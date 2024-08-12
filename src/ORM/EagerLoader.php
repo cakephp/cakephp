@@ -400,7 +400,7 @@ class EagerLoader
      */
     public function attachAssociations(SelectQuery $query, Table $repository, bool $includeFields): void
     {
-        if (empty($this->_containments) && $this->_matching === null) {
+        if (!$this->_containments && $this->_matching === null) {
             return;
         }
 
@@ -557,10 +557,9 @@ class EagerLoader
     protected function _correctStrategy(EagerLoadable $loadable): void
     {
         $config = $loadable->getConfig();
-        $currentStrategy = $config['strategy'] ??
-            'join';
+        $currentStrategy = $config['strategy'] ?? Association::STRATEGY_JOIN;
 
-        if (!$loadable->canBeJoined() || $currentStrategy !== 'join') {
+        if (!$loadable->canBeJoined() || $currentStrategy !== Association::STRATEGY_JOIN) {
             return;
         }
 
@@ -608,19 +607,25 @@ class EagerLoader
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query for which to eager load external.
      * associations.
-     * @param array $results Results array.
-     * @return array
+     * @param iterable $results Results.
+     * @return iterable
      * @throws \RuntimeException
      */
-    public function loadExternal(SelectQuery $query, array $results): array
+    public function loadExternal(SelectQuery $query, iterable $results): iterable
     {
-        if (empty($results)) {
+        if (!$results) {
             return $results;
         }
 
-        $table = $query->getRepository();
-        $external = $this->externalAssociations($table);
-        if (empty($external)) {
+        $external = $this->externalAssociations($query->getRepository());
+        if (!$external) {
+            return $results;
+        }
+
+        if (!is_array($results)) {
+            $results = iterator_to_array($results);
+        }
+        if (!$results) {
             return $results;
         }
 
@@ -792,7 +797,7 @@ class EagerLoader
             }
             $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, count($pkFields) === 1];
         }
-        if (empty($collectKeys)) {
+        if (!$collectKeys) {
             return [];
         }
 

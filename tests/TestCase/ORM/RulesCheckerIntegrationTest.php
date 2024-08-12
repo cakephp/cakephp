@@ -38,7 +38,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Fixtures to be loaded
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = [
         'core.Articles', 'core.Tags', 'core.ArticlesTags', 'core.Authors', 'core.Comments',
@@ -48,8 +48,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests saving belongsTo association and get a validation error
-     *
-     * @group save
      */
     public function testSaveBelongsToWithValidationError(): void
     {
@@ -86,8 +84,6 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests saving hasOne association and returning a validation error will
      * abort the saving process
-     *
-     * @group save
      */
     public function testSaveHasOneWithValidationError(): void
     {
@@ -213,8 +209,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests saving belongsToMany records with a validation error in a joint entity
-     *
-     * @group save
      */
     public function testSaveBelongsToManyWithValidationErrorInJointEntity(): void
     {
@@ -252,8 +246,6 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests saving belongsToMany records with a validation error in a joint entity
      * and atomic set to false
-     *
-     * @group save
      */
     public function testSaveBelongsToManyWithValidationErrorInJointEntityNonAtomic(): void
     {
@@ -291,8 +283,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Test adding rule with name
-     *
-     * @group save
      */
     public function testAddingRuleWithName(): void
     {
@@ -338,8 +328,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the isUnique domain rule
-     *
-     * @group save
      */
     public function testIsUniqueDomainRule(): void
     {
@@ -364,8 +352,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests isUnique with multiple fields
-     *
-     * @group save
      */
     public function testIsUniqueMultipleFields(): void
     {
@@ -408,8 +394,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests isUnique with allowMultipleNulls
-     *
-     * @group save
      */
     public function testIsUniqueAllowMultipleNulls(): void
     {
@@ -440,8 +424,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the existsIn domain rule
-     *
-     * @group save
      */
     public function testExistsInDomainRule(): void
     {
@@ -485,8 +467,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the existsIn domain rule when passing an object
-     *
-     * @group save
      */
     public function testExistsInDomainRuleWithObject(): void
     {
@@ -571,8 +551,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests existsIn with invalid associations
-     *
-     * @group save
      */
     public function testExistsInInvalidAssociation(): void
     {
@@ -649,8 +627,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the checkRules save option
-     *
-     * @group save
      */
     public function testSkipRulesChecking(): void
     {
@@ -668,8 +644,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the beforeRules event
-     *
-     * @group save
      */
     public function testUseBeforeRules(): void
     {
@@ -708,8 +682,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the afterRules event
-     *
-     * @group save
      */
     public function testUseAfterRules(): void
     {
@@ -749,8 +721,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that rules can be changed using the buildRules event
-     *
-     * @group save
      */
     public function testUseBuildRulesEvent(): void
     {
@@ -769,8 +739,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests isUnique with untouched fields
-     *
-     * @group save
      */
     public function testIsUniqueWithCleanFields(): void
     {
@@ -788,8 +756,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests isUnique rule with conflicting columns
-     *
-     * @group save
      */
     public function testIsUniqueAliasPrefix(): void
     {
@@ -813,8 +779,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the existsIn rule when passing non dirty fields
-     *
-     * @group save
      */
     public function testExistsInWithCleanFields(): void
     {
@@ -832,8 +796,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the existsIn with conflicting columns
-     *
-     * @group save
      */
     public function testExistsInAliasPrefix(): void
     {
@@ -892,7 +854,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
             'allowNullableNulls' => true,
         ]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**
@@ -974,7 +936,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowNullableNulls' => true]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**
@@ -993,7 +955,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowNullableNulls' => false]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**
@@ -1014,7 +976,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
             'allowNullableNulls' => true,
             'message' => 'will not error']));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**
@@ -1123,8 +1085,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests using rules to prevent delete operations
-     *
-     * @group delete
      */
     public function testDeleteRules(): void
     {
@@ -1140,8 +1100,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Checks that it is possible to pass custom options to rules when saving
-     *
-     * @group save
      */
     public function testCustomOptionsPassingSave(): void
     {
@@ -1163,8 +1121,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests passing custom options to rules from delete
-     *
-     * @group delete
      */
     public function testCustomOptionsPassingDelete(): void
     {
@@ -1183,8 +1139,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Test adding rules that return error string
-     *
-     * @group save
      */
     public function testCustomErrorMessageFromRule(): void
     {
@@ -1204,8 +1158,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Test adding rules with no errorField do not accept strings
-     *
-     * @group save
      */
     public function testCustomErrorMessageFromRuleNoErrorField(): void
     {
@@ -1226,8 +1178,6 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests that using existsIn for a hasMany association will not be called
      * as the foreign key for the association was automatically validated already.
-     *
-     * @group save
      */
     public function testAvoidExistsInOnAutomaticSaving(): void
     {
@@ -1265,8 +1215,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the existsIn domain rule respects the conditions set for the associations
-     *
-     * @group save
      */
     public function testExistsInDomainRuleWithAssociationConditions(): void
     {

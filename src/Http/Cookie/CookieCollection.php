@@ -62,7 +62,7 @@ class CookieCollection implements IteratorAggregate, Countable
     /**
      * Create a Cookie Collection from an array of Set-Cookie Headers
      *
-     * @param array<string> $header The array of set-cookie header values.
+     * @param list<string> $header The array of set-cookie header values.
      * @param array<string, mixed> $defaults The defaults attributes.
      * @return static
      */
@@ -72,7 +72,7 @@ class CookieCollection implements IteratorAggregate, Countable
         foreach ($header as $value) {
             try {
                 $cookies[] = Cookie::createFromHeaderString($value, $defaults);
-            } catch (Exception | TypeError $e) {
+            } catch (Exception | TypeError) {
                 // Don't blow up on invalid cookies
             }
         }
@@ -276,7 +276,7 @@ class CookieCollection implements IteratorAggregate, Countable
             $cookiePairs[] = $cookie;
         }
 
-        if (empty($cookiePairs)) {
+        if (!$cookiePairs) {
             return $request;
         }
 

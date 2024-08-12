@@ -95,7 +95,7 @@ trait CellTrait
         $builder = $instance->viewBuilder();
         $builder->setTemplate(Inflector::underscore($action));
 
-        if (!empty($plugin)) {
+        if ($plugin) {
             $builder->setPlugin($plugin);
         }
         if (!empty($this->helpers)) {
@@ -103,7 +103,7 @@ trait CellTrait
         }
 
         if ($this instanceof View) {
-            if (!empty($this->theme)) {
+            if ($this->theme) {
                 $builder->setTheme($this->theme);
             }
 

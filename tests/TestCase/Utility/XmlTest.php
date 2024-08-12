@@ -26,6 +26,7 @@ use Cake\Utility\Xml;
 use DateTime;
 use DOMDocument;
 use Exception;
+use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleXMLElement;
 use TypeError;
 
@@ -35,27 +36,12 @@ use TypeError;
 class XmlTest extends TestCase
 {
     /**
-     * @var string
-     */
-    protected $appEncoding;
-
-    /**
      * setUp method
      */
     public function setUp(): void
     {
         parent::setUp();
-        $this->appEncoding = Configure::read('App.encoding');
         Configure::write('App.encoding', 'UTF-8');
-    }
-
-    /**
-     * tearDown method
-     */
-    public function tearDown(): void
-    {
-        parent::tearDown();
-        Configure::write('App.encoding', $this->appEncoding);
     }
 
     public function testExceptionChainingForInvalidInput(): void
@@ -195,9 +181,9 @@ class XmlTest extends TestCase
     /**
      * testBuildInvalidData
      *
-     * @dataProvider invalidDataProvider
      * @param mixed $value
      */
+    #[DataProvider('invalidDataProvider')]
     public function testBuildInvalidData($value): void
     {
         $this->expectException(CakeException::class);
@@ -222,7 +208,7 @@ class XmlTest extends TestCase
         try {
             Xml::build('<tag>');
             $this->fail('No exception');
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->assertTrue(true, 'An exception was raised');
         }
     }
@@ -617,9 +603,9 @@ XML;
     /**
      * testFromArrayFail method
      *
-     * @dataProvider invalidArrayDataProvider
      * @param mixed $value
      */
+    #[DataProvider('invalidArrayDataProvider')]
     public function testFromArrayFail($value): void
     {
         $this->expectException(Exception::class);
@@ -838,7 +824,7 @@ XML;
         $expected = [
             'title' => 'Alertpay automated sales via IPN',
             'link' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn',
-            'description' => 'I\'m going to show you how I implemented a payment module via the Alertpay payment processor.',
+            'description' => "I'm going to show you how I implemented a payment module via the Alertpay payment processor.",
             'pubDate' => 'Tue, 31 Aug 2010 01:42:00 -0500',
             'guid' => 'http://bakery.cakephp.org/articles/view/alertpay-automated-sales-via-ipn',
         ];
@@ -1187,7 +1173,7 @@ XML;
         $file = str_replace(' ', '%20', CAKE . 'VERSION.txt');
         $xml = <<<XML
 <!DOCTYPE cakephp [
-  <!ENTITY payload SYSTEM "file://$file" >]>
+  <!ENTITY payload SYSTEM "file://{$file}" >]>
 <request>
   <xxe>&payload;</xxe>
 </request>

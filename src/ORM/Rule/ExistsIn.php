@@ -30,7 +30,7 @@ class ExistsIn
     /**
      * The list of fields to check
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_fields;
 
@@ -54,7 +54,7 @@ class ExistsIn
      * Available option for $options is 'allowNullableNulls' flag.
      * Set to true to accept composite foreign keys where one or more nullable columns are null.
      *
-     * @param array<string>|string $fields The field or fields to check existence as primary key.
+     * @param list<string>|string $fields The field or fields to check existence as primary key.
      * @param \Cake\ORM\Table|\Cake\ORM\Association|string $repository The repository where the
      * field will be looked for, or the association name for the repository.
      * @param array<string, mixed> $options The options that modify the rule's behavior.
@@ -82,20 +82,24 @@ class ExistsIn
     public function __invoke(EntityInterface $entity, array $options): bool
     {
         if (is_string($this->_repository)) {
-            if (!$options['repository']->hasAssociation($this->_repository)) {
+            /** @var \Cake\ORM\Table $table */
+            $table = $options['repository'];
+
+            if (!$table->hasAssociation($this->_repository)) {
                 throw new DatabaseException(sprintf(
                     'ExistsIn rule for `%s` is invalid. `%s` is not associated with `%s`.',
                     implode(', ', $this->_fields),
                     $this->_repository,
-                    get_class($options['repository'])
+                    $options['repository']::class
                 ));
             }
-            $repository = $options['repository']->getAssociation($this->_repository);
+            $repository = $table->getAssociation($this->_repository);
             $this->_repository = $repository;
         }
 
         $fields = $this->_fields;
-        $source = $target = $this->_repository;
+        $source = $this->_repository;
+        $target = $this->_repository;
         if ($target instanceof Association) {
             $bindingKey = (array)$target->getBindingKey();
             $realTarget = $target->getTarget();
@@ -124,6 +128,7 @@ class ExistsIn
         }
 
         if ($this->_options['allowNullableNulls']) {
+            /** @var \Cake\ORM\Table $source */
             $schema = $source->getSchema();
             foreach ($fields as $i => $field) {
                 if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {

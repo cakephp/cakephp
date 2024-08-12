@@ -149,7 +149,7 @@ class SelectBoxWidget extends BasicWidget
      * Render the contents of the select element.
      *
      * @param array<string, mixed> $data The context for rendering a select.
-     * @return array<string>
+     * @return list<string>
      */
     protected function _renderContent(array $data): array
     {
@@ -162,7 +162,7 @@ class SelectBoxWidget extends BasicWidget
         if (!empty($data['empty'])) {
             $options = $this->_emptyValue($data['empty']) + (array)$options;
         }
-        if (empty($options)) {
+        if (!$options) {
             return [];
         }
 
@@ -236,11 +236,11 @@ class SelectBoxWidget extends BasicWidget
      * Will recursively call itself when option groups are in use.
      *
      * @param iterable $options The options to render.
-     * @param array<string>|null $disabled The options to disable.
+     * @param list<string>|null $disabled The options to disable.
      * @param mixed $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.
-     * @return array<string> Option elements.
+     * @return list<string> Option elements.
      */
     protected function _renderOptions(
         iterable $options,
@@ -253,6 +253,7 @@ class SelectBoxWidget extends BasicWidget
         foreach ($options as $key => $val) {
             // Option groups
             $isIterable = is_iterable($val);
+            /** @var \ArrayAccess|array $val */
             if (
                 (
                     !is_int($key) &&
@@ -290,7 +291,7 @@ class SelectBoxWidget extends BasicWidget
             if ($this->_isDisabled((string)$key, $disabled)) {
                 $optAttrs['disabled'] = true;
             }
-            if (!empty($templateVars)) {
+            if ($templateVars) {
                 $optAttrs['templateVars'] = array_merge($templateVars, $optAttrs['templateVars']);
             }
             $optAttrs['escape'] = $escape;
@@ -332,7 +333,7 @@ class SelectBoxWidget extends BasicWidget
      * Helper method for deciding what options are disabled.
      *
      * @param string $key The key to test.
-     * @param array<string>|null $disabled The disabled values.
+     * @param list<string>|null $disabled The disabled values.
      * @return bool
      */
     protected function _isDisabled(string $key, ?array $disabled): bool

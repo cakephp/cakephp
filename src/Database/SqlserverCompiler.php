@@ -52,7 +52,7 @@ class SqlserverCompiler extends QueryCompiler
     /**
      * {@inheritDoc}
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_selectParts = [
         'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',

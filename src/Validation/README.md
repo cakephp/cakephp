@@ -27,7 +27,7 @@ $validator
     ->notEmptyString('comment', 'You need to give a comment.');
 
 $errors = $validator->validate($_POST);
-if (!empty($errors)) {
+if ($errors) {
     // display errors.
 }
 ```

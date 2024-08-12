@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Utility\Hash;
 
 /**
@@ -57,9 +58,10 @@ class PluginConfig
     /**
      * Get the config how plugins should be loaded
      *
+     * @param string|null $path The absolute path to the composer.lock file to retrieve the versions from
      * @return array
      */
-    public static function getAppConfig(): array
+    public static function getAppConfig(?string $path = null): array
     {
         self::loadInstallerConfig();
 
@@ -71,11 +73,16 @@ class PluginConfig
             $pluginLoadConfig = [];
         }
 
+        try {
+            $composerVersions = self::getVersions($path);
+        } catch (CakeException) {
+            $composerVersions = [];
+        }
+
         $result = [];
         $availablePlugins = Configure::read('plugins', []);
         if ($availablePlugins && is_array($availablePlugins)) {
-            $availablePlugins = array_keys($availablePlugins);
-            foreach ($availablePlugins as $pluginName) {
+            foreach ($availablePlugins as $pluginName => $pluginPath) {
                 if ($pluginLoadConfig && array_key_exists($pluginName, $pluginLoadConfig)) {
                     $options = $pluginLoadConfig[$pluginName];
                     $hooks = PluginInterface::VALID_HOOKS;
@@ -92,15 +99,89 @@ class PluginConfig
                 } else {
                     $result[$pluginName]['isLoaded'] = false;
                 }
+
+                try {
+                    $packageName = self::getPackageNameFromPath($pluginPath);
+                    $result[$pluginName]['packagePath'] = $pluginPath;
+                    $result[$pluginName]['package'] = $packageName;
+                } catch (CakeException) {
+                    $packageName = null;
+                }
+                if ($composerVersions && $packageName) {
+                    if (array_key_exists($packageName, $composerVersions['packages'])) {
+                        $result[$pluginName]['version'] = $composerVersions['packages'][$packageName];
+                        $result[$pluginName]['isDevPackage'] = false;
+                    } elseif (array_key_exists($packageName, $composerVersions['devPackages'])) {
+                        $result[$pluginName]['version'] = $composerVersions['devPackages'][$packageName];
+                        $result[$pluginName]['isDevPackage'] = true;
+                    }
+                }
             }
         }
 
-        $diff = array_diff(array_keys($pluginLoadConfig), $availablePlugins);
+        $diff = array_diff(array_keys($pluginLoadConfig), array_keys($availablePlugins));
         foreach ($diff as $unknownPlugin) {
             $result[$unknownPlugin]['isLoaded'] = false;
             $result[$unknownPlugin]['isUnknown'] = true;
         }
 
         return $result;
+    }
+
+    /**
+     * @param string|null $path The absolute path to the composer.lock file to retrieve the versions from
+     * @return array
+     */
+    public static function getVersions(?string $path = null): array
+    {
+        $lockFilePath = $path ?? ROOT . DIRECTORY_SEPARATOR . 'composer.lock';
+        if (!file_exists($lockFilePath)) {
+            throw new CakeException(sprintf('composer.lock does not exist in %s', $lockFilePath));
+        }
+        $lockFile = file_get_contents($lockFilePath);
+        if ($lockFile === false) {
+            throw new CakeException(sprintf('Could not read composer.lock: %s', $lockFilePath));
+        }
+        $lockFileJson = json_decode($lockFile, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new CakeException(sprintf(
+                'Error parsing composer.lock: %s',
+                json_last_error_msg()
+            ));
+        }
+
+        $packages = Hash::combine($lockFileJson['packages'], '{n}.name', '{n}.version');
+        $devPackages = Hash::combine($lockFileJson['packages-dev'], '{n}.name', '{n}.version');
+
+        return [
+            'packages' => $packages,
+            'devPackages' => $devPackages,
+        ];
+    }
+
+    /**
+     * @param string $path
+     * @return string
+     */
+    protected static function getPackageNameFromPath(string $path): string
+    {
+        $jsonPath = $path . DS . 'composer.json';
+        if (!file_exists($jsonPath)) {
+            throw new CakeException(sprintf('composer.json does not exist in %s', $jsonPath));
+        }
+        $jsonString = file_get_contents($jsonPath);
+        if ($jsonString === false) {
+            throw new CakeException(sprintf('Could not read composer.json: %s', $jsonPath));
+        }
+        $json = json_decode($jsonString, true);
+        if (json_last_error() !== JSON_ERROR_NONE) {
+            throw new CakeException(sprintf(
+                'Error parsing %ss: %s',
+                $jsonPath,
+                json_last_error_msg()
+            ));
+        }
+
+        return $json['name'];
     }
 }

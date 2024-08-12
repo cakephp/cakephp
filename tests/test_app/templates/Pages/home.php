@@ -81,7 +81,7 @@ if (file_exists(APP . 'Config/datasources.php')): ?>
 <?php endif; ?>
 
 <p>
-<?php if (Plugin::loaded('DebugKit')): ?>
+<?php if (Plugin::isLoaded('DebugKit')): ?>
     <span class="notice success">DebugKit plugin is present</span>
 <?php else: ?>
     <span class="notice">';
@@ -103,7 +103,7 @@ You can also add some CSS styles for your pages at: APP/webroot/css.;
 <p>
     <?php
         echo $this->Html->link(
-            '<strong>New</strong> CakePHP 3.0 Docs',
+            '<strong>New</strong> CakePHP Docs',
             'https://book.cakephp.org/5/en/',
             ['target' => '_blank', 'escape' => false]
         );

@@ -75,7 +75,7 @@ class TimeHelper extends Helper
     ): DateTime {
         $time = new DateTime($dateString);
         if ($timezone !== null) {
-            $time = $time->setTimezone($timezone);
+            return $time->setTimezone($timezone);
         }
 
         return $time;
@@ -216,7 +216,7 @@ class TimeHelper extends Helper
      *
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param bool $range if true returns a range in Y-m-d format
-     * @return array<string>|int 1, 2, 3, or 4 quarter of year or array if $range true
+     * @return list<string>|int 1, 2, 3, or 4 quarter of year or array if $range true
      * @see \Cake\I18n\Time::toQuarter()
      */
     public function toQuarter(
@@ -327,7 +327,7 @@ class TimeHelper extends Helper
         $relativeDate = (new DateTime($dateTime))->timeAgoInWords($options);
 
         if ($element) {
-            $relativeDate = sprintf(
+            return sprintf(
                 '<%s%s>%s</%s>',
                 $element['tag'],
                 $this->templater()->formatAttributes($element, ['tag']),
@@ -395,7 +395,7 @@ class TimeHelper extends Helper
      *
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int|null $date UNIX timestamp, strtotime() valid string
      *   or DateTime object (or a date format string).
-     * @param string|int|null $format date format string (or a UNIX timestamp,
+     * @param array<int>|string|int|null $format date format string (or a UNIX timestamp,
      *   `strtotime()` valid string or DateTime object).
      * @param string|false $invalid Default value to display on invalid dates
      * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
@@ -404,7 +404,7 @@ class TimeHelper extends Helper
      */
     public function format(
         ChronosDate|DateTimeInterface|string|int|null $date,
-        string|int|null $format = null,
+        array|string|int|null $format = null,
         string|false $invalid = false,
         DateTimeZone|string|null $timezone = null
     ): string|int|false {

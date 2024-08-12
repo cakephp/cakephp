@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Schema\Collection as SchemaCollection;
@@ -24,6 +25,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Postgres schema test case.
@@ -248,14 +250,30 @@ SQL;
                 ['type' => 'JSONB'],
                 ['type' => 'json', 'length' => null],
             ],
+            // Geospatial
+            [
+                ['type' => 'GEOGRAPHY(GEOMETRY, 4326)'],
+                ['type' => 'geometry', 'length' => null, 'srid' => 4326],
+            ],
+            [
+                ['type' => 'GEOGRAPHY(POINT, 4326)'],
+                ['type' => 'point', 'length' => null, 'srid' => 4326],
+            ],
+            [
+                ['type' => 'GEOGRAPHY(LINESTRING, 4326)'],
+                ['type' => 'linestring', 'length' => null, 'srid' => 4326],
+            ],
+            [
+                ['type' => 'GEOGRAPHY(POLYGON, 4326)'],
+                ['type' => 'polygon', 'length' => null, 'srid' => 4326],
+            ],
         ];
     }
 
     /**
      * Test parsing Postgres column types from field description.
-     *
-     * @dataProvider convertColumnProvider
      */
+    #[DataProvider('convertColumnProvider')]
     public function testConvertColumn(array $field, array $expected): void
     {
         $field += [
@@ -274,7 +292,7 @@ SQL;
             'comment' => 'Comment section',
         ];
 
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')->getMock();
+        $driver = $this->getMockBuilder(Postgres::class)->getMock();
         $dialect = new PostgresSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -545,7 +563,7 @@ SQL;
         ];
         $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in $field column");
+            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in {$field} column");
         }
     }
 
@@ -559,7 +577,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_authors');
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -587,7 +605,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
 
         $this->assertCount(4, $result->constraints());
         $expected = [
@@ -949,14 +967,54 @@ SQL;
                 ['type' => 'timestampfractional', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
                 '"current_timestamp_fractional" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ],
+            // Geospatial
+            [
+                'g',
+                ['type' => 'geometry'],
+                '"g" GEOGRAPHY(GEOMETRY, 4326)',
+            ],
+            [
+                'g',
+                ['type' => 'geometry', 'null' => false, 'srid' => 4326],
+                '"g" GEOGRAPHY(GEOMETRY, 4326) NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'point'],
+                '"p" GEOGRAPHY(POINT, 4326)',
+            ],
+            [
+                'p',
+                ['type' => 'point', 'null' => false, 'srid' => 4326],
+                '"p" GEOGRAPHY(POINT, 4326) NOT NULL',
+            ],
+            [
+                'l',
+                ['type' => 'linestring'],
+                '"l" GEOGRAPHY(LINESTRING, 4326)',
+            ],
+            [
+                'l',
+                ['type' => 'linestring', 'null' => false, 'srid' => 4326],
+                '"l" GEOGRAPHY(LINESTRING, 4326) NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'polygon'],
+                '"p" GEOGRAPHY(POLYGON, 4326)',
+            ],
+            [
+                'p',
+                ['type' => 'polygon', 'null' => false, 'srid' => 4326],
+                '"p" GEOGRAPHY(POLYGON, 4326) NOT NULL',
+            ],
         ];
     }
 
     /**
      * Test generating column definitions
-     *
-     * @dataProvider columnSqlProvider
      */
+    #[DataProvider('columnSqlProvider')]
     public function testColumnSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -1041,9 +1099,8 @@ SQL;
 
     /**
      * Test the constraintSql method.
-     *
-     * @dataProvider constraintSqlProvider
      */
+    #[DataProvider('constraintSqlProvider')]
     public function testConstraintSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -1065,7 +1122,7 @@ SQL;
     public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1114,7 +1171,7 @@ SQL;
     public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1163,7 +1220,7 @@ SQL;
     public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1233,7 +1290,7 @@ SQL;
     public function testCreateInSchema(): void
     {
         $driver = $this->_getMockedDriver(['schema' => 'notpublic']);
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())
@@ -1254,7 +1311,7 @@ SQL;
     public function testCreateTemporary(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1274,7 +1331,7 @@ SQL;
     public function testCreateSqlCompositeIntegerKey(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1338,7 +1395,7 @@ SQL;
     public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1356,7 +1413,7 @@ SQL;
     public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1387,7 +1444,7 @@ SQL;
         $mock->expects($this->any())
             ->method('quote')
             ->willReturnCallback(function ($value) {
-                return "'$value'";
+                return "'{$value}'";
             });
 
         $driver = $this->getMockBuilder(Postgres::class)

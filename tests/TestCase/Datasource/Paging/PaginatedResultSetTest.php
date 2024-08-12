@@ -20,10 +20,12 @@ use ArrayIterator;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\ResultSetInterface;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
+use function Cake\Collection\collection;
 
 class PaginatedResultSetTest extends TestCase
 {
-    public function testItems()
+    public function testItems(): void
     {
         $paginatedResults = new PaginatedResultSet(
             $this->getMockBuilder(ResultSetInterface::class)->getMock(),
@@ -33,7 +35,28 @@ class PaginatedResultSetTest extends TestCase
         $this->assertInstanceOf(ResultSetInterface::class, $paginatedResults->items());
     }
 
-    public function testJsonEncode()
+    #[WithoutErrorHandler]
+    public function testCall(): void
+    {
+        $resultSet = $this->getMockBuilder(ResultSetInterface::class)->getMock();
+        $resultSet
+            ->expects($this->once())
+            ->method('extract')
+            ->with('foo')
+            ->willReturn(collection(['bar']));
+
+        $paginatedResults = new PaginatedResultSet(
+            $resultSet,
+            []
+        );
+
+        $this->deprecated(function () use ($paginatedResults): void {
+            $result = $paginatedResults->extract('foo')->toList();
+            $this->assertEquals(['bar'], $result);
+        });
+    }
+
+    public function testJsonEncode(): void
     {
         $paginatedResults = new PaginatedResultSet(
             new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),
@@ -41,5 +64,19 @@ class PaginatedResultSetTest extends TestCase
         );
 
         $this->assertEquals('{"1":"a","2":"b","3":"c"}', json_encode($paginatedResults));
+    }
+
+    public function testSerialization(): void
+    {
+        $paginatedResults = new PaginatedResultSet(
+            new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),
+            ['foo' => 'bar']
+        );
+
+        $serialized = serialize($paginatedResults);
+        $unserialized = unserialize($serialized);
+
+        $this->assertEquals($paginatedResults->pagingParams(), $unserialized->pagingParams());
+        $this->assertEquals($paginatedResults->items(), $unserialized->items());
     }
 }

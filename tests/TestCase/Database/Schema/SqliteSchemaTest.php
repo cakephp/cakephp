@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\Collection as SchemaCollection;
@@ -24,6 +25,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for Sqlite Schema Dialect.
@@ -31,6 +33,23 @@ use PDO;
 class SqliteSchemaTest extends TestCase
 {
     protected PDO $pdo;
+
+    public function tearDown(): void
+    {
+        parent::tearDown();
+
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        if ($connection->getDriver() instanceof Sqlite) {
+            $connection->execute('DROP VIEW IF EXISTS view_schema_articles');
+            $connection->execute('DROP TABLE IF EXISTS schema_articles');
+            $connection->execute('DROP TABLE IF EXISTS schema_authors');
+            $connection->execute('DROP TABLE IF EXISTS schema_no_rowid_pk');
+            $connection->execute('DROP TABLE IF EXISTS schema_unique_constraint_variations');
+            $connection->execute('DROP TABLE IF EXISTS schema_foreign_key_variations');
+            $connection->execute('DROP TABLE IF EXISTS schema_composite');
+        }
+    }
 
     /**
      * Helper method for skipping tests that need a real connection.
@@ -153,14 +172,33 @@ class SqliteSchemaTest extends TestCase
                 'UUID_TEXT',
                 ['type' => 'uuid', 'length' => null],
             ],
+            [
+                'UUID_BLOB',
+                ['type' => 'binaryuuid', 'length' => null],
+            ],
+            [
+                'GEOMETRY_TEXT',
+                ['type' => 'geometry', 'length' => null],
+            ],
+            [
+                'POINT_TEXT',
+                ['type' => 'point', 'length' => null],
+            ],
+            [
+                'LINESTRING_TEXT',
+                ['type' => 'linestring', 'length' => null],
+            ],
+            [
+                'POLYGON_TEXT',
+                ['type' => 'polygon', 'length' => null],
+            ],
         ];
     }
 
     /**
      * Test parsing SQLite column types from field description.
-     *
-     * @dataProvider convertColumnProvider
      */
+    #[DataProvider('convertColumnProvider')]
     public function testConvertColumn(string $type, array $expected): void
     {
         $field = [
@@ -176,7 +214,7 @@ class SqliteSchemaTest extends TestCase
             'comment' => null,
         ];
 
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')->getMock();
+        $driver = $this->getMockBuilder(Sqlite::class)->getMock();
         $dialect = new SqliteSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -194,7 +232,7 @@ class SqliteSchemaTest extends TestCase
      */
     public function testConvertCompositePrimaryKey(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')->getMock();
+        $driver = $this->getMockBuilder(Sqlite::class)->getMock();
         $dialect = new SqliteSchemaDialect($driver);
 
         $field1 = [
@@ -257,6 +295,7 @@ published BOOLEAN DEFAULT 0,
 created DATETIME,
 field1 VARCHAR(10) DEFAULT NULL,
 field2 VARCHAR(10) DEFAULT 'NULL',
+location POINT_TEXT,
 CONSTRAINT "title_idx" UNIQUE ("title", "body")
 CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
 );
@@ -375,7 +414,7 @@ SQL;
             'title' => [
                 'type' => 'string',
                 'null' => true,
-                'default' => 'Let \'em eat cake',
+                'default' => "Let 'em eat cake",
                 'length' => 20,
                 'precision' => null,
                 'comment' => null,
@@ -434,8 +473,17 @@ SQL;
                 'comment' => null,
                 'collate' => null,
             ],
+            'location' => [
+                'type' => 'point',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
+            ],
         ];
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
         $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->getColumn($field));
@@ -463,7 +511,7 @@ SQL;
                 'collate' => null,
             ],
         ];
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
         foreach ($expected as $field => $definition) {
             $this->assertSame($definition, $result->getColumn($field));
         }
@@ -497,7 +545,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -547,13 +595,13 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_no_rowid_pk');
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
 
         $this->assertSame(['primary'], $result->constraints());
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_unique_constraint_variations');
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
 
         $expected = [
             'primary' => [
@@ -628,7 +676,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_foreign_key_variations');
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
 
         $expected = [
             'primary' => [
@@ -849,6 +897,47 @@ SQL;
                 ['type' => 'timestamp', 'null' => true],
                 '"created" TIMESTAMP DEFAULT NULL',
             ],
+            // Geospatial types
+            [
+                'g',
+                ['type' => 'geometry'],
+                '"g" GEOMETRY_TEXT',
+            ],
+            [
+                'g',
+                ['type' => 'geometry', 'null' => false, 'srid' => 4326],
+                '"g" GEOMETRY_TEXT NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'point'],
+                '"p" POINT_TEXT',
+            ],
+            [
+                'p',
+                ['type' => 'point', 'null' => false, 'srid' => 4326],
+                '"p" POINT_TEXT NOT NULL',
+            ],
+            [
+                'l',
+                ['type' => 'linestring'],
+                '"l" LINESTRING_TEXT',
+            ],
+            [
+                'l',
+                ['type' => 'linestring', 'null' => false, 'srid' => 4326],
+                '"l" LINESTRING_TEXT NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'polygon'],
+                '"p" POLYGON_TEXT',
+            ],
+            [
+                'p',
+                ['type' => 'polygon', 'null' => false, 'srid' => 4326],
+                '"p" POLYGON_TEXT NOT NULL',
+            ],
         ];
     }
 
@@ -858,7 +947,7 @@ SQL;
     public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -876,7 +965,7 @@ SQL;
     public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -889,9 +978,8 @@ SQL;
 
     /**
      * Test generating column definitions
-     *
-     * @dataProvider columnSqlProvider
      */
+    #[DataProvider('columnSqlProvider')]
     public function testColumnSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -1004,9 +1092,8 @@ SQL;
 
     /**
      * Test the constraintSql method.
-     *
-     * @dataProvider constraintSqlProvider
      */
+    #[DataProvider('constraintSqlProvider')]
     public function testConstraintSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -1040,9 +1127,8 @@ SQL;
 
     /**
      * Test the indexSql method.
-     *
-     * @dataProvider indexSqlProvider
      */
+    #[DataProvider('indexSqlProvider')]
     public function testIndexSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -1064,7 +1150,7 @@ SQL;
     public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1114,7 +1200,7 @@ SQL;
     public function testCreateTemporary(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1134,7 +1220,7 @@ SQL;
     public function testCreateSqlCompositeIntegerKey(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1200,7 +1286,7 @@ SQL;
     public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1218,7 +1304,7 @@ SQL;
     public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1249,7 +1335,7 @@ SQL;
     public function testTruncateSqlNoSequences(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')

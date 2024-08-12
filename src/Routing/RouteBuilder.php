@@ -28,10 +28,7 @@ use InvalidArgumentException;
 use Psr\Http\Server\MiddlewareInterface;
 
 /**
- * Provides features for building routes inside scopes.
- *
- * Gives an easy to use way to build routes and append them
- * into a route collection.
+ * Provides features for building routes and parsing/matching URLs to routes.
  */
 class RouteBuilder
 {
@@ -72,7 +69,7 @@ class RouteBuilder
     /**
      * The extensions that should be set into the routes connected.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_extensions = [];
 
@@ -108,7 +105,7 @@ class RouteBuilder
      * The list of middleware that routes in this builder get
      * added during construction.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $middleware = [];
 
@@ -175,7 +172,7 @@ class RouteBuilder
      * Future routes connected in through this builder will have the connected
      * extensions applied. However, setting extensions does not modify existing routes.
      *
-     * @param array<string>|string $extensions The extensions to set.
+     * @param list<string>|string $extensions The extensions to set.
      * @return $this
      */
     public function setExtensions(array|string $extensions)
@@ -188,7 +185,7 @@ class RouteBuilder
     /**
      * Get the extensions in this route builder's scope.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getExtensions(): array
     {
@@ -198,7 +195,7 @@ class RouteBuilder
     /**
      * Add additional extensions to what is already in current scope
      *
-     * @param array<string>|string $extensions One or more extensions to add
+     * @param list<string>|string $extensions One or more extensions to add
      * @return $this
      */
     public function addExtensions(array|string $extensions)
@@ -389,7 +386,7 @@ class RouteBuilder
         $resourceMap = array_merge(static::$_resourceMap, $options['map']);
 
         $only = (array)$options['only'];
-        if (empty($only)) {
+        if (!$only) {
             $only = array_keys($resourceMap);
         }
 
@@ -701,11 +698,11 @@ class RouteBuilder
      */
     protected function parseDefaults(array|string $defaults): array
     {
-        if (!is_string($defaults)) {
-            return $defaults;
+        if (is_string($defaults)) {
+            return Router::parseRoutePath($defaults);
         }
 
-        return Router::parseRoutePath($defaults);
+        return $defaults;
     }
 
     /**
@@ -994,10 +991,11 @@ class RouteBuilder
      */
     public function applyMiddleware(string ...$names)
     {
+        /** @var list<string> $names */
         foreach ($names as $name) {
             if (!$this->_collection->middlewareExists($name)) {
-                $message = "Cannot apply '$name' middleware or middleware group. " .
-                    'Use registerMiddleware() to register middleware.';
+                $message = "Cannot apply `{$name}` middleware or middleware group. " .
+                    'Use `registerMiddleware()` to register middleware.';
                 throw new InvalidArgumentException($message);
             }
         }
@@ -1009,7 +1007,7 @@ class RouteBuilder
     /**
      * Get the middleware that this builder will apply to routes.
      *
-     * @return array
+     * @return list<string>
      */
     public function getMiddleware(): array
     {
@@ -1020,7 +1018,7 @@ class RouteBuilder
      * Apply a set of middleware to a group
      *
      * @param string $name Name of the middleware group
-     * @param array<string> $middlewareNames Names of the middleware
+     * @param list<string> $middlewareNames Names of the middleware
      * @return $this
      */
     public function middlewareGroup(string $name, array $middlewareNames)

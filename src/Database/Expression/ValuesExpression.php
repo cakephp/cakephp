@@ -213,7 +213,7 @@ class ValuesExpression implements ExpressionInterface
      */
     public function sql(ValueBinder $binder): string
     {
-        if (empty($this->_values) && empty($this->_query)) {
+        if (!$this->_values && $this->_query === null) {
             return '';
         }
 
@@ -310,7 +310,7 @@ class ValuesExpression implements ExpressionInterface
 
         $types = $this->_requiresToExpressionCasting($types);
 
-        if (empty($types)) {
+        if (!$types) {
             return;
         }
 

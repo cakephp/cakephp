@@ -171,19 +171,23 @@ class SelectLoader
             $query = $query->find($finderName, ...$opts);
         }
 
+        /** @var \Cake\ORM\Query\SelectQuery $selectQuery */
+        $selectQuery = $options['query'];
+
         $fetchQuery = $query
             ->select($options['fields'])
             ->where($options['conditions'])
             ->eagerLoaded(true)
-            ->enableHydration($options['query']->isHydrationEnabled());
-        if ($options['query']->isResultsCastingEnabled()) {
+            ->enableHydration($selectQuery->isHydrationEnabled())
+            ->setConnectionRole($selectQuery->getConnectionRole());
+        if ($selectQuery->isResultsCastingEnabled()) {
             $fetchQuery->enableResultsCasting();
         } else {
             $fetchQuery->disableResultsCasting();
         }
 
         if ($useSubquery) {
-            $filter = $this->_buildSubquery($options['query']);
+            $filter = $this->_buildSubquery($selectQuery);
             $fetchQuery = $this->_addFilteringJoin($fetchQuery, $key, $filter);
         } else {
             $fetchQuery = $this->_addFilteringCondition($fetchQuery, $key, $filter);
@@ -239,7 +243,7 @@ class SelectLoader
      * If the required fields are missing, throws an exception.
      *
      * @param \Cake\ORM\Query\SelectQuery $fetchQuery The association fetching query
-     * @param array<string> $key The foreign key fields to check
+     * @param list<string> $key The foreign key fields to check
      * @return void
      * @throws \InvalidArgumentException
      */
@@ -250,10 +254,10 @@ class SelectLoader
         }
 
         $select = $fetchQuery->aliasFields($fetchQuery->clause('select'));
-        if (empty($select)) {
+        if (!$select) {
             return;
         }
-        $missingKey = function ($fieldList, $key) {
+        $missingKey = function ($fieldList, $key): bool {
             foreach ($key as $keyField) {
                 if (!in_array($keyField, $fieldList, true)) {
                     return true;
@@ -266,7 +270,7 @@ class SelectLoader
         $missingFields = $missingKey($select, $key);
         if ($missingFields) {
             $driver = $fetchQuery->getConnection()->getDriver();
-            $quoted = array_map([$driver, 'quoteIdentifier'], $key);
+            $quoted = array_map($driver->quoteIdentifier(...), $key);
             $missingFields = $missingKey($select, $quoted);
         }
 
@@ -286,7 +290,7 @@ class SelectLoader
      * filtering needs to be done using a subquery.
      *
      * @param \Cake\ORM\Query\SelectQuery $query Target table's query
-     * @param array<string>|string $key the fields that should be used for filtering
+     * @param list<string>|string $key the fields that should be used for filtering
      * @param \Cake\ORM\Query\SelectQuery $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query\SelectQuery
      */
@@ -322,7 +326,7 @@ class SelectLoader
      * target table query given a filter key and some filtering values.
      *
      * @param \Cake\ORM\Query\SelectQuery $query Target table's query
-     * @param array<string>|string $key The fields that should be used for filtering
+     * @param list<string>|string $key The fields that should be used for filtering
      * @param mixed $filter The value that should be used to match for $key
      * @return \Cake\ORM\Query\SelectQuery
      */
@@ -342,7 +346,7 @@ class SelectLoader
      * from $keys with the tuple values in $filter using the provided operator.
      *
      * @param \Cake\ORM\Query\SelectQuery $query Target table's query
-     * @param array<string> $keys the fields that should be used for filtering
+     * @param list<string> $keys the fields that should be used for filtering
      * @param mixed $filter the value that should be used to match for $key
      * @param string $operator The operator for comparing the tuples
      * @return \Cake\Database\Expression\TupleComparison
@@ -369,7 +373,7 @@ class SelectLoader
      * which the filter should be applied
      *
      * @param array<string, mixed> $options The options for getting the link field.
-     * @return array<string>|string
+     * @return list<string>|string
      * @throws \Cake\Database\Exception\DatabaseException
      */
     protected function _linkField(array $options): array|string
@@ -447,8 +451,10 @@ class SelectLoader
         }
 
         $fields = $query->aliasFields($keys, $this->sourceAlias);
-        $group = $fields = array_values($fields);
+        $group = array_values($fields);
+        $fields = $group;
 
+        /** @var \Cake\Database\Expression\QueryExpression $order */
         $order = $query->clause('order');
         if ($order) {
             $columns = $query->clause('select');
@@ -538,7 +544,7 @@ class SelectLoader
      * be done with multiple foreign keys
      *
      * @param array<string, mixed> $resultMap A keyed arrays containing the target table
-     * @param array<string> $sourceKeys An array with aliased keys to match
+     * @param list<string> $sourceKeys An array with aliased keys to match
      * @param string $nestKey The key under which results should be nested
      * @return \Closure
      */

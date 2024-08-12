@@ -29,7 +29,7 @@ $path = dirname(__DIR__) . DS . 'src' . DS;
 $di = new RecursiveDirectoryIterator($path, RecursiveDirectoryIterator::SKIP_DOTS);
 $iterator = new RecursiveIteratorIterator($di, RecursiveIteratorIterator::LEAVES_ONLY);
 /** @var array<\SplFileInfo> $iterator */
-$iterator = new RegexIterator($iterator, '~composer.json$~');
+$iterator = new RegexIterator($iterator, '~/src/\w+/composer.json$~');
 
 $packages = [];
 $code = 0;
@@ -58,11 +58,11 @@ foreach ($packages as $fullPackageName => $package) {
 
     $missing[] = $package;
 }
-if (!empty($mainReplace)) {
+if ($mainReplace) {
     echo "\033[31m" . ' * Missing "replace" statement in ROOT composer.json for package `' . $package . '`' . "\033[0m" . PHP_EOL;
     $code = 1;
 }
-if (!empty($missing)) {
+if ($missing) {
     echo "\033[31m" . ' * Extra "replace" statement in ROOT composer.json for non-existent package(s) `' . implode(', ', $missing)  . '`' . "\033[0m" . PHP_EOL;
     $code = 1;
 }
@@ -70,7 +70,7 @@ if (!empty($missing)) {
 $mainRequire = $mainJson['require'];
 
 $issues = [];
-foreach ($packages as $fullPackageName => $package) {
+foreach ($packages as $package) {
     $content = file_get_contents($path . $package . DS . 'composer.json');
     $json = json_decode($content, true);
     $require = $json['require'] ?? [];
@@ -92,13 +92,11 @@ foreach ($packages as $fullPackageName => $package) {
     }
 }
 
-if ($issues) {
-    foreach ($issues as $packageName => $packageIssues) {
-        echo "\033[31m" . $packageName  . ':' . "\033[0m" . PHP_EOL;
-        foreach ($packageIssues as $issue) {
-            echo "\033[31m" . ' - ' . $issue  . "\033[0m" . PHP_EOL;
-            $code = 1;
-        }
+foreach ($issues as $packageName => $packageIssues) {
+    echo "\033[31m" . $packageName  . ':' . "\033[0m" . PHP_EOL;
+    foreach ($packageIssues as $issue) {
+        echo "\033[31m" . ' - ' . $issue  . "\033[0m" . PHP_EOL;
+        $code = 1;
     }
 }
 

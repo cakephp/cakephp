@@ -97,13 +97,6 @@ class Configure
             if (static::$_hasIniSet) {
                 ini_set('display_errors', $config['debug'] ? '1' : '0');
             }
-
-            if ($config['debug'] && PHP_SAPI !== 'cli' && ini_get('zend.assertions') === '-1') {
-                trigger_error(
-                    'You should set `zend.assertions` to `1` in your php.ini for your development environment.',
-                    E_USER_WARNING
-                );
-            }
         }
     }
 
@@ -139,7 +132,7 @@ class Configure
      */
     public static function check(string $var): bool
     {
-        if (empty($var)) {
+        if (!$var) {
             return false;
         }
 
@@ -275,7 +268,7 @@ class Configure
     /**
      * Gets the names of the configured Engine objects.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public static function configured(): array
     {
@@ -378,7 +371,7 @@ class Configure
      * @param string $key The identifier to create in the config adapter.
      *   This could be a filename or a cache key depending on the adapter being used.
      * @param string $config The name of the configured adapter to dump data with.
-     * @param array<string> $keys The name of the top-level keys you want to dump.
+     * @param list<string> $keys The name of the top-level keys you want to dump.
      *   This allows you save only some data stored in Configure.
      * @return bool Success
      * @throws \Cake\Core\Exception\CakeException if the adapter does not implement a `dump` method.
@@ -390,7 +383,7 @@ class Configure
             throw new CakeException(sprintf('There is no `%s` config engine.', $config));
         }
         $values = static::$_values;
-        if (!empty($keys)) {
+        if ($keys) {
             $values = array_intersect_key($values, array_flip($keys));
         }
 

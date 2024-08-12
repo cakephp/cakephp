@@ -27,6 +27,7 @@ use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\RulesChecker;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
 /**
@@ -181,9 +182,9 @@ class LinkConstraintTest extends TestCase
     /**
      * Tests that an exception is thrown when the `repository` option holds an invalid value.
      *
-     * @dataProvider invalidRepositoryOptionsDataProvider
      * @param mixed $options
      */
+    #[DataProvider('invalidRepositoryOptionsDataProvider')]
     public function testInvalidRepository($options): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -964,10 +965,6 @@ class LinkConstraintTest extends TestCase
     public function testImplicitBelongsToManyJunctionDeleteErrors(): void
     {
         $Articles = $this->getTableLocator()->get('Articles');
-        $Articles
-            ->getAssociation('Tags')
-            ->junction()
-            ->belongsTo('Articles');
 
         $rulesChecker = $Articles->getAssociation('Tags')->junction()->rulesChecker();
         $rulesChecker->addDelete(

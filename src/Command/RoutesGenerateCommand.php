@@ -47,7 +47,7 @@ class RoutesGenerateCommand extends Command
         try {
             $args = $this->_splitArgs($args->getArguments());
             $url = Router::url($args);
-            $io->out("> $url");
+            $io->out("> {$url}");
             $io->out();
         } catch (MissingRouteException) {
             $io->err('<warning>The provided parameters do not match any routes.</warning>');
@@ -62,7 +62,7 @@ class RoutesGenerateCommand extends Command
     /**
      * Split the CLI arguments into a hash.
      *
-     * @param array<string> $args The arguments to split.
+     * @param list<string> $args The arguments to split.
      * @return array<string|bool>
      */
     protected function _splitArgs(array $args): array

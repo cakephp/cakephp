@@ -28,6 +28,7 @@ use Cake\Console\TestSuite\Constraint\ExitCode;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\TestSuite\ContainerStubTrait;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\After;
 
 /**
  * A bundle of methods that makes testing commands
@@ -90,15 +91,17 @@ trait ConsoleIntegrationTestTrait
                 'You can use `$input` only if `$_in` property is null and will be reset.'
             );
         }
+        $this->_out->clear();
+        $this->_err->clear();
 
-        $args = $this->commandStringToArgs("cake $command");
+        $args = $this->commandStringToArgs("cake {$command}");
         $io = new ConsoleIo($this->_out, $this->_err, $this->_in);
 
         try {
             $this->_exitCode = $runner->run($args, $io);
         } catch (MissingConsoleInputException $e) {
             $messages = $this->_out->messages();
-            if (count($messages)) {
+            if ($messages !== []) {
                 $e->setQuestion($messages[count($messages) - 1]);
             }
             throw $e;
@@ -110,10 +113,10 @@ trait ConsoleIntegrationTestTrait
     /**
      * Cleans state to get ready for the next test
      *
-     * @after
      * @return void
      * @psalm-suppress PossiblyNullPropertyAssignmentValue
      */
+    #[After]
     public function cleanupConsoleTrait(): void
     {
         $this->_exitCode = null;
@@ -267,7 +270,7 @@ trait ConsoleIntegrationTestTrait
      * Creates an $argv array from a command string
      *
      * @param string $command Command string
-     * @return array<string>
+     * @return list<string>
      */
     protected function commandStringToArgs(string $command): array
     {

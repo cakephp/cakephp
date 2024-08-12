@@ -20,6 +20,7 @@ use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class TableGetWithCustomFinderTest extends TestCase
 {
@@ -42,9 +43,9 @@ class TableGetWithCustomFinderTest extends TestCase
     /**
      * Test that get() will call a custom finder.
      *
-     * @dataProvider providerForTestGetWithCustomFinder
      * @param array $options
      */
+    #[DataProvider('providerForTestGetWithCustomFinder')]
     public function testGetWithCustomFinder($options): void
     {
         $table = $this->getMockBuilder(GetWithCustomFinderTable::class)

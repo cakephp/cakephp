@@ -59,7 +59,7 @@ class TestAuthenticate extends BaseAuthenticate
         $this->callStack[] = __FUNCTION__;
         $this->authenticationProvider = $event->getData('1');
 
-        if (!empty($this->modifiedUser)) {
+        if ($this->modifiedUser) {
             return $user + ['extra' => 'foo'];
         }
     }

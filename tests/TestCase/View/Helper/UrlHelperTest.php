@@ -333,7 +333,7 @@ class UrlHelperTest extends TestCase
     public function testAssetTimestampPluginsAndThemes(): void
     {
         Configure::write('Asset.timestamp', 'force');
-        $this->loadPlugins(['TestPlugin']);
+        $this->loadPlugins(['TestTheme', 'TestPlugin']);
 
         $result = $this->Helper->assetTimestamp('/test_plugin/css/test_plugin_asset.css');
         $this->assertMatchesRegularExpression('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');

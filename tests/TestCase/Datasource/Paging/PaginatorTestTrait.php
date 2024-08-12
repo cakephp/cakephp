@@ -23,11 +23,14 @@ use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\ResultSet;
+use PHPUnit\Framework\Attributes\DataProvider;
+use TestApp\Model\Table\PaginatorPostsTable;
 
 trait PaginatorTestTrait
 {
     /**
-     * @var \Cake\Datasource\Paginator
+     * @var \Cake\Datasource\Paging\NumericPaginator
      */
     protected $Paginator;
 
@@ -109,9 +112,7 @@ trait PaginatorTestTrait
         $params = ['page' => '-1'];
         $settings = [
             'PaginatorPosts' => [
-                'contain' => ['PaginatorAuthor'],
                 'maxLimit' => 10,
-                'group' => 'PaginatorPosts.published',
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
@@ -163,11 +164,11 @@ trait PaginatorTestTrait
     public function testPaginateNestedEagerLoader(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $articles->belongsToMany('Tags');
         $tags = $this->getTableLocator()->get('Tags');
+        $tags->associations()->remove('Authors');
         $tags->belongsToMany('Authors');
         $articles->getEventManager()->on('Model.beforeFind', function ($event, $query): void {
-            $query ->matching('Tags', function ($q) {
+            $query->matching('Tags', function ($q) {
                 return $q->matching('Authors', function ($q) {
                     return $q->where(['Authors.name' => 'larry']);
                 });
@@ -1115,9 +1116,8 @@ trait PaginatorTestTrait
 
     /**
      * test that maxLimit is respected
-     *
-     * @dataProvider checkLimitProvider
      */
+    #[DataProvider('checkLimitProvider')]
     public function testCheckLimit(array $input, int $expected): void
     {
         $result = $this->Paginator->checkLimit($input);
@@ -1259,7 +1259,7 @@ trait PaginatorTestTrait
      */
     protected function _getMockPosts($methods = [])
     {
-        return $this->getMockBuilder('TestApp\Model\Table\PaginatorPostsTable')
+        return $this->getMockBuilder(PaginatorPostsTable::class)
             ->onlyMethods($methods)
             ->setConstructorArgs([[
                 'connection' => ConnectionManager::get('test'),
@@ -1290,7 +1290,7 @@ trait PaginatorTestTrait
             ->disableOriginalConstructor()
             ->getMock();
 
-        $results = $this->getMockBuilder('Cake\ORM\ResultSet')
+        $results = $this->getMockBuilder(ResultSet::class)
             ->disableOriginalConstructor()
             ->getMock();
 

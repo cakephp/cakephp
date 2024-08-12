@@ -34,6 +34,9 @@ use InvalidArgumentException;
  * will have one or multiple records per each one in the source side.
  *
  * An example of a HasMany association would be Author has many Articles.
+ *
+ * @template T of \Cake\ORM\Table
+ * @mixin T
  */
 class HasMany extends Association
 {
@@ -61,7 +64,7 @@ class HasMany extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_validStrategies = [
         self::STRATEGY_SELECT,
@@ -166,7 +169,7 @@ class HasMany extends Association
             throw new InvalidArgumentException($message);
         }
 
-        /** @var array<string> $foreignKeys */
+        /** @var list<string> $foreignKeys */
         $foreignKeys = (array)$this->getForeignKey();
         $foreignKeyReference = array_combine(
             $foreignKeys,
@@ -234,9 +237,11 @@ class HasMany extends Association
             }
 
             if (!empty($options['atomic'])) {
-                $original[$k]->setErrors($entity->getErrors());
+                /** @var \Cake\ORM\Entity $originEntity */
+                $originEntity = $original[$k];
+                $originEntity->setErrors($entity->getErrors());
                 if ($entity instanceof InvalidPropertyInterface) {
-                    $original[$k]->setInvalid($entity->getInvalid());
+                    $originEntity->setInvalid($entity->getInvalid());
                 }
 
                 return false;
@@ -350,7 +355,7 @@ class HasMany extends Association
         } else {
             $options += ['cleanProperty' => true];
         }
-        if (count($targetEntities) === 0) {
+        if ($targetEntities === []) {
             return;
         }
 
@@ -363,7 +368,7 @@ class HasMany extends Association
             'OR' => (new Collection($targetEntities))
                 ->map(function (EntityInterface $entity) use ($targetPrimaryKey) {
                     /** @psalm-suppress InvalidArgument,UnusedPsalmSuppress */
-                    /** @var array<string> $targetPrimaryKey */
+                    /** @var list<string> $targetPrimaryKey */
                     return $entity->extract($targetPrimaryKey);
                 })
                 ->toList(),
@@ -484,7 +489,7 @@ class HasMany extends Association
 
         $conditions = $foreignKeyReference;
 
-        if (count($exclusions) > 0) {
+        if ($exclusions !== []) {
             $conditions = [
                 'NOT' => [
                     'OR' => $exclusions,

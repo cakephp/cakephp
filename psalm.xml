@@ -13,9 +13,14 @@
     errorBaseline="psalm-baseline.xml"
 >
     <projectFiles>
-        <directory name="src" />
+        <directory name="src/"/>
         <ignoreFiles>
-            <directory name="vendor" />
+            <directory name="vendor/"/>
+            <directory name="src/Database/tests/"/>
+            <directory name="src/Datasource/tests/"/>
+            <directory name="src/Http/tests/"/>
+            <directory name="src/ORM/tests/"/>
+            <directory name="src/Validation/tests/"/>
         </ignoreFiles>
     </projectFiles>
 
@@ -40,9 +45,9 @@
         </UndefinedDocblockClass>
         <UndefinedConstant>
             <errorLevel type="suppress">
-                <file name="src/Cache/Engine/ApcuEngine.php" />
-                <file name="src/Database/Driver/Sqlserver.php" />
-                <file name="src/Database/Statement/SqlserverStatement.php" />
+                <file name="src/Cache/Engine/ApcuEngine.php"/>
+                <file name="src/Database/Driver/Sqlserver.php"/>
+                <file name="src/Database/Statement/SqlserverStatement.php"/>
             </errorLevel>
         </UndefinedConstant>
         <RedundantPropertyInitializationCheck errorLevel="suppress"/>

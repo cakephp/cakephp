@@ -25,6 +25,7 @@ use Cake\Event\Event;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
@@ -37,7 +38,7 @@ class BelongsToTest extends TestCase
     /**
      * Fixtures to use.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
@@ -293,7 +294,7 @@ class BelongsToTest extends TestCase
      */
     public function testCascadeDelete(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
+        $mock = $this->getMockBuilder(Table::class)
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
@@ -315,7 +316,7 @@ class BelongsToTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock('Cake\ORM\Table')
+        $mock = Mockery::mock(Table::class)
             ->shouldAllowMockingMethod('saveAssociated')
             ->makePartial();
         $config = [
@@ -351,7 +352,7 @@ class BelongsToTest extends TestCase
      */
     public function testPropertyNoPlugin(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
+        $mock = $this->getMockBuilder(Table::class)
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
@@ -461,7 +462,7 @@ class BelongsToTest extends TestCase
     {
         $this->setAppNamespace('TestApp');
         $articles = $this->getTableLocator()->get('Articles');
-        $articles->belongsTo('Authors')
+        $articles->associations()->get('Authors')
             ->setFinder('formatted');
 
         $query = $articles->find()

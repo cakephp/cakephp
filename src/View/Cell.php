@@ -97,7 +97,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      * Override this property in subclasses to allow
      * which options you want set as properties in your Cell.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_validCellOptions = [];
 
@@ -168,7 +168,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
             $cache = $this->_cacheConfig($this->action, $template);
         }
 
-        $render = function () use ($template) {
+        $render = function () use ($template): string {
             try {
                 $this->dispatchEvent('Cell.beforeAction', [$this, $this->action, $this->args]);
                 $reflect = new ReflectionMethod($this, $this->action);
@@ -233,7 +233,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      */
     protected function _cacheConfig(string $action, ?string $template = null): array
     {
-        if (empty($this->_cache)) {
+        if (!$this->_cache) {
             return [];
         }
         $template = $template ?: 'default';

@@ -71,7 +71,7 @@ class TestFixture implements FixtureInterface
      */
     public function __construct()
     {
-        if (!empty($this->connection)) {
+        if ($this->connection) {
             $connection = $this->connection;
             if (!str_starts_with($connection, 'test')) {
                 $message = sprintf(
@@ -109,7 +109,7 @@ class TestFixture implements FixtureInterface
      */
     public function init(): void
     {
-        if (empty($this->table)) {
+        if (!$this->table) {
             $this->table = $this->_tableFromClass();
         }
 
@@ -169,7 +169,7 @@ class TestFixture implements FixtureInterface
     public function insert(ConnectionInterface $connection): bool
     {
         assert($connection instanceof Connection);
-        if (!empty($this->records)) {
+        if ($this->records) {
             [$fields, $values, $types] = $this->_getRecords();
             $query = $connection->insertQuery()
                 ->insert($fields, $types)
@@ -191,12 +191,14 @@ class TestFixture implements FixtureInterface
      */
     protected function _getRecords(): array
     {
-        $fields = $values = $types = [];
+        $fields = [];
+        $values = [];
+        $types = [];
         $columns = $this->_schema->columns();
         foreach ($this->records as $record) {
             $fields = array_merge($fields, array_intersect(array_keys($record), $columns));
         }
-        /** @var array<string> $fields */
+        /** @var list<string> $fields */
         $fields = array_values(array_unique($fields));
         foreach ($fields as $field) {
             $column = $this->_schema->getColumn($field);

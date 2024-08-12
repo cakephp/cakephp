@@ -218,7 +218,7 @@ class TimeHelperTest extends TestCase
             $yourTimezone = new DateTimeZone($timezone);
             $yourTime = new NativeDateTime($date, $yourTimezone);
             $time = $yourTime->format('U');
-            $this->assertSame($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
+            $this->assertSame($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on {$timezone}");
         }
     }
 
@@ -472,6 +472,10 @@ class TimeHelperTest extends TestCase
         $result = $this->Time->format($time, IntlDateFormatter::FULL);
         $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
         $this->assertStringStartsWith('Thursday, January 14, 2010 at 1:59:28 PM', $result);
+
+        $result = $this->Time->format($time, [IntlDateFormatter::SHORT, IntlDateFormatter::MEDIUM]);
+        $result = preg_replace('/[\pZ\pC]/u', ' ', $result);
+        $this->assertSame('1/14/10, 1:59:28 PM', $result);
 
         $result = $this->Time->format('invalid date', null, 'Date invalid');
         $expected = 'Date invalid';

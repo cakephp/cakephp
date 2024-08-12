@@ -97,7 +97,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         foreach ($invert as $class => $names) {
             preg_match('/^(.+)\\\\Command\\\\/', $class, $matches);
             // Probably not a useful class
-            if (empty($matches)) {
+            if (!$matches) {
                 continue;
             }
             $namespace = str_replace('\\', '/', $matches[1]);
@@ -159,7 +159,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         if (defined('CORE_PATH')) {
             $paths['core'] = rtrim(CORE_PATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         }
-        if (!count($paths)) {
+        if ($paths === []) {
             return;
         }
         $io->out('<info>Current Paths:</info>', 2);
@@ -170,7 +170,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     }
 
     /**
-     * @param array<string> $names Names
+     * @param list<string> $names Names
      * @return string
      */
     protected function getShortestName(array $names): string

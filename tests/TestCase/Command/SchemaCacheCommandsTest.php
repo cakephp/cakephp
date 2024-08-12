@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Command;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\NullEngine;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Database\Schema\CachedCollection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 
@@ -32,7 +33,7 @@ class SchemaCacheCommandsTest extends TestCase
     /**
      * Fixtures.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Tags'];
 
@@ -84,7 +85,7 @@ class SchemaCacheCommandsTest extends TestCase
 
         $this->exec('schema_cache clear --connection test');
         $this->assertExitSuccess();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $this->connection->getSchemaCollection());
+        $this->assertInstanceOf(CachedCollection::class, $this->connection->getSchemaCollection());
     }
 
     /**
@@ -96,7 +97,7 @@ class SchemaCacheCommandsTest extends TestCase
 
         $this->exec('schema_cache build --connection test');
         $this->assertExitSuccess();
-        $this->assertInstanceOf('Cake\Database\Schema\CachedCollection', $this->connection->getSchemaCollection());
+        $this->assertInstanceOf(CachedCollection::class, $this->connection->getSchemaCollection());
     }
 
     /**

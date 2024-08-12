@@ -21,6 +21,7 @@ namespace Cake\Test\TestCase\Http\Session;
 use Cake\Datasource\ConnectionManager;
 use Cake\Http\Session\DatabaseSession;
 use Cake\ORM\Entity;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -29,9 +30,7 @@ use Cake\TestSuite\TestCase;
 class DatabaseSessionTest extends TestCase
 {
     /**
-     * fixtures
-     *
-     * @var string
+     * @var array
      */
     protected array $fixtures = ['core.Sessions'];
 
@@ -68,7 +67,7 @@ class DatabaseSessionTest extends TestCase
         new DatabaseSession();
 
         $session = $this->getTableLocator()->get('Sessions');
-        $this->assertInstanceOf('Cake\ORM\Table', $session);
+        $this->assertInstanceOf(Table::class, $session);
         $this->assertSame('Sessions', $session->getAlias());
         $this->assertEquals(ConnectionManager::get('test'), $session->getConnection());
         $this->assertSame('sessions', $session->getTable());

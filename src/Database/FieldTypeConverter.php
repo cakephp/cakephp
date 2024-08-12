@@ -79,13 +79,16 @@ class FieldTypeConverter
         }
 
         foreach ($this->conversions as $conversion) {
+            /** @var \Cake\Database\TypeInterface $type */
+            $type = $conversion['type'];
             if ($conversion['hasBatch']) {
-                $row = $conversion['type']->manyToPHP($row, $conversion['fields'], $this->driver);
+                /** @var \Cake\Database\Type\BatchCastingInterface $type */
+                $row = $type->manyToPHP($row, $conversion['fields'], $this->driver);
                 continue;
             }
 
             foreach ($conversion['fields'] as $field) {
-                $row[$field] = $conversion['type']->toPHP($row[$field], $this->driver);
+                $row[$field] = $type->toPHP($row[$field], $this->driver);
             }
         }
 

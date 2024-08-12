@@ -19,6 +19,7 @@ use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -84,7 +85,7 @@ class QueryTest extends TestCase
         $this->assertSame(Connection::ROLE_WRITE, $selectQuery->useWriteRole()->getConnectionRole());
     }
 
-    protected function newQuery()
+    protected function newQuery(): Query
     {
         return new class ($this->connection) extends Query
         {
@@ -304,7 +305,7 @@ class QueryTest extends TestCase
      */
     public function testGetValueBinder(): void
     {
-        $this->assertInstanceOf('Cake\Database\ValueBinder', $this->query->getValueBinder());
+        $this->assertInstanceOf(ValueBinder::class, $this->query->getValueBinder());
     }
 
     /**

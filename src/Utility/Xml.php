@@ -185,7 +185,7 @@ class Xml
                 $xml->loadHTML($input, $flags);
 
                 if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-                    $xml = simplexml_import_dom($xml);
+                    return simplexml_import_dom($xml);
                 }
 
                 return $xml;
@@ -315,7 +315,7 @@ class Xml
         mixed $data,
         string $format
     ): void {
-        if (empty($data) || !is_array($data)) {
+        if (!$data || !is_array($data)) {
             return;
         }
         foreach ($data as $key => $value) {
@@ -335,7 +335,7 @@ class Xml
                         $node->setAttributeNS('http://www.w3.org/2000/xmlns/', $key, (string)$value);
                         continue;
                     }
-                    if ($key[0] !== '@' && $format === 'tags') {
+                    if (!str_starts_with($key, '@') && $format === 'tags') {
                         if (!is_numeric($value)) {
                             // Escape special characters
                             // https://www.w3.org/TR/REC-xml/#syntax
@@ -347,7 +347,7 @@ class Xml
                         }
                         $node->appendChild($child);
                     } else {
-                        if ($key[0] === '@') {
+                        if (str_starts_with($key, '@')) {
                             $key = substr($key, 1);
                         }
                         $attribute = $dom->createAttribute($key);
@@ -355,7 +355,7 @@ class Xml
                         $node->appendChild($attribute);
                     }
                 } else {
-                    if ($key[0] === '@') {
+                    if (str_starts_with($key, '@')) {
                         throw new XmlException('Invalid array');
                     }
                     if (is_numeric(implode('', array_keys($value)))) {
@@ -392,11 +392,12 @@ class Xml
         $key = $data['key'];
         $format = $data['format'];
         $value = $data['value'];
+        /** @var \DOMDocument $dom */
         $dom = $data['dom'];
-
+        /** @var \DOMNode $node */
         $node = $data['node'];
-
-        $childNS = $childValue = null;
+        $childNS = null;
+        $childValue = null;
         if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
             $value = $value->toArray();
         }
@@ -409,7 +410,7 @@ class Xml
                 $childNS = $value['xmlns:'];
                 unset($value['xmlns:']);
             }
-        } elseif (!empty($value) || $value === 0 || $value === '0') {
+        } elseif ($value || $value === 0 || $value === '0') {
             $childValue = (string)$value;
         }
 
@@ -455,7 +456,7 @@ class Xml
      * @param \SimpleXMLElement $xml SimpleXMLElement object
      * @param array<string, mixed> $parentData Parent array with data
      * @param string $ns Namespace of current child
-     * @param array<string> $namespaces List of namespaces in XML
+     * @param list<string> $namespaces List of namespaces in XML
      * @return void
      */
     protected static function _toArray(SimpleXMLElement $xml, array &$parentData, string $ns, array $namespaces): void
@@ -467,7 +468,7 @@ class Xml
             $attributes = $xml->attributes($namespace, true);
             /** @var string $key */
             foreach ($attributes as $key => $value) {
-                if (!empty($namespace)) {
+                if ($namespace) {
                     $key = $namespace . ':' . $key;
                 }
                 $data['@' . $key] = (string)$value;
@@ -479,13 +480,13 @@ class Xml
         }
 
         $asString = trim((string)$xml);
-        if (empty($data)) {
+        if (!$data) {
             $data = $asString;
         } elseif ($asString !== '') {
             $data['@'] = $asString;
         }
 
-        if (!empty($ns)) {
+        if ($ns) {
             $ns .= ':';
         }
         $name = $ns . $xml->getName();

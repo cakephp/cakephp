@@ -21,6 +21,8 @@ use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingComponentException;
+use Cake\Core\Container;
+use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Countable;
@@ -34,6 +36,7 @@ class ComponentRegistryTest extends TestCase
      * @var \Cake\Controller\ComponentRegistry
      */
     protected $Components;
+    private bool $created = false;
 
     /**
      * setUp
@@ -72,6 +75,35 @@ class ComponentRegistryTest extends TestCase
     }
 
     /**
+     * test load() with the container set
+     */
+    public function testLoadWithContainer(): void
+    {
+        $controller = new Controller(new ServerRequest());
+        $container = new Container();
+        $components = new ComponentRegistry($controller, $container);
+        $this->assertEquals([], $components->loaded());
+
+        $container->add(ComponentRegistry::class, $components);
+        $container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
+            $this->created = true;
+
+            return new FlashComponent($registry, $config);
+        })
+        ->addArgument(ComponentRegistry::class)
+        ->addArgument(['key' => 'customFlash']);
+
+        $flash = $components->load('Flash');
+
+        // Container was modified for the current registry and our factory was called
+        $this->assertTrue($container->has(ComponentRegistry::class));
+        $this->assertTrue($this->created);
+
+        $this->assertInstanceOf(FlashComponent::class, $flash);
+        $this->assertSame('customFlash', $flash->getConfig('key'));
+    }
+
+    /**
      * Tests loading as an alias
      */
     public function testLoadWithAlias(): void
@@ -101,7 +133,7 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadWithEnableFalse(): void
     {
-        $mock = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $mock = $this->getMockBuilder(EventManager::class)->getMock();
         $mock->expects($this->never())
             ->method('on');
 
@@ -152,7 +184,7 @@ class ComponentRegistryTest extends TestCase
     public function testGetController(): void
     {
         $result = $this->Components->getController();
-        $this->assertInstanceOf('Cake\Controller\Controller', $result);
+        $this->assertInstanceOf(Controller::class, $result);
     }
 
     /**

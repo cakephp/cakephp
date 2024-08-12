@@ -122,7 +122,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Constructor
      *
-     * @param array<string> $headers Unparsed headers.
+     * @param list<string> $headers Unparsed headers.
      * @param string $body The response body.
      */
     public function __construct(array $headers = [], string $body = '')
@@ -171,7 +171,7 @@ class Response extends Message implements ResponseInterface
      * - Decodes the status code and reasonphrase.
      * - Parses and normalizes header names + values.
      *
-     * @param array<string> $headers Headers to parse.
+     * @param list<string> $headers Headers to parse.
      * @return void
      */
     protected function _parseHeaders(array $headers): void

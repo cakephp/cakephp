@@ -58,6 +58,18 @@ class ArticlesTable extends Table
     }
 
     /**
+     * Finder for testing named parameter compatibility
+     */
+    public function findTitled(SelectQuery $query, array $options): SelectQuery
+    {
+        if (!empty($options['title'])) {
+            $query->where(['Articles.title' => $options['title']]);
+        }
+
+        return $query;
+    }
+
+    /**
      * Example public method
      */
     public function doSomething(): void

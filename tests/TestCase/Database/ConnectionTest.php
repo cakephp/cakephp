@@ -26,7 +26,9 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
 use Cake\Database\Exception\MissingExtensionException;
 use Cake\Database\Exception\NestedTransactionRollbackException;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\Schema\CachedCollection;
+use Cake\Database\Schema\Collection;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
@@ -36,10 +38,13 @@ use Error;
 use Exception;
 use InvalidArgumentException;
 use PDO;
+use Psr\Log\AbstractLogger;
 use ReflectionMethod;
 use ReflectionProperty;
 use TestApp\Database\Driver\DisabledDriver;
 use TestApp\Database\Driver\RetryDriver;
+use TestApp\Database\Driver\TestDriver;
+use TestPlugin\Database\Driver\TestDriver as PluginTestDriver;
 use function Cake\Core\namespaceSplit;
 
 /**
@@ -48,7 +53,7 @@ use function Cake\Core\namespaceSplit;
 class ConnectionTest extends TestCase
 {
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = ['core.Things'];
 
@@ -168,14 +173,14 @@ class ConnectionTest extends TestCase
     public function testDriverOptionClassNameSupport(): void
     {
         $connection = new Connection(['driver' => 'TestDriver']);
-        $this->assertInstanceOf('TestApp\Database\Driver\TestDriver', $connection->getDriver());
+        $this->assertInstanceOf(TestDriver::class, $connection->getDriver());
 
         $connection = new Connection(['driver' => 'TestPlugin.TestDriver']);
-        $this->assertInstanceOf('TestPlugin\Database\Driver\TestDriver', $connection->getDriver());
+        $this->assertInstanceOf(PluginTestDriver::class, $connection->getDriver());
 
-        [, $name] = namespaceSplit(get_class($this->connection->getDriver()));
+        [, $name] = namespaceSplit($this->connection->getDriver()::class);
         $connection = new Connection(['driver' => $name]);
-        $this->assertInstanceOf(get_class($this->connection->getDriver()), $connection->getDriver());
+        $this->assertInstanceOf($this->connection->getDriver()::class, $connection->getDriver());
     }
 
     /**
@@ -205,16 +210,55 @@ class ConnectionTest extends TestCase
     }
 
     /**
-     * Test providing the same read and write config uses a shared driver.
+     * Tests that unique drivers are created if roles are specified even with same config
      */
-    public function testSameReadWriteDriver(): void
+    public function testSameReadWriteConfig(): void
     {
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
         $config = ConnectionManager::getConfig('test') + ['read' => ['database' => 'read_test.db'], 'write' => ['database' => 'read_test.db']];
         $connection = new Connection($config);
-        $this->assertSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
-        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
         $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    /**
+     * Tests that unique drivers are created if roles are specified even with empty config
+     */
+    public function testEmptyReadWriteConfig(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['read' => [], 'write' => []];
+        $connection = new Connection($config);
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    /**
+     * Tests that unique drivers are created if roles are specified even with empty config
+     */
+    public function testSingleEmptyReadWriteConfig(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['read' => []];
+        $connection = new Connection($config);
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertSame(Connection::ROLE_READ, $connection->getDriver(Connection::ROLE_READ)->getRole());
+        $this->assertSame(Connection::ROLE_WRITE, $connection->getDriver(Connection::ROLE_WRITE)->getRole());
+    }
+
+    /**
+     * Test role-specific config values override defaults
+     */
+    public function testRoleSpecificOverrides(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['log' => true, 'write' => ['database' => 'read_test.db', 'log' => false]];
+        $connection = new Connection($config);
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+        $this->assertNotNull($connection->getDriver(Connection::ROLE_READ)->getLogger());
+        $this->assertNull($connection->getDriver(Connection::ROLE_WRITE)->getLogger());
     }
 
     public function testDisabledReadWriteDriver(): void
@@ -245,7 +289,7 @@ class ConnectionTest extends TestCase
         $this->assertStringStartsWith(
             sprintf(
                 'Connection to %s could not be established:',
-                App::shortName(get_class($connection->getDriver()), 'Database/Driver')
+                App::shortName($connection->getDriver()::class, 'Database/Driver')
             ),
             $e->getMessage()
         );
@@ -261,7 +305,7 @@ class ConnectionTest extends TestCase
 
         try {
             $connection->execute('SELECT 1');
-        } catch (MissingConnectionException $e) {
+        } catch (MissingConnectionException) {
             $this->assertSame(4, $connection->getDriver()->getConnectRetries());
         }
     }
@@ -360,7 +404,7 @@ class ConnectionTest extends TestCase
             ['id' => 'integer', 'title' => 'string', 'body' => 'string']
         );
         $result = $query->execute();
-        $this->assertInstanceOf('Cake\Database\StatementInterface', $result);
+        $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
 
         $result = $this->connection->execute('SELECT * from things where id = 3');
@@ -614,7 +658,7 @@ class ConnectionTest extends TestCase
         $connection->begin();
         $this->assertTrue($connection->inTransaction());
 
-        $logger = $this->createMock('Psr\Log\AbstractLogger');
+        $logger = $this->createMock(AbstractLogger::class);
         $logger->expects($this->once())
             ->method('log')
             ->with('warning', $this->stringContains('The connection is going to be closed'));
@@ -699,7 +743,7 @@ class ConnectionTest extends TestCase
     public function testSavePoints(): void
     {
         $this->connection->enableSavePoints(true);
-        $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Database driver doesn\'t support save points');
+        $this->skipIf(!$this->connection->isSavePointsEnabled(), "Database driver doesn't support save points");
 
         $this->connection->begin();
         $this->connection->delete('things', ['id' => 1]);
@@ -728,7 +772,7 @@ class ConnectionTest extends TestCase
     public function testSavePoints2(): void
     {
         $this->connection->enableSavePoints(true);
-        $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Database driver doesn\'t support save points');
+        $this->skipIf(!$this->connection->isSavePointsEnabled(), "Database driver doesn't support save points");
 
         $this->connection->begin();
         $this->connection->delete('things', ['id' => 1]);
@@ -786,7 +830,7 @@ class ConnectionTest extends TestCase
         );
 
         $this->connection->enableSavePoints(true);
-        $this->skipIf(!$this->connection->isSavePointsEnabled(), 'Database driver doesn\'t support save points');
+        $this->skipIf(!$this->connection->isSavePointsEnabled(), "Database driver doesn't support save points");
 
         $this->connection->begin();
         $this->assertTrue($this->connection->inTransaction());
@@ -896,9 +940,9 @@ class ConnectionTest extends TestCase
         $connection = new Connection(['driver' => $driver]);
 
         $schema = $connection->getSchemaCollection();
-        $this->assertInstanceOf('Cake\Database\Schema\Collection', $schema);
+        $this->assertInstanceOf(Collection::class, $schema);
 
-        $schema = $this->getMockBuilder('Cake\Database\Schema\Collection')
+        $schema = $this->getMockBuilder(Collection::class)
             ->setConstructorArgs([$connection])
             ->getMock();
         $connection->setSchemaCollection($schema);
@@ -1128,6 +1172,17 @@ class ConnectionTest extends TestCase
             $this->assertInstanceOf(Exception::class, $e);
             $prop->setValue($conn, $oldDriver);
             $conn->rollback();
+        }
+    }
+
+    public function testRunAndStatementIteration(): void
+    {
+        $query = new SelectQuery($this->connection);
+        $query->select(fields: ['field' => $query->newExpr('1')]);
+
+        $statement = $this->connection->run($query);
+        foreach ($statement as $row) {
+            $this->assertEquals(['field' => 1], $row);
         }
     }
 }

@@ -32,16 +32,24 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\Validation\Validator;
+use Cake\View\Form\ArrayContext;
+use Cake\View\Form\ContextInterface;
 use Cake\View\Form\EntityContext;
+use Cake\View\Form\FormContext;
+use Cake\View\Form\NullContext;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
+use Cake\View\Widget\LabelWidget;
+use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\ArticleStatusLabel;
 use TestApp\Model\Enum\ArticleStatusLabelInterface;
+use TestApp\Model\Enum\Priority;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
 use TestApp\View\Form\StubContext;
@@ -57,7 +65,7 @@ class FormHelperTest extends TestCase
     /**
      * Fixtures to be used
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Comments'];
 
@@ -159,12 +167,12 @@ class FormHelperTest extends TestCase
     {
         $config = [
             'widgets' => [
-                'datetime' => ['Cake\View\Widget\LabelWidget', 'select'],
+                'datetime' => [LabelWidget::class, 'select'],
             ],
         ];
         $helper = new FormHelper($this->View, $config);
         $locator = $helper->getWidgetLocator();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('datetime'));
+        $this->assertInstanceOf(LabelWidget::class, $locator->get('datetime'));
     }
 
     /**
@@ -175,7 +183,7 @@ class FormHelperTest extends TestCase
     {
         $helper = new FormHelper($this->View, ['widgets' => ['test_widgets']]);
         $locator = $helper->getWidgetLocator();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('text'));
+        $this->assertInstanceOf(LabelWidget::class, $locator->get('text'));
     }
 
     /**
@@ -212,7 +220,7 @@ class FormHelperTest extends TestCase
         $data = [
             'val' => 1,
         ];
-        $mock = $this->getMockBuilder('Cake\View\Widget\WidgetInterface')->getMock();
+        $mock = $this->getMockBuilder(WidgetInterface::class)->getMock();
         $this->Form->addWidget('test', $mock);
         $mock->expects($this->once())
             ->method('render')
@@ -236,7 +244,7 @@ class FormHelperTest extends TestCase
             'val' => 1,
             'name' => 'test',
         ];
-        $mock = $this->getMockBuilder('Cake\View\Widget\WidgetInterface')->getMock();
+        $mock = $this->getMockBuilder(WidgetInterface::class)->getMock();
         $this->Form->addWidget('test', $mock);
 
         $mock->expects($this->once())
@@ -280,9 +288,9 @@ class FormHelperTest extends TestCase
     public function testAddContextProvider(): void
     {
         $context = 'My data';
-        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
         $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
-            $this->assertInstanceOf('Cake\Http\ServerRequest', $request);
+            $this->assertInstanceOf(ServerRequest::class, $request);
             $this->assertSame($context, $data['entity']);
 
             return $stub;
@@ -298,7 +306,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderReplace(): void
     {
         $entity = new Article();
-        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
         $this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
             return $stub;
         });
@@ -313,7 +321,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderAdd(): void
     {
         $entity = new Article();
-        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
         $this->Form->addContextProvider('newshiny', function ($request, $data) use ($stub) {
             if ($data['entity'] instanceof Entity) {
                 return $stub;
@@ -343,12 +351,12 @@ class FormHelperTest extends TestCase
         $custom = new StubContext();
 
         return [
-            'entity' => [$entity, 'Cake\View\Form\EntityContext'],
-            'collection' => [$collection, 'Cake\View\Form\EntityContext'],
-            'empty_collection' => [$emptyCollection, 'Cake\View\Form\NullContext'],
-            'array' => [$data, 'Cake\View\Form\ArrayContext'],
-            'form' => [$form, 'Cake\View\Form\FormContext'],
-            'none' => [null, 'Cake\View\Form\NullContext'],
+            'entity' => [$entity, EntityContext::class],
+            'collection' => [$collection, EntityContext::class],
+            'empty_collection' => [$emptyCollection, NullContext::class],
+            'array' => [$data, ArrayContext::class],
+            'form' => [$form, FormContext::class],
+            'none' => [null, NullContext::class],
             'custom' => [$custom, $custom::class],
         ];
     }
@@ -356,9 +364,9 @@ class FormHelperTest extends TestCase
     /**
      * Test default context selection in create()
      *
-     * @dataProvider contextSelectionProvider
      * @param mixed $data
      */
+    #[DataProvider('contextSelectionProvider')]
     public function testCreateContextSelectionBuiltIn($data, string $class): void
     {
         $this->Form->create($data);
@@ -595,9 +603,8 @@ class FormHelperTest extends TestCase
 
     /**
      * test the create() method
-     *
-     * @dataProvider requestTypeProvider
      */
+    #[DataProvider('requestTypeProvider')]
     public function testCreateTypeOptions(string $type, string $method, string $override): void
     {
         $encoding = strtolower(Configure::read('App.encoding'));
@@ -2186,13 +2193,13 @@ class FormHelperTest extends TestCase
         $this->Form->create();
 
         $this->Form->checkbox('Model.checkbox', ['disabled' => true]);
-        $this->Form->text('Model.text', ['disabled' => true]);
-        $this->Form->password('Model.text', ['disabled' => true]);
         $this->Form->textarea('Model.textarea', ['disabled' => true]);
         $this->Form->select('Model.select', [1, 2], ['disabled' => true]);
         $this->Form->radio('Model.radio', [1, 2], ['disabled' => [1, 2]]);
         $this->Form->year('Model.year', ['disabled' => true]);
         $this->Form->month('Model.month', ['disabled' => true]);
+        $this->Form->text('Model.text', ['disabled' => true]);
+        $this->Form->password('Model.text', ['disabled' => true]);
         $this->Form->day('Model.day', ['disabled' => true]);
         $this->Form->hour('Model.hour', ['disabled' => true]);
         $this->Form->minute('Model.minute', ['disabled' => true]);
@@ -2274,6 +2281,22 @@ class FormHelperTest extends TestCase
         $this->Form->hidden('Contact.id', ['value' => 1]);
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertSame('1', $result['Contact.id'], 'Hidden input should be secured.');
+    }
+
+    /**
+     * testUnlockFieldWithFormTokenData method
+     *
+     * Test that unlockField() becomes a no-op and does not throw an exception
+     * when called without `formTokenData` being present in the request.
+     *
+     * @return void
+     */
+    public function testUnlockFieldWithFormTokenData(): void
+    {
+        $this->Form->create();
+        $result = $this->Form->unlockField('foo');
+
+        $this->assertSame($this->Form, $result);
     }
 
     /**
@@ -3637,10 +3660,10 @@ class FormHelperTest extends TestCase
             '/label',
             'select' => ['name' => 'published', 'id' => 'published'],
             ['option' => ['value' => 'Y']],
-            'PUBLISHED',
+            'Published',
             '/option',
             ['option' => ['value' => 'N', 'selected' => 'selected']],
-            'UNPUBLISHED',
+            'Unpublished',
             '/option',
             '/select',
             '/div',
@@ -3660,10 +3683,10 @@ class FormHelperTest extends TestCase
             '/label',
             'select' => ['name' => 'published', 'id' => 'published'],
             ['option' => ['value' => 'Y']],
-            'Is published',
+            'Is Published',
             '/option',
             ['option' => ['value' => 'N', 'selected' => 'selected']],
-            'Is unpublished',
+            'Is Unpublished',
             '/option',
             '/select',
             '/div',
@@ -3675,20 +3698,36 @@ class FormHelperTest extends TestCase
             EnumType::from(ArticleStatusLabelInterface::class)
         );
 
-        $article = $articlesTable->newEmptyEntity();
-        $this->Form->create($article);
+        $this->Form->create($articlesTable->newEmptyEntity());
         $result = $this->Form->control('published');
+        $this->assertHtml($expected, $result);
+
+        $articlePriosTable = $this->getTableLocator()->get('ArticlePrios');
+        $articlePriosTable->getSchema()->setColumnType(
+            'priority',
+            EnumType::from(Priority::class)
+        );
+
+        $this->Form->create($articlePriosTable->newEmptyEntity());
+        // Select empty by default
+        $result = $this->Form->control('priority', ['empty' => ['' => ' - please select - '], 'default' => '']);
         $expected = [
             'div' => ['class' => 'input select'],
-            'label' => ['for' => 'published'],
-            'Published',
+            'label' => ['for' => 'priority'],
+            'Priority',
             '/label',
-            'select' => ['name' => 'published', 'id' => 'published'],
-            ['option' => ['value' => 'Y']],
-            'Is published',
+            'select' => ['name' => 'priority', 'id' => 'priority'],
+            ['option' => ['value' => '', 'selected' => 'selected']],
+            ' - please select - ',
             '/option',
-            ['option' => ['value' => 'N', 'selected' => 'selected']],
-            'Is unpublished',
+            ['option' => ['value' => '1']],
+            'Is Low',
+            '/option',
+            ['option' => ['value' => '2']],
+            'Is Medium',
+            '/option',
+            ['option' => ['value' => '3']],
+            'Is High',
             '/option',
             '/select',
             '/div',
@@ -4566,7 +4605,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::UNPUBLISHED,
+            'status' => ArticleStatus::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->radio('status', ['Y' => 'Published', 'N' => 'Unpublished']);
@@ -4787,11 +4826,11 @@ class FormHelperTest extends TestCase
                 'input' => ['type' => 'hidden', 'name' => 'published', 'value' => '', 'id' => 'published'],
                 ['label' => ['for' => 'published-y']],
                 ['input' => ['type' => 'radio', 'name' => 'published', 'value' => 'Y', 'id' => 'published-y']],
-                'PUBLISHED',
+                'Published',
                 '/label',
                 ['label' => ['for' => 'published-n']],
                 ['input' => ['type' => 'radio', 'name' => 'published', 'value' => 'N', 'id' => 'published-n', 'checked' => 'checked']],
-                'UNPUBLISHED',
+                'Unpublished',
                 '/label',
             '/div',
         ];
@@ -4991,7 +5030,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::UNPUBLISHED,
+            'status' => ArticleStatus::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->select('status', ['Y' => 'Published', 'N' => 'Unpublished']);
@@ -6572,7 +6611,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $article = new Article([
-            'status' => ArticleStatus::UNPUBLISHED,
+            'status' => ArticleStatus::Unpublished,
         ]);
         $this->Form->create($article);
         $result = $this->Form->hidden('status');
@@ -7429,9 +7468,8 @@ class FormHelperTest extends TestCase
      * testDateTimeWithFractional method
      *
      * Test that datetime() works with datetimefractional.
-     *
-     * @dataProvider fractionalTypeProvider
      */
+    #[DataProvider('fractionalTypeProvider')]
     public function testDateTimeWithFractional(string $type): void
     {
         $this->Form->create([
@@ -7458,9 +7496,8 @@ class FormHelperTest extends TestCase
      * testControlWithFractional method
      *
      * Test that control() works with datetimefractional.
-     *
-     * @dataProvider fractionalTypeProvider
      */
+    #[DataProvider('fractionalTypeProvider')]
     public function testControlWithFractional(string $type): void
     {
         $this->Form->create([
@@ -7811,6 +7848,7 @@ class FormHelperTest extends TestCase
             ->notEmptyString('email', 'Custom error message')
             ->requirePresence('password')
             ->alphaNumeric('password')
+            ->requirePresence('accept_tos')
             ->notBlank('phone');
 
         $table = $this->getTableLocator()->get('Contacts', [
@@ -7875,6 +7913,27 @@ class FormHelperTest extends TestCase
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
             ],
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->Form->control('accept_tos', ['type' => 'checkbox']);
+        $expected = [
+            ['input' => ['type' => 'hidden', 'name' => 'accept_tos', 'value' => '0']],
+            'label' => ['for' => 'accept-tos'],
+            [
+                'input' => [
+                    'required' => 'required',
+                    'type' => 'checkbox',
+                    'name' => 'accept_tos',
+                    'id' => 'accept-tos',
+                    'value' => '1',
+                    'data-validity-message' => 'This field cannot be left empty',
+                    'oninput' => 'this.setCustomValidity(&#039;&#039;)',
+                    'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.checked) this.setCustomValidity(this.dataset.validityMessage)',
+                ],
+            ],
+            'Accept Tos',
+            '/label',
         ];
         $this->assertHtml($expected, $result);
     }
@@ -8178,9 +8237,9 @@ class FormHelperTest extends TestCase
     public function testContext(): void
     {
         $result = $this->Form->context();
-        $this->assertInstanceOf('Cake\View\Form\ContextInterface', $result);
+        $this->assertInstanceOf(ContextInterface::class, $result);
 
-        $mock = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $mock = $this->getMockBuilder(ContextInterface::class)->getMock();
         $this->assertSame($mock, $this->Form->context($mock));
         $this->assertSame($mock, $this->Form->context());
     }

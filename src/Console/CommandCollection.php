@@ -130,11 +130,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Get the target for a command.
      *
      * @param string $name The named shell.
-<<<<<<< HEAD
      * @return \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface> Either the command class or an instance.
-=======
-     * @return \Cake\Console\CommandInterface|\Cake\Console\Shell|class-string<\Cake\Console\CommandInterface> Either the command class or an instance.
->>>>>>> 4.next
      * @throws \InvalidArgumentException when unknown commands are fetched.
      */
     public function get(string $name): CommandInterface|string
@@ -150,11 +146,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Implementation of IteratorAggregate.
      *
      * @return \Traversable
-<<<<<<< HEAD
      * @psalm-return \Traversable<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>>
-=======
-     * @psalm-return \Traversable<string, (\Cake\Console\CommandInterface|\Cake\Console\Shell|class-string<\Cake\Console\CommandInterface>)>
->>>>>>> 4.next
      */
     public function getIterator(): Traversable
     {
@@ -250,7 +242,7 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Get the list of available command names.
      *
-     * @return array<string> Command names
+     * @return list<string> Command names
      */
     public function keys(): array
     {

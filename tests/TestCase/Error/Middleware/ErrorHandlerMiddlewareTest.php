@@ -127,7 +127,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
@@ -145,7 +145,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
@@ -177,7 +177,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): void {
             $err = new RedirectException('http://example.org/login', 301, ['Constructor' => 'yes', 'Method' => 'yes']);
             throw $err;
         });
@@ -207,7 +207,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('"message": "whoops"', (string)$result->getBody());
         $this->assertStringContainsString('application/json', $result->getHeaderLine('Content-type'));
@@ -298,7 +298,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware([
             'log' => true,
-            'skipLog' => ['Cake\Http\Exception\NotFoundException'],
+            'skipLog' => [NotFoundException::class],
         ]);
         $handler = new TestRequestHandler(function (): void {
             throw new NotFoundException('Kaboom!');
@@ -318,7 +318,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware(['log' => true]);
         $handler = new TestRequestHandler(function (): void {
-            throw new MissingControllerException(['class' => 'Articles']);
+            throw new MissingControllerException(['controller' => 'Articles']);
         });
         $result = $middleware->process($request, $handler);
         $this->assertSame(404, $result->getStatusCode());
@@ -329,7 +329,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             $logs[0]
         );
         $this->assertStringContainsString('Exception Attributes:', $logs[0]);
-        $this->assertStringContainsString("'class' => 'Articles'", $logs[0]);
+        $this->assertStringContainsString("'controller' => 'Articles'", $logs[0]);
         $this->assertStringContainsString('Request URL:', $logs[0]);
     }
 

@@ -20,6 +20,7 @@ use Cake\Cache\Cache;
 use Cake\Cache\Engine\RedisEngine;
 use Cake\TestSuite\TestCase;
 use DateInterval;
+use Redis;
 use function Cake\Core\env;
 
 /**
@@ -92,6 +93,7 @@ class RedisEngineTest extends TestCase
             'groups' => [],
             'server' => '127.0.0.1',
             'port' => $this->port,
+            'tls' => false,
             'timeout' => 0,
             'persistent' => true,
             'password' => false,
@@ -119,6 +121,7 @@ class RedisEngineTest extends TestCase
             'groups' => [],
             'server' => 'localhost',
             'port' => $this->port,
+            'tls' => false,
             'timeout' => 0,
             'persistent' => true,
             'password' => false,
@@ -134,12 +137,269 @@ class RedisEngineTest extends TestCase
     }
 
     /**
+     * testConfigDsnSSLContext method
+     */
+    public function testConfigDsnSSLContext(): void
+    {
+        $url = 'redis://localhost:' . $this->port;
+
+        $url .= '?ssl_ca=/tmp/cert.crt';
+        $url .= '&ssl_key=/tmp/local.key';
+        $url .= '&ssl_cert=/tmp/local.crt';
+
+        Cache::setConfig('redis_dsn', compact('url'));
+
+        $config = Cache::pool('redis_dsn')->getConfig();
+        $expecting = [
+            'prefix' => 'cake_',
+            'duration' => 3600,
+            'groups' => [],
+            'server' => 'localhost',
+            'port' => $this->port,
+            'tls' => false,
+            'timeout' => 0,
+            'persistent' => true,
+            'password' => false,
+            'database' => 0,
+            'unix_socket' => false,
+            'host' => 'localhost',
+            'scheme' => 'redis',
+            'scanCount' => 10,
+            'ssl_ca' => '/tmp/cert.crt',
+            'ssl_key' => '/tmp/local.key',
+            'ssl_cert' => '/tmp/local.crt',
+        ];
+        $this->assertEquals($expecting, $config);
+
+        Cache::drop('redis_dsn');
+    }
+
+    /**
      * testConnect method
      */
     public function testConnect(): void
     {
         $Redis = new RedisEngine();
         $this->assertTrue($Redis->init(Cache::pool('redis')->getConfig()));
+    }
+
+    /**
+     * testConnectTransient method
+     */
+    public function testConnectTransient(): void
+    {
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('connect')
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => false,
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('connect')
+            ->with(
+                'tls://' . $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => false,
+            'tls' => true,
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+    }
+
+    /**
+     * testConnectTransientContext method
+     */
+    public function testConnectTransientContext(): void
+    {
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
+
+        $context = [
+            'ssl' => [
+                'cafile' => $cafile,
+            ],
+        ];
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('connect')
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+                null,
+                0,
+                0.0,
+                $context
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => false,
+            'ssl_ca' => $cafile,
+        ];
+
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+    }
+
+    /**
+     * testConnectPersistent method
+     */
+    public function testConnectPersistent(): void
+    {
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $expectedPersistentId = $this->port . $Redis->getConfig('timeout') . $Redis->getConfig('database');
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('pconnect')
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+                $expectedPersistentId
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('pconnect')
+            ->with(
+                'tls://' . $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+                $expectedPersistentId
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'tls' => true,
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+    }
+
+    /**
+     * testConnectPersistentContext method
+     */
+    public function testConnectPersistentContext(): void
+    {
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $expectedPersistentId = $this->port . $Redis->getConfig('timeout') . $Redis->getConfig('database');
+
+        $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
+
+        $context = [
+            'ssl' => [
+                'cafile' => $cafile,
+            ],
+        ];
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('pconnect')
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+                $expectedPersistentId,
+                0,
+                0.0,
+                $context
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => true,
+            'ssl_ca' => $cafile,
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
     }
 
     /**

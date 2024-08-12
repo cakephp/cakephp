@@ -32,6 +32,8 @@ use DateTimeImmutable;
 use DateTimeZone;
 use InvalidArgumentException;
 use Laminas\Diactoros\Stream;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Http\Message\StreamInterface;
 
 /**
  * ResponseTest
@@ -293,7 +295,8 @@ class ResponseTest extends TestCase
     public function testWithCache(): void
     {
         $response = new Response();
-        $since = $time = time();
+        $since = time();
+        $time = $since;
 
         $new = $response->withCache($since, $time);
         $this->assertFalse($response->hasHeader('Date'));
@@ -859,7 +862,7 @@ class ResponseTest extends TestCase
         $this->assertSame(1, $new->getCookie('yay')['expires']);
     }
 
-    public function testWithExpiredCookieNotUtc()
+    public function testWithExpiredCookieNotUtc(): void
     {
         date_default_timezone_set('Europe/Paris');
 
@@ -1017,9 +1020,8 @@ class ResponseTest extends TestCase
 
     /**
      * test withFile and invalid paths
-     *
-     * @dataProvider invalidFileProvider
      */
+    #[DataProvider('invalidFileProvider')]
     public function testWithFileInvalidPath(string $path, string $expectedMessage): void
     {
         $this->expectException(NotFoundException::class);
@@ -1058,7 +1060,7 @@ class ResponseTest extends TestCase
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
         $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $body = $new->getBody();
-        $this->assertInstanceOf('Laminas\Diactoros\Stream', $body);
+        $this->assertInstanceOf(Stream::class, $body);
 
         $expected = '/* this is the test asset css file */';
         $this->assertSame($expected, trim($body->getContents()));
@@ -1173,9 +1175,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test withFile() & the various range offset types.
-     *
-     * @dataProvider rangeProvider
      */
+    #[DataProvider('rangeProvider')]
     public function testWithFileRangeOffsets(string $range, int $length, string $offsetResponse): void
     {
         $_SERVER['HTTP_RANGE'] = $range;
@@ -1239,9 +1240,8 @@ class ResponseTest extends TestCase
 
     /**
      * Test withFile() and invalid ranges
-     *
-     * @dataProvider invalidFileRangeProvider
      */
+    #[DataProvider('invalidFileRangeProvider')]
     public function testWithFileInvalidRange(string $range): void
     {
         $_SERVER['HTTP_RANGE'] = $range;
@@ -1434,7 +1434,7 @@ class ResponseTest extends TestCase
     {
         $response = new Response();
         $stream = $response->getBody();
-        $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $stream);
+        $this->assertInstanceOf(StreamInterface::class, $stream);
     }
 
     /**

@@ -1,112 +1,112 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="5.15.0@5c774aca4746caf3d239d9c8cadb9f882ca29352">
+<files psalm-version="5.24.0@462c80e31c34e58cc4f750c656be3927e80e550e">
   <file src="src/Cache/Engine/FileEngine.php">
     <TooManyTemplateParams>
-      <code>$iterator</code>
+      <code><![CDATA[$iterator]]></code>
     </TooManyTemplateParams>
   </file>
   <file src="src/Cache/Engine/RedisEngine.php">
+    <InvalidCast>
+      <code><![CDATA[$this->_Redis->del($key)]]></code>
+      <code><![CDATA[$this->_Redis->del($key)]]></code>
+      <code><![CDATA[$this->_Redis->unlink($key)]]></code>
+      <code><![CDATA[$this->_Redis->unlink($key)]]></code>
+    </InvalidCast>
     <InvalidReturnStatement>
       <code><![CDATA[$this->_Redis->set($key, $value)]]></code>
       <code><![CDATA[$this->_Redis->setEx($key, $duration, $value)]]></code>
-      <code>$value</code>
-      <code>$value</code>
+      <code><![CDATA[$value]]></code>
+      <code><![CDATA[$value]]></code>
     </InvalidReturnStatement>
     <InvalidReturnType>
-      <code>bool</code>
-      <code>int|false</code>
-      <code>int|false</code>
+      <code><![CDATA[bool]]></code>
+      <code><![CDATA[int|false]]></code>
+      <code><![CDATA[int|false]]></code>
     </InvalidReturnType>
   </file>
-  <file src="src/Console/CommandCollection.php">
-    <InvalidDocblock>
-      <code>public function get(string $name): CommandInterface|string</code>
-      <code>public function getIterator(): Traversable</code>
-    </InvalidDocblock>
+  <file src="src/Controller/ControllerFactory.php">
+    <UndefinedMethod>
+      <code><![CDATA[getName]]></code>
+    </UndefinedMethod>
   </file>
   <file src="src/Core/PluginConfig.php">
     <RedundantCondition>
-      <code>is_array($pluginLoadConfig)</code>
+      <code><![CDATA[is_array($pluginLoadConfig)]]></code>
     </RedundantCondition>
-  </file>
-  <file src="src/Database/Query.php">
-    <UnusedPsalmSuppress>
-      <code>InvalidArrayOffset</code>
-    </UnusedPsalmSuppress>
   </file>
   <file src="src/Event/EventDispatcherTrait.php">
     <MoreSpecificImplementedParamType>
-      <code>$subject</code>
+      <code><![CDATA[$subject]]></code>
     </MoreSpecificImplementedParamType>
   </file>
   <file src="src/Event/EventManager.php">
     <InvalidArgument>
-      <code>_callListener</code>
-      <code>addEventToList</code>
-      <code>addEventToList</code>
+      <code><![CDATA[_callListener]]></code>
+      <code><![CDATA[addEventToList]]></code>
+      <code><![CDATA[addEventToList]]></code>
     </InvalidArgument>
     <InvalidReturnStatement>
-      <code>$event</code>
-      <code>$event</code>
+      <code><![CDATA[$event]]></code>
+      <code><![CDATA[$event]]></code>
     </InvalidReturnStatement>
     <InvalidReturnType>
-      <code>EventInterface</code>
+      <code><![CDATA[EventInterface]]></code>
     </InvalidReturnType>
   </file>
   <file src="src/I18n/Date.php">
     <ImpureFunctionCall>
-      <code>call_user_func(static::$_jsonEncodeFormat, $this)</code>
-      <code>static::$_jsonEncodeFormat</code>
+      <code><![CDATA[call_user_func(static::$_jsonEncodeFormat, $this)]]></code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
     </ImpureFunctionCall>
     <ImpureMethodCall>
-      <code>_formatObject</code>
-      <code>dateAgoInWords</code>
-      <code>diffFormatter</code>
-      <code>getDefaultLocale</code>
+      <code><![CDATA[_formatObject]]></code>
+      <code><![CDATA[dateAgoInWords]]></code>
+      <code><![CDATA[diffFormatter]]></code>
+      <code><![CDATA[getDefaultLocale]]></code>
     </ImpureMethodCall>
     <ImpureStaticProperty>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_toStringFormat</code>
-      <code>static::$niceFormat</code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
+      <code><![CDATA[static::$_toStringFormat]]></code>
+      <code><![CDATA[static::$niceFormat]]></code>
     </ImpureStaticProperty>
   </file>
   <file src="src/I18n/DateTime.php">
     <ImpureFunctionCall>
-      <code>call_user_func(static::$_jsonEncodeFormat, $this)</code>
-      <code>static::$_jsonEncodeFormat</code>
+      <code><![CDATA[call_user_func(static::$_jsonEncodeFormat, $this)]]></code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
     </ImpureFunctionCall>
     <ImpureMethodCall>
-      <code>_formatObject</code>
-      <code>diffFormatter</code>
-      <code>getDefaultLocale</code>
-      <code>timeAgoInWords</code>
+      <code><![CDATA[_formatObject]]></code>
+      <code><![CDATA[diffFormatter]]></code>
+      <code><![CDATA[getDefaultLocale]]></code>
+      <code><![CDATA[timeAgoInWords]]></code>
     </ImpureMethodCall>
     <ImpureStaticProperty>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_toStringFormat</code>
-      <code>static::$niceFormat</code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
+      <code><![CDATA[static::$_toStringFormat]]></code>
+      <code><![CDATA[static::$niceFormat]]></code>
     </ImpureStaticProperty>
   </file>
   <file src="src/I18n/Time.php">
     <ImpureFunctionCall>
-      <code>call_user_func(static::$_jsonEncodeFormat, $this)</code>
-      <code>static::$_jsonEncodeFormat</code>
+      <code><![CDATA[call_user_func(static::$_jsonEncodeFormat, $this)]]></code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
     </ImpureFunctionCall>
     <ImpureMethodCall>
-      <code>_formatObject</code>
-      <code>getDefaultLocale</code>
-      <code>toNative</code>
+      <code><![CDATA[_formatObject]]></code>
+      <code><![CDATA[getDefaultLocale]]></code>
+      <code><![CDATA[toNative]]></code>
     </ImpureMethodCall>
     <ImpureStaticProperty>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_jsonEncodeFormat</code>
-      <code>static::$_toStringFormat</code>
-      <code>static::$niceFormat</code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
+      <code><![CDATA[static::$_jsonEncodeFormat]]></code>
+      <code><![CDATA[static::$_toStringFormat]]></code>
+      <code><![CDATA[static::$niceFormat]]></code>
     </ImpureStaticProperty>
   </file>
   <file src="src/TestSuite/Constraint/EventFired.php">
@@ -153,22 +153,32 @@
   </file>
   <file src="src/TestSuite/Constraint/Session/FlashParamEquals.php">
     <InternalClass>
-      <code>new AssertionFailedError($message)</code>
+      <code><![CDATA[new AssertionFailedError($message)]]></code>
     </InternalClass>
     <InternalMethod>
-      <code>new AssertionFailedError($message)</code>
+      <code><![CDATA[new AssertionFailedError($message)]]></code>
     </InternalMethod>
+  </file>
+  <file src="src/TestSuite/TestCase.php">
+    <UndefinedVariable>
+      <code><![CDATA[$previousHandler]]></code>
+    </UndefinedVariable>
   </file>
   <file src="src/Utility/Filesystem.php">
     <TooManyTemplateParams>
-      <code>$iterator</code>
-      <code>$iterator</code>
+      <code><![CDATA[$iterator]]></code>
+      <code><![CDATA[$iterator]]></code>
     </TooManyTemplateParams>
   </file>
   <file src="src/Utility/Hash.php">
-    <RedundantCondition>
-      <code>is_array($_list)</code>
-    </RedundantCondition>
+    <InvalidReturnStatement>
+      <code><![CDATA[$data]]></code>
+      <code><![CDATA[$data]]></code>
+    </InvalidReturnStatement>
+    <InvalidReturnType>
+      <code><![CDATA[(T is array ? array : \ArrayAccess)]]></code>
+      <code><![CDATA[(T is array ? array : \ArrayAccess)]]></code>
+    </InvalidReturnType>
   </file>
   <file src="src/Validation/Validation.php">
     <RedundantCondition>
@@ -178,17 +188,12 @@
   </file>
   <file src="src/View/Exception/MissingCellTemplateException.php">
     <ImplementedReturnTypeMismatch>
-      <code><![CDATA[array{name: string, file: string, paths: array<string>}]]></code>
+      <code><![CDATA[array{name: string, file: string, paths: list<string>}]]></code>
     </ImplementedReturnTypeMismatch>
   </file>
-  <file src="src/View/HelperRegistry.php">
-    <UnusedPsalmSuppress>
-      <code>NoValue</code>
-    </UnusedPsalmSuppress>
-  </file>
-  <file src="src/View/Widget/RadioWidget.php">
-    <UnusedPsalmSuppress>
-      <code>TypeDoesNotContainType</code>
-    </UnusedPsalmSuppress>
+  <file src="src/View/Helper/PaginatorHelper.php">
+    <TypeDoesNotContainType>
+      <code><![CDATA[empty($this->_config['options']['url'])]]></code>
+    </TypeDoesNotContainType>
   </file>
 </files>

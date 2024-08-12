@@ -22,6 +22,7 @@ use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\CallbackStream;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\Http\Server;
 use Cake\Http\ServerRequest;
@@ -352,5 +353,32 @@ class ServerTest extends TestCase
 
         $request = new ServerRequest();
         $this->assertInstanceOf(ResponseInterface::class, $server->run($request));
+    }
+
+    public function testTerminateEvent(): void
+    {
+        $request = new ServerRequest();
+        $app = new MiddlewareApplication($this->config);
+        $app->getContainer()->add(ServerRequest::class, $request);
+        $server = new Server($app);
+
+        $triggered = false;
+        $server->getEventManager()->on(
+            'Server.terminate',
+            function ($event, $request, $response) use (&$triggered): void {
+                $triggered = true;
+                $this->assertInstanceOf(ServerRequest::class, $request);
+                $this->assertInstanceOf(Response::class, $response);
+            }
+        );
+
+        $emitter = $this->getMockBuilder(ResponseEmitter::class)->getMock();
+        $emitter->expects($this->once())
+            ->method('emit')
+            ->willReturn(true);
+
+        $server->emit(new Response(), $emitter);
+
+        $this->assertTrue($triggered);
     }
 }

@@ -30,7 +30,7 @@ class ApcuEngine extends CacheEngine
      * Contains the compiled group names
      * (prefixed with the global configuration prefix)
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_compiledGroupNames = [];
 
@@ -184,13 +184,13 @@ class ApcuEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return array<string>
+     * @return list<string>
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
     public function groups(): array
     {
-        if (empty($this->_compiledGroupNames)) {
+        if (!$this->_compiledGroupNames) {
             foreach ($this->_config['groups'] as $group) {
                 $this->_compiledGroupNames[] = $this->_config['prefix'] . $group;
             }

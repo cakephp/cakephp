@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Integration tests for using the bindingKey in associations
@@ -26,7 +27,7 @@ class BindingKeyTest extends TestCase
     /**
      * Fixture to be used
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = [
         'core.AuthUsers',
@@ -56,9 +57,8 @@ class BindingKeyTest extends TestCase
 
     /**
      * Tests that bindingKey can be used in belongsTo associations
-     *
-     * @dataProvider strategiesProviderJoinable
      */
+    #[DataProvider('strategiesProviderJoinable')]
     public function testBelongsto(string $strategy): void
     {
         $users = $this->getTableLocator()->get('Users');
@@ -87,9 +87,8 @@ class BindingKeyTest extends TestCase
 
     /**
      * Tests that bindingKey can be used in hasOne associations
-     *
-     * @dataProvider strategiesProviderJoinable
      */
+    #[DataProvider('strategiesProviderJoinable')]
     public function testHasOne(string $strategy): void
     {
         $users = $this->getTableLocator()->get('Users');
@@ -110,9 +109,8 @@ class BindingKeyTest extends TestCase
 
     /**
      * Tests that bindingKey can be used in hasOne associations
-     *
-     * @dataProvider strategiesProviderExternal
      */
+    #[DataProvider('strategiesProviderExternal')]
     public function testHasMany(string $strategy): void
     {
         $users = $this->getTableLocator()->get('Users');

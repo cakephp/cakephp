@@ -18,6 +18,7 @@ namespace Cake\Collection;
 
 use AppendIterator;
 use ArrayIterator;
+use BackedEnum;
 use Cake\Collection\Iterator\BufferedIterator;
 use Cake\Collection\Iterator\ExtractIterator;
 use Cake\Collection\Iterator\FilterIterator;
@@ -32,13 +33,14 @@ use Cake\Collection\Iterator\UnfoldIterator;
 use Cake\Collection\Iterator\UniqueIterator;
 use Cake\Collection\Iterator\ZipIterator;
 use Countable;
+use Generator;
 use InvalidArgumentException;
 use Iterator;
 use LimitIterator;
 use LogicException;
 use OuterIterator;
 use RecursiveIteratorIterator;
-use Traversable;
+use UnitEnum;
 use const SORT_ASC;
 use const SORT_DESC;
 use const SORT_NUMERIC;
@@ -81,7 +83,7 @@ trait CollectionTrait
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v) {
+        $callback ??= function ($v): bool {
             return (bool)$v;
         };
 
@@ -93,7 +95,7 @@ trait CollectionTrait
      */
     public function reject(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v, $k, $i) {
+        $callback ??= function ($v, $k, $i): bool {
             return (bool)$v;
         };
 
@@ -192,9 +194,9 @@ trait CollectionTrait
     {
         $extractor = new ExtractIterator($this->unwrap(), $path);
         if (is_string($path) && str_contains($path, '{*}')) {
-            $extractor = $extractor
+            return $extractor
                 ->filter(function ($data) {
-                    return $data !== null && ($data instanceof Traversable || is_array($data));
+                    return $data !== null && (is_iterable($data));
                 })
                 ->unfold();
         }
@@ -290,6 +292,12 @@ trait CollectionTrait
                     'Use a callback to return a default value for that path.'
                 );
             }
+            if ($pathValue instanceof BackedEnum) {
+                $pathValue = $pathValue->value;
+            } elseif ($pathValue instanceof UnitEnum) {
+                $pathValue = $pathValue->name;
+            }
+
             $group[$pathValue][] = $value;
         }
 
@@ -311,6 +319,12 @@ trait CollectionTrait
                     'Use a callback to return a default value for that path.'
                 );
             }
+            if ($pathValue instanceof BackedEnum) {
+                $pathValue = $pathValue->value;
+            } elseif ($pathValue instanceof UnitEnum) {
+                $pathValue = $pathValue->name;
+            }
+
             $group[$pathValue] = $value;
         }
 
@@ -464,7 +478,7 @@ trait CollectionTrait
             return $this->newCollection($iterator);
         }
 
-        $generator = function ($iterator, $length) {
+        $generator = function ($iterator, $length): Generator {
             $result = [];
             $bucket = 0;
             $offset = 0;
@@ -521,7 +535,7 @@ trait CollectionTrait
                 $offset++;
             }
 
-            $offset = $offset % $length;
+            $offset %= $length;
             $head = array_slice($result, $offset);
             $tail = array_slice($result, 0, $offset);
 
@@ -612,6 +626,12 @@ trait CollectionTrait
                     );
                 }
 
+                if ($mapKey instanceof BackedEnum) {
+                    $mapKey = $mapKey->value;
+                } elseif ($mapKey instanceof UnitEnum) {
+                    $mapKey = $mapKey->name;
+                }
+
                 $mapReduce->emit($rowVal($value, $key), $mapKey);
 
                 return null;
@@ -677,7 +697,7 @@ trait CollectionTrait
                 $isObject = is_object(current($parents));
                 $foundOutType = true;
             }
-            if (empty($key) || !isset($parents[$key])) {
+            if (!$key || !isset($parents[$key])) {
                 foreach ($values as $id) {
                     /** @psalm-suppress PossiblyInvalidArgument */
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
@@ -695,7 +715,10 @@ trait CollectionTrait
         };
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer))
-            ->map(fn ($value) => $isObject ? $value : $value->getArrayCopy());
+            ->map(function ($value) use ($isObject) {
+                /** @var \ArrayIterator|\ArrayObject $value */
+                return $isObject ? $value : $value->getArrayCopy();
+            });
     }
 
     /**
@@ -755,7 +778,7 @@ trait CollectionTrait
      */
     public function lazy(): CollectionInterface
     {
-        $generator = function () {
+        $generator = function (): Generator {
             foreach ($this->unwrap() as $k => $v) {
                 yield $k => $v;
             }
@@ -789,7 +812,7 @@ trait CollectionTrait
 
             if (!isset($modes[$order])) {
                 throw new InvalidArgumentException(sprintf(
-                    'Invalid direction `%s` provided. Must be one of: \'desc\', \'asc\', \'leaves\'.',
+                    "Invalid direction `%s` provided. Must be one of: 'desc', 'asc', 'leaves'.",
                     $order
                 ));
             }
@@ -938,7 +961,7 @@ trait CollectionTrait
         }
 
         if ($iterator !== $this && $iterator instanceof CollectionInterface) {
-            $iterator = $iterator->unwrap();
+            return $iterator->unwrap();
         }
 
         return $iterator;
@@ -1064,7 +1087,7 @@ trait CollectionTrait
         $iterator = $this->unwrap();
 
         if ($iterator::class === ArrayIterator::class) {
-            $iterator = $iterator->getArrayCopy();
+            return $iterator->getArrayCopy();
         }
 
         return $iterator;

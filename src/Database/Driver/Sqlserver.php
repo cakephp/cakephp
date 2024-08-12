@@ -112,7 +112,7 @@ class Sqlserver extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->pdo)) {
+        if ($this->pdo !== null) {
             return;
         }
         $config = $this->_config;
@@ -214,13 +214,8 @@ class Sqlserver extends Driver
             ]
         );
 
-        $typeMap = null;
-        if ($query instanceof SelectQuery && $query->isResultsCastingEnabled()) {
-            $typeMap = $query->getSelectTypeMap();
-        }
-
         /** @var \Cake\Database\StatementInterface */
-        return new (static::STATEMENT_CLASS)($statement, $this, $typeMap);
+        return new (static::STATEMENT_CLASS)($statement, $this, $this->getResultSetDecorators($query));
     }
 
     /**
@@ -336,15 +331,16 @@ class Sqlserver extends Driver
     {
         $field = '_cake_paging_._cake_page_rownum_';
 
-        if ($original->clause('order')) {
+        /** @var \Cake\Database\Expression\OrderByExpression $originalOrder */
+        $originalOrder = $original->clause('order');
+        if ($originalOrder) {
             // SQL server does not support column aliases in OVER clauses.  But
             // the only practical way to specify the use of calculated columns
             // is with their alias.  So substitute the select SQL in place of
             // any column aliases for those entries in the order clause.
             $select = $original->clause('select');
             $order = new OrderByExpression();
-            $original
-                ->clause('order')
+            $originalOrder
                 ->iterateParts(function ($direction, $orderBy) use ($select, $order) {
                     $key = $orderBy;
                     if (
@@ -375,11 +371,11 @@ class Sqlserver extends Driver
             ->from(['_cake_paging_' => $query]);
 
         if ($offset) {
-            $outer->where(["$field > " . $offset]);
+            $outer->where(["{$field} > " . $offset]);
         }
         if ($limit) {
             $value = (int)$offset + $limit;
-            $outer->where(["$field <= $value"]);
+            $outer->where(["{$field} <= {$value}"]);
         }
 
         // Decorate the original query as that is what the
@@ -412,7 +408,7 @@ class Sqlserver extends Driver
 
         $order = new OrderByExpression($distinct);
         $query
-            ->select(function ($q) use ($distinct, $order) {
+            ->select(function (Query $q) use ($distinct, $order) {
                 $over = $q->newExpr('ROW_NUMBER() OVER')
                     ->add('(PARTITION BY')
                     ->add($q->newExpr()->add($distinct)->setConjunction(','))

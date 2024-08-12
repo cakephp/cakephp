@@ -124,7 +124,7 @@ class ConsoleFormatter implements FormatterInterface
             return match ($var->getType()) {
                 'bool' => $this->style('const', $var->getValue() ? 'true' : 'false'),
                 'null' => $this->style('const', 'null'),
-                'string' => $this->style('string', "'" . (string)$var->getValue() . "'"),
+                'string' => $this->style('string', "'" . $var->getValue() . "'"),
                 'int', 'float' => $this->style('visibility', "({$var->getType()})") .
                         ' ' . $this->style('number', "{$var->getValue()}"),
                 default => "({$var->getType()}) {$var->getValue()}",
@@ -163,7 +163,7 @@ class ConsoleFormatter implements FormatterInterface
         }
 
         $close = $this->style('punct', ']');
-        if (count($vars)) {
+        if ($vars !== []) {
             return $out . implode($this->style('punct', ','), $vars) . $end . $close;
         }
 
@@ -215,7 +215,7 @@ class ConsoleFormatter implements FormatterInterface
                     $this->export($property->getValue(), $indent);
             }
         }
-        if (count($props)) {
+        if ($props !== []) {
             return $out . $break . implode($break, $props) . $end;
         }
 

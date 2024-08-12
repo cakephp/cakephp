@@ -80,12 +80,10 @@ class TupleComparison extends ComparisonExpression
                     'Multi-tuple comparisons require a multi-tuple value, single-tuple given.'
                 );
             }
-        } else {
-            if (is_array($value) && is_array(current($value))) {
-                throw new InvalidArgumentException(
-                    'Single-tuple comparisons require a single-tuple value, multi-tuple given.'
-                );
-            }
+        } elseif (is_array($value) && is_array(current($value))) {
+            throw new InvalidArgumentException(
+                'Single-tuple comparisons require a single-tuple value, multi-tuple given.'
+            );
         }
 
         $this->_value = $value;
@@ -139,7 +137,7 @@ class TupleComparison extends ComparisonExpression
 
             $type = $this->types;
             $isMultiOperation = $this->isMulti();
-            if (empty($type)) {
+            if (!$type) {
                 $type = null;
             }
 

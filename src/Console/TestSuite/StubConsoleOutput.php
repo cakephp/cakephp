@@ -36,14 +36,14 @@ class StubConsoleOutput extends ConsoleOutput
     /**
      * Buffered messages.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_out = [];
 
     /**
      * Write output to the buffer.
      *
-     * @param array<string>|string $message A string or an array of strings to output
+     * @param list<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int
      */
@@ -65,11 +65,21 @@ class StubConsoleOutput extends ConsoleOutput
     /**
      * Get the buffered output.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function messages(): array
     {
         return $this->_out;
+    }
+
+    /**
+     * Clear buffered output
+     *
+     * @return void
+     */
+    public function clear(): void
+    {
+        $this->_out = [];
     }
 
     /**

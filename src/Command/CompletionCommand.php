@@ -191,13 +191,14 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             }
 
             if (method_exists($value, 'getOptionParser')) {
+                /** @var \Cake\Console\ConsoleOptionParser $parser */
                 $parser = $value->getOptionParser();
 
                 foreach ($parser->options() as $name => $option) {
-                    $options[] = "--$name";
+                    $options[] = "--{$name}";
                     $short = $option->short();
                     if ($short) {
-                        $options[] = "-$short";
+                        $options[] = "-{$short}";
                     }
                 }
             }

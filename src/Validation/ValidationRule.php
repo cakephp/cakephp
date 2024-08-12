@@ -40,7 +40,7 @@ class ValidationRule
      *
      * @var callable|string|null
      */
-    protected $_on = null;
+    protected $_on;
 
     /**
      * The 'last' key
@@ -193,7 +193,7 @@ class ValidationRule
     protected function _addValidatorProps(array $validator = []): void
     {
         foreach ($validator as $key => $value) {
-            if (empty($value)) {
+            if (!$value) {
                 continue;
             }
             if ($key === 'rule' && is_array($value) && !is_callable($value)) {
@@ -201,7 +201,7 @@ class ValidationRule
                 $value = array_shift($value);
             }
             if (in_array($key, ['rule', 'on', 'message', 'last', 'provider', 'pass'], true)) {
-                $this->{"_$key"} = $value;
+                $this->{"_{$key}"} = $value;
             }
         }
     }

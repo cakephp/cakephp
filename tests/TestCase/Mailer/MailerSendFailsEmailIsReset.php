@@ -36,7 +36,7 @@ class MailerSendFailsEmailIsReset extends TestCase
         try {
             $mailer->send('welcome', ['foo', 'bar']);
             $this->fail('Exception should bubble up.');
-        } catch (RuntimeException $e) {
+        } catch (RuntimeException) {
             $this->assertTrue(true, 'Exception was raised');
         }
     }

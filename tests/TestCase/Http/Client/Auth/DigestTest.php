@@ -21,6 +21,7 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Digest authentication test
@@ -331,10 +332,10 @@ class DigestTest extends TestCase
     /**
      * testAlgorithms method
      *
-     * @dataProvider algorithmsProvider
      * @return void
      */
-    public function testAlgorithms($message, $headers, $method, $data, $expected)
+    #[DataProvider('algorithmsProvider')]
+    public function testAlgorithms($message, $headers, $method, $data, $expected): void
     {
         $response = new Response($headers, '');
         $this->client->expects($this->once())
@@ -348,7 +349,7 @@ class DigestTest extends TestCase
         $this->assertSame($expected, $result, $message);
     }
 
-    public function testAlgorithmException()
+    public function testAlgorithmException(): void
     {
         $headers = [
             'WWW-Authenticate: Digest algorithm="WRONG",realm="The batcave",nonce="4cded326c6c51"',

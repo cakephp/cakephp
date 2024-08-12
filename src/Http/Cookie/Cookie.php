@@ -258,7 +258,7 @@ class Cookie implements CookieInterface
         }
 
         if ($expires !== null) {
-            $expires = new DateTimeImmutable('@' . (string)$expires);
+            return new DateTimeImmutable('@' . $expires);
         }
 
         return $expires;
@@ -413,7 +413,7 @@ class Cookie implements CookieInterface
             );
         }
 
-        if (empty($name)) {
+        if (!$name) {
             throw new InvalidArgumentException('The cookie name cannot be empty.');
         }
     }

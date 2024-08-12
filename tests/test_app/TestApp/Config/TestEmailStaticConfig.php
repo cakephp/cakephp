@@ -3,6 +3,9 @@
 namespace TestApp\Config;
 
 use Cake\Core\StaticConfigTrait;
+use Cake\Mailer\Transport\DebugTransport;
+use Cake\Mailer\Transport\MailTransport;
+use Cake\Mailer\Transport\SmtpTransport;
 
 class TestEmailStaticConfig
 {
@@ -14,8 +17,8 @@ class TestEmailStaticConfig
      * @var array
      */
     protected static $_dsnClassMap = [
-        'debug' => 'Cake\Mailer\Transport\DebugTransport',
-        'mail' => 'Cake\Mailer\Transport\MailTransport',
-        'smtp' => 'Cake\Mailer\Transport\SmtpTransport',
+        'debug' => DebugTransport::class,
+        'mail' => MailTransport::class,
+        'smtp' => SmtpTransport::class,
     ];
 }

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace TestApp;
 
 use Cake\Console\CommandCollection;
-use Cake\Controller\ComponentRegistry;
 use Cake\Core\Configure;
 use Cake\Core\ContainerInterface;
 use Cake\Error\Middleware\ErrorHandlerMiddleware;
@@ -74,6 +73,12 @@ class Application extends BaseApplication
      */
     public function routes(RouteBuilder $routes): void
     {
+        // Additional routes to load
+        if (Configure::check('TestApp.routes')) {
+            $func = Configure::read('TestApp.routes');
+            $func($routes);
+        }
+
         $routes->registerMiddleware('dumb', new DumbMiddleware());
         $routes->registerMiddleware('sample', new SampleMiddleware());
         $routes->scope('/app', function (RouteBuilder $routes): void {
@@ -83,7 +88,7 @@ class Application extends BaseApplication
 
             try {
                 $routes->connect('/tests/{action}/*', ['controller' => 'Tests'], ['_name' => 'testName']);
-            } catch (DuplicateNamedRouteException $e) {
+            } catch (DuplicateNamedRouteException) {
                 // do nothing. This happens when one test does multiple requests.
             }
             $routes->redirect('/redirect', 'http://example.com/test.html');
@@ -103,7 +108,6 @@ class Application extends BaseApplication
         $container->add(stdClass::class, json_decode('{"key":"value"}'));
         $container->add(DependencyCommand::class)
             ->addArgument(stdClass::class);
-        $container->add(ComponentRegistry::class);
         $container->delegate(new ReflectionContainer());
     }
 }

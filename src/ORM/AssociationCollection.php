@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM;
 
 use ArrayIterator;
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Locator\LocatorInterface;
@@ -70,6 +71,7 @@ class AssociationCollection implements IteratorAggregate
      * @param string $alias The association alias
      * @param \Cake\ORM\Association $association The association to add.
      * @return \Cake\ORM\Association The association object being added.
+     * @throws \Cake\Core\Exception\CakeException If the alias is already added.
      * @template T of \Cake\ORM\Association
      * @psalm-param T $association
      * @psalm-return T
@@ -77,6 +79,10 @@ class AssociationCollection implements IteratorAggregate
     public function add(string $alias, Association $association): Association
     {
         [, $alias] = pluginSplit($alias);
+
+        if (isset($this->_items[$alias])) {
+            throw new CakeException(sprintf('Association alias `%s` is already set.', $alias));
+        }
 
         return $this->_items[$alias] = $association;
     }
@@ -146,7 +152,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Get the names of all the associations in the collection.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function keys(): array
     {
@@ -156,7 +162,7 @@ class AssociationCollection implements IteratorAggregate
     /**
      * Get an array of associations matching a specific type.
      *
-     * @param array<string>|string $class The type of associations you want.
+     * @param list<string>|string $class The type of associations you want.
      *   For example 'BelongsTo' or array like ['BelongsTo', 'HasOne']
      * @return array<\Cake\ORM\Association> An array of Association objects.
      * @since 3.5.3
@@ -216,7 +222,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function saveParents(Table $table, EntityInterface $entity, array $associations, array $options = []): bool
     {
-        if (empty($associations)) {
+        if (!$associations) {
             return true;
         }
 
@@ -238,7 +244,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function saveChildren(Table $table, EntityInterface $entity, array $associations, array $options): bool
     {
-        if (empty($associations)) {
+        if (!$associations) {
             return true;
         }
 
@@ -308,7 +314,7 @@ class AssociationCollection implements IteratorAggregate
         if (!$entity->isDirty($association->getProperty())) {
             return true;
         }
-        if (!empty($nested)) {
+        if ($nested) {
             $options = $nested + $options;
         }
 
@@ -361,7 +367,7 @@ class AssociationCollection implements IteratorAggregate
             $keys = $this->keys();
         }
 
-        if (empty($keys)) {
+        if (!$keys) {
             return [];
         }
 

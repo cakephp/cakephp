@@ -70,9 +70,9 @@ class ContextFactory
                         $pass = (new Collection($data['entity']))->first() !== null;
                         if ($pass) {
                             return new EntityContext($data);
-                        } else {
-                            return new NullContext($data);
                         }
+
+                        return new NullContext($data);
                     }
                 },
             ],
@@ -142,6 +142,7 @@ class ContextFactory
     {
         $data += ['entity' => null];
 
+        $context = null;
         foreach ($this->providers as $provider) {
             $check = $provider['callable'];
             $context = $check($request, $data);
@@ -150,7 +151,7 @@ class ContextFactory
             }
         }
 
-        if (!isset($context)) {
+        if ($context === null) {
             throw new CakeException(sprintf(
                 'No context provider found for value of type `%s`.'
                 . ' Use `null` as 1st argument of FormHelper::create() to create a context-less form.',

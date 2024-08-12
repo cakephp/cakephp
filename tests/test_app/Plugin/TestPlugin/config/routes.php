@@ -5,7 +5,7 @@ use Cake\Routing\RouteBuilder;
 
 Configure::write('PluginTest.test_plugin.routes', 'loaded plugin routes');
 
-return function (RouteBuilder $routes) {
+return function (RouteBuilder $routes): void {
     $routes->get(
         '/test_plugin',
         ['controller' => 'TestPlugin', 'plugin' => 'TestPlugin', 'action' => 'index'],

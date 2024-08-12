@@ -118,9 +118,9 @@ class LinkConstraint
     /**
      * Alias fields.
      *
-     * @param array<string> $fields The fields that should be aliased.
+     * @param list<string> $fields The fields that should be aliased.
      * @param \Cake\ORM\Table $source The object to use for aliasing.
-     * @return array<string> The aliased fields
+     * @return list<string> The aliased fields
      */
     protected function _aliasFields(array $fields, Table $source): array
     {
@@ -134,9 +134,9 @@ class LinkConstraint
     /**
      * Build conditions.
      *
-     * @param array $fields The condition fields.
+     * @param list<string> $fields The condition fields.
      * @param array $values The condition values.
-     * @return array A conditions array combined from the passed fields and values.
+     * @return array<string, string> A conditions array combined from the passed fields and values.
      */
     protected function _buildConditions(array $fields, array $values): array
     {
@@ -162,6 +162,7 @@ class LinkConstraint
     {
         $source = $association->getSource();
 
+        /** @var list<string> $primaryKey */
         $primaryKey = (array)$source->getPrimaryKey();
         if (!$entity->has($primaryKey)) {
             throw new DatabaseException(sprintf(

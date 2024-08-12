@@ -121,7 +121,7 @@ class PaginatorHelper extends Helper
      * Set paginated results.
      *
      * @param \Cake\Datasource\Paging\PaginatedInterface $paginated Instance to use.
-     * @param array $options Options array.
+     * @param array<string, mixed> $options Options array.
      * @return void
      */
     public function setPaginated(PaginatedInterface $paginated, array $options = []): void
@@ -390,7 +390,7 @@ class PaginatorHelper extends Helper
         $url = $options['url'];
         unset($options['url']);
 
-        if (empty($title)) {
+        if (!$title) {
             $title = $key;
 
             if (str_contains($title, '.')) {
@@ -527,7 +527,7 @@ class PaginatorHelper extends Helper
             $options = [$scope => $options];
         }
 
-        if (!empty($baseUrl)) {
+        if ($baseUrl) {
             $url = Hash::merge($url, $baseUrl);
         }
 
@@ -632,7 +632,7 @@ class PaginatorHelper extends Helper
                 $template = 'counterCustom';
                 $this->templater()->add([$template => $format]);
         }
-        $map = array_map([$this->Number, 'format'], [
+        $map = array_map($this->Number->format(...), [
             'page' => (int)$paging['currentPage'],
             'pages' => (int)$paging['pageCount'],
             'current' => (int)$paging['count'],
@@ -1108,7 +1108,7 @@ class PaginatorHelper extends Helper
             );
         }
 
-        $out = implode($links);
+        $out = implode('', $links);
 
         if ($options['block'] === true) {
             $options['block'] = __FUNCTION__;

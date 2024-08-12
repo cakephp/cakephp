@@ -49,7 +49,7 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
-        if (empty($matches)) {
+        if (!$matches) {
             throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
         }
 
@@ -59,7 +59,9 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[2]);
-        $length = $precision = $scale = null;
+        $length = null;
+        $precision = null;
+        $scale = null;
         if (isset($matches[3])) {
             $length = $matches[3];
             if (str_contains($length, ',')) {
@@ -86,7 +88,7 @@ class SqliteSchemaDialect extends SchemaDialect
         if ($col === 'tinyint') {
             return ['type' => TableSchemaInterface::TYPE_TINYINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
-        if (str_contains($col, 'int')) {
+        if (str_contains($col, 'int') && $col !== 'point') {
             return ['type' => TableSchemaInterface::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
         if (str_contains($col, 'decimal')) {
@@ -110,6 +112,9 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_BOOLEAN, 'length' => null];
         }
 
+        if (($col === 'binary' && $length === 16) || strtolower($column) === 'uuid_blob') {
+            return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
+        }
         if (($col === 'char' && $length === 36) || $col === 'uuid') {
             return ['type' => TableSchemaInterface::TYPE_UUID, 'length' => null];
         }
@@ -120,9 +125,6 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => $length];
         }
 
-        if ($col === 'binary' && $length === 16) {
-            return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
-        }
         if (in_array($col, ['blob', 'clob', 'binary', 'varbinary'])) {
             return ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
         }
@@ -138,6 +140,14 @@ class SqliteSchemaDialect extends SchemaDialect
         ];
         if (in_array($col, $datetimeTypes)) {
             return ['type' => $col, 'length' => null];
+        }
+        if (in_array($col, TableSchemaInterface::GEOSPATIAL_TYPES)) {
+            // TODO how can srid be preserved? It doesn't come back
+            // in the output of show full columns from ...
+            return [
+                'type' => $col,
+                'length' => null,
+            ];
         }
 
         return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];
@@ -181,8 +191,14 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function describeColumnSql(string $tableName, array $config): array
     {
+        $pragma = 'table_xinfo';
+        if (version_compare($this->_driver->version(), '3.26.0', '<')) {
+            $pragma = 'table_info';
+        }
+
         $sql = sprintf(
-            'PRAGMA table_info(%s)',
+            'PRAGMA %s(%s)',
+            $pragma,
             $this->_driver->quoteIdentifier($tableName)
         );
 
@@ -475,6 +491,10 @@ class SqliteSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMPFRACTIONAL',
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMPTIMEZONE',
             TableSchemaInterface::TYPE_JSON => ' TEXT',
+            TableSchemaInterface::TYPE_GEOMETRY => ' GEOMETRY_TEXT',
+            TableSchemaInterface::TYPE_POINT => ' POINT_TEXT',
+            TableSchemaInterface::TYPE_LINESTRING => ' LINESTRING_TEXT',
+            TableSchemaInterface::TYPE_POLYGON => ' POLYGON_TEXT',
         ];
 
         $out = $this->_driver->quoteIdentifier($name);
@@ -490,11 +510,10 @@ class SqliteSchemaDialect extends SchemaDialect
         if (
             in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) &&
-            $data['unsigned'] === true
+            $data['unsigned'] === true &&
+            ($data['type'] !== TableSchemaInterface::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name])
         ) {
-            if ($data['type'] !== TableSchemaInterface::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name]) {
-                $out .= ' UNSIGNED';
-            }
+            $out .= ' UNSIGNED';
         }
 
         if (isset($typeMap[$data['type']])) {
@@ -559,14 +578,11 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= ' NOT NULL';
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER) {
-            if ($schema->getPrimaryKey() === [$name]) {
-                $out .= ' PRIMARY KEY';
-
-                if (($name === 'id' || $data['autoIncrement']) && $data['autoIncrement'] !== false) {
-                    $out .= ' AUTOINCREMENT';
-                    unset($data['default']);
-                }
+        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER && $schema->getPrimaryKey() === [$name]) {
+            $out .= ' PRIMARY KEY';
+            if (($name === 'id' || $data['autoIncrement']) && $data['autoIncrement'] !== false) {
+                $out .= ' AUTOINCREMENT';
+                unset($data['default']);
             }
         }
 
@@ -632,7 +648,7 @@ class SqliteSchemaDialect extends SchemaDialect
             );
         }
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 
@@ -681,7 +697,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $data = $schema->getIndex($name);
         assert($data !== null);
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 

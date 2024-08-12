@@ -21,6 +21,7 @@ use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests MySQL driver
@@ -42,7 +43,7 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+        $driver = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
@@ -69,7 +70,7 @@ class MysqlTest extends TestCase
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected);
 
-        $driver->connect([]);
+        $driver->connect();
     }
 
     /**
@@ -93,7 +94,7 @@ class MysqlTest extends TestCase
             ],
             'log' => false,
         ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+        $driver = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -120,7 +121,7 @@ class MysqlTest extends TestCase
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
             ->willReturn($connection);
-        $driver->connect($config);
+        $driver->connect();
     }
 
     /**
@@ -166,10 +167,10 @@ class MysqlTest extends TestCase
     }
 
     /**
-     * @dataProvider versionStringProvider
      * @param string $dbVersion
      * @param string $expectedVersion
      */
+    #[DataProvider('versionStringProvider')]
     public function testVersion($dbVersion, $expectedVersion): void
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject&\PDO $connection */

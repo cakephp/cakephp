@@ -16,11 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Console;
 
+use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOutput;
 use Cake\Console\Exception\StopException;
+use Cake\Console\Helper;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * ConsoleIo test.
@@ -55,13 +59,13 @@ class ConsoleIoTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
 
-        $this->out = $this->getMockBuilder('Cake\Console\ConsoleOutput')
+        $this->out = $this->getMockBuilder(ConsoleOutput::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->err = $this->getMockBuilder('Cake\Console\ConsoleOutput')
+        $this->err = $this->getMockBuilder(ConsoleOutput::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->in = $this->getMockBuilder('Cake\Console\ConsoleInput')
+        $this->in = $this->getMockBuilder(ConsoleInput::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->io = new ConsoleIo($this->out, $this->err, $this->in);
@@ -98,9 +102,9 @@ class ConsoleIoTest extends TestCase
     /**
      * test ask choices method
      *
-     * @dataProvider choiceProvider
      * @param array|string $choices
      */
+    #[DataProvider('choiceProvider')]
     public function testAskChoices($choices): void
     {
         $this->in->expects($this->once())
@@ -114,9 +118,9 @@ class ConsoleIoTest extends TestCase
     /**
      * test ask choices method
      *
-     * @dataProvider choiceProvider
      * @param array|string $choices
      */
+    #[DataProvider('choiceProvider')]
     public function testAskChoicesInsensitive($choices): void
     {
         $this->in->expects($this->once())
@@ -513,6 +517,7 @@ class ConsoleIoTest extends TestCase
         $this->io->setLoggers(ConsoleIo::VERBOSE);
 
         $this->assertNotEmpty(Log::engine('stderr'));
+        /** @var \Cake\Log\Log $engine */
         $engine = Log::engine('stdout');
         $this->assertEquals(['notice', 'info', 'debug'], $engine->getConfig('levels'));
     }
@@ -558,7 +563,7 @@ class ConsoleIoTest extends TestCase
             ->method('write')
             ->with('It works!well ish');
         $helper = $this->io->helper('simple');
-        $this->assertInstanceOf('Cake\Console\Helper', $helper);
+        $this->assertInstanceOf(Helper::class, $helper);
         $helper->output(['well', 'ish']);
     }
 
@@ -584,9 +589,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * test out helper methods
-     *
-     * @dataProvider outHelperProvider
      */
+    #[DataProvider('outHelperProvider')]
     public function testOutHelpers(string $method): void
     {
         $this->out->expects($this->exactly(2))
@@ -604,9 +608,8 @@ class ConsoleIoTest extends TestCase
 
     /**
      * test err helper methods
-     *
-     * @dataProvider errHelperProvider
      */
+    #[DataProvider('errHelperProvider')]
     public function testErrHelpers(string $method): void
     {
         $this->err->expects($this->exactly(2))

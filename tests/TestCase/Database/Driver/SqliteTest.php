@@ -23,6 +23,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests Sqlite driver
@@ -41,7 +42,7 @@ class SqliteTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
+        $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'sqlite::memory:';
@@ -66,7 +67,7 @@ class SqliteTest extends TestCase
         ];
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected);
-        $driver->connect([]);
+        $driver->connect();
     }
 
     /**
@@ -83,7 +84,7 @@ class SqliteTest extends TestCase
             'init' => ['Execute this', 'this too'],
             'mask' => 0666,
         ];
-        $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
+        $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -111,13 +112,13 @@ class SqliteTest extends TestCase
             ->with($dsn, $expected)
             ->willReturn($connection);
 
-        $driver->connect($config);
+        $driver->connect();
     }
 
     /**
      * Tests creating multiple connections to same db.
      */
-    public function testConnectionSharedCached()
+    public function testConnectionSharedCached(): void
     {
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
         ConnectionManager::setConfig('test_shared_cache', [
@@ -167,10 +168,10 @@ class SqliteTest extends TestCase
     /**
      * Test the schemaValue method on Driver.
      *
-     * @dataProvider schemaValueProvider
      * @param mixed $input
      * @param mixed $expected
      */
+    #[DataProvider('schemaValueProvider')]
     public function testSchemaValue($input, $expected): void
     {
         $mock = Mockery::mock(PDO::class)

@@ -231,7 +231,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
                 $field = $this->_field instanceof ExpressionInterface ? $this->_field->sql($binder) : $this->_field;
                 /** @var string $field */
                 throw new DatabaseException(
-                    "Impossible to generate condition with empty list of values for field ($field)"
+                    "Impossible to generate condition with empty list of values for field ({$field})"
                 );
             }
         } else {
@@ -277,7 +277,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
             }
         }
 
-        if (!empty($value)) {
+        if ($value) {
             $parts += $binder->generateManyNamed($value, $type);
         }
 
@@ -297,8 +297,8 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
         if ($values instanceof ExpressionInterface) {
             return [$values, []];
         }
-
-        $expressions = $result = [];
+        $expressions = [];
+        $result = [];
         $isArray = is_array($values);
 
         if ($isArray) {

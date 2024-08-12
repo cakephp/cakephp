@@ -362,7 +362,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of default providers.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public static function getDefaultProviders(): array
     {
@@ -372,7 +372,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of providers in this validator.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function providers(): array
     {
@@ -404,20 +404,20 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Sets the rule set for a field
      *
-     * @param string $field name of the field to set
-     * @param \Cake\Validation\ValidationSet|array $rules set of rules to apply to field
+     * @param string $offset name of the field to set
+     * @param \Cake\Validation\ValidationSet|array $value set of rules to apply to field
      * @return void
      */
-    public function offsetSet(mixed $field, mixed $rules): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        if (!$rules instanceof ValidationSet) {
+        if (!$value instanceof ValidationSet) {
             $set = new ValidationSet();
-            foreach ($rules as $name => $rule) {
+            foreach ($value as $name => $rule) {
                 $set->add($name, $rule);
             }
-            $rules = $set;
+            $value = $set;
         }
-        $this->_fields[$field] = $rules;
+        $this->_fields[$offset] = $value;
     }
 
     /**
@@ -596,7 +596,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                     return false;
                 }
                 $check = $validator->validate($row, $context['newRecord']);
-                if (!empty($check)) {
+                if ($check) {
                     $errors[$i] = $check;
                 }
             }
@@ -1277,19 +1277,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                         $typeEnumeration
                     );
                 }
+            } elseif ($type === 'all') {
+                $message = __d(
+                    'cake',
+                    'The provided value must be a valid credit card number of any type'
+                );
             } else {
-                if ($type === 'all') {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be a valid credit card number of any type'
-                    );
-                } else {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be a valid credit card number of these types: `{0}`',
-                        $typeEnumeration
-                    );
-                }
+                $message = __d(
+                    'cake',
+                    'The provided value must be a valid credit card number of these types: `{0}`',
+                    $typeEnumeration
+                );
             }
         }
 
@@ -1791,7 +1789,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a date format validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array<string> $formats A list of accepted date formats.
+     * @param list<string> $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.
@@ -1832,7 +1830,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * Add a date time format validation rule to a field.
      *
      * @param string $field The field you want to apply the rule to.
-     * @param array<string> $formats A list of accepted date formats.
+     * @param list<string> $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.
@@ -1979,19 +1977,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 } else {
                     $message = sprintf('The provided value must be decimal with `%s` decimal places', $places);
                 }
+            } elseif ($places === null) {
+                $message = __d(
+                    'cake',
+                    'The provided value must be decimal with any number of decimal places, including none'
+                );
             } else {
-                if ($places === null) {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be decimal with any number of decimal places, including none'
-                    );
-                } else {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be decimal with `{0}` decimal places',
-                        $places
-                    );
-                }
+                $message = __d(
+                    'cake',
+                    'The provided value must be decimal with `{0}` decimal places',
+                    $places
+                );
             }
         }
 
@@ -3000,12 +2996,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (!$this->_useI18n) {
-            $message = 'This field is required';
-        } else {
-            $message = __d('cake', 'This field is required');
+            return 'This field is required';
         }
 
-        return $message;
+        return __d('cake', 'This field is required');
     }
 
     /**
@@ -3031,12 +3025,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (!$this->_useI18n) {
-            $message = 'This field cannot be left empty';
-        } else {
-            $message = __d('cake', 'This field cannot be left empty');
+            return 'This field cannot be left empty';
         }
 
-        return $message;
+        return __d('cake', 'This field cannot be left empty');
     }
 
     /**

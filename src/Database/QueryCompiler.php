@@ -49,7 +49,7 @@ class QueryCompiler
     /**
      * The list of query clauses to traverse for generating a SELECT statement
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_selectParts = [
         'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
@@ -59,21 +59,21 @@ class QueryCompiler
     /**
      * The list of query clauses to traverse for generating an UPDATE statement
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_updateParts = ['comment', 'with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_deleteParts = ['comment', 'with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_insertParts = ['comment', 'with', 'insert', 'values', 'epilog'];
 
@@ -138,7 +138,7 @@ class QueryCompiler
         return function ($part, $partName) use (&$sql, $query, $binder): void {
             if (
                 $part === null ||
-                (is_array($part) && empty($part)) ||
+                ($part === []) ||
                 ($part instanceof Countable && count($part) === 0)
             ) {
                 return;
@@ -208,7 +208,7 @@ class QueryCompiler
         $parts = $this->_stringifyExpressions($parts, $binder);
         foreach ($parts as $k => $p) {
             if (!is_numeric($k)) {
-                $p = $p . ' AS ';
+                $p .= ' AS ';
                 if ($quoteIdentifiers) {
                     $p .= $driver->quoteIdentifier($k);
                 } else {
@@ -309,7 +309,11 @@ class QueryCompiler
     {
         $windows = [];
         foreach ($parts as $window) {
-            $windows[] = $window['name']->sql($binder) . ' AS (' . $window['window']->sql($binder) . ')';
+            /** @var \Cake\Database\Expression\IdentifierExpression $expr */
+            $expr = $window['name'];
+            /** @var \Cake\Database\Expression\IdentifierExpression $windowExpr */
+            $windowExpr = $window['window'];
+            $windows[] = $expr->sql($binder) . ' AS (' . $windowExpr->sql($binder) . ')';
         }
 
         return ' WINDOW ' . implode(', ', $windows);
@@ -330,7 +334,7 @@ class QueryCompiler
             if ($part instanceof ExpressionInterface) {
                 $part = $part->sql($binder);
             }
-            if ($part[0] === '(') {
+            if (str_starts_with($part, '(')) {
                 $part = substr($part, 1, -1);
             }
             $set[] = $part;
@@ -352,8 +356,10 @@ class QueryCompiler
     protected function _buildUnionPart(array $parts, Query $query, ValueBinder $binder): string
     {
         $parts = array_map(function ($p) use ($binder) {
-            $p['query'] = $p['query']->sql($binder);
-            $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
+            /** @var \Cake\Database\Expression\IdentifierExpression $expr */
+            $expr = $p['query'];
+            $p['query'] = $expr->sql($binder);
+            $p['query'] = str_starts_with($p['query'], '(') ? trim($p['query'], '()') : $p['query'];
             $prefix = $p['all'] ? 'ALL ' : '';
             if ($this->_orderedUnion) {
                 return "{$prefix}({$p['query']})";

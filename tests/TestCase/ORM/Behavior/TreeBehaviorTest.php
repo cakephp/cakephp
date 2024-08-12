@@ -29,7 +29,7 @@ class TreeBehaviorTest extends TestCase
     /**
      * fixtures
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = [
         'core.MenuLinkTrees',
@@ -860,7 +860,7 @@ class TreeBehaviorTest extends TestCase
     public function testReParentSelf(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
+        $this->expectExceptionMessage("Cannot set a node's parent as itself");
         $entity = $this->table->get(1);
         $entity->parent_id = $entity->id;
         $this->table->save($entity);
@@ -872,7 +872,7 @@ class TreeBehaviorTest extends TestCase
     public function testReParentSelfNewEntity(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
+        $this->expectExceptionMessage("Cannot set a node's parent as itself");
         $entity = $this->table->newEntity(['name' => 'root']);
         $entity->id = 1;
         $entity->parent_id = $entity->id;

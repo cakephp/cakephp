@@ -28,6 +28,9 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use TestApp\Model\Table\ArticlesTable;
+use TestApp\Model\Table\TagsTable;
 use function Cake\Collection\collection;
 
 /**
@@ -38,7 +41,7 @@ class QueryRegressionTest extends TestCase
     /**
      * Fixture to be used
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = [
         'core.Articles',
@@ -232,7 +235,7 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
         ]);
@@ -312,19 +315,20 @@ class QueryRegressionTest extends TestCase
      * Checks that only relevant associations are passed when saving _joinData
      * Tests that _joinData can also save deeper associations
      *
-     * @dataProvider strategyProvider
      * @param string $strategy
      */
+    #[DataProvider('strategyProvider')]
     public function testBelongsToManyDeepSave($strategy): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
             'saveStrategy' => $strategy,
         ]);
         $articles->Highlights->junction()->belongsTo('Authors');
+        $articles->Highlights->associations()->remove('Authors');
         $articles->Highlights->hasOne('Authors', [
             'foreignKey' => 'id',
         ]);
@@ -410,12 +414,12 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
         ]);
         $articles->Highlights->hasMany('TopArticles', [
-            'className' => 'TestApp\Model\Table\ArticlesTable',
+            'className' => ArticlesTable::class,
             'foreignKey' => 'author_id',
         ]);
         $entity = $articles->get(2, ...['contain' => ['Highlights']]);
@@ -608,10 +612,7 @@ class QueryRegressionTest extends TestCase
             ->contain('Tags.TagsTranslations')
             ->all();
 
-        $tags->hasMany('TagsTranslations', [
-            'foreignKey' => 'id',
-            'strategy' => 'subquery',
-        ]);
+        $tags->TagsTranslations->setStrategy('subquery');
         $findViaSubquery = $featuredTags
             ->find()
             ->where(['FeaturedTags.tag_id' => 2])
@@ -943,8 +944,8 @@ class QueryRegressionTest extends TestCase
             })
             ->orderBy(['Comments.id' => 'ASC'])
             ->first();
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->article);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->user);
+        $this->assertInstanceOf(Entity::class, $result->article);
+        $this->assertInstanceOf(Entity::class, $result->user);
         $this->assertSame(2, $result->user->id);
         $this->assertSame(1, $result->article->id);
     }

@@ -26,6 +26,7 @@ use Cake\ORM\Marshaller;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\OpenArticleEntity;
 
 /**
@@ -36,7 +37,7 @@ class CompositeKeysTest extends TestCase
     /**
      * Fixture to be used
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = [
         'core.CompositeIncrements',
@@ -102,8 +103,6 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Test that you cannot save rows with composite keys if some columns are missing.
-     *
-     * @group save
      */
     public function testSaveNewErrorCompositeKeyNoIncrement(): void
     {
@@ -118,8 +117,6 @@ class CompositeKeysTest extends TestCase
      * Test that saving into composite primary keys where one column is missing & autoIncrement works.
      *
      * SQLite is skipped because it doesn't support autoincrement composite keys.
-     *
-     * @group save
      */
     public function testSaveNewCompositeKeyIncrement(): void
     {
@@ -134,9 +131,8 @@ class CompositeKeysTest extends TestCase
     /**
      * Tests that HasMany associations are correctly eager loaded and results
      * correctly nested when multiple foreignKeys are used
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEager(string $strategy): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
@@ -209,9 +205,8 @@ class CompositeKeysTest extends TestCase
     /**
      * Tests that BelongsToMany associations are correctly eager loaded when multiple
      * foreignKeys are used
-     *
-     * @dataProvider strategiesProviderBelongsToMany
      */
+    #[DataProvider('strategiesProviderBelongsToMany')]
     public function testBelongsToManyEager(string $strategy): void
     {
         $articles = $this->getTableLocator()->get('SiteArticles');
@@ -295,9 +290,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Tests loading belongsTo with composite keys
-     *
-     * @dataProvider strategiesProviderBelongsTo
      */
+    #[DataProvider('strategiesProviderBelongsTo')]
     public function testBelongsToEager(string $strategy): void
     {
         $table = $this->getTableLocator()->get('SiteArticles');
@@ -343,9 +337,8 @@ class CompositeKeysTest extends TestCase
 
     /**
      * Tests loading hasOne with composite keys
-     *
-     * @dataProvider strategiesProviderHasOne
      */
+    #[DataProvider('strategiesProviderHasOne')]
     public function testHasOneEager(string $strategy): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
@@ -393,8 +386,6 @@ class CompositeKeysTest extends TestCase
     /**
      * Tests that it is possible to insert a new row using the save method
      * if the entity has composite primary key
-     *
-     * @group save
      */
     public function testSaveNewEntity(): void
     {
@@ -416,8 +407,6 @@ class CompositeKeysTest extends TestCase
     /**
      * Tests that it is possible to insert a new row using the save method
      * if the entity has composite primary key
-     *
-     * @group save
      */
     public function testSaveNewEntityMissingKey(): void
     {
@@ -496,9 +485,9 @@ class CompositeKeysTest extends TestCase
         $result = $marshall->one($data, ['associated' => ['SiteTags']]);
 
         $this->assertCount(3, $result->tags);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[0]);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[1]);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->tags[2]);
+        $this->assertInstanceOf(Entity::class, $result->tags[0]);
+        $this->assertInstanceOf(Entity::class, $result->tags[1]);
+        $this->assertInstanceOf(Entity::class, $result->tags[2]);
 
         $data = [
             'title' => 'Haz tags',
@@ -536,10 +525,10 @@ class CompositeKeysTest extends TestCase
             ->enableHydration(false)
             ->orderBy('id');
         $expected = [
-            '1;1' => 'mark;1',
-            '2;2' => 'juan;2',
-            '3;2' => 'jose;2',
-            '4;1' => 'andy;1',
+            '1;1' => 'mark 1',
+            '2;2' => 'juan 2',
+            '3;2' => 'jose 2',
+            '4;1' => 'andy 1',
         ];
         $this->assertEquals($expected, $query->toArray());
 
@@ -547,13 +536,13 @@ class CompositeKeysTest extends TestCase
             ->enableHydration(false)
             ->orderBy('id');
         $expected = [
-            '1;1' => [
-                '1;1' => 'mark;1',
-                '4;1' => 'andy;1',
+            '1 1' => [
+                '1;1' => 'mark 1',
+                '4;1' => 'andy 1',
             ],
-            '2;2' => [
-                '2;2' => 'juan;2',
-                '3;2' => 'jose;2',
+            '2 2' => [
+                '2;2' => 'juan 2',
+                '3;2' => 'jose 2',
             ],
         ];
         $this->assertEquals($expected, $query->toArray());
@@ -723,7 +712,7 @@ class CompositeKeysTest extends TestCase
         } elseif ($driver instanceof Sqlite) {
             $serverVersion = $driver->version();
             if (version_compare($serverVersion, '3.15.0', '<')) {
-                $this->markTestSkipped("Sqlite ($serverVersion) does not support the requirements of this test.");
+                $this->markTestSkipped("Sqlite ({$serverVersion}) does not support the requirements of this test.");
             }
         }
 

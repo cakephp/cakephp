@@ -392,7 +392,7 @@ class Mailer implements EventListenerInterface
         if (is_string($config)) {
             $name = $config;
             $config = static::getConfig($name);
-            if (empty($config)) {
+            if (!$config) {
                 throw new InvalidArgumentException(sprintf('Unknown email configuration `%s`.', $name));
             }
             unset($name);
@@ -532,7 +532,7 @@ class Mailer implements EventListenerInterface
      */
     protected function logDelivery(array $contents): void
     {
-        if (empty($this->logConfig)) {
+        if (!$this->logConfig) {
             return;
         }
 
@@ -568,7 +568,7 @@ class Mailer implements EventListenerInterface
     /**
      * Converts given value to string
      *
-     * @param array<string>|string $value The value to convert
+     * @param list<string>|string $value The value to convert
      * @return string
      */
     protected function flatten(array|string $value): string

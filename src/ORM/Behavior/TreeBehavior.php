@@ -111,7 +111,7 @@ class TreeBehavior extends Behavior
         $level = $config['level'];
 
         if ($parent && $entity->get($primaryKey) === $parent) {
-            throw new DatabaseException('Cannot set a node\'s parent as itself.');
+            throw new DatabaseException("Cannot set a node's parent as itself.");
         }
 
         if ($isNew) {
@@ -403,8 +403,8 @@ class TreeBehavior extends Behavior
 
         return $this->_scope($query)
             ->where([
-                "$left <=" => $node->get($config['left']),
-                "$right >=" => $node->get($config['right']),
+                "{$left} <=" => $node->get($config['left']),
+                "{$right} >=" => $node->get($config['right']),
             ])
             ->orderBy([$left => 'ASC']);
     }
@@ -482,7 +482,7 @@ class TreeBehavior extends Behavior
      *   return the key out of the provided row.
      * @param \Closure|string|null $valuePath A dot separated path to fetch the field to use for the array value, or a closure to
      *   return the value out of the provided row.
-     * @param ?string $spacer A string to be used as prefix for denoting the depth in the tree for each item.
+     * @param string|null $spacer A string to be used as prefix for denoting the depth in the tree for each item.
      * @return \Cake\ORM\Query\SelectQuery
      */
     public function findTreeList(
@@ -505,11 +505,11 @@ class TreeBehavior extends Behavior
      * indicate relative depth in the tree.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query object to format.
-     * @param \Closure|string|null $keyPath  A dot separated path to the field that will be the result array key, or a closure to
+     * @param \Closure|string|null $keyPath A dot separated path to the field that will be the result array key, or a closure to
      *   return the key from the provided row.
-     * @param \Closure|string|null $valuePath: A dot separated path to the field that is the array's value, or a closure to
+     * @param \Closure|string|null $valuePath A dot separated path to the field that is the array's value, or a closure to
      *   return the value from the provided row.
-     * @param ?string $spacer A string to be used as prefix for denoting the depth in the tree for each item.
+     * @param string|null $spacer A string to be used as prefix for denoting the depth in the tree for each item.
      * @return \Cake\ORM\Query\SelectQuery Augmented query.
      */
     public function formatTreeList(
@@ -637,7 +637,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent])
+                ->where(["{$parent} IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByDesc($config['leftField'])
                 ->offset($number - 1)
@@ -648,7 +648,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent])
+                ->where(["{$parent} IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByAsc($config['leftField'])
                 ->limit(1)
@@ -726,7 +726,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent])
+                ->where(["{$parent} IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByAsc($config['leftField'])
                 ->offset($number - 1)
@@ -737,7 +737,7 @@ class TreeBehavior extends Behavior
             /** @var \Cake\Datasource\EntityInterface|null $targetNode */
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
-                ->where(["$parent IS" => $nodeParent])
+                ->where(["{$parent} IS" => $nodeParent])
                 ->where(fn (QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByDesc($config['leftField'])
                 ->limit(1)

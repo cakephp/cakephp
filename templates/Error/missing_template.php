@@ -12,7 +12,7 @@
  * @since         0.10.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  * @var string $file
- * @var array<string> $paths
+ * @var list<string> $paths
  */
 use Cake\Utility\Inflector;
 use function Cake\Core\h;

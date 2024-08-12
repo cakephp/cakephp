@@ -18,8 +18,11 @@ namespace Cake\Database\Driver;
 
 use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\SchemaDialect;
+use Cake\Database\StatementInterface;
 use PDO;
 
 /**
@@ -111,7 +114,7 @@ class Mysql extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->pdo)) {
+        if ($this->pdo !== null) {
             return;
         }
         $config = $this->_config;
@@ -158,6 +161,28 @@ class Mysql extends Driver
     }
 
     /**
+     * @inheritDoc
+     */
+    public function run(Query $query): StatementInterface
+    {
+        $statement = $this->prepare($query);
+        $query->getValueBinder()->attachTo($statement);
+
+        if ($query instanceof SelectQuery) {
+            try {
+                $this->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, $query->isBufferedResultsEnabled());
+                $this->executeStatement($statement);
+            } finally {
+                $this->getPdo()->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+            }
+        } else {
+            $this->executeStatement($statement);
+        }
+
+        return $statement;
+    }
+
+    /**
      * Returns whether php is able to use this driver for connecting to database
      *
      * @return bool true if it is valid to use this driver
@@ -172,11 +197,7 @@ class Mysql extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if (isset($this->_schemaDialect)) {
-            return $this->_schemaDialect;
-        }
-
-        return $this->_schemaDialect = new MysqlSchemaDialect($this);
+        return $this->_schemaDialect ?? ($this->_schemaDialect = new MysqlSchemaDialect($this));
     }
 
     /**

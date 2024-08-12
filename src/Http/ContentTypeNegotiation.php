@@ -18,7 +18,7 @@ class ContentTypeNegotiation
      * discarded as they are not frequently used.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to get an accept from.
-     * @return array<string, array<string>> A mapping of preference values => content types
+     * @return array<string, list<string>> A mapping of preference values => content types
      */
     public function parseAccept(RequestInterface $request): array
     {
@@ -34,7 +34,7 @@ class ContentTypeNegotiation
      * as they are not frequently used.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to get an accept from.
-     * @return array<string, array<string>> A mapping of preference values => languages
+     * @return array<string, list<string>> A mapping of preference values => languages
      */
     public function parseAcceptLanguage(RequestInterface $request): array
     {
@@ -47,7 +47,7 @@ class ContentTypeNegotiation
      * Parse a header value into preference => value mapping
      *
      * @param string $header The header value to parse
-     * @return array<string, array<string>>
+     * @return array<string, list<string>>
      */
     protected function parseQualifiers(string $header): array
     {
@@ -64,17 +64,17 @@ class ContentTypeNegotiation
      * You can expect null when the request has no Accept header.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to use.
-     * @param array<string> $choices The supported content type choices.
-     * @return string|null The prefered type or null if there is no match with choices or if the
+     * @param list<string> $choices The supported content type choices.
+     * @return string|null The preferred type or null if there is no match with choices or if the
      *   request had no Accept header.
      */
     public function preferredType(RequestInterface $request, array $choices = []): ?string
     {
         $parsed = $this->parseAccept($request);
-        if (empty($parsed)) {
+        if (!$parsed) {
             return null;
         }
-        if (empty($choices)) {
+        if (!$choices) {
             $preferred = array_shift($parsed);
 
             return $preferred[0];
@@ -97,7 +97,7 @@ class ContentTypeNegotiation
      * `_` replaced with `-`.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to read headers from.
-     * @return array<string> A list of language codes that are accepted.
+     * @return list<string> A list of language codes that are accepted.
      */
     public function acceptedLanguages(RequestInterface $request): array
     {

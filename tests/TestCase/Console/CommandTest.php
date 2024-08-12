@@ -74,7 +74,7 @@ class CommandTest extends TestCase
     public function testSetNameInvalid(): void
     {
         $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage('The name \'routes_show\' is missing a space. Names should look like `cake routes`');
+        $this->expectExceptionMessage("The name 'routes_show' is missing a space. Names should look like `cake routes`");
 
         $command = new Command();
         $command->setName('routes_show');
@@ -108,7 +108,7 @@ class CommandTest extends TestCase
      */
     public function testRunCallsInitialize(): void
     {
-        /** @var \Cake\Console\Command|\PHPUnit\Framework\MockObject\MockObject $command */
+        /** @var \Cake\Command\Command|\PHPUnit\Framework\MockObject\MockObject $command */
         $command = $this->getMockBuilder(Command::class)
             ->onlyMethods(['initialize'])
             ->getMock();
@@ -191,7 +191,7 @@ class CommandTest extends TestCase
      */
     public function testRunOptionParserFailure(): void
     {
-        /** @var \Cake\Console\Command|\PHPUnit\Framework\MockObject\MockObject $command */
+        /** @var \Cake\Command\Command|\PHPUnit\Framework\MockObject\MockObject $command */
         $command = $this->getMockBuilder(Command::class)
             ->onlyMethods(['getOptionParser'])
             ->getMock();

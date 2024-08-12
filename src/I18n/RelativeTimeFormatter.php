@@ -113,8 +113,10 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             $time = $time->setTimezone($options['timezone']);
         }
 
-        $now = $options['from']->format('U');
-        $inSeconds = $time->format('U');
+        /** @var \Cake\Chronos\Chronos $from */
+        $from = $options['from'];
+        $now = (int)$from->format('U');
+        $inSeconds = (int)$time->format('U');
         $backwards = ($inSeconds > $now);
 
         $futureTime = $now;
@@ -129,7 +131,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             return __d('cake', 'just now', 'just now');
         }
 
-        if ($diff > abs($now - (new DateTime($options['end']))->format('U'))) {
+        if ($diff > abs($now - (int)(new DateTime($options['end']))->format('U'))) {
             return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
         }
 
@@ -228,7 +230,11 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $past['m'],
                 $past['Y'],
             ] = explode('/', date('H/i/s/d/m/Y', $pastTime));
-            $weeks = $days = $hours = $minutes = $seconds = 0;
+            $weeks = 0;
+            $days = 0;
+            $hours = 0;
+            $minutes = 0;
+            $seconds = 0;
 
             $years = (int)$future['Y'] - (int)$past['Y'];
             $months = (int)$future['m'] + (12 * $years) - (int)$past['m'];
@@ -273,7 +279,9 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $days -= $weeks * 7;
             }
         } else {
-            $years = $months = $weeks = 0;
+            $years = 0;
+            $months = 0;
+            $weeks = 0;
             $days = floor($diff / 86400);
 
             $diff -= $days * 86400;
@@ -335,8 +343,10 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             $date = $date->setTimezone($options['timezone']);
         }
 
-        $now = $options['from']->format('U');
-        $inSeconds = $date->format('U');
+        /** @var \Cake\Chronos\Chronos $from */
+        $from = $options['from'];
+        $now = (int)$from->format('U');
+        $inSeconds = (int)$date->format('U');
         $backwards = ($inSeconds > $now);
 
         $futureTime = $now;
@@ -351,7 +361,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             return __d('cake', 'today');
         }
 
-        if ($diff > abs($now - (new Date($options['end']))->format('U'))) {
+        if ($diff > abs($now - (int)(new Date($options['end']))->format('U'))) {
             return sprintf($options['absoluteString'], $date->i18nFormat($options['format']));
         }
 

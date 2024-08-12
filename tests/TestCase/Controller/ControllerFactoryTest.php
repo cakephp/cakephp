@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Controller;
 
+use Cake\Controller\Component\FlashComponent;
+use Cake\Controller\ComponentRegistry;
 use Cake\Controller\ControllerFactory;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Core\Container;
@@ -23,8 +25,14 @@ use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Company\TestPluginThree\Controller\OvensController;
 use stdClass;
+use TestApp\Controller\Admin\PostsController;
+use TestApp\Controller\Admin\Sub\PostsController as SubPostsController;
+use TestApp\Controller\CakesController;
 use TestApp\Controller\DependenciesController;
+use TestPlugin\Controller\Admin\CommentsController;
+use TestPlugin\Controller\TestPluginController;
 
 /**
  * Test case for ControllerFactory.
@@ -65,7 +73,7 @@ class ControllerFactoryTest extends TestCase
             ],
         ]);
         $result = $this->factory->create($request);
-        $this->assertInstanceOf('TestApp\Controller\CakesController', $result);
+        $this->assertInstanceOf(CakesController::class, $result);
         $this->assertSame($request, $result->getRequest());
     }
 
@@ -84,7 +92,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestApp\Controller\Admin\PostsController',
+            PostsController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -105,7 +113,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestApp\Controller\Admin\Sub\PostsController',
+            SubPostsController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -126,7 +134,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestPlugin\Controller\TestPluginController',
+            TestPluginController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -147,7 +155,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'Company\TestPluginThree\Controller\OvensController',
+            OvensController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -169,7 +177,7 @@ class ControllerFactoryTest extends TestCase
         ]);
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
-            'TestPlugin\Controller\Admin\CommentsController',
+            CommentsController::class,
             $result
         );
         $this->assertSame($request, $result->getRequest());
@@ -238,7 +246,7 @@ class ControllerFactoryTest extends TestCase
         $request = new ServerRequest([
             'url' => 'interface/index',
             'params' => [
-                'controller' => 'TestApp\Controller\CakesController',
+                'controller' => CakesController::class,
                 'action' => 'index',
             ],
         ]);
@@ -304,7 +312,7 @@ class ControllerFactoryTest extends TestCase
             ],
         ]);
         $result = $this->factory->getControllerClass($request);
-        $this->assertSame('Company\TestPluginThree\Controller\OvensController', $result);
+        $this->assertSame(OvensController::class, $result);
     }
 
     /**
@@ -897,6 +905,34 @@ class ControllerFactoryTest extends TestCase
         $data = json_decode((string)$result->getBody(), true);
 
         $this->assertSame(['one' => '1'], $data);
+    }
+
+    /**
+     * Test that default values work for typed parameters
+     */
+    public function testInvokeComponentFromContainer(): void
+    {
+        $this->container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
+            return new FlashComponent($registry, $config);
+        })
+        ->addArgument(ComponentRegistry::class)
+        ->addArgument(['key' => 'customFlash']);
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/component-test/flash',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'ComponentTest',
+                'action' => 'flash',
+                'pass' => [],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody(), true);
+
+        $this->assertSame(['flashKey' => 'customFlash'], $data);
     }
 
     public function testMiddleware(): void

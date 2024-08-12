@@ -39,6 +39,7 @@ use Closure;
 use Exception;
 use LogicException;
 use Mockery;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
@@ -56,7 +57,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Fixtures used by this test case.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = [];
 
@@ -71,6 +72,13 @@ abstract class TestCase extends BaseTestCase
      * @var array
      */
     protected array $_configure = [];
+
+    /**
+     * Plugins to be loaded after app instance is created ContainerStubTrait::creatApp()
+     *
+     * @var array
+     */
+    protected array $appPluginsToLoad = [];
 
     /**
      * @var \Cake\Error\PhpError|null
@@ -156,6 +164,7 @@ abstract class TestCase extends BaseTestCase
      * @param \Closure $callable callable function that will receive asserts
      * @return void
      */
+    #[WithoutErrorHandler]
     public function deprecated(Closure $callable): void
     {
         $duplicate = Configure::read('Error.allowDuplicateDeprecations');
@@ -307,6 +316,8 @@ abstract class TestCase extends BaseTestCase
      */
     public function loadPlugins(array $plugins = []): BaseApplication
     {
+        $this->appPluginsToLoad = $plugins;
+
         /**
          * @psalm-suppress MissingTemplateParam
          */
@@ -341,7 +352,7 @@ abstract class TestCase extends BaseTestCase
      *
      * Useful in test case teardown methods.
      *
-     * @param array<string> $names A list of plugins you want to remove.
+     * @param list<string> $names A list of plugins you want to remove.
      * @return void
      */
     public function removePlugins(array $names = []): void
@@ -653,7 +664,7 @@ abstract class TestCase extends BaseTestCase
                 $tags = (string)$tags;
             }
             $i++;
-            if (is_string($tags) && $tags[0] === '<') {
+            if (is_string($tags) && str_starts_with($tags, '<')) {
                 $tags = [substr($tags, 1) => []];
             } elseif (is_string($tags)) {
                 $tagsTrimmed = preg_replace('/\s+/m', '', $tags);
@@ -671,7 +682,7 @@ abstract class TestCase extends BaseTestCase
                     ];
                     continue;
                 }
-                if (!empty($tags) && preg_match('/^preg\:\/(.+)\/$/i', $tags, $matches)) {
+                if ($tags && preg_match('/^preg\:\/(.+)\/$/i', $tags, $matches)) {
                     $tags = $matches[1];
                     $type = 'Regex matches';
                 } else {
@@ -698,7 +709,7 @@ abstract class TestCase extends BaseTestCase
                 $explanations = [];
                 $i = 1;
                 foreach ($attributes as $attr => $val) {
-                    if (is_numeric($attr) && preg_match('/^preg\:\/(.+)\/$/i', (string)$val, $matches)) {
+                    if (is_numeric($attr) && preg_match('/^preg:\/(.+)\/$/i', (string)$val, $matches)) {
                         $attrs[] = $matches[1];
                         $explanations[] = sprintf('Regex `%s` matches', $matches[1]);
                         continue;
@@ -710,7 +721,7 @@ abstract class TestCase extends BaseTestCase
                         $attr = $val;
                         $val = '.+?';
                         $explanations[] = sprintf('Attribute `%s` present', $attr);
-                    } elseif (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
+                    } elseif ($val && preg_match('/^preg:\/(.+)\/$/i', $val, $matches)) {
                         $val = str_replace(
                             ['.*', '.+'],
                             ['.*?', '.+?'],
@@ -748,7 +759,7 @@ abstract class TestCase extends BaseTestCase
                  * @var string $string
                  */
                 $string = $this->_assertAttributes($assertion, $string, $fullDebug, $regex);
-                if ($fullDebug === true && $string === false) {
+                if ($fullDebug && $string === false) {
                     debug($string, true);
                     debug($regex, true);
                 }
@@ -770,7 +781,7 @@ abstract class TestCase extends BaseTestCase
                 }
             }
             if (!$matches) {
-                if ($fullDebug === true) {
+                if ($fullDebug) {
                     debug($string);
                     debug($regex);
                 }
@@ -819,7 +830,7 @@ abstract class TestCase extends BaseTestCase
                 }
             }
             if ($matches === false) {
-                if ($fullDebug === true) {
+                if ($fullDebug) {
                     debug($string);
                     debug($regex);
                 }
@@ -913,7 +924,7 @@ abstract class TestCase extends BaseTestCase
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
-     * @param array<string> $methods The list of methods to mock
+     * @param list<string> $methods The list of methods to mock
      * @param array<string, mixed> $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
@@ -945,8 +956,15 @@ abstract class TestCase extends BaseTestCase
         }
 
         if ($nonExistingMethods) {
-            trigger_error('Adding non existent methods to your model ' .
-                'via testing will not work in future PHPUnit versions.', E_USER_DEPRECATED);
+            trigger_error(
+                sprintf(
+                    'Adding non-existent methods (%s) to model `%s` ' .
+                    'when mocking will not work in future PHPUnit versions.',
+                    join(',', $nonExistingMethods),
+                    $alias
+                ),
+                E_USER_DEPRECATED
+            );
             $builder->addMethods($nonExistingMethods);
         }
 
@@ -1033,7 +1051,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Get the fixtures this test should use.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getFixtures(): array
     {

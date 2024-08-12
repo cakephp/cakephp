@@ -80,11 +80,16 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function load(string $name, array $config = []): object
     {
+        $plugin = null;
         if (isset($config['className'])) {
             $objName = $name;
             $name = $config['className'];
         } else {
-            [, $objName] = pluginSplit($name);
+            [$plugin, $objName] = pluginSplit($name);
+        }
+
+        if ($plugin) {
+            $config['className'] = $name;
         }
 
         $loaded = isset($this->_loaded[$objName]);
@@ -134,7 +139,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         if (!$hasConfig) {
             throw new CakeException($msg);
         }
-        if (empty($config)) {
+        if (!$config) {
             return;
         }
         $existingConfig = $existing->getConfig();
@@ -198,7 +203,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Get the list of loaded objects.
      *
-     * @return array<string> List of object names.
+     * @return list<string> List of object names.
      */
     public function loaded(): array
     {

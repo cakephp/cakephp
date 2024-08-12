@@ -79,7 +79,7 @@ class RouteCollection
     /**
      * Route extensions
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_extensions = [];
 
@@ -115,7 +115,7 @@ class RouteCollection
         $path = $route->staticPath();
 
         $extensions = $route->getExtensions();
-        if (count($extensions) > 0) {
+        if ($extensions !== []) {
             $this->setExtensions($extensions);
         }
 
@@ -160,7 +160,7 @@ class RouteCollection
         krsort($this->_paths);
 
         foreach ($this->_paths as $path => $routes) {
-            if (strpos($urlPath, $path) !== 0) {
+            if (!str_starts_with($urlPath, $path)) {
                 continue;
             }
 
@@ -185,7 +185,7 @@ class RouteCollection
      * and newer style urls containing '_name'
      *
      * @param array $url The url to match.
-     * @return array<string> The set of names of the url
+     * @return list<string> The set of names of the url
      */
     protected function _getNames(array $url): array
     {
@@ -340,7 +340,7 @@ class RouteCollection
     /**
      * Get the extensions that can be handled.
      *
-     * @return array<string> The valid extensions.
+     * @return list<string> The valid extensions.
      */
     public function getExtensions(): array
     {
@@ -350,7 +350,7 @@ class RouteCollection
     /**
      * Set the extensions that the route collection can handle.
      *
-     * @param array<string> $extensions The list of extensions to set.
+     * @param list<string> $extensions The list of extensions to set.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return $this
@@ -390,20 +390,20 @@ class RouteCollection
      * Add middleware to a middleware group
      *
      * @param string $name Name of the middleware group
-     * @param array<string> $middlewareNames Names of the middleware
+     * @param list<string> $middlewareNames Names of the middleware
      * @return $this
      * @throws \InvalidArgumentException
      */
     public function middlewareGroup(string $name, array $middlewareNames)
     {
         if ($this->hasMiddleware($name)) {
-            $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
+            $message = "Cannot add middleware group '{$name}'. A middleware by this name has already been registered.";
             throw new InvalidArgumentException($message);
         }
 
         foreach ($middlewareNames as $middlewareName) {
             if (!$this->hasMiddleware($middlewareName)) {
-                $message = "Cannot add '$middlewareName' middleware to group '$name'. It has not been registered.";
+                $message = "Cannot add '{$middlewareName}' middleware to group '{$name}'. It has not been registered.";
                 throw new InvalidArgumentException($message);
             }
         }
@@ -449,7 +449,7 @@ class RouteCollection
     /**
      * Get an array of middleware given a list of names
      *
-     * @param array<string> $names The names of the middleware or groups to fetch
+     * @param list<string> $names The names of the middleware or groups to fetch
      * @return array An array of middleware. If any of the passed names are groups,
      *   the groups middleware will be flattened into the returned list.
      * @throws \InvalidArgumentException when a requested middleware does not exist.

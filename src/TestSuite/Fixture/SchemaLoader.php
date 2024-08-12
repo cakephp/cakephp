@@ -36,22 +36,9 @@ use InvalidArgumentException;
 class SchemaLoader
 {
     /**
-     * @var \Cake\TestSuite\ConnectionHelper
-     */
-    protected ConnectionHelper $helper;
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->helper = new ConnectionHelper();
-    }
-
-    /**
      * Load and apply schema sql file, or an array of files.
      *
-     * @param array<string>|string $paths Schema files to load
+     * @param list<string>|string $paths Schema files to load
      * @param string $connectionName Connection name
      * @param bool $dropTables Drop all tables prior to loading schema files
      * @param bool $truncateTables Truncate all tables after loading schema files
@@ -71,7 +58,7 @@ class SchemaLoader
         }
 
         if ($dropTables) {
-            $this->helper->dropTables($connectionName);
+            ConnectionHelper::dropTables($connectionName);
         }
 
         /** @var \Cake\Database\Connection $connection */
@@ -92,7 +79,7 @@ class SchemaLoader
         }
 
         if ($truncateTables) {
-            $this->helper->truncateTables($connectionName);
+            ConnectionHelper::truncateTables($connectionName);
         }
     }
 
@@ -157,7 +144,7 @@ class SchemaLoader
             return;
         }
 
-        $this->helper->dropTables($connectionName);
+        ConnectionHelper::dropTables($connectionName);
 
         $tables = include $file;
 
@@ -171,7 +158,7 @@ class SchemaLoader
                 if (!is_string($name)) {
                     throw new InvalidArgumentException(
                         sprintf('`%s` is not a valid table name. Either use a string key for the table definition'
-                            . '(`\'articles\' => [...]`) or define the `table` key in the table definition.', $name)
+                            . "(`'articles' => [...]`) or define the `table` key in the table definition.", $name)
                     );
                 }
                 $schema = new TableSchema($name, $table['columns']);

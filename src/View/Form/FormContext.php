@@ -218,7 +218,7 @@ class FormContext implements ContextInterface
     {
         $errors = $this->error($field);
 
-        return count($errors) > 0;
+        return $errors !== [];
     }
 
     /**

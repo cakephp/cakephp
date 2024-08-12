@@ -102,7 +102,7 @@ class Response implements ResponseInterface, Stringable
         415 => 'Unsupported Media Type',
         416 => 'Requested range not satisfiable',
         417 => 'Expectation Failed',
-        418 => 'I\'m a teapot',
+        418 => "I'm a teapot",
         421 => 'Misdirected Request',
         422 => 'Unprocessable Entity',
         423 => 'Locked',
@@ -679,7 +679,7 @@ class Response implements ResponseInterface, Stringable
      * This is needed for RequestHandlerComponent and recognition of types.
      *
      * @param string $type Content type.
-     * @param array<string>|string $mimeType Definition of the mime type.
+     * @param list<string>|string $mimeType Definition of the mime type.
      * @return void
      */
     public function setTypeMap(string $type, array|string $mimeType): void
@@ -1021,7 +1021,7 @@ class Response implements ResponseInterface, Stringable
      * separated string. If no parameters are passed, then an
      * array with the current Vary header value is returned
      *
-     * @param array<string>|string $cacheVariances A single Vary string or an array
+     * @param list<string>|string $cacheVariances A single Vary string or an array
      *   containing the list for variances.
      * @return static
      */
@@ -1373,13 +1373,14 @@ class Response implements ResponseInterface, Stringable
         if ($options['download']) {
             $agent = (string)env('HTTP_USER_AGENT');
 
+            $contentType = null;
             if ($agent && preg_match('%Opera([/ ])([0-9].[0-9]{1,2})%', $agent)) {
                 $contentType = 'application/octet-stream';
             } elseif ($agent && preg_match('/MSIE ([0-9].[0-9]{1,2})/', $agent)) {
                 $contentType = 'application/force-download';
             }
 
-            if (isset($contentType)) {
+            if ($contentType !== null) {
                 $new = $new->withType($contentType);
             }
             $name = $options['name'] ?: $file->getFileName();

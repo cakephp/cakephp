@@ -28,7 +28,7 @@ use InvalidArgumentException;
 class TimeTest extends TestCase
 {
     /**
-     * @var \Cake\Chronos\ChronosInterface|null
+     * @var \Cake\Chronos\Chronos|null
      */
     protected $now;
 
@@ -136,7 +136,7 @@ class TimeTest extends TestCase
         $this->assertTimeFormat('"custom format"', json_encode($time));
     }
 
-    public function testInvalidJsonEncodeFormat()
+    public function testInvalidJsonEncodeFormat(): void
     {
         $this->expectException(InvalidArgumentException::class);
         Time::setJsonEncodeFormat(DateTime::UNIX_TIMESTAMP_FORMAT);

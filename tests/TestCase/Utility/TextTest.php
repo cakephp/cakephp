@@ -19,6 +19,7 @@ use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionMethod;
 use Transliterator;
 
@@ -339,9 +340,8 @@ class TextTest extends TestCase
 
     /**
      * test that wordWrap() works the same as built-in wordwrap function
-     *
-     * @dataProvider wordWrapProvider
      */
+    #[DataProvider('wordWrapProvider')]
     public function testWordWrap(string $text, int $width, string $break = "\n", bool $cut = false): void
     {
         $result = Text::wordWrap($text, $width, $break, $cut);
@@ -539,21 +539,21 @@ TEXT;
         $text3 = '<b>&copy; 2005-2007, Cake Software Foundation, Inc.</b><br />written by Alexander Wegener';
         $text4 = '<IMG src="mypic.jpg"> This image tag is not XHTML conform!<br><hr/><b>But the following image tag should be conform <img src="mypic.jpg" alt="Me, myself and I" /></b><br />Great, or?';
         $text5 = '0<b>1<i>2<span class="myclass">3</span>4<u>5</u>6</i>7</b>8<b>9</b>0';
-        $text6 = '<p><strong>Extra dates have been announced for this year\'s tour.</strong></p><p>Tickets for the new shows in</p>';
+        $text6 = "<p><strong>Extra dates have been announced for this year's tour.</strong></p><p>Tickets for the new shows in</p>";
         $text7 = 'El moño está en el lugar correcto. Eso fue lo que dijo la niña, ¿habrá dicho la verdad?';
         $text8 = 'Vive la R' . chr(195) . chr(169) . 'publique de France';
         $text9 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
         $text10 = 'http://example.com/something/foo:bar';
 
-        $this->assertSame('...', $this->Text->truncate('Hello', 3));
-        $this->assertSame('Hel...', $this->Text->truncate('Hello', 3, ['exact' => false]));
-        $this->assertSame('The quick br...', $this->Text->truncate($text1, 15));
-        $this->assertSame('The quick...', $this->Text->truncate($text1, 15, ['exact' => false]));
+        $this->assertSame('H…', $this->Text->truncate('Hello', 2));
+        $this->assertSame('Hel…', $this->Text->truncate('Hello', 3, ['exact' => false]));
+        $this->assertSame('The quick brow…', $this->Text->truncate($text1, 15));
+        $this->assertSame('The quick…', $this->Text->truncate($text1, 15, ['exact' => false]));
         $this->assertSame('The quick brown fox jumps over the lazy dog', $this->Text->truncate($text1, 100));
-        $this->assertSame('Heiz&ou...', $this->Text->truncate($text2, 10));
-        $this->assertSame('Heiz&ouml;...', $this->Text->truncate($text2, 10, ['exact' => false]));
-        $this->assertSame('<b>&copy; 2005-20...', $this->Text->truncate($text3, 20));
-        $this->assertSame('<IMG src="my...', $this->Text->truncate($text4, 15));
+        $this->assertSame('Heiz&ouml…', $this->Text->truncate($text2, 10));
+        $this->assertSame('Heiz&ouml;…', $this->Text->truncate($text2, 10, ['exact' => false]));
+        $this->assertSame('<b>&copy; 2005-2007…', $this->Text->truncate($text3, 20));
+        $this->assertSame('<IMG src="mypi…', $this->Text->truncate($text4, 15));
         $this->assertSame('0<b>1<', $this->Text->truncate($text5, 6, ['ellipsis' => '']));
         $this->assertSame("The quick brow\xe2\x80\xa6", $this->Text->truncate($text1, 15, ['html' => true]));
         $this->assertSame("The quick\xe2\x80\xa6", $this->Text->truncate($text1, 15, ['exact' => false, 'html' => true]));
@@ -567,10 +567,10 @@ TEXT;
         $this->assertSame($text5, $this->Text->truncate($text5, 20, ['ellipsis' => '', 'html' => true]));
         $this->assertSame("<p><strong>Extra dates have been announced for this year's\xe2\x80\xa6</strong></p>", $this->Text->truncate($text6, 48, ['exact' => false, 'html' => true]));
         $this->assertSame($text7, $this->Text->truncate($text7, 255));
-        $this->assertSame('El moño está...', $this->Text->truncate($text7, 15));
-        $this->assertSame('Vive la R' . chr(195) . chr(169) . 'pu...', $this->Text->truncate($text8, 15));
-        $this->assertSame('НОПРСТУ...', $this->Text->truncate($text9, 10));
-        $this->assertSame('http://example.com/somethin...', $this->Text->truncate($text10, 30));
+        $this->assertSame('El moño está e…', $this->Text->truncate($text7, 15));
+        $this->assertSame('Vive la R' . chr(195) . chr(169) . 'publ…', $this->Text->truncate($text8, 15));
+        $this->assertSame('НОПРСТУФХ…', $this->Text->truncate($text9, 10));
+        $this->assertSame('http://example.com/something/…', $this->Text->truncate($text10, 30));
         $this->assertSame('1 <b>2...</b>', $this->Text->truncate('1 <b>2 345</b>', 6, ['exact' => false, 'html' => true, 'ellipsis' => '...']));
         $this->assertSame('&amp;', $this->Text->truncate('&amp;', 1, ['html' => true]));
 
@@ -583,8 +583,8 @@ TEXT;
         $expected = '<p><span style="font-size: medium;"><a>Iamatestwi...</a></span></p>';
         $this->assertSame($expected, $result);
 
-        $text = '<style>text-align: center;</style><script>console.log(\'test\');</script><p>The quick brown fox jumps over the lazy dog</p>';
-        $expected = '<style>text-align: center;</style><script>console.log(\'test\');</script><p>The qu...</p>';
+        $text = "<style>text-align: center;</style><script>console.log('test');</script><p>The quick brown fox jumps over the lazy dog</p>";
+        $expected = "<style>text-align: center;</style><script>console.log('test');</script><p>The qu...</p>";
         $result = $this->Text->truncate($text, 9, ['html' => true, 'ellipsis' => '...']);
         $this->assertSame($expected, $result);
     }
@@ -623,14 +623,14 @@ TEXT;
             'html' => true,
             'exact' => false,
         ]);
-        $expected = '<b>&copy; 2005-2007, Cake Software...</b>';
+        $expected = '<b>&copy; 2005-2007, Cake Software…</b>';
         $this->assertSame($expected, $result);
 
         $result = $this->Text->truncate($text, 31, [
             'html' => true,
             'exact' => true,
         ]);
-        $expected = '<b>&copy; 2005-2007, Cake Software F...</b>';
+        $expected = '<b>&copy; 2005-2007, Cake Software F…</b>';
         $this->assertSame($expected, $result);
     }
 
@@ -677,31 +677,31 @@ HTML;
         $text5 = 'НОПРСТУФХЦЧШЩЪЫЬЭЮЯабвгдежзийклмнопрстуфхцчшщъыь';
 
         $result = $this->Text->tail($text1, 13);
-        $this->assertSame('...e lazy dog', $result);
+        $this->assertSame('…the lazy dog', $result);
 
         $result = $this->Text->tail($text1, 13, ['exact' => false]);
-        $this->assertSame('...lazy dog', $result);
+        $this->assertSame('…lazy dog', $result);
 
         $result = $this->Text->tail($text1, 100);
         $this->assertSame('The quick brown fox jumps over the lazy dog', $result);
 
         $result = $this->Text->tail($text2, 10);
-        $this->assertSame('...;mpfung', $result);
+        $this->assertSame('…ml;mpfung', $result);
 
         $result = $this->Text->tail($text2, 10, ['exact' => false]);
-        $this->assertSame('...', $result);
+        $this->assertSame('…', $result);
 
         $result = $this->Text->tail($text3, 255);
         $this->assertSame($text3, $result);
 
         $result = $this->Text->tail($text3, 21);
-        $this->assertSame('...á dicho la verdad?', $result);
+        $this->assertSame('…brá dicho la verdad?', $result);
 
         $result = $this->Text->tail($text4, 25);
-        $this->assertSame('...a R' . chr(195) . chr(169) . 'publique de France', $result);
+        $this->assertSame('… la R' . chr(195) . chr(169) . 'publique de France', $result);
 
         $result = $this->Text->tail($text5, 10);
-        $this->assertSame('...цчшщъыь', $result);
+        $this->assertSame('…фхцчшщъыь', $result);
 
         $result = $this->Text->tail($text5, 6, ['ellipsis' => '']);
         $this->assertSame('чшщъыь', $result);
@@ -843,7 +843,7 @@ HTML;
         $text = 'aaaaaaaaaaaaaaaaaaaaaaaabbbbbbbbaaaaaaaaaaaaaaaaaaaaaaaa';
         $phrase = 'bbbbbbbb';
         $result = $this->Text->excerpt($text, $phrase, 10);
-        $expected = '...aaaaaaaaaabbbbbbbbaaaaaaaaaa...';
+        $expected = '…aaaaaaaaaabbbbbbbbaaaaaaaaaa…';
         $this->assertSame($expected, $result);
     }
 
@@ -1534,9 +1534,9 @@ HTML;
     /**
      * testparseFileSize
      *
-     * @dataProvider filesizes
      * @param mixed $expected
      */
+    #[DataProvider('filesizes')]
     public function testParseFileSize(array $params, $expected): void
     {
         $result = Text::parseFileSize($params['size'], $params['default']);
@@ -1683,8 +1683,8 @@ HTML;
      * @param string $string String
      * @param \Transliterator|string|null $transliterator Transliterator
      * @param String $expected Expected string
-     * @dataProvider transliterateInputProvider
      */
+    #[DataProvider('transliterateInputProvider')]
     public function testTransliterate($string, $transliterator, $expected): void
     {
         $result = Text::transliterate($string, $transliterator);
@@ -1802,8 +1802,8 @@ HTML;
      * @param string $string String
      * @param array $options Options
      * @param String $expected Expected string
-     * @dataProvider slugInputProvider
      */
+    #[DataProvider('slugInputProvider')]
     public function testSlug($string, $options, $expected): void
     {
         $result = Text::slug($string, $options);
@@ -1815,7 +1815,7 @@ HTML;
      */
     public function testTruncateByWidth(): void
     {
-        $this->assertSame('<p>あ...', Text::truncateByWidth('<p>あいうえお</p>', 8));
+        $this->assertSame('<p>あい…', Text::truncateByWidth('<p>あいうえお</p>', 8));
         $this->assertSame('<p>あい...</p>', Text::truncateByWidth('<p>あいうえお</p>', 8, ['html' => true, 'ellipsis' => '...']));
     }
 
@@ -1824,7 +1824,7 @@ HTML;
      */
     public function testStrlen(): void
     {
-        $method = new ReflectionMethod('Cake\Utility\Text', '_strlen');
+        $method = new ReflectionMethod(Text::class, '_strlen');
         $strlen = function () use ($method) {
             return $method->invokeArgs(null, func_get_args());
         };
@@ -1847,7 +1847,7 @@ HTML;
      */
     public function testSubstr(): void
     {
-        $method = new ReflectionMethod('Cake\Utility\Text', '_substr');
+        $method = new ReflectionMethod(Text::class, '_substr');
         $substr = function () use ($method) {
             return $method->invokeArgs(null, func_get_args());
         };

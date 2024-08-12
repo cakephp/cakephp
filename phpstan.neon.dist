@@ -1,15 +1,22 @@
 includes:
 	- phpstan-baseline.neon
 
+rules:
+	- Symplify\PHPStanRules\Rules\Explicit\NoMixedPropertyFetcherRule
+	- Symplify\PHPStanRules\Rules\Explicit\NoMixedMethodCallerRule
+
 parameters:
 	level: 8
-	checkMissingIterableValueType: false
-	checkGenericClassInNonGenericObjectType: false
 	treatPhpDocTypesAsCertain: false
 	bootstrapFiles:
 		- tests/bootstrap.php
 	paths:
 		- src/
+	ignoreErrors:
+		-
+			identifier: missingType.iterableValue
+		-
+			identifier: missingType.generics
 
 services:
 	-

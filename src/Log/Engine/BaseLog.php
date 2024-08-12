@@ -73,7 +73,7 @@ abstract class BaseLog extends AbstractLogger
             $this->_config['levels'] = (array)$this->_config['types'];
         }
 
-        /** @var \Cake\Log\Formatter\AbstractFormatter|class-string<\Cake\Log\Formatter\AbstractFormatter> $formatter */
+        /** @var \Cake\Log\Formatter\AbstractFormatter|array|class-string<\Cake\Log\Formatter\AbstractFormatter> $formatter */
         $formatter = $this->_config['formatter'] ?? DefaultFormatter::class;
         if (!is_object($formatter)) {
             if (is_array($formatter)) {
@@ -93,7 +93,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the levels this logger is interested in.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function levels(): array
     {
@@ -103,7 +103,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the scopes this logger is interested in.
      *
-     * @return array<string>|null
+     * @return list<string>|null
      */
     public function scopes(): ?array
     {
@@ -126,11 +126,11 @@ abstract class BaseLog extends AbstractLogger
         }
 
         preg_match_all(
-            '/(?<!' . preg_quote('\\', '/') . ')\{([a-z0-9-_]+)\}/i',
+            '/(?<!\\\\)\{([a-z0-9-_]+)\}/i',
             $message,
             $matches
         );
-        if (empty($matches)) {
+        if (!$matches) {
             return $message;
         }
 

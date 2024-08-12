@@ -32,6 +32,11 @@ use function Cake\Core\env;
  * - `info` Informational messages.
  * - `comment` Additional text.
  * - `question` Magenta text used for user prompts
+ * - `success` Green foreground text
+ * - `info.bg` Cyan background with black text
+ * - `warning.bg` Yellow background with black text
+ * - `error.bg` Red background with black text
+ * - `success.bg` Green background with black text
  *
  * By defining styles with addStyle() you can create custom console styles.
  *
@@ -147,13 +152,18 @@ class ConsoleOutput
         'alert' => ['text' => 'red'],
         'critical' => ['text' => 'red'],
         'error' => ['text' => 'red'],
+        'error.bg' => ['background' => 'red', 'text' => 'black'],
         'warning' => ['text' => 'yellow'],
+        'warning.bg' => ['background' => 'yellow', 'text' => 'black'],
         'info' => ['text' => 'cyan'],
+        'info.bg' => ['background' => 'white', 'text' => 'cyan'],
         'debug' => ['text' => 'yellow'],
         'success' => ['text' => 'green'],
+        'success.bg' => ['background' => 'green', 'text' => 'black'],
+        'notice' => ['text' => 'cyan'],
+        'notice.bg' => ['background' => 'cyan', 'text' => 'black'],
         'comment' => ['text' => 'blue'],
         'question' => ['text' => 'magenta'],
-        'notice' => ['text' => 'cyan'],
     ];
 
     /**
@@ -201,7 +211,7 @@ class ConsoleOutput
      * Outputs a single or multiple messages to stdout or stderr. If no parameters
      * are passed, outputs just a newline.
      *
-     * @param array<string>|string $message A string or an array of strings to output
+     * @param list<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to output.
      */
@@ -230,7 +240,7 @@ class ConsoleOutput
             $replaceTags = $this->_replaceTags(...);
 
             $output = preg_replace_callback(
-                '/<(?P<tag>[a-z0-9-_]+)>(?P<text>.*?)<\/(\1)>/ims',
+                '/<(?P<tag>[a-z0-9-_.]+)>(?P<text>.*?)<\/(\1)>/ims',
                 $replaceTags,
                 $text
             );
@@ -254,7 +264,7 @@ class ConsoleOutput
     protected function _replaceTags(array $matches): string
     {
         $style = $this->getStyle($matches['tag']);
-        if (empty($style)) {
+        if (!$style) {
             return '<' . $matches['tag'] . '>' . $matches['text'] . '</' . $matches['tag'] . '>';
         }
 
@@ -283,6 +293,10 @@ class ConsoleOutput
      */
     protected function _write(string $message): int
     {
+        if (!isset($this->_output)) {
+            return 0;
+        }
+
         return (int)fwrite($this->_output, $message);
     }
 
@@ -369,8 +383,9 @@ class ConsoleOutput
     public function __destruct()
     {
         /** @psalm-suppress RedundantCondition */
-        if (is_resource($this->_output)) {
+        if (isset($this->_output) && is_resource($this->_output)) {
             fclose($this->_output);
         }
+        unset($this->_output);
     }
 }

@@ -286,7 +286,7 @@ class ConsoleOptionParser
     /**
      * Sets the description text for shell/task.
      *
-     * @param array<string>|string $text The text to set. If an array the
+     * @param list<string>|string $text The text to set. If an array the
      *   text will be imploded with "\n".
      * @return $this
      */
@@ -314,7 +314,7 @@ class ConsoleOptionParser
      * Sets an epilog to the parser. The epilog is added to the end of
      * the options and arguments listing when help is generated.
      *
-     * @param array<string>|string $text The text to set. If an array the text will
+     * @param list<string>|string $text The text to set. If an array the text will
      *   be imploded with "\n".
      * @return $this
      */
@@ -519,7 +519,7 @@ class ConsoleOptionParser
     /**
      * Get the list of argument names.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function argumentNames(): array
     {
@@ -551,7 +551,8 @@ class ConsoleOptionParser
      */
     public function parse(array $argv, ?ConsoleIo $io = null): array
     {
-        $params = $args = [];
+        $params = [];
+        $args = [];
         $this->_tokens = $argv;
 
         $afterDoubleDash = false;
@@ -581,10 +582,15 @@ class ConsoleOptionParser
         }
 
         foreach ($this->_args as $i => $arg) {
-            if ($arg->isRequired() && !isset($args[$i])) {
-                throw new ConsoleException(
-                    sprintf('Missing required argument. The `%s` argument is required.', $arg->name())
-                );
+            if (!isset($args[$i])) {
+                if ($arg->isRequired()) {
+                    throw new ConsoleException(
+                        sprintf('Missing required argument. The `%s` argument is required.', $arg->name())
+                    );
+                }
+                if ($arg->defaultValue() !== null) {
+                    $args[$i] = $arg->defaultValue();
+                }
             }
         }
         foreach ($this->_options as $option) {
@@ -769,7 +775,7 @@ class ConsoleOptionParser
         if (str_starts_with($name, '--')) {
             return isset($this->_options[substr($name, 2)]);
         }
-        if ($name[0] === '-' && $name[1] !== '-') {
+        if (str_starts_with($name, '-')) {
             return isset($this->_shortOptions[$name[1]]);
         }
 
@@ -782,12 +788,12 @@ class ConsoleOptionParser
      *
      * @param string $argument The argument to append
      * @param array $args The array of parsed args to append to.
-     * @return array<string> Args
+     * @return list<string> Args
      * @throws \Cake\Console\Exception\ConsoleException
      */
     protected function _parseArg(string $argument, array $args): array
     {
-        if (empty($this->_args)) {
+        if (!$this->_args) {
             $args[] = $argument;
 
             return $args;

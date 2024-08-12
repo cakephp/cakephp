@@ -342,7 +342,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * for each record.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The original query to modify
-     * @param array<string> $locales A list of locales or options with the `locales` key defined
+     * @param list<string> $locales A list of locales or options with the `locales` key defined
      * @return \Cake\ORM\Query\SelectQuery
      */
     public function findTranslations(SelectQuery $query, array $locales = []): SelectQuery
@@ -352,7 +352,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         return $query
             ->contain([$targetAlias => function (QueryInterface $query) use ($locales, $targetAlias) {
                 if ($locales) {
-                    $query->where(["$targetAlias.locale IN" => $locales]);
+                    $query->where(["{$targetAlias}.locale IN" => $locales]);
                 }
 
                 return $query;
@@ -387,7 +387,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     {
         $name = namespaceSplit($table::class);
         $name = substr((string)end($name), 0, -5);
-        if (empty($name)) {
+        if (!$name) {
             $name = $table->getTable() ?: $table->getAlias();
             $name = Inflector::camelize($name);
         }

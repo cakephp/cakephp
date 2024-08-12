@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Core\Configure;
 use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -139,9 +140,11 @@ class RoutesCommandTest extends TestCase
      */
     public function testRouteListSorted(): void
     {
-        Router::createRouteBuilder('/')->connect(
-            new Route('/a/route/sorted', [], ['_name' => '_aRoute'])
-        );
+        Configure::write('TestApp.routes', function ($routes): void {
+            $routes->connect(
+                new Route('/a/route/sorted', [], ['_name' => '_aRoute'])
+            );
+        });
 
         $this->exec('routes -s');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
@@ -311,27 +314,28 @@ class RoutesCommandTest extends TestCase
      */
     public function testRouteDuplicateWarning(): void
     {
-        $builder = Router::createRouteBuilder('/');
-        $builder->connect(
-            new Route('/unique-path', [], ['_name' => '_aRoute'])
-        );
-        $builder->connect(
-            new Route('/unique-path', [], ['_name' => '_bRoute'])
-        );
+        Configure::write('TestApp.routes', function ($builder): void {
+            $builder->connect(
+                new Route('/unique-path', [], ['_name' => '_aRoute'])
+            );
+            $builder->connect(
+                new Route('/unique-path', [], ['_name' => '_bRoute'])
+            );
 
-        $builder->connect(
-            new Route('/blog', ['_method' => 'GET'], ['_name' => 'blog-get'])
-        );
-        $builder->connect(
-            new Route('/blog', [], ['_name' => 'blog-all'])
-        );
+            $builder->connect(
+                new Route('/blog', ['_method' => 'GET'], ['_name' => 'blog-get'])
+            );
+            $builder->connect(
+                new Route('/blog', [], ['_name' => 'blog-all'])
+            );
 
-        $builder->connect(
-            new Route('/events', ['_method' => ['POST', 'PUT']], ['_name' => 'events-post'])
-        );
-        $builder->connect(
-            new Route('/events', ['_method' => 'GET'], ['_name' => 'events-get'])
-        );
+            $builder->connect(
+                new Route('/events', ['_method' => ['POST', 'PUT']], ['_name' => 'events-post'])
+            );
+            $builder->connect(
+                new Route('/events', ['_method' => 'GET'], ['_name' => 'events-get'])
+            );
+        });
 
         $this->exec('routes');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);

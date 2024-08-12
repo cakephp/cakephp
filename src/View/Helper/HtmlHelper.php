@@ -130,13 +130,14 @@ class HtmlHelper extends Helper
      * @param array|string|null $content The address of the external resource or string for content attribute
      * @param array<string, mixed> $options Other attributes for the generated tag. If the type attribute is html,
      *    rss, atom, or icon, the mime-type is returned.
-     * @return string|null A completed `<link>` element, or null if the element was sent to a block.
+     * @return string|null A completed `<link>` or `<meta>` element, or null if the element was sent to a block.
      * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-meta-tags
      */
     public function meta(array|string $type, array|string|null $content = null, array $options = []): ?string
     {
-        if (!is_array($type)) {
+        if (is_string($type)) {
             $types = [
+                'csrfToken' => ['name' => 'csrf-token'],
                 'rss' => ['type' => 'application/rss+xml', 'rel' => 'alternate', 'title' => $type, 'link' => $content],
                 'atom' => ['type' => 'application/atom+xml', 'title' => $type, 'link' => $content],
                 'icon' => ['type' => 'image/x-icon', 'rel' => 'icon', 'link' => $content],
@@ -153,6 +154,10 @@ class HtmlHelper extends Helper
 
             if ($type === 'icon' && $content === null) {
                 $types['icon']['link'] = 'favicon.ico';
+            }
+
+            if ($type === 'csrfToken') {
+                $types['csrfToken']['content'] = $this->_View->getRequest()->getAttribute('csrfToken');
             }
 
             if (isset($types[$type])) {
@@ -218,7 +223,7 @@ class HtmlHelper extends Helper
      */
     public function charset(?string $charset = null): string
     {
-        if (empty($charset)) {
+        if (!$charset) {
             $charset = strtolower((string)Configure::read('App.encoding'));
         }
 
@@ -368,7 +373,7 @@ class HtmlHelper extends Helper
      * `cspStyleNonce` attribute, that value will be applied as the `nonce` attribute on the
      * generated HTML.
      *
-     * @param array<string>|string $path The name of a CSS style sheet or an array containing names of
+     * @param list<string>|string $path The name of a CSS style sheet or an array containing names of
      *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
      *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
      * @param array<string, mixed> $options Array of options and HTML arguments.
@@ -387,7 +392,7 @@ class HtmlHelper extends Helper
         if (is_array($path)) {
             $out = '';
             foreach ($path as $i) {
-                $out .= "\n\t" . (string)$this->css($i, $options);
+                $out .= "\n\t" . $this->css($i, $options);
             }
             if (empty($options['block'])) {
                 return $out . "\n";
@@ -469,7 +474,7 @@ class HtmlHelper extends Helper
      * If the current request has a `cspScriptNonce` attribute, that value will
      * be inserted as a `nonce` attribute on the script tag.
      *
-     * @param array<string>|string $url String or array of javascript files to include
+     * @param list<string>|string $url String or array of javascript files to include
      * @param array<string, mixed> $options Array of options, and html attributes see above.
      * @return string|null String of `<script>` tags or null if block is specified in options
      *   or if $once is true and the file has been included before.
@@ -487,7 +492,7 @@ class HtmlHelper extends Helper
         if (is_array($url)) {
             $out = '';
             foreach ($url as $i) {
-                $out .= "\n\t" . (string)$this->script($i, $options);
+                $out .= "\n\t" . $this->script($i, $options);
             }
             if (empty($options['block'])) {
                 return $out . "\n";
@@ -784,7 +789,7 @@ class HtmlHelper extends Helper
      *
      * @param array $line Line data to render.
      * @param bool $useCount Renders the count into the row. Default is false.
-     * @return array<string>
+     * @return list<string>
      */
     protected function _renderCells(array $line, bool $useCount = false): array
     {
@@ -890,7 +895,7 @@ class HtmlHelper extends Helper
      */
     public function div(?string $class = null, ?string $text = null, array $options = []): string
     {
-        if (!empty($class)) {
+        if ($class) {
             $options['class'] = $class;
         }
 
@@ -1024,7 +1029,7 @@ class HtmlHelper extends Helper
             $options['text'] = $sourceTags . $options['text'];
             unset($options['fullBase']);
         } else {
-            if (empty($path) && !empty($options['src'])) {
+            if (!$path && !empty($options['src'])) {
                 $path = $options['src'];
             }
             /** @psalm-suppress PossiblyNullArgument */

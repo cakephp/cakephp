@@ -155,7 +155,7 @@ class ConsoleIo
     /**
      * Output at the verbose level.
      *
-     * @param array<string>|string $message A string or an array of strings to output
+     * @param list<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if current level is less than ConsoleIo::VERBOSE
@@ -168,7 +168,7 @@ class ConsoleIo
     /**
      * Output at all levels.
      *
-     * @param array<string>|string $message A string or an array of strings to output
+     * @param list<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if current level is less than ConsoleIo::QUIET
@@ -189,7 +189,7 @@ class ConsoleIo
      * present in most shells. Using ConsoleIo::QUIET for a message means it will always display.
      * While using ConsoleIo::VERBOSE means it will only display when verbose output is toggled.
      *
-     * @param array<string>|string $message A string or an array of strings to output
+     * @param list<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
@@ -209,7 +209,7 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <info> tag
      *
-     * @param array<string>|string $message A string or an array of strings to output
+     * @param list<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
@@ -227,7 +227,7 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <comment> tag
      *
-     * @param array<string>|string $message A string or an array of strings to output
+     * @param list<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
@@ -245,7 +245,7 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <warning> tag
      *
-     * @param array<string>|string $message A string or an array of strings to output
+     * @param list<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/5/en/console-and-shells.html#ConsoleIo::err
@@ -261,7 +261,7 @@ class ConsoleIo
     /**
      * Convenience method for err() that wraps message between <error> tag
      *
-     * @param array<string>|string $message A string or an array of strings to output
+     * @param list<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      * @see https://book.cakephp.org/5/en/console-and-shells.html#ConsoleIo::err
@@ -277,7 +277,7 @@ class ConsoleIo
     /**
      * Convenience method for out() that wraps message between <success> tag
      *
-     * @param array<string>|string $message A string or an array of strings to output
+     * @param list<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
@@ -311,8 +311,8 @@ class ConsoleIo
      * Wraps a message with a given message type, e.g. <warning>
      *
      * @param string $messageType The message type, e.g. "warning".
-     * @param array<string>|string $message The message to wrap.
-     * @return array<string>|string The message wrapped with the given message type.
+     * @param list<string>|string $message The message to wrap.
+     * @return list<string>|string The message wrapped with the given message type.
      */
     protected function wrapMessageWithType(string $messageType, array|string $message): array|string
     {
@@ -335,7 +335,7 @@ class ConsoleIo
      *
      * **Warning** You cannot overwrite text that contains newlines.
      *
-     * @param array<string>|string $message The message to output.
+     * @param list<string>|string $message The message to output.
      * @param int $newlines Number of newlines to append.
      * @param int|null $size The number of bytes to overwrite. Defaults to the
      *    length of the last message output.
@@ -371,7 +371,7 @@ class ConsoleIo
      * Outputs a single or multiple error messages to stderr. If no parameters
      * are passed outputs just a newline.
      *
-     * @param array<string>|string $message A string or an array of strings to output
+     * @param list<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
      */
@@ -469,7 +469,7 @@ class ConsoleIo
      * Prompts the user for input based on a list of options, and returns it.
      *
      * @param string $prompt Prompt text.
-     * @param array<string>|string $options Array or string of options.
+     * @param list<string>|string $options Array or string of options.
      * @param string|null $default Default input value.
      * @return string Either the default value, or the user-provided input.
      */
@@ -514,15 +514,15 @@ class ConsoleIo
         }
 
         $optionsText = '';
-        if (isset($options)) {
-            $optionsText = " $options ";
+        if ($options !== null) {
+            $optionsText = " {$options} ";
         }
 
         $defaultText = '';
         if ($default !== null) {
-            $defaultText = "[$default] ";
+            $defaultText = "[{$default}] ";
         }
-        $this->_out->write('<question>' . $prompt . "</question>$optionsText\n$defaultText> ", 0);
+        $this->_out->write('<question>' . $prompt . "</question>{$optionsText}\n{$defaultText}> ", 0);
         $result = $this->_in->read();
 
         $result = $result === null ? '' : trim($result);

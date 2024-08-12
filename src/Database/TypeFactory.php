@@ -124,7 +124,7 @@ class TypeFactory
     /**
      * Set type to classname mapping.
      *
-     * @param array<string> $map List of types to be mapped.
+     * @param array<string, string> $map List of types to be mapped.
      * @return void
      * @psalm-param array<string, class-string<\Cake\Database\TypeInterface>> $map
      */
@@ -138,7 +138,7 @@ class TypeFactory
      * Get mapped class name for given type or map array.
      *
      * @param string|null $type Type name to get mapped class for or null to get map array.
-     * @return array<string>|string|null Configured class name for given $type or map array.
+     * @return array<string, class-string<\Cake\Database\TypeInterface>>|string|null Configured class name for given $type or map array.
      */
     public static function getMap(?string $type = null): array|string|null
     {

@@ -87,8 +87,7 @@ interface SchemaInterface
     /**
      * Get the column names in the table.
      *
-     * @return array<string>
-     * @psalm-return list<string>
+     * @return list<string>
      */
     public function columns(): array;
 
@@ -111,7 +110,7 @@ interface SchemaInterface
 
     /**
      * Returns the base type name for the provided column.
-     * This represent the database type a more complex class is
+     * This represents the database type a more complex class is
      * based upon.
      *
      * @param string $column The column name to get the base type from

@@ -584,10 +584,11 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     protected function _sendRequest(RequestInterface $request, array $options): Response
     {
+        $responses = [];
         if (static::$_mockAdapter) {
             $responses = static::$_mockAdapter->send($request, $options);
         }
-        if (empty($responses)) {
+        if (!$responses) {
             $responses = $this->_adapter->send($request, $options);
         }
         foreach ($responses as $response) {
@@ -608,7 +609,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     public function buildUrl(string $url, array|string $query = [], array $options = []): string
     {
-        if (empty($options) && empty($query)) {
+        if (!$options && !$query) {
             return $url;
         }
         $defaults = [
@@ -678,7 +679,7 @@ class Client implements EventDispatcherInterface, ClientInterface
             $request = $this->_addAuthentication($request, $options);
         }
         if (isset($options['proxy'])) {
-            $request = $this->_addProxy($request, $options);
+            return $this->_addProxy($request, $options);
         }
 
         return $request;

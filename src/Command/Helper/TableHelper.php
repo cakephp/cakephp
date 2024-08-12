@@ -106,7 +106,7 @@ class TableHelper extends Helper
      */
     protected function _render(array $row, array $widths, array $options = []): void
     {
-        if (count($row) === 0) {
+        if ($row === []) {
             return;
         }
 
@@ -142,7 +142,7 @@ class TableHelper extends Helper
      */
     public function output(array $args): void
     {
-        if (empty($args)) {
+        if (!$args) {
             return;
         }
 
@@ -157,7 +157,7 @@ class TableHelper extends Helper
             $this->_rowSeparator($widths);
         }
 
-        if (empty($args)) {
+        if (!$args) {
             return;
         }
 

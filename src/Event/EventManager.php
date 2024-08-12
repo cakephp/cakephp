@@ -83,13 +83,14 @@ class EventManager implements EventManagerInterface
      */
     public static function instance(?EventManager $manager = null): EventManager
     {
+        if ($manager === null && static::$_generalManager) {
+            return static::$_generalManager;
+        }
+
         if ($manager instanceof EventManager) {
             static::$_generalManager = $manager;
         }
-        if (empty(static::$_generalManager)) {
-            static::$_generalManager = new static();
-        }
-
+        static::$_generalManager ??= new static();
         static::$_generalManager->_isGlobal = true;
 
         return static::$_generalManager;
@@ -109,13 +110,13 @@ class EventManager implements EventManagerInterface
             return $this;
         }
 
-        if (!$callable && !is_callable($options)) {
+        if ($callable === null && !is_callable($options)) {
             throw new InvalidArgumentException(
                 'Second argument of `EventManager::on()` must be a callable if `$callable` is null.'
             );
         }
 
-        if (!$callable) {
+        if ($callable === null) {
             /** @var callable $options */
             $this->_listeners[$eventKey][static::$defaultPriority][] = [
                 'callable' => $options(...),
@@ -124,6 +125,7 @@ class EventManager implements EventManagerInterface
             return $this;
         }
 
+        /** @var array $options */
         $priority = $options['priority'] ?? static::$defaultPriority;
         $this->_listeners[$eventKey][$priority][] = [
             'callable' => $callable(...),
@@ -208,10 +210,10 @@ class EventManager implements EventManagerInterface
     protected function _detachSubscriber(EventListenerInterface $subscriber, ?string $eventKey = null): void
     {
         $events = $subscriber->implementedEvents();
-        if (!empty($eventKey) && empty($events[$eventKey])) {
+        if ($eventKey && empty($events[$eventKey])) {
             return;
         }
-        if (!empty($eventKey)) {
+        if ($eventKey) {
             $events = [$eventKey => $events[$eventKey]];
         }
         foreach ($events as $key => $handlers) {
@@ -296,7 +298,7 @@ class EventManager implements EventManagerInterface
             static::instance()->addEventToList($event);
         }
 
-        if (empty($listeners)) {
+        if (!$listeners) {
             return $event;
         }
 

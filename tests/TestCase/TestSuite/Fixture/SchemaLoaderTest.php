@@ -41,8 +41,11 @@ class SchemaLoaderTest extends TestCase
     public function setUp(): void
     {
         parent::setUp();
-        $this->restore = $GLOBALS['__PHPUNIT_BOOTSTRAP'];
-        unset($GLOBALS['__PHPUNIT_BOOTSTRAP']);
+
+        if (isset($GLOBALS['__PHPUNIT_BOOTSTRAP'])) {
+            $this->restore = $GLOBALS['__PHPUNIT_BOOTSTRAP'];
+            unset($GLOBALS['__PHPUNIT_BOOTSTRAP']);
+        }
 
         $this->loader = new SchemaLoader();
     }
@@ -50,9 +53,12 @@ class SchemaLoaderTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        $GLOBALS['__PHPUNIT_BOOTSTRAP'] = $this->restore;
 
-        (new ConnectionHelper())->dropTables('test', ['schema_loader_test_one', 'schema_loader_test_two']);
+        if ($this->restore !== null) {
+            $GLOBALS['__PHPUNIT_BOOTSTRAP'] = $this->restore;
+        }
+
+        ConnectionHelper::dropTables('test', ['schema_loader_test_one', 'schema_loader_test_two']);
         ConnectionManager::drop('test_schema_loader');
 
         if (file_exists($this->truncateDbFile)) {

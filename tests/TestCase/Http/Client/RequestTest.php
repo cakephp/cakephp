@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Http\Client;
 
 use Cake\Http\Client\Request;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * HTTP request test.
@@ -45,8 +46,8 @@ class RequestTest extends TestCase
      * @param array $headers The HTTP headers to set.
      * @param array|string|null $data The request body to use.
      * @param string $method The HTTP method to use.
-     * @dataProvider additionProvider
      */
+    #[DataProvider('additionProvider')]
     public function testMethods(array $headers, $data, $method): void
     {
         $request = new Request('http://example.com', $method, $headers, json_encode($data));
@@ -57,9 +58,7 @@ class RequestTest extends TestCase
         $this->assertSame(json_encode($data), $request->getBody()->__toString());
     }
 
-    /**
-     * @dataProvider additionProvider
-     */
+    #[DataProvider('additionProvider')]
     public static function additionProvider(): array
     {
         $headers = [

@@ -31,13 +31,16 @@ use function Cake\Core\pluginSplit;
  * related to only one record in the target table.
  *
  * An example of a BelongsTo association would be Article belongs to Author.
+ *
+ * @template T of \Cake\ORM\Table
+ * @mixin T
  */
 class BelongsTo extends Association
 {
     /**
      * Valid strategies for this type of association
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_validStrategies = [
         self::STRATEGY_JOIN,
@@ -59,7 +62,7 @@ class BelongsTo extends Association
     /**
      * Sets the name of the field representing the foreign key to the target table.
      *
-     * @param array<string>|string|false $key the key or keys to be used to link both tables together, if set to `false`
+     * @param list<string>|string|false $key the key or keys to be used to link both tables together, if set to `false`
      *  no join conditions will be generated automatically.
      * @return $this
      */
@@ -134,7 +137,7 @@ class BelongsTo extends Association
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
-        if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
+        if (!$targetEntity instanceof EntityInterface) {
             return $entity;
         }
 
@@ -144,7 +147,7 @@ class BelongsTo extends Association
             return false;
         }
 
-        /** @var array<string> $foreignKeys */
+        /** @var list<string> $foreignKeys */
         $foreignKeys = (array)$this->getForeignKey();
         $properties = array_combine(
             $foreignKeys,
@@ -173,7 +176,7 @@ class BelongsTo extends Association
         $bindingKey = (array)$this->getBindingKey();
 
         if (count($foreignKey) !== count($bindingKey)) {
-            if (empty($bindingKey)) {
+            if (!$bindingKey) {
                 $msg = 'The `%s` table does not define a primary key. Please set one.';
                 throw new DatabaseException(sprintf($msg, $this->getTarget()->getTable()));
             }

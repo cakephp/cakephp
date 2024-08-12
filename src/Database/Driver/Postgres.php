@@ -77,7 +77,7 @@ class Postgres extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->pdo)) {
+        if ($this->pdo !== null) {
             return;
         }
         $config = $this->_config;
@@ -125,11 +125,7 @@ class Postgres extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if (isset($this->_schemaDialect)) {
-            return $this->_schemaDialect;
-        }
-
-        return $this->_schemaDialect = new PostgresSchemaDialect($this);
+        return $this->_schemaDialect ?? ($this->_schemaDialect = new PostgresSchemaDialect($this));
     }
 
     /**
@@ -287,7 +283,7 @@ class Postgres extends Driver
                     ->setConjunction(' + INTERVAL')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
-                            $p = sprintf("'%s'", $p);
+                            return sprintf("'%s'", $p);
                         }
 
                         return $p;
@@ -299,6 +295,18 @@ class Postgres extends Driver
                     ->setConjunction(' ')
                     ->add(['DOW FROM' => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
+                break;
+            case 'JSON_VALUE':
+                $expression->setName('JSONB_PATH_QUERY')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 0) {
+                            $p = sprintf('%s::jsonb', $p);
+                        } elseif ($key === 1) {
+                            $p = sprintf("'%s'::jsonpath", $this->quoteIdentifier($p['value']));
+                        }
+
+                        return $p;
+                    });
                 break;
         }
     }

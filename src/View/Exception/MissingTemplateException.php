@@ -33,7 +33,7 @@ class MissingTemplateException extends CakeException
     protected string $filename;
 
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected array $paths;
 
@@ -45,8 +45,8 @@ class MissingTemplateException extends CakeException
     /**
      * Constructor
      *
-     * @param array<string>|string $file Either the file name as a string, or in an array for backwards compatibility.
-     * @param array<string> $paths The path list that template could not be found in.
+     * @param list<string>|string $file Either the file name as a string, or in an array for backwards compatibility.
+     * @param list<string> $paths The path list that template could not be found in.
      * @param int|null $code The code of the error.
      * @param \Throwable|null $previous the previous exception.
      */
@@ -87,7 +87,7 @@ class MissingTemplateException extends CakeException
      * Get the passed in attributes
      *
      * @return array<string, mixed>
-     * @psalm-return array{file: string, paths: array<string>}
+     * @psalm-return array{file: string, paths: list<string>}
      */
     public function getAttributes(): array
     {

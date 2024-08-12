@@ -26,6 +26,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\TestPluginThreePlugin;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use TestPlugin\Plugin as TestPlugin;
 
 /**
@@ -88,11 +89,12 @@ class BasePluginTest extends TestCase
         $this->assertSame($commands, $plugin->console($commands));
     }
 
+    #[DoesNotPerformAssertions]
     public function testServices(): void
     {
         $plugin = new BasePlugin();
         $container = new Container();
-        $this->assertNull($plugin->services($container));
+        $plugin->services($container);
     }
 
     public function testConsoleFind(): void

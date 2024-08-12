@@ -95,7 +95,7 @@ class Debugger
     public function __construct()
     {
         $docRef = ini_get('docref_root');
-        if (empty($docRef) && function_exists('ini_set')) {
+        if (!$docRef && function_exists('ini_set')) {
             ini_set('docref_root', 'https://secure.php.net/');
         }
         if (!defined('E_RECOVERABLE_ERROR')) {
@@ -116,10 +116,8 @@ class Debugger
     {
         /** @var array<int, static> $instance */
         static $instance = [];
-        if ($class) {
-            if (!$instance || strtolower($class) !== strtolower(get_class($instance[0]))) {
-                $instance[0] = new $class();
-            }
+        if ($class && (!$instance || strtolower($class) !== strtolower($instance[0]::class))) {
+            $instance[0] = new $class();
         }
         if (!$instance) {
             $instance[0] = new Debugger();
@@ -385,8 +383,8 @@ class Debugger
             if (isset($backtrace[$i])) {
                 $frame = $backtrace[$i] + ['file' => '[internal]', 'line' => '??'];
             }
-
-            $signature = $reference = $frame['file'];
+            $signature = $frame['file'];
+            $reference = $frame['file'];
             if (!empty($frame['class'])) {
                 $signature = $frame['class'] . $frame['type'] . $frame['function'];
                 $reference = $signature . '(';
@@ -469,7 +467,7 @@ class Debugger
      * @param string $file Absolute path to a PHP file.
      * @param int $line Line number to highlight.
      * @param int $context Number of lines of context to extract above and below $line.
-     * @return array<string> Set of lines highlighted
+     * @return list<string> Set of lines highlighted
      * @see https://secure.php.net/highlight_string
      * @link https://book.cakephp.org/5/en/development/debugging.html#getting-an-excerpt-from-a-file
      */
@@ -480,7 +478,7 @@ class Debugger
             return [];
         }
         $data = file_get_contents($file);
-        if (empty($data)) {
+        if (!$data) {
             return $lines;
         }
         if (str_contains($data, "\n")) {
@@ -514,9 +512,6 @@ class Debugger
      */
     protected static function _highlight(string $str): string
     {
-        if (function_exists('hphp_log') || function_exists('hphp_gettid')) {
-            return htmlentities($str);
-        }
         $added = false;
         if (!str_contains($str, '<?php')) {
             $added = true;
@@ -524,8 +519,8 @@ class Debugger
         }
         $highlight = highlight_string($str, true);
         if ($added) {
-            $highlight = str_replace(
-                ['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />'],
+            return str_replace(
+                ['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />', '&lt;?php '],
                 '',
                 $highlight
             );

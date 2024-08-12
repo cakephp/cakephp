@@ -27,8 +27,8 @@ use const PHP_SESSION_ACTIVE;
 
 /**
  * This class is a wrapper for the native PHP session functions. It provides
- * several defaults for the most common session configuration
- * via external handlers and helps with using session in CLI without any warnings.
+ * several presets for the most common session configuration
+ * via external handlers and helps with using sessions in CLI without any warnings.
  *
  * Sessions can be created from the defaults using `Session::create()` or you can get
  * an instance of a new session by just instantiating this class and passing the complete
@@ -96,7 +96,8 @@ class Session
      * - defaults: either 'php', 'database', 'cache' or 'cake' as explained above.
      * - handler: An array containing the handler configuration
      * - ini: A list of php.ini directives to set before the session starts.
-     * - timeout: The time in minutes the session should stay active
+     * - timeout: The 'idle timeout' in minutes. If not request is received for `timeout`
+     *   minutes the session will be regenerated.
      *
      * @param array $sessionConfig Session config.
      * @return static
@@ -199,7 +200,8 @@ class Session
      *
      * ### Configuration:
      *
-     * - timeout: The time in minutes the session should be valid for.
+     * - timeout: The time in minutes that a session can be idle and remain valid.
+     *  If set to 0, no server side timeout will be applied.
      * - cookiePath: The url path for which session cookie is set. Maps to the
      *   `session.cookie_path` php.ini config. Defaults to base path of app.
      * - ini: A list of php.ini directives to change before the session start.
@@ -219,8 +221,12 @@ class Session
             'handler' => [],
         ];
 
-        if ($config['timeout']) {
-            $config['ini']['session.gc_maxlifetime'] = 60 * $config['timeout'];
+        $lifetime = 0;
+        if (isset($config['timeout'])) {
+            $lifetime = (int)$config['timeout'] * 60;
+        }
+        if ($lifetime !== 0) {
+            $config['ini']['session.gc_maxlifetime'] = $lifetime;
         }
 
         if ($config['cookie']) {
@@ -240,7 +246,7 @@ class Session
             $this->engine($class, $config['handler']);
         }
 
-        $this->_lifetime = (int)ini_get('session.gc_maxlifetime');
+        $this->_lifetime = $lifetime;
         $this->_isCLI = (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
         session_register_shutdown();
     }
@@ -350,8 +356,8 @@ class Session
         if (session_status() === PHP_SESSION_ACTIVE) {
             throw new CakeException('Session was already started');
         }
-
-        $filename = $line = null;
+        $filename = null;
+        $line = null;
         if (ini_get('session.use_cookies') && headers_sent($filename, $line)) {
             $this->headerSentInfo = ['filename' => $filename, 'line' => $line];
 
@@ -482,7 +488,7 @@ class Session
      */
     public function consume(string $name): mixed
     {
-        if (empty($name)) {
+        if (!$name) {
             return null;
         }
         $value = $this->read($name);

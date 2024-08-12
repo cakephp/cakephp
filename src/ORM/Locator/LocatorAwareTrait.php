@@ -59,7 +59,7 @@ trait LocatorAwareTrait
      */
     public function getTableLocator(): LocatorInterface
     {
-        if (isset($this->_tableLocator)) {
+        if ($this->_tableLocator !== null) {
             return $this->_tableLocator;
         }
 
@@ -87,7 +87,7 @@ trait LocatorAwareTrait
     public function fetchTable(?string $alias = null, array $options = []): Table
     {
         $alias ??= $this->defaultTable;
-        if (empty($alias)) {
+        if (!$alias) {
             throw new UnexpectedValueException(
                 'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
             );

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Core\Exception\CakeException;
+use InvalidArgumentException;
 use Locale;
 
 /**
@@ -144,6 +145,11 @@ class PluralRules
     public static function calculate(string $locale, int $n): int
     {
         $locale = Locale::canonicalize($locale);
+
+        /** @psalm-suppress TypeDoesNotContainNull */
+        if ($locale === null) {
+            throw new InvalidArgumentException('Invalid locale provided');
+        }
 
         if (!isset(static::$_rulesMap[$locale])) {
             $locale = explode('_', $locale)[0];

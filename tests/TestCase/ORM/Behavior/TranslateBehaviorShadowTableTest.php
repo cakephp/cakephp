@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Behavior;
 
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\I18n\I18n;
 use Cake\ORM\Behavior\Translate\ShadowTableStrategy;
@@ -250,7 +251,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
-            'The default locale doesn\'t need a join'
+            "The default locale doesn't need a join"
         );
 
         $table->setLocale('eng');
@@ -266,7 +267,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $this->assertStringNotContainsString(
             'articles_translations',
             $query->sql(),
-            'Other isn\'t the table class with the translate behavior, nothing to do'
+            "Other isn't the table class with the translate behavior, nothing to do"
         );
     }
 
@@ -359,7 +360,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table->addBehavior('Translate');
         $table->setLocale('eng');
 
-        $query = $table->find()->select()->where(function ($exp) {
+        $query = $table->find()->select()->where(function (ExpressionInterface $exp) {
             return $exp->lt(new QueryExpression('1'), 50);
         });
 
@@ -489,13 +490,13 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             ->select(['id'])
             ->toArray();
 
-        $this->assertNotNull($article, 'There will be an exception if there\'s ambiguous sql');
+        $this->assertNotNull($article, "There will be an exception if there's ambiguous sql");
 
         $article = $table->find('all')
             ->select(['title'])
             ->toArray();
 
-        $this->assertNotNull($article, 'There will be an exception if there\'s ambiguous sql');
+        $this->assertNotNull($article, "There will be an exception if there's ambiguous sql");
     }
 
     /**
@@ -511,13 +512,13 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             ->where(['id' => 1])
             ->toArray();
 
-        $this->assertNotNull($article, 'There will be an exception if there\'s ambiguous sql');
+        $this->assertNotNull($article, "There will be an exception if there's ambiguous sql");
 
         $article = $table->find('all')
             ->where(['title' => 1])
             ->toArray();
 
-        $this->assertNotNull($article, 'There will be an exception if there\'s ambiguous sql');
+        $this->assertNotNull($article, "There will be an exception if there's ambiguous sql");
     }
 
     /**
@@ -1125,7 +1126,24 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $this->assertSame(
             $expected,
             $result,
-            'Title and body are translated values, but don\'t match'
+            "Title and body are translated values, but don't match"
         );
+    }
+
+    /**
+     * Tests that modified entities aren't marked as clean after ShadowTableStrategy::rowMapper
+     */
+    public function testModifiedEntityNotCleanAfterTranslationMapping(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $table->setLocale('fra');
+
+        $articles = $table->find()->all();
+        $articles->each(function ($article): void {
+            $article->published = 'N';
+        });
+
+        $this->assertTrue($articles->first()->isDirty('published'));
     }
 }

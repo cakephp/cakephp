@@ -25,6 +25,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\PaginatorHelper;
 use Cake\View\View;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * PaginatorHelperTest class
@@ -42,7 +43,7 @@ class PaginatorHelperTest extends TestCase
     protected $Paginator;
 
     /**
-     * @var \Cake\Datasource\Pagination\PaginatedResultSet
+     * @var \Cake\Datasource\Paging\PaginatedResultSet
      */
     protected $paginatedResult;
 
@@ -687,8 +688,8 @@ class PaginatorHelperTest extends TestCase
      * @param string $field
      * @param array $options
      * @param string $expected
-     * @dataProvider urlGenerationResetsToPage1Provider
      */
+    #[DataProvider('urlGenerationResetsToPage1Provider')]
     public function testUrlGenerationResetsToPage1($field, $options, $expected): void
     {
         $this->setPaginatedResult([
@@ -2679,8 +2680,8 @@ class PaginatorHelperTest extends TestCase
      * @param int $pageCount
      * @param array $options
      * @param string $expected
-     * @dataProvider dataMetaProvider
      */
+    #[DataProvider('dataMetaProvider')]
     public function testMeta($page, $prevPage, $nextPage, $pageCount, $options, $expected): void
     {
         $this->setPaginatedResult([
@@ -2799,7 +2800,7 @@ class PaginatorHelperTest extends TestCase
      *
      * @return void
      */
-    public function testLimitControlUrlWithQuery()
+    public function testLimitControlUrlWithQuery(): void
     {
         $request = new ServerRequest([
             'url' => '/batches?owner=billy&expected=1',

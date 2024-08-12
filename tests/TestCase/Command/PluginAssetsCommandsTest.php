@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
+use Cake\Command\PluginAssetsSymlinkCommand;
 use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
@@ -117,7 +118,7 @@ class PluginAssetsCommandsTest extends TestCase
         $parser->addArgument('name', ['required' => false]);
         $parser->addOption('overwrite', ['default' => false, 'boolean' => true]);
 
-        $command = $this->getMockBuilder('Cake\Command\PluginAssetsSymlinkCommand')
+        $command = $this->getMockBuilder(PluginAssetsSymlinkCommand::class)
             ->onlyMethods(['getOptionParser', '_createSymlink', '_copyDirectory'])
             ->getMock();
         $command->method('getOptionParser')->willReturn($parser);
@@ -222,7 +223,7 @@ class PluginAssetsCommandsTest extends TestCase
 
         $this->assertFalse(is_link($this->wwwRoot . 'test_plugin'));
         $this->assertFalse(is_link($path));
-        $this->assertDirectoryExists($this->wwwRoot . 'company', 'Ensure namespace folder isn\'t removed');
+        $this->assertDirectoryExists($this->wwwRoot . 'company', "Ensure namespace folder isn't removed");
     }
 
     /**
@@ -242,7 +243,7 @@ class PluginAssetsCommandsTest extends TestCase
 
         $this->assertDirectoryDoesNotExist($this->wwwRoot . 'test_plugin');
         $this->assertDirectoryDoesNotExist($this->wwwRoot . 'company' . DS . 'test_plugin_three');
-        $this->assertDirectoryExists($this->wwwRoot . 'company', 'Ensure namespace folder isn\'t removed');
+        $this->assertDirectoryExists($this->wwwRoot . 'company', "Ensure namespace folder isn't removed");
     }
 
     /**

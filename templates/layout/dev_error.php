@@ -292,6 +292,12 @@ use function Cake\Core\h;
     .excerpt-line {
         padding: 0;
     }
+    /* php 8.3 adds pre around highlighted code */
+    .code-highlight > pre,
+    .excerpt-line > pre {
+        padding: 0;
+        background: none;
+    }
     .excerpt-line > code {
         padding-left: 4px;
     }
@@ -336,7 +342,7 @@ use function Cake\Core\h;
         <?php if (strlen($errorDescription)) : ?>
             <span class="header-description"><?= Debugger::formatHtmlMessage($errorDescription) ?></span>
         <?php endif ?>
-        <span class="header-type"><?= get_class($error) ?></span>
+        <span class="header-type"><?= $error::class ?></span>
     </header>
     <div class="error-content">
         <?php if ($this->fetch('subheading')): ?>

@@ -96,7 +96,7 @@ class Socket
      * Used to capture connection warnings which can happen when there are
      * SSL errors for example.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_connectionErrors = [];
 
@@ -268,7 +268,7 @@ class Socket
      * socket_stream_client() does not populate errNum, or $errStr when there are
      * connection errors, as in the case of SSL verification failure.
      *
-     * Instead we need to handle those errors manually.
+     * Instead, we need to handle those errors manually.
      *
      * @param int $code Code number.
      * @param string $message Message.
@@ -282,7 +282,7 @@ class Socket
     /**
      * Get the connection context.
      *
-     * @return array|null Null when there is no connection, an array when there is.
+     * @return array<string, mixed>|null Null when there is no connection, an array when there is.
      */
     public function context(): ?array
     {
@@ -324,7 +324,7 @@ class Socket
     /**
      * Get all IP addresses associated with the current connection.
      *
-     * @return array IP addresses
+     * @return list<string> IP addresses
      */
     public function addresses(): array
     {
@@ -342,7 +342,7 @@ class Socket
      */
     public function lastError(): ?string
     {
-        if (empty($this->lastError)) {
+        if (!$this->lastError) {
             return null;
         }
 
@@ -396,7 +396,7 @@ class Socket
      */
     public function read(int $length = 1024): ?string
     {
-        if ($length < 0) {
+        if ($length < 1) {
             throw new InvalidArgumentException('Length must be greater than `0`');
         }
 
@@ -458,9 +458,9 @@ class Socket
      */
     public function reset(?array $state = null): void
     {
-        if (empty($state)) {
+        if (!$state) {
             static $initialState = [];
-            if (empty($initialState)) {
+            if (!$initialState) {
                 $initialState = get_class_vars(self::class);
             }
             $state = $initialState;

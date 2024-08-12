@@ -38,7 +38,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      * The names of the clauses that are valid for use with the
      * `clause()` method.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $validClauseNames = [
         'value',
@@ -521,7 +521,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
             throw new LogicException('Case expression has incomplete when clause. Missing `then()` after `when()`.');
         }
 
-        if (empty($this->when)) {
+        if (!$this->when) {
             throw new LogicException('Case expression must have at least one when statement.');
         }
 
@@ -538,7 +538,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
 
         $else = $this->compileNullableValue($binder, $this->else, $this->elseType);
 
-        return "CASE {$value}{$whenThen} ELSE $else END";
+        return "CASE {$value}{$whenThen} ELSE {$else} END";
     }
 
     /**

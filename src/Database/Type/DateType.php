@@ -35,7 +35,7 @@ class DateType extends BaseType implements BatchCastingInterface
     protected string $_format = 'Y-m-d';
 
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_marshalFormats = [
         'Y-m-d',
@@ -90,6 +90,8 @@ class DateType extends BaseType implements BatchCastingInterface
             $class = $this->_className;
             $value = new $class('@' . $value);
         }
+
+        assert(is_object($value) && method_exists($value, 'format'));
 
         return $value->format($this->_format);
     }

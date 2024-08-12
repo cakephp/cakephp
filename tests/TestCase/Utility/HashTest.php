@@ -22,6 +22,8 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use stdClass;
 
 /**
  * HashTest
@@ -903,9 +905,9 @@ class HashTest extends TestCase
     /**
      * Test the extraction of a single value filtered by another field.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractSingleValueWithFilteringByAnotherField($data): void
     {
         $result = Hash::extract($data, '{*}.Article[id=1].title');
@@ -918,9 +920,9 @@ class HashTest extends TestCase
     /**
      * Test simple paths.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractBasic($data): void
     {
         $result = Hash::extract($data, '');
@@ -939,9 +941,9 @@ class HashTest extends TestCase
     /**
      * Test the {n} selector
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractNumericKey($data): void
     {
         $result = Hash::extract($data, '{n}.Article.title');
@@ -1072,9 +1074,9 @@ class HashTest extends TestCase
     /**
      * Test the {s} selector.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractStringKey($data): void
     {
         $result = Hash::extract($data, '{n}.{s}.user');
@@ -1138,9 +1140,9 @@ class HashTest extends TestCase
     /**
      * Test the attribute presence selector.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractAttributePresence($data): void
     {
         $result = Hash::extract($data, '{n}.Article[published]');
@@ -1155,9 +1157,9 @@ class HashTest extends TestCase
     /**
      * Test = and != operators.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractAttributeEquality($data): void
     {
         $result = Hash::extract($data, '{n}.Article[id=3]');
@@ -1268,9 +1270,9 @@ class HashTest extends TestCase
     /**
      * Test comparison operators.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractAttributeComparison($data): void
     {
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2]');
@@ -1297,9 +1299,9 @@ class HashTest extends TestCase
     /**
      * Test multiple attributes with conditions.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractAttributeMultiple($data): void
     {
         $result = Hash::extract($data, '{n}.Comment.{n}[user_id > 2][id=1]');
@@ -1314,9 +1316,9 @@ class HashTest extends TestCase
     /**
      * Test attribute pattern matching.
      *
-     * @dataProvider articleDataSets
      * @param \ArrayAccess|array $data
      */
+    #[DataProvider('articleDataSets')]
     public function testExtractAttributePattern($data): void
     {
         $result = Hash::extract($data, '{n}.Article[title=/^First/]');
@@ -1975,6 +1977,30 @@ class HashTest extends TestCase
     }
 
     /**
+     * test insert() with {s} placeholders and conditions.
+     */
+    public function testInsertMultiWord(): void
+    {
+        $data = static::articleData();
+
+        $result = Hash::insert($data, '{n}.{s}.insert', 'value');
+        $this->assertSame('value', $result[0]['Article']['insert']);
+        $this->assertSame('value', $result[1]['Article']['insert']);
+
+        $data = [
+            0 => ['obj' => new stdClass(), 'Item' => ['id' => 1, 'title' => 'first']],
+            1 => ['float' => 1.5, 'Item' => ['id' => 2, 'title' => 'second']],
+            2 => ['int' => 1, 'Item' => ['id' => 3, 'title' => 'third']],
+            3 => ['str' => 'yes', 'Item' => ['id' => 3, 'title' => 'third']],
+            4 => ['bool' => true, 'Item' => ['id' => 4, 'title' => 'fourth']],
+            5 => ['null' => null, 'Item' => ['id' => 5, 'title' => 'fifth']],
+            6 => ['arrayish' => new ArrayObject(['val']), 'Item' => ['id' => 6, 'title' => 'sixth']],
+        ];
+        $result = Hash::insert($data, '{n}.{s}[id=4].new', 'value');
+        $this->assertEquals('value', $result[4]['Item']['new']);
+    }
+
+    /**
      * Test that insert() can insert data over a string value.
      */
     public function testInsertOverwriteStringValue(): void
@@ -1993,6 +2019,63 @@ class HashTest extends TestCase
             ],
         ];
         $this->assertSame($expected, $result);
+    }
+
+    public function testInsertArrayAccess(): void
+    {
+        $testObject = new ArrayObject([
+            'name' => 'about',
+            'vars' => ['title' => 'page title'],
+        ]);
+
+        $a = [
+            'pages' => [
+                0 => ['name' => 'main'],
+                1 => $testObject,
+            ],
+        ];
+
+        $result = Hash::insert($a, 'pages.1.vars.new', 1);
+        $expected = [
+            'pages' => [
+                0 => ['name' => 'main'],
+                1 => $testObject,
+            ],
+        ];
+        $this->assertSame($expected, $result);
+        $this->assertSame(['title' => 'page title', 'new' => 1], $testObject->getArrayCopy()['vars']);
+
+        $result = new ArrayObject([
+            'name' => 'about',
+            'vars' => ['title' => 'page title'],
+        ]);
+        $result = Hash::insert($result, 'vars', 1);
+        $expected = [
+            'name' => 'about',
+            'vars' => 1,
+        ];
+        $this->assertSame($expected, $result->getArrayCopy());
+
+        $a = new ArrayObject([
+            0 => [
+                'name' => 'pages',
+            ],
+            1 => [
+                'name' => 'files',
+            ],
+        ]);
+
+        $result = Hash::insert($a, '{n}[name=files]', 'new');
+        $expected = [
+            0 => [
+                'name' => 'pages',
+            ],
+            1 => [
+                'name' => 'files',
+                0 => 'new',
+            ],
+        ];
+        $this->assertSame($expected, $result->getArrayCopy());
     }
 
     /**
@@ -2144,6 +2227,59 @@ class HashTest extends TestCase
             4 => ['Item' => ['id' => 5, 'title' => 'fifth']],
         ];
         $this->assertSame($expected, $result);
+    }
+
+    public function testRemoveArrayAccess(): void
+    {
+        $testObject = new ArrayObject([
+            'name' => 'about',
+            'vars' => ['title' => 'page title'],
+        ]);
+
+        $a = [
+            'pages' => [
+                0 => ['name' => 'main'],
+                1 => $testObject,
+            ],
+        ];
+
+        $result = Hash::remove($a, 'pages.1.vars');
+        $expected = [
+            'pages' => [
+                0 => ['name' => 'main'],
+                1 => $testObject,
+            ],
+        ];
+        $this->assertSame($expected, $result);
+        $this->assertSame(['name' => 'about'], $testObject->getArrayCopy());
+
+        $result = new ArrayObject([
+            'name' => 'about',
+            'vars' => ['title' => 'page title'],
+        ]);
+        $result = Hash::remove($result, 'vars.title');
+        $expected = [
+            'name' => 'about',
+            'vars' => [],
+        ];
+        $this->assertSame($expected, $result->getArrayCopy());
+
+        $a = new ArrayObject([
+            0 => [
+                'name' => 'pages',
+            ],
+            1 => [
+                'name' => 'files',
+            ],
+        ]);
+
+        $result = Hash::remove($a, '{n}[name=files]');
+        $expected = [
+            0 => [
+                'name' => 'pages',
+            ],
+        ];
+        $this->assertSame($expected, $result->getArrayCopy());
     }
 
     /**

@@ -29,13 +29,16 @@ use function Cake\Core\pluginSplit;
  * related to only one record in the target table and vice versa.
  *
  * An example of a HasOne association would be User has one Profile.
+ *
+ * @template T of \Cake\ORM\Table
+ * @mixin T
  */
 class HasOne extends Association
 {
     /**
      * Valid strategies for this type of association
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_validStrategies = [
         self::STRATEGY_JOIN,
@@ -57,7 +60,7 @@ class HasOne extends Association
     /**
      * Sets the name of the field representing the foreign key to the target table.
      *
-     * @param array<string>|string|false $key the key or keys to be used to link both tables together, if set to `false`
+     * @param list<string>|string|false $key the key or keys to be used to link both tables together, if set to `false`
      *  no join conditions will be generated automatically.
      * @return $this
      */
@@ -118,11 +121,11 @@ class HasOne extends Association
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
-        if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
+        if (!$targetEntity instanceof EntityInterface) {
             return $entity;
         }
 
-        /** @var array<string> $foreignKeys */
+        /** @var list<string> $foreignKeys */
         $foreignKeys = (array)$this->getForeignKey();
         $properties = array_combine(
             $foreignKeys,

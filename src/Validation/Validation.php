@@ -18,6 +18,7 @@ namespace Cake\Validation;
 
 use BackedEnum;
 use Cake\Chronos\ChronosDate;
+use Cake\Chronos\ChronosTime;
 use Cake\Core\Exception\CakeException;
 use Cake\I18n\DateTime;
 use Cake\Utility\Text;
@@ -102,7 +103,7 @@ class Validation
     public const COMPARE_LESS_OR_EQUAL = '<=';
 
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected const COMPARE_STRING = [
         self::COMPARE_EQUAL,
@@ -147,7 +148,7 @@ class Validation
      */
     public static function notBlank(mixed $check): bool
     {
-        if (empty($check) && !is_bool($check) && !is_numeric($check)) {
+        if (!$check && !is_bool($check) && !is_numeric($check)) {
             return false;
         }
 
@@ -237,7 +238,7 @@ class Validation
      * Returns true if $check is in the proper credit card format.
      *
      * @param mixed $check credit card number to validate
-     * @param array<string>|string $type 'all' may be passed as a string, defaults to fast which checks format of
+     * @param list<string>|string $type 'all' may be passed as a string, defaults to fast which checks format of
      *     most major credit cards if an array is used only the values of the array are checked.
      *    Example: ['amex', 'bankcard', 'maestro']
      * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
@@ -251,7 +252,7 @@ class Validation
         bool $deep = false,
         ?string $regex = null
     ): bool {
-        if (!(is_string($check) || is_int($check))) {
+        if (!is_string($check) && !is_int($check)) {
             return false;
         }
 
@@ -443,7 +444,7 @@ class Validation
      * - `y` 2006 just the year without any separators
      *
      * @param mixed $check a valid date string/object
-     * @param array<string>|string $format Use a string or an array of the keys above.
+     * @param list<string>|string $format Use a string or an array of the keys above.
      *    Arrays should be passed as ['dmy', 'mdy', ...]
      * @param string|null $regex If a custom regular expression is used this is the only validation that will occur.
      * @return bool Success
@@ -502,9 +503,9 @@ class Validation
         $regex['ym'] = '%^(' . $year . $separator . $month . ')$%';
         $regex['y'] = '%^(' . $fourDigitYear . ')$%';
 
-        $format = is_array($format) ? array_values($format) : [$format];
+        $format = (array)$format;
         foreach ($format as $key) {
-            if (static::_check($check, $regex[$key]) === true) {
+            if (static::_check($check, $regex[$key])) {
                 return true;
             }
         }
@@ -596,7 +597,7 @@ class Validation
      */
     public static function time(mixed $check): bool
     {
-        if ($check instanceof DateTimeInterface) {
+        if ($check instanceof ChronosTime || $check instanceof DateTimeInterface) {
             return true;
         }
         if (is_array($check)) {
@@ -628,7 +629,7 @@ class Validation
      */
     public static function localizedTime(mixed $check, string $type = 'datetime', string|int|null $format = null): bool
     {
-        if ($check instanceof DateTimeInterface) {
+        if ($check instanceof ChronosTime || $check instanceof DateTimeInterface) {
             return true;
         }
         if (!is_string($check)) {
@@ -692,6 +693,9 @@ class Validation
     /**
      * Checks that a value is a valid decimal. Both the sign and exponent are optional.
      *
+     * Be aware that the currently set locale is being used to determine
+     * the decimal and thousands separator of the given number.
+     *
      * Valid Places:
      *
      * - null => Any number of decimal places, including none. The '.' is not required.
@@ -736,7 +740,7 @@ class Validation
         $groupingSep = $formatter->getSymbol(NumberFormatter::GROUPING_SEPARATOR_SYMBOL);
 
         // There are two types of non-breaking spaces - we inject a space to account for human input
-        if ($groupingSep == "\xc2\xa0" || $groupingSep == "\xe2\x80\xaf") {
+        if ($groupingSep === "\xc2\xa0" || $groupingSep === "\xe2\x80\xaf") {
             $check = str_replace([' ', $groupingSep, $decimalPoint], ['', '', '.'], (string)$check);
         } else {
             $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], (string)$check);
@@ -770,7 +774,7 @@ class Validation
             return $return;
         }
 
-        if ($return === true && preg_match('/@(' . static::$_pattern['hostname'] . ')$/i', $check, $regs)) {
+        if ($return && preg_match('/@(' . static::$_pattern['hostname'] . ')$/i', $check, $regs)) {
             if (function_exists('getmxrr') && getmxrr($regs[1], $mxhosts)) {
                 return true;
             }
@@ -794,17 +798,83 @@ class Validation
      */
     public static function enum(mixed $check, string $enumClassName): bool
     {
+        return static::checkEnum($check, $enumClassName);
+    }
+
+    /**
+     * Checks that the value is a valid backed enum instance or value.
+     *
+     * @param mixed $check Value to check
+     * @param list<\BackedEnum> $cases Array of enum cases that are valid.
+     * @return bool Success
+     * @since 5.1.0
+     */
+    public static function enumOnly(mixed $check, array $cases): bool
+    {
+        if ($cases === []) {
+            throw new InvalidArgumentException('At least one case needed for `enumOnly()` validation.');
+        }
+
+        $firstKey = array_key_first($cases);
+        $firstValue = $cases[$firstKey];
+        $enumClassName = $firstValue::class;
+
+        $options = ['only' => $cases];
+
+        return static::checkEnum($check, $enumClassName, $options);
+    }
+
+    /**
+     * Checks that the value is a valid backed enum instance or value.
+     *
+     * @param mixed $check Value to check
+     * @param list<\BackedEnum> $cases Array of enum cases that are not valid.
+     * @return bool Success
+     * @since 5.1.0
+     */
+    public static function enumExcept(mixed $check, array $cases): bool
+    {
+        if ($cases === []) {
+            throw new InvalidArgumentException('At least one case needed for `enumExcept()` validation.');
+        }
+
+        $firstKey = array_key_first($cases);
+        $firstValue = $cases[$firstKey];
+        $enumClassName = $firstValue::class;
+
+        $options = ['except' => $cases];
+
+        return static::checkEnum($check, $enumClassName, $options);
+    }
+
+    /**
+     * @param mixed $check
+     * @param class-string<\BackedEnum> $enumClassName
+     * @param array<string, mixed> $options
+     * @return bool
+     */
+    protected static function checkEnum(mixed $check, string $enumClassName, array $options = []): bool
+    {
         if (
             $check instanceof $enumClassName &&
             $check instanceof BackedEnum
         ) {
-            return true;
+            return static::isValidEnum($check, $options);
         }
 
         $backingType = null;
         try {
             $reflectionEnum = new ReflectionEnum($enumClassName);
-            $backingType = $reflectionEnum->getBackingType();
+
+            /** @var \ReflectionNamedType|\ReflectionUnionType|null $reflectionBackingType */
+            $reflectionBackingType = $reflectionEnum->getBackingType();
+            if ($reflectionBackingType) {
+                if (method_exists($reflectionBackingType, 'getName')) {
+                    $backingType = $reflectionBackingType->getName();
+                } else {
+                    $backingType = (string)$reflectionBackingType;
+                }
+            }
         } catch (ReflectionException) {
         }
 
@@ -814,11 +884,66 @@ class Validation
             );
         }
 
+        if (!is_string($check) && !is_int($check)) {
+            return false;
+        }
+
+        if ($backingType === 'int') {
+            if (!is_numeric($check)) {
+                return false;
+            }
+            $check = (int)$check;
+        }
+
         if (get_debug_type($check) !== (string)$backingType) {
             return false;
         }
 
-        return $enumClassName::tryFrom($check) !== null;
+        $options += [
+            'only' => null,
+            'except' => null,
+        ];
+
+        $enum = $enumClassName::tryFrom($check);
+        if ($enum === null) {
+            return false;
+        }
+
+        return static::isValidEnum($enum, $options);
+    }
+
+    /**
+     * @param \BackedEnum $enum
+     * @param array<string, mixed> $options
+     * @return bool
+     */
+    protected static function isValidEnum(BackedEnum $enum, array $options): bool
+    {
+        $options += ['only' => null, 'except' => null];
+
+        if ($options['only']) {
+            if (!is_array($options['only'])) {
+                $options['only'] = [$options['only']];
+            }
+
+            if (in_array($enum, $options['only'], true)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        if ($options['except']) {
+            if (!is_array($options['except'])) {
+                $options['except'] = [$options['except']];
+            }
+
+            if (in_array($enum, $options['except'], true)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -840,7 +965,7 @@ class Validation
      * and arrays with a `name` key.
      *
      * @param mixed $check Value to check
-     * @param array<string> $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
+     * @param list<string> $extensions file extensions to allow. By default extensions are 'gif', 'jpeg', 'png', 'jpg'
      * @return bool Success
      */
     public static function extension(mixed $check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
@@ -853,7 +978,7 @@ class Validation
             return static::extension(array_shift($check), $extensions);
         }
 
-        if (empty($check)) {
+        if (!$check) {
             return false;
         }
 
@@ -997,7 +1122,7 @@ class Validation
         $check = array_filter((array)$check, function ($value) {
             return $value || is_numeric($value);
         });
-        if (empty($check)) {
+        if (!$check) {
             return false;
         }
         if ($options['max'] && count($check) > $options['max']) {
@@ -1121,11 +1246,11 @@ class Validation
     }
 
     /**
-     * Checks if a value is in a given list. Comparison is case sensitive by default.
+     * Checks if a value is in a given list. Comparison is case-sensitive by default.
      *
      * @param mixed $check Value to check.
-     * @param array<string> $list List to check against.
-     * @param bool $caseInsensitive Set to true for case insensitive comparison.
+     * @param list<string> $list List to check against.
+     * @param bool $caseInsensitive Set to true for case-insensitive comparison.
      * @return bool Success.
      */
     public static function inList(mixed $check, array $list, bool $caseInsensitive = false): bool
@@ -1410,10 +1535,14 @@ class Validation
         if ($file === null) {
             return false;
         }
-
-        [$width, $height] = getimagesize($file) ?: [];
-        $validHeight = null;
+        $width = null;
+        $height = null;
+        $imageSize = getimagesize($file);
+        if ($imageSize) {
+            [$width, $height] = $imageSize;
+        }
         $validWidth = null;
+        $validHeight = null;
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);

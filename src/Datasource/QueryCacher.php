@@ -70,7 +70,7 @@ class QueryCacher
         $key = $this->_resolveKey($query);
         $storage = $this->_resolveCacher();
         $result = $storage->get($key);
-        if (empty($result)) {
+        if (!$result) {
             return null;
         }
 

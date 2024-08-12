@@ -136,12 +136,14 @@ class CounterCacheBehavior extends Behavior
 
                 $registryAlias = $assoc->getTarget()->getRegistryAlias();
                 $entityAlias = $assoc->getProperty();
+                /** @var \Cake\Datasource\EntityInterface $assocEntity */
+                $assocEntity = $entity->$entityAlias;
 
                 if (
                     !is_callable($config) &&
                     isset($config['ignoreDirty']) &&
                     $config['ignoreDirty'] === true &&
-                    $entity->$entityAlias->isDirty($field)
+                    $assocEntity->isDirty($field)
                 ) {
                     $this->_ignoreDirty[$registryAlias][$field] = true;
                 }
@@ -219,7 +221,7 @@ class CounterCacheBehavior extends Behavior
         Association $assoc,
         array $settings
     ): void {
-        /** @var array<string> $foreignKeys */
+        /** @var list<string> $foreignKeys */
         $foreignKeys = (array)$assoc->getForeignKey();
         $countConditions = $entity->extract($foreignKeys);
 
@@ -234,6 +236,7 @@ class CounterCacheBehavior extends Behavior
         $updateConditions = array_combine($primaryKeys, $countConditions);
 
         $countOriginalConditions = $entity->extractOriginalChanged($foreignKeys);
+        $updateOriginalConditions = null;
         if ($countOriginalConditions !== []) {
             $updateOriginalConditions = array_combine($primaryKeys, $countOriginalConditions);
         }
@@ -262,7 +265,7 @@ class CounterCacheBehavior extends Behavior
                 }
             }
 
-            if (isset($updateOriginalConditions) && $this->_shouldUpdateCount($updateOriginalConditions)) {
+            if ($updateOriginalConditions && $this->_shouldUpdateCount($updateOriginalConditions)) {
                 if ($config instanceof Closure) {
                     $count = $config($event, $entity, $this->_table, true);
                 } else {

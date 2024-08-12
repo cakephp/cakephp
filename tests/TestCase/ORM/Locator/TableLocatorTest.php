@@ -27,9 +27,15 @@ use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use ReflectionProperty;
 use TestApp\Infrastructure\Table\AddressesTable;
+use TestApp\Model\Entity\Article;
 use TestApp\Model\Table\ArticlesTable;
+use TestApp\Model\Table\AuthorsTable;
 use TestApp\Model\Table\MyUsersTable;
 use TestPlugin\Infrastructure\Table\AddressesTable as PluginAddressesTable;
+use TestPlugin\Model\Entity\Comment;
+use TestPlugin\Model\Table\CommentsTable;
+use TestPlugin\Model\Table\TestPluginCommentsTable;
+use TestPluginTwo\Model\Table\CommentsTable as PluginTwoCommentsTable;
 
 /**
  * Test case for TableLocator
@@ -72,7 +78,7 @@ class TableLocatorTest extends TestCase
 
         $data = [
             'connection' => 'testing',
-            'entityClass' => 'TestApp\Model\Entity\Article',
+            'entityClass' => Article::class,
         ];
         $result = $this->_locator->setConfig('Tests', $data);
         $this->assertSame($this->_locator, $result, 'Returns locator');
@@ -91,7 +97,7 @@ class TableLocatorTest extends TestCase
 
         $data = [
             'connection' => 'testing',
-            'entityClass' => 'TestPlugin\Model\Entity\Comment',
+            'entityClass' => Comment::class,
         ];
 
         $result = $this->_locator->setConfig('TestPlugin.TestPluginComments', $data);
@@ -308,10 +314,10 @@ class TableLocatorTest extends TestCase
     public function testGetWithConventions(): void
     {
         $table = $this->_locator->get('Articles');
-        $this->assertInstanceOf('TestApp\Model\Table\ArticlesTable', $table);
+        $this->assertInstanceOf(ArticlesTable::class, $table);
 
         $table = $this->_locator->get('Authors');
-        $this->assertInstanceOf('TestApp\Model\Table\AuthorsTable', $table);
+        $this->assertInstanceOf(AuthorsTable::class, $table);
     }
 
     /**
@@ -322,7 +328,7 @@ class TableLocatorTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $table = $this->_locator->get('TestPlugin.TestPluginComments');
 
-        $this->assertInstanceOf('TestPlugin\Model\Table\TestPluginCommentsTable', $table);
+        $this->assertInstanceOf(TestPluginCommentsTable::class, $table);
         $this->assertFalse(
             $this->_locator->exists('TestPluginComments'),
             'Short form should NOT exist'
@@ -350,16 +356,16 @@ class TableLocatorTest extends TestCase
         $plugin2 = $this->_locator->get('TestPluginTwo.Comments');
 
         $this->assertInstanceOf(Table::class, $app, 'Should be an app table instance');
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $plugin1, 'Should be a plugin 1 table instance');
-        $this->assertInstanceOf('TestPluginTwo\Model\Table\CommentsTable', $plugin2, 'Should be a plugin 2 table instance');
+        $this->assertInstanceOf(CommentsTable::class, $plugin1, 'Should be a plugin 1 table instance');
+        $this->assertInstanceOf(PluginTwoCommentsTable::class, $plugin2, 'Should be a plugin 2 table instance');
 
         $plugin2 = $this->_locator->get('TestPluginTwo.Comments');
         $plugin1 = $this->_locator->get('TestPlugin.Comments');
         $app = $this->_locator->get('Comments');
 
         $this->assertInstanceOf(Table::class, $app, 'Should still be an app table instance');
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $plugin1, 'Should still be a plugin 1 table instance');
-        $this->assertInstanceOf('TestPluginTwo\Model\Table\CommentsTable', $plugin2, 'Should still be a plugin 2 table instance');
+        $this->assertInstanceOf(CommentsTable::class, $plugin1, 'Should still be a plugin 1 table instance');
+        $this->assertInstanceOf(PluginTwoCommentsTable::class, $plugin2, 'Should still be a plugin 2 table instance');
     }
 
     /**
@@ -371,7 +377,7 @@ class TableLocatorTest extends TestCase
         $table = $this->_locator->get('Comments', [
             'className' => 'TestPlugin.TestPluginComments',
         ]);
-        $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
+        $class = TestPluginCommentsTable::class;
         $this->assertInstanceOf($class, $table);
         $this->assertFalse($this->_locator->exists('TestPluginComments'), 'Class name should not exist');
         $this->assertFalse($this->_locator->exists('TestPlugin.TestPluginComments'), 'Full class alias should not exist');
@@ -387,7 +393,7 @@ class TableLocatorTest extends TestCase
     public function testGetPluginWithFullNamespaceName(): void
     {
         $this->loadPlugins(['TestPlugin']);
-        $class = 'TestPlugin\Model\Table\TestPluginCommentsTable';
+        $class = TestPluginCommentsTable::class;
         $table = $this->_locator->get('Comments', [
             'className' => $class,
         ]);
@@ -491,7 +497,7 @@ class TableLocatorTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
 
-        $mock = $this->getMockBuilder('TestPlugin\Model\Table\CommentsTable')->getMock();
+        $mock = $this->getMockBuilder(CommentsTable::class)->getMock();
 
         $this->assertSame($mock, $this->_locator->set('TestPlugin.Comments', $mock));
         $this->assertSame($mock, $this->_locator->get('TestPlugin.Comments'));
@@ -679,7 +685,7 @@ class TableLocatorTest extends TestCase
         $this->assertSame($table, $mock);
     }
 
-    public function testQueryFactoryInstance()
+    public function testQueryFactoryInstance(): void
     {
         $articles = $this->_locator->get(ArticlesTable::class);
         $prop1 = new ReflectionProperty($articles, 'queryFactory');

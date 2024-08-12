@@ -94,6 +94,7 @@ class SelectWithPivotLoader extends SelectLoader
         $query = parent::_buildQuery($options);
 
         if ($queryBuilder) {
+            /** @var \Cake\ORM\Query\SelectQuery $query */
             $query = $queryBuilder($query);
         }
 
@@ -106,11 +107,12 @@ class SelectWithPivotLoader extends SelectLoader
 
         $tempName = $this->alias . '_CJoin';
         $schema = $assoc->getSchema();
-        $joinFields = $types = [];
+        $joinFields = [];
+        $types = [];
 
         foreach ($schema->typeMap() as $f => $type) {
             $key = $tempName . '__' . $f;
-            $joinFields[$key] = "$name.$f";
+            $joinFields[$key] = "{$name}.{$f}";
             $types[$key] = $type;
         }
 
@@ -145,7 +147,7 @@ class SelectWithPivotLoader extends SelectLoader
      * which the filter should be applied
      *
      * @param array<string, mixed> $options the options to use for getting the link field.
-     * @return array<string>|string
+     * @return list<string>|string
      */
     protected function _linkField(array $options): array|string
     {

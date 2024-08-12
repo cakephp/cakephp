@@ -68,8 +68,8 @@ class ValueBinder
     public function placeholder(string $token): string
     {
         $number = $this->_bindingsCount++;
-        if ($token[0] !== ':' && $token !== '?') {
-            $token = sprintf(':%s%s', $token, $number);
+        if (!str_starts_with($token, ':') && $token !== '?') {
+            return sprintf(':%s%s', $token, $number);
         }
 
         return $token;
@@ -140,7 +140,7 @@ class ValueBinder
     public function attachTo(StatementInterface $statement): void
     {
         $bindings = $this->bindings();
-        if (empty($bindings)) {
+        if (!$bindings) {
             return;
         }
 
