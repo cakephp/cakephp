@@ -157,7 +157,7 @@ class FormData implements Countable, Stringable
             if (stream_is_local($value)) {
                 $finfo = new finfo(FILEINFO_MIME);
                 $metadata = stream_get_meta_data($value);
-                $uri = $metadata['uri'] ?? '';
+                $uri = $metadata['uri'];
                 $contentType = (string)$finfo->file($uri);
                 $filename = basename($uri);
             }
