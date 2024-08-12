@@ -1,8 +1,0 @@
----
-linters:
-  phpcs:
-    standard: CakePHP4
-    extensions: 'php'
-
-branches:
-    ignore: ['5.x']
