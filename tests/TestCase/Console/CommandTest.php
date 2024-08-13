@@ -108,13 +108,17 @@ class CommandTest extends TestCase
      */
     public function testRunCallsInitialize(): void
     {
-        /** @var \Cake\Command\Command|\PHPUnit\Framework\MockObject\MockObject $command */
-        $command = $this->getMockBuilder(Command::class)
-            ->onlyMethods(['initialize'])
-            ->getMock();
+        $command = new class extends Command {
+            public bool $initializeCalled = false;
+
+            public function initialize(): void
+            {
+                $this->initializeCalled = true;
+            }
+        };
         $command->setName('cake example');
-        $command->expects($this->once())->method('initialize');
         $command->run([], $this->getMockIo(new StubConsoleOutput()));
+        $this->assertTrue($command->initializeCalled);
     }
 
     /**
@@ -191,14 +195,15 @@ class CommandTest extends TestCase
      */
     public function testRunOptionParserFailure(): void
     {
-        /** @var \Cake\Command\Command|\PHPUnit\Framework\MockObject\MockObject $command */
-        $command = $this->getMockBuilder(Command::class)
-            ->onlyMethods(['getOptionParser'])
-            ->getMock();
-        $parser = new ConsoleOptionParser('cake example');
-        $parser->addArgument('name', ['required' => true]);
+        $command = new class extends Command {
+            public function getOptionParser(): ConsoleOptionParser
+            {
+                $parser = new ConsoleOptionParser('cake example');
+                $parser->addArgument('name', ['required' => true]);
 
-        $command->method('getOptionParser')->willReturn($parser);
+                return $parser;
+            }
+        };
 
         $output = new StubConsoleOutput();
         $result = $command->run([], $this->getMockIo($output));

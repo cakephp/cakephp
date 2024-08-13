@@ -35,7 +35,6 @@ use InvalidArgumentException;
 use LogicException;
 use NoRewindIterator;
 use PHPUnit\Framework\Attributes\DataProvider;
-use stdClass;
 use TestApp\Collection\CountableIterator;
 use TestApp\Collection\TestCollection;
 use TestApp\Model\Enum\ArticleStatus;
@@ -2728,17 +2727,14 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = (new Collection($items))->lazy();
-        $callable = $this->getMockBuilder(stdMock::class)
-            ->getMock();
+        $callable = new class {
+            public function __invoke()
+            {
+                throw new Exception('This should not be called');
+            }
+        };
 
-        $callable->expects($this->never())->method('__invoke');
         $collection->filter($callable)->filter($callable);
+        $this->assertTrue(true);
     }
 }
-
-// phpcs:disable
-class stdMock extends stdClass
-{
-    public function __invoke() {}
-}
-// phpcs:enable
