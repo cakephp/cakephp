@@ -131,6 +131,7 @@ jobs:
       uses: codecov/codecov-action@v4
       with:
         files: coverage.xml,coverage-functions.xml
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   testsuite-windows:
     runs-on: windows-2022
