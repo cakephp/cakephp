@@ -23,6 +23,7 @@ use Traversable;
  * This interface describes the methods for pagination instance.
  *
  * @template-extends \Traversable<mixed>
+ * @method array<mixed> toArray() Get the paginated items as an array
  */
 interface PaginatedInterface extends Countable, Traversable
 {
@@ -67,15 +68,6 @@ interface PaginatedInterface extends Countable, Traversable
      * @return bool
      */
     public function hasNextPage(): bool;
-
-    /**
-     * Get the paginated items as an array.
-     *
-     * This will exhaust the iterator `items`.
-     *
-     * @return array
-     */
-    public function toArray(): array;
 
     /**
      * Get paginated items.
