@@ -38,7 +38,7 @@ class PaginatedResultSetTest extends TestCase
 
     public function testToArray(): void
     {
-        $paginatedResults = new PaginatedResultSet( new Collection([1, 2, 3]), []);
+        $paginatedResults = new PaginatedResultSet(new Collection([1, 2, 3]), []);
 
         $out = $paginatedResults->toArray();
         $this->assertSame([1, 2, 3], $out);
