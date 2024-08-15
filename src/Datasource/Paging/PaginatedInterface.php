@@ -69,6 +69,15 @@ interface PaginatedInterface extends Countable, Traversable
     public function hasNextPage(): bool;
 
     /**
+     * Get the paginated items as an array.
+     *
+     * This will exhaust the iterator `items`.
+     *
+     * @return array
+     */
+    public function toArray(): array;
+
+    /**
      * Get paginated items.
      *
      * @return iterable

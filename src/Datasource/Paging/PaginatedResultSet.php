@@ -64,6 +64,18 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
     }
 
     /**
+     * Get the paginated items as an array.
+     *
+     * This will exhaust the iterator `items`.
+     *
+     * @return array<array-key, T>
+     */
+    public function toArray(): array
+    {
+        return iterator_to_array($this->items());
+    }
+
+    /**
      * Get paginated items.
      *
      * @return \Traversable<T> The paginated items result set.
