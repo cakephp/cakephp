@@ -21,6 +21,7 @@ use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\ContainerInterface;
 use Cake\Event\EventInterface;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
@@ -53,6 +54,15 @@ class BaseApplicationTest extends TestCase
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
+            }
+
+            public function events(EventManagerInterface $eventsManager): EventManagerInterface
+            {
+                $eventsManager->on('testTrue', function ($event) {
+                    return true;
+                });
+
+                return $eventsManager;
             }
         };
     }
@@ -273,5 +283,20 @@ class BaseApplicationTest extends TestCase
         $container = $app->getContainer();
         $this->assertInstanceOf(ContainerInterface::class, $container);
         $this->assertTrue($container->has('testing'));
+    }
+
+    public function testEventsAreRegistered(): void
+    {
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/cakes']);
+        $request = $request->withAttribute('params', [
+            'controller' => 'Cakes',
+            'action' => 'index',
+            'plugin' => null,
+            'pass' => [],
+        ]);
+
+        $app = $this->app;
+        $app->handle($request);
+        $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
 }

@@ -22,12 +22,12 @@ use TestApp\Command\DemoCommand;
 
 class EventApplication extends BaseApplication
 {
-    public function events(EventManagerInterface $eventManager): EventManagerInterface
+    public function events(EventManagerInterface $eventsManager): EventManagerInterface
     {
-        $eventManager->on('My.event', function (): void {
+        $eventsManager->on('My.event', function (): void {
         });
 
-        return $eventManager;
+        return $eventsManager;
     }
 
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue

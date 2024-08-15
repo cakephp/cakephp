@@ -21,7 +21,10 @@ use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
+use Cake\Event\EventManagerInterface;
+use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
@@ -193,5 +196,40 @@ class BasePluginTest extends TestCase
         $this->assertSame($expected . 'config' . DS, $plugin->getConfigPath());
         $this->assertSame($expected . 'src' . DS, $plugin->getClassPath());
         $this->assertSame($expected . 'templates' . DS, $plugin->getTemplatePath());
+    }
+
+    public function testEventsAreRegistered(): void
+    {
+        static::setAppNamespace();
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/cakes']);
+        $request = $request->withAttribute('params', [
+            'controller' => 'Cakes',
+            'action' => 'index',
+            'plugin' => null,
+            'pass' => [],
+        ]);
+
+        $basePlugin = new class extends BasePlugin
+        {
+            public function events(EventManagerInterface $eventsManager): EventManagerInterface
+            {
+                $eventsManager->on('testTrue', function ($event) {
+                    return true;
+                });
+
+                return $eventsManager;
+            }
+        };
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $app = $app->addPlugin($basePlugin);
+        $app->handle($request);
+        $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
 }
