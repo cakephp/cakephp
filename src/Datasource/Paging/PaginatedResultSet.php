@@ -72,7 +72,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
      */
     public function toArray(): array
     {
-        return iterator_to_array($this->items());
+        return $this->jsonSerialize();
     }
 
     /**
