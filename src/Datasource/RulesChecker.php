@@ -301,19 +301,12 @@ class RulesChecker
      */
     public function check(EntityInterface $entity, string $mode, array $options = []): bool
     {
-        if ($mode === self::CREATE) {
-            return $this->checkCreate($entity, $options);
-        }
-
-        if ($mode === self::UPDATE) {
-            return $this->checkUpdate($entity, $options);
-        }
-
-        if ($mode === self::DELETE) {
-            return $this->checkDelete($entity, $options);
-        }
-
-        throw new InvalidArgumentException('Wrong checking mode: ' . $mode);
+        return match ($mode) {
+            self::CREATE => $this->checkCreate($entity, $options),
+            self::UPDATE => $this->checkUpdate($entity, $options),
+            self::DELETE => $this->checkDelete($entity, $options),
+            default => throw new InvalidArgumentException('Wrong checking mode: ' . $mode),
+        };
     }
 
     /**
@@ -391,7 +384,7 @@ class RulesChecker
      * Utility method for decorating any callable so that if it returns false, the correct
      * property in the entity is marked as invalid.
      *
-     * @param \Cake\Datasource\RuleInvoker|callable $rule The rule to decorate
+     * @param callable $rule The rule to decorate
      * @param array|string|null $name The alias for a rule or an array of options
      * @param array<string, mixed> $options The options containing the error message and field.
      * @return \Cake\Datasource\RuleInvoker
