@@ -26,6 +26,7 @@ use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Countable;
+use Exception;
 use TestApp\Controller\Component\FlashAliasComponent;
 use TestPlugin\Controller\Component\OtherComponent;
 use Traversable;
@@ -133,11 +134,14 @@ class ComponentRegistryTest extends TestCase
      */
     public function testLoadWithEnableFalse(): void
     {
-        $mock = $this->getMockBuilder(EventManager::class)->getMock();
-        $mock->expects($this->never())
-            ->method('on');
+        $eventManager = new class extends EventManager {
+            public function on($eventKey, $options = null, $callable = []): void
+            {
+                throw new Exception('Should not be called');
+            }
+        };
 
-        $this->Components->getController()->setEventManager($mock);
+        $this->Components->getController()->setEventManager($eventManager);
 
         $result = $this->Components->load('Flash', ['enabled' => false]);
         $this->assertInstanceOf(FlashComponent::class, $result);

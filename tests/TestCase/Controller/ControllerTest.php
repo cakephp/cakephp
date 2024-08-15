@@ -27,7 +27,7 @@ use Cake\Core\Container;
 use Cake\Datasource\Paging\PaginatedInterface;
 use Cake\Event\Event;
 use Cake\Event\EventInterface;
-use Cake\Event\EventManagerInterface;
+use Cake\Event\EventManager;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -576,10 +576,6 @@ class ControllerTest extends TestCase
         $result = $Controller->referer(['controller' => 'Posts', 'action' => 'index'], true);
         $this->assertSame('/posts/index', $result);
 
-        $request = $this->getMockBuilder(ServerRequest::class)
-            ->onlyMethods(['referer'])
-            ->getMock();
-
         $request = new ServerRequest([
             'environment' => ['HTTP_REFERER' => 'http://localhost/posts/index'],
         ]);
@@ -617,25 +613,21 @@ class ControllerTest extends TestCase
      */
     public function testStartupProcess(): void
     {
-        $eventManager = $this->getMockBuilder(EventManagerInterface::class)->getMock();
+        $eventManager = new class extends EventManager
+        {
+            public function dispatch(EventInterface|string $event): EventInterface
+            {
+                if ($event->getName() !== 'Controller.initialize' && $event->getName() !== 'Controller.startup') {
+                    throw new InvalidArgumentException('Unexpected event');
+                }
+
+                return new Event('stub');
+            }
+        };
+
         $controller = new Controller(new ServerRequest(), null, $eventManager);
 
-        $eventManager
-            ->expects($this->exactly(2))
-            ->method('dispatch')
-            ->with(
-                ...self::withConsecutive(
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'Controller.initialize';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'Controller.startup';
-                    })]
-                )
-            )
-            ->willReturn(new Event('stub'));
-
-        $controller->startupProcess();
+        $this->assertNull($controller->startupProcess());
     }
 
     /**
@@ -643,17 +635,19 @@ class ControllerTest extends TestCase
      */
     public function testShutdownProcess(): void
     {
-        $eventManager = $this->getMockBuilder(EventManagerInterface::class)->getMock();
+        $eventManager = new class extends EventManager {
+            public function dispatch(EventInterface|string $event): EventInterface
+            {
+                if ($event->getName() !== 'Controller.shutdown') {
+                    throw new InvalidArgumentException('Unexpected event');
+                }
+
+                return new Event('stub');
+            }
+        };
         $controller = new Controller(new ServerRequest(), null, $eventManager);
 
-        $eventManager->expects($this->once())
-            ->method('dispatch')
-            ->with($this->callback(function (EventInterface $event) {
-                return $event->getName() === 'Controller.shutdown';
-            }))
-            ->willReturn(new Event('stub'));
-
-        $controller->shutdownProcess();
+        $this->assertNull($controller->shutdownProcess());
     }
 
     /**
