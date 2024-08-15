@@ -17,8 +17,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource\Paging;
 
 use ArrayIterator;
+use Cake\Collection\CollectionInterface;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\ResultSetInterface;
+use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use function Cake\Collection\collection;
@@ -27,8 +29,10 @@ class PaginatedResultSetTest extends TestCase
 {
     public function testItems(): void
     {
+        $resultSet = new class ([]) extends ResultSet {
+        };
         $paginatedResults = new PaginatedResultSet(
-            $this->getMockBuilder(ResultSetInterface::class)->getMock(),
+            $resultSet,
             []
         );
 
@@ -38,12 +42,12 @@ class PaginatedResultSetTest extends TestCase
     #[WithoutErrorHandler]
     public function testCall(): void
     {
-        $resultSet = $this->getMockBuilder(ResultSetInterface::class)->getMock();
-        $resultSet
-            ->expects($this->once())
-            ->method('extract')
-            ->with('foo')
-            ->willReturn(collection(['bar']));
+        $resultSet = new class ([]) extends ResultSet {
+            public function extract(callable|string $path): CollectionInterface
+            {
+                return collection(['bar']);
+            }
+        };
 
         $paginatedResults = new PaginatedResultSet(
             $resultSet,
