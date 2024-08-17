@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Datasource\Paging;
 
 use ArrayIterator;
 use Cake\Collection\CollectionInterface;
+use Cake\Collection\Collection;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\ResultSet;
@@ -37,6 +38,14 @@ class PaginatedResultSetTest extends TestCase
         );
 
         $this->assertInstanceOf(ResultSetInterface::class, $paginatedResults->items());
+    }
+
+    public function testToArray(): void
+    {
+        $paginatedResults = new PaginatedResultSet(new Collection([1, 2, 3]), []);
+
+        $out = $paginatedResults->toArray();
+        $this->assertSame([1, 2, 3], $out);
     }
 
     #[WithoutErrorHandler]

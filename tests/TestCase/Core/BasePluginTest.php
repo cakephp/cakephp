@@ -113,7 +113,9 @@ class BasePluginTest extends TestCase
 
     public function testBootstrap(): void
     {
-        $app = $this->createMock(PluginApplicationInterface::class);
+        $app = new class implements PluginApplicationInterface {
+            use BasePluginApplicationTrait;
+        };
         $plugin = new TestPlugin();
 
         $this->assertFalse(Configure::check('PluginTest.test_plugin.bootstrap'));
@@ -126,7 +128,9 @@ class BasePluginTest extends TestCase
      */
     public function testBootstrapSkipMissingFile(): void
     {
-        $app = $this->createMock(PluginApplicationInterface::class);
+        $app = new class implements PluginApplicationInterface {
+            use BasePluginApplicationTrait;
+        };
         $plugin = new BasePlugin();
         $plugin->bootstrap($app);
         $this->assertTrue(true);
