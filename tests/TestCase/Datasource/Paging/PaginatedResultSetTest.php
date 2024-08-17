@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource\Paging;
 
 use ArrayIterator;
-use Cake\Collection\CollectionInterface;
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\ResultSet;
