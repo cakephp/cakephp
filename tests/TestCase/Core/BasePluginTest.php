@@ -16,6 +16,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core;
 
 use Cake\Console\CommandCollection;
+use Cake\Console\CommandRunner;
+use Cake\Console\ConsoleIo;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
@@ -29,6 +32,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\TestPluginThreePlugin;
+use Mockery;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use TestPlugin\Plugin as TestPlugin;
 
@@ -230,6 +234,42 @@ class BasePluginTest extends TestCase
         };
         $app = $app->addPlugin($basePlugin);
         $app->handle($request);
+        $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
+    }
+
+    public function testConsoleEventsAreRegistered(): void
+    {
+        static::setAppNamespace();
+        $basePlugin = new class extends BasePlugin
+        {
+            public function consoleEvents(EventManagerInterface $eventsManager): EventManagerInterface
+            {
+                $eventsManager->on('testTrue', function ($event) {
+                    return true;
+                });
+
+                return $eventsManager;
+            }
+        };
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function routes(RouteBuilder $routes): void
+            {
+            }
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $app = $app->addPlugin($basePlugin);
+        $output = new StubConsoleOutput();
+        $consoleIo = Mockery::mock(ConsoleIo::class, [$output, $output, null, null])
+            ->shouldAllowMockingMethod('in')
+            ->makePartial();
+        $runner = new CommandRunner($app);
+        $runner->run(['cake', 'version'], $consoleIo);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
 }

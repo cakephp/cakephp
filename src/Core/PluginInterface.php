@@ -28,7 +28,7 @@ interface PluginInterface
      *
      * @var list<string>
      */
-    public const VALID_HOOKS = ['bootstrap', 'console', 'middleware', 'routes', 'services', 'events'];
+    public const VALID_HOOKS = ['bootstrap', 'console', 'middleware', 'routes', 'services', 'events', 'consoleEvents'];
 
     /**
      * Get the name of this plugin.

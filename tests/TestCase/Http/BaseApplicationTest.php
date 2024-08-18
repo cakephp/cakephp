@@ -16,6 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Console\CommandRunner;
+use Cake\Console\ConsoleIo;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
@@ -29,6 +32,7 @@ use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use Psr\Http\Message\ResponseInterface;
 use TestPlugin\Plugin as TestPlugin;
 
@@ -297,6 +301,38 @@ class BaseApplicationTest extends TestCase
 
         $app = $this->app;
         $app->handle($request);
+        $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
+    }
+
+    public function testConsoleEventsAreRegistered(): void
+    {
+        static::setAppNamespace();
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function routes(RouteBuilder $routes): void
+            {
+            }
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function consoleEvents(EventManagerInterface $eventsManager): EventManagerInterface
+            {
+                $eventsManager->on('testTrue', function ($event) {
+                    return true;
+                });
+
+                return $eventsManager;
+            }
+        };
+        $output = new StubConsoleOutput();
+        $consoleIo = Mockery::mock(ConsoleIo::class, [$output, $output, null, null])
+            ->shouldAllowMockingMethod('in')
+            ->makePartial();
+        $runner = new CommandRunner($app);
+        $runner->run(['cake', 'version'], $consoleIo);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
 }

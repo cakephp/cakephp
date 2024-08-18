@@ -93,6 +93,7 @@ PHP;
                 'routes' => true,
                 'services' => true,
                 'events' => true,
+                'consoleEvents' => true,
             ],
             'OtherPlugin' => [
                 'isLoaded' => true,
@@ -105,6 +106,7 @@ PHP;
                 'routes' => true,
                 'services' => true,
                 'events' => true,
+                'consoleEvents' => true,
             ],
         ];
         $this->assertSame($result, PluginConfig::getAppConfig());
@@ -143,6 +145,7 @@ PHP;
                 'routes' => true,
                 'services' => true,
                 'events' => true,
+                'consoleEvents' => true,
             ],
             'OtherPlugin' => [
                 'isLoaded' => false,
@@ -168,7 +171,7 @@ PHP;
 <?php
 return [
     'OtherPlugin' => ['onlyDebug' => true, 'onlyCli' => false, 'optional' => true],
-    'AnotherPlugin' => ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false, 'events' => false],
+    'AnotherPlugin' => ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false, 'events' => false, 'consoleEvents' => false],
 ];
 PHP;
         file_put_contents($this->pluginsConfigPath, $config);
@@ -185,6 +188,7 @@ PHP;
                 'routes' => true,
                 'services' => true,
                 'events' => true,
+                'consoleEvents' => true,
             ],
             'AnotherPlugin' => [
                 'isLoaded' => true,
@@ -197,6 +201,7 @@ PHP;
                 'routes' => false,
                 'services' => false,
                 'events' => false,
+                'consoleEvents' => false,
             ],
         ];
         $this->assertSame($result, PluginConfig::getAppConfig());
@@ -314,6 +319,7 @@ PHP;
                 'routes' => true,
                 'services' => true,
                 'events' => true,
+                'consoleEvents' => true,
                 'packagePath' => $pathToRootVendor . 'cakephp' . DS . 'chronos',
                 'package' => 'cakephp/chronos',
                 'version' => '3.0.4',
@@ -330,6 +336,7 @@ PHP;
                 'routes' => true,
                 'services' => true,
                 'events' => true,
+                'consoleEvents' => true,
                 'packagePath' => $pathToRootVendor . 'cakephp' . DS . 'cakephp-codesniffer',
                 'package' => 'cakephp/cakephp-codesniffer',
                 'version' => '5.1.1',
@@ -384,6 +391,7 @@ PHP;
                 'routes' => true,
                 'services' => true,
                 'events' => true,
+                'consoleEvents' => true,
             ],
         ], PluginConfig::getAppConfig());
         unlink($pathToTestPlugin . 'composer.json');

@@ -20,6 +20,9 @@ use Cake\Console\CommandCollection;
 /**
  * An interface defining the methods that the
  * console runner depend on.
+ *
+ * @method consoleEvents(\Cake\Event\EventManagerInterface $eventManager)
+ * @method pluginConsoleEvents(\Cake\Event\EventManagerInterface $eventManager)
  */
 interface ConsoleApplicationInterface
 {

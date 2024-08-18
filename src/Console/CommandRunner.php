@@ -319,6 +319,10 @@ class CommandRunner implements EventDispatcherInterface
     protected function runCommand(CommandInterface $command, array $argv, ConsoleIo $io): ?int
     {
         try {
+            $eventManager = $this->getEventManager();
+            $eventManager = $this->app->consoleEvents($eventManager);
+            $eventManager = $this->app->pluginConsoleEvents($eventManager);
+            EventManager::instance($eventManager);
             if ($command instanceof EventDispatcherInterface) {
                 $command->setEventManager($this->getEventManager());
             }
