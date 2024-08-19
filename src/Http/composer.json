@@ -29,7 +29,7 @@
         "cakephp/core": "^5.0",
         "cakephp/event": "^5.0",
         "cakephp/utility": "^5.0",
-        "composer/ca-bundle": "^1.2",
+        "composer/ca-bundle": "^1.5",
         "psr/http-client": "^1.0.2",
         "psr/http-factory": "^1.1",
         "psr/http-message": "^1.1 || ^2.0",
