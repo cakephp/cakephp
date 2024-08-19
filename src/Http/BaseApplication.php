@@ -320,12 +320,12 @@ abstract class BaseApplication implements
     /**
      * Register application events.
      *
-     * @param \Cake\Event\EventManagerInterface $eventsManager The global event manager to register listeners on
+     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
      * @return \Cake\Event\EventManagerInterface
      */
-    public function events(EventManagerInterface $eventsManager): EventManagerInterface
+    public function events(EventManagerInterface $eventManager): EventManagerInterface
     {
-        return $eventsManager;
+        return $eventManager;
     }
 
     /**
@@ -345,11 +345,8 @@ abstract class BaseApplication implements
         $container->add(ServerRequest::class, $request);
         $container->add(ContainerInterface::class, $container);
 
-        $eventsManager = EventManager::instance();
-        $eventsManager = $this->pluginEvents($eventsManager);
-        /** @var \Cake\Event\EventManager $eventsManager */
-        $eventsManager = $this->events($eventsManager);
-        EventManager::instance($eventsManager);
+        $eventManager = $this->pluginEvents($this->getEventManager());
+        $this->setEventManager($this->events($eventManager));
 
         $this->controllerFactory ??= new ControllerFactory($container);
 

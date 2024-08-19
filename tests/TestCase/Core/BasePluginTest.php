@@ -215,13 +215,13 @@ class BasePluginTest extends TestCase
 
         $basePlugin = new class extends BasePlugin
         {
-            public function events(EventManagerInterface $eventsManager): EventManagerInterface
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
-                $eventsManager->on('testTrue', function ($event) {
+                $eventManager->on('testTrue', function ($event) {
                     return true;
                 });
 
-                return $eventsManager;
+                return $eventManager;
             }
         };
 
@@ -242,13 +242,13 @@ class BasePluginTest extends TestCase
         static::setAppNamespace();
         $basePlugin = new class extends BasePlugin
         {
-            public function events(EventManagerInterface $eventsManager): EventManagerInterface
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
-                $eventsManager->on('testTrue', function ($event) {
+                $eventManager->on('testTrue', function ($event) {
                     return true;
                 });
 
-                return $eventsManager;
+                return $eventManager;
             }
         };
 

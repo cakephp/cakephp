@@ -314,11 +314,11 @@ class BasePlugin implements PluginInterface
     /**
      * Register application events.
      *
-     * @param \Cake\Event\EventManagerInterface $eventsManager The global event manager to register listeners on
+     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
      * @return \Cake\Event\EventManagerInterface
      */
-    public function events(EventManagerInterface $eventsManager): EventManagerInterface
+    public function events(EventManagerInterface $eventManager): EventManagerInterface
     {
-        return $eventsManager;
+        return $eventManager;
     }
 }

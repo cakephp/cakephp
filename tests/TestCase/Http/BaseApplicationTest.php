@@ -60,13 +60,13 @@ class BaseApplicationTest extends TestCase
                 return $middlewareQueue;
             }
 
-            public function events(EventManagerInterface $eventsManager): EventManagerInterface
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
-                $eventsManager->on('testTrue', function ($event) {
+                $eventManager->on('testTrue', function ($event) {
                     return true;
                 });
 
-                return $eventsManager;
+                return $eventManager;
             }
         };
     }
@@ -318,13 +318,13 @@ class BaseApplicationTest extends TestCase
                 return $middlewareQueue;
             }
 
-            public function events(EventManagerInterface $eventsManager): EventManagerInterface
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
-                $eventsManager->on('testTrue', function ($event) {
+                $eventManager->on('testTrue', function ($event) {
                     return true;
                 });
 
-                return $eventsManager;
+                return $eventManager;
             }
         };
         $output = new StubConsoleOutput();
