@@ -318,7 +318,7 @@ class BaseApplicationTest extends TestCase
                 return $middlewareQueue;
             }
 
-            public function consoleEvents(EventManagerInterface $eventsManager): EventManagerInterface
+            public function events(EventManagerInterface $eventsManager): EventManagerInterface
             {
                 $eventsManager->on('testTrue', function ($event) {
                     return true;

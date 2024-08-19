@@ -242,7 +242,7 @@ class BasePluginTest extends TestCase
         static::setAppNamespace();
         $basePlugin = new class extends BasePlugin
         {
-            public function consoleEvents(EventManagerInterface $eventsManager): EventManagerInterface
+            public function events(EventManagerInterface $eventsManager): EventManagerInterface
             {
                 $eventsManager->on('testTrue', function ($event) {
                     return true;

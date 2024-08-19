@@ -271,19 +271,6 @@ abstract class BaseApplication implements
     }
 
     /**
-     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
-     * @return \Cake\Event\EventManagerInterface
-     */
-    public function pluginConsoleEvents(EventManagerInterface $eventManager): EventManagerInterface
-    {
-        foreach ($this->plugins->with('consoleEvents') as $plugin) {
-            $eventManager = $plugin->consoleEvents($eventManager);
-        }
-
-        return $eventManager;
-    }
-
-    /**
      * Get the dependency injection container for the application.
      *
      * The first time the container is fetched it will be constructed
@@ -337,15 +324,6 @@ abstract class BaseApplication implements
      * @return \Cake\Event\EventManagerInterface
      */
     public function events(EventManagerInterface $eventsManager): EventManagerInterface
-    {
-        return $eventsManager;
-    }
-
-    /**
-     * @param \Cake\Event\EventManagerInterface $eventsManager The global event manager to register listeners on
-     * @return \Cake\Event\EventManagerInterface
-     */
-    public function consoleEvents(EventManagerInterface $eventsManager): EventManagerInterface
     {
         return $eventsManager;
     }

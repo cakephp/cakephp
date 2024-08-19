@@ -74,13 +74,6 @@ class BasePlugin implements PluginInterface
     protected bool $eventsEnabled = true;
 
     /**
-     * Load console events or not
-     *
-     * @var bool
-     */
-    protected bool $consoleEventsEnabled = true;
-
-    /**
      * The path to this plugin.
      *
      * @var string|null
@@ -325,15 +318,6 @@ class BasePlugin implements PluginInterface
      * @return \Cake\Event\EventManagerInterface
      */
     public function events(EventManagerInterface $eventsManager): EventManagerInterface
-    {
-        return $eventsManager;
-    }
-
-    /**
-     * @param \Cake\Event\EventManagerInterface $eventsManager The global event manager to register listeners on
-     * @return \Cake\Event\EventManagerInterface
-     */
-    public function consoleEvents(EventManagerInterface $eventsManager): EventManagerInterface
     {
         return $eventsManager;
     }

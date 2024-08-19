@@ -55,7 +55,6 @@
   </file>
   <file src="src/Http/BaseApplication.php">
     <UndefinedInterfaceMethod>
-      <code><![CDATA[consoleEvents]]></code>
       <code><![CDATA[events]]></code>
     </UndefinedInterfaceMethod>
   </file>
