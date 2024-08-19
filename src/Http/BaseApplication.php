@@ -345,9 +345,10 @@ abstract class BaseApplication implements
         $container->add(ServerRequest::class, $request);
         $container->add(ContainerInterface::class, $container);
 
+        $eventsManager = EventManager::instance();
+        $eventsManager = $this->pluginEvents($eventsManager);
         /** @var \Cake\Event\EventManager $eventsManager */
-        $eventsManager = $this->events(EventManager::instance());
-        $this->pluginEvents($eventsManager);
+        $eventsManager = $this->events($eventsManager);
         EventManager::instance($eventsManager);
 
         $this->controllerFactory ??= new ControllerFactory($container);
