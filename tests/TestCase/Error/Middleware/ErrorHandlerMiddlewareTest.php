@@ -98,14 +98,18 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $factory = function ($exception) {
             $this->assertInstanceOf('LogicException', $exception);
-            $response = new Response();
-            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
-                ->getMock();
-            $mock->expects($this->once())
-                ->method('render')
-                ->willReturn($response);
 
-            return $mock;
+            return new class implements ExceptionRendererInterface
+            {
+                public function render(): ResponseInterface|string
+                {
+                    return new Response();
+                }
+
+                public function write(string|ResponseInterface $output): void
+                {
+                }
+            };
         };
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
             'exceptionRenderer' => $factory,
@@ -362,14 +366,18 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function ($exception) {
-            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
-                ->getMock();
-            $mock->expects($this->once())
-                ->method('render')
-                ->will($this->throwException(new LogicException('Rendering failed')));
+        $factory = function () {
+            return new class implements ExceptionRendererInterface
+            {
+                public function render(): ResponseInterface|string
+                {
+                    throw new LogicException('Rendering failed');
+                }
 
-            return $mock;
+                public function write(string|ResponseInterface $output): void
+                {
+                }
+            };
         };
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
             'exceptionRenderer' => $factory,

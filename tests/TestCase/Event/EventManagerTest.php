@@ -222,17 +222,39 @@ class EventManagerTest extends TestCase
     public function testDispatch(): void
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(EventTestListener::class)
-            ->getMock();
-        $anotherListener = $this->getMockBuilder(EventTestListener::class)
-            ->getMock();
+        $listener = new class implements EventListenerInterface {
+            public array $callList = [];
+
+            public function listenerFunction(EventInterface $event): void
+            {
+                $this->callList[] = 'listenerFunction';
+            }
+
+            public function implementedEvents(): array
+            {
+                return [];
+            }
+        };
+        $anotherListener = new class implements EventListenerInterface {
+            public array $callList = [];
+
+            public function listenerFunction(EventInterface $event): void
+            {
+                $this->callList[] = 'listenerFunction';
+            }
+
+            public function implementedEvents(): array
+            {
+                return [];
+            }
+        };
         $manager->on('fake.event', [$listener, 'listenerFunction']);
         $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
         $event = new Event('fake.event');
 
-        $listener->expects($this->once())->method('listenerFunction')->with($event);
-        $anotherListener->expects($this->once())->method('listenerFunction')->with($event);
         $manager->dispatch($event);
+        $this->assertEquals(['listenerFunction'], $listener->callList);
+        $this->assertEquals(['listenerFunction'], $anotherListener->callList);
     }
 
     /**
@@ -258,23 +280,42 @@ class EventManagerTest extends TestCase
     public function testDispatchReturnValue(): void
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(EventTestListener::class)
-            ->getMock();
-        $anotherListener = $this->getMockBuilder(EventTestListener::class)
-            ->getMock();
+        $listener = new class implements EventListenerInterface {
+            public array $callList = [];
+
+            public function listenerFunction(EventInterface $event): string
+            {
+                $this->callList[] = 'listenerFunction';
+
+                return 'something special';
+            }
+
+            public function implementedEvents(): array
+            {
+                return [];
+            }
+        };
+        $anotherListener = new class implements EventListenerInterface {
+            public array $callList = [];
+
+            public function listenerFunction(EventInterface $event): void
+            {
+                $this->callList[] = 'listenerFunction';
+            }
+
+            public function implementedEvents(): array
+            {
+                return [];
+            }
+        };
         $manager->on('fake.event', [$listener, 'listenerFunction']);
         $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
         $event = new Event('fake.event');
 
-        $listener->expects($this->once())
-            ->method('listenerFunction')
-            ->with($event)
-            ->willReturn('something special');
-        $anotherListener->expects($this->once())
-            ->method('listenerFunction')
-            ->with($event);
         $manager->dispatch($event);
         $this->assertSame('something special', $event->getResult());
+        $this->assertEquals(['listenerFunction'], $listener->callList);
+        $this->assertEquals(['listenerFunction'], $anotherListener->callList);
     }
 
     /**
@@ -285,21 +326,42 @@ class EventManagerTest extends TestCase
     public function testDispatchFalseStopsEvent(): void
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(EventTestListener::class)
-            ->getMock();
-        $anotherListener = $this->getMockBuilder(EventTestListener::class)
-            ->getMock();
+        $listener = new class implements EventListenerInterface {
+            public array $callList = [];
+
+            public function listenerFunction(EventInterface $event): bool
+            {
+                $this->callList[] = 'listenerFunction';
+
+                return false;
+            }
+
+            public function implementedEvents(): array
+            {
+                return [];
+            }
+        };
+        $anotherListener = new class implements EventListenerInterface {
+            public array $callList = [];
+
+            public function listenerFunction(EventInterface $event): void
+            {
+                $this->callList[] = 'listenerFunction';
+            }
+
+            public function implementedEvents(): array
+            {
+                return [];
+            }
+        };
         $manager->on('fake.event', [$listener, 'listenerFunction']);
         $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
         $event = new Event('fake.event');
 
-        $listener->expects($this->once())->method('listenerFunction')
-            ->with($event)
-            ->willReturn(false);
-        $anotherListener->expects($this->never())
-            ->method('listenerFunction');
         $manager->dispatch($event);
         $this->assertTrue($event->isStopped());
+        $this->assertEquals(['listenerFunction'], $listener->callList);
+        $this->assertEquals([], $anotherListener->callList);
     }
 
     /**
@@ -329,23 +391,16 @@ class EventManagerTest extends TestCase
     public function testOnSubscriber(): void
     {
         $manager = new EventManager();
-        /** @var \TestApp\TestCase\Event\CustomTestEventListenerInterface|\PHPUnit\Framework\MockObject\MockObject $listener */
-        $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
-            ->onlyMethods(['secondListenerFunction'])
-            ->getMock();
+        $listener = new CustomTestEventListenerInterface();
         $manager->on($listener);
 
         $event = new Event('fake.event');
         $manager->dispatch($event);
-
-        $expected = ['listenerFunction'];
-        $this->assertEquals($expected, $listener->callList);
+        $this->assertEquals(['listenerFunction'], $listener->callList);
 
         $event = new Event('another.event', $this, ['some' => 'data']);
-        $listener->expects($this->once())
-            ->method('secondListenerFunction')
-            ->with($event, 'data');
         $manager->dispatch($event);
+        $this->assertEquals(['listenerFunction','secondListenerFunction'], $listener->callList);
     }
 
     /**
@@ -356,18 +411,23 @@ class EventManagerTest extends TestCase
     public function testOnSubscriberMultiple(): void
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
-            ->onlyMethods(['listenerFunction', 'secondListenerFunction'])
-            ->getMock();
+        $listener = new class extends CustomTestEventListenerInterface {
+            public $callList = [];
+
+            public function listenerFunction(EventInterface $event): void
+            {
+                $this->callList[] = 'listenerFunction';
+            }
+
+            public function secondListenerFunction(EventInterface $event): void
+            {
+                $this->callList[] = 'secondListenerFunction';
+            }
+        };
         $manager->on($listener);
         $event = new Event('multiple.handlers');
-        $listener->expects($this->once())
-            ->method('listenerFunction')
-            ->with($event);
-        $listener->expects($this->once())
-            ->method('secondListenerFunction')
-            ->with($event);
         $manager->dispatch($event);
+        $this->assertEquals(['listenerFunction','secondListenerFunction'], $listener->callList);
     }
 
     /**
@@ -376,9 +436,8 @@ class EventManagerTest extends TestCase
     public function testDetachSubscriber(): void
     {
         $manager = new EventManager();
-        $listener = $this->getMockBuilder(CustomTestEventListenerInterface::class)
-            ->onlyMethods(['secondListenerFunction'])
-            ->getMock();
+        $listener = new class extends CustomTestEventListenerInterface {
+        };
         $manager->on($listener);
         $expected = [
             ['callable' => $listener->secondListenerFunction(...)],
@@ -412,16 +471,31 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchWithGlobal(): void
     {
-        $generalManager = $this->getMockBuilder(EventManager::class)
-            ->onlyMethods(['prioritisedListeners'])
-            ->getMock();
+        $eventListener = new class implements EventListenerInterface {
+            public array $callList = [];
+
+            public function listenerFunction(EventInterface $event): void
+            {
+                $this->callList[] = 'listenerFunction';
+            }
+
+            public function implementedEvents(): array
+            {
+                return [
+                    'fake.event' => 'listenerFunction',
+                ];
+            }
+        };
+
+        $generalManager = (new EventManager())->trackEvents(true)->setEventList(new EventList());
         $manager = new EventManager();
         $event = new Event('fake.event');
         EventManager::instance($generalManager);
-
-        $generalManager->expects($this->once())->method('prioritisedListeners')->with('fake.event');
+        $manager->on($eventListener);
         $manager->dispatch($event);
-        EventManager::instance(new EventManager());
+
+        $this->assertEquals(['listenerFunction'], $eventListener->callList);
+        $this->assertTrue($generalManager->getEventList()->hasEvent('fake.event'));
     }
 
     /**
@@ -431,16 +505,17 @@ class EventManagerTest extends TestCase
      */
     public function testStopPropagation(): void
     {
-        $generalManager = $this->getMockBuilder(EventManager::class)->getMock();
+        $generalManager = new class extends EventManager
+        {
+            public function prioritisedListeners(string $name): array
+            {
+                return [];
+            }
+        };
         $manager = new EventManager();
         $listener = new EventTestListener();
 
         EventManager::instance($generalManager);
-        $generalManager->expects($this->any())
-                ->method('prioritisedListeners')
-                ->with('fake.event')
-                ->willReturn([]);
-
         $manager->on('fake.event', $listener->listenerFunction(...));
         $manager->on('fake.event', ['priority' => 8], $listener->stopListener(...));
         $manager->on('fake.event', ['priority' => 5], $listener->secondListenerFunction(...));
@@ -459,21 +534,24 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchPrioritizedWithGlobal(): void
     {
-        $generalManager = $this->getMockBuilder(EventManager::class)->getMock();
-        $manager = new EventManager();
         $listener = new CustomTestEventListenerInterface();
+        $generalManager = new class ($listener) extends EventManager
+        {
+            public function __construct(public CustomTestEventListenerInterface $listener)
+            {
+            }
+
+            public function prioritisedListeners(string $name): array
+            {
+                return [11 => [
+                    ['callable' => $this->listener->secondListenerFunction(...)],
+                ]];
+            }
+        };
+        $manager = new EventManager();
         $event = new Event('fake.event');
 
         EventManager::instance($generalManager);
-        $generalManager->expects($this->any())
-                ->method('prioritisedListeners')
-                ->with('fake.event')
-                ->willReturn(
-                    [11 => [
-                        ['callable' => $listener->secondListenerFunction(...)],
-                    ]]
-                );
-
         $manager->on('fake.event', $listener->listenerFunction(...));
         $manager->on('fake.event', ['priority' => 15], $listener->thirdListenerFunction(...));
 
@@ -481,7 +559,6 @@ class EventManagerTest extends TestCase
 
         $expected = ['listenerFunction', 'secondListenerFunction', 'thirdListenerFunction'];
         $this->assertEquals($expected, $listener->callList);
-        EventManager::instance(new EventManager());
     }
 
     /**
@@ -491,28 +568,29 @@ class EventManagerTest extends TestCase
      */
     public function testDispatchGlobalBeforeLocal(): void
     {
-        $generalManager = $this->getMockBuilder(EventManager::class)->getMock();
-        $manager = new EventManager();
         $listener = new CustomTestEventListenerInterface();
+        $generalManager = new class ($listener) extends EventManager
+        {
+            public function __construct(public CustomTestEventListenerInterface $listener)
+            {
+            }
+
+            public function prioritisedListeners(string $name): array
+            {
+                return [10 => [
+                    ['callable' => $this->listener->listenerFunction(...)],
+                ]];
+            }
+        };
+        $manager = new EventManager();
         $event = new Event('fake.event');
 
         EventManager::instance($generalManager);
-        $generalManager->expects($this->any())
-                ->method('prioritisedListeners')
-                ->with('fake.event')
-                ->willReturn(
-                    [10 => [
-                        ['callable' => $listener->listenerFunction(...)],
-                    ]]
-                );
-
         $manager->on('fake.event', $listener->secondListenerFunction(...));
 
         $manager->dispatch($event);
-
         $expected = ['listenerFunction', 'secondListenerFunction'];
         $this->assertEquals($expected, $listener->callList);
-        EventManager::instance(new EventManager());
     }
 
     /**
@@ -762,7 +840,12 @@ class EventManagerTest extends TestCase
     {
         $eventManager = new EventManager();
 
-        $listener = $this->createMock(EventListenerInterface::class);
+        $listener = new class implements EventListenerInterface {
+            public function implementedEvents(): array
+            {
+                return [];
+            }
+        };
         $callable = function (): void {
         };
 
