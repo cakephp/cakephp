@@ -25,6 +25,7 @@ use InvalidArgumentException;
 use PDO;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
+use TestApp\Model\Enum\Gender;
 use TestApp\Model\Enum\NonBacked;
 use TestApp\Model\Enum\Priority;
 use ValueError;
@@ -207,6 +208,9 @@ class EnumTypeTest extends TestCase
         $this->assertSame(ArticleStatus::Published, $this->stringType->marshal('Y'));
         $this->assertSame(ArticleStatus::Published, $this->stringType->marshal(ArticleStatus::Published));
 
+        $genderType = TypeFactory::build(EnumType::from(Gender::class));
+        $this->assertSame(Gender::NoSelection, $genderType->marshal(''));
+
         $this->expectException(InvalidArgumentException::class);
         $this->stringType->marshal(1);
     }
@@ -217,7 +221,7 @@ class EnumTypeTest extends TestCase
     public function testMarshalInteger(): void
     {
         $this->assertNull($this->intType->marshal(null));
-        $this->assertNull($this->stringType->marshal(''));
+        $this->assertNull($this->intType->marshal(''));
         $this->assertSame(Priority::Low, $this->intType->marshal(1));
         $this->assertSame(Priority::Low, $this->intType->marshal('1'));
         $this->assertSame(Priority::Medium, $this->intType->marshal(Priority::Medium));
