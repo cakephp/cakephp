@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use Cake\Console\CommandCollection;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
 use Closure;
@@ -64,6 +65,13 @@ class BasePlugin implements PluginInterface
      * @var bool
      */
     protected bool $routesEnabled = true;
+
+    /**
+     * Load events or not
+     *
+     * @var bool
+     */
+    protected bool $eventsEnabled = true;
 
     /**
      * The path to this plugin.
@@ -301,5 +309,16 @@ class BasePlugin implements PluginInterface
      */
     public function services(ContainerInterface $container): void
     {
+    }
+
+    /**
+     * Register application events.
+     *
+     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
+     * @return \Cake\Event\EventManagerInterface
+     */
+    public function events(EventManagerInterface $eventManager): EventManagerInterface
+    {
+        return $eventManager;
     }
 }

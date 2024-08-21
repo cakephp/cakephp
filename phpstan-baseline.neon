@@ -71,6 +71,11 @@ parameters:
 			path: src/Event/EventManager.php
 
 		-
+			message: "#^Call to an undefined method Cake\\\\Core\\\\PluginInterface\\:\\:events\\(\\)\\.$#"
+			count: 1
+			path: src/Http/BaseApplication.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Http/Client.php

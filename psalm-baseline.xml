@@ -53,6 +53,11 @@
       <code><![CDATA[EventInterface]]></code>
     </InvalidReturnType>
   </file>
+  <file src="src/Http/BaseApplication.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[events]]></code>
+    </UndefinedInterfaceMethod>
+  </file>
   <file src="src/I18n/Date.php">
     <ImpureFunctionCall>
       <code><![CDATA[call_user_func(static::$_jsonEncodeFormat, $this)]]></code>
