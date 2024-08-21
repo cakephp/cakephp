@@ -70,7 +70,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        extensions: mbstring, intl-72.1, apcu, memcached, redis, pdo_${{ matrix.db-type }}
+        extensions: mbstring, intl, apcu, memcached, redis, pdo_${{ matrix.db-type }}
         ini-values: apc.enable_cli = 1, zend.assertions = 1
         coverage: pcov
 
