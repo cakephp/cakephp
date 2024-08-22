@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
+use Cake\Datasource\Exception\RuleAlreadyExistsException;
 use InvalidArgumentException;
 
 /**
@@ -133,10 +134,12 @@ class RulesChecker
      * @param array<string, mixed> $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
+     * @throws \Cake\Datasource\Exception\RuleAlreadyExistsException If a rule with the same name already exists
      */
     public function add(callable $rule, array|string|null $name = null, array $options = [])
     {
         if (is_string($name)) {
+            $this->_checkName($this->_rules, $name);
             $this->_rules[$name] = $this->_addError($rule, $name, $options);
         } else {
             $this->_rules[] = $this->_addError($rule, $name, $options);
@@ -176,10 +179,12 @@ class RulesChecker
      * @param array<string, mixed> $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
+     * @throws \Cake\Datasource\Exception\RuleAlreadyExistsException If a rule with the same name already exists
      */
     public function addCreate(callable $rule, array|string|null $name = null, array $options = [])
     {
         if (is_string($name)) {
+            $this->_checkName($this->_createRules, $name);
             $this->_createRules[$name] = $this->_addError($rule, $name, $options);
         } else {
             $this->_createRules[] = $this->_addError($rule, $name, $options);
@@ -219,10 +224,12 @@ class RulesChecker
      * @param array<string, mixed> $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
+     * @throws \Cake\Datasource\Exception\RuleAlreadyExistsException If a rule with the same name already exists
      */
     public function addUpdate(callable $rule, array|string|null $name = null, array $options = [])
     {
         if (is_string($name)) {
+            $this->_checkName($this->_updateRules, $name);
             $this->_updateRules[$name] = $this->_addError($rule, $name, $options);
         } else {
             $this->_updateRules[] = $this->_addError($rule, $name, $options);
@@ -262,10 +269,12 @@ class RulesChecker
      * @param array<string, mixed> $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
+     * @throws \Cake\Datasource\Exception\RuleAlreadyExistsException If a rule with the same name already exists
      */
     public function addDelete(callable $rule, array|string|null $name = null, array $options = [])
     {
         if (is_string($name)) {
+            $this->_checkName($this->_deleteRules, $name);
             $this->_deleteRules[$name] = $this->_addError($rule, $name, $options);
         } else {
             $this->_deleteRules[] = $this->_addError($rule, $name, $options);
@@ -403,5 +412,20 @@ class RulesChecker
         }
 
         return $rule;
+    }
+
+    /**
+     * Checks that a rule with the same name doesn't already exist
+     *
+     * @param array<\Cake\Datasource\RuleInvoker> $rules The rules array to check
+     * @param string $name The name to check
+     * @return void
+     * @throws \Cake\Datasource\Exception\RuleAlreadyExistsException
+     */
+    private function _checkName(array $rules, string $name): void
+    {
+        if (array_key_exists($name, $rules)) {
+            throw new RuleAlreadyExistsException();
+        }
     }
 }
