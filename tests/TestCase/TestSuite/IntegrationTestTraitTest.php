@@ -182,6 +182,14 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertSame(['id' => '1', 'username' => 'mark'], $request['session']->read('User'));
         $this->assertSame('foo', $request['environment']['PHP_AUTH_USER']);
         $this->assertSame('bar', $request['environment']['PHP_AUTH_PW']);
+
+        $this->replaceRequest([
+            'headers' => [
+                'X-CSRF-Token' => 'test321',
+            ],
+        ]);
+        $this->assertSame('test321', $this->_request['headers']['X-CSRF-Token']);
+        $this->assertEmpty($this->_request['webroot']);
     }
 
     /**
