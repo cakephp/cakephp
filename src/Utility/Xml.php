@@ -367,7 +367,13 @@ class Xml
                         }
                     } else {
 // Struct
-                        static::_createChild(['dom' => $dom, 'node' => $node, 'key' => $key, 'value' => $value, 'format' => $format]);
+                        static::_createChild([
+                            'dom' => $dom,
+                            'node' => $node,
+                            'key' => $key,
+                            'value' => $value,
+                            'format' => $format,
+                        ]);
                     }
                 }
             } else {

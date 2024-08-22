@@ -1405,7 +1405,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $options = $this->_setFieldMatchers(
-            ['keyField' => $keyField, 'valueField' => $valueField, 'groupField' => $groupField, 'valueSeparator' => $valueSeparator],
+            [
+                'keyField' => $keyField,
+                'valueField' => $valueField,
+                'groupField' => $groupField,
+                'valueSeparator' => $valueSeparator,
+            ],
             ['keyField', 'valueField', 'groupField']
         );
 
@@ -1446,7 +1451,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     ): SelectQuery {
         $keyField ??= $this->getPrimaryKey();
 
-        $options = $this->_setFieldMatchers(['keyField' => $keyField, 'parentField' => $parentField], ['keyField', 'parentField']);
+        $options = $this->_setFieldMatchers([
+            'keyField' => $keyField,
+            'parentField' => $parentField,
+        ], ['keyField', 'parentField']);
 
         return $query->formatResults(fn (CollectionInterface $results) => $results->nest(
             $options['keyField'],

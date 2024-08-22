@@ -69,7 +69,14 @@ class RulesChecker extends BaseRulesChecker
 
         $errorField = current($fields);
 
-        return $this->_addError(new IsUnique($fields, $options), '_isUnique', ['errorField' => $errorField, 'message' => $message]);
+        return $this->_addError(
+            new IsUnique($fields, $options),
+            '_isUnique',
+            [
+                'errorField' => $errorField,
+                'message' => $message,
+            ]
+        );
     }
 
     /**
@@ -119,7 +126,14 @@ class RulesChecker extends BaseRulesChecker
 
         $errorField = is_string($field) ? $field : current($field);
 
-        return $this->_addError(new ExistsIn($field, $table, $options), '_existsIn', ['errorField' => $errorField, 'message' => $message]);
+        return $this->_addError(
+            new ExistsIn($field, $table, $options),
+            '_existsIn',
+            [
+                'errorField' => $errorField,
+                'message' => $message,
+            ]
+        );
     }
 
     /**

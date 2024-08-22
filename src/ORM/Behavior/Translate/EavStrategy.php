@@ -316,10 +316,18 @@ class EavStrategy implements TranslateStrategyInterface
 
         $new = array_diff_key($values, $modified);
         foreach ($new as $field => $content) {
-            $new[$field] = new Entity(['locale' => $locale, 'field' => $field, 'content' => $content, 'model' => $model], [
-                'useSetters' => false,
-                'markNew' => true,
-            ]);
+            $new[$field] = new Entity(
+                [
+                    'locale' => $locale,
+                    'field' => $field,
+                    'content' => $content,
+                    'model' => $model,
+                ],
+                [
+                    'useSetters' => false,
+                    'markNew' => true,
+                ]
+            );
         }
 
         $entity->set('_i18n', array_merge($bundled, array_values($modified + $new)));

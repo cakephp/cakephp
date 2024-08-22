@@ -135,7 +135,7 @@ class ComponentRegistryTest extends TestCase
     public function testLoadWithEnableFalse(): void
     {
         $eventManager = new class extends EventManager {
-            public function on($eventKey, $options = null, $callable = []): void
+            public function on($eventKey, $options = null, $callable = []): never
             {
                 throw new Exception('Should not be called');
             }

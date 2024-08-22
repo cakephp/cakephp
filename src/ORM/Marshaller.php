@@ -902,6 +902,13 @@ class Marshaller
     {
         $data = new ArrayObject($data);
         $options = new ArrayObject($options);
-        $this->_table->dispatchEvent('Model.afterMarshal', ['entity' => $entity, 'data' => $data, 'options' => $options]);
+        $this->_table->dispatchEvent(
+            'Model.afterMarshal',
+            [
+                'entity' => $entity,
+                'data' => $data,
+                'options' => $options,
+            ]
+        );
     }
 }

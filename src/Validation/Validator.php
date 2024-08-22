@@ -3156,7 +3156,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         foreach ($rules as $name => $rule) {
-            $result = $rule->process($data[$field], $this->_providers, ['newRecord' => $newRecord, 'data' => $data, 'field' => $field]);
+            $result = $rule->process($data[$field], $this->_providers, [
+                'newRecord' => $newRecord,
+                'data' => $data,
+                'field' => $field,
+            ]);
             if ($result === true) {
                 continue;
             }
