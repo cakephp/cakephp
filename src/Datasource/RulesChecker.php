@@ -422,7 +422,7 @@ class RulesChecker
      * @return void
      * @throws \Cake\Datasource\Exception\RuleAlreadyExistsException
      */
-    private function _checkName(array $rules, string $name): void
+    protected function _checkName(array $rules, string $name): void
     {
         if (array_key_exists($name, $rules)) {
             throw new RuleAlreadyExistsException();
