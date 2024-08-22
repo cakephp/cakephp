@@ -37,6 +37,7 @@ use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
 use Cake\ORM\Exception\MissingBehaviorException;
@@ -698,17 +699,13 @@ class WebExceptionRendererTest extends TestCase
         $exception = new MissingHelperException(['class' => 'Fail']);
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder(Controller::class)
-            ->onlyMethods(['render'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
-        $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
-        $controller->setRequest(new ServerRequest());
-        $controller->expects($this->once())
-            ->method('render')
-            ->with('missingHelper')
-            ->will($this->throwException($exception));
+        $request = new ServerRequest();
+        $controller = new class ($request) extends Controller {
+            public function render(?string $template = null, ?string $layout = null): Response
+            {
+                throw new MissingHelperException(['class' => 'Fail']);
+            }
+        };
 
         $ExceptionRenderer->setController($controller);
 
@@ -727,15 +724,13 @@ class WebExceptionRendererTest extends TestCase
         $exception = new NotFoundException('Not there, sorry');
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder(Controller::class)
-            ->onlyMethods(['beforeRender'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
-        $controller->setRequest(new ServerRequest());
-        $controller->expects($this->any())
-            ->method('beforeRender')
-            ->will($this->throwException($exception));
+        $request = new ServerRequest();
+        $controller = new class ($request) extends Controller {
+            public function beforeRender(EventInterface $event)
+            {
+                throw new NotFoundException('Not there, sorry');
+            }
+        };
 
         $ExceptionRenderer->setController($controller);
 
@@ -809,20 +804,14 @@ class WebExceptionRendererTest extends TestCase
         $exception = new NotFoundException();
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder(Controller::class)
-            ->onlyMethods(['render'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
+        $request = new ServerRequest();
+        $controller = new class ($request) extends Controller {
+            public function render(?string $template = null, ?string $layout = null): Response
+            {
+                throw new MissingPluginException(['plugin' => 'TestPlugin']);
+            }
+        };
         $controller->setPlugin('TestPlugin');
-        $controller->setRequest(new ServerRequest());
-
-        $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
-        $controller->expects($this->once())
-            ->method('render')
-            ->with('error400')
-            ->will($this->throwException($exception));
-
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
@@ -840,19 +829,14 @@ class WebExceptionRendererTest extends TestCase
         $exception = new NotFoundException();
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder(Controller::class)
-            ->onlyMethods(['render'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
+        $request = new ServerRequest();
+        $controller = new class ($request) extends Controller {
+            public function render(?string $template = null, ?string $layout = null): Response
+            {
+                throw new MissingPluginException(['plugin' => 'TestPluginTwo']);
+            }
+        };
         $controller->setPlugin('TestPlugin');
-
-        $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);
-        $controller->expects($this->once())
-            ->method('render')
-            ->with('error400')
-            ->will($this->throwException($exception));
-
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
