@@ -703,7 +703,7 @@ class Hash
             $element = $data[$key];
             unset($data[$key]);
 
-            if (is_array($element) && !empty($element)) {
+            if (is_array($element) && $element !== []) {
                 if ($data) {
                     $stack[] = [$data, $path];
                 }
@@ -800,7 +800,7 @@ class Hash
      */
     protected static function _merge(array $stack, array &$return): void
     {
-        while (!empty($stack)) {
+        while ($stack !== []) {
             foreach ($stack as $curKey => &$curMerge) {
                 foreach ($curMerge[0] as $key => &$val) {
                     if (!is_array($curMerge[1])) {
@@ -891,7 +891,7 @@ class Hash
             }
         }
 
-        return empty($depth) ? 0 : max($depth);
+        return $depth === [] ? 0 : max($depth);
     }
 
     /**
@@ -1093,7 +1093,7 @@ class Hash
             if ($key !== null) {
                 $id = $key;
             }
-            if (is_array($r) && !empty($r)) {
+            if (is_array($r) && $r !== []) {
                 $stack = array_merge($stack, static::_squash($r, $id));
             } else {
                 $stack[] = ['id' => $id, 'value' => $r];
@@ -1143,7 +1143,7 @@ class Hash
      */
     public static function mergeDiff(array $data, array $compare): array
     {
-        if (!$data && !empty($compare)) {
+        if (!$data && $compare !== []) {
             return $compare;
         }
         if (!$compare) {

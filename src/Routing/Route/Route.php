@@ -670,7 +670,7 @@ class Route
             $hostOptions['_base'] = $context['_base'];
         }
 
-        $query = !empty($url['?']) ? (array)$url['?'] : [];
+        $query = empty($url['?']) ? [] : (array)$url['?'];
         unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base'], $url['?']);
 
         // Move extension into the hostOptions so its not part of
@@ -727,7 +727,7 @@ class Route
         }
 
         // if not a greedy route, no extra params are allowed.
-        if (!$this->_greedy && !empty($pass)) {
+        if (!$this->_greedy && $pass !== []) {
             return null;
         }
 
@@ -839,7 +839,7 @@ class Route
             $scheme = $params['_scheme'] ?? 'http';
             $out = "{$scheme}://{$host}{$out}";
         }
-        if (!empty($params['_ext']) || !empty($query)) {
+        if (!empty($params['_ext']) || $query !== []) {
             $out = rtrim($out, '/');
         }
         if (!empty($params['_ext'])) {

@@ -112,7 +112,7 @@ class ConnectionTest extends TestCase
      *
      * @return \Cake\Database\Driver
      */
-    public function getDriver()
+    public function getDriver(): Driver
     {
         return new class extends Driver {
             use BaseDriverTrait;
@@ -523,7 +523,7 @@ class ConnectionTest extends TestCase
     {
         $title = 'changed the title!';
         $body = new DateTime('2012-01-01');
-        $values = compact('title', 'body');
+        $values = ['title' => $title, 'body' => $body];
         $this->connection->update('things', $values, [], ['body' => 'date']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
         $rows = $result->fetchAll('assoc');
@@ -540,7 +540,7 @@ class ConnectionTest extends TestCase
     {
         $title = 'changed the title!';
         $body = new DateTime('2012-01-01');
-        $values = compact('title', 'body');
+        $values = ['title' => $title, 'body' => $body];
         $this->connection->update('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
         $rows = $result->fetchAll('assoc');
@@ -556,7 +556,7 @@ class ConnectionTest extends TestCase
     {
         $title = 'changed the title!';
         $body = new DateTime('2012-01-01');
-        $values = compact('title', 'body');
+        $values = ['title' => $title, 'body' => $body];
         $query = $this->connection->updateQuery('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
         $query->execute()->closeCursor();
 

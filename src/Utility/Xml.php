@@ -361,13 +361,13 @@ class Xml
                     if (is_numeric(implode('', array_keys($value)))) {
 // List
                         foreach ($value as $item) {
-                            $itemData = compact('dom', 'node', 'key', 'format');
+                            $itemData = ['dom' => $dom, 'node' => $node, 'key' => $key, 'format' => $format];
                             $itemData['value'] = $item;
                             static::_createChild($itemData);
                         }
                     } else {
 // Struct
-                        static::_createChild(compact('dom', 'node', 'key', 'value', 'format'));
+                        static::_createChild(['dom' => $dom, 'node' => $node, 'key' => $key, 'value' => $value, 'format' => $format]);
                     }
                 }
             } else {

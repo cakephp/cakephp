@@ -83,7 +83,7 @@ class FormProtector
         }
 
         if (Configure::read('debug')) {
-            $debugMessage = $this->debugTokenNotMatching($formData, $hashParts + compact('url', 'sessionId'));
+            $debugMessage = $this->debugTokenNotMatching($formData, $hashParts + ['url' => $url, 'sessionId' => $sessionId]);
             if ($debugMessage) {
                 $this->debugMessage = $debugMessage;
             }

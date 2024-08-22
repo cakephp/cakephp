@@ -264,7 +264,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         $values = $entity->extract($this->_config['fields'], true);
         $fields = array_keys($values);
-        $noFields = empty($fields);
+        $noFields = $fields === [];
 
         // If there are no fields and no bundled translations, or both fields
         // in the default locale and bundled translations we can
@@ -316,7 +316,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         $new = array_diff_key($values, $modified);
         foreach ($new as $field => $content) {
-            $new[$field] = new Entity(compact('locale', 'field', 'content', 'model'), [
+            $new[$field] = new Entity(['locale' => $locale, 'field' => $field, 'content' => $content, 'model' => $model], [
                 'useSetters' => false,
                 'markNew' => true,
             ]);

@@ -131,7 +131,7 @@ class CommandRunner implements EventDispatcherInterface
      */
     public function run(array $argv, ?ConsoleIo $io = null): int
     {
-        assert(!empty($argv), 'Cannot run any commands. No arguments received.');
+        assert($argv !== [], 'Cannot run any commands. No arguments received.');
 
         $this->bootstrap();
 

@@ -213,18 +213,18 @@ class ServerRequestTest extends TestCase
         $post = [
             'Article' => ['title'],
         ];
-        $request = new ServerRequest(compact('post'));
+        $request = new ServerRequest(['post' => $post]);
         $this->assertEquals($post, $request->getData());
 
         $post = ['one' => 1, 'two' => 'three'];
-        $request = new ServerRequest(compact('post'));
+        $request = new ServerRequest(['post' => $post]);
         $this->assertEquals($post, $request->getData());
 
         $post = [
             'Article' => ['title' => 'Testing'],
             'action' => 'update',
         ];
-        $request = new ServerRequest(compact('post'));
+        $request = new ServerRequest(['post' => $post]);
         $this->assertEquals($post, $request->getData());
     }
 
@@ -1157,7 +1157,7 @@ class ServerRequestTest extends TestCase
                 'field' => 'value',
             ],
         ];
-        $request = new ServerRequest(compact('post'));
+        $request = new ServerRequest(['post' => $post]);
         $this->assertEquals($post['Model'], $request->getData('Model'));
 
         $this->assertEquals($post, $request->getData());
@@ -1176,7 +1176,7 @@ class ServerRequestTest extends TestCase
         $this->expectExceptionMessage('`post` key must be an array, object or null. Got `string` instead.');
 
         $post = 'strange, but could happen';
-        new ServerRequest(compact('post'));
+        new ServerRequest(['post' => $post]);
     }
 
     /**

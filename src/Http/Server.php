@@ -157,7 +157,7 @@ class Server implements EventDispatcherInterface
         if (!$request) {
             $request = Router::getRequest();
         }
-        $this->dispatchEvent('Server.terminate', compact('request', 'response'));
+        $this->dispatchEvent('Server.terminate', ['request' => $request, 'response' => $response]);
     }
 
     /**

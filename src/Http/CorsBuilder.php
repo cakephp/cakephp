@@ -142,7 +142,7 @@ class CorsBuilder
                 $preg = ($this->_isSsl ? 'https://' : 'http://') . $domain;
             }
             $preg = '@^' . str_replace('\*', '.*', preg_quote($preg, '@')) . '$@';
-            $result[] = compact('original', 'preg');
+            $result[] = ['original' => $original, 'preg' => $preg];
         }
 
         return $result;

@@ -66,7 +66,7 @@ class Asset
     {
         $pathPrefix = Configure::read('App.imageBaseUrl');
 
-        return static::url($path, $options + compact('pathPrefix'));
+        return static::url($path, $options + ['pathPrefix' => $pathPrefix]);
     }
 
     /**
@@ -92,7 +92,7 @@ class Asset
         $pathPrefix = Configure::read('App.cssBaseUrl');
         $ext = '.css';
 
-        return static::url($path, $options + compact('pathPrefix', 'ext'));
+        return static::url($path, $options + ['pathPrefix' => $pathPrefix, 'ext' => $ext]);
     }
 
     /**
@@ -118,7 +118,7 @@ class Asset
         $pathPrefix = Configure::read('App.jsBaseUrl');
         $ext = '.js';
 
-        return static::url($path, $options + compact('pathPrefix', 'ext'));
+        return static::url($path, $options + ['pathPrefix' => $pathPrefix, 'ext' => $ext]);
     }
 
     /**

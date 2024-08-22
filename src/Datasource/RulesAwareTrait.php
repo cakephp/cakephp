@@ -60,7 +60,7 @@ trait RulesAwareTrait
         if ($hasEvents) {
             $event = $this->dispatchEvent(
                 'Model.beforeRules',
-                compact('entity', 'options', 'operation')
+                ['entity' => $entity, 'options' => $options, 'operation' => $operation]
             );
             if ($event->isStopped()) {
                 return $event->getResult();
@@ -72,7 +72,7 @@ trait RulesAwareTrait
         if ($hasEvents) {
             $event = $this->dispatchEvent(
                 'Model.afterRules',
-                compact('entity', 'options', 'result', 'operation')
+                ['entity' => $entity, 'options' => $options, 'result' => $result, 'operation' => $operation]
             );
 
             if ($event->isStopped()) {

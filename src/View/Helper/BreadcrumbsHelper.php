@@ -88,7 +88,7 @@ class BreadcrumbsHelper extends Helper
             return $this;
         }
 
-        $this->crumbs[] = compact('title', 'url', 'options');
+        $this->crumbs[] = ['title' => $title, 'url' => $url, 'options' => $options];
 
         return $this;
     }
@@ -127,7 +127,7 @@ class BreadcrumbsHelper extends Helper
             return $this;
         }
 
-        array_unshift($this->crumbs, compact('title', 'url', 'options'));
+        array_unshift($this->crumbs, ['title' => $title, 'url' => $url, 'options' => $options]);
 
         return $this;
     }
@@ -160,7 +160,7 @@ class BreadcrumbsHelper extends Helper
             throw new LogicException(sprintf('No crumb could be found at index `%s`.', $index));
         }
 
-        array_splice($this->crumbs, $index, 0, [compact('title', 'url', 'options')]);
+        array_splice($this->crumbs, $index, 0, [['title' => $title, 'url' => $url, 'options' => $options]]);
 
         return $this;
     }

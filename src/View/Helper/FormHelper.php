@@ -999,7 +999,7 @@ class FormHelper extends Helper
             }
 
             $fieldsetParams = ['content' => $out, 'attrs' => ''];
-            if (is_array($fieldset) && !empty($fieldset)) {
+            if (is_array($fieldset) && $fieldset !== []) {
                 $fieldsetParams['attrs'] = $this->templater()->formatAttributes($fieldset);
             }
             $out = $this->formatTemplate('fieldset', $fieldsetParams);
@@ -1132,11 +1132,21 @@ class FormHelper extends Helper
             return $input;
         }
 
-        $label = $this->_getLabel($fieldName, compact('input', 'label', 'error', 'nestedInput') + $options);
+        $label = $this->_getLabel($fieldName, [
+            'input' => $input,
+            'label' => $label,
+            'error' => $error,
+            'nestedInput' => $nestedInput,
+            ] + $options);
         if ($nestedInput) {
-            $result = $this->_groupTemplate(compact('label', 'error', 'options'));
+            $result = $this->_groupTemplate(['label' => $label, 'error' => $error, 'options' => $options]);
         } else {
-            $result = $this->_groupTemplate(compact('input', 'label', 'error', 'options'));
+            $result = $this->_groupTemplate([
+                'input' => $input,
+                'label' => $label,
+                'error' => $error,
+                'options' => $options,
+            ]);
         }
         $result = $this->_inputContainerTemplate([
             'content' => $result,
@@ -2357,7 +2367,7 @@ class FormHelper extends Helper
             }
             $parts = explode('.', $field);
             $first = array_shift($parts);
-            $options['name'] = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
+            $options['name'] = $first . ($parts === [] ? '' : '[' . implode('][', $parts) . ']') . $endsWithBrackets;
         }
 
         if (isset($options['value']) && !isset($options['val'])) {

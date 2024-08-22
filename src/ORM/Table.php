@@ -1405,7 +1405,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $options = $this->_setFieldMatchers(
-            compact('keyField', 'valueField', 'groupField', 'valueSeparator'),
+            ['keyField' => $keyField, 'valueField' => $valueField, 'groupField' => $groupField, 'valueSeparator' => $valueSeparator],
             ['keyField', 'valueField', 'groupField']
         );
 
@@ -1446,7 +1446,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     ): SelectQuery {
         $keyField ??= $this->getPrimaryKey();
 
-        $options = $this->_setFieldMatchers(compact('keyField', 'parentField'), ['keyField', 'parentField']);
+        $options = $this->_setFieldMatchers(['keyField' => $keyField, 'parentField' => $parentField], ['keyField', 'parentField']);
 
         return $query->formatResults(fn (CollectionInterface $results) => $results->nest(
             $options['keyField'],
@@ -1669,7 +1669,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         );
 
         if ($entity && $this->_transactionCommitted($options['atomic'], true)) {
-            $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+            $this->dispatchEvent('Model.afterSaveCommit', ['entity' => $entity, 'options' => $options]);
         }
 
         return $entity;
@@ -1976,7 +1976,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if ($success) {
             if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
-                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+                $this->dispatchEvent('Model.afterSaveCommit', ['entity' => $entity, 'options' => $options]);
             }
             if ($options['atomic'] || $options['_primary']) {
                 if ($options['_cleanOnSuccess']) {
@@ -2039,7 +2039,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $options['associated'] = $this->_associations->normalizeKeys($options['associated']);
-        $event = $this->dispatchEvent('Model.beforeSave', compact('entity', 'options'));
+        $event = $this->dispatchEvent('Model.beforeSave', ['entity' => $entity, 'options' => $options]);
 
         if ($event->isStopped()) {
             $result = $event->getResult();
@@ -2115,7 +2115,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return false;
         }
 
-        $this->dispatchEvent('Model.afterSave', compact('entity', 'options'));
+        $this->dispatchEvent('Model.afterSave', ['entity' => $entity, 'options' => $options]);
 
         if ($options['atomic'] && !$this->getConnection()->inTransaction()) {
             throw new RolledbackTransactionException(['table' => static::class]);
@@ -2388,7 +2388,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
             foreach ($entities as $entity) {
-                $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
+                $this->dispatchEvent('Model.afterSaveCommit', ['entity' => $entity, 'options' => $options]);
                 if ($options['atomic'] || $options['_primary']) {
                     $cleanupOnSuccess($entity);
                 }

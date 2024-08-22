@@ -1570,7 +1570,7 @@ class View implements EventDispatcherInterface
     protected function _paths(?string $plugin = null, bool $cached = true): array
     {
         if ($cached) {
-            if ($plugin === null && !empty($this->_paths)) {
+            if ($plugin === null && $this->_paths !== []) {
                 return $this->_paths;
             }
             if ($plugin !== null && isset($this->_pathsForPlugin[$plugin])) {

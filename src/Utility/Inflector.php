@@ -209,7 +209,7 @@ class Inflector
      */
     public static function reset(): void
     {
-        if (empty(static::$_initialState)) {
+        if (static::$_initialState === []) {
             static::$_initialState = get_class_vars(self::class);
 
             return;

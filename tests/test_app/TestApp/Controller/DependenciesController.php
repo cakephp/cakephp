@@ -31,7 +31,7 @@ class DependenciesController extends Controller
      */
     public function requiredString(string $str)
     {
-        return $this->response->withStringBody(json_encode(compact('str')));
+        return $this->response->withStringBody(json_encode(['str' => $str]));
     }
 
     /**
@@ -39,30 +39,30 @@ class DependenciesController extends Controller
      */
     public function optionalString(string $str = 'default val')
     {
-        return $this->response->withStringBody(json_encode(compact('str')));
+        return $this->response->withStringBody(json_encode(['str' => $str]));
     }
 
     public function requiredTyped(float $one, int $two, bool $three, array $four)
     {
         return $this->response->withStringBody(json_encode(
-            compact('one', 'two', 'three', 'four'),
+            ['one' => $one, 'two' => $two, 'three' => $three, 'four' => $four],
             JSON_PRESERVE_ZERO_FRACTION
         ));
     }
 
     public function optionalTyped(float $one = 1.0, int $two = 2, bool $three = true)
     {
-        return $this->response->withStringBody(json_encode(compact('one', 'two', 'three'), JSON_PRESERVE_ZERO_FRACTION));
+        return $this->response->withStringBody(json_encode(['one' => $one, 'two' => $two, 'three' => $three], JSON_PRESERVE_ZERO_FRACTION));
     }
 
     public function unsupportedTyped(iterable $one)
     {
-        return $this->response->withStringBody(json_encode(compact('one')));
+        return $this->response->withStringBody(json_encode(['one' => $one]));
     }
 
     public function typedUnion(string|int $one)
     {
-        return $this->response->withStringBody(json_encode(compact('one')));
+        return $this->response->withStringBody(json_encode(['one' => $one]));
     }
 
     /**
@@ -71,7 +71,7 @@ class DependenciesController extends Controller
      */
     public function optionalDep($any = null, ?string $str = null, ?stdClass $dep = null)
     {
-        return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
+        return $this->response->withStringBody(json_encode(['dep' => $dep, 'any' => $any, 'str' => $str]));
     }
 
     /**
@@ -80,7 +80,7 @@ class DependenciesController extends Controller
      */
     public function reflectionDep(ReflectionDependency $dep)
     {
-        return $this->response->withStringBody(json_encode(compact('dep')));
+        return $this->response->withStringBody(json_encode(['dep' => $dep]));
     }
 
     /**
@@ -89,7 +89,7 @@ class DependenciesController extends Controller
      */
     public function requiredDep(stdClass $dep, $any = null, ?string $str = null)
     {
-        return $this->response->withStringBody(json_encode(compact('dep', 'any', 'str')));
+        return $this->response->withStringBody(json_encode(['dep' => $dep, 'any' => $any, 'str' => $str]));
     }
 
     /**
@@ -114,6 +114,6 @@ class DependenciesController extends Controller
      */
     public function requiredParam($one)
     {
-        return $this->response->withStringBody(json_encode(compact('one')));
+        return $this->response->withStringBody(json_encode(['one' => $one]));
     }
 }

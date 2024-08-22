@@ -123,7 +123,7 @@ trait ValidatorAwareTrait
             $event = defined(static::class . '::BUILD_VALIDATOR_EVENT')
                 ? static::BUILD_VALIDATOR_EVENT
                 : 'Model.buildValidator';
-            $this->dispatchEvent($event, compact('validator', 'name'));
+            $this->dispatchEvent($event, ['validator' => $validator, 'name' => $name]);
         }
 
         assert(

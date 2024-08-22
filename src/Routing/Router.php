@@ -233,7 +233,7 @@ class Router
      */
     public static function reload(): void
     {
-        if (empty(static::$_initialState)) {
+        if (static::$_initialState === []) {
             static::$_collection = new RouteCollection();
             static::$_initialState = get_class_vars(static::class);
 
