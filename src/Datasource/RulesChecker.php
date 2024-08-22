@@ -139,7 +139,7 @@ class RulesChecker
     public function add(callable $rule, array|string|null $name = null, array $options = [])
     {
         if (is_string($name)) {
-            $this->_checkName($this->_rules, $name);
+            $this->checkName($name, $this->_rules);
             $this->_rules[$name] = $this->_addError($rule, $name, $options);
         } else {
             $this->_rules[] = $this->_addError($rule, $name, $options);
@@ -184,7 +184,7 @@ class RulesChecker
     public function addCreate(callable $rule, array|string|null $name = null, array $options = [])
     {
         if (is_string($name)) {
-            $this->_checkName($this->_createRules, $name);
+            $this->checkName($name, $this->_createRules);
             $this->_createRules[$name] = $this->_addError($rule, $name, $options);
         } else {
             $this->_createRules[] = $this->_addError($rule, $name, $options);
@@ -229,7 +229,7 @@ class RulesChecker
     public function addUpdate(callable $rule, array|string|null $name = null, array $options = [])
     {
         if (is_string($name)) {
-            $this->_checkName($this->_updateRules, $name);
+            $this->checkName($name, $this->_updateRules);
             $this->_updateRules[$name] = $this->_addError($rule, $name, $options);
         } else {
             $this->_updateRules[] = $this->_addError($rule, $name, $options);
@@ -274,7 +274,7 @@ class RulesChecker
     public function addDelete(callable $rule, array|string|null $name = null, array $options = [])
     {
         if (is_string($name)) {
-            $this->_checkName($this->_deleteRules, $name);
+            $this->checkName($name, $this->_deleteRules);
             $this->_deleteRules[$name] = $this->_addError($rule, $name, $options);
         } else {
             $this->_deleteRules[] = $this->_addError($rule, $name, $options);
@@ -417,12 +417,12 @@ class RulesChecker
     /**
      * Checks that a rule with the same name doesn't already exist
      *
-     * @param array<\Cake\Datasource\RuleInvoker> $rules The rules array to check
      * @param string $name The name to check
+     * @param array<\Cake\Datasource\RuleInvoker> $rules The rules array to check
      * @return void
      * @throws \Cake\Datasource\Exception\RuleAlreadyExistsException
      */
-    protected function _checkName(array $rules, string $name): void
+    protected function checkName(string $name, array $rules): void
     {
         if (array_key_exists($name, $rules)) {
             throw new RuleAlreadyExistsException();
