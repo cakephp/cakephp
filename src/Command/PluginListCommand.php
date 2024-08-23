@@ -53,7 +53,7 @@ class PluginListCommand extends Command
             ['Plugin', 'Is Loaded', 'Only Debug', 'Only CLI', 'Optional', 'Version'],
         ];
 
-        if (empty($config)) {
+        if ($config === []) {
             $io->warning(__d('cake', 'No plugins have been found.'));
 
             return static::CODE_ERROR;

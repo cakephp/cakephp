@@ -248,8 +248,8 @@ class EventManagerTest extends TestCase
                 return [];
             }
         };
-        $manager->on('fake.event', [$listener, 'listenerFunction']);
-        $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
+        $manager->on('fake.event', $listener->listenerFunction(...));
+        $manager->on('fake.event', $anotherListener->listenerFunction(...));
         $event = new Event('fake.event');
 
         $manager->dispatch($event);
@@ -308,8 +308,8 @@ class EventManagerTest extends TestCase
                 return [];
             }
         };
-        $manager->on('fake.event', [$listener, 'listenerFunction']);
-        $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
+        $manager->on('fake.event', $listener->listenerFunction(...));
+        $manager->on('fake.event', $anotherListener->listenerFunction(...));
         $event = new Event('fake.event');
 
         $manager->dispatch($event);
@@ -354,8 +354,8 @@ class EventManagerTest extends TestCase
                 return [];
             }
         };
-        $manager->on('fake.event', [$listener, 'listenerFunction']);
-        $manager->on('fake.event', [$anotherListener, 'listenerFunction']);
+        $manager->on('fake.event', $listener->listenerFunction(...));
+        $manager->on('fake.event', $anotherListener->listenerFunction(...));
         $event = new Event('fake.event');
 
         $manager->dispatch($event);

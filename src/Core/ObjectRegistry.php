@@ -93,7 +93,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         }
 
         $loaded = isset($this->_loaded[$objName]);
-        if ($loaded && !empty($config)) {
+        if ($loaded && $config !== []) {
             $this->_checkDuplicate($objName, $config);
         }
         if ($loaded) {

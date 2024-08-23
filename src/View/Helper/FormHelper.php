@@ -999,7 +999,7 @@ class FormHelper extends Helper
             }
 
             $fieldsetParams = ['content' => $out, 'attrs' => ''];
-            if (is_array($fieldset) && !empty($fieldset)) {
+            if (is_array($fieldset) && $fieldset !== []) {
                 $fieldsetParams['attrs'] = $this->templater()->formatAttributes($fieldset);
             }
             $out = $this->formatTemplate('fieldset', $fieldsetParams);
@@ -2357,7 +2357,7 @@ class FormHelper extends Helper
             }
             $parts = explode('.', $field);
             $first = array_shift($parts);
-            $options['name'] = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
+            $options['name'] = $first . ($parts !== [] ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
         }
 
         if (isset($options['value']) && !isset($options['val'])) {

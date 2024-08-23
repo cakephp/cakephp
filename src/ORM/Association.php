@@ -948,7 +948,7 @@ abstract class Association
         $fields = array_merge($surrogate->clause('select'), $options['fields']);
 
         if (
-            (empty($fields) && $options['includeFields']) ||
+            ($fields === [] && $options['includeFields']) ||
             $surrogate->isAutoFieldsEnabled()
         ) {
             $fields = array_merge($fields, $this->getTarget()->getSchema()->columns());

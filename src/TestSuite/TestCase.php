@@ -960,7 +960,7 @@ abstract class TestCase extends BaseTestCase
                 sprintf(
                     'Adding non-existent methods (%s) to model `%s` ' .
                     'when mocking will not work in future PHPUnit versions.',
-                    join(',', $nonExistingMethods),
+                    implode(',', $nonExistingMethods),
                     $alias
                 ),
                 E_USER_DEPRECATED

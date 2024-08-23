@@ -706,7 +706,7 @@ trait IntegrationTestTrait
         ) {
             $props['input'] = http_build_query($data);
         } else {
-            if ($method !== 'GET' || !empty($data)) {
+            if ($method !== 'GET' || $data !== []) {
                 $data = $this->_addTokens($tokenUrl, $data, $method);
             }
             $props['post'] = $this->_castToString($data);

@@ -112,7 +112,7 @@ class ConnectionTest extends TestCase
      *
      * @return \Cake\Database\Driver
      */
-    public function getDriver()
+    public function getDriver(): Driver
     {
         return new class extends Driver {
             use BaseDriverTrait;

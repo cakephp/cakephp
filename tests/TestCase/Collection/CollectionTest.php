@@ -2728,7 +2728,7 @@ class CollectionTest extends TestCase
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = (new Collection($items))->lazy();
         $callable = new class {
-            public function __invoke()
+            public function __invoke(): never
             {
                 throw new Exception('This should not be called');
             }

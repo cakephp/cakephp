@@ -678,10 +678,10 @@ class MailerTest extends TestCase
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
-        $expected = "--$boundary\r\n" .
-            "Content-Type: multipart/related; boundary=\"rel-$boundary\"\r\n" .
+        $expected = "--{$boundary}\r\n" .
+            "Content-Type: multipart/related; boundary=\"rel-{$boundary}\"\r\n" .
             "\r\n" .
-            "--rel-$boundary\r\n" .
+            "--rel-{$boundary}\r\n" .
             "Content-Type: text/html; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
             "\r\n" .
@@ -689,7 +689,7 @@ class MailerTest extends TestCase
             "\r\n" .
             "\r\n" .
             "\r\n" .
-            "--rel-$boundary\r\n" .
+            "--rel-{$boundary}\r\n" .
             "Content-Disposition: inline; filename=\"ri ben yuno ming qian\"; filename*=utf-8''%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%81%AE%E5%90%8D%E5%89%8D\r\n" .
             "Content-Type: text/plain\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .

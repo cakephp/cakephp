@@ -153,7 +153,7 @@ class RedisEngine extends CacheEngine
      */
     protected function _connectTransient(string $server, array $ssl): bool
     {
-        if (empty($ssl)) {
+        if ($ssl === []) {
             return $this->_Redis->connect(
                 $server,
                 (int)$this->_config['port'],
@@ -184,7 +184,7 @@ class RedisEngine extends CacheEngine
     {
         $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
 
-        if (empty($ssl)) {
+        if ($ssl === []) {
             return $this->_Redis->pconnect(
                 $server,
                 (int)$this->_config['port'],

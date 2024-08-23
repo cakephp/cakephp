@@ -726,7 +726,7 @@ class WebExceptionRendererTest extends TestCase
 
         $request = new ServerRequest();
         $controller = new class ($request) extends Controller {
-            public function beforeRender(EventInterface $event)
+            public function beforeRender(EventInterface $event): never
             {
                 throw new NotFoundException('Not there, sorry');
             }
