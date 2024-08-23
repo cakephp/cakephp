@@ -149,7 +149,7 @@ class Curl implements AdapterInterface
             $out[CURLOPT_PROXY] = $options['proxy']['proxy'];
         }
         if (isset($options['proxy']['username'])) {
-            $password = empty($options['proxy']['password']) ? '' : $options['proxy']['password'];
+            $password = !empty($options['proxy']['password']) ? $options['proxy']['password'] : '';
             $out[CURLOPT_PROXYUSERPWD] = $options['proxy']['username'] . ':' . $password;
         }
         if (isset($options['curl']) && is_array($options['curl'])) {

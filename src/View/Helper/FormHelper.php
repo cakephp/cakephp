@@ -2357,7 +2357,7 @@ class FormHelper extends Helper
             }
             $parts = explode('.', $field);
             $first = array_shift($parts);
-            $options['name'] = $first . ($parts === [] ? '' : '[' . implode('][', $parts) . ']') . $endsWithBrackets;
+            $options['name'] = $first . ($parts !== [] ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
         }
 
         if (isset($options['value']) && !isset($options['val'])) {
