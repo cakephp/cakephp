@@ -29,6 +29,6 @@ class ThemePostsController extends Controller
         $this->set('testData', 'Some test data');
         $test2 = 'more data';
         $test3 = 'even more data';
-        $this->set(['test2' => $test2, 'test3' => $test3]);
+        $this->set(compact('test2', 'test3'));
     }
 }

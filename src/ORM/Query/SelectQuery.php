@@ -428,7 +428,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
             return $this;
         }
-        $this->_mapReduce[] = ['mapper' => $mapper, 'reducer' => $reducer];
+        $this->_mapReduce[] = compact('mapper', 'reducer');
 
         return $this;
     }

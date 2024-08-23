@@ -120,7 +120,7 @@ class PostgresSchemaDialect extends SchemaDialect
 
         $type = $this->_applyTypeSpecificColumnConversion(
             $col,
-            ['length' => $length, 'precision' => $precision, 'scale' => $scale]
+            compact('length', 'precision', 'scale')
         );
         if ($type !== null) {
             return $type;

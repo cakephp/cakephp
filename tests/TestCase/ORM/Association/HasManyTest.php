@@ -264,7 +264,7 @@ class HasManyTest extends TestCase
             ->willReturn($query);
         $keys = [1, 2, 3, 4];
 
-        $callable = $association->eagerLoader(['keys' => $keys, 'query' => $query]);
+        $callable = $association->eagerLoader(compact('keys', 'query'));
         $row = ['Authors__id' => 1];
 
         $result = $callable($row);
@@ -306,7 +306,7 @@ class HasManyTest extends TestCase
             ->with('all')
             ->willReturn($query);
 
-        $association->eagerLoader(['keys' => $keys, 'query' => $query]);
+        $association->eagerLoader(compact('keys', 'query'));
 
         $expected = new QueryExpression(
             ['Articles.published' => 'Y', 'Articles.author_id IN' => $keys],
@@ -422,7 +422,7 @@ class HasManyTest extends TestCase
         $queryBuilder = function ($query) {
             return $query->select(['author_id'])->join('comments')->where(['comments.id' => 1]);
         };
-        $association->eagerLoader(['keys' => $keys, 'query' => $query, 'queryBuilder' => $queryBuilder]);
+        $association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
 
         $expected = [
             'Articles__author_id' => 'Articles.author_id',
@@ -491,7 +491,7 @@ class HasManyTest extends TestCase
             ->with($tuple)
             ->willReturnSelf();
 
-        $callable = $association->eagerLoader(['keys' => $keys, 'query' => $query]);
+        $callable = $association->eagerLoader(compact('keys', 'query'));
         $row = ['Authors__id' => 2, 'Authors__site_id' => 10, 'username' => 'author 1'];
         $result = $callable($row);
         $row['Articles'] = [

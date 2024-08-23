@@ -61,7 +61,7 @@ class FileLogTest extends TestCase
         $path = TMP . 'tests' . DS;
         $this->_deleteLogs($path);
 
-        $log = new FileLog(['path' => $path]);
+        $log = new FileLog(compact('path'));
         $log->log('warning', 'Test warning');
         $this->assertFileExists($path . 'error.log');
     }

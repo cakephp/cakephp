@@ -1132,21 +1132,11 @@ class FormHelper extends Helper
             return $input;
         }
 
-        $label = $this->_getLabel($fieldName, [
-            'input' => $input,
-            'label' => $label,
-            'error' => $error,
-            'nestedInput' => $nestedInput,
-            ] + $options);
+        $label = $this->_getLabel($fieldName, compact('input', 'label', 'error', 'nestedInput') + $options);
         if ($nestedInput) {
-            $result = $this->_groupTemplate(['label' => $label, 'error' => $error, 'options' => $options]);
+            $result = $this->_groupTemplate(compact('label', 'error', 'options'));
         } else {
-            $result = $this->_groupTemplate([
-                'input' => $input,
-                'label' => $label,
-                'error' => $error,
-                'options' => $options,
-            ]);
+            $result = $this->_groupTemplate(compact('input', 'label', 'error', 'options'));
         }
         $result = $this->_inputContainerTemplate([
             'content' => $result,

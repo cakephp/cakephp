@@ -335,7 +335,7 @@ class NumericPaginator implements PaginatorInterface
 
         $options['page'] = max((int)$options['page'], 1);
 
-        return ['defaults' => $defaults, 'options' => $options, 'alias' => $alias];
+        return compact('defaults', 'options', 'alias');
     }
 
     /**

@@ -1100,7 +1100,7 @@ class ViewTest extends TestCase
         $trace = $error->getTrace();
 
         $View = $this->PostsController->createView(TestView::class);
-        $View->set(['error' => $error, 'exceptions' => $exceptions, 'message' => $message, 'trace' => $trace]);
+        $View->set(compact('error', 'exceptions', 'message', 'trace'));
         $View->setTemplatePath('Error');
 
         $result = $View->render('pdo_error', 'error');

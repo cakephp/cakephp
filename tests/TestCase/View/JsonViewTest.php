@@ -234,7 +234,7 @@ class JsonViewTest extends TestCase
 
         $Controller->set($data);
         $Controller->viewBuilder()
-            ->setOptions(['serialize' => $serialize, 'jsonOptions' => $jsonOptions])
+            ->setOptions(compact('serialize', 'jsonOptions'))
             ->setClassName('Json');
         $View = $Controller->createView();
         $output = $View->render();

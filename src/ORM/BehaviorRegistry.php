@@ -208,7 +208,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
             $methods[$method] = [$alias, $methodName];
         }
 
-        return ['methods' => $methods, 'finders' => $finders];
+        return compact('methods', 'finders');
     }
 
     /**

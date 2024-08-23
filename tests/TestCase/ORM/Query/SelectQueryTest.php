@@ -381,7 +381,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('authors');
         $this->getTableLocator()->get('articles');
-        $table->hasMany('articles', ['propertyName' => 'articles'] + ['strategy' => $strategy]);
+        $table->hasMany('articles', ['propertyName' => 'articles'] + compact('strategy'));
 
         $query = new SelectQuery($table);
         $results = $query->select()

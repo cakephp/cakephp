@@ -127,7 +127,7 @@ class PostsController extends AppController
     {
         $data = [];
 
-        $this->set(['data' => $data]);
+        $this->set(compact('data'));
         $this->viewBuilder()->setOption('serialize', ['data']);
     }
 

@@ -31,6 +31,6 @@ class UnionDependenciesController extends Controller
 
     public function typedUnion(string|int $one)
     {
-        return $this->response->withStringBody(json_encode(['one' => $one]));
+        return $this->response->withStringBody(json_encode(compact('one')));
     }
 }

@@ -523,7 +523,7 @@ class ConnectionTest extends TestCase
     {
         $title = 'changed the title!';
         $body = new DateTime('2012-01-01');
-        $values = ['title' => $title, 'body' => $body];
+        $values = compact('title', 'body');
         $this->connection->update('things', $values, [], ['body' => 'date']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
         $rows = $result->fetchAll('assoc');
@@ -540,7 +540,7 @@ class ConnectionTest extends TestCase
     {
         $title = 'changed the title!';
         $body = new DateTime('2012-01-01');
-        $values = ['title' => $title, 'body' => $body];
+        $values = compact('title', 'body');
         $this->connection->update('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
         $result = $this->connection->execute('SELECT * FROM things WHERE title = :title AND body = :body', $values, ['body' => 'date']);
         $rows = $result->fetchAll('assoc');
@@ -556,7 +556,7 @@ class ConnectionTest extends TestCase
     {
         $title = 'changed the title!';
         $body = new DateTime('2012-01-01');
-        $values = ['title' => $title, 'body' => $body];
+        $values = compact('title', 'body');
         $query = $this->connection->updateQuery('things', $values, ['id' => '1'], ['body' => 'date', 'id' => 'integer']);
         $query->execute()->closeCursor();
 

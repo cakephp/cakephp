@@ -85,7 +85,7 @@ class FormProtectionComponentTest extends TestCase
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
-            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
+            '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
 
         $event = new Event('Controller.startup', $this->Controller);
@@ -123,7 +123,7 @@ class FormProtectionComponentTest extends TestCase
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'id' => '1',
-            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
+            '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
 
         $event = new Event('Controller.startup', $this->Controller);
@@ -143,7 +143,7 @@ class FormProtectionComponentTest extends TestCase
         $this->Controller->setRequest($this->Controller->getRequest()
             ->withEnv('REQUEST_METHOD', 'GET')
             ->withData('Model', ['username' => 'nate', 'password' => 'foo', 'valid' => '0'])
-            ->withData('_Token', ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug]));
+            ->withData('_Token', compact('fields', 'unlocked', 'debug')));
 
         $event = new Event('Controller.startup', $this->Controller);
 
@@ -164,7 +164,7 @@ class FormProtectionComponentTest extends TestCase
 
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'Model' => ['username' => 'nate', 'password' => 'foo', 'valid' => '0'],
-            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
+            '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
 
         $event = new Event('Controller.startup', $this->Controller);
@@ -204,7 +204,7 @@ class FormProtectionComponentTest extends TestCase
                 'hidden' => 'tampered',
                 'id' => '1',
             ],
-            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
+            '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
 
         $this->expectException(BadRequestException::class);
@@ -229,7 +229,7 @@ class FormProtectionComponentTest extends TestCase
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'open' => 'yes',
             'title' => 'yay',
-            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
+            '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
 
         $this->expectException(BadRequestException::class);
@@ -254,7 +254,7 @@ class FormProtectionComponentTest extends TestCase
         $this->Controller->setRequest($this->Controller->getRequest()->withParsedBody([
             'title' => 'yay',
             'open' => 'yes',
-            '_Token' => ['fields' => $fields, 'unlocked' => $unlocked, 'debug' => $debug],
+            '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
 
         $event = new Event('Controller.startup', $this->Controller);

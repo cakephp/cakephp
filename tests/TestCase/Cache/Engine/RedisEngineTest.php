@@ -148,7 +148,7 @@ class RedisEngineTest extends TestCase
         $url .= '&ssl_key=/tmp/local.key';
         $url .= '&ssl_cert=/tmp/local.crt';
 
-        Cache::setConfig('redis_dsn', ['url' => $url]);
+        Cache::setConfig('redis_dsn', compact('url'));
 
         $config = Cache::pool('redis_dsn')->getConfig();
         $expecting = [
