@@ -46,6 +46,16 @@ parameters:
 			path: src/Database/Expression/QueryExpression.php
 
 		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/Database/Type/EnumType.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between \\*NEVER\\* and '' will always evaluate to false\\.$#"
+			count: 1
+			path: src/Database/Type/EnumType.php
+
+		-
 			message: "#^Template type T of method Cake\\\\Datasource\\\\QueryInterface\\:\\:all\\(\\) is not referenced in a parameter\\.$#"
 			count: 1
 			path: src/Datasource/QueryInterface.php
