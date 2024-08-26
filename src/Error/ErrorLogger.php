@@ -129,7 +129,7 @@ class ErrorLogger implements ErrorLoggerInterface
         }
 
         if ($includeTrace) {
-            $trace = Debugger::formatTrace($exception, ['format' => 'points']);
+            $trace = Debugger::formatTrace($exception, ['format' => 'shortPoints']);
             assert(is_array($trace));
             $message .= "\nStack Trace:\n";
             foreach ($trace as $line) {

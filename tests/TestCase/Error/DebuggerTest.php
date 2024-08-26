@@ -601,6 +601,17 @@ TEXT;
         $this->assertDoesNotMatchRegularExpression('/^Cake\\\Test\\\TestCase\\\Error\\\DebuggerTest..testTraceExclude/m', $result);
     }
 
+    public function testTraceShortPoints(): void
+    {
+        $result = Debugger::trace(['format' => 'shortPoints']);
+        $this->assertIsArray($result);
+        $this->assertEquals(
+            'CORE' . DS . 'vendor' . DS . 'phpunit' . DS . 'phpunit' . DS . 'src' . DS .
+                'Framework' . DS . 'TestCase.php',
+            $result[0]['file']
+        );
+    }
+
     protected function _makeException(): RuntimeException
     {
         return new RuntimeException('testing');
