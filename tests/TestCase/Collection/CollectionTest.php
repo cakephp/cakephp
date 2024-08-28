@@ -668,6 +668,30 @@ class CollectionTest extends TestCase
         $this->assertEquals($expected, iterator_to_array($grouped));
     }
 
+    public function testGroupByPreserveIndex(): void
+    {
+        $items = [
+            'first' => ['name' => 'foo', 'type' => 'a'],
+            'second' => ['name' => 'bar', 'type' => 'b'],
+            'third' => ['name' => 'baz', 'type' => 'b'],
+            'fourth' => ['name' => 'aah', 'type' => 'a'],
+        ];
+
+        $collection = new Collection($items);
+        $grouped = $collection->groupBy('type', true);
+        $expected = [
+            'a' => [
+                'first' => ['name' => 'foo', 'type' => 'a'],
+                'fourth' => ['name' => 'aah', 'type' => 'a'],
+            ],
+            'b' => [
+                'second' => ['name' => 'bar', 'type' => 'b'],
+                'third' => ['name' => 'baz', 'type' => 'b'],
+            ],
+        ];
+        $this->assertEquals($expected, iterator_to_array($grouped));
+    }
+
     /**
      * Tests grouping by a deep key
      */

@@ -278,13 +278,53 @@ trait CollectionTrait
     }
 
     /**
-     * @inheritDoc
+     * Splits a collection into sets, grouped by the result of running each value
+     * through the callback. If $callback is a string instead of a callable,
+     * groups by the property named by $callback on each of the values.
+     *
+     * When $callback is a string it should be a property name to extract or
+     * a dot separated path of properties that should be followed to get the last
+     * one in the path.
+     *
+     * ### Example:
+     *
+     * ```
+     * $items = [
+     *  ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
+     *  ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
+     *  ['id' => 3, 'name' => 'baz', 'parent_id' => 10],
+     * ];
+     *
+     * $group = (new Collection($items))->groupBy('parent_id');
+     *
+     * // Or
+     * $group = (new Collection($items))->groupBy(function ($e) {
+     *  return $e['parent_id'];
+     * });
+     *
+     * // Result will look like this when converted to array
+     * [
+     *  10 => [
+     *      ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
+     *      ['id' => 3, 'name' => 'baz', 'parent_id' => 10],
+     *  ],
+     *  11 => [
+     *      ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
+     *  ]
+     * ];
+     * ```
+     *
+     * @param callable|string $path The column name to use for grouping or callback that returns the value.
+     *   or a function returning the grouping key out of the provided element
+     * @param bool $preserveKeys Whether to preserve the keys of the existing
+     *   collection when the values are grouped. Defaults to false.
+     * @return \Cake\Collection\CollectionInterface
      */
-    public function groupBy(callable|string $path): CollectionInterface
+    public function groupBy(callable|string $path, bool $preserveKeys = false): CollectionInterface
     {
         $callback = $this->_propertyExtractor($path);
         $group = [];
-        foreach ($this->optimizeUnwrap() as $value) {
+        foreach ($this->optimizeUnwrap() as $key => $value) {
             $pathValue = $callback($value);
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
@@ -296,6 +336,11 @@ trait CollectionTrait
                 $pathValue = $pathValue->value;
             } elseif ($pathValue instanceof UnitEnum) {
                 $pathValue = $pathValue->name;
+            }
+
+            if ($preserveKeys) {
+                $group[$pathValue][$key] = $value;
+                continue;
             }
 
             $group[$pathValue][] = $value;
