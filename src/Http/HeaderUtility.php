@@ -34,6 +34,10 @@ class HeaderUtility
     {
         preg_match('/<(.*)>[; ]?[; ]?(.*)?/i', $value, $matches);
 
+        if ($matches === []) {
+            return [];
+        }
+
         $url = $matches[1];
         $parsedParams = ['link' => $url];
 
@@ -48,8 +52,11 @@ class HeaderUtility
                     // See https://www.rfc-editor.org/rfc/rfc8187#section-3.2.3
                     preg_match('/(.*)\'(.*)\'(.*)/i', $trimedValue, $matches);
                     $trimedValue = [
+                        /** @phpstan-ignore-next-line */
                         'language' => $matches[2],
+                        /** @phpstan-ignore-next-line */
                         'encoding' => $matches[1],
+                        /** @phpstan-ignore-next-line */
                         'value' => urldecode($matches[3]),
                     ];
                 }
@@ -117,6 +124,7 @@ class HeaderUtility
 
         $return = [];
         foreach ($matches as $match) {
+            /** @phpstan-ignore-next-line */
             $return[$match[1]] = $match[3] ?? $match[2];
         }
 
