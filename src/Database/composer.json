@@ -42,6 +42,6 @@
     "require-dev": {
         "cakephp/i18n": "^5.0",
         "cakephp/log": "^5.0",
-        "phpstan/phpstan": "^1.10"
+        "phpstan/phpstan": "1.12.0"
     }
 }
