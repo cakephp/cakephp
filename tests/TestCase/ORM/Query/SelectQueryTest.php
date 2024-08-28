@@ -47,6 +47,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\AuthorsTable;
+use TestApp\Model\Table\TagsTable;
 
 /**
  * Tests SelectQuery class
@@ -1430,6 +1431,24 @@ class SelectQueryTest extends TestCase
         ];
         $this->assertEquals($expected, $first->tags[1]->toArray());
         $this->assertInstanceOf(DateTime::class, $first->tags[0]->created);
+    }
+
+    public function testBelongsToManyWithPreservedKeys(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $this->getTableLocator()->get('Tags', ['className' => TagsTable::class]);
+        $table->belongsToMany('Tags');
+
+        $first = $table->find()
+            ->where(['Articles.id' => 1])
+            ->contain([
+                'Tags' => ['finder' => 'slugged'],
+            ])
+            ->first();
+
+        $this->assertArrayHasKey('tag1', $first->tags);
+        $this->assertArrayHasKey('tag2', $first->tags);
+        $this->assertSame('tag1', $first->tags['tag1']->name);
     }
 
     /**
@@ -3028,6 +3047,18 @@ class SelectQueryTest extends TestCase
                 ],
             ]);
 
+        $resultWithSlugIndexedArticles = $table->find('all')
+            ->where(['id' => 1])
+            ->contain([
+                'Articles' => [
+                    'finder' => [
+                        'slugged' => [
+                            'preserveKeys' => true,
+                        ],
+                    ],
+                ],
+            ]);
+
         $this->assertCount(2, $resultWithArticles->first()->articles);
         $this->assertCount(2, $resultWithArticlesArray->first()->articles);
 
@@ -3038,6 +3069,8 @@ class SelectQueryTest extends TestCase
         );
 
         $this->assertCount(0, $resultWithoutArticles->first()->articles);
+
+        $this->assertSame('First-Article', key($resultWithSlugIndexedArticles->first()->articles));
     }
 
     /**
