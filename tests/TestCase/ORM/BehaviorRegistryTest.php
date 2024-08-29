@@ -282,20 +282,12 @@ class BehaviorRegistryTest extends TestCase
     public function testCallFinder(): void
     {
         $this->Behaviors->load('Sluggable');
-        $mockedBehavior = $this->getMockBuilder('Cake\ORM\Behavior')
-            ->addMethods(['findNoSlug'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->Behaviors->set('Sluggable', $mockedBehavior);
 
         $query = new Query($this->Table->getConnection(), $this->Table);
-        $mockedBehavior
-            ->expects($this->once())
-            ->method('findNoSlug')
-            ->with($query, [])
-            ->will($this->returnValue($query));
         $return = $this->Behaviors->callFinder('noSlug', [$query, []]);
         $this->assertSame($query, $return);
+        $sql = $query->sql();
+        $this->assertMatchesRegularExpression('/slug[^ ]+ IS NULL/', $sql);
     }
 
     /**
@@ -319,9 +311,11 @@ class BehaviorRegistryTest extends TestCase
         $this->Behaviors->load('Sluggable');
 
         $this->assertTrue($this->Behaviors->hasMethod('slugify'));
+        $this->assertTrue($this->Behaviors->hasMethod('camelCase'));
         $this->Behaviors->unload('Sluggable');
 
         $this->assertFalse($this->Behaviors->hasMethod('slugify'), 'should not have method anymore');
+        $this->assertFalse($this->Behaviors->hasMethod('camelCase'), 'should not have method anymore');
         $this->Behaviors->call('slugify');
     }
 
@@ -336,8 +330,8 @@ class BehaviorRegistryTest extends TestCase
         $this->assertTrue($this->Behaviors->hasFinder('noSlug'));
         $this->Behaviors->unload('Sluggable');
 
-        $this->Behaviors->callFinder('noSlug');
         $this->assertFalse($this->Behaviors->hasFinder('noSlug'));
+        $this->Behaviors->callFinder('noSlug');
     }
 
     /**
