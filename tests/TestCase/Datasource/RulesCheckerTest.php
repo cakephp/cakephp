@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\RulesChecker;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
@@ -257,5 +258,45 @@ class RulesCheckerTest extends TestCase
 
         $rules->removeDelete('ruleName');
         $this->assertTrue($rules->check($entity, RulesChecker::DELETE));
+    }
+
+    public function testAddDuplicateName(): void
+    {
+        $rules = new RulesChecker();
+        $rules->add(fn () => false, 'myUniqueName');
+
+        $this->expectException(CakeException::class);
+        $rules->add(fn () => true, 'myUniqueName');
+        $this->fail('Exception not thrown');
+    }
+
+    public function testAddCreateDuplicateName(): void
+    {
+        $rules = new RulesChecker();
+        $rules->addCreate(fn () => false, 'myUniqueName');
+
+        $this->expectException(CakeException::class);
+        $rules->addCreate(fn () => true, 'myUniqueName');
+        $this->fail('Exception not thrown');
+    }
+
+    public function testAddUpdateDuplicateName(): void
+    {
+        $rules = new RulesChecker();
+        $rules->addUpdate(fn () => false, 'myUniqueName');
+
+        $this->expectException(CakeException::class);
+        $rules->addUpdate(fn () => true, 'myUniqueName');
+        $this->fail('Exception not thrown');
+    }
+
+    public function testAddDeleteDuplicateName(): void
+    {
+        $rules = new RulesChecker();
+        $rules->addDelete(fn () => false, 'myUniqueName');
+
+        $this->expectException(CakeException::class);
+        $rules->addDelete(fn () => true, 'myUniqueName');
+        $this->fail('Exception not thrown');
     }
 }
