@@ -38,6 +38,10 @@ foreach ($iterator as $file) {
 }
 ksort($packages);
 
+$mainJsonContent = file_get_contents(dirname(__FILE__, 2) . DS . 'composer.json');
+$mainJson = json_decode($mainJsonContent, true);
+$composerCommand = 'composer require --dev phpstan/phpstan:' . $mainJson['require-dev']['phpstan/phpstan'];
+
 $issues = [];
 foreach ($packages as $path => $package) {
     if (!file_exists($path . 'phpstan.neon.dist')) {
@@ -45,7 +49,11 @@ foreach ($packages as $path => $package) {
     }
 
     $exitCode = null;
-    exec('cd ' . $path . ' && composer install && vendor/bin/phpstan analyze ./', $output, $exitCode);
+    exec(
+        'cd ' . $path . ' && ' . $composerCommand . ' && vendor/bin/phpstan analyze ./',
+        $output,
+        $exitCode
+    );
     if ($exitCode !== 0) {
         $code = $exitCode;
 
