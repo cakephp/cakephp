@@ -37,6 +37,8 @@ class MailerSendFailsEmailIsReset extends TestCase
             protected function restore()
             {
                 $this->restoreIsCalled = true;
+
+                return $this;
             }
         };
 
