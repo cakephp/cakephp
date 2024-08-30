@@ -41,7 +41,6 @@
     "require-dev": {
         "cakephp/cache": "^5.0",
         "cakephp/collection": "^5.0",
-        "cakephp/utility": "^5.0",
-        "phpstan/phpstan": "1.12.0"
+        "cakephp/utility": "^5.0"
     }
 }
