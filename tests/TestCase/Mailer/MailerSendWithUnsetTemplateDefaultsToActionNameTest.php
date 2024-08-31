@@ -21,26 +21,27 @@ class MailerSendWithUnsetTemplateDefaultsToActionNameTest extends TestCase
 {
     public function testSendAction(): void
     {
-        $mailer = $this->getMockBuilder(SendWithUnsetTemplateDefaultsToActionNameMailer::class)
-            ->onlyMethods(['deliver', 'restore', 'test'])
-            ->getMock();
-        $mailer->expects($this->once())
-            ->method('test')
-            ->with('foo', 'bar');
-        $mailer->expects($this->any())
-            ->method('deliver')
-            ->willReturn([]);
+        $mailer = new class extends Mailer {
+            public bool $testIsCalled = false;
+
+            public function test($to, $subject)
+            {
+                $this->testIsCalled = true;
+            }
+
+            public function deliver(string $content = ''): array
+            {
+                return [];
+            }
+
+            protected function restore()
+            {
+                return $this;
+            }
+        };
 
         $mailer->send('test', ['foo', 'bar']);
         $this->assertSame('test', $mailer->viewBuilder()->getTemplate());
+        $this->assertTrue($mailer->testIsCalled);
     }
 }
-
-// phpcs:disable
-class SendWithUnsetTemplateDefaultsToActionNameMailer extends Mailer
-{
-    public function test($to, $subject)
-    {
-    }
-}
-// phpcs:enable

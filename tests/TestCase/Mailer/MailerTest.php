@@ -88,7 +88,8 @@ class MailerTest extends TestCase
         $result = $this->mailer->getTransport();
         $this->assertInstanceOf(DebugTransport::class, $result);
 
-        $instance = $this->getMockBuilder(DebugTransport::class)->getMock();
+        $instance = new class extends DebugTransport {
+        };
         $this->mailer->setTransport($instance);
         $this->assertSame($instance, $this->mailer->getTransport());
     }
@@ -311,21 +312,26 @@ class MailerTest extends TestCase
     }
 
     /**
-     * CakeEmailTest::testMockTransport()
+     * CakeEmailTest::testDefaultTransport()
      */
-    public function testMockTransport(): void
+    public function testDefaultTransport(): void
     {
         TransportFactory::drop('default');
 
-        $mock = $this->getMockBuilder(AbstractTransport::class)->getMock();
+        $instance = new class extends AbstractTransport {
+            public function send(Message $message): array
+            {
+                return [];
+            }
+        };
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
         Mailer::setConfig('default', $config);
-        TransportFactory::setConfig('default', $mock);
+        TransportFactory::setConfig('default', $instance);
 
         $em = new Mailer('default');
 
-        $this->assertSame($mock, $em->getTransport());
+        $this->assertSame($instance, $em->getTransport());
 
         TransportFactory::drop('default');
     }
