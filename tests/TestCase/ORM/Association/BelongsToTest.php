@@ -21,12 +21,14 @@ use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
+use Cake\Datasource\EntityInterface;
 use Cake\Event\Event;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Exception;
 use InvalidArgumentException;
 use Mockery;
 
@@ -43,12 +45,12 @@ class BelongsToTest extends TestCase
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Table
      */
     protected $company;
 
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Table
      */
     protected $client;
 
@@ -294,17 +296,22 @@ class BelongsToTest extends TestCase
      */
     public function testCascadeDelete(): void
     {
-        $mock = $this->getMockBuilder(Table::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $table = new class extends Table
+        {
+            public function find(string $type = 'all', ...$args): SelectQuery
+            {
+                throw new Exception('Should not be called');
+            }
+
+            public function delete(EntityInterface $entity, array $options = []): bool
+            {
+                throw new Exception('Should not be called');
+            }
+        };
         $config = [
             'sourceTable' => $this->client,
-            'targetTable' => $mock,
+            'targetTable' => $table,
         ];
-        $mock->expects($this->never())
-            ->method('find');
-        $mock->expects($this->never())
-            ->method('delete');
 
         $association = new BelongsTo('Companies', $config);
         $entity = new Entity(['company_name' => 'CakePHP', 'id' => 1]);
@@ -352,12 +359,12 @@ class BelongsToTest extends TestCase
      */
     public function testPropertyNoPlugin(): void
     {
-        $mock = $this->getMockBuilder(Table::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $table = new class extends Table
+        {
+        };
         $config = [
             'sourceTable' => $this->client,
-            'targetTable' => $mock,
+            'targetTable' => $table,
         ];
         $association = new BelongsTo('Contacts.Companies', $config);
         $this->assertSame('company', $association->getProperty());

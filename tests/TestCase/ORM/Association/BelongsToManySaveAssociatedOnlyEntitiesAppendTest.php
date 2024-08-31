@@ -17,10 +17,12 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\EntityInterface;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Exception;
 
 /**
  * Tests BelongsToManySaveAssociatedOnlyEntitiesAppendTest class
@@ -28,58 +30,35 @@ use Cake\TestSuite\TestCase;
 class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
 {
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $tag;
-
-    /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $article;
-
-    /**
-     * Set up
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->tag = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['find', 'delete'])
-            ->setConstructorArgs([['alias' => 'Tags', 'table' => 'tags']])
-            ->getMock();
-        $this->tag->setSchema([
-            'id' => ['type' => 'integer'],
-            'name' => ['type' => 'string'],
-            '_constraints' => [
-                'primary' => ['type' => 'primary', 'columns' => ['id']],
-            ],
-        ]);
-        $this->article = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['find', 'delete'])
-            ->setConstructorArgs([['alias' => 'Articles', 'table' => 'articles']])
-            ->getMock();
-        $this->article->setSchema([
-            'id' => ['type' => 'integer'],
-            'name' => ['type' => 'string'],
-            '_constraints' => [
-                'primary' => ['type' => 'primary', 'columns' => ['id']],
-            ],
-        ]);
-    }
-
-    /**
      * Test that saveAssociated() ignores non entity values.
      */
     public function testSaveAssociatedOnlyEntitiesAppend(): void
     {
         $connection = ConnectionManager::get('test');
-        $table = $this->getMockBuilder(MockedTable::class)
-            ->setConstructorArgs([['table' => 'tags', 'connection' => $connection]])
-            ->getMock();
+        $table = new class (['alias' => 'Tags', 'table' => 'tags', 'connection' => $connection]) extends Table {
+            public function saveAssociated()
+            {
+                throw new Exception('Should not be called');
+            }
+
+            public function schema()
+            {
+            }
+        };
         $table->setPrimaryKey('id');
 
+        $articleTable = new class (['alias' => 'Articles', 'table' => 'articles']) extends Table {
+        };
+        $articleTable->setSchema([
+            'id' => ['type' => 'integer'],
+            'name' => ['type' => 'string'],
+            '_constraints' => [
+                'primary' => ['type' => 'primary', 'columns' => ['id']],
+            ],
+        ]);
+
         $config = [
-            'sourceTable' => $this->article,
+            'sourceTable' => $articleTable,
             'targetTable' => $table,
             'saveStrategy' => BelongsToMany::SAVE_APPEND,
         ];
@@ -93,18 +72,7 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
             ],
         ]);
 
-        $table->expects($this->never())
-            ->method('saveAssociated');
-
         $association = new BelongsToMany('Tags', $config);
-        $association->saveAssociated($entity);
+        $this->assertInstanceOf(EntityInterface::class, $association->saveAssociated($entity));
     }
 }
-
-// phpcs:disable
-class MockedTable extends Table
-{
-    public function saveAssociated() {}
-    public function schema() {}
-}
-// phpcs:enable

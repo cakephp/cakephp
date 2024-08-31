@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Locator;
 
 use Cake\ORM\Locator\LocatorAwareTrait;
-use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Table\PaginatorPostsTable;
@@ -60,7 +60,7 @@ class LocatorAwareTraitTest extends TestCase
      */
     public function testSetTableLocator(): void
     {
-        $newLocator = $this->getMockBuilder(LocatorInterface::class)->getMock();
+        $newLocator = new TableLocator();
         $this->subject->setTableLocator($newLocator);
         $subjectLocator = $this->subject->getTableLocator();
         $this->assertSame($newLocator, $subjectLocator);

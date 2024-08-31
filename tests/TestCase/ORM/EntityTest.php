@@ -270,14 +270,15 @@ class EntityTest extends TestCase
      */
     public function testConstructorWithGuard(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['set'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->once())
-            ->method('set')
-            ->with(['foo' => 'bar'], ['setter' => true, 'guard' => true]);
-        $entity->__construct(['foo' => 'bar'], ['guard' => true]);
+        // all properties are accessible by default
+        $entity = new Entity(['foo' => 'bar'], ['guard' => true]);
+        $this->assertEquals($entity->foo, 'bar');
+
+        $entity = new class (['foo' => 'bar'], ['guard' => true]) extends Entity
+        {
+            protected array $_accessible = ['foo' => false];
+        };
+        $this->assertEquals($entity->foo, null);
     }
 
     /**
@@ -568,15 +569,7 @@ class EntityTest extends TestCase
      */
     public function testGetArrayAccess(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['get'])
-            ->getMock();
-        $entity->expects($this->exactly(2))
-            ->method('get')
-            ->with(
-                ...self::withConsecutive(['foo'], ['bar'])
-            )
-            ->willReturn('worked', 'worked too');
+        $entity = new Entity(['foo' => 'worked', 'bar' => 'worked too']);
 
         $this->assertSame('worked', $entity['foo']);
         $this->assertSame('worked too', $entity['bar']);
@@ -587,20 +580,11 @@ class EntityTest extends TestCase
      */
     public function testSetArrayAccess(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['set'])
-            ->getMock();
-        $entity->setAccess('*', true);
-
-        $entity->expects($this->exactly(2))
-            ->method('set')
-            ->with(
-                ...self::withConsecutive(['foo', 1], ['bar', 2])
-            )
-            ->willReturnSelf();
-
+        $entity = new Entity();
         $entity['foo'] = 1;
         $entity['bar'] = 2;
+        $this->assertEquals(1, $entity->foo);
+        $this->assertEquals(2, $entity->bar);
     }
 
     /**
@@ -697,10 +681,12 @@ class EntityTest extends TestCase
      */
     public function testJsonSerializeRecursive(): void
     {
-        $phone = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['jsonSerialize'])
-            ->getMock();
-        $phone->expects($this->once())->method('jsonSerialize')->willReturn(['something']);
+        $phone = new class extends Entity {
+            public function jsonSerialize(): array
+            {
+                return ['something'];
+            }
+        };
         $data = ['name' => 'James', 'age' => 20, 'phone' => $phone];
         $entity = new Entity($data);
         $expected = ['name' => 'James', 'age' => 20, 'phone' => ['something']];
@@ -881,19 +867,24 @@ class EntityTest extends TestCase
      */
     public function testConstructorWithClean(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['clean'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->never())->method('clean');
+        $entity = new class extends Entity {
+            public function clean(): void
+            {
+                throw new Exception('Should not be called');
+            }
+        };
         $entity->__construct(['a' => 'b', 'c' => 'd']);
 
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['clean'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->once())->method('clean');
+        $entity = new class extends Entity {
+            public bool $cleanIsCalled = false;
+
+            public function clean(): void
+            {
+                $this->cleanIsCalled = true;
+            }
+        };
         $entity->__construct(['a' => 'b', 'c' => 'd'], ['markClean' => true]);
+        $this->assertTrue($entity->cleanIsCalled);
     }
 
     /**
@@ -901,19 +892,26 @@ class EntityTest extends TestCase
      */
     public function testConstructorWithMarkNew(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['setNew', 'clean'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->never())->method('clean');
+        $entity = new class extends Entity {
+            public function clean(): void
+            {
+                throw new Exception('Should not be called');
+            }
+        };
         $entity->__construct(['a' => 'b', 'c' => 'd']);
 
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['setNew'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->once())->method('setNew');
+        $entity = new class extends Entity {
+            public bool $setNewIsCalled = false;
+
+            public function setNew(bool $new)
+            {
+                $this->setNewIsCalled = $new;
+
+                return $this;
+            }
+        };
         $entity->__construct(['a' => 'b', 'c' => 'd'], ['markNew' => true]);
+        $this->assertTrue($entity->setNewIsCalled);
     }
 
     /**

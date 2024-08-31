@@ -58,7 +58,7 @@ class HasManyTest extends TestCase
     ];
 
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Table
      */
     protected $author;
 
@@ -694,12 +694,10 @@ class HasManyTest extends TestCase
      */
     public function testPropertyNoPlugin(): void
     {
-        $mock = $this->getMockBuilder(Table::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $table = new Table();
         $config = [
             'sourceTable' => $this->author,
-            'targetTable' => $mock,
+            'targetTable' => $table,
         ];
         $association = new HasMany('Contacts.Addresses', $config);
         $this->assertSame('addresses', $association->getProperty());

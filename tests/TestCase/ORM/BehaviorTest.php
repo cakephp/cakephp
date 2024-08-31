@@ -33,7 +33,7 @@ class BehaviorTest extends TestCase
      */
     public function testConstructor(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $config = ['key' => 'value'];
         $behavior = new TestBehavior($table, $config);
         $this->assertEquals($config, $behavior->getConfig());
@@ -44,15 +44,14 @@ class BehaviorTest extends TestCase
      */
     public function testGetTable(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
-
+        $table = new Table();
         $behavior = new TestBehavior($table);
         $this->assertSame($table, $behavior->table());
     }
 
     public function testReflectionCache(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new Test3Behavior($table);
         $expected = [
             'finders' => [
@@ -71,7 +70,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedEvents(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new TestBehavior($table);
         $expected = [
             'Model.beforeFind' => 'beforeFind',
@@ -89,7 +88,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedEventsWithPriority(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new TestBehavior($table, ['priority' => 10]);
         $expected = [
             'Model.beforeFind' => [
@@ -125,7 +124,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedMethods(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new Test2Behavior($table);
         $expected = [
             'doSomething' => 'doSomething',
@@ -138,7 +137,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedMethodsAliased(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [
                 'aliased' => 'doSomething',
@@ -155,7 +154,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedMethodsDisabled(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [],
         ]);
@@ -168,7 +167,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedFinders(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new Test2Behavior($table);
         $expected = [
             'foo' => 'findFoo',
@@ -181,7 +180,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedFindersAliased(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [
                 'aliased' => 'findFoo',
@@ -198,7 +197,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedFindersDisabled(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [],
         ]);
@@ -212,7 +211,7 @@ class BehaviorTest extends TestCase
      */
     public function testVerifyConfig(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new Test2Behavior($table);
         $behavior->verifyConfig();
         $this->assertTrue(true, 'No exception thrown');
@@ -225,7 +224,7 @@ class BehaviorTest extends TestCase
      */
     public function testVerifyConfigImplementedFindersOverridden(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [
                 'aliased' => 'findFoo',
@@ -242,7 +241,7 @@ class BehaviorTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The method `findNotDefined` is not callable on class `' . Test2Behavior::class . '`');
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [
                 'aliased' => 'findNotDefined',
@@ -258,8 +257,7 @@ class BehaviorTest extends TestCase
      */
     public function testVerifyConfigImplementedMethodsOverridden(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
-        $behavior = new Test2Behavior($table);
+        $table = new Table();
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [
                 'aliased' => 'doSomething',
@@ -276,7 +274,7 @@ class BehaviorTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The method `iDoNotExist` is not callable on class `' . Test2Behavior::class . '`');
-        $table = $this->getMockBuilder(Table::class)->getMock();
+        $table = new Table();
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [
                 'aliased' => 'iDoNotExist',

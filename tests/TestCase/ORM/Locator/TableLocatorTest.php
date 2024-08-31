@@ -485,9 +485,9 @@ class TableLocatorTest extends TestCase
      */
     public function testSet(): void
     {
-        $mock = $this->getMockBuilder(Table::class)->getMock();
-        $this->assertSame($mock, $this->_locator->set('Articles', $mock));
-        $this->assertSame($mock, $this->_locator->get('Articles'));
+        $table = new Table();
+        $this->assertSame($table, $this->_locator->set('Articles', $table));
+        $this->assertSame($table, $this->_locator->get('Articles'));
     }
 
     /**
@@ -496,11 +496,10 @@ class TableLocatorTest extends TestCase
     public function testSetPlugin(): void
     {
         $this->loadPlugins(['TestPlugin']);
+        $table = new CommentsTable();
 
-        $mock = $this->getMockBuilder(CommentsTable::class)->getMock();
-
-        $this->assertSame($mock, $this->_locator->set('TestPlugin.Comments', $mock));
-        $this->assertSame($mock, $this->_locator->get('TestPlugin.Comments'));
+        $this->assertSame($table, $this->_locator->set('TestPlugin.Comments', $table));
+        $this->assertSame($table, $this->_locator->get('TestPlugin.Comments'));
     }
 
     /**

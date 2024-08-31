@@ -53,24 +53,12 @@ class TableRegistryTest extends TestCase
     }
 
     /**
-     * Sets and returns mock LocatorInterface instance.
-     *
-     * @return \Cake\ORM\Locator\LocatorInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function _setMockLocator()
-    {
-        $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
-        TableRegistry::setTableLocator($locator);
-
-        return $locator;
-    }
-
-    /**
      * Test testSetLocator() method.
      */
     public function testSetLocator(): void
     {
-        $locator = $this->_setMockLocator();
+        $locator = new TableLocator();
+        TableRegistry::setTableLocator($locator);
 
         $this->assertSame($locator, TableRegistry::getTableLocator());
     }

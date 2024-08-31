@@ -42,12 +42,12 @@ class HasOneTest extends TestCase
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.NullableAuthors', 'core.Users', 'core.Profiles'];
 
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Table
      */
     protected $user;
 
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Table
      */
     protected $profile;
 
@@ -210,10 +210,7 @@ class HasOneTest extends TestCase
     {
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for `Profiles`, got `(user_id)` but expected foreign key for `(id, site_id)`');
-        $query = $this->getMockBuilder(Query::class)
-            ->onlyMethods(['join', 'select'])
-            ->setConstructorArgs([$this->user])
-            ->getMock();
+        $query = new Query($this->user);
         $config = [
             'sourceTable' => $this->user,
             'targetTable' => $this->profile,

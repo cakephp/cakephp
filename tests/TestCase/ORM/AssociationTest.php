@@ -19,9 +19,11 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Configure;
 use Cake\Database\Exception\DatabaseException;
 use Cake\ORM\Association;
-use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
+use Cake\Test\TestCase\ORM\Association\StubAssociationTrait;
 use Cake\TestSuite\TestCase;
+use Exception;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use TestApp\Model\Table\AuthorsTable;
@@ -39,7 +41,7 @@ class AssociationTest extends TestCase
     protected $source;
 
     /**
-     * @var \Cake\ORM\Association|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Association
      */
     protected $association;
 
@@ -58,13 +60,9 @@ class AssociationTest extends TestCase
             'sourceTable' => $this->source,
             'joinType' => 'INNER',
         ];
-        $this->association = $this->getMockBuilder(Association::class)
-            ->onlyMethods([
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
-            ])
-            ->setConstructorArgs(['Foo', $config])
-            ->getMock();
+        $this->association = new class ('Foo', $config) extends Association {
+            use StubAssociationTrait;
+        };
     }
 
     /**
@@ -73,9 +71,17 @@ class AssociationTest extends TestCase
      */
     public function testOptionsIsCalled(): void
     {
-        $options = ['foo' => 'bar'];
-        $this->association->expects($this->once())->method('_options')->with($options);
-        $this->association->__construct('Name', $options);
+        $assoc = new class ('Name', ['foo' => 'bar']) extends Association {
+            use StubAssociationTrait;
+
+            protected function _options(array $options): void
+            {
+                if ($options['foo'] !== 'bar') {
+                    throw new Exception('Invalid option');
+                }
+            }
+        };
+        $this->assertInstanceOf(Association::class, $assoc);
     }
 
     /**
@@ -84,10 +90,9 @@ class AssociationTest extends TestCase
      */
     public function testSetttingClassNameFromAlias(): void
     {
-        $association = $this->getMockBuilder(Association::class)
-            ->onlyMethods(['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'])
-            ->setConstructorArgs(['Foo'])
-            ->getMock();
+        $association = new class ('Foo') extends Association {
+            use StubAssociationTrait;
+        };
 
         $this->assertSame('Foo', $association->getClassName());
     }
@@ -153,16 +158,9 @@ class AssociationTest extends TestCase
      */
     public function testClassNameUnnormalized(): void
     {
-        $config = [
-            'className' => 'Test',
-        ];
-        $this->association = $this->getMockBuilder(Association::class)
-            ->onlyMethods([
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
-            ])
-            ->setConstructorArgs(['Foo', $config])
-            ->getMock();
+        $this->association = new class ('Foo', ['className' => 'Test']) extends Association {
+            use StubAssociationTrait;
+        };
 
         $this->assertSame('Test', $this->association->getClassName());
     }
@@ -174,19 +172,10 @@ class AssociationTest extends TestCase
     public function testInvalidTableFetchedFromRegistry(): void
     {
         $this->expectException(DatabaseException::class);
-
-        $config = [
-            'className' => TestTable::class,
-        ];
-        $this->association = $this->getMockBuilder(Association::class)
-            ->onlyMethods([
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
-            ])
-            ->setConstructorArgs(['Test', $config])
-            ->getMock();
+        $this->association = new class ('Test', ['className' => TestTable::class]) extends Association {
+            use StubAssociationTrait;
+        };
         $this->association->setSource($this->getTableLocator()->get('Test'));
-
         $this->association->getTarget();
     }
 
@@ -198,21 +187,12 @@ class AssociationTest extends TestCase
         $this->getTableLocator()->get('Test', [
             'className' => TestTable::class,
         ]);
-        $className = Table::class;
-
-        $config = [
-            'className' => $className,
-        ];
-        $this->association = $this->getMockBuilder(Association::class)
-            ->onlyMethods([
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
-            ])
-            ->setConstructorArgs(['Test', $config])
-            ->getMock();
+        $this->association = new class ('Test', ['className' => Table::class]) extends Association {
+            use StubAssociationTrait;
+        };
 
         $target = $this->association->getTarget();
-        $this->assertInstanceOf($className, $target);
+        $this->assertInstanceOf(Table::class, $target);
     }
 
     /**
@@ -240,11 +220,11 @@ class AssociationTest extends TestCase
     public function testBindingKeyDefault(): void
     {
         $this->source->setPrimaryKey(['id', 'site_id']);
-        $this->association
-            ->expects($this->once())
-            ->method('isOwningSide')
-            ->willReturn(true);
-        $result = $this->association->getBindingKey();
+        $association = new class ('Test') extends Association {
+            use StubAssociationTrait;
+        };
+        $association->setSource($this->source);
+        $result = $association->getBindingKey();
         $this->assertEquals(['id', 'site_id'], $result);
     }
 
@@ -256,13 +236,18 @@ class AssociationTest extends TestCase
     {
         $target = new Table();
         $target->setPrimaryKey(['foo', 'site_id']);
-        $this->association->setTarget($target);
 
-        $this->association
-            ->expects($this->once())
-            ->method('isOwningSide')
-            ->willReturn(false);
-        $result = $this->association->getBindingKey();
+        $association = new class ('Test') extends Association {
+            use StubAssociationTrait;
+
+            public function isOwningSide(Table $side): bool
+            {
+                return false;
+            }
+        };
+        $association->setTarget($target);
+        $association->setSource($this->source);
+        $result = $association->getBindingKey();
         $this->assertEquals(['foo', 'site_id'], $result);
     }
 
@@ -322,14 +307,9 @@ class AssociationTest extends TestCase
             'sourceTable' => $this->source,
             'joinType' => 'INNER',
         ];
-
-        $this->association = $this->getMockBuilder(Association::class)
-            ->onlyMethods([
-                'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
-                'requiresKeys',
-            ])
-            ->setConstructorArgs(['ThisAssociationName', $config])
-            ->getMock();
+        $this->association = new class ('ThisAssociationName', $config) extends Association {
+            use StubAssociationTrait;
+        };
 
         $table = $this->association->getTarget();
         $this->assertInstanceOf(CommentsTable::class, $table);
@@ -410,13 +390,9 @@ class AssociationTest extends TestCase
             'joinType' => 'INNER',
             'propertyName' => 'foo',
         ];
-        $association = $this->getMockBuilder(Association::class)
-            ->onlyMethods([
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
-            ])
-            ->setConstructorArgs(['Foo', $config])
-            ->getMock();
+        $association = new class ('Foo', $config) extends Association {
+            use StubAssociationTrait;
+        };
 
         $this->assertSame('foo', $association->getProperty());
     }
@@ -468,13 +444,9 @@ class AssociationTest extends TestCase
             'joinType' => 'INNER',
             'finder' => 'published',
         ];
-        $assoc = $this->getMockBuilder(Association::class)
-            ->onlyMethods([
-                'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
-                'requiresKeys',
-            ])
-            ->setConstructorArgs(['Foo', $config])
-            ->getMock();
+        $assoc = new class ('Foo', $config) extends Association {
+            use StubAssociationTrait;
+        };
         $this->assertSame('published', $assoc->getFinder());
     }
 
@@ -518,18 +490,14 @@ class AssociationTest extends TestCase
      */
     public function testLocatorInConstructor(): void
     {
-        $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
+        $locator = new TableLocator();
         $config = [
             'className' => TestTable::class,
             'tableLocator' => $locator,
         ];
-        $assoc = $this->getMockBuilder(Association::class)
-            ->onlyMethods([
-                'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
-                'requiresKeys',
-            ])
-            ->setConstructorArgs(['Foo', $config])
-            ->getMock();
+        $assoc = new class ('Foo', $config) extends Association {
+            use StubAssociationTrait;
+        };
         $this->assertEquals($locator, $assoc->getTableLocator());
     }
 }
