@@ -77,7 +77,7 @@ tests for CakePHP by doing the following:
 
 ## Contributing
 
-* [CONTRIBUTING.md](.github/CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project.
+* [CONTRIBUTING.md](.github/CONTRIBUTING.md) - Quick pointers for contributing to the CakePHP project....
 * [CookBook "Contributing" Section](https://book.cakephp.org/5/en/contributing.html) - Details about contributing to the project.
 
 # Security
