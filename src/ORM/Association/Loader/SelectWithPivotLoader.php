@@ -178,8 +178,9 @@ class SelectWithPivotLoader extends SelectLoader
     {
         $resultMap = [];
         $key = (array)$options['foreignKey'];
+        $preserveKeys = $fetchQuery->getOptions()['preserveKeys'] ?? false;
 
-        foreach ($fetchQuery->all() as $result) {
+        foreach ($fetchQuery->all() as $i => $result) {
             if (!isset($result[$this->junctionProperty])) {
                 throw new DatabaseException(sprintf(
                     '`%s` is missing from the belongsToMany results. Results cannot be created.',
@@ -191,6 +192,12 @@ class SelectWithPivotLoader extends SelectLoader
             foreach ($key as $k) {
                 $values[] = $result[$this->junctionProperty][$k];
             }
+
+            if ($preserveKeys) {
+                $resultMap[implode(';', $values)][$i] = $result;
+                continue;
+            }
+
             $resultMap[implode(';', $values)][] = $result;
         }
 

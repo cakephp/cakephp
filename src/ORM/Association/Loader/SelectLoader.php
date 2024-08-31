@@ -485,16 +485,25 @@ class SelectLoader
             $this->bindingKey;
         $key = (array)$keys;
 
-        foreach ($fetchQuery->all() as $result) {
+        $preserveKeys = $fetchQuery->getOptions()['preserveKeys'] ?? false;
+
+        foreach ($fetchQuery->all() as $i => $result) {
             $values = [];
             foreach ($key as $k) {
                 $values[] = $result[$k];
             }
+
             if ($singleResult) {
                 $resultMap[implode(';', $values)] = $result;
-            } else {
-                $resultMap[implode(';', $values)][] = $result;
+                continue;
             }
+
+            if ($preserveKeys) {
+                $resultMap[implode(';', $values)][$i] = $result;
+                continue;
+            }
+
+            $resultMap[implode(';', $values)][] = $result;
         }
 
         return $resultMap;
