@@ -2989,20 +2989,17 @@ class RouterTest extends TestCase
      */
     public function testUrlFullUrlReturnFromRoute(): void
     {
-        $url = 'http://example.com/posts/view/1';
-
-        $route = $this->getMockBuilder(Route::class)
-            ->onlyMethods(['match'])
-            ->setConstructorArgs(['/{controller}/{action}/*'])
-            ->getMock();
-        $route->expects($this->any())
-            ->method('match')
-            ->willReturn($url);
+        $route = new class ('/{controller}/{action}/*') extends Route {
+            public function match(array $url, array $context = []): ?string
+            {
+                return 'http://example.com/posts/view/1';
+            }
+        };
 
         Router::createRouteBuilder('/')->connect($route);
 
         $result = Router::url(['controller' => 'Posts', 'action' => 'view', 1]);
-        $this->assertSame($url, $result);
+        $this->assertSame('http://example.com/posts/view/1', $result);
     }
 
     /**

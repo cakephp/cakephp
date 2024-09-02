@@ -1038,16 +1038,12 @@ class RouteTest extends TestCase
      */
     public function testParseRequestDelegates(): void
     {
-        /** @var \Cake\Routing\Route\Route|\PHPUnit\Framework\MockObject\MockObject $route */
-        $route = $this->getMockBuilder(Route::class)
-            ->onlyMethods(['parse'])
-            ->setConstructorArgs(['/forward', ['controller' => 'Articles', 'action' => 'index']])
-            ->getMock();
-
-        $route->expects($this->once())
-            ->method('parse')
-            ->with('/forward', 'GET')
-            ->willReturn(['works!']);
+        $route = new class ('/forward', ['controller' => 'Articles', 'action' => 'index']) extends Route {
+            public function parse(string $url, string $method): ?array
+            {
+                return ['works!'];
+            }
+        };
 
         $request = new ServerRequest([
             'environment' => [
