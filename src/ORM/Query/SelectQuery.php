@@ -1418,6 +1418,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $query->clause('distinct') ||
             count($query->clause('group')) ||
             count($query->clause('union')) ||
+            count($query->clause('intersect')) ||
             $query->clause('having')
         );
 

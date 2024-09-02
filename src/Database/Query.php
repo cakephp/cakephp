@@ -120,6 +120,7 @@ abstract class Query implements ExpressionInterface, Stringable
         'offset' => null,
         'union' => [],
         'epilog' => null,
+        'intersect' => [],
     ];
 
     /**
@@ -1573,7 +1574,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * modifying any internal part of the query and it is used by the SQL dialects
      * to transform the query accordingly before it is executed. The valid clauses that
      * can be retrieved are: delete, update, set, insert, values, select, distinct,
-     * from, join, set, where, group, having, order, limit, offset and union.
+     * from, join, set, where, group, having, order, limit, offset, union and intersect.
      *
      * The return value for each of those parts may vary. Some clauses use QueryExpression
      * to internally store their state, some use arrays and others may use booleans or
@@ -1595,6 +1596,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * - limit: integer or QueryExpression, null when not set
      * - offset: integer or QueryExpression, null when not set
      * - union: array
+     * - intersect: array
      *
      * @param string $name name of the clause to be returned
      * @return mixed

@@ -28,13 +28,6 @@ use Cake\Database\Expression\FunctionExpression;
 class SqlserverCompiler extends QueryCompiler
 {
     /**
-     * SQLserver does not support ORDER BY in UNION queries.
-     *
-     * @var bool
-     */
-    protected bool $_orderedUnion = false;
-
-    /**
      * {@inheritDoc}
      *
      * @var array<string, string>
@@ -56,7 +49,7 @@ class SqlserverCompiler extends QueryCompiler
      */
     protected array $_selectParts = [
         'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
-        'offset', 'limit', 'union', 'epilog',
+        'offset', 'limit', 'union', 'epilog', 'intersect',
     ];
 
     /**
