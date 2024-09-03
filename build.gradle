@@ -1,0 +1,59 @@
+plugins {
+    id 'java'
+    id 'application'
+}
+
+group 'com.yourcompany'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Add your dependencies here
+    testImplementation 'junit:junit:4.13.2'
+}
+
+application {
+    // Main class if you have any executable class
+    mainClassName = 'com.yourcompany.Main'
+}
+
+task resolveDependencies(type: Copy) {
+    from configurations.compileClasspath
+    into "$buildDir/dependencies"
+}
+
+task packageApp(type: Zip) {
+    dependsOn build
+    archiveFileName = "cakephp-app-${version}.zip"
+    from sourceSets.main.output
+    into 'lib'
+    from configurations.runtimeClasspath
+    into 'lib'
+}
+
+task buildReport(type: Exec) {
+    commandLine 'sh', '-c', 'echo "Build report generated"'
+}
+
+task buildApp {
+    dependsOn clean, resolveDependencies, packageApp, buildReport
+}
+
+buildApp.finalizedBy(buildReport)
+
+test {
+    useJUnitPlatform()
+    reports {
+        junitXml.enabled = true
+        html.enabled = true
+    }
+}
+
+task testReport(type: Exec) {
+    commandLine 'sh', '-c', 'echo "Test report generated"'
+}
+
+test.finalizedBy(testReport)
