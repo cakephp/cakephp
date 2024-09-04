@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
+use Cake\Core\Configure;
 use Cake\Database\Exception\DatabaseException;
 
 /**
@@ -139,8 +140,10 @@ class SqliteSchemaDialect extends SchemaDialect
         if (in_array($col, $datetimeTypes)) {
             return ['type' => $col, 'length' => null];
         }
-        if (str_contains($col, 'json') && !str_contains($col, 'jsonb')) {
-            return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
+        if (Configure::read('ORM.mapJsonTypeForSqlite') === true) {
+            if (str_contains($col, 'json') && !str_contains($col, 'jsonb')) {
+                return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
+            }
         }
 
         return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];

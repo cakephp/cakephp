@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
@@ -226,6 +227,7 @@ class SqliteTest extends TestCase
 
     public function testJSON(): void
     {
+        Configure::write('ORM.mapJsonTypeForSqlite', true);
         $connection = ConnectionManager::get('test');
         $this->skipIf(!($connection->getDriver() instanceof Sqlite));
         assert($connection instanceof Connection);
@@ -238,6 +240,7 @@ class SqliteTest extends TestCase
         $table->save($entity);
         $result = $table->find()->first();
         $this->assertEquals($data, $result->data);
+        Configure::write('ORM.mapJsonTypeForSqlite', false);
     }
 
     /**
