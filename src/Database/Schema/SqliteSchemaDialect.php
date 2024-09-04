@@ -139,6 +139,9 @@ class SqliteSchemaDialect extends SchemaDialect
         if (in_array($col, $datetimeTypes)) {
             return ['type' => $col, 'length' => null];
         }
+        if (str_contains($col, 'json') && !str_contains($col, 'jsonb')) {
+            return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
+        }
 
         return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];
     }

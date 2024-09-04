@@ -218,6 +218,22 @@ class SqliteTest extends TestCase
         $this->assertFalse($driver->supports(DriverFeatureEnum::JSON));
     }
 
+    public function testJSON(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(!($connection->getDriver() instanceof Sqlite));
+        assert($connection instanceof Connection);
+
+        $connection->execute('CREATE TABLE json_test (id INTEGER PRIMARY KEY, data JSON_TEXT);');
+        $table = $this->getTableLocator()->get('json_test');
+
+        $data = ['foo' => 'bar', 'baz' => 1, 'qux' => ['a', 'b', 'c' => true]];
+        $entity = $table->newEntity(['data' => $data]);
+        $table->save($entity);
+        $result = $table->find()->first();
+        $this->assertEquals($data, $result->data);
+    }
+
     /**
      * Tests identifier quoting
      */
