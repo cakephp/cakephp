@@ -144,7 +144,7 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         if (Configure::read('ORM.mapJsonTypeForSqlite') === true) {
-            if (str_contains($col, 'json') && !str_contains($col, 'jsonb')) {
+            if (str_contains($col, TableSchemaInterface::TYPE_JSON) && !str_contains($col, 'jsonb')) {
                 return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
             }
         }
