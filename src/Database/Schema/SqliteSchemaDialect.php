@@ -141,6 +141,11 @@ class SqliteSchemaDialect extends SchemaDialect
         if (in_array($col, $datetimeTypes)) {
             return ['type' => $col, 'length' => null];
         }
+
+        if (str_contains($col, 'json') && !str_contains($col, 'jsonb')) {
+            return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
+        }
+
         if (in_array($col, TableSchemaInterface::GEOSPATIAL_TYPES)) {
             // TODO how can srid be preserved? It doesn't come back
             // in the output of show full columns from ...

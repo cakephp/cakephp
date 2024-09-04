@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
@@ -217,6 +218,30 @@ class SqliteTest extends TestCase
         $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
 
         $this->assertFalse($driver->supports(DriverFeatureEnum::JSON));
+    }
+
+    /**
+     * Test of Inconsistency for JSON type field between mysql and sqlite
+     *
+     * @return void
+     */
+
+    public function testJSON(): void
+    {
+        Configure::write('ORM.mapJsonTypeForSqlite', true);
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(!($connection->getDriver() instanceof Sqlite));
+        assert($connection instanceof Connection);
+
+        $connection->execute('CREATE TABLE json_test (id INTEGER PRIMARY KEY, data JSON_TEXT);');
+        $table = $this->getTableLocator()->get('json_test');
+
+        $data = ['foo' => 'bar', 'baz' => 1, 'qux' => ['a', 'b', 'c' => true]];
+        $entity = $table->newEntity(['data' => $data]);
+        $table->save($entity);
+        $result = $table->find()->first();
+        $this->assertEquals($data, $result->data);
+        Configure::write('ORM.mapJsonTypeForSqlite', false);
     }
 
     /**
