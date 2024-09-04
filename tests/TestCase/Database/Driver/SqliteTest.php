@@ -218,6 +218,12 @@ class SqliteTest extends TestCase
         $this->assertFalse($driver->supports(DriverFeatureEnum::JSON));
     }
 
+    /**
+     * Test of Inconsistency for JSON type field between mysql and sqlite
+     *
+     * @return void
+     */
+
     public function testJSON(): void
     {
         $connection = ConnectionManager::get('test');
