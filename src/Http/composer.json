@@ -59,6 +59,6 @@
         "cakephp/console": "^5.1",
         "cakephp/orm": "^5.1",
         "cakephp/i18n": "^5.1",
-        "paragonie/csp-builder": "^2.3"
+        "paragonie/csp-builder": "^3.0"
     }
 }
