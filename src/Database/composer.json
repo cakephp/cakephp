@@ -25,9 +25,9 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/core": "^5.0",
-        "cakephp/chronos": "^3.1.0",
-        "cakephp/datasource": "^5.0",
+        "cakephp/core": "^5.1",
+        "cakephp/chronos": "^3.1",
+        "cakephp/datasource": "^5.1",
         "psr/log": "^3.0"
     },
     "suggest": {
@@ -40,7 +40,7 @@
         }
     },
     "require-dev": {
-        "cakephp/i18n": "^5.0",
-        "cakephp/log": "^5.0"
+        "cakephp/i18n": "^5.1",
+        "cakephp/log": "^5.1"
     }
 }

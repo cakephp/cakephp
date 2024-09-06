@@ -22,8 +22,8 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/event": "^5.0",
-        "cakephp/validation": "^5.0"
+        "cakephp/event": "^5.1",
+        "cakephp/validation": "^5.1"
     },
     "autoload": {
         "psr-4": {

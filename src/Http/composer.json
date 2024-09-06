@@ -26,9 +26,9 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/core": "^5.0",
-        "cakephp/event": "^5.0",
-        "cakephp/utility": "^5.0",
+        "cakephp/core": "^5.1",
+        "cakephp/event": "^5.1",
+        "cakephp/utility": "^5.1",
         "composer/ca-bundle": "^1.5",
         "psr/http-client": "^1.0.2",
         "psr/http-factory": "^1.1",
@@ -55,10 +55,10 @@
         }
     },
     "require-dev": {
-        "cakephp/cache": "^5.0",
-        "cakephp/console": "^5.0",
-        "cakephp/orm": "^5.0",
-        "cakephp/i18n": "^5.0",
+        "cakephp/cache": "^5.1",
+        "cakephp/console": "^5.1",
+        "cakephp/orm": "^5.1",
+        "cakephp/i18n": "^5.1",
         "paragonie/csp-builder": "^2.3"
     }
 }
