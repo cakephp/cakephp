@@ -215,8 +215,11 @@ class SqliteTest extends TestCase
         $this->assertTrue($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
         $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
         $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT));
 
+        $this->assertFalse($driver->supports(DriverFeatureEnum::INTERSECT_ALL));
         $this->assertFalse($driver->supports(DriverFeatureEnum::JSON));
+        $this->assertFalse($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));
     }
 
     /**

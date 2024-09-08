@@ -231,6 +231,9 @@ class PostgresTest extends TestCase
         $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
         $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
         $this->assertTrue($driver->supports(DriverFeatureEnum::WINDOW));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT_ALL));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));
 
         $this->assertFalse($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
     }

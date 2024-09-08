@@ -67,6 +67,7 @@ class SelectQuery extends Query implements IteratorAggregate
         'offset' => null,
         'union' => [],
         'epilog' => null,
+        'intersect' => [],
     ];
 
     /**
@@ -748,6 +749,79 @@ class SelectQuery extends Query implements IteratorAggregate
             $this->_parts['union'] = [];
         }
         $this->_parts['union'][] = [
+            'all' => true,
+            'query' => $query,
+        ];
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Adds a complete query to be used in conjunction with an INTERSECT operator with
+     * this query. This is used to combine the result set of this query with the one
+     * that will be returned by the passed query. You can add as many queries as you
+     * required by calling multiple times this method with different queries.
+     *
+     * By default, the INTERSECT operator will remove duplicate rows, if you wish to include
+     * every row for all queries, use intersectAll().
+     *
+     * ### Examples
+     *
+     * ```
+     * $intersect = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $query->select(['id', 'name'])->from(['d' => 'things'])->intersect($intersect);
+     * ```
+     *
+     * Will produce:
+     *
+     * `SELECT id, name FROM things d INTERSECT SELECT id, title FROM articles a`
+     *
+     * @param \Cake\Database\Query|string $query full SQL query to be used in INTERSECT operator
+     * @param bool $overwrite whether to reset the list of queries to be operated or not
+     * @return $this
+     */
+    public function intersect(Query|string $query, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['intersect'] = [];
+        }
+        $this->_parts['intersect'][] = [
+            'all' => false,
+            'query' => $query,
+        ];
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Adds a complete query to be used in conjunction with the INTERSECT ALL operator with
+     * this query. This is used to combine the result set of this query with the one
+     * that will be returned by the passed query. You can add as many queries as you
+     * required by calling multiple times this method with different queries.
+     *
+     * Unlike INTERSECT, INTERSECT ALL will not remove duplicate rows.
+     *
+     * ```
+     * $intersect = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $query->select(['id', 'name'])->from(['d' => 'things'])->intersectAll($intersect);
+     * ```
+     *
+     * Will produce:
+     *
+     * `SELECT id, name FROM things d INTERSECT ALL SELECT id, title FROM articles a`
+     *
+     * @param \Cake\Database\Query|string $query full SQL query to be used in INTERSECT operator
+     * @param bool $overwrite whether to reset the list of queries to be operated or not
+     * @return $this
+     */
+    public function intersectAll(Query|string $query, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['intersect'] = [];
+        }
+        $this->_parts['intersect'][] = [
             'all' => true,
             'query' => $query,
         ];
