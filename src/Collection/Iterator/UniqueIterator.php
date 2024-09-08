@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
-use Iterator;
 
 /**
  * Creates a filtered iterator from another iterator. The filtering is done by
@@ -38,10 +37,6 @@ class UniqueIterator extends Collection
      */
     public function __construct(iterable $items, callable $callback)
     {
-        if (!$items instanceof Iterator) {
-            $items = new Collection($items);
-        }
-
         $unique = [];
         $uniqueValues = [];
         foreach ($items as $k => $v) {

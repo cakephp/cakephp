@@ -83,9 +83,7 @@ trait CollectionTrait
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v): bool {
-            return (bool)$v;
-        };
+        $callback ??= fn ($v) => (bool)$v;
 
         return new FilterIterator($this->unwrap(), $callback);
     }
@@ -95,9 +93,7 @@ trait CollectionTrait
      */
     public function reject(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v, $k, $i): bool {
-            return (bool)$v;
-        };
+        $callback ??= fn ($v) => (bool)$v;
 
         return new FilterIterator($this->unwrap(), fn ($value, $key, $items) => !$callback($value, $key, $items));
     }
@@ -107,9 +103,7 @@ trait CollectionTrait
      */
     public function unique(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v) {
-            return $v;
-        };
+        $callback ??= fn ($v) => $v;
 
         return new UniqueIterator($this->unwrap(), $callback);
     }
@@ -169,10 +163,7 @@ trait CollectionTrait
      */
     public function reduce(callable $callback, mixed $initial = null): mixed
     {
-        $isFirst = false;
-        if (func_num_args() < 2) {
-            $isFirst = true;
-        }
+        $isFirst = func_num_args() < 2;
 
         $result = $initial;
         foreach ($this->optimizeUnwrap() as $k => $value) {
@@ -887,9 +878,7 @@ trait CollectionTrait
      */
     public function unfold(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($item) {
-            return $item;
-        };
+        $callback ??= fn ($v) => $v;
 
         return $this->newCollection(
             new RecursiveIteratorIterator(
