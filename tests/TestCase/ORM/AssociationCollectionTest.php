@@ -335,6 +335,13 @@ class AssociationCollectionTest extends TestCase
         ]) extends HasMany {
             public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface
             {
+                if ($options['atomic'] !== true) {
+                    throw new Exception('options[atomic] is not correct');
+                }
+                if ($options['associated'] !== ['Other']) {
+                    throw new Exception('options[associated] is not correct');
+                }
+
                 return $entity;
             }
         };

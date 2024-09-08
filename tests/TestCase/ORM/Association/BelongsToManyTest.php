@@ -419,6 +419,13 @@ class BelongsToManyTest extends TestCase
         $articleTag = new class (['alias' => 'Articles']) extends Table {
             public function deleteAll($conditions): int
             {
+                if ($conditions['click_count'] !== 3) {
+                    throw new Exception('click_count condition is incorrect.');
+                }
+                if ($conditions['article_id'] !== 1) {
+                    throw new Exception('article_id condition is incorrect.');
+                }
+
                 return 1;
             }
         };
@@ -1285,6 +1292,9 @@ class BelongsToManyTest extends TestCase
             public function replaceLinks(EntityInterface $entity, array $data, array $options = []): bool
             {
                 $this->replaceLinksCalled = true;
+                if ($entity->tags !== $data) {
+                    throw new Exception('entity->tags does not match');
+                }
 
                 return false;
             }
