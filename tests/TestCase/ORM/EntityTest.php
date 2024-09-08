@@ -870,7 +870,7 @@ class EntityTest extends TestCase
         $entity = new class extends Entity {
             public function clean(): void
             {
-                throw new Exception('Should not be called');
+                throw new Exception('clean should not be called');
             }
         };
         $entity->__construct(['a' => 'b', 'c' => 'd']);
@@ -895,7 +895,7 @@ class EntityTest extends TestCase
         $entity = new class extends Entity {
             public function clean(): void
             {
-                throw new Exception('Should not be called');
+                throw new Exception('clean should not be called');
             }
         };
         $entity->__construct(['a' => 'b', 'c' => 'd']);

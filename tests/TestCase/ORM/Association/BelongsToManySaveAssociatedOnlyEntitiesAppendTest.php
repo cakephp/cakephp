@@ -38,7 +38,7 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
         $table = new class (['alias' => 'Tags', 'table' => 'tags', 'connection' => $connection]) extends Table {
             public function saveAssociated()
             {
-                throw new Exception('Should not be called');
+                throw new Exception('saveAssociated should not be called');
             }
 
             public function schema()

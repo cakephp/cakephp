@@ -4050,7 +4050,7 @@ class TableTest extends TestCase
             // phpcs:ignore CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore
             public function _processSave(EntityInterface $entity, $options): EntityInterface
             {
-                throw new Exception('Should not be called');
+                throw new Exception('_processSave should not be called');
             }
         };
         $entity = new Entity(
@@ -5303,7 +5303,7 @@ class TableTest extends TestCase
 
                     public function cache(false|Closure|string $key, CacheInterface|string $config = 'default')
                     {
-                        throw new Exception('Should not be called');
+                        throw new Exception('cache should not be called');
                     }
 
                     public function firstOrFail(): mixed

@@ -1200,12 +1200,12 @@ class BelongsToManyTest extends TestCase
         $assoc = new class ('tags', ['sourceTable' => $table]) extends BelongsToMany {
             public function replaceLinks(EntityInterface $entity, array $data, array $options = []): bool
             {
-                throw new Exception('Should not be called');
+                throw new Exception('replaceLinks should not be called');
             }
 
             protected function _saveTarget(EntityInterface $parentEntity, array $entities, array $options): EntityInterface|false
             {
-                throw new Exception('Should not be called');
+                throw new Exception('_saveTarget should not be called');
             }
         };
         $entity = new Entity([
@@ -1239,7 +1239,7 @@ class BelongsToManyTest extends TestCase
 
             protected function _saveTarget(EntityInterface $parentEntity, array $entities, array $options): EntityInterface|false
             {
-                throw new Exception('Should not be called');
+                throw new Exception('_saveTarget should not be called');
             }
         };
         $entity = new Entity([

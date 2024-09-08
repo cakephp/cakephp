@@ -265,7 +265,7 @@ class AssociationCollectionTest extends TestCase
         ]) extends HasMany {
             public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface
             {
-                throw new Exception('Should not be called');
+                throw new Exception('saveAssociated should not be called');
             }
         };
 
@@ -303,7 +303,7 @@ class AssociationCollectionTest extends TestCase
         ]) extends BelongsTo {
             public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface
             {
-                throw new Exception('Should not be called');
+                throw new Exception('saveAssociated should not be called');
             }
         };
 
@@ -350,7 +350,7 @@ class AssociationCollectionTest extends TestCase
         ]) extends HasOne {
             public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface
             {
-                throw new Exception('Should not be called');
+                throw new Exception('saveAssociated should not be called');
             }
         };
 

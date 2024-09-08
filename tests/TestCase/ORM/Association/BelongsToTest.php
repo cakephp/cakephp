@@ -300,12 +300,12 @@ class BelongsToTest extends TestCase
         {
             public function find(string $type = 'all', ...$args): SelectQuery
             {
-                throw new Exception('Should not be called');
+                throw new Exception('find should not be called');
             }
 
             public function delete(EntityInterface $entity, array $options = []): bool
             {
-                throw new Exception('Should not be called');
+                throw new Exception('delete should not be called');
             }
         };
         $config = [
