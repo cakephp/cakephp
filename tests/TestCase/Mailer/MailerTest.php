@@ -107,6 +107,8 @@ class MailerTest extends TestCase
 
     /**
      * testMessage function
+     *
+     * @deprecated
      */
     #[WithoutErrorHandler]
     public function testSetMessage(): void
