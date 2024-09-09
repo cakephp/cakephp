@@ -25,12 +25,9 @@ use function Cake\Core\h;
  *
  * Methods to make numbers more readable.
  *
- * @method string ordinal(float|int $value, array $options = []) See Number::ordinal()
- * @method string precision(string|float|int $number, int $precision = 3, array $options = []) See Number::precision()
- * @method string toPercentage(string|float|int $value, int $precision = 3, array $options = []) See Number::toPercentage()
- * @method string toReadableSize(string|float|int $size) See Number::toReadableSize()
  * @link https://book.cakephp.org/5/en/views/helpers/number.html
  * @see \Cake\I18n\Number
+ * @mixin \Cake\I18n\Number
  */
 class NumberHelper extends Helper
 {

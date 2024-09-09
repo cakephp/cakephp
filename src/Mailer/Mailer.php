@@ -87,48 +87,7 @@ use function Cake\Core\deprecationWarning;
  * Our mailer could either be registered in the application bootstrap, or
  * in the Table class' initialize() hook.
  *
- * @method $this setTo($email, $name = null) Sets "to" address. {@see \Cake\Mailer\Message::setTo()}
- * @method array getTo() Gets "to" address. {@see \Cake\Mailer\Message::getTo()}
- * @method $this setFrom($email, $name = null) Sets "from" address. {@see \Cake\Mailer\Message::setFrom()}
- * @method array getFrom() Gets "from" address. {@see \Cake\Mailer\Message::getFrom()}
- * @method $this setSender($email, $name = null) Sets "sender" address. {@see \Cake\Mailer\Message::setSender()}
- * @method array getSender() Gets "sender" address. {@see \Cake\Mailer\Message::getSender()}
- * @method $this setReplyTo($email, $name = null) Sets "Reply-To" address. {@see \Cake\Mailer\Message::setReplyTo()}
- * @method array getReplyTo() Gets "Reply-To" address. {@see \Cake\Mailer\Message::getReplyTo()}
- * @method $this addReplyTo($email, $name = null) Add "Reply-To" address. {@see \Cake\Mailer\Message::addReplyTo()}
- * @method $this setReadReceipt($email, $name = null) Sets Read Receipt (Disposition-Notification-To header).
- *   {@see \Cake\Mailer\Message::setReadReceipt()}
- * @method array getReadReceipt() Gets Read Receipt (Disposition-Notification-To header).
- *   {@see \Cake\Mailer\Message::getReadReceipt()}
- * @method $this setReturnPath($email, $name = null) Sets return path. {@see \Cake\Mailer\Message::setReturnPath()}
- * @method array getReturnPath() Gets return path. {@see \Cake\Mailer\Message::getReturnPath()}
- * @method $this addTo($email, $name = null) Add "To" address. {@see \Cake\Mailer\Message::addTo()}
- * @method $this setCc($email, $name = null) Sets "cc" address. {@see \Cake\Mailer\Message::setCc()}
- * @method array getCc() Gets "cc" address. {@see \Cake\Mailer\Message::getCc()}
- * @method $this addCc($email, $name = null) Add "cc" address. {@see \Cake\Mailer\Message::addCc()}
- * @method $this setBcc($email, $name = null) Sets "bcc" address. {@see \Cake\Mailer\Message::setBcc()}
- * @method array getBcc() Gets "bcc" address. {@see \Cake\Mailer\Message::getBcc()}
- * @method $this addBcc($email, $name = null) Add "bcc" address. {@see \Cake\Mailer\Message::addBcc()}
- * @method $this setCharset($charset) Charset setter. {@see \Cake\Mailer\Message::setCharset()}
- * @method string getCharset() Charset getter. {@see \Cake\Mailer\Message::getCharset()}
- * @method $this setHeaderCharset($charset) HeaderCharset setter. {@see \Cake\Mailer\Message::setHeaderCharset()}
- * @method string getHeaderCharset() HeaderCharset getter. {@see \Cake\Mailer\Message::getHeaderCharset()}
- * @method $this setSubject($subject) Sets subject. {@see \Cake\Mailer\Message::setSubject()}
- * @method string getSubject() Gets subject. {@see \Cake\Mailer\Message::getSubject()}
- * @method $this setHeaders(array $headers) Sets headers for the message. {@see \Cake\Mailer\Message::setHeaders()}
- * @method $this addHeaders(array $headers) Add header for the message. {@see \Cake\Mailer\Message::addHeaders()}
- * @method $this getHeaders(array $include = []) Get list of headers. {@see \Cake\Mailer\Message::getHeaders()}
- * @method $this setEmailFormat($format) Sets email format. {@see \Cake\Mailer\Message::getHeaders()}
- * @method string getEmailFormat() Gets email format. {@see \Cake\Mailer\Message::getEmailFormat()}
- * @method $this setMessageId($message) Sets message ID. {@see \Cake\Mailer\Message::setMessageId()}
- * @method string|bool getMessageId() Gets message ID. {@see \Cake\Mailer\Message::getMessageId()}
- * @method $this setDomain($domain) Sets domain. {@see \Cake\Mailer\Message::setDomain()}
- * @method string getDomain() Gets domain. {@see \Cake\Mailer\Message::getDomain()}
- * @method $this setAttachments($attachments) Add attachments to the email message. {@see \Cake\Mailer\Message::setAttachments()}
- * @method array getAttachments() Gets attachments to the email message. {@see \Cake\Mailer\Message::getAttachments()}
- * @method $this addAttachments($attachments) Add attachments. {@see \Cake\Mailer\Message::addAttachments()}
- * @method array|string getBody(?string $type = null) Get generated message body as array.
- *   {@see \Cake\Mailer\Message::getBody()}
+ * @mixin \Cake\Mailer\Message
  */
 class Mailer implements EventListenerInterface
 {
