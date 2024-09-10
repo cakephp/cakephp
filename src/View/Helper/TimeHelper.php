@@ -435,9 +435,11 @@ class TimeHelper extends Helper
         $timezone = $this->_getTimezone($timezone);
 
         try {
-            $time = new DateTime($date);
+            if ($date instanceof DateTime) {
+                return $date->i18nFormat($format, $timezone);
+            }
 
-            return $time->i18nFormat($format, $timezone);
+            return (new DateTime($date))->i18nFormat($format, $timezone);
         } catch (Exception $e) {
             if ($invalid === false) {
                 throw $e;
