@@ -23,6 +23,7 @@ use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
 use TestApp\TestCase\Event\CustomTestEventListenerInterface;
 use TestApp\TestCase\Event\EventTestListener;
 
@@ -221,7 +222,7 @@ class EventManagerTest extends TestCase
      */
     public function testDispatch(): void
     {
-        $manager = new EventManager();
+        $manager = Mockery::mock(EventManager::class)->makePartial();
         $listener = new class implements EventListenerInterface {
             public array $callList = [];
 

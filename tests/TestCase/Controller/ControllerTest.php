@@ -37,6 +37,7 @@ use Cake\View\View;
 use Cake\View\XmlView;
 use InvalidArgumentException;
 use Laminas\Diactoros\Uri;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionFunction;
 use RuntimeException;
@@ -613,17 +614,20 @@ class ControllerTest extends TestCase
      */
     public function testStartupProcess(): void
     {
-        $eventManager = new class extends EventManager
-        {
-            public function dispatch(EventInterface|string $event): EventInterface
-            {
-                if ($event->getName() !== 'Controller.initialize' && $event->getName() !== 'Controller.startup') {
-                    throw new InvalidArgumentException('Unexpected event');
-                }
+        $eventManager = Mockery::mock(EventManager::class)->makePartial();
+        $eventManager->shouldReceive('dispatch')
+            ->withArgs(function ($event) {
+                return $event->getName() === 'Controller.initialize';
+            })
+            ->once()
+            ->andReturn(new Event('stub'));
 
-                return new Event('stub');
-            }
-        };
+        $eventManager->shouldReceive('dispatch')
+            ->withArgs(function ($event) {
+                return $event->getName() === 'Controller.startup';
+            })
+            ->once()
+            ->andReturn(new Event('stub'));
 
         $controller = new Controller(new ServerRequest(), null, $eventManager);
 
@@ -635,16 +639,13 @@ class ControllerTest extends TestCase
      */
     public function testShutdownProcess(): void
     {
-        $eventManager = new class extends EventManager {
-            public function dispatch(EventInterface|string $event): EventInterface
-            {
-                if ($event->getName() !== 'Controller.shutdown') {
-                    throw new InvalidArgumentException('Unexpected event');
-                }
-
-                return new Event('stub');
-            }
-        };
+        $eventManager = Mockery::mock(EventManager::class)->makePartial();
+        $eventManager->shouldReceive('dispatch')
+            ->withArgs(function ($event) {
+                return $event->getName() === 'Controller.shutdown';
+            })
+            ->once()
+            ->andReturn(new Event('stub'));
         $controller = new Controller(new ServerRequest(), null, $eventManager);
 
         $this->assertNull($controller->shutdownProcess());
