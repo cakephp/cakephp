@@ -41,8 +41,6 @@ use function Cake\Core\namespaceSplit;
  *
  * If you want to bring all or certain languages for each of the fetched records,
  * you can use the custom `translations` finders that is exposed to the table.
- *
- * @mixin \Cake\ORM\Behavior\Translate\TranslateStrategyInterface
  */
 class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 {
