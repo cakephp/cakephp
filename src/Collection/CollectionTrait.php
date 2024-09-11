@@ -38,7 +38,6 @@ use InvalidArgumentException;
 use Iterator;
 use LimitIterator;
 use LogicException;
-use OuterIterator;
 use RecursiveIteratorIterator;
 use UnitEnum;
 use const SORT_ASC;
@@ -987,10 +986,7 @@ trait CollectionTrait
     public function unwrap(): Iterator
     {
         $iterator = $this;
-        while (
-            $iterator::class === Collection::class
-            && $iterator instanceof OuterIterator
-        ) {
+        while ($iterator::class === Collection::class) {
             $iterator = $iterator->getInnerIterator();
         }
 
