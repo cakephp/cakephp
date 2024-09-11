@@ -43,6 +43,7 @@ use Cake\View\Widget\LabelWidget;
 use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
@@ -217,20 +218,14 @@ class FormHelperTest extends TestCase
      */
     public function testAddWidgetAndRenderWidget(): void
     {
-        $widget = new class implements WidgetInterface
-        {
-            public function render(array $data, ContextInterface $context): string
-            {
-                return 'HTML';
-            }
-
-            public function secureFields(array $data): array
-            {
-                return ['val'];
-            }
-        };
+        $data = ['val' => 1];
+        $widget = Mockery::mock(WidgetInterface::class);
+        $widget->shouldReceive('render')
+            ->withSomeOfArgs($data)
+            ->once()
+            ->andReturn('HTML');
         $this->Form->addWidget('test', $widget);
-        $result = $this->Form->widget('test', ['val' => 1]);
+        $result = $this->Form->widget('test', $data);
         $this->assertSame('HTML', $result);
     }
 
@@ -244,18 +239,16 @@ class FormHelperTest extends TestCase
             'unlockedFields' => [],
         ]));
 
-        $widget = new class implements WidgetInterface
-        {
-            public function render(array $data, ContextInterface $context): string
-            {
-                return 'HTML';
-            }
-
-            public function secureFields(array $data): array
-            {
-                return ['test'];
-            }
-        };
+        $data = ['val' => 1, 'name' => 'test'];
+        $widget = Mockery::mock(WidgetInterface::class);
+        $widget->shouldReceive('render')
+            ->withSomeOfArgs($data)
+            ->once()
+            ->andReturn('HTML');
+        $widget->shouldReceive('secureFields')
+            ->with($data)
+            ->once()
+            ->andReturn(['test']);
         $this->Form->addWidget('test', $widget);
         $this->Form->create();
         $result = $this->Form->widget('test', ['val' => 1, 'name' => 'test', 'secure' => true]);

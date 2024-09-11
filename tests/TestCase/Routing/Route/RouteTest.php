@@ -23,6 +23,7 @@ use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Routing\Route\ProtectedRoute;
 
@@ -1038,12 +1039,11 @@ class RouteTest extends TestCase
      */
     public function testParseRequestDelegates(): void
     {
-        $route = new class ('/forward', ['controller' => 'Articles', 'action' => 'index']) extends Route {
-            public function parse(string $url, string $method): ?array
-            {
-                return ['works!'];
-            }
-        };
+        $route = Mockery::mock(Route::class)->makePartial();
+        $route->shouldReceive('parse')
+            ->once()
+            ->with('/forward', 'GET')
+            ->andReturn(['works!']);
 
         $request = new ServerRequest([
             'environment' => [
