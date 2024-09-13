@@ -24,3 +24,8 @@ services:
 		tags:
 			- phpstan.broker.methodsClassReflectionExtension
 			- phpstan.broker.propertiesClassReflectionExtension
+
+	-
+		class: Cake\PHPStan\PhpDoc\TableAssociationTypeNodeResolverExtension
+		tags:
+			- phpstan.phpDoc.typeNodeResolverExtension

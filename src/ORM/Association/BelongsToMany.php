@@ -37,6 +37,9 @@ use SplObjectStorage;
  *
  * An example of a BelongsToMany association would be Article belongs to many Tags.
  * In this example 'Article' is the source table and 'Tags' is the target table.
+ *
+ * @template T of \Cake\ORM\Table
+ * @mixin T
  */
 class BelongsToMany extends Association
 {

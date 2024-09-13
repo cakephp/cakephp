@@ -27,7 +27,7 @@ use Cake\Utility\Text;
 
 class SluggableBehavior extends Behavior
 {
-    public function beforeFind(EventInterface $event, Query $query, array $options = []): Query
+    public function beforeFind(EventInterface $event, Query $query, $options = []): Query
     {
         $query->where(['slug' => 'test']);
 
@@ -44,5 +44,10 @@ class SluggableBehavior extends Behavior
     public function slugify(string $value): string
     {
         return Text::slug($value);
+    }
+
+    public function camelCase(): string
+    {
+        return 'camelCase';
     }
 }
