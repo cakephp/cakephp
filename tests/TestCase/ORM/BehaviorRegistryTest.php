@@ -23,6 +23,7 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use LogicException;
+use RuntimeException;
 
 /**
  * Test case for BehaviorRegistry.
@@ -257,19 +258,8 @@ class BehaviorRegistryTest extends TestCase
     public function testCall(): void
     {
         $this->Behaviors->load('Sluggable');
-        $mockedBehavior = $this->getMockBuilder('Cake\ORM\Behavior')
-            ->addMethods(['slugify'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->Behaviors->set('Sluggable', $mockedBehavior);
-
-        $mockedBehavior
-            ->expects($this->once())
-            ->method('slugify')
-            ->with(['some value'])
-            ->will($this->returnValue('some-thing'));
-        $return = $this->Behaviors->call('slugify', [['some value']]);
-        $this->assertSame('some-thing', $return);
+        $return = $this->Behaviors->call('slugify', ['some value']);
+        $this->assertSame('some-value', $return);
     }
 
     /**
@@ -292,20 +282,12 @@ class BehaviorRegistryTest extends TestCase
     public function testCallFinder(): void
     {
         $this->Behaviors->load('Sluggable');
-        $mockedBehavior = $this->getMockBuilder('Cake\ORM\Behavior')
-            ->addMethods(['findNoSlug'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->Behaviors->set('Sluggable', $mockedBehavior);
 
         $query = new Query($this->Table->getConnection(), $this->Table);
-        $mockedBehavior
-            ->expects($this->once())
-            ->method('findNoSlug')
-            ->with($query, [])
-            ->will($this->returnValue($query));
         $return = $this->Behaviors->callFinder('noSlug', [$query, []]);
         $this->assertSame($query, $return);
+        $sql = $query->sql();
+        $this->assertMatchesRegularExpression('/slug[^ ]+ IS NULL/', $sql);
     }
 
     /**
@@ -327,8 +309,13 @@ class BehaviorRegistryTest extends TestCase
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Cannot call "slugify" it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
+
+        $this->assertTrue($this->Behaviors->hasMethod('slugify'));
+        $this->assertTrue($this->Behaviors->hasMethod('camelCase'));
         $this->Behaviors->unload('Sluggable');
 
+        $this->assertFalse($this->Behaviors->hasMethod('slugify'), 'should not have method anymore');
+        $this->assertFalse($this->Behaviors->hasMethod('camelCase'), 'should not have method anymore');
         $this->Behaviors->call('slugify');
     }
 
@@ -340,8 +327,10 @@ class BehaviorRegistryTest extends TestCase
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Cannot call finder "noslug" it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
+        $this->assertTrue($this->Behaviors->hasFinder('noSlug'));
         $this->Behaviors->unload('Sluggable');
 
+        $this->assertFalse($this->Behaviors->hasFinder('noSlug'));
         $this->Behaviors->callFinder('noSlug');
     }
 
@@ -377,8 +366,8 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testUnloadUnknown(): void
     {
-        $this->expectException(MissingBehaviorException::class);
-        $this->expectExceptionMessage('Behavior class FooBehavior could not be found.');
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unknown object "Foo"');
         $this->Behaviors->unload('Foo');
     }
 
