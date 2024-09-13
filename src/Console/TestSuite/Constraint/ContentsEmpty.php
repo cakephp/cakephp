@@ -57,7 +57,7 @@ class ContentsEmpty extends ContentsBase
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\Constraint\ContentsEmpty',
+    \Cake\Console\TestSuite\Constraint\ContentsEmpty::class,
     'Cake\TestSuite\Constraint\Console\ContentsEmpty'
 );
 // phpcs:enable

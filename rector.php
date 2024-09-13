@@ -15,4 +15,4 @@ return RectorConfig::configure()
         __DIR__ . '/tests/test_app/templates',
         __DIR__ . '/tests/test_app/Plugin/TestPlugin/templates',
     ])
-    ->withPhpSets(php53: true);
+    ->withPhpSets(php55: true);

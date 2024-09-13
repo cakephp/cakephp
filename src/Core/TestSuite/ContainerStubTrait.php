@@ -189,7 +189,7 @@ trait ContainerStubTrait
 
 // phpcs:disable
 class_alias(
-    'Cake\Core\TestSuite\ContainerStubTrait',
+    \Cake\Core\TestSuite\ContainerStubTrait::class,
     'Cake\TestSuite\ContainerStubTrait'
 );
 // phpcs:enable

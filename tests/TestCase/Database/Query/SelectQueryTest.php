@@ -38,6 +38,7 @@ use Cake\Database\TypeFactory;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
+use Cake\Error\Debugger;
 use Cake\I18n\DateTime;
 use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
@@ -1302,7 +1303,7 @@ class SelectQueryTest extends TestCase
             ->from('articles')
             ->where([
                 'id' => 'Cake\Error\Debugger::dump',
-                'title' => ['Cake\Error\Debugger', 'dump'],
+                'title' => [Debugger::class, 'dump'],
                 'author_id' => function (ExpressionInterface $exp) {
                     return 1;
                 },

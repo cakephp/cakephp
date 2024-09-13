@@ -90,7 +90,7 @@ class StubConsoleInput extends ConsoleInput
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\StubConsoleInput',
+    \Cake\Console\TestSuite\StubConsoleInput::class,
     'Cake\TestSuite\Stub\ConsoleInput'
 );
 // phpcs:enable

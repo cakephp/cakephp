@@ -46,7 +46,7 @@ class ContentsContain extends ContentsBase
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\Constraint\ContentsContain',
+    \Cake\Console\TestSuite\Constraint\ContentsContain::class,
     'Cake\TestSuite\Constraint\Console\ContentsContain'
 );
 // phpcs:enable

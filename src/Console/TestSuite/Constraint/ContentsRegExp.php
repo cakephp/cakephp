@@ -55,7 +55,7 @@ class ContentsRegExp extends ContentsBase
 
 // phpcs:disable
 class_alias(
-    'Cake\Console\TestSuite\Constraint\ContentsRegExp',
+    \Cake\Console\TestSuite\Constraint\ContentsRegExp::class,
     'Cake\TestSuite\Constraint\Console\ContentsRegExp'
 );
 // phpcs:enable
