@@ -264,3 +264,7 @@ jobs:
       - name: Prefer lowest check
         if: matrix.prefer-lowest == 'prefer-lowest'
         run: composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest -m
+
+      - name: Run rector
+        if: always()
+        run: vendor/bin/rector process --dry-run
