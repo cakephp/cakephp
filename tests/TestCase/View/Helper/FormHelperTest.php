@@ -413,6 +413,12 @@ class FormHelperTest extends TestCase
             'accept-charset' => $encoding,
         ]];
         $this->assertHtml($expected, $result);
+
+        $request = $this->View->getRequest()->withAttribute('csrfToken', 'this-is-a-csrf-token');
+        $this->View->setRequest($request);
+
+        $result = $this->Form->create(null, ['method' => 'get']);
+        $this->assertStringNotContainsString('this-is-a-csrf-token', $result);
     }
 
     /**
@@ -429,7 +435,7 @@ class FormHelperTest extends TestCase
             'enctype' => 'multipart/form-data',
         ]);
         $expected = ['form' => [
-            'method' => 'put',
+            'method' => 'post',
             'action' => '/articles/add',
             'enctype' => 'multipart/form-data',
             'accept-charset' => $encoding,
