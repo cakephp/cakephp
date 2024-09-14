@@ -52,7 +52,7 @@ class DigestTest extends TestCase
     /**
      * @return Digest
      */
-    protected function getDigestMock()
+    protected function getDigestMock(): Digest
     {
         return new class ($this->client) extends Digest
         {

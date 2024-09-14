@@ -372,10 +372,10 @@ class QueryCompiler
         }, $parts);
 
         if ($setOperationsOrderBy) {
-            return sprintf(")\n$operation %s", implode("\n$operation ", $parts));
+            return sprintf(")\n{$operation} %s", implode("\n{$operation} ", $parts));
         }
 
-        return sprintf("\n$operation %s", implode("\n$operation ", $parts));
+        return sprintf("\n{$operation} %s", implode("\n{$operation} ", $parts));
     }
 
     /**

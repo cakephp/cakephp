@@ -143,10 +143,14 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => $col, 'length' => null];
         }
 
-        if (Configure::read('ORM.mapJsonTypeForSqlite') === true) {
-            if (str_contains($col, TableSchemaInterface::TYPE_JSON) && !str_contains($col, 'jsonb')) {
-                return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
-            }
+        if (
+            Configure::read('ORM.mapJsonTypeForSqlite') === true &&
+            (
+                str_contains($col, TableSchemaInterface::TYPE_JSON) &&
+                !str_contains($col, 'jsonb')
+            )
+        ) {
+            return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
         }
 
         if (in_array($col, TableSchemaInterface::GEOSPATIAL_TYPES)) {
