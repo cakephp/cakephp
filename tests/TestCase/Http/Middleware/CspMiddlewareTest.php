@@ -61,7 +61,7 @@ class CspMiddlewareTest extends TestCase
         $response = $middleware->process($request, $this->_getRequestHandler());
         $policy = $response->getHeaderLine('Content-Security-Policy');
 
-        $expected = 'script-src \'self\' https://www.google-analytics.com';
+        $expected = "script-src 'self' https://www.google-analytics.com";
         $this->assertStringContainsString($expected, $policy);
         $this->assertStringNotContainsString('nonce-', $policy);
     }
@@ -133,7 +133,7 @@ class CspMiddlewareTest extends TestCase
 
         $response = $middleware->process($request, $this->_getRequestHandler());
         $policy = $response->getHeaderLine('Content-Security-Policy');
-        $expected = 'script-src \'self\' https://www.google-analytics.com';
+        $expected = "script-src 'self' https://www.google-analytics.com";
 
         $this->assertStringContainsString($expected, $policy);
     }

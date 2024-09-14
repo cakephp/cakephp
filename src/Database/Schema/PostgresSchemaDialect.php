@@ -26,6 +26,11 @@ use Cake\Database\Exception\DatabaseException;
 class PostgresSchemaDialect extends SchemaDialect
 {
     /**
+     * @const int
+     */
+    public const DEFAULT_SRID = 4326;
+
+    /**
      * Generate the SQL to list the tables and views.
      *
      * @param array<string, mixed> $config The connection configuration to use for
@@ -100,13 +105,15 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     protected function _convertColumn(string $column): array
     {
-        preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
+        preg_match('/([a-z\s]+)(?:\(([a-z0-9,]+)(?:,\s*([0-9]+))?\))?/i', $column, $matches);
         if (!$matches) {
             throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
         }
 
         $col = strtolower($matches[1]);
-        $length = $precision = $scale = null;
+        $length = null;
+        $precision = null;
+        $scale = null;
         if (isset($matches[2])) {
             $length = (int)$matches[2];
         }
@@ -169,9 +176,14 @@ class PostgresSchemaDialect extends SchemaDialect
         if (str_contains($col, 'numeric') || str_contains($col, 'decimal')) {
             return ['type' => TableSchemaInterface::TYPE_DECIMAL, 'length' => null];
         }
-
         if (str_contains($col, 'json')) {
             return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
+        }
+        if ($col === 'geography') {
+            $srid = (int)($matches[3] ?? self::DEFAULT_SRID);
+            $type = strtolower($matches[2] ?? 'point');
+
+            return ['type' => $type, 'length' => null, 'srid' => $srid];
         }
 
         $length = is_numeric($length) ? $length : null;
@@ -292,7 +304,8 @@ class PostgresSchemaDialect extends SchemaDialect
         $type = TableSchema::INDEX_INDEX;
         $name = $row['relname'];
         if ($row['indisprimary']) {
-            $name = $type = TableSchema::CONSTRAINT_PRIMARY;
+            $name = TableSchema::CONSTRAINT_PRIMARY;
+            $type = TableSchema::CONSTRAINT_PRIMARY;
         }
         if ($row['indisunique'] && $type === TableSchema::INDEX_INDEX) {
             $type = TableSchema::CONSTRAINT_UNIQUE;
@@ -431,6 +444,10 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_UUID => ' UUID',
             TableSchemaInterface::TYPE_CHAR => ' CHAR',
             TableSchemaInterface::TYPE_JSON => ' JSONB',
+            TableSchemaInterface::TYPE_GEOMETRY => ' GEOGRAPHY(GEOMETRY, %s)',
+            TableSchemaInterface::TYPE_POINT => ' GEOGRAPHY(POINT, %s)',
+            TableSchemaInterface::TYPE_LINESTRING => ' GEOGRAPHY(LINESTRING, %s)',
+            TableSchemaInterface::TYPE_POLYGON => ' GEOGRAPHY(POLYGON, %s)',
         ];
 
         $autoIncrementTypes = [
@@ -506,6 +523,9 @@ class PostgresSchemaDialect extends SchemaDialect
             )
         ) {
             $out .= '(' . $data['length'] . ',' . (int)$data['precision'] . ')';
+        }
+        if (in_array($data['type'], TableSchemaInterface::GEOSPATIAL_TYPES)) {
+            $out = sprintf($out, $data['srid'] ?? self::DEFAULT_SRID);
         }
 
         if (isset($data['null']) && $data['null'] === false) {
@@ -587,7 +607,7 @@ class PostgresSchemaDialect extends SchemaDialect
         $data = $schema->getIndex($name);
         assert($data !== null);
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 
@@ -627,7 +647,7 @@ class PostgresSchemaDialect extends SchemaDialect
     protected function _keySql(string $prefix, array $data): string
     {
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
@@ -653,7 +673,7 @@ class PostgresSchemaDialect extends SchemaDialect
         $content = implode(",\n", array_filter($content));
         $tableName = $this->_driver->quoteIdentifier($schema->name());
         $dbSchema = $this->_driver->schema();
-        if ($dbSchema != 'public') {
+        if ($dbSchema !== 'public') {
             $tableName = $this->_driver->quoteIdentifier($dbSchema) . '.' . $tableName;
         }
         $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';

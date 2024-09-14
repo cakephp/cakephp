@@ -19,6 +19,7 @@ use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\Locator\LocatorInterface;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use TestApp\Datasource\StubFactory;
 
 /**
  * FactoryLocatorTest test case
@@ -49,8 +50,7 @@ class FactoryLocatorTest extends TestCase
      */
     public function testAdd(): void
     {
-        $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
-        FactoryLocator::add('MyType', $locator);
+        FactoryLocator::add('MyType', new StubFactory());
         $this->assertInstanceOf(LocatorInterface::class, FactoryLocator::get('MyType'));
     }
 

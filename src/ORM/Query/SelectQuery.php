@@ -27,7 +27,6 @@ use Cake\Database\ValueBinder;
 use Cake\Datasource\Exception\RecordNotFoundException;
 use Cake\Datasource\QueryCacher;
 use Cake\Datasource\QueryInterface;
-use Cake\Datasource\ResultSetDecorator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\Association;
 use Cake\ORM\EagerLoader;
@@ -734,17 +733,17 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     protected function _decorateResults(iterable $result): ResultSetInterface
     {
-        $decorator = $this->_decoratorClass();
+        $resultSetClass = $this->resultSetFactory()->getResultSetClass();
 
         if ($this->_mapReduce) {
             foreach ($this->_mapReduce as $functions) {
                 $result = new MapReduce($result, $functions['mapper'], $functions['reducer']);
             }
-            $result = new $decorator($result);
+            $result = new $resultSetClass($result);
         }
 
         if (!($result instanceof ResultSetInterface)) {
-            $result = new $decorator($result);
+            $result = new $resultSetClass($result);
         }
 
         if ($this->_formatters) {
@@ -753,21 +752,11 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             }
 
             if (!($result instanceof ResultSetInterface)) {
-                $result = new $decorator($result);
+                $result = new $resultSetClass($result);
             }
         }
 
         return $result;
-    }
-
-    /**
-     * Returns the name of the class to be used for decorating results
-     *
-     * @return class-string<\Cake\Datasource\ResultSetInterface>
-     */
-    protected function _decoratorClass(): string
-    {
-        return ResultSetDecorator::class;
     }
 
     /**
@@ -1429,6 +1418,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $query->clause('distinct') ||
             count($query->clause('group')) ||
             count($query->clause('union')) ||
+            count($query->clause('intersect')) ||
             $query->clause('having')
         );
 
@@ -1584,13 +1574,14 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             return $this->_results;
         }
 
-        $results = parent::all();
-        if (!is_array($results)) {
-            $results = iterator_to_array($results);
+        if ($this->bufferedResults) {
+            $results = parent::all();
+        } else {
+            $results = $this->execute();
         }
         $results = $this->getEagerLoader()->loadExternal($this, $results);
 
-        return $this->resultSetFactory()->createResultSet($this, $results);
+        return $this->resultSetFactory()->createResultSet($results, $this);
     }
 
     /**
@@ -1598,7 +1589,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return \Cake\ORM\ResultSetFactory
      */
-    protected function resultSetFactory(): ResultSetFactory
+    public function resultSetFactory(): ResultSetFactory
     {
         return $this->resultSetFactory ??= new ResultSetFactory();
     }
@@ -1797,5 +1788,5 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 }
 
 // phpcs:disable
-class_exists('Cake\ORM\Query');
+class_exists(\Cake\ORM\Query::class);
 // phpcs:enable

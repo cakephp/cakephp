@@ -29,6 +29,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Exception;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use function Cake\Routing\url;
 use function Cake\Routing\urlArray;
@@ -56,7 +57,7 @@ class RouterTest extends TestCase
     {
         parent::tearDown();
         $this->clearPlugins();
-        Router::defaultRouteClass('Cake\Routing\Route\Route');
+        Router::defaultRouteClass(Route::class);
     }
 
     /**
@@ -1165,7 +1166,7 @@ class RouterTest extends TestCase
         ]);
         Router::setRequest($request);
 
-        Router::addUrlFilter(function () {
+        Router::addUrlFilter(function (): void {
             throw new Exception();
         });
         Router::url(['controller' => 'Posts', 'action' => 'index', 'lang' => 'en']);
@@ -1678,9 +1679,8 @@ class RouterTest extends TestCase
 
     /**
      * Test parse and reverse symmetry
-     *
-     * @dataProvider parseReverseSymmetryData
      */
+    #[DataProvider('parseReverseSymmetryData')]
     public function testParseReverseSymmetry(string $url): void
     {
         Router::createRouteBuilder('/')->fallbacks();
@@ -2079,14 +2079,14 @@ class RouterTest extends TestCase
         try {
             Router::url(['controller' => '0', 'action' => '1', 'test']);
             $this->fail('No exception raised');
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->assertTrue(true, 'Exception was raised');
         }
 
         try {
             Router::url(['prefix' => '1', 'controller' => '0', 'action' => '1', 'test']);
             $this->fail('No exception raised');
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->assertTrue(true, 'Exception was raised');
         }
     }
@@ -2385,9 +2385,8 @@ class RouterTest extends TestCase
 
     /**
      * Test parseRoutePath() with valid strings
-     *
-     * @dataProvider routePathProvider
      */
+    #[DataProvider('routePathProvider')]
     public function testParseRoutePath($path, $expected): void
     {
         $this->assertSame($expected, Router::parseRoutePath($path));
@@ -2400,7 +2399,7 @@ class RouterTest extends TestCase
         Router::parseRoutePath('Bookmarks::view/1invalid=cakephp');
     }
 
-    public function testParseRoutePathInvalidParameterKey()
+    public function testParseRoutePathInvalidParameterKey(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Param key `-invalid` is not valid');
@@ -2427,9 +2426,8 @@ class RouterTest extends TestCase
 
     /**
      * Test parseRoutePath() with invalid strings
-     *
-     * @dataProvider invalidRoutePathProvider
      */
+    #[DataProvider('invalidRoutePathProvider')]
     public function testParseInvalidRoutePath(string $value): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -2991,20 +2989,17 @@ class RouterTest extends TestCase
      */
     public function testUrlFullUrlReturnFromRoute(): void
     {
-        $url = 'http://example.com/posts/view/1';
-
-        $route = $this->getMockBuilder('Cake\Routing\Route\Route')
-            ->onlyMethods(['match'])
-            ->setConstructorArgs(['/{controller}/{action}/*'])
-            ->getMock();
-        $route->expects($this->any())
-            ->method('match')
-            ->willReturn($url);
+        $route = new class ('/{controller}/{action}/*') extends Route {
+            public function match(array $url, array $context = []): ?string
+            {
+                return 'http://example.com/posts/view/1';
+            }
+        };
 
         Router::createRouteBuilder('/')->connect($route);
 
         $result = Router::url(['controller' => 'Posts', 'action' => 'view', 1]);
-        $this->assertSame($url, $result);
+        $this->assertSame('http://example.com/posts/view/1', $result);
     }
 
     /**
@@ -3468,8 +3463,8 @@ class RouterTest extends TestCase
      * Test url() doesn't let override parts of string route path
      *
      * @param array $params
-     * @dataProvider invalidRoutePathParametersArrayProvider
      */
+    #[DataProvider('invalidRoutePathParametersArrayProvider')]
     public function testUrlGenerationOverridingShortString(array $params): void
     {
         $routes = Router::createRouteBuilder('/');
@@ -3485,8 +3480,8 @@ class RouterTest extends TestCase
      * Test url() doesn't let override parts of string route path from `_path` key
      *
      * @param array $params
-     * @dataProvider invalidRoutePathParametersArrayProvider
      */
+    #[DataProvider('invalidRoutePathParametersArrayProvider')]
     public function testUrlGenerationOverridingPathKey(array $params): void
     {
         $routes = Router::createRouteBuilder('/');

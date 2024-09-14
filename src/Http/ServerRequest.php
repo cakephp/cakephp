@@ -183,7 +183,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * A list of properties that emulated by the PSR7 attribute methods.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $emulatedAttributes = ['session', 'flash', 'webroot', 'base', 'params', 'here'];
 
@@ -322,7 +322,7 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function processUrlOption(array $config): array
     {
-        if ($config['url'][0] !== '/') {
+        if (!str_starts_with($config['url'], '/')) {
             $config['url'] = '/' . $config['url'];
         }
 
@@ -377,7 +377,7 @@ class ServerRequest implements ServerRequestInterface
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
             $addresses = array_map('trim', explode(',', (string)$this->getEnv('HTTP_X_FORWARDED_FOR')));
-            $trusted = (count($this->trustedProxies) > 0);
+            $trusted = $this->trustedProxies !== [];
             $n = count($addresses);
 
             if ($trusted) {
@@ -447,8 +447,8 @@ class ServerRequest implements ServerRequestInterface
             if ($ref === '' || str_starts_with($ref, '//')) {
                 $ref = '/';
             }
-            if ($ref[0] !== '/') {
-                $ref = '/' . $ref;
+            if (!str_starts_with($ref, '/')) {
+                return '/' . $ref;
             }
 
             return $ref;
@@ -488,7 +488,7 @@ class ServerRequest implements ServerRequestInterface
      * defined with {@link \Cake\Http\ServerRequest::addDetector()}. Any detector can be called
      * as `is($type)` or `is$Type()`.
      *
-     * @param array<string>|string $type The type of request you want to check. If an array
+     * @param list<string>|string $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
      * @param mixed ...$args List of arguments
      * @return bool Whether the request is the type you are checking.
@@ -514,7 +514,7 @@ class ServerRequest implements ServerRequestInterface
             return $this->_is($type, $args);
         }
 
-        return $this->_detectorCache[$type] = $this->_detectorCache[$type] ?? $this->_is($type, $args);
+        return $this->_detectorCache[$type] ??= $this->_is($type, $args);
     }
 
     /**
@@ -622,10 +622,10 @@ class ServerRequest implements ServerRequestInterface
         if (isset($detect['value'])) {
             $value = $detect['value'];
 
-            return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+            return isset($this->params[$key]) && $this->params[$key] == $value;
         }
         if (isset($detect['options'])) {
-            return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
+            return isset($this->params[$key]) && in_array($this->params[$key], $detect['options']);
         }
 
         return false;
@@ -781,7 +781,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $name = str_replace('-', '_', strtoupper($name));
         if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'], true)) {
-            $name = 'HTTP_' . $name;
+            return 'HTTP_' . $name;
         }
 
         return $name;
@@ -796,7 +796,7 @@ class ServerRequest implements ServerRequestInterface
      * While header names are not case-sensitive, getHeaders() will normalize
      * the headers.
      *
-     * @return array<string[]> An associative array of headers and their values.
+     * @return array<list<string>> An associative array of headers and their values.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getHeaders(): array
@@ -841,7 +841,7 @@ class ServerRequest implements ServerRequestInterface
      * is not present an empty array will be returned.
      *
      * @param string $name The header you want to get (case-insensitive)
-     * @return array<string> An associative array of headers and their values.
+     * @return array<string, string> An associative array of headers and their values.
      *   If the header doesn't exist, an empty array will be returned.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
@@ -1080,7 +1080,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
      *   While `example.co.uk` contains 2.
-     * @return array<string> An array of subdomains.
+     * @return list<string> An array of subdomains.
      */
     public function subdomains(int $tldLength = 1): array
     {
@@ -1114,7 +1114,7 @@ class ServerRequest implements ServerRequestInterface
      * by the client.
      *
      * @param string|null $type The content type to check for. Leave null to get all types a client accepts.
-     * @return array<string>|bool Either an array of all the types the client accepts or a boolean if they accept the
+     * @return list<string>|bool Either an array of all the types the client accepts or a boolean if they accept the
      *   provided type.
      */
     public function accepts(?string $type = null): array|bool
@@ -1426,7 +1426,7 @@ class ServerRequest implements ServerRequestInterface
      * If the request would be GET, response header "Allow: POST, DELETE" will be set
      * and a 405 error will be returned.
      *
-     * @param array<string>|string $methods Allowed HTTP request methods.
+     * @param list<string>|string $methods Allowed HTTP request methods.
      * @return true
      * @throws \Cake\Http\Exception\MethodNotAllowedException
      */
@@ -1548,7 +1548,7 @@ class ServerRequest implements ServerRequestInterface
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
             throw new InvalidArgumentException(
-                "You cannot unset '$name'. It is a required CakePHP attribute."
+                "You cannot unset '{$name}'. It is a required CakePHP attribute."
             );
         }
         unset($new->attributes[$name]);
@@ -1772,7 +1772,7 @@ class ServerRequest implements ServerRequestInterface
         }
 
         if (!$target) {
-            $target = '/';
+            return '/';
         }
 
         return $target;

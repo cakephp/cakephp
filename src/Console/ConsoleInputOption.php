@@ -171,7 +171,8 @@ class ConsoleInputOption
      */
     public function help(int $width = 0): string
     {
-        $default = $short = '';
+        $default = '';
+        $short = '';
         if ($this->_default && $this->_default !== true) {
             $default = sprintf(' <comment>(default: %s)</comment>', $this->_default);
         }
@@ -265,7 +266,7 @@ class ConsoleInputOption
      */
     public function validChoice(string|bool $value): bool
     {
-        if (empty($this->_choices)) {
+        if ($this->_choices === []) {
             return true;
         }
         if (!in_array($value, $this->_choices, true)) {

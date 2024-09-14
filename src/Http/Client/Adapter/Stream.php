@@ -94,7 +94,8 @@ class Stream implements AdapterInterface
      */
     public function createResponses(array $headers, string $content): array
     {
-        $indexes = $responses = [];
+        $indexes = [];
+        $responses = [];
         foreach ($headers as $i => $header) {
             if (strtoupper(substr($header, 0, 5)) === 'HTTP/') {
                 $indexes[] = $i;

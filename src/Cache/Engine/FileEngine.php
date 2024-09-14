@@ -128,7 +128,7 @@ class FileEngine extends CacheEngine
         }
 
         $expires = time() + $this->duration($ttl);
-        $contents = implode([$expires, PHP_EOL, $value, PHP_EOL]);
+        $contents = implode('', [$expires, PHP_EOL, $value, PHP_EOL]);
 
         if ($this->_config['lock']) {
             $this->_File->flock(LOCK_EX);
@@ -194,7 +194,7 @@ class FileEngine extends CacheEngine
         $data = trim($data);
 
         if ($data !== '' && !empty($this->_config['serialize'])) {
-            $data = unserialize($data);
+            return unserialize($data);
         }
 
         return $data;

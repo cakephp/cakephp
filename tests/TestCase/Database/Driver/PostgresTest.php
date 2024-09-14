@@ -34,7 +34,7 @@ class PostgresTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+        $driver = $this->getMockBuilder(Postgres::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'pgsql:host=localhost;port=5432;dbname=cake';
@@ -102,7 +102,7 @@ class PostgresTest extends TestCase
             'init' => ['Execute this', 'this too'],
             'log' => false,
         ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+        $driver = $this->getMockBuilder(Postgres::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -167,7 +167,7 @@ class PostgresTest extends TestCase
      */
     public function testHavingReplacesAlias(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+        $driver = $this->getMockBuilder(Postgres::class)
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -195,7 +195,7 @@ class PostgresTest extends TestCase
      */
     public function testHavingWhenNoAliasIsUsed(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+        $driver = $this->getMockBuilder(Postgres::class)
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -231,6 +231,9 @@ class PostgresTest extends TestCase
         $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
         $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
         $this->assertTrue($driver->supports(DriverFeatureEnum::WINDOW));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT_ALL));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));
 
         $this->assertFalse($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
     }

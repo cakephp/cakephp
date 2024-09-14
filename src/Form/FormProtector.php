@@ -42,7 +42,7 @@ class FormProtector
     /**
      * Unlocked fields.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $unlockedFields = [];
 
@@ -107,7 +107,7 @@ class FormProtector
     /**
      * Determine which fields of a form should be used for hash.
      *
-     * @param array<string>|string $field Reference to field to be secured. Can be dot
+     * @param list<string>|string $field Reference to field to be secured. Can be dot
      *   separated string to indicate nesting or array of fieldname parts.
      * @param bool $lock Whether this field should be part of the validation
      *   or excluded as part of the unlockedFields. Default `true`.
@@ -159,7 +159,7 @@ class FormProtector
      * fieldname parts like ['Model', 'field'] is returned.
      *
      * @param string $name The form inputs name attribute.
-     * @return array<string> Array of field name params like ['Model.field'] or
+     * @return list<string> Array of field name params like ['Model.field'] or
      *   ['Model', 'field'] for array fields or empty array if $name is empty.
      */
     protected function getFieldNameArray(string $name): array
@@ -306,7 +306,8 @@ class FormProtector
 
         $fields = Hash::flatten($formData);
         $fieldList = array_keys($fields);
-        $multi = $lockedFields = [];
+        $multi = [];
+        $lockedFields = [];
         $isUnlocked = false;
 
         foreach ($fieldList as $i => $key) {
@@ -332,14 +333,12 @@ class FormProtector
         foreach ($fieldList as $i => $key) {
             $isLocked = in_array($key, $locked, true);
 
-            if ($unlockedFields) {
-                foreach ($unlockedFields as $off) {
-                    $off = explode('.', $off);
-                    $field = array_values(array_intersect(explode('.', $key), $off));
-                    $isUnlocked = ($field === $off);
-                    if ($isUnlocked) {
-                        break;
-                    }
+            foreach ($unlockedFields as $off) {
+                $off = explode('.', $off);
+                $field = array_values(array_intersect(explode('.', $key), $off));
+                $isUnlocked = ($field === $off);
+                if ($isUnlocked) {
+                    break;
                 }
             }
 
@@ -361,7 +360,7 @@ class FormProtector
      * Get the sorted unlocked string
      *
      * @param array $formData Data array
-     * @return array<string>
+     * @return list<string>
      */
     protected function sortedUnlockedFields(array $formData): array
     {
@@ -380,7 +379,7 @@ class FormProtector
      * Generate the token data.
      *
      * @param string $url Form URL.
-     * @param string $sessionId Session Id.
+     * @param string $sessionId Session ID.
      * @return array<string, string> The token data.
      * @psalm-return array{fields: string, unlocked: string, debug: string}
      */
@@ -496,7 +495,7 @@ class FormProtector
      * @param string $stringKeyMessage Message string if tampered found in
      *  data fields indexed by string (protected).
      * @param string $missingMessage Message string if missing field
-     * @return array<string> Messages
+     * @return list<string> Messages
      */
     protected function debugCheckFields(
         array $dataFields,
@@ -523,7 +522,7 @@ class FormProtector
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
      * @param string $stringKeyMessage Message string if tampered found in
      *   data fields indexed by string (protected)
-     * @return array<string> Error messages
+     * @return list<string> Error messages
      */
     protected function matchExistingFields(
         array $dataFields,
@@ -560,7 +559,7 @@ class FormProtector
      */
     protected function debugExpectedFields(array $expectedFields = [], string $missingMessage = ''): ?string
     {
-        if (count($expectedFields) === 0) {
+        if ($expectedFields === []) {
             return null;
         }
 

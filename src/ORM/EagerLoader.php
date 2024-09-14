@@ -290,7 +290,7 @@ class EagerLoader
      */
     public function normalized(Table $repository): array
     {
-        if ($this->_normalized !== null || empty($this->_containments)) {
+        if ($this->_normalized !== null || $this->_containments === []) {
             return (array)$this->_normalized;
         }
 
@@ -419,7 +419,7 @@ class EagerLoader
 
             $newAttachable = $this->attachableAssociations($repository);
             $attachable = array_diff_key($newAttachable, $processed);
-        } while (!empty($attachable));
+        } while ($attachable !== []);
     }
 
     /**
@@ -607,19 +607,25 @@ class EagerLoader
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query for which to eager load external.
      * associations.
-     * @param array $results Results array.
-     * @return array
+     * @param iterable $results Results.
+     * @return iterable
      * @throws \RuntimeException
      */
-    public function loadExternal(SelectQuery $query, array $results): array
+    public function loadExternal(SelectQuery $query, iterable $results): iterable
     {
         if (!$results) {
             return $results;
         }
 
-        $table = $query->getRepository();
-        $external = $this->externalAssociations($table);
+        $external = $this->externalAssociations($query->getRepository());
         if (!$external) {
+            return $results;
+        }
+
+        if (!is_array($results)) {
+            $results = iterator_to_array($results);
+        }
+        if (!$results) {
             return $results;
         }
 
@@ -686,7 +692,7 @@ class EagerLoader
     {
         $map = [];
 
-        if (!$this->getMatching() && !$this->getContain() && empty($this->_joinsMap)) {
+        if (!$this->getMatching() && !$this->getContain() && $this->_joinsMap === []) {
             return $map;
         }
 

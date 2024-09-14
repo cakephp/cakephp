@@ -19,10 +19,12 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Log\Log;
 use Cake\ORM\ResultSetFactory;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Mockery;
 
 /**
  * ResultSetFactory test case.
@@ -30,7 +32,7 @@ use Cake\TestSuite\TestCase;
 class ResultSetFactoryTest extends TestCase
 {
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
@@ -72,6 +74,14 @@ class ResultSetFactoryTest extends TestCase
             ['id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
             ['id' => 3, 'author_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y'],
         ];
+    }
+
+    public function testSetResultSetClass(): void
+    {
+        $mock = Mockery::mock(ResultSetInterface::class);
+
+        $this->factory->setResultSetClass($mock::class);
+        $this->assertSame($mock::class, $this->factory->getResultSetClass());
     }
 
     /**
@@ -183,7 +193,7 @@ class ResultSetFactoryTest extends TestCase
         $statement->method('fetchAll')
             ->willReturn([$row]);
 
-        $results = $this->factory->createResultSet($query, $statement->fetchAll());
+        $results = $this->factory->createResultSet($statement->fetchAll(), $query);
         $this->assertNotEmpty($results);
     }
 

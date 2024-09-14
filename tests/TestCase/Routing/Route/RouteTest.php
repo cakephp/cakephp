@@ -23,6 +23,8 @@ use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Routing\Route\ProtectedRoute;
 
 /**
@@ -292,8 +294,8 @@ class RouteTest extends TestCase
      * @param string $url
      * @param array $expected
      * @param array $ext
-     * @dataProvider provideMatchParseExtension
      */
+    #[DataProvider('provideMatchParseExtension')]
     public function testMatchParseExtension($url, array $expected, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);
@@ -321,8 +323,8 @@ class RouteTest extends TestCase
      *
      * @param string $url
      * @param array $ext
-     * @dataProvider provideNoMatchParseExtension
      */
+    #[DataProvider('provideNoMatchParseExtension')]
     public function testNoMatchParseExtension($url, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);
@@ -1037,16 +1039,11 @@ class RouteTest extends TestCase
      */
     public function testParseRequestDelegates(): void
     {
-        /** @var \Cake\Routing\Route\Route|\PHPUnit\Framework\MockObject\MockObject $route */
-        $route = $this->getMockBuilder('Cake\Routing\Route\Route')
-            ->onlyMethods(['parse'])
-            ->setConstructorArgs(['/forward', ['controller' => 'Articles', 'action' => 'index']])
-            ->getMock();
-
-        $route->expects($this->once())
-            ->method('parse')
+        $route = Mockery::mock(Route::class)->makePartial();
+        $route->shouldReceive('parse')
+            ->once()
             ->with('/forward', 'GET')
-            ->willReturn(['works!']);
+            ->andReturn(['works!']);
 
         $request = new ServerRequest([
             'environment' => [
@@ -1677,7 +1674,7 @@ class RouteTest extends TestCase
             '_greedy' => false,
             '_compiledRoute' => null,
         ]);
-        $this->assertInstanceOf('Cake\Routing\Route\Route', $route);
+        $this->assertInstanceOf(Route::class, $route);
         $this->assertSame('/', $route->match(['controller' => 'Pages', 'action' => 'display', 'home']));
         $this->assertNull($route->match(['controller' => 'Pages', 'action' => 'display', 'about']));
         $expected = [

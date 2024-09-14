@@ -67,6 +67,7 @@ class SelectQuery extends Query implements IteratorAggregate
         'offset' => null,
         'union' => [],
         'epilog' => null,
+        'intersect' => [],
     ];
 
     /**
@@ -74,7 +75,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * statement upon retrieval. Each one of the callback function will receive
      * the row array as first argument.
      *
-     * @var array<\Closure>
+     * @var list<\Closure>
      */
     protected array $_resultDecorators = [];
 
@@ -84,6 +85,14 @@ class SelectQuery extends Query implements IteratorAggregate
      * @var iterable|null
      */
     protected ?iterable $_results = null;
+
+    /**
+     * Boolean for tracking whether buffered results
+     * are enabled.
+     *
+     * @var bool
+     */
+    protected bool $bufferedResults = true;
 
     /**
      * The Type map for fields in the select clause
@@ -111,13 +120,6 @@ class SelectQuery extends Query implements IteratorAggregate
     {
         if ($this->_results === null || $this->_dirty) {
             $this->_results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
-            if ($this->_resultDecorators) {
-                foreach ($this->_results as &$row) {
-                    foreach ($this->_resultDecorators as $decorator) {
-                        $row = $decorator($row);
-                    }
-                }
-            }
         }
 
         return $this->_results;
@@ -756,6 +758,79 @@ class SelectQuery extends Query implements IteratorAggregate
     }
 
     /**
+     * Adds a complete query to be used in conjunction with an INTERSECT operator with
+     * this query. This is used to combine the result set of this query with the one
+     * that will be returned by the passed query. You can add as many queries as you
+     * required by calling multiple times this method with different queries.
+     *
+     * By default, the INTERSECT operator will remove duplicate rows, if you wish to include
+     * every row for all queries, use intersectAll().
+     *
+     * ### Examples
+     *
+     * ```
+     * $intersect = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $query->select(['id', 'name'])->from(['d' => 'things'])->intersect($intersect);
+     * ```
+     *
+     * Will produce:
+     *
+     * `SELECT id, name FROM things d INTERSECT SELECT id, title FROM articles a`
+     *
+     * @param \Cake\Database\Query|string $query full SQL query to be used in INTERSECT operator
+     * @param bool $overwrite whether to reset the list of queries to be operated or not
+     * @return $this
+     */
+    public function intersect(Query|string $query, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['intersect'] = [];
+        }
+        $this->_parts['intersect'][] = [
+            'all' => false,
+            'query' => $query,
+        ];
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Adds a complete query to be used in conjunction with the INTERSECT ALL operator with
+     * this query. This is used to combine the result set of this query with the one
+     * that will be returned by the passed query. You can add as many queries as you
+     * required by calling multiple times this method with different queries.
+     *
+     * Unlike INTERSECT, INTERSECT ALL will not remove duplicate rows.
+     *
+     * ```
+     * $intersect = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $query->select(['id', 'name'])->from(['d' => 'things'])->intersectAll($intersect);
+     * ```
+     *
+     * Will produce:
+     *
+     * `SELECT id, name FROM things d INTERSECT ALL SELECT id, title FROM articles a`
+     *
+     * @param \Cake\Database\Query|string $query full SQL query to be used in INTERSECT operator
+     * @param bool $overwrite whether to reset the list of queries to be operated or not
+     * @return $this
+     */
+    public function intersectAll(Query|string $query, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['intersect'] = [];
+        }
+        $this->_parts['intersect'][] = [
+            'all' => true,
+            'query' => $query,
+        ];
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
      * Executes this query and returns a results iterator. This function is required
      * for implementing the IteratorAggregate interface and allows the query to be
      * iterated without having to call all() manually, thus making it look like
@@ -765,13 +840,17 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function getIterator(): Traversable
     {
-        /** @var \Traversable|array $results */
-        $results = $this->all();
-        if (is_array($results)) {
-            return new ArrayIterator($results);
+        if ($this->bufferedResults) {
+            /** @var \Traversable|array $results */
+            $results = $this->all();
+            if (is_array($results)) {
+                return new ArrayIterator($results);
+            }
+
+            return $results;
         }
 
-        return $results;
+        return $this->execute();
     }
 
     /**
@@ -814,6 +893,69 @@ class SelectQuery extends Query implements IteratorAggregate
         }
 
         return $this;
+    }
+
+    /**
+     * Get result decorators.
+     *
+     * @return array
+     */
+    public function getResultDecorators(): array
+    {
+        return $this->_resultDecorators;
+    }
+
+    /**
+     * Enables buffered results.
+     *
+     * When enabled the results returned by this query will be
+     * buffered. This enables you to iterate a result set multiple times, or
+     * both cache and iterate it.
+     *
+     * When disabled it will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return $this
+     */
+    public function enableBufferedResults()
+    {
+        $this->_dirty();
+        $this->bufferedResults = true;
+
+        return $this;
+    }
+
+    /**
+     * Disables buffered results.
+     *
+     * Disabling buffering will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return $this
+     */
+    public function disableBufferedResults()
+    {
+        $this->_dirty();
+        $this->bufferedResults = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether buffered results are enabled/disabled.
+     *
+     * When enabled the results returned by this query will be
+     * buffered. This enables you to iterate a result set multiple times, or
+     * both cache and iterate it.
+     *
+     * When disabled it will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return bool
+     */
+    public function isBufferedResultsEnabled(): bool
+    {
+        return $this->bufferedResults;
     }
 
     /**

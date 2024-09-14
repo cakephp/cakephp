@@ -27,7 +27,7 @@ use function Cake\Core\h;
  * Text manipulations: Highlight, excerpt, truncate, strip of links, convert email addresses to mailto: links...
  *
  * @property \Cake\View\Helper\HtmlHelper $Html
- * @method string excerpt(string $text, string $phrase, int $radius = 100, string $ending = '...') See Text::excerpt()
+ * @method string excerpt(string $text, string $phrase, int $radius = 100, string $ending = '…') See Text::excerpt()
  * @method string highlight(string $text, array|string $phrase, array $options = []) See Text::highlight()
  * @method string slug(string $string, array|string $options = []) See Text::slug()
  * @method string tail(string $text, int $length = 100, array $options = []) See Text::tail()
@@ -72,6 +72,9 @@ class TextHelper extends Helper
      * ### Options
      *
      * - `escape` Control HTML escaping of input. Defaults to true.
+     * - `stripProtocol` Strips http:// and https:// from the beginning of the link. Default off.
+     * - `maxLength` The maximum length of the link label. Default off.
+     * - `ellipsis` The string to append to the end of the link label. Defaults to UTF8 version.
      *
      * @param string $text Text
      * @param array<string, mixed> $options Array of HTML options, and options listed above.
@@ -157,15 +160,45 @@ class TextHelper extends Helper
     {
         $replace = [];
         foreach ($this->_placeholders as $hash => $content) {
-            $link = $url = $content['content'];
+            $link = $content['content'];
+            $url = $content['content'];
             $envelope = $content['envelope'];
             if (!preg_match('#^[a-z]+\://#i', $url)) {
                 $url = 'http://' . $url;
             }
+
+            $linkOptions = $htmlOptions;
+            unset($htmlOptions['maxLength'], $htmlOptions['stripProtocol'], $htmlOptions['ellipsis']);
+            $link = $this->_prepareLinkLabel($link, $linkOptions);
+
             $replace[$hash] = $envelope[0] . $this->Html->link($link, $url, $htmlOptions) . $envelope[1];
         }
 
         return strtr($text, $replace);
+    }
+
+    /**
+     * Prepares the link label.
+     *
+     * @param string $name Link label.
+     * @param array $options<string, mixed> $htmlOptions The options for the generated link label.
+     * @return string Modified link label.
+     */
+    protected function _prepareLinkLabel(string $name, array $options): string
+    {
+        if (isset($options['stripProtocol']) && $options['stripProtocol'] === true) {
+            $name = (string)preg_replace('(^https?://)', '', $name);
+        }
+        if (!empty($options['maxLength'])) {
+            $ellipsis = $options['ellipsis'] ?? '…';
+            $length = $options['maxLength'] - mb_strlen($ellipsis);
+            if (mb_strlen($name) > $length) {
+                $name = mb_substr($name, 0, $length);
+                $name .= $ellipsis;
+            }
+        }
+
+        return $name;
     }
 
     /**

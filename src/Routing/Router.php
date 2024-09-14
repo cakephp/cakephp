@@ -147,7 +147,7 @@ class Router
     /**
      * Default extensions defined with Router::extensions()
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected static array $_defaultExtensions = [];
 
@@ -233,7 +233,7 @@ class Router
      */
     public static function reload(): void
     {
-        if (empty(static::$_initialState)) {
+        if (static::$_initialState === []) {
             static::$_collection = new RouteCollection();
             static::$_initialState = get_class_vars(static::class);
 
@@ -381,7 +381,7 @@ class Router
             $here = static::getRequest()?->getRequestTarget() ?? '/';
             $output = $context['_base'] . $here;
             if ($full) {
-                $output = static::fullBaseUrl() . $output;
+                return static::fullBaseUrl() . $output;
             }
 
             return $output;
@@ -709,10 +709,10 @@ class Router
      * A string or an array of valid extensions can be passed to this method.
      * If called without any parameters it will return current list of set extensions.
      *
-     * @param array<string>|string|null $extensions List of extensions to be added.
+     * @param list<string>|string|null $extensions List of extensions to be added.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
-     * @return array<string> Array of extensions Router is configured to parse.
+     * @return list<string> Array of extensions Router is configured to parse.
      */
     public static function extensions(array|string|null $extensions = null, bool $merge = true): array
     {
@@ -792,7 +792,7 @@ class Router
         foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
             if (array_key_exists($key, $url)) {
                 throw new InvalidArgumentException(
-                    "`$key` cannot be used when defining route targets with a string route path."
+                    "`{$key}` cannot be used when defining route targets with a string route path."
                 );
             }
         }
@@ -853,7 +853,7 @@ class Router
         if (isset($matches['params']) && $matches['params'] !== '') {
             $paramsArray = explode('/', trim($matches['params'], '/'));
             foreach ($paramsArray as $param) {
-                if (strpos($param, '=') !== false) {
+                if (str_contains($param, '=')) {
                     if (!preg_match('/(?<key>.+?)=(?<value>.*)/', $param, $paramMatches)) {
                         throw new InvalidArgumentException(
                             "Could not parse a key=value from `{$param}` in route path `{$url}`."

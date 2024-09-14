@@ -268,7 +268,7 @@ class Configure
     /**
      * Gets the names of the configured Engine objects.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public static function configured(): array
     {

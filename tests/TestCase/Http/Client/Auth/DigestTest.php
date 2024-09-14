@@ -21,6 +21,7 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Digest authentication test
@@ -33,7 +34,7 @@ class DigestTest extends TestCase
     protected $client;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Cake\Http\Client\Auth\Digest
+     * @var \Cake\Http\Client\Auth\Digest
      */
     protected $auth;
 
@@ -49,19 +50,17 @@ class DigestTest extends TestCase
     }
 
     /**
-     * @return Digest|\PHPUnit\Framework\MockObject\MockObject
+     * @return Digest
      */
     protected function getDigestMock()
     {
-        $digest = $this->getMockBuilder(Digest::class)
-            ->onlyMethods(['generateCnonce'])
-            ->setConstructorArgs([$this->client])
-            ->getMock();
-        $digest->expects($this->any())
-            ->method('generateCnonce')
-            ->willReturn('cnonce');
-
-        return $digest;
+        return new class ($this->client) extends Digest
+        {
+            public function generateCnonce(): string
+            {
+                return 'cnonce';
+            }
+        };
     }
 
     /**
@@ -331,10 +330,10 @@ class DigestTest extends TestCase
     /**
      * testAlgorithms method
      *
-     * @dataProvider algorithmsProvider
      * @return void
      */
-    public function testAlgorithms($message, $headers, $method, $data, $expected)
+    #[DataProvider('algorithmsProvider')]
+    public function testAlgorithms($message, $headers, $method, $data, $expected): void
     {
         $response = new Response($headers, '');
         $this->client->expects($this->once())
@@ -348,7 +347,7 @@ class DigestTest extends TestCase
         $this->assertSame($expected, $result, $message);
     }
 
-    public function testAlgorithmException()
+    public function testAlgorithmException(): void
     {
         $headers = [
             'WWW-Authenticate: Digest algorithm="WRONG",realm="The batcave",nonce="4cded326c6c51"',

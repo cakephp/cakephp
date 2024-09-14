@@ -120,6 +120,7 @@ abstract class Query implements ExpressionInterface, Stringable
         'offset' => null,
         'union' => [],
         'epilog' => null,
+        'intersect' => [],
     ];
 
     /**
@@ -332,7 +333,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * ```
      *
      * @param \Closure $visitor Callback executed for each part
-     * @param array<string> $parts The list of query parts to traverse
+     * @param list<string> $parts The list of query parts to traverse
      * @return $this
      */
     public function traverseParts(Closure $visitor, array $parts)
@@ -1573,7 +1574,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * modifying any internal part of the query and it is used by the SQL dialects
      * to transform the query accordingly before it is executed. The valid clauses that
      * can be retrieved are: delete, update, set, insert, values, select, distinct,
-     * from, join, set, where, group, having, order, limit, offset and union.
+     * from, join, set, where, group, having, order, limit, offset, union and intersect.
      *
      * The return value for each of those parts may vary. Some clauses use QueryExpression
      * to internally store their state, some use arrays and others may use booleans or
@@ -1595,6 +1596,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * - limit: integer or QueryExpression, null when not set
      * - offset: integer or QueryExpression, null when not set
      * - union: array
+     * - intersect: array
      *
      * @param string $name name of the clause to be returned
      * @return mixed
@@ -1604,7 +1606,7 @@ abstract class Query implements ExpressionInterface, Stringable
     {
         if (!array_key_exists($name, $this->_parts)) {
             $clauses = array_keys($this->_parts);
-            array_walk($clauses, fn (&$x) => $x = "`$x`");
+            array_walk($clauses, fn (&$x) => $x = "`{$x}`");
             $clauses = implode(', ', $clauses);
             throw new InvalidArgumentException(sprintf(
                 'The `%s` clause is not defined. Valid clauses are: %s.',
@@ -1837,7 +1839,7 @@ abstract class Query implements ExpressionInterface, Stringable
             );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();
-        } catch (Throwable $e) {
+        } catch (Throwable) {
             $sql = 'SQL could not be generated for this query as it is incomplete.';
             $params = [];
         } finally {

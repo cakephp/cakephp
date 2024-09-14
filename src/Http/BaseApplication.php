@@ -107,9 +107,10 @@ abstract class BaseApplication implements
         ?ControllerFactoryInterface $controllerFactory = null
     ) {
         $this->configDir = rtrim($configDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        $this->plugins = Plugin::getCollection();
+        $this->plugins = new PluginCollection();
         $this->_eventManager = $eventManager ?: EventManager::instance();
         $this->controllerFactory = $controllerFactory;
+        Plugin::setCollection($this->plugins);
     }
 
     /**
@@ -257,6 +258,19 @@ abstract class BaseApplication implements
     }
 
     /**
+     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
+     * @return \Cake\Event\EventManagerInterface
+     */
+    public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
+    {
+        foreach ($this->plugins->with('events') as $plugin) {
+            $eventManager = $plugin->events($eventManager);
+        }
+
+        return $eventManager;
+    }
+
+    /**
      * Get the dependency injection container for the application.
      *
      * The first time the container is fetched it will be constructed
@@ -304,6 +318,17 @@ abstract class BaseApplication implements
     }
 
     /**
+     * Register application events.
+     *
+     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
+     * @return \Cake\Event\EventManagerInterface
+     */
+    public function events(EventManagerInterface $eventManager): EventManagerInterface
+    {
+        return $eventManager;
+    }
+
+    /**
      * Invoke the application.
      *
      * - Add the request to the container, enabling its injection into other services.
@@ -319,6 +344,9 @@ abstract class BaseApplication implements
         $container = $this->getContainer();
         $container->add(ServerRequest::class, $request);
         $container->add(ContainerInterface::class, $container);
+
+        $eventManager = $this->pluginEvents($this->getEventManager());
+        $this->setEventManager($this->events($eventManager));
 
         $this->controllerFactory ??= new ControllerFactory($container);
 

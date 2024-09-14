@@ -22,10 +22,17 @@ use Cake\Controller\Controller;
  */
 class ComponentTestController extends Controller
 {
-    /**
-     * uses property
-     *
-     * @var array
-     */
-    public $uses = [];
+    public function initialize(): void
+    {
+        parent::initialize();
+
+        $this->loadComponent('Flash');
+    }
+
+    public function flash()
+    {
+        return $this->response->withStringBody(json_encode([
+            'flashKey' => $this->Flash->getConfig('key'),
+        ]));
+    }
 }

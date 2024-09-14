@@ -28,6 +28,8 @@ use Cake\Routing\RouteCollection;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use TestApp\Routing\Route\DashedRoute;
 
 /**
  * RouteBuilder test case
@@ -119,12 +121,12 @@ class RouteBuilderTest extends TestCase
 
         $this->collection = new RouteCollection();
         $routes = new RouteBuilder($this->collection, '/l');
-        $this->assertSame($routes, $routes->setRouteClass('TestApp\Routing\Route\DashedRoute'));
-        $this->assertSame('TestApp\Routing\Route\DashedRoute', $routes->getRouteClass());
+        $this->assertSame($routes, $routes->setRouteClass(DashedRoute::class));
+        $this->assertSame(DashedRoute::class, $routes->getRouteClass());
 
         $routes->connect('/{controller}', ['action' => 'index']);
         $all = $this->collection->routes();
-        $this->assertInstanceOf('TestApp\Routing\Route\DashedRoute', $all[0]);
+        $this->assertInstanceOf(DashedRoute::class, $all[0]);
     }
 
     /**
@@ -884,11 +886,11 @@ class RouteBuilderTest extends TestCase
     public function testDefaultRouteClassFallbacks(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->setRouteClass('TestApp\Routing\Route\DashedRoute');
+        $routes->setRouteClass(DashedRoute::class);
         $routes->fallbacks();
 
         $all = $this->collection->routes();
-        $this->assertInstanceOf('TestApp\Routing\Route\DashedRoute', $all[0]);
+        $this->assertInstanceOf(DashedRoute::class, $all[0]);
     }
 
     /**
@@ -1009,7 +1011,7 @@ class RouteBuilderTest extends TestCase
     public function testMiddlewareGroupOverlap(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot add middleware group \'test\'. A middleware by this name has already been registered.');
+        $this->expectExceptionMessage("Cannot add middleware group 'test'. A middleware by this name has already been registered.");
         $func = function (): void {
         };
         $routes = new RouteBuilder($this->collection, '/api');
@@ -1023,7 +1025,7 @@ class RouteBuilderTest extends TestCase
     public function testApplyMiddlewareInvalidName(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot apply \'bad\' middleware or middleware group. Use registerMiddleware() to register middleware');
+        $this->expectExceptionMessage('Cannot apply `bad` middleware or middleware group. Use `registerMiddleware()` to register middleware');
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->applyMiddleware('bad');
     }
@@ -1110,9 +1112,8 @@ class RouteBuilderTest extends TestCase
 
     /**
      * Test that the HTTP method helpers create the right kind of routes.
-     *
-     * @dataProvider httpMethodProvider
      */
+    #[DataProvider('httpMethodProvider')]
     public function testHttpMethods(string $method): void
     {
         $routes = new RouteBuilder($this->collection, '/', [], ['namePrefix' => 'app:']);
@@ -1133,9 +1134,8 @@ class RouteBuilderTest extends TestCase
 
     /**
      * Test that the HTTP method helpers create the right kind of routes.
-     *
-     * @dataProvider httpMethodProvider
      */
+    #[DataProvider('httpMethodProvider')]
     public function testHttpMethodsStringTarget(string $method): void
     {
         $routes = new RouteBuilder($this->collection, '/', [], ['namePrefix' => 'app:']);

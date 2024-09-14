@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
@@ -26,6 +27,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for MySQL Schema Dialect.
@@ -219,14 +221,29 @@ class MysqlSchemaTest extends TestCase
                 'JSON',
                 ['type' => 'json', 'length' => null],
             ],
+            [
+                'GEOMETRY',
+                ['type' => 'geometry', 'length' => null],
+            ],
+            [
+                'POINT',
+                ['type' => 'point', 'length' => null],
+            ],
+            [
+                'LINESTRING',
+                ['type' => 'linestring', 'length' => null],
+            ],
+            [
+                'POLYGON',
+                ['type' => 'polygon', 'length' => null],
+            ],
         ];
     }
 
     /**
      * Test parsing MySQL column types from field description.
-     *
-     * @dataProvider convertColumnProvider
      */
+    #[DataProvider('convertColumnProvider')]
     public function testConvertColumn(string $type, array $expected): void
     {
         $field = [
@@ -242,7 +259,7 @@ class MysqlSchemaTest extends TestCase
             'default' => 'Default value',
             'comment' => 'Comment section',
         ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')->getMock();
+        $driver = $this->getMockBuilder(Mysql::class)->getMock();
         $dialect = new MysqlSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -286,6 +303,7 @@ SQL;
                 unique_id INT NOT NULL,
                 published BOOLEAN DEFAULT 0,
                 allow_comments TINYINT(1) DEFAULT 0,
+                location POINT,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
                 KEY `author_idx` (`author_id`),
@@ -344,7 +362,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
         $expected = [
             'id' => [
                 'type' => 'biginteger',
@@ -400,6 +418,15 @@ SQL;
                 'precision' => null,
                 'comment' => null,
             ],
+            'location' => [
+                'type' => 'point',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
+            ],
             'created' => [
                 'type' => 'datetime',
                 'null' => true,
@@ -448,7 +475,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_articles');
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
 
         $this->assertCount(4, $result->constraints());
         $expected = [
@@ -519,7 +546,7 @@ CREATE TABLE conditional_constraint (
 SQL;
         try {
             $connection->execute($table);
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->markTestSkipped('Could not create table with conditional constraint');
         }
         $schema = new SchemaCollection($connection);
@@ -552,7 +579,7 @@ SQL;
         try {
             $connection->execute($table);
             $connection->execute($index);
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->markTestSkipped('Could not create table with functional index');
         }
         $schema = new SchemaCollection($connection);
@@ -627,17 +654,17 @@ SQL;
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => 'ignored'],
-                '`title` VARCHAR(25) DEFAULT \'ignored\'',
+                "`title` VARCHAR(25) DEFAULT 'ignored'",
             ],
             [
                 'title',
                 ['type' => 'string', 'length' => 25, 'null' => true, 'default' => ''],
-                '`title` VARCHAR(25) DEFAULT \'\'',
+                "`title` VARCHAR(25) DEFAULT ''",
             ],
             [
                 'role',
                 ['type' => 'string', 'length' => 10, 'null' => false, 'default' => 'admin'],
-                '`role` VARCHAR(10) NOT NULL DEFAULT \'admin\'',
+                "`role` VARCHAR(10) NOT NULL DEFAULT 'admin'",
             ],
             [
                 'id',
@@ -844,7 +871,7 @@ SQL;
             [
                 'created',
                 ['type' => 'datetime', 'comment' => 'Created timestamp'],
-                '`created` DATETIME COMMENT \'Created timestamp\'',
+                "`created` DATETIME COMMENT 'Created timestamp'",
             ],
             [
                 'created',
@@ -854,7 +881,7 @@ SQL;
             [
                 'open_date',
                 ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
-                '`open_date` DATETIME NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
+                "`open_date` DATETIME NOT NULL DEFAULT '2016-12-07 23:04:00'",
             ],
             [
                 'created_with_precision',
@@ -891,21 +918,61 @@ SQL;
             [
                 'open_date',
                 ['type' => 'timestamp', 'null' => false, 'default' => '2016-12-07 23:04:00'],
-                '`open_date` TIMESTAMP NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
+                "`open_date` TIMESTAMP NOT NULL DEFAULT '2016-12-07 23:04:00'",
             ],
             [
                 'created_with_precision',
                 ['type' => 'timestampfractional', 'precision' => 3, 'null' => false, 'default' => 'current_timestamp'],
                 '`created_with_precision` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)',
             ],
+            // Geospatial types
+            [
+                'g',
+                ['type' => 'geometry'],
+                '`g` GEOMETRY',
+            ],
+            [
+                'g',
+                ['type' => 'geometry', 'null' => false, 'srid' => 4326],
+                '`g` GEOMETRY NOT NULL SRID 4326',
+            ],
+            [
+                'p',
+                ['type' => 'point'],
+                '`p` POINT',
+            ],
+            [
+                'p',
+                ['type' => 'point', 'null' => false, 'srid' => 4326],
+                '`p` POINT NOT NULL SRID 4326',
+            ],
+            [
+                'l',
+                ['type' => 'linestring'],
+                '`l` LINESTRING',
+            ],
+            [
+                'l',
+                ['type' => 'linestring', 'null' => false, 'srid' => 4326],
+                '`l` LINESTRING NOT NULL SRID 4326',
+            ],
+            [
+                'p',
+                ['type' => 'polygon'],
+                '`p` POLYGON',
+            ],
+            [
+                'p',
+                ['type' => 'polygon', 'null' => false, 'srid' => 4326],
+                '`p` POLYGON NOT NULL SRID 4326',
+            ],
         ];
     }
 
     /**
      * Test generating column definitions
-     *
-     * @dataProvider columnSqlProvider
      */
+    #[DataProvider('columnSqlProvider')]
     public function testColumnSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -977,9 +1044,8 @@ SQL;
 
     /**
      * Test the constraintSql method.
-     *
-     * @dataProvider constraintSqlProvider
      */
+    #[DataProvider('constraintSqlProvider')]
     public function testConstraintSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -1018,9 +1084,8 @@ SQL;
 
     /**
      * Test the indexSql method.
-     *
-     * @dataProvider indexSqlProvider
      */
+    #[DataProvider('indexSqlProvider')]
     public function testIndexSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -1042,7 +1107,7 @@ SQL;
     public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1091,7 +1156,7 @@ SQL;
     public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1173,7 +1238,7 @@ SQL;
     public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1240,7 +1305,7 @@ SQL;
     public function testCreateSqlJson(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())
@@ -1287,7 +1352,7 @@ SQL;
     public function testCreateTemporary(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1307,7 +1372,7 @@ SQL;
     public function testCreateSqlCompositeIntegerKey(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1371,7 +1436,7 @@ SQL;
     public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1389,7 +1454,7 @@ SQL;
     public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1406,7 +1471,7 @@ SQL;
      */
     public function testConstructConnectsDriver(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $driver = $this->getMockBuilder(Driver::class)->getMock();
         $driver->expects($this->once())
             ->method('connect');
         new MysqlSchemaDialect($driver);
@@ -1424,7 +1489,7 @@ SQL;
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_json');
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
         $expected = [
             'type' => 'json',
             'null' => false,
@@ -1454,7 +1519,7 @@ SQL;
             $this->pdo->expects($this->any())
             ->method('quote')
             ->willReturnCallback(function ($value) {
-                return "'$value'";
+                return "'{$value}'";
             });
 
         $driver = $this->getMockBuilder(Mysql::class)

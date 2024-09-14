@@ -21,12 +21,12 @@ use Cake\Http\MiddlewareQueue;
 
 class Plugin extends BasePlugin
 {
-    public function events(EventManagerInterface $events): EventManagerInterface
+    public function events(EventManagerInterface $event): EventManagerInterface
     {
-        $events->on('TestPlugin.load', function (): void {
+        $event->on('TestPlugin.load', function (): void {
         });
 
-        return $events;
+        return $event;
     }
 
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue

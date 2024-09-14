@@ -221,7 +221,7 @@ class CounterCacheBehavior extends Behavior
         Association $assoc,
         array $settings
     ): void {
-        /** @var array<string> $foreignKeys */
+        /** @var list<string> $foreignKeys */
         $foreignKeys = (array)$assoc->getForeignKey();
         $countConditions = $entity->extract($foreignKeys);
 

@@ -120,6 +120,8 @@ class Arguments
      */
     public function getArgument(string $name): ?string
     {
+        $this->assertArgumentExists($name);
+
         $offset = array_search($name, $this->argNames, true);
         if ($offset === false || !isset($this->args[$offset])) {
             return null;
@@ -204,5 +206,21 @@ class Arguments
     public function hasOption(string $name): bool
     {
         return isset($this->options[$name]);
+    }
+
+    /**
+     * @param string $name
+     * @return void
+     */
+    protected function assertArgumentExists(string $name): void
+    {
+        if (in_array($name, $this->argNames, true)) {
+            return;
+        }
+
+        throw new ConsoleException(sprintf(
+            'Argument `%s` is not defined on this Command. Could this be an option maybe?',
+            $name
+        ));
     }
 }

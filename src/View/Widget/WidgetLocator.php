@@ -198,7 +198,7 @@ class WidgetLocator
         if ($className === null) {
             throw new InvalidArgumentException(sprintf('Unable to locate widget class `%s`.', $class));
         }
-        if (count($config)) {
+        if ($config !== []) {
             $reflection = new ReflectionClass($className);
             $arguments = [$this->_templates];
             foreach ($config as $requirement) {
@@ -208,12 +208,12 @@ class WidgetLocator
                     $arguments[] = $this->get($requirement);
                 }
             }
-            $instance = $reflection->newInstanceArgs($arguments);
-        } else {
-            $instance = new $className($this->_templates);
+
+            /** @var \Cake\View\Widget\WidgetInterface */
+            return $reflection->newInstanceArgs($arguments);
         }
 
         /** @var \Cake\View\Widget\WidgetInterface */
-        return $instance;
+        return new $className($this->_templates);
     }
 }

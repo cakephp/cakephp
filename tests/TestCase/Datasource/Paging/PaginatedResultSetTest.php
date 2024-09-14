@@ -17,23 +17,58 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource\Paging;
 
 use ArrayIterator;
+use Cake\Collection\Collection;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\ResultSetInterface;
+use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
+use Mockery;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
+use function Cake\Collection\collection;
 
 class PaginatedResultSetTest extends TestCase
 {
-    public function testItems()
+    public function testItems(): void
     {
+        $resultSet = new class ([]) extends ResultSet {
+        };
         $paginatedResults = new PaginatedResultSet(
-            $this->getMockBuilder(ResultSetInterface::class)->getMock(),
+            $resultSet,
             []
         );
 
         $this->assertInstanceOf(ResultSetInterface::class, $paginatedResults->items());
     }
 
-    public function testJsonEncode()
+    public function testToArray(): void
+    {
+        $paginatedResults = new PaginatedResultSet(new Collection([1, 2, 3]), []);
+
+        $out = $paginatedResults->toArray();
+        $this->assertSame([1, 2, 3], $out);
+    }
+
+    #[WithoutErrorHandler]
+    public function testCall(): void
+    {
+        $resultSet = Mockery::mock(ResultSet::class);
+        $resultSet->shouldReceive('extract')
+            ->with('foo')
+            ->once()
+            ->andReturn(collection(['bar']));
+
+        $paginatedResults = new PaginatedResultSet(
+            $resultSet,
+            []
+        );
+
+        $this->deprecated(function () use ($paginatedResults): void {
+            $result = $paginatedResults->extract('foo')->toList();
+            $this->assertEquals(['bar'], $result);
+        });
+    }
+
+    public function testJsonEncode(): void
     {
         $paginatedResults = new PaginatedResultSet(
             new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),
@@ -41,5 +76,19 @@ class PaginatedResultSetTest extends TestCase
         );
 
         $this->assertEquals('{"1":"a","2":"b","3":"c"}', json_encode($paginatedResults));
+    }
+
+    public function testSerialization(): void
+    {
+        $paginatedResults = new PaginatedResultSet(
+            new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),
+            ['foo' => 'bar']
+        );
+
+        $serialized = serialize($paginatedResults);
+        $unserialized = unserialize($serialized);
+
+        $this->assertEquals($paginatedResults->pagingParams(), $unserialized->pagingParams());
+        $this->assertEquals($paginatedResults->items(), $unserialized->items());
     }
 }

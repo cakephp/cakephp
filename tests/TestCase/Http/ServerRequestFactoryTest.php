@@ -23,6 +23,9 @@ use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Exception\InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**
@@ -86,10 +89,9 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test fromGlobals includes the session
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testFromGlobalsUrlSession(): void
     {
         Configure::write('App.base', '/basedir');
@@ -900,11 +902,11 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * Test environment detection
      *
-     * @dataProvider environmentGenerator
      * @param string $name
      * @param array $data
      * @param array $expected
      */
+    #[DataProvider('environmentGenerator')]
     public function testEnvironmentDetection($name, $data, $expected): void
     {
         if (isset($data['App'])) {

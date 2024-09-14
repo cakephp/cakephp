@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Driver;
 use Cake\Database\Type\JsonType;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
@@ -44,7 +45,7 @@ class JsonTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = TypeFactory::build('json');
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**
@@ -127,7 +128,7 @@ class JsonTypeTest extends TestCase
      *
      * @return void
      */
-    public function testEncodingOptions()
+    public function testEncodingOptions(): void
     {
         // New instance to prevent others tests breaking
         $instance = new JsonType();

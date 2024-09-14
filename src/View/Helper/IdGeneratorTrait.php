@@ -34,7 +34,7 @@ trait IdGeneratorTrait
     /**
      * A list of id suffixes used in the current rendering.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_idSuffixes = [];
 
@@ -75,7 +75,7 @@ trait IdGeneratorTrait
      */
     protected function _idSuffix(string $val): string
     {
-        $idSuffix = mb_strtolower(str_replace(['/', '@', '<', '>', ' ', '"', '\''], '-', $val));
+        $idSuffix = mb_strtolower(str_replace(['/', '@', '<', '>', ' ', '"', "'"], '-', $val));
         $count = 1;
         $check = $idSuffix;
         while (in_array($check, $this->_idSuffixes, true)) {
@@ -96,7 +96,7 @@ trait IdGeneratorTrait
     {
         $domId = mb_strtolower(Text::slug($value, '-'));
         if ($this->_idPrefix) {
-            $domId = $this->_idPrefix . '-' . $domId;
+            return $this->_idPrefix . '-' . $domId;
         }
 
         return $domId;

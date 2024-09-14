@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
+use Cake\Core\Configure;
 use Cake\Database\Exception\DatabaseException;
 
 /**
@@ -59,7 +60,9 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         $col = strtolower($matches[2]);
-        $length = $precision = $scale = null;
+        $length = null;
+        $precision = null;
+        $scale = null;
         if (isset($matches[3])) {
             $length = $matches[3];
             if (str_contains($length, ',')) {
@@ -86,7 +89,7 @@ class SqliteSchemaDialect extends SchemaDialect
         if ($col === 'tinyint') {
             return ['type' => TableSchemaInterface::TYPE_TINYINTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
-        if (str_contains($col, 'int')) {
+        if (str_contains($col, 'int') && $col !== 'point') {
             return ['type' => TableSchemaInterface::TYPE_INTEGER, 'length' => $length, 'unsigned' => $unsigned];
         }
         if (str_contains($col, 'decimal')) {
@@ -138,6 +141,21 @@ class SqliteSchemaDialect extends SchemaDialect
         ];
         if (in_array($col, $datetimeTypes)) {
             return ['type' => $col, 'length' => null];
+        }
+
+        if (Configure::read('ORM.mapJsonTypeForSqlite') === true) {
+            if (str_contains($col, TableSchemaInterface::TYPE_JSON) && !str_contains($col, 'jsonb')) {
+                return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
+            }
+        }
+
+        if (in_array($col, TableSchemaInterface::GEOSPATIAL_TYPES)) {
+            // TODO how can srid be preserved? It doesn't come back
+            // in the output of show full columns from ...
+            return [
+                'type' => $col,
+                'length' => null,
+            ];
         }
 
         return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];
@@ -481,6 +499,10 @@ class SqliteSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMPFRACTIONAL',
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMPTIMEZONE',
             TableSchemaInterface::TYPE_JSON => ' TEXT',
+            TableSchemaInterface::TYPE_GEOMETRY => ' GEOMETRY_TEXT',
+            TableSchemaInterface::TYPE_POINT => ' POINT_TEXT',
+            TableSchemaInterface::TYPE_LINESTRING => ' LINESTRING_TEXT',
+            TableSchemaInterface::TYPE_POLYGON => ' POLYGON_TEXT',
         ];
 
         $out = $this->_driver->quoteIdentifier($name);
@@ -496,11 +518,10 @@ class SqliteSchemaDialect extends SchemaDialect
         if (
             in_array($data['type'], $hasUnsigned, true) &&
             isset($data['unsigned']) &&
-            $data['unsigned'] === true
+            $data['unsigned'] === true &&
+            ($data['type'] !== TableSchemaInterface::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name])
         ) {
-            if ($data['type'] !== TableSchemaInterface::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name]) {
-                $out .= ' UNSIGNED';
-            }
+            $out .= ' UNSIGNED';
         }
 
         if (isset($typeMap[$data['type']])) {
@@ -565,14 +586,11 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= ' NOT NULL';
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER) {
-            if ($schema->getPrimaryKey() === [$name]) {
-                $out .= ' PRIMARY KEY';
-
-                if (($name === 'id' || $data['autoIncrement']) && $data['autoIncrement'] !== false) {
-                    $out .= ' AUTOINCREMENT';
-                    unset($data['default']);
-                }
+        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER && $schema->getPrimaryKey() === [$name]) {
+            $out .= ' PRIMARY KEY';
+            if (($name === 'id' || $data['autoIncrement']) && $data['autoIncrement'] !== false) {
+                $out .= ' AUTOINCREMENT';
+                unset($data['default']);
             }
         }
 
@@ -638,7 +656,7 @@ class SqliteSchemaDialect extends SchemaDialect
             );
         }
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 
@@ -687,7 +705,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $data = $schema->getIndex($name);
         assert($data !== null);
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 

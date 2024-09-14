@@ -16,11 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Query;
 
+use ArrayIterator;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -1808,7 +1810,7 @@ class SelectQueryTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'Passing extra expressions by associative array (`\'id\' => \'desc -- Comment\'`) ' .
+            "Passing extra expressions by associative array (`'id' => 'desc -- Comment'`) " .
             'is not allowed to avoid potential SQL injection. ' .
             'Use QueryExpression or numeric array instead.'
         );
@@ -2652,10 +2654,10 @@ class SelectQueryTest extends TestCase
     public function testUnionOrderBy(): void
     {
         $this->skipIf(
-            ($this->connection->getDriver() instanceof Sqlite ||
-            $this->connection->getDriver() instanceof Sqlserver),
-            'Driver does not support ORDER BY in UNIONed queries.'
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY),
+            'Driver does not support ORDER BY on UNIONed queries.'
         );
+
         $union = (new SelectQuery($this->connection))
             ->select(['id', 'title'])
             ->from(['a' => 'articles'])
@@ -2696,6 +2698,115 @@ class SelectQueryTest extends TestCase
         $result = $query->execute();
         $rows2 = $result->fetchAll();
         $this->assertCount(1 + self::COMMENT_COUNT + self::ARTICLE_COUNT, $rows2);
+        $this->assertNotEquals($rows, $rows2);
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests that it is possible to one or multiple INTERSECT statements in a query
+     */
+    public function testIntersect(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::INTERSECT),
+            'Driver does not support INTERSECT clause.'
+        );
+
+        $intersect = (new SelectQuery($this->connection))->select(['id', 'comment'])->from(['c' => 'comments'])->where(['article_id' => 1]);
+        $query = new SelectQuery($this->connection);
+        $result = $query->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->intersect($intersect)
+            ->execute();
+        $rows = $result->fetchAll();
+
+        $this->assertCount(count($intersect->execute()->fetchAll()), $rows);
+        $result->closeCursor();
+
+        $intersect->select(['foo' => 'id', 'bar' => 'comment']);
+        $intersect = (new SelectQuery($this->connection))
+            ->select(['id', 'comment', 'other' => 'id', 'nameish' => 'comment'])
+            ->from(['c' => 'comments'])
+            ->where($intersect->newExpr()->like('comment', '%First%'))
+            ->orderBy(['id' => 'desc']);
+        $expectedCount = count($query->select(['foo' => 'id', 'bar' => 'comment'])->execute()->fetchAll());
+        $query->select(['foo' => 'id', 'bar' => 'comment'])->intersect($intersect);
+        $result = $query->execute();
+        $rows2 = $result->fetchAll();
+
+        $this->assertCount($expectedCount, $rows2);
+        $this->assertNotEquals($rows, $rows2);
+        $result->closeCursor();
+
+        $intersect = (new SelectQuery($this->connection))
+            ->select(['id', 'comment'])
+            ->where(['article_id' => 1])
+            ->from(['c' => 'comments']);
+        $query->select(['id', 'comment'], true)->intersect($intersect, true);
+        $result = $query->execute();
+        $rows3 = $result->fetchAll();
+
+        $this->assertCount(count($intersect->execute()->fetchAll()), $rows3);
+        $this->assertEquals($rows, $rows3);
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests that it is possible to run intersects with order by statements
+     */
+    public function testIntersectOrderBy(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY),
+            'Driver does not support ORDER BY on INTERSECTed queries.'
+        );
+        $intersect = (new SelectQuery($this->connection))
+            ->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->where(['article_id' => 1])
+            ->orderBy(['c.id' => 'asc']);
+
+        $query = new SelectQuery($this->connection);
+        $result = $query->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->orderBy(['c.id' => 'asc'])
+            ->intersect($intersect)
+            ->execute();
+
+        $this->assertCount(count($intersect->execute()->fetchAll()), $result->fetchAll());
+    }
+
+    /**
+     * Tests that INTERSECT ALL can be built
+     */
+    public function testIntersectAll(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::INTERSECT_ALL),
+            'Driver does not support INTERSECT ALL clause.'
+        );
+        $intersect = (new SelectQuery($this->connection))->select(['id', 'comment'])->from(['c' => 'comments'])->where(['article_id' => 1]);
+        $query = new SelectQuery($this->connection);
+        $result = $query->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->intersectAll($intersect)
+            ->execute();
+        $rows = $result->fetchAll('assoc');
+
+        $this->assertCount(count($intersect->execute()->fetchAll()), $rows);
+        $result->closeCursor();
+
+        $intersect = (new SelectQuery($this->connection))
+            ->select(['article_id', 'user_id'])
+            ->from(['c' => 'comments'])
+            ->where($intersect->newExpr()->like('comment', '%First%'))
+            ->orderBy(['id' => 'desc']);
+        $expectedCount = count($intersect->execute()->fetchAll());
+        $query->select(['article_id', 'user_id'], true)->intersectAll($intersect, true);
+        $result = $query->execute();
+        $rows2 = $result->fetchAll();
+
+        $this->assertCount($expectedCount, $rows2);
         $this->assertNotEquals($rows, $rows2);
         $result->closeCursor();
     }
@@ -2817,12 +2928,13 @@ class SelectQueryTest extends TestCase
         }
         $this->assertSame(3, $count);
 
+        $iterable = $query->getIterator();
+        $this->assertInstanceOf(ArrayIterator::class, $iterable);
+
         $this->connection->execute('DELETE FROM articles WHERE author_id = 3')->closeCursor();
 
-        // Mark query as dirty
-        $query->select(['id'], true);
+        $query->disableBufferedResults();
 
-        // Verify all() is called again
         $count = 0;
         foreach ($query as $row) {
             ++$count;
@@ -2830,12 +2942,13 @@ class SelectQueryTest extends TestCase
             $this->assertSame('test', $row['generated']);
         }
         $this->assertSame(2, $count);
+
+        $iterable = $query->getIterator();
+        $this->assertInstanceOf(StatementInterface::class, $iterable);
     }
 
     /**
      * Tests that functions are correctly transformed and their parameters are bound
-     *
-     * @group FunctionExpression
      */
     public function testSQLFunctions(): void
     {

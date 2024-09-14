@@ -26,7 +26,7 @@ class FixturizedTestCase extends TestCase
     /**
      * Fixtures to use in this test
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = ['core.Categories', 'core.Articles'];
 

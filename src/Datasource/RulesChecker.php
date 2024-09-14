@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
+use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 
 /**
@@ -133,10 +134,30 @@ class RulesChecker
      * @param array<string, mixed> $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
+     * @throws \Cake\Core\Exception\CakeException If a rule with the same name already exists
      */
     public function add(callable $rule, array|string|null $name = null, array $options = [])
     {
-        $this->_rules[] = $this->_addError($rule, $name, $options);
+        if (is_string($name)) {
+            $this->checkName($name, $this->_rules);
+            $this->_rules[$name] = $this->_addError($rule, $name, $options);
+        } else {
+            $this->_rules[] = $this->_addError($rule, $name, $options);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes a rule from the set.
+     *
+     * @param string $name The name of the rule to remove.
+     * @return $this
+     * @since 5.1.0
+     */
+    public function remove(string $name)
+    {
+        unset($this->_rules[$name]);
 
         return $this;
     }
@@ -158,10 +179,30 @@ class RulesChecker
      * @param array<string, mixed> $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
+     * @throws \Cake\Core\Exception\CakeException If a rule with the same name already exists
      */
     public function addCreate(callable $rule, array|string|null $name = null, array $options = [])
     {
-        $this->_createRules[] = $this->_addError($rule, $name, $options);
+        if (is_string($name)) {
+            $this->checkName($name, $this->_createRules);
+            $this->_createRules[$name] = $this->_addError($rule, $name, $options);
+        } else {
+            $this->_createRules[] = $this->_addError($rule, $name, $options);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes a rule from the create set.
+     *
+     * @param string $name The name of the rule to remove.
+     * @return $this
+     * @since 5.1.0
+     */
+    public function removeCreate(string $name)
+    {
+        unset($this->_createRules[$name]);
 
         return $this;
     }
@@ -183,10 +224,30 @@ class RulesChecker
      * @param array<string, mixed> $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
+     * @throws \Cake\Core\Exception\CakeException If a rule with the same name already exists
      */
     public function addUpdate(callable $rule, array|string|null $name = null, array $options = [])
     {
-        $this->_updateRules[] = $this->_addError($rule, $name, $options);
+        if (is_string($name)) {
+            $this->checkName($name, $this->_updateRules);
+            $this->_updateRules[$name] = $this->_addError($rule, $name, $options);
+        } else {
+            $this->_updateRules[] = $this->_addError($rule, $name, $options);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes a rule from the update set.
+     *
+     * @param string $name The name of the rule to remove.
+     * @return $this
+     * @since 5.1.0
+     */
+    public function removeUpdate(string $name)
+    {
+        unset($this->_updateRules[$name]);
 
         return $this;
     }
@@ -208,10 +269,30 @@ class RulesChecker
      * @param array<string, mixed> $options List of extra options to pass to the rule callable as
      * second argument.
      * @return $this
+     * @throws \Cake\Core\Exception\CakeException If a rule with the same name already exists
      */
     public function addDelete(callable $rule, array|string|null $name = null, array $options = [])
     {
-        $this->_deleteRules[] = $this->_addError($rule, $name, $options);
+        if (is_string($name)) {
+            $this->checkName($name, $this->_deleteRules);
+            $this->_deleteRules[$name] = $this->_addError($rule, $name, $options);
+        } else {
+            $this->_deleteRules[] = $this->_addError($rule, $name, $options);
+        }
+
+        return $this;
+    }
+
+    /**
+     * Removes a rule from the delete set.
+     *
+     * @param string $name The name of the rule to remove.
+     * @return $this
+     * @since 5.1.0
+     */
+    public function removeDelete(string $name)
+    {
+        unset($this->_deleteRules[$name]);
 
         return $this;
     }
@@ -229,19 +310,12 @@ class RulesChecker
      */
     public function check(EntityInterface $entity, string $mode, array $options = []): bool
     {
-        if ($mode === self::CREATE) {
-            return $this->checkCreate($entity, $options);
-        }
-
-        if ($mode === self::UPDATE) {
-            return $this->checkUpdate($entity, $options);
-        }
-
-        if ($mode === self::DELETE) {
-            return $this->checkDelete($entity, $options);
-        }
-
-        throw new InvalidArgumentException('Wrong checking mode: ' . $mode);
+        return match ($mode) {
+            self::CREATE => $this->checkCreate($entity, $options),
+            self::UPDATE => $this->checkUpdate($entity, $options),
+            self::DELETE => $this->checkDelete($entity, $options),
+            default => throw new InvalidArgumentException('Wrong checking mode: ' . $mode),
+        };
     }
 
     /**
@@ -254,7 +328,11 @@ class RulesChecker
      */
     public function checkCreate(EntityInterface $entity, array $options = []): bool
     {
-        return $this->_checkRules($entity, $options, array_merge($this->_rules, $this->_createRules));
+        return $this->_checkRules(
+            $entity,
+            $options,
+            array_merge(array_values($this->_rules), array_values($this->_createRules))
+        );
     }
 
     /**
@@ -267,7 +345,11 @@ class RulesChecker
      */
     public function checkUpdate(EntityInterface $entity, array $options = []): bool
     {
-        return $this->_checkRules($entity, $options, array_merge($this->_rules, $this->_updateRules));
+        return $this->_checkRules(
+            $entity,
+            $options,
+            array_merge(array_values($this->_rules), array_values($this->_updateRules))
+        );
     }
 
     /**
@@ -280,7 +362,11 @@ class RulesChecker
      */
     public function checkDelete(EntityInterface $entity, array $options = []): bool
     {
-        return $this->_checkRules($entity, $options, $this->_deleteRules);
+        return $this->_checkRules(
+            $entity,
+            $options,
+            array_merge(array_values($this->_rules), array_values($this->_deleteRules))
+        );
     }
 
     /**
@@ -307,7 +393,7 @@ class RulesChecker
      * Utility method for decorating any callable so that if it returns false, the correct
      * property in the entity is marked as invalid.
      *
-     * @param \Cake\Datasource\RuleInvoker|callable $rule The rule to decorate
+     * @param callable $rule The rule to decorate
      * @param array|string|null $name The alias for a rule or an array of options
      * @param array<string, mixed> $options The options containing the error message and field.
      * @return \Cake\Datasource\RuleInvoker
@@ -326,5 +412,20 @@ class RulesChecker
         }
 
         return $rule;
+    }
+
+    /**
+     * Checks that a rule with the same name doesn't already exist
+     *
+     * @param string $name The name to check
+     * @param array<\Cake\Datasource\RuleInvoker> $rules The rules array to check
+     * @return void
+     * @throws \Cake\Core\Exception\CakeException
+     */
+    protected function checkName(string $name, array $rules): void
+    {
+        if (array_key_exists($name, $rules)) {
+            throw new CakeException('A rule with the same name already exists');
+        }
     }
 }

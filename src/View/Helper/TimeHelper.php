@@ -75,7 +75,7 @@ class TimeHelper extends Helper
     ): DateTime {
         $time = new DateTime($dateString);
         if ($timezone !== null) {
-            $time = $time->setTimezone($timezone);
+            return $time->setTimezone($timezone);
         }
 
         return $time;
@@ -216,7 +216,7 @@ class TimeHelper extends Helper
      *
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param bool $range if true returns a range in Y-m-d format
-     * @return array<string>|int 1, 2, 3, or 4 quarter of year or array if $range true
+     * @return list<string>|int 1, 2, 3, or 4 quarter of year or array if $range true
      * @see \Cake\I18n\Time::toQuarter()
      */
     public function toQuarter(
@@ -327,7 +327,7 @@ class TimeHelper extends Helper
         $relativeDate = (new DateTime($dateTime))->timeAgoInWords($options);
 
         if ($element) {
-            $relativeDate = sprintf(
+            return sprintf(
                 '<%s%s>%s</%s>',
                 $element['tag'],
                 $this->templater()->formatAttributes($element, ['tag']),
@@ -435,9 +435,11 @@ class TimeHelper extends Helper
         $timezone = $this->_getTimezone($timezone);
 
         try {
-            $time = new DateTime($date);
+            if ($date instanceof DateTime) {
+                return $date->i18nFormat($format, $timezone);
+            }
 
-            return $time->i18nFormat($format, $timezone);
+            return (new DateTime($date))->i18nFormat($format, $timezone);
         } catch (Exception $e) {
             if ($invalid === false) {
                 throw $e;

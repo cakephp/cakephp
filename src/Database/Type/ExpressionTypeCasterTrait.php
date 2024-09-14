@@ -50,7 +50,7 @@ trait ExpressionTypeCasterTrait
 
         if ($multi) {
             /** @var \Cake\Database\Type\ExpressionTypeInterface $converter */
-            return array_map([$converter, 'toExpression'], $value);
+            return array_map($converter->toExpression(...), $value);
         }
 
         return $converter->toExpression($value);

@@ -22,6 +22,8 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerTrait;
+use Stringable;
 use Throwable;
 
 /**
@@ -30,6 +32,7 @@ use Throwable;
 class ErrorLogger implements ErrorLoggerInterface
 {
     use InstanceConfigTrait;
+    use LoggerTrait;
 
     /**
      * Default configuration values.
@@ -55,6 +58,14 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * @inheritDoc
      */
+    public function log($level, Stringable|string $message, array $context = []): void
+    {
+        Log::write($level, $message, $context);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function logError(PhpError $error, ?ServerRequestInterface $request = null, bool $includeTrace = false): void
     {
         $message = $error->getMessage();
@@ -71,7 +82,7 @@ class ErrorLogger implements ErrorLoggerInterface
             default => $label,
         };
 
-        Log::write($level, $message);
+        $this->log($level, $message);
     }
 
     /**
@@ -87,7 +98,7 @@ class ErrorLogger implements ErrorLoggerInterface
         if ($request !== null) {
             $message .= $this->getRequestContext($request);
         }
-        Log::error($message);
+        $this->error($message);
     }
 
     /**
@@ -118,7 +129,7 @@ class ErrorLogger implements ErrorLoggerInterface
         }
 
         if ($includeTrace) {
-            $trace = Debugger::formatTrace($exception, ['format' => 'points']);
+            $trace = Debugger::formatTrace($exception, ['format' => 'shortPoints']);
             assert(is_array($trace));
             $message .= "\nStack Trace:\n";
             foreach ($trace as $line) {

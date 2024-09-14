@@ -141,7 +141,7 @@ class Log
     /**
      * Handled log levels
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected static array $_levels = [
         'emergency',
@@ -221,7 +221,7 @@ class Log
      * Call this method to obtain current
      * level configuration.
      *
-     * @return array<string> Active log levels
+     * @return list<string> Active log levels
      */
     public static function levels(): array
     {
@@ -366,7 +366,8 @@ class Log
         foreach ($registry->loaded() as $streamName) {
             /** @var \Psr\Log\LoggerInterface $logger */
             $logger = $registry->{$streamName};
-            $levels = $scopes = null;
+            $levels = null;
+            $scopes = null;
 
             if ($logger instanceof BaseLog) {
                 $levels = $logger->levels();

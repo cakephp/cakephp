@@ -93,7 +93,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         }
 
         $loaded = isset($this->_loaded[$objName]);
-        if ($loaded && !empty($config)) {
+        if ($loaded && $config !== []) {
             $this->_checkDuplicate($objName, $config);
         }
         if ($loaded) {
@@ -203,7 +203,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Get the list of loaded objects.
      *
-     * @return array<string> List of object names.
+     * @return list<string> List of object names.
      */
     public function loaded(): array
     {

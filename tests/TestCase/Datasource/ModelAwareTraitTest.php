@@ -18,10 +18,12 @@ namespace Cake\Test\TestCase\Datasource;
 use Cake\Datasource\Exception\MissingModelException;
 use Cake\Datasource\FactoryLocator;
 use Cake\Datasource\RepositoryInterface;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use TestApp\Datasource\StubFactory;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\Stub;
+use TestPlugin\Model\Table\CommentsTable;
 use UnexpectedValueException;
 
 /**
@@ -55,11 +57,11 @@ class ModelAwareTraitTest extends TestCase
         $stub->setModelType('Table');
 
         $result = $stub->fetchModel();
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertNull($stub->Articles);
 
         $result = $stub->fetchModel('Comments');
-        $this->assertInstanceOf('Cake\ORM\Table', $result);
+        $this->assertInstanceOf(Table::class, $result);
         $this->assertNull($stub->Comments);
 
         $result = $stub->fetchModel(PaginatorPostsTable::class);
@@ -108,7 +110,7 @@ class ModelAwareTraitTest extends TestCase
         $stub->setModelType('Table');
 
         $result = $stub->fetchModel('TestPlugin.Comments');
-        $this->assertInstanceOf('TestPlugin\Model\Table\CommentsTable', $result);
+        $this->assertInstanceOf(CommentsTable::class, $result);
         $this->assertNull($stub->Comments);
     }
 
@@ -120,13 +122,15 @@ class ModelAwareTraitTest extends TestCase
         $stub = new Stub();
         $stub->setProps('Articles');
 
-        $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
-        $mock->expects($this->any())
-            ->method('getAlias')
-            ->willReturn('Magic');
+        $table = new class extends Table {
+            public function getAlias(): string
+            {
+                return 'Magic';
+            }
+        };
 
         $locator = new StubFactory();
-        $locator->set('Magic', $mock);
+        $locator->set('Magic', $table);
         $stub->modelFactory('Table', $locator);
 
         $result = $stub->fetchModel('Magic', 'Table');
@@ -134,11 +138,13 @@ class ModelAwareTraitTest extends TestCase
         $this->assertSame('Magic', $result->getAlias());
 
         $locator = new StubFactory();
-        $mock2 = $this->getMockBuilder(RepositoryInterface::class)->getMock();
-        $mock2->expects($this->any())
-            ->method('getAlias')
-            ->willReturn('Foo');
-        $locator->set('Foo', $mock2);
+        $table2 = new class extends Table {
+            public function getAlias(): string
+            {
+                return 'Foo';
+            }
+        };
+        $locator->set('Foo', $table2);
 
         $stub->modelFactory('MyType', $locator);
         $result = $stub->fetchModel('Foo', 'MyType');

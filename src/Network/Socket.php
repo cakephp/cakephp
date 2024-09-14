@@ -96,7 +96,7 @@ class Socket
      * Used to capture connection warnings which can happen when there are
      * SSL errors for example.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_connectionErrors = [];
 
@@ -268,7 +268,7 @@ class Socket
      * socket_stream_client() does not populate errNum, or $errStr when there are
      * connection errors, as in the case of SSL verification failure.
      *
-     * Instead we need to handle those errors manually.
+     * Instead, we need to handle those errors manually.
      *
      * @param int $code Code number.
      * @param string $message Message.
@@ -282,7 +282,7 @@ class Socket
     /**
      * Get the connection context.
      *
-     * @return array|null Null when there is no connection, an array when there is.
+     * @return array<string, mixed>|null Null when there is no connection, an array when there is.
      */
     public function context(): ?array
     {
@@ -324,7 +324,7 @@ class Socket
     /**
      * Get all IP addresses associated with the current connection.
      *
-     * @return array IP addresses
+     * @return list<string> IP addresses
      */
     public function addresses(): array
     {

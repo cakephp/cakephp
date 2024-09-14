@@ -43,7 +43,7 @@ class Text
     /**
      * Default HTML tags which must not be counted for truncating text.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected static array $_defaultHtmlNoCount = [
         'style',
@@ -93,7 +93,7 @@ class Text
      * @param string $separator The token to split the data on.
      * @param string $leftBound The left boundary to ignore separators in.
      * @param string $rightBound The right boundary to ignore separators in.
-     * @return array<string> Array of tokens in $data.
+     * @return list<string> Array of tokens in $data.
      */
     public static function tokenize(
         string $data,
@@ -140,15 +140,13 @@ class Text
                     if ($char === $rightBound) {
                         $depth--;
                     }
-                } else {
-                    if ($char === $leftBound) {
-                        if (!$open) {
-                            $depth++;
-                            $open = true;
-                        } else {
-                            $depth--;
-                            $open = false;
-                        }
+                } elseif ($char === $leftBound) {
+                    if (!$open) {
+                        $depth++;
+                        $open = true;
+                    } else {
+                        $depth--;
+                        $open = false;
                     }
                 }
                 $tmpOffset += 1;
@@ -212,7 +210,10 @@ class Text
         );
 
         $dataKeys = array_keys($data);
-        $hashKeys = array_map('md5', $dataKeys);
+        $hashKeys = array_map(
+            fn ($str) => hash('xxh128', $str),
+            $dataKeys
+        );
         /** @var array<string, string> $tempData */
         $tempData = array_combine($dataKeys, $hashKeys);
         krsort($tempData);
@@ -472,7 +473,7 @@ class Text
      * - `limit` A limit, optional, defaults to -1 (none)
      *
      * @param string $text Text to search the phrase in.
-     * @param array<string>|string $phrase The phrase or phrases that will be searched.
+     * @param list<string>|string $phrase The phrase or phrases that will be searched.
      * @param array<string, mixed> $options An array of HTML attributes and options.
      * @return string The highlighted text
      * @link https://book.cakephp.org/5/en/core-libraries/text.html#highlighting-substrings
@@ -498,7 +499,7 @@ class Text
             foreach ($phrase as $key => $segment) {
                 $segment = '(' . preg_quote($segment, '|') . ')';
                 if ($options['html']) {
-                    $segment = "(?![^<]+>)$segment(?![^<]+>)";
+                    $segment = "(?![^<]+>){$segment}(?![^<]+>)";
                 }
 
                 $with[] = is_array($options['format']) ? $options['format'][$key] : $options['format'];
@@ -510,7 +511,7 @@ class Text
 
         $phrase = '(' . preg_quote($phrase, '|') . ')';
         if ($options['html']) {
-            $phrase = "(?![^<]+>)$phrase(?![^<]+>)";
+            $phrase = "(?![^<]+>){$phrase}(?![^<]+>)";
         }
 
         return (string)preg_replace(
@@ -540,7 +541,7 @@ class Text
     public static function tail(string $text, int $length = 100, array $options = []): string
     {
         $default = [
-            'ellipsis' => '...', 'exact' => true,
+            'ellipsis' => '…', 'exact' => true,
         ];
         $options += $default;
         $ellipsis = $options['ellipsis'];
@@ -580,7 +581,7 @@ class Text
     public static function truncate(string $text, int $length = 100, array $options = []): string
     {
         $default = [
-            'ellipsis' => '...', 'exact' => true, 'html' => false, 'trimWidth' => false,
+            'ellipsis' => '…', 'exact' => true, 'html' => false, 'trimWidth' => false,
         ];
         if (!empty($options['html']) && strtolower(mb_internal_encoding()) === 'utf-8') {
             $default['ellipsis'] = "\xe2\x80\xa6";
@@ -833,7 +834,7 @@ class Text
             // Some languages are written without word separation.
             // We recognize a string as a word if it doesn't contain any full-width characters.
             if (mb_strwidth($lastWord) === mb_strlen($lastWord)) {
-                $text = mb_substr($text, 0, $spacepos);
+                return mb_substr($text, 0, $spacepos);
             }
 
             return $text;
@@ -853,13 +854,13 @@ class Text
      * @return string Modified string
      * @link https://book.cakephp.org/5/en/core-libraries/text.html#extracting-an-excerpt
      */
-    public static function excerpt(string $text, string $phrase, int $radius = 100, string $ellipsis = '...'): string
+    public static function excerpt(string $text, string $phrase, int $radius = 100, string $ellipsis = '…'): string
     {
         if (!$text || !$phrase) {
             return static::truncate($text, $radius * 2, ['ellipsis' => $ellipsis]);
         }
-
-        $append = $prepend = $ellipsis;
+        $append = $ellipsis;
+        $prepend = $ellipsis;
 
         $phraseLen = mb_strlen($phrase);
         $textLen = mb_strlen($text);

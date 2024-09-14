@@ -214,13 +214,8 @@ class Sqlserver extends Driver
             ]
         );
 
-        $typeMap = null;
-        if ($query instanceof SelectQuery && $query->isResultsCastingEnabled()) {
-            $typeMap = $query->getSelectTypeMap();
-        }
-
         /** @var \Cake\Database\StatementInterface */
-        return new (static::STATEMENT_CLASS)($statement, $this, $typeMap);
+        return new (static::STATEMENT_CLASS)($statement, $this, $this->getResultSetDecorators($query));
     }
 
     /**
@@ -275,8 +270,10 @@ class Sqlserver extends Driver
             DriverFeatureEnum::SAVEPOINT,
             DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
             DriverFeatureEnum::WINDOW => true,
-
+            DriverFeatureEnum::INTERSECT => true,
+            DriverFeatureEnum::INTERSECT_ALL => false,
             DriverFeatureEnum::JSON => false,
+            DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => false,
         };
     }
 
@@ -376,11 +373,11 @@ class Sqlserver extends Driver
             ->from(['_cake_paging_' => $query]);
 
         if ($offset) {
-            $outer->where(["$field > " . $offset]);
+            $outer->where(["{$field} > " . $offset]);
         }
         if ($limit) {
             $value = (int)$offset + $limit;
-            $outer->where(["$field <= $value"]);
+            $outer->where(["{$field} <= {$value}"]);
         }
 
         // Decorate the original query as that is what the

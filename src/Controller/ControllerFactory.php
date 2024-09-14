@@ -31,6 +31,9 @@ use Psr\Http\Server\RequestHandlerInterface;
 use ReflectionClass;
 use ReflectionFunction;
 use ReflectionNamedType;
+use function Cake\Core\toBool;
+use function Cake\Core\toFloat;
+use function Cake\Core\toInt;
 
 /**
  * Factory method for building controllers for request.
@@ -78,13 +81,37 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         if ($reflection->isAbstract()) {
             throw $this->missingController($request);
         }
+        $this->container->addShared(
+            ComponentRegistry::class,
+            new ComponentRegistry(container: $this->container)
+        );
 
         // Get the controller from the container if defined.
         // The request is in the container by default.
         if ($this->container->has($className)) {
             $controller = $this->container->get($className);
         } else {
-            $controller = $reflection->newInstance($request);
+            $components = $this->container->get(ComponentRegistry::class);
+            $constructor = $reflection->getConstructor();
+            assert($constructor !== null);
+            $hasComponents = false;
+            foreach ($constructor->getParameters() as $parameter) {
+                $paramType = $parameter->getType();
+                // TODO: In a future minor release it would be good to start requiring the components parameter
+                if (
+                    $parameter->getName() === 'components' &&
+                    $paramType !== null &&
+                    $paramType->getName() == ComponentRegistry::class
+                ) {
+                    $hasComponents = true;
+                    break;
+                }
+            }
+            if ($hasComponents) {
+                $controller = $reflection->newInstance(request: $request, components: $components);
+            } else {
+                $controller = $reflection->newInstance($request);
+            }
         }
 
         return $controller;
@@ -253,9 +280,9 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
     {
         return match ($type->getName()) {
             'string' => $argument,
-            'float' => is_numeric($argument) ? (float)$argument : null,
-            'int' => filter_var($argument, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE),
-            'bool' => $argument === '0' ? false : ($argument === '1' ? true : null),
+            'float' => toFloat($argument),
+            'int' => toInt($argument),
+            'bool' => toBool($argument),
             'array' => $argument === '' ? [] : explode(',', $argument),
             default => null,
         };

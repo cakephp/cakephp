@@ -171,7 +171,7 @@ class FormHelper extends Helper
     /**
      * Default widgets
      *
-     * @var array<string, array<string>>
+     * @var array<string, list<string>>
      */
     protected array $_defaultWidgets = [
         'button' => ['Button'],
@@ -247,14 +247,14 @@ class FormHelper extends Helper
      * The default sources.
      *
      * @see FormHelper::$supportedValueSources for valid values.
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_valueSources = ['data', 'context'];
 
     /**
      * Grouped input types.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_groupedInputTypes = ['radio', 'multicheckbox'];
 
@@ -382,7 +382,7 @@ class FormHelper extends Helper
                 $options['context'] = [];
             }
             $options['context']['entity'] = $context;
-            $context = $this->_getContext($options['context']);
+            $context = $this->_getContext((array)$options['context']);
             unset($options['context']);
         }
 
@@ -665,11 +665,7 @@ class FormHelper extends Helper
      */
     public function unlockField(string $name)
     {
-        try {
-            $this->getFormProtector()->unlockField($name);
-        } catch (CakeException) {
-            // Ignore exception when the FormProtector is not created (FormProtectionComponent is not loaded).
-        }
+        $this->getFormProtector()?->unlockField($name);
 
         return $this;
     }
@@ -693,18 +689,10 @@ class FormHelper extends Helper
     /**
      * Get form protector instance.
      *
-     * @return \Cake\Form\FormProtector
-     * @throws \Cake\Core\Exception\CakeException
+     * @return \Cake\Form\FormProtector|null
      */
-    public function getFormProtector(): FormProtector
+    public function getFormProtector(): ?FormProtector
     {
-        if ($this->formProtector === null) {
-            throw new CakeException(
-                '`FormProtector` instance has not been created. Ensure you have loaded the `FormProtectionComponent`'
-                . ' in your controller and called `FormHelper::create()` before calling `FormHelper::unlockField()`.'
-            );
-        }
-
         return $this->formProtector;
     }
 
@@ -1011,7 +999,7 @@ class FormHelper extends Helper
             }
 
             $fieldsetParams = ['content' => $out, 'attrs' => ''];
-            if (is_array($fieldset) && !empty($fieldset)) {
+            if (is_array($fieldset) && $fieldset !== []) {
                 $fieldsetParams['attrs'] = $this->templater()->formatAttributes($fieldset);
             }
             $out = $this->formatTemplate('fieldset', $fieldsetParams);
@@ -1081,7 +1069,6 @@ class FormHelper extends Helper
         if ($options['type'] !== 'hidden' && ($options['type'] !== 'select' && !isset($options['multiple']))) {
             $isFieldError = $this->isFieldError($fieldName);
             $options += [
-                'aria-required' => $options['required'] ? 'true' : null,
                 'aria-invalid' => $isFieldError ? 'true' : null,
             ];
             // Don't include aria-describedby unless we have a good chance of
@@ -1546,7 +1533,7 @@ class FormHelper extends Helper
      *
      * @param string $fieldName Name of a field, like this "modelname.fieldname"
      * @param array<string, mixed> $options Array of HTML attributes.
-     * @return array<string>|string An HTML text input element.
+     * @return array<string, string>|string An HTML text input element.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-checkboxes
      */
     public function checkbox(string $fieldName, array $options = []): array|string
@@ -1669,7 +1656,7 @@ class FormHelper extends Helper
             throw new CakeException(sprintf('Missing field name for `FormHelper::%s`.', $method));
         }
         $options = $params[1] ?? [];
-        $options['type'] = $options['type'] ?? $method;
+        $options['type'] ??= $method;
         $options = $this->_initInputField($params[0], $options);
 
         return $this->widget($options['type'], $options);
@@ -1935,7 +1922,7 @@ class FormHelper extends Helper
         $onClick = 'document.' . $formName . '.submit();';
         if ($confirmMessage) {
             $onClick = $this->_confirm($onClick, '');
-            $onClick = $onClick . 'event.returnValue = false; return false;';
+            $onClick .= 'event.returnValue = false; return false;';
             $onClick = $this->templater()->format('confirmJs', [
                 'confirmMessage' => h($confirmMessage),
                 'formName' => $formName,
@@ -2014,7 +2001,7 @@ class FormHelper extends Helper
         if ($isUrl) {
             $options['src'] = $caption;
         } elseif ($isImage) {
-            if ($caption[0] !== '/') {
+            if (!str_starts_with($caption, '/')) {
                 $url = $this->Url->webroot(Configure::read('App.imageBaseUrl') . $caption);
             } else {
                 $url = $this->Url->webroot(trim($caption, '/'));
@@ -2349,7 +2336,7 @@ class FormHelper extends Helper
      * can be passed to a form widget to generate the actual input.
      *
      * @param string $field Name of the field to initialize options for.
-     * @param array<string, mixed>|array<string> $options Array of options to append options into.
+     * @param array<string, mixed> $options Array of options to append options into.
      * @return array<string, mixed> Array of options for the input.
      */
     protected function _initInputField(string $field, array $options = []): array
@@ -2357,7 +2344,7 @@ class FormHelper extends Helper
         $options += ['fieldName' => $field];
 
         if (!isset($options['secure'])) {
-            $options['secure'] = $this->_View->getRequest()->getAttribute('formTokenData') === null ? false : true;
+            $options['secure'] = $this->_View->getRequest()->getAttribute('formTokenData') !== null;
         }
         $context = $this->_getContext();
 
@@ -2373,7 +2360,7 @@ class FormHelper extends Helper
             }
             $parts = explode('.', $field);
             $first = array_shift($parts);
-            $options['name'] = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
+            $options['name'] = $first . ($parts !== [] ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
         }
 
         if (isset($options['value']) && !isset($options['val'])) {
@@ -2437,7 +2424,7 @@ class FormHelper extends Helper
                     fn ($i) => in_array($i['value'], $options['disabled'], true)
                 );
 
-                return count($disabled) > 0;
+                return $disabled !== [];
             }
         }
 
@@ -2486,12 +2473,12 @@ class FormHelper extends Helper
      *
      * If no type can be matched a NullContext will be returned.
      *
-     * @param mixed $data The data to get a context provider for.
+     * @param array $data The data to get a context provider for.
      * @return \Cake\View\Form\ContextInterface Context provider.
      * @throws \RuntimeException when the context class does not implement the
      *   ContextInterface.
      */
-    protected function _getContext(mixed $data = []): ContextInterface
+    protected function _getContext(array $data = []): ContextInterface
     {
         if ($this->_context !== null && !$data) {
             return $this->_context;
@@ -2579,7 +2566,7 @@ class FormHelper extends Helper
      *
      * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
      *
-     * @return array<string> List of value sources.
+     * @return list<string> List of value sources.
      */
     public function getValueSources(): array
     {
@@ -2598,8 +2585,8 @@ class FormHelper extends Helper
         $diff = array_diff($sources, $this->supportedValueSources);
 
         if ($diff) {
-            array_walk($diff, fn (&$x) => $x = "`$x`");
-            array_walk($this->supportedValueSources, fn (&$x) => $x = "`$x`");
+            array_walk($diff, fn (&$x) => $x = "`{$x}`");
+            array_walk($this->supportedValueSources, fn (&$x) => $x = "`{$x}`");
             throw new InvalidArgumentException(sprintf(
                 'Invalid value source(s): %s. Valid values are: %s.',
                 implode(', ', $diff),
@@ -2615,7 +2602,7 @@ class FormHelper extends Helper
      * Order sets priority.
      *
      * @see FormHelper::$supportedValueSources for valid values.
-     * @param array<string>|string $sources A string or a list of strings identifying a source.
+     * @param list<string>|string $sources A string or a list of strings identifying a source.
      * @return $this
      * @throws \InvalidArgumentException If sources list contains invalid value.
      */

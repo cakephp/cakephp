@@ -103,7 +103,7 @@ class Validation
     public const COMPARE_LESS_OR_EQUAL = '<=';
 
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected const COMPARE_STRING = [
         self::COMPARE_EQUAL,
@@ -238,7 +238,7 @@ class Validation
      * Returns true if $check is in the proper credit card format.
      *
      * @param mixed $check credit card number to validate
-     * @param array<string>|string $type 'all' may be passed as a string, defaults to fast which checks format of
+     * @param list<string>|string $type 'all' may be passed as a string, defaults to fast which checks format of
      *     most major credit cards if an array is used only the values of the array are checked.
      *    Example: ['amex', 'bankcard', 'maestro']
      * @param bool $deep set to true this will check the Luhn algorithm of the credit card.
@@ -252,7 +252,7 @@ class Validation
         bool $deep = false,
         ?string $regex = null
     ): bool {
-        if (!(is_string($check) || is_int($check))) {
+        if (!is_string($check) && !is_int($check)) {
             return false;
         }
 
@@ -444,7 +444,7 @@ class Validation
      * - `y` 2006 just the year without any separators
      *
      * @param mixed $check a valid date string/object
-     * @param array<string>|string $format Use a string or an array of the keys above.
+     * @param list<string>|string $format Use a string or an array of the keys above.
      *    Arrays should be passed as ['dmy', 'mdy', ...]
      * @param string|null $regex If a custom regular expression is used this is the only validation that will occur.
      * @return bool Success
@@ -503,9 +503,9 @@ class Validation
         $regex['ym'] = '%^(' . $year . $separator . $month . ')$%';
         $regex['y'] = '%^(' . $fourDigitYear . ')$%';
 
-        $format = is_array($format) ? array_values($format) : [$format];
+        $format = (array)$format;
         foreach ($format as $key) {
-            if (static::_check($check, $regex[$key]) === true) {
+            if (static::_check($check, $regex[$key])) {
                 return true;
             }
         }
@@ -774,7 +774,7 @@ class Validation
             return $return;
         }
 
-        if ($return === true && preg_match('/@(' . static::$_pattern['hostname'] . ')$/i', $check, $regs)) {
+        if ($return && preg_match('/@(' . static::$_pattern['hostname'] . ')$/i', $check, $regs)) {
             if (function_exists('getmxrr') && getmxrr($regs[1], $mxhosts)) {
                 return true;
             }
@@ -798,11 +798,68 @@ class Validation
      */
     public static function enum(mixed $check, string $enumClassName): bool
     {
+        return static::checkEnum($check, $enumClassName);
+    }
+
+    /**
+     * Checks that the value is a valid backed enum instance or value.
+     *
+     * @param mixed $check Value to check
+     * @param list<\BackedEnum> $cases Array of enum cases that are valid.
+     * @return bool Success
+     * @since 5.1.0
+     */
+    public static function enumOnly(mixed $check, array $cases): bool
+    {
+        if ($cases === []) {
+            throw new InvalidArgumentException('At least one case needed for `enumOnly()` validation.');
+        }
+
+        $firstKey = array_key_first($cases);
+        $firstValue = $cases[$firstKey];
+        $enumClassName = $firstValue::class;
+
+        $options = ['only' => $cases];
+
+        return static::checkEnum($check, $enumClassName, $options);
+    }
+
+    /**
+     * Checks that the value is a valid backed enum instance or value.
+     *
+     * @param mixed $check Value to check
+     * @param list<\BackedEnum> $cases Array of enum cases that are not valid.
+     * @return bool Success
+     * @since 5.1.0
+     */
+    public static function enumExcept(mixed $check, array $cases): bool
+    {
+        if ($cases === []) {
+            throw new InvalidArgumentException('At least one case needed for `enumExcept()` validation.');
+        }
+
+        $firstKey = array_key_first($cases);
+        $firstValue = $cases[$firstKey];
+        $enumClassName = $firstValue::class;
+
+        $options = ['except' => $cases];
+
+        return static::checkEnum($check, $enumClassName, $options);
+    }
+
+    /**
+     * @param mixed $check
+     * @param class-string<\BackedEnum> $enumClassName
+     * @param array<string, mixed> $options
+     * @return bool
+     */
+    protected static function checkEnum(mixed $check, string $enumClassName, array $options = []): bool
+    {
         if (
             $check instanceof $enumClassName &&
             $check instanceof BackedEnum
         ) {
-            return true;
+            return static::isValidEnum($check, $options);
         }
 
         $backingType = null;
@@ -842,7 +899,51 @@ class Validation
             return false;
         }
 
-        return $enumClassName::tryFrom($check) !== null;
+        $options += [
+            'only' => null,
+            'except' => null,
+        ];
+
+        $enum = $enumClassName::tryFrom($check);
+        if ($enum === null) {
+            return false;
+        }
+
+        return static::isValidEnum($enum, $options);
+    }
+
+    /**
+     * @param \BackedEnum $enum
+     * @param array<string, mixed> $options
+     * @return bool
+     */
+    protected static function isValidEnum(BackedEnum $enum, array $options): bool
+    {
+        $options += ['only' => null, 'except' => null];
+
+        if ($options['only']) {
+            if (!is_array($options['only'])) {
+                $options['only'] = [$options['only']];
+            }
+
+            if (in_array($enum, $options['only'], true)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        if ($options['except']) {
+            if (!is_array($options['except'])) {
+                $options['except'] = [$options['except']];
+            }
+
+            if (in_array($enum, $options['except'], true)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -1434,13 +1535,14 @@ class Validation
         if ($file === null) {
             return false;
         }
-
-        $width = $height = null;
+        $width = null;
+        $height = null;
         $imageSize = getimagesize($file);
         if ($imageSize) {
             [$width, $height] = $imageSize;
         }
-        $validWidth = $validHeight = null;
+        $validWidth = null;
+        $validHeight = null;
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);

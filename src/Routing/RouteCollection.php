@@ -115,7 +115,7 @@ class RouteCollection
         $path = $route->staticPath();
 
         $extensions = $route->getExtensions();
-        if (count($extensions) > 0) {
+        if ($extensions !== []) {
             $this->setExtensions($extensions);
         }
 
@@ -160,7 +160,7 @@ class RouteCollection
         krsort($this->_paths);
 
         foreach ($this->_paths as $path => $routes) {
-            if (strpos($urlPath, $path) !== 0) {
+            if (!str_starts_with($urlPath, $path)) {
                 continue;
             }
 
@@ -185,7 +185,7 @@ class RouteCollection
      * and newer style urls containing '_name'
      *
      * @param array $url The url to match.
-     * @return array<string> The set of names of the url
+     * @return list<string> The set of names of the url
      */
     protected function _getNames(array $url): array
     {
@@ -397,13 +397,13 @@ class RouteCollection
     public function middlewareGroup(string $name, array $middlewareNames)
     {
         if ($this->hasMiddleware($name)) {
-            $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
+            $message = "Cannot add middleware group '{$name}'. A middleware by this name has already been registered.";
             throw new InvalidArgumentException($message);
         }
 
         foreach ($middlewareNames as $middlewareName) {
             if (!$this->hasMiddleware($middlewareName)) {
-                $message = "Cannot add '$middlewareName' middleware to group '$name'. It has not been registered.";
+                $message = "Cannot add '{$middlewareName}' middleware to group '{$name}'. It has not been registered.";
                 throw new InvalidArgumentException($message);
             }
         }

@@ -159,7 +159,7 @@ class Route
     /**
      * Get the supported extensions for this route.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getExtensions(): array
     {
@@ -239,7 +239,7 @@ class Route
     /**
      * Set the names of parameters that will be converted into passed parameters
      *
-     * @param array<string> $names The names of the parameters that should be passed.
+     * @param list<string> $names The names of the parameters that should be passed.
      * @return $this
      */
     public function setPass(array $names)
@@ -316,7 +316,8 @@ class Route
             return;
         }
         $route = $this->template;
-        $names = $routeParams = [];
+        $names = [];
+        $routeParams = [];
         $parsed = preg_quote($this->template, '#');
 
         preg_match_all(static::PLACEHOLDER_REGEX, $route, $namedElements, PREG_OFFSET_CAPTURE | PREG_SET_ORDER);
@@ -517,7 +518,7 @@ class Route
 
         $route['_route'] = $this;
         $route['_matchedRoute'] = $this->template;
-        if (count($this->middleware) > 0) {
+        if ($this->middleware !== []) {
             $route['_middleware'] = $this->middleware;
         }
 
@@ -566,7 +567,7 @@ class Route
      *
      * @param string $args A string with the passed params. eg. /1/foo
      * @param array $context The current route context, which should contain controller/action keys.
-     * @return array<string> Array of passed args.
+     * @return list<string> Array of passed args.
      */
     protected function _parseArgs(string $args, array $context): array
     {
@@ -726,16 +727,14 @@ class Route
         }
 
         // if not a greedy route, no extra params are allowed.
-        if (!$this->_greedy && !empty($pass)) {
+        if (!$this->_greedy && $pass !== []) {
             return null;
         }
 
         // check patterns for routed params
-        if ($this->options) {
-            foreach ($this->options as $key => $pattern) {
-                if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
-                    return null;
-                }
+        foreach ($this->options as $key => $pattern) {
+            if (isset($url[$key]) && !preg_match('#^' . $pattern . '$#u', (string)$url[$key])) {
+                return null;
             }
         }
         $url += $hostOptions;
@@ -794,8 +793,8 @@ class Route
         }, $pass);
         $pass = implode('/', $pass);
         $out = $this->template;
-
-        $search = $replace = [];
+        $search = [];
+        $replace = [];
         foreach ($this->keys as $key) {
             if (!array_key_exists($key, $params)) {
                 throw new InvalidArgumentException(sprintf(
@@ -809,8 +808,10 @@ class Route
         }
 
         if (str_contains($this->template, '**')) {
-            array_push($search, '**', '%2F');
-            array_push($replace, $pass, '/');
+            $search[] = '**';
+            $search[] = '%2F';
+            $replace[] = $pass;
+            $replace[] = '/';
         } elseif (str_contains($this->template, '*')) {
             $search[] = '*';
             $replace[] = $pass;
@@ -838,7 +839,7 @@ class Route
             $scheme = $params['_scheme'] ?? 'http';
             $out = "{$scheme}://{$host}{$out}";
         }
-        if (!empty($params['_ext']) || !empty($query)) {
+        if (!empty($params['_ext']) || $query !== []) {
             $out = rtrim($out, '/');
         }
         if (!empty($params['_ext'])) {

@@ -88,7 +88,7 @@ class MemcachedEngine extends CacheEngine
     protected array $_serializers = [];
 
     /**
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_compiledGroupNames = [];
 
@@ -467,7 +467,7 @@ class MemcachedEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function groups(): array
     {

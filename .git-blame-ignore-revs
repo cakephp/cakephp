@@ -1,0 +1,4 @@
+# Use HTTPS for the cakefoundation.org URL
+c61ab5ee95cbf30a1720457c961337b200ab0c73
+# Run phpcbf for PSR2 CS fixers
+be845a3a01e3271fc075e49dcb81d73b0ec169c5

@@ -26,6 +26,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
+use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\Core\h;
 
 /**
@@ -71,6 +72,7 @@ class HtmlHelperTest extends TestCase
         $request = new ServerRequest([
             'webroot' => '',
         ]);
+        $request = $request->withAttribute('csrfToken', 'test');
         Router::reload();
         Router::setRequest($request);
 
@@ -298,7 +300,7 @@ class HtmlHelperTest extends TestCase
         $expected = ['a' => ['href' => 'http://www.example.org?param1=value1&amp;param2=value2'], 'http://www.example.org?param1=value1&amp;param2=value2', '/a'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->link('alert', 'javascript:alert(\'cakephp\');');
+        $result = $this->Html->link('alert', "javascript:alert('cakephp');");
         $expected = ['a' => ['href' => 'javascript:alert(&#039;cakephp&#039;);'], 'alert', '/a'];
         $this->assertHtml($expected, $result);
 
@@ -1575,6 +1577,12 @@ class HtmlHelperTest extends TestCase
             'link' => ['href' => 'http://example.com/manifest', 'rel' => 'manifest'],
         ];
         $this->assertHtml($expected, $result);
+
+        $result = $this->Html->meta('csrfToken');
+        $expected = [
+            'meta' => ['name' => 'csrf-token', 'content' => 'test'],
+        ];
+        $this->assertHtml($expected, $result);
     }
 
     /**
@@ -1597,8 +1605,8 @@ class HtmlHelperTest extends TestCase
      * @param string $type
      * @param array $url
      * @param string $expectedUrl
-     * @dataProvider dataMetaLinksProvider
      */
+    #[DataProvider('dataMetaLinksProvider')]
     public function testMetaLinks($type, array $url, $expectedUrl): void
     {
         $result = $this->Html->meta($type, $url);

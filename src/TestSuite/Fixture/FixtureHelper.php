@@ -139,8 +139,7 @@ class FixtureHelper
                 if ($sortedFixtures) {
                     $this->insertConnection($connection, $sortedFixtures);
                 } else {
-                    $helper = new ConnectionHelper();
-                    $helper->runWithoutConstraints(
+                    ConnectionHelper::runWithoutConstraints(
                         $connection,
                         fn (Connection $connection) => $this->insertConnection($connection, $groupFixtures)
                     );
@@ -268,7 +267,7 @@ class FixtureHelper
      *
      * @param \Cake\Database\Connection $connection Database connection
      * @param \Cake\Datasource\FixtureInterface $fixture Database fixture
-     * @return array<string>
+     * @return list<string>
      */
     protected function getForeignReferences(Connection $connection, FixtureInterface $fixture): array
     {

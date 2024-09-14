@@ -6,6 +6,7 @@ on:
       - '4.x'
       - '4.next'
       - '5.x'
+      - '5.next'
   pull_request:
     branches:
       - '*'
@@ -32,6 +33,8 @@ jobs:
           - php-version: '8.2'
             db-type: 'mysql'
           - php-version: '8.3'
+            db-type: 'mysql'
+          - php-version: '8.4'
             db-type: 'mysql'
 
     services:
@@ -67,7 +70,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         php-version: ${{ matrix.php-version }}
-        extensions: mbstring, intl-72.1, apcu, memcached, redis, pdo_${{ matrix.db-type }}
+        extensions: mbstring, intl, apcu, memcached, redis, pdo_${{ matrix.db-type }}
         ini-values: apc.enable_cli = 1, zend.assertions = 1
         coverage: pcov
 
@@ -94,6 +97,8 @@ jobs:
       run: |
         if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
+        elif ${{ matrix.php-version == '8.4' }}; then
+          composer update --ignore-platform-req=php
         else
           composer update
         fi
@@ -101,10 +106,6 @@ jobs:
     - name: Setup problem matchers for PHPUnit
       if: matrix.php-version == '8.1' && matrix.db-type == 'mysql'
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
-
-    - name: Wait for MySQL
-      if: matrix.db-type == 'mysql' || matrix.db-type == 'mariadb'
-      run: while ! `mysqladmin ping -h 127.0.0.1 --silent`; do printf 'Waiting for MySQL...\n'; sleep 2; done;
 
     - name: Run PHPUnit
       env:

@@ -293,4 +293,15 @@ class FunctionsBuilderTest extends TestCase
         $this->assertSame('LEAD(field, 1, :param0) OVER ()', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());
     }
+
+    /**
+     * Tests generating a JSON_VALUE() function
+     */
+    public function testJsonValue(): void
+    {
+        $function = $this->functions->jsonValue('field', '$');
+        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertSame('JSON_VALUE(field, :param0)', $function->sql(new ValueBinder()));
+        $this->assertSame('string', $function->getReturnType());
+    }
 }

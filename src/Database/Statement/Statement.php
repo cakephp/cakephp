@@ -17,11 +17,10 @@ declare(strict_types=1);
 namespace Cake\Database\Statement;
 
 use Cake\Database\Driver;
-use Cake\Database\FieldTypeConverter;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeInterface;
-use Cake\Database\TypeMap;
+use Generator;
 use InvalidArgumentException;
 use PDO;
 use PDOStatement;
@@ -43,16 +42,6 @@ class Statement implements StatementInterface
     protected Driver $_driver;
 
     /**
-     * @var \PDOStatement
-     */
-    protected PDOStatement $statement;
-
-    /**
-     * @var \Cake\Database\FieldTypeConverter|null
-     */
-    protected ?FieldTypeConverter $typeConverter;
-
-    /**
      * Cached bound parameters used for logging
      *
      * @var array<mixed>
@@ -62,16 +51,14 @@ class Statement implements StatementInterface
     /**
      * @param \PDOStatement $statement PDO statement
      * @param \Cake\Database\Driver $driver Database driver
-     * @param \Cake\Database\TypeMap|null $typeMap Results type map
+     * @param list<\Closure> $resultDecorators Results decorators
      */
     public function __construct(
-        PDOStatement $statement,
+        protected PDOStatement $statement,
         Driver $driver,
-        ?TypeMap $typeMap = null,
+        protected array $resultDecorators = [],
     ) {
         $this->_driver = $driver;
-        $this->statement = $statement;
-        $this->typeConverter = $typeMap !== null ? new FieldTypeConverter($typeMap, $driver) : null;
     }
 
     /**
@@ -170,8 +157,8 @@ class Statement implements StatementInterface
             return false;
         }
 
-        if ($this->typeConverter !== null) {
-            return ($this->typeConverter)($row);
+        foreach ($this->resultDecorators as $decorator) {
+            $row = $decorator($row);
         }
 
         return $row;
@@ -206,8 +193,8 @@ class Statement implements StatementInterface
         $mode = $this->convertMode($mode);
         $rows = $this->statement->fetchAll($mode);
 
-        if ($this->typeConverter !== null) {
-            return array_map($this->typeConverter, $rows);
+        foreach ($this->resultDecorators as $decorator) {
+            $rows = array_map($decorator, $rows);
         }
 
         return $rows;
@@ -229,7 +216,7 @@ class Statement implements StatementInterface
 
         return static::MODE_NAME_MAP[$mode]
             ??
-            throw new InvalidArgumentException('Invalid fetch mode requested. Expected \'assoc\', \'num\' or \'obj\'.');
+            throw new InvalidArgumentException("Invalid fetch mode requested. Expected 'assoc', 'num' or 'obj'.");
     }
 
     /**
@@ -296,5 +283,25 @@ class Statement implements StatementInterface
     public function queryString(): string
     {
         return $this->statement->queryString;
+    }
+
+    /**
+     * Get the inner iterator
+     *
+     * @return \Generator
+     */
+    public function getIterator(): Generator
+    {
+        $this->statement->setFetchMode(PDO::FETCH_ASSOC);
+
+        foreach ($this->statement as $row) {
+            foreach ($this->resultDecorators as $decorator) {
+                $row = $decorator($row);
+            }
+
+            yield $row;
+        }
+
+        $this->closeCursor();
     }
 }

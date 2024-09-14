@@ -21,6 +21,7 @@ use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests MySQL driver
@@ -42,7 +43,7 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+        $driver = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
@@ -93,7 +94,7 @@ class MysqlTest extends TestCase
             ],
             'log' => false,
         ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
+        $driver = $this->getMockBuilder(Mysql::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -166,10 +167,10 @@ class MysqlTest extends TestCase
     }
 
     /**
-     * @dataProvider versionStringProvider
      * @param string $dbVersion
      * @param string $expectedVersion
      */
+    #[DataProvider('versionStringProvider')]
     public function testVersion($dbVersion, $expectedVersion): void
     {
         /** @var \PHPUnit\Framework\MockObject\MockObject&\PDO $connection */
@@ -219,11 +220,17 @@ class MysqlTest extends TestCase
                 'json' => '5.7.0',
                 'cte' => '8.0.0',
                 'window' => '8.0.0',
+                'intersect' => '8.0.31',
+                'intersect-all' => '8.0.31',
+                'set-operations-order-by' => '8.0.31',
             ],
             'mariadb' => [
                 'json' => '10.2.7',
                 'cte' => '10.2.1',
                 'window' => '10.2.0',
+                'intersect' => '10.3.0',
+                'intersect-all' => '10.5.0',
+                'set-operations-order-by' => '8.0.31',
             ],
         ];
         foreach ($featureVersions[$serverType] as $feature => $version) {

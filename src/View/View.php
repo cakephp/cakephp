@@ -217,7 +217,7 @@ class View implements EventDispatcherInterface
     /**
      * List of variables to collect from the associated controller.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
@@ -234,21 +234,21 @@ class View implements EventDispatcherInterface
     /**
      * Holds an array of paths.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_paths = [];
 
     /**
      * Holds an array of plugin paths.
      *
-     * @var array<string[]>
+     * @var array<string, list<string>>
      */
     protected array $_pathsForPlugin = [];
 
     /**
      * The names of views and their parents used with View::extend();
      *
-     * @var array<string>
+     * @var array<string, string>
      */
     protected array $_parents = [];
 
@@ -270,7 +270,7 @@ class View implements EventDispatcherInterface
     /**
      * Content stack, used for nested templates that all use View::extend();
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_stack = [];
 
@@ -392,8 +392,8 @@ class View implements EventDispatcherInterface
      */
     protected function setContentType(): void
     {
-        $viewContentType = $this->contentType();
-        if (!$viewContentType || $viewContentType == static::TYPE_MATCH_ALL) {
+        $viewContentType = static::contentType();
+        if (!$viewContentType || $viewContentType === static::TYPE_MATCH_ALL) {
             return;
         }
         $response = $this->getResponse();
@@ -844,7 +844,7 @@ class View implements EventDispatcherInterface
     /**
      * Returns a list of variables available in the current View context
      *
-     * @return array<string> Array of the set view variable names.
+     * @return list<string> Array of the set view variable names.
      */
     public function getVars(): array
     {
@@ -897,7 +897,7 @@ class View implements EventDispatcherInterface
     /**
      * Get the names of all the existing blocks.
      *
-     * @return array<string> An array containing the blocks.
+     * @return list<string> An array containing the blocks.
      * @see \Cake\View\ViewBlock::keys()
      */
     public function blocks(): array
@@ -1053,7 +1053,7 @@ class View implements EventDispatcherInterface
      */
     public function extend(string $name)
     {
-        $type = $name[0] === '/' ? static::TYPE_TEMPLATE : $this->_currentType;
+        $type = str_starts_with($name, '/') ? static::TYPE_TEMPLATE : $this->_currentType;
         switch ($type) {
             case static::TYPE_ELEMENT:
                 $parent = $this->_getElementFileName($name);
@@ -1332,15 +1332,15 @@ class View implements EventDispatcherInterface
      */
     protected function _getTemplateFileName(?string $name = null): string
     {
-        $templatePath = $subDir = '';
-
+        $templatePath = '';
+        $subDir = '';
         if ($this->templatePath) {
             $templatePath = $this->templatePath . DIRECTORY_SEPARATOR;
         }
         if ($this->subDir !== '') {
             $subDir = $this->subDir . DIRECTORY_SEPARATOR;
             // Check if templatePath already terminates with subDir
-            if ($templatePath != $subDir && str_ends_with($templatePath, $subDir)) {
+            if ($templatePath !== $subDir && str_ends_with($templatePath, $subDir)) {
                 $subDir = '';
             }
         }
@@ -1357,7 +1357,7 @@ class View implements EventDispatcherInterface
         if (!str_contains($name, DIRECTORY_SEPARATOR) && $name !== '' && !str_starts_with($name, '.')) {
             $name = $templatePath . $subDir . $this->_inflectTemplateFileName($name);
         } elseif (str_contains($name, DIRECTORY_SEPARATOR)) {
-            if ($name[0] === DIRECTORY_SEPARATOR || $name[1] === ':') {
+            if (str_starts_with($name, DIRECTORY_SEPARATOR) || $name[1] === ':') {
                 $name = trim($name, DIRECTORY_SEPARATOR);
             } elseif (!$plugin || $this->templatePath !== $this->name) {
                 $name = $templatePath . $subDir . $name;
@@ -1539,7 +1539,7 @@ class View implements EventDispatcherInterface
      * and layouts.
      *
      * @param string $basePath Base path on which to get the prefixed one.
-     * @return array<string> Array with all the templates paths.
+     * @return list<string> Array with all the templates paths.
      */
     protected function _getSubPaths(string $basePath): array
     {
@@ -1565,20 +1565,21 @@ class View implements EventDispatcherInterface
      *
      * @param string|null $plugin Optional plugin name to scan for view files.
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
-     * @return array<string> paths
+     * @return list<string> paths
      */
     protected function _paths(?string $plugin = null, bool $cached = true): array
     {
-        if ($cached === true) {
-            if ($plugin === null && !empty($this->_paths)) {
+        if ($cached) {
+            if ($plugin === null && $this->_paths !== []) {
                 return $this->_paths;
             }
             if ($plugin !== null && isset($this->_pathsForPlugin[$plugin])) {
                 return $this->_pathsForPlugin[$plugin];
             }
         }
-        $templatePaths = App::path(static::NAME_TEMPLATE);
-        $pluginPaths = $themePaths = [];
+        $templatePaths = array_values(App::path(static::NAME_TEMPLATE));
+        $pluginPaths = [];
+        $themePaths = [];
         if ($plugin) {
             foreach ($templatePaths as $templatePath) {
                 $pluginPaths[] = $templatePath

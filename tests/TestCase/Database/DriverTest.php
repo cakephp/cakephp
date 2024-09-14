@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Exception\QueryException;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
@@ -32,6 +33,7 @@ use Exception;
 use PDO;
 use PDOException;
 use PDOStatement;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Driver\RetryDriver;
 use TestApp\Database\Driver\StubDriver;
 
@@ -100,9 +102,9 @@ class DriverTest extends TestCase
      * Test schemaValue().
      * Uses a provider for all the different values we can pass to the method.
      *
-     * @dataProvider schemaValueProvider
      * @param mixed $input
      */
+    #[DataProvider('schemaValueProvider')]
     public function testSchemaValue($input, string $expected): void
     {
         $result = $this->driver->schemaValue($input);
@@ -378,7 +380,7 @@ class DriverTest extends TestCase
 
         try {
             $this->driver->execute('SELECT foo FROM bar');
-        } catch (PDOException $e) {
+        } catch (PDOException) {
         }
 
         $messages = Log::engine('queries')->read();
@@ -459,5 +461,20 @@ class DriverTest extends TestCase
         $this->assertSame('debug: connection= role= duration=0 rows=0 ROLLBACK', $messages[1]);
         $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[2]);
         $this->assertSame('debug: connection= role= duration=0 rows=0 COMMIT', $messages[3]);
+    }
+
+    public function testQueryException(): void
+    {
+        $this->expectException(QueryException::class);
+
+        ConnectionManager::get('default')->execute('SELECT * FROM non_existent_table');
+    }
+
+    public function testQueryExceptionStatementExecute(): void
+    {
+        $this->expectException(QueryException::class);
+
+        ConnectionManager::get('default')->getDriver()
+            ->execute('SELECT * FROM :foo', ['foo' => 'bar']);
     }
 }

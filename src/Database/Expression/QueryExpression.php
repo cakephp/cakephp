@@ -499,7 +499,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function equalFields(string $leftField, string $rightField)
     {
-        $wrapIdentifier = function ($field) {
+        $wrapIdentifier = function ($field): ExpressionInterface {
             if ($field instanceof ExpressionInterface) {
                 return $field;
             }
@@ -533,7 +533,7 @@ class QueryExpression implements ExpressionInterface, Countable
             }
         }
 
-        return sprintf($template, implode(" $conjunction ", $parts));
+        return sprintf($template, implode(" {$conjunction} ", $parts));
     }
 
     /**
@@ -627,7 +627,8 @@ class QueryExpression implements ExpressionInterface, Countable
             }
 
             $isArray = is_array($c);
-            $isOperator = $isNot = false;
+            $isOperator = false;
+            $isNot = false;
             if (!$numericKey) {
                 $normalizedKey = strtolower($k);
                 $isOperator = in_array($normalizedKey, $operators);

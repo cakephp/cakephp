@@ -203,6 +203,14 @@ class SqlserverSchemaDialect extends SchemaDialect
         if ($col === 'uniqueidentifier') {
             return ['type' => TableSchemaInterface::TYPE_UUID];
         }
+        if ($col === 'geometry') {
+            return ['type' => TableSchemaInterface::TYPE_GEOMETRY];
+        }
+        if ($col === 'geography') {
+            // SQLserver only has one generic geometry type that
+            // we map to point.
+            return ['type' => TableSchemaInterface::TYPE_POINT];
+        }
 
         return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => null];
     }
@@ -301,7 +309,8 @@ class SqlserverSchemaDialect extends SchemaDialect
         $type = TableSchema::INDEX_INDEX;
         $name = $row['index_name'];
         if ($row['is_primary_key']) {
-            $name = $type = TableSchema::CONSTRAINT_PRIMARY;
+            $name = TableSchema::CONSTRAINT_PRIMARY;
+            $type = TableSchema::CONSTRAINT_PRIMARY;
         }
         if (($row['is_unique'] || $row['is_unique_constraint']) && $type === TableSchema::INDEX_INDEX) {
             $type = TableSchema::CONSTRAINT_UNIQUE;
@@ -430,6 +439,10 @@ class SqlserverSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE => ' DATETIME2',
             TableSchemaInterface::TYPE_UUID => ' UNIQUEIDENTIFIER',
             TableSchemaInterface::TYPE_JSON => ' NVARCHAR(MAX)',
+            TableSchemaInterface::TYPE_GEOMETRY => ' GEOMETRY',
+            TableSchemaInterface::TYPE_POINT => ' GEOGRAPHY',
+            TableSchemaInterface::TYPE_LINESTRING => ' GEOGRAPHY',
+            TableSchemaInterface::TYPE_POLYGON => ' GEOGRAPHY',
         ];
 
         if (isset($typeMap[$data['type']])) {
@@ -604,7 +617,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         $data = $schema->getIndex($name);
         assert($data !== null);
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
 
@@ -644,7 +657,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     protected function _keySql(string $prefix, array $data): string
     {
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
+            $this->_driver->quoteIdentifier(...),
             $data['columns']
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {

@@ -18,10 +18,11 @@ namespace Cake\Test\TestCase\Error;
 
 use Cake\Error\PhpError;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class PhpErrorTest extends TestCase
 {
-    public function testBasicGetters()
+    public function testBasicGetters(): void
     {
         $error = new PhpError(E_ERROR, 'something bad');
         $this->assertEquals(E_ERROR, $error->getCode());
@@ -45,10 +46,8 @@ class PhpErrorTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider errorCodeProvider
-     */
-    public function testMappings($phpCode, $label, $logLevel)
+    #[DataProvider('errorCodeProvider')]
+    public function testMappings($phpCode, $label, $logLevel): void
     {
         $error = new PhpError($phpCode, 'something bad');
         $this->assertEquals($phpCode, $error->getCode());
@@ -56,7 +55,7 @@ class PhpErrorTest extends TestCase
         $this->assertEquals($logLevel, $error->getLogLevel());
     }
 
-    public function testGetTraceAsString()
+    public function testGetTraceAsString(): void
     {
         $trace = [
             ['file' => 'a.php', 'line' => 10, 'reference' => 'TestObject::a()'],

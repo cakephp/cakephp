@@ -27,6 +27,7 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingTemplateException;
 use DateTime;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use TestApp\Mailer\TestMailer;
 use function Cake\Core\env;
 
@@ -88,7 +89,8 @@ class MailerTest extends TestCase
         $result = $this->mailer->getTransport();
         $this->assertInstanceOf(DebugTransport::class, $result);
 
-        $instance = $this->getMockBuilder(DebugTransport::class)->getMock();
+        $instance = new class extends DebugTransport {
+        };
         $this->mailer->setTransport($instance);
         $this->assertSame($instance, $this->mailer->getTransport());
     }
@@ -105,14 +107,19 @@ class MailerTest extends TestCase
 
     /**
      * testMessage function
+     *
+     * @deprecated
      */
-    public function testMessage(): void
+    #[WithoutErrorHandler]
+    public function testSetMessage(): void
     {
         $message = $this->mailer->getMessage();
         $this->assertInstanceOf(Message::class, $message);
 
         $newMessage = new Message();
-        $this->mailer->setMessage($newMessage);
+        $this->deprecated(function () use ($newMessage): void {
+            $this->mailer->setMessage($newMessage);
+        });
         $this->assertSame($newMessage, $this->mailer->getMessage());
         $this->assertNotSame($message, $newMessage);
     }
@@ -223,7 +230,7 @@ class MailerTest extends TestCase
         $this->assertSame($configs['subject'], $result);
 
         $result = $this->mailer->getTransport();
-        $this->assertInstanceOf('Cake\Mailer\Transport\DebugTransport', $result);
+        $this->assertInstanceOf(DebugTransport::class, $result);
 
         $result = $this->mailer->deliver('This is the message');
 
@@ -311,21 +318,26 @@ class MailerTest extends TestCase
     }
 
     /**
-     * CakeEmailTest::testMockTransport()
+     * CakeEmailTest::testDefaultTransport()
      */
-    public function testMockTransport(): void
+    public function testDefaultTransport(): void
     {
         TransportFactory::drop('default');
 
-        $mock = $this->getMockBuilder(AbstractTransport::class)->getMock();
+        $instance = new class extends AbstractTransport {
+            public function send(Message $message): array
+            {
+                return [];
+            }
+        };
         $config = ['from' => 'tester@example.org', 'transport' => 'default'];
 
         Mailer::setConfig('default', $config);
-        TransportFactory::setConfig('default', $mock);
+        TransportFactory::setConfig('default', $instance);
 
         $em = new Mailer('default');
 
-        $this->assertSame($mock, $em->getTransport());
+        $this->assertSame($instance, $em->getTransport());
 
         TransportFactory::drop('default');
     }
@@ -465,7 +477,7 @@ class MailerTest extends TestCase
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
-        $expected = "--$boundary\r\n" .
+        $expected = "--{$boundary}\r\n" .
             "Content-Type: text/plain; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
             "\r\n" .
@@ -473,7 +485,7 @@ class MailerTest extends TestCase
             "\r\n" .
             "\r\n" .
             "\r\n" .
-            "--$boundary\r\n" .
+            "--{$boundary}\r\n" .
             "Content-Disposition: attachment; filename=\"MailerTest.php\"\r\n" .
             "Content-Type: text/x-php\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .
@@ -500,7 +512,7 @@ class MailerTest extends TestCase
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
-        $expected = "--$boundary\r\n" .
+        $expected = "--{$boundary}\r\n" .
                 "Content-Type: text/plain; charset=UTF-8\r\n" .
                 "Content-Transfer-Encoding: 8bit\r\n" .
                 "\r\n" .
@@ -508,7 +520,7 @@ class MailerTest extends TestCase
                 "\r\n" .
                 "\r\n" .
                 "\r\n" .
-                "--$boundary\r\n" .
+                "--{$boundary}\r\n" .
                 "Content-Disposition: attachment; filename=\"cake.icon.gif\"\r\n" .
                 "Content-Type: image/gif\r\n" .
                 "Content-Transfer-Encoding: base64\r\n\r\n";
@@ -531,10 +543,10 @@ class MailerTest extends TestCase
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
-        $expected = "--$boundary\r\n" .
-            "Content-Type: multipart/alternative; boundary=\"alt-$boundary\"\r\n" .
+        $expected = "--{$boundary}\r\n" .
+            "Content-Type: multipart/alternative; boundary=\"alt-{$boundary}\"\r\n" .
             "\r\n" .
-            "--alt-$boundary\r\n" .
+            "--alt-{$boundary}\r\n" .
             "Content-Type: text/plain; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
             "\r\n" .
@@ -542,7 +554,7 @@ class MailerTest extends TestCase
             "\r\n" .
             "\r\n" .
             "\r\n" .
-            "--alt-$boundary\r\n" .
+            "--alt-{$boundary}\r\n" .
             "Content-Type: text/html; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
             "\r\n" .
@@ -552,7 +564,7 @@ class MailerTest extends TestCase
             "\r\n" .
             "--alt-{$boundary}--\r\n" .
             "\r\n" .
-            "--$boundary\r\n" .
+            "--{$boundary}\r\n" .
             "Content-Disposition: attachment; filename=\"VERSION.txt\"\r\n" .
             "Content-Type: text/plain\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .
@@ -580,13 +592,13 @@ class MailerTest extends TestCase
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
-        $expected = "--$boundary\r\n" .
-            "Content-Type: multipart/related; boundary=\"rel-$boundary\"\r\n" .
+        $expected = "--{$boundary}\r\n" .
+            "Content-Type: multipart/related; boundary=\"rel-{$boundary}\"\r\n" .
             "\r\n" .
-            "--rel-$boundary\r\n" .
-            "Content-Type: multipart/alternative; boundary=\"alt-$boundary\"\r\n" .
+            "--rel-{$boundary}\r\n" .
+            "Content-Type: multipart/alternative; boundary=\"alt-{$boundary}\"\r\n" .
             "\r\n" .
-            "--alt-$boundary\r\n" .
+            "--alt-{$boundary}\r\n" .
             "Content-Type: text/plain; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
             "\r\n" .
@@ -594,7 +606,7 @@ class MailerTest extends TestCase
             "\r\n" .
             "\r\n" .
             "\r\n" .
-            "--alt-$boundary\r\n" .
+            "--alt-{$boundary}\r\n" .
             "Content-Type: text/html; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
             "\r\n" .
@@ -604,7 +616,7 @@ class MailerTest extends TestCase
             "\r\n" .
             "--alt-{$boundary}--\r\n" .
             "\r\n" .
-            "--rel-$boundary\r\n" .
+            "--rel-{$boundary}\r\n" .
             "Content-Disposition: inline; filename=\"cake.png\"\r\n" .
             "Content-Type: text/plain\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .
@@ -635,10 +647,10 @@ class MailerTest extends TestCase
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
-        $expected = "--$boundary\r\n" .
-            "Content-Type: multipart/related; boundary=\"rel-$boundary\"\r\n" .
+        $expected = "--{$boundary}\r\n" .
+            "Content-Type: multipart/related; boundary=\"rel-{$boundary}\"\r\n" .
             "\r\n" .
-            "--rel-$boundary\r\n" .
+            "--rel-{$boundary}\r\n" .
             "Content-Type: text/html; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
             "\r\n" .
@@ -646,7 +658,7 @@ class MailerTest extends TestCase
             "\r\n" .
             "\r\n" .
             "\r\n" .
-            "--rel-$boundary\r\n" .
+            "--rel-{$boundary}\r\n" .
             "Content-Disposition: inline; filename=\"cake.png\"\r\n" .
             "Content-Type: text/plain\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .
@@ -678,10 +690,10 @@ class MailerTest extends TestCase
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
-        $expected = "--$boundary\r\n" .
-            "Content-Type: multipart/related; boundary=\"rel-$boundary\"\r\n" .
+        $expected = "--{$boundary}\r\n" .
+            "Content-Type: multipart/related; boundary=\"rel-{$boundary}\"\r\n" .
             "\r\n" .
-            "--rel-$boundary\r\n" .
+            "--rel-{$boundary}\r\n" .
             "Content-Type: text/html; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
             "\r\n" .
@@ -689,7 +701,7 @@ class MailerTest extends TestCase
             "\r\n" .
             "\r\n" .
             "\r\n" .
-            "--rel-$boundary\r\n" .
+            "--rel-{$boundary}\r\n" .
             "Content-Disposition: inline; filename=\"ri ben yuno ming qian\"; filename*=utf-8''%E6%97%A5%E6%9C%AC%E8%AA%9E%E3%81%AE%E5%90%8D%E5%89%8D\r\n" .
             "Content-Type: text/plain\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .
@@ -724,7 +736,7 @@ class MailerTest extends TestCase
 
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/mixed; boundary="' . $boundary . '"', $result['headers']);
-        $expected = "--$boundary\r\n" .
+        $expected = "--{$boundary}\r\n" .
             "Content-Type: text/plain; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
             "\r\n" .
@@ -801,7 +813,7 @@ class MailerTest extends TestCase
         $boundary = $this->mailer->boundary;
         $this->assertStringContainsString('Content-Type: multipart/alternative; boundary="' . $boundary . '"', $result['headers']);
 
-        $expected = "--$boundary\r\n" .
+        $expected = "--{$boundary}\r\n" .
             "Content-Type: text/plain; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
             "\r\n" .
@@ -811,7 +823,7 @@ class MailerTest extends TestCase
             "\r\n" .
             "\r\n" .
             "\r\n" .
-            "--$boundary\r\n" .
+            "--{$boundary}\r\n" .
             "Content-Type: text/html; charset=UTF-8\r\n" .
             "Content-Transfer-Encoding: 8bit\r\n" .
             "\r\n" .
@@ -822,7 +834,7 @@ class MailerTest extends TestCase
             "\r\n" .
             "\r\n" .
             "\r\n" .
-            "--$boundary--\r\n";
+            "--{$boundary}--\r\n";
         $this->assertStringEndsWith($expected, $result['message']);
     }
 
@@ -969,7 +981,7 @@ class MailerTest extends TestCase
         $this->mailer->setProfile(['empty']);
         $this->mailer->viewBuilder()->setTemplate('image');
         $this->mailer->setEmailFormat('html');
-        $server = env('SERVER_NAME') ? env('SERVER_NAME') : 'localhost';
+        $server = env('SERVER_NAME') ?: 'localhost';
 
         if (env('SERVER_PORT') && env('SERVER_PORT') !== 80) {
             $server .= ':' . env('SERVER_PORT');

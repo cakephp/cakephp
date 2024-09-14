@@ -80,7 +80,7 @@ class CookieEncryptedEquals extends CookieEquals
      */
     public function toString(): string
     {
-        return sprintf('is encrypted in cookie \'%s\'', $this->cookieName);
+        return sprintf("is encrypted in cookie '%s'", $this->cookieName);
     }
 
     /**

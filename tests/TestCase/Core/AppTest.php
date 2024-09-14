@@ -15,11 +15,14 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Core;
 
+use Cake\Cache\Engine\FileEngine;
 use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver\Mysql;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
+use TestApp\Controller\PagesController;
 use TestApp\Core\TestApp;
 
 /**
@@ -46,8 +49,8 @@ class AppTest extends TestCase
      * @param string $suffix Class suffix
      * @param bool $existsInBase Whether class exists in base.
      * @param mixed $expected Expected value.
-     * @dataProvider classNameProvider
      */
+    #[DataProvider('classNameProvider')]
     public function testClassName($class, $type, $suffix = '', $existsInBase = false, $expected = false): void
     {
         static::setAppNamespace();
@@ -91,8 +94,8 @@ class AppTest extends TestCase
      * @param string $type Class type
      * @param string $suffix Class suffix
      * @param mixed $expected Expected value.
-     * @dataProvider shortNameProvider
      */
+    #[DataProvider('shortNameProvider')]
     public function testShortName($class, $type, $suffix = '', $expected = false): void
     {
         static::setAppNamespace();
@@ -176,12 +179,12 @@ class AppTest extends TestCase
             ['Unknown', 'Controller', 'Controller'],
 
             // Real examples returning class names
-            ['App', 'Core', '', false, 'Cake\Core\App'],
+            ['App', 'Core', '', false, App::class],
             ['Auth', 'Controller/Component', 'Component', false, 'Cake\Controller\Component\AuthComponent'],
-            ['File', 'Cache/Engine', 'Engine', false, 'Cake\Cache\Engine\FileEngine'],
+            ['File', 'Cache/Engine', 'Engine', false, FileEngine::class],
             ['Command', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\CommandTask'],
             ['Upgrade/Locations', 'Shell/Task', 'Task', false, 'Cake\Shell\Task\Upgrade\LocationsTask'],
-            ['Pages', 'Controller', 'Controller', true, 'TestApp\Controller\PagesController'],
+            ['Pages', 'Controller', 'Controller', true, PagesController::class],
         ];
     }
 
@@ -226,12 +229,12 @@ class AppTest extends TestCase
             ['Muffin\Webservice\Webservice\EndpointWebservice', 'Webservice', 'Webservice', 'Muffin/Webservice.Endpoint'],
 
             // Real examples returning class names
-            ['Cake\Core\App', 'Core', '', 'App'],
+            [App::class, 'Core', '', 'App'],
             ['Cake\Controller\Component\AuthComponent', 'Controller/Component', 'Component', 'Auth'],
-            ['Cake\Cache\Engine\FileEngine', 'Cache/Engine', 'Engine', 'File'],
+            [FileEngine::class, 'Cache/Engine', 'Engine', 'File'],
             ['Cake\Shell\Task\CommandTask', 'Shell/Task', 'Task', 'Command'],
             ['Cake\Shell\Task\Upgrade\LocationsTask', 'Shell/Task', 'Task', 'Upgrade/Locations'],
-            ['TestApp\Controller\PagesController', 'Controller', 'Controller', 'Pages'],
+            [PagesController::class, 'Controller', 'Controller', 'Pages'],
         ];
     }
 

@@ -190,6 +190,7 @@ class ExceptionTrap
         if (static::$registeredTrap == $this) {
             $this->disabled = true;
             static::$registeredTrap = null;
+            restore_exception_handler();
         }
     }
 
@@ -241,7 +242,7 @@ class ExceptionTrap
             $this->logInternalError($exception);
         }
         // Use this constant as a proxy for cakephp tests.
-        if (PHP_SAPI == 'cli' && !env('FIXTURE_SCHEMA_METADATA')) {
+        if (PHP_SAPI === 'cli' && !env('FIXTURE_SCHEMA_METADATA')) {
             exit(1);
         }
     }

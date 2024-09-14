@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\Database\Exception\DatabaseException;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Mockery;
 
@@ -29,7 +30,7 @@ class AssociationProxyTest extends TestCase
     /**
      * Fixtures to be loaded
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = [
         'core.Articles', 'core.Authors', 'core.Comments',
@@ -100,9 +101,7 @@ class AssociationProxyTest extends TestCase
         // Exclude a record from the published finder.
         $articles->updateAll(['published' => 'N'], ['id' => 1]);
 
-        $authors->hasMany('Articles', [
-            'finder' => 'published',
-        ]);
+        $authors->Articles->setFinder('published');
         $authors->Articles->updateAll(['published' => '?'], '1=1');
         $missed = $articles->find()->where(['published' => 'Y'])->count();
         $this->assertSame(0, $missed);
@@ -136,9 +135,7 @@ class AssociationProxyTest extends TestCase
         // Exclude a record from the published finder.
         $articles->updateAll(['published' => 'N'], ['id' => 1]);
 
-        $authors->hasMany('Articles', [
-            'finder' => 'published',
-        ]);
+        $authors->Articles->setFinder('published');
         $authors->Articles->deleteAll('1=1');
         $remaining = $articles->find()->all();
         $this->assertCount(1, $remaining);
@@ -164,7 +161,7 @@ class AssociationProxyTest extends TestCase
     public function testAssociationMethodProxy(): void
     {
         $articles = $this->getTableLocator()->get('articles');
-        $mock = Mockery::mock('Cake\ORM\Table')
+        $mock = Mockery::mock(Table::class)
             ->shouldAllowMockingMethod('crazy');
         $articles->belongsTo('authors', [
             'targetTable' => $mock,

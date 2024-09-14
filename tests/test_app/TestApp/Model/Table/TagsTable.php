@@ -14,7 +14,9 @@ declare(strict_types=1);
  */
 namespace TestApp\Model\Table;
 
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
+use Cake\Utility\Text;
 
 /**
  * Tag table class
@@ -26,5 +28,15 @@ class TagsTable extends Table
         $this->belongsTo('Authors');
         $this->belongsToMany('Articles');
         $this->hasMany('ArticlesTags', ['propertyName' => 'extraInfo']);
+    }
+
+    public function findSlugged(SelectQuery $query): SelectQuery
+    {
+        return $query->applyOptions(['preserveKeys' => true])
+            ->formatResults(function ($results) {
+                return $results->indexBy(function ($record) {
+                    return Text::slug($record->name);
+                });
+            });
     }
 }

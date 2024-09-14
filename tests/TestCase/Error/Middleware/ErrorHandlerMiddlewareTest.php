@@ -98,14 +98,18 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $factory = function ($exception) {
             $this->assertInstanceOf('LogicException', $exception);
-            $response = new Response();
-            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
-                ->getMock();
-            $mock->expects($this->once())
-                ->method('render')
-                ->willReturn($response);
 
-            return $mock;
+            return new class implements ExceptionRendererInterface
+            {
+                public function render(): ResponseInterface|string
+                {
+                    return new Response();
+                }
+
+                public function write(string|ResponseInterface $output): void
+                {
+                }
+            };
         };
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
             'exceptionRenderer' => $factory,
@@ -127,7 +131,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
@@ -145,7 +149,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
@@ -177,7 +181,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): void {
             $err = new RedirectException('http://example.org/login', 301, ['Constructor' => 'yes', 'Method' => 'yes']);
             throw $err;
         });
@@ -207,7 +211,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('"message": "whoops"', (string)$result->getBody());
         $this->assertStringContainsString('application/json', $result->getHeaderLine('Content-type'));
@@ -298,7 +302,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware([
             'log' => true,
-            'skipLog' => ['Cake\Http\Exception\NotFoundException'],
+            'skipLog' => [NotFoundException::class],
         ]);
         $handler = new TestRequestHandler(function (): void {
             throw new NotFoundException('Kaboom!');
@@ -362,14 +366,18 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function ($exception) {
-            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
-                ->getMock();
-            $mock->expects($this->once())
-                ->method('render')
-                ->will($this->throwException(new LogicException('Rendering failed')));
+        $factory = function () {
+            return new class implements ExceptionRendererInterface
+            {
+                public function render(): ResponseInterface|string
+                {
+                    throw new LogicException('Rendering failed');
+                }
 
-            return $mock;
+                public function write(string|ResponseInterface $output): void
+                {
+                }
+            };
         };
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
             'exceptionRenderer' => $factory,

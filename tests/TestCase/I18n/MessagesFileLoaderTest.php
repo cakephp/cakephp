@@ -25,6 +25,13 @@ use Cake\TestSuite\TestCase;
  */
 class MessagesFileLoaderTest extends TestCase
 {
+    public function setUp(): void
+    {
+        parent::setUp();
+
+        $this->clearPlugins();
+    }
+
     /**
      * test reading file from custom locale folder
      */

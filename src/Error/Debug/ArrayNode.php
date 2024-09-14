@@ -24,7 +24,7 @@ class ArrayNode implements NodeInterface
     /**
      * @var array<\Cake\Error\Debug\ArrayItemNode>
      */
-    private array $items;
+    private array $items = [];
 
     /**
      * Constructor
@@ -33,7 +33,6 @@ class ArrayNode implements NodeInterface
      */
     public function __construct(array $items = [])
     {
-        $this->items = [];
         foreach ($items as $item) {
             $this->add($item);
         }

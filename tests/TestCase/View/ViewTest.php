@@ -22,22 +22,28 @@ use Cake\Core\App;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
+use Cake\Database\Exception\QueryException;
 use Cake\Event\EventInterface;
+use Cake\Event\EventManager;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingElementException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
+use Cake\View\Helper\FormHelper;
+use Cake\View\Helper\HtmlHelper;
+use Cake\View\HelperRegistry;
 use Cake\View\View;
 use Error;
 use Exception;
 use InvalidArgumentException;
 use LogicException;
+use PDOException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use TestApp\Controller\ThemePostsController;
 use TestApp\Controller\ViewPostsController;
-use TestApp\Error\Exception\MyPDOException;
 use TestApp\View\Helper\TestBeforeAfterHelper;
 use TestApp\View\Object\TestObjectWithoutToString;
 use TestApp\View\Object\TestObjectWithToString;
@@ -53,7 +59,7 @@ class ViewTest extends TestCase
     /**
      * Fixtures used in this test.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = ['core.Posts', 'core.Users'];
 
@@ -840,7 +846,7 @@ class ViewTest extends TestCase
     public function testAddHelper(): void
     {
         $View = new TestView();
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
+        $this->assertInstanceOf(HtmlHelper::class, $View->Html);
 
         $config = $View->Html->getConfig();
         $this->assertSame('myval', $config['mykey']);
@@ -854,7 +860,7 @@ class ViewTest extends TestCase
         $View = new View();
 
         $View->loadHelper('Html', ['foo' => 'bar']);
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html);
+        $this->assertInstanceOf(HtmlHelper::class, $View->Html);
 
         $config = $View->Html->getConfig();
         $this->assertSame('bar', $config['foo']);
@@ -888,8 +894,8 @@ class ViewTest extends TestCase
         $result = $View->loadHelpers();
         $this->assertSame($View, $result);
 
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
-        $this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
+        $this->assertInstanceOf(HtmlHelper::class, $View->Html, 'Object type is wrong.');
+        $this->assertInstanceOf(FormHelper::class, $View->Form, 'Object type is wrong.');
 
         $config = $View->Html->getConfig();
         $this->assertSame('bar', $config['foo']);
@@ -905,8 +911,8 @@ class ViewTest extends TestCase
     {
         $View = new View();
 
-        $this->assertInstanceOf('Cake\View\Helper\HtmlHelper', $View->Html, 'Object type is wrong.');
-        $this->assertInstanceOf('Cake\View\Helper\FormHelper', $View->Form, 'Object type is wrong.');
+        $this->assertInstanceOf(HtmlHelper::class, $View->Html, 'Object type is wrong.');
+        $this->assertInstanceOf(FormHelper::class, $View->Form, 'Object type is wrong.');
     }
 
     /**
@@ -938,7 +944,7 @@ class ViewTest extends TestCase
         $View = $this->PostsController->createView();
         $View->setTemplatePath($this->PostsController->getName());
 
-        $manager = $this->getMockBuilder('Cake\Event\EventManager')->getMock();
+        $manager = $this->getMockBuilder(EventManager::class)->getMock();
         $View->setEventManager($manager);
 
         $manager->expects($this->exactly(8))
@@ -1087,8 +1093,8 @@ class ViewTest extends TestCase
      */
     public function testRenderUsingLayoutArgument(): void
     {
-        $error = new MyPDOException();
-        $error->queryString = 'this is sql string';
+        $pdoException = $this->getMockBuilder(PDOException::class)->getMock();
+        $error = new QueryException('this is sql string', $pdoException);
         $exceptions = [$error];
         $message = 'it works';
         $trace = $error->getTrace();
@@ -1361,8 +1367,8 @@ class ViewTest extends TestCase
      * Test appending to a block with append.
      *
      * @param mixed $value Value
-     * @dataProvider blockValueProvider
      */
+    #[DataProvider('blockValueProvider')]
     public function testBlockAppend($value): void
     {
         $this->View->assign('testBlock', 'Block');
@@ -1390,8 +1396,8 @@ class ViewTest extends TestCase
      * Test prepending to a block with prepend.
      *
      * @param mixed $value Value
-     * @dataProvider blockValueProvider
      */
+    #[DataProvider('blockValueProvider')]
     public function testBlockPrepend($value): void
     {
         $this->View->assign('test', 'Block');
@@ -1475,7 +1481,7 @@ class ViewTest extends TestCase
             $this->View->start('first');
             $this->View->start('first');
             $this->fail('No exception');
-        } catch (CakeException $e) {
+        } catch (CakeException) {
             ob_end_clean();
             $this->assertTrue(true);
         }
@@ -1727,7 +1733,7 @@ TEXT;
      */
     public function testHelpers(): void
     {
-        $this->assertInstanceOf('Cake\View\HelperRegistry', $this->View->helpers());
+        $this->assertInstanceOf(HelperRegistry::class, $this->View->helpers());
 
         $result = $this->View->helpers();
         $this->assertSame($result, $this->View->helpers());
@@ -1837,7 +1843,7 @@ TEXT;
     /**
      * Somewhat pointless, but helps ensure BC for defaults.
      */
-    public function testContentType()
+    public function testContentType(): void
     {
         $this->assertSame('', $this->View->contentType());
     }

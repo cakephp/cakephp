@@ -232,14 +232,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The name of the field that represents the primary key in the table
      *
-     * @var array<string>|string|null
+     * @var list<string>|string|null
      */
     protected array|string|null $_primaryKey = null;
 
     /**
      * The name of the field that represents a human-readable representation of a row
      *
-     * @var array<string>|string|null
+     * @var list<string>|string|null
      */
     protected array|string|null $_displayField = null;
 
@@ -318,7 +318,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!empty($config['entityClass'])) {
             $this->setEntityClass($config['entityClass']);
         }
-        $eventManager = $behaviors = $associations = null;
+        $eventManager = null;
+        $behaviors = null;
+        $associations = null;
         if (!empty($config['eventManager'])) {
             $eventManager = $config['eventManager'];
         }
@@ -637,7 +639,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the primary key field name.
      *
-     * @param array<string>|string $key Sets a new name to be used as primary key
+     * @param list<string>|string $key Sets a new name to be used as primary key
      * @return $this
      */
     public function setPrimaryKey(array|string $key)
@@ -650,7 +652,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the primary key field name.
      *
-     * @return array<string>|string
+     * @return list<string>|string
      */
     public function getPrimaryKey(): array|string
     {
@@ -668,7 +670,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Sets the display field.
      *
-     * @param array<string>|string $field Name to be used as display field.
+     * @param list<string>|string $field Name to be used as display field.
      * @return $this
      */
     public function setDisplayField(array|string $field)
@@ -681,7 +683,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the display field.
      *
-     * @return array<string>|string
+     * @return list<string>|string
      */
     public function getDisplayField(): array|string|null
     {
@@ -965,7 +967,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if ($result !== null && $next !== null) {
-            $result = $result->getTarget()->getAssociation($next);
+            return $result->getTarget()->getAssociation($next);
         }
 
         return $result;
@@ -1380,7 +1382,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         Closure|array|string|null $keyField = null,
         Closure|array|string|null $valueField = null,
         Closure|array|string|null $groupField = null,
-        string $valueSeparator = ';'
+        string $valueSeparator = ' '
     ): SelectQuery {
         $keyField ??= $this->getPrimaryKey();
         $valueField ??= $this->getDisplayField();
@@ -1480,7 +1482,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
             $fields = $options[$field];
             $glue = in_array($field, ['keyField', 'parentField'], true) ? ';' : $options['valueSeparator'];
-            $options[$field] = function ($row) use ($fields, $glue) {
+            $options[$field] = function ($row) use ($fields, $glue): string {
                 $matches = [];
                 foreach ($fields as $field) {
                     $matches[] = $row[$field];
@@ -2026,7 +2028,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $alias = $this->getAlias();
             $conditions = [];
             foreach ($entity->extract($primaryColumns) as $k => $v) {
-                $conditions["$alias.$k"] = $v;
+                $conditions["{$alias}.{$k}"] = $v;
             }
             $entity->setNew(!$this->exists($conditions));
         }
@@ -2212,7 +2214,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Note: The ORM will not generate primary key values for composite primary keys.
      * You can overwrite _newId() in your table class.
      *
-     * @param array<string> $primary The primary key columns to get a new ID for.
+     * @param list<string> $primary The primary key columns to get a new ID for.
      * @return string|null Either null or the primary key value or a list of primary key values.
      */
     protected function _newId(array $primary): ?string
@@ -2245,10 +2247,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $entity;
         }
 
-        if (count($primaryColumns) === 0) {
+        if ($primaryColumns === []) {
             $entityClass = $entity::class;
             $table = $this->getTable();
-            $message = "Cannot update `$entityClass`. The `$table` has no primary key.";
+            $message = "Cannot update `{$entityClass}`. The `{$table}` has no primary key.";
             throw new InvalidArgumentException($message);
         }
 
@@ -2284,7 +2286,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     ): iterable|false {
         try {
             return $this->_saveMany($entities, $options);
-        } catch (PersistenceFailedException $exception) {
+        } catch (PersistenceFailedException) {
             return false;
         }
     }
@@ -2771,7 +2773,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $hasOr = str_contains($fields, '_or_');
         $hasAnd = str_contains($fields, '_and_');
 
-        $makeConditions = function ($fields, $args) {
+        $makeConditions = function ($fields, $args): array {
             $conditions = [];
             if (count($args) < count($fields)) {
                 throw new BadMethodCallException(sprintf(
@@ -2787,7 +2789,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $conditions;
         };
 
-        if ($hasOr !== false && $hasAnd !== false) {
+        if ($hasOr && $hasAnd) {
             throw new BadMethodCallException(
                 'Cannot mix "and" & "or" in a magic finder. Use find() instead.'
             );
@@ -2795,7 +2797,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if ($hasOr === false && $hasAnd === false) {
             $conditions = $makeConditions([$fields], $args);
-        } elseif ($hasOr !== false) {
+        } elseif ($hasOr) {
             $fields = explode('_or_', $fields);
             $conditions = [
                 'OR' => $makeConditions($fields, $args),

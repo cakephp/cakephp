@@ -69,7 +69,11 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @var array<string, string>
      */
-    protected array $aliases = [];
+    protected array $aliases = [
+        '--version' => 'version',
+        '--help' => 'help',
+        '-h' => 'help',
+    ];
 
     /**
      * Constructor
@@ -86,11 +90,6 @@ class CommandRunner implements EventDispatcherInterface
         $this->app = $app;
         $this->root = $root;
         $this->factory = $factory;
-        $this->aliases = [
-            '--version' => 'version',
-            '--help' => 'help',
-            '-h' => 'help',
-        ];
     }
 
     /**
@@ -132,7 +131,7 @@ class CommandRunner implements EventDispatcherInterface
      */
     public function run(array $argv, ?ConsoleIo $io = null): int
     {
-        assert(!empty($argv), 'Cannot run any commands. No arguments received.');
+        assert($argv !== [], 'Cannot run any commands. No arguments received.');
 
         $this->bootstrap();
 
@@ -320,6 +319,10 @@ class CommandRunner implements EventDispatcherInterface
     protected function runCommand(CommandInterface $command, array $argv, ConsoleIo $io): ?int
     {
         try {
+            $eventManager = $this->getEventManager();
+            $eventManager = $this->app->pluginEvents($eventManager);
+            $eventManager = $this->app->events($eventManager);
+            $this->setEventManager($eventManager);
             if ($command instanceof EventDispatcherInterface) {
                 $command->setEventManager($this->getEventManager());
             }

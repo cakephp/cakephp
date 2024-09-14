@@ -81,7 +81,7 @@ class Marshaller
         }
 
         // Map associations
-        $options['associated'] = $options['associated'] ?? [];
+        $options['associated'] ??= [];
         $include = $this->_normalizeAssociations($options['associated']);
         foreach ($include as $key => $nested) {
             if (is_int($key) && is_scalar($nested)) {
@@ -106,13 +106,19 @@ class Marshaller
                 $nested['forceNew'] = $options['forceNew'];
             }
             if (isset($options['isMerge'])) {
-                $callback = function ($value, EntityInterface $entity) use ($assoc, $nested) {
+                $callback = function (
+                    $value,
+                    EntityInterface $entity
+                ) use (
+                    $assoc,
+                    $nested
+                ): array|EntityInterface|null {
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
                     return $this->_mergeAssociation($entity->get($assoc->getProperty()), $assoc, $value, $options);
                 };
             } else {
-                $callback = function ($value, $entity) use ($assoc, $nested) {
+                $callback = function ($value, $entity) use ($assoc, $nested): array|EntityInterface|null {
                     $options = $nested + ['associated' => []];
 
                     return $this->_marshalAssociation($assoc, $value, $options);
@@ -387,7 +393,8 @@ class Marshaller
 
         $target = $assoc->getTarget();
         $primaryKey = array_flip((array)$target->getPrimaryKey());
-        $records = $conditions = [];
+        $records = [];
+        $conditions = [];
         $primaryCount = count($primaryKey);
 
         foreach ($data as $i => $row) {
@@ -477,7 +484,7 @@ class Marshaller
         $target = $assoc->getTarget();
         $primaryKey = (array)$target->getPrimaryKey();
         $multi = count($primaryKey) > 1;
-        $primaryKey = array_map([$target, 'aliasField'], $primaryKey);
+        $primaryKey = array_map($target->aliasField(...), $primaryKey);
 
         if ($multi) {
             $first = current($ids);
@@ -707,7 +714,7 @@ class Marshaller
             })
             ->filter(fn ($keys) => count(Hash::filter($keys)) === count($primary))
             ->reduce(function ($conditions, $keys) use ($primary) {
-                $fields = array_map([$this->_table, 'aliasField'], $primary);
+                $fields = array_map($this->_table->aliasField(...), $primary);
                 $conditions['OR'][] = array_combine($fields, $keys);
 
                 return $conditions;

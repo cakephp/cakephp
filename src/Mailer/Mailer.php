@@ -22,6 +22,7 @@ use Cake\Mailer\Exception\MissingActionException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\View\ViewBuilder;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Mailer base class.
@@ -259,9 +260,14 @@ class Mailer implements EventListenerInterface
      *
      * @param \Cake\Mailer\Message $message Message instance.
      * @return $this
+     * @deprecated 5.1.0 Configure the mailer according to the documentation instead of manually setting the Message instance.
      */
     public function setMessage(Message $message)
     {
+        deprecationWarning(
+            '5.1.0',
+            'Setting the message instance is deprecated. Configure the mailer according to the documentation instead.'
+        );
         $this->message = $message;
 
         return $this;
@@ -568,7 +574,7 @@ class Mailer implements EventListenerInterface
     /**
      * Converts given value to string
      *
-     * @param array<string>|string $value The value to convert
+     * @param list<string>|string $value The value to convert
      * @return string
      */
     protected function flatten(array|string $value): string

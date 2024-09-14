@@ -131,6 +131,10 @@ class EavStrategy implements TranslateStrategyInterface
                 $conditions[$name . '.content !='] = '';
             }
 
+            if ($this->table->associations()->has($name)) {
+                $this->table->associations()->remove($name);
+            }
+
             $this->table->hasOne($name, [
                 'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
@@ -140,11 +144,14 @@ class EavStrategy implements TranslateStrategyInterface
             ]);
         }
 
-        $conditions = ["$targetAlias.model" => $model];
+        $conditions = ["{$targetAlias}.model" => $model];
         if (!$this->_config['allowEmptyTranslations']) {
-            $conditions["$targetAlias.content !="] = '';
+            $conditions["{$targetAlias}.content !="] = '';
         }
 
+        if ($this->table->associations()->has($targetAlias)) {
+            $this->table->associations()->remove($targetAlias);
+        }
         $this->table->hasMany($targetAlias, [
             'className' => $table,
             'foreignKey' => 'foreign_key',
@@ -257,7 +264,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         $values = $entity->extract($this->_config['fields'], true);
         $fields = array_keys($values);
-        $noFields = empty($fields);
+        $noFields = $fields === [];
 
         // If there are no fields and no bundled translations, or both fields
         // in the default locale and bundled translations we can

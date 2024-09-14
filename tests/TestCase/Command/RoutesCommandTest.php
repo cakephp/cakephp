@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Core\Configure;
 use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
@@ -118,6 +119,7 @@ class RoutesCommandTest extends TestCase
             '<info>Controller</info>',
             '<info>Action</info>',
             '<info>Method(s)</info>',
+            '<info>Middlewares</info>',
             '<info>Defaults</info>',
         ]);
         $this->assertOutputContainsRow([
@@ -128,6 +130,7 @@ class RoutesCommandTest extends TestCase
             'Articles',
             'index',
             '',
+            'dumb, sample',
             '{"action":"index","controller":"Articles","plugin":null}',
         ]);
     }
@@ -137,13 +140,34 @@ class RoutesCommandTest extends TestCase
      */
     public function testRouteListSorted(): void
     {
-        Router::createRouteBuilder('/')->connect(
-            new Route('/a/route/sorted', [], ['_name' => '_aRoute'])
-        );
+        Configure::write('TestApp.routes', function ($routes): void {
+            $routes->connect(
+                new Route('/a/route/sorted', [], ['_name' => '_aRoute'])
+            );
+        });
 
         $this->exec('routes -s');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('_aRoute', $this->_out->messages()[3]);
+    }
+
+    /**
+     * Test routes with --with-middlewares option
+     */
+    public function testRouteWithMiddlewares(): void
+    {
+        $this->exec('routes -m');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContainsRow([
+            'articles:_action',
+            '/app/articles/{action}/*',
+            '',
+            '',
+            'Articles',
+            'index',
+            '',
+            'dumb, sample',
+        ]);
     }
 
     /**
@@ -182,7 +206,7 @@ class RoutesCommandTest extends TestCase
         $this->assertOutputContainsRow([
             'articles:_action',
             '/app/articles/check',
-            '{"action":"check","controller":"Articles","pass":[],"plugin":null}',
+            '{"_middleware":["dumb","sample"],"action":"check","controller":"Articles","pass":[],"plugin":null}',
         ]);
     }
 
@@ -201,7 +225,7 @@ class RoutesCommandTest extends TestCase
         $this->assertOutputContainsRow([
             'testName',
             '/app/tests/index',
-            '{"_name":"testName","action":"index","controller":"Tests","pass":[],"plugin":null}',
+            '{"_middleware":["dumb","sample"],"_name":"testName","action":"index","controller":"Tests","pass":[],"plugin":null}',
         ]);
     }
 
@@ -290,27 +314,28 @@ class RoutesCommandTest extends TestCase
      */
     public function testRouteDuplicateWarning(): void
     {
-        $builder = Router::createRouteBuilder('/');
-        $builder->connect(
-            new Route('/unique-path', [], ['_name' => '_aRoute'])
-        );
-        $builder->connect(
-            new Route('/unique-path', [], ['_name' => '_bRoute'])
-        );
+        Configure::write('TestApp.routes', function ($builder): void {
+            $builder->connect(
+                new Route('/unique-path', [], ['_name' => '_aRoute'])
+            );
+            $builder->connect(
+                new Route('/unique-path', [], ['_name' => '_bRoute'])
+            );
 
-        $builder->connect(
-            new Route('/blog', ['_method' => 'GET'], ['_name' => 'blog-get'])
-        );
-        $builder->connect(
-            new Route('/blog', [], ['_name' => 'blog-all'])
-        );
+            $builder->connect(
+                new Route('/blog', ['_method' => 'GET'], ['_name' => 'blog-get'])
+            );
+            $builder->connect(
+                new Route('/blog', [], ['_name' => 'blog-all'])
+            );
 
-        $builder->connect(
-            new Route('/events', ['_method' => ['POST', 'PUT']], ['_name' => 'events-post'])
-        );
-        $builder->connect(
-            new Route('/events', ['_method' => 'GET'], ['_name' => 'events-get'])
-        );
+            $builder->connect(
+                new Route('/events', ['_method' => ['POST', 'PUT']], ['_name' => 'events-post'])
+            );
+            $builder->connect(
+                new Route('/events', ['_method' => 'GET'], ['_name' => 'events-get'])
+            );
+        });
 
         $this->exec('routes');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);

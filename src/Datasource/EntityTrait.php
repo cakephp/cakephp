@@ -22,7 +22,6 @@ use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
-use Traversable;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
@@ -434,7 +433,7 @@ trait EntityTrait
      * When checking multiple fields all fields must have a value (even `null`)
      * present for the method to return `true`.
      *
-     * @param array<string>|string $field The field or fields to check.
+     * @param list<string>|string $field The field or fields to check.
      * @return bool
      */
     public function has(array|string $field): bool
@@ -469,8 +468,7 @@ trait EntityTrait
         if (
             $value === null ||
             (
-                is_array($value) &&
-                empty($value) ||
+                $value === [] ||
                 $value === ''
             )
         ) {
@@ -511,7 +509,7 @@ trait EntityTrait
      * $entity->unset(['name', 'last_name']);
      * ```
      *
-     * @param array<string>|string $field The field to unset.
+     * @param list<string>|string $field The field to unset.
      * @return $this
      */
     public function unset(array|string $field)
@@ -548,7 +546,7 @@ trait EntityTrait
     /**
      * Gets the hidden fields.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getHidden(): array
     {
@@ -579,7 +577,7 @@ trait EntityTrait
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getVirtual(): array
     {
@@ -592,7 +590,7 @@ trait EntityTrait
      * The list of visible fields is all standard fields
      * plus virtual fields minus hidden fields.
      *
-     * @return array<string> A list of fields that are 'visible' in all
+     * @return list<string> A list of fields that are 'visible' in all
      *     representations.
      */
     public function getVisible(): array
@@ -610,7 +608,7 @@ trait EntityTrait
      * This method will recursively transform entities assigned to fields
      * into arrays as well.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -639,7 +637,7 @@ trait EntityTrait
     /**
      * Returns the fields that will be serialized as JSON
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function jsonSerialize(): array
     {
@@ -717,7 +715,7 @@ trait EntityTrait
 
         foreach (get_class_methods($class) as $method) {
             $prefix = substr($method, 1, 3);
-            if ($method[0] !== '_' || ($prefix !== 'get' && $prefix !== 'set')) {
+            if (!str_starts_with($method, '_') || ($prefix !== 'get' && $prefix !== 'set')) {
                 continue;
             }
             $field = lcfirst(substr($method, 4));
@@ -820,7 +818,7 @@ trait EntityTrait
      * Returns an array of original fields.
      * Original fields are those that the entity was initialized with.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getOriginalFields(): array
     {
@@ -831,7 +829,7 @@ trait EntityTrait
      * Sets the given field or a list of fields to as original.
      * Normally there is no need to call this method manually.
      *
-     * @param array<string>|string $field the name of a field or a list of fields to set as original
+     * @param list<string>|string $field the name of a field or a list of fields to set as original
      * @param bool $merge
      * @return $this
      */
@@ -896,7 +894,7 @@ trait EntityTrait
     /**
      * Gets the dirty fields.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getDirty(): array
     {
@@ -1099,7 +1097,7 @@ trait EntityTrait
      * Auxiliary method for getting errors in nested entities
      *
      * @param string $field the field in this entity to check for errors
-     * @return array errors in nested entity if any
+     * @return array Errors in nested entity if any
      */
     protected function _nestedErrors(string $field): array
     {
@@ -1135,8 +1133,7 @@ trait EntityTrait
             }
 
             if (
-                is_array($val) ||
-                $val instanceof Traversable ||
+                is_iterable($val) ||
                 $val instanceof EntityInterface
             ) {
                 $entity = $val;
@@ -1235,7 +1232,7 @@ trait EntityTrait
     public function setInvalid(array $fields, bool $overwrite = false)
     {
         foreach ($fields as $field => $value) {
-            if ($overwrite === true) {
+            if ($overwrite) {
                 $this->_invalid[$field] = $value;
                 continue;
             }
@@ -1278,7 +1275,7 @@ trait EntityTrait
      * $entity->setAccess('*', false); // Mark all fields as protected
      * ```
      *
-     * @param array<string>|string $field Single or list of fields to change its accessibility
+     * @param list<string>|string $field Single or list of fields to change its accessibility
      * @param bool $set True marks the field as accessible, false will
      * mark it as protected.
      * @return $this

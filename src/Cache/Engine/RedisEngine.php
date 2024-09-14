@@ -46,6 +46,7 @@ class RedisEngine extends CacheEngine
      * - `password` Redis server password.
      * - `persistent` Connect to the Redis server with a persistent connection
      * - `port` port number to the Redis server.
+     * - `tls` connect to the Redis server using TLS.
      * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
      * - `scanCount` Number of keys to ask for each scan (default: 10)
@@ -62,6 +63,7 @@ class RedisEngine extends CacheEngine
         'password' => false,
         'persistent' => true,
         'port' => 6379,
+        'tls' => false,
         'prefix' => 'cake_',
         'host' => null,
         'server' => '127.0.0.1',
@@ -100,24 +102,29 @@ class RedisEngine extends CacheEngine
      */
     protected function _connect(): bool
     {
+        $tls = $this->_config['tls'] === true ? 'tls://' : '';
+
+        $map = [
+            'ssl_ca' => 'cafile',
+            'ssl_key' => 'local_pk',
+            'ssl_cert' => 'local_cert',
+        ];
+
+        $ssl = [];
+        foreach ($map as $key => $context) {
+            if (!empty($this->_config[$key])) {
+                $ssl[$context] = $this->_config[$key];
+            }
+        }
+
         try {
-            $this->_Redis = new Redis();
+            $this->_Redis = $this->_createRedisInstance();
             if (!empty($this->_config['unix_socket'])) {
                 $return = $this->_Redis->connect($this->_config['unix_socket']);
             } elseif (empty($this->_config['persistent'])) {
-                $return = $this->_Redis->connect(
-                    $this->_config['server'],
-                    (int)$this->_config['port'],
-                    (int)$this->_config['timeout']
-                );
+                $return = $this->_connectTransient($tls . $this->_config['server'], $ssl);
             } else {
-                $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
-                $return = $this->_Redis->pconnect(
-                    $this->_config['server'],
-                    (int)$this->_config['port'],
-                    (int)$this->_config['timeout'],
-                    $persistentId
-                );
+                $return = $this->_connectPersistent($tls . $this->_config['server'], $ssl);
             }
         } catch (RedisException $e) {
             if (class_exists(Log::class)) {
@@ -130,10 +137,71 @@ class RedisEngine extends CacheEngine
             $return = $this->_Redis->auth($this->_config['password']);
         }
         if ($return) {
-            $return = $this->_Redis->select((int)$this->_config['database']);
+            return $this->_Redis->select((int)$this->_config['database']);
         }
 
         return $return;
+    }
+
+    /**
+     * Connects to a Redis server using a new connection.
+     *
+     * @param string $server Server to connect to.
+     * @param array $ssl SSL context options.
+     * @throws \RedisException
+     * @return bool True if Redis server was connected
+     */
+    protected function _connectTransient(string $server, array $ssl): bool
+    {
+        if ($ssl === []) {
+            return $this->_Redis->connect(
+                $server,
+                (int)$this->_config['port'],
+                (int)$this->_config['timeout']
+            );
+        }
+
+        return $this->_Redis->connect(
+            $server,
+            (int)$this->_config['port'],
+            (int)$this->_config['timeout'],
+            null,
+            0,
+            0.0,
+            ['ssl' => $ssl]
+        );
+    }
+
+    /**
+     * Connects to a Redis server using a persistent connection.
+     *
+     * @param string $server Server to connect to.
+     * @param array $ssl SSL context options.
+     * @throws \RedisException
+     * @return bool True if Redis server was connected
+     */
+    protected function _connectPersistent(string $server, array $ssl): bool
+    {
+        $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
+
+        if ($ssl === []) {
+            return $this->_Redis->pconnect(
+                $server,
+                (int)$this->_config['port'],
+                (int)$this->_config['timeout'],
+                $persistentId
+            );
+        }
+
+        return $this->_Redis->pconnect(
+            $server,
+            (int)$this->_config['port'],
+            (int)$this->_config['timeout'],
+            $persistentId,
+            0,
+            0.0,
+            ['ssl' => $ssl]
+        );
     }
 
     /**
@@ -332,7 +400,7 @@ class RedisEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function groups(): array
     {
@@ -393,6 +461,16 @@ class RedisEngine extends CacheEngine
         }
 
         return unserialize($value);
+    }
+
+    /**
+     * Create new Redis instance.
+     *
+     * @return \Redis
+     */
+    protected function _createRedisInstance(): Redis
+    {
+        return new Redis();
     }
 
     /**

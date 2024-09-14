@@ -26,6 +26,8 @@ use Cake\TestSuite\Constraint\Email\MailSentTo;
 use Cake\TestSuite\Constraint\Email\MailSentWith;
 use Cake\TestSuite\Constraint\Email\MailSubjectContains;
 use Cake\TestSuite\Constraint\Email\NoMailSent;
+use PHPUnit\Framework\Attributes\After;
+use PHPUnit\Framework\Attributes\Before;
 
 /**
  * Make assertions on emails sent through the Cake\TestSuite\TestEmailTransport
@@ -39,9 +41,9 @@ trait EmailTrait
     /**
      * Replaces all transports with the test transport during test setup
      *
-     * @before
      * @return void
      */
+    #[Before]
     public function setupTransports(): void
     {
         TestEmailTransport::replaceAllTransports();
@@ -50,9 +52,9 @@ trait EmailTrait
     /**
      * Resets transport state
      *
-     * @after
      * @return void
      */
+    #[After]
     public function cleanupEmailTrait(): void
     {
         TestEmailTransport::clearMessages();
@@ -175,7 +177,7 @@ trait EmailTrait
     /**
      * Asserts an email was sent from an address
      *
-     * @param array<string>|string $address Email address
+     * @param list<string>|string $address Email address
      * @param string $message Message
      * @return void
      */

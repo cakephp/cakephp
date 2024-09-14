@@ -116,10 +116,8 @@ class Debugger
     {
         /** @var array<int, static> $instance */
         static $instance = [];
-        if ($class) {
-            if (!$instance || strtolower($class) !== strtolower(get_class($instance[0]))) {
-                $instance[0] = new $class();
-            }
+        if ($class && (!$instance || strtolower($class) !== strtolower($instance[0]::class))) {
+            $instance[0] = new $class();
         }
         if (!$instance) {
             $instance[0] = new Debugger();
@@ -326,7 +324,7 @@ class Debugger
      *
      * - `depth` - The number of stack frames to return. Defaults to 999
      * - `format` - The format you want the return. Defaults to the currently selected format. If
-     *    format is 'array' or 'points' the return will be an array.
+     *    format is 'array', 'points', or 'shortPoints' the return will be an array.
      * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
@@ -351,7 +349,7 @@ class Debugger
      *
      * - `depth` - The number of stack frames to return. Defaults to 999
      * - `format` - The format you want the return. Defaults to 'text'. If
-     *    format is 'array' or 'points' the return will be an array.
+     *    format is 'array', 'points', or 'shortPoints' the return will be an array.
      * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
@@ -374,6 +372,7 @@ class Debugger
             'start' => 0,
             'scope' => null,
             'exclude' => ['call_user_func_array', 'trigger_error'],
+            'shortPath' => false,
         ];
         $options = Hash::merge($defaults, $options);
 
@@ -385,8 +384,8 @@ class Debugger
             if (isset($backtrace[$i])) {
                 $frame = $backtrace[$i] + ['file' => '[internal]', 'line' => '??'];
             }
-
-            $signature = $reference = $frame['file'];
+            $signature = $frame['file'];
+            $reference = $frame['file'];
             if (!empty($frame['class'])) {
                 $signature = $frame['class'] . $frame['type'] . $frame['function'];
                 $reference = $signature . '(';
@@ -402,7 +401,13 @@ class Debugger
             if (in_array($signature, $options['exclude'], true)) {
                 continue;
             }
-            if ($options['format'] === 'points') {
+            if ($options['format'] === 'shortPoints') {
+                $back[] = [
+                    'file' => self::trimPath($frame['file']),
+                    'line' => $frame['line'],
+                    'reference' => $reference,
+                ];
+            } elseif ($options['format'] === 'points') {
                 $back[] = ['file' => $frame['file'], 'line' => $frame['line'], 'reference' => $reference];
             } elseif ($options['format'] === 'array') {
                 if (!$options['args']) {
@@ -419,7 +424,7 @@ class Debugger
                 );
             }
         }
-        if ($options['format'] === 'array' || $options['format'] === 'points') {
+        if (in_array($options['format'], ['array', 'points', 'shortPoints'])) {
             return $back;
         }
 
@@ -469,7 +474,7 @@ class Debugger
      * @param string $file Absolute path to a PHP file.
      * @param int $line Line number to highlight.
      * @param int $context Number of lines of context to extract above and below $line.
-     * @return array<string> Set of lines highlighted
+     * @return list<string> Set of lines highlighted
      * @see https://secure.php.net/highlight_string
      * @link https://book.cakephp.org/5/en/development/debugging.html#getting-an-excerpt-from-a-file
      */
@@ -521,7 +526,7 @@ class Debugger
         }
         $highlight = highlight_string($str, true);
         if ($added) {
-            $highlight = str_replace(
+            return str_replace(
                 ['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />', '&lt;?php '],
                 '',
                 $highlight

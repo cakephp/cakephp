@@ -30,6 +30,7 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Locale;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\NonBacked;
@@ -2027,6 +2028,18 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::enum('a1', Priority::class));
     }
 
+    public function testEnumOnly(): void
+    {
+        $this->assertTrue(Validation::enumOnly(ArticleStatus::Published, [ArticleStatus::Published]));
+        $this->assertFalse(Validation::enumOnly(ArticleStatus::Published, [ArticleStatus::Unpublished]));
+    }
+
+    public function testEnumExcept(): void
+    {
+        $this->assertFalse(Validation::enumExcept(ArticleStatus::Published, [ArticleStatus::Published]));
+        $this->assertTrue(Validation::enumExcept(ArticleStatus::Published, [ArticleStatus::Unpublished]));
+    }
+
     public function testEnumNonBacked(): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -2709,9 +2722,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test uploadedFile with a PSR7 object.
-     *
-     * @dataProvider uploadedFileProvider
      */
+    #[DataProvider('uploadedFileProvider')]
     public function testUploadedFile(bool $expected, array $options): void
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';

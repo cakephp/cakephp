@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Integration tests for Table class with uuid primary keys.
@@ -28,7 +29,7 @@ class TableUuidTest extends TestCase
     /**
      * Fixtures
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = [
         'core.BinaryUuidItems',
@@ -56,9 +57,8 @@ class TableUuidTest extends TestCase
 
     /**
      * Test saving new records sets uuids
-     *
-     * @dataProvider uuidTableProvider
      */
+    #[DataProvider('uuidTableProvider')]
     public function testSaveNew(string $tableName): void
     {
         $entity = new Entity([
@@ -76,9 +76,8 @@ class TableUuidTest extends TestCase
 
     /**
      * Test saving new records allows manual uuids
-     *
-     * @dataProvider uuidTableProvider
      */
+    #[DataProvider('uuidTableProvider')]
     public function testSaveNewSpecificId(string $tableName): void
     {
         $id = Text::uuid();
@@ -99,9 +98,8 @@ class TableUuidTest extends TestCase
 
     /**
      * Test saving existing records works
-     *
-     * @dataProvider uuidTableProvider
      */
+    #[DataProvider('uuidTableProvider')]
     public function testSaveUpdate(string $tableName): void
     {
         $id = '481fc6d0-b920-43e0-a40d-6d1740cf8569';
@@ -122,9 +120,8 @@ class TableUuidTest extends TestCase
 
     /**
      * Test delete with string pk.
-     *
-     * @dataProvider uuidTableProvider
      */
+    #[DataProvider('uuidTableProvider')]
     public function testGetById(string $tableName): void
     {
         $table = $this->getTableLocator()->get($tableName);
@@ -136,9 +133,8 @@ class TableUuidTest extends TestCase
 
     /**
      * Test delete with string pk.
-     *
-     * @dataProvider uuidTableProvider
      */
+    #[DataProvider('uuidTableProvider')]
     public function testDelete(string $tableName): void
     {
         $table = $this->getTableLocator()->get($tableName);
@@ -151,9 +147,8 @@ class TableUuidTest extends TestCase
 
     /**
      * Tests that sql server does not error when an empty uuid is bound
-     *
-     * @dataProvider uuidTableProvider
      */
+    #[DataProvider('uuidTableProvider')]
     public function testEmptyUuid(string $tableName): void
     {
         $id = '';

@@ -50,14 +50,14 @@ class ViewBlock
     /**
      * Block content. An array of blocks indexed by name.
      *
-     * @var array<string>
+     * @var array<string, string>
      */
     protected array $_blocks = [];
 
     /**
      * The active blocks being captured.
      *
-     * @var array<string>
+     * @var array<string, string>
      */
     protected array $_active = [];
 
@@ -197,7 +197,7 @@ class ViewBlock
     /**
      * Get the names of all the existing blocks.
      *
-     * @return array<string> An array containing the blocks.
+     * @return list<string> An array containing the blocks.
      */
     public function keys(): array
     {
@@ -220,7 +220,7 @@ class ViewBlock
     /**
      * Get the unclosed/active blocks. Key is name, value is mode.
      *
-     * @return array<string> An array of unclosed blocks.
+     * @return array<string, string> An array of unclosed blocks.
      */
     public function unclosed(): array
     {

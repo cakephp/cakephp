@@ -67,7 +67,7 @@ class FormData implements Countable, Stringable
         if ($this->_boundary) {
             return $this->_boundary;
         }
-        $this->_boundary = md5(uniqid((string)time()));
+        $this->_boundary = hash('xxh128', uniqid((string)time()));
 
         return $this->_boundary;
     }
@@ -266,11 +266,11 @@ class FormData implements Countable, Stringable
             $boundary = $this->boundary();
             $out = '';
             foreach ($this->_parts as $part) {
-                $out .= "--$boundary\r\n";
+                $out .= "--{$boundary}\r\n";
                 $out .= (string)$part;
                 $out .= "\r\n";
             }
-            $out .= "--$boundary--\r\n";
+            $out .= "--{$boundary}--\r\n";
 
             return $out;
         }

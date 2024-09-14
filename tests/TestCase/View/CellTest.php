@@ -27,6 +27,7 @@ use Cake\View\Exception\MissingCellTemplateException;
 use Cake\View\Exception\MissingTemplateException;
 use Cake\View\View;
 use TestApp\Controller\CellTraitTestController;
+use TestApp\View\Cell\CelloCell;
 use TestApp\View\CustomJsonView;
 
 /**
@@ -48,6 +49,7 @@ class CellTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
+        $this->clearPlugins();
         $this->loadPlugins(['TestPlugin', 'TestTheme']);
         $request = new ServerRequest();
         $response = new Response();
@@ -60,7 +62,6 @@ class CellTest extends TestCase
     public function tearDown(): void
     {
         parent::tearDown();
-        $this->clearPlugins();
         unset($this->View);
     }
 
@@ -79,7 +80,7 @@ class CellTest extends TestCase
         $this->assertStringContainsString('<h2>Suspendisse gravida neque</h2>', $render);
 
         $cell = $this->View->cell('Cello');
-        $this->assertInstanceOf('TestApp\View\Cell\CelloCell', $cell);
+        $this->assertInstanceOf(CelloCell::class, $cell);
         $this->assertSame("Cellos\n", $cell->render());
     }
 
@@ -347,7 +348,7 @@ class CellTest extends TestCase
         $view = new CustomJsonView($request, $response);
         $view->setTheme('Pretty');
         $cell = $view->cell('Articles');
-        $this->assertSame('TestApp\View\CustomJsonView', $cell->viewBuilder()->getClassName());
+        $this->assertSame(CustomJsonView::class, $cell->viewBuilder()->getClassName());
         $this->assertSame('Pretty', $cell->viewBuilder()->getTheme());
     }
 
@@ -461,5 +462,33 @@ class CellTest extends TestCase
         $this->assertStringContainsString('This is NOT the alternate template', $result2);
         Cache::delete('celltest');
         Cache::drop('default');
+    }
+
+    /**
+     * Tests events are dispatched correctly
+     */
+    public function testCellRenderDispatchesEvents(): void
+    {
+        $args = ['msg1' => 'dummy', 'msg2' => ' message'];
+        /** @var \TestApp\View\Cell\ArticlesCell $cell */
+        $cell = $this->View->cell('Articles::doEcho', $args);
+        $beforeEventIsCalled = false;
+        $afterEventIsCalled = false;
+        $manager = $this->View->getEventManager();
+        $manager->on('Cell.beforeAction', function ($event, $eventCell, $action, $eventArgs) use ($cell, $args, &$beforeEventIsCalled): void {
+            $this->assertSame($eventCell, $cell);
+            $this->assertEquals('doEcho', $action);
+            $this->assertEquals($args, $eventArgs);
+            $beforeEventIsCalled = true;
+        });
+        $manager->on('Cell.afterAction', function ($event, $eventCell, $action, $eventArgs) use ($cell, $args, &$afterEventIsCalled): void {
+            $this->assertSame($eventCell, $cell);
+            $this->assertEquals('doEcho', $action);
+            $this->assertEquals($args, $eventArgs);
+            $afterEventIsCalled = true;
+        });
+        $cell->render();
+        $this->assertTrue($beforeEventIsCalled);
+        $this->assertTrue($afterEventIsCalled);
     }
 }

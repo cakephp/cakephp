@@ -24,6 +24,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class RouteCollectionTest extends TestCase
 {
@@ -412,9 +413,8 @@ class RouteCollectionTest extends TestCase
 
     /**
      * Test parseRequest() checks host conditions
-     *
-     * @dataProvider hostProvider
      */
+    #[DataProvider('hostProvider')]
     public function testParseRequestCheckHostConditionFail(string $host): void
     {
         $this->expectException(MissingRouteException::class);
@@ -718,7 +718,7 @@ class RouteCollectionTest extends TestCase
 
         $all = $this->collection->named();
         $this->assertCount(1, $all);
-        $this->assertInstanceOf('Cake\Routing\Route\Route', $all['cntrl']);
+        $this->assertInstanceOf(Route::class, $all['cntrl']);
         $this->assertSame('/l/{controller}', $all['cntrl']->template);
     }
 
@@ -776,7 +776,7 @@ class RouteCollectionTest extends TestCase
         });
         $this->assertSame($result, $this->collection);
 
-        $callable = function () {
+        $callable = function (): void {
         };
         $result = $this->collection->registerMiddleware('callable', $callable);
         $this->assertSame($result, $this->collection);
@@ -795,7 +795,7 @@ class RouteCollectionTest extends TestCase
         $this->collection->registerMiddleware('closure', function (): void {
         });
 
-        $callable = function () {
+        $callable = function (): void {
         };
         $this->collection->registerMiddleware('callable', $callable);
 
@@ -825,7 +825,7 @@ class RouteCollectionTest extends TestCase
     public function testMiddlewareGroupUnregisteredMiddleware(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot add \'bad\' middleware to group \'group\'. It has not been registered.');
+        $this->expectExceptionMessage("Cannot add 'bad' middleware to group 'group'. It has not been registered.");
         $this->collection->middlewareGroup('group', ['bad']);
     }
 }

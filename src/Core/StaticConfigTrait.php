@@ -169,7 +169,7 @@ trait StaticConfigTrait
     /**
      * Returns an array containing the named configurations
      *
-     * @return array<string> Array of configurations.
+     * @return list<string> Array of configurations.
      */
     public static function configured(): array
     {
@@ -199,7 +199,7 @@ trait StaticConfigTrait
      * $dsn = 'file:///?className=\My\Cache\Engine\FileEngine';
      * $config = Cache::parseDsn($dsn);
      *
-     * $dsn = 'File://?prefix=myapp_cake_core_&serialize=true&duration=+2 minutes&path=/tmp/persistent/';
+     * $dsn = 'File://?prefix=myapp_cake_translations_&serialize=true&duration=+2 minutes&path=/tmp/persistent/';
      * $config = Cache::parseDsn($dsn);
      * ```
      *

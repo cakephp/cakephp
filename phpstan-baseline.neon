@@ -26,14 +26,44 @@ parameters:
 			path: src/Console/ConsoleOutput.php
 
 		-
+			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+			count: 1
+			path: src/Controller/ControllerFactory.php
+
+		-
+			message: "#^Unknown parameter \\$components in call to method ReflectionClass\\<Cake\\\\Controller\\\\Controller\\>\\:\\:newInstance\\(\\)\\.$#"
+			count: 1
+			path: src/Controller/ControllerFactory.php
+
+		-
+			message: "#^Unknown parameter \\$request in call to method ReflectionClass\\<Cake\\\\Controller\\\\Controller\\>\\:\\:newInstance\\(\\)\\.$#"
+			count: 1
+			path: src/Controller/ControllerFactory.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 8
 			path: src/Database/Expression/QueryExpression.php
 
 		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: src/Database/Type/EnumType.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between \\*NEVER\\* and '' will always evaluate to false\\.$#"
+			count: 1
+			path: src/Database/Type/EnumType.php
+
+		-
 			message: "#^Template type T of method Cake\\\\Datasource\\\\QueryInterface\\:\\:all\\(\\) is not referenced in a parameter\\.$#"
 			count: 1
 			path: src/Datasource/QueryInterface.php
+
+		-
+			message: "#^Method Cake\\\\Error\\\\ErrorLogger\\:\\:log\\(\\) has parameter \\$level with no type specified\\.$#"
+			count: 1
+			path: src/Error/ErrorLogger.php
 
 		-
 			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
@@ -49,6 +79,11 @@ parameters:
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Event/EventManager.php
+
+		-
+			message: "#^Call to an undefined method Cake\\\\Core\\\\PluginInterface\\:\\:events\\(\\)\\.$#"
+			count: 1
+			path: src/Http/BaseApplication.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
@@ -114,6 +149,11 @@ parameters:
 			message: "#^Unreachable statement \\- code above always terminates\\.$#"
 			count: 1
 			path: src/TestSuite/TestCase.php
+
+		-
+			message: "#^Unable to resolve the template type T in call to method static method Cake\\\\Utility\\\\Hash\\:\\:insert\\(\\)$#"
+			count: 1
+			path: src/Utility/Hash.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"

@@ -259,7 +259,7 @@ class SmtpTransport extends AbstractTransport
 
         $auth = '';
         foreach ($this->_lastResponse as $line) {
-            if (strlen($line['message']) === 0 || substr($line['message'], 0, 5) === 'AUTH ') {
+            if ($line['message'] === '' || str_starts_with($line['message'], 'AUTH ')) {
                 $auth = $line['message'];
                 break;
             }
@@ -472,7 +472,7 @@ class SmtpTransport extends AbstractTransport
     {
         $from = $message->getReturnPath();
         if (!$from) {
-            $from = $message->getFrom();
+            return $message->getFrom();
         }
 
         return $from;

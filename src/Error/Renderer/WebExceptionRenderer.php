@@ -188,7 +188,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             $controller->startupProcess();
         } catch (Throwable $e) {
             Log::warning(
-                "Failed to construct or call startup() on the resolved controller class of `$class`. " .
+                "Failed to construct or call startup() on the resolved controller class of `{$class}`. " .
                     "Using Fallback Controller instead. Error {$e->getMessage()}" .
                     "\nStack Trace\n: {$e->getTraceAsString()}",
                 'cake.error'
@@ -320,7 +320,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
         $result = $this->{$method}($exception);
         $this->_shutdown();
         if (is_string($result)) {
-            $result = $this->controller->getResponse()->withStringBody($result);
+            return $this->controller->getResponse()->withStringBody($result);
         }
 
         return $result;
@@ -454,7 +454,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             );
             try {
                 return $this->_outputMessageSafe('error500');
-            } catch (Throwable $inner) {
+            } catch (Throwable) {
                 throw $outer;
             }
         }

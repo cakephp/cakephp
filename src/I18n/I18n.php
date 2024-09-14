@@ -17,10 +17,12 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Cache\Cache;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\I18n\Exception\I18nException;
 use Cake\I18n\Formatter\IcuFormatter;
 use Cake\I18n\Formatter\SprintfFormatter;
 use Locale;
+use function Cake\Core\deprecationWarning;
 
 /**
  * I18n handles translation of Text and time format strings.
@@ -71,7 +73,16 @@ class I18n
         );
 
         if (class_exists(Cache::class)) {
-            static::$_collection->setCacher(Cache::pool('_cake_core_'));
+            try {
+                $pool = Cache::pool('_cake_translations_');
+            } catch (InvalidArgumentException) {
+                $pool = Cache::pool('_cake_core_');
+                deprecationWarning(
+                    '5.1.0',
+                    'Cache config `_cake_core_` is deprecated. Use `_cake_translations_` instead'
+                );
+            }
+            static::$_collection->setCacher($pool);
         }
 
         return static::$_collection;

@@ -26,7 +26,7 @@ enum DriverFeatureEnum: string
     /**
      * Disabling constraints without being in transaction support.
      */
-    case DISABLE_CONSTRAINT_WITHOUT_TRANSACTION = 'disble-constarint-without-transaction';
+    case DISABLE_CONSTRAINT_WITHOUT_TRANSACTION = 'disable-constraint-without-transaction';
 
     /**
      * Native JSON data type support.
@@ -47,4 +47,19 @@ enum DriverFeatureEnum: string
      * Window function support (all or partial clauses).
      */
     case WINDOW = 'window';
+
+    /**
+     * Intersect feature support
+     */
+    case INTERSECT = 'intersect';
+
+    /**
+     * Intersect all feature support
+     */
+    case INTERSECT_ALL = 'intersect-all';
+
+    /**
+     * Support for order by in set operations (union, intersect)
+     */
+    case SET_OPERATIONS_ORDER_BY = 'set-operations-order-by';
 }

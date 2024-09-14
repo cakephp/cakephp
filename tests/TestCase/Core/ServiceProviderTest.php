@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\Container;
 use Cake\TestSuite\TestCase;
+use LogicException;
+use TestApp\ServiceProvider\EmptyServiceProvider;
 use TestApp\ServiceProvider\PersonServiceProvider;
 
 /**
@@ -44,5 +46,13 @@ class ServiceProviderTest extends TestCase
 
         $this->assertTrue($container->has('sally'), 'Should have service');
         $this->assertSame('sally', $container->get('sally')->name);
+    }
+
+    public function testEmptyProvides(): void
+    {
+        $this->expectException(LogicException::class);
+
+        $provider = new EmptyServiceProvider();
+        $provider->provides('sally');
     }
 }

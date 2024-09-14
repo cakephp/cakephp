@@ -98,7 +98,7 @@ class ArrayContext implements ContextInterface
     /**
      * Get the fields used in the context as a primary key.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getPrimaryKey(): array
     {
@@ -229,7 +229,7 @@ class ArrayContext implements ContextInterface
         }
 
         if ($required === true) {
-            $required = __d('cake', 'This field cannot be left empty');
+            return __d('cake', 'This field cannot be left empty');
         }
 
         return $required;
@@ -249,7 +249,7 @@ class ArrayContext implements ContextInterface
             return null;
         }
 
-        return Hash::get($this->_context['schema'], "$field.length");
+        return Hash::get($this->_context['schema'], "{$field}.length");
     }
 
     /**

@@ -72,7 +72,7 @@ class NestIterator extends Collection implements RecursiveIterator
         $children = $property($this->current());
 
         if (is_array($children)) {
-            return !empty($children);
+            return $children !== [];
         }
 
         return $children instanceof Traversable;

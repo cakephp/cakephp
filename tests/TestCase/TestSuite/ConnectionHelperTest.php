@@ -37,8 +37,7 @@ class ConnectionHelperTest extends TestCase
     public function testAliasConnections(): void
     {
         ConnectionManager::dropAlias('default');
-
-        (new ConnectionHelper())->addTestAliases();
+        ConnectionHelper::addTestAliases();
 
         $this->assertSame(
             ConnectionManager::get('test'),
@@ -51,7 +50,7 @@ class ConnectionHelperTest extends TestCase
         $connection = new Connection(['driver' => TestDriver::class]);
         ConnectionManager::setConfig('test_something', $connection);
 
-        (new ConnectionHelper())->addTestAliases();
+        ConnectionHelper::addTestAliases();
 
         // Having a test_ alias defined will generate an alias for the unprefixed
         // connection for simpler CI configuration
@@ -96,7 +95,7 @@ class ConnectionHelperTest extends TestCase
         ConnectionManager::setConfig('query_logging', $connection);
         $this->assertFalse($connection->getDriver()->log(''));
 
-        (new ConnectionHelper())->enableQueryLogging(['query_logging']);
+        ConnectionHelper::enableQueryLogging(['query_logging']);
         $this->assertTrue($connection->getDriver()->log(''));
     }
 }

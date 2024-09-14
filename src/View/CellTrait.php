@@ -98,18 +98,15 @@ trait CellTrait
         if ($plugin) {
             $builder->setPlugin($plugin);
         }
-        if (!empty($this->helpers)) {
-            $builder->addHelpers($this->helpers);
-        }
 
         if ($this instanceof View) {
+            $builder->addHelpers($this->helpers);
+
             if ($this->theme) {
                 $builder->setTheme($this->theme);
             }
 
-            $class = static::class;
-            $builder->setClassName($class);
-            $instance->viewBuilder()->setClassName($class);
+            $builder->setClassName(static::class);
 
             return $instance;
         }

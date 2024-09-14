@@ -153,7 +153,7 @@ class Inflector
     /**
      * Words that should not be inflected
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected static array $_uninflected = [
         '.*[nrlm]ese', '.*data', '.*deer', '.*fish', '.*measles', '.*ois',
@@ -209,7 +209,7 @@ class Inflector
      */
     public static function reset(): void
     {
-        if (empty(static::$_initialState)) {
+        if (static::$_initialState === []) {
             static::$_initialState = get_class_vars(self::class);
 
             return;

@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Expression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests QueryExpression class
@@ -98,7 +99,7 @@ class QueryExpressionTest extends TestCase
     public function testAndOrCalls(): void
     {
         $expr = new QueryExpression();
-        $expected = 'Cake\Database\Expression\QueryExpression';
+        $expected = QueryExpression::class;
         $this->assertInstanceOf($expected, $expr->and([]));
         $this->assertInstanceOf($expected, $expr->or([]));
     }
@@ -206,9 +207,8 @@ class QueryExpressionTest extends TestCase
     /**
      * Tests that the query expression uses the type map when the
      * specific comparison functions are used.
-     *
-     * @dataProvider methodsProvider
      */
+    #[DataProvider('methodsProvider')]
     public function testTypeMapUsage(string $method): void
     {
         $expr = new QueryExpression([], ['created' => 'date']);

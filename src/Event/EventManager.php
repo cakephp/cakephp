@@ -83,13 +83,14 @@ class EventManager implements EventManagerInterface
      */
     public static function instance(?EventManager $manager = null): EventManager
     {
+        if ($manager === null && static::$_generalManager) {
+            return static::$_generalManager;
+        }
+
         if ($manager instanceof EventManager) {
             static::$_generalManager = $manager;
         }
-        if (empty(static::$_generalManager)) {
-            static::$_generalManager = new static();
-        }
-
+        static::$_generalManager ??= new static();
         static::$_generalManager->_isGlobal = true;
 
         return static::$_generalManager;
@@ -338,10 +339,8 @@ class EventManager implements EventManagerInterface
         $localListeners = [];
         if (!$this->_isGlobal) {
             $localListeners = $this->prioritisedListeners($eventKey);
-            $localListeners = empty($localListeners) ? [] : $localListeners;
         }
         $globalListeners = static::instance()->prioritisedListeners($eventKey);
-        $globalListeners = empty($globalListeners) ? [] : $globalListeners;
 
         $priorities = array_merge(array_keys($globalListeners), array_keys($localListeners));
         $priorities = array_unique($priorities);

@@ -55,7 +55,8 @@ trait DateFormatTrait
         if (is_array($format)) {
             [$dateFormat, $timeFormat] = $format;
         } else {
-            $dateFormat = $timeFormat = IntlDateFormatter::FULL;
+            $dateFormat = IntlDateFormatter::FULL;
+            $timeFormat = IntlDateFormatter::FULL;
             $pattern = $format;
         }
 
@@ -78,7 +79,7 @@ trait DateFormatTrait
         if (!isset(static::$formatters[$key])) {
             if ($timezone === '+00:00' || $timezone === 'Z') {
                 $timezone = 'UTC';
-            } elseif ($timezone[0] === '+' || $timezone[0] === '-') {
+            } elseif (str_starts_with($timezone, '+') || str_starts_with($timezone, '-')) {
                 $timezone = 'GMT' . $timezone;
             }
 
@@ -94,7 +95,7 @@ trait DateFormatTrait
             if (!$formatter) {
                 throw new CakeException(
                     'Your version of icu does not support creating a date formatter for ' .
-                    "`$key`. You should try to upgrade libicu and the intl extension."
+                    "`{$key}`. You should try to upgrade libicu and the intl extension."
                 );
             }
 
@@ -139,7 +140,8 @@ trait DateFormatTrait
         if (is_array($format)) {
             [$dateFormat, $timeFormat] = $format;
         } else {
-            $dateFormat = $timeFormat = IntlDateFormatter::FULL;
+            $dateFormat = IntlDateFormatter::FULL;
+            $timeFormat = IntlDateFormatter::FULL;
             $pattern = $format;
         }
 

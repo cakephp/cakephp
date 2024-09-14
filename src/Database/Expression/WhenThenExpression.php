@@ -37,7 +37,7 @@ class WhenThenExpression implements ExpressionInterface
      * The names of the clauses that are valid for use with the
      * `clause()` method.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $validClauseNames = [
         'when',
@@ -140,7 +140,7 @@ class WhenThenExpression implements ExpressionInterface
             $typeMap = clone $this->_typeMap;
             if (
                 is_array($type) &&
-                count($type) > 0
+                $type !== []
             ) {
                 $typeMap = $typeMap->setTypes($type);
             }
@@ -282,7 +282,7 @@ class WhenThenExpression implements ExpressionInterface
 
         $then = $this->compileNullableValue($binder, $this->then, $this->thenType);
 
-        return "WHEN $when THEN $then";
+        return "WHEN {$when} THEN {$then}";
     }
 
     /**

@@ -362,7 +362,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of default providers.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public static function getDefaultProviders(): array
     {
@@ -372,7 +372,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of providers in this validator.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function providers(): array
     {
@@ -546,7 +546,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
             $message = $message ? [static::NESTED => $message] : [];
 
-            return empty($errors) ? true : $errors + $message;
+            return $errors === [] ? true : $errors + $message;
         }]);
 
         return $this;
@@ -603,7 +603,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
             $message = $message ? [static::NESTED => $message] : [];
 
-            return empty($errors) ? true : $errors + $message;
+            return $errors === [] ? true : $errors + $message;
         }]);
 
         return $this;
@@ -1277,19 +1277,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                         $typeEnumeration
                     );
                 }
+            } elseif ($type === 'all') {
+                $message = __d(
+                    'cake',
+                    'The provided value must be a valid credit card number of any type'
+                );
             } else {
-                if ($type === 'all') {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be a valid credit card number of any type'
-                    );
-                } else {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be a valid credit card number of these types: `{0}`',
-                        $typeEnumeration
-                    );
-                }
+                $message = __d(
+                    'cake',
+                    'The provided value must be a valid credit card number of these types: `{0}`',
+                    $typeEnumeration
+                );
             }
         }
 
@@ -1979,19 +1977,17 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 } else {
                     $message = sprintf('The provided value must be decimal with `%s` decimal places', $places);
                 }
+            } elseif ($places === null) {
+                $message = __d(
+                    'cake',
+                    'The provided value must be decimal with any number of decimal places, including none'
+                );
             } else {
-                if ($places === null) {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be decimal with any number of decimal places, including none'
-                    );
-                } else {
-                    $message = __d(
-                        'cake',
-                        'The provided value must be decimal with `{0}` decimal places',
-                        $places
-                    );
-                }
+                $message = __d(
+                    'cake',
+                    'The provided value must be decimal with `{0}` decimal places',
+                    $places
+                );
             }
         }
 
@@ -3000,12 +2996,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (!$this->_useI18n) {
-            $message = 'This field is required';
-        } else {
-            $message = __d('cake', 'This field is required');
+            return 'This field is required';
         }
 
-        return $message;
+        return __d('cake', 'This field is required');
     }
 
     /**
@@ -3031,12 +3025,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (!$this->_useI18n) {
-            $message = 'This field cannot be left empty';
-        } else {
-            $message = __d('cake', 'This field cannot be left empty');
+            return 'This field cannot be left empty';
         }
 
-        return $message;
+        return __d('cake', 'This field cannot be left empty');
     }
 
     /**

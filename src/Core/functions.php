@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Core;
 
+use JsonException;
 use Stringable;
 
 if (!defined('DS')) {
@@ -23,6 +24,64 @@ if (!defined('DS')) {
      * Defines DS as short form of DIRECTORY_SEPARATOR.
      */
     define('DS', DIRECTORY_SEPARATOR);
+}
+
+if (!function_exists('Cake\Core\pathCombine')) {
+    /**
+     * Combines parts with a forward-slash `/`.
+     *
+     * Skips adding a forward-slash if either `/` or `\` already exists.
+     *
+     * @param list<string> $parts
+     * @param bool|null $trailing Determines how trailing slashes are handled
+     *  - If true, ensures a trailing forward-slash is added if one doesn't exist
+     *  - If false, ensures any trailing slash is removed
+     *  - if null, ignores trailing slashes
+     * @return string
+     */
+    function pathCombine(array $parts, ?bool $trailing = null): string
+    {
+        $numParts = count($parts);
+        if ($numParts === 0) {
+            if ($trailing === true) {
+                return '/';
+            }
+
+            return '';
+        }
+
+        $path = $parts[0];
+        for ($i = 1; $i < $numParts; ++$i) {
+            $part = $parts[$i];
+            if ($part === '') {
+                continue;
+            }
+
+            if ($path[-1] === '/' || $path[-1] === '\\') {
+                if ($part[0] === '/' || $part[0] === '\\') {
+                    $path .= substr($part, 1);
+                } else {
+                    $path .= $part;
+                }
+            } elseif ($part[0] === '/' || $part[0] === '\\') {
+                $path .= $part;
+            } else {
+                $path .= '/' . $part;
+            }
+        }
+
+        if ($trailing === true) {
+            if ($path === '' || ($path[-1] !== '/' && $path[-1] !== '\\')) {
+                $path .= '/';
+            }
+        } elseif ($trailing === false) {
+            if ($path !== '' && ($path[-1] === '/' || $path[-1] === '\\')) {
+                $path = substr($path, 0, -1);
+            }
+        }
+
+        return $path;
+    }
 }
 
 if (!function_exists('Cake\Core\h')) {
@@ -109,7 +168,7 @@ if (!function_exists('Cake\Core\namespaceSplit')) {
      * Commonly used like `list($namespace, $className) = namespaceSplit($class);`.
      *
      * @param string $class The full class name, ie `Cake\Core\App`.
-     * @return array<string> Array with 2 indexes. 0 => namespace, 1 => classname.
+     * @return array{0: string, 1: string} Array with 2 indexes. 0 => namespace, 1 => classname.
      */
     function namespaceSplit(string $class): array
     {
@@ -313,7 +372,7 @@ if (!function_exists('Cake\Core\deprecationWarning')) {
         }
 
         static $errors = [];
-        $checksum = md5($message);
+        $checksum = hash('xxh128', $message);
         $duplicate = (bool)Configure::read('Error.allowDuplicateDeprecations', false);
         if (isset($errors[$checksum]) && !$duplicate) {
             return;
@@ -324,4 +383,146 @@ if (!function_exists('Cake\Core\deprecationWarning')) {
 
         trigger_error($message, E_USER_DEPRECATED);
     }
+}
+
+/**
+ * Converts the given value to a string.
+ *
+ * This method attempts to convert the given value to a string.
+ * If the value is already a string, it returns the value as it is.
+ * ``null`` is returned if the conversion is not possible.
+ *
+ * @param mixed $value The value to be converted.
+ * @return ?string Returns the string representation of the value, or null if the value is not a string.
+ * @since 5.1.0
+ */
+function toString(mixed $value): ?string
+{
+    if (is_string($value)) {
+        return $value;
+    }
+    if (is_int($value)) {
+        return (string)$value;
+    }
+    if (is_bool($value)) {
+        return $value ? '1' : '0';
+    }
+    if (is_float($value)) {
+        if (is_nan($value) || is_infinite($value)) {
+            return null;
+        }
+        try {
+            $return = json_encode($value, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            $return = null;
+        }
+
+        if ($return === null || str_contains($return, 'e')) {
+            return rtrim(sprintf('%.' . (PHP_FLOAT_DIG + 3) . 'F', $value), '.0');
+        }
+
+        return $return;
+    }
+    if ($value instanceof Stringable) {
+        return (string)$value;
+    }
+
+    return null;
+}
+
+/**
+ * Converts a value to an integer.
+ *
+ * This method attempts to convert the given value to an integer.
+ * If the conversion is successful, it returns the value as an integer.
+ * If the conversion fails, it returns NULL.
+ *
+ * String values are trimmed using trim().
+ *
+ * @param mixed $value The value to be converted to an integer.
+ * @return int|null Returns the converted integer value or null if the conversion fails.
+ * @since 5.1.0
+ */
+function toInt(mixed $value): ?int
+{
+    if (is_int($value)) {
+        return $value;
+    }
+    if (is_string($value)) {
+        $value = filter_var($value, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
+
+        return $value === PHP_INT_MIN ? null : $value;
+    }
+    if (is_float($value)) {
+        if (is_nan($value) || is_infinite($value)) {
+            return null;
+        }
+
+        return (int)$value;
+    }
+    if (is_bool($value)) {
+        return (int)$value;
+    }
+
+    return null;
+}
+
+/**
+ * Converts a value to a float.
+ *
+ * This method attempts to convert the given value to a float.
+ * If the conversion is successful, it returns the value as an float.
+ * If the conversion fails, it returns NULL.
+ *
+ * String values are trimmed using trim().
+ *
+ * @param mixed $value The value to be converted to a float.
+ * @return float|null Returns the converted float value or null if the conversion fails.
+ * @since 5.1.0
+ */
+function toFloat(mixed $value): ?float
+{
+    if (is_string($value)) {
+        $value = filter_var($value, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
+
+        return $value === PHP_FLOAT_MIN ? null : $value;
+    }
+    if (is_float($value)) {
+        if (is_nan($value) || is_infinite($value)) {
+            return null;
+        }
+
+        return $value;
+    }
+    if (is_int($value)) {
+        return (float)$value;
+    }
+    if (is_bool($value)) {
+        return (float)$value;
+    }
+
+    return null;
+}
+
+/**
+ * Converts a value to boolean.
+ *
+ *  1 | '1' | 1.0 | true  - values returns as true
+ *  0 | '0' | 0.0 | false - values returns as false
+ *  Other values returns as null.
+ *
+ * @param mixed $value The value to convert to boolean.
+ * @return bool|null Returns true if the value is truthy, false if it's falsy, or NULL otherwise.
+ * @since 5.1.0
+ */
+function toBool(mixed $value): ?bool
+{
+    if ($value === '1' || $value === 1 || $value === 1.0 || $value === true) {
+        return true;
+    }
+    if ($value === '0' || $value === 0 || $value === 0.0 || $value === false) {
+        return false;
+    }
+
+    return null;
 }

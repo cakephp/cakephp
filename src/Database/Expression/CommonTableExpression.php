@@ -115,7 +115,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * Adds one or more fields (arguments) to the CTE.
      *
-     * @param \Cake\Database\Expression\IdentifierExpression|array<\Cake\Database\Expression\IdentifierExpression>|array<string>|string $fields Field names
+     * @param \Cake\Database\Expression\IdentifierExpression|list<string>|array<\Cake\Database\Expression\IdentifierExpression>|string $fields Field names
      * @return $this
      */
     public function field(IdentifierExpression|array|string $fields)

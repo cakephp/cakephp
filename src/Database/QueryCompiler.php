@@ -49,42 +49,33 @@ class QueryCompiler
     /**
      * The list of query clauses to traverse for generating a SELECT statement
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_selectParts = [
         'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
-        'limit', 'offset', 'union', 'epilog',
+        'limit', 'offset', 'union', 'epilog', 'intersect',
     ];
 
     /**
      * The list of query clauses to traverse for generating an UPDATE statement
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_updateParts = ['comment', 'with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_deleteParts = ['comment', 'with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_insertParts = ['comment', 'with', 'insert', 'values', 'epilog'];
-
-    /**
-     * Indicate whether this query dialect supports ordered unions.
-     *
-     * Overridden in subclasses.
-     *
-     * @var bool
-     */
-    protected bool $_orderedUnion = true;
 
     /**
      * Indicate whether aliases in SELECT clause need to be always quoted.
@@ -138,7 +129,7 @@ class QueryCompiler
         return function ($part, $partName) use (&$sql, $query, $binder): void {
             if (
                 $part === null ||
-                (is_array($part) && empty($part)) ||
+                ($part === []) ||
                 ($part instanceof Countable && count($part) === 0)
             ) {
                 return;
@@ -153,7 +144,6 @@ class QueryCompiler
 
                 return;
             }
-
             $sql .= $this->{'_build' . $partName . 'Part'}($part, $query, $binder);
         };
     }
@@ -195,20 +185,23 @@ class QueryCompiler
      */
     protected function _buildSelectPart(array $parts, Query $query, ValueBinder $binder): string
     {
+        $driver = $query->getConnection()->getDriver($query->getConnectionRole());
         $select = 'SELECT%s %s%s';
-        if ($this->_orderedUnion && $query->clause('union')) {
+        if (
+            ($query->clause('union') || $query->clause('intersect')) &&
+            $driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY)
+        ) {
             $select = '(SELECT%s %s%s';
         }
         $distinct = $query->clause('distinct');
         $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $binder);
 
-        $driver = $query->getConnection()->getDriver($query->getConnectionRole());
         $quoteIdentifiers = $driver->isAutoQuotingEnabled() || $this->_quotedSelectAliases;
         $normalized = [];
         $parts = $this->_stringifyExpressions($parts, $binder);
         foreach ($parts as $k => $p) {
             if (!is_numeric($k)) {
-                $p = $p . ' AS ';
+                $p .= ' AS ';
                 if ($quoteIdentifiers) {
                     $p .= $driver->quoteIdentifier($k);
                 } else {
@@ -334,13 +327,70 @@ class QueryCompiler
             if ($part instanceof ExpressionInterface) {
                 $part = $part->sql($binder);
             }
-            if ($part[0] === '(') {
+            if (str_starts_with($part, '(')) {
                 $part = substr($part, 1, -1);
             }
             $set[] = $part;
         }
 
         return ' SET ' . implode('', $set);
+    }
+
+    /**
+     * Builds the SQL string for all the `operation` clauses in this query, when dealing
+     * with query objects it will also transform them using their configured SQL
+     * dialect.
+     *
+     * @param string $operation
+     * @param array $parts
+     * @param \Cake\Database\Query $query
+     * @param \Cake\Database\ValueBinder $binder
+     * @return string
+     */
+    protected function _buildSetOperationPart(
+        string $operation,
+        array $parts,
+        Query $query,
+        ValueBinder $binder
+    ): string {
+        $setOperationsOrderBy = $query
+            ->getConnection()
+            ->getDriver($query->getConnectionRole())
+            ->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY);
+
+        $parts = array_map(function ($p) use ($binder, $setOperationsOrderBy) {
+            /** @var \Cake\Database\Expression\IdentifierExpression $expr */
+            $expr = $p['query'];
+            $p['query'] = $expr->sql($binder);
+            $p['query'] = str_starts_with($p['query'], '(') ? trim($p['query'], '()') : $p['query'];
+            $prefix = $p['all'] ? 'ALL ' : '';
+            if ($setOperationsOrderBy) {
+                return "{$prefix}({$p['query']})";
+            }
+
+            return $prefix . $p['query'];
+        }, $parts);
+
+        if ($setOperationsOrderBy) {
+            return sprintf(")\n$operation %s", implode("\n$operation ", $parts));
+        }
+
+        return sprintf("\n$operation %s", implode("\n$operation ", $parts));
+    }
+
+    /**
+     * Builds the SQL string for all the INTERSECT clauses in this query, when dealing
+     * with query objects it will also transform them using their configured SQL
+     * dialect.
+     *
+     * @param array $parts list of queries to be operated with INTERSECT
+     * @param \Cake\Database\Query $query The query that is being compiled
+     * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
+     * @return string
+     */
+    protected function _buildIntersectPart(array $parts, Query $query, ValueBinder $binder): string
+    {
+        return $this->_buildSetOperationPart('INTERSECT', $parts, $query, $binder);
     }
 
     /**
@@ -355,24 +405,7 @@ class QueryCompiler
      */
     protected function _buildUnionPart(array $parts, Query $query, ValueBinder $binder): string
     {
-        $parts = array_map(function ($p) use ($binder) {
-            /** @var \Cake\Database\Expression\IdentifierExpression $expr */
-            $expr = $p['query'];
-            $p['query'] = $expr->sql($binder);
-            $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
-            $prefix = $p['all'] ? 'ALL ' : '';
-            if ($this->_orderedUnion) {
-                return "{$prefix}({$p['query']})";
-            }
-
-            return $prefix . $p['query'];
-        }, $parts);
-
-        if ($this->_orderedUnion) {
-            return sprintf(")\nUNION %s", implode("\nUNION ", $parts));
-        }
-
-        return sprintf("\nUNION %s", implode("\nUNION ", $parts));
+        return $this->_buildSetOperationPart('UNION', $parts, $query, $binder);
     }
 
     /**

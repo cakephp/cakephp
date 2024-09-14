@@ -20,10 +20,8 @@ use Cake\Database\Driver;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\TupleComparison;
-use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\SqliteSchemaDialect;
-use Cake\Database\SqliteCompiler;
 use Cake\Database\Statement\SqliteStatement;
 use InvalidArgumentException;
 use PDO;
@@ -206,6 +204,9 @@ class Sqlite extends Driver
                 $this->featureVersions[$feature->value],
                 '>='
             ),
+            DriverFeatureEnum::INTERSECT => true,
+            DriverFeatureEnum::INTERSECT_ALL => false,
+            DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => false,
         };
     }
 
@@ -214,19 +215,7 @@ class Sqlite extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if (isset($this->_schemaDialect)) {
-            return $this->_schemaDialect;
-        }
-
-        return $this->_schemaDialect = new SqliteSchemaDialect($this);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function newCompiler(): QueryCompiler
-    {
-        return new SqliteCompiler();
+        return $this->_schemaDialect ?? ($this->_schemaDialect = new SqliteSchemaDialect($this));
     }
 
     /**
@@ -297,7 +286,7 @@ class Sqlite extends Driver
                     ->setConjunction(',')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
-                            $p = ['value' => $p, 'type' => null];
+                            return ['value' => $p, 'type' => null];
                         }
 
                         return $p;
@@ -309,6 +298,9 @@ class Sqlite extends Driver
                     ->setConjunction(' ')
                     ->add(["'%w', " => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Sqlite starts on index 0 but Sunday should be 1
+                break;
+            case 'JSON_VALUE':
+                $expression->setName('JSON_EXTRACT');
                 break;
         }
     }

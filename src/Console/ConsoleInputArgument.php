@@ -56,15 +56,28 @@ class ConsoleInputArgument
     protected array $_choices;
 
     /**
+     * Default value for this argument.
+     *
+     * @var string|null
+     */
+    protected ?string $_default = null;
+
+    /**
      * Make a new Input Argument
      *
      * @param array<string, mixed>|string $name The long name of the option, or an array with all the properties.
      * @param string $help The help text for this option
      * @param bool $required Whether this argument is required. Missing required args will trigger exceptions
      * @param list<string> $choices Valid choices for this option.
+     * @param string|null $default The default value for this argument.
      */
-    public function __construct(array|string $name, string $help = '', bool $required = false, array $choices = [])
-    {
+    public function __construct(
+        array|string $name,
+        string $help = '',
+        bool $required = false,
+        array $choices = [],
+        ?string $default = null
+    ) {
         if (is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {
                 $this->{'_' . $key} = $value;
@@ -75,6 +88,7 @@ class ConsoleInputArgument
             $this->_help = $help;
             $this->_required = $required;
             $this->_choices = $choices;
+            $this->_default = $default;
         }
     }
 
@@ -119,6 +133,9 @@ class ConsoleInputArgument
         if ($this->_choices) {
             $optional .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
         }
+        if ($this->_default !== null) {
+            $optional .= sprintf(' <comment>default: "%s"</comment>', $this->_default);
+        }
 
         return sprintf('%s%s%s', $name, $this->_help, $optional);
     }
@@ -136,10 +153,20 @@ class ConsoleInputArgument
         }
         $name = '<' . $name . '>';
         if (!$this->isRequired()) {
-            $name = '[' . $name . ']';
+            return '[' . $name . ']';
         }
 
         return $name;
+    }
+
+    /**
+     * Get the default value for this argument
+     *
+     * @return string|null
+     */
+    public function defaultValue(): ?string
+    {
+        return $this->_default;
     }
 
     /**
@@ -161,7 +188,7 @@ class ConsoleInputArgument
      */
     public function validChoice(string $value): bool
     {
-        if (empty($this->_choices)) {
+        if ($this->_choices === []) {
             return true;
         }
         if (!in_array($value, $this->_choices, true)) {
@@ -193,6 +220,9 @@ class ConsoleInputArgument
         $choices = $option->addChild('choices');
         foreach ($this->_choices as $valid) {
             $choices->addChild('choice', $valid);
+        }
+        if ($this->_default !== null) {
+            $option->addAttribute('default', $this->_default);
         }
 
         return $parent;

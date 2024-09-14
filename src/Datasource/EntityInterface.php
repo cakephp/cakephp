@@ -42,7 +42,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Gets the hidden fields.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getHidden(): array;
 
@@ -58,7 +58,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getVirtual(): array;
 
@@ -74,7 +74,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Returns an array of original fields.
      * Original fields are those that an entity was initialized with.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getOriginalFields(): array;
 
@@ -99,7 +99,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Gets the dirty fields.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getDirty(): array;
 
@@ -148,7 +148,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Stores whether a field value can be changed or set in this entity.
      *
-     * @param array<string>|string $field single or list of fields to change its accessibility
+     * @param list<string>|string $field single or list of fields to change its accessibility
      * @param bool $set true marks the field as accessible, false will
      * mark it as protected.
      * @return $this
@@ -262,7 +262,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      *
      * The method will return `true` even when the field is set to `null`.
      *
-     * @param array<string>|string $field The field to check.
+     * @param list<string>|string $field The field to check.
      * @return bool
      */
     public function has(array|string $field): bool;
@@ -270,7 +270,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Removes a field or list of fields from this entity
      *
-     * @param array<string>|string $field The field to unset.
+     * @param list<string>|string $field The field to unset.
      * @return $this
      */
     public function unset(array|string $field);
@@ -278,7 +278,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Get the list of visible fields.
      *
-     * @return array<string> A list of fields that are 'visible' in all representations.
+     * @return list<string> A list of fields that are 'visible' in all representations.
      */
     public function getVisible(): array;
 
@@ -288,7 +288,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * *Note* hidden fields are not visible, and will not be output
      * by toArray().
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array;
 

@@ -150,7 +150,7 @@ class MessagesFileLoader
      * Returns the folders where the file should be looked for according to the locale
      * and package name.
      *
-     * @return array<string> The list of folders where the translation file should be looked for
+     * @return list<string> The list of folders where the translation file should be looked for
      */
     public function translationsFolders(): array
     {
@@ -196,7 +196,7 @@ class MessagesFileLoader
         $name = str_replace('/', '_', $name);
 
         foreach ($folders as $folder) {
-            $path = $folder . $name . ".$ext";
+            $path = "{$folder}{$name}.{$ext}";
             if (is_file($path)) {
                 $file = $path;
                 break;

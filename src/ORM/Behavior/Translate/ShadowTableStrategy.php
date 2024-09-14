@@ -105,6 +105,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $config = $this->getConfig();
 
         $targetAlias = $this->translationTable->getAlias();
+
+        if ($this->table->associations()->has($targetAlias)) {
+            $this->table->associations()->remove($targetAlias);
+        }
+
         $this->table->hasMany($targetAlias, [
             'className' => $config['translationTable'],
             'foreignKey' => 'id',
@@ -184,6 +189,10 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             $joinType = $config['onlyTranslated'] ? 'INNER' : 'LEFT';
         }
 
+        if ($this->table->associations()->has($config['hasOneAlias'])) {
+            $this->table->associations()->remove($config['hasOneAlias']);
+        }
+
         $this->table->hasOne($config['hasOneAlias'], [
             'foreignKey' => ['id'],
             'joinType' => $joinType,
@@ -225,7 +234,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $alias = $config['mainTableAlias'];
         $joinRequired = false;
         foreach ($this->translatedFields() as $field) {
-            if (array_intersect($select, [$field, "$alias.$field"])) {
+            if (array_intersect($select, [$field, "{$alias}.{$field}"])) {
                 $joinRequired = true;
                 $query->select($query->aliasField($field, $config['hasOneAlias']));
             }
@@ -272,9 +281,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
                 if (in_array($field, $fields, true)) {
                     $joinRequired = true;
-                    $field = "$alias.$field";
+                    $field = "{$alias}.{$field}";
                 } elseif (in_array($field, $mainTableFields, true)) {
-                    $field = "$mainTableAlias.$field";
+                    $field = "{$mainTableAlias}.{$field}";
                 }
 
                 return $c;
@@ -322,13 +331,13 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
                 if (in_array($field, $fields, true)) {
                     $joinRequired = true;
-                    $expression->setField("$alias.$field");
+                    $expression->setField("{$alias}.{$field}");
 
                     return;
                 }
 
                 if (in_array($field, $mainTableFields, true)) {
-                    $expression->setField("$mainTableAlias.$field");
+                    $expression->setField("{$mainTableAlias}.{$field}");
                 }
             }
         );
@@ -370,7 +379,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $values = $entity->extract($this->translatedFields(), true);
         $fields = array_keys($values);
-        $noFields = empty($fields);
+        $noFields = $fields === [];
 
         // If there are no fields and no bundled translations, or both fields
         // in the default locale and bundled translations we can
@@ -513,14 +522,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                     continue;
                 }
 
-                if ($translation[$field] !== null) {
-                    if ($allowEmpty || $translation[$field] !== '') {
-                        $row[$field] = $translation[$field];
-
-                        if ($hydrated) {
-                            /** @var \Cake\Datasource\EntityInterface $row */
-                            $row->setDirty($field, false);
-                        }
+                if ($translation[$field] !== null && ($allowEmpty || $translation[$field] !== '')) {
+                    $row[$field] = $translation[$field];
+                    if ($hydrated) {
+                        /** @var \Cake\Datasource\EntityInterface $row */
+                        $row->setDirty($field, false);
                     }
                 }
             }
@@ -607,10 +613,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the main table fields.
      *
-     * @return array<string>
+     * @return list<string>
      */
     protected function mainFields(): array
     {
+        /** @var list<string> $fields */
         $fields = $this->getConfig('mainTableFields');
 
         if ($fields) {
@@ -627,7 +634,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the translation table fields.
      *
-     * @return array<string>
+     * @return list<string>
      */
     protected function translatedFields(): array
     {

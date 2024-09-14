@@ -32,11 +32,19 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Cake\Validation\Validator;
+use Cake\View\Form\ArrayContext;
+use Cake\View\Form\ContextInterface;
 use Cake\View\Form\EntityContext;
+use Cake\View\Form\FormContext;
+use Cake\View\Form\NullContext;
 use Cake\View\Helper\FormHelper;
 use Cake\View\View;
+use Cake\View\Widget\LabelWidget;
+use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
+use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
@@ -58,7 +66,7 @@ class FormHelperTest extends TestCase
     /**
      * Fixtures to be used
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Comments'];
 
@@ -160,12 +168,12 @@ class FormHelperTest extends TestCase
     {
         $config = [
             'widgets' => [
-                'datetime' => ['Cake\View\Widget\LabelWidget', 'select'],
+                'datetime' => [LabelWidget::class, 'select'],
             ],
         ];
         $helper = new FormHelper($this->View, $config);
         $locator = $helper->getWidgetLocator();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('datetime'));
+        $this->assertInstanceOf(LabelWidget::class, $locator->get('datetime'));
     }
 
     /**
@@ -176,7 +184,7 @@ class FormHelperTest extends TestCase
     {
         $helper = new FormHelper($this->View, ['widgets' => ['test_widgets']]);
         $locator = $helper->getWidgetLocator();
-        $this->assertInstanceOf('Cake\View\Widget\LabelWidget', $locator->get('text'));
+        $this->assertInstanceOf(LabelWidget::class, $locator->get('text'));
     }
 
     /**
@@ -210,15 +218,13 @@ class FormHelperTest extends TestCase
      */
     public function testAddWidgetAndRenderWidget(): void
     {
-        $data = [
-            'val' => 1,
-        ];
-        $mock = $this->getMockBuilder('Cake\View\Widget\WidgetInterface')->getMock();
-        $this->Form->addWidget('test', $mock);
-        $mock->expects($this->once())
-            ->method('render')
-            ->with($data)
-            ->willReturn('HTML');
+        $data = ['val' => 1];
+        $widget = Mockery::mock(WidgetInterface::class);
+        $widget->shouldReceive('render')
+            ->withSomeOfArgs($data)
+            ->once()
+            ->andReturn('HTML');
+        $this->Form->addWidget('test', $widget);
         $result = $this->Form->widget('test', $data);
         $this->assertSame('HTML', $result);
     }
@@ -233,25 +239,19 @@ class FormHelperTest extends TestCase
             'unlockedFields' => [],
         ]));
 
-        $data = [
-            'val' => 1,
-            'name' => 'test',
-        ];
-        $mock = $this->getMockBuilder('Cake\View\Widget\WidgetInterface')->getMock();
-        $this->Form->addWidget('test', $mock);
-
-        $mock->expects($this->once())
-            ->method('render')
+        $data = ['val' => 1, 'name' => 'test'];
+        $widget = Mockery::mock(WidgetInterface::class);
+        $widget->shouldReceive('render')
+            ->withSomeOfArgs($data)
+            ->once()
+            ->andReturn('HTML');
+        $widget->shouldReceive('secureFields')
             ->with($data)
-            ->willReturn('HTML');
-
-        $mock->expects($this->once())
-            ->method('secureFields')
-            ->with($data)
-            ->willReturn(['test']);
-
+            ->once()
+            ->andReturn(['test']);
+        $this->Form->addWidget('test', $widget);
         $this->Form->create();
-        $result = $this->Form->widget('test', $data + ['secure' => true]);
+        $result = $this->Form->widget('test', ['val' => 1, 'name' => 'test', 'secure' => true]);
         $this->assertSame('HTML', $result);
     }
 
@@ -281,9 +281,9 @@ class FormHelperTest extends TestCase
     public function testAddContextProvider(): void
     {
         $context = 'My data';
-        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $stub = new StubContext();
         $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
-            $this->assertInstanceOf('Cake\Http\ServerRequest', $request);
+            $this->assertInstanceOf(ServerRequest::class, $request);
             $this->assertSame($context, $data['entity']);
 
             return $stub;
@@ -299,7 +299,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderReplace(): void
     {
         $entity = new Article();
-        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $stub = new StubContext();
         $this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
             return $stub;
         });
@@ -314,7 +314,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderAdd(): void
     {
         $entity = new Article();
-        $stub = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
+        $stub = new StubContext();
         $this->Form->addContextProvider('newshiny', function ($request, $data) use ($stub) {
             if ($data['entity'] instanceof Entity) {
                 return $stub;
@@ -344,12 +344,12 @@ class FormHelperTest extends TestCase
         $custom = new StubContext();
 
         return [
-            'entity' => [$entity, 'Cake\View\Form\EntityContext'],
-            'collection' => [$collection, 'Cake\View\Form\EntityContext'],
-            'empty_collection' => [$emptyCollection, 'Cake\View\Form\NullContext'],
-            'array' => [$data, 'Cake\View\Form\ArrayContext'],
-            'form' => [$form, 'Cake\View\Form\FormContext'],
-            'none' => [null, 'Cake\View\Form\NullContext'],
+            'entity' => [$entity, EntityContext::class],
+            'collection' => [$collection, EntityContext::class],
+            'empty_collection' => [$emptyCollection, NullContext::class],
+            'array' => [$data, ArrayContext::class],
+            'form' => [$form, FormContext::class],
+            'none' => [null, NullContext::class],
             'custom' => [$custom, $custom::class],
         ];
     }
@@ -357,9 +357,9 @@ class FormHelperTest extends TestCase
     /**
      * Test default context selection in create()
      *
-     * @dataProvider contextSelectionProvider
      * @param mixed $data
      */
+    #[DataProvider('contextSelectionProvider')]
     public function testCreateContextSelectionBuiltIn($data, string $class): void
     {
         $this->Form->create($data);
@@ -508,7 +508,6 @@ class FormHelperTest extends TestCase
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
-                'aria-required' => 'true',
             ],
             '/div',
         ];
@@ -597,9 +596,8 @@ class FormHelperTest extends TestCase
 
     /**
      * test the create() method
-     *
-     * @dataProvider requestTypeProvider
      */
+    #[DataProvider('requestTypeProvider')]
     public function testCreateTypeOptions(string $type, string $method, string $override): void
     {
         $encoding = strtolower(Configure::read('App.encoding'));
@@ -2581,7 +2579,6 @@ class FormHelperTest extends TestCase
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
                 'oninput' => 'this.setCustomValidity(&#039;&#039;)',
-                'aria-required' => 'true',
                 'aria-invalid' => 'true',
                 'aria-describedby' => 'title-error',
             ],
@@ -2604,7 +2601,6 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'name' => 'title',
                 'id' => 'title',
-                'aria-required' => 'true',
                 'aria-invalid' => 'true',
                 'aria-describedby' => 'title-error',
                 'class' => 'form-error',
@@ -6425,7 +6421,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'type' => 'text',
                 'required' => 'required',
                 'placeholder' => 'Add title',
@@ -6452,7 +6447,6 @@ class FormHelperTest extends TestCase
         $expected = [
             'div' => ['class' => 'input text required'],
             'input' => [
-                'aria-required' => 'true',
                 'type' => 'text',
                 'required' => 'required',
                 'id' => 'title',
@@ -7467,9 +7461,8 @@ class FormHelperTest extends TestCase
      * testDateTimeWithFractional method
      *
      * Test that datetime() works with datetimefractional.
-     *
-     * @dataProvider fractionalTypeProvider
      */
+    #[DataProvider('fractionalTypeProvider')]
     public function testDateTimeWithFractional(string $type): void
     {
         $this->Form->create([
@@ -7496,9 +7489,8 @@ class FormHelperTest extends TestCase
      * testControlWithFractional method
      *
      * Test that control() works with datetimefractional.
-     *
-     * @dataProvider fractionalTypeProvider
      */
+    #[DataProvider('fractionalTypeProvider')]
     public function testControlWithFractional(string $type): void
     {
         $this->Form->create([
@@ -7761,7 +7753,6 @@ class FormHelperTest extends TestCase
                 '/label',
                 'textarea' => [
                     'name',
-                    'aria-required' => 'true',
                     'required' => 'required',
                     'id' => '0-comments-1-comment',
                     'rows' => 5,
@@ -7868,7 +7859,6 @@ class FormHelperTest extends TestCase
             'Password',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'password',
                 'name' => 'password',
                 'type' => 'password',
@@ -7887,7 +7877,6 @@ class FormHelperTest extends TestCase
             'Phone',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'phone',
                 'name' => 'phone',
                 'type' => 'tel',
@@ -7907,7 +7896,6 @@ class FormHelperTest extends TestCase
             'Email',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'email',
                 'name' => 'email',
                 'type' => 'email',
@@ -7927,7 +7915,6 @@ class FormHelperTest extends TestCase
             'label' => ['for' => 'accept-tos'],
             [
                 'input' => [
-                    'aria-required' => 'true',
                     'required' => 'required',
                     'type' => 'checkbox',
                     'name' => 'accept_tos',
@@ -7974,7 +7961,6 @@ class FormHelperTest extends TestCase
             'Password',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'password',
                 'name' => 'password',
                 'type' => 'password',
@@ -7991,7 +7977,6 @@ class FormHelperTest extends TestCase
             'Phone',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'phone',
                 'name' => 'phone',
                 'type' => 'tel',
@@ -8013,7 +7998,6 @@ class FormHelperTest extends TestCase
             'Email',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id' => 'email',
                 'name' => 'email',
                 'type' => 'email',
@@ -8052,7 +8036,6 @@ class FormHelperTest extends TestCase
                 'type' => 'text',
                 'name' => 'title',
                 'id' => 'title',
-                'aria-required' => 'true',
                 'required' => 'required',
                 'data-validity-message' => 'This field cannot be left empty',
                 'oninvalid' => 'this.setCustomValidity(&#039;&#039;); if (!this.value) this.setCustomValidity(this.dataset.validityMessage)',
@@ -8247,11 +8230,11 @@ class FormHelperTest extends TestCase
     public function testContext(): void
     {
         $result = $this->Form->context();
-        $this->assertInstanceOf('Cake\View\Form\ContextInterface', $result);
+        $this->assertInstanceOf(ContextInterface::class, $result);
 
-        $mock = $this->getMockBuilder('Cake\View\Form\ContextInterface')->getMock();
-        $this->assertSame($mock, $this->Form->context($mock));
-        $this->assertSame($mock, $this->Form->context());
+        $stub = new StubContext();
+        $this->assertSame($stub, $this->Form->context($stub));
+        $this->assertSame($stub, $this->Form->context());
     }
 
     /**
@@ -8929,7 +8912,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -8974,7 +8956,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -9011,7 +8992,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -9048,7 +9028,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -9091,7 +9070,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
@@ -9126,7 +9104,6 @@ class FormHelperTest extends TestCase
             'Title',
             '/label',
             'input' => [
-                'aria-required' => 'true',
                 'id',
                 'name' => 'title',
                 'type' => 'text',
