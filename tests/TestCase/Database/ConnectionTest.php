@@ -20,7 +20,6 @@ use Cake\Cache\Engine\NullEngine;
 use Cake\Core\App;
 use Cake\Database\Connection;
 use Cake\Database\Driver;
-use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\MissingDriverException;
@@ -32,6 +31,7 @@ use Cake\Database\Schema\Collection;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
+use Cake\Test\TestCase\Database\Driver\BaseDriverTrait;
 use Cake\TestSuite\TestCase;
 use DateTime;
 use Error;
@@ -43,6 +43,7 @@ use ReflectionMethod;
 use ReflectionProperty;
 use TestApp\Database\Driver\DisabledDriver;
 use TestApp\Database\Driver\RetryDriver;
+use TestApp\Database\Driver\StubDriver;
 use TestApp\Database\Driver\TestDriver;
 use TestPlugin\Database\Driver\TestDriver as PluginTestDriver;
 use function Cake\Core\namespaceSplit;
@@ -109,16 +110,13 @@ class ConnectionTest extends TestCase
      * Auxiliary method to build a mock for a driver so it can be injected into
      * the connection object
      *
-     * @return \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
+     * @return \Cake\Database\Driver
      */
-    public function getMockFormDriver()
+    public function getDriver(): Driver
     {
-        $driver = $this->getMockBuilder(Driver::class)->getMock();
-        $driver->expects($this->once())
-            ->method('enabled')
-            ->willReturn(true);
-
-        return $driver;
+        return new class extends Driver {
+            use BaseDriverTrait;
+        };
     }
 
     /**
@@ -156,15 +154,17 @@ class ConnectionTest extends TestCase
     public function testDisabledDriver(): void
     {
         $this->expectException(MissingExtensionException::class);
-        $this->expectExceptionMessage(
-            'Database driver `DriverMock` cannot be used due to a missing PHP extension or unmet dependency. ' .
-            'Requested by connection `custom_connection_name`'
+        $this->expectExceptionMessageMatches(
+            '/Database driver `.+` cannot be used due to a missing PHP extension or unmet dependency\. ' .
+            'Requested by connection `custom_connection_name`/'
         );
-        $mock = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['enabled'])
-            ->setMockClassName('DriverMock')
-            ->getMock();
-        new Connection(['driver' => $mock, 'name' => 'custom_connection_name']);
+        $driver = new class extends StubDriver {
+            public function enabled(): bool
+            {
+                return false;
+            }
+        };
+        new Connection(['driver' => $driver, 'name' => 'custom_connection_name']);
     }
 
     /**
@@ -653,7 +653,7 @@ class ConnectionTest extends TestCase
      */
     public function testDestructorWithUncommittedTransaction(): void
     {
-        $driver = $this->getMockFormDriver();
+        $driver = $this->getDriver();
         $connection = new Connection(['driver' => $driver]);
         $connection->begin();
         $this->assertTrue($connection->inTransaction());
@@ -871,19 +871,31 @@ class ConnectionTest extends TestCase
      */
     public function testTransactionalSuccess(): void
     {
-        $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['commit', 'begin'])
-            ->setConstructorArgs([['driver' => $driver]])
-            ->getMock();
-        $connection->expects($this->once())->method('begin');
-        $connection->expects($this->once())->method('commit');
+        $driver = $this->getDriver();
+        $connection = new class (['driver' => $driver]) extends Connection {
+            public bool $beginIsCalled = false;
+            public bool $commitIsCalled = false;
+
+            public function begin(): void
+            {
+                $this->beginIsCalled = true;
+            }
+
+            public function commit(): bool
+            {
+                $this->commitIsCalled = true;
+
+                return true;
+            }
+        };
         $result = $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
 
             return 'thing';
         });
         $this->assertSame('thing', $result);
+        $this->assertTrue($connection->beginIsCalled);
+        $this->assertTrue($connection->commitIsCalled);
     }
 
     /**
@@ -892,20 +904,36 @@ class ConnectionTest extends TestCase
      */
     public function testTransactionalFail(): void
     {
-        $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['commit', 'begin', 'rollback'])
-            ->setConstructorArgs([['driver' => $driver]])
-            ->getMock();
-        $connection->expects($this->once())->method('begin');
-        $connection->expects($this->once())->method('rollback');
-        $connection->expects($this->never())->method('commit');
+        $driver = $this->getDriver();
+        $connection = new class (['driver' => $driver]) extends Connection {
+            public bool $beginIsCalled = false;
+            public bool $rollbackIsCalled = false;
+
+            public function commit(): bool
+            {
+                throw new Exception('Should not be called');
+            }
+
+            public function begin(): void
+            {
+                $this->beginIsCalled = true;
+            }
+
+            public function rollback(?bool $toBeginning = null): bool
+            {
+                $this->rollbackIsCalled = true;
+
+                return true;
+            }
+        };
         $result = $connection->transactional(function ($conn) use ($connection) {
             $this->assertSame($connection, $conn);
 
             return false;
         });
         $this->assertFalse($result);
+        $this->assertTrue($connection->beginIsCalled);
+        $this->assertTrue($connection->rollbackIsCalled);
     }
 
     /**
@@ -917,18 +945,34 @@ class ConnectionTest extends TestCase
     public function testTransactionalWithException(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $driver = $this->getMockFormDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->onlyMethods(['commit', 'begin', 'rollback'])
-            ->setConstructorArgs([['driver' => $driver]])
-            ->getMock();
-        $connection->expects($this->once())->method('begin');
-        $connection->expects($this->once())->method('rollback');
-        $connection->expects($this->never())->method('commit');
+        $driver = $this->getDriver();
+        $connection = new class (['driver' => $driver]) extends Connection {
+            public bool $beginIsCalled = false;
+            public bool $rollbackIsCalled = false;
+
+            public function commit(): bool
+            {
+                throw new Exception('Should not be called');
+            }
+
+            public function begin(): void
+            {
+                $this->beginIsCalled = true;
+            }
+
+            public function rollback(?bool $toBeginning = null): bool
+            {
+                $this->rollbackIsCalled = true;
+
+                return true;
+            }
+        };
         $connection->transactional(function ($conn) use ($connection): void {
             $this->assertSame($connection, $conn);
             throw new InvalidArgumentException();
         });
+        $this->assertTrue($connection->beginIsCalled);
+        $this->assertTrue($connection->rollbackIsCalled);
     }
 
     /**
@@ -936,15 +980,14 @@ class ConnectionTest extends TestCase
      */
     public function testSetSchemaCollection(): void
     {
-        $driver = $this->getMockFormDriver();
+        $driver = $this->getDriver();
         $connection = new Connection(['driver' => $driver]);
 
         $schema = $connection->getSchemaCollection();
         $this->assertInstanceOf(Collection::class, $schema);
 
-        $schema = $this->getMockBuilder(Collection::class)
-            ->setConstructorArgs([$connection])
-            ->getMock();
+        $schema = new class ($connection) extends Collection {
+        };
         $connection->setSchemaCollection($schema);
         $this->assertSame($schema, $connection->getSchemaCollection());
     }
@@ -954,7 +997,7 @@ class ConnectionTest extends TestCase
      */
     public function testGetCachedCollection(): void
     {
-        $driver = $this->getMockFormDriver();
+        $driver = $this->getDriver();
 
         $connection = new Connection([
             'driver' => $driver,
@@ -966,7 +1009,7 @@ class ConnectionTest extends TestCase
         $this->assertInstanceOf(CachedCollection::class, $schema);
         $this->assertSame('default_key', $schema->cacheKey('key'));
 
-        $driver = $this->getMockFormDriver();
+        $driver = $this->getDriver();
         $connection = new Connection([
             'driver' => $driver,
             'name' => 'default',

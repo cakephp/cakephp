@@ -35,7 +35,6 @@ use InvalidArgumentException;
 use LogicException;
 use NoRewindIterator;
 use PHPUnit\Framework\Attributes\DataProvider;
-use stdClass;
 use TestApp\Collection\CountableIterator;
 use TestApp\Collection\TestCollection;
 use TestApp\Model\Enum\ArticleStatus;
@@ -666,6 +665,30 @@ class CollectionTest extends TestCase
         $grouped = $collection->groupBy(function ($element) {
             return $element['parent_id'];
         });
+        $this->assertEquals($expected, iterator_to_array($grouped));
+    }
+
+    public function testGroupByPreserveIndex(): void
+    {
+        $items = [
+            'first' => ['name' => 'foo', 'type' => 'a'],
+            'second' => ['name' => 'bar', 'type' => 'b'],
+            'third' => ['name' => 'baz', 'type' => 'b'],
+            'fourth' => ['name' => 'aah', 'type' => 'a'],
+        ];
+
+        $collection = new Collection($items);
+        $grouped = $collection->groupBy('type', true);
+        $expected = [
+            'a' => [
+                'first' => ['name' => 'foo', 'type' => 'a'],
+                'fourth' => ['name' => 'aah', 'type' => 'a'],
+            ],
+            'b' => [
+                'second' => ['name' => 'bar', 'type' => 'b'],
+                'third' => ['name' => 'baz', 'type' => 'b'],
+            ],
+        ];
         $this->assertEquals($expected, iterator_to_array($grouped));
     }
 
@@ -2728,17 +2751,14 @@ class CollectionTest extends TestCase
     {
         $items = ['a' => 1, 'b' => 2, 'c' => 3];
         $collection = (new Collection($items))->lazy();
-        $callable = $this->getMockBuilder(stdMock::class)
-            ->getMock();
+        $callable = new class {
+            public function __invoke(): never
+            {
+                throw new Exception('This should not be called');
+            }
+        };
 
-        $callable->expects($this->never())->method('__invoke');
         $collection->filter($callable)->filter($callable);
+        $this->assertTrue(true);
     }
 }
-
-// phpcs:disable
-class stdMock extends stdClass
-{
-    public function __invoke() {}
-}
-// phpcs:enable

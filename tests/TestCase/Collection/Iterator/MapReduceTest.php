@@ -67,6 +67,32 @@ class MapReduceTest extends TestCase
         $this->assertEquals($expected, iterator_to_array($results));
     }
 
+    public function testSpecifyingKeyWhenEmittingIntermediate(): void
+    {
+        $data = [
+            'document_1' => 'one two three',
+            'document_2' => 'one three',
+            'document_3' => 'two four',
+        ];
+        $mapper = function ($row, $document, $mr): void {
+            $words = array_map('strtolower', explode(' ', $row));
+            foreach ($words as $word) {
+                $mr->emitIntermediate($document, $word, $document);
+            }
+        };
+        $reducer = function ($documents, $word, $mr): void {
+            $mr->emit(array_unique($documents), $word);
+        };
+        $results = new MapReduce(new ArrayIterator($data), $mapper, $reducer);
+        $expected = [
+            'one' => ['document_1' => 'document_1', 'document_2' => 'document_2'],
+            'two' => ['document_1' => 'document_1', 'document_3' => 'document_3'],
+            'three' => ['document_1' => 'document_1', 'document_2' => 'document_2'],
+            'four' => ['document_3' => 'document_3'],
+        ];
+        $this->assertEquals($expected, iterator_to_array($results));
+    }
+
     /**
      * Tests that it is possible to use the emit function directly in the mapper
      */

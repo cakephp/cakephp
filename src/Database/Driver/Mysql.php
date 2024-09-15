@@ -101,11 +101,17 @@ class Mysql extends Driver
             'json' => '5.7.0',
             'cte' => '8.0.0',
             'window' => '8.0.0',
+            'intersect' => '8.0.31',
+            'intersect-all' => '8.0.31',
+            'set-operations-order-by' => '8.0.31',
         ],
         'mariadb' => [
             'json' => '10.2.7',
             'cte' => '10.2.1',
             'window' => '10.2.0',
+            'intersect' => '10.3.0',
+            'intersect-all' => '10.5.0',
+            'set-operations-order-by' => '10.3.0',
         ],
     ];
 
@@ -231,6 +237,14 @@ class Mysql extends Driver
      */
     public function supports(DriverFeatureEnum $feature): bool
     {
+        $versionCompare = function () use ($feature) {
+            return version_compare(
+                $this->version(),
+                $this->featureVersions[$this->serverType][$feature->value],
+                '>='
+            );
+        };
+
         return match ($feature) {
             DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION,
             DriverFeatureEnum::SAVEPOINT => true,
@@ -239,11 +253,10 @@ class Mysql extends Driver
 
             DriverFeatureEnum::CTE,
             DriverFeatureEnum::JSON,
-            DriverFeatureEnum::WINDOW => version_compare(
-                $this->version(),
-                $this->featureVersions[$this->serverType][$feature->value],
-                '>='
-            ),
+            DriverFeatureEnum::WINDOW => $versionCompare(),
+            DriverFeatureEnum::INTERSECT => $versionCompare(),
+            DriverFeatureEnum::INTERSECT_ALL => $versionCompare(),
+            DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => $versionCompare(),
         };
     }
 
@@ -272,6 +285,7 @@ class Mysql extends Driver
             if (str_contains($this->_version, 'MariaDB')) {
                 $this->serverType = static::SERVER_TYPE_MARIADB;
                 preg_match('/^(?:5\.5\.5-)?(\d+\.\d+\.\d+.*-MariaDB[^:]*)/', $this->_version, $matches);
+                /** @phpstan-ignore-next-line */
                 $this->_version = $matches[1];
             }
         }

@@ -290,7 +290,7 @@ class EagerLoader
      */
     public function normalized(Table $repository): array
     {
-        if ($this->_normalized !== null || empty($this->_containments)) {
+        if ($this->_normalized !== null || $this->_containments === []) {
             return (array)$this->_normalized;
         }
 
@@ -419,7 +419,7 @@ class EagerLoader
 
             $newAttachable = $this->attachableAssociations($repository);
             $attachable = array_diff_key($newAttachable, $processed);
-        } while (!empty($attachable));
+        } while ($attachable !== []);
     }
 
     /**
@@ -692,7 +692,7 @@ class EagerLoader
     {
         $map = [];
 
-        if (!$this->getMatching() && !$this->getContain() && empty($this->_joinsMap)) {
+        if (!$this->getMatching() && !$this->getContain() && $this->_joinsMap === []) {
             return $map;
         }
 

@@ -19,11 +19,14 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View;
 
 use Cake\Core\Configure;
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\View\Helper;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
+use Exception;
 use TestApp\View\Helper\TestHelper;
 use TestPlugin\View\Helper\OtherHelperHelper;
 
@@ -94,14 +97,17 @@ class HelperTest extends TestCase
      */
     public function testThatHelperHelpersAreNotAttached(): void
     {
-        $events = $this->getMockBuilder(EventManager::class)->getMock();
-        $this->View->setEventManager($events);
+        $eventsManager = new class extends EventManager
+        {
+            public function on(string|EventListenerInterface $eventKey, callable|array $options = [], ?callable $callable = null)
+            {
+                throw new Exception('Should not be called');
+            }
+        };
+        $this->View->setEventManager($eventsManager);
 
-        $events->expects($this->never())
-            ->method('on');
-
-        $Helper = new TestHelper($this->View);
-        $Helper->OtherHelper;
+        $helper = new TestHelper($this->View);
+        $this->assertInstanceOf(Helper::class, $helper->OtherHelper);
     }
 
     /**

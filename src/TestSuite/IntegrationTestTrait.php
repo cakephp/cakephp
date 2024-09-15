@@ -271,7 +271,7 @@ trait IntegrationTestTrait
     }
 
     /**
-     * Configures the data for the *next* request.
+     * Configures the data for the *next* request merging with existing state.
      *
      * This data is cleared in the tearDown() method.
      *
@@ -285,6 +285,17 @@ trait IntegrationTestTrait
     public function configRequest(array $data): void
     {
         $this->_request = array_merge_recursive($data, $this->_request);
+    }
+
+    /**
+     * Configures the data for the *next* request replacing existing state.
+     *
+     * @param array $data The request data to use.
+     * @return void
+     */
+    public function replaceRequest(array $data): void
+    {
+        $this->_request = $data;
     }
 
     /**
@@ -695,7 +706,7 @@ trait IntegrationTestTrait
         ) {
             $props['input'] = http_build_query($data);
         } else {
-            if ($method !== 'GET' || !empty($data)) {
+            if ($method !== 'GET' || $data !== []) {
                 $data = $this->_addTokens($tokenUrl, $data, $method);
             }
             $props['post'] = $this->_castToString($data);

@@ -21,27 +21,23 @@ class MailerSendActionTest extends TestCase
 {
     public function testSendAction(): void
     {
-        $mailer = $this->getMockBuilder(SendActionMailer::class)
-            ->onlyMethods(['deliver', 'test'])
-            ->getMock();
-        $mailer->expects($this->once())
-            ->method('test')
-            ->with('foo', 'bar');
-        $mailer->expects($this->any())
-            ->method('deliver')
-            ->willReturn([]);
+        $mailer = new class extends Mailer {
+            public bool $testIsCalled = false;
+
+            public function test($to, $subject)
+            {
+                $this->testIsCalled = true;
+            }
+
+            public function deliver(string $content = ''): array
+            {
+                return [];
+            }
+        };
 
         $mailer->send('test', ['foo', 'bar']);
 
         $this->assertNull($mailer->viewBuilder()->getTemplate());
+        $this->assertTrue($mailer->testIsCalled);
     }
 }
-
-// phpcs:disable
-class SendActionMailer extends Mailer
-{
-    public function test($to, $subject)
-    {
-    }
-}
-// phpcs:enable

@@ -16,16 +16,23 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Core;
 
 use Cake\Console\CommandCollection;
+use Cake\Console\CommandRunner;
+use Cake\Console\ConsoleIo;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
+use Cake\Event\EventManagerInterface;
+use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
+use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\TestPluginThreePlugin;
+use Mockery;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use TestPlugin\Plugin as TestPlugin;
 
@@ -113,7 +120,9 @@ class BasePluginTest extends TestCase
 
     public function testBootstrap(): void
     {
-        $app = $this->createMock(PluginApplicationInterface::class);
+        $app = new class implements PluginApplicationInterface {
+            use BasePluginApplicationTrait;
+        };
         $plugin = new TestPlugin();
 
         $this->assertFalse(Configure::check('PluginTest.test_plugin.bootstrap'));
@@ -126,7 +135,9 @@ class BasePluginTest extends TestCase
      */
     public function testBootstrapSkipMissingFile(): void
     {
-        $app = $this->createMock(PluginApplicationInterface::class);
+        $app = new class implements PluginApplicationInterface {
+            use BasePluginApplicationTrait;
+        };
         $plugin = new BasePlugin();
         $plugin->bootstrap($app);
         $this->assertTrue(true);
@@ -189,5 +200,76 @@ class BasePluginTest extends TestCase
         $this->assertSame($expected . 'config' . DS, $plugin->getConfigPath());
         $this->assertSame($expected . 'src' . DS, $plugin->getClassPath());
         $this->assertSame($expected . 'templates' . DS, $plugin->getTemplatePath());
+    }
+
+    public function testEventsAreRegistered(): void
+    {
+        static::setAppNamespace();
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/cakes']);
+        $request = $request->withAttribute('params', [
+            'controller' => 'Cakes',
+            'action' => 'index',
+            'plugin' => null,
+            'pass' => [],
+        ]);
+
+        $basePlugin = new class extends BasePlugin
+        {
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                $eventManager->on('testTrue', function ($event) {
+                    return true;
+                });
+
+                return $eventManager;
+            }
+        };
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $app = $app->addPlugin($basePlugin);
+        $app->handle($request);
+        $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
+    }
+
+    public function testConsoleEventsAreRegistered(): void
+    {
+        static::setAppNamespace();
+        $basePlugin = new class extends BasePlugin
+        {
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                $eventManager->on('testTrue', function ($event) {
+                    return true;
+                });
+
+                return $eventManager;
+            }
+        };
+
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function routes(RouteBuilder $routes): void
+            {
+            }
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+        $app = $app->addPlugin($basePlugin);
+        $output = new StubConsoleOutput();
+        $consoleIo = Mockery::mock(ConsoleIo::class, [$output, $output, null, null])
+            ->shouldAllowMockingMethod('in')
+            ->makePartial();
+        $runner = new CommandRunner($app);
+        $runner->run(['cake', 'version'], $consoleIo);
+        $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
 }

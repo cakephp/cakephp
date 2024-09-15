@@ -16,6 +16,7 @@ namespace TestApp\Model\Table;
 
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
+use Cake\Utility\Text;
 
 /**
  * Article table class
@@ -67,6 +68,15 @@ class ArticlesTable extends Table
         }
 
         return $query;
+    }
+
+    public function findSlugged(SelectQuery $query): SelectQuery
+    {
+        return $query->formatResults(function ($results) {
+            return $results->indexBy(function ($row) {
+                return Text::slug($row['title']);
+            });
+        });
     }
 
     /**

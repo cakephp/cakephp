@@ -25,7 +25,7 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/core": "^5.0",
+        "cakephp/core": "^5.1",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
     "suggest": {
@@ -39,9 +39,8 @@
         }
     },
     "require-dev": {
-        "cakephp/cache": "^5.0",
-        "cakephp/collection": "^5.0",
-        "cakephp/utility": "^5.0",
-        "phpstan/phpstan": "^1.10"
+        "cakephp/cache": "^5.1",
+        "cakephp/collection": "^5.1",
+        "cakephp/utility": "^5.1"
     }
 }

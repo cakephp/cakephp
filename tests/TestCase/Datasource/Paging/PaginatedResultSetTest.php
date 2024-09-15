@@ -17,9 +17,12 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource\Paging;
 
 use ArrayIterator;
+use Cake\Collection\Collection;
 use Cake\Datasource\Paging\PaginatedResultSet;
 use Cake\Datasource\ResultSetInterface;
+use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use function Cake\Collection\collection;
 
@@ -27,23 +30,32 @@ class PaginatedResultSetTest extends TestCase
 {
     public function testItems(): void
     {
+        $resultSet = new class ([]) extends ResultSet {
+        };
         $paginatedResults = new PaginatedResultSet(
-            $this->getMockBuilder(ResultSetInterface::class)->getMock(),
+            $resultSet,
             []
         );
 
         $this->assertInstanceOf(ResultSetInterface::class, $paginatedResults->items());
     }
 
+    public function testToArray(): void
+    {
+        $paginatedResults = new PaginatedResultSet(new Collection([1, 2, 3]), []);
+
+        $out = $paginatedResults->toArray();
+        $this->assertSame([1, 2, 3], $out);
+    }
+
     #[WithoutErrorHandler]
     public function testCall(): void
     {
-        $resultSet = $this->getMockBuilder(ResultSetInterface::class)->getMock();
-        $resultSet
-            ->expects($this->once())
-            ->method('extract')
+        $resultSet = Mockery::mock(ResultSet::class);
+        $resultSet->shouldReceive('extract')
             ->with('foo')
-            ->willReturn(collection(['bar']));
+            ->once()
+            ->andReturn(collection(['bar']));
 
         $paginatedResults = new PaginatedResultSet(
             $resultSet,

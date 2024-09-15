@@ -20,6 +20,7 @@ use Cake\Form\Form;
 use Cake\Form\Schema;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
+use Exception;
 use TestApp\Form\AppForm;
 use TestApp\Form\FormSchema;
 
@@ -164,16 +165,18 @@ class FormTest extends TestCase
      */
     public function testExecuteInvalid(): void
     {
-        $form = $this->getMockBuilder(Form::class)
-            ->onlyMethods(['_execute'])
-            ->getMock();
+        $form = new class extends Form {
+            // phpcs:ignore CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore
+            public function _execute(array $data): bool
+            {
+                throw new Exception('Should not be called');
+            }
+        };
         $form->getValidator()
             ->add('email', 'format', ['rule' => 'email']);
         $data = [
             'email' => 'rong',
         ];
-        $form->expects($this->never())
-            ->method('_execute');
 
         $this->assertFalse($form->execute($data));
     }

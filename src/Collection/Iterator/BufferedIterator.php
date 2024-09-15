@@ -17,14 +17,13 @@ declare(strict_types=1);
 namespace Cake\Collection\Iterator;
 
 use Cake\Collection\Collection;
-use Countable;
 use SplDoublyLinkedList;
 
 /**
  * Creates an iterator from another iterator that will keep the results of the inner
  * iterator in memory, so that results don't have to be re-calculated.
  */
-class BufferedIterator extends Collection implements Countable
+class BufferedIterator extends Collection
 {
     /**
      * The in-memory cache containing results from previous iterators

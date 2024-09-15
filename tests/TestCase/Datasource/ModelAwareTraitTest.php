@@ -122,13 +122,15 @@ class ModelAwareTraitTest extends TestCase
         $stub = new Stub();
         $stub->setProps('Articles');
 
-        $mock = $this->getMockBuilder(RepositoryInterface::class)->getMock();
-        $mock->expects($this->any())
-            ->method('getAlias')
-            ->willReturn('Magic');
+        $table = new class extends Table {
+            public function getAlias(): string
+            {
+                return 'Magic';
+            }
+        };
 
         $locator = new StubFactory();
-        $locator->set('Magic', $mock);
+        $locator->set('Magic', $table);
         $stub->modelFactory('Table', $locator);
 
         $result = $stub->fetchModel('Magic', 'Table');
@@ -136,11 +138,13 @@ class ModelAwareTraitTest extends TestCase
         $this->assertSame('Magic', $result->getAlias());
 
         $locator = new StubFactory();
-        $mock2 = $this->getMockBuilder(RepositoryInterface::class)->getMock();
-        $mock2->expects($this->any())
-            ->method('getAlias')
-            ->willReturn('Foo');
-        $locator->set('Foo', $mock2);
+        $table2 = new class extends Table {
+            public function getAlias(): string
+            {
+                return 'Foo';
+            }
+        };
+        $locator->set('Foo', $table2);
 
         $stub->modelFactory('MyType', $locator);
         $result = $stub->fetchModel('Foo', 'MyType');

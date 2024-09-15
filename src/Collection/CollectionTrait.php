@@ -38,7 +38,6 @@ use InvalidArgumentException;
 use Iterator;
 use LimitIterator;
 use LogicException;
-use OuterIterator;
 use RecursiveIteratorIterator;
 use UnitEnum;
 use const SORT_ASC;
@@ -83,9 +82,7 @@ trait CollectionTrait
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v): bool {
-            return (bool)$v;
-        };
+        $callback ??= fn ($v) => (bool)$v;
 
         return new FilterIterator($this->unwrap(), $callback);
     }
@@ -95,9 +92,7 @@ trait CollectionTrait
      */
     public function reject(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v, $k, $i): bool {
-            return (bool)$v;
-        };
+        $callback ??= fn ($v) => (bool)$v;
 
         return new FilterIterator($this->unwrap(), fn ($value, $key, $items) => !$callback($value, $key, $items));
     }
@@ -107,9 +102,7 @@ trait CollectionTrait
      */
     public function unique(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($v) {
-            return $v;
-        };
+        $callback ??= fn ($v) => $v;
 
         return new UniqueIterator($this->unwrap(), $callback);
     }
@@ -169,10 +162,7 @@ trait CollectionTrait
      */
     public function reduce(callable $callback, mixed $initial = null): mixed
     {
-        $isFirst = false;
-        if (func_num_args() < 2) {
-            $isFirst = true;
-        }
+        $isFirst = func_num_args() < 2;
 
         $result = $initial;
         foreach ($this->optimizeUnwrap() as $k => $value) {
@@ -278,13 +268,53 @@ trait CollectionTrait
     }
 
     /**
-     * @inheritDoc
+     * Splits a collection into sets, grouped by the result of running each value
+     * through the callback. If $callback is a string instead of a callable,
+     * groups by the property named by $callback on each of the values.
+     *
+     * When $callback is a string it should be a property name to extract or
+     * a dot separated path of properties that should be followed to get the last
+     * one in the path.
+     *
+     * ### Example:
+     *
+     * ```
+     * $items = [
+     *  ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
+     *  ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
+     *  ['id' => 3, 'name' => 'baz', 'parent_id' => 10],
+     * ];
+     *
+     * $group = (new Collection($items))->groupBy('parent_id');
+     *
+     * // Or
+     * $group = (new Collection($items))->groupBy(function ($e) {
+     *  return $e['parent_id'];
+     * });
+     *
+     * // Result will look like this when converted to array
+     * [
+     *  10 => [
+     *      ['id' => 1, 'name' => 'foo', 'parent_id' => 10],
+     *      ['id' => 3, 'name' => 'baz', 'parent_id' => 10],
+     *  ],
+     *  11 => [
+     *      ['id' => 2, 'name' => 'bar', 'parent_id' => 11],
+     *  ]
+     * ];
+     * ```
+     *
+     * @param callable|string $path The column name to use for grouping or callback that returns the value.
+     *   or a function returning the grouping key out of the provided element
+     * @param bool $preserveKeys Whether to preserve the keys of the existing
+     *   collection when the values are grouped. Defaults to false.
+     * @return \Cake\Collection\CollectionInterface
      */
-    public function groupBy(callable|string $path): CollectionInterface
+    public function groupBy(callable|string $path, bool $preserveKeys = false): CollectionInterface
     {
         $callback = $this->_propertyExtractor($path);
         $group = [];
-        foreach ($this->optimizeUnwrap() as $value) {
+        foreach ($this->optimizeUnwrap() as $key => $value) {
             $pathValue = $callback($value);
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
@@ -296,6 +326,11 @@ trait CollectionTrait
                 $pathValue = $pathValue->value;
             } elseif ($pathValue instanceof UnitEnum) {
                 $pathValue = $pathValue->name;
+            }
+
+            if ($preserveKeys) {
+                $group[$pathValue][$key] = $value;
+                continue;
             }
 
             $group[$pathValue][] = $value;
@@ -842,9 +877,7 @@ trait CollectionTrait
      */
     public function unfold(?callable $callback = null): CollectionInterface
     {
-        $callback ??= function ($item) {
-            return $item;
-        };
+        $callback ??= fn ($v) => $v;
 
         return $this->newCollection(
             new RecursiveIteratorIterator(
@@ -953,10 +986,7 @@ trait CollectionTrait
     public function unwrap(): Iterator
     {
         $iterator = $this;
-        while (
-            $iterator::class === Collection::class
-            && $iterator instanceof OuterIterator
-        ) {
+        while ($iterator::class === Collection::class) {
             $iterator = $iterator->getInnerIterator();
         }
 

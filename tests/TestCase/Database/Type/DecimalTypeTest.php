@@ -20,6 +20,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver;
 use Cake\Database\Type\DecimalType;
 use Cake\I18n\I18n;
+use Cake\Test\TestCase\Database\Driver\BaseDriverTrait;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
@@ -51,7 +52,9 @@ class DecimalTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new DecimalType();
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = new class extends Driver {
+            use BaseDriverTrait;
+        };
         $this->numberClass = DecimalType::$numberClass;
     }
 

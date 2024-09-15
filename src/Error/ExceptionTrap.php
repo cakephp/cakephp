@@ -190,6 +190,7 @@ class ExceptionTrap
         if (static::$registeredTrap == $this) {
             $this->disabled = true;
             static::$registeredTrap = null;
+            restore_exception_handler();
         }
     }
 

@@ -80,7 +80,7 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
             $out = array_merge($out, $this->renderException($error, $parent));
         }
 
-        return join("\n", $out);
+        return implode("\n", $out);
     }
 
     /**

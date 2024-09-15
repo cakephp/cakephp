@@ -262,10 +262,14 @@ class CacheTest extends TestCase
      */
     public function testConfigFailedInit(): void
     {
-        $mock = $this->getMockBuilder(TestAppCacheEngine::class)->getMock();
-        $mock->method('init')->willReturn(false);
+        $engine = new class extends TestAppCacheEngine {
+            public function init(array $config = []): bool
+            {
+                return false;
+            }
+        };
         Cache::setConfig('tests', [
-            'engine' => $mock,
+            'engine' => $engine,
         ]);
 
         $engine = Cache::pool('tests');
@@ -402,14 +406,11 @@ class CacheTest extends TestCase
      */
     public function testConfigInvalidObject(): void
     {
-        $this->getMockBuilder(stdClass::class)
-            ->setMockClassName('RubbishEngine')
-            ->getMock();
-
+        $object = new stdClass();
         $this->expectException(BadMethodCallException::class);
 
         Cache::setConfig('test', [
-            'engine' => '\RubbishEngine',
+            'engine' => $object,
         ]);
     }
 

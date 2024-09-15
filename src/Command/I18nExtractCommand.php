@@ -188,7 +188,7 @@ class I18nExtractCommand extends Command
         }
         if ($args->getOption('plugin')) {
             $plugin = Inflector::camelize((string)$args->getOption('plugin'));
-            if (empty($this->_paths)) {
+            if ($this->_paths === []) {
                 $this->_paths = [Plugin::classPath($plugin), Plugin::templatePath($plugin)];
             }
         } elseif (!$args->getOption('paths')) {

@@ -34,7 +34,7 @@ class DigestTest extends TestCase
     protected $client;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Cake\Http\Client\Auth\Digest
+     * @var \Cake\Http\Client\Auth\Digest
      */
     protected $auth;
 
@@ -50,19 +50,17 @@ class DigestTest extends TestCase
     }
 
     /**
-     * @return Digest|\PHPUnit\Framework\MockObject\MockObject
+     * @return Digest
      */
     protected function getDigestMock()
     {
-        $digest = $this->getMockBuilder(Digest::class)
-            ->onlyMethods(['generateCnonce'])
-            ->setConstructorArgs([$this->client])
-            ->getMock();
-        $digest->expects($this->any())
-            ->method('generateCnonce')
-            ->willReturn('cnonce');
-
-        return $digest;
+        return new class ($this->client) extends Digest
+        {
+            public function generateCnonce(): string
+            {
+                return 'cnonce';
+            }
+        };
     }
 
     /**

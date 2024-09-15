@@ -270,8 +270,10 @@ class Sqlserver extends Driver
             DriverFeatureEnum::SAVEPOINT,
             DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
             DriverFeatureEnum::WINDOW => true,
-
+            DriverFeatureEnum::INTERSECT => true,
+            DriverFeatureEnum::INTERSECT_ALL => false,
             DriverFeatureEnum::JSON => false,
+            DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => false,
         };
     }
 

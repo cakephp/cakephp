@@ -546,7 +546,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
             $message = $message ? [static::NESTED => $message] : [];
 
-            return empty($errors) ? true : $errors + $message;
+            return $errors === [] ? true : $errors + $message;
         }]);
 
         return $this;
@@ -603,7 +603,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
             $message = $message ? [static::NESTED => $message] : [];
 
-            return empty($errors) ? true : $errors + $message;
+            return $errors === [] ? true : $errors + $message;
         }]);
 
         return $this;

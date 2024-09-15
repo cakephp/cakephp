@@ -339,10 +339,8 @@ class EventManager implements EventManagerInterface
         $localListeners = [];
         if (!$this->_isGlobal) {
             $localListeners = $this->prioritisedListeners($eventKey);
-            $localListeners = empty($localListeners) ? [] : $localListeners;
         }
         $globalListeners = static::instance()->prioritisedListeners($eventKey);
-        $globalListeners = empty($globalListeners) ? [] : $globalListeners;
 
         $priorities = array_merge(array_keys($globalListeners), array_keys($localListeners));
         $priorities = array_unique($priorities);

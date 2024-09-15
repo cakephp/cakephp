@@ -43,6 +43,7 @@ use Cake\View\Widget\LabelWidget;
 use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
@@ -217,15 +218,13 @@ class FormHelperTest extends TestCase
      */
     public function testAddWidgetAndRenderWidget(): void
     {
-        $data = [
-            'val' => 1,
-        ];
-        $mock = $this->getMockBuilder(WidgetInterface::class)->getMock();
-        $this->Form->addWidget('test', $mock);
-        $mock->expects($this->once())
-            ->method('render')
-            ->with($data)
-            ->willReturn('HTML');
+        $data = ['val' => 1];
+        $widget = Mockery::mock(WidgetInterface::class);
+        $widget->shouldReceive('render')
+            ->withSomeOfArgs($data)
+            ->once()
+            ->andReturn('HTML');
+        $this->Form->addWidget('test', $widget);
         $result = $this->Form->widget('test', $data);
         $this->assertSame('HTML', $result);
     }
@@ -240,25 +239,19 @@ class FormHelperTest extends TestCase
             'unlockedFields' => [],
         ]));
 
-        $data = [
-            'val' => 1,
-            'name' => 'test',
-        ];
-        $mock = $this->getMockBuilder(WidgetInterface::class)->getMock();
-        $this->Form->addWidget('test', $mock);
-
-        $mock->expects($this->once())
-            ->method('render')
+        $data = ['val' => 1, 'name' => 'test'];
+        $widget = Mockery::mock(WidgetInterface::class);
+        $widget->shouldReceive('render')
+            ->withSomeOfArgs($data)
+            ->once()
+            ->andReturn('HTML');
+        $widget->shouldReceive('secureFields')
             ->with($data)
-            ->willReturn('HTML');
-
-        $mock->expects($this->once())
-            ->method('secureFields')
-            ->with($data)
-            ->willReturn(['test']);
-
+            ->once()
+            ->andReturn(['test']);
+        $this->Form->addWidget('test', $widget);
         $this->Form->create();
-        $result = $this->Form->widget('test', $data + ['secure' => true]);
+        $result = $this->Form->widget('test', ['val' => 1, 'name' => 'test', 'secure' => true]);
         $this->assertSame('HTML', $result);
     }
 
@@ -288,7 +281,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProvider(): void
     {
         $context = 'My data';
-        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
+        $stub = new StubContext();
         $this->Form->addContextProvider('test', function ($request, $data) use ($context, $stub) {
             $this->assertInstanceOf(ServerRequest::class, $request);
             $this->assertSame($context, $data['entity']);
@@ -306,7 +299,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderReplace(): void
     {
         $entity = new Article();
-        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
+        $stub = new StubContext();
         $this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
             return $stub;
         });
@@ -321,7 +314,7 @@ class FormHelperTest extends TestCase
     public function testAddContextProviderAdd(): void
     {
         $entity = new Article();
-        $stub = $this->getMockBuilder(ContextInterface::class)->getMock();
+        $stub = new StubContext();
         $this->Form->addContextProvider('newshiny', function ($request, $data) use ($stub) {
             if ($data['entity'] instanceof Entity) {
                 return $stub;
@@ -8239,9 +8232,9 @@ class FormHelperTest extends TestCase
         $result = $this->Form->context();
         $this->assertInstanceOf(ContextInterface::class, $result);
 
-        $mock = $this->getMockBuilder(ContextInterface::class)->getMock();
-        $this->assertSame($mock, $this->Form->context($mock));
-        $this->assertSame($mock, $this->Form->context());
+        $stub = new StubContext();
+        $this->assertSame($stub, $this->Form->context($stub));
+        $this->assertSame($stub, $this->Form->context());
     }
 
     /**

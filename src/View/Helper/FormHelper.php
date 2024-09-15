@@ -999,7 +999,7 @@ class FormHelper extends Helper
             }
 
             $fieldsetParams = ['content' => $out, 'attrs' => ''];
-            if (is_array($fieldset) && !empty($fieldset)) {
+            if (is_array($fieldset) && $fieldset !== []) {
                 $fieldsetParams['attrs'] = $this->templater()->formatAttributes($fieldset);
             }
             $out = $this->formatTemplate('fieldset', $fieldsetParams);
@@ -1352,12 +1352,15 @@ class FormHelper extends Helper
     {
         assert(is_subclass_of($enumClass, BackedEnum::class));
 
+        $hasLabel = is_a($enumClass, EnumLabelInterface::class, true) || method_exists($enumClass, 'label');
         $values = [];
-        /** @var \BackedEnum $case */
-        foreach ($enumClass::cases() as $case) {
-            $hasLabel = $case instanceof EnumLabelInterface || method_exists($case, 'label');
-            $values[$case->value] = $hasLabel ? $case->label()
-                : Inflector::humanize(Inflector::underscore($case->name));
+        foreach ($enumClass::cases() as $enumClass) {
+            /**
+             * @psalm-suppress UndefinedInterfaceMethod
+             * @phpstan-ignore-next-line
+             */
+            $values[$enumClass->value] = $hasLabel ? $enumClass->label()
+                : Inflector::humanize(Inflector::underscore($enumClass->name));
         }
 
         return $values;
@@ -2357,7 +2360,7 @@ class FormHelper extends Helper
             }
             $parts = explode('.', $field);
             $first = array_shift($parts);
-            $options['name'] = $first . (!empty($parts) ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
+            $options['name'] = $first . ($parts !== [] ? '[' . implode('][', $parts) . ']' : '') . $endsWithBrackets;
         }
 
         if (isset($options['value']) && !isset($options['val'])) {

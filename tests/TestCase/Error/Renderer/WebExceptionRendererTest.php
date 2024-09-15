@@ -37,6 +37,7 @@ use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
 use Cake\ORM\Exception\MissingBehaviorException;
@@ -46,6 +47,7 @@ use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
+use Mockery;
 use OutOfBoundsException;
 use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -698,17 +700,17 @@ class WebExceptionRendererTest extends TestCase
         $exception = new MissingHelperException(['class' => 'Fail']);
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder(Controller::class)
-            ->onlyMethods(['render'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
-        $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
-        $controller->setRequest(new ServerRequest());
-        $controller->expects($this->once())
-            ->method('render')
+        $controller = Mockery::mock(Controller::class)->makePartial();
+        $controller->shouldReceive('render')
             ->with('missingHelper')
-            ->will($this->throwException($exception));
+            ->once()
+            ->andThrow($exception);
+        $controller->shouldReceive('getRequest')
+            ->times(1)
+            ->andReturn(new ServerRequest());
+        $controller->shouldReceive('getResponse')
+            ->times(2)
+            ->andReturn(new Response());
 
         $ExceptionRenderer->setController($controller);
 
@@ -727,15 +729,13 @@ class WebExceptionRendererTest extends TestCase
         $exception = new NotFoundException('Not there, sorry');
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder(Controller::class)
-            ->onlyMethods(['beforeRender'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
-        $controller->setRequest(new ServerRequest());
-        $controller->expects($this->any())
-            ->method('beforeRender')
-            ->will($this->throwException($exception));
+        $request = new ServerRequest();
+        $controller = new class ($request) extends Controller {
+            public function beforeRender(EventInterface $event): never
+            {
+                throw new NotFoundException('Not there, sorry');
+            }
+        };
 
         $ExceptionRenderer->setController($controller);
 
@@ -808,21 +808,20 @@ class WebExceptionRendererTest extends TestCase
     {
         $exception = new NotFoundException();
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
+        $pluginException = new MissingPluginException(['plugin' => 'TestPlugin']);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder(Controller::class)
-            ->onlyMethods(['render'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
-        $controller->setPlugin('TestPlugin');
-        $controller->setRequest(new ServerRequest());
-
-        $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
-        $controller->expects($this->once())
-            ->method('render')
+        $controller = Mockery::mock(Controller::class)->makePartial();
+        $controller->shouldReceive('render')
             ->with('error400')
-            ->will($this->throwException($exception));
-
+            ->once()
+            ->andThrow($pluginException);
+        $controller->shouldReceive('getRequest')
+            ->times(1)
+            ->andReturn(new ServerRequest());
+        $controller->shouldReceive('getResponse')
+            ->times(2)
+            ->andReturn(new Response());
+        $controller->setPlugin('TestPlugin');
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
@@ -839,20 +838,20 @@ class WebExceptionRendererTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $exception = new NotFoundException();
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
+        $innerException = new MissingPluginException(['plugin' => 'TestPluginTwo']);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder(Controller::class)
-            ->onlyMethods(['render'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
-        $controller->setPlugin('TestPlugin');
-
-        $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);
-        $controller->expects($this->once())
-            ->method('render')
+        $controller = Mockery::mock(Controller::class)->makePartial();
+        $controller->shouldReceive('render')
             ->with('error400')
-            ->will($this->throwException($exception));
-
+            ->once()
+            ->andThrow($innerException);
+        $controller->shouldReceive('getRequest')
+            ->times(1)
+            ->andReturn(new ServerRequest());
+        $controller->shouldReceive('getResponse')
+            ->times(2)
+            ->andReturn(new Response());
+        $controller->setPlugin('TestPlugin');
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();

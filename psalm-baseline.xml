@@ -24,6 +24,11 @@
       <code><![CDATA[int|false]]></code>
     </InvalidReturnType>
   </file>
+  <file src="src/Collection/CollectionTrait.php">
+    <TooManyArguments>
+      <code><![CDATA[$callback($value, $key, $items)]]></code>
+    </TooManyArguments>
+  </file>
   <file src="src/Controller/ControllerFactory.php">
     <UndefinedMethod>
       <code><![CDATA[getName]]></code>
@@ -52,6 +57,11 @@
     <InvalidReturnType>
       <code><![CDATA[EventInterface]]></code>
     </InvalidReturnType>
+  </file>
+  <file src="src/Http/BaseApplication.php">
+    <UndefinedInterfaceMethod>
+      <code><![CDATA[events]]></code>
+    </UndefinedInterfaceMethod>
   </file>
   <file src="src/I18n/Date.php">
     <ImpureFunctionCall>

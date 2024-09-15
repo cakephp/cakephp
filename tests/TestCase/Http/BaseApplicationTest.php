@@ -16,11 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Console\CommandRunner;
+use Cake\Console\ConsoleIo;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\ContainerInterface;
 use Cake\Event\EventInterface;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\ServerRequest;
@@ -28,6 +32,7 @@ use Cake\Http\ServerRequestFactory;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use Psr\Http\Message\ResponseInterface;
 use TestPlugin\Plugin as TestPlugin;
 
@@ -53,6 +58,15 @@ class BaseApplicationTest extends TestCase
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;
+            }
+
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                $eventManager->on('testTrue', function ($event) {
+                    return true;
+                });
+
+                return $eventManager;
             }
         };
     }
@@ -273,5 +287,52 @@ class BaseApplicationTest extends TestCase
         $container = $app->getContainer();
         $this->assertInstanceOf(ContainerInterface::class, $container);
         $this->assertTrue($container->has('testing'));
+    }
+
+    public function testEventsAreRegistered(): void
+    {
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/cakes']);
+        $request = $request->withAttribute('params', [
+            'controller' => 'Cakes',
+            'action' => 'index',
+            'plugin' => null,
+            'pass' => [],
+        ]);
+
+        $app = $this->app;
+        $app->handle($request);
+        $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
+    }
+
+    public function testConsoleEventsAreRegistered(): void
+    {
+        static::setAppNamespace();
+        $app = new class (dirname(__DIR__, 2)) extends BaseApplication
+        {
+            public function routes(RouteBuilder $routes): void
+            {
+            }
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                $eventManager->on('testTrue', function ($event) {
+                    return true;
+                });
+
+                return $eventManager;
+            }
+        };
+        $output = new StubConsoleOutput();
+        $consoleIo = Mockery::mock(ConsoleIo::class, [$output, $output, null, null])
+            ->shouldAllowMockingMethod('in')
+            ->makePartial();
+        $runner = new CommandRunner($app);
+        $runner->run(['cake', 'version'], $consoleIo);
+        $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
     }
 }

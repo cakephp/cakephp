@@ -92,6 +92,7 @@ PHP;
                 'middleware' => true,
                 'routes' => true,
                 'services' => true,
+                'events' => true,
             ],
             'OtherPlugin' => [
                 'isLoaded' => true,
@@ -103,6 +104,7 @@ PHP;
                 'middleware' => true,
                 'routes' => true,
                 'services' => true,
+                'events' => true,
             ],
         ];
         $this->assertSame($result, PluginConfig::getAppConfig());
@@ -140,6 +142,7 @@ PHP;
                 'middleware' => true,
                 'routes' => true,
                 'services' => true,
+                'events' => true,
             ],
             'OtherPlugin' => [
                 'isLoaded' => false,
@@ -165,7 +168,7 @@ PHP;
 <?php
 return [
     'OtherPlugin' => ['onlyDebug' => true, 'onlyCli' => false, 'optional' => true],
-    'AnotherPlugin' => ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false]
+    'AnotherPlugin' => ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false, 'events' => false],
 ];
 PHP;
         file_put_contents($this->pluginsConfigPath, $config);
@@ -181,6 +184,7 @@ PHP;
                 'middleware' => true,
                 'routes' => true,
                 'services' => true,
+                'events' => true,
             ],
             'AnotherPlugin' => [
                 'isLoaded' => true,
@@ -192,6 +196,7 @@ PHP;
                 'middleware' => false,
                 'routes' => false,
                 'services' => false,
+                'events' => false,
             ],
         ];
         $this->assertSame($result, PluginConfig::getAppConfig());
@@ -308,6 +313,7 @@ PHP;
                 'middleware' => true,
                 'routes' => true,
                 'services' => true,
+                'events' => true,
                 'packagePath' => $pathToRootVendor . 'cakephp' . DS . 'chronos',
                 'package' => 'cakephp/chronos',
                 'version' => '3.0.4',
@@ -323,6 +329,7 @@ PHP;
                 'middleware' => true,
                 'routes' => true,
                 'services' => true,
+                'events' => true,
                 'packagePath' => $pathToRootVendor . 'cakephp' . DS . 'cakephp-codesniffer',
                 'package' => 'cakephp/cakephp-codesniffer',
                 'version' => '5.1.1',
@@ -376,6 +383,7 @@ PHP;
                 'middleware' => true,
                 'routes' => true,
                 'services' => true,
+                'events' => true,
             ],
         ], PluginConfig::getAppConfig());
         unlink($pathToTestPlugin . 'composer.json');

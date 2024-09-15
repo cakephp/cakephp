@@ -264,7 +264,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         $values = $entity->extract($this->_config['fields'], true);
         $fields = array_keys($values);
-        $noFields = empty($fields);
+        $noFields = $fields === [];
 
         // If there are no fields and no bundled translations, or both fields
         // in the default locale and bundled translations we can

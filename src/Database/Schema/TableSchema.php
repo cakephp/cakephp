@@ -393,8 +393,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         if (!isset($this->_columns[$name])) {
             $message = sprintf(
                 'Column `%s` of table `%s`: The column type `%s` can only be set if the column already exists;',
-                $this->_table,
                 $name,
+                $this->_table,
                 $type,
             );
             $message .= ' can be checked using `hasColumn()`.';
