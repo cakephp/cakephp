@@ -117,7 +117,7 @@ class MessagesFileLoaderTest extends TestCase
             ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS,
             ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS . 'LC_MESSAGES' . DS,
         ];
-        $result = $loader->translationsFolders();debug($result);
+        $result = $loader->translationsFolders();
         $this->assertEquals($expected, $result);
     }
 
