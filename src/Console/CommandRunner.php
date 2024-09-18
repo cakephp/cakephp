@@ -320,8 +320,12 @@ class CommandRunner implements EventDispatcherInterface
     {
         try {
             $eventManager = $this->getEventManager();
-            $eventManager = $this->app->pluginEvents($eventManager);
-            $eventManager = $this->app->events($eventManager);
+            if (method_exists($this->app, 'pluginEvents')) {
+                $eventManager = $this->app->pluginEvents($eventManager);
+            }
+            if (method_exists($this->app, 'events')) {
+                $eventManager = $this->app->events($eventManager);
+            }
             $this->setEventManager($eventManager);
             if ($command instanceof EventDispatcherInterface) {
                 $command->setEventManager($this->getEventManager());
