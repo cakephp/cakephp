@@ -214,12 +214,9 @@ class CommandRunner implements EventDispatcherInterface
      */
     public function setEventManager(EventManagerInterface $eventManager)
     {
-        assert(
-            $this->app instanceof EventDispatcherInterface,
-            'Cannot set the event manager, the application does not support events.'
-        );
-
-        $this->app->setEventManager($eventManager);
+        if ($this->app instanceof EventDispatcherInterface) {
+            $this->app->setEventManager($eventManager);
+        }
 
         return $this;
     }
@@ -320,8 +317,12 @@ class CommandRunner implements EventDispatcherInterface
     {
         try {
             $eventManager = $this->getEventManager();
-            $eventManager = $this->app->pluginEvents($eventManager);
-            $eventManager = $this->app->events($eventManager);
+            if (method_exists($this->app, 'pluginEvents')) {
+                $eventManager = $this->app->pluginEvents($eventManager);
+            }
+            if (method_exists($this->app, 'events')) {
+                $eventManager = $this->app->events($eventManager);
+            }
             $this->setEventManager($eventManager);
             if ($command instanceof EventDispatcherInterface) {
                 $command->setEventManager($this->getEventManager());
