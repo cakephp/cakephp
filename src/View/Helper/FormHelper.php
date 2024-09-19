@@ -386,6 +386,10 @@ class FormHelper extends Helper
             unset($options['context']);
         }
 
+        if (isset($options['method'])) {
+            $options['type'] = $options['method'];
+        }
+
         $isCreate = $context->isCreate();
 
         $options += [
@@ -448,9 +452,6 @@ class FormHelper extends Helper
             // Default to post method
             default:
                 $htmlAttributes['method'] = 'post';
-        }
-        if (isset($options['method'])) {
-            $htmlAttributes['method'] = strtolower($options['method']);
         }
         if (isset($options['enctype'])) {
             $htmlAttributes['enctype'] = strtolower($options['enctype']);
