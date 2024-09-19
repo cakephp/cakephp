@@ -210,7 +210,8 @@ class Sqlserver extends Driver
             $sql,
             [
                 PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
-                PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => $this->_config['flags'][PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE] ?? PDO::SQLSRV_CURSOR_BUFFERED
+                PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => 
+                    $this->_config['flags'][PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE] ?? PDO::SQLSRV_CURSOR_BUFFERED,
             ]
         );
 
