@@ -1578,7 +1578,7 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Html->meta('csrfToken');
+        $result = $this->Html->meta('csrf-token');
         $expected = [
             'meta' => ['name' => 'csrf-token', 'content' => 'test'],
         ];
