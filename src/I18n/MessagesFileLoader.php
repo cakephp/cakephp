@@ -156,9 +156,13 @@ class MessagesFileLoader
     {
         $locale = Locale::parseLocale($this->_locale) + ['region' => null];
 
+        $languageRegion = implode('_', [$locale['language'], $locale['region']]);
         $folders = [
-            implode('_', [$locale['language'], $locale['region']]),
+            $languageRegion,
             $locale['language'],
+            // gettext compatible paths, see https://www.php.net/manual/en/function.gettext.php
+            $languageRegion . DIRECTORY_SEPARATOR . 'LC_MESSAGES',
+            $locale['language'] . DIRECTORY_SEPARATOR . 'LC_MESSAGES',
         ];
 
         $searchPaths = [];
@@ -167,20 +171,12 @@ class MessagesFileLoader
         if (!$localePaths && defined('APP')) {
             $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
         }
+        if ($this->_plugin && Plugin::isLoaded($this->_plugin)) {
+            $localePaths[] = App::path('locales', $this->_plugin)[0];
+        }
         foreach ($localePaths as $path) {
             foreach ($folders as $folder) {
                 $searchPaths[] = $path . $folder . DIRECTORY_SEPARATOR;
-                // gettext compatible paths, see https://www.php.net/manual/en/function.gettext.php
-                $searchPaths[] = $path . $folder . DIRECTORY_SEPARATOR . 'LC_MESSAGES' . DIRECTORY_SEPARATOR;
-            }
-        }
-
-        if ($this->_plugin && Plugin::isLoaded($this->_plugin)) {
-            $basePath = App::path('locales', $this->_plugin)[0];
-            foreach ($folders as $folder) {
-                $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;
-                // gettext compatible paths, see https://www.php.net/manual/en/function.gettext.php
-                $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR . 'LC_MESSAGES' . DIRECTORY_SEPARATOR;
             }
         }
 
