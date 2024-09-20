@@ -73,7 +73,7 @@ class MessagesFileLoaderTest extends TestCase
         $loader = new MessagesFileLoader('company/test_plugin_three', 'es', 'mo');
 
         $result = $loader->translationsFolders();
-        $this->assertCount(8, $result);
+        $this->assertCount(4, $result);
     }
 
     /**
@@ -87,13 +87,9 @@ class MessagesFileLoaderTest extends TestCase
         $loader = new MessagesFileLoader('test_plugin_two', 'en');
 
         $expected = [
-            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . 'en_' . DS,
             ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS,
-            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . 'en_' . DS . 'LC_MESSAGES' . DS,
             ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS . 'LC_MESSAGES' . DS,
-            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS . 'resources' . DS . 'locales' . DS . 'en_' . DS,
             ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS,
-            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS . 'resources' . DS . 'locales' . DS . 'en_' . DS . 'LC_MESSAGES' . DS,
             ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'TestPluginTwo' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS . 'LC_MESSAGES' . DS,
         ];
         $result = $loader->translationsFolders();
@@ -108,14 +104,14 @@ class MessagesFileLoaderTest extends TestCase
         $loader = new MessagesFileLoader('company/test_plugin_three', $locale);
 
         $expected = [
-            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . $locale . DS,
             ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS,
-            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . $locale . DS . 'LC_MESSAGES' . DS,
             ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS . 'LC_MESSAGES' . DS,
-            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'resources' . DS . 'locales' . DS . $locale . DS,
+            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . $locale . DS,
+            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'resources' . DS . 'locales' . DS . $locale . DS . 'LC_MESSAGES' . DS,
             ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS,
-            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'resources' . DS . 'locales' . DS . $locale . DS . 'LC_MESSAGES' . DS,
             ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'resources' . DS . 'locales' . DS . 'en' . DS . 'LC_MESSAGES' . DS,
+            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'resources' . DS . 'locales' . DS . $locale . DS,
+            ROOT . DS . 'tests' . DS . 'test_app' . DS . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'resources' . DS . 'locales' . DS . $locale . DS . 'LC_MESSAGES' . DS,
         ];
         $result = $loader->translationsFolders();
         $this->assertEquals($expected, $result);
