@@ -350,11 +350,11 @@ class MailerTest extends TestCase
         $this->assertSame('nice', $header['X-Something']);
 
         $result = (new Mailer())->setAttachments([
-            ['file' => __FILE__, 'mimetype' => 'text/plain'],
+            ['file' => APP . 'ApplicationWithDefaultRoutes.php', 'mimetype' => 'text/plain'],
         ]);
         $this->assertInstanceOf(Mailer::class, $result);
         $this->assertSame(
-            ['MailerTest.php' => ['file' => __FILE__, 'mimetype' => 'text/plain']],
+            ['ApplicationWithDefaultRoutes.php' => ['file' => APP . 'ApplicationWithDefaultRoutes.php', 'mimetype' => 'text/plain']],
             $result->getMessage()->getAttachments()
         );
     }
@@ -388,7 +388,7 @@ class MailerTest extends TestCase
     {
         $this->mailer->setEmailFormat('html');
         $this->mailer->viewBuilder()->setTemplate('html');
-        $this->mailer->setAttachments([__FILE__]);
+        $this->mailer->setAttachments([APP . 'ApplicationWithDefaultRoutes.php']);
         $this->mailer->render();
         $result = $this->mailer->getBody();
         $this->assertNotEmpty($result);
@@ -472,7 +472,7 @@ class MailerTest extends TestCase
         $this->mailer->setTo('cake@cakephp.org');
         $this->mailer->setSubject('My title');
         $this->mailer->setEmailFormat('text');
-        $this->mailer->setAttachments([__FILE__]);
+        $this->mailer->setAttachments([APP . 'ApplicationWithDefaultRoutes.php']);
         $result = $this->mailer->deliver('Hello');
 
         $boundary = $this->mailer->boundary;
@@ -486,7 +486,7 @@ class MailerTest extends TestCase
             "\r\n" .
             "\r\n" .
             "--{$boundary}\r\n" .
-            "Content-Disposition: attachment; filename=\"MailerTest.php\"\r\n" .
+            "Content-Disposition: attachment; filename=\"ApplicationWithDefaultRoutes.php\"\r\n" .
             "Content-Type: text/x-php\r\n" .
             "Content-Transfer-Encoding: base64\r\n" .
             "\r\n";
@@ -1086,7 +1086,7 @@ class MailerTest extends TestCase
         $this->assertContains('--' . $boundary, $message);
         $this->assertContains('--' . $boundary . '--', $message);
 
-        $this->mailer->setAttachments(['fake.php' => __FILE__]);
+        $this->mailer->setAttachments(['fake.php' => APP . 'ApplicationWithDefaultRoutes.php']);
         $this->mailer->send();
 
         $message = $this->mailer->getBody();
@@ -1108,15 +1108,15 @@ class MailerTest extends TestCase
         $this->mailer->setTo(['you@cakephp.org' => 'You']);
         $this->mailer->setSubject('My title');
         $this->mailer->setProfile([]);
-        $this->mailer->setAttachments([__FILE__]);
+        $this->mailer->setAttachments([APP . 'ApplicationWithDefaultRoutes.php']);
         $this->mailer->setBodyText('body');
         $result = $this->mailer->send();
-        $expected = "Content-Disposition: attachment; filename=\"MailerTest.php\"\r\n" .
+        $expected = "Content-Disposition: attachment; filename=\"ApplicationWithDefaultRoutes.php\"\r\n" .
             "Content-Type: text/x-php\r\n" .
             "Content-Transfer-Encoding: base64\r\n";
         $this->assertStringContainsString($expected, $result['message']);
 
-        $this->mailer->setAttachments(['my.file.txt' => __FILE__]);
+        $this->mailer->setAttachments(['my.file.txt' => APP . 'ApplicationWithDefaultRoutes.php']);
         $this->mailer->setBodyText('body');
         $result = $this->mailer->send();
         $expected = "Content-Disposition: attachment; filename=\"my.file.txt\"\r\n" .
@@ -1124,7 +1124,7 @@ class MailerTest extends TestCase
             "Content-Transfer-Encoding: base64\r\n";
         $this->assertStringContainsString($expected, $result['message']);
 
-        $this->mailer->setAttachments(['file.txt' => ['file' => __FILE__, 'mimetype' => 'text/plain']]);
+        $this->mailer->setAttachments(['file.txt' => ['file' => APP . 'ApplicationWithDefaultRoutes.php', 'mimetype' => 'text/plain']]);
         $this->mailer->setBodyText('body');
         $result = $this->mailer->send();
         $expected = "Content-Disposition: attachment; filename=\"file.txt\"\r\n" .
@@ -1132,7 +1132,7 @@ class MailerTest extends TestCase
             "Content-Transfer-Encoding: base64\r\n";
         $this->assertStringContainsString($expected, $result['message']);
 
-        $this->mailer->setAttachments(['file2.txt' => ['file' => __FILE__, 'mimetype' => 'text/plain', 'contentId' => 'a1b1c1']]);
+        $this->mailer->setAttachments(['file2.txt' => ['file' => APP . 'ApplicationWithDefaultRoutes.php', 'mimetype' => 'text/plain', 'contentId' => 'a1b1c1']]);
         $this->mailer->setBodyText('body');
         $result = $this->mailer->send();
         $expected = "Content-Disposition: inline; filename=\"file2.txt\"\r\n" .
