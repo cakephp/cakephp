@@ -1152,11 +1152,27 @@ class PaginatorHelper extends Helper
         $default ??= $this->paginated()->perPage();
         $scope = $this->param('scope');
         assert($scope === null || is_string($scope));
+
+        $url = null;
+        $currentPage = $this->paginated()->currentPage();
+
+        if ($currentPage > 1) {
+            $query = $this->_View->getRequest()->getQueryParams();
+
+            if ($scope) {
+                $query[$scope]['page'] = 1;
+            } else {
+                $query['page'] = 1;
+            }
+
+            $url = $this->_View->getRequest()->getPath();
+            $url .= '?' . http_build_query($query);
+        }
+
         if ($scope) {
             $scope .= '.';
         }
-
-        $out = $this->Form->create(null, ['type' => 'get']);
+        $out = $this->Form->create(null, ['type' => 'get', 'url' => $url]);
         $out .= $this->Form->control($scope . 'limit', $options + [
             'type' => 'select',
             'label' => __('View'),
