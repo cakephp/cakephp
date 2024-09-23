@@ -23,6 +23,7 @@ use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\Container;
 use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\ContainerInterface;
+use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
@@ -58,6 +59,7 @@ use Psr\Http\Message\ServerRequestInterface;
 abstract class BaseApplication implements
     ConsoleApplicationInterface,
     ContainerApplicationInterface,
+    EventAwareApplicationInterface,
     EventDispatcherInterface,
     HttpApplicationInterface,
     PluginApplicationInterface,
