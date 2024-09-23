@@ -438,7 +438,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function setRequest(ServerRequest $request)
     {
         $this->request = $request;
-        $this->plugin = $request->getParam('plugin');
+        $this->plugin = $request->getParam('plugin') ?: null;
 
         return $this;
     }
