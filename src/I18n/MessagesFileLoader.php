@@ -161,7 +161,7 @@ class MessagesFileLoader
             // gettext compatible paths, see https://www.php.net/manual/en/function.gettext.php
             $locale['language'] . DIRECTORY_SEPARATOR . 'LC_MESSAGES',
         ];
-        if (!empty($locale['region'])) {
+        if ($locale['region']) {
             $languageRegion = implode('_', [$locale['language'], $locale['region']]);
             $folders[] = $languageRegion;
             // gettext compatible paths, see https://www.php.net/manual/en/function.gettext.php
