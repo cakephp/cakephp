@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 // phpcs:disable PSR1.Files.SideEffects
 
+use Cake\I18n\Date;
+use Cake\I18n\DateTime;
 use function Cake\I18n\__ as cake__;
 use function Cake\I18n\__d as cake__d;
 use function Cake\I18n\__dn as cake__dn;
@@ -24,6 +26,8 @@ use function Cake\I18n\__dxn as cake__dxn;
 use function Cake\I18n\__n as cake__n;
 use function Cake\I18n\__x as cake__x;
 use function Cake\I18n\__xn as cake__xn;
+use function Cake\I18n\toDate as cakeToDate;
+use function Cake\I18n\toDateTime as cakeToDateTime;
 
 if (!function_exists('__')) {
     /**
@@ -177,5 +181,45 @@ if (!function_exists('__dxn')) {
         mixed ...$args
     ): string {
         return cake__dxn($domain, $context, $singular, $plural, $count, ...$args);
+    }
+}
+
+if (!function_exists('toDateTime')) {
+    /**
+     * Converts a value to a DateTime object.
+     *
+     *  integer - value is treated as a Unix timestamp
+     *  float - value is treated as a Unix timestamp with microseconds
+     *  string - value is treated as an Atom-formatted timestamp, unless otherwise specified
+     *  Other values returns as null.
+     *
+     * @param mixed $value The value to convert to DateTime.
+     * @param string $format The datetime format the value is in. Defaults to Atom (ex: 1970-01-01T12:00:00+00:00) format.
+     * @return \Cake\I18n\DateTime|null Returns a DateTime object if parsing is successful, or NULL otherwise.
+     * @since 5.1.1
+     */
+    function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?DateTime
+    {
+        return cakeToDateTime($value, $format);
+    }
+}
+
+if (!function_exists('toDate')) {
+    /**
+     * Converts a value to a Date object.
+     *
+     *  integer - value is treated as a Unix timestamp
+     *  float - value is treated as a Unix timestamp with microseconds
+     *  string - value is treated as a I18N short formatted date, unless otherwise specified
+     *  Other values returns as null.
+     *
+     * @param mixed $value The value to convert to Date.
+     * @param string $format The date format the value is in. Defaults to Short (ex: 1970-01-01) format.
+     * @return \Cake\I18n\Date|null Returns a Date object if parsing is successful, or NULL otherwise.
+     * @since 5.1.1
+     */
+    function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
+    {
+        return cakeToDate($value, $format);
     }
 }
