@@ -2803,7 +2803,7 @@ class PaginatorHelperTest extends TestCase
     public function testLimitControlUrlWithQuery(): void
     {
         $request = new ServerRequest([
-            'url' => '/batches?owner=billy&expected=1',
+            'url' => '/batches?owner=billy&expected=1&page=2',
             'params' => [
                 'plugin' => null, 'controller' => 'Batches', 'action' => 'index', 'pass' => [],
             ],
@@ -2813,11 +2813,11 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequest($request);
         $this->View->setRequest($request);
-        $this->setPaginatedResult(['perPage' => 10]);
+        $this->setPaginatedResult(['perPage' => 10, 'currentPage' => 2]);
 
         $out = $this->Paginator->limitControl([1 => 1]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/batches?owner=billy&amp;expected=1']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/batches?owner=billy&amp;expected=1&amp;page=1']],
             ['div' => ['class' => 'input select']],
             ['label' => ['for' => 'limit']],
             'View',
@@ -2910,13 +2910,13 @@ class PaginatorHelperTest extends TestCase
             'pageCount' => 7,
             'sort' => 'date',
             'direction' => 'asc',
-            'page' => 1,
+            'currentPage' => 2,
             'scope' => 'article',
         ], false);
 
         $out = $this->Paginator->limitControl([25 => 25, 50 => 50]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/?article%5Bpage%5D=1']],
             ['div' => ['class' => 'input select']],
             ['label' => ['for' => 'article-limit']],
             'View',
