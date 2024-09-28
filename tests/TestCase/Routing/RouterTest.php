@@ -2070,9 +2070,9 @@ class RouterTest extends TestCase
     public function testRouteParamDefaults(): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->connect('/cache/*', ['prefix' => false, 'plugin' => true, 'controller' => 0, 'action' => 1]);
+        $routes->connect('/cache/*', ['prefix' => null, 'plugin' => '1', 'controller' => '0', 'action' => '1']);
 
-        $url = Router::url(['prefix' => '0', 'plugin' => '1', 'controller' => '0', 'action' => '1', 'test']);
+        $url = Router::url(['prefix' => null, 'plugin' => '1', 'controller' => '0', 'action' => '1', 'test']);
         $expected = '/cache/test';
         $this->assertSame($expected, $url);
 
@@ -2089,6 +2089,17 @@ class RouterTest extends TestCase
         } catch (Exception) {
             $this->assertTrue(true, 'Exception was raised');
         }
+    }
+
+    public function testRouteInvalidDefaults(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage(
+            'Value for `plugin` in $defaults when connecting routes must be of type `string` or `null`'
+        );
+
+        $routes = Router::createRouteBuilder('/');
+        $routes->connect('/foo', ['plugin' => false, 'controller' => 'Foo', 'action' => 'index']);
     }
 
     /**
