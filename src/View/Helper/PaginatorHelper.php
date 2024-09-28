@@ -74,9 +74,9 @@ class PaginatorHelper extends Helper
         'options' => [],
         'templates' => [
             'nextActive' => '<li class="next"><a rel="next" href="{{url}}">{{text}}</a></li>',
-            'nextDisabled' => '<li class="next disabled"><a href="" onclick="return false;">{{text}}</a></li>',
+            'nextDisabled' => '<li class="next disabled"><a>{{text}}</a></li>',
             'prevActive' => '<li class="prev"><a rel="prev" href="{{url}}">{{text}}</a></li>',
-            'prevDisabled' => '<li class="prev disabled"><a href="" onclick="return false;">{{text}}</a></li>',
+            'prevDisabled' => '<li class="prev disabled"><a>{{text}}</a></li>',
             'counterRange' => '{{start}} - {{end}} of {{count}}',
             'counterPages' => '{{page}} of {{pages}}',
             'first' => '<li class="first"><a href="{{url}}">{{text}}</a></li>',
@@ -1152,11 +1152,27 @@ class PaginatorHelper extends Helper
         $default ??= $this->paginated()->perPage();
         $scope = $this->param('scope');
         assert($scope === null || is_string($scope));
+
+        $url = null;
+        $currentPage = $this->paginated()->currentPage();
+
+        if ($currentPage > 1) {
+            $query = $this->_View->getRequest()->getQueryParams();
+
+            if ($scope) {
+                $query[$scope]['page'] = 1;
+            } else {
+                $query['page'] = 1;
+            }
+
+            $url = $this->_View->getRequest()->getPath();
+            $url .= '?' . http_build_query($query);
+        }
+
         if ($scope) {
             $scope .= '.';
         }
-
-        $out = $this->Form->create(null, ['type' => 'get']);
+        $out = $this->Form->create(null, ['type' => 'get', 'url' => $url]);
         $out .= $this->Form->control($scope . 'limit', $options + [
             'type' => 'select',
             'label' => __('View'),
