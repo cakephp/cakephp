@@ -181,6 +181,8 @@ class MessagesFileLoader
         foreach ($localePaths as $path) {
             foreach ($folders as $folder) {
                 $searchPaths[] = $path . $folder . DIRECTORY_SEPARATOR;
+                // gettext compatible paths, see https://www.php.net/manual/en/function.gettext.php
+                $searchPaths[] = $path . $folder . DIRECTORY_SEPARATOR . 'LC_MESSAGES' . DIRECTORY_SEPARATOR;
             }
         }
 
@@ -188,6 +190,8 @@ class MessagesFileLoader
             $basePath = App::path('locales', $this->_plugin)[0];
             foreach ($folders as $folder) {
                 $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR;
+                // gettext compatible paths, see https://www.php.net/manual/en/function.gettext.php
+                $searchPaths[] = $basePath . $folder . DIRECTORY_SEPARATOR . 'LC_MESSAGES' . DIRECTORY_SEPARATOR;
             }
         }
 
