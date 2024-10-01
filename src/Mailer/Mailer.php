@@ -307,6 +307,9 @@ class Mailer implements EventListenerInterface
     /**
      * Sends email.
      *
+     * If an `$action` is specified the internal state of the mailer will be
+     * backed up and restored after the action is run.
+     *
      * @param string|null $action The name of the mailer action to trigger.
      *   If no action is specified then all other method arguments will be ignored.
      * @param array $args Arguments to pass to the triggered mailer action.
