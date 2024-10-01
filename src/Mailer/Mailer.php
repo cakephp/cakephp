@@ -500,7 +500,11 @@ class Mailer implements EventListenerInterface
     {
         foreach (array_keys($this->clonedInstances) as $key) {
             if ($this->clonedInstances[$key] === null) {
-                $this->{$key} = null;
+                if ($key === 'message') {
+                    $this->message->reset();
+                } else {
+                    $this->{$key} = null;
+                }
             } else {
                 $this->{$key} = clone $this->clonedInstances[$key];
                 $this->clonedInstances[$key] = null;
