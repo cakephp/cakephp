@@ -332,11 +332,7 @@ class Mailer implements EventListenerInterface
             ]);
         }
 
-        $this->clonedInstances['message'] = clone $this->message;
-        $this->clonedInstances['renderer'] = clone $this->getRenderer();
-        if ($this->transport !== null) {
-            $this->clonedInstances['transport'] = clone $this->transport;
-        }
+        $this->backup();
 
         $this->getMessage()->setHeaders($headers);
         if (!$this->viewBuilder()->getTemplate()) {
@@ -492,6 +488,22 @@ class Mailer implements EventListenerInterface
         }
 
         return $this->transport;
+    }
+
+    /**
+     * Backup message, renderer, transport instances before an action is run.
+     *
+     * @return void
+     */
+    protected function backup(): void
+    {
+        $this->clonedInstances['message'] = clone $this->message;
+        if ($this->renderer !== null) {
+            $this->clonedInstances['renderer'] = clone $this->renderer;
+        }
+        if ($this->transport !== null) {
+            $this->clonedInstances['transport'] = clone $this->transport;
+        }
     }
 
     /**
