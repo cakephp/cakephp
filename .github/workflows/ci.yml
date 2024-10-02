@@ -92,11 +92,11 @@ jobs:
       id: key-date
       run: echo "date=$(date +'%Y-%m')" >> $GITHUB_OUTPUT
 
-    - name: Cache composer dependencies
-      uses: actions/cache@v4
-      with:
-        path: ${{ steps.composer-cache.outputs.dir }}
-        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
+#    - name: Cache composer dependencies
+#      uses: actions/cache@v4
+#      with:
+#        path: ${{ steps.composer-cache.outputs.dir }}
+#        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
 
     - name: Install packages
       run: |
