@@ -94,11 +94,11 @@ jobs:
       id: key-date
       run: echo "date=$(date +'%Y-%m')" >> $GITHUB_OUTPUT
 
-#    - name: Cache composer dependencies
-#      uses: actions/cache@v4
-#      with:
-#        path: ${{ steps.composer-cache.outputs.dir }}
-#        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
+    - name: Cache composer dependencies
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
 
     - name: Install packages
       run: |
@@ -117,9 +117,9 @@ jobs:
       if: matrix.php-version == '7.4' && matrix.db-type == 'mysql'
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
-#    - name: Wait for MySQL
-#      if: matrix.db-type == 'mysql' || matrix.db-type == 'mariadb'
-#      run: while ! `mysqladmin ping -h 127.0.0.1 --silent`; do printf 'Waiting for MySQL...\n'; sleep 2; done;
+    - name: Wait for MySQL
+      if: matrix.db-type == 'mysql' || matrix.db-type == 'mariadb'
+      run: while ! `mysqladmin ping -h 127.0.0.1 --silent`; do printf 'Waiting for MySQL...\n'; sleep 2; done;
 
     - name: Run PHPUnit
       env:
@@ -202,11 +202,11 @@ jobs:
       id: composer-cache
       run: echo "dir=$(composer config cache-files-dir)" >> $env:GITHUB_OUTPUT
 
-#    - name: Cache composer dependencies
-#      uses: actions/cache@v4
-#      with:
-#        path: ${{ steps.composer-cache.outputs.dir }}
-#        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
+    - name: Cache composer dependencies
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
 
     - name: Composer install
       run: composer update
@@ -250,11 +250,11 @@ jobs:
       id: key-date
       run: echo "date=$(date +'%Y-%m')" >> $GITHUB_OUTPUT
 
-#    - name: Cache composer dependencies
-#      uses: actions/cache@v4
-#      with:
-#        path: ${{ steps.composer-cache.outputs.dir }}
-#        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
+    - name: Cache composer dependencies
+      uses: actions/cache@v4
+      with:
+        path: ${{ steps.composer-cache.outputs.dir }}
+        key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
 
     - name: Composer install
       run: composer update
