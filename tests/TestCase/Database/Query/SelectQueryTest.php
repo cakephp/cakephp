@@ -2757,6 +2757,10 @@ class SelectQueryTest extends TestCase
     public function testIntersectOrderBy(): void
     {
         $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::INTERSECT),
+            'Driver does not support INTERSECT clause.'
+        );
+        $this->skipIf(
             !$this->connection->getDriver()->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY),
             'Driver does not support ORDER BY on INTERSECTed queries.'
         );
