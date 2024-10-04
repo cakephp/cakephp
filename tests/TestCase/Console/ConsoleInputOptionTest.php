@@ -51,11 +51,14 @@ class ConsoleInputOptionTest extends TestCase
             [['color', '', '', false, null, ['red', 'blue'], true], 'choices', ['red', 'blue']],
             // Test prompt()
             [['color', '', '', false, null, [], false, false, 'color ?'], 'prompt', 'color ?'],
+            // Test separator()
+            [['color', '', '', false, null, [], false, false, null, ';'], 'separator', ';'],
         ];
     }
 
     /**
      * Test properties setters and getters.
+     *
      * @dataProvider dataProperties
      */
     public function testProperties(array $args, $method, $expected): void
@@ -97,13 +100,16 @@ class ConsoleInputOptionTest extends TestCase
             false,
             'red',
             ['red', 'blue'],
-            false,
             true,
+            true,
+            null,
+            ';'
         );
         $output = $input->help(72);
         $this->assertStringStartsWith('--color, -c ', $output);
         $this->assertStringContainsString(' help message <comment>(default: red)</comment>', $output);
         $this->assertStringContainsString(' <comment>(choices: red|blue)</comment>', $output);
+        $this->assertStringContainsString(' <comment>(separator: `;`)</comment>', $output);
         $this->assertStringEndsWith(' <comment>(required)</comment>', $output);
     }
 
@@ -173,7 +179,7 @@ class ConsoleInputOptionTest extends TestCase
             ['red', 'blue']
         );
         $this->expectException(ConsoleException::class);
-        $this->expectExceptionMessage('`yellow` is not a valid value for `--color`. Please use one of `red, blue`');
+        $this->expectExceptionMessage('`yellow` is not a valid value for `--color`. Please use one of `red|blue`');
         $input->validChoice('yellow');
     }
 
@@ -220,12 +226,12 @@ XML;
         $this->assertEquals($expected, (string)$xml->asXML());
     }
 
-     /**
+    /**
      * Test xml default as true
      */
     public function testXmlDefaultTrue()
     {
-$input = new ConsoleInputOption(
+        $input = new ConsoleInputOption(
             'verbose',
             '',
             '',
@@ -244,12 +250,12 @@ XML;
         $this->assertEquals($expected, (string)$xml->asXML());
     }
 
-     /**
+    /**
      * Test xml default as true
      */
     public function testXmlDefaultFalse()
     {
-$input = new ConsoleInputOption(
+        $input = new ConsoleInputOption(
             'verbose',
             '',
             '',

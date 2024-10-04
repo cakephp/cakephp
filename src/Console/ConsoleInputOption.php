@@ -91,6 +91,13 @@ class ConsoleInputOption
     protected bool $required;
 
     /**
+     * The multiple separator.
+     *
+     * @var string
+     */
+    protected $_separator = ',';
+
+    /**
      * Make a new Input Option
      *
      * @param string $name The long name of the option, or an array with all the properties.
@@ -113,7 +120,8 @@ class ConsoleInputOption
         array $choices = [],
         bool $multiple = false,
         bool $required = false,
-        ?string $prompt = null
+        ?string $prompt = null,
+        string $separator = ','
     ) {
         $this->_name = $name;
         $this->_short = $short;
@@ -123,6 +131,7 @@ class ConsoleInputOption
         $this->_multiple = $multiple;
         $this->required = $required;
         $this->prompt = $prompt;
+        $this->_separator = $separator;
 
         if ($isBoolean) {
             $this->_default = (bool)$default;
@@ -179,6 +188,10 @@ class ConsoleInputOption
         if ($this->_choices) {
             $default .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
         }
+        if ($this->_multiple) {
+            $default .= sprintf(' <comment>(separator: `%s`)</comment>', $this->_separator);
+        }
+
         if ($this->_short !== '') {
             $short = ', -' . $this->_short;
         }
@@ -273,9 +286,9 @@ class ConsoleInputOption
             throw new ConsoleException(
                 sprintf(
                     '`%s` is not a valid value for `--%s`. Please use one of `%s`',
-                    (string)$value,
+                    $value,
                     $this->_name,
-                    implode(', ', $this->_choices)
+                    implode('|', $this->_choices)
                 )
             );
         }
@@ -334,5 +347,15 @@ class ConsoleInputOption
         }
 
         return $parent;
+    }
+
+    /**
+     * Get the value of the separator.
+     *
+     * @return string Value of this->_separator.
+     */
+    public function separator(): string
+    {
+        return $this->_separator;
     }
 }
