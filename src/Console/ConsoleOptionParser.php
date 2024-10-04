@@ -374,6 +374,7 @@ class ConsoleOptionParser
                 'default' => null,
                 'boolean' => false,
                 'multiple' => false,
+                'separator' => ',',
                 'choices' => [],
                 'required' => false,
                 'prompt' => null,
@@ -388,7 +389,8 @@ class ConsoleOptionParser
                 $options['choices'],
                 $options['multiple'],
                 $options['required'],
-                $options['prompt']
+                $options['prompt'],
+                $options['separator']
             );
         }
         $this->_options[$name] = $option;
@@ -756,7 +758,8 @@ class ConsoleOptionParser
 
         $option->validChoice($value);
         if ($option->acceptsMultiple()) {
-            $params[$name][] = $value;
+            $values = explode($option->separator(), $value);
+            $params[$name] = array_merge($params[$name] ?? [], $values);
         } else {
             $params[$name] = $value;
         }
