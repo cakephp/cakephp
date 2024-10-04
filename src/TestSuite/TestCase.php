@@ -834,7 +834,7 @@ abstract class TestCase extends BaseTestCase
                     debug($string);
                     debug($regex);
                 }
-                $this->assertTrue(false, 'Attribute did not match. Was expecting ' . $explains[$j]);
+                $this->assertTrue(false,'Attribute did not match. Was expecting ' . $explains[$j]);
             }
             $len = count($asserts);
         } while ($len > 0);
