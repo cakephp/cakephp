@@ -470,43 +470,6 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
-     * test adding and option with multiple and default separator.
-     */
-    public function testAddOptionWithMultipleDefaultSeparator(): void
-    {
-        $parser = new ConsoleOptionParser('test', false);
-        $parser->addOption('color', [
-            'multiple' => true,
-            'choices' => ['red', 'green', 'blue'],
-        ]);
-        $out = new StubConsoleOutput();
-        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
-
-        $result = $parser->parse(['--color', 'blue,red'], $io);
-        $this->assertEquals(['color' => ['blue', 'red'], 'help' => false], $result[0]);
-        $this->assertCount(0, $out->messages());
-    }
-
-    /**
-     * test adding and option with multiple and default separator.
-     */
-    public function testAddOptionWithMultipleCustomSeparator(): void
-    {
-        $parser = new ConsoleOptionParser('test', false);
-        $parser->addOption('color', [
-            'multiple' => true,
-            'choices' => ['1st,choice', '2nd,choice', '3rd,choice'],
-            'separator' => ';',
-        ]);
-        $out = new StubConsoleOutput();
-        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
-
-        $result = $parser->parse(['--color', '2nd,choice;3rd,choice'], $io);
-        $this->assertEquals(['color' => ['2nd,choice', '3rd,choice'], 'help' => false], $result[0]);
-        $this->assertCount(0, $out->messages());
-    }
-
-    /**
      * Test adding multiple options.
      */
     public function testAddOptions(): void
@@ -729,6 +692,61 @@ class ConsoleOptionParserTest extends TestCase
         $expected = ['one', 'two', 0, 'after', 'zero'];
         $result = $parser->parse($expected, $this->io);
         $this->assertEquals($expected, $result[1], 'Arguments are not as expected');
+    }
+
+    /**
+     * test parse with multiples and default list separator.
+     */
+    public function testParseWithMultiplesDefaultSeparator(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('colors', [
+            'multiple' => true,
+            'choices' => ['red', 'green', 'blue'],
+        ]);
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
+
+        $result = $parser->parse(['--colors', 'blue,red'], $io);
+        $this->assertEquals(['colors' => ['blue', 'red'], 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
+    }
+
+    /**
+     * test parse with multiples and custom list separator.
+     */
+    public function testParseWithMultiplesCustomSeparator(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('colors', [
+            'multiple' => true,
+            'choices' => ['1st,choice', '2nd,choice', '3rd,choice'],
+            'separator' => ';',
+        ]);
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
+
+        $result = $parser->parse(['--colors', '2nd,choice;3rd,choice'], $io);
+        $this->assertEquals(['colors' => ['2nd,choice', '3rd,choice'], 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
+    }
+
+    /**
+     * test mixing multiples option as list and duplicate
+     */
+    public function testParseWithMultiples()
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('colors', [
+            'multiple' => true,
+            'choices' => ['red', 'blue', 'green', 'yellow', 'purple'],
+        ]);
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
+
+        $result = $parser->parse(['--colors', 'green,purple', '--colors', 'red'], $io);
+        $this->assertEquals(['colors' => ['green', 'purple', 'red'], 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
     }
 
     /**
