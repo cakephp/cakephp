@@ -95,7 +95,7 @@ class ConsoleInputOption
      *
      * @var string
      */
-    protected $_separator = ',';
+    protected string $_separator = ',';
 
     /**
      * Make a new Input Option
@@ -291,7 +291,7 @@ class ConsoleInputOption
             $values = array_map('boolval', $values);
         }
 
-        $unwanted = array_filter($values, fn($value) => !in_array($value, $this->_choices, true));
+        $unwanted = array_filter($values, fn ($value) => !in_array($value, $this->_choices, true));
         if ($unwanted) {
             throw new ConsoleException(
                 sprintf(

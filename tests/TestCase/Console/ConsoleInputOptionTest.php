@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleInputOption;
 use Cake\Console\Exception\ConsoleException;
 use Cake\TestSuite\TestCase;
+use SimpleXMLElement;
 
 /**
  * ConsoleInputOptionTest
@@ -296,7 +297,7 @@ class ConsoleInputOptionTest extends TestCase
             true,
             true
         );
-        $parent = new \SimpleXMLElement('<options></options>');
+        $parent = new SimpleXMLElement('<options></options>');
         $xml = $input->xml($parent);
 
         $expected = <<<XML
@@ -320,7 +321,7 @@ XML;
             true,
             true,
         );
-        $parent = new \SimpleXMLElement('<options></options>');
+        $parent = new SimpleXMLElement('<options></options>');
         $xml = $input->xml($parent);
 
         $expected = <<<XML
@@ -344,7 +345,7 @@ XML;
             true,
             false,
         );
-        $parent = new \SimpleXMLElement('<options></options>');
+        $parent = new SimpleXMLElement('<options></options>');
         $xml = $input->xml($parent);
 
         $expected = <<<XML
