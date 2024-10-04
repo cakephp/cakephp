@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Route;
 
+use Cake\Core\Exception\CakeException;
 use Cake\Http\Exception\BadRequestException;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
@@ -131,6 +132,21 @@ class Route
      */
     public function __construct(string $template, array $defaults = [], array $options = [])
     {
+        $checker = function () use ($defaults): bool {
+            foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
+                if (isset($defaults[$key]) && !is_string($defaults[$key])) {
+                    throw new CakeException(
+                        'Value for `' . $key . '` in $defaults when connecting routes'
+                        . ' must be of type `string` or `null`'
+                    );
+                }
+            }
+
+            return true;
+        };
+
+        assert($checker());
+
         $this->template = $template;
         $this->defaults = $defaults;
         $this->options = $options + ['_ext' => [], '_middleware' => []];

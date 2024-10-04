@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace TestApp\Mailer;
 
 use Cake\Mailer\Mailer;
+use Cake\Mailer\Transport\DebugTransport;
 
 /**
  * Test Suite Test App Mailer class.
@@ -41,5 +42,12 @@ class TestMailer extends Mailer
         $this->boundary = $this->message->getBoundary();
 
         return $result;
+    }
+
+    public function dummy(): void
+    {
+        $this->reset();
+
+        $this->setTransport(new DebugTransport());
     }
 }

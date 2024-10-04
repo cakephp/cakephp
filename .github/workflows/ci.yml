@@ -49,10 +49,14 @@ jobs:
 
     steps:
     - name: Setup MySQL 8.0
-      if: matrix.db-type == 'mysql'
+      if: matrix.db-type == 'mysql' && matrix.prefer-lowest != 'prefer-lowest'
       run: |
         sudo service mysql start
         mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE cakephp;'
+
+    - name: Setup MySQL 5.7
+      if: matrix.db-type == 'mysql' && matrix.prefer-lowest == 'prefer-lowest'
+      run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:5.7 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
 
     - name: Setup PostgreSQL latest
       if: matrix.db-type == 'pgsql'

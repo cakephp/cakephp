@@ -1827,8 +1827,6 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function __debugInfo(): array
     {
-        $sql = 'SQL could not be generated for this query as it is incomplete.';
-        $params = [];
         try {
             set_error_handler(
                 /** @return no-return */

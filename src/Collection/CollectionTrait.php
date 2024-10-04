@@ -186,7 +186,7 @@ trait CollectionTrait
         if (is_string($path) && str_contains($path, '{*}')) {
             return $extractor
                 ->filter(function ($data) {
-                    return $data !== null && (is_iterable($data));
+                    return is_iterable($data);
                 })
                 ->unfold();
         }

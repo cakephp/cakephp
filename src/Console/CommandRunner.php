@@ -22,6 +22,7 @@ use Cake\Console\Exception\MissingOptionException;
 use Cake\Console\Exception\StopException;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerApplicationInterface;
+use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
@@ -214,12 +215,9 @@ class CommandRunner implements EventDispatcherInterface
      */
     public function setEventManager(EventManagerInterface $eventManager)
     {
-        assert(
-            $this->app instanceof EventDispatcherInterface,
-            'Cannot set the event manager, the application does not support events.'
-        );
-
-        $this->app->setEventManager($eventManager);
+        if ($this->app instanceof EventDispatcherInterface) {
+            $this->app->setEventManager($eventManager);
+        }
 
         return $this;
     }
@@ -320,8 +318,10 @@ class CommandRunner implements EventDispatcherInterface
     {
         try {
             $eventManager = $this->getEventManager();
-            $eventManager = $this->app->pluginEvents($eventManager);
-            $eventManager = $this->app->events($eventManager);
+            if ($this->app instanceof EventAwareApplicationInterface) {
+                $eventManager = $this->app->events($eventManager);
+                $eventManager = $this->app->pluginEvents($eventManager);
+            }
             $this->setEventManager($eventManager);
             if ($command instanceof EventDispatcherInterface) {
                 $command->setEventManager($this->getEventManager());
