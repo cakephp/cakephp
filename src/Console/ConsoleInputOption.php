@@ -282,7 +282,17 @@ class ConsoleInputOption
         if ($this->_choices === []) {
             return true;
         }
-        if (!in_array($value, $this->_choices, true)) {
+        if (is_string($value)) {
+            $values = explode($this->_separator, $value);
+        } else {
+            $values = [$value];
+        }
+        if ($this->_boolean) {
+            $values = array_map('boolval', $values);
+        }
+
+        $unwanted = array_filter($values, fn($value) => !in_array($value, $this->_choices, true));
+        if ($unwanted) {
             throw new ConsoleException(
                 sprintf(
                     '`%s` is not a valid value for `--%s`. Please use one of `%s`',

@@ -200,6 +200,88 @@ class ConsoleInputOptionTest extends TestCase
     }
 
     /**
+     * Test valid choice strict.
+     */
+    public function testValidChoiceStrict(): void
+    {
+        $input = new ConsoleInputOption(
+            'color',
+            '',
+            '',
+            false,
+            '',
+            ['1', '0']
+        );
+        $this->expectException(ConsoleException::class);
+        $input->validChoice(true);
+    }
+
+    public static function dataValideChoiceSeparatorSuccess()
+    {
+        return [
+            [['red', 'blue', 'green'], ';', false, 'blue;red'],
+            [[false, true], ';', true, '1;0'],
+            [[false, true], ';', true, 'true;false'], // Is boolean, so 'false' mean `true` and is valid
+        ];
+    }
+
+    /**
+     * Test valid choice with value contain multiple and separator.
+     *
+     * @dataProvider dataValideChoiceSeparatorSuccess
+     */
+    public function testValidChoiceSeparatorSuccess($choices, $separator, $isBoolean, $value)
+    {
+        $input = new ConsoleInputOption(
+            'colors',
+            '',
+            '',
+            $isBoolean,
+            '',
+            $choices,
+            true,
+            false,
+            null,
+            $separator
+        );
+
+        $success = $input->validChoice($value);
+        $this->assertTrue($success);
+    }
+
+    public static function dataValideChoiceSeparatorFail()
+    {
+        return [
+            [['red', 'blue', 'green'], ';', false, 'blue;yellow'],
+            [[1, 0], ';', false, '1;0'],
+        ];
+    }
+
+    /**
+     * Test valid choice with value contain multiple and separator.
+     *
+     * @dataProvider dataValideChoiceSeparatorFail
+     */
+    public function testValidChoiceSeparatorFail($choices, $separator, $isBoolean, $value)
+    {
+        $input = new ConsoleInputOption(
+            'colors',
+            '',
+            '',
+            $isBoolean,
+            '',
+            $choices,
+            true,
+            false,
+            null,
+            $separator
+        );
+
+        $this->expectException(ConsoleException::class);
+        $input->validChoice($value);
+    }
+
+    /**
      * Test xml.
      */
     public function testXml()
