@@ -147,7 +147,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
             $rule = new ValidationRule($rule);
         }
         if (array_key_exists($name, $this->_rules)) {
-            throw new CakeException('A validation rule with the same name already exists');
+            throw new CakeException("A validation rule with the name `{$name}` already exists");
         }
         $this->_rules[$name] = $rule;
 
