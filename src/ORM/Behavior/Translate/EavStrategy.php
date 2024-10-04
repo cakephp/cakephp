@@ -138,7 +138,7 @@ class EavStrategy implements TranslateStrategyInterface
             $this->table->hasOne($name, [
                 'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
-                'joinType' => $filter ? SelectQuery::JOIN_TYPE_INNER : SelectQuery ::JOIN_TYPE_LEFT,
+                'joinType' => $filter ? SelectQuery::JOIN_TYPE_INNER : SelectQuery::JOIN_TYPE_LEFT,
                 'conditions' => $conditions,
                 'propertyName' => $field . '_translation',
             ]);
@@ -218,7 +218,7 @@ class EavStrategy implements TranslateStrategyInterface
             if ($changeFilter) {
                 $filter = $options['filterByCurrentLocale']
                     ? SelectQuery::JOIN_TYPE_INNER
-                    : SelectQuery ::JOIN_TYPE_LEFT;
+                    : SelectQuery::JOIN_TYPE_LEFT;
                 $contain[$name]['joinType'] = $filter;
             }
         }
