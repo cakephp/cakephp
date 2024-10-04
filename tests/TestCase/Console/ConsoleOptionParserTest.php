@@ -470,6 +470,43 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test adding and option with multiple and default separator.
+     */
+    public function testAddOptionWithMultipleDefaultSeparator(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('color', [
+            'multiple' => true,
+            'choices' => ['red', 'green', 'blue'],
+        ]);
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
+
+        $result = $parser->parse(['--color', 'blue,red'], $io);
+        $this->assertEquals(['color' => ['blue', 'red'], 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
+    }
+
+    /**
+     * test adding and option with multiple and default separator.
+     */
+    public function testAddOptionWithMultipleCustomSeparator(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('color', [
+            'multiple' => true,
+            'choices' => ['1st,choice', '2nd,choice', '3rd,choice'],
+            'separator' => ';',
+        ]);
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
+
+        $result = $parser->parse(['--color', '2nd,choice;3rd,choice'], $io);
+        $this->assertEquals(['color' => ['2nd,choice', '3rd,choice'], 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
+    }
+
+    /**
      * Test adding multiple options.
      */
     public function testAddOptions(): void
