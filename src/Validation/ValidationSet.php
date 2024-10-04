@@ -18,6 +18,7 @@ namespace Cake\Validation;
 
 use ArrayAccess;
 use ArrayIterator;
+use Cake\Core\Exception\CakeException;
 use Countable;
 use IteratorAggregate;
 use Traversable;
@@ -138,11 +139,15 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param string $name The name under which the rule should be set
      * @param \Cake\Validation\ValidationRule|array $rule The validation rule to be set
      * @return $this
+     * @throws \Cake\Core\Exception\CakeException If a rule with the same name already exists
      */
     public function add(string $name, ValidationRule|array $rule)
     {
         if (!($rule instanceof ValidationRule)) {
             $rule = new ValidationRule($rule);
+        }
+        if (array_key_exists($name, $this->_rules)) {
+            throw new CakeException('A validation rule with the same name already exists');
         }
         $this->_rules[$name] = $rule;
 
