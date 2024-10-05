@@ -182,13 +182,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     /**
      * @param list<string> $names Names
      * @return string
+     * @psalm-param non-empty-list<string> $names
      */
     protected function getShortestName(array $names): string
     {
-        if (count($names) <= 1) {
-            return (string)array_shift($names);
-        }
-
         usort($names, function ($a, $b) {
             return strlen($a) - strlen($b);
         });
