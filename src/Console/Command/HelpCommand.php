@@ -119,6 +119,16 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         ksort($grouped);
 
+        if (isset($grouped['CakePHP'])) {
+            $cakephp = $grouped['CakePHP'];
+            $grouped = ['CakePHP' => $cakephp] + $grouped;
+        }
+
+        if (isset($grouped['App'])) {
+            $app = $grouped['App'];
+            $grouped = ['App' => $app] + $grouped;
+        }
+
         $this->outputPaths($io);
         $io->out('<info>Available Commands:</info>', 2);
 
