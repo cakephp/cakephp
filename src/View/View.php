@@ -686,6 +686,36 @@ class View implements EventDispatcherInterface
     }
 
     /**
+     * Includes a template fragment, specific to the controller's folder.
+     *
+     * This method allows you to include a fragment of the template, which is placed in the folder
+     * of the current controller instead of the `element` folder. If the fragment is used across
+     * multiple controllers, you can specify an absolute path starting with `/`.
+     *
+     * @param string $name The name of the fragment template to include.
+     * @param array $data The data to pass into the fragment template.
+     * @param array $options Additional options for rendering the fragment.
+     * @return string Rendered HTML content of the fragment.
+     */
+    public function fragment(string $name, array $data = [], array $options = []): string
+    {
+        // Ensure data is always an array
+        if (!is_array($data)) {
+            $data = ['data' => $data]; // Wrap in array if needed
+        }
+
+        // Construct the path for the fragment
+        if ($name[0] == '/') {
+            $path = "..{$name}";
+        } else {
+            $path = "..{$this->name}/{$name}";
+        }
+
+        // Delegate rendering to the element() method
+        return $this->element($path, $data, $options);
+    }
+
+    /**
      * Create a cached block of view logic.
      *
      * This allows you to cache a block of view output into the cache
