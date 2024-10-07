@@ -188,6 +188,5 @@ class ValidationRuleTest extends TestCase
 
         $this->expectException(CakeException::class);
         $rules->add('myUniqueName', ['rule' => fn () => true]);
-        $this->fail('Exception not thrown');
     }
 }
