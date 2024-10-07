@@ -2934,6 +2934,7 @@ class ValidatorTest extends TestCase
      */
     protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null): void
     {
+        $validator->remove('username', $method);
         $name = $name ?: $method;
         if ($extra !== null) {
             $this->assertSame($validator, $validator->{$method}('username', $extra));
@@ -2949,6 +2950,7 @@ class ValidatorTest extends TestCase
         $this->assertEquals($pass, $rule->get('pass'), 'Passed options are different');
         $this->assertSame('default', $rule->get('provider'), 'Provider does not match');
 
+        $validator->remove('username', $method);
         if ($extra !== null) {
             $validator->{$method}('username', $extra, 'the message', 'create');
         } else {

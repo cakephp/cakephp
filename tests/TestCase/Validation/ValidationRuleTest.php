@@ -16,8 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Validation;
 
+use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\ValidationRule;
+use Cake\Validation\ValidationSet;
 use InvalidArgumentException;
 
 /**
@@ -177,5 +179,23 @@ class ValidationRuleTest extends TestCase
         $this->assertSame('willPass', $Rule->get('rule'));
         $this->assertSame('bar', $Rule->get('message'));
         $this->assertEquals(['param'], $Rule->get('pass'));
+    }
+
+    public function testAddDuplicateName(): void
+    {
+        $rules = new ValidationSet();
+        $rules->add('myUniqueName', ['rule' => fn () => false]);
+
+        $this->expectException(CakeException::class);
+        $rules->add('myUniqueName', ['rule' => fn () => true]);
+    }
+
+    public function testHasName(): void
+    {
+        $rules = new ValidationSet();
+        $rules->add('myUniqueName', ['rule' => fn () => false]);
+
+        $this->assertTrue($rules->has('myUniqueName'));
+        $this->assertFalse($rules->has('myMadeUpName'));
     }
 }

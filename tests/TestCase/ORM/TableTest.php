@@ -5879,12 +5879,6 @@ class TableTest extends TestCase
 
         $data = ['username' => 'larry'];
         $this->assertNotEmpty($validator->validate($data, false));
-
-        $validator->add('username', 'unique', [
-            'rule' => 'validateUnique', 'provider' => 'table',
-        ]);
-        $data = ['username' => 'larry'];
-        $this->assertNotEmpty($validator->validate($data, false));
     }
 
     /**
