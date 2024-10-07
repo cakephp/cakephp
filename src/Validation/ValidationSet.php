@@ -126,6 +126,17 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Returns whether a validation rule with the given name exists in this set.
+     *
+     * @param string $name The name to check
+     * @return bool
+     */
+    public function has(string $name): bool
+    {
+        return array_key_exists($name, $this->_rules);
+    }
+
+    /**
      * Sets a ValidationRule $rule with a $name
      *
      * ### Example:
