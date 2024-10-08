@@ -687,7 +687,7 @@ class ViewTest extends TestCase
         // Verify the initial fragment content
         $result = $this->View->fragment('testFragment');
         echo 'Initial fragment: ' . $result . "\n";
-        $this->assertEquals('Initial fragment data', $result); // Expect stored data
+        $this->assertSame('Initial fragment data', $result); // Expect stored data
 
         // Step 2: Change the fragment data to new data
         $this->View->fragment('testFragment', ['data' => 'Updated fragment data']);
@@ -695,7 +695,7 @@ class ViewTest extends TestCase
         // Verify the updated fragment content
         $updatedResult = $this->View->fragment('testFragment');
         echo 'Updated fragment: ' . $updatedResult . "\n";
-        $this->assertEquals('Updated fragment data', $updatedResult); // Should be updated
+        $this->assertSame('Updated fragment data', $updatedResult); // Should be updated
 
         // Step 3: Clear the fragment by setting it to an empty array
         $this->View->fragment('testFragment', ['data' => '']);
@@ -703,7 +703,7 @@ class ViewTest extends TestCase
         // Verify that the fragment is cleared by checking the stored fragment
         $clearedResult = $this->View->fragment('testFragment');
         echo 'Cleared fragment: ' . $clearedResult . "\n";
-        $this->assertEquals('', $clearedResult); // Expect empty string after clearing
+        $this->assertSame('', $clearedResult); // Expect empty string after clearing
     }
 
     /**
