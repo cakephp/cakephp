@@ -93,9 +93,9 @@ class ConsoleInputOption
     /**
      * The multiple separator.
      *
-     * @var string
+     * @var string|null
      */
-    protected string $_separator = ',';
+    protected ?string $_separator = null;
 
     /**
      * Make a new Input Option
@@ -121,7 +121,7 @@ class ConsoleInputOption
         bool $multiple = false,
         bool $required = false,
         ?string $prompt = null,
-        string $separator = ','
+        ?string $separator = null
     ) {
         $this->_name = $name;
         $this->_short = $short;
@@ -188,7 +188,7 @@ class ConsoleInputOption
         if ($this->_choices) {
             $default .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
         }
-        if ($this->_multiple) {
+        if ($this->_multiple && $this->_separator) {
             $default .= sprintf(' <comment>(separator: `%s`)</comment>', $this->_separator);
         }
 
@@ -282,7 +282,7 @@ class ConsoleInputOption
         if ($this->_choices === []) {
             return true;
         }
-        if (is_string($value)) {
+        if (is_string($value) && $this->_separator) {
             $values = explode($this->_separator, $value);
         } else {
             $values = [$value];
@@ -362,9 +362,9 @@ class ConsoleInputOption
     /**
      * Get the value of the separator.
      *
-     * @return string Value of this->_separator.
+     * @return string|null Value of this->_separator.
      */
-    public function separator(): string
+    public function separator(): ?string
     {
         return $this->_separator;
     }
