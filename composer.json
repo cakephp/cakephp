@@ -57,6 +57,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
+        "ext-simplexml": "*",
         "cakephp/cakephp-codesniffer": "^5.0",
         "http-interop/http-factory-tests": "^2.0",
         "mikey179/vfsstream": "^1.6.10",

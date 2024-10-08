@@ -702,13 +702,12 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('colors', [
             'multiple' => true,
-            'choices' => ['red', 'green', 'blue'],
+            'choices' => ['blue,red', 'yellow,green'],
         ]);
         $out = new StubConsoleOutput();
-        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
 
-        $result = $parser->parse(['--colors', 'blue,red'], $io);
-        $this->assertEquals(['colors' => ['blue', 'red'], 'help' => false], $result[0]);
+        $result = $parser->parse(['--colors', 'blue,red']);
+        $this->assertEquals(['colors' => ['blue,red'], 'help' => false], $result[0]);
         $this->assertCount(0, $out->messages());
     }
 
@@ -739,6 +738,7 @@ class ConsoleOptionParserTest extends TestCase
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('colors', [
             'multiple' => true,
+            'separator' => ',',
             'choices' => ['red', 'blue', 'green', 'yellow', 'purple'],
         ]);
         $out = new StubConsoleOutput();
