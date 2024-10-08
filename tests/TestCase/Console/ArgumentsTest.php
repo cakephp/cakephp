@@ -4,7 +4,6 @@ declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
@@ -211,13 +210,64 @@ class ArgumentsTest extends TestCase
         $this->assertNull($args->getMultipleOption('missing'));
     }
 
-    public function testGetMultipleOptionInvalidType(): void
+    /**
+     * Test getArrayOption(). Consistent method (alias of getMultipleOption())
+     */
+    public function testGetArrayOption(): void
+    {
+        $options = [
+            'types' => ['one', 'two', 'three'],
+        ];
+        $args = new Arguments([], $options, []);
+        $this->assertSame(['one', 'two', 'three'], $args->getArrayOption('types'));
+        $this->assertNull($args->getArrayOption('missing'));
+    }
+
+    public function testGetArrayOptionInvalidType(): void
     {
         $options = [
             'connection' => 'test',
         ];
         $args = new Arguments([], $options, []);
         $this->expectException(ConsoleException::class);
-        $args->getMultipleOption('connection');
+        $args->getArrayOption('connection');
+    }
+
+    public function testGetArrayArgumentInvalid(): void
+    {
+        $values = ['XS'];
+        $names = ['size'];
+        $args = new Arguments($values, [], $names);
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('Argument `colors` is not defined on this Command. Could this be an option maybe?');
+        $args->getArrayArgument('colors');
+    }
+
+    public function testGetArrayArgument(): void
+    {
+        $values = [
+            ['one', 'two', 'three'],
+        ];
+        $names = [
+            'types',
+            'odd',
+        ];
+        $args = new Arguments($values, [], $names);
+        $this->assertSame(['one', 'two', 'three'], $args->getArrayArgument('types'));
+        $this->assertNull($args->getArrayArgument('odd'));
+    }
+
+    public function testGetArrayArgumentInvalidType(): void
+    {
+        $values = [
+            'one type',
+        ];
+        $names = [
+            'types',
+        ];
+        $args = new Arguments($values, [], $names);
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('Argument `types` is not of type `array`, use `getArgument()` instead.');
+        $args->getArrayArgument('types');
     }
 }
