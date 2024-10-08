@@ -4,7 +4,6 @@ declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
@@ -695,9 +694,23 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * Test parsing argument with separator
+     */
+    public function testParseArgumentWithSeparator(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addArgument('colors', [
+            'separator' => ',',
+            'choices' => ['red', 'blue', 'green'],
+        ]);
+        $result = $parser->parse(['blue,red'], $this->io);
+        $this->assertEquals([['blue', 'red']], $result[1]);
+    }
+
+    /**
      * test parse with multiples and default list separator.
      */
-    public function testParseWithMultiplesDefaultSeparator(): void
+    public function testParseOptionWithMultiplesDefaultSeparator(): void
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('colors', [
@@ -714,7 +727,7 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test parse with multiples and custom list separator.
      */
-    public function testParseWithMultiplesCustomSeparator(): void
+    public function testParseOptionWithMultiplesCustomSeparator(): void
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('colors', [
@@ -733,7 +746,7 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test mixing multiples option as list and duplicate
      */
-    public function testParseWithMultiples()
+    public function testParseOptionWithMultiplesMixed(): void
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser->addOption('colors', [

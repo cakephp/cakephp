@@ -428,6 +428,7 @@ class ConsoleOptionParser
      *   option will be overwritten.
      * - `choices` A list of valid choices for this argument. If left empty all values are valid..
      *   An exception will be raised when parse() encounters an invalid value.
+     * - `separator` A separator to allow writing argument in a list form.
      *
      * @param \Cake\Console\ConsoleInputArgument|string $name The name of the argument.
      *   Will also accept an instance of ConsoleInputArgument.
@@ -446,6 +447,7 @@ class ConsoleOptionParser
                 'index' => count($this->_args),
                 'required' => false,
                 'choices' => [],
+                'separator' => null,
             ];
             $options = $params + $defaults;
             $index = $options['index'];
@@ -814,8 +816,14 @@ class ConsoleOptionParser
             ));
         }
 
-        $this->_args[$next]->validChoice($argument);
-        $args[] = $argument;
+        $arg = $this->_args[$next];
+
+        $arg->validChoice($argument);
+        if ($arg->separator()) {
+            $args[] = explode($arg->separator(), $argument);
+        } else {
+            $args[] = $argument;
+        }
 
         return $args;
     }
