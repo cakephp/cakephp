@@ -37,6 +37,14 @@ class PluginListCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Displays all currently available plugins.';
+    }
+
+    /**
      * Displays all currently available plugins.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -87,7 +95,7 @@ class PluginListCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription('Displays all currently available plugins.');
+        $parser->setDescription(static::getDescription());
         $parser->addOption('composer-path', [
             'help' => 'The absolute path to the composer.lock file to retrieve the versions from',
         ]);

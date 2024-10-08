@@ -27,6 +27,14 @@ use Cake\Routing\Router;
 class RoutesCommand extends Command
 {
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Get the list of routes connected in this application.';
+    }
+
+    /**
      * Display all routes in an application
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -136,7 +144,7 @@ class RoutesCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser
-            ->setDescription('Get the list of routes connected in this application.')
+            ->setDescription(static::getDescription())
             ->addOption('sort', [
                 'help' => 'Sorts alphabetically by route name A-Z',
                 'short' => 's',
