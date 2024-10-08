@@ -44,11 +44,11 @@ class CommandFactory implements CommandFactoryInterface
      */
     public function create(string $className): CommandInterface
     {
-        if ($this->container && $this->container->has($className)) {
+        if ($this->container?->has($className)) {
             return $this->container->get($className);
         }
 
         /** @var \Cake\Console\CommandInterface */
-        return new $className();
+        return new $className($this);
     }
 }
