@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleInputOption;
 use Cake\Console\Exception\ConsoleException;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use SimpleXMLElement;
 
 /**
@@ -31,7 +32,7 @@ class ConsoleInputOptionTest extends TestCase
      */
     protected $input;
 
-    public static function dataProperties()
+    public static function dataProperties(): array
     {
         return [
             // Test name()
@@ -60,9 +61,12 @@ class ConsoleInputOptionTest extends TestCase
     /**
      * Test properties setters and getters.
      *
-     * @dataProvider dataProperties
+     * @param array $args
+     * @param string $method
+     * @param mixed $expected
      */
-    public function testProperties(array $args, $method, $expected): void
+    #[DataProvider('dataProperties')]
+    public function testProperties(array $args, string $method, mixed $expected): void
     {
         $input = new ConsoleInputOption(...$args);
         $result = $input->$method();
@@ -217,9 +221,14 @@ class ConsoleInputOptionTest extends TestCase
         $input->validChoice(true);
     }
 
-    public static function dataValideChoiceSeparatorSuccess()
+    /**
+     * @return array
+     */
+    public static function dataValideChoiceSeparatorSuccess(): array
     {
         return [
+            [['red', 'blue', 'green'], null, false, 'blue'],
+            [['blue,red', 'green,yellow'], null, false, 'blue,red'],
             [['red', 'blue', 'green'], ';', false, 'blue;red'],
             [[false, true], ';', true, '1;0'],
             [[false, true], ';', true, 'true;false'], // Is boolean, so 'false' mean `true` and is valid
@@ -229,9 +238,13 @@ class ConsoleInputOptionTest extends TestCase
     /**
      * Test valid choice with value contain multiple and separator.
      *
-     * @dataProvider dataValideChoiceSeparatorSuccess
+     * @param array $choices
+     * @param string|null $separator
+     * @param bool $isBoolean
+     * @param string $value
      */
-    public function testValidChoiceSeparatorSuccess($choices, $separator, $isBoolean, $value)
+    #[DataProvider('dataValideChoiceSeparatorSuccess')]
+    public function testValidChoiceSeparatorSuccess(array $choices, ?string $separator, bool $isBoolean, string $value): void
     {
         $input = new ConsoleInputOption(
             'colors',
@@ -250,9 +263,10 @@ class ConsoleInputOptionTest extends TestCase
         $this->assertTrue($success);
     }
 
-    public static function dataValideChoiceSeparatorFail()
+    public static function dataValideChoiceSeparatorFail(): array
     {
         return [
+            [['red', 'blue', 'green'], null, false, 'blue,yellow'],
             [['red', 'blue', 'green'], ';', false, 'blue;yellow'],
             [[1, 0], ';', false, '1;0'],
         ];
@@ -261,9 +275,13 @@ class ConsoleInputOptionTest extends TestCase
     /**
      * Test valid choice with value contain multiple and separator.
      *
-     * @dataProvider dataValideChoiceSeparatorFail
+     * @param array $choices
+     * @param string|null $separator
+     * @param bool $isBoolean
+     * @param string $value
      */
-    public function testValidChoiceSeparatorFail($choices, $separator, $isBoolean, $value)
+    #[DataProvider('dataValideChoiceSeparatorFail')]
+    public function testValidChoiceSeparatorFail(array $choices, ?string $separator, bool $isBoolean, string $value): void
     {
         $input = new ConsoleInputOption(
             'colors',
@@ -285,7 +303,7 @@ class ConsoleInputOptionTest extends TestCase
     /**
      * Test xml.
      */
-    public function testXml()
+    public function testXml(): void
     {
         $input = new ConsoleInputOption(
             'colors',
@@ -312,7 +330,7 @@ XML;
     /**
      * Test xml default as true
      */
-    public function testXmlDefaultTrue()
+    public function testXmlDefaultTrue(): void
     {
         $input = new ConsoleInputOption(
             'verbose',
@@ -336,7 +354,7 @@ XML;
     /**
      * Test xml default as true
      */
-    public function testXmlDefaultFalse()
+    public function testXmlDefaultFalse(): void
     {
         $input = new ConsoleInputOption(
             'verbose',
