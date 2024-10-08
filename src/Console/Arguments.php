@@ -224,7 +224,7 @@ class Arguments
      * Gets a multiple option's value or null if not set.
      *
      * @return list<string>|null
-     * @deprecated
+     * @deprecated 5.2.0 Use getArrayOption instead.
      */
     public function getMultipleOption(string $name): ?array
     {

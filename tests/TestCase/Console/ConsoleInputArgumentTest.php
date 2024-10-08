@@ -75,13 +75,11 @@ class ConsoleInputArgumentTest extends TestCase
             ';'
         );
         $output = $input->help(72);
-        debug($output);
         $this->assertStringStartsWith('colors ', $output);
         $this->assertStringContainsString(' help message ', $output);
         $this->assertStringContainsString(' <comment>(choices: red|blue)</comment>', $output);
         $this->assertStringContainsString(' <comment>default: "red"</comment>', $output);
         $this->assertStringContainsString(' <comment>(separator: ";")</comment>', $output);
-        $this->assertStringEndsWith(' <comment>(required)</comment>', $output);
     }
 
     /**

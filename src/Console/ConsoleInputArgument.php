@@ -148,12 +148,8 @@ class ConsoleInputArgument
         if ($this->_separator) {
             $optional .= sprintf(' <comment>(separator: "%s")</comment>', $this->_separator);
         }
-        $required = '';
-        if ($this->isRequired()) {
-            $required = ' <comment>(required)</comment>';
-        }
 
-        return sprintf('%s%s%s%s', $name, $this->_help, $optional, $required);
+        return sprintf('%s%s%s', $name, $this->_help, $optional);
     }
 
     /**
