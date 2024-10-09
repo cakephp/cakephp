@@ -38,6 +38,14 @@ class PluginAssetsRemoveCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return "Remove plugin assets from app's webroot.";
+    }
+
+    /**
      * Execute the command
      *
      * Remove plugin assets from app's webroot.
@@ -76,9 +84,9 @@ class PluginAssetsRemoveCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription([
-            "Remove plugin assets from app's webroot.",
-        ])->addArgument('name', [
+        $parser->setDescription(
+            static::getDescription()
+        )->addArgument('name', [
             'help' => 'A specific plugin you want to remove.',
             'required' => false,
         ]);

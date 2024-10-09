@@ -39,6 +39,14 @@ class I18nInitCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Initialize a language PO file from the POT file.';
+    }
+
+    /**
      * Execute the command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -101,7 +109,7 @@ class I18nInitCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription('Initialize a language PO file from the POT file')
+        $parser->setDescription(static::getDescription())
            ->addOption('plugin', [
                'help' => 'The plugin to create a PO file in.',
                'short' => 'p',

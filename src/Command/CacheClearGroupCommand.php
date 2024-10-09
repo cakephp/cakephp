@@ -38,6 +38,14 @@ class CacheClearGroupCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Clear all data in a single cache group.';
+    }
+
+    /**
      * Hook method for defining this command's option parser.
      *
      * @see https://book.cakephp.org/5/en/console-commands/option-parsers.html
@@ -47,7 +55,7 @@ class CacheClearGroupCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
-        $parser->setDescription('Clear all data in a single cache group.');
+        $parser->setDescription(static::getDescription());
         $parser->addArgument('group', [
             'help' => 'The cache group to clear. For example, `cake cache clear_group mygroup` will clear ' .
                 'all cache items belonging to group "mygroup".',
