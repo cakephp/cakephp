@@ -122,7 +122,7 @@ class Arguments
      */
     private function _getArgument(string $name): array|string|null
     {
-         $this->assertArgumentExists($name);
+        $this->assertArgumentExists($name);
 
         $offset = array_search($name, $this->argNames, true);
         if ($offset === false || !isset($this->args[$offset])) {

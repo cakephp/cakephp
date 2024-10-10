@@ -224,7 +224,7 @@ class ConsoleInputOptionTest extends TestCase
     /**
      * @return array
      */
-    public static function dataValideChoiceSeparatorSuccess(): array
+    public static function dataValidChoiceSeparatorSuccess(): array
     {
         return [
             [['red', 'blue', 'green'], null, false, 'blue'],
@@ -263,7 +263,7 @@ class ConsoleInputOptionTest extends TestCase
         $this->assertTrue($success);
     }
 
-    public static function dataValideChoiceSeparatorFail(): array
+    public static function dataValidChoiceSeparatorFail(): array
     {
         return [
             [['red', 'blue', 'green'], null, false, 'blue,yellow'],

@@ -161,7 +161,7 @@ class ConsoleInputArgumentTest extends TestCase
     /**
      * @return array
      */
-    public static function dataValideChoiceSeparatorSuccess(): array
+    public static function dataValidChoiceSeparatorSuccess(): array
     {
         return [
             [['red', 'blue', 'green'], null, 'blue'],
@@ -177,7 +177,7 @@ class ConsoleInputArgumentTest extends TestCase
      * @param string|null $separator
      * @param string $value
      */
-    #[DataProvider('dataValideChoiceSeparatorSuccess')]
+    #[DataProvider('dataValidChoiceSeparatorSuccess')]
     public function testValidChoiceSeparatorSuccess(array $choices, ?string $separator, string $value): void
     {
         $input = new ConsoleInputArgument(
