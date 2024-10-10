@@ -322,6 +322,7 @@ class Cookie implements CookieInterface
         assert(is_string($name) && is_string($value));
         unset($data['name'], $data['value']);
 
+        /** @phpstan-ignore-next-line */
         return Cookie::create(
             $name,
             $value,
