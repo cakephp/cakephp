@@ -22,6 +22,7 @@ use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
+use Cake\Core\ContainerInterface;
 use Cake\Core\Plugin;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Event\EventManagerInterface;
@@ -34,6 +35,7 @@ use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\TestPluginThreePlugin;
 use Mockery;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
+use stdClass;
 use TestPlugin\Plugin as TestPlugin;
 
 /**
@@ -215,7 +217,7 @@ class BasePluginTest extends TestCase
 
         $basePlugin = new class extends BasePlugin
         {
-            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            public function events(EventManagerInterface $eventManager, ContainerInterface $container): EventManagerInterface
             {
                 $eventManager->on('testTrue', function ($event) {
                     return true;
@@ -242,10 +244,10 @@ class BasePluginTest extends TestCase
         static::setAppNamespace();
         $basePlugin = new class extends BasePlugin
         {
-            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            public function events(EventManagerInterface $eventManager, ContainerInterface $container): EventManagerInterface
             {
-                $eventManager->on('testTrue', function ($event) {
-                    return true;
+                $eventManager->on('testTrue', function ($event) use ($container) {
+                    return $container->get(stdClass::class);
                 });
 
                 return $eventManager;
@@ -262,6 +264,11 @@ class BasePluginTest extends TestCase
             {
                 return $middlewareQueue;
             }
+
+            public function services(ContainerInterface $container): void
+            {
+                $container->add(stdClass::class, json_decode('{"key":"value"}', true));
+            }
         };
         $app = $app->addPlugin($basePlugin);
         $output = new StubConsoleOutput();
@@ -271,5 +278,6 @@ class BasePluginTest extends TestCase
         $runner = new CommandRunner($app);
         $runner->run(['cake', 'version'], $consoleIo);
         $this->assertNotEmpty($app->getEventManager()->listeners('testTrue'));
+        $this->assertEquals(['key' => 'value'], $app->getEventManager()->dispatch('testTrue')->getResult());
     }
 }

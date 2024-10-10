@@ -266,7 +266,7 @@ abstract class BaseApplication implements
     public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
     {
         foreach ($this->plugins->with('events') as $plugin) {
-            $eventManager = $plugin->events($eventManager);
+            $eventManager = $plugin->events($eventManager, $this->container);
         }
 
         return $eventManager;

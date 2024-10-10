@@ -315,9 +315,10 @@ class BasePlugin implements PluginInterface
      * Register application events.
      *
      * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
+     * @param \Cake\Core\ContainerInterface $container The DI container instance
      * @return \Cake\Event\EventManagerInterface
      */
-    public function events(EventManagerInterface $eventManager): EventManagerInterface
+    public function events(EventManagerInterface $eventManager, ContainerInterface $container): EventManagerInterface
     {
         return $eventManager;
     }
