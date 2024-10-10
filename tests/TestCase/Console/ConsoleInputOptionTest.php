@@ -243,7 +243,7 @@ class ConsoleInputOptionTest extends TestCase
      * @param bool $isBoolean
      * @param string $value
      */
-    #[DataProvider('dataValideChoiceSeparatorSuccess')]
+    #[DataProvider('dataValidChoiceSeparatorSuccess')]
     public function testValidChoiceSeparatorSuccess(array $choices, ?string $separator, bool $isBoolean, string $value): void
     {
         $input = new ConsoleInputOption(
