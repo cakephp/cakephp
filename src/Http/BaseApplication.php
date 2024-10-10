@@ -138,6 +138,7 @@ abstract class BaseApplication implements
      */
     public function addPlugin($name, array $config = [])
     {
+        $this->plugins->setContainer($this->getContainer());
         if (is_string($name)) {
             $plugin = $this->plugins->create($name, $config);
         } else {
@@ -188,6 +189,7 @@ abstract class BaseApplication implements
         // phpcs:ignore
         $plugins = @include $this->configDir . 'plugins.php';
         if (is_array($plugins)) {
+            $this->plugins->setContainer($this->getContainer());
             $this->plugins->addFromConfig($plugins);
         }
     }
@@ -266,7 +268,7 @@ abstract class BaseApplication implements
     public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
     {
         foreach ($this->plugins->with('events') as $plugin) {
-            $eventManager = $plugin->events($eventManager, $this->container);
+            $eventManager = $plugin->events($eventManager);
         }
 
         return $eventManager;

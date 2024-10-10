@@ -109,6 +109,11 @@ class BasePlugin implements PluginInterface
     protected ?string $name = null;
 
     /**
+     * @var \Cake\Core\ContainerInterface|null
+     */
+    protected ?ContainerInterface $container;
+
+    /**
      * Constructor
      *
      * @param array<string, mixed> $options Options
@@ -315,11 +320,26 @@ class BasePlugin implements PluginInterface
      * Register application events.
      *
      * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
-     * @param \Cake\Core\ContainerInterface $container The DI container instance
      * @return \Cake\Event\EventManagerInterface
      */
-    public function events(EventManagerInterface $eventManager, ContainerInterface $container): EventManagerInterface
+    public function events(EventManagerInterface $eventManager): EventManagerInterface
     {
         return $eventManager;
+    }
+
+    /**
+     * @return \Cake\Core\ContainerInterface|null
+     */
+    public function getContainer(): ?ContainerInterface
+    {
+        return $this->container;
+    }
+
+    /**
+     * @param \Cake\Core\ContainerInterface|null $container
+     */
+    public function setContainer(?ContainerInterface $container): void
+    {
+        $this->container = $container;
     }
 }

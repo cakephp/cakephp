@@ -217,7 +217,7 @@ class BasePluginTest extends TestCase
 
         $basePlugin = new class extends BasePlugin
         {
-            public function events(EventManagerInterface $eventManager, ContainerInterface $container): EventManagerInterface
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
                 $eventManager->on('testTrue', function ($event) {
                     return true;
@@ -244,8 +244,9 @@ class BasePluginTest extends TestCase
         static::setAppNamespace();
         $basePlugin = new class extends BasePlugin
         {
-            public function events(EventManagerInterface $eventManager, ContainerInterface $container): EventManagerInterface
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
+                $container = $this->getContainer();
                 $eventManager->on('testTrue', function ($event) use ($container) {
                     return $container->get(stdClass::class);
                 });
@@ -270,6 +271,7 @@ class BasePluginTest extends TestCase
                 $container->add(stdClass::class, json_decode('{"key":"value"}', true));
             }
         };
+        $basePlugin->setContainer($app->getContainer());
         $app = $app->addPlugin($basePlugin);
         $output = new StubConsoleOutput();
         $consoleIo = Mockery::mock(ConsoleIo::class, [$output, $output, null, null])

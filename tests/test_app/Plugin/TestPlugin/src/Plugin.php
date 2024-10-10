@@ -16,13 +16,12 @@ declare(strict_types=1);
 namespace TestPlugin;
 
 use Cake\Core\BasePlugin;
-use Cake\Core\ContainerInterface;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\MiddlewareQueue;
 
 class Plugin extends BasePlugin
 {
-    public function events(EventManagerInterface $event, ContainerInterface $container): EventManagerInterface
+    public function events(EventManagerInterface $event): EventManagerInterface
     {
         $event->on('TestPlugin.load', function (): void {
         });

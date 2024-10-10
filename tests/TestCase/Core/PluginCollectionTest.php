@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
+use Cake\Core\Container;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\PluginCollection;
@@ -72,6 +73,7 @@ class PluginCollectionTest extends TestCase
         ];
 
         $plugins = new PluginCollection();
+        $plugins->setContainer(new Container());
         $plugins->addFromConfig($config);
 
         $this->assertCount(2, $plugins);
@@ -127,6 +129,7 @@ class PluginCollectionTest extends TestCase
     public function testGetAutoload(): void
     {
         $plugins = new PluginCollection();
+        $plugins->setContainer(new Container());
         $plugin = $plugins->get('Named');
         $this->assertInstanceOf(NamedPlugin::class, $plugin);
     }
@@ -142,6 +145,7 @@ class PluginCollectionTest extends TestCase
     public function testCreate(): void
     {
         $plugins = new PluginCollection();
+        $plugins->setContainer(new Container());
 
         $plugin = $plugins->create('Named');
         $this->assertInstanceOf(NamedPlugin::class, $plugin);

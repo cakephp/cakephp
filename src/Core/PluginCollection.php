@@ -70,6 +70,13 @@ class PluginCollection implements Iterator, Countable
     protected int $loopDepth = -1;
 
     /**
+     * Container instance
+     *
+     * @var \Cake\Core\ContainerInterface
+     */
+    protected ContainerInterface $container;
+
+    /**
      * Constructor
      *
      * @param array<\Cake\Core\PluginInterface> $plugins The map of plugins to add to the collection.
@@ -272,6 +279,7 @@ class PluginCollection implements Iterator, Countable
         $config += ['name' => $name];
         $namespace = str_replace('/', '\\', $name);
 
+        /** @var class-string<\Cake\Core\PluginInterface> $className */
         $className = $namespace . '\\' . 'Plugin';
         // Check for [Vendor/]Foo/Plugin class
         if (!class_exists($className)) {
@@ -291,8 +299,11 @@ class PluginCollection implements Iterator, Countable
             }
         }
 
-        /** @var class-string<\Cake\Core\PluginInterface> $className */
-        return new $className($config);
+        /** @var \Cake\Core\BasePlugin $plugin */
+        $plugin = new $className($config);
+        $plugin->setContainer($this->container);
+
+        return $plugin;
     }
 
     /**
@@ -384,5 +395,21 @@ class PluginCollection implements Iterator, Countable
                 yield $plugin;
             }
         }
+    }
+
+    /**
+     * @return \Cake\Core\ContainerInterface
+     */
+    public function getContainer(): ContainerInterface
+    {
+        return $this->container;
+    }
+
+    /**
+     * @param \Cake\Core\ContainerInterface $container
+     */
+    public function setContainer(ContainerInterface $container): void
+    {
+        $this->container = $container;
     }
 }
