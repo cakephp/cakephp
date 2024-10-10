@@ -208,7 +208,7 @@ class ConsoleInputArgumentTest extends TestCase
      * @param string|null $separator
      * @param string $value
      */
-    #[DataProvider('dataValideChoiceSeparatorFail')]
+    #[DataProvider('dataValidChoiceSeparatorFail')]
     public function testValidChoiceSeparatorFail(array $choices, ?string $separator, string $value): void
     {
         $input = new ConsoleInputArgument(
