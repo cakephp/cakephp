@@ -280,7 +280,7 @@ class ConsoleInputOptionTest extends TestCase
      * @param bool $isBoolean
      * @param string $value
      */
-    #[DataProvider('dataValideChoiceSeparatorFail')]
+    #[DataProvider('dataValidChoiceSeparatorFail')]
     public function testValidChoiceSeparatorFail(array $choices, ?string $separator, bool $isBoolean, string $value): void
     {
         $input = new ConsoleInputOption(
