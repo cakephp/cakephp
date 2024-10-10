@@ -193,7 +193,7 @@ class ConsoleInputArgumentTest extends TestCase
         $this->assertTrue($success);
     }
 
-    public static function dataValideChoiceSeparatorFail(): array
+    public static function dataValidChoiceSeparatorFail(): array
     {
         return [
             [['red', 'blue', 'green'], null, 'blue,yellow'],
