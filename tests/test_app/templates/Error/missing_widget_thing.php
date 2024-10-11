@@ -1,1 +1,1 @@
-template for MissingWidgetThing was rendered
+template for <?= get_class($error) ?> was rendered
