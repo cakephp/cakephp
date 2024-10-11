@@ -43,6 +43,7 @@ use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use PDOException;
 use Psr\Http\Message\ResponseInterface;
+use ReflectionMethod;
 use Throwable;
 use function Cake\Core\h;
 use function Cake\Core\namespaceSplit;
@@ -221,7 +222,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
     /**
      * Renders the response for the exception.
      *
-     * @return \Cake\Http\Response The response to be sent.
+     * @return \Psr\Http\Message\ResponseInterface The response to be sent.
      */
     public function render(): ResponseInterface
     {
@@ -411,12 +412,29 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      * Generate the response using the controller object.
      *
      * @param string $template The template to render.
+     * @param bool $skipControllerCheck Skip checking controller for existence of
+     *   method matching the exception name.
      * @return \Cake\Http\Response A response object that can be sent.
      */
-    protected function _outputMessage(string $template): Response
+    protected function _outputMessage(string $template, bool $skipControllerCheck = false): Response
     {
         try {
-            $this->controller->render($template);
+            $method = $this->method ?: $this->_method($this->error);
+
+            if (!$skipControllerCheck && method_exists($this->controller, $method)) {
+                $this->controller->viewBuilder()->setTemplate($method);
+
+                $reflectionMethod = new ReflectionMethod($this->controller, $method);
+                $result = $reflectionMethod->invoke($this->controller);
+
+                if ($result instanceof Response) {
+                    $this->controller->setResponse($result);
+                } else {
+                    $this->controller->render();
+                }
+            } else {
+                $this->controller->render($template);
+            }
 
             return $this->_shutdown();
         } catch (MissingTemplateException $e) {
@@ -433,7 +451,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
                 return $this->_outputMessageSafe('error500');
             }
 
-            return $this->_outputMessage('error500');
+            return $this->_outputMessage('error500', true);
         } catch (MissingPluginException $e) {
             Log::warning(
                 "MissingPluginException - Failed to render error template `{$template}`. Error: {$e->getMessage()}" .

@@ -43,6 +43,7 @@ use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Exception\XmlException;
 use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
@@ -968,5 +969,25 @@ class WebExceptionRendererTest extends TestCase
         $this->assertStringContainsString('Database Error', $result);
         $this->assertStringContainsString('SQL Query', $result);
         $this->assertStringContainsString(h('SELECT * from poo_query < 5 and 7'), $result);
+    }
+
+    /**
+     * Tests for customzing responses using methods of ErrorController.
+     *
+     * @return void
+     */
+    public function testExceptionWithMatchingControllerMethod(): void
+    {
+        $exception = new MissingWidgetThingException();
+        $exceptionRenderer = new TestAppsExceptionRenderer($exception);
+
+        $result = (string)$exceptionRenderer->render()->getBody();
+        $this->assertStringContainsString('template for MissingWidgetThing was rendered', $result);
+
+        $exception = new XmlException();
+        $exceptionRenderer = new TestAppsExceptionRenderer($exception);
+
+        $result = (string)$exceptionRenderer->render()->getBody();
+        $this->assertStringContainsString('<xml>rendered xml exception</xml>', $result);
     }
 }
