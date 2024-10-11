@@ -425,7 +425,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
                 $this->controller->viewBuilder()->setTemplate($method);
 
                 $reflectionMethod = new ReflectionMethod($this->controller, $method);
-                $result = $reflectionMethod->invoke($this->controller);
+                $result = $reflectionMethod->invoke($this->controller, $this->error);
 
                 if ($result instanceof Response) {
                     $this->controller->setResponse($result);

@@ -982,7 +982,7 @@ class WebExceptionRendererTest extends TestCase
         $exceptionRenderer = new TestAppsExceptionRenderer($exception);
 
         $result = (string)$exceptionRenderer->render()->getBody();
-        $this->assertStringContainsString('template for MissingWidgetThing was rendered', $result);
+        $this->assertStringContainsString('template for TestApp\Error\Exception\MissingWidgetThingException was rendered', $result);
 
         $exception = new XmlException();
         $exceptionRenderer = new TestAppsExceptionRenderer($exception);
