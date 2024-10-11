@@ -654,4 +654,23 @@ class SessionTest extends TestCase
         $session->check('something');
         $this->assertFalse($session->started());
     }
+
+    /**
+     * test setting ini properties with Session configuration after session is created before started.
+     */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
+    public function testSessionConfigTimeoutUpdate(): void
+    {
+        $_SESSION = null;
+
+        ini_set('session.gc_maxlifetime', 86400);
+        $config = [
+            'defaults' => 'php',
+        ];
+
+        $session = Session::create($config);
+        $session->setSessionLifetime(3540); // 59*60
+        $this->assertEquals(59 * 60, ini_get('session.gc_maxlifetime'), 'timeout should set gc maxlifetime');
+    }
 }
