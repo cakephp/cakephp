@@ -672,5 +672,9 @@ class SessionTest extends TestCase
         $session = Session::create($config);
         $session->setSessionLifetime(3540); // 59*60
         $this->assertEquals(59 * 60, ini_get('session.gc_maxlifetime'), 'timeout should set gc maxlifetime');
+
+        $session->start();
+        $this->expectException(CakeException::class);
+        $session->setSessionLifetime(3600); // 60*60
     }
 }
