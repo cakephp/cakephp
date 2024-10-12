@@ -20,9 +20,11 @@ use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query\SelectQuery;
 use Closure;
+use InvalidArgumentException;
 
 /**
  * CounterCache behavior
@@ -189,6 +191,85 @@ class CounterCacheBehavior extends Behavior
         }
 
         $this->_processAssociations($event, $entity);
+    }
+
+    /**
+     * Update counter cache.
+     *
+     * @param string|null $assocName The association name to update counter cache for.
+     *  If null, all configured associations will be updated.
+     * @throws \InvalidArgumentException If specified association is not configured.
+     * @return void
+     */
+    public function updateCounterCache(?string $assocName = null): void
+    {
+        $config = $this->_config;
+        if ($assocName !== null) {
+            if (!isset($config[$assocName])) {
+                throw new InvalidArgumentException(sprintf(
+                    'Association `%s` is not configured for counter cache behavior of `%s`',
+                    $assocName,
+                    $this->_table->getAlias()
+                ));
+            }
+
+            $config = [$assocName => $config[$assocName]];
+        }
+
+        foreach ($config as $assoc => $settings) {
+            /** @var \Cake\ORM\Association\BelongsTo $belongsTo */
+            $belongsTo = $this->_table->getAssociation($assoc);
+
+            foreach ($settings as $field => $config) {
+                if ($config instanceof Closure) {
+                    // Cannot update counter cache which use a closure
+                    return;
+                }
+
+                if (is_int($field)) {
+                    $field = $config;
+                    $config = [];
+                }
+
+                $this->updateCountForAssociation($belongsTo, $field, $config);
+            }
+        }
+    }
+
+    /**
+     * Update counter cache for the given association.
+     *
+     * @param \Cake\ORM\Association\BelongsTo $assoc The association object.
+     * @param string $field Counter cache field.
+     * @param array $config Config array.
+     * @return void
+     */
+    protected function updateCountForAssociation(BelongsTo $assoc, string $field, array $config): void
+    {
+        $primaryKeys = (array)$assoc->getBindingKey();
+        /** @var list<string> $foreignKeys */
+        $foreignKeys = (array)$assoc->getForeignKey();
+
+        $results = $assoc->getTarget()->find()
+            ->select($primaryKeys)
+            ->all();
+
+        /** @var \Cake\Datasource\EntityInterface $entity */
+        foreach ($results as $entity) {
+            $updateConditions = $entity->extract($primaryKeys);
+
+            foreach ($updateConditions as $f => $value) {
+                if ($value === null) {
+                    $updateConditions[$f . ' IS'] = $value;
+                    unset($updateConditions[$f]);
+                }
+            }
+
+            $countConditions = array_combine($foreignKeys, $updateConditions);
+
+            $count = $this->_getCount($config, $countConditions);
+            $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
+        }
     }
 
     /**
