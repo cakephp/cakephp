@@ -338,6 +338,28 @@ class CounterCacheBehaviorTest extends TestCase
         $this->assertSame(2, $after->get('posts_published'));
     }
 
+    public function testCustomFindWithoutSubquery(): void
+    {
+        $this->post->belongsTo('Users');
+
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'posts_published' => [
+                    'finder' => 'published',
+                    'useSubQuery' => false,
+                ],
+            ],
+        ]);
+
+        $before = $this->_getUser();
+        $entity = $this->_getEntity()->set('published', true);
+        $this->post->save($entity);
+        $after = $this->_getUser();
+
+        $this->assertSame(1, $before->get('posts_published'));
+        $this->assertSame(2, $after->get('posts_published'));
+    }
+
     /**
      * Testing counter cache with lambda returning number
      */
