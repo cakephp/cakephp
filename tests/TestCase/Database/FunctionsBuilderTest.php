@@ -128,7 +128,18 @@ class FunctionsBuilderTest extends TestCase
      */
     public function testCount(): void
     {
-        $function = $this->functions->count('*');
+        $function = $this->functions->count('col_a');
+        $this->assertInstanceOf(AggregateExpression::class, $function);
+        $this->assertSame('COUNT(col_a)', $function->sql(new ValueBinder()));
+        $this->assertSame('integer', $function->getReturnType());
+    }
+
+    /**
+     * Tests generating a COUNT(*) function
+     */
+    public function testCountAll(): void
+    {
+        $function = $this->functions->countAll();
         $this->assertInstanceOf(AggregateExpression::class, $function);
         $this->assertSame('COUNT(*)', $function->sql(new ValueBinder()));
         $this->assertSame('integer', $function->getReturnType());

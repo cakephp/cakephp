@@ -103,6 +103,16 @@ class FunctionsBuilder
     }
 
     /**
+     * Returns a AggregateExpression representing a call to SQL COUNT(*) function.
+     *
+     * @return \Cake\Database\Expression\AggregateExpression
+     */
+    public function countAll(): AggregateExpression
+    {
+        return $this->count('*');
+    }
+
+    /**
      * Returns a FunctionExpression representing a string concatenation
      *
      * @param array $args List of strings or expressions to concatenate
