@@ -23,6 +23,7 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Exception;
 use TestApp\Model\Table\PublishedPostsTable;
 
 /**
@@ -626,6 +627,9 @@ class CounterCacheBehaviorTest extends TestCase
         $this->post->addBehavior('CounterCache', [
             'Users' => [
                 'post_count',
+                'dummy' => function () {
+                    throw new Exception('Closures are never called by "updateCounterCache()"');
+                },
             ],
         ]);
 
