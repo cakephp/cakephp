@@ -198,10 +198,13 @@ class CounterCacheBehavior extends Behavior
      *
      * @param string|null $assocName The association name to update counter cache for.
      *  If null, all configured associations will be updated.
+     * @param int $limit The number of records to fetch per page/iteration.
+     * @param int|null $page The page/iteration number. If null (default), all
+     *   records will be updated one page at a time.
      * @throws \InvalidArgumentException If specified association is not configured.
      * @return void
      */
-    public function updateCounterCache(?string $assocName = null): void
+    public function updateCounterCache(?string $assocName = null, int $limit = 100, ?int $page = null): void
     {
         $config = $this->_config;
         if ($assocName !== null) {
@@ -231,7 +234,7 @@ class CounterCacheBehavior extends Behavior
                     $config = [];
                 }
 
-                $this->updateCountForAssociation($belongsTo, $field, $config);
+                $this->updateCountForAssociation($belongsTo, $field, $config, $limit, $page);
             }
         }
     }
@@ -242,34 +245,50 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\ORM\Association\BelongsTo $assoc The association object.
      * @param string $field Counter cache field.
      * @param array $config Config array.
+     * @param int $limit Limit.
+     * @param int|null $page Page number.
      * @return void
      */
-    protected function updateCountForAssociation(BelongsTo $assoc, string $field, array $config): void
-    {
+    protected function updateCountForAssociation(
+        BelongsTo $assoc,
+        string $field,
+        array $config,
+        int $limit = 100,
+        ?int $page = null
+    ): void {
         $primaryKeys = (array)$assoc->getBindingKey();
         /** @var list<string> $foreignKeys */
         $foreignKeys = (array)$assoc->getForeignKey();
 
-        $results = $assoc->getTarget()->find()
+        $query = $assoc->getTarget()->find()
             ->select($primaryKeys)
-            ->all();
+            ->limit($limit);
 
-        /** @var \Cake\Datasource\EntityInterface $entity */
-        foreach ($results as $entity) {
-            $updateConditions = $entity->extract($primaryKeys);
+        $singlePage = $page !== null;
+        $page ??= 1;
 
-            foreach ($updateConditions as $f => $value) {
-                if ($value === null) {
-                    $updateConditions[$f . ' IS'] = $value;
-                    unset($updateConditions[$f]);
+        do {
+            $results = $query
+                ->page($page++)
+                ->all();
+
+            /** @var \Cake\Datasource\EntityInterface $entity */
+            foreach ($results as $entity) {
+                $updateConditions = $entity->extract($primaryKeys);
+
+                foreach ($updateConditions as $f => $value) {
+                    if ($value === null) {
+                        $updateConditions[$f . ' IS'] = $value;
+                        unset($updateConditions[$f]);
+                    }
                 }
+
+                $countConditions = array_combine($foreignKeys, $updateConditions);
+
+                $count = $this->_getCount($config, $countConditions);
+                $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
             }
-
-            $countConditions = array_combine($foreignKeys, $updateConditions);
-
-            $count = $this->_getCount($config, $countConditions);
-            $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
-        }
+        } while (!$singlePage && $results->count() === $limit);
     }
 
     /**
