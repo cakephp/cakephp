@@ -23,7 +23,6 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use TestApp\Model\Table\PublishedPostsTable;
 
 /**
@@ -650,15 +649,6 @@ class CounterCacheBehaviorTest extends TestCase
         $this->assertSame(0, $user->get('post_count'));
         $user = $this->_getUser(2);
         $this->assertSame(1, $user->get('post_count'));
-    }
-
-    public function testUpdateCounterCacheException()
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Association `NonExistent` is not configured for counter cache behavior of `Post`');
-
-        $this->post->addBehavior('CounterCache');
-        $this->post->updateCounterCache('NonExistent');
     }
 
     /**

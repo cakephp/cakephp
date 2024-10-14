@@ -24,7 +24,6 @@ use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query\SelectQuery;
 use Closure;
-use InvalidArgumentException;
 
 /**
  * CounterCache behavior
@@ -208,14 +207,6 @@ class CounterCacheBehavior extends Behavior
     {
         $config = $this->_config;
         if ($assocName !== null) {
-            if (!isset($config[$assocName])) {
-                throw new InvalidArgumentException(sprintf(
-                    'Association `%s` is not configured for counter cache behavior of `%s`',
-                    $assocName,
-                    $this->_table->getAlias()
-                ));
-            }
-
             $config = [$assocName => $config[$assocName]];
         }
 
