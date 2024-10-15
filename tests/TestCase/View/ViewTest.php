@@ -647,6 +647,66 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test fragment method with mock for element.
+     */
+    public function testFragmentMethod(): void
+    {
+        // Simulate the fragment storage with a variable
+        $storedFragment = '';
+
+        // Mock the element method to behave dynamically based on fragment data
+        $this->View = $this->getMockBuilder(View::class)
+            ->onlyMethods(['element'])
+            ->getMock();
+
+        // Set up the element method to return the stored fragment data
+        $this->View->expects($this->any())
+            ->method('element')
+            ->willReturnCallback(function ($path, $data) use (&$storedFragment) {
+                // Debug output to check what's happening
+                echo 'Data passed: ' . json_encode($data['data']) . "\n";
+                echo 'Stored fragment before update: ' . $storedFragment . "\n";
+
+                // If new fragment data is passed, update the stored fragment
+                if (!empty($data['data'])) {
+                    $storedFragment = $data['data'];
+                } elseif (!($data['data'] === null)) {
+                    $storedFragment = $data['data'];
+                }
+
+                // Debug output to confirm the change
+                echo 'Stored fragment after update: ' . $storedFragment . "\n";
+
+                // Return the stored fragment or an empty string if cleared
+                return $storedFragment;
+            });
+
+        // Step 1: Store initial fragment data
+        $this->View->fragment('testFragment', ['data' => 'Initial fragment data']);
+
+        // Verify the initial fragment content
+        $result = $this->View->fragment('testFragment');
+        echo 'Initial fragment: ' . $result . "\n";
+        $this->assertSame('Initial fragment data', $result); // Expect stored data
+
+        // Step 2: Change the fragment data to new data
+        $this->View->fragment('testFragment', ['data' => 'Updated fragment data']);
+
+        // Verify the updated fragment content
+        $updatedResult = $this->View->fragment('testFragment');
+        echo 'Updated fragment: ' . $updatedResult . "\n";
+        $this->assertSame('Updated fragment data', $updatedResult); // Should be updated
+
+        // Step 3: Clear the fragment by setting it to an empty array
+        $this->View->fragment('testFragment', ['data' => '']);
+
+        // Verify that the fragment is cleared by checking the stored fragment
+        $clearedResult = $this->View->fragment('testFragment');
+        echo 'Cleared fragment: ' . $clearedResult . "\n";
+        $this->assertSame('', $clearedResult); // Expect empty string after clearing
+    }
+
+    /**
      * Test element method with a prefix
      */
     public function testPrefixElement(): void
