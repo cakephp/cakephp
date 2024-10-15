@@ -193,7 +193,7 @@ class CounterCacheBehavior extends Behavior
     }
 
     /**
-     * Update counter cache.
+     * Update counter cache for a batch of records.
      *
      * @param string|null $assocName The association name to update counter cache for.
      *  If null, all configured associations will be updated.
@@ -254,6 +254,10 @@ class CounterCacheBehavior extends Behavior
         $query = $assoc->getTarget()->find()
             ->select($primaryKeys)
             ->limit($limit);
+
+        foreach ($primaryKeys as $key) {
+            $query->orderByAsc($key);
+        }
 
         $singlePage = $page !== null;
         $page ??= 1;
