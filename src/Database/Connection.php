@@ -190,7 +190,7 @@ class Connection implements ConnectionInterface
             $message = 'The connection is going to be closed but there is an active transaction.';
 
             $requestUrl = $_SERVER['REQUEST_URI'] ?? '';
-            if (!empty($requestUrl)) {
+            if ($requestUrl) {
                 $message .= "\nRequest URL: " . $requestUrl;
             }
 
