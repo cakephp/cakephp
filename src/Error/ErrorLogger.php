@@ -68,13 +68,12 @@ class ErrorLogger implements ErrorLoggerInterface
      */
     public function logError(PhpError $error, ?ServerRequestInterface $request = null, bool $includeTrace = false): void
     {
-        $message = $error->getMessage();
-        if ($request) {
+        $message = $this->getErrorMessage($error, $includeTrace);
+
+        if ($request instanceof ServerRequestInterface) {
             $message .= $this->getRequestContext($request);
         }
-        if ($includeTrace) {
-            $message .= "\nTrace:\n" . $error->getTraceAsString() . "\n";
-        }
+
         $label = $error->getLabel();
         $level = match ($label) {
             'strict' => LOG_NOTICE,
@@ -83,6 +82,42 @@ class ErrorLogger implements ErrorLoggerInterface
         };
 
         $this->log($level, $message);
+    }
+
+    /**
+     * Generate the message for the error
+     *
+     * @param \PhpError $exception The exception to log a message for.
+     * @param bool $includeTrace Whether or not to include a stack trace.
+     * @return string Error message
+     */
+    private function getErrorMessage(PhpError $error, bool $includeTrace = false): string
+    {
+        $message = sprintf(
+            '%s in %s on line %s',
+            $error->getMessage(),
+            $error->getFile(),
+            $error->getLine()
+        );
+
+        if (!$includeTrace) {
+            return $message;
+        }
+
+        $trace = $error->getTrace();
+
+        /** @var array<array{file: string, line: string}|string> $trace */
+        $trace = Debugger::formatTrace($trace, ['format' => 'shortPoints']);
+        $message .= "\nStack Trace:\n";
+        foreach ($trace as $line) {
+            if (is_string($line)) {
+                $message .= '- ' . $line;
+            } else {
+                $message .= "- {$line['file']}:{$line['line']}\n";
+            }
+        }
+
+        return $message;
     }
 
     /**
