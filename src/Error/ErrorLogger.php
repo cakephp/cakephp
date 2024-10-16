@@ -91,7 +91,7 @@ class ErrorLogger implements ErrorLoggerInterface
      * @param bool $includeTrace Whether or not to include a stack trace.
      * @return string Error message
      */
-    private function getErrorMessage(PhpError $error, bool $includeTrace = false): string
+    protected function getErrorMessage(PhpError $error, bool $includeTrace = false): string
     {
         $message = sprintf(
             '%s in %s on line %s',
