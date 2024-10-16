@@ -187,7 +187,6 @@ class Connection implements ConnectionInterface
     public function __destruct()
     {
         if ($this->_transactionStarted && class_exists(Log::class)) {
-
             $message = 'The connection is going to be closed but there is an active transaction.';
 
             $requestUrl = $_SERVER['REQUEST_URI'] ?? '';
