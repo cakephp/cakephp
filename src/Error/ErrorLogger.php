@@ -87,7 +87,7 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * Generate the message for the error
      *
-     * @param \PhpError $exception The exception to log a message for.
+     * @param \PhpError $error The exception to log a message for.
      * @param bool $includeTrace Whether or not to include a stack trace.
      * @return string Error message
      */
@@ -104,19 +104,7 @@ class ErrorLogger implements ErrorLoggerInterface
             return $message;
         }
 
-        $trace = $error->getTrace();
-
-        /** @var array<array{file: string, line: string}|string> $trace */
-        $trace = Debugger::formatTrace($trace, ['format' => 'shortPoints']);
-        $message .= "\nStack Trace:\n";
-        foreach ($trace as $line) {
-            if (is_string($line)) {
-                $message .= '- ' . $line;
-            } else {
-                $message .= "- {$line['file']}:{$line['line']}\n";
-            }
-        }
-
+        $message .= "\nTrace:\n" . $error->getTraceAsString() . "\n";
         return $message;
     }
 
