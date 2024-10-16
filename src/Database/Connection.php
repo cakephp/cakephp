@@ -195,7 +195,7 @@ class Connection implements ConnectionInterface
             }
 
             $clientIp = $_SERVER['REMOTE_ADDR'] ?? '';
-            if (!empty($clientIp)) {
+            if ($clientIp) {
                 $message .= "\nClient IP: " . $clientIp;
             }
 
