@@ -87,7 +87,7 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * Generate the message for the error
      *
-     * @param PhpError $error The exception to log a message for.
+     * @param \Cake\Error\PhpError $error The exception to log a message for.
      * @param bool $includeTrace Whether or not to include a stack trace.
      * @return string Error message
      */
