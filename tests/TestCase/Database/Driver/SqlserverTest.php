@@ -130,7 +130,11 @@ class SqlserverTest extends TestCase
             'password' => 'blablabla',
             'database' => 'bar',
             'encoding' => 'a-language',
-            'flags' => [1 => true, 2 => false],
+            'flags' => [
+                1 => true, 
+                2 => false,
+                PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_FORWARD,
+            ],
             'init' => ['Execute this', 'this too'],
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
