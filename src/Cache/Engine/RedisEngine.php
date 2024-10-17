@@ -22,6 +22,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Log\Log;
 use DateInterval;
 use Redis;
+use RedisCluster;
 use RedisException;
 
 /**
@@ -34,7 +35,7 @@ class RedisEngine extends CacheEngine
      *
      * @var \Redis
      */
-    protected Redis $_Redis;
+    protected Redis|RedisCluster $_Redis;
 
     /**
      * The default config used unless overridden by runtime configuration
