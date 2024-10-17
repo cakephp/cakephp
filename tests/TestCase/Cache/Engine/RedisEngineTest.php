@@ -102,6 +102,9 @@ class RedisEngineTest extends TestCase
             'unix_socket' => false,
             'host' => null,
             'scanCount' => 10,
+            'readTimeout' => 0,
+            'name' => null,
+            'nodes' => [],
         ];
         $this->assertEquals($expecting, $config);
     }
@@ -131,6 +134,9 @@ class RedisEngineTest extends TestCase
             'host' => 'localhost',
             'scheme' => 'redis',
             'scanCount' => 10,
+            'readTimeout' => 0,
+            'name' => null,
+            'nodes' => [],
         ];
         $this->assertEquals($expecting, $config);
 
@@ -169,6 +175,9 @@ class RedisEngineTest extends TestCase
             'ssl_ca' => '/tmp/cert.crt',
             'ssl_key' => '/tmp/local.key',
             'ssl_cert' => '/tmp/local.crt',
+            'readTimeout' => 0,
+            'name' => null,
+            'nodes' => [],
         ];
         $this->assertEquals($expecting, $config);
 
