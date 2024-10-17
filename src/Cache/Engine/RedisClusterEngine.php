@@ -188,8 +188,10 @@ class RedisClusterEngine extends RedisEngine
      */
     public function __destruct()
     {
-        if (empty($this->_config['persistent']) && $this->_Redis instanceof RedisCluster) {
-            $this->_Redis->close();
+        if (isset($this->_Redis)) {
+            if (empty($this->_config['persistent']) && $this->_Redis instanceof RedisCluster) {
+                $this->_Redis->close();
+            }
         }
     }
 }
