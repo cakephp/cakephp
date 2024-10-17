@@ -4,8 +4,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
-use Cake\TestSuite\TestCase;
 use Cake\Cache\Engine\RedisClusterEngine;
+use Cake\TestSuite\TestCase;
 
 /**
  * RedisClusterEngineTest class
@@ -36,7 +36,7 @@ class RedisClusterEngineTest extends TestCase
         ];
 
         foreach ($nodes as $node) {
-            $socket = @fsockopen($node['host'], $node['port'], $errno, $errstr, 1);
+            $socket = fsockopen($node['host'], $node['port'], $errno, $errstr, 1);
 
             if (!$socket) {
                 echo "Connection to Redis node {$node['host']}:{$node['port']} failed: $errstr ($errno) \n";
@@ -73,7 +73,7 @@ class RedisClusterEngineTest extends TestCase
     {
         $defaults = [
             'className' => 'RedisCluster',
-            'nodes' => $this->redisClusterNodes()
+            'nodes' => $this->redisClusterNodes(),
         ];
 
         Cache::drop('redis');
@@ -138,13 +138,13 @@ class RedisClusterEngineTest extends TestCase
      */
     public function testWriteNumbers(): void
     {
-        $result = Cache::write('test-counter', 1, 'redis');
+        Cache::write('test-counter', 1, 'redis');
         $this->assertSame(1, Cache::read('test-counter', 'redis'));
 
-        $result = Cache::write('test-counter', 0, 'redis');
+        Cache::write('test-counter', 0, 'redis');
         $this->assertSame(0, Cache::read('test-counter', 'redis'));
 
-        $result = Cache::write('test-counter', -1, 'redis');
+        Cache::write('test-counter', -1, 'redis');
         $this->assertSame(-1, Cache::read('test-counter', 'redis'));
     }
 
@@ -334,7 +334,7 @@ class RedisClusterEngineTest extends TestCase
             'className' => 'RedisCluster',
             'duration' => 3600,
             'nodes' => $this->redisClusterNodes(),
-            'prefix' => 'cake2_'
+            'prefix' => 'cake2_',
         ]);
 
         Cache::write('some_value', 'cache1', 'redis');
@@ -360,7 +360,7 @@ class RedisClusterEngineTest extends TestCase
             'className' => 'RedisCluster',
             'duration' => 3600,
             'nodes' => $this->redisClusterNodes(),
-            'prefix' => 'cake2_'
+            'prefix' => 'cake2_',
         ]);
 
         Cache::write('some_value', 'cache1', 'redis');
@@ -412,7 +412,7 @@ class RedisClusterEngineTest extends TestCase
             'className' => 'RedisCluster',
             'nodes' => $this->redisClusterNodes(),
             'prefix' => 'test_',
-            'password' => null
+            'password' => null,
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'redis_groups'));
         $this->assertSame('value', Cache::read('test_groups', 'redis_groups'));
@@ -439,7 +439,7 @@ class RedisClusterEngineTest extends TestCase
             'className' => 'RedisCluster',
             'groups' => ['group_a', 'group_b'],
             'nodes' => $this->redisClusterNodes(),
-            'password' => null
+            'password' => null,
         ]);
         $this->assertTrue(Cache::write('test_groups', 'value', 'redis_groups'));
         $this->assertEquals('value', Cache::read('test_groups', 'redis_groups'));
@@ -459,7 +459,7 @@ class RedisClusterEngineTest extends TestCase
             'className' => 'RedisCluster',
             'groups' => ['group_a', 'group_b'],
             'nodes' => $this->redisClusterNodes(),
-            'password' => null
+            'password' => null,
         ]);
 
         $this->assertTrue(Cache::write('test_groups', 'value', 'redis_groups'));

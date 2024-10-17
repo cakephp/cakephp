@@ -1,6 +1,56 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Call to an undefined method Redis\\|RedisCluster\\:\\:_masters\\(\\)\\.$#"
+			count: 2
+			path: src/Cache/Engine/RedisClusterEngine.php
+
+		-
+			message: "#^Call to an undefined method Redis\\|RedisCluster\\:\\:unlink\\(\\)\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisClusterEngine.php
+
+		-
+			message: "#^Cannot cast int\\|Redis\\|false to int\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisClusterEngine.php
+
+		-
+			message: "#^Comparison operation \"\\>\" between \\(int\\|Redis\\|false\\) and 0 results in an error\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisClusterEngine.php
+
+		-
+			message: "#^Parameter \\#3 \\$count\\|pattern of method Redis\\:\\:scan\\(\\) expects int\\|null, string given\\.$#"
+			count: 2
+			path: src/Cache/Engine/RedisClusterEngine.php
+
+		-
+			message: "#^Parameter \\#4 \\$type of method Redis\\:\\:scan\\(\\) expects string\\|null, int given\\.$#"
+			count: 2
+			path: src/Cache/Engine/RedisClusterEngine.php
+
+		-
+			message: "#^Call to an undefined method Redis\\|RedisCluster\\:\\:connect\\(\\)\\.$#"
+			count: 2
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Call to an undefined method Redis\\|RedisCluster\\:\\:pconnect\\(\\)\\.$#"
+			count: 2
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Call to an undefined method Redis\\|RedisCluster\\:\\:unlink\\(\\)\\.$#"
+			count: 2
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Cannot cast int\\|Redis\\|false to int\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"
 			count: 1
 			path: src/Collection/Iterator/NestIterator.php
