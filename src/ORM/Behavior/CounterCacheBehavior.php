@@ -20,6 +20,7 @@ use ArrayObject;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Association;
+use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Behavior;
 use Cake\ORM\Query\SelectQuery;
 use Closure;
@@ -189,6 +190,100 @@ class CounterCacheBehavior extends Behavior
         }
 
         $this->_processAssociations($event, $entity);
+    }
+
+    /**
+     * Update counter cache for a batch of records.
+     *
+     * @param string|null $assocName The association name to update counter cache for.
+     *  If null, all configured associations will be updated.
+     * @param int $limit The number of records to fetch per page/iteration.
+     * @param int|null $page The page/iteration number. If null (default), all
+     *   records will be updated one page at a time.
+     * @throws \InvalidArgumentException If specified association is not configured.
+     * @return void
+     */
+    public function updateCounterCache(?string $assocName = null, int $limit = 100, ?int $page = null): void
+    {
+        $config = $this->_config;
+        if ($assocName !== null) {
+            $config = [$assocName => $config[$assocName]];
+        }
+
+        foreach ($config as $assoc => $settings) {
+            /** @var \Cake\ORM\Association\BelongsTo $belongsTo */
+            $belongsTo = $this->_table->getAssociation($assoc);
+
+            foreach ($settings as $field => $config) {
+                if ($config instanceof Closure) {
+                    // Cannot update counter cache which use a closure
+                    return;
+                }
+
+                if (is_int($field)) {
+                    $field = $config;
+                    $config = [];
+                }
+
+                $this->updateCountForAssociation($belongsTo, $field, $config, $limit, $page);
+            }
+        }
+    }
+
+    /**
+     * Update counter cache for the given association.
+     *
+     * @param \Cake\ORM\Association\BelongsTo $assoc The association object.
+     * @param string $field Counter cache field.
+     * @param array $config Config array.
+     * @param int $limit Limit.
+     * @param int|null $page Page number.
+     * @return void
+     */
+    protected function updateCountForAssociation(
+        BelongsTo $assoc,
+        string $field,
+        array $config,
+        int $limit = 100,
+        ?int $page = null
+    ): void {
+        $primaryKeys = (array)$assoc->getBindingKey();
+        /** @var list<string> $foreignKeys */
+        $foreignKeys = (array)$assoc->getForeignKey();
+
+        $query = $assoc->getTarget()->find()
+            ->select($primaryKeys)
+            ->limit($limit);
+
+        foreach ($primaryKeys as $key) {
+            $query->orderByAsc($key);
+        }
+
+        $singlePage = $page !== null;
+        $page ??= 1;
+
+        do {
+            $results = $query
+                ->page($page++)
+                ->all();
+
+            /** @var \Cake\Datasource\EntityInterface $entity */
+            foreach ($results as $entity) {
+                $updateConditions = $entity->extract($primaryKeys);
+
+                foreach ($updateConditions as $f => $value) {
+                    if ($value === null) {
+                        $updateConditions[$f . ' IS'] = $value;
+                        unset($updateConditions[$f]);
+                    }
+                }
+
+                $countConditions = array_combine($foreignKeys, $updateConditions);
+
+                $count = $this->_getCount($config, $countConditions);
+                $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
+            }
+        } while (!$singlePage && $results->count() === $limit);
     }
 
     /**
