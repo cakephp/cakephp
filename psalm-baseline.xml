@@ -8,10 +8,18 @@
   <file src="src/Cache/Engine/RedisEngine.php">
     <InvalidCast>
       <code><![CDATA[$this->_Redis->del($key)]]></code>
-      <code><![CDATA[$this->_Redis->del($key)]]></code>
-      <code><![CDATA[$this->_Redis->unlink($key)]]></code>
       <code><![CDATA[$this->_Redis->unlink($key)]]></code>
     </InvalidCast>
+    <InvalidPropertyAssignmentValue>
+      <code><![CDATA[new RedisCluster(
+                    $this->_config['name'],
+                    $this->_config['nodes'],
+                    (float)$this->_config['timeout'],
+                    (float)$this->_config['readTimeout'],
+                    $this->_config['persistent'],
+                    $this->_config['password'],
+                )]]></code>
+    </InvalidPropertyAssignmentValue>
     <InvalidReturnStatement>
       <code><![CDATA[$this->_Redis->set($key, $value)]]></code>
       <code><![CDATA[$this->_Redis->setEx($key, $duration, $value)]]></code>
@@ -23,6 +31,14 @@
       <code><![CDATA[int|false]]></code>
       <code><![CDATA[int|false]]></code>
     </InvalidReturnType>
+    <RedundantCondition>
+      <code><![CDATA[$this->_Redis instanceof Redis]]></code>
+      <code><![CDATA[$this->_Redis instanceof Redis]]></code>
+    </RedundantCondition>
+    <TypeDoesNotContainType>
+      <code><![CDATA[$this->_Redis instanceof RedisCluster]]></code>
+      <code><![CDATA[$this->_Redis instanceof RedisCluster]]></code>
+    </TypeDoesNotContainType>
   </file>
   <file src="src/Collection/CollectionTrait.php">
     <TooManyArguments>
