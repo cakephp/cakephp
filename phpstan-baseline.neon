@@ -31,6 +31,11 @@ parameters:
 			path: src/Cache/Engine/RedisClusterEngine.php
 
 		-
+			message: "#^Call to an undefined method RedisCluster\\:\\:unlink\\(\\)\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
 			message: "#^Call to an undefined method Redis\\|RedisCluster\\:\\:connect\\(\\)\\.$#"
 			count: 2
 			path: src/Cache/Engine/RedisEngine.php
@@ -42,12 +47,27 @@ parameters:
 
 		-
 			message: "#^Call to an undefined method Redis\\|RedisCluster\\:\\:unlink\\(\\)\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Comparison operation \"\\>\" between \\(int\\<0, max\\>\\|Redis\\|false\\) and 0 results in an error\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Comparison operation \"\\>\" between \\(int\\|Redis\\|false\\) and 0 results in an error\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Method RedisCluster\\:\\:scan\\(\\) invoked with 4 parameters, 1\\-3 required\\.$#"
 			count: 2
 			path: src/Cache/Engine/RedisEngine.php
 
 		-
-			message: "#^Cannot cast int\\|Redis\\|false to int\\.$#"
-			count: 1
+			message: "#^Parameter \\#3 \\$pattern of method RedisCluster\\:\\:scan\\(\\) expects int, string given\\.$#"
+			count: 2
 			path: src/Cache/Engine/RedisEngine.php
 
 		-

@@ -72,7 +72,7 @@ class RedisClusterEngineTest extends TestCase
     protected function configCache($config = []): void
     {
         $defaults = [
-            'className' => 'RedisCluster',
+            'className' => 'Redis',
             'nodes' => $this->redisClusterNodes(),
         ];
 
@@ -116,6 +116,12 @@ class RedisClusterEngineTest extends TestCase
             'scanCount' => 10,
             'duration' => 3600,
             'nodes' => $this->redisClusterNodes(),
+            'database' => 0,
+            'port' => 6379,
+            'tls' => false,
+            'host' => null,
+            'server' => '127.0.0.1',
+            'unix_socket' => false,
         ];
         $this->assertEquals($expecting, $config);
     }
@@ -331,7 +337,7 @@ class RedisClusterEngineTest extends TestCase
     public function testClear(): void
     {
         Cache::setConfig('redis2', [
-            'className' => 'RedisCluster',
+            'className' => 'Redis',
             'duration' => 3600,
             'nodes' => $this->redisClusterNodes(),
             'prefix' => 'cake2_',
@@ -357,7 +363,7 @@ class RedisClusterEngineTest extends TestCase
     public function testClearBlocking(): void
     {
         Cache::setConfig('redis_clear_blocking', [
-            'className' => 'RedisCluster',
+            'className' => 'Redis',
             'duration' => 3600,
             'nodes' => $this->redisClusterNodes(),
             'prefix' => 'cake2_',
@@ -402,14 +408,14 @@ class RedisClusterEngineTest extends TestCase
     public function testGroupReadWrite(): void
     {
         Cache::setConfig('redis_groups', [
-            'className' => 'RedisCluster',
+            'className' => 'Redis',
             'groups' => ['group_a', 'group_b'],
             'nodes' => $this->redisClusterNodes(),
             'prefix' => 'test_',
             'password' => null,
         ]);
         Cache::setConfig('redis_helper', [
-            'className' => 'RedisCluster',
+            'className' => 'Redis',
             'nodes' => $this->redisClusterNodes(),
             'prefix' => 'test_',
             'password' => null,
@@ -436,7 +442,7 @@ class RedisClusterEngineTest extends TestCase
     public function testGroupDelete(): void
     {
         Cache::setConfig('redis_groups', [
-            'className' => 'RedisCluster',
+            'className' => 'Redis',
             'groups' => ['group_a', 'group_b'],
             'nodes' => $this->redisClusterNodes(),
             'password' => null,
@@ -456,7 +462,7 @@ class RedisClusterEngineTest extends TestCase
     public function testGroupClear(): void
     {
         Cache::setConfig('redis_groups', [
-            'className' => 'RedisCluster',
+            'className' => 'Redis',
             'groups' => ['group_a', 'group_b'],
             'nodes' => $this->redisClusterNodes(),
             'password' => null,
