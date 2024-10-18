@@ -452,6 +452,11 @@ if (!function_exists('Cake\Core\toInt')) {
             return $value;
         }
         if (is_string($value)) {
+            $value = trim($value);
+            if (preg_match('/0+[^0]+/', $value)) {
+                $value = ltrim($value, '0');
+            }
+
             $value = filter_var($value, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
             return $value === PHP_INT_MIN ? null : $value;
@@ -488,6 +493,11 @@ if (!function_exists('Cake\Core\toFloat')) {
     function toFloat(mixed $value): ?float
     {
         if (is_string($value)) {
+            $value = trim($value);
+            if (preg_match('/0+[^0]+/', $value)) {
+                $value = ltrim($value, '0');
+            }
+
             $value = filter_var($value, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
 
             return $value === PHP_FLOAT_MIN ? null : $value;
