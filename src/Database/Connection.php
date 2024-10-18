@@ -37,6 +37,7 @@ use Cake\Log\Log;
 use Closure;
 use Psr\SimpleCache\CacheInterface;
 use Throwable;
+use function Cake\Core\env;
 
 /**
  * Represents a connection with a database server.
@@ -189,12 +190,12 @@ class Connection implements ConnectionInterface
         if ($this->_transactionStarted && class_exists(Log::class)) {
             $message = 'The connection is going to be closed but there is an active transaction.';
 
-            $requestUrl = $_SERVER['REQUEST_URI'] ?? '';
+            $requestUrl = env('REQUEST_URI');
             if ($requestUrl) {
                 $message .= "\nRequest URL: " . $requestUrl;
             }
 
-            $clientIp = $_SERVER['REMOTE_ADDR'] ?? '';
+            $clientIp = env('REMOTE_ADDR');
             if ($clientIp) {
                 $message .= "\nClient IP: " . $clientIp;
             }
