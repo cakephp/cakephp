@@ -12,13 +12,13 @@
     </InvalidCast>
     <InvalidPropertyAssignmentValue>
       <code><![CDATA[new RedisCluster(
-                    $this->_config['name'],
-                    $this->_config['nodes'],
-                    (float)$this->_config['timeout'],
-                    (float)$this->_config['readTimeout'],
-                    $this->_config['persistent'],
-                    $this->_config['password'],
-                )]]></code>
+                $this->_config['name'],
+                $this->_config['nodes'],
+                (float)$this->_config['timeout'],
+                (float)$this->_config['readTimeout'],
+                $this->_config['persistent'],
+                $this->_config['password'],
+            )]]></code>
     </InvalidPropertyAssignmentValue>
     <InvalidReturnStatement>
       <code><![CDATA[$this->_Redis->set($key, $value)]]></code>

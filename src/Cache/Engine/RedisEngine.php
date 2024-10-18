@@ -116,6 +116,51 @@ class RedisEngine extends CacheEngine
      */
     protected function _connect(): bool
     {
+        if (!empty($this->_config['nodes'])) {
+            return $this->_connectRedisCluster();
+        }
+
+        return $this->_connectRedis();
+    }
+
+    /**
+     * Connects to a Redis cluster server
+     *
+     * @return bool True if Redis server was connected
+     */
+    protected function _connectRedisCluster(): bool
+    {
+        $connected = false;
+
+        try {
+            $this->_Redis = new RedisCluster(
+                $this->_config['name'],
+                $this->_config['nodes'],
+                (float)$this->_config['timeout'],
+                (float)$this->_config['readTimeout'],
+                $this->_config['persistent'],
+                $this->_config['password'],
+            );
+
+            $connected = true;
+        } catch (RedisClusterException $e) {
+            $connected = false;
+
+            if (class_exists(Log::class)) {
+                Log::error('RedisClusterEngine could not connect. Got error: ' . $e->getMessage());
+            }
+        }
+
+        return $connected;
+    }
+
+    /**
+     * Connects to a Redis server
+     *
+     * @return bool True if Redis server was connected
+     */
+    protected function _connectRedis(): bool
+    {
         $tls = $this->_config['tls'] === true ? 'tls://' : '';
 
         $map = [
@@ -132,33 +177,14 @@ class RedisEngine extends CacheEngine
         }
 
         try {
-            if (!empty($this->_config['nodes'])) {
-                $this->_Redis = new RedisCluster(
-                    $this->_config['name'],
-                    $this->_config['nodes'],
-                    (float)$this->_config['timeout'],
-                    (float)$this->_config['readTimeout'],
-                    $this->_config['persistent'],
-                    $this->_config['password'],
-                );
-
-                $return = true;
+            $this->_Redis = $this->_createRedisInstance();
+            if (!empty($this->_config['unix_socket'])) {
+                $return = $this->_Redis->connect($this->_config['unix_socket']);
+            } elseif (empty($this->_config['persistent'])) {
+                $return = $this->_connectTransient($tls . $this->_config['server'], $ssl);
             } else {
-                $this->_Redis = $this->_createRedisInstance();
-                if (!empty($this->_config['unix_socket'])) {
-                    $return = $this->_Redis->connect($this->_config['unix_socket']);
-                } elseif (empty($this->_config['persistent'])) {
-                    $return = $this->_connectTransient($tls . $this->_config['server'], $ssl);
-                } else {
-                    $return = $this->_connectPersistent($tls . $this->_config['server'], $ssl);
-                }
+                $return = $this->_connectPersistent($tls . $this->_config['server'], $ssl);
             }
-        } catch (RedisClusterException $e) {
-            if (class_exists(Log::class)) {
-                Log::error('RedisClusterEngine could not connect. Got error: ' . $e->getMessage());
-            }
-
-            return false;
         } catch (RedisException $e) {
             if (class_exists(Log::class)) {
                 Log::error('RedisEngine could not connect. Got error: ' . $e->getMessage());
@@ -167,13 +193,11 @@ class RedisEngine extends CacheEngine
             return false;
         }
 
-        if ($this->_Redis instanceof Redis) {
-            if ($return && $this->_config['password']) {
-                $return = $this->_Redis->auth($this->_config['password']);
-            }
-            if ($return) {
-                return $this->_Redis->select((int)$this->_config['database']);
-            }
+        if ($return && $this->_config['password']) {
+            $return = $this->_Redis->auth($this->_config['password']);
+        }
+        if ($return) {
+            return $this->_Redis->select((int)$this->_config['database']);
         }
 
         return $return;
@@ -383,6 +407,8 @@ class RedisEngine extends CacheEngine
                     }
                 }
             }
+
+            return $isAllDeleted;
         } else {
             while (true) {
                 $keys = $this->_Redis->scan($iterator, $pattern, $scanCount);
