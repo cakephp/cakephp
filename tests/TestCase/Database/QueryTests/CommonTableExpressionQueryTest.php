@@ -121,6 +121,25 @@ class CommonTableExpressionQueryTest extends TestCase
     }
 
     /**
+     * Tests calling with(null)  clears other CTEs.
+     */
+    public function testWithCteNullClear(): void
+    {
+        $query = $this->connection->selectQuery()
+            ->with(new CommonTableExpression('cte', function () {
+                return $this->connection->selectQuery(['col' => '1']);
+            }))
+            ->select('col')
+            ->from('cte');
+
+        $query = $query->with(null, true);
+        $this->assertEqualsSql(
+            'SELECT col FROM cte',
+            $query->sql(new ValueBinder())
+        );
+    }
+
+    /**
      * Tests recursive CTE.
      */
     public function testWithRecursiveCte(): void
