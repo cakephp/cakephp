@@ -195,13 +195,15 @@ class CounterCacheBehavior extends Behavior
     /**
      * Update counter cache for a batch of records.
      *
+     * Counter caches configured to use closures will not be updated by the method.
+     *
      * @param string|null $assocName The association name to update counter cache for.
-     *  If null, all configured associations will be updated.
-     * @param int $limit The number of records to fetch per page/iteration.
+     *  If null, all configured associations will be processed.
+     * @param int $limit The number of records to update per page/iteration.
      * @param int|null $page The page/iteration number. If null (default), all
      *   records will be updated one page at a time.
-     * @throws \InvalidArgumentException If specified association is not configured.
      * @return void
+     * @since 5.2.0
      */
     public function updateCounterCache(?string $assocName = null, int $limit = 100, ?int $page = null): void
     {
