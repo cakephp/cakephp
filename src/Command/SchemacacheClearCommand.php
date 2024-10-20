@@ -40,6 +40,14 @@ class SchemacacheClearCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Clear all metadata caches for the connection.';
+    }
+
+    /**
      * Display all routes in an application
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -77,10 +85,10 @@ class SchemacacheClearCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription(
-            'Clear all metadata caches for the connection. If a ' .
-            'table name is provided, only that table will be removed.'
-        )->addOption('connection', [
+        $parser->setDescription([
+            static::getDescription(),
+            'If a table name is provided, only that table will be removed.',
+        ])->addOption('connection', [
             'help' => 'The connection to build/clear metadata cache data for.',
             'short' => 'c',
             'default' => 'default',

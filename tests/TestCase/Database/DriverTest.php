@@ -477,4 +477,34 @@ class DriverTest extends TestCase
         ConnectionManager::get('default')->getDriver()
             ->execute('SELECT * FROM :foo', ['foo' => 'bar']);
     }
+
+    /**
+     * Tests that queries are logged when executed without params
+     */
+    public function testDisableQueryLogging(): void
+    {
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo');
+        $statement->method('rowCount')->willReturn(3);
+        $statement->method('execute')->willReturn(true);
+
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+        $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
+
+        $this->driver->execute('SELECT bar FROM foo');
+
+        $messages = Log::engine('queries')->read();
+        $this->driver->disableQueryLogging();
+
+        $this->driver->execute('SELECT bar FROM foo');
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo$/', $messages[0]);
+    }
 }

@@ -103,6 +103,13 @@ class BehaviorRegistryTest extends TestCase
 
         $result = $this->Behaviors->load('TestPlugin.PersisterOne');
         $this->assertInstanceOf(PersisterOneBehavior::class, $result);
+
+        $config = ['className' => 'TestPlugin.PersisterOne'];
+        $this->assertSame($config, $result->getConfig());
+
+        $this->Behaviors->unload('PersisterOne');
+        $this->Behaviors->load('TestPlugin.PersisterOne', $config);
+        $this->assertInstanceOf(PersisterOneBehavior::class, $this->Behaviors->PersisterOne);
     }
 
     /**

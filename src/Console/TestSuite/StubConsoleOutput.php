@@ -41,6 +41,19 @@ class StubConsoleOutput extends ConsoleOutput
     protected array $_out = [];
 
     /**
+     * Constructor
+     *
+     * Closes and unsets the file handle created in the parent constructor to
+     * prevent 'too many open files' errors.
+     */
+    public function __construct()
+    {
+        parent::__construct();
+        fclose($this->_output);
+        unset($this->_output);
+    }
+
+    /**
      * Write output to the buffer.
      *
      * @param list<string>|string $message A string or an array of strings to output

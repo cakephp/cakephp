@@ -43,6 +43,14 @@ class PluginUnloadCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Command for unloading plugins.';
+    }
+
+    /**
      * Execute the command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -108,9 +116,9 @@ class PluginUnloadCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription([
-            'Command for unloading plugins.',
-        ])
+        $parser->setDescription(
+            static::getDescription()
+        )
         ->addArgument('plugin', [
             'help' => 'Name of the plugin to unload.',
             'required' => true,

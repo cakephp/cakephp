@@ -38,6 +38,14 @@ class PluginAssetsSymlinkCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return "Symlink (copy as fallback) plugin assets to app's webroot.";
+    }
+
+    /**
      * Execute the command
      *
      * Attempt to symlink plugin assets to app's webroot. If symlinking fails it
@@ -68,9 +76,9 @@ class PluginAssetsSymlinkCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription([
-            "Symlink (copy as fallback) plugin assets to app's webroot.",
-        ])->addArgument('name', [
+        $parser->setDescription(
+            static::getDescription()
+        )->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'required' => false,
         ])->addOption('overwrite', [

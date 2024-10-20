@@ -38,6 +38,14 @@ class PluginAssetsCopyCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return "Copy plugin assets to app's webroot.";
+    }
+
+    /**
      * Execute the command
      *
      * Copying plugin assets to app's webroot. For vendor namespaced plugin,
@@ -67,9 +75,9 @@ class PluginAssetsCopyCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription([
-            "Copy plugin assets to app's webroot.",
-        ])->addArgument('name', [
+        $parser->setDescription(
+            static::getDescription()
+        )->addArgument('name', [
             'help' => 'A specific plugin you want to copy assets for.',
             'required' => false,
         ])->addOption('overwrite', [
