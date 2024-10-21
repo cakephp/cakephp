@@ -147,6 +147,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             /** @var \Cake\Controller\Component $instance */
             $instance = $this->container->get($class);
             $instance->setConfig($config);
+            $instance->initialize($config);
         } else {
             $instance = new $class($this, $config);
         }

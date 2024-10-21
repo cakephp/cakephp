@@ -27,6 +27,8 @@ use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
 use Countable;
 use Exception;
+use League\Container\ReflectionContainer;
+use TestApp\Controller\Component\ConfiguredComponent;
 use TestApp\Controller\Component\FlashAliasComponent;
 use TestPlugin\Controller\Component\OtherComponent;
 use Traversable;
@@ -102,6 +104,21 @@ class ComponentRegistryTest extends TestCase
 
         $this->assertInstanceOf(FlashComponent::class, $flash);
         $this->assertSame('customFlash', $flash->getConfig('key'));
+    }
+
+    public function testLoadWithContainerAutoWiring(): void
+    {
+        $controller = new Controller(new ServerRequest());
+        $container = new Container();
+        $container->delegate(new ReflectionContainer());
+        $components = new ComponentRegistry($controller, $container);
+
+        $container->add(ComponentRegistry::class, $components);
+
+        $component = $components->load(ConfiguredComponent::class, ['key' => 'customFlash']);
+
+        $this->assertInstanceOf(ConfiguredComponent::class, $component);
+        $this->assertSame(['key' => 'customFlash'], $component->configCopy);
     }
 
     /**
