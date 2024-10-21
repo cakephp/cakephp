@@ -138,9 +138,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
         $parser->setRootName($root);
         $parser->setDescription(static::getDescription());
 
-        $parser = $this->buildOptionParser($parser);
-
-        return $parser;
+        return $this->buildOptionParser($parser);
     }
 
     /**
