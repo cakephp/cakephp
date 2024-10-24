@@ -106,10 +106,7 @@ class Session
     public static function create(array $sessionConfig = []): static
     {
         if (isset($sessionConfig['defaults'])) {
-            $defaults = static::_defaultConfig($sessionConfig['defaults']);
-            if ($defaults) {
-                $sessionConfig = Hash::merge($defaults, $sessionConfig);
-            }
+            $sessionConfig = Hash::merge(static::_defaultConfig($sessionConfig['defaults']), $sessionConfig);
         }
 
         if (
@@ -142,11 +139,11 @@ class Session
      * Get one of the prebaked default session configurations.
      *
      * @param string $name Config name.
-     * @return array|false
+     * @return array
+     * @throws \Cake\Core\Exception\CakeException When an invalid name is used.
      */
-    protected static function _defaultConfig(string $name): array|false
+    protected static function _defaultConfig(string $name): array
     {
-        $tmp = defined('TMP') ? TMP : sys_get_temp_dir() . DIRECTORY_SEPARATOR;
         $defaults = [
             'php' => [
                 'ini' => [
@@ -158,7 +155,8 @@ class Session
                     'session.use_trans_sid' => 0,
                     'session.serialize_handler' => 'php',
                     'session.use_cookies' => 1,
-                    'session.save_path' => $tmp . 'sessions',
+                    'session.save_path' => defined('TMP') ? TMP : sys_get_temp_dir()
+                        . DIRECTORY_SEPARATOR . 'sessions',
                     'session.save_handler' => 'files',
                 ],
             ],
@@ -184,15 +182,19 @@ class Session
             ],
         ];
 
-        if (isset($defaults[$name])) {
-            if ($name !== 'php' || empty(ini_get('session.cookie_samesite'))) {
-                $defaults['php']['ini']['session.cookie_samesite'] = 'Lax';
-            }
-
-            return $defaults[$name];
+        if (!isset($defaults[$name])) {
+            throw new CakeException(sprintf(
+                'Invalid session defaults name `%s`. Valid values are: %s.',
+                $name,
+                implode(', ', array_keys($defaults))
+            ));
         }
 
-        return false;
+        if ($name !== 'php' || empty(ini_get('session.cookie_samesite'))) {
+            $defaults['php']['ini']['session.cookie_samesite'] = 'Lax';
+        }
+
+        return $defaults[$name];
     }
 
     /**

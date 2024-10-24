@@ -41,6 +41,14 @@ class SessionTest extends TestCase
         unset($_SESSION);
     }
 
+    public function testInvalidDefaultsNameException(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Invalid session defaults name `derp`. Valid values are: php, cake, cache, database.');
+
+        Session::create(['defaults' => 'derp']);
+    }
+
     /**
      * test setting ini properties with Session configuration.
      */
