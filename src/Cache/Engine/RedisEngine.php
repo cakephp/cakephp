@@ -117,10 +117,10 @@ class RedisEngine extends CacheEngine
     protected function _connect(): bool
     {
         if (!empty($this->_config['nodes'])) {
-            return $this->_connectRedisCluster();
+            return $this->connectRedisCluster();
         }
 
-        return $this->_connectRedis();
+        return $this->connectRedis();
     }
 
     /**
@@ -128,7 +128,7 @@ class RedisEngine extends CacheEngine
      *
      * @return bool True if Redis server was connected
      */
-    protected function _connectRedisCluster(): bool
+    protected function connectRedisCluster(): bool
     {
         $connected = false;
 
@@ -159,7 +159,7 @@ class RedisEngine extends CacheEngine
      *
      * @return bool True if Redis server was connected
      */
-    protected function _connectRedis(): bool
+    protected function connectRedis(): bool
     {
         $tls = $this->_config['tls'] === true ? 'tls://' : '';
 
@@ -409,18 +409,18 @@ class RedisEngine extends CacheEngine
             }
 
             return $isAllDeleted;
-        } else {
-            while (true) {
-                $keys = $this->_Redis->scan($iterator, $pattern, $scanCount);
+        }
 
-                if ($keys === false) {
-                    break;
-                }
+        while (true) {
+            $keys = $this->_Redis->scan($iterator, $pattern, $scanCount);
 
-                foreach ($keys as $key) {
-                    $isDeleted = ($this->_Redis->del($key) > 0);
-                    $isAllDeleted = $isAllDeleted && $isDeleted;
-                }
+            if ($keys === false) {
+                break;
+            }
+
+            foreach ($keys as $key) {
+                $isDeleted = ($this->_Redis->del($key) > 0);
+                $isAllDeleted = $isAllDeleted && $isDeleted;
             }
         }
 
@@ -463,18 +463,20 @@ class RedisEngine extends CacheEngine
                     }
                 }
             }
-        } else {
-            while (true) {
-                $keys = $this->_Redis->scan($iterator, $pattern, $scanCount);
 
-                if ($keys === false) {
-                    break;
-                }
+            return $isAllDeleted;
+        }
 
-                foreach ($keys as $key) {
-                    $isDeleted = ($this->_Redis->unlink($key) > 0);
-                    $isAllDeleted = $isAllDeleted && $isDeleted;
-                }
+        while (true) {
+            $keys = $this->_Redis->scan($iterator, $pattern, $scanCount);
+
+            if ($keys === false) {
+                break;
+            }
+
+            foreach ($keys as $key) {
+                $isDeleted = ($this->_Redis->unlink($key) > 0);
+                $isAllDeleted = $isAllDeleted && $isDeleted;
             }
         }
 
