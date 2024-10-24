@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
-use Cake\Cache\Engine\RedisClusterEngine;
+use Cake\Cache\Engine\RedisEngine;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -106,7 +106,7 @@ class RedisClusterEngineTest extends TestCase
     {
         $config = Cache::pool('redis')->getConfig();
         $expecting = [
-            'name' => null,
+            'clusterName' => null,
             'groups' => [],
             'password' => null,
             'persistent' => true,
@@ -133,8 +133,8 @@ class RedisClusterEngineTest extends TestCase
      */
     public function testConnect(): void
     {
-        $RedisCluster = new RedisClusterEngine();
-        $this->assertTrue($RedisCluster->init(Cache::pool('redis')->getConfig()));
+        $Redis = new RedisEngine();
+        $this->assertTrue($Redis->init(Cache::pool('redis')->getConfig()));
     }
 
     /**

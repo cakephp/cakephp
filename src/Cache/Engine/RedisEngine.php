@@ -41,7 +41,7 @@ class RedisEngine extends CacheEngine
     /**
      * The default config used unless overridden by runtime configuration
      *
-     * - `name` Redis cluster name
+     * - `clusterName` Redis cluster name
      * - `database` database number to use for connection.
      * - `duration` Specify how long items in this cache configuration last.
      * - `groups` List of groups or 'tags' associated to every key stored in this config.
@@ -68,7 +68,7 @@ class RedisEngine extends CacheEngine
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
-        'name' => null,
+        'clusterName' => null,
         'database' => 0,
         'duration' => 3600,
         'groups' => [],
@@ -134,7 +134,7 @@ class RedisEngine extends CacheEngine
 
         try {
             $this->_Redis = new RedisCluster(
-                $this->_config['name'],
+                $this->_config['clusterName'],
                 $this->_config['nodes'],
                 (float)$this->_config['timeout'],
                 (float)$this->_config['readTimeout'],
