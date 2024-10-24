@@ -25,6 +25,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -476,6 +477,88 @@ SQL;
         $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->getColumn($field));
+        }
+    }
+
+    /**
+     * Test that schema reflection works for geosptial columns.
+     *
+     * We currently cannot reflect the postgis types from postgres.
+     *
+     * @return void
+     */
+    public function testDescribeTableGeometry(): void
+    {
+        $connection = ConnectionManager::get('test');
+        try {
+            $connection->execute('SELECT PostGIS_version()');
+        } catch (PDOException $e) {
+            $this->markTestSkipped('Postgis extension not installed');
+        }
+        $table = <<<SQL
+CREATE TABLE schema_geometry (
+    id SERIAL,
+    geo_line GEOGRAPHY(LINESTRING, 4326),
+    geo_geometry GEOGRAPHY(GEOMETRY, 4326),
+    geo_point GEOGRAPHY(POINT, 4326),
+    geo_polygon GEOGRAPHY(POLYGON, 4326)
+)
+SQL;
+        $connection->execute($table);
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_geometry');
+        $connection->execute('DROP TABLE schema_geometry');
+
+        $expected = [
+            'id' => [
+                'type' => 'integer',
+                'null' => false,
+                'default' => null,
+                'length' => 10,
+                'precision' => null,
+                'unsigned' => null,
+                'comment' => null,
+                'autoIncrement' => true,
+            ],
+            'geo_line' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => null,
+                'collate' => null,
+            ],
+            'geo_geometry' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => null,
+                'collate' => null,
+            ],
+            'geo_point' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => null,
+                'collate' => null,
+            ],
+            'geo_polygon' => [
+                'type' => 'string',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => null,
+                'collate' => null,
+            ],
+        ];
+        foreach ($expected as $field => $definition) {
+            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in {$field} column");
         }
     }
 
