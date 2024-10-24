@@ -374,6 +374,7 @@ class ConsoleOptionParser
                 'default' => null,
                 'boolean' => false,
                 'multiple' => false,
+                'separator' => null,
                 'choices' => [],
                 'required' => false,
                 'prompt' => null,
@@ -388,7 +389,8 @@ class ConsoleOptionParser
                 $options['choices'],
                 $options['multiple'],
                 $options['required'],
-                $options['prompt']
+                $options['prompt'],
+                $options['separator']
             );
         }
         $this->_options[$name] = $option;
@@ -426,6 +428,7 @@ class ConsoleOptionParser
      *   option will be overwritten.
      * - `choices` A list of valid choices for this argument. If left empty all values are valid..
      *   An exception will be raised when parse() encounters an invalid value.
+     * - `separator` A separator to allow writing argument in a list form.
      *
      * @param \Cake\Console\ConsoleInputArgument|string $name The name of the argument.
      *   Will also accept an instance of ConsoleInputArgument.
@@ -444,6 +447,7 @@ class ConsoleOptionParser
                 'index' => count($this->_args),
                 'required' => false,
                 'choices' => [],
+                'separator' => null,
             ];
             $options = $params + $defaults;
             $index = $options['index'];
@@ -756,7 +760,11 @@ class ConsoleOptionParser
 
         $option->validChoice($value);
         if ($option->acceptsMultiple()) {
-            $params[$name][] = $value;
+            $values = [$value];
+            if (is_string($value) && $option->separator()) {
+                $values = explode($option->separator(), $value);
+            }
+            $params[$name] = array_merge($params[$name] ?? [], $values);
         } else {
             $params[$name] = $value;
         }
@@ -808,8 +816,14 @@ class ConsoleOptionParser
             ));
         }
 
-        $this->_args[$next]->validChoice($argument);
-        $args[] = $argument;
+        $arg = $this->_args[$next];
+
+        $arg->validChoice($argument);
+        if ($arg->separator()) {
+            $args[] = explode($arg->separator(), $argument);
+        } else {
+            $args[] = $argument;
+        }
 
         return $args;
     }

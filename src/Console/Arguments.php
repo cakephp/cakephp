@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Provides an interface for interacting with
@@ -34,7 +35,7 @@ class Arguments
     /**
      * Positional arguments.
      *
-     * @var array<int, string>
+     * @var array<int, list<string>|string>
      */
     protected array $args;
 
@@ -48,7 +49,7 @@ class Arguments
     /**
      * Constructor
      *
-     * @param array<int, string> $args Positional arguments
+     * @param array<int, list<string>|string> $args Positional arguments
      * @param array<string, list<string>|string|bool|null> $options Named arguments
      * @param array<int, string> $argNames List of argument names. Order is expected to be
      *  the same as $args.
@@ -63,7 +64,7 @@ class Arguments
     /**
      * Get all positional arguments.
      *
-     * @return array<int, string>
+     * @return array<int, list<string>|string>
      */
     public function getArguments(): array
     {
@@ -82,7 +83,40 @@ class Arguments
             return null;
         }
 
-        return $this->args[$index];
+        $value = $this->args[$index];
+
+        if ($value !== null && !is_string($value)) {
+            throw new ConsoleException(sprintf(
+                'Argument at index `%d` is not of type `string`, use `getArrayArgument()` instead.',
+                $index
+            ));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get positional arguments (multiple) by index.
+     *
+     * @param int $index The argument index to access.
+     * @return array|null The argument value or null
+     */
+    public function getArrayArgumentAt(int $index): ?array
+    {
+        if (!$this->hasArgumentAt($index)) {
+            return null;
+        }
+
+        $value = $this->args[$index];
+
+        if ($value !== null && !is_array($value)) {
+            throw new ConsoleException(sprintf(
+                'Argument at index `%d` is not of type `array`, use `getArgument()` instead.',
+                $index
+            ));
+        }
+
+        return $value;
     }
 
     /**
@@ -113,12 +147,13 @@ class Arguments
     }
 
     /**
-     * Returns positional argument value by name or null if doesn't exist
+     * Internal method to get argument from name.
+     * Avoid duplication code for getArgument() and getArrayArgument().
      *
-     * @param string $name The argument name to check.
-     * @return string|null
+     * @param string $name Argument name.
+     * @return array|string|null
      */
-    public function getArgument(string $name): ?string
+    private function _getArgument(string $name): array|string|null
     {
         $this->assertArgumentExists($name);
 
@@ -128,6 +163,44 @@ class Arguments
         }
 
         return $this->args[$offset];
+    }
+
+    /**
+     * Returns positional argument value by name or null if doesn't exist
+     *
+     * @param string $name The argument name to check.
+     * @return string|null
+     */
+    public function getArgument(string $name): ?string
+    {
+        $value = $this->_getArgument($name);
+        if ($value !== null && !is_string($value)) {
+            throw new ConsoleException(sprintf(
+                'Argument `%s` is not of type `string`, use `getArrayArgument()` instead.',
+                $name
+            ));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Gets a multiple (array) argument's value or null if not set.
+     *
+     * @param string $name Argument name.
+     * @return list<string>|null
+     */
+    public function getArrayArgument(string $name): ?array
+    {
+        $value = $this->_getArgument($name);
+        if ($value !== null && !is_array($value)) {
+            throw new ConsoleException(sprintf(
+                'Argument `%s` is not of type `array`, use `getArgument()` instead.',
+                $name
+            ));
+        }
+
+        return $value;
     }
 
     /**
@@ -151,7 +224,7 @@ class Arguments
         $value = $this->options[$name] ?? null;
         if (is_array($value)) {
             throw new ConsoleException(sprintf(
-                'Cannot get multiple values for option `%s`, use `getMultipleOption()` instead.',
+                'Cannot get multiple values for option `%s`, use `getArrayOption()` instead.',
                 $name
             ));
         }
@@ -164,6 +237,7 @@ class Arguments
     /**
      * Get a boolean option's value or null if not set.
      *
+     * @param string $name Option name.
      * @return bool|null
      */
     public function getBooleanOption(string $name): ?bool
@@ -183,8 +257,24 @@ class Arguments
      * Gets a multiple option's value or null if not set.
      *
      * @return list<string>|null
+     * @deprecated 5.2.0 Use getArrayOption instead.
      */
     public function getMultipleOption(string $name): ?array
+    {
+        deprecationWarning(
+            '5.2.0',
+            'getMultipleOption() is deprecated. Use `getArrayOption()` instead.'
+        );
+
+        return $this->getArrayOption($name);
+    }
+
+    /**
+     * Gets a multiple (array) option's value or null if not set.
+     *
+     * @return list<string>|null
+     */
+    public function getArrayOption(string $name): ?array
     {
         $value = $this->options[$name] ?? null;
         if ($value !== null && !is_array($value)) {

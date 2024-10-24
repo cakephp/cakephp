@@ -4,7 +4,6 @@ declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
@@ -692,6 +691,75 @@ class ConsoleOptionParserTest extends TestCase
         $expected = ['one', 'two', 0, 'after', 'zero'];
         $result = $parser->parse($expected, $this->io);
         $this->assertEquals($expected, $result[1], 'Arguments are not as expected');
+    }
+
+    /**
+     * Test parsing argument with separator
+     */
+    public function testParseArgumentWithSeparator(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addArgument('colors', [
+            'separator' => ',',
+            'choices' => ['red', 'blue', 'green'],
+        ]);
+        $result = $parser->parse(['blue,red'], $this->io);
+        $this->assertEquals([['blue', 'red']], $result[1]);
+    }
+
+    /**
+     * test parse with multiples and default list separator.
+     */
+    public function testParseOptionWithMultiplesDefaultSeparator(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('colors', [
+            'multiple' => true,
+            'choices' => ['blue,red', 'yellow,green'],
+        ]);
+        $out = new StubConsoleOutput();
+
+        $result = $parser->parse(['--colors', 'blue,red']);
+        $this->assertEquals(['colors' => ['blue,red'], 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
+    }
+
+    /**
+     * test parse with multiples and custom list separator.
+     */
+    public function testParseOptionWithMultiplesCustomSeparator(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('colors', [
+            'multiple' => true,
+            'choices' => ['1st,choice', '2nd,choice', '3rd,choice'],
+            'separator' => ';',
+        ]);
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
+
+        $result = $parser->parse(['--colors', '2nd,choice;3rd,choice'], $io);
+        $this->assertEquals(['colors' => ['2nd,choice', '3rd,choice'], 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
+    }
+
+    /**
+     * test mixing multiples option as list and duplicate
+     */
+    public function testParseOptionWithMultiplesMixed(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('colors', [
+            'multiple' => true,
+            'separator' => ',',
+            'choices' => ['red', 'blue', 'green', 'yellow', 'purple'],
+        ]);
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
+
+        $result = $parser->parse(['--colors', 'green,purple', '--colors', 'red'], $io);
+        $this->assertEquals(['colors' => ['green', 'purple', 'red'], 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
     }
 
     /**
