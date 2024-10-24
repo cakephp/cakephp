@@ -55,6 +55,10 @@ class ConsoleInputOptionTest extends TestCase
             [['color', '', '', false, null, [], false, false, 'color ?'], 'prompt', 'color ?'],
             // Test separator()
             [['color', '', '', false, null, [], false, false, null, ';'], 'separator', ';'],
+            // Test separator() more than one character
+            [['color', '', '', false, null, [], false, false, null, ', '], 'separator', ','],
+            // Test separator() start by space
+            [['color', '', '', false, null, [], false, false, null, ' ;'], 'separator', ''],
         ];
     }
 

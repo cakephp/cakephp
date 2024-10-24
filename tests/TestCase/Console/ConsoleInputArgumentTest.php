@@ -43,6 +43,10 @@ class ConsoleInputArgumentTest extends TestCase
             [['verbose', '', true, []], 'isRequired', true],
             // Test separator()
             [['color', '', false, [], null, ';'], 'separator', ';'],
+            // Test separator() more than one character
+            [['color', '', false, [], null, ', '], 'separator', ','],
+            // Test separator() start by space
+            [['color', '', false, [], null, ' ;'], 'separator', ''],
         ];
     }
 

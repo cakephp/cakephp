@@ -224,7 +224,7 @@ class Arguments
         $value = $this->options[$name] ?? null;
         if (is_array($value)) {
             throw new ConsoleException(sprintf(
-                'Cannot get multiple values for option `%s`, use `getMultipleOption()` instead.',
+                'Cannot get multiple values for option `%s`, use `getArrayOption()` instead.',
                 $name
             ));
         }
