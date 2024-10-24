@@ -35,7 +35,7 @@ class ArgumentsTest extends TestCase
     }
 
     /**
-     * Get arguments by index
+     * Get arguments by index.
      */
     public function testGetArgumentAt(): void
     {
@@ -44,6 +44,42 @@ class ArgumentsTest extends TestCase
         $this->assertSame($values[0], $args->getArgumentAt(0));
         $this->assertSame($values[1], $args->getArgumentAt(1));
         $this->assertNull($args->getArgumentAt(3));
+    }
+
+    /**
+     * Test get arguments by index is not a string.
+     */
+    public function testGetArgumentAtNotString(): void
+    {
+        $values = [['one', 'two']];
+        $args = new Arguments($values, [], []);
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('Argument at index `0` is not of type `string`, use `getArrayArgument()` instead.');
+        $args->getArgumentAt(0);
+    }
+
+    /**
+     * Get array arguments by index.
+     */
+    public function testGetArrayArgumentAt(): void
+    {
+        $values = [['one', 'two'], []];
+        $args = new Arguments($values, [], []);
+        $this->assertSame($values[0], $args->getArrayArgumentAt(0));
+        $this->assertSame($values[1], $args->getArrayArgumentAt(1));
+        $this->assertNull($args->getArrayArgumentAt(3));
+    }
+
+    /**
+     * Test get array arguments by index is not an array.
+     */
+    public function testGetArrayArgumentAtNotArray(): void
+    {
+        $values = ['one two'];
+        $args = new Arguments($values, [], []);
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('Argument at index `0` is not of type `array`, use `getArgument()` instead.');
+        $args->getArrayArgumentAt(0);
     }
 
     /**
@@ -108,8 +144,22 @@ class ArgumentsTest extends TestCase
         $args = new Arguments($values, [], $names);
 
         $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('Argument `color` is not defined on this Command. Could this be an option maybe?');
 
         $args->getArgument('color');
+    }
+
+    /**
+     * Test getArgument() could only return string.
+     */
+    public function testGetArgumentNotString(): void
+    {
+        $values = [['one', 'two']];
+        $names = ['types'];
+        $args = new Arguments($values, [], $names);
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('Argument `types` is not of type `string`, use `getArrayArgument()` instead.');
+        $args->getArgument('types');
     }
 
     /**

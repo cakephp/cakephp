@@ -75,15 +75,48 @@ class Arguments
      * Get positional arguments by index.
      *
      * @param int $index The argument index to access.
-     * @return array|string|null The argument value or null
+     * @return string|null The argument value or null
      */
-    public function getArgumentAt(int $index): array|string|null
+    public function getArgumentAt(int $index): ?string
     {
         if (!$this->hasArgumentAt($index)) {
             return null;
         }
 
-        return $this->args[$index];
+        $value = $this->args[$index];
+
+        if ($value !== null && !is_string($value)) {
+            throw new ConsoleException(sprintf(
+                'Argument at index `%d` is not of type `string`, use `getArrayArgument()` instead.',
+                $index
+            ));
+        }
+
+        return $value;
+    }
+
+    /**
+     * Get positional arguments (multiple) by index.
+     *
+     * @param int $index The argument index to access.
+     * @return array|null The argument value or null
+     */
+    public function getArrayArgumentAt(int $index): ?array
+    {
+        if (!$this->hasArgumentAt($index)) {
+            return null;
+        }
+
+        $value = $this->args[$index];
+
+        if ($value !== null && !is_array($value)) {
+            throw new ConsoleException(sprintf(
+                'Argument at index `%d` is not of type `array`, use `getArgument()` instead.',
+                $index
+            ));
+        }
+
+        return $value;
     }
 
     /**
@@ -230,7 +263,7 @@ class Arguments
     {
         deprecationWarning(
             '5.2.0',
-            'getMultipleOption() is deprecated. Use `getArrayOption()` instead'
+            'getMultipleOption() is deprecated. Use `getArrayOption()` instead.'
         );
 
         return $this->getArrayOption($name);
