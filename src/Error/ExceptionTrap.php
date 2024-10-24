@@ -359,7 +359,7 @@ class ExceptionTrap
     /**
      * Trigger an error that occurred during rendering an exception.
      *
-     * By triggering an E_USER_ERROR we can end up in the default
+     * By triggering an E_USER_WARNING we can end up in the default
      * exception handling which will log the rendering failure,
      * and hopefully render an error page.
      *
@@ -375,6 +375,6 @@ class ExceptionTrap
             $exception->getFile(),
             $exception->getLine(),
         );
-        trigger_error($message, E_USER_ERROR);
+        trigger_error($message, E_USER_WARNING);
     }
 }
