@@ -383,11 +383,11 @@ abstract class Query implements ExpressionInterface, Stringable
      * });
      * ```
      *
-     * @param \Cake\Database\Expression\CommonTableExpression|\Closure $cte The CTE to add.
+     * @param \Cake\Database\Expression\CommonTableExpression|\Closure|null $cte The CTE to add.
      * @param bool $overwrite Whether to reset the list of CTEs.
      * @return $this
      */
-    public function with(CommonTableExpression|Closure $cte, bool $overwrite = false)
+    public function with(CommonTableExpression|Closure|null $cte, bool $overwrite = false)
     {
         if ($overwrite) {
             $this->_parts['with'] = [];
@@ -403,7 +403,10 @@ abstract class Query implements ExpressionInterface, Stringable
             }
         }
 
-        $this->_parts['with'][] = $cte;
+        if ($cte) {
+            $this->_parts['with'][] = $cte;
+        }
+
         $this->_dirty();
 
         return $this;
