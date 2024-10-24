@@ -49,6 +49,7 @@ use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Query\UpdateQuery;
 use Cake\ORM\Rule\IsUnique;
+use Cake\ORM\TableEvents\BeforeMarshalEventInterface;
 use Cake\Utility\Inflector;
 use Cake\Validation\ValidatorAwareInterface;
 use Cake\Validation\ValidatorAwareTrait;
@@ -3191,7 +3192,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function implementedEvents(): array
     {
         $eventMap = [
-            'Model.beforeMarshal' => 'beforeMarshal',
+            'Model.beforeMarshal' => BeforeMarshalEventInterface::class,
             'Model.afterMarshal' => 'afterMarshal',
             'Model.buildValidator' => 'buildValidator',
             'Model.beforeFind' => 'beforeFind',
@@ -3206,10 +3207,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         ];
         $events = [];
 
-        foreach ($eventMap as $event => $method) {
-            if (!method_exists($this, $method)) {
+        foreach ($eventMap as $event => $interface) {
+            if (!($this instanceof $interface)) {
                 continue;
             }
+            $method = explode('.', $event)[1];
             $events[$event] = $method;
         }
 
