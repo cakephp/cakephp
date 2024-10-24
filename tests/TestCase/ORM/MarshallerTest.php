@@ -225,6 +225,30 @@ class MarshallerTest extends TestCase
         $this->assertEquals($data['Articles'], $result->Articles);
     }
 
+    public function testOneWithGeospatialFields(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->getSchema()
+            ->addColumn('geo_line', ['type' => 'linestring'])
+            ->addColumn('geo_geometry', ['type' => 'geometry'])
+            ->addColumn('geo_point', ['type' => 'point'])
+            ->addColumn('geo_polygon', ['type' => 'polygon']);
+
+        $data = [
+            'geo_line' => 'LINESTRING(0 0,1 1)',
+            'geo_geometry' => 'GEOMETRY(15, 25)',
+            'geo_point' => 'POINT(10, 15)',
+            'geo_polygon' => 'POLYGON(0 0,6 6,6 12,12 0)',
+        ];
+        $marshall = new Marshaller($articles);
+        $result = $marshall->one($data);
+
+        $this->assertEquals($data['geo_line'], $result->geo_line);
+        $this->assertEquals($data['geo_geometry'], $result->geo_geometry);
+        $this->assertEquals($data['geo_point'], $result->geo_point);
+        $this->assertEquals($data['geo_polygon'], $result->geo_polygon);
+    }
+
     /**
      * Ensure that marshalling casts reasonably.
      */
