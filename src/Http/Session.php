@@ -59,7 +59,7 @@ class Session
      *
      * @var int
      */
-    protected int $_lifetime;
+    protected int $_lifetime = 0;
 
     /**
      * Whether this session is running under a CLI environment
@@ -221,12 +221,8 @@ class Session
             'handler' => [],
         ];
 
-        $lifetime = 0;
-        if (isset($config['timeout'])) {
-            $lifetime = (int)$config['timeout'] * 60;
-        }
-        if ($lifetime !== 0) {
-            $config['ini']['session.gc_maxlifetime'] = $lifetime;
+        if (!is_null($config['timeout'])) {
+            $this->configureSessionLifetime((int)$config['timeout'] * 60);
         }
 
         if ($config['cookie']) {
@@ -246,7 +242,6 @@ class Session
             $this->engine($class, $config['handler']);
         }
 
-        $this->_lifetime = $lifetime;
         $this->_isCLI = (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
         session_register_shutdown();
     }
@@ -687,5 +682,40 @@ class Session
         $this->write('Config.time', time());
 
         return $result;
+    }
+
+    /**
+     * Allow to set session timeout before session is started in Middleware.
+     * Setting it in bootstrap when fetching the value from database result in query not showing DebugKit
+     * and other issues due to using ORM before bootstrapping of other plugins.
+     *
+     * @param int $lifetime in seconds
+     * @return void
+     * @throws \Cake\Core\Exception\CakeException
+     */
+    public function setSessionLifetime(int $lifetime): void
+    {
+        if ($this->started()) {
+            throw new CakeException("Can't modify session lifetime after session has already been started.");
+        }
+
+        $this->configureSessionLifetime($lifetime);
+    }
+
+    /**
+     * Configure session lifetime
+     *
+     * @param int $lifetime
+     * @return void
+     */
+    private function configureSessionLifetime(int $lifetime): void
+    {
+        if ($lifetime !== 0) {
+            $this->options([
+                'session.gc_maxlifetime' => $lifetime,
+            ]);
+        }
+
+        $this->_lifetime = $lifetime;
     }
 }
