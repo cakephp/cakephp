@@ -96,7 +96,7 @@ class ConnectionHelper
         // Skip special tables.
         // spatial_ref_sys - postgis and it is undroppable.
         $skip = ['spatial_ref_sys'];
-        $tables = array_diff($allTables, $skip);
+        $allTables = array_diff($allTables, $skip);
 
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
