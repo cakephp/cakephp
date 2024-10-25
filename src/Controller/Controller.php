@@ -188,6 +188,15 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     protected array $viewClasses = [];
 
     /**
+     * Holds an array of deferred tasks (callables) to be executed after the response is sent to the client.
+     *
+     * Tasks are added to this array via the defer() method, and they are executed in the shutdown function.
+     *
+     * @var array<callable> $deferredTasks Array of callables to execute deferred tasks
+     */
+    protected array $deferredTasks = [];
+
+    /**
      * Constructor.
      *
      * Sets a number of properties based on conventions if they are empty. To override the
@@ -974,5 +983,78 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function afterFilter(EventInterface $event)
     {
+        // Only register deferred execution if there are deferred tasks
+        if (!empty($this->deferredTasks)) {
+            register_shutdown_function(function (): void {
+                $this->executeDeferredTasks();
+
+                echo $this->response->getBody();
+
+                foreach ($this->response->getHeaders() as $header => $values) {
+                    foreach ($values as $value) {
+                        header("{$header}: {$value}");
+                    }
+                }
+
+                if (function_exists('fastcgi_finish_request')) {
+                    fastcgi_finish_request();
+                } else {
+                    ob_end_flush();
+                    flush();
+                }
+            });
+        }
+    }
+
+    /**
+     * Adds a task (closure or callable) to the deferred queue for execution after the client receives the response.
+     *
+     * This method allows you to queue tasks that do not need to run immediately, such as sending emails or logging,
+     * to improve response time for the user. Deferred tasks will execute in the shutdown phase after the main
+     * response has been sent.
+     *
+     * Example usage:
+     *
+     * ```php
+     * // Using an anonymous function (closure)
+     * $this->defer(function () {
+     *     // Example task: send an email
+     *     $mailer = new UserMailer();
+     *     $mailer->sendWelcomeEmail($user)->send();
+     * });
+     *
+     * // Using an instance method as a callable
+     * $logger = new CustomLogger();
+     * $this->defer([$logger, 'logDeferredInfo']);
+     *
+     * // Using a static method as a callable
+     * $this->defer(['CustomLogger', 'logStaticDeferredInfo']);
+     *
+     * // Using a named function as a callable
+     * function logDeferredMessage() {
+     *     Log::info('This is a deferred log message');
+     * }
+     * $this->defer('logDeferredMessage');
+     * ```
+     *
+     * @param callable $task A callable (e.g., closure, function, method) that defines the deferred task to be executed.
+     *                        This task will run after the response is sent to the client.
+     */
+    public function defer(callable $task): void
+    {
+        $this->deferredTasks[] = $task;
+    }
+
+    /**
+     * Execute all deferred tasks after the response is sent.
+     */
+    protected function executeDeferredTasks(): void
+    {
+        foreach ($this->deferredTasks as $task) {
+            $task();
+        }
+
+        // Clear tasks to prevent re-running
+        $this->deferredTasks = [];
     }
 }
