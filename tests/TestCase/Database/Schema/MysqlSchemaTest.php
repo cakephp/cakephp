@@ -474,6 +474,7 @@ SQL;
      */
     public function testDescribeTableGeometry(): void
     {
+        $this->_needsConnection();
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
 
