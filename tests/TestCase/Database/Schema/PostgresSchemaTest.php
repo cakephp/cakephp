@@ -25,7 +25,6 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
-use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
