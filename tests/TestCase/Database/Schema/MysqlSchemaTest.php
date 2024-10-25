@@ -475,6 +475,11 @@ SQL;
     public function testDescribeTableGeometry(): void
     {
         $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+
+        $hasGeometry = $driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=');
+        $this->skipIf(!$hasGeometry, 'This test requires geometry type support');
+
         $table = <<<SQL
 CREATE TABLE schema_geometry (
     id INTEGER,
