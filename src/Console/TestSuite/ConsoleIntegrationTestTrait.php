@@ -18,6 +18,7 @@ namespace Cake\Console\TestSuite;
 use Cake\Command\Command;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOutput;
 use Cake\Console\Exception\StopException;
 use Cake\Console\TestSuite\Constraint\ContentsContain;
 use Cake\Console\TestSuite\Constraint\ContentsContainRow;
@@ -27,6 +28,7 @@ use Cake\Console\TestSuite\Constraint\ContentsRegExp;
 use Cake\Console\TestSuite\Constraint\ExitCode;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\TestSuite\ContainerStubTrait;
+use Cake\Error\Debugger;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\After;
 
@@ -251,6 +253,35 @@ trait ConsoleIntegrationTestTrait
     public function assertErrorEmpty(string $message = ''): void
     {
         $this->assertThat(null, new ContentsEmpty($this->_err->messages(), 'error output'), $message);
+    }
+
+    /**
+     * Dump the exit code, stdout and stderr from the most recently run command
+     *
+     * @param resource|null $stream The stream to write to. Defaults to STDOUT
+     * @return void
+     */
+    public function debugOutput($stream = null): void
+    {
+        $output = new ConsoleOutput($stream ?? STDOUT);
+        if (class_exists(Debugger::class)) {
+            $trace = Debugger::trace(['start' => 0, 'depth' => 1, 'format' => 'array']);
+            $file = $trace[0]['file'];
+            $line = $trace[0]['line'];
+            $output->write("{$file} on {$line}");
+        }
+        $output->write('########## debugOutput() ##########');
+
+        if ($this->_exitCode !== null) {
+            $output->write('<info>Exit Code</info>');
+            $output->write((string)$this->_exitCode, 2);
+        }
+        $output->write('<info>STDOUT</info>');
+        $output->write($this->_out->messages(), 2);
+
+        $output->write('<info>STDERR</info>');
+        $output->write($this->_err->messages());
+        $output->write('###################################');
     }
 
     /**

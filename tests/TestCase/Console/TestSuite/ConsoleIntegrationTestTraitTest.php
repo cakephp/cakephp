@@ -254,4 +254,38 @@ class ConsoleIntegrationTestTraitTest extends TestCase
             'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that `/test/` PCRE pattern found in error output', 'routes', '/test/'],
         ];
     }
+
+    /**
+     * Test the debugOutput helper
+     *
+     * @return void
+     */
+    public function testDebugOutput(): void
+    {
+        $this->exec('sample');
+        $temp = tempnam(TMP, 'debug-output');
+        $f = fopen($temp, 'w');
+        $this->debugOutput($f);
+
+        $f = fopen($temp, 'r');
+        $result = fread($f, 1024);
+        $file = __FILE__;
+        $line = __LINE__ - 5;
+
+        $expected = <<<TEXT
+$file on $line
+########## debugOutput() ##########
+Exit Code
+0
+
+STDOUT
+This is the main method called from SampleCommand
+
+STDERR
+
+###################################
+
+TEXT;
+        $this->assertEquals($expected, $result);
+    }
 }
