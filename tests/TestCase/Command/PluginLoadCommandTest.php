@@ -126,4 +126,22 @@ class PluginLoadCommandTest extends TestCase
         $this->assertTrue(isset($config['NopeNotThere']));
         $this->assertSame(['optional' => true], $config['NopeNotThere']);
     }
+
+    /**
+     * Test writing file with existing content and tab indentation.
+     */
+    public function testLoadWithExistingFileAndTabIndentation(): void
+    {
+        copy(CONFIG . 'plugins_tab_indentation.php', CONFIG . 'plugins.php');
+        $this->exec('plugin load TestPlugin --optional');
+        Plugin::getCollection()->remove('TestPlugin');
+
+        $contentAfter = (string)file_get_contents($this->configFile);
+        $this->assertTrue(str_contains($contentAfter, "\t"));
+        $this->assertFalse(str_contains($contentAfter, '    '));
+
+        $config = include $this->configFile;
+        $this->assertTrue(isset($config['TestPlugin']));
+        $this->assertTrue(isset($config['TestPlugin']['optional']));
+    }
 }

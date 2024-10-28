@@ -20,6 +20,7 @@ use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use TestPlugin\Plugin as TestPlugin;
 
 /**
  * PluginUnloadCommandTest class
@@ -111,5 +112,24 @@ class PluginUnloadCommandTest extends TestCase
         $this->exec('plugin unload NopeNotThere');
         $this->assertExitCode(CommandInterface::CODE_ERROR);
         $this->assertErrorContains('Plugin `NopeNotThere` could not be found');
+    }
+
+    /**
+     * Test writing file with existing content and tab indentation.
+     */
+    public function testUnloadWithExistingFileAndTabIndentation(): void
+    {
+        $plugin = new TestPlugin();
+        Plugin::getCollection()->add($plugin);
+
+        copy(CONFIG . 'plugins_tab_indentation.php', CONFIG . 'plugins.php');
+        $this->exec('plugin unload TestPlugin');
+
+        $contentAfter = (string)file_get_contents($this->configFile);
+        $this->assertTrue(str_contains($contentAfter, "\t"));
+        $this->assertFalse(str_contains($contentAfter, '    '));
+
+        $config = include $this->configFile;
+        $this->assertTrue(!isset($config['TestPlugin']));
     }
 }

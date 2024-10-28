@@ -27,6 +27,8 @@ use Cake\Utility\Hash;
  */
 class PluginUnloadCommand extends Command
 {
+    use PluginLoadTrait;
+
     /**
      * Config file
      *
@@ -99,6 +101,10 @@ class PluginUnloadCommand extends Command
         } else {
             $array = var_export($config, true);
         }
+        if ($this->isTabIndentation($this->configFile)) {
+            $array = $this->indentWithTab($array);
+        }
+
         $contents = '<?php' . "\n" . 'return ' . $array . ';';
 
         if (file_put_contents($this->configFile, $contents)) {

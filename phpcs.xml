@@ -14,4 +14,6 @@
         <severity>0</severity>
         <exclude-pattern>src/Collection/functions.php</exclude-pattern>
     </rule>
+
+    <exclude-pattern>/tests/test_app/config/plugins_tab_indentation.php</exclude-pattern>
 </ruleset>

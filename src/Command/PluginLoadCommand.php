@@ -32,6 +32,8 @@ use Cake\Utility\Hash;
  */
 class PluginLoadCommand extends Command
 {
+    use PluginLoadTrait;
+
     /**
      * Config file
      *
@@ -127,6 +129,10 @@ class PluginLoadCommand extends Command
         } else {
             $array = var_export($config, true);
         }
+        if ($this->isTabIndentation($this->configFile)) {
+            $array = $this->indentWithTab($array);
+        }
+
         $contents = '<?php' . "\n\n" . 'return ' . $array . ';' . "\n";
 
         if (file_put_contents($this->configFile, $contents)) {
