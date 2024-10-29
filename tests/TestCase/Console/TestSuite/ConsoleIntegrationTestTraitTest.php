@@ -286,6 +286,6 @@ STDERR
 ###################################
 
 TEXT;
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($expected, str_replace("\r\n", "\n", $result));
     }
 }
