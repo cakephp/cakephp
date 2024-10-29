@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Route;
 
+use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Exception\BadRequestException;
 use InvalidArgumentException;
@@ -918,6 +919,32 @@ class Route
     public function getMiddleware(): array
     {
         return $this->middleware;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isActionPresent(): bool
+    {
+        $action = $this->defaults['action'] ?? null;
+        $controller = $this->defaults['controller'] ?? null;
+        if (!$action || !$controller) {
+            // generic actions and controllers can't be checked
+            return true;
+        }
+
+        $pluginPath = '';
+        if ($this->defaults['plugin']) {
+            $pluginPath = $this->defaults['plugin'] . '.';
+        }
+        $controllerClass = App::className($pluginPath . $controller, 'Controller', 'Controller');
+
+        if (!$controllerClass) {
+            // Controller class couldn't be found for some reason
+            return true;
+        }
+
+        return method_exists($controllerClass, $action);
     }
 
     /**

@@ -44,7 +44,10 @@ class RoutesCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $header = ['Route name', 'URI template', 'Plugin', 'Prefix', 'Controller', 'Action', 'Method(s)'];
+        $header = [
+            'Route name', 'URI template', 'Plugin', 'Prefix',
+            'Controller', 'Action', 'Valid Action', 'Method(s)',
+        ];
         if ($args->getOption('with-middlewares') || $args->getOption('verbose')) {
             $header[] = 'Middlewares';
         }
@@ -66,6 +69,7 @@ class RoutesCommand extends Command
                 $route->defaults['prefix'] ?? '',
                 $route->defaults['controller'] ?? '',
                 $route->defaults['action'] ?? '',
+                $route->isActionPresent() ? '' : 'X',
                 implode(', ', $methods),
             ];
 
@@ -117,6 +121,7 @@ class RoutesCommand extends Command
                         $route->defaults['prefix'] ?? '',
                         $route->defaults['controller'] ?? '',
                         $route->defaults['action'] ?? '',
+                        $route->isActionPresent() ? '' : 'X',
                         implode(', ', $methods),
                     ];
 
