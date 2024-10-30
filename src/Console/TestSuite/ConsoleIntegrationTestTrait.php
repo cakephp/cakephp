@@ -263,7 +263,7 @@ trait ConsoleIntegrationTestTrait
      */
     public function debugOutput($stream = null): void
     {
-        $output = new ConsoleOutput($stream ?? STDOUT);
+        $output = new ConsoleOutput($stream ?? 'php://stdout');
         if (class_exists(Debugger::class)) {
             $trace = Debugger::trace(['start' => 0, 'depth' => 1, 'format' => 'array']);
             $file = $trace[0]['file'];
