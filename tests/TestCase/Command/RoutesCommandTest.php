@@ -73,7 +73,6 @@ class RoutesCommandTest extends TestCase
             '<info>Prefix</info>',
             '<info>Controller</info>',
             '<info>Action</info>',
-            '<info>Valid Action</info>',
             '<info>Method(s)</info>',
         ]);
         $this->assertOutputContainsRow([
@@ -83,7 +82,6 @@ class RoutesCommandTest extends TestCase
             '',
             'Articles',
             'index',
-            'X',
             '',
         ]);
         $this->assertOutputContainsRow([
@@ -94,7 +92,6 @@ class RoutesCommandTest extends TestCase
             '',
             'index',
             '',
-            '',
         ]);
         $this->assertOutputContainsRow([
             'testName',
@@ -103,7 +100,6 @@ class RoutesCommandTest extends TestCase
             '',
             'Tests',
             'index',
-            '',
             '',
         ]);
     }
@@ -122,10 +118,10 @@ class RoutesCommandTest extends TestCase
             '<info>Prefix</info>',
             '<info>Controller</info>',
             '<info>Action</info>',
-            '<info>Valid Action</info>',
             '<info>Method(s)</info>',
             '<info>Middlewares</info>',
             '<info>Defaults</info>',
+            '<info>Existing</info>',
         ]);
         $this->assertOutputContainsRow([
             'articles:_action',
@@ -134,10 +130,10 @@ class RoutesCommandTest extends TestCase
             '',
             'Articles',
             'index',
-            'X',
             '',
             'dumb, sample',
             '{"action":"index","controller":"Articles","plugin":null}',
+            'X',
         ]);
     }
 
@@ -171,7 +167,6 @@ class RoutesCommandTest extends TestCase
             '',
             'Articles',
             'index',
-            'X',
             '',
             'dumb, sample',
         ]);
@@ -353,7 +348,6 @@ class RoutesCommandTest extends TestCase
             '<info>Prefix</info>',
             '<info>Controller</info>',
             '<info>Action</info>',
-            '<info>Valid Action</info>',
             '<info>Method(s)</info>',
         ]);
         $this->assertOutputContainsRow([
