@@ -453,7 +453,7 @@ if (!function_exists('Cake\Core\toInt')) {
         }
         if (is_string($value)) {
             $value = trim($value);
-            if (preg_match(/^0+[^0]{1}/, $value)) {
+            if (preg_match('/^0+[^0]{1}/', $value)) {
                 $value = ltrim($value, '0');
             }
 
@@ -494,7 +494,7 @@ if (!function_exists('Cake\Core\toFloat')) {
     {
         if (is_string($value)) {
             $value = trim($value);
-            if (preg_match('/0+[^0]+/', $value)) {
+            if (preg_match('/^0+[^0]{1}/', $value)) {
                 $value = ltrim($value, '0');
             }
 
