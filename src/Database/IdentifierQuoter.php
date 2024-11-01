@@ -126,9 +126,8 @@ class IdentifierQuoter
         };
 
         $query->traverseExpressions($this->quoteExpression(...));
-        $query->setValueBinder($binder);
 
-        return $query;
+        return $query->setValueBinder($binder);
     }
 
     /**

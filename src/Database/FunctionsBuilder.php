@@ -139,9 +139,8 @@ class FunctionsBuilder
     public function cast(ExpressionInterface|string $field, string $dataType): FunctionExpression
     {
         $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
-        $expression->setConjunction(' AS')->add([$dataType => 'literal']);
 
-        return $expression;
+        return $expression->setConjunction(' AS')->add([$dataType => 'literal']);
     }
 
     /**
@@ -184,9 +183,8 @@ class FunctionsBuilder
     public function extract(string $part, ExpressionInterface|string $expression, array $types = []): FunctionExpression
     {
         $expression = new FunctionExpression('EXTRACT', $this->toLiteralParam($expression), $types, 'integer');
-        $expression->setConjunction(' FROM')->add([$part => 'literal'], [], true);
 
-        return $expression;
+        return $expression->setConjunction(' FROM')->add([$part => 'literal'], [], true);
     }
 
     /**
@@ -209,9 +207,8 @@ class FunctionsBuilder
         }
         $interval = $value . ' ' . $unit;
         $expression = new FunctionExpression('DATE_ADD', $this->toLiteralParam($expression), $types, 'datetime');
-        $expression->setConjunction(', INTERVAL')->add([$interval => 'literal']);
 
-        return $expression;
+        return $expression->setConjunction(', INTERVAL')->add([$interval => 'literal']);
     }
 
     /**
@@ -250,17 +247,12 @@ class FunctionsBuilder
      */
     public function now(string $type = 'datetime'): FunctionExpression
     {
-        if ($type === 'datetime') {
-            return new FunctionExpression('NOW', [], [], 'datetime');
-        }
-        if ($type === 'date') {
-            return new FunctionExpression('CURRENT_DATE', [], [], 'date');
-        }
-        if ($type === 'time') {
-            return new FunctionExpression('CURRENT_TIME', [], [], 'time');
-        }
-
-        throw new InvalidArgumentException('Invalid argument for FunctionsBuilder::now(): ' . $type);
+        return match ($type) {
+            'datetime' => new FunctionExpression('NOW', [], [], 'datetime'),
+            'date' => new FunctionExpression('CURRENT_DATE', [], [], 'date'),
+            'time' => new FunctionExpression('CURRENT_TIME', [], [], 'time'),
+            default => throw new InvalidArgumentException('Invalid argument for FunctionsBuilder::now(): ' . $type),
+        };
     }
 
     /**

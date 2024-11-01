@@ -197,7 +197,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
 
                 // Use passedParams as a source of typed dependencies.
                 // The accepted types for passedParams was never defined and userland code relies on that.
-                if ($passedParams && is_object($passedParams[0]) && $passedParams[0] instanceof $typeName) {
+                if ($passedParams && $passedParams[0] instanceof $typeName) {
                     $resolved[] = array_shift($passedParams);
                     continue;
                 }

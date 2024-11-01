@@ -1213,6 +1213,12 @@ class MailerTest extends TestCase
         $this->assertSame(Message::EMAIL_PATTERN, $this->mailer->getEmailPattern());
     }
 
+    public function testRestore(): void
+    {
+        $this->expectNotToPerformAssertions();
+        $this->mailer->send('dummy');
+    }
+
     /**
      * testSendWithLog method
      */

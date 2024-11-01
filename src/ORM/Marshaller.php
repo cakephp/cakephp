@@ -847,7 +847,7 @@ class Marshaller
             $entity->setAccess('_joinData', true);
 
             $joinData = $entity->get('_joinData');
-            if ($joinData && $joinData instanceof EntityInterface) {
+            if ($joinData instanceof EntityInterface) {
                 $extra[spl_object_hash($entity)] = $joinData;
             }
         }

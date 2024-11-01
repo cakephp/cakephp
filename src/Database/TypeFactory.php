@@ -53,6 +53,10 @@ class TypeFactory
         'timestampfractional' => Type\DateTimeFractionalType::class,
         'timestamptimezone' => Type\DateTimeTimezoneType::class,
         'uuid' => Type\UuidType::class,
+        'linestring' => Type\StringType::class,
+        'geometry' => Type\StringType::class,
+        'point' => Type\StringType::class,
+        'polygon' => Type\StringType::class,
     ];
 
     /**

@@ -346,7 +346,11 @@ class CommandRunner implements EventDispatcherInterface
             if ($this->app instanceof ContainerApplicationInterface) {
                 $container = $this->app->getContainer();
             }
+
             $this->factory = new CommandFactory($container);
+            if ($container !== null) {
+                $container->add(CommandFactoryInterface::class, $this->factory);
+            }
         }
 
         return $this->factory->create($className);

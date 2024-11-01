@@ -47,6 +47,18 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      */
     protected string $name = 'cake unknown';
 
+    protected ?CommandFactoryInterface $factory = null;
+
+    /**
+     * Constructor
+     *
+     * @param \Cake\Console\CommandFactoryInterface $factory Command factory instance.
+     */
+    public function __construct(?CommandFactoryInterface $factory = null)
+    {
+        $this->factory = $factory;
+    }
+
     /**
      * @inheritDoc
      */
@@ -276,7 +288,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
                 sprintf('Command `%s` is not a subclass of `%s`.', $command, CommandInterface::class)
             );
 
-            $command = new $command();
+            $command = $this->factory?->create($command) ?? new $command();
         }
         $io = $io ?: new ConsoleIo();
 

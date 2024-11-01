@@ -805,7 +805,7 @@ class BelongsToMany extends Association
 
         foreach ($targetEntities as $e) {
             $joint = $e->get($jointProperty);
-            if (!$joint || !($joint instanceof EntityInterface)) {
+            if (!($joint instanceof EntityInterface)) {
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionRegistryAlias]);
             }
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
@@ -1405,7 +1405,7 @@ class BelongsToMany extends Association
             }
             $joint = $entity->get($jointProperty);
 
-            if (!$joint || !($joint instanceof EntityInterface)) {
+            if (!($joint instanceof EntityInterface)) {
                 $missing[] = $entity->extract($primary);
                 continue;
             }

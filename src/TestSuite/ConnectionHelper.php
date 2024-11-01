@@ -93,6 +93,11 @@ class ConnectionHelper
         $collection = $connection->getSchemaCollection();
         $allTables = $collection->listTablesWithoutViews();
 
+        // Skip special tables.
+        // spatial_ref_sys - postgis and it is undroppable.
+        $skip = ['spatial_ref_sys'];
+        $allTables = array_diff($allTables, $skip);
+
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
         $schemas = array_map(fn ($table) => $collection->describe($table), $tables);

@@ -47,6 +47,11 @@ trait StringCompareTrait
     /**
      * Compare the result to the contents of the file
      *
+     * Set UPDATE_TEST_COMPARISON_FILES=1 in your environment
+     * to have this assertion *overwrite* comparison files. This
+     * is useful when you intentionally make a behavior change and
+     * want a quick way to capture the baseline output.
+     *
      * @param string $path partial path to test comparison file
      * @param string $result test result as a string
      * @return void

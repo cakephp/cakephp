@@ -63,7 +63,6 @@ class PhpError
         E_RECOVERABLE_ERROR => 'warning',
         E_NOTICE => 'notice',
         E_USER_NOTICE => 'notice',
-        E_STRICT => 'strict',
         E_DEPRECATED => 'deprecated',
         E_USER_DEPRECATED => 'deprecated',
     ];
@@ -95,6 +94,10 @@ class PhpError
         ?int $line = null,
         array $trace = []
     ) {
+        if (version_compare(PHP_VERSION, '8.4.0-dev', '<')) {
+            $this->levelMap[E_STRICT] = 'strict';
+        }
+
         $this->code = $code;
         $this->message = $message;
         $this->file = $file;

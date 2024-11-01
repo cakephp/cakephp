@@ -33,14 +33,6 @@ use Cake\Utility\Inflector;
 class I18nExtractCommand extends Command
 {
     /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'i18n extract';
-    }
-
-    /**
      * Paths to use when looking for strings
      *
      * @var list<string>
@@ -123,6 +115,22 @@ class I18nExtractCommand extends Command
      * @var int
      */
     protected int $_countMarkerError = 0;
+
+    /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'i18n extract';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Extract i18n POT files from application source files.';
+    }
 
     /**
      * Method to interact with the user and get path selections.
@@ -354,11 +362,11 @@ class I18nExtractCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription(
-            'Extract i18n POT files from application source files. ' .
+        $parser->setDescription([
+            static::getDescription(),
             'Source files are parsed and string literal format strings ' .
-            'provided to the <info>__</info> family of functions are extracted.'
-        )->addOption('app', [
+            'provided to the <info>__</info> family of functions are extracted.',
+        ])->addOption('app', [
             'help' => 'Directory where your application is located.',
         ])->addOption('paths', [
             'help' => 'Comma separated list of paths that are searched for source files.',

@@ -21,6 +21,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Association;
 use Cake\ORM\Behavior;
+use Cake\ORM\Query\SelectQuery;
 use Closure;
 
 /**
@@ -296,9 +297,10 @@ class CounterCacheBehavior extends Behavior
      *
      * @param array<string, mixed> $config The counter cache configuration for a single field
      * @param array $conditions Additional conditions given to the query
-     * @return int The number of relations matching the given config and conditions
+     * @return \Cake\ORM\Query\SelectQuery|int The query to fetch the number of
+     *   relations matching the given config and conditions or the number itself.
      */
-    protected function _getCount(array $config, array $conditions): int
+    protected function _getCount(array $config, array $conditions): SelectQuery|int
     {
         $finder = 'all';
         if (!empty($config['finder'])) {
@@ -309,6 +311,12 @@ class CounterCacheBehavior extends Behavior
         $config['conditions'] = array_merge($conditions, $config['conditions'] ?? []);
         $query = $this->_table->find($finder, ...$config);
 
-        return $query->count();
+        if (isset($config['useSubQuery']) && $config['useSubQuery'] === false) {
+            return $query->count();
+        }
+
+        return $query
+            ->select(['count' => $query->func()->count('*')], true)
+            ->orderBy([], true);
     }
 }

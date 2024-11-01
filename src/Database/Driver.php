@@ -125,6 +125,13 @@ abstract class Driver
     protected ?string $_version = null;
 
     /**
+     * Whether to log queries generated during this connection.
+     *
+     * @var bool
+     */
+    protected bool $logQueries = false;
+
+    /**
      * The last number of connection retry attempts.
      *
      * @var int
@@ -157,6 +164,7 @@ abstract class Driver
             $this->enableAutoQuoting();
         }
         if ($config['log'] !== false) {
+            $this->logQueries = true;
             $this->logger = $this->createLogger($config['log'] === true ? null : $config['log']);
         }
     }
@@ -971,7 +979,7 @@ abstract class Driver
      */
     public function log(Stringable|string $message, array $context = []): bool
     {
-        if ($this->logger === null) {
+        if ($this->logger === null || !$this->logQueries) {
             return false;
         }
 
@@ -992,6 +1000,39 @@ abstract class Driver
     public function getRole(): string
     {
         return $this->_config['_role'] ?? Connection::ROLE_WRITE;
+    }
+
+    /**
+     * Enable query logging.
+     *
+     * @return $this
+     */
+    public function enableQueryLogging()
+    {
+        $this->logQueries = true;
+
+        return $this;
+    }
+
+    /**
+     * Disable query logging.
+     *
+     * @return $this
+     */
+    public function disableQueryLogging()
+    {
+        $this->logQueries = false;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
+        $this->enableQueryLogging();
     }
 
     /**

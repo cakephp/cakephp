@@ -117,7 +117,7 @@ class RulesChecker
     }
 
     /**
-     * Adds a rule that will be applied to the entity both on create and update
+     * Adds a rule that will be applied to the entity on create, update and delete
      * operations.
      *
      * ### Options

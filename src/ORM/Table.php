@@ -2551,7 +2551,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new PersistenceFailedException($entity, ['delete']);
         }
 
-        return $deleted;
+        return true;
     }
 
     /**

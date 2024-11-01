@@ -307,6 +307,9 @@ class Mailer implements EventListenerInterface
     /**
      * Sends email.
      *
+     * If an `$action` is specified the internal state of the mailer will be
+     * backed up and restored after the action is run.
+     *
      * @param string|null $action The name of the mailer action to trigger.
      *   If no action is specified then all other method arguments will be ignored.
      * @param array $args Arguments to pass to the triggered mailer action.
@@ -329,11 +332,7 @@ class Mailer implements EventListenerInterface
             ]);
         }
 
-        $this->clonedInstances['message'] = clone $this->message;
-        $this->clonedInstances['renderer'] = clone $this->getRenderer();
-        if ($this->transport !== null) {
-            $this->clonedInstances['transport'] = clone $this->transport;
-        }
+        $this->backup();
 
         $this->getMessage()->setHeaders($headers);
         if (!$this->viewBuilder()->getTemplate()) {
@@ -492,6 +491,22 @@ class Mailer implements EventListenerInterface
     }
 
     /**
+     * Backup message, renderer, transport instances before an action is run.
+     *
+     * @return void
+     */
+    protected function backup(): void
+    {
+        $this->clonedInstances['message'] = clone $this->message;
+        if ($this->renderer !== null) {
+            $this->clonedInstances['renderer'] = clone $this->renderer;
+        }
+        if ($this->transport !== null) {
+            $this->clonedInstances['transport'] = clone $this->transport;
+        }
+    }
+
+    /**
      * Restore message, renderer, transport instances to state before an action was run.
      *
      * @return $this
@@ -500,7 +515,11 @@ class Mailer implements EventListenerInterface
     {
         foreach (array_keys($this->clonedInstances) as $key) {
             if ($this->clonedInstances[$key] === null) {
-                $this->{$key} = null;
+                if ($key === 'message') {
+                    $this->message->reset();
+                } else {
+                    $this->{$key} = null;
+                }
             } else {
                 $this->{$key} = clone $this->clonedInstances[$key];
                 $this->clonedInstances[$key] = null;

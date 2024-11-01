@@ -466,6 +466,89 @@ SQL;
     }
 
     /**
+     * Test that schema reflection works for geosptial columns.
+     *
+     * We currently cannot reflect the postgis types from postgres.
+     *
+     * @return void
+     */
+    public function testDescribeTableGeometry(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+
+        $hasGeometry = $driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=');
+        $this->skipIf(!$hasGeometry, 'This test requires geometry type support');
+
+        $table = <<<SQL
+CREATE TABLE schema_geometry (
+    id INTEGER,
+    geo_line LINESTRING,
+    geo_geometry GEOMETRY,
+    geo_point POINT,
+    geo_polygon POLYGON
+)
+SQL;
+        $connection->execute($table);
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_geometry');
+        $connection->execute('DROP TABLE schema_geometry');
+
+        $expected = [
+            'id' => [
+                'type' => 'integer',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'unsigned' => false,
+                'comment' => '',
+                'autoIncrement' => null,
+            ],
+            'geo_line' => [
+                'type' => 'linestring',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+            'geo_geometry' => [
+                'type' => 'geometry',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+            'geo_point' => [
+                'type' => 'point',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+            'geo_polygon' => [
+                'type' => 'polygon',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+        ];
+        foreach ($expected as $field => $definition) {
+            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in {$field} column");
+        }
+    }
+
+    /**
      * Test describing a table with indexes in MySQL
      */
     public function testDescribeTableIndexes(): void

@@ -18,18 +18,23 @@ namespace Cake\Test\TestCase\Console;
 
 use AssertionError;
 use Cake\Command\Command;
+use Cake\Console\CommandFactory;
+use Cake\Console\CommandFactoryInterface;
 use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Exception\StopException;
 use Cake\Console\TestSuite\StubConsoleOutput;
+use Cake\Core\Container;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use stdClass;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\AutoLoadModelCommand;
 use TestApp\Command\DemoCommand;
+use TestApp\Command\DependencyCommand;
 use TestApp\Command\NonInteractiveCommand;
 
 /**
@@ -307,6 +312,26 @@ class CommandTest extends TestCase
         $command = new Command();
         $command->executeCommand(NonInteractiveCommand::class, ['--quiet'], $this->getMockIo($output));
         $this->assertEquals(['Result: Default!'], $output->messages());
+    }
+
+    public function testExecuteCommandWithDI(): void
+    {
+        $output = new StubConsoleOutput();
+        $container = new Container();
+        $factory = new CommandFactory($container);
+
+        $container->add(CommandFactoryInterface::class, $factory);
+        $container->add(Command::class)
+            ->addArgument(CommandFactoryInterface::class);
+        $container->add(stdClass::class);
+        $container->add(DependencyCommand::class)
+            ->addArgument(stdClass::class);
+
+        $command = $factory->create(Command::class);
+        $result = $command->executeCommand(DependencyCommand::class, [], $this->getMockIo($output));
+
+        $this->assertSame(Command::CODE_SUCCESS, $result);
+        $this->assertEquals(['Dependency Command', 'constructor inject: {}'], $output->messages());
     }
 
     /**

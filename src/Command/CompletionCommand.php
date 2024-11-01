@@ -35,6 +35,14 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     protected CommandCollection $commands;
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Used by shells like bash to autocomplete command name, options and arguments';
+    }
+
+    /**
      * Set the command collection used to get completion data on.
      *
      * @param \Cake\Console\CommandCollection $commands The command collection
@@ -64,7 +72,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         }
 
         $parser->setDescription(
-            'Used by shells like bash to autocomplete command name, options and arguments'
+            static::getDescription()
         )->addArgument('mode', [
             'help' => 'The type of thing to get completion on.',
             'required' => true,

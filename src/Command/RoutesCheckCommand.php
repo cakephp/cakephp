@@ -38,6 +38,14 @@ class RoutesCheckCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Check a URL string against the routes.';
+    }
+
+    /**
      * Display all routes in an application
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -93,10 +101,10 @@ class RoutesCheckCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription(
-            'Check a URL string against the routes. ' .
-            'Will output the routing parameters the route resolves to.'
-        )
+        $parser->setDescription([
+            static::getDescription(),
+            'Will output the routing parameters the route resolves to.',
+        ])
         ->addArgument('url', [
             'help' => 'The URL to check.',
             'required' => true,

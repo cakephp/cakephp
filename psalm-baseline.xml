@@ -29,6 +29,11 @@
       <code><![CDATA[$callback($value, $key, $items)]]></code>
     </TooManyArguments>
   </file>
+  <file src="src/Console/TestSuite/StubConsoleOutput.php">
+    <InvalidPropertyAssignmentValue>
+      <code><![CDATA[$this->_output]]></code>
+    </InvalidPropertyAssignmentValue>
+  </file>
   <file src="src/Controller/ControllerFactory.php">
     <UndefinedMethod>
       <code><![CDATA[getName]]></code>

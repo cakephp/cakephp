@@ -119,6 +119,16 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         ksort($grouped);
 
+        if (isset($grouped['CakePHP'])) {
+            $cakephp = $grouped['CakePHP'];
+            $grouped = ['CakePHP' => $cakephp] + $grouped;
+        }
+
+        if (isset($grouped['App'])) {
+            $app = $grouped['App'];
+            $grouped = ['App' => $app] + $grouped;
+        }
+
         $this->outputPaths($io);
         $io->out('<info>Available Commands:</info>', 2);
 
@@ -172,13 +182,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     /**
      * @param list<string> $names Names
      * @return string
+     * @psalm-param non-empty-list<string> $names
      */
     protected function getShortestName(array $names): string
     {
-        if (count($names) <= 1) {
-            return (string)array_shift($names);
-        }
-
         usort($names, function ($a, $b) {
             return strlen($a) - strlen($b);
         });

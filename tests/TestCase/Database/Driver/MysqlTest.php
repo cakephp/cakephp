@@ -222,7 +222,6 @@ class MysqlTest extends TestCase
                 'window' => '8.0.0',
                 'intersect' => '8.0.31',
                 'intersect-all' => '8.0.31',
-                'set-operations-order-by' => '8.0.31',
             ],
             'mariadb' => [
                 'json' => '10.2.7',
@@ -230,7 +229,6 @@ class MysqlTest extends TestCase
                 'window' => '10.2.0',
                 'intersect' => '10.3.0',
                 'intersect-all' => '10.5.0',
-                'set-operations-order-by' => '8.0.31',
             ],
         ];
         foreach ($featureVersions[$serverType] as $feature => $version) {
