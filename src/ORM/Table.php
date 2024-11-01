@@ -163,6 +163,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     use EventDispatcherTrait;
     use RulesAwareTrait;
+    use TableEventsTrait;
     use ValidatorAwareTrait;
 
     /**

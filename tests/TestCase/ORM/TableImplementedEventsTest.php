@@ -24,32 +24,22 @@ class TableImplementedEventsTest extends TestCase
      */
     public function testImplementedEvents(): void
     {
-        $table = new ImplementedEventsTable();
+        $table = new Table();
         $result = $table->implementedEvents();
         $expected = [
             'Model.beforeMarshal' => 'beforeMarshal',
+            'Model.afterMarshal' => 'afterMarshal',
             'Model.buildValidator' => 'buildValidator',
             'Model.beforeFind' => 'beforeFind',
             'Model.beforeSave' => 'beforeSave',
             'Model.afterSave' => 'afterSave',
+            'Model.afterSaveCommit' => 'afterSaveCommit',
             'Model.beforeDelete' => 'beforeDelete',
             'Model.afterDelete' => 'afterDelete',
+            'Model.afterDeleteCommit' => 'afterDeleteCommit',
+            'Model.beforeRules' => 'beforeRules',
             'Model.afterRules' => 'afterRules',
         ];
         $this->assertEquals($expected, $result, 'Events do not match.');
     }
 }
-
-// phpcs:disable
-class ImplementedEventsTable extends Table
-{
-    public function buildValidator(): void {}
-    public function beforeMarshal(): void {}
-    public function beforeFind(): void {}
-    public function beforeSave(): void {}
-    public function afterSave(): void {}
-    public function beforeDelete(): void {}
-    public function afterDelete(): void {}
-    public function afterRules(): void {}
-}
-// phpcs:enable
