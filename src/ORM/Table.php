@@ -3213,7 +3213,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 continue;
             }
             if (!($this instanceof $interface)) {
-            	throw new CakeException(self::class . ' must implement ' . $interface . ' interface');
+                throw new CakeException(self::class . ' must implement ' . $interface . ' interface');
             }
             $events[$event] = $method;
         }

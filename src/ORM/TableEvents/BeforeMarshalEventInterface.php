@@ -20,7 +20,6 @@ use ArrayObject;
 use Cake\Event\EventInterface;
 
 interface BeforeMarshalEventInterface {
-
     /**
      * The Model.beforeMarshal event is fired before request data is converted into entities.
      *
