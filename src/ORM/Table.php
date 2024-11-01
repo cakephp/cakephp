@@ -3208,10 +3208,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $events = [];
 
         foreach ($eventMap as $event => $interface) {
-            if (!($this instanceof $interface)) {
+            $method = explode('.', $event)[1];
+            if (!method_exists($this, $method)) {
                 continue;
             }
-            $method = explode('.', $event)[1];
+            if (!($this instanceof $interface)) {
+            	throw new CakeException(self::class . ' must implement ' . $interface . ' interface');
+            }
             $events[$event] = $method;
         }
 
