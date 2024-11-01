@@ -124,15 +124,13 @@ class SqlserverTest extends TestCase
     public function testConnectionConfigCustom(): void
     {
         $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
-
         $flags = [
-            1 => true, 
+            1 => true,
             2 => false,
         ];
         if (defined('PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE') && defined('PDO::SQLSRV_CURSOR_FORWARD')) {
             $flags[PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE] = PDO::SQLSRV_CURSOR_FORWARD;
         }
-    
         $config = [
             'host' => 'foo',
             'username' => 'Administrator',
