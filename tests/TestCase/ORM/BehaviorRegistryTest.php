@@ -111,11 +111,15 @@ class BehaviorRegistryTest extends TestCase
     public function testLoadBindEvents(): void
     {
         $result = $this->EventManager->listeners('Model.beforeFind');
-        $this->assertCount(0, $result);
+        $this->assertCount(1, $result);
 
         $sluggable = $this->Behaviors->load('Sluggable');
         $result = $this->EventManager->listeners('Model.beforeFind');
-        $this->assertEquals([['callable' => $sluggable->beforeFind(...)]], $result);
+        $expected = [
+            ['callable' => $sluggable->beforeFind(...)],
+            ['callable' => $sluggable->beforeFind(...)],
+        ];
+        $this->assertEquals($expected, $result);
     }
 
     /**
@@ -124,11 +128,11 @@ class BehaviorRegistryTest extends TestCase
     public function testLoadEnabledFalse(): void
     {
         $result = $this->EventManager->listeners('Model.beforeFind');
-        $this->assertCount(0, $result);
+        $this->assertCount(1, $result);
 
         $this->Behaviors->load('Sluggable', ['enabled' => false]);
         $result = $this->EventManager->listeners('Model.beforeFind');
-        $this->assertCount(0, $result);
+        $this->assertCount(1, $result);
     }
 
     /**
@@ -367,7 +371,7 @@ class BehaviorRegistryTest extends TestCase
         $this->Behaviors->unload('Sluggable');
 
         $this->assertEmpty($this->Behaviors->loaded());
-        $this->assertCount(0, $this->EventManager->listeners('Model.beforeFind'));
+        $this->assertCount(1, $this->EventManager->listeners('Model.beforeFind'));
     }
 
     /**

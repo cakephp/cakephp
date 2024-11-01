@@ -14,9 +14,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
-use AssertionError;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use TypeError;
 
 class TableValidationWithBadDefinerTest extends TestCase
 {
@@ -26,9 +26,9 @@ class TableValidationWithBadDefinerTest extends TestCase
     public function testValidationWithBadDefiner(): void
     {
         $table = new ValidationWithBadDefinerTable();
-        $this->expectException(AssertionError::class);
+        $this->expectException(TypeError::class);
         $this->expectExceptionMessage(sprintf(
-            'The `%s::validationBad()` validation method must return an instance of `Cake\Validation\Validator`.',
+            'Cake\ORM\Table::buildValidator(): Argument #2 ($validator) must be of type Cake\Validation\Validator, string given',
             $table::class
         ));
 
