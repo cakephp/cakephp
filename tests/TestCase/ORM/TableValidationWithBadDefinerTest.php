@@ -27,10 +27,9 @@ class TableValidationWithBadDefinerTest extends TestCase
     {
         $table = new ValidationWithBadDefinerTable();
         $this->expectException(TypeError::class);
-        $this->expectExceptionMessage(sprintf(
+        $this->expectExceptionMessage(
             'Cake\ORM\Table::buildValidator(): Argument #2 ($validator) must be of type Cake\Validation\Validator, string given',
-            $table::class
-        ));
+        );
 
         $table->getValidator('bad');
     }

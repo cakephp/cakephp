@@ -3191,7 +3191,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function implementedEvents(): array
     {
-        $eventMap = [
+        return [
             'Model.beforeMarshal' => 'beforeMarshal',
             'Model.afterMarshal' => 'afterMarshal',
             'Model.buildValidator' => 'buildValidator',
@@ -3205,16 +3205,6 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'Model.beforeRules' => 'beforeRules',
             'Model.afterRules' => 'afterRules',
         ];
-        $events = [];
-
-        foreach ($eventMap as $event => $method) {
-            if (!method_exists($this, $method)) {
-                continue;
-            }
-            $events[$event] = $method;
-        }
-
-        return $events;
     }
 
     /**

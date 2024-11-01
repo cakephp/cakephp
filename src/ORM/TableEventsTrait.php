@@ -9,13 +9,18 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\Validation\Validator;
 
-trait TableEventsTrait {
+trait TableEventsTrait
+{
     public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void
     {
     }
 
-    public function afterMarshal(EventInterface $event, EntityInterface $entity, ArrayObject $data, ArrayObject $options): void
-    {
+    public function afterMarshal(
+        EventInterface $event,
+        EntityInterface $entity,
+        ArrayObject $data,
+        ArrayObject $options
+    ): void {
     }
 
     public function buildValidator(EventInterface $event, Validator $validator, $name): void
@@ -54,7 +59,12 @@ trait TableEventsTrait {
     {
     }
 
-    public function afterRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation): void
-    {
+    public function afterRules(
+        EventInterface $event,
+        EntityInterface $entity,
+        ArrayObject $options,
+        $result,
+        $operation
+    ): void {
     }
 }
