@@ -12,7 +12,7 @@
     </InvalidCast>
     <InvalidPropertyAssignmentValue>
       <code><![CDATA[new RedisCluster(
-                $this->_config['name'],
+                $this->_config['clusterName'],
                 $this->_config['nodes'],
                 (float)$this->_config['timeout'],
                 (float)$this->_config['readTimeout'],
