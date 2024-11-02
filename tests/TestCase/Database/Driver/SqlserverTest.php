@@ -127,7 +127,7 @@ class SqlserverTest extends TestCase
         $flags = [
             1 => true,
             2 => false,
-            PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE >= PDO::SQLSRV_CURSOR_STATIC
+            PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_STATIC
         }
         $config = [
             'host' => 'foo',
