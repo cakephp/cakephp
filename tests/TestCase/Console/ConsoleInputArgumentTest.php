@@ -44,9 +44,7 @@ class ConsoleInputArgumentTest extends TestCase
             // Test separator()
             [['color', '', false, [], null, ';'], 'separator', ';'],
             // Test separator() more than one character
-            [['color', '', false, [], null, ', '], 'separator', ','],
-            // Test separator() start by space
-            [['color', '', false, [], null, ' ;'], 'separator', ''],
+            [['color', '', false, [], null, '\"'], 'separator', '\"'],
         ];
     }
 
@@ -63,6 +61,23 @@ class ConsoleInputArgumentTest extends TestCase
         $input = new ConsoleInputArgument(...$args);
         $result = $input->$method();
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test separator must not contain space.
+     */
+    public function testNoSpaceInSeparator(): void
+    {
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('The argument separator must not contain spaces for `colors`.');
+        new ConsoleInputArgument(
+            'colors',
+            '',
+            false,
+            ['red', 'blue'],
+            'red',
+            ' '
+        );
     }
 
     /**

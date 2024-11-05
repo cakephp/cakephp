@@ -100,12 +100,13 @@ class ConsoleInputArgument
             $this->_separator = $separator;
         }
 
-        // Separator could only be one character, not space.
-        if (isset($this->_separator)) {
-            if (mb_strlen($this->_separator) > 1) {
-                $this->_separator = mb_substr($this->_separator, 0, 1);
-            }
-            $this->_separator = trim($this->_separator);
+        if ($this->_separator !== null && str_contains($this->_separator, ' ')) {
+            throw new ConsoleException(
+                sprintf(
+                    'The argument separator must not contain spaces for `%s`.',
+                    $this->_name
+                )
+            );
         }
     }
 

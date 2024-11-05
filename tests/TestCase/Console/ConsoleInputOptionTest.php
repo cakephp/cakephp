@@ -56,9 +56,7 @@ class ConsoleInputOptionTest extends TestCase
             // Test separator()
             [['color', '', '', false, null, [], false, false, null, ';'], 'separator', ';'],
             // Test separator() more than one character
-            [['color', '', '', false, null, [], false, false, null, ', '], 'separator', ','],
-            // Test separator() start by space
-            [['color', '', '', false, null, [], false, false, null, ' ;'], 'separator', ''],
+            [['color', '', '', false, null, [], false, false, null, '\"'], 'separator', '\"'],
         ];
     }
 
@@ -75,6 +73,27 @@ class ConsoleInputOptionTest extends TestCase
         $input = new ConsoleInputOption(...$args);
         $result = $input->$method();
         $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test separator must not contain space.
+     */
+    public function testNoSpaceInSeparator(): void
+    {
+        $this->expectException(ConsoleException::class);
+        $this->expectExceptionMessage('The option separator must not contain spaces for `colors`.');
+        new ConsoleInputOption(
+            'colors',
+            'c',
+            '',
+            false,
+            'red',
+            ['red', 'blue'],
+            true,
+            false,
+            null,
+            '; '
+        );
     }
 
     /**
