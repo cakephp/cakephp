@@ -147,25 +147,6 @@ class Arguments
     }
 
     /**
-     * Internal method to get argument from name.
-     * Avoid duplication code for getArgument() and getArrayArgument().
-     *
-     * @param string $name Argument name.
-     * @return array|string|null
-     */
-    private function _getArgument(string $name): array|string|null
-    {
-        $this->assertArgumentExists($name);
-
-        $offset = array_search($name, $this->argNames, true);
-        if ($offset === false || !isset($this->args[$offset])) {
-            return null;
-        }
-
-        return $this->args[$offset];
-    }
-
-    /**
      * Returns positional argument value by name or null if doesn't exist
      *
      * @param string $name The argument name to check.
@@ -173,7 +154,11 @@ class Arguments
      */
     public function getArgument(string $name): ?string
     {
-        $value = $this->_getArgument($name);
+        $this->assertArgumentExists($name);
+
+        $offset = array_search($name, $this->argNames, true);
+        $value = $this->args[$offset] ?? null;
+
         if ($value !== null && !is_string($value)) {
             throw new ConsoleException(sprintf(
                 'Argument `%s` is not of type `string`, use `getArrayArgument()` instead.',
@@ -192,7 +177,11 @@ class Arguments
      */
     public function getArrayArgument(string $name): ?array
     {
-        $value = $this->_getArgument($name);
+        $this->assertArgumentExists($name);
+
+        $offset = array_search($name, $this->argNames, true);
+        $value = $this->args[$offset] ?? null;
+
         if ($value !== null && !is_array($value)) {
             throw new ConsoleException(sprintf(
                 'Argument `%s` is not of type `array`, use `getArgument()` instead.',
