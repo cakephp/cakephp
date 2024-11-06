@@ -217,9 +217,11 @@ class Oauth
             rewind($resource);
             $credentials['privateKeyPassphrase'] = $passphrase;
         }
-        /** @var \OpenSSLAsymmetricKey|\OpenSSLCertificate|array|string $privateKey */
+        /** @var \OpenSSLAsymmetricKey|false $privateKey */
         $privateKey = openssl_pkey_get_private($credentials['privateKey'], $credentials['privateKeyPassphrase']);
         $this->checkSslError();
+
+        assert($privateKey !== false);
 
         $signature = '';
         openssl_sign($baseString, $signature, $privateKey);

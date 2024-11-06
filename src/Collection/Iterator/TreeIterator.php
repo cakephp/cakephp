@@ -35,6 +35,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
      * The iteration mode
      *
      * @var int
+     * @phpstan-var \RecursiveIteratorIterator::LEAVES_ONLY|\RecursiveIteratorIterator::SELF_FIRST|\RecursiveIteratorIterator::CHILD_FIRST
      */
     protected int $_mode;
 
@@ -44,6 +45,8 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
      * @param \RecursiveIterator<mixed, mixed> $items The iterator to flatten.
      * @param int $mode Iterator mode.
      * @param int $flags Iterator flags.
+     * @phpstan-param \RecursiveIteratorIterator::LEAVES_ONLY|\RecursiveIteratorIterator::SELF_FIRST|\RecursiveIteratorIterator::CHILD_FIRST $mode
+     * @phpstan-param \RecursiveIteratorIterator::LEAVES_ONLY|\RecursiveIteratorIterator::CATCH_GET_CHILD $flags
      */
     public function __construct(
         RecursiveIterator $items,

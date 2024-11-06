@@ -321,12 +321,12 @@ class MimeType
     public static function addMimeTypes(string $ext, array|string $mimeTypes): void
     {
         if (isset(static::$mimeTypes[$ext])) {
-            static::$mimeTypes[$ext] = array_merge(static::$mimeTypes[$ext], (array)$mimeTypes);
+            static::$mimeTypes[$ext] = array_values(array_merge(static::$mimeTypes[$ext], (array)$mimeTypes));
 
             return;
         }
 
-        static::$mimeTypes[$ext] = (array)$mimeTypes;
+        static::$mimeTypes[$ext] = array_values((array)$mimeTypes);
     }
 
     /**
@@ -340,7 +340,7 @@ class MimeType
      */
     public static function setMimeTypes(string $ext, array|string $mimeTypes): void
     {
-        static::$mimeTypes[$ext] = (array)$mimeTypes;
+        static::$mimeTypes[$ext] = array_values((array)$mimeTypes);
     }
 
     /**

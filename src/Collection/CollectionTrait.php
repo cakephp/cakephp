@@ -854,6 +854,12 @@ trait CollectionTrait
             $order = $modes[$order];
         }
 
+        assert(
+            $order === RecursiveIteratorIterator::LEAVES_ONLY ||
+            $order === RecursiveIteratorIterator::SELF_FIRST ||
+            $order === RecursiveIteratorIterator::CHILD_FIRST
+        );
+
         return new TreeIterator(
             new NestIterator($this, $nestingKey),
             $order

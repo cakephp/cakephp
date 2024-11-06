@@ -265,7 +265,7 @@ class Xml
      */
     public static function fromArray(object|array $input, array $options = []): SimpleXMLElement|DOMDocument
     {
-        if (is_object($input) && method_exists($input, 'toArray') && is_callable([$input, 'toArray'])) {
+        if (is_object($input) && is_callable([$input, 'toArray'])) {
             $input = $input->toArray();
         }
         if (!is_array($input) || count($input) !== 1) {
@@ -320,7 +320,7 @@ class Xml
         }
         foreach ($data as $key => $value) {
             if (is_string($key)) {
-                if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
+                if (is_object($value) && is_callable([$value, 'toArray'])) {
                     $value = $value->toArray();
                 }
 
@@ -398,7 +398,7 @@ class Xml
         $node = $data['node'];
         $childNS = null;
         $childValue = null;
-        if (is_object($value) && method_exists($value, 'toArray') && is_callable([$value, 'toArray'])) {
+        if (is_object($value) && is_callable([$value, 'toArray'])) {
             $value = $value->toArray();
         }
         if (is_array($value)) {

@@ -1,4 +1,5 @@
 includes:
+	- phar://phpstan.phar/conf/bleedingEdge.neon
 	- phpstan-baseline.neon
 
 rules:
@@ -17,6 +18,8 @@ parameters:
 			identifier: missingType.iterableValue
 		-
 			identifier: missingType.generics
+		-
+			identifier: include.fileNotFound
 
 services:
 	-

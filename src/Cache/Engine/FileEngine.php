@@ -245,12 +245,12 @@ class FileEngine extends CacheEngine
             $this->_config['path'],
             FilesystemIterator::SKIP_DOTS
         );
-        /** @var \RecursiveDirectoryIterator<\SplFileInfo> $iterator Coerce for phpstan/psalm */
         $iterator = new RecursiveIteratorIterator(
             $directory,
             RecursiveIteratorIterator::SELF_FIRST
         );
         $cleared = [];
+        /** @var \SplFileInfo $fileInfo */
         foreach ($iterator as $fileInfo) {
             if ($fileInfo->isFile()) {
                 unset($fileInfo);
@@ -457,7 +457,6 @@ class FileEngine extends CacheEngine
             $directoryIterator,
             RecursiveIteratorIterator::CHILD_FIRST
         );
-        /** @var array<\SplFileInfo> $filtered */
         $filtered = new CallbackFilterIterator(
             $contents,
             function (SplFileInfo $current) use ($group, $prefix) {
@@ -476,6 +475,7 @@ class FileEngine extends CacheEngine
                 );
             }
         );
+        /** @var \SplFileInfo $object */
         foreach ($filtered as $object) {
             $path = $object->getPathname();
             unset($object);

@@ -849,7 +849,7 @@ class Validation
 
     /**
      * @param mixed $check
-     * @param class-string<\BackedEnum> $enumClassName
+     * @param class-string $enumClassName
      * @param array<string, mixed> $options
      * @return bool
      */
@@ -866,7 +866,7 @@ class Validation
         try {
             $reflectionEnum = new ReflectionEnum($enumClassName);
 
-            /** @var \ReflectionNamedType|\ReflectionUnionType|null $reflectionBackingType */
+            /** @var \ReflectionNamedType|null $reflectionBackingType */
             $reflectionBackingType = $reflectionEnum->getBackingType();
             if ($reflectionBackingType) {
                 if (method_exists($reflectionBackingType, 'getName')) {
@@ -904,6 +904,7 @@ class Validation
             'except' => null,
         ];
 
+        /** @var class-string<\BackedEnum> $enumClassName */
         $enum = $enumClassName::tryFrom($check);
         if ($enum === null) {
             return false;

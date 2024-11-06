@@ -349,7 +349,7 @@ class StringTemplate
      * @param mixed $input The array or string to add the class to
      * @param list<string>|string|false|null $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return list<string>|string|null
+     * @return array<string, string>|string|null
      */
     public function addClass(
         mixed $input,

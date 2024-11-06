@@ -169,7 +169,7 @@ class SelectBoxWidget extends BasicWidget
         $selected = $data['val'] ?? null;
         $disabled = null;
         if (isset($data['disabled']) && is_array($data['disabled'])) {
-            $disabled = $data['disabled'];
+            $disabled = array_values($data['disabled']);
         }
         $templateVars = $data['templateVars'];
 
@@ -199,7 +199,7 @@ class SelectBoxWidget extends BasicWidget
      *
      * @param string $label The optgroup label text
      * @param \ArrayAccess<string, mixed>|array<string, mixed> $optgroup The optgroup data.
-     * @param array|null $disabled The options to disable.
+     * @param list<string>|null $disabled The options to disable.
      * @param mixed $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping

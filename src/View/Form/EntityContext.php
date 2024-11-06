@@ -568,7 +568,7 @@ class EntityContext implements ContextInterface
      * Get the validator associated to an entity based on naming
      * conventions.
      *
-     * @param array $parts Each one of the parts in a path for a field name
+     * @param list<string> $parts Each one of the parts in a path for a field name
      * @return \Cake\Validation\Validator
      * @throws \Cake\Core\Exception\CakeException If validator cannot be retrieved based on the parts.
      */

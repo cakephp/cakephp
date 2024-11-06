@@ -102,7 +102,7 @@ class CommandScanner
 
         $classPattern = '/Command\.php$/';
         $fs = new Filesystem();
-        /** @var array<\SplFileInfo> $files */
+        /** @var \Iterator<\SplFileInfo> $files */
         $files = $fs->find($path, $classPattern);
 
         $commands = [];

@@ -157,7 +157,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
      */
     protected function encodeSetCookieHeader(ResponseInterface $response): ResponseInterface
     {
-        $cookies = CookieCollection::createFromHeader($response->getHeader('Set-Cookie'));
+        $cookies = CookieCollection::createFromHeader(array_values($response->getHeader('Set-Cookie')));
         $header = [];
         foreach ($cookies as $cookie) {
             if (in_array($cookie->getName(), $this->cookieNames, true)) {

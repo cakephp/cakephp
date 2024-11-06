@@ -681,7 +681,7 @@ class View implements EventDispatcherInterface
         }
 
         [$plugin, $elementName] = $this->pluginSplit($name, $pluginCheck);
-        $paths = iterator_to_array($this->getElementPaths($plugin));
+        $paths = array_values(iterator_to_array($this->getElementPaths($plugin)));
         throw new MissingElementException([$name . $this->_ext, $elementName . $this->_ext], $paths);
     }
 
@@ -876,7 +876,6 @@ class View implements EventDispatcherInterface
     {
         if (is_array($name)) {
             if (is_array($value)) {
-                /** @var array|false $data Coerce phpstan to accept failure case */
                 $data = array_combine($name, $value);
                 if ($data === false) {
                     throw new CakeException(
@@ -1468,7 +1467,7 @@ class View implements EventDispatcherInterface
             }
         }
 
-        $paths = iterator_to_array($this->getLayoutPaths($plugin));
+        $paths = array_values(iterator_to_array($this->getLayoutPaths($plugin)));
         throw new MissingLayoutException($name, $paths);
     }
 

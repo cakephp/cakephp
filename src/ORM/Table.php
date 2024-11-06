@@ -3145,10 +3145,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'source' => $this->getRegistryAlias(),
             ]
         );
-        $fields = array_merge(
+        $fields = array_values(array_merge(
             [$context['field']],
             isset($options['scope']) ? (array)$options['scope'] : []
-        );
+        ));
         $values = $entity->extract($fields);
         foreach ($values as $field) {
             if ($field !== null && !is_scalar($field)) {

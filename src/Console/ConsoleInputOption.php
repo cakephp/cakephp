@@ -318,7 +318,7 @@ class ConsoleInputOption
     /**
      * Get the list of choices this option has.
      *
-     * @return array
+     * @return list<string>
      */
     public function choices(): array
     {

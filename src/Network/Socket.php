@@ -203,7 +203,7 @@ class Socket
      * @param int $errNum error number
      * @param string $errStr error string
      * @param int $timeout timeout
-     * @param int $connectAs flags
+     * @param int<0, 7> $connectAs flags
      * @param resource $context context
      * @return resource|null
      */

@@ -337,7 +337,7 @@ class CookieCollection implements IteratorAggregate, Countable
         $path = $uri->getPath() ?: '/';
 
         $cookies = static::createFromHeader(
-            $response->getHeader('Set-Cookie'),
+            array_values($response->getHeader('Set-Cookie')),
             ['domain' => $host, 'path' => $path]
         );
         $new = clone $this;

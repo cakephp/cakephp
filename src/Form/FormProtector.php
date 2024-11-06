@@ -169,14 +169,14 @@ class FormProtector
         }
 
         if (!str_contains($name, '[')) {
-            return Hash::filter(explode('.', $name));
+            return array_values(Hash::filter(explode('.', $name)));
         }
         $parts = explode('[', $name);
         $parts = array_map(function ($el) {
             return trim($el, ']');
         }, $parts);
 
-        return Hash::filter($parts, 'strlen');
+        return array_values(Hash::filter($parts, 'strlen'));
     }
 
     /**
@@ -271,7 +271,7 @@ class FormProtector
      *
      * @param array<string, array> $formData Form data.
      * @return array<string, array>
-     * @psalm-return array{fields: array, unlockedFields: array}
+     * @psalm-return array{fields: array, unlockedFields: list<string>}
      */
     protected function extractHashParts(array $formData): array
     {

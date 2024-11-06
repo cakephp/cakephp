@@ -145,12 +145,12 @@ class Route
             return true;
         };
 
-        assert($checker());
+        $checker();
 
         $this->template = $template;
         $this->defaults = $defaults;
         $this->options = $options + ['_ext' => [], '_middleware' => []];
-        $this->setExtensions((array)$this->options['_ext']);
+        $this->setExtensions(array_values((array)$this->options['_ext']));
         $this->setMiddleware((array)$this->options['_middleware']);
         unset($this->options['_middleware']);
 

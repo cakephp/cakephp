@@ -796,7 +796,7 @@ class ServerRequest implements ServerRequestInterface
      * While header names are not case-sensitive, getHeaders() will normalize
      * the headers.
      *
-     * @return array<list<string>> An associative array of headers and their values.
+     * @return array<string, array<string>> An associative array of headers and their values.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getHeaders(): array

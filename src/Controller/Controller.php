@@ -311,7 +311,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $this->components()->get($name);
         }
 
-        /** @var array<int, array<string, mixed>> $trace */
         $trace = debug_backtrace();
         $parts = explode('\\', static::class);
         trigger_error(
@@ -319,8 +318,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 'Undefined property `%s::$%s` in `%s` on line %s',
                 array_pop($parts),
                 $name,
-                $trace[0]['file'],
-                $trace[0]['line']
+                $trace[0]['file'] ?? 'unknown',
+                $trace[0]['line'] ?? 'unknown'
             ),
             E_USER_NOTICE
         );

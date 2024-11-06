@@ -247,10 +247,10 @@ class Inflector
         if ($reset) {
             static::${$var} = $rules;
         } elseif ($type === 'uninflected') {
-            static::$_uninflected = array_merge(
+            static::$_uninflected = array_values(array_merge(
                 $rules,
                 static::$_uninflected
-            );
+            ));
         } else {
             static::${$var} = $rules + static::${$var};
         }

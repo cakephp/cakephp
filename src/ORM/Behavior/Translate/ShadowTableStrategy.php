@@ -486,7 +486,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $allowEmpty = $this->_config['allowEmptyTranslations'];
 
         return $results->map(function ($row) use ($allowEmpty, $locale) {
-            /** @var \Cake\Datasource\EntityInterface|array|null $row */
             if ($row === null) {
                 return $row;
             }
@@ -505,14 +504,14 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 return $row;
             }
 
-            /** @var \Cake\Datasource\EntityInterface|array $translation */
             $translation = $row['translation'];
+            assert($translation instanceof EntityInterface || is_array($translation));
 
             if ($hydrated) {
                 /** @var \Cake\Datasource\EntityInterface $translation */
                 $keys = $translation->getVisible();
             } else {
-                /** @var array $translation */
+                /** @var non-empty-array $translation */
                 $keys = array_keys($translation);
             }
 
@@ -569,9 +568,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
             $row['_translations'] = $result;
             unset($row['_i18n']);
-            if ($row instanceof EntityInterface) {
-                $row->setDirty('_translations', false);
-            }
+            $row->setDirty('_translations', false);
 
             return $row;
         });

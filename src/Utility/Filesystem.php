@@ -201,13 +201,13 @@ class Filesystem
             throw new CakeException(sprintf('`%s` is not a directory', $path));
         }
 
-        /** @var \RecursiveDirectoryIterator<\SplFileInfo> $iterator Replace type for psalm */
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST
         );
 
         $result = true;
+        /** @var \SplFileInfo $fileInfo */
         foreach ($iterator as $fileInfo) {
             $isWindowsLink = DIRECTORY_SEPARATOR === '\\' && $fileInfo->getType() === 'link';
             if ($fileInfo->getType() === self::TYPE_DIR || $isWindowsLink) {

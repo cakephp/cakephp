@@ -84,7 +84,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($request instanceof ServerRequest && is_array($this->config['trustedProxies'])) {
-            $request->setTrustedProxies($this->config['trustedProxies']);
+            $request->setTrustedProxies(array_values($this->config['trustedProxies']));
         }
 
         if (
