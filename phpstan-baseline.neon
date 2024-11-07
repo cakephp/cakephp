@@ -151,11 +151,6 @@ parameters:
 			path: src/Http/Client/Auth/Digest.php
 
 		-
-			message: "#^Offset 'uri' on array\\{timed_out\\: bool, blocked\\: bool, eof\\: bool, unread_bytes\\: int, stream_type\\: string, wrapper_type\\: string, wrapper_data\\: mixed, mode\\: string, \\.\\.\\.\\} on left side of \\?\\? always exists and is not nullable\\.$#"
-			count: 1
-			path: src/Http/Client/FormData.php
-
-		-
 			message: "#^Parameter \\#1 \\$header of static method Cake\\\\Http\\\\Cookie\\\\CookieCollection\\:\\:createFromHeader\\(\\) expects list\\<string\\>, array\\<string\\> given\\.$#"
 			count: 1
 			path: src/Http/Client/Response.php

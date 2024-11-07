@@ -18,4 +18,3 @@ parameters:
 		- '#Unsafe usage of new static\(\).#'
 		- "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
 		- '#Call to static method getRequest\(\) on an unknown class Cake\\Routing\\Router.#'
-		- "#^Offset 'uri' on array\\{timed_out\\: bool, blocked\\: bool, eof\\: bool, unread_bytes\\: int, stream_type\\: string, wrapper_type\\: string, wrapper_data\\: mixed, mode\\: string, \\.\\.\\.\\} on left side of \\?\\? always exists and is not nullable\\.$#"
