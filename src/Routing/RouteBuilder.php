@@ -139,7 +139,7 @@ class RouteBuilder
             $this->_namePrefix = $options['namePrefix'];
         }
         if (isset($options['middleware'])) {
-            $this->middleware = array_values($options['middleware']);
+            $this->middleware = (array)$options['middleware'];
         }
     }
 
@@ -201,7 +201,7 @@ class RouteBuilder
     public function addExtensions(array|string $extensions)
     {
         $extensions = array_merge($this->_extensions, (array)$extensions);
-        $this->_extensions = array_values(array_unique($extensions));
+        $this->_extensions = array_unique($extensions);
 
         return $this;
     }
@@ -999,7 +999,7 @@ class RouteBuilder
                 throw new InvalidArgumentException($message);
             }
         }
-        $this->middleware = array_values(array_unique(array_merge($this->middleware, $names)));
+        $this->middleware = array_unique(array_merge($this->middleware, $names));
 
         return $this;
     }

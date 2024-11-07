@@ -857,7 +857,7 @@ class I18nExtractCommand extends Command
             }
             $this->_files = array_merge($this->_files, $files);
         }
-        $this->_files = array_values(array_unique($this->_files));
+        $this->_files = array_unique($this->_files);
     }
 
     /**

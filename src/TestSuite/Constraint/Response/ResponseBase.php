@@ -68,7 +68,7 @@ abstract class ResponseBase extends Constraint
         if (method_exists($this->response, 'getCookie')) {
             return $this->response->getCookie($name);
         }
-        $cookies = CookieCollection::createFromHeader(array_values($this->response->getHeader('Set-Cookie')));
+        $cookies = CookieCollection::createFromHeader($this->response->getHeader('Set-Cookie'));
         if (!$cookies->has($name)) {
             return null;
         }

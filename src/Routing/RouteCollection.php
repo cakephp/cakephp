@@ -358,10 +358,10 @@ class RouteCollection
     public function setExtensions(array $extensions, bool $merge = true)
     {
         if ($merge) {
-            $extensions = array_values(array_unique(array_merge(
+            $extensions = array_unique(array_merge(
                 $this->_extensions,
                 $extensions
-            )));
+            ));
         }
         $this->_extensions = $extensions;
 

@@ -43,7 +43,7 @@ class RedirectException extends HttpException
         parent::__construct($target, $code);
 
         foreach ($headers as $key => $value) {
-            $this->setHeader($key, array_values((array)$value));
+            $this->setHeader($key, (array)$value);
         }
     }
 }

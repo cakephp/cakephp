@@ -681,7 +681,7 @@ class View implements EventDispatcherInterface
         }
 
         [$plugin, $elementName] = $this->pluginSplit($name, $pluginCheck);
-        $paths = array_values(iterator_to_array($this->getElementPaths($plugin)));
+        $paths = iterator_to_array($this->getElementPaths($plugin));
         throw new MissingElementException([$name . $this->_ext, $elementName . $this->_ext], $paths);
     }
 
@@ -1467,7 +1467,7 @@ class View implements EventDispatcherInterface
             }
         }
 
-        $paths = array_values(iterator_to_array($this->getLayoutPaths($plugin)));
+        $paths = iterator_to_array($this->getLayoutPaths($plugin));
         throw new MissingLayoutException($name, $paths);
     }
 

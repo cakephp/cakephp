@@ -804,7 +804,7 @@ class ConsoleOptionParser
         if (!$this->_args) {
             $args[] = $argument;
 
-            return array_values($args);
+            return $args;
         }
         $next = count($args);
         if (!isset($this->_args[$next])) {
@@ -825,7 +825,7 @@ class ConsoleOptionParser
             $args[] = $argument;
         }
 
-        return array_values($args);
+        return $args;
     }
 
     /**

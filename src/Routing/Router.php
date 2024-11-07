@@ -718,12 +718,12 @@ class Router
     {
         $collection = static::$_collection;
         if ($extensions === null) {
-            return array_values(array_unique(array_merge(static::$_defaultExtensions, $collection->getExtensions())));
+            return array_unique(array_merge(static::$_defaultExtensions, $collection->getExtensions()));
         }
 
         $extensions = (array)$extensions;
         if ($merge) {
-            $extensions = array_values(array_unique(array_merge(static::$_defaultExtensions, $extensions)));
+            $extensions = array_unique(array_merge(static::$_defaultExtensions, $extensions));
         }
 
         return static::$_defaultExtensions = $extensions;

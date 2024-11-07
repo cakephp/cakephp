@@ -169,7 +169,7 @@ class SelectBoxWidget extends BasicWidget
         $selected = $data['val'] ?? null;
         $disabled = null;
         if (isset($data['disabled']) && is_array($data['disabled'])) {
-            $disabled = array_values($data['disabled']);
+            $disabled = $data['disabled'];
         }
         $templateVars = $data['templateVars'];
 

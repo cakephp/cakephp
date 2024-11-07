@@ -538,7 +538,7 @@ trait EntityTrait
         }
 
         $fields = array_merge($this->_hidden, $fields);
-        $this->_hidden = array_values(array_unique($fields));
+        $this->_hidden = array_unique($fields);
 
         return $this;
     }
@@ -569,7 +569,7 @@ trait EntityTrait
         }
 
         $fields = array_merge($this->_virtual, $fields);
-        $this->_virtual = array_values(array_unique($fields));
+        $this->_virtual = array_unique($fields);
 
         return $this;
     }

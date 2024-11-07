@@ -169,14 +169,14 @@ class FormProtector
         }
 
         if (!str_contains($name, '[')) {
-            return array_values(Hash::filter(explode('.', $name)));
+            return Hash::filter(explode('.', $name));
         }
         $parts = explode('[', $name);
         $parts = array_map(function ($el) {
             return trim($el, ']');
         }, $parts);
 
-        return array_values(Hash::filter($parts, 'strlen'));
+        return Hash::filter($parts, 'strlen');
     }
 
     /**
