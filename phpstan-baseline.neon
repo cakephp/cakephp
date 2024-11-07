@@ -306,6 +306,11 @@ parameters:
 			path: src/Routing/RouteBuilder.php
 
 		-
+			message: "#^Property Cake\\\\Routing\\\\RouteBuilder\\:\\:\\$middleware \\(list\\<string\\>\\) does not accept array\\.$#"
+			count: 1
+			path: src/Routing/RouteBuilder.php
+
+		-
 			message: "#^Property Cake\\\\Routing\\\\RouteBuilder\\:\\:\\$middleware \\(list\\<string\\>\\) does not accept array\\<int\\<0, max\\>, string\\>\\.$#"
 			count: 1
 			path: src/Routing/RouteBuilder.php
@@ -414,6 +419,11 @@ parameters:
 			message: "#^Parameter \\#1 \\$objectOrClass of class ReflectionEnum constructor expects class\\-string\\<UnitEnum\\>\\|UnitEnum, class\\-string given\\.$#"
 			count: 1
 			path: src/Validation/Validation.php
+
+		-
+			message: "#^Method Cake\\\\View\\\\Form\\\\ArrayContext\\:\\:getPrimaryKey\\(\\) should return list\\<string\\> but returns array\\.$#"
+			count: 1
+			path: src/View/Form/ArrayContext.php
 
 		-
 			message: "#^Unsafe usage of new static\\(\\)\\.$#"

@@ -74,7 +74,7 @@ class BannerHelper extends Helper
      */
     public function output(array $args): void
     {
-        if (empty($args)) {
+        if ($args === []) {
             throw new InvalidArgumentException('At least one argument is required');
         }
 

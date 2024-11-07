@@ -192,7 +192,7 @@ class Response extends Message implements ResponseInterface
             }
             [$name, $value] = explode(':', $value, 2);
             $value = trim($value);
-            /** @phpstan-var non-empty-string $name */
+            /** @psalm-var non-empty-string $name */
             $name = trim($name);
 
             $normalized = strtolower($name);
