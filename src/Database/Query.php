@@ -1367,7 +1367,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * @param int|null $limit The number of rows you want in the page. If null
      *  the current limit clause will be used.
      * @return $this
-     * @throws \InvalidArgumentException If page number < 1.
+     * @throws \Cake\Core\Exception\CakeException If page number < 1.
      */
     public function page(int $num, ?int $limit = null)
     {

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phive xmlns="https://phar.io/phive">
+  <phar name="phpstan" version="2.0.0" installed="2.0.0" location="./tools/phpstan" copy="false"/>
   <phar name="psalm" version="5.26.1" installed="5.26.1" location="./tools/psalm" copy="false"/>
 </phive>

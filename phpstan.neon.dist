@@ -1,10 +1,5 @@
 includes:
-	- phar://phpstan.phar/conf/bleedingEdge.neon
 	- phpstan-baseline.neon
-
-rules:
-	- Symplify\PHPStanRules\Rules\Explicit\NoMixedPropertyFetcherRule
-	- Symplify\PHPStanRules\Rules\Explicit\NoMixedMethodCallerRule
 
 parameters:
 	level: 8

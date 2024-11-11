@@ -598,7 +598,7 @@ trait EntityTrait
         $fields = array_keys($this->_fields);
         $fields = array_merge($fields, $this->_virtual);
 
-        return array_values(array_diff($fields, $this->_hidden));
+        return array_diff($fields, $this->_hidden);
     }
 
     /**

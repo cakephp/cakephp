@@ -218,11 +218,11 @@ jobs:
 
       - name: Run phpstan
         if: always()
-        run: vendor/bin/phpstan analyse --error-format=github
+        run: tools/phpstan analyse --error-format=github
 
       - name: Run phpstan for tests
         if: env.PHPSTAN_TESTS
-        run: vendor/bin/phpstan analyse -c tests/phpstan.neon --error-format=github
+        run: tools/phpstan analyse -c tests/phpstan.neon --error-format=github
 
       - name: Run class deprecation aliasing validation script
         if: always()

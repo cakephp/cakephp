@@ -1,481 +1,577 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Call to function method_exists\\(\\) with Memcached and 'setSaslAuthData' will always evaluate to true\\.$#"
+			message: '#^Call to function method_exists\(\) with Memcached and ''setSaslAuthData'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/Cache/Engine/MemcachedEngine.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Collection/Iterator/NestIterator.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Collection/Iterator/NoChildrenIterator.php
 
 		-
-			message: "#^Property Cake\\\\Command\\\\I18nExtractCommand\\:\\:\\$_files \\(list\\<string\\>\\) does not accept array\\<int\\<0, max\\>, string\\>\\.$#"
+			message: '#^Property Cake\\Command\\I18nExtractCommand\:\:\$_files \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Command/I18nExtractCommand.php
 
 		-
-			message: "#^Parameter \\#1 \\$args of method Cake\\\\Command\\\\RoutesGenerateCommand\\:\\:_splitArgs\\(\\) expects list\\<string\\>, array\\<int, string\\> given\\.$#"
+			message: '#^Parameter \#1 \$args of method Cake\\Command\\RoutesGenerateCommand\:\:_splitArgs\(\) expects list\<string\>, array\<int, list\<string\>\|string\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Command/RoutesGenerateCommand.php
 
 		-
-			message: "#^Property Cake\\\\Console\\\\ConsoleInput\\:\\:\\$_input \\(resource\\) in isset\\(\\) is not nullable\\.$#"
+			message: '#^Property Cake\\Console\\ConsoleInput\:\:\$_input \(resource\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
 			count: 1
 			path: src/Console/ConsoleInput.php
 
 		-
-			message: "#^Method Cake\\\\Console\\\\ConsoleIo\\:\\:wrapMessageWithType\\(\\) should return list\\<string\\>\\|string but returns array\\<int\\<0, max\\>, string\\>\\|non\\-falsy\\-string\\.$#"
+			message: '#^Method Cake\\Console\\ConsoleIo\:\:wrapMessageWithType\(\) should return list\<string\>\|string but returns array\<int\<0, max\>, string\>\|non\-falsy\-string\.$#'
+			identifier: return.type
 			count: 1
 			path: src/Console/ConsoleIo.php
 
 		-
-			message: "#^Method Cake\\\\Console\\\\ConsoleOptionParser\\:\\:_parseArg\\(\\) should return list\\<string\\> but returns non\\-empty\\-array\\.$#"
+			message: '#^Method Cake\\Console\\ConsoleOptionParser\:\:_parseArg\(\) should return list\<string\> but returns non\-empty\-array\.$#'
+			identifier: return.type
 			count: 2
 			path: src/Console/ConsoleOptionParser.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 2
 			path: src/Console/ConsoleOptionParser.php
 
 		-
-			message: "#^PHPDoc tag @var with type Closure is not subtype of native type Closure\\(array\\<string, string\\>\\)\\: string\\.$#"
+			message: '#^PHPDoc tag @var with type Closure is not subtype of native type Closure\(array\<string, string\>\)\: string\.$#'
+			identifier: varTag.nativeType
 			count: 1
 			path: src/Console/ConsoleOutput.php
 
 		-
-			message: "#^Property Cake\\\\Console\\\\ConsoleOutput\\:\\:\\$_output \\(resource\\) in isset\\(\\) is not nullable\\.$#"
+			message: '#^Property Cake\\Console\\ConsoleOutput\:\:\$_output \(resource\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
 			count: 2
 			path: src/Console/ConsoleOutput.php
 
 		-
-			message: "#^Trait Cake\\\\Console\\\\TestSuite\\\\ConsoleIntegrationTestTrait is used zero times and is not analysed\\.$#"
+			message: '#^Trait Cake\\Console\\TestSuite\\ConsoleIntegrationTestTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
 			count: 1
 			path: src/Console/TestSuite/ConsoleIntegrationTestTrait.php
 
 		-
-			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Unknown parameter \\$components in call to method ReflectionClass\\<Cake\\\\Controller\\\\Controller\\>\\:\\:newInstance\\(\\)\\.$#"
+			message: '#^Unknown parameter \$components in call to method ReflectionClass\<Cake\\Controller\\Controller\>\:\:newInstance\(\)\.$#'
+			identifier: argument.unknown
 			count: 1
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Unknown parameter \\$request in call to method ReflectionClass\\<Cake\\\\Controller\\\\Controller\\>\\:\\:newInstance\\(\\)\\.$#"
+			message: '#^Unknown parameter \$request in call to method ReflectionClass\<Cake\\Controller\\Controller\>\:\:newInstance\(\)\.$#'
+			identifier: argument.unknown
 			count: 1
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Trait Cake\\\\Core\\\\TestSuite\\\\ContainerStubTrait is used zero times and is not analysed\\.$#"
+			message: '#^Trait Cake\\Core\\TestSuite\\ContainerStubTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
 			count: 1
 			path: src/Core/TestSuite/ContainerStubTrait.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 8
 			path: src/Database/Expression/QueryExpression.php
 
 		-
-			message: "#^Strict comparison using \\!\\=\\= between Cake\\\\Database\\\\TypeMap and null will always evaluate to true\\.$#"
+			message: '#^Strict comparison using \!\=\= between Cake\\Database\\TypeMap and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: src/Database/Expression/WhenThenExpression.php
 
 		-
-			message: "#^Result of && is always false\\.$#"
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
 			count: 1
 			path: src/Database/Type/EnumType.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between \\*NEVER\\* and '' will always evaluate to false\\.$#"
+			message: '#^Strict comparison using \=\=\= between \*NEVER\* and '''' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: src/Database/Type/EnumType.php
 
 		-
-			message: "#^Trait Cake\\\\Datasource\\\\ModelAwareTrait is used zero times and is not analysed\\.$#"
+			message: '#^Trait Cake\\Datasource\\ModelAwareTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
 			count: 1
 			path: src/Datasource/ModelAwareTrait.php
 
 		-
-			message: "#^Template type T of method Cake\\\\Datasource\\\\QueryInterface\\:\\:all\\(\\) is not referenced in a parameter\\.$#"
+			message: '#^Template type T of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
+			identifier: method.templateTypeNotInParameter
 			count: 1
 			path: src/Datasource/QueryInterface.php
 
 		-
-			message: "#^Method Cake\\\\Error\\\\ErrorLogger\\:\\:log\\(\\) has parameter \\$level with no type specified\\.$#"
+			message: '#^Method Cake\\Error\\ErrorLogger\:\:log\(\) has parameter \$level with no type specified\.$#'
+			identifier: missingType.parameter
 			count: 1
 			path: src/Error/ErrorLogger.php
 
 		-
-			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
+			message: '#^Constructor of class Cake\\Error\\Renderer\\ConsoleExceptionRenderer has an unused parameter \$request\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/Error/Renderer/ConsoleExceptionRenderer.php
 
 		-
-			message: "#^Method Cake\\\\Event\\\\EventManager\\:\\:dispatch\\(\\) should return Cake\\\\Event\\\\EventInterface\\<TSubject of object\\> but returns Cake\\\\Event\\\\Event\\<object\\>\\|Cake\\\\Event\\\\EventInterface\\<TSubject of object\\>\\.$#"
+			message: '#^Method Cake\\Event\\EventManager\:\:dispatch\(\) should return Cake\\Event\\EventInterface\<TSubject of object\> but returns Cake\\Event\\Event\<object\>\|Cake\\Event\\EventInterface\<TSubject of object\>\.$#'
+			identifier: return.type
 			count: 2
 			path: src/Event/EventManager.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Event/EventManager.php
 
 		-
-			message: "#^Method Cake\\\\Form\\\\FormProtector\\:\\:getFieldNameArray\\(\\) should return list\\<string\\> but returns array\\.$#"
+			message: '#^Method Cake\\Form\\FormProtector\:\:getFieldNameArray\(\) should return list\<string\> but returns array\.$#'
+			identifier: return.type
 			count: 2
 			path: src/Form/FormProtector.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\Core\\\\PluginInterface\\:\\:events\\(\\)\\.$#"
+			message: '#^Call to an undefined method Cake\\Core\\PluginInterface\:\:events\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Http/BaseApplication.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Http/Client.php
 
 		-
-			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
+			message: '#^Constructor of class Cake\\Http\\Client\\Auth\\Digest has an unused parameter \$options\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/Http/Client/Auth/Digest.php
 
 		-
-			message: "#^Parameter \\#1 \\$header of static method Cake\\\\Http\\\\Cookie\\\\CookieCollection\\:\\:createFromHeader\\(\\) expects list\\<string\\>, array\\<string\\> given\\.$#"
+			message: '#^Parameter \#1 \$header of static method Cake\\Http\\Cookie\\CookieCollection\:\:createFromHeader\(\) expects list\<string\>, array\<string\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Http/Client/Response.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Http/Cookie/Cookie.php
 
 		-
-			message: "#^Parameter \\#1 \\$header of static method Cake\\\\Http\\\\Cookie\\\\CookieCollection\\:\\:createFromHeader\\(\\) expects list\\<string\\>, array\\<string\\> given\\.$#"
+			message: '#^Parameter \#1 \$header of static method Cake\\Http\\Cookie\\CookieCollection\:\:createFromHeader\(\) expects list\<string\>, array\<string\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Http/Cookie/CookieCollection.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 2
 			path: src/Http/Cookie/CookieCollection.php
 
 		-
-			message: "#^Parameter \\#2 \\$value of method Cake\\\\Http\\\\Exception\\\\HttpException\\:\\:setHeader\\(\\) expects list\\<string\\>\\|string\\|null, array given\\.$#"
+			message: '#^Parameter \#2 \$value of method Cake\\Http\\Exception\\HttpException\:\:setHeader\(\) expects list\<string\>\|string\|null, array given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Http/Exception/RedirectException.php
 
 		-
-			message: "#^Parameter \\#1 \\$header of static method Cake\\\\Http\\\\Cookie\\\\CookieCollection\\:\\:createFromHeader\\(\\) expects list\\<string\\>, array\\<string\\> given\\.$#"
+			message: '#^Parameter \#1 \$header of static method Cake\\Http\\Cookie\\CookieCollection\:\:createFromHeader\(\) expects list\<string\>, array\<string\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Http/Middleware/EncryptedCookieMiddleware.php
 
 		-
-			message: "#^Parameter \\#1 \\$proxies of method Cake\\\\Http\\\\ServerRequest\\:\\:setTrustedProxies\\(\\) expects list\\<string\\>, array given\\.$#"
+			message: '#^Parameter \#1 \$proxies of method Cake\\Http\\ServerRequest\:\:setTrustedProxies\(\) expects list\<string\>, array\<mixed, mixed\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Http/Middleware/HttpsEnforcerMiddleware.php
 
 		-
-			message: "#^Static property Cake\\\\Http\\\\MimeType\\:\\:\\$mimeTypes \\(array\\<string, list\\<string\\>\\>\\) does not accept non\\-empty\\-array\\<string, array\\>\\.$#"
+			message: '#^Static property Cake\\Http\\MimeType\:\:\$mimeTypes \(array\<string, list\<string\>\>\) does not accept non\-empty\-array\<string, array\>\.$#'
+			identifier: assign.propertyType
 			count: 3
 			path: src/Http/MimeType.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Http/Session.php
 
 		-
-			message: "#^Trait Cake\\\\Http\\\\TestSuite\\\\HttpClientTrait is used zero times and is not analysed\\.$#"
+			message: '#^Trait Cake\\Http\\TestSuite\\HttpClientTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
 			count: 1
 			path: src/Http/TestSuite/HttpClientTrait.php
 
 		-
-			message: "#^@readonly property cannot have a default value\\.$#"
+			message: '#^@readonly property cannot have a default value\.$#'
+			identifier: property.readOnlyByPhpDocDefaultValue
 			count: 7
 			path: src/I18n/Date.php
 
 		-
-			message: "#^@readonly property cannot have a default value\\.$#"
+			message: '#^@readonly property cannot have a default value\.$#'
+			identifier: property.readOnlyByPhpDocDefaultValue
 			count: 9
 			path: src/I18n/DateTime.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\I18n\\\\Date\\|Cake\\\\I18n\\\\DateTime\\:\\:setTimezone\\(\\)\\.$#"
+			message: '#^Call to an undefined method Cake\\I18n\\Date\|Cake\\I18n\\DateTime\:\:setTimezone\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/I18n/RelativeTimeFormatter.php
 
 		-
-			message: "#^@readonly property cannot have a default value\\.$#"
+			message: '#^@readonly property cannot have a default value\.$#'
+			identifier: property.readOnlyByPhpDocDefaultValue
 			count: 4
 			path: src/I18n/Time.php
 
 		-
-			message: "#^Trait Cake\\\\Mailer\\\\MailerAwareTrait is used zero times and is not analysed\\.$#"
+			message: '#^Trait Cake\\Mailer\\MailerAwareTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
 			count: 1
 			path: src/Mailer/MailerAwareTrait.php
 
 		-
-			message: "#^PHPDoc tag @var with type callable\\(\\)\\: mixed is not subtype of native type Closure\\(string\\)\\: string\\.$#"
+			message: '#^PHPDoc tag @var with type callable\(\)\: mixed is not subtype of native type Closure\(string\)\: string\.$#'
+			identifier: varTag.nativeType
 			count: 1
 			path: src/ORM/Association/DependentDeleteHelper.php
 
 		-
-			message: "#^Trait Cake\\\\ORM\\\\Behavior\\\\Translate\\\\TranslateTrait is used zero times and is not analysed\\.$#"
+			message: '#^Trait Cake\\ORM\\Behavior\\Translate\\TranslateTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
 			count: 1
 			path: src/ORM/Behavior/Translate/TranslateTrait.php
 
 		-
-			message: "#^Method Cake\\\\ORM\\\\Behavior\\\\TreeBehavior\\:\\:_scope\\(\\) should return T of Cake\\\\ORM\\\\Query\\\\DeleteQuery\\|Cake\\\\ORM\\\\Query\\\\SelectQuery\\|Cake\\\\ORM\\\\Query\\\\UpdateQuery but returns Cake\\\\ORM\\\\Query\\\\DeleteQuery\\|Cake\\\\ORM\\\\Query\\\\SelectQuery\\|Cake\\\\ORM\\\\Query\\\\UpdateQuery\\.$#"
-			count: 1
-			path: src/ORM/Behavior/TreeBehavior.php
-
-		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 2
 			path: src/ORM/EagerLoader.php
 
 		-
-			message: "#^Property Cake\\\\ORM\\\\Entity\\:\\:\\$_hidden \\(list\\<string\\>\\) does not accept array\\<int\\<0, max\\>, string\\>\\.$#"
+			message: '#^Method Cake\\ORM\\Entity\:\:getVisible\(\) should return list\<string\> but returns array\<int\<0, max\>, string\>\.$#'
+			identifier: return.type
 			count: 1
 			path: src/ORM/Entity.php
 
 		-
-			message: "#^Property Cake\\\\ORM\\\\Entity\\:\\:\\$_virtual \\(list\\<string\\>\\) does not accept array\\<int\\<0, max\\>, string\\>\\.$#"
+			message: '#^Property Cake\\ORM\\Entity\:\:\$_hidden \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/ORM/Entity.php
 
 		-
-			message: "#^Method Cake\\\\ORM\\\\Query\\\\SelectQuery\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\) but returns Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\.$#"
+			message: '#^Property Cake\\ORM\\Entity\:\:\$_virtual \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
+			identifier: assign.propertyType
+			count: 1
+			path: src/ORM/Entity.php
+
+		-
+			message: '#^Method Cake\\ORM\\Query\\SelectQuery\:\:find\(\) should return static\(Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\) but returns Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\.$#'
+			identifier: return.type
 			count: 1
 			path: src/ORM/Query/SelectQuery.php
 
 		-
-			message: "#^PHPDoc tag @return with type Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\> is not subtype of native type static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\)\\.$#"
+			message: '#^PHPDoc tag @return with type Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\> is not subtype of native type static\(Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\)\.$#'
+			identifier: return.phpDocType
 			count: 1
 			path: src/ORM/Query/SelectQuery.php
 
 		-
-			message: "#^Parameter \\#1 \\$fields of method Cake\\\\Datasource\\\\EntityInterface\\:\\:extract\\(\\) expects list\\<string\\>, array\\<int\\<0, max\\>, string\\> given\\.$#"
+			message: '#^Parameter \#1 \$fields of method Cake\\Datasource\\EntityInterface\:\:extract\(\) expects list\<string\>, array\<int\<0, max\>, string\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/ORM/Rule/ExistsIn.php
 
 		-
-			message: "#^Method Cake\\\\ORM\\\\Rule\\\\LinkConstraint\\:\\:_aliasFields\\(\\) should return list\\<string\\> but returns array\\<int\\<0, max\\>, string\\>\\.$#"
+			message: '#^Method Cake\\ORM\\Rule\\LinkConstraint\:\:_aliasFields\(\) should return list\<string\> but returns array\<int\<0, max\>, string\>\.$#'
+			identifier: return.type
 			count: 1
 			path: src/ORM/Rule/LinkConstraint.php
 
 		-
-			message: "#^PHPDoc tag @var with type class\\-string\\<Cake\\\\Datasource\\\\RulesChecker\\> is not subtype of native type 'Cake\\\\\\\\Datasource\\\\\\\\RulesChecker'\\|class\\-string\\<Cake\\\\ORM\\\\RulesChecker\\>\\.$#"
+			message: '#^PHPDoc tag @var with type class\-string\<Cake\\Datasource\\RulesChecker\> is not subtype of native type ''Cake\\\\Datasource\\\\RulesChecker''\|class\-string\<Cake\\ORM\\RulesChecker\>\.$#'
+			identifier: varTag.nativeType
 			count: 1
 			path: src/ORM/Table.php
 
 		-
-			message: "#^Parameter \\#1 \\$fields of method Cake\\\\ORM\\\\Entity\\:\\:extract\\(\\) expects list\\<string\\>, non\\-empty\\-array given\\.$#"
+			message: '#^Parameter \#1 \$fields of method Cake\\ORM\\Entity\:\:extract\(\) expects list\<string\>, non\-empty\-array given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/ORM/Table.php
 
 		-
-			message: "#^Call to function assert\\(\\) with true will always evaluate to true\\.$#"
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/Routing/Route/Route.php
 
 		-
-			message: "#^Parameter \\#1 \\$extensions of method Cake\\\\Routing\\\\Route\\\\Route\\:\\:setExtensions\\(\\) expects list\\<string\\>, array given\\.$#"
+			message: '#^Parameter \#1 \$extensions of method Cake\\Routing\\Route\\Route\:\:setExtensions\(\) expects list\<string\>, array\<mixed, mixed\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Routing/Route/Route.php
 
 		-
-			message: "#^Property Cake\\\\Routing\\\\RouteBuilder\\:\\:\\$_extensions \\(list\\<string\\>\\) does not accept array\\<int\\<0, max\\>, string\\>\\.$#"
+			message: '#^Property Cake\\Routing\\RouteBuilder\:\:\$_extensions \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: "#^Property Cake\\\\Routing\\\\RouteBuilder\\:\\:\\$middleware \\(list\\<string\\>\\) does not accept array\\.$#"
+			message: '#^Property Cake\\Routing\\RouteBuilder\:\:\$middleware \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: "#^Property Cake\\\\Routing\\\\RouteBuilder\\:\\:\\$middleware \\(list\\<string\\>\\) does not accept array\\<int\\<0, max\\>, string\\>\\.$#"
+			message: '#^Property Cake\\Routing\\RouteBuilder\:\:\$middleware \(list\<string\>\) does not accept array\<mixed, mixed\>\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: "#^Property Cake\\\\Routing\\\\RouteCollection\\:\\:\\$_extensions \\(list\\<string\\>\\) does not accept array\\<int\\<0, max\\>, string\\>\\.$#"
+			message: '#^Property Cake\\Routing\\RouteCollection\:\:\$_extensions \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Routing/RouteCollection.php
 
 		-
-			message: "#^Method Cake\\\\Routing\\\\Router\\:\\:extensions\\(\\) should return list\\<string\\> but returns array\\<int\\<0, max\\>, string\\>\\.$#"
+			message: '#^Method Cake\\Routing\\Router\:\:extensions\(\) should return list\<string\> but returns array\<int\<0, max\>, string\>\.$#'
+			identifier: return.type
 			count: 2
 			path: src/Routing/Router.php
 
 		-
-			message: "#^Static property Cake\\\\Routing\\\\Router\\:\\:\\$_defaultExtensions \\(list\\<string\\>\\) does not accept array\\<int\\<0, max\\>, string\\>\\.$#"
+			message: '#^Static property Cake\\Routing\\Router\:\:\$_defaultExtensions \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Routing/Router.php
 
 		-
-			message: "#^Parameter \\#1 \\$header of static method Cake\\\\Http\\\\Cookie\\\\CookieCollection\\:\\:createFromHeader\\(\\) expects list\\<string\\>, array\\<string\\> given\\.$#"
+			message: '#^Parameter \#1 \$header of static method Cake\\Http\\Cookie\\CookieCollection\:\:createFromHeader\(\) expects list\<string\>, array\<string\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/TestSuite/Constraint/Response/ResponseBase.php
 
 		-
-			message: "#^Trait Cake\\\\TestSuite\\\\EmailTrait is used zero times and is not analysed\\.$#"
+			message: '#^Trait Cake\\TestSuite\\EmailTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
 			count: 1
 			path: src/TestSuite/EmailTrait.php
 
 		-
-			message: "#^Trait Cake\\\\TestSuite\\\\IntegrationTestTrait is used zero times and is not analysed\\.$#"
+			message: '#^Trait Cake\\TestSuite\\IntegrationTestTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
 			count: 1
 			path: src/TestSuite/IntegrationTestTrait.php
 
 		-
-			message: "#^Trait Cake\\\\TestSuite\\\\LogTestTrait is used zero times and is not analysed\\.$#"
+			message: '#^Trait Cake\\TestSuite\\LogTestTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
 			count: 1
 			path: src/TestSuite/LogTestTrait.php
 
 		-
-			message: "#^Trait Cake\\\\TestSuite\\\\StringCompareTrait is used zero times and is not analysed\\.$#"
+			message: '#^Trait Cake\\TestSuite\\StringCompareTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
 			count: 1
 			path: src/TestSuite/StringCompareTrait.php
 
 		-
-			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertTrue\\(\\) with false and non\\-falsy\\-string will always evaluate to false\\.$#"
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with false and non\-falsy\-string will always evaluate to false\.$#'
+			identifier: method.impossibleType
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Call to method PHPUnit\\\\Framework\\\\Assert\\:\\:assertTrue\\(\\) with true and '%%s' will always evaluate to true\\.$#"
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true and ''%%s'' will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^PHPDoc tag @var with type array\\<int, mixed\\> is not subtype of native type array\\{attrs\\?\\: non\\-empty\\-list\\<non\\-empty\\-string\\>, explains\\?\\: list\\<string\\>, 0\\?\\: string, 1\\?\\: string, 2\\?\\: int\\<1, max\\>\\}\\.$#"
+			message: '#^PHPDoc tag @var with type array\<int, mixed\> is not subtype of native type array\{explains\?\: list\<string\>, attrs\?\: non\-empty\-list\<non\-empty\-string\>, 0\?\: string, 1\?\: string, 2\?\: int\<1, max\>\}\.$#'
+			identifier: varTag.nativeType
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^PHPDoc tag @var with type array\\<string, mixed\\> is not subtype of native type array\\{attrs\\: non\\-empty\\-list\\<non\\-empty\\-string\\>, explains\\?\\: list\\<string\\>, 0\\?\\: string, 1\\?\\: string, 2\\?\\: int\\<1, max\\>\\}\\.$#"
+			message: '#^PHPDoc tag @var with type array\<string, mixed\> is not subtype of native type array\{explains\?\: list\<string\>, attrs\: non\-empty\-list\<non\-empty\-string\>, 0\?\: string, 1\?\: string, 2\?\: int\<1, max\>\}\.$#'
+			identifier: varTag.nativeType
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Parameter \\#1 \\$methods of method PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\<Cake\\\\ORM\\\\Table\\>\\:\\:addMethods\\(\\) expects list\\<non\\-empty\\-string\\>, non\\-empty\\-array\\<int\\<0, max\\>, string\\> given\\.$#"
+			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:addMethods\(\) expects list\<non\-empty\-string\>, non\-empty\-array\<int\<0, max\>, string\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Parameter \\#1 \\$methods of method PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\<Cake\\\\ORM\\\\Table\\>\\:\\:onlyMethods\\(\\) expects list\\<non\\-empty\\-string\\>, array\\<int\\<0, max\\>, non\\-falsy\\-string\\> given\\.$#"
+			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<int\<0, max\>, non\-falsy\-string\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between null and null will always evaluate to true\\.$#"
+			message: '#^Strict comparison using \=\=\= between null and null will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to method static method Cake\\\\Utility\\\\Hash\\:\\:insert\\(\\)$#"
+			message: '#^Unable to resolve the template type T in call to method static method Cake\\Utility\\Hash\:\:insert\(\)$#'
+			identifier: argument.templateType
 			count: 1
 			path: src/Utility/Hash.php
 
 		-
-			message: "#^Static property Cake\\\\Utility\\\\Inflector\\:\\:\\$_uninflected \\(list\\<string\\>\\) does not accept array\\.$#"
+			message: '#^Static property Cake\\Utility\\Inflector\:\:\$_uninflected \(list\<string\>\) does not accept array\.$#'
+			identifier: assign.propertyType
 			count: 1
 			path: src/Utility/Inflector.php
 
 		-
-			message: "#^Trait Cake\\\\Utility\\\\MergeVariablesTrait is used zero times and is not analysed\\.$#"
+			message: '#^Trait Cake\\Utility\\MergeVariablesTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
 			count: 1
 			path: src/Utility/MergeVariablesTrait.php
 
 		-
-			message: "#^Parameter \\#1 \\$objectOrClass of class ReflectionEnum constructor expects class\\-string\\<UnitEnum\\>\\|UnitEnum, class\\-string given\\.$#"
+			message: '#^Parameter \#1 \$objectOrClass of class ReflectionEnum constructor expects class\-string\<UnitEnum\>\|UnitEnum, class\-string given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/Validation/Validation.php
 
 		-
-			message: "#^Method Cake\\\\View\\\\Form\\\\ArrayContext\\:\\:getPrimaryKey\\(\\) should return list\\<string\\> but returns array\\.$#"
+			message: '#^Method Cake\\View\\Form\\ArrayContext\:\:getPrimaryKey\(\) should return list\<string\> but returns array\<mixed, mixed\>\.$#'
+			identifier: return.type
 			count: 1
 			path: src/View/Form/ArrayContext.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/View/Form/ContextFactory.php
 
 		-
-			message: "#^Constructor of class Cake\\\\View\\\\Form\\\\NullContext has an unused parameter \\$context\\.$#"
+			message: '#^Constructor of class Cake\\View\\Form\\NullContext has an unused parameter \$context\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/View/Form/NullContext.php
 
 		-
-			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
+			message: '#^Call to an undefined method DateTimeInterface\:\:setTimezone\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/View/Helper/TimeHelper.php
 
 		-
-			message: "#^Method Cake\\\\View\\\\Helper\\\\TimeHelper\\:\\:toQuarter\\(\\) should return list\\<string\\>\\|int but returns array\\|int\\.$#"
+			message: '#^Method Cake\\View\\Helper\\TimeHelper\:\:toQuarter\(\) should return int\|list\<string\> but returns array\|int\.$#'
+			identifier: return.type
 			count: 1
 			path: src/View/Helper/TimeHelper.php
 
 		-
-			message: "#^Call to function method_exists\\(\\) with \\*NEVER\\* and 'viewBuilder' will always evaluate to true\\.$#"
+			message: '#^Call to function method_exists\(\) with \*NEVER\* and ''viewBuilder'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/View/View.php
 
 		-
-			message: "#^Parameter \\#2 \\$paths of class Cake\\\\View\\\\Exception\\\\MissingElementException constructor expects list\\<string\\>, array given\\.$#"
+			message: '#^Parameter \#2 \$paths of class Cake\\View\\Exception\\MissingElementException constructor expects list\<string\>, array\<mixed, mixed\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/View/View.php
 
 		-
-			message: "#^Parameter \\#2 \\$paths of class Cake\\\\View\\\\Exception\\\\MissingLayoutException constructor expects list\\<string\\>, array given\\.$#"
+			message: '#^Parameter \#2 \$paths of class Cake\\View\\Exception\\MissingLayoutException constructor expects list\<string\>, array\<mixed, mixed\> given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/View/View.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between array and false will always evaluate to false\\.$#"
+			message: '#^Strict comparison using \=\=\= between array and false will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: src/View/View.php
 
 		-
-			message: "#^Cannot access constant class on Closure\\|PDO\\|resource\\.$#"
+			message: '#^Cannot access constant class on Closure\|PDO\|resource\.$#'
+			identifier: classConstant.nonObject
 			count: 1
 			path: src/View/ViewBuilder.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\ChronosDate\\|DateTime\\|DateTimeImmutable\\:\\:setTimezone\\(\\)\\.$#"
+			message: '#^Call to an undefined method Cake\\Chronos\\ChronosDate\|DateTime\|DateTimeImmutable\:\:setTimezone\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/View/Widget/DateTimeWidget.php
 
 		-
-			message: "#^Call to function is_numeric\\(\\) with int\\|\\(non\\-empty\\-string&numeric\\-string\\) will always evaluate to true\\.$#"
+			message: '#^Call to function is_numeric\(\) with int\|\(non\-empty\-string&numeric\-string\) will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/View/Widget/DateTimeWidget.php
 
 		-
-			message: "#^Parameter \\#2 \\$disabled of method Cake\\\\View\\\\Widget\\\\SelectBoxWidget\\:\\:_renderOptions\\(\\) expects list\\<string\\>\\|null, array\\|null given\\.$#"
+			message: '#^Parameter \#2 \$disabled of method Cake\\View\\Widget\\SelectBoxWidget\:\:_renderOptions\(\) expects list\<string\>\|null, array\<mixed, mixed\>\|null given\.$#'
+			identifier: argument.type
 			count: 1
 			path: src/View/Widget/SelectBoxWidget.php

@@ -377,7 +377,6 @@ class RouteCollection
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to register.
      * @return $this
-     * @throws \RuntimeException
      */
     public function registerMiddleware(string $name, MiddlewareInterface|Closure|string $middleware)
     {
