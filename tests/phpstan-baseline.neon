@@ -1,2 +1,4 @@
 parameters:
 	ignoreErrors:
+		-
+			identifier: include.fileNotFound

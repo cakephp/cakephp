@@ -65,7 +65,7 @@ foreach ($packages as $path => $package) {
 
         $issues[] = $package . ': ' . PHP_EOL . implode(PHP_EOL, $output);
     }
-    exec('cd ' . $path . ' && rm composer.lock && rm -rf vendor');
+    exec('cd ' . $path . ' && rm composer.lock && rm -rf vendor && git checkout composer.json');
 }
 
 echo implode(PHP_EOL . PHP_EOL, $issues);
