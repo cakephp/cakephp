@@ -432,6 +432,35 @@ class EventManagerTest extends TestCase
     }
 
     /**
+     * Tests subscribing an invokable listener class
+     */
+    public function testOnListenerClass(): void
+    {
+        $manager = new EventManager();
+        $listener = new class implements EventListenerInterface {
+            public array $callList = [];
+
+            final public function __invoke(EventInterface $event): void
+            {
+                $this->callList[] = __FUNCTION__;
+            }
+
+            public function implementedEvents(): array
+            {
+                return [
+                    'some.event' => $this,
+                ];
+            }
+        };
+        $manager->on($listener);
+
+        $event = new Event('some.event');
+        $manager->dispatch($event);
+
+        $this->assertEquals(['__invoke'], $listener->callList);
+    }
+
+    /**
      * Tests subscribing a listener object and firing the events it subscribed to
      */
     public function testDetachSubscriber(): void
