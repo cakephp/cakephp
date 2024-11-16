@@ -493,6 +493,12 @@ parameters:
 			path: src/Utility/MergeVariablesTrait.php
 
 		-
+			message: '#^Call to function is_callable\(\) with array\{object, ''toArray''\} will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 3
+			path: src/Utility/Xml.php
+
+		-
 			message: '#^Parameter \#1 \$objectOrClass of class ReflectionEnum constructor expects class\-string\<UnitEnum\>\|UnitEnum, class\-string given\.$#'
 			identifier: argument.type
 			count: 1
