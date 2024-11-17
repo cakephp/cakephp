@@ -123,7 +123,7 @@
         ],
         "cs-check": "phpcs --colors --parallel=16 -p",
         "cs-fix": "phpcbf --colors --parallel=16 -p",
-        "phpstan": "tools/phpstan analyse",
+        "phpstan": "tools/phpstan analyze",
         "psalm": "tools/psalm --show-info=false",
         "stan": [
             "@phpstan",
