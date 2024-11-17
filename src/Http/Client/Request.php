@@ -92,7 +92,7 @@ class Request extends Message implements RequestInterface
         if (is_array($content)) {
             $formData = new FormData();
             $formData->addMany($content);
-            /** @psalm-var array<non-empty-string, non-empty-string> $headers */
+            /** @var array<non-empty-string, non-empty-string> $headers */
             $headers = ['Content-Type' => $formData->contentType()];
             $this->addHeaders($headers);
             $content = (string)$formData;
