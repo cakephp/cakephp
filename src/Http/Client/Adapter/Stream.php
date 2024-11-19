@@ -88,7 +88,7 @@ class Stream implements AdapterInterface
      * Creates one or many response objects based on the number
      * of redirects that occurred.
      *
-     * @param list<string> $headers The list of headers from the request(s)
+     * @param array<string> $headers The list of headers from the request(s)
      * @param string $content The response content.
      * @return array<\Cake\Http\Client\Response> The list of responses from the request(s)
      */
@@ -286,7 +286,7 @@ class Stream implements AdapterInterface
     /**
      * Build a response object
      *
-     * @param list<string> $headers Unparsed headers.
+     * @param array<string> $headers Unparsed headers.
      * @param string $body The response body.
      * @return \Cake\Http\Client\Response
      */

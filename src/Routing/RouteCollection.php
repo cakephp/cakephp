@@ -79,7 +79,7 @@ class RouteCollection
     /**
      * Route extensions
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_extensions = [];
 
@@ -340,7 +340,7 @@ class RouteCollection
     /**
      * Get the extensions that can be handled.
      *
-     * @return list<string> The valid extensions.
+     * @return array<string> The valid extensions.
      */
     public function getExtensions(): array
     {

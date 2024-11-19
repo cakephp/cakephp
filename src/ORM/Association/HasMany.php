@@ -169,7 +169,7 @@ class HasMany extends Association
             throw new InvalidArgumentException($message);
         }
 
-        /** @var list<string> $foreignKeys */
+        /** @var array<string> $foreignKeys */
         $foreignKeys = (array)$this->getForeignKey();
         $foreignKeyReference = array_combine(
             $foreignKeys,
@@ -368,7 +368,7 @@ class HasMany extends Association
             'OR' => (new Collection($targetEntities))
                 ->map(function (EntityInterface $entity) use ($targetPrimaryKey) {
                     /** @psalm-suppress InvalidArgument,UnusedPsalmSuppress */
-                    /** @var list<string> $targetPrimaryKey */
+                    /** @var array<string> $targetPrimaryKey */
                     return $entity->extract($targetPrimaryKey);
                 })
                 ->toList(),

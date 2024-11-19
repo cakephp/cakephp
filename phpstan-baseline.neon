@@ -25,7 +25,7 @@ parameters:
 			path: src/Command/I18nExtractCommand.php
 
 		-
-			message: '#^Parameter \#1 \$args of method Cake\\Command\\RoutesGenerateCommand\:\:_splitArgs\(\) expects list\<string\>, array\<int, list\<string\>\|string\> given\.$#'
+			message: '#^Parameter \#1 \$args of method Cake\\Command\\RoutesGenerateCommand\:\:_splitArgs\(\) expects array\<string\>, array\<int, array\<string\>\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Command/RoutesGenerateCommand.php
@@ -35,12 +35,6 @@ parameters:
 			identifier: isset.property
 			count: 1
 			path: src/Console/ConsoleInput.php
-
-		-
-			message: '#^Method Cake\\Console\\ConsoleIo\:\:wrapMessageWithType\(\) should return list\<string\>\|string but returns array\<int\<0, max\>, string\>\|non\-falsy\-string\.$#'
-			identifier: return.type
-			count: 1
-			path: src/Console/ConsoleIo.php
 
 		-
 			message: '#^Method Cake\\Console\\ConsoleOptionParser\:\:_parseArg\(\) should return list\<string\> but returns non\-empty\-array\.$#'
@@ -181,46 +175,16 @@ parameters:
 			path: src/Http/Client/Auth/Digest.php
 
 		-
-			message: '#^Parameter \#1 \$header of static method Cake\\Http\\Cookie\\CookieCollection\:\:createFromHeader\(\) expects list\<string\>, array\<string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/Client/Response.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 1
 			path: src/Http/Cookie/Cookie.php
 
 		-
-			message: '#^Parameter \#1 \$header of static method Cake\\Http\\Cookie\\CookieCollection\:\:createFromHeader\(\) expects list\<string\>, array\<string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/Cookie/CookieCollection.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2
 			path: src/Http/Cookie/CookieCollection.php
-
-		-
-			message: '#^Parameter \#2 \$value of method Cake\\Http\\Exception\\HttpException\:\:setHeader\(\) expects list\<string\>\|string\|null, array given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/Exception/RedirectException.php
-
-		-
-			message: '#^Parameter \#1 \$header of static method Cake\\Http\\Cookie\\CookieCollection\:\:createFromHeader\(\) expects list\<string\>, array\<string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/Middleware/EncryptedCookieMiddleware.php
-
-		-
-			message: '#^Parameter \#1 \$proxies of method Cake\\Http\\ServerRequest\:\:setTrustedProxies\(\) expects list\<string\>, array\<mixed, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Http/Middleware/HttpsEnforcerMiddleware.php
 
 		-
 			message: '#^Static property Cake\\Http\\MimeType\:\:\$mimeTypes \(array\<string, list\<string\>\>\) does not accept non\-empty\-array\<string, array\>\.$#'
@@ -289,24 +253,6 @@ parameters:
 			path: src/ORM/EagerLoader.php
 
 		-
-			message: '#^Method Cake\\ORM\\Entity\:\:getVisible\(\) should return list\<string\> but returns array\<int\<0, max\>, string\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/ORM/Entity.php
-
-		-
-			message: '#^Property Cake\\ORM\\Entity\:\:\$_hidden \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/ORM/Entity.php
-
-		-
-			message: '#^Property Cake\\ORM\\Entity\:\:\$_virtual \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/ORM/Entity.php
-
-		-
 			message: '#^Method Cake\\ORM\\Query\\SelectQuery\:\:find\(\) should return static\(Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\) but returns Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\.$#'
 			identifier: return.type
 			count: 1
@@ -319,26 +265,8 @@ parameters:
 			path: src/ORM/Query/SelectQuery.php
 
 		-
-			message: '#^Parameter \#1 \$fields of method Cake\\Datasource\\EntityInterface\:\:extract\(\) expects list\<string\>, array\<int\<0, max\>, string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/ORM/Rule/ExistsIn.php
-
-		-
-			message: '#^Method Cake\\ORM\\Rule\\LinkConstraint\:\:_aliasFields\(\) should return list\<string\> but returns array\<int\<0, max\>, string\>\.$#'
-			identifier: return.type
-			count: 1
-			path: src/ORM/Rule/LinkConstraint.php
-
-		-
 			message: '#^PHPDoc tag @var with type class\-string\<Cake\\Datasource\\RulesChecker\> is not subtype of native type ''Cake\\\\Datasource\\\\RulesChecker''\|class\-string\<Cake\\ORM\\RulesChecker\>\.$#'
 			identifier: varTag.nativeType
-			count: 1
-			path: src/ORM/Table.php
-
-		-
-			message: '#^Parameter \#1 \$fields of method Cake\\ORM\\Entity\:\:extract\(\) expects list\<string\>, non\-empty\-array given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/ORM/Table.php
 
@@ -349,26 +277,8 @@ parameters:
 			path: src/Routing/Route/Route.php
 
 		-
-			message: '#^Parameter \#1 \$extensions of method Cake\\Routing\\Route\\Route\:\:setExtensions\(\) expects list\<string\>, array\<mixed, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Routing/Route/Route.php
-
-		-
-			message: '#^Property Cake\\Routing\\RouteBuilder\:\:\$_extensions \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Routing/RouteBuilder.php
-
-		-
-			message: '#^Property Cake\\Routing\\RouteBuilder\:\:\$middleware \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Routing/RouteBuilder.php
-
-		-
-			message: '#^Property Cake\\Routing\\RouteBuilder\:\:\$middleware \(list\<string\>\) does not accept array\<mixed, mixed\>\.$#'
-			identifier: assign.propertyType
+			message: '#^Method Cake\\Routing\\RouteBuilder\:\:getMiddleware\(\) should return list\<string\> but returns array\<string\>\.$#'
+			identifier: return.type
 			count: 1
 			path: src/Routing/RouteBuilder.php
 
@@ -377,30 +287,6 @@ parameters:
 			identifier: new.static
 			count: 1
 			path: src/Routing/RouteBuilder.php
-
-		-
-			message: '#^Property Cake\\Routing\\RouteCollection\:\:\$_extensions \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Routing/RouteCollection.php
-
-		-
-			message: '#^Method Cake\\Routing\\Router\:\:extensions\(\) should return list\<string\> but returns array\<int\<0, max\>, string\>\.$#'
-			identifier: return.type
-			count: 2
-			path: src/Routing/Router.php
-
-		-
-			message: '#^Static property Cake\\Routing\\Router\:\:\$_defaultExtensions \(list\<string\>\) does not accept array\<int\<0, max\>, string\>\.$#'
-			identifier: assign.propertyType
-			count: 1
-			path: src/Routing/Router.php
-
-		-
-			message: '#^Parameter \#1 \$header of static method Cake\\Http\\Cookie\\CookieCollection\:\:createFromHeader\(\) expects list\<string\>, array\<string\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/TestSuite/Constraint/Response/ResponseBase.php
 
 		-
 			message: '#^Trait Cake\\TestSuite\\EmailTrait is used zero times and is not analysed\.$#'
@@ -447,12 +333,6 @@ parameters:
 		-
 			message: '#^PHPDoc tag @var with type array\<string, mixed\> is not subtype of native type array\{explains\?\: list\<string\>, attrs\: non\-empty\-list\<non\-empty\-string\>, 0\?\: string, 1\?\: string, 2\?\: int\<1, max\>\}\.$#'
 			identifier: varTag.nativeType
-			count: 1
-			path: src/TestSuite/TestCase.php
-
-		-
-			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:addMethods\(\) expects list\<non\-empty\-string\>, non\-empty\-array\<int\<0, max\>, string\> given\.$#'
-			identifier: argument.type
 			count: 1
 			path: src/TestSuite/TestCase.php
 
@@ -541,18 +421,6 @@ parameters:
 			path: src/View/View.php
 
 		-
-			message: '#^Parameter \#2 \$paths of class Cake\\View\\Exception\\MissingElementException constructor expects list\<string\>, array\<mixed, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/View/View.php
-
-		-
-			message: '#^Parameter \#2 \$paths of class Cake\\View\\Exception\\MissingLayoutException constructor expects list\<string\>, array\<mixed, mixed\> given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/View/View.php
-
-		-
 			message: '#^Strict comparison using \=\=\= between array and false will always evaluate to false\.$#'
 			identifier: identical.alwaysFalse
 			count: 1
@@ -575,9 +443,3 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/View/Widget/DateTimeWidget.php
-
-		-
-			message: '#^Parameter \#2 \$disabled of method Cake\\View\\Widget\\SelectBoxWidget\:\:_renderOptions\(\) expects list\<string\>\|null, array\<mixed, mixed\>\|null given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/View/Widget/SelectBoxWidget.php

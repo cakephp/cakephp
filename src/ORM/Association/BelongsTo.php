@@ -147,7 +147,7 @@ class BelongsTo extends Association
             return false;
         }
 
-        /** @var list<string> $foreignKeys */
+        /** @var array<string> $foreignKeys */
         $foreignKeys = (array)$this->getForeignKey();
         $properties = array_combine(
             $foreignKeys,

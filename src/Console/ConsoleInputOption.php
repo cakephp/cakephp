@@ -72,7 +72,7 @@ class ConsoleInputOption
     /**
      * An array of choices for the option.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_choices;
 
@@ -318,7 +318,7 @@ class ConsoleInputOption
     /**
      * Get the list of choices this option has.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function choices(): array
     {

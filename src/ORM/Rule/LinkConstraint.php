@@ -120,7 +120,7 @@ class LinkConstraint
      *
      * @param array<string> $fields The fields that should be aliased.
      * @param \Cake\ORM\Table $source The object to use for aliasing.
-     * @return list<string> The aliased fields
+     * @return array<string> The aliased fields
      */
     protected function _aliasFields(array $fields, Table $source): array
     {
@@ -162,7 +162,7 @@ class LinkConstraint
     {
         $source = $association->getSource();
 
-        /** @var list<string> $primaryKey */
+        /** @var array<string> $primaryKey */
         $primaryKey = (array)$source->getPrimaryKey();
         if (!$entity->has($primaryKey)) {
             throw new DatabaseException(sprintf(

@@ -29,7 +29,7 @@ class StubConsoleInput extends ConsoleInput
     /**
      * Reply values for ask() and askChoice()
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $replies = [];
 

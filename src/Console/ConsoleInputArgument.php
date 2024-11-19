@@ -51,7 +51,7 @@ class ConsoleInputArgument
     /**
      * An array of valid choices for this argument.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_choices;
 

@@ -247,14 +247,14 @@ class FormHelper extends Helper
      * The default sources.
      *
      * @see FormHelper::$supportedValueSources for valid values.
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_valueSources = ['data', 'context'];
 
     /**
      * Grouped input types.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_groupedInputTypes = ['radio', 'multicheckbox'];
 
@@ -2573,7 +2573,7 @@ class FormHelper extends Helper
      *
      * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
      *
-     * @return list<string> List of value sources.
+     * @return array<string> List of value sources.
      */
     public function getValueSources(): array
     {

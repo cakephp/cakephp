@@ -84,7 +84,7 @@ class Route
     /**
      * List of connected extensions for this route.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_extensions = [];
 
@@ -98,7 +98,7 @@ class Route
     /**
      * Valid HTTP methods.
      *
-     * @var list<string>
+     * @var array<string>
      */
     public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
@@ -175,7 +175,7 @@ class Route
     /**
      * Get the supported extensions for this route.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getExtensions(): array
     {
@@ -200,7 +200,7 @@ class Route
      * Normalize method names to upper case and validate that they are valid HTTP methods.
      *
      * @param array<string>|string $methods Methods.
-     * @return list<string>|string
+     * @return array<string>|string
      * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
     protected function normalizeAndValidateMethods(array|string $methods): array|string

@@ -250,7 +250,7 @@ class CounterCacheBehavior extends Behavior
         ?int $page = null
     ): void {
         $primaryKeys = (array)$assoc->getBindingKey();
-        /** @var list<string> $foreignKeys */
+        /** @var array<string> $foreignKeys */
         $foreignKeys = (array)$assoc->getForeignKey();
 
         $query = $assoc->getTarget()->find()
@@ -319,7 +319,7 @@ class CounterCacheBehavior extends Behavior
         Association $assoc,
         array $settings
     ): void {
-        /** @var list<string> $foreignKeys */
+        /** @var array<string> $foreignKeys */
         $foreignKeys = (array)$assoc->getForeignKey();
         $countConditions = $entity->extract($foreignKeys);
 

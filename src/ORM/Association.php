@@ -110,14 +110,14 @@ abstract class Association
     /**
      * The field name in the owning side table that is used to match with the foreignKey
      *
-     * @var list<string>|string
+     * @var array<string>|string
      */
     protected array|string $_bindingKey;
 
     /**
      * The name of the field representing the foreign key to the table to load
      *
-     * @var list<string>|string|false
+     * @var array<string>|string|false
      */
     protected array|string|false $_foreignKey;
 
@@ -442,7 +442,7 @@ abstract class Association
      * Gets the name of the field representing the binding field with the target table.
      * When not manually specified the primary key of the owning side table is used.
      *
-     * @return list<string>|string
+     * @return array<string>|string
      */
     public function getBindingKey(): array|string
     {
@@ -458,7 +458,7 @@ abstract class Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return list<string>|string|false
+     * @return array<string>|string|false
      */
     public function getForeignKey(): array|string|false
     {

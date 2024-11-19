@@ -107,7 +107,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Trusted proxies list
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $trustedProxies = [];
 
@@ -419,7 +419,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get trusted proxies
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getTrustedProxies(): array
     {

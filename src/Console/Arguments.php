@@ -64,7 +64,7 @@ class Arguments
     /**
      * Get all positional arguments.
      *
-     * @return array<int, list<string>|string>
+     * @return array<int, array<string>|string>
      */
     public function getArguments(): array
     {

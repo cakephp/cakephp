@@ -30,7 +30,7 @@ class ExistsIn
     /**
      * The list of fields to check
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_fields;
 

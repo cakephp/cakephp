@@ -163,7 +163,7 @@ class EntityContext implements ContextInterface
      *
      * Gets the primary key columns from the root entity's schema.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getPrimaryKey(): array
     {
@@ -568,7 +568,7 @@ class EntityContext implements ContextInterface
      * Get the validator associated to an entity based on naming
      * conventions.
      *
-     * @param list<string> $parts Each one of the parts in a path for a field name
+     * @param array<string> $parts Each one of the parts in a path for a field name
      * @return \Cake\Validation\Validator
      * @throws \Cake\Core\Exception\CakeException If validator cannot be retrieved based on the parts.
      */
@@ -613,7 +613,7 @@ class EntityContext implements ContextInterface
     /**
      * Get the table instance from a property path
      *
-     * @param \Cake\Datasource\EntityInterface|list<string>|string $parts Each one of the parts in a path for a field name
+     * @param \Cake\Datasource\EntityInterface|array<string>|string $parts Each one of the parts in a path for a field name
      * @param bool $fallback Whether to fallback to the last found table
      *  when a nonexistent field/property is being encountered.
      * @return \Cake\ORM\Table|null Table instance or null

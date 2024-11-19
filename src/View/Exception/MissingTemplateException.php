@@ -33,7 +33,7 @@ class MissingTemplateException extends CakeException
     protected string $filename;
 
     /**
-     * @var list<string>
+     * @var array<string>
      */
     protected array $paths;
 
@@ -87,7 +87,7 @@ class MissingTemplateException extends CakeException
      * Get the passed in attributes
      *
      * @return array<string, mixed>
-     * @psalm-return array{file: string, paths: list<string>}
+     * @psalm-return array{file: string, paths: array<string>}
      */
     public function getAttributes(): array
     {

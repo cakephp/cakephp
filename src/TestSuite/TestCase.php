@@ -946,6 +946,7 @@ abstract class TestCase extends BaseTestCase
         }, $reflection->getMethods());
 
         $existingMethods = array_intersect($classMethods, $methods);
+        /** @var list<non-empty-string> $nonExistingMethods */
         $nonExistingMethods = array_diff($methods, $existingMethods);
 
         $builder = $this->getMockBuilder($className)

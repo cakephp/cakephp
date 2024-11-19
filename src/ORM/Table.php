@@ -232,14 +232,14 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * The name of the field that represents the primary key in the table
      *
-     * @var list<string>|string|null
+     * @var array<string>|string|null
      */
     protected array|string|null $_primaryKey = null;
 
     /**
      * The name of the field that represents a human-readable representation of a row
      *
-     * @var list<string>|string|null
+     * @var array<string>|string|null
      */
     protected array|string|null $_displayField = null;
 
@@ -652,7 +652,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the primary key field name.
      *
-     * @return list<string>|string
+     * @return array<string>|string
      */
     public function getPrimaryKey(): array|string
     {
@@ -683,7 +683,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the display field.
      *
-     * @return list<string>|string
+     * @return array<string>|string
      */
     public function getDisplayField(): array|string|null
     {
