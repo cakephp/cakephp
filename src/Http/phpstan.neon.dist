@@ -20,7 +20,3 @@ parameters:
 		- '#Unsafe usage of new static\(\).#'
 		- "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
 		- '#Call to static method getRequest\(\) on an unknown class Cake\\Routing\\Router.#'
-		- '#^Parameter \#1 \$header of static method Cake\\Http\\Cookie\\CookieCollection::createFromHeader\(\) expects list<string>, array<string> given\.$#'
-		- '#^Parameter \#2 \$value of method Cake\\Http\\Exception\\HttpException::setHeader\(\) expects list<string>\|string\|null, array given\.$#'
-		- '#^Static property Cake\\Http\\MimeType::\$mimeTypes \(array<string, list<string>>\) does not accept non-empty-array<string, array>\.$#'
-		- '#^Parameter \#1 \$proxies of method Cake\\Http\\ServerRequest::setTrustedProxies\(\) expects list<string>, array<mixed, mixed> given\.$#'

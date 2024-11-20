@@ -42,7 +42,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Gets the hidden fields.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getHidden(): array;
 
@@ -58,7 +58,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getVirtual(): array;
 
@@ -74,7 +74,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Returns an array of original fields.
      * Original fields are those that an entity was initialized with.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getOriginalFields(): array;
 
@@ -99,7 +99,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Gets the dirty fields.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getDirty(): array;
 
@@ -278,7 +278,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     /**
      * Get the list of visible fields.
      *
-     * @return list<string> A list of fields that are 'visible' in all representations.
+     * @return array<string> A list of fields that are 'visible' in all representations.
      */
     public function getVisible(): array;
 

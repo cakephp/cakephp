@@ -1,5 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <files psalm-version="5.26.1@d747f6500b38ac4f7dfc5edbcae6e4b637d7add0">
+  <file src="../../laminas/laminas-diactoros/src/CallbackStream.php">
+    <ImplementedReturnTypeMismatch>
+      <code><![CDATA[null|callable]]></code>
+    </ImplementedReturnTypeMismatch>
+  </file>
+  <file src="../../laminas/laminas-diactoros/src/MessageTrait.php">
+    <InvalidArrayOffset>
+      <code><![CDATA[$new->headerNames[$normalized]]]></code>
+      <code><![CDATA[$this->headerNames[strtolower($header)]]]></code>
+      <code><![CDATA[$this->headerNames[strtolower($header)]]]></code>
+      <code><![CDATA[$this->headerNames[strtolower($name)]]]></code>
+    </InvalidArrayOffset>
+    <InvalidPropertyAssignmentValue>
+      <code><![CDATA[$headerNames]]></code>
+    </InvalidPropertyAssignmentValue>
+  </file>
+  <file src="../chronos/src/ChronosDate.php">
+    <ImpureMethodCall>
+      <code><![CDATA[getTestNow]]></code>
+    </ImpureMethodCall>
+  </file>
   <file src="src/Cache/Engine/RedisEngine.php">
     <InvalidCast>
       <code><![CDATA[$this->_Redis->del($key)]]></code>
@@ -18,11 +39,26 @@
       <code><![CDATA[int|false]]></code>
       <code><![CDATA[int|false]]></code>
     </InvalidReturnType>
+    <UndefinedConstant>
+      <code><![CDATA[Redis::OPT_SCAN]]></code>
+      <code><![CDATA[Redis::OPT_SCAN]]></code>
+      <code><![CDATA[Redis::SCAN_RETRY]]></code>
+      <code><![CDATA[Redis::SCAN_RETRY]]></code>
+    </UndefinedConstant>
+    <UndefinedDocblockClass>
+      <code><![CDATA[\RedisException]]></code>
+      <code><![CDATA[\RedisException]]></code>
+    </UndefinedDocblockClass>
   </file>
   <file src="src/Collection/CollectionTrait.php">
     <TooManyArguments>
       <code><![CDATA[$callback($value, $key, $items)]]></code>
     </TooManyArguments>
+  </file>
+  <file src="src/Command/RoutesGenerateCommand.php">
+    <InvalidArgument>
+      <code><![CDATA[$args->getArguments()]]></code>
+    </InvalidArgument>
   </file>
   <file src="src/Console/TestSuite/StubConsoleOutput.php">
     <InvalidPropertyAssignmentValue>
@@ -38,6 +74,15 @@
     <RedundantCondition>
       <code><![CDATA[is_array($pluginLoadConfig)]]></code>
     </RedundantCondition>
+  </file>
+  <file src="src/Datasource/EntityTrait.php">
+    <LessSpecificImplementedReturnType>
+      <code><![CDATA[array<string>]]></code>
+      <code><![CDATA[array<string>]]></code>
+      <code><![CDATA[array<string>]]></code>
+      <code><![CDATA[array<string>]]></code>
+      <code><![CDATA[array<string>]]></code>
+    </LessSpecificImplementedReturnType>
   </file>
   <file src="src/Event/EventDispatcherTrait.php">
     <MoreSpecificImplementedParamType>
@@ -62,6 +107,11 @@
     <UndefinedInterfaceMethod>
       <code><![CDATA[events]]></code>
     </UndefinedInterfaceMethod>
+  </file>
+  <file src="src/Http/Client/Adapter/Stream.php">
+    <InvalidOperand>
+      <code><![CDATA[$indexes[$i + 1]]]></code>
+    </InvalidOperand>
   </file>
   <file src="src/I18n/Date.php">
     <ImpureFunctionCall>
@@ -191,8 +241,13 @@
   </file>
   <file src="src/View/Exception/MissingCellTemplateException.php">
     <ImplementedReturnTypeMismatch>
-      <code><![CDATA[array{name: string, file: string, paths: list<string>}]]></code>
+      <code><![CDATA[array{name: string, file: string, paths: array<string>}]]></code>
     </ImplementedReturnTypeMismatch>
+  </file>
+  <file src="src/View/Form/EntityContext.php">
+    <LessSpecificImplementedReturnType>
+      <code><![CDATA[array<string>]]></code>
+    </LessSpecificImplementedReturnType>
   </file>
   <file src="src/View/Helper/PaginatorHelper.php">
     <TypeDoesNotContainType>

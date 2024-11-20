@@ -44,7 +44,7 @@ class MimeType
      * Some extensions may map to multiple MIME types, with the first type in the array
      * being the preferred/default type.
      *
-     * @var array<string, list<string>>
+     * @var array<string, array<string>>
      */
     protected static array $mimeTypes = [
         'html' => ['text/html', '*/*'],

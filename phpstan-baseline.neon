@@ -187,12 +187,6 @@ parameters:
 			path: src/Http/Cookie/CookieCollection.php
 
 		-
-			message: '#^Static property Cake\\Http\\MimeType\:\:\$mimeTypes \(array\<string, list\<string\>\>\) does not accept non\-empty\-array\<string, array\>\.$#'
-			identifier: assign.propertyType
-			count: 3
-			path: src/Http/MimeType.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 1
