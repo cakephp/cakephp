@@ -112,7 +112,7 @@ class ReconnectStrategy implements RetryStrategyInterface
             $this->connection->getDriver()->connect();
             $this->connection->getDriver()->log(
                 'connection={connection} [RECONNECT]',
-                ['connection' => $this->connection->configName()]
+                ['connection' => $this->connection->configName()],
             );
 
             return true;

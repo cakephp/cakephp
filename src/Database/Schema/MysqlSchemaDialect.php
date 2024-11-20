@@ -119,7 +119,7 @@ class MysqlSchemaDialect extends SchemaDialect
 
         $type = $this->_applyTypeSpecificColumnConversion(
             $col,
-            compact('length', 'precision', 'scale')
+            compact('length', 'precision', 'scale'),
         );
         if ($type !== null) {
             return $type;
@@ -570,7 +570,7 @@ class MysqlSchemaDialect extends SchemaDialect
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $columns = array_map(
                 $this->_driver->quoteIdentifier(...),
-                $data['columns']
+                $data['columns'],
             );
 
             return sprintf('PRIMARY KEY (%s)', implode(', ', $columns));
@@ -659,7 +659,7 @@ class MysqlSchemaDialect extends SchemaDialect
     {
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns']
+            $data['columns'],
         );
         foreach ($data['columns'] as $i => $column) {
             if (isset($data['length'][$column])) {
@@ -673,7 +673,7 @@ class MysqlSchemaDialect extends SchemaDialect
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
-                $this->_foreignOnClause($data['delete'])
+                $this->_foreignOnClause($data['delete']),
             );
         }
 

@@ -880,7 +880,7 @@ class Validation
 
         if ($backingType === null) {
             throw new InvalidArgumentException(
-                'The `$enumClassName` argument must be the classname of a valid backed enum.'
+                'The `$enumClassName` argument must be the classname of a valid backed enum.',
             );
         }
 
@@ -1527,7 +1527,7 @@ class Validation
     {
         if (!isset($options['height']) && !isset($options['width'])) {
             throw new InvalidArgumentException(
-                'Invalid image size validation parameters! Missing `width` and / or `height`.'
+                'Invalid image size validation parameters! Missing `width` and / or `height`.',
             );
         }
 
@@ -1629,7 +1629,7 @@ class Validation
         if ($options['type'] !== 'latLong') {
             throw new InvalidArgumentException(sprintf(
                 'Unsupported coordinate type `%s`. Use `latLong` instead.',
-                $options['type']
+                $options['type'],
             ));
         }
         $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
@@ -1856,7 +1856,7 @@ class Validation
                     $value['hour'],
                     $value['minute'],
                     $value['second'],
-                    $value['microsecond']
+                    $value['microsecond'],
                 );
             }
         }

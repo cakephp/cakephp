@@ -1053,7 +1053,7 @@ class HtmlHelper extends Helper
         if (isset($options['poster'])) {
             $options['poster'] = $this->Url->assetUrl(
                 $options['poster'],
-                ['pathPrefix' => Configure::read('App.imageBaseUrl')] + $options
+                ['pathPrefix' => Configure::read('App.imageBaseUrl')] + $options,
             );
         }
         $text = $options['text'];

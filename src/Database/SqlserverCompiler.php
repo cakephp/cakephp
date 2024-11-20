@@ -89,7 +89,7 @@ class SqlserverCompiler extends QueryCompiler
         if (!isset($parts[0])) {
             throw new DatabaseException(
                 'Could not compile insert query. No table was specified. ' .
-                'Use `into()` to define a table.'
+                'Use `into()` to define a table.',
             );
         }
         $table = $parts[0];
@@ -100,7 +100,7 @@ class SqlserverCompiler extends QueryCompiler
             'INSERT%s INTO %s (%s) OUTPUT INSERTED.*',
             $modifiers,
             $table,
-            implode(', ', $columns)
+            implode(', ', $columns),
         );
     }
 
@@ -145,7 +145,7 @@ class SqlserverCompiler extends QueryCompiler
                 preg_match_all(
                     '/\b' . trim($selectKey, '[]') . '\b/i',
                     $p,
-                    $matches
+                    $matches,
                 );
 
                 if (empty($matches[0])) {
@@ -155,7 +155,7 @@ class SqlserverCompiler extends QueryCompiler
                 $parts[$k] = preg_replace(
                     ['/\[|\]/', '/\b' . trim($selectKey, '[]') . '\b/i'],
                     ['', $selectPart->sql($binder)],
-                    $p
+                    $p,
                 );
             }
         }

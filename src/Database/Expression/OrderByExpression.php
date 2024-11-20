@@ -81,8 +81,8 @@ class OrderByExpression extends QueryExpression
                         'is not allowed to avoid potential SQL injection. ' .
                         'Use QueryExpression or numeric array instead.',
                         $key,
-                        $val
-                    )
+                        $val,
+                    ),
                 );
             }
         }

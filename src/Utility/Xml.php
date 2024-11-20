@@ -159,7 +159,7 @@ class Xml
                 }
 
                 return $xml;
-            }
+            },
         );
     }
 
@@ -191,7 +191,7 @@ class Xml
                 }
 
                 return $xml;
-            }
+            },
         );
     }
 

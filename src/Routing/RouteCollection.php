@@ -323,7 +323,7 @@ class RouteCollection
         return array_reduce(
             $this->_paths,
             'array_merge',
-            []
+            [],
         );
     }
 
@@ -360,7 +360,7 @@ class RouteCollection
         if ($merge) {
             $extensions = array_unique(array_merge(
                 $this->_extensions,
-                $extensions
+                $extensions,
             ));
         }
         $this->_extensions = $extensions;
@@ -465,7 +465,7 @@ class RouteCollection
             if (!$this->hasMiddleware($name)) {
                 throw new InvalidArgumentException(sprintf(
                     'The middleware named `%s` has not been registered. Use registerMiddleware() to define it.',
-                    $name
+                    $name,
                 ));
             }
             $out[] = $this->_middleware[$name];

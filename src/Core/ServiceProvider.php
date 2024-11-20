@@ -53,8 +53,8 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
             sprintf(
                 'Unexpected container type. Expected `%s` got `%s` instead.',
                 ContainerInterface::class,
-                get_debug_type($container)
-            )
+                get_debug_type($container),
+            ),
         );
 
         return $container;
@@ -115,7 +115,7 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
     {
         if (!$this->provides) {
             throw new LogicException(
-                'The property `$provides` should contain a list with service ids for this service provider'
+                'The property `$provides` should contain a list with service ids for this service provider',
             );
         }
 

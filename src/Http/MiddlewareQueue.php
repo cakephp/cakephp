@@ -84,7 +84,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
                 if ($className === null) {
                     throw new InvalidArgumentException(sprintf(
                         'Middleware `%s` was not found.',
-                        $middleware
+                        $middleware,
                     ));
                 }
                 $middleware = new $className();

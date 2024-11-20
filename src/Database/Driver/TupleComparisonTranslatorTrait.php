@@ -62,8 +62,8 @@ trait TupleComparisonTranslatorTrait
             throw new InvalidArgumentException(
                 sprintf(
                     'Tuple comparison transform only supports the `IN` and `=` operators, `%s` given.',
-                    $operator
-                )
+                    $operator,
+                ),
             );
         }
 

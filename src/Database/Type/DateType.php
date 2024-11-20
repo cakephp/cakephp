@@ -216,7 +216,7 @@ class DateType extends BaseType implements BatchCastingInterface
             return $this;
         }
         throw new DatabaseException(
-            sprintf('Cannot use locale parsing with %s', $this->_className)
+            sprintf('Cannot use locale parsing with %s', $this->_className),
         );
     }
 

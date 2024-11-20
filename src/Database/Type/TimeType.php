@@ -125,7 +125,7 @@ class TimeType extends BaseType implements BatchCastingInterface
             $value['hour'],
             $value['minute'],
             $value['second'],
-            $value['microsecond']
+            $value['microsecond'],
         );
 
         return new $this->_className($format);

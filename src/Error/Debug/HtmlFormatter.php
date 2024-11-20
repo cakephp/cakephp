@@ -70,7 +70,7 @@ class HtmlFormatter implements FormatterInterface
             $lineInfo = sprintf(
                 '<span><strong>%s</strong> (line <strong>%s</strong>)</span>',
                 $location['file'],
-                $location['line']
+                $location['line'],
             );
         }
         $parts = [
@@ -193,7 +193,7 @@ class HtmlFormatter implements FormatterInterface
         $objectId = "cake-db-object-{$this->id}-{$var->getId()}";
         $out = sprintf(
             '<span class="cake-debug-object" id="%s">',
-            $objectId
+            $objectId,
         );
         $break = "\n" . str_repeat('  ', $indent);
         $endBreak = "\n" . str_repeat('  ', $indent - 1);
@@ -202,7 +202,7 @@ class HtmlFormatter implements FormatterInterface
             $link = sprintf(
                 '<a class="cake-debug-ref" href="#%s">id: %s</a>',
                 $objectId,
-                $var->getId()
+                $var->getId(),
             );
 
             return '<span class="cake-debug-ref">' .
@@ -269,7 +269,7 @@ class HtmlFormatter implements FormatterInterface
         return sprintf(
             '<span class="cake-debug-%s">%s</span>',
             $style,
-            h($text)
+            h($text),
         );
     }
 }

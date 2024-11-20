@@ -135,7 +135,7 @@ class ValidationRule
                 'Unable to call method `%s` in `%s` provider for field `%s`',
                 $method,
                 $this->_provider,
-                $context['field']
+                $context['field'],
             );
             throw new InvalidArgumentException($message);
         }

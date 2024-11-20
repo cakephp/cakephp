@@ -141,7 +141,7 @@ class FixtureHelper
                 } else {
                     ConnectionHelper::runWithoutConstraints(
                         $connection,
-                        fn (Connection $connection) => $this->insertConnection($connection, $groupFixtures)
+                        fn (Connection $connection) => $this->insertConnection($connection, $groupFixtures),
                     );
                 }
             } else {
@@ -167,7 +167,7 @@ class FixtureHelper
                     'Unable to insert rows for table `%s`.'
                         . " Fixture records might have invalid data or unknown constraints.\n%s",
                     $fixture->sourceName(),
-                    $exception->getMessage()
+                    $exception->getMessage(),
                 );
                 throw new CakeException($message);
             }
@@ -196,7 +196,7 @@ class FixtureHelper
                     $helper = new ConnectionHelper();
                     $helper->runWithoutConstraints(
                         $connection,
-                        fn (Connection $connection) => $this->truncateConnection($connection, $groupFixtures)
+                        fn (Connection $connection) => $this->truncateConnection($connection, $groupFixtures),
                     );
                 }
             } else {
@@ -222,7 +222,7 @@ class FixtureHelper
                     'Unable to truncate table `%s`.'
                         . " Fixture records might have invalid data or unknown contraints.\n%s",
                     $fixture->sourceName(),
-                    $exception->getMessage()
+                    $exception->getMessage(),
                 );
                 throw new CakeException($message);
             }

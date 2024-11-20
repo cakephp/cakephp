@@ -494,7 +494,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             }
             if (!is_string($name)) {
                 throw new InvalidArgumentException(
-                    'You cannot add validation rules without a `name` key. Update rules array to have string keys.'
+                    'You cannot add validation rules without a `name` key. Update rules array to have string keys.',
                 );
             }
 
@@ -1224,14 +1224,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = sprintf(
                     'The length of the provided value must be between `%s` and `%s`, inclusively',
                     $lowerBound,
-                    $upperBound
+                    $upperBound,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The length of the provided value must be between `{0}` and `{1}`, inclusively',
                     $lowerBound,
-                    $upperBound
+                    $upperBound,
                 );
             }
         }
@@ -1274,19 +1274,19 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 } else {
                     $message = sprintf(
                         'The provided value must be a valid credit card number of these types: `%s`',
-                        $typeEnumeration
+                        $typeEnumeration,
                     );
                 }
             } elseif ($type === 'all') {
                 $message = __d(
                     'cake',
-                    'The provided value must be a valid credit card number of any type'
+                    'The provided value must be a valid credit card number of any type',
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be a valid credit card number of these types: `{0}`',
-                    $typeEnumeration
+                    $typeEnumeration,
                 );
             }
         }
@@ -1582,7 +1582,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = __d(
                     'cake',
                     'The provided value must be equal to the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1619,7 +1619,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = __d(
                     'cake',
                     'The provided value must not be equal to the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1656,7 +1656,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = __d(
                     'cake',
                     'The provided value must be greater than the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1690,13 +1690,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             if (!$this->_useI18n) {
                 $message = sprintf(
                     'The provided value must be greater than or equal to the one of field `%s`',
-                    $secondField
+                    $secondField,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be greater than or equal to the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1733,7 +1733,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = __d(
                     'cake',
                     'The provided value must be less than the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1767,13 +1767,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             if (!$this->_useI18n) {
                 $message = sprintf(
                     'The provided value must be less than or equal to the one of field `%s`',
-                    $secondField
+                    $secondField,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be less than or equal to the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1808,13 +1808,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             if (!$this->_useI18n) {
                 $message = sprintf(
                     'The provided value must be a date of one of these formats: `%s`',
-                    $formatEnumeration
+                    $formatEnumeration,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be a date of one of these formats: `{0}`',
-                    $formatEnumeration
+                    $formatEnumeration,
                 );
             }
         }
@@ -1849,13 +1849,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             if (!$this->_useI18n) {
                 $message = sprintf(
                     'The provided value must be a date and time of one of these formats: `%s`',
-                    $formatEnumeration
+                    $formatEnumeration,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be a date and time of one of these formats: `{0}`',
-                    $formatEnumeration
+                    $formatEnumeration,
                 );
             }
         }
@@ -1980,13 +1980,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             } elseif ($places === null) {
                 $message = __d(
                     'cake',
-                    'The provided value must be decimal with any number of decimal places, including none'
+                    'The provided value must be decimal with any number of decimal places, including none',
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be decimal with `{0}` decimal places',
-                    $places
+                    $places,
                 );
             }
         }
@@ -2050,7 +2050,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     ) {
         if (!in_array(BackedEnum::class, (array)class_implements($enumClassName), true)) {
             throw new InvalidArgumentException(
-                'The `$enumClassName` argument must be the classname of a valid backed enum.'
+                'The `$enumClassName` argument must be the classname of a valid backed enum.',
             );
         }
 
@@ -2372,14 +2372,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = sprintf(
                     'The provided value must be between `%s` and `%s`, inclusively',
                     $lowerBound,
-                    $upperBound
+                    $upperBound,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be between `{0}` and `{1}`, inclusively',
                     $lowerBound,
-                    $upperBound
+                    $upperBound,
                 );
             }
         }
@@ -2471,7 +2471,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = __d(
                     'cake',
                     'The provided value must be one of: `{0}`',
-                    $listEnumeration
+                    $listEnumeration,
                 );
             }
         }

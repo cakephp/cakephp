@@ -144,14 +144,14 @@ class I18nExtractCommand extends Command
         $defaultPaths = array_merge(
             [APP],
             array_values(App::path('templates')),
-            ['D'] // This is required to break the loop below
+            ['D'], // This is required to break the loop below
         );
         $defaultPathIndex = 0;
         while (true) {
             $currentPaths = $this->_paths !== [] ? $this->_paths : ['None'];
             $message = sprintf(
                 "Current paths: %s\nWhat is the path you would like to extract?\n[Q]uit [D]one",
-                implode(', ', $currentPaths)
+                implode(', ', $currentPaths),
             );
             $response = $io->ask($message, $defaultPaths[$defaultPathIndex] ?? 'D');
             if (strtoupper($response) === 'Q') {
@@ -209,7 +209,7 @@ class I18nExtractCommand extends Command
             $response = $io->askChoice(
                 'Would you like to extract the messages from the CakePHP core?',
                 ['y', 'n'],
-                'n'
+                'n',
             );
             $this->_extractCore = strtolower($response) === 'y';
         }
@@ -237,7 +237,7 @@ class I18nExtractCommand extends Command
             while (true) {
                 $response = $io->ask(
                     $message,
-                    $localePaths[0]
+                    $localePaths[0],
                 );
                 if (strtoupper($response) === 'Q') {
                     $io->err('Extract Aborted');
@@ -252,7 +252,7 @@ class I18nExtractCommand extends Command
                 $io->err('');
                 $io->err(
                     '<error>The directory path you supplied was ' .
-                    'not found. Please try again.</error>'
+                    'not found. Please try again.</error>',
                 );
                 $io->err('');
             }
@@ -265,7 +265,7 @@ class I18nExtractCommand extends Command
             $response = $io->askChoice(
                 'Would you like to merge all domain strings into the default.pot file?',
                 ['y', 'n'],
-                'n'
+                'n',
             );
             $this->_merge = strtolower($response) === 'y';
         }
@@ -645,7 +645,7 @@ class I18nExtractCommand extends Command
                 $response = $io->askChoice(
                     sprintf('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
                     ['y', 'n', 'a'],
-                    'y'
+                    'y',
                 );
                 if (strtoupper($response) === 'N') {
                     $response = '';

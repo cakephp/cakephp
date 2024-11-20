@@ -152,7 +152,7 @@ class Arguments
         if (is_array($value)) {
             throw new ConsoleException(sprintf(
                 'Cannot get multiple values for option `%s`, use `getMultipleOption()` instead.',
-                $name
+                $name,
             ));
         }
 
@@ -172,7 +172,7 @@ class Arguments
         if ($value !== null && !is_bool($value)) {
             throw new ConsoleException(sprintf(
                 'Option `%s` is not of type `bool`, use `getOption()` instead.',
-                $name
+                $name,
             ));
         }
 
@@ -190,7 +190,7 @@ class Arguments
         if ($value !== null && !is_array($value)) {
             throw new ConsoleException(sprintf(
                 'Option `%s` is not of type `array`, use `getOption()` instead.',
-                $name
+                $name,
             ));
         }
 
@@ -220,7 +220,7 @@ class Arguments
 
         throw new ConsoleException(sprintf(
             'Argument `%s` is not defined on this Command. Could this be an option maybe?',
-            $name
+            $name,
         ));
     }
 }

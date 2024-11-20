@@ -69,7 +69,7 @@ class I18n
                 'default' => IcuFormatter::class,
                 'sprintf' => SprintfFormatter::class,
             ]),
-            static::getLocale()
+            static::getLocale(),
         );
 
         if (class_exists(Cache::class)) {
@@ -79,7 +79,7 @@ class I18n
                 $pool = Cache::pool('_cake_core_');
                 deprecationWarning(
                     '5.1.0',
-                    'Cache config `_cake_core_` is deprecated. Use `_cake_translations_` instead'
+                    'Cache config `_cake_core_` is deprecated. Use `_cake_translations_` instead',
                 );
             }
             static::$_collection->setCacher($pool);
@@ -161,7 +161,7 @@ class I18n
         if ($translator === null) {
             throw new I18nException(sprintf(
                 'Translator for domain `%s` could not be found.',
-                $name
+                $name,
             ));
         }
 

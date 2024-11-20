@@ -132,13 +132,13 @@ class ConsoleInputOption
 
         if (strlen($this->_short) > 1) {
             throw new ConsoleException(
-                sprintf('Short option `%s` is invalid, short options must be one letter.', $this->_short)
+                sprintf('Short option `%s` is invalid, short options must be one letter.', $this->_short),
             );
         }
         if ($this->_default !== null && $this->prompt) {
             throw new ConsoleException(
                 'You cannot set both `prompt` and `default` options. ' .
-                'Use either a static `default` or interactive `prompt`'
+                'Use either a static `default` or interactive `prompt`',
             );
         }
     }
@@ -275,8 +275,8 @@ class ConsoleInputOption
                     '`%s` is not a valid value for `--%s`. Please use one of `%s`',
                     (string)$value,
                     $this->_name,
-                    implode(', ', $this->_choices)
-                )
+                    implode(', ', $this->_choices),
+                ),
             );
         }
 

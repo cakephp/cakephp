@@ -174,7 +174,7 @@ class MultiCheckboxWidget extends BasicWidget
                 if (isset($data['id'])) {
                     $checkbox['id'] = $data['id'] . '-' . trim(
                         $this->_idSuffix((string)$checkbox['value']),
-                        '-'
+                        '-',
                     );
                 } else {
                     $checkbox['id'] = $this->_id($checkbox['name'], (string)$checkbox['value']);
@@ -201,7 +201,7 @@ class MultiCheckboxWidget extends BasicWidget
             'templateVars' => $checkbox['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $checkbox,
-                ['name', 'value', 'text', 'options', 'label', 'val', 'type']
+                ['name', 'value', 'text', 'options', 'label', 'val', 'type'],
             ),
         ]);
 

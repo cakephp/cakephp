@@ -246,12 +246,12 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             $start = $this->buildOffsetSql(
                 $binder,
                 $this->frame['start']['offset'],
-                $this->frame['start']['direction']
+                $this->frame['start']['direction'],
             );
             $end = $this->buildOffsetSql(
                 $binder,
                 $this->frame['end']['offset'],
-                $this->frame['end']['direction']
+                $this->frame['end']['direction'],
             );
 
             $frameSql = sprintf('%s BETWEEN %s AND %s', $this->frame['type'], $start, $end);
@@ -322,7 +322,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         return sprintf(
             '%s %s',
             $offset ?? 'UNBOUNDED',
-            $direction
+            $direction,
         );
     }
 

@@ -103,7 +103,7 @@ class CommonTableExpression implements ExpressionInterface
             $query = $query();
             if (!($query instanceof ExpressionInterface)) {
                 throw new DatabaseException(
-                    'You must return an `ExpressionInterface` from a Closure passed to `query()`.'
+                    'You must return an `ExpressionInterface` from a Closure passed to `query()`.',
                 );
             }
         }
@@ -198,7 +198,7 @@ class CommonTableExpression implements ExpressionInterface
             $this->name->sql($binder),
             $fields,
             $suffix,
-            $this->query ? $this->query->sql($binder) : ''
+            $this->query ? $this->query->sql($binder) : '',
         );
     }
 

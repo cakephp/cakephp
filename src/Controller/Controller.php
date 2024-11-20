@@ -319,9 +319,9 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 array_pop($parts),
                 $name,
                 $trace[0]['file'],
-                $trace[0]['line']
+                $trace[0]['line'],
             ),
-            E_USER_NOTICE
+            E_USER_NOTICE,
         );
 
         return null;
@@ -507,8 +507,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 sprintf(
                     'Controller actions can only return Response instance or null. '
                     . 'Got %s instead.',
-                    get_debug_type($result)
-                )
+                    get_debug_type($result),
+                ),
             );
         } elseif ($this->isAutoRenderEnabled()) {
             $result = $this->render();
@@ -646,7 +646,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($status < 300 || $status > 399) {
             throw new InvalidArgumentException(
                 sprintf('Invalid status code `%s`. It should be within the range ' .
-                    '`300` - `399` for redirect responses.', $status)
+                    '`300` - `399` for redirect responses.', $status),
             );
         }
 
@@ -808,7 +808,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         if ($this->request->getParam('prefix')) {
             $prefixes = array_map(
                 'Cake\Utility\Inflector::camelize',
-                explode('/', $this->request->getParam('prefix'))
+                explode('/', $this->request->getParam('prefix')),
             );
             $templatePath = implode(DIRECTORY_SEPARATOR, $prefixes) . DIRECTORY_SEPARATOR . $templatePath;
         }
@@ -874,7 +874,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $paginator = App::className(
             $settings['className'] ?? NumericPaginator::class,
             'Datasource/Paging',
-            'Paginator'
+            'Paginator',
         );
         $paginator = new $paginator();
         unset($settings['className']);
@@ -883,7 +883,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             $results = $paginator->paginate(
                 $object,
                 $this->request->getQueryParams(),
-                $settings
+                $settings,
             );
         } catch (PageOutOfBoundsException $exception) {
             throw new NotFoundException(null, null, $exception);

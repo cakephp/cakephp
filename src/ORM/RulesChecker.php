@@ -151,7 +151,7 @@ class RulesChecker extends BaseRulesChecker
             $field,
             $message,
             LinkConstraint::STATUS_LINKED,
-            '_isLinkedTo'
+            '_isLinkedTo',
         );
     }
 
@@ -184,7 +184,7 @@ class RulesChecker extends BaseRulesChecker
             $field,
             $message,
             LinkConstraint::STATUS_NOT_LINKED,
-            '_isNotLinkedTo'
+            '_isNotLinkedTo',
         );
     }
 
@@ -234,19 +234,19 @@ class RulesChecker extends BaseRulesChecker
                 $message = __d(
                     'cake',
                     'Cannot modify row: a constraint for the `{0}` association fails.',
-                    $associationAlias
+                    $associationAlias,
                 );
             } else {
                 $message = sprintf(
                     'Cannot modify row: a constraint for the `%s` association fails.',
-                    $associationAlias
+                    $associationAlias,
                 );
             }
         }
 
         $rule = new LinkConstraint(
             $association,
-            $linkStatus
+            $linkStatus,
         );
 
         return $this->_addError($rule, $ruleName, compact('errorField', 'message'));
@@ -280,7 +280,7 @@ class RulesChecker extends BaseRulesChecker
         return $this->_addError(
             new ValidCount($field),
             '_validCount',
-            compact('count', 'operator', 'errorField', 'message')
+            compact('count', 'operator', 'errorField', 'message'),
         );
     }
 }

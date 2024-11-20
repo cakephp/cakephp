@@ -61,14 +61,14 @@ class TransactionStrategy implements FixtureStrategyInterface
                 assert(
                     $connection->inTransaction() === false,
                     'Cannot start transaction strategy inside a transaction. ' .
-                    'Ensure you have closed all open transactions.'
+                    'Ensure you have closed all open transactions.',
                 );
                 $connection->enableSavePoints();
                 if (!$connection->isSavePointsEnabled()) {
                     throw new DatabaseException(
                         "Could not enable save points for the `{$connection->configName()}` connection. " .
                             'Your database needs to support savepoints in order to use ' .
-                            'TransactionStrategy.'
+                            'TransactionStrategy.',
                     );
                 }
 

@@ -33,7 +33,7 @@ class DebugTransport extends AbstractTransport
     public function send(Message $message): array
     {
         $headers = $message->getHeadersString(
-            ['from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'subject']
+            ['from', 'sender', 'replyTo', 'readReceipt', 'returnPath', 'to', 'cc', 'subject'],
         );
         $message = implode("\r\n", $message->getBody());
 

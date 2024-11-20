@@ -242,7 +242,7 @@ class ConsoleOutput
             $output = preg_replace_callback(
                 '/<(?P<tag>[a-z0-9-_.]+)>(?P<text>.*?)<\/(\1)>/ims',
                 $replaceTags,
-                $text
+                $text,
             );
             if ($output !== null) {
                 return $output;

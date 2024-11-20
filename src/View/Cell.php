@@ -178,7 +178,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
                 throw new BadMethodCallException(sprintf(
                     'Class `%s` does not have a `%s` method.',
                     static::class,
-                    $this->action
+                    $this->action,
                 ));
             }
 
@@ -195,7 +195,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
             $name = substr($name, 0, -4);
             if (!$builder->getTemplatePath()) {
                 $builder->setTemplatePath(
-                    static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name)
+                    static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name),
                 );
             }
             $template = $builder->getTemplate();
@@ -210,7 +210,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
                     $attributes['file'],
                     $attributes['paths'],
                     null,
-                    $e
+                    $e,
                 );
             }
         };
@@ -270,7 +270,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
                 'Could not render cell - %s [%s, line %d]',
                 $e->getMessage(),
                 $e->getFile(),
-                $e->getLine()
+                $e->getLine(),
             ), E_USER_WARNING);
 
             return '';
@@ -280,7 +280,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
                 'Could not render cell - %s [%s, line %d]',
                 $e->getMessage(),
                 $e->getFile(),
-                $e->getLine()
+                $e->getLine(),
             ), 0, $e);
         }
     }

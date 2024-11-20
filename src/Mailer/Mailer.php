@@ -266,7 +266,7 @@ class Mailer implements EventListenerInterface
     {
         deprecationWarning(
             '5.1.0',
-            'Setting the message instance is deprecated. Configure the mailer according to the documentation instead.'
+            'Setting the message instance is deprecated. Configure the mailer according to the documentation instead.',
         );
         $this->message = $message;
 
@@ -360,7 +360,7 @@ class Mailer implements EventListenerInterface
     {
         $content = $this->getRenderer()->render(
             $content,
-            $this->message->getBodyTypes()
+            $this->message->getBodyTypes(),
         );
 
         $this->message->setBody($content);
@@ -483,7 +483,7 @@ class Mailer implements EventListenerInterface
         if ($this->transport === null) {
             throw new BadMethodCallException(
                 'Transport was not defined. '
-                . 'You must set on using setTransport() or set `transport` option in your mailer profile.'
+                . 'You must set on using setTransport() or set `transport` option in your mailer profile.',
             );
         }
 
@@ -564,7 +564,7 @@ class Mailer implements EventListenerInterface
         Log::write(
             $this->logConfig['level'],
             PHP_EOL . $this->flatten($contents['headers']) . PHP_EOL . PHP_EOL . $this->flatten($contents['message']),
-            $this->logConfig['scope']
+            $this->logConfig['scope'],
         );
     }
 

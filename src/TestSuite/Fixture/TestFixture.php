@@ -77,7 +77,7 @@ class TestFixture implements FixtureInterface
                 $message = sprintf(
                     'Invalid datasource name `%s` for `%s` fixture. Fixture datasource names must begin with `test`.',
                     $connection,
-                    static::class
+                    static::class,
                 );
                 throw new CakeException($message);
             }
@@ -157,7 +157,7 @@ class TestFixture implements FixtureInterface
             $message = sprintf(
                 'Cannot describe schema for table `%s` for fixture `%s`. The table does not exist.',
                 $this->table,
-                static::class
+                static::class,
             );
             throw new CakeException($message, null, $e);
         }

@@ -378,7 +378,7 @@ class Connection implements ConnectionInterface
             return $this->_schemaCollection = new CachedCollection(
                 new SchemaCollection($this),
                 empty($this->_config['cacheKeyPrefix']) ? $this->configName() : $this->_config['cacheKeyPrefix'],
-                $this->getCacher()
+                $this->getCacher(),
             );
         }
 
@@ -766,7 +766,7 @@ class Connection implements ConnectionInterface
         if (!class_exists(Cache::class)) {
             throw new CakeException(
                 'To use caching you must either set a cacher using Connection::setCacher()' .
-                ' or require the cakephp/cache package in your composer config.'
+                ' or require the cakephp/cache package in your composer config.',
             );
         }
 

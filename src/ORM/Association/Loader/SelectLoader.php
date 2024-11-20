@@ -278,8 +278,8 @@ class SelectLoader
             throw new InvalidArgumentException(
                 sprintf(
                     'You are required to select the "%s" field(s)',
-                    implode(', ', $key)
-                )
+                    implode(', ', $key),
+                ),
             );
         }
     }
@@ -317,7 +317,7 @@ class SelectLoader
 
         return $query->innerJoin(
             [$aliasedTable => $subquery],
-            $conditions
+            $conditions,
         );
     }
 

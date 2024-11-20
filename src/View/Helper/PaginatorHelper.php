@@ -113,7 +113,7 @@ class PaginatorHelper extends Helper
         unset($query['page'], $query['limit'], $query['sort'], $query['direction']);
         $this->setConfig(
             'options.url',
-            array_merge($this->_View->getRequest()->getParam('pass', []), ['?' => $query])
+            array_merge($this->_View->getRequest()->getParam('pass', []), ['?' => $query]),
         );
     }
 
@@ -276,7 +276,7 @@ class PaginatorHelper extends Helper
 
         $url = $this->generateUrl(
             ['page' => $this->paginated()->currentPage() + $options['step']],
-            $options['url']
+            $options['url'],
         );
 
         $out = $templater->format($template, [
@@ -503,7 +503,7 @@ class PaginatorHelper extends Helper
 
         $options += array_intersect_key(
             $paging,
-            ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null]
+            ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null],
         );
 
         if (!empty($options['page']) && $options['page'] === 1) {
@@ -733,7 +733,7 @@ class PaginatorHelper extends Helper
         $end = max(1 + $options['modulus'], $params['currentPage'] + $half);
         $start = min(
             $params['pageCount'] - $options['modulus'],
-            $params['currentPage'] - $half - $options['modulus'] % 2
+            $params['currentPage'] - $half - $options['modulus'] % 2,
         );
 
         if ($options['first']) {
@@ -1074,8 +1074,8 @@ class PaginatorHelper extends Helper
                 $this->generateUrl(
                     ['page' => $this->paginated()->currentPage() - 1],
                     [],
-                    ['escape' => false, 'fullBase' => true]
-                )
+                    ['escape' => false, 'fullBase' => true],
+                ),
             );
         }
 
@@ -1085,15 +1085,15 @@ class PaginatorHelper extends Helper
                 $this->generateUrl(
                     ['page' => $this->paginated()->currentPage() + 1],
                     [],
-                    ['escape' => false, 'fullBase' => true]
-                )
+                    ['escape' => false, 'fullBase' => true],
+                ),
             );
         }
 
         if ($options['first']) {
             $links[] = $this->Html->meta(
                 'first',
-                $this->generateUrl(['page' => 1], [], ['escape' => false, 'fullBase' => true])
+                $this->generateUrl(['page' => 1], [], ['escape' => false, 'fullBase' => true]),
             );
         }
 
@@ -1103,8 +1103,8 @@ class PaginatorHelper extends Helper
                 $this->generateUrl(
                     ['page' => $this->paginated()->pageCount()],
                     [],
-                    ['escape' => false, 'fullBase' => true]
-                )
+                    ['escape' => false, 'fullBase' => true],
+                ),
             );
         }
 

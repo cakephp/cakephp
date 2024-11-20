@@ -723,7 +723,7 @@ class RouteBuilder
             if ($routeClass === null) {
                 throw new InvalidArgumentException(sprintf(
                     'Cannot find route class %s',
-                    $options['routeClass']
+                    $options['routeClass'],
                 ));
             }
 
@@ -741,7 +741,7 @@ class RouteBuilder
                         $param,
                         $val,
                         $param,
-                        $defaults[$param]
+                        $defaults[$param],
                     ));
                 }
             }

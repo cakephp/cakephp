@@ -283,7 +283,7 @@ class Session
         $className = App::className($class, 'Http/Session');
         if ($className === null) {
             throw new InvalidArgumentException(
-                sprintf('The class `%s` does not exist and cannot be used as a session engine', $class)
+                sprintf('The class `%s` does not exist and cannot be used as a session engine', $class),
             );
         }
 
@@ -328,7 +328,7 @@ class Session
         foreach ($options as $setting => $value) {
             if (ini_set($setting, (string)$value) === false) {
                 throw new CakeException(
-                    sprintf('Unable to configure the session, setting %s failed.', $setting)
+                    sprintf('Unable to configure the session, setting %s failed.', $setting),
                 );
             }
         }
@@ -516,7 +516,7 @@ class Session
                 $message .= sprintf(
                     ', headers already sent in file `%s` on line `%s`',
                     Debugger::trimPath($this->headerSentInfo['filename']),
-                    $this->headerSentInfo['line']
+                    $this->headerSentInfo['line'],
                 );
             }
 
@@ -660,7 +660,7 @@ class Session
             $params['path'],
             $params['domain'],
             $params['secure'],
-            $params['httponly']
+            $params['httponly'],
         );
 
         if (session_id() !== '') {

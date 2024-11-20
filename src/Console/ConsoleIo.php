@@ -489,7 +489,7 @@ class ConsoleIo
         $options = array_merge(
             array_map('strtolower', $options),
             array_map('strtoupper', $options),
-            $options
+            $options,
         );
         $in = '';
         while ($in === '' || !in_array($in, $options, true)) {

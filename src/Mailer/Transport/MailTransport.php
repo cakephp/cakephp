@@ -55,7 +55,7 @@ class MailTransport extends AbstractTransport
             $eol,
             function ($val) {
                 return str_replace("\r\n", '', $val);
-            }
+            },
         );
 
         $message = $message->getBodyString($eol);

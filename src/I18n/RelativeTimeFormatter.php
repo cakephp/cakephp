@@ -51,7 +51,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         }
         assert(
             ($first instanceof ChronosDate && $second instanceof ChronosDate) ||
-            ($first instanceof DateTimeInterface && $second instanceof DateTimeInterface)
+            ($first instanceof DateTimeInterface && $second instanceof DateTimeInterface),
         );
 
         $diffInterval = $first->diff($second);
@@ -312,7 +312,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         $fNum = str_replace(
             ['year', 'month', 'week', 'day', 'hour', 'minute', 'second'],
             ['1', '2', '3', '4', '5', '6', '7'],
-            $fWord
+            $fWord,
         );
 
         return [

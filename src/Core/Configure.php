@@ -331,8 +331,8 @@ class Configure
                 sprintf(
                     'Config %s engine not found when attempting to load %s.',
                     $config,
-                    $key
-                )
+                    $key,
+                ),
             );
         }
 

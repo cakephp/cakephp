@@ -229,7 +229,7 @@ class Cookie implements CookieInterface
             $options['domain'],
             $options['secure'],
             $options['httponly'],
-            $options['samesite']
+            $options['samesite'],
         );
     }
 
@@ -326,7 +326,7 @@ class Cookie implements CookieInterface
         return Cookie::create(
             $name,
             $value,
-            $data
+            $data,
         );
     }
 
@@ -410,7 +410,7 @@ class Cookie implements CookieInterface
     {
         if (preg_match("/[=,;\t\r\n\013\014]/", $name)) {
             throw new InvalidArgumentException(
-                sprintf('The cookie name `%s` contains invalid characters.', $name)
+                sprintf('The cookie name `%s` contains invalid characters.', $name),
             );
         }
 

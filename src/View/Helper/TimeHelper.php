@@ -332,7 +332,7 @@ class TimeHelper extends Helper
                 $element['tag'],
                 $this->templater()->formatAttributes($element, ['tag']),
                 $relativeDate,
-                $element['tag']
+                $element['tag'],
             );
         }
 

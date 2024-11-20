@@ -132,8 +132,8 @@ trait ValidatorAwareTrait
                 'The `%s::%s()` validation method must return an instance of `%s`.',
                 static::class,
                 $method,
-                Validator::class
-            )
+                Validator::class,
+            ),
         );
 
         return $validator;

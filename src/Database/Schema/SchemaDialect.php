@@ -112,7 +112,7 @@ abstract class SchemaDialect
 
         return implode(', ', array_map(
             $this->_driver->quoteIdentifier(...),
-            $references
+            $references,
         ));
     }
 
@@ -176,7 +176,7 @@ abstract class SchemaDialect
     {
         $sql = sprintf(
             'DROP TABLE %s',
-            $this->_driver->quoteIdentifier($schema->name())
+            $this->_driver->quoteIdentifier($schema->name()),
         );
 
         return [$sql];

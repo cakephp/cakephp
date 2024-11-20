@@ -125,7 +125,7 @@ class ExceptionTrap
             if (!is_subclass_of($class, ExceptionRendererInterface::class)) {
                 throw new InvalidArgumentException(
                     "Cannot use `{$class}` as an `exceptionRenderer`. " .
-                    'It must be an instance of `Cake\Error\ExceptionRendererInterface`.'
+                    'It must be an instance of `Cake\Error\ExceptionRendererInterface`.',
                 );
             }
 
@@ -279,7 +279,7 @@ class ExceptionTrap
             $error['type'],
             $error['message'],
             $error['file'],
-            $error['line']
+            $error['line'],
         );
     }
 

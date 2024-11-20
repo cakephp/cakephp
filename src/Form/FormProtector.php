@@ -75,7 +75,7 @@ class FormProtector
             $hashParts['fields'],
             $hashParts['unlockedFields'],
             $url,
-            $sessionId
+            $sessionId,
         );
 
         if (hash_equals($generatedToken, $extractedToken)) {
@@ -325,8 +325,8 @@ class FormProtector
         $unlockedFields = array_unique(
             array_merge(
                 $this->unlockedFields,
-                $unlocked
-            )
+                $unlocked,
+            ),
         );
 
         /** @var string $key */
@@ -469,7 +469,7 @@ class FormProtector
             $expectedFields,
             'Unexpected field `%s` in POST data',
             'Tampered field `%s` in POST data (expected value `%s` but found `%s`)',
-            'Missing field `%s` in POST data'
+            'Missing field `%s` in POST data',
         );
         $expectedUnlockedFields = Hash::get($expectedParts, 2);
         $dataUnlockedFields = Hash::get($hashParts, 'unlockedFields') ?: [];
@@ -478,7 +478,7 @@ class FormProtector
             $expectedUnlockedFields,
             'Unexpected unlocked field `%s` in POST data',
             '',
-            'Missing unlocked field: `%s`'
+            'Missing unlocked field: `%s`',
         );
 
         $messages = array_merge($messages, $fieldsMessages, $unlockFieldsMessages);

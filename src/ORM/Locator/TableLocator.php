@@ -149,7 +149,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         if (isset($this->instances[$alias])) {
             throw new DatabaseException(sprintf(
                 'You cannot configure `%s`, it has already been constructed.',
-                $alias
+                $alias,
             ));
         }
 

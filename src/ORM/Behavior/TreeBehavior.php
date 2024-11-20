@@ -212,7 +212,7 @@ class TreeBehavior extends Behavior
 
             $this->_table->updateAll(
                 [$config['level'] => $depth],
-                [$primaryKey => $node->get($primaryKey)]
+                [$primaryKey => $node->get($primaryKey)],
             );
         }
     }
@@ -238,7 +238,7 @@ class TreeBehavior extends Behavior
                     ->where(
                         fn (QueryExpression $exp) => $exp
                             ->gte($config['leftField'], $left + 1)
-                            ->lte($config['leftField'], $right - 1)
+                            ->lte($config['leftField'], $right - 1),
                     );
 
                 $entities = $query->toArray();
@@ -250,7 +250,7 @@ class TreeBehavior extends Behavior
                     ->where(
                         fn (QueryExpression $exp) => $exp
                             ->gte($config['leftField'], $left + 1)
-                            ->lte($config['leftField'], $right - 1)
+                            ->lte($config['leftField'], $right - 1),
                     )
                     ->execute();
             }
@@ -283,7 +283,7 @@ class TreeBehavior extends Behavior
             throw new DatabaseException(sprintf(
                 'Cannot use node `%s` as parent for entity `%s`.',
                 $parent,
-                $entity->get($this->_getPrimaryKey())
+                $entity->get($this->_getPrimaryKey()),
             ));
         }
 
@@ -375,7 +375,7 @@ class TreeBehavior extends Behavior
                     ->eq($config['leftField'], $leftInverse->add($config['leftField']))
                     ->eq($config['rightField'], $rightInverse->add($config['rightField']));
             },
-            fn (QueryExpression $exp) => $exp->lt($config['leftField'], 0)
+            fn (QueryExpression $exp) => $exp->lt($config['leftField'], 0),
         );
     }
 
@@ -396,7 +396,7 @@ class TreeBehavior extends Behavior
             function ($field) {
                 return $this->_table->aliasField($field);
             },
-            [$config['left'], $config['right']]
+            [$config['left'], $config['right']],
         );
 
         $node = $this->_table->get($for, select: [$left, $right]);
@@ -452,7 +452,7 @@ class TreeBehavior extends Behavior
             function ($field) {
                 return $this->_table->aliasField($field);
             },
-            [$config['parent'], $config['left'], $config['right']]
+            [$config['parent'], $config['left'], $config['right']],
         );
 
         if ($query->clause('order') === null) {
@@ -529,7 +529,7 @@ class TreeBehavior extends Behavior
                 assert(is_callable($valuePath) || is_string($valuePath));
 
                 return $nested->printer($valuePath, $keyPath, $spacer);
-            }
+            },
         );
     }
 
@@ -576,7 +576,7 @@ class TreeBehavior extends Behavior
         $primary = $this->_getPrimaryKey();
         $this->_table->updateAll(
             [$config['parent'] => $parent],
-            [$config['parent'] => $node->get($primary)]
+            [$config['parent'] => $node->get($primary)],
         );
         $this->_sync(1, '-', 'BETWEEN ' . ($left + 1) . ' AND ' . ($right - 1));
         $this->_sync(2, '-', "> {$right}");
@@ -844,7 +844,7 @@ class TreeBehavior extends Behavior
 
             $this->_table->updateAll(
                 $fields,
-                [$primaryKey => $node[$primaryKey]]
+                [$primaryKey => $node[$primaryKey]],
             );
         }
 

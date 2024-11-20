@@ -316,7 +316,7 @@ if (!function_exists('Cake\Core\triggerWarning')) {
                 '%s - %s, line: %s',
                 $message,
                 $frame['file'],
-                $frame['line']
+                $frame['line'],
             );
         }
         trigger_error($message, E_USER_WARNING);
@@ -367,7 +367,7 @@ if (!function_exists('Cake\Core\deprecationWarning')) {
                 $message,
                 $frame['file'],
                 $frame['line'],
-                $relative
+                $relative,
             );
         }
 

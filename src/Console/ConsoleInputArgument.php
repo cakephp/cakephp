@@ -197,8 +197,8 @@ class ConsoleInputArgument
                     '`%s` is not a valid value for `%s`. Please use one of `%s`',
                     $value,
                     $this->_name,
-                    implode(', ', $this->_choices)
-                )
+                    implode(', ', $this->_choices),
+                ),
             );
         }
 

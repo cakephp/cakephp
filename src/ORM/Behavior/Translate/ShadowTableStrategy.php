@@ -86,7 +86,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $this->table = $table;
         $this->translationTable = $this->getTableLocator()->get(
             $this->_config['translationTable'],
-            ['allowFallbackClass' => true]
+            ['allowFallbackClass' => true],
         );
 
         $this->setupAssociations();
@@ -155,7 +155,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $query->formatResults(
             fn (CollectionInterface $results) => $this->rowMapper($results, $locale),
-            $query::PREPEND
+            $query::PREPEND,
         );
     }
 
@@ -179,7 +179,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 [
                     'className' => $config['translationTable'],
                     'allowFallbackClass' => true,
-                ]
+                ],
             );
         }
 
@@ -287,7 +287,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 }
 
                 return $c;
-            }
+            },
         );
 
         return $joinRequired;
@@ -339,7 +339,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 if (in_array($field, $mainTableFields, true)) {
                     $expression->setField("{$mainTableAlias}.{$field}");
                 }
-            }
+            },
         );
 
         return $joinRequired;
@@ -426,7 +426,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 [
                     'useSetters' => false,
                     'markNew' => true,
-                ]
+                ],
             );
         }
 

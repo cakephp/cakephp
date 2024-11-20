@@ -281,7 +281,7 @@ class AssociationCollection implements IteratorAggregate
                 $msg = sprintf(
                     'Cannot save `%s`, it is not associated to `%s`.',
                     $alias,
-                    $table->getAlias()
+                    $table->getAlias(),
                 );
                 throw new InvalidArgumentException($msg);
             }

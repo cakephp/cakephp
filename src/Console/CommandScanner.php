@@ -42,7 +42,7 @@ class CommandScanner
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Command' . DIRECTORY_SEPARATOR,
             'Cake\Command\\',
             '',
-            ['command_list']
+            ['command_list'],
         );
     }
 
@@ -59,7 +59,7 @@ class CommandScanner
             App::classPath('Command')[0],
             $appNamespace . '\Command\\',
             '',
-            []
+            [],
         );
     }
 

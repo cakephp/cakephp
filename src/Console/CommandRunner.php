@@ -299,7 +299,7 @@ class CommandRunner implements EventDispatcherInterface
                 "Unknown command `{$this->root} {$name}`. " .
                 "Run `{$this->root} --help` to get the list of commands.",
                 $name,
-                $commands->keys()
+                $commands->keys(),
             );
         }
 

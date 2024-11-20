@@ -325,7 +325,7 @@ class Router
                     'URL filter defined in %s on line %s could not be applied. The filter failed with: %s',
                     $ref->getFileName(),
                     $ref->getStartLine(),
-                    $e->getMessage()
+                    $e->getMessage(),
                 );
                 throw new CakeException($message, (int)$e->getCode(), $e);
             }
@@ -561,7 +561,7 @@ class Router
                 $base = sprintf(
                     '%s://%s',
                     static::$_requestContext['_scheme'],
-                    static::$_requestContext['_host']
+                    static::$_requestContext['_host'],
                 );
                 if (!empty(static::$_requestContext['_port'])) {
                     $base .= ':' . static::$_requestContext['_port'];
@@ -614,7 +614,7 @@ class Router
         unset(
             $params['pass'],
             $params['_matchedRoute'],
-            $params['_name']
+            $params['_name'],
         );
         if (!$route && $template) {
             // Locate the route that was used to match this route
@@ -792,7 +792,7 @@ class Router
         foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
             if (array_key_exists($key, $url)) {
                 throw new InvalidArgumentException(
-                    "`{$key}` cannot be used when defining route targets with a string route path."
+                    "`{$key}` cannot be used when defining route targets with a string route path.",
                 );
             }
         }
@@ -856,13 +856,13 @@ class Router
                 if (str_contains($param, '=')) {
                     if (!preg_match('/(?<key>.+?)=(?<value>.*)/', $param, $paramMatches)) {
                         throw new InvalidArgumentException(
-                            "Could not parse a key=value from `{$param}` in route path `{$url}`."
+                            "Could not parse a key=value from `{$param}` in route path `{$url}`.",
                         );
                     }
                     $paramKey = $paramMatches['key'];
                     if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $paramKey)) {
                         throw new InvalidArgumentException(
-                            "Param key `{$paramKey}` is not valid in route path `{$url}`."
+                            "Param key `{$paramKey}` is not valid in route path `{$url}`.",
                         );
                     }
                     $defaults[$paramKey] = trim($paramMatches['value'], '\'"');

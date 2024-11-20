@@ -82,7 +82,7 @@ abstract class SerializedView extends View
                 throw new SerializationFailureException(
                     'Serialization of View data failed.',
                     null,
-                    $e
+                    $e,
                 );
             }
         }

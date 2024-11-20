@@ -724,7 +724,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return new UnaryExpression(
                 'IS NULL',
                 new IdentifierExpression($expression),
-                UnaryExpression::POSTFIX
+                UnaryExpression::POSTFIX,
             );
         }
 
@@ -732,7 +732,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return new UnaryExpression(
                 'IS NOT NULL',
                 new IdentifierExpression($expression),
-                UnaryExpression::POSTFIX
+                UnaryExpression::POSTFIX,
             );
         }
 
@@ -746,7 +746,7 @@ class QueryExpression implements ExpressionInterface, Countable
 
         if ($value === null && $this->_conjunction !== ',') {
             throw new InvalidArgumentException(
-                sprintf('Expression `%s` is missing operator (IS, IS NOT) with `null` value.', $expression)
+                sprintf('Expression `%s` is missing operator (IS, IS NOT) with `null` value.', $expression),
             );
         }
 

@@ -244,7 +244,7 @@ class SmtpTransport extends AbstractTransport
         if ($authType !== null) {
             if (!in_array($authType, self::SUPPORTED_AUTH_TYPES)) {
                 throw new CakeException(
-                    'Unsupported auth type. Available types are: ' . implode(', ', self::SUPPORTED_AUTH_TYPES)
+                    'Unsupported auth type. Available types are: ' . implode(', ', self::SUPPORTED_AUTH_TYPES),
                 );
             }
 
@@ -321,7 +321,7 @@ class SmtpTransport extends AbstractTransport
                 throw new SocketException(
                     'SMTP server did not accept the connection or trying to connect to non TLS SMTP server using TLS.',
                     null,
-                    $e
+                    $e,
                 );
             }
             try {
@@ -384,9 +384,9 @@ class SmtpTransport extends AbstractTransport
         return $this->_smtpSend(
             sprintf(
                 'AUTH PLAIN %s',
-                base64_encode(chr(0) . $username . chr(0) . $password)
+                base64_encode(chr(0) . $username . chr(0) . $password),
             ),
-            '235|504|534|535'
+            '235|504|534|535',
         );
     }
 
@@ -415,7 +415,7 @@ class SmtpTransport extends AbstractTransport
             throw new SocketException('SMTP authentication method not allowed, check if SMTP server requires TLS.');
         } else {
             throw new SocketException(
-                'AUTH command not recognized or not implemented, SMTP server may not require authentication.'
+                'AUTH command not recognized or not implemented, SMTP server may not require authentication.',
             );
         }
     }
@@ -434,7 +434,7 @@ class SmtpTransport extends AbstractTransport
         $authString = base64_encode(sprintf(
             "user=%s\1auth=Bearer %s\1\1",
             $username,
-            $token
+            $token,
         ));
 
         $this->_smtpSend('AUTH XOAUTH2 ' . $authString, '235');

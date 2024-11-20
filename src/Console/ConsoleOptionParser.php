@@ -388,7 +388,7 @@ class ConsoleOptionParser
                 $options['choices'],
                 $options['multiple'],
                 $options['required'],
-                $options['prompt']
+                $options['prompt'],
             );
         }
         $this->_options[$name] = $option;
@@ -585,7 +585,7 @@ class ConsoleOptionParser
             if (!isset($args[$i])) {
                 if ($arg->isRequired()) {
                     throw new ConsoleException(
-                        sprintf('Missing required argument. The `%s` argument is required.', $arg->name())
+                        sprintf('Missing required argument. The `%s` argument is required.', $arg->name()),
                     );
                 }
                 if ($arg->defaultValue() !== null) {
@@ -610,7 +610,7 @@ class ConsoleOptionParser
                 if (!$io) {
                     throw new ConsoleException(
                         'Cannot use interactive option prompts without a ConsoleIo instance. ' .
-                        'Please provide a `$io` parameter to `parse()`.'
+                        'Please provide a `$io` parameter to `parse()`.',
                     );
                 }
                 $choices = $option->choices();
@@ -623,7 +623,7 @@ class ConsoleOptionParser
             }
             if ($option->isRequired() && !isset($params[$name])) {
                 throw new ConsoleException(
-                    sprintf('Missing required option. The `%s` option is required and has no default value.', $name)
+                    sprintf('Missing required option. The `%s` option is required and has no default value.', $name),
                 );
             }
         }
@@ -716,7 +716,7 @@ class ConsoleOptionParser
             throw new MissingOptionException(
                 sprintf('Unknown short option `%s`.', $key),
                 $key,
-                $options
+                $options,
             );
         }
         $name = $this->_shortOptions[$key];
@@ -738,7 +738,7 @@ class ConsoleOptionParser
             throw new MissingOptionException(
                 sprintf('Unknown option `%s`.', $name),
                 $name,
-                array_keys($this->_options)
+                array_keys($this->_options),
             );
         }
         $option = $this->_options[$name];
@@ -804,7 +804,7 @@ class ConsoleOptionParser
             throw new ConsoleException(sprintf(
                 'Received too many arguments. Got `%s` but only `%s` arguments are defined.',
                 $next,
-                $expected
+                $expected,
             ));
         }
 

@@ -117,7 +117,7 @@ class ErrorLogger implements ErrorLoggerInterface
             $exception::class,
             $exception->getMessage(),
             $exception->getFile(),
-            $exception->getLine()
+            $exception->getLine(),
         );
         $debug = Configure::read('debug');
 

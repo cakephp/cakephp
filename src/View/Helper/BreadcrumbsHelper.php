@@ -289,7 +289,7 @@ class BreadcrumbsHelper extends Helper
 
             $separator['attrs'] = $templater->formatAttributes(
                 $separator,
-                ['innerAttrs', 'separator']
+                ['innerAttrs', 'separator'],
             );
 
             $separatorString = $this->formatTemplate('separator', $separator);

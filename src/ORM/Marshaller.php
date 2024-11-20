@@ -95,7 +95,7 @@ class Marshaller
                     throw new InvalidArgumentException(sprintf(
                         'Cannot marshal data for `%s` association. It is not associated with `%s`.',
                         (string)$key,
-                        $this->_table->getAlias()
+                        $this->_table->getAlias(),
                     ));
                 }
                 continue;

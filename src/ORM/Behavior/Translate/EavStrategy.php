@@ -82,7 +82,7 @@ class EavStrategy implements TranslateStrategyInterface
         $this->table = $table;
         $this->translationTable = $this->getTableLocator()->get(
             $this->_config['translationTable'],
-            ['allowFallbackClass' => true]
+            ['allowFallbackClass' => true],
         );
 
         $this->setupAssociations();
@@ -212,7 +212,7 @@ class EavStrategy implements TranslateStrategyInterface
                 $field,
                 $locale,
                 $query,
-                $select
+                $select,
             );
 
             if ($changeFilter) {
@@ -226,7 +226,7 @@ class EavStrategy implements TranslateStrategyInterface
         $query->contain($contain);
         $query->formatResults(
             fn (CollectionInterface $results) => $this->rowMapper($results, $locale),
-            $query::PREPEND
+            $query::PREPEND,
         );
     }
 

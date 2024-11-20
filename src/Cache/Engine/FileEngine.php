@@ -243,12 +243,12 @@ class FileEngine extends CacheEngine
 
         $directory = new RecursiveDirectoryIterator(
             $this->_config['path'],
-            FilesystemIterator::SKIP_DOTS
+            FilesystemIterator::SKIP_DOTS,
         );
         /** @var \RecursiveDirectoryIterator<\SplFileInfo> $iterator Coerce for phpstan/psalm */
         $iterator = new RecursiveIteratorIterator(
             $directory,
-            RecursiveIteratorIterator::SELF_FIRST
+            RecursiveIteratorIterator::SELF_FIRST,
         );
         $cleared = [];
         foreach ($iterator as $fileInfo) {
@@ -394,7 +394,7 @@ class FileEngine extends CacheEngine
                 trigger_error(sprintf(
                     'Could not apply permission mask `%s` on cache file `%s`',
                     $this->_File->getPathname(),
-                    $this->_config['mask']
+                    $this->_config['mask'],
                 ), E_USER_WARNING);
             }
         }
@@ -423,7 +423,7 @@ class FileEngine extends CacheEngine
             $this->_init = false;
             trigger_error(sprintf(
                 '%s is not writable',
-                $this->_config['path']
+                $this->_config['path'],
             ), E_USER_WARNING);
         }
 
@@ -455,7 +455,7 @@ class FileEngine extends CacheEngine
         $directoryIterator = new RecursiveDirectoryIterator($this->_config['path']);
         $contents = new RecursiveIteratorIterator(
             $directoryIterator,
-            RecursiveIteratorIterator::CHILD_FIRST
+            RecursiveIteratorIterator::CHILD_FIRST,
         );
         /** @var array<\SplFileInfo> $filtered */
         $filtered = new CallbackFilterIterator(
@@ -472,9 +472,9 @@ class FileEngine extends CacheEngine
 
                 return str_contains(
                     $current->getPathname(),
-                    DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR
+                    DIRECTORY_SEPARATOR . $group . DIRECTORY_SEPARATOR,
                 );
-            }
+            },
         );
         foreach ($filtered as $object) {
             $path = $object->getPathname();

@@ -610,7 +610,7 @@ trait IntegrationTestTrait
             $controller = $event->getSubject();
             $this->_flashMessages = Hash::merge(
                 $this->_flashMessages,
-                $controller->getRequest()->getSession()->read('Flash')
+                $controller->getRequest()->getSession()->read('Flash'),
             );
         };
         $events->on('Controller.beforeRedirect', ['priority' => -100], $flashCapture);
@@ -928,7 +928,7 @@ trait IntegrationTestTrait
             $this->assertThat(
                 Router::url($url, true),
                 new HeaderEquals($this->_response, 'Location'),
-                $verboseMessage
+                $verboseMessage,
             );
         }
     }
@@ -1303,7 +1303,7 @@ trait IntegrationTestTrait
         $this->assertThat(
             $expected,
             new FlashParamEquals($this->_requestSession, $key, 'message', $at),
-            $verboseMessage
+            $verboseMessage,
         );
     }
 
@@ -1321,7 +1321,7 @@ trait IntegrationTestTrait
         $this->assertThat(
             $expected,
             new FlashParamEquals($this->_requestSession, $key, 'element'),
-            $verboseMessage
+            $verboseMessage,
         );
     }
 
@@ -1340,7 +1340,7 @@ trait IntegrationTestTrait
         $this->assertThat(
             $expected,
             new FlashParamEquals($this->_requestSession, $key, 'element', $at),
-            $verboseMessage
+            $verboseMessage,
         );
     }
 
@@ -1431,7 +1431,7 @@ trait IntegrationTestTrait
         $this->_cookieEncryptionKey = $key;
         $this->assertThat(
             $expected,
-            new CookieEncryptedEquals($this->_response, $name, $encrypt, $this->_getCookieEncryptionKey())
+            new CookieEncryptedEquals($this->_response, $name, $encrypt, $this->_getCookieEncryptionKey()),
         );
     }
 

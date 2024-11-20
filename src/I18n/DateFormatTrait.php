@@ -65,7 +65,7 @@ trait DateFormatTrait
         if (
             preg_match(
                 '/@calendar=(japanese|buddhist|chinese|persian|indian|islamic|hebrew|coptic|ethiopic)/',
-                $locale
+                $locale,
             )
         ) {
             $calendar = IntlDateFormatter::TRADITIONAL;
@@ -89,13 +89,13 @@ trait DateFormatTrait
                 $timeFormat,
                 $timezone,
                 $calendar,
-                $pattern
+                $pattern,
             );
 
             if (!$formatter) {
                 throw new CakeException(
                     'Your version of icu does not support creating a date formatter for ' .
-                    "`{$key}`. You should try to upgrade libicu and the intl extension."
+                    "`{$key}`. You should try to upgrade libicu and the intl extension.",
                 );
             }
 
@@ -152,7 +152,7 @@ trait DateFormatTrait
             $timeFormat,
             $tz,
             null,
-            $pattern
+            $pattern,
         );
         if (!$formatter) {
             throw new CakeException('Unable to create IntlDateFormatter instance');

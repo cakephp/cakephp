@@ -299,7 +299,7 @@ class ArrayContext implements ContextInterface
 
         return array_intersect_key(
             (array)$schema,
-            array_flip(static::VALID_ATTRIBUTES)
+            array_flip(static::VALID_ATTRIBUTES),
         );
     }
 

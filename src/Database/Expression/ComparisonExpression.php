@@ -231,7 +231,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
                 $field = $this->_field instanceof ExpressionInterface ? $this->_field->sql($binder) : $this->_field;
                 /** @var string $field */
                 throw new DatabaseException(
-                    "Impossible to generate condition with empty list of values for field ({$field})"
+                    "Impossible to generate condition with empty list of values for field ({$field})",
                 );
             }
         } else {

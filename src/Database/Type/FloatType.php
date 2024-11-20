@@ -147,7 +147,7 @@ class FloatType extends BaseType implements BatchCastingInterface
             return $this;
         }
         throw new DatabaseException(
-            sprintf('Cannot use locale parsing with the %s class', static::$numberClass)
+            sprintf('Cannot use locale parsing with the %s class', static::$numberClass),
         );
     }
 

@@ -151,7 +151,7 @@ class BelongsTo extends Association
         $foreignKeys = (array)$this->getForeignKey();
         $properties = array_combine(
             $foreignKeys,
-            $targetEntity->extract((array)$this->getBindingKey())
+            $targetEntity->extract((array)$this->getBindingKey()),
         );
         $entity->set($properties, ['guard' => false]);
 
@@ -186,7 +186,7 @@ class BelongsTo extends Association
                 $msg,
                 $this->_name,
                 implode(', ', $foreignKey),
-                implode(', ', $bindingKey)
+                implode(', ', $bindingKey),
             ));
         }
 

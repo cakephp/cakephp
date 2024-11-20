@@ -192,7 +192,7 @@ class Asset
         }
         $webPath = static::assetTimestamp(
             static::webroot($path, $options),
-            $optionTimestamp
+            $optionTimestamp,
         );
 
         $path = static::encodeUrl($webPath);
@@ -248,7 +248,7 @@ class Asset
             $filepath = (string)preg_replace(
                 '/^' . preg_quote(static::requestWebroot(), '/') . '/',
                 '',
-                urldecode($path)
+                urldecode($path),
             );
             $webrootPath = Configure::read('App.wwwRoot') . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
             if (is_file($webrootPath)) {

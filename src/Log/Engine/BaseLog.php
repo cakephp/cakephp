@@ -128,7 +128,7 @@ abstract class BaseLog extends AbstractLogger
         $found = preg_match_all(
             '/(?<!\\\\)\{([a-z0-9-_]+)\}/i',
             $message,
-            $matches
+            $matches,
         );
         if ($found === false) {
             return $message;

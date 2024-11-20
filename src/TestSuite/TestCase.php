@@ -142,7 +142,7 @@ abstract class TestCase extends BaseTestCase
 
                 return true;
             },
-            $errorLevel
+            $errorLevel,
         );
 
         try {
@@ -184,7 +184,7 @@ abstract class TestCase extends BaseTestCase
                 }
 
                 return false;
-            }
+            },
         );
         try {
             $callable();
@@ -725,7 +725,7 @@ abstract class TestCase extends BaseTestCase
                         $val = str_replace(
                             ['.*', '.+'],
                             ['.*?', '.+?'],
-                            $matches[1]
+                            $matches[1],
                         );
                         $quotes = $val !== $matches[1] ? '["\']' : '["\']?';
 
@@ -788,7 +788,7 @@ abstract class TestCase extends BaseTestCase
                 $this->assertMatchesRegularExpression(
                     $expression,
                     (string)$string,
-                    sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description)
+                    sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description),
                 );
 
                 return false;
@@ -961,9 +961,9 @@ abstract class TestCase extends BaseTestCase
                     'Adding non-existent methods (%s) to model `%s` ' .
                     'when mocking will not work in future PHPUnit versions.',
                     implode(',', $nonExistingMethods),
-                    $alias
+                    $alias,
                 ),
-                E_USER_DEPRECATED
+                E_USER_DEPRECATED,
             );
             $builder->addMethods($nonExistingMethods);
         }

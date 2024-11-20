@@ -137,7 +137,7 @@ class Route
                 if (isset($defaults[$key]) && !is_string($defaults[$key])) {
                     throw new CakeException(
                         'Value for `' . $key . '` in $defaults when connecting routes'
-                        . ' must be of type `string` or `null`'
+                        . ' must be of type `string` or `null`',
                     );
                 }
             }
@@ -212,7 +212,7 @@ class Route
         $diff = array_diff((array)$methods, static::VALID_METHODS);
         if ($diff !== []) {
             throw new InvalidArgumentException(
-                sprintf('Invalid HTTP method received. `%s` is invalid.', implode(', ', $diff))
+                sprintf('Invalid HTTP method received. `%s` is invalid.', implode(', ', $diff)),
             );
         }
 
@@ -815,7 +815,7 @@ class Route
             if (!array_key_exists($key, $params)) {
                 throw new InvalidArgumentException(sprintf(
                     'Missing required route key `%s`.',
-                    $key
+                    $key,
                 ));
             }
             $string = $params[$key];
@@ -879,7 +879,7 @@ class Route
             static::PLACEHOLDER_REGEX,
             $this->template,
             $namedElements,
-            PREG_OFFSET_CAPTURE
+            PREG_OFFSET_CAPTURE,
         );
 
         if ($matched) {

@@ -226,7 +226,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
-            'Get the list of available commands for this application.'
+            'Get the list of available commands for this application.',
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
             'boolean' => true,

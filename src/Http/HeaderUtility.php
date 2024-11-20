@@ -119,7 +119,7 @@ class HeaderUtility
             '@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@',
             $value,
             $matches,
-            PREG_SET_ORDER
+            PREG_SET_ORDER,
         );
 
         $return = [];

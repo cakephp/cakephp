@@ -162,7 +162,7 @@ class Socket
             $errStr,
             (int)$this->_config['timeout'],
             $connectAs,
-            $context
+            $context,
         );
         restore_error_handler();
 
@@ -221,7 +221,7 @@ class Socket
             $errStr,
             $timeout,
             $connectAs,
-            $context
+            $context,
         );
 
         if (!$resource) {

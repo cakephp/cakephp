@@ -140,8 +140,8 @@ class CookieCollection implements IteratorAggregate, Countable
             throw new InvalidArgumentException(
                 sprintf(
                     'Cookie `%s` not found. Use `has()` to check first for existence.',
-                    $name
-                )
+                    $name,
+                ),
             );
         }
 
@@ -225,8 +225,8 @@ class CookieCollection implements IteratorAggregate, Countable
                         'Expected `%s[]` as $cookies but instead got `%s` at index %d',
                         static::class,
                         get_debug_type($cookie),
-                        $index
-                    )
+                        $index,
+                    ),
                 );
             }
         }
@@ -260,7 +260,7 @@ class CookieCollection implements IteratorAggregate, Countable
         $cookies = $this->findMatchingCookies(
             $uri->getScheme(),
             $uri->getHost(),
-            $uri->getPath() ?: '/'
+            $uri->getPath() ?: '/',
         );
         $cookies = $extraCookies + $cookies;
         $cookiePairs = [];
@@ -270,7 +270,7 @@ class CookieCollection implements IteratorAggregate, Countable
             if ($size > 4096) {
                 triggerWarning(sprintf(
                     'The cookie `%s` exceeds the recommended maximum cookie length of 4096 bytes.',
-                    $key
+                    $key,
                 ));
             }
             $cookiePairs[] = $cookie;
@@ -338,7 +338,7 @@ class CookieCollection implements IteratorAggregate, Countable
 
         $cookies = static::createFromHeader(
             $response->getHeader('Set-Cookie'),
-            ['domain' => $host, 'path' => $path]
+            ['domain' => $host, 'path' => $path],
         );
         $new = clone $this;
         foreach ($cookies as $cookie) {

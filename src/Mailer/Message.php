@@ -435,7 +435,7 @@ class Message implements JsonSerializable
             'readReceipt',
             $email,
             $name,
-            'Disposition-Notification-To requires only 1 email address.'
+            'Disposition-Notification-To requires only 1 email address.',
         );
     }
 
@@ -642,8 +642,8 @@ class Message implements JsonSerializable
                 throw new InvalidArgumentException(
                     sprintf(
                         'Transfer encoding not available. Can be : %s.',
-                        implode(', ', $this->transferEncodingAvailable)
-                    )
+                        implode(', ', $this->transferEncodingAvailable),
+                    ),
                 );
             }
         }
@@ -892,7 +892,7 @@ class Message implements JsonSerializable
                 'from', 'sender', 'replyTo', 'readReceipt', 'returnPath',
                 'to', 'cc', 'bcc', 'subject',
             ],
-            false
+            false,
         );
         $include += $defaults;
 
@@ -1076,7 +1076,7 @@ class Message implements JsonSerializable
         } else {
             if (!preg_match('/^\<.+@.+\>$/', $message)) {
                 throw new InvalidArgumentException(
-                    'Invalid format to Message-ID. The text should be something like "<uuid@server.com>"'
+                    'Invalid format to Message-ID. The text should be something like "<uuid@server.com>"',
                 );
             }
             $this->messageId = $message;
@@ -1202,7 +1202,7 @@ class Message implements JsonSerializable
             } else {
                 throw new InvalidArgumentException(sprintf(
                     'File must be a filepath or UploadedFileInterface instance. Found `%s` instead.',
-                    gettype($fileInfo['file'])
+                    gettype($fileInfo['file']),
                 ));
             }
             if (
@@ -1518,7 +1518,7 @@ class Message implements JsonSerializable
             if (!in_array($type, $this->emailFormatAvailable, true)) {
                 throw new InvalidArgumentException(sprintf(
                     'Invalid message type: `%s`. Valid types are: `text`, `html`.',
-                    $type
+                    $type,
                 ));
             }
 
@@ -1634,7 +1634,7 @@ class Message implements JsonSerializable
             if (!preg_match('/<[a-z]+.*>/i', $line)) {
                 $formatted = array_merge(
                     $formatted,
-                    explode("\n", Text::wordWrap($line, $wrapLength, "\n", $cut))
+                    explode("\n", Text::wordWrap($line, $wrapLength, "\n", $cut)),
                 );
                 continue;
             }
@@ -1656,7 +1656,7 @@ class Message implements JsonSerializable
                             if ($tmpLineLength > 0) {
                                 $formatted = array_merge(
                                     $formatted,
-                                    explode("\n", Text::wordWrap(trim($tmpLine), $wrapLength, "\n", $cut))
+                                    explode("\n", Text::wordWrap(trim($tmpLine), $wrapLength, "\n", $cut)),
                                 );
                                 $tmpLine = '';
                                 $tmpLineLength = 0;

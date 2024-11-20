@@ -624,7 +624,7 @@ class FormHelper extends Helper
 
         $tokenData = $this->formProtector->buildTokenData(
             $this->_lastAction,
-            $this->_getFormProtectorSessionId()
+            $this->_getFormProtectorSessionId(),
         );
         $tokenFields = array_merge($secureAttributes, [
             'value' => $tokenData['fields'],
@@ -683,7 +683,7 @@ class FormHelper extends Helper
         $session->start();
 
         return new FormProtector(
-            $formTokenData
+            $formTokenData,
         );
     }
 
@@ -917,7 +917,7 @@ class FormHelper extends Helper
 
         $fields = array_merge(
             Hash::normalize($modelFields),
-            Hash::normalize($fields)
+            Hash::normalize($fields),
         );
 
         return $this->controls($fields, $options);
@@ -985,7 +985,7 @@ class FormHelper extends Helper
         if ($legend === true) {
             $isCreate = $context->isCreate();
             $modelName = Inflector::humanize(
-                Inflector::singularize($this->_View->getRequest()->getParam('controller'))
+                Inflector::singularize($this->_View->getRequest()->getParam('controller')),
             );
             if (!$isCreate) {
                 $legend = __d('cake', 'Edit {0}', $modelName);
@@ -1230,7 +1230,7 @@ class FormHelper extends Helper
             case 'input':
                 throw new InvalidArgumentException(sprintf(
                     'Invalid type `input` used for field `%s`.',
-                    $fieldName
+                    $fieldName,
                 ));
 
             default:
@@ -1335,7 +1335,7 @@ class FormHelper extends Helper
         $fieldName = array_slice(explode('.', $fieldName), -1)[0];
 
         $varName = Inflector::variable(
-            $pluralize ? Inflector::pluralize($fieldName) : $fieldName
+            $pluralize ? Inflector::pluralize($fieldName) : $fieldName,
         );
         $varOptions = $this->_View->get($varName);
         if (!is_iterable($varOptions)) {
@@ -1706,14 +1706,14 @@ class FormHelper extends Helper
 
         $options = $this->_initInputField($fieldName, array_merge(
             $options,
-            ['secure' => static::SECURE_SKIP]
+            ['secure' => static::SECURE_SKIP],
         ));
 
         if ($secure === true && $this->formProtector) {
             $this->formProtector->addField(
                 $options['name'],
                 true,
-                $options['val'] === false ? '0' : (string)$options['val']
+                $options['val'] === false ? '0' : (string)$options['val'],
             );
         }
 
@@ -1977,7 +1977,7 @@ class FormHelper extends Helper
         if (isset($options['name']) && $this->formProtector) {
             $this->formProtector->addField(
                 $options['name'],
-                $options['secure']
+                $options['secure'],
             );
         }
         unset($options['secure']);
@@ -2428,7 +2428,7 @@ class FormHelper extends Helper
             if (is_array($first)) {
                 $disabled = array_filter(
                     $options['options'],
-                    fn ($i) => in_array($i['value'], $options['disabled'], true)
+                    fn ($i) => in_array($i['value'], $options['disabled'], true),
                 );
 
                 return $disabled !== [];
@@ -2597,7 +2597,7 @@ class FormHelper extends Helper
             throw new InvalidArgumentException(sprintf(
                 'Invalid value source(s): %s. Valid values are: %s.',
                 implode(', ', $diff),
-                implode(', ', $this->supportedValueSources)
+                implode(', ', $this->supportedValueSources),
             ));
         }
     }

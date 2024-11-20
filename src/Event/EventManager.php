@@ -111,7 +111,7 @@ class EventManager implements EventManagerInterface
 
         if ($callable === null && !is_callable($options)) {
             throw new InvalidArgumentException(
-                'Second argument of `EventManager::on()` must be a callable if `$callable` is null.'
+                'Second argument of `EventManager::on()` must be a callable if `$callable` is null.',
             );
         }
 
@@ -390,8 +390,8 @@ class EventManager implements EventManagerInterface
         return array_intersect_key(
             $this->_listeners,
             array_flip(
-                preg_grep($matchPattern, array_keys($this->_listeners), 0) ?: []
-            )
+                preg_grep($matchPattern, array_keys($this->_listeners), 0) ?: [],
+            ),
         );
     }
 

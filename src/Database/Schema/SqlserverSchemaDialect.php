@@ -117,7 +117,7 @@ class SqlserverSchemaDialect extends SchemaDialect
 
         $type = $this->_applyTypeSpecificColumnConversion(
             $col,
-            compact('length', 'precision', 'scale')
+            compact('length', 'precision', 'scale'),
         );
         if ($type !== null) {
             return $type;
@@ -224,7 +224,7 @@ class SqlserverSchemaDialect extends SchemaDialect
             $row['type'],
             $row['char_length'] !== null ? (int)$row['char_length'] : null,
             $row['precision'] !== null ? (int)$row['precision'] : null,
-            $row['scale'] !== null ? (int)$row['scale'] : null
+            $row['scale'] !== null ? (int)$row['scale'] : null,
         );
 
         if (!empty($row['autoincrement'])) {
@@ -618,14 +618,14 @@ class SqlserverSchemaDialect extends SchemaDialect
         assert($data !== null);
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns']
+            $data['columns'],
         );
 
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
-            implode(', ', $columns)
+            implode(', ', $columns),
         );
     }
 
@@ -658,7 +658,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     {
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns']
+            $data['columns'],
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
@@ -667,7 +667,7 @@ class SqlserverSchemaDialect extends SchemaDialect
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
-                $this->_foreignOnClause($data['delete'])
+                $this->_foreignOnClause($data['delete']),
             );
         }
 
@@ -711,7 +711,7 @@ class SqlserverSchemaDialect extends SchemaDialect
                     "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = '%s' AND " .
                     "last_value IS NOT NULL) DBCC CHECKIDENT('%s', RESEED, 0)",
                     $schema->name(),
-                    $schema->name()
+                    $schema->name(),
                 );
             }
         }

@@ -99,7 +99,7 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
                 $exception::class,
                 $exception->getMessage(),
                 $exception->getFile(),
-                $exception->getLine()
+                $exception->getLine(),
             ),
         ];
 

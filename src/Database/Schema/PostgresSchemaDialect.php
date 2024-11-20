@@ -120,7 +120,7 @@ class PostgresSchemaDialect extends SchemaDialect
 
         $type = $this->_applyTypeSpecificColumnConversion(
             $col,
-            compact('length', 'precision', 'scale')
+            compact('length', 'precision', 'scale'),
         );
         if ($type !== null) {
             return $type;
@@ -264,7 +264,7 @@ class PostgresSchemaDialect extends SchemaDialect
         return preg_replace(
             "/^'(.*)'(?:::.*)$/",
             '$1',
-            $default
+            $default,
         );
     }
 
@@ -608,14 +608,14 @@ class PostgresSchemaDialect extends SchemaDialect
         assert($data !== null);
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns']
+            $data['columns'],
         );
 
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
-            implode(', ', $columns)
+            implode(', ', $columns),
         );
     }
 
@@ -648,7 +648,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns']
+            $data['columns'],
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
@@ -657,7 +657,7 @@ class PostgresSchemaDialect extends SchemaDialect
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
-                $this->_foreignOnClause($data['delete'])
+                $this->_foreignOnClause($data['delete']),
             );
         }
 
@@ -689,7 +689,7 @@ class PostgresSchemaDialect extends SchemaDialect
                     'COMMENT ON COLUMN %s.%s IS %s',
                     $tableName,
                     $this->_driver->quoteIdentifier($column),
-                    $this->_driver->schemaValue($columnData['comment'])
+                    $this->_driver->schemaValue($columnData['comment']),
                 );
             }
         }
@@ -719,7 +719,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $sql = sprintf(
             'DROP TABLE %s CASCADE',
-            $this->_driver->quoteIdentifier($schema->name())
+            $this->_driver->quoteIdentifier($schema->name()),
         );
 
         return [$sql];

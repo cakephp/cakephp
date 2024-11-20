@@ -57,7 +57,7 @@ class Mock implements AdapterInterface
             $type = get_debug_type($options['match']);
             throw new InvalidArgumentException(sprintf(
                 'The `match` option must be a `Closure`. Got `%s`.',
-                $type
+                $type,
             ));
         }
         $this->responses[] = [

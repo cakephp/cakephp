@@ -110,12 +110,12 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
             return new RedirectResponse(
                 $uri,
                 $this->config['statusCode'],
-                $this->config['headers']
+                $this->config['headers'],
             );
         }
 
         throw new BadRequestException(
-            'Requests to this URL must be made with HTTPS.'
+            'Requests to this URL must be made with HTTPS.',
         );
     }
 

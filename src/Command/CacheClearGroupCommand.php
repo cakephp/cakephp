@@ -102,7 +102,7 @@ class CacheClearGroupCommand extends Command
                 $io->error(sprintf(
                     'Error encountered clearing group "%s". Was unable to clear entries for "%s".',
                     $group,
-                    $groupConfig
+                    $groupConfig,
                 ));
                 $this->abort();
             } else {

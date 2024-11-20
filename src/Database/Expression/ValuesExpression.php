@@ -98,7 +98,7 @@ class ValuesExpression implements ExpressionInterface
             )
         ) {
             throw new DatabaseException(
-                'You cannot mix subqueries and array values in inserts.'
+                'You cannot mix subqueries and array values in inserts.',
             );
         }
         if ($values instanceof Query) {

@@ -230,7 +230,7 @@ class Hash
             '/(\[ (?P<attr>[^=><!]+?) (\s* (?P<op>[><!]?[=]|[><]) \s* (?P<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',
             $selector,
             $conditions,
-            PREG_SET_ORDER
+            PREG_SET_ORDER,
         );
 
         foreach ($conditions as $cond) {
@@ -507,7 +507,7 @@ class Hash
 
         if (is_array($keys) && count($keys) !== count($vals)) {
             throw new InvalidArgumentException(
-                '`Hash::combine()` needs an equal number of keys + values.'
+                '`Hash::combine()` needs an equal number of keys + values.',
             );
         }
 

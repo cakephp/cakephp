@@ -138,7 +138,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
                 'A CSRF token is already set in the request.' .
                 "\n" .
                 'Ensure you do not have the CSRF middleware applied more than once. ' .
-                'Check both your `Application::middleware()` method and `config/routes.php`.'
+                'Check both your `Application::middleware()` method and `config/routes.php`.',
             );
         }
 
@@ -380,7 +380,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
 
         throw new InvalidCsrfTokenException(__d(
             'cake',
-            'CSRF token from either the request body or request headers did not match or is missing.'
+            'CSRF token from either the request body or request headers did not match or is missing.',
         ));
     }
 
@@ -402,7 +402,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
                 'secure' => $this->_config['secure'],
                 'httponly' => $this->_config['httponly'],
                 'samesite' => $this->_config['samesite'],
-            ]
+            ],
         );
     }
 }

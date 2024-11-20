@@ -421,7 +421,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $table = substr((string)end($table), 0, -5) ?: $this->_alias;
             if (!$table) {
                 throw new CakeException(
-                    'You must specify either the `alias` or the `table` option for the constructor.'
+                    'You must specify either the `alias` or the `table` option for the constructor.',
                 );
             }
             $this->_table = Inflector::underscore($table);
@@ -455,7 +455,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $alias = substr((string)end($alias), 0, -5) ?: $this->_table;
             if (!$alias) {
                 throw new CakeException(
-                    'You must specify either the `alias` or the `table` option for the constructor.'
+                    'You must specify either the `alias` or the `table` option for the constructor.',
                 );
             }
             $this->_alias = $alias;
@@ -599,7 +599,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($this->_schema === null) {
             throw new DatabaseException(sprintf(
                 'Unable to check max alias lengths for `%s` without schema.',
-                $this->getAlias()
+                $this->getAlias(),
             ));
         }
 
@@ -616,7 +616,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     'ORM queries generate field aliases using the table name/alias and column name. ' .
                     "The table alias `{$table}` and column `{$name}` create an alias longer than ({$nameLength}). " .
                     'You must change the table schema in the database and shorten either the table or column ' .
-                    'identifier so they fit within the database alias limits.'
+                    'identifier so they fit within the database alias limits.',
                 );
             }
         }
@@ -873,7 +873,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new InvalidArgumentException(sprintf(
                 'The `%s` behavior is not defined on `%s`.',
                 $name,
-                static::class
+                static::class,
             ));
         }
 
@@ -1396,7 +1396,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $fields = array_merge(
                 (array)$keyField,
                 (array)$valueField,
-                (array)$groupField
+                (array)$groupField,
             );
             $columns = $this->getSchema()->columns();
             if (count($fields) === count(array_intersect($fields, $columns))) {
@@ -1406,13 +1406,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $options = $this->_setFieldMatchers(
             compact('keyField', 'valueField', 'groupField', 'valueSeparator'),
-            ['keyField', 'valueField', 'groupField']
+            ['keyField', 'valueField', 'groupField'],
         );
 
         return $query->formatResults(fn (CollectionInterface $results) => $results->combine(
             $options['keyField'],
             $options['valueField'],
-            $options['groupField']
+            $options['groupField'],
         ));
     }
 
@@ -1451,7 +1451,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         return $query->formatResults(fn (CollectionInterface $results) => $results->nest(
             $options['keyField'],
             $options['parentField'],
-            $nestingKey
+            $nestingKey,
         ));
     }
 
@@ -1530,7 +1530,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($primaryKey === null) {
             throw new InvalidPrimaryKeyException(sprintf(
                 'Record not found in table `%s` with primary key `[NULL]`.',
-                $this->getTable()
+                $this->getTable(),
             ));
         }
 
@@ -1551,7 +1551,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new InvalidPrimaryKeyException(sprintf(
                 'Record not found in table `%s` with primary key `[%s]`.',
                 $this->getTable(),
-                implode(', ', $primaryKey)
+                implode(', ', $primaryKey),
             ));
         }
         $conditions = array_combine($key, $primaryKey);
@@ -1560,7 +1560,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             deprecationWarning(
                 '5.0.0',
                 'Calling Table::get() with options array is deprecated.'
-                    . ' Use named arguments instead.'
+                    . ' Use named arguments instead.',
             );
 
             $args += $finder;
@@ -1582,7 +1582,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     'get-%s-%s-%s',
                     $this->getConnection()->configName(),
                     $this->getTable(),
-                    json_encode($primaryKey, JSON_THROW_ON_ERROR)
+                    json_encode($primaryKey, JSON_THROW_ON_ERROR),
                 );
             }
             $query->cache($cacheKey, $cache);
@@ -1665,7 +1665,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $entity = $this->_executeTransaction(
             fn () => $this->_processFindOrCreate($search, $callback, $options->getArrayCopy()),
-            $options['atomic']
+            $options['atomic'],
         );
 
         if ($entity && $this->_transactionCommitted($options['atomic'], true)) {
@@ -1858,7 +1858,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ->where($conditions)
             ->limit(1)
             ->disableHydration()
-            ->toArray()
+            ->toArray(),
         );
     }
 
@@ -1971,7 +1971,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $success = $this->_executeTransaction(
             fn () => $this->_processSave($entity, $options),
-            $options['atomic']
+            $options['atomic'],
         );
 
         if ($success) {
@@ -2052,8 +2052,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     $result instanceof EntityInterface,
                     sprintf(
                         'The beforeSave callback must return `false` or `EntityInterface` instance. Got `%s` instead.',
-                        get_debug_type($result)
-                    )
+                        get_debug_type($result),
+                    ),
                 );
             }
 
@@ -2064,7 +2064,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $this,
             $entity,
             $options['associated'],
-            ['_primary' => false] + $options->getArrayCopy()
+            ['_primary' => false] + $options->getArrayCopy(),
         );
 
         if (!$saved && $options['atomic']) {
@@ -2108,7 +2108,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             $this,
             $entity,
             $options['associated'],
-            ['_primary' => false] + $options->getArrayCopy()
+            ['_primary' => false] + $options->getArrayCopy(),
         );
 
         if (!$success && $options['atomic']) {
@@ -2145,7 +2145,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if (!$primary) {
             $msg = sprintf(
                 'Cannot insert row in `%s` table, it has no primary key.',
-                $this->getTable()
+                $this->getTable(),
             );
             throw new DatabaseException($msg);
         }
@@ -2169,7 +2169,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                     $msg .= sprintf(
                         'Got (%s), expecting (%s)',
                         implode(', ', $filteredKeys + $entity->extract(array_keys($primary))),
-                        implode(', ', array_keys($primary))
+                        implode(', ', array_keys($primary)),
                     );
                     throw new DatabaseException($msg);
                 }
@@ -2325,7 +2325,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'atomic' => true,
                 'checkRules' => true,
                 '_primary' => true,
-            ]
+            ],
         );
         $options['_cleanOnSuccess'] = false;
 
@@ -2438,7 +2438,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $success = $this->_executeTransaction(
             fn () => $this->_processDelete($entity, $options),
-            $options['atomic']
+            $options['atomic'],
         );
 
         if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
@@ -2593,7 +2593,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $success = $this->_associations->cascadeDelete(
             $entity,
-            ['_primary' => false] + $options->getArrayCopy()
+            ['_primary' => false] + $options->getArrayCopy(),
         );
         if (!$success) {
             return $success;
@@ -2656,7 +2656,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         throw new BadMethodCallException(sprintf(
             'Unknown finder method `%s` on `%s`.',
             $type,
-            static::class
+            static::class,
         ));
     }
 
@@ -2692,7 +2692,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 deprecationWarning(
                     '5.0.0',
                     'Calling finders with options arrays is deprecated.'
-                    . ' Update your finder methods to used named arguments instead.'
+                    . ' Update your finder methods to used named arguments instead.',
                 );
                 $args = $args[0];
             }
@@ -2717,7 +2717,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             deprecationWarning(
                 '5.0.0',
                 "Calling `{$reflected->getName()}` finder with options array is deprecated."
-                 . ' Use named arguments instead.'
+                 . ' Use named arguments instead.',
             );
 
             $args = $args[0];
@@ -2779,7 +2779,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 throw new BadMethodCallException(sprintf(
                     'Not enough arguments for magic finder. Got %s required %s',
                     count($args),
-                    count($fields)
+                    count($fields),
                 ));
             }
             foreach ($fields as $field) {
@@ -2791,7 +2791,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if ($hasOr && $hasAnd) {
             throw new BadMethodCallException(
-                'Cannot mix "and" & "or" in a magic finder. Use find() instead.'
+                'Cannot mix "and" & "or" in a magic finder. Use find() instead.',
             );
         }
 
@@ -2831,7 +2831,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         throw new BadMethodCallException(
-            sprintf('Unknown method `%s` called on `%s`', $method, static::class)
+            sprintf('Unknown method `%s` called on `%s`', $method, static::class),
         );
     }
 
@@ -2852,7 +2852,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'You have not defined the `%s` association on `%s`.',
                 $property,
                 $property,
-                static::class
+                static::class,
             ));
         }
 
@@ -3143,11 +3143,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 'useSetters' => false,
                 'markNew' => $context['newRecord'],
                 'source' => $this->getRegistryAlias(),
-            ]
+            ],
         );
         $fields = array_merge(
             [$context['field']],
-            isset($options['scope']) ? (array)$options['scope'] : []
+            isset($options['scope']) ? (array)$options['scope'] : [],
         );
         $values = $entity->extract($fields);
         foreach ($values as $field) {

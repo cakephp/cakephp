@@ -651,7 +651,7 @@ class ViewBuilder implements JsonSerializable
                 'Failed serializing the `%s` %s in the `%s` view var',
                 is_resource($item) ? get_resource_type($item) : $item::class,
                 is_resource($item) ? 'resource' : 'object',
-                $key
+                $key,
             ));
         }
     }

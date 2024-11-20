@@ -104,7 +104,7 @@ class TimestampBehavior extends Behavior
             if (!in_array($when, ['always', 'new', 'existing'], true)) {
                 throw new UnexpectedValueException(sprintf(
                     'When should be one of "always", "new" or "existing". The passed value `%s` is invalid.',
-                    $when
+                    $when,
                 ));
             }
             if (
@@ -217,7 +217,7 @@ class TimestampBehavior extends Behavior
         $type = TypeFactory::build($columnType);
         assert(
             $type instanceof DateTimeType,
-            sprintf('TimestampBehavior only supports columns of type `%s`.', DateTimeType::class)
+            sprintf('TimestampBehavior only supports columns of type `%s`.', DateTimeType::class),
         );
 
         $class = $type->getDateTimeClassName();

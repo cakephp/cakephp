@@ -132,7 +132,7 @@ class WhenThenExpression implements ExpressionInterface
                 throw new InvalidArgumentException(sprintf(
                     'When using an array for the `$when` argument, the `$type` argument must be an ' .
                     'array too, `%s` given.',
-                    get_debug_type($type)
+                    get_debug_type($type),
                 ));
             }
 
@@ -154,7 +154,7 @@ class WhenThenExpression implements ExpressionInterface
                 throw new InvalidArgumentException(sprintf(
                     'When using a non-array value for the `$when` argument, the `$type` argument must ' .
                     'be a string, `%s` given.',
-                    get_debug_type($type)
+                    get_debug_type($type),
                 ));
             }
 
@@ -192,7 +192,7 @@ class WhenThenExpression implements ExpressionInterface
                 'The `$result` argument must be either `null`, a scalar value, an object, ' .
                 'or an instance of `\%s`, `%s` given.',
                 ExpressionInterface::class,
-                get_debug_type($result)
+                get_debug_type($result),
             ));
         }
 
@@ -237,8 +237,8 @@ class WhenThenExpression implements ExpressionInterface
                 sprintf(
                     'The `$clause` argument must be one of `%s`, the given value `%s` is invalid.',
                     implode('`, `', $this->validClauseNames),
-                    $clause
-                )
+                    $clause,
+                ),
             );
         }
 

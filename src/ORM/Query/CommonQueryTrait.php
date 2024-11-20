@@ -66,7 +66,7 @@ trait CommonQueryTrait
     {
         assert(
             $repository instanceof Table,
-            '`$repository` must be an instance of `' . Table::class . '`.'
+            '`$repository` must be an instance of `' . Table::class . '`.',
         );
 
         $this->_repository = $repository;

@@ -301,7 +301,7 @@ class ServerRequest implements ServerRequestInterface
             throw new InvalidArgumentException(sprintf(
                 '`post` key must be an array, object or null.'
                 . ' Got `%s` instead.',
-                get_debug_type($post)
+                get_debug_type($post),
             ));
         }
         $this->data = $post;
@@ -962,7 +962,7 @@ class ServerRequest implements ServerRequestInterface
         if (!preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)) {
             throw new InvalidArgumentException(sprintf(
                 'Unsupported HTTP method `%s` provided.',
-                $method
+                $method,
             ));
         }
         $new->_environment['REQUEST_METHOD'] = $method;
@@ -1548,7 +1548,7 @@ class ServerRequest implements ServerRequestInterface
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
             throw new InvalidArgumentException(
-                "You cannot unset '{$name}'. It is a required CakePHP attribute."
+                "You cannot unset '{$name}'. It is a required CakePHP attribute.",
             );
         }
         unset($new->attributes[$name]);

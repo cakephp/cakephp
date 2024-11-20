@@ -147,7 +147,7 @@ class ResultSetFactory
             $matching = $data['matchingAssoc'][$alias];
             $results['_matchingData'][$alias] = array_combine(
                 $keys,
-                array_intersect_key($row, $keys)
+                array_intersect_key($row, $keys),
             );
             if ($data['hydrate']) {
                 $table = $matching['instance'];
@@ -254,7 +254,7 @@ class ResultSetFactory
             throw new InvalidArgumentException(sprintf(
                 'Invalid ResultSet class `%s`. It must implement `%s`',
                 $resultSetClass,
-                ResultSetInterface::class
+                ResultSetInterface::class,
             ));
         }
 

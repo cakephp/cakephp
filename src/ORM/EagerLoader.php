@@ -134,7 +134,7 @@ class EagerLoader
         if ($queryBuilder) {
             if (!is_string($associations)) {
                 throw new InvalidArgumentException(
-                    'Cannot set containments. To use $queryBuilder, $associations must be a string'
+                    'Cannot set containments. To use $queryBuilder, $associations must be a string',
                 );
             }
 
@@ -304,7 +304,7 @@ class EagerLoader
                 $repository,
                 $alias,
                 $options,
-                ['root' => null]
+                ['root' => null],
             );
         }
 
@@ -358,7 +358,7 @@ class EagerLoader
                     $options;
                 $options = $this->_reformatContain(
                     $options,
-                    $pointer[$table] ?? []
+                    $pointer[$table] ?? [],
                 );
             }
 
@@ -514,7 +514,7 @@ class EagerLoader
         foreach ($extra as $t => $assoc) {
             $eagerLoadable->addAssociation(
                 $t,
-                $this->_normalizeContain($table, $t, $assoc, $paths)
+                $this->_normalizeContain($table, $t, $assoc, $paths),
             );
         }
 
@@ -665,7 +665,7 @@ class EagerLoader
                     'contain' => $contain,
                     'keys' => $keys,
                     'nestKey' => $meta->aliasPath(),
-                ]
+                ],
             );
             $results = array_map($callback, $results);
         }

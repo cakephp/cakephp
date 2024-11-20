@@ -65,13 +65,13 @@ class BodyParserMiddleware implements MiddlewareInterface
         if ($options['json']) {
             $this->addParser(
                 ['application/json', 'text/json'],
-                $this->decodeJson(...)
+                $this->decodeJson(...),
             );
         }
         if ($options['xml']) {
             $this->addParser(
                 ['application/xml', 'text/xml'],
-                $this->decodeXml(...)
+                $this->decodeXml(...),
             );
         }
         if ($options['methods']) {

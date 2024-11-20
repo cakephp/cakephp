@@ -363,7 +363,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             $value['hour'],
             $value['minute'],
             $value['second'],
-            $value['microsecond']
+            $value['microsecond'],
         );
 
         $dateTime = new $class($format, $value['timezone'] ?? $this->userTimezone);
@@ -391,7 +391,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             return $this;
         }
         throw new DatabaseException(
-            sprintf('Cannot use locale parsing with the %s class', $this->_className)
+            sprintf('Cannot use locale parsing with the %s class', $this->_className),
         );
     }
 

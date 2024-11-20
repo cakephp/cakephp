@@ -98,7 +98,7 @@ class QueryCompiler
         $type = $query->type();
         $query->traverseParts(
             $this->_sqlCompiler($sql, $query, $binder),
-            $this->{"_{$type}Parts"}
+            $this->{"_{$type}Parts"},
         );
 
         // Propagate bound parameters from sub-queries if the
@@ -267,7 +267,7 @@ class QueryCompiler
                 throw new DatabaseException(sprintf(
                     'Could not compile join clause for alias `%s`. No table was specified. ' .
                     'Use the `table` key to define a table.',
-                    $join['alias']
+                    $join['alias'],
                 ));
             }
             if ($join['table'] instanceof ExpressionInterface) {
@@ -421,7 +421,7 @@ class QueryCompiler
         if (!isset($parts[0])) {
             throw new DatabaseException(
                 'Could not compile insert query. No table was specified. ' .
-                'Use `into()` to define a table.'
+                'Use `into()` to define a table.',
             );
         }
         $table = $parts[0];

@@ -372,7 +372,7 @@ class EntityContext implements ContextInterface
         }
         throw new CakeException(sprintf(
             'Unable to fetch property `%s`.',
-            implode('.', $path)
+            implode('.', $path),
         ));
     }
 
@@ -398,7 +398,7 @@ class EntityContext implements ContextInterface
         if ($oneElement && $this->_isCollection) {
             throw new CakeException(sprintf(
                 'Unable to fetch property `%s`.',
-                implode('.', $path)
+                implode('.', $path),
             ));
         }
         $entity = $this->_context['entity'];
@@ -438,7 +438,7 @@ class EntityContext implements ContextInterface
         }
         throw new CakeException(sprintf(
             'Unable to fetch property `%s`.',
-            implode('.', $path)
+            implode('.', $path),
         ));
     }
 
@@ -697,7 +697,7 @@ class EntityContext implements ContextInterface
 
         return array_intersect_key(
             (array)$table->getSchema()->getColumn(array_pop($parts)),
-            array_flip(static::VALID_ATTRIBUTES)
+            array_flip(static::VALID_ATTRIBUTES),
         );
     }
 

@@ -64,7 +64,7 @@ class FileWidget extends BasicWidget
             'templateVars' => $data['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $data,
-                ['name']
+                ['name'],
             ),
         ]);
     }

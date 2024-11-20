@@ -66,7 +66,7 @@ trait LocatorAwareTrait
         $locator = FactoryLocator::get('Table');
         assert(
             $locator instanceof LocatorInterface,
-            '`FactoryLocator` must return an instance of Cake\ORM\LocatorInterface for type `Table`.'
+            '`FactoryLocator` must return an instance of Cake\ORM\LocatorInterface for type `Table`.',
         );
 
         return $this->_tableLocator = $locator;
@@ -89,7 +89,7 @@ trait LocatorAwareTrait
         $alias ??= $this->defaultTable;
         if (!$alias) {
             throw new UnexpectedValueException(
-                'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
+                'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.',
             );
         }
 

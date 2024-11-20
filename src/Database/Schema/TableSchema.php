@@ -496,7 +496,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 'Invalid index type `%s` in index `%s` in table `%s`.',
                 $attrs['type'],
                 $name,
-                $this->_table
+                $this->_table,
             ));
         }
         $attrs['columns'] = (array)$attrs['columns'];
@@ -507,7 +507,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                     'The column `%s` was not found.',
                     $name,
                     $this->_table,
-                    $field
+                    $field,
                 );
                 throw new DatabaseException($msg);
             }
@@ -565,13 +565,13 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             throw new DatabaseException(sprintf(
                 'Invalid constraint type `%s` in table `%s`.',
                 $attrs['type'],
-                $this->_table
+                $this->_table,
             ));
         }
         if (empty($attrs['columns'])) {
             throw new DatabaseException(sprintf(
                 'Constraints in table `%s` must have at least one column.',
-                $this->_table
+                $this->_table,
             ));
         }
         $attrs['columns'] = (array)$attrs['columns'];
@@ -581,7 +581,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                     'Columns used in constraints must be added to the Table schema first. ' .
                     'The column `%s` was not found in table `%s`.',
                     $field,
-                    $this->_table
+                    $this->_table,
                 );
                 throw new DatabaseException($msg);
             }
@@ -593,13 +593,13 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             if (isset($this->_constraints[$name])) {
                 $this->_constraints[$name]['columns'] = array_unique(array_merge(
                     $this->_constraints[$name]['columns'],
-                    $attrs['columns']
+                    $attrs['columns'],
                 ));
 
                 if (isset($this->_constraints[$name]['references'])) {
                     $this->_constraints[$name]['references'][1] = array_unique(array_merge(
                         (array)$this->_constraints[$name]['references'][1],
-                        [$attrs['references'][1]]
+                        [$attrs['references'][1]],
                     ));
                 }
 
@@ -657,13 +657,13 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         if (!in_array($attrs['update'], static::$_validForeignKeyActions)) {
             throw new DatabaseException(sprintf(
                 'Update action is invalid. Must be one of %s',
-                implode(',', static::$_validForeignKeyActions)
+                implode(',', static::$_validForeignKeyActions),
             ));
         }
         if (!in_array($attrs['delete'], static::$_validForeignKeyActions)) {
             throw new DatabaseException(sprintf(
                 'Delete action is invalid. Must be one of %s',
-                implode(',', static::$_validForeignKeyActions)
+                implode(',', static::$_validForeignKeyActions),
             ));
         }
 

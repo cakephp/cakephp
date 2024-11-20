@@ -185,7 +185,7 @@ class StringTemplate
 
             assert(
                 is_string($template),
-                sprintf('Template for `%s` must be of type `string`, but is `%s`', $name, gettype($template))
+                sprintf('Template for `%s` must be of type `string`, but is `%s`', $name, gettype($template)),
             );
 
             $template = str_replace('%', '%%', $template);

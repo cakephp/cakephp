@@ -173,7 +173,7 @@ class HasMany extends Association
         $foreignKeys = (array)$this->getForeignKey();
         $foreignKeyReference = array_combine(
             $foreignKeys,
-            $entity->extract((array)$this->getBindingKey())
+            $entity->extract((array)$this->getBindingKey()),
         );
 
         $options['_sourceTable'] = $this->getSource();
@@ -287,8 +287,8 @@ class HasMany extends Association
         $currentEntities = array_unique(
             array_merge(
                 (array)$sourceEntity->get($property),
-                $targetEntities
-            )
+                $targetEntities,
+            ),
         );
 
         $sourceEntity->set($property, $currentEntities);
@@ -384,9 +384,9 @@ class HasMany extends Association
                 ->reject(
                     function ($assoc) use ($targetEntities) {
                         return in_array($assoc, $targetEntities);
-                    }
+                    },
                 )
-                ->toList()
+                ->toList(),
             );
         }
 
@@ -478,12 +478,12 @@ class HasMany extends Association
         $exclusions = $exclusions->map(
             function (EntityInterface $ent) use ($primaryKey) {
                 return $ent->extract($primaryKey);
-            }
+            },
         )
         ->filter(
             function ($v) {
                 return !in_array(null, $v, true);
-            }
+            },
         )
         ->toList();
 
@@ -563,8 +563,8 @@ class HasMany extends Association
                 function ($prop) use ($table) {
                     return $table->getSchema()->isNullable($prop);
                 },
-                $properties
-            )
+                $properties,
+            ),
         );
     }
 

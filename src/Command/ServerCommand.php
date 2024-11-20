@@ -141,7 +141,7 @@ class ServerCommand extends Command
             $phpBinary,
             $this->_host,
             $this->_port,
-            escapeshellarg($this->_documentRoot)
+            escapeshellarg($this->_documentRoot),
         );
 
         if ($this->_iniPath) {

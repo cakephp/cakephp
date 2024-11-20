@@ -198,7 +198,7 @@ class App
             'locales' => [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR],
             default => throw new CakeException(sprintf(
                 'Invalid type `%s`. Only path types `templates` and `locales` are supported for plugins.',
-                $type
+                $type,
             ))
         };
     }

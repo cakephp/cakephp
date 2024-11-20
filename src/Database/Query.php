@@ -398,7 +398,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $cte = $cte(new CommonTableExpression(), $query);
             if (!($cte instanceof CommonTableExpression)) {
                 throw new CakeException(
-                    'You must return a `CommonTableExpression` from a Closure passed to `with()`.'
+                    'You must return a `CommonTableExpression` from a Closure passed to `with()`.',
                 );
             }
         }
@@ -1035,7 +1035,7 @@ abstract class Query implements ExpressionInterface, Stringable
             [
                 'OR' => [$field . ' NOT IN' => $values, $field . ' IS' => null],
             ],
-            $options['types']
+            $options['types'],
         );
     }
 
@@ -1611,7 +1611,7 @@ abstract class Query implements ExpressionInterface, Stringable
             throw new InvalidArgumentException(sprintf(
                 'The `%s` clause is not defined. Valid clauses are: %s.',
                 $name,
-                $clauses
+                $clauses,
             ));
         }
 
@@ -1833,7 +1833,7 @@ abstract class Query implements ExpressionInterface, Stringable
                 function ($errno, $errstr): void {
                     throw new CakeException($errstr, $errno);
                 },
-                E_ALL
+                E_ALL,
             );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();

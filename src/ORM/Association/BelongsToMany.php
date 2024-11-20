@@ -289,7 +289,7 @@ class BelongsToMany extends Association
             throw new InvalidArgumentException(sprintf(
                 'The `%s` association on `%s` cannot target the same table.',
                 $this->getName(),
-                $source->getAlias()
+                $source->getAlias(),
             ));
         }
 
@@ -417,7 +417,7 @@ class BelongsToMany extends Association
             ) {
                 throw new InvalidArgumentException(
                     "The existing `{$tAlias}` association on `{$junction->getAlias()}` " .
-                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`"
+                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`",
                 );
             }
         }
@@ -876,7 +876,7 @@ class BelongsToMany extends Association
         return $this->junction()->getConnection()->transactional(
             function () use ($sourceEntity, $targetEntities, $options) {
                 return $this->_saveLinks($sourceEntity, $targetEntities, $options);
-            }
+            },
         );
     }
 
@@ -935,7 +935,7 @@ class BelongsToMany extends Association
                 foreach ($links as $entity) {
                     $this->_junctionTable->delete($entity, $options);
                 }
-            }
+            },
         );
 
         /** @var array<\Cake\Datasource\EntityInterface> $existing */
@@ -1223,7 +1223,7 @@ class BelongsToMany extends Association
                     ->from([$junctionQueryAlias => $matches])
                     ->innerJoin(
                         [$junction->getAlias() => $junction->getTable()],
-                        $matchesConditions
+                        $matchesConditions,
                     );
 
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
@@ -1242,7 +1242,7 @@ class BelongsToMany extends Association
                     /** @psalm-suppress RedundantConditionGivenDocblockType */
                     $inserted = array_combine(
                         array_keys($inserts),
-                        (array)$sourceEntity->get($property)
+                        (array)$sourceEntity->get($property),
                     ) ?: [];
                     $targetEntities = $inserted + $targetEntities;
                 }
@@ -1252,7 +1252,7 @@ class BelongsToMany extends Association
                 $sourceEntity->setDirty($property, false);
 
                 return true;
-            }
+            },
         );
     }
 
