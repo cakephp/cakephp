@@ -127,34 +127,34 @@
   <file src="src/TestSuite/Constraint/EventFired.php">
     <InternalClass>
       <code><![CDATA[new AssertionFailedError(
-                'The event manager you are asserting against is not configured to track events.'
+                'The event manager you are asserting against is not configured to track events.',
             )]]></code>
     </InternalClass>
     <InternalMethod>
       <code><![CDATA[new AssertionFailedError(
-                'The event manager you are asserting against is not configured to track events.'
+                'The event manager you are asserting against is not configured to track events.',
             )]]></code>
     </InternalMethod>
   </file>
   <file src="src/TestSuite/Constraint/EventFiredWith.php">
     <InternalClass>
       <code><![CDATA[new AssertionFailedError(
-                'The event manager you are asserting against is not configured to track events.'
+                'The event manager you are asserting against is not configured to track events.',
             )]]></code>
       <code><![CDATA[new AssertionFailedError(sprintf(
                 'Event `%s` was fired %d times, cannot make data assertion',
                 $other,
-                count($events)
+                count($events),
             ))]]></code>
     </InternalClass>
     <InternalMethod>
       <code><![CDATA[new AssertionFailedError(
-                'The event manager you are asserting against is not configured to track events.'
+                'The event manager you are asserting against is not configured to track events.',
             )]]></code>
       <code><![CDATA[new AssertionFailedError(sprintf(
                 'Event `%s` was fired %d times, cannot make data assertion',
                 $other,
-                count($events)
+                count($events),
             ))]]></code>
     </InternalMethod>
   </file>
