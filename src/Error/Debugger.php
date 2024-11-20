@@ -401,26 +401,28 @@ class Debugger
             if (in_array($signature, $options['exclude'], true)) {
                 continue;
             }
-            if ($options['format'] === 'shortPoints') {
+
+            $format = $options['format'];
+            if ($format === 'shortPoints') {
                 $back[] = [
                     'file' => self::trimPath($frame['file']),
                     'line' => $frame['line'],
                     'reference' => $reference,
                 ];
-            } elseif ($options['format'] === 'points') {
+            } elseif ($format === 'points') {
                 $back[] = ['file' => $frame['file'], 'line' => $frame['line'], 'reference' => $reference];
-            } elseif ($options['format'] === 'array') {
+            } elseif ($format === 'array') {
                 if (!$options['args']) {
                     unset($frame['args']);
                 }
                 $back[] = $frame;
-            } elseif ($options['format'] === 'text') {
+            } elseif ($format === 'text') {
                 $path = static::trimPath($frame['file']);
                 $back[] = sprintf('%s - %s, line %d', $reference, $path, $frame['line']);
             } else {
                 debug($options);
                 throw new InvalidArgumentException(
-                    "Invalid trace format of `{$options['format']}` chosen. Must be one of `array`, `points` or `text`.",
+                    "Invalid trace format of `$format` chosen. Must be one of `array`, `points` or `text`.",
                 );
             }
         }
