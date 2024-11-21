@@ -420,7 +420,6 @@ class Debugger
                 $path = static::trimPath($frame['file']);
                 $back[] = sprintf('%s - %s, line %d', $reference, $path, $frame['line']);
             } else {
-                debug($options);
                 throw new InvalidArgumentException(
                     "Invalid trace format of `$format` chosen. Must be one of `array`, `points` or `text`.",
                 );
