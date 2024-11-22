@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM;
 
 use ArrayObject;
-use Cake\Database\Query;
+use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\Validation\Validator;
@@ -75,12 +75,12 @@ trait TableEventsTrait
      * The Model.beforeFind event is fired before each find operation.
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Model event.
-     * @param \Cake\Database\Query $query Query.
+     * @param \Cake\Database\Query\SelectQuery $query Query.
      * @param \ArrayObject<string, mixed> $options Options.
      * @param bool $primary `true` if it is the root query, `false` if it is the associated query.
      * @return void
      */
-    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options, bool $primary): void
+    public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary): void
     {
     }
 
