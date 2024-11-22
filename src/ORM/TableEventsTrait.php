@@ -67,7 +67,7 @@ trait TableEventsTrait
      * @param string $name Name.
      * @return void
      */
-    public function buildValidator(EventInterface $event, Validator $validator, $name): void
+    public function buildValidator(EventInterface $event, Validator $validator, string $name): void
     {
     }
 
@@ -80,7 +80,7 @@ trait TableEventsTrait
      * @param bool $primary `true` if it is the root query, `false` if it is the associated query.
      * @return void
      */
-    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options, $primary): void
+    public function beforeFind(EventInterface $event, Query $query, ArrayObject $options, bool $primary): void
     {
     }
 
@@ -176,8 +176,12 @@ trait TableEventsTrait
      * @param string $operation Operation.
      * @return void
      */
-    public function beforeRules(EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation): void
-    {
+    public function beforeRules(
+        EventInterface $event,
+        EntityInterface $entity,
+        ArrayObject $options,
+        string $operation
+    ): void {
     }
 
     /**
@@ -187,7 +191,7 @@ trait TableEventsTrait
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Model event.
      * @param \Cake\Datasource\EntityInterface $entity The entity to be saved.
      * @param \ArrayObject<string, mixed> $options Options.
-     * @param mixed $result Result.
+     * @param bool $result Result.
      * @param string $operation Operation.
      * @return void
      */
@@ -195,8 +199,8 @@ trait TableEventsTrait
         EventInterface $event,
         EntityInterface $entity,
         ArrayObject $options,
-        $result,
-        $operation
+        bool $result,
+        string $operation
     ): void {
     }
 }
