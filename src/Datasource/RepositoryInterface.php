@@ -235,7 +235,7 @@ interface RepositoryInterface
     public function newEntities(array $data, array $options = []): array;
 
     /**
-     * Merges the passed `$data` into `$entity` respecting the accessible
+     * Merges the passed `$data` into `$entity` respecting the patchable
      * fields configured on the entity. Returns the same entity after being
      * altered.
      *
@@ -255,7 +255,7 @@ interface RepositoryInterface
 
     /**
      * Merges each of the elements passed in `$data` into the entities
-     * found in `$entities` respecting the accessible fields configured on the entities.
+     * found in `$entities` respecting the patchable fields configured on the entities.
      * Merging is done by matching the primary key in each of the elements in `$data`
      * and `$entities`.
      *

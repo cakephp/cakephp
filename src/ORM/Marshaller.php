@@ -147,8 +147,8 @@ class Marshaller
      *   Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well. Defaults to null.
      * - fields: An allowed list of fields to be assigned to the entity. If not present,
-     *   the accessible fields list in the entity will be used. Defaults to null.
-     * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
+     *   the patchable fields list in the entity will be used. Defaults to null.
+     * - patchableFields: A list of fields to allow or deny in entity patchable fields. Defaults to null
      * - forceNew: When enabled, belongsToMany associations will have 'new' entities created
      *   when primary key values are set, and a record does not already exist. Normally primary key
      *   on missing entities would be ignored. Defaults to false.
@@ -166,7 +166,7 @@ class Marshaller
      * ```
      * $result = $marshaller->one($data, [
      *   'associated' => [
-     *     'Tags' => ['accessibleFields' => ['*' => true]]
+     *     'Tags' => ['patchableFields' => ['*' => true]]
      *   ]
      * ]);
      * ```
@@ -185,7 +185,7 @@ class Marshaller
      * @param array<string, mixed> $options List of options
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Table::newEntity()
-     * @see \Cake\ORM\Entity::$_accessible
+     * @see \Cake\ORM\Entity::$patchable
      */
     public function one(array $data, array $options = []): EntityInterface
     {
@@ -194,9 +194,9 @@ class Marshaller
         $primaryKey = (array)$this->_table->getPrimaryKey();
         $entity = $this->_table->newEmptyEntity();
 
-        if (isset($options['accessibleFields'])) {
-            foreach ((array)$options['accessibleFields'] as $key => $value) {
-                $entity->setAccess($key, $value);
+        if (isset($options['patchableFields'])) {
+            foreach ((array)$options['patchableFields'] as $key => $value) {
+                $entity->setPatchable($key, $value);
             }
         }
         $errors = $this->_validate($data, $options['validate'], true);
@@ -345,8 +345,8 @@ class Marshaller
      *   Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well. Defaults to null.
      * - fields: An allowed list of fields to be assigned to the entity. If not present,
-     *   the accessible fields list in the entity will be used. Defaults to null.
-     * - accessibleFields: A list of fields to allow or deny in entity accessible fields. Defaults to null
+     *   the patchable fields list in the entity will be used. Defaults to null.
+     * - patchableFields: A list of fields to allow or deny in entity patchable fields. Defaults to null
      * - forceNew: When enabled, belongsToMany associations will have 'new' entities created
      *   when primary key values are set, and a record does not already exist. Normally primary key
      *   on missing entities would be ignored. Defaults to false.
@@ -355,7 +355,7 @@ class Marshaller
      * @param array<string, mixed> $options List of options
      * @return array<\Cake\Datasource\EntityInterface> An array of hydrated records.
      * @see \Cake\ORM\Table::newEntities()
-     * @see \Cake\ORM\Entity::$_accessible
+     * @see \Cake\ORM\Entity::$patchable
      */
     public function many(array $data, array $options = []): array
     {
@@ -521,8 +521,8 @@ class Marshaller
      * - validate: Whether to validate data before hydrating the entities. Can
      *   also be set to a string to use a specific validator. Defaults to true/default.
      * - fields: An allowed list of fields to be assigned to the entity. If not present
-     *   the accessible fields list in the entity will be used.
-     * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
+     *   the patchable fields list in the entity will be used.
+     * - patchableFields: A list of fields to allow or deny in entity patchable fields.
      *
      * The above options can be used in each nested `associated` array. In addition to the above
      * options you can also use the `onlyIds` option for HasMany and BelongsToMany associations.
@@ -549,7 +549,7 @@ class Marshaller
      * @param array $data key value list of fields to be merged into the entity
      * @param array<string, mixed> $options List of options.
      * @return \Cake\Datasource\EntityInterface
-     * @see \Cake\ORM\Entity::$_accessible
+     * @see \Cake\ORM\Entity::$patchable
      */
     public function merge(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
@@ -562,9 +562,9 @@ class Marshaller
             $keys = $entity->extract((array)$this->_table->getPrimaryKey());
         }
 
-        if (isset($options['accessibleFields'])) {
-            foreach ((array)$options['accessibleFields'] as $key => $value) {
-                $entity->setAccess($key, $value);
+        if (isset($options['patchableFields'])) {
+            foreach ((array)$options['patchableFields'] as $key => $value) {
+                $entity->setPatchable($key, $value);
             }
         }
 
@@ -662,15 +662,15 @@ class Marshaller
      *   also be set to a string to use a specific validator. Defaults to true/default.
      * - associated: Associations listed here will be marshalled as well.
      * - fields: An allowed list of fields to be assigned to the entity. If not present,
-     *   the accessible fields list in the entity will be used.
-     * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
+     *   the patchable fields list in the entity will be used.
+     * - patchableFields: A list of fields to allow or deny in entity patchable fields.
      *
      * @param iterable<\Cake\Datasource\EntityInterface> $entities the entities that will get the
      *   data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array<string, mixed> $options List of options.
      * @return array<\Cake\Datasource\EntityInterface>
-     * @see \Cake\ORM\Entity::$_accessible
+     * @see \Cake\ORM\Entity::$patchable
      */
     public function mergeMany(iterable $entities, array $data, array $options = []): array
     {
@@ -841,8 +841,8 @@ class Marshaller
         $associated = $options['associated'] ?? [];
         $extra = [];
         foreach ($original as $entity) {
-            // Mark joinData as accessible so we can marshal it properly.
-            $entity->setAccess('_joinData', true);
+            // Mark joinData as patchable so we can marshal it properly.
+            $entity->setPatchable('_joinData', true);
 
             $joinData = $entity->get('_joinData');
             if ($joinData instanceof EntityInterface) {
@@ -858,7 +858,7 @@ class Marshaller
             $nested = (array)$associated['_joinData'];
         }
 
-        $options['accessibleFields'] = ['_joinData' => true];
+        $options['patchableFields'] = ['_joinData' => true];
 
         $records = $this->mergeMany($original, $value, $options);
         foreach ($records as $record) {

@@ -150,26 +150,26 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Stores whether a field value can be changed or set in this entity.
      *
      * @param array<string>|string $field single or list of fields to change its accessibility
-     * @param bool $set true marks the field as accessible, false will
+     * @param bool $set true marks the field as patchable, false will
      * mark it as protected.
      * @return $this
      */
-    public function setAccess(array|string $field, bool $set);
+    public function setPatchable(array|string $field, bool $set);
 
     /**
-     * Accessible configuration for this entity.
+     * Patchable configuration for this entity.
      *
      * @return array<bool>
      */
-    public function getAccessible(): array;
+    public function getPatchable(): array;
 
     /**
-     * Checks if a field is accessible
+     * Checks if a field can be patched
      *
      * @param string $field Field name to check
      * @return bool
      */
-    public function isAccessible(string $field): bool;
+    public function isPatchable(string $field): bool;
 
     /**
      * Sets the source alias

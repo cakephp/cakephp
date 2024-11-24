@@ -157,7 +157,7 @@ class DatabaseSession implements SessionHandlerInterface
             $pkField => $id,
             'data' => $data,
             'expires' => time() + $this->_timeout,
-        ], ['accessibleFields' => [$pkField => true]]);
+        ], ['patchableFields' => [$pkField => true]]);
 
         return (bool)$this->_table->save($session);
     }

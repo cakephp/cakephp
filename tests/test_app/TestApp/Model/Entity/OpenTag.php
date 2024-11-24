@@ -10,7 +10,7 @@ use Cake\ORM\Entity;
  */
 class OpenTag extends Entity
 {
-    protected array $_accessible = [
+    protected array $patchable = [
         'tag' => true,
     ];
 }

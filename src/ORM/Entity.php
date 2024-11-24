@@ -35,7 +35,7 @@ class Entity implements EntityInterface, InvalidPropertyInterface
      * - useSetters: whether use internal setters for properties or not
      * - markClean: whether to mark all properties as clean after setting them
      * - markNew: whether this instance has not yet been persisted
-     * - guard: whether to prevent inaccessible properties from being set (default: false)
+     * - guard: whether to prevent unpatchable properties from being set (default: false)
      * - source: A string representing the alias of the repository this entity came from
      *
      * ### Example:

@@ -106,18 +106,18 @@ trait EntityTrait
     protected array $_invalid = [];
 
     /**
-     * Map of fields in this entity that can be safely mass assigned, each
-     * field name points to a boolean indicating its status. An empty array
-     * means no fields are accessible for mass assigment.
+     * Map of fields in this entity that can be safely mass assigned.
+     * Each field name points to a boolean indicating its status.
+     * An empty array means no fields can be patched into the entity.
      *
      * The special field '\*' can also be mapped, meaning that any other field
      * not defined in the map will take its value. For example, `'*' => true`
-     * means that any field not defined in the map will be accessible for mass
+     * means that any field not defined in the map will be patchable for mass
      * assignment by default.
      *
      * @var array<string, bool>
      */
-    protected array $_accessible = ['*' => true];
+    protected array $patchable = ['*' => true];
 
     /**
      * The alias of the repository this entity came from
@@ -277,7 +277,7 @@ trait EntityTrait
         foreach ($field as $name => $value) {
             /** @psalm-suppress RedundantCastGivenDocblockType */
             $name = (string)$name;
-            if ($options['guard'] === true && !$this->isAccessible($name)) {
+            if ($options['guard'] === true && !$this->isPatchable($name)) {
                 continue;
             }
 
@@ -1259,10 +1259,10 @@ trait EntityTrait
 
     /**
      * Stores whether a field value can be changed or set in this entity.
-     * The special field `*` can also be marked as accessible or protected, meaning
+     * The special field `*` can also be marked as patchable or protected, meaning
      * that any other field specified before will take its value. For example
-     * `$entity->setAccess('*', true)` means that any field not specified already
-     * will be accessible by default.
+     * `$entity->setPatchable('*', true)` means that any field not specified already
+     * will be patchable by default.
      *
      * You can also call this method with an array of fields, in which case they
      * will each take the accessibility value specified in the second argument.
@@ -1270,61 +1270,61 @@ trait EntityTrait
      * ### Example:
      *
      * ```
-     * $entity->setAccess('id', true); // Mark id as not protected
-     * $entity->setAccess('author_id', false); // Mark author_id as protected
-     * $entity->setAccess(['id', 'user_id'], true); // Mark both fields as accessible
-     * $entity->setAccess('*', false); // Mark all fields as protected
+     * $entity->setPatchable('id', true); // Mark id as not protected
+     * $entity->setPatchable('author_id', false); // Mark author_id as protected
+     * $entity->setPatchable(['id', 'user_id'], true); // Mark both fields as patchable
+     * $entity->setPatchable('*', false); // Mark all fields as protected
      * ```
      *
      * @param array<string>|string $field Single or list of fields to change its accessibility
-     * @param bool $set True marks the field as accessible, false will
+     * @param bool $set True marks the field as patchable, false will
      * mark it as protected.
      * @return $this
      */
-    public function setAccess(array|string $field, bool $set)
+    public function setPatchable(array|string $field, bool $set)
     {
         if ($field === '*') {
-            $this->_accessible = array_map(fn ($p) => $set, $this->_accessible);
-            $this->_accessible['*'] = $set;
+            $this->patchable = array_map(fn ($p) => $set, $this->patchable);
+            $this->patchable['*'] = $set;
 
             return $this;
         }
 
         foreach ((array)$field as $prop) {
-            $this->_accessible[$prop] = $set;
+            $this->patchable[$prop] = $set;
         }
 
         return $this;
     }
 
     /**
-     * Returns the raw accessible configuration for this entity.
+     * Returns the raw patchable configuration for this entity.
      * The `*` wildcard refers to all fields.
      *
      * @return array<bool>
      */
-    public function getAccessible(): array
+    public function getPatchable(): array
     {
-        return $this->_accessible;
+        return $this->patchable;
     }
 
     /**
-     * Checks if a field is accessible
+     * Checks if a field can be patched
      *
      * ### Example:
      *
      * ```
-     * $entity->isAccessible('id'); // Returns whether it can be set or not
+     * $entity->isPatchable('id'); // Returns whether it can be set or not
      * ```
      *
      * @param string $field Field name to check
      * @return bool
      */
-    public function isAccessible(string $field): bool
+    public function isPatchable(string $field): bool
     {
-        $value = $this->_accessible[$field] ?? null;
+        $value = $this->patchable[$field] ?? null;
 
-        return ($value === null && !empty($this->_accessible['*'])) || $value;
+        return ($value === null && !empty($this->patchable['*'])) || $value;
     }
 
     /**
@@ -1375,7 +1375,7 @@ trait EntityTrait
 
         return $fields + [
             '[new]' => $this->isNew(),
-            '[accessible]' => $this->_accessible,
+            '[patchable]' => $this->patchable,
             '[dirty]' => $this->_dirty,
             '[original]' => $this->_original,
             '[originalFields]' => $this->_originalFields,

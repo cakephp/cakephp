@@ -10,7 +10,7 @@ use Cake\ORM\Entity;
  */
 class ProtectedArticle extends Entity
 {
-    protected array $_accessible = [
+    protected array $patchable = [
         'title' => true,
         'body' => true,
     ];

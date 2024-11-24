@@ -59,7 +59,7 @@ class EntityTest extends TestCase
     public function testSetMultiplePropertiesNoSetters(): void
     {
         $entity = new Entity();
-        $entity->setAccess('*', true);
+        $entity->setPatchable('*', true);
 
         $entity->set(['foo' => 'bar', 'id' => 1], ['asOriginal' => true]);
         $this->assertSame('bar', $entity->foo);
@@ -206,7 +206,7 @@ class EntityTest extends TestCase
                 return ['c', 'd'];
             }
         };
-        $entity->setAccess('*', true);
+        $entity->setPatchable('*', true);
         $entity->set(['name' => 'Jones', 'stuff' => ['a', 'b']]);
         $this->assertSame('Dr. Jones', $entity->name);
         $this->assertEquals(['c', 'd'], $entity->stuff);
@@ -228,7 +228,7 @@ class EntityTest extends TestCase
                 throw new Exception('_setStuff should not have been called');
             }
         };
-        $entity->setAccess('*', true);
+        $entity->setPatchable('*', true);
 
         $entity->set('name', 'Jones', ['setter' => false]);
         $this->assertSame('Jones', $entity->name);
@@ -590,7 +590,7 @@ class EntityTest extends TestCase
         $entity = $this->getMockBuilder(Entity::class)
             ->onlyMethods(['set'])
             ->getMock();
-        $entity->setAccess('*', true);
+        $entity->setPatchable('*', true);
 
         $entity->expects($this->exactly(2))
             ->method('set')
@@ -988,7 +988,7 @@ class EntityTest extends TestCase
                 return 'Jose';
             }
         };
-        $entity->setAccess('*', true);
+        $entity->setPatchable('*', true);
         $entity->set(['name' => 'Mark', 'email' => 'mark@example.com']);
         $expected = ['name' => 'Jose', 'email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
@@ -1056,7 +1056,7 @@ class EntityTest extends TestCase
                 return 'Jose';
             }
         };
-        $entity->setAccess('*', true);
+        $entity->setPatchable('*', true);
         $entity->set(['email' => 'mark@example.com']);
 
         $entity->setVirtual(['name']);
@@ -1284,141 +1284,141 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests getAccessible() method
+     * Tests getPatchable() method
      */
-    public function testGetAccessible(): void
+    public function testGetPatchable(): void
     {
         $entity = new Entity();
-        $entity->setAccess('*', false);
-        $entity->setAccess('bar', true);
+        $entity->setPatchable('*', false);
+        $entity->setPatchable('bar', true);
 
-        $accessible = $entity->getAccessible();
+        $patchable = $entity->getPatchable();
         $expected = [
             '*' => false,
             'bar' => true,
         ];
-        $this->assertSame($expected, $accessible);
+        $this->assertSame($expected, $patchable);
     }
 
     /**
-     * Tests isAccessible() and setAccess() methods
+     * Tests isPatchable() and setPatchable() methods
      */
-    public function testIsAccessible(): void
+    public function testIsPatchable(): void
     {
         $entity = new Entity();
-        $entity->setAccess('*', false);
-        $this->assertFalse($entity->isAccessible('foo'));
-        $this->assertFalse($entity->isAccessible('bar'));
+        $entity->setPatchable('*', false);
+        $this->assertFalse($entity->isPatchable('foo'));
+        $this->assertFalse($entity->isPatchable('bar'));
 
-        $this->assertSame($entity, $entity->setAccess('foo', true));
-        $this->assertTrue($entity->isAccessible('foo'));
-        $this->assertFalse($entity->isAccessible('bar'));
+        $this->assertSame($entity, $entity->setPatchable('foo', true));
+        $this->assertTrue($entity->isPatchable('foo'));
+        $this->assertFalse($entity->isPatchable('bar'));
 
-        $this->assertSame($entity, $entity->setAccess('bar', true));
-        $this->assertTrue($entity->isAccessible('foo'));
-        $this->assertTrue($entity->isAccessible('bar'));
+        $this->assertSame($entity, $entity->setPatchable('bar', true));
+        $this->assertTrue($entity->isPatchable('foo'));
+        $this->assertTrue($entity->isPatchable('bar'));
 
-        $this->assertSame($entity, $entity->setAccess('foo', false));
-        $this->assertFalse($entity->isAccessible('foo'));
-        $this->assertTrue($entity->isAccessible('bar'));
+        $this->assertSame($entity, $entity->setPatchable('foo', false));
+        $this->assertFalse($entity->isPatchable('foo'));
+        $this->assertTrue($entity->isPatchable('bar'));
 
-        $this->assertSame($entity, $entity->setAccess('bar', false));
-        $this->assertFalse($entity->isAccessible('foo'));
-        $this->assertFalse($entity->isAccessible('bar'));
+        $this->assertSame($entity, $entity->setPatchable('bar', false));
+        $this->assertFalse($entity->isPatchable('foo'));
+        $this->assertFalse($entity->isPatchable('bar'));
     }
 
     /**
      * Tests that an array can be used to set
      */
-    public function testAccessibleAsArray(): void
+    public function testPatchableAsArray(): void
     {
         $entity = new Entity();
-        $entity->setAccess(['foo', 'bar', 'baz'], true);
-        $this->assertTrue($entity->isAccessible('foo'));
-        $this->assertTrue($entity->isAccessible('bar'));
-        $this->assertTrue($entity->isAccessible('baz'));
+        $entity->setPatchable(['foo', 'bar', 'baz'], true);
+        $this->assertTrue($entity->isPatchable('foo'));
+        $this->assertTrue($entity->isPatchable('bar'));
+        $this->assertTrue($entity->isPatchable('baz'));
 
-        $entity->setAccess('foo', false);
-        $this->assertFalse($entity->isAccessible('foo'));
-        $this->assertTrue($entity->isAccessible('bar'));
-        $this->assertTrue($entity->isAccessible('baz'));
+        $entity->setPatchable('foo', false);
+        $this->assertFalse($entity->isPatchable('foo'));
+        $this->assertTrue($entity->isPatchable('bar'));
+        $this->assertTrue($entity->isPatchable('baz'));
 
-        $entity->setAccess(['foo', 'bar', 'baz'], false);
-        $this->assertFalse($entity->isAccessible('foo'));
-        $this->assertFalse($entity->isAccessible('bar'));
-        $this->assertFalse($entity->isAccessible('baz'));
+        $entity->setPatchable(['foo', 'bar', 'baz'], false);
+        $this->assertFalse($entity->isPatchable('foo'));
+        $this->assertFalse($entity->isPatchable('bar'));
+        $this->assertFalse($entity->isPatchable('baz'));
     }
 
     /**
-     * Tests that a wildcard can be used for setting accessible properties
+     * Tests that a wildcard can be used for setting patchable properties
      */
-    public function testAccessibleWildcard(): void
+    public function testPatchableWildcard(): void
     {
         $entity = new Entity();
-        $entity->setAccess(['foo', 'bar', 'baz'], true);
-        $this->assertTrue($entity->isAccessible('foo'));
-        $this->assertTrue($entity->isAccessible('bar'));
-        $this->assertTrue($entity->isAccessible('baz'));
+        $entity->setPatchable(['foo', 'bar', 'baz'], true);
+        $this->assertTrue($entity->isPatchable('foo'));
+        $this->assertTrue($entity->isPatchable('bar'));
+        $this->assertTrue($entity->isPatchable('baz'));
 
-        $entity->setAccess('*', false);
-        $this->assertFalse($entity->isAccessible('foo'));
-        $this->assertFalse($entity->isAccessible('bar'));
-        $this->assertFalse($entity->isAccessible('baz'));
-        $this->assertFalse($entity->isAccessible('newOne'));
+        $entity->setPatchable('*', false);
+        $this->assertFalse($entity->isPatchable('foo'));
+        $this->assertFalse($entity->isPatchable('bar'));
+        $this->assertFalse($entity->isPatchable('baz'));
+        $this->assertFalse($entity->isPatchable('newOne'));
 
-        $entity->setAccess('*', true);
-        $this->assertTrue($entity->isAccessible('foo'));
-        $this->assertTrue($entity->isAccessible('bar'));
-        $this->assertTrue($entity->isAccessible('baz'));
-        $this->assertTrue($entity->isAccessible('newOne2'));
+        $entity->setPatchable('*', true);
+        $this->assertTrue($entity->isPatchable('foo'));
+        $this->assertTrue($entity->isPatchable('bar'));
+        $this->assertTrue($entity->isPatchable('baz'));
+        $this->assertTrue($entity->isPatchable('newOne2'));
     }
 
     /**
-     * Tests that only accessible properties can be set
+     * Tests that only patchable properties can be set
      */
-    public function testSetWithAccessible(): void
+    public function testSetWithPatchable(): void
     {
         $entity = new Entity(['foo' => 1, 'bar' => 2]);
         $options = ['guard' => true];
-        $entity->setAccess('*', false);
-        $entity->setAccess('foo', true);
+        $entity->setPatchable('*', false);
+        $entity->setPatchable('foo', true);
         $entity->set('bar', 3, $options);
         $entity->set('foo', 4, $options);
         $this->assertSame(2, $entity->get('bar'));
         $this->assertSame(4, $entity->get('foo'));
 
-        $entity->setAccess('bar', true);
+        $entity->setPatchable('bar', true);
         $entity->set('bar', 3, $options);
         $this->assertSame(3, $entity->get('bar'));
     }
 
     /**
-     * Tests that only accessible properties can be set
+     * Tests that only patchable properties can be set
      */
-    public function testSetWithAccessibleWithArray(): void
+    public function testSetWithPatchableWithArray(): void
     {
         $entity = new Entity(['foo' => 1, 'bar' => 2]);
         $options = ['guard' => true];
-        $entity->setAccess('*', false);
-        $entity->setAccess('foo', true);
+        $entity->setPatchable('*', false);
+        $entity->setPatchable('foo', true);
         $entity->set(['bar' => 3, 'foo' => 4], $options);
         $this->assertSame(2, $entity->get('bar'));
         $this->assertSame(4, $entity->get('foo'));
 
-        $entity->setAccess('bar', true);
+        $entity->setPatchable('bar', true);
         $entity->set(['bar' => 3, 'foo' => 5], $options);
         $this->assertSame(3, $entity->get('bar'));
         $this->assertSame(5, $entity->get('foo'));
     }
 
     /**
-     * Test that accessible() and single property setting works.
+     * Test that patchable() and single property setting works.
      */
-    public function testSetWithAccessibleSingleProperty(): void
+    public function testSetWithPatchableSingleProperty(): void
     {
         $entity = new Entity(['foo' => 1, 'bar' => 2]);
-        $entity->setAccess('*', false);
-        $entity->setAccess('title', true);
+        $entity->setPatchable('*', false);
+        $entity->setPatchable('title', true);
 
         $entity->set(['title' => 'test', 'body' => 'Nope']);
         $this->assertSame('test', $entity->title);
@@ -1447,8 +1447,8 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(['foo' => 'bar'], ['markClean' => true]);
         $entity->somethingElse = 'value';
-        $entity->setAccess('id', false);
-        $entity->setAccess('name', true);
+        $entity->setPatchable('id', false);
+        $entity->setPatchable('name', true);
         $entity->setVirtual(['baz']);
         $entity->setDirty('foo', true);
         $entity->setError('foo', ['An error']);
@@ -1460,7 +1460,7 @@ class EntityTest extends TestCase
             'somethingElse' => 'value',
             'baz' => null,
             '[new]' => true,
-            '[accessible]' => ['*' => true, 'id' => false, 'name' => true],
+            '[patchable]' => ['*' => true, 'id' => false, 'name' => true],
             '[dirty]' => ['somethingElse' => true, 'foo' => true],
             '[original]' => [],
             '[originalFields]' => ['foo'],
