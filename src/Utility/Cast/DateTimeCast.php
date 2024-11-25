@@ -28,13 +28,19 @@ class DateTimeCast
      */
     public static function from(mixed $value, ?DateTimeZone $timezone = null): DateTime
     {
+        if (!$value) {
+            return throw new InvalidArgumentException('Input value missing');
+        }
         if ($value instanceof DateTime) {
             return $value;
         }
         if ($value instanceof DateTimeInterface) {
             return DateTime::parse($value->format('Y-m-d H:i:s.u'), $value->getTimezone());
         }
-        if (is_int($value)) {
+        if (is_int($value) || is_numeric($value)) {
+            if (is_string($value)) {
+                $value = (int)$value;
+            }
             if ($value < 0) {
                 throw new InvalidArgumentException('Invalid timestamp');
             }

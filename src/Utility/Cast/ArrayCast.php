@@ -10,13 +10,12 @@ class ArrayCast
 {
     /**
      * @param mixed $value
-     * @param bool $convertEmptyArrayToNull
-     * @return array|null
+     * @param bool $strict
      */
-    public static function tryFrom(mixed $value, bool $convertEmptyArrayToNull = true): ?array
+    public static function tryFrom(mixed $value, bool $strict = false): ?array
     {
         try {
-            return self::from($value, $convertEmptyArrayToNull);
+            return self::from($value, $strict);
         } catch (InvalidArgumentException $e) {
             return null;
         }
@@ -24,17 +23,18 @@ class ArrayCast
 
     /**
      * @param mixed $value
-     * @param bool $failOnEmptyArray
-     * @return array
+     * @param bool $strict
      */
-    public static function from(mixed $value, bool $failOnEmptyArray = true): array
+    public static function from(mixed $value, bool $strict = false): array
     {
+        if ($value === null) {
+            return [];
+        }
         if (is_array($value)) {
-            if ($failOnEmptyArray && !$value) {
-                throw new InvalidArgumentException('Only non-empty arrays are allowed');
-            }
-
             return $value;
+        }
+        if (!$strict && is_scalar($value)) {
+            return strlen((string)$value) === 0 ? [] : [$value];
         }
 
         throw new InvalidArgumentException('Value cannot be converted to array');

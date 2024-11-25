@@ -22,12 +22,18 @@ class DateCast
         if ($value instanceof DateTimeInterface) {
             return Date::parse($value->format('Y-m-d'));
         }
-        if (is_int($value)) {
+        if (is_int($value) || is_numeric($value)) {
+            if (is_string($value)) {
+                $value = (int)$value;
+            }
             if ($value < 0) {
                 throw new InvalidArgumentException('Invalid timestamp');
             }
 
-            return new Date(DateTime::createFromTimestamp($value));
+            return Date::parse(DateTime::parse($value)->format('Y-m-d'));
+        }
+        if (!$value) {
+            throw new InvalidArgumentException('No value given');
         }
 
         return Date::parse(StringCast::from($value));

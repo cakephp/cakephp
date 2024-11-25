@@ -14,14 +14,20 @@ class FloatCast
 {
     /**
      * @param mixed $value
+     * @param bool $strict
+     * @param float|null $min
+     * @param float|null $max
      */
-    public static function tryFrom(mixed $value, ?float $min = null, ?float $max = null): ?float
+    public static function tryFrom(mixed $value, bool $strict = false, ?float $min = null, ?float $max = null): ?float
     {
         if (is_object($value) && method_exists($value, 'toFloat')) {
             $value = $value->toFloat();
         }
         if ($value instanceof Stringable) {
             $value = (string)$value;
+        }
+        if (!$strict && is_scalar($value)) {
+            //$value = (float)$value;
         }
         if (!is_float($value)) {
             $value = filter_var($value, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
@@ -38,10 +44,13 @@ class FloatCast
 
     /**
      * @param mixed $value
+     * @param bool $strict
+     * @param float|null $min
+     * @param float|null $max
      */
-    public static function from(mixed $value, ?float $min = null, ?float $max = null): float
+    public static function from(mixed $value, bool $strict = false, ?float $min = null, ?float $max = null): float
     {
-        $result = self::tryFrom($value, $min, $max);
+        $result = self::tryFrom($value, $strict, $min, $max);
         if ($result === null) {
             throw new InvalidArgumentException('Value cannot be converted to float');
         }

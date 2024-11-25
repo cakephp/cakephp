@@ -16,8 +16,11 @@ class IntCast
 {
     /**
      * @param mixed $value
+     * @param bool $strict
+     * @param int|null $min
+     * @param int|null $max
      */
-    public static function tryFrom(mixed $value, ?int $min = null, ?int $max = null): ?int
+    public static function tryFrom(mixed $value, bool $strict = false, ?int $min = null, ?int $max = null): ?int
     {
         if (is_object($value) && method_exists($value, 'toInt')) {
             $value = $value->toInt();
@@ -27,6 +30,9 @@ class IntCast
         }
         if (is_float($value) && $value === round($value)) {
             $value = (int)$value;
+        }
+        if (is_bool($value)) {
+            return $value ? 1 : 0;
         }
 
         $value = filter_var($value, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
@@ -42,10 +48,13 @@ class IntCast
 
     /**
      * @param mixed $value
+     * @param bool $strict
+     * @param int|null $min
+     * @param int|null $max
      */
-    public static function from(mixed $value, ?int $min = null, ?int $max = null): int
+    public static function from(mixed $value, bool $strict = false, ?int $min = null, ?int $max = null): int
     {
-        $result = self::tryFrom($value, $min, $max);
+        $result = self::tryFrom($value, $strict, $min, $max);
         if ($result === null) {
             throw new InvalidArgumentException('Value cannot be converted to int');
         }

@@ -12,11 +12,12 @@ class StringCast
 {
     /**
      * @param mixed $value
+     * @param bool $strict
      */
-    public static function tryFrom(mixed $value, bool $convertEmptyStringToNull = true): ?string
+    public static function tryFrom(mixed $value, bool $strict = false): ?string
     {
         try {
-            return self::from($value, $convertEmptyStringToNull);
+            return self::from($value, $strict);
         } catch (InvalidArgumentException $e) {
             return null;
         }
@@ -25,14 +26,17 @@ class StringCast
     /**
      * @param mixed $value
      */
-    public static function from(mixed $value, bool $failOnEmptyString = true): string
+    public static function from(mixed $value, bool $strict = false): string
     {
-        if (is_bool($value)) {
+        if (!$strict && $value === null) {
+            return '';
+        }
+        if (!$strict && is_bool($value)) {
             return $value ? '1' : '0';
         }
         if (is_string($value) || is_numeric($value) || $value instanceof Stringable) {
             $value = (string)$value;
-            if ($failOnEmptyString && trim($value) === '') {
+            if ($strict && trim($value) === '') {
                 throw new InvalidArgumentException('Only non-empty strings are allowed');
             }
 

@@ -4,23 +4,23 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Utility\Cast;
 
 use Cake\TestSuite\TestCase;
-use Cake\Utility\Cast\StringCast;
+use Cake\Utility\Cast\FloatCast;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
 
-class StringCastTest extends TestCase
+class FloatCastTest extends TestCase
 {
     #[DataProvider('castProvider')]
-    public function testTryFrom(mixed $value, ?string $expected): void
+    public function testTryFrom(mixed $value, ?float $expected): void
     {
-        $result = StringCast::tryFrom($value);
+        $result = FloatCast::tryFrom($value);
         $this->assertSame($expected, $result);
     }
 
     #[DataProvider('castStrictProvider')]
-    public function testTryFromStrict(mixed $value, ?string $expected): void
+    public function testTryFromStrict(mixed $value, ?float $expected): void
     {
-        $result = StringCast::tryFrom($value, true);
+        $result = FloatCast::tryFrom($value, true);
         $this->assertSame($expected, $result);
     }
 
@@ -28,20 +28,21 @@ class StringCastTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        StringCast::from([]);
+        FloatCast::from([]);
     }
 
     public static function castProvider(): array
     {
         return [
             // empty string input
-            '(string) empty' => ['', ''],
+            '(string) empty' => ['', null],
             // non-empty string input with trailing whitespace
-            '(string) not empty' => ['non-empty ', 'non-empty '],
-            'null' => [null, ''],
-            'bool false' => [false, '0'],
-            'bool true' => [true, '1'],
-            'int' => [2, '2'],
+            '(string) not empty' => ['non-empty ', null],
+            'null' => [null, null],
+            'bool false' => [false, null],
+            'bool true' => [true, 1.0],
+            'int' => [2, 2.0],
+            'float' => [2.2, 2.2],
         ];
     }
 
@@ -51,11 +52,12 @@ class StringCastTest extends TestCase
             // empty string input
             '(string) empty' => ['', null],
             // non-empty string input with trailing whitespace
-            '(string) not empty' => ['non-empty ', 'non-empty '],
+            '(string) not empty' => ['non-empty ', null],
             'null' => [null, null],
             'bool false' => [false, null],
-            'bool true' => [true, null],
-            'int' => [2, '2'],
+            'bool true' => [true, 1.0],
+            'int' => [2, 2.0],
+            'float' => [2.2, 2.2],
         ];
     }
 }
