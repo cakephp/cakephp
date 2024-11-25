@@ -54,7 +54,7 @@ class IntCastTest extends TestCase
             // non-empty string input with trailing whitespace
             '(string) not empty' => ['non-empty ', null],
             'null' => [null, null],
-            'bool false' => [false, null],
+            'bool false' => [false, 0],
             'bool true' => [true, 1],
             'int' => [2, 2],
             'float' => [2.2, null],
