@@ -276,7 +276,8 @@ class NumericPaginator implements PaginatorInterface
             $query = $object->find($type, ...$args);
         } elseif (!empty($options['finder'])) {
             triggerWarning(sprintf(
-                'Finder option (`%s`) from pagination config is not applied when a `SelectQuery` instance is passed to `paginate()`',
+                'Finder option (`%s`) from pagination config is not applied'
+                        . ' when a `SelectQuery` instance is passed to `paginate()`',
                 $options['finder'],
             ));
         }
