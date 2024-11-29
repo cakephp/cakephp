@@ -274,6 +274,11 @@ class NumericPaginator implements PaginatorInterface
             }
 
             $query = $object->find($type, ...$args);
+        } elseif (!empty($options['finder'])) {
+            triggerWarning(sprintf(
+                'Custom finder `%s` from pagination config cannot be applied to a custom build query object',
+                $options['finder'],
+            ));
         }
 
         $query->applyOptions($queryOptions);
