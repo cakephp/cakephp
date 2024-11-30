@@ -40,7 +40,8 @@ jobs:
             db-type: 'mysql'
           - php-version: '8.3'
             db-type: 'mysql'
-
+          - php-version: '8.4'
+            db-type: 'mysql'
     services:
       redis:
         image: redis
