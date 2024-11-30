@@ -68,7 +68,7 @@ class QueryExpression implements ExpressionInterface, Countable
     public function __construct(
         ExpressionInterface|array|string $conditions = [],
         TypeMap|array $types = [],
-        string $conjunction = 'AND'
+        string $conjunction = 'AND',
     ) {
         $this->setTypeMap($types);
         $this->setConjunction(strtoupper($conjunction));
@@ -301,7 +301,7 @@ class QueryExpression implements ExpressionInterface, Countable
     public function in(
         ExpressionInterface|string $field,
         ExpressionInterface|array|string $values,
-        ?string $type = null
+        ?string $type = null,
     ) {
         $type ??= $this->_calculateType($field);
         $type = $type ?: 'string';
@@ -355,7 +355,7 @@ class QueryExpression implements ExpressionInterface, Countable
     public function notIn(
         ExpressionInterface|string $field,
         ExpressionInterface|array|string $values,
-        ?string $type = null
+        ?string $type = null,
     ) {
         $type ??= $this->_calculateType($field);
         $type = $type ?: 'string';
@@ -377,7 +377,7 @@ class QueryExpression implements ExpressionInterface, Countable
     public function notInOrNull(
         ExpressionInterface|string $field,
         ExpressionInterface|array|string $values,
-        ?string $type = null
+        ?string $type = null,
     ) {
         $or = new static([], [], 'OR');
         $or

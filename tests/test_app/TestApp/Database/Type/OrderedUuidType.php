@@ -34,13 +34,13 @@ class OrderedUuidType extends BaseType implements ExpressionTypeInterface
             return new FunctionExpression(
                 'SUBSTR',
                 $length === null ? [$value, $start] : [$value, $start, $length],
-                ['string', 'integer', 'integer']
+                ['string', 'integer', 'integer'],
             );
         };
 
         return new FunctionExpression(
             'CONCAT',
-            [$substr(15, 4), $substr(10, 4), $substr(1, 8), $substr(20, 4), $substr(25)]
+            [$substr(15, 4), $substr(10, 4), $substr(1, 8), $substr(20, 4), $substr(25)],
         );
     }
 

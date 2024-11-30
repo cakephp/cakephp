@@ -220,7 +220,7 @@ class CounterCacheBehavior extends Behavior
         EventInterface $event,
         EntityInterface $entity,
         Association $assoc,
-        array $settings
+        array $settings,
     ): void {
         /** @var list<string> $foreignKeys */
         $foreignKeys = (array)$assoc->getForeignKey();

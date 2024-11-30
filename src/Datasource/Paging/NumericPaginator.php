@@ -202,7 +202,7 @@ class NumericPaginator implements PaginatorInterface
     public function paginate(
         mixed $target,
         array $params = [],
-        array $settings = []
+        array $settings = [],
     ): PaginatedInterface {
         $query = null;
         if ($target instanceof QueryInterface) {

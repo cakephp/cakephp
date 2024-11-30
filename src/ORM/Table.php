@@ -1382,7 +1382,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         Closure|array|string|null $keyField = null,
         Closure|array|string|null $valueField = null,
         Closure|array|string|null $groupField = null,
-        string $valueSeparator = ' '
+        string $valueSeparator = ' ',
     ): SelectQuery {
         $keyField ??= $this->getPrimaryKey();
         $valueField ??= $this->getDisplayField();
@@ -1442,7 +1442,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         SelectQuery $query,
         Closure|array|string|null $keyField = null,
         Closure|array|string $parentField = 'parent_id',
-        string $nestingKey = 'children'
+        string $nestingKey = 'children',
     ): SelectQuery {
         $keyField ??= $this->getPrimaryKey();
 
@@ -1525,7 +1525,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         array|string $finder = 'all',
         CacheInterface|string|null $cache = null,
         Closure|string|null $cacheKey = null,
-        mixed ...$args
+        mixed ...$args,
     ): EntityInterface {
         if ($primaryKey === null) {
             throw new InvalidPrimaryKeyException(sprintf(
@@ -1656,7 +1656,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function findOrCreate(
         SelectQuery|callable|array $search,
         ?callable $callback = null,
-        array $options = []
+        array $options = [],
     ): EntityInterface {
         $options = new ArrayObject($options + [
             'atomic' => true,
@@ -1691,7 +1691,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function _processFindOrCreate(
         SelectQuery|callable|array $search,
         ?callable $callback = null,
-        array $options = []
+        array $options = [],
     ): EntityInterface|array {
         $query = $this->_getFindOrCreateQuery($search);
 
@@ -1814,7 +1814,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function updateAll(
         QueryExpression|Closure|array|string $fields,
-        QueryExpression|Closure|array|string|null $conditions
+        QueryExpression|Closure|array|string|null $conditions,
     ): int {
         $statement = $this->updateQuery()
             ->set($fields)
@@ -1950,7 +1950,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function save(
         EntityInterface $entity,
-        array $options = []
+        array $options = [],
     ): EntityInterface|false {
         $options = new ArrayObject($options + [
             'atomic' => true,
@@ -2282,7 +2282,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function saveMany(
         iterable $entities,
-        array $options = []
+        array $options = [],
     ): iterable|false {
         try {
             return $this->_saveMany($entities, $options);
@@ -2318,7 +2318,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     protected function _saveMany(
         iterable $entities,
-        array $options = []
+        array $options = [],
     ): iterable {
         $options = new ArrayObject(
             $options + [

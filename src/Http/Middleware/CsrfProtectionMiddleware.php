@@ -329,7 +329,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     protected function _addTokenCookie(
         string $token,
         ServerRequestInterface $request,
-        ResponseInterface $response
+        ResponseInterface $response,
     ): ResponseInterface {
         $cookie = $this->_createCookie($token, $request);
         if ($response instanceof Response) {

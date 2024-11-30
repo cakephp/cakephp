@@ -203,7 +203,7 @@ class TextTest extends TestCase
         $result = Text::insert(
             ':I.am: :not.yet: passing.',
             ['I.am' => 'We are'],
-            ['before' => ':', 'after' => ':', 'clean' => true]
+            ['before' => ':', 'after' => ':', 'clean' => true],
         );
         $expected = 'We are passing.';
         $this->assertSame($expected, $result);
@@ -256,7 +256,7 @@ class TextTest extends TestCase
             ':incomplete',
             [
             'clean' => ['method' => 'text', 'replacement' => 'complete'],
-            'before' => ':', 'after' => '']
+            'before' => ':', 'after' => ''],
         );
         $this->assertSame('complete', $result);
 
@@ -268,7 +268,7 @@ class TextTest extends TestCase
         $result = Text::cleanInsert(
             ':in.complete and',
             [
-            'clean' => true, 'before' => ':', 'after' => '']
+            'clean' => true, 'before' => ':', 'after' => ''],
         );
         $this->assertSame('', $result);
 
@@ -279,7 +279,7 @@ class TextTest extends TestCase
 
         $result = Text::cleanInsert(
             '<p class=":missing" id=":missing">Text here</p>',
-            ['clean' => 'html', 'before' => ':', 'after' => '']
+            ['clean' => 'html', 'before' => ':', 'after' => ''],
         );
         $this->assertSame('<p>Text here</p>', $result);
     }

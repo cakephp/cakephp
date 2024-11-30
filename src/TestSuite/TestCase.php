@@ -408,7 +408,7 @@ abstract class TestCase extends BaseTestCase
         string $dataKey,
         mixed $dataValue,
         ?EventManager $eventManager = null,
-        string $message = ''
+        string $message = '',
     ): void {
         if (!$eventManager) {
             $eventManager = EventManager::instance();
@@ -530,7 +530,7 @@ abstract class TestCase extends BaseTestCase
         string $needle,
         string $haystack,
         string $message = '',
-        bool $ignoreCase = false
+        bool $ignoreCase = false,
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
@@ -556,7 +556,7 @@ abstract class TestCase extends BaseTestCase
         string $needle,
         string $haystack,
         string $message = '',
-        bool $ignoreCase = false
+        bool $ignoreCase = false,
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
@@ -579,7 +579,7 @@ abstract class TestCase extends BaseTestCase
     public function assertEqualsSql(
         string $expected,
         string $actual,
-        string $message = ''
+        string $message = '',
     ): void {
         $this->assertEquals($expected, preg_replace('/[`"\[\]]/', '', $actual), $message);
     }
@@ -813,7 +813,7 @@ abstract class TestCase extends BaseTestCase
         array $assertions,
         string $string,
         bool $fullDebug = false,
-        array|string $regex = ''
+        array|string $regex = '',
     ): string|false {
         $asserts = $assertions['attrs'];
         $explains = $assertions['explains'];

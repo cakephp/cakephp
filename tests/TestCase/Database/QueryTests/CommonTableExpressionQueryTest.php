@@ -55,7 +55,7 @@ class CommonTableExpressionQueryTest extends TestCase
 
         $this->skipIf(
             !$this->connection->getDriver()->supports(DriverFeatureEnum::CTE),
-            'The current driver does not support common table expressions.'
+            'The current driver does not support common table expressions.',
         );
     }
 
@@ -80,7 +80,7 @@ class CommonTableExpressionQueryTest extends TestCase
         $this->assertRegExpSql(
             'WITH <cte> AS \(SELECT 1 AS <col>\) SELECT <col> FROM <cte>',
             $query->sql(new ValueBinder()),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $expected = [
@@ -108,7 +108,7 @@ class CommonTableExpressionQueryTest extends TestCase
 
         $this->assertEqualsSql(
             'WITH cte AS (SELECT 1 AS col) SELECT col FROM cte',
-            $query->sql(new ValueBinder())
+            $query->sql(new ValueBinder()),
         );
 
         $query
@@ -116,7 +116,7 @@ class CommonTableExpressionQueryTest extends TestCase
             ->from('cte2', true);
         $this->assertEqualsSql(
             'WITH cte2 AS () SELECT col FROM cte2',
-            $query->sql(new ValueBinder())
+            $query->sql(new ValueBinder()),
         );
     }
 
@@ -164,7 +164,7 @@ class CommonTableExpressionQueryTest extends TestCase
         }
         $this->assertEqualsSql(
             $expectedSql,
-            $query->sql(new ValueBinder())
+            $query->sql(new ValueBinder()),
         );
 
         $expected = [
@@ -191,7 +191,7 @@ class CommonTableExpressionQueryTest extends TestCase
     {
         $this->skipIf(
             ($this->connection->getDriver() instanceof Mysql),
-            '`WITH ... INSERT INTO` syntax is not supported in MySQL.'
+            '`WITH ... INSERT INTO` syntax is not supported in MySQL.',
         );
 
         // test initial state
@@ -213,14 +213,14 @@ class CommonTableExpressionQueryTest extends TestCase
             ->into('articles')
             ->values(
                 $this->connection
-                    ->selectQuery(fields: '*', table: 'cte')
+                    ->selectQuery(fields: '*', table: 'cte'),
             );
 
         $this->assertRegExpSql(
             "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) " .
                 'INSERT INTO <articles> \(<title>, <body>\)',
             $query->sql(new ValueBinder()),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         // run insert
@@ -249,7 +249,7 @@ class CommonTableExpressionQueryTest extends TestCase
     {
         $this->skipIf(
             ($this->connection->getDriver() instanceof Sqlserver),
-            '`INSERT INTO ... WITH` syntax is not supported in SQL Server.'
+            '`INSERT INTO ... WITH` syntax is not supported in SQL Server.',
         );
 
         $query = $this->connection->insertQuery(table: 'articles')
@@ -263,14 +263,14 @@ class CommonTableExpressionQueryTest extends TestCase
                             ->query($query->newExpr("SELECT 'Fourth Article', 'Fourth Article Body'"));
                     })
                     ->select('*')
-                    ->from('cte')
+                    ->from('cte'),
             );
 
         $this->assertRegExpSql(
             'INSERT INTO <articles> \(<title>, <body>\) ' .
                 "WITH <cte>\(<title>, <body>\) AS \(SELECT 'Fourth Article', 'Fourth Article Body'\) SELECT \* FROM <cte>",
             $query->sql(new ValueBinder()),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         // run insert
@@ -299,7 +299,7 @@ class CommonTableExpressionQueryTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Mysql && $this->connection->getDriver()->isMariadb(),
-            'MariaDB does not support CTEs in UPDATE query.'
+            'MariaDB does not support CTEs in UPDATE query.',
         );
 
         // test initial state
@@ -327,14 +327,14 @@ class CommonTableExpressionQueryTest extends TestCase
                     'articles.id',
                     $query
                         ->getConnection()
-                        ->selectQuery('cte.id', 'cte')
+                        ->selectQuery('cte.id', 'cte'),
                 );
             });
 
         $this->assertEqualsSql(
             'WITH cte AS (SELECT articles.id FROM articles WHERE articles.id != :c0) ' .
                 'UPDATE articles SET published = :c1 WHERE id IN (SELECT cte.id FROM cte)',
-            $query->sql(new ValueBinder())
+            $query->sql(new ValueBinder()),
         );
 
         // run update
@@ -355,7 +355,7 @@ class CommonTableExpressionQueryTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Mysql && $this->connection->getDriver()->isMariadb(),
-            'MariaDB does not support CTEs in DELETE query.'
+            'MariaDB does not support CTEs in DELETE query.',
         );
 
         // test initial state
@@ -381,14 +381,14 @@ class CommonTableExpressionQueryTest extends TestCase
                     'a.id',
                     $query
                         ->getConnection()
-                        ->selectQuery('cte.id', 'cte')
+                        ->selectQuery('cte.id', 'cte'),
                 );
             });
 
         $this->assertEqualsSql(
             'WITH cte AS (SELECT articles.id FROM articles WHERE articles.id != :c0) ' .
                 'DELETE FROM articles WHERE id IN (SELECT cte.id FROM cte)',
-            $query->sql(new ValueBinder())
+            $query->sql(new ValueBinder()),
         );
 
         // run delete

@@ -315,7 +315,7 @@ class Xml
         DOMDocument $dom,
         DOMDocument|DOMElement $node,
         mixed $data,
-        string $format
+        string $format,
     ): void {
         if (!$data || !is_array($data)) {
             return;

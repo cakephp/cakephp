@@ -209,7 +209,7 @@ class BelongsToTest extends TestCase
         $this->assertSame(
             'integer',
             $query->getTypeMap()->type('Companies__id'),
-            'Associations should map types.'
+            'Associations should map types.',
         );
     }
 

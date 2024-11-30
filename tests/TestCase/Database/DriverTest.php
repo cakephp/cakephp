@@ -81,7 +81,7 @@ class DriverTest extends TestCase
         } catch (Exception $e) {
             $this->assertStringContainsString(
                 'Please pass "username" instead of "login" for connecting to the database',
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
     }
@@ -350,7 +350,7 @@ class DriverTest extends TestCase
                 'a' => 1,
                 'b' => new DateTime('2013-01-01'),
             ],
-            ['b' => 'date']
+            ['b' => 'date'],
         );
 
         $messages = Log::engine('queries')->read();

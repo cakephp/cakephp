@@ -181,7 +181,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertSame(
             ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
-            $results
+            $results,
         );
 
         $query = new SelectQuery($table);
@@ -194,7 +194,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertSame(
             ['id' => 2, 'extra' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
-            $results
+            $results,
         );
 
         $query = new SelectQuery($table);
@@ -207,7 +207,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertSame(
             ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
-            $results
+            $results,
         );
     }
 
@@ -1088,7 +1088,7 @@ class SelectQueryTest extends TestCase
         $this->assertSame($query, $query->mapReduce($mapper1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => null]],
-            $query->getMapReducers()
+            $query->getMapReducers(),
         );
 
         $this->assertEquals($query, $query->mapReduce($mapper2));
@@ -1098,7 +1098,7 @@ class SelectQueryTest extends TestCase
                 ['mapper' => $mapper1, 'reducer' => null],
                 ['mapper' => $mapper2, 'reducer' => null],
             ],
-            $result
+            $result,
         );
     }
 
@@ -1119,7 +1119,7 @@ class SelectQueryTest extends TestCase
         $this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => $reducer1]],
-            $query->getMapReducers()
+            $query->getMapReducers(),
         );
 
         $this->assertSame($query, $query->mapReduce($mapper2, $reducer2));
@@ -1128,7 +1128,7 @@ class SelectQueryTest extends TestCase
                 ['mapper' => $mapper1, 'reducer' => $reducer1],
                 ['mapper' => $mapper2, 'reducer' => $reducer2],
             ],
-            $query->getMapReducers()
+            $query->getMapReducers(),
         );
     }
 
@@ -1149,13 +1149,13 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => $reducer1]],
-            $query->getMapReducers()
+            $query->getMapReducers(),
         );
 
         $this->assertEquals($query, $query->mapReduce($mapper2, $reducer2, true));
         $this->assertEquals(
             [['mapper' => $mapper2, 'reducer' => $reducer2]],
-            $query->getMapReducers()
+            $query->getMapReducers(),
         );
     }
 
@@ -1176,7 +1176,7 @@ class SelectQueryTest extends TestCase
             },
             function ($v, $k, $mr): void {
                 $mr->emit($v[0] + 1);
-            }
+            },
         );
 
         $this->assertEquals([2, 3], iterator_to_array($query->all()));
@@ -1669,7 +1669,7 @@ class SelectQueryTest extends TestCase
         $query->select([
             'title' => $query->func()->concat(
                 ['title' => 'identifier', 'test'],
-                ['string']
+                ['string'],
             ),
         ]);
         $query->where(['id' => 1]);
@@ -1906,7 +1906,7 @@ class SelectQueryTest extends TestCase
             ->method('set')
             ->with(
                 'my_key',
-                $this->isInstanceOf(ResultSetInterface::class)
+                $this->isInstanceOf(ResultSetInterface::class),
             );
 
         $query->cache('my_key', $cacher)
@@ -2167,7 +2167,7 @@ class SelectQueryTest extends TestCase
 
                     return $results;
                 });
-            }
+            },
         );
 
         $sourceQuery = $articles
@@ -2198,7 +2198,7 @@ class SelectQueryTest extends TestCase
             ->find()
             ->contain('Authors', function (SelectQuery $targetQuery) use (
                 &$resultFormatterTargetQuery,
-                &$resultFormatterSourceQuery
+                &$resultFormatterSourceQuery,
             ) {
                 $resultFormatterTargetQuery = $targetQuery;
 
@@ -2239,7 +2239,7 @@ class SelectQueryTest extends TestCase
 
                     return $results;
                 });
-            }
+            },
         );
 
         $sourceQuery = $articles
@@ -2270,7 +2270,7 @@ class SelectQueryTest extends TestCase
             ->find()
             ->contain('Tags', function (SelectQuery $targetQuery) use (
                 &$resultFormatterTargetQuery,
-                &$resultFormatterSourceQuery
+                &$resultFormatterSourceQuery,
             ) {
                 $resultFormatterTargetQuery = $targetQuery;
 
@@ -2471,7 +2471,7 @@ class SelectQueryTest extends TestCase
                     '%s - %s - %s',
                     $row->tag_id,
                     $row->article->idCopy,
-                    $row->article->author->idCopy
+                    $row->article->author->idCopy,
                 );
             });
         });
@@ -2792,7 +2792,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $this->assertEquals(
             json_encode($table->find()),
-            json_encode($table->find()->toArray())
+            json_encode($table->find()->toArray()),
         );
     }
 
@@ -2904,7 +2904,7 @@ class SelectQueryTest extends TestCase
         $this->assertNotSame(
             $reflect->getValue($copyLoader),
             $reflect->getValue($loader),
-            'should be clones'
+            'should be clones',
         );
         $this->assertNull($copy->clause('offset'));
         $this->assertNull($copy->clause('limit'));
@@ -2964,7 +2964,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo(
             'Authors',
-            ['className' => AuthorsTable::class]
+            ['className' => AuthorsTable::class],
         );
         $authorId = 1;
 
@@ -2996,7 +2996,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany(
             'Articles',
-            ['className' => ArticlesTable::class]
+            ['className' => ArticlesTable::class],
         );
 
         $newArticle = $table->newEntity([
@@ -3065,7 +3065,7 @@ class SelectQueryTest extends TestCase
         $this->assertCount(1, $resultWithArticlesArrayOptions->first()->articles);
         $this->assertSame(
             'First Article',
-            $resultWithArticlesArrayOptions->first()->articles[0]->title
+            $resultWithArticlesArrayOptions->first()->articles[0]->title,
         );
 
         $this->assertCount(0, $resultWithoutArticles->first()->articles);
@@ -3081,7 +3081,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany(
             'Articles',
-            ['className' => ArticlesTable::class]
+            ['className' => ArticlesTable::class],
         );
 
         $newArticle = $table->newEntity([
@@ -3403,11 +3403,11 @@ class SelectQueryTest extends TestCase
         $expected = ['id' => 2, 'title' => 'Second Article'];
         $this->assertEquals(
             $expected,
-            $results->first()->_matchingData['articles']->toArray()
+            $results->first()->_matchingData['articles']->toArray(),
         );
         $this->assertEquals(
             ['name' => 'tag3'],
-            $results->first()->_matchingData['tags']->toArray()
+            $results->first()->_matchingData['tags']->toArray(),
         );
     }
 
@@ -3868,7 +3868,7 @@ class SelectQueryTest extends TestCase
     {
         $this->skipIf(
             !$this->connection->getDriver()->supports(DriverFeatureEnum::CTE),
-            'The current driver does not support common table expressions.'
+            'The current driver does not support common table expressions.',
         );
         $this->skipIf(
             (
@@ -3876,7 +3876,7 @@ class SelectQueryTest extends TestCase
                 $this->connection->getDriver() instanceof Sqlite
             ) &&
             !$this->connection->getDriver()->supports(DriverFeatureEnum::WINDOW),
-            'The current driver does not support window functions.'
+            'The current driver does not support window functions.',
         );
 
         $table = $this->getTableLocator()->get('Articles');
@@ -3995,7 +3995,7 @@ class SelectQueryTest extends TestCase
         $function = new FunctionExpression('MyFunction', [$query]);
         $this->assertSame(
             'MyFunction((SELECT Articles.column AS Articles__column FROM articles Articles))',
-            preg_replace('/[`"\[\]]/', '', $function->sql($binder))
+            preg_replace('/[`"\[\]]/', '', $function->sql($binder)),
         );
     }
 }

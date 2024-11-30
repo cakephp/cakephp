@@ -53,7 +53,7 @@ class EnumType extends BaseType
      */
     public function __construct(
         string $name,
-        string $enumClassName
+        string $enumClassName,
     ) {
         parent::__construct($name);
         $this->enumClassName = $enumClassName;

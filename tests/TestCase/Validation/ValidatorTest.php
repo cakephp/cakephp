@@ -687,7 +687,7 @@ class ValidatorTest extends TestCase
             'picture' => new UploadedFile(
                 '',
                 0,
-                UPLOAD_ERR_NO_FILE
+                UPLOAD_ERR_NO_FILE,
             ),
         ];
         $result = $validator->validate($data);
@@ -747,7 +747,7 @@ class ValidatorTest extends TestCase
             'very required',
             function ($context) {
                 return $context['data']['otherField'] === true;
-            }
+            },
         )
             ->scalar('title');
 
@@ -2771,7 +2771,7 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['username' => [1, 2, 3]]));
         $this->assertSame(
             ['username' => ['array' => 'The provided value must be an array']],
-            $validator->validate(['username' => 'is not an array'])
+            $validator->validate(['username' => 'is not an array']),
         );
 
         $fieldName = 'field_name';
@@ -2790,7 +2790,7 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['username' => 'scalar']));
         $this->assertSame(
             ['username' => ['scalar' => 'The provided value must be scalar']],
-            $validator->validate(['username' => ['array']])
+            $validator->validate(['username' => ['array']]),
         );
 
         $fieldName = 'field_name';
@@ -2826,7 +2826,7 @@ class ValidatorTest extends TestCase
             'multipleOptions',
             ['min' => 1, 'caseInsensitive' => true],
             [['min' => 1], true],
-            'multiple'
+            'multiple',
         );
 
         $this->assertProxyMethod(
@@ -2834,7 +2834,7 @@ class ValidatorTest extends TestCase
             'multipleOptions',
             ['min' => 1, 'caseInsensitive' => false],
             [['min' => 1], false],
-            'multiple'
+            'multiple',
         );
 
         $this->assertNotEmpty($validator->validate(['username' => '']));
@@ -3000,7 +3000,7 @@ class ValidatorTest extends TestCase
         string $fieldName,
         string $rule,
         string $expectedMessage,
-        mixed $additional = null
+        mixed $additional = null,
     ): void {
         $validator = new Validator();
         if ($additional !== null) {
@@ -3011,7 +3011,7 @@ class ValidatorTest extends TestCase
 
         $this->assertSame(
             $expectedMessage,
-            $validator->field($fieldName)->rule($rule)->get('message')
+            $validator->field($fieldName)->rule($rule)->get('message'),
         );
 
         $noI18nValidator = new NoI18nValidator();
@@ -3023,7 +3023,7 @@ class ValidatorTest extends TestCase
 
         $this->assertSame(
             $expectedMessage,
-            $noI18nValidator->field($fieldName)->rule($rule)->get('message')
+            $noI18nValidator->field($fieldName)->rule($rule)->get('message'),
         );
     }
 }

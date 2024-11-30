@@ -108,10 +108,10 @@ class Marshaller
             if (isset($options['isMerge'])) {
                 $callback = function (
                     $value,
-                    EntityInterface $entity
+                    EntityInterface $entity,
                 ) use (
                     $assoc,
-                    $nested
+                    $nested,
                 ): array|EntityInterface|null {
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
@@ -756,7 +756,7 @@ class Marshaller
         EntityInterface|array|null $original,
         Association $assoc,
         mixed $value,
-        array $options
+        array $options,
     ): EntityInterface|array|null {
         if (!$original) {
             return $this->_marshalAssociation($assoc, $value, $options);

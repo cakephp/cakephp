@@ -233,7 +233,7 @@ class CookieCollectionTest extends TestCase
         $this->assertSame(
             '2031-06-09 10:18:14',
             $new->get('expiring')->getExpiry()->format('Y-m-d H:i:s'),
-            'Has expiry'
+            'Has expiry',
         );
         $session = $new->get('session');
         $this->assertNull($session->getExpiry(), 'No expiry');
@@ -243,7 +243,7 @@ class CookieCollectionTest extends TestCase
         $this->assertLessThanOrEqual(
             (new DateTime('60 seconds'))->format('Y-m-d H:i:s'),
             $maxage->getExpiry()->format('Y-m-d H:i:s'),
-            'Has max age'
+            'Has max age',
         );
     }
 

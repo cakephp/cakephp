@@ -137,7 +137,7 @@ class RequestTest extends TestCase
         $this->assertSame(
             'a=b&c=d&e%5B0%5D=f&e%5B1%5D=g',
             $request->getBody()->__toString(),
-            'Body should be serialized'
+            'Body should be serialized',
         );
     }
 

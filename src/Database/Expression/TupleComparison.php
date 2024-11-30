@@ -48,7 +48,7 @@ class TupleComparison extends ComparisonExpression
         ExpressionInterface|array|string $fields,
         ExpressionInterface|array $values,
         array $types = [],
-        string $conjunction = '='
+        string $conjunction = '=',
     ) {
         $this->types = $types;
         $this->setField($fields);

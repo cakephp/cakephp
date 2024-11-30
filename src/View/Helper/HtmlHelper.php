@@ -744,7 +744,7 @@ class HtmlHelper extends Helper
         array|bool|null $oddTrOptions = null,
         array|bool|null $evenTrOptions = null,
         bool $useCount = false,
-        bool $continueOddEven = true
+        bool $continueOddEven = true,
     ): string {
         if (!is_array($data)) {
             $data = [[$data]];

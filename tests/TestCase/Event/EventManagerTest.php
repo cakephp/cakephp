@@ -758,7 +758,7 @@ class EventManagerTest extends TestCase
                 '_generalManager' => '(object) EventManager',
                 '_dispatchedEvents' => null,
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
 
         $eventManager->setEventList(new EventList());
@@ -773,7 +773,7 @@ class EventManagerTest extends TestCase
                     'Foo with subject Cake\Test\TestCase\Event\EventManagerTest',
                 ],
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
 
         $eventManager->unsetEventList();
@@ -792,7 +792,7 @@ class EventManagerTest extends TestCase
                 '_generalManager' => '(object) EventManager',
                 '_dispatchedEvents' => null,
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
 
         $eventManager->off('foo', $func);
@@ -807,7 +807,7 @@ class EventManagerTest extends TestCase
                 '_generalManager' => '(object) EventManager',
                 '_dispatchedEvents' => null,
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
 
         $eventManager->on('bar', function (): void {
@@ -831,7 +831,7 @@ class EventManagerTest extends TestCase
                 '_generalManager' => '(object) EventManager',
                 '_dispatchedEvents' => null,
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
     }
 
@@ -859,7 +859,7 @@ class EventManagerTest extends TestCase
                     'example with no subject',
                 ],
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
     }
 

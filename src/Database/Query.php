@@ -667,7 +667,7 @@ abstract class Query implements ExpressionInterface, Stringable
     public function leftJoin(
         array|string $table,
         ExpressionInterface|Closure|array|string $conditions = [],
-        array $types = []
+        array $types = [],
     ) {
         $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_LEFT), $types);
 
@@ -692,7 +692,7 @@ abstract class Query implements ExpressionInterface, Stringable
     public function rightJoin(
         array|string $table,
         ExpressionInterface|Closure|array|string $conditions = [],
-        array $types = []
+        array $types = [],
     ) {
         $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_RIGHT), $types);
 
@@ -717,7 +717,7 @@ abstract class Query implements ExpressionInterface, Stringable
     public function innerJoin(
         array|string $table,
         ExpressionInterface|Closure|array|string $conditions = [],
-        array $types = []
+        array $types = [],
     ) {
         $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_INNER), $types);
 
@@ -736,7 +736,7 @@ abstract class Query implements ExpressionInterface, Stringable
     protected function _makeJoin(
         array|string $table,
         ExpressionInterface|Closure|array|string $conditions,
-        string $type
+        string $type,
     ): array {
         $alias = $table;
 
@@ -893,7 +893,7 @@ abstract class Query implements ExpressionInterface, Stringable
     public function where(
         ExpressionInterface|Closure|array|string|null $conditions = null,
         array $types = [],
-        bool $overwrite = false
+        bool $overwrite = false,
     ) {
         if ($overwrite) {
             $this->_parts['where'] = $this->newExpr();
@@ -1733,7 +1733,7 @@ abstract class Query implements ExpressionInterface, Stringable
         string $part,
         ExpressionInterface|Closure|array|string|null $append,
         string $conjunction,
-        array $types
+        array $types,
     ): void {
         /** @var \Cake\Database\Expression\QueryExpression $expression */
         $expression = $this->_parts[$part] ?: $this->newExpr();

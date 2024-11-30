@@ -395,7 +395,7 @@ class BreadcrumbsHelperTest extends TestCase
 
         $result = $this->breadcrumbs->render(
             ['data-stuff' => 'foo and bar'],
-            ['separator' => '<i class="fa fa-angle-right"></i>', 'class' => 'separator']
+            ['separator' => '<i class="fa fa-angle-right"></i>', 'class' => 'separator'],
         );
         $expected = [
             ['ul' => ['data-stuff' => 'foo and bar']],
@@ -449,7 +449,7 @@ class BreadcrumbsHelperTest extends TestCase
 
         $result = $this->breadcrumbs->render(
             ['data-stuff' => 'foo and bar'],
-            ['separator' => ' > ', 'class' => 'separator']
+            ['separator' => ' > ', 'class' => 'separator'],
         );
         $expected = [
             ['ol' => ['itemtype' => 'http://schema.org/BreadcrumbList', 'data-stuff' => 'foo and bar']],
@@ -488,7 +488,7 @@ class BreadcrumbsHelperTest extends TestCase
 
         $result = $this->breadcrumbs->render(
             ['data-stuff' => 'foo and bar', 'templateVars' => ['thing' => 'somestuff']],
-            ['separator' => ' > ', 'class' => 'separator']
+            ['separator' => ' > ', 'class' => 'separator'],
         );
         $expected = [
             'somestuff',

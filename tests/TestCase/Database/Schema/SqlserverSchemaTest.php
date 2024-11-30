@@ -1138,7 +1138,7 @@ SQL;
         $this->assertSame(str_replace("\r\n", "\n", $expected), str_replace("\r\n", "\n", $result[0]));
         $this->assertSame(
             'CREATE INDEX [title_idx] ON [schema_articles] ([title])',
-            $result[1]
+            $result[1],
         );
     }
 
@@ -1184,7 +1184,7 @@ SQL;
         $this->assertSame(
             "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = 'schema_articles' AND last_value IS NOT NULL) " .
             "DBCC CHECKIDENT('schema_articles', RESEED, 0)",
-            $result[1]
+            $result[1],
         );
     }
 

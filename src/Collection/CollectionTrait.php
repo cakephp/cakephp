@@ -640,7 +640,7 @@ trait CollectionTrait
     public function combine(
         callable|string $keyPath,
         callable|string $valuePath,
-        callable|string|null $groupPath = null
+        callable|string|null $groupPath = null,
     ): CollectionInterface {
         $options = [
             'keyPath' => $this->_propertyExtractor($keyPath),
@@ -711,7 +711,7 @@ trait CollectionTrait
     public function nest(
         callable|string $idPath,
         callable|string $parentPath,
-        string $nestingKey = 'children'
+        string $nestingKey = 'children',
     ): CollectionInterface {
         $parents = [];
         $idPath = $this->_propertyExtractor($idPath);
@@ -835,7 +835,7 @@ trait CollectionTrait
      */
     public function listNested(
         string|int $order = 'desc',
-        callable|string $nestingKey = 'children'
+        callable|string $nestingKey = 'children',
     ): CollectionInterface {
         if (is_string($order)) {
             $order = strtolower($order);

@@ -353,7 +353,7 @@ class RouteCollectionTest extends TestCase
         $routes->connect(
             '/fallback',
             ['controller' => 'Articles', 'action' => 'index'],
-            ['_host' => '*.example.com']
+            ['_host' => '*.example.com'],
         );
 
         $request = new ServerRequest([
@@ -423,7 +423,7 @@ class RouteCollectionTest extends TestCase
         $routes->connect(
             '/fallback',
             ['controller' => 'Articles', 'action' => 'index'],
-            ['_host' => '*.example.com']
+            ['_host' => '*.example.com'],
         );
 
         $request = new ServerRequest([
@@ -594,7 +594,7 @@ class RouteCollectionTest extends TestCase
 
         $result = $this->collection->match(
             ['id' => 'thing', 'plugin' => null, 'controller' => 'Articles', 'action' => 'view'],
-            $context
+            $context,
         );
         $this->assertSame('b/thing', $result);
     }

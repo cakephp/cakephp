@@ -269,7 +269,7 @@ class TimestampBehaviorTest extends TestCase
         $this->assertInstanceOf(
             DateTime::class,
             $return,
-            'Should return a timestamp object'
+            'Should return a timestamp object',
         );
 
         $now = DateTime::now();
@@ -290,7 +290,7 @@ class TimestampBehaviorTest extends TestCase
         $this->assertSame(
             $initialValue,
             $postValue,
-            'The timestamp should be exactly the same object'
+            'The timestamp should be exactly the same object',
         );
     }
 
@@ -308,7 +308,7 @@ class TimestampBehaviorTest extends TestCase
         $this->assertNotSame(
             $initialValue,
             $postValue,
-            'The timestamp should be a different object if refreshTimestamp is truthy'
+            'The timestamp should be a different object if refreshTimestamp is truthy',
         );
     }
 
@@ -327,7 +327,7 @@ class TimestampBehaviorTest extends TestCase
         $this->assertSame(
             $ts->format('c'),
             $return->format('c'),
-            'Should return the same value as initially set'
+            'Should return the same value as initially set',
         );
     }
 
@@ -347,7 +347,7 @@ class TimestampBehaviorTest extends TestCase
         $this->assertSame(
             $ts->format('Y-m-d H:i:s'),
             $entity->modified->format('Y-m-d H:i:s'),
-            'Modified field is expected to be updated'
+            'Modified field is expected to be updated',
         );
         $this->assertNull($entity->created, 'Created field is NOT expected to change');
     }
@@ -394,7 +394,7 @@ class TimestampBehaviorTest extends TestCase
         $this->assertSame(
             $ts->format('Y-m-d H:i:s'),
             $entity->date_specialed->format('Y-m-d H:i:s'),
-            'Modified field is expected to be updated'
+            'Modified field is expected to be updated',
         );
         $this->assertNull($entity->created, 'Created field is NOT expected to change');
     }

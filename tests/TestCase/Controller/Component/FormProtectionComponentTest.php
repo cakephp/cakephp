@@ -117,7 +117,7 @@ class FormProtectionComponentTest extends TestCase
         $fields = hash_hmac(
             'sha1',
             '/subfolder/articles/index' . serialize($fields) . $unlocked . 'cli',
-            Security::getSalt()
+            Security::getSalt(),
         );
         $fields .= urlencode(':id');
 

@@ -268,7 +268,7 @@ class AssociationCollection implements IteratorAggregate
         EntityInterface $entity,
         array $associations,
         array $options,
-        bool $owningSide
+        bool $owningSide,
     ): bool {
         unset($options['associated']);
         foreach ($associations as $alias => $nested) {
@@ -309,7 +309,7 @@ class AssociationCollection implements IteratorAggregate
         Association $association,
         EntityInterface $entity,
         array $nested,
-        array $options
+        array $options,
     ): bool {
         if (!$entity->isDirty($association->getProperty())) {
             return true;

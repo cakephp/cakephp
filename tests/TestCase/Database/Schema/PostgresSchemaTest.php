@@ -1276,11 +1276,11 @@ SQL;
         $this->assertTextEquals($expected, $result[0]);
         $this->assertSame(
             'CREATE INDEX "title_idx" ON "schema_articles" ("title")',
-            $result[1]
+            $result[1],
         );
         $this->assertSame(
             'COMMENT ON COLUMN "schema_articles"."title" IS \'This is the title\'',
-            $result[2]
+            $result[2],
         );
     }
 

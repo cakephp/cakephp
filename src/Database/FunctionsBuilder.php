@@ -167,7 +167,7 @@ class FunctionsBuilder
     public function datePart(
         string $part,
         ExpressionInterface|string $expression,
-        array $types = []
+        array $types = [],
     ): FunctionExpression {
         return $this->extract($part, $expression, $types);
     }
@@ -200,7 +200,7 @@ class FunctionsBuilder
         ExpressionInterface|string $expression,
         string|int $value,
         string $unit,
-        array $types = []
+        array $types = [],
     ): FunctionExpression {
         if (!is_numeric($value)) {
             $value = 0;
@@ -278,7 +278,7 @@ class FunctionsBuilder
         ExpressionInterface|string $expression,
         int $offset,
         mixed $default = null,
-        ?string $type = null
+        ?string $type = null,
     ): AggregateExpression {
         $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
         if ($default !== null) {
@@ -306,7 +306,7 @@ class FunctionsBuilder
         ExpressionInterface|string $expression,
         int $offset,
         mixed $default = null,
-        ?string $type = null
+        ?string $type = null,
     ): AggregateExpression {
         $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
         if ($default !== null) {
@@ -332,7 +332,7 @@ class FunctionsBuilder
     public function jsonValue(
         ExpressionInterface|string $expression,
         string $jsonPath,
-        array $types = []
+        array $types = [],
     ): FunctionExpression {
         $params = $this->toLiteralParam($expression) + [$jsonPath];
 
@@ -355,7 +355,7 @@ class FunctionsBuilder
         string $name,
         array $params = [],
         array $types = [],
-        string $return = 'float'
+        string $return = 'float',
     ): AggregateExpression {
         return new AggregateExpression($name, $params, $types, $return);
     }

@@ -39,7 +39,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     public function diffForHumans(
         ChronosDate|DateTimeInterface $first,
         ChronosDate|DateTimeInterface|null $second = null,
-        bool $absolute = false
+        bool $absolute = false,
     ): string {
         $isNow = $second === null;
         if ($second === null) {

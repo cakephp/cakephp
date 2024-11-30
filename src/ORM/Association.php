@@ -878,7 +878,7 @@ abstract class Association
      */
     public function updateAll(
         QueryExpression|Closure|array|string $fields,
-        QueryExpression|Closure|array|string|null $conditions
+        QueryExpression|Closure|array|string|null $conditions,
     ): int {
         $expression = $this->find()
             ->where($conditions)

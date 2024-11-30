@@ -101,7 +101,7 @@ class EventManager implements EventManagerInterface
     public function on(
         EventListenerInterface|string $eventKey,
         callable|array $options = [],
-        ?callable $callable = null
+        ?callable $callable = null,
     ) {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_attachSubscriber($eventKey);
@@ -154,7 +154,7 @@ class EventManager implements EventManagerInterface
      */
     public function off(
         EventListenerInterface|callable|string $eventKey,
-        EventListenerInterface|callable|null $callable = null
+        EventListenerInterface|callable|null $callable = null,
     ) {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_detachSubscriber($eventKey);
@@ -236,7 +236,7 @@ class EventManager implements EventManagerInterface
      */
     protected function normalizeHandlers(
         EventListenerInterface $subscriber,
-        callable|array|string $handlers
+        callable|array|string $handlers,
     ): array {
         // Check if an array of handlers not single handler config array
         if (is_array($handlers) && !isset($handlers['callable'])) {
@@ -264,7 +264,7 @@ class EventManager implements EventManagerInterface
      */
     protected function normalizeHandler(
         EventListenerInterface $subscriber,
-        callable|array|string $handler
+        callable|array|string $handler,
     ): array {
         $callable = $handler;
         $settings = [];

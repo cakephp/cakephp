@@ -502,7 +502,7 @@ class FormProtector
         array $expectedFields = [],
         string $intKeyMessage = '',
         string $stringKeyMessage = '',
-        string $missingMessage = ''
+        string $missingMessage = '',
     ): array {
         $messages = $this->matchExistingFields($dataFields, $expectedFields, $intKeyMessage, $stringKeyMessage);
         $expectedFieldsMessage = $this->debugExpectedFields($expectedFields, $missingMessage);
@@ -528,7 +528,7 @@ class FormProtector
         array $dataFields,
         array &$expectedFields,
         string $intKeyMessage,
-        string $stringKeyMessage
+        string $stringKeyMessage,
     ): array {
         $messages = [];
         foreach ($dataFields as $key => $value) {

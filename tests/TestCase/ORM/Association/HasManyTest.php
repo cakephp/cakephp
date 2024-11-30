@@ -310,7 +310,7 @@ class HasManyTest extends TestCase
 
         $expected = new QueryExpression(
             ['Articles.published' => 'Y', 'Articles.author_id IN' => $keys],
-            $this->articlesTypeMap
+            $this->articlesTypeMap,
         );
         $this->assertWhereClause($expected, $query);
 
@@ -364,7 +364,7 @@ class HasManyTest extends TestCase
                 'Articles.id !=' => 3,
                 'Articles.author_id IN' => $keys,
             ],
-            $query->getTypeMap()
+            $query->getTypeMap(),
         );
         $this->assertWhereClause($expected, $query);
 
@@ -444,7 +444,7 @@ class HasManyTest extends TestCase
                 'Articles.author_id IN' => $keys,
                 'comments.id' => 1,
             ],
-            $query->getTypeMap()
+            $query->getTypeMap(),
         );
         $this->assertWhereClause($expected, $query);
     }
@@ -485,7 +485,7 @@ class HasManyTest extends TestCase
             ['Articles.author_id', 'Articles.site_id'],
             $keys,
             ['integer'],
-            'IN'
+            'IN',
         );
         $query->expects($this->once())->method('andWhere')
             ->with($tuple)
@@ -564,7 +564,7 @@ class HasManyTest extends TestCase
         // Exclude one record from the association finder
         $articles->updateAll(
             ['published' => 'N'],
-            ['author_id' => 1, 'title' => 'First Article']
+            ['author_id' => 1, 'title' => 'First Article'],
         );
         $association = new HasMany('Articles', $config);
 
@@ -896,7 +896,7 @@ class HasManyTest extends TestCase
         $listenerAfterSave = function ($e, $entity, $options) use ($articles): void {
             $this->assertTrue(
                 $articles->getConnection()->inTransaction(),
-                'Multiple transactions used to save associated models.'
+                'Multiple transactions used to save associated models.',
             );
         };
         $articles->getEventManager()->on('Model.afterSave', $listenerAfterSave);
@@ -1360,7 +1360,7 @@ class HasManyTest extends TestCase
         // No additional records in db.
         $this->assertCount(
             1,
-            $authors->Articles->find()->where(['author_id' => 1])->toArray()
+            $authors->Articles->find()->where(['author_id' => 1])->toArray(),
         );
 
         $others = $articles->find('all')
@@ -1370,7 +1370,7 @@ class HasManyTest extends TestCase
         $this->assertCount(
             1,
             $others,
-            'Record not matching association condition should stay'
+            'Record not matching association condition should stay',
         );
         $this->assertSame('Third Article', $others[0]->title);
     }

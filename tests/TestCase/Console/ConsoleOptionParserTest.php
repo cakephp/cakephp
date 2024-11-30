@@ -160,7 +160,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertSame(
             ['test' => 'default value', 'help' => false],
             $result[0],
-            'Default value did not parse out'
+            'Default value did not parse out',
         );
 
         $parser = new ConsoleOptionParser('test', false);
@@ -201,7 +201,7 @@ class ConsoleOptionParserTest extends TestCase
                 'help' => false,
             ],
             $result[0],
-            'Short parameter did not parse out'
+            'Short parameter did not parse out',
         );
     }
 
@@ -328,13 +328,13 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->parse(['--test', '--no-default', 'value'], $this->io);
         $this->assertSame(
             ['test' => 'default value', 'no-default' => 'value', 'help' => false],
-            $result[0]
+            $result[0],
         );
 
         $result = $parser->parse(['--no-default', 'value'], $this->io);
         $this->assertSame(
             ['no-default' => 'value', 'help' => false, 'test' => 'default value'],
-            $result[0]
+            $result[0],
         );
     }
 
@@ -517,7 +517,7 @@ class ConsoleOptionParserTest extends TestCase
                 "Other valid choices:\n" .
                 "\n" .
                 '- help',
-                $e->getFullMessage()
+                $e->getFullMessage(),
             );
         }
     }
@@ -648,7 +648,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertSame([0, 1, 2], array_keys($result));
         $this->assertEquals(
             ['other', 'name', 'bag'],
-            $parser->argumentNames()
+            $parser->argumentNames(),
         );
     }
 

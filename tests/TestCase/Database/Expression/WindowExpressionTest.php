@@ -49,19 +49,19 @@ class WindowExpressionTest extends TestCase
         $w = (new WindowExpression())->partition('test');
         $this->assertEqualsSql(
             'PARTITION BY test',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w->partition(new IdentifierExpression('identifier'));
         $this->assertEqualsSql(
             'PARTITION BY test, identifier',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->partition(new AggregateExpression('MyAggregate', ['param']));
         $this->assertEqualsSql(
             'PARTITION BY MyAggregate(:param0)',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->partition(function (QueryExpression $expr) {
@@ -69,7 +69,7 @@ class WindowExpressionTest extends TestCase
         });
         $this->assertEqualsSql(
             'PARTITION BY MyAggregate(:param0)',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
     }
 
@@ -81,19 +81,19 @@ class WindowExpressionTest extends TestCase
         $w = (new WindowExpression())->orderBy('test');
         $this->assertEqualsSql(
             'ORDER BY test',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w->orderBy(['test2' => 'DESC']);
         $this->assertEqualsSql(
             'ORDER BY test, test2 DESC',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w->partition('test');
         $this->assertEqualsSql(
             'PARTITION BY test ORDER BY test, test2 DESC',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())
@@ -105,7 +105,7 @@ class WindowExpressionTest extends TestCase
             });
         $this->assertEqualsSql(
             'ORDER BY test, test2, test3 DESC',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
     }
 
@@ -114,7 +114,7 @@ class WindowExpressionTest extends TestCase
         $w = (new WindowExpression())->order('test');
         $this->assertEqualsSql(
             'ORDER BY test',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
     }
 
@@ -126,55 +126,55 @@ class WindowExpressionTest extends TestCase
         $w = (new WindowExpression())->range(null);
         $this->assertEqualsSql(
             'RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->range(0);
         $this->assertEqualsSql(
             'RANGE BETWEEN CURRENT ROW AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->range(2);
         $this->assertEqualsSql(
             'RANGE BETWEEN 2 PRECEDING AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->range(null, null);
         $this->assertEqualsSql(
             'RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->range(0, null);
         $this->assertEqualsSql(
             'RANGE BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->range(0, 0);
         $this->assertEqualsSql(
             'RANGE BETWEEN CURRENT ROW AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->range(1, 2);
         $this->assertEqualsSql(
             'RANGE BETWEEN 1 PRECEDING AND 2 FOLLOWING',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->range("'1 day'", "'10 days'");
         $this->assertRegExpSql(
             "RANGE BETWEEN '1 day' PRECEDING AND '10 days' FOLLOWING",
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->range(new QueryExpression("'1 day'"), new QueryExpression("'10 days'"));
         $this->assertRegExpSql(
             "RANGE BETWEEN '1 day' PRECEDING AND '10 days' FOLLOWING",
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->frame(
@@ -182,11 +182,11 @@ class WindowExpressionTest extends TestCase
             2,
             WindowExpression::PRECEDING,
             1,
-            WindowExpression::PRECEDING
+            WindowExpression::PRECEDING,
         );
         $this->assertEqualsSql(
             'RANGE BETWEEN 2 PRECEDING AND 1 PRECEDING',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
     }
 
@@ -198,43 +198,43 @@ class WindowExpressionTest extends TestCase
         $w = (new WindowExpression())->rows(null);
         $this->assertEqualsSql(
             'ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->rows(0);
         $this->assertEqualsSql(
             'ROWS BETWEEN CURRENT ROW AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->rows(2);
         $this->assertEqualsSql(
             'ROWS BETWEEN 2 PRECEDING AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->rows(null, null);
         $this->assertEqualsSql(
             'ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->rows(0, null);
         $this->assertEqualsSql(
             'ROWS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->rows(0, 0);
         $this->assertEqualsSql(
             'ROWS BETWEEN CURRENT ROW AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->rows(1, 2);
         $this->assertEqualsSql(
             'ROWS BETWEEN 1 PRECEDING AND 2 FOLLOWING',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->frame(
@@ -242,12 +242,12 @@ class WindowExpressionTest extends TestCase
             2,
             WindowExpression::PRECEDING,
             1,
-            WindowExpression::PRECEDING
+            WindowExpression::PRECEDING,
         );
         $b = new ValueBinder();
         $this->assertEqualsSql(
             'ROWS BETWEEN 2 PRECEDING AND 1 PRECEDING',
-            $w->sql($b)
+            $w->sql($b),
         );
     }
 
@@ -259,43 +259,43 @@ class WindowExpressionTest extends TestCase
         $w = (new WindowExpression())->groups(null);
         $this->assertEqualsSql(
             'GROUPS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->groups(0);
         $this->assertEqualsSql(
             'GROUPS BETWEEN CURRENT ROW AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->groups(2);
         $this->assertEqualsSql(
             'GROUPS BETWEEN 2 PRECEDING AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->groups(null, null);
         $this->assertEqualsSql(
             'GROUPS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->groups(0, null);
         $this->assertEqualsSql(
             'GROUPS BETWEEN CURRENT ROW AND UNBOUNDED FOLLOWING',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->groups(0, 0);
         $this->assertEqualsSql(
             'GROUPS BETWEEN CURRENT ROW AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->groups(1, 2);
         $this->assertEqualsSql(
             'GROUPS BETWEEN 1 PRECEDING AND 2 FOLLOWING',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->frame(
@@ -303,12 +303,12 @@ class WindowExpressionTest extends TestCase
             2,
             WindowExpression::PRECEDING,
             1,
-            WindowExpression::PRECEDING
+            WindowExpression::PRECEDING,
         );
         $b = new ValueBinder();
         $this->assertEqualsSql(
             'GROUPS BETWEEN 2 PRECEDING AND 1 PRECEDING',
-            $w->sql($b)
+            $w->sql($b),
         );
     }
 
@@ -320,25 +320,25 @@ class WindowExpressionTest extends TestCase
         $w = (new WindowExpression())->excludeCurrent();
         $this->assertEqualsSql(
             '',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->range(null)->excludeCurrent();
         $this->assertEqualsSql(
             'RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->range(null)->excludeGroup();
         $this->assertEqualsSql(
             'RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE GROUP',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->range(null)->excludeTies();
         $this->assertEqualsSql(
             'RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE TIES',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
     }
 
@@ -350,25 +350,25 @@ class WindowExpressionTest extends TestCase
         $w = (new WindowExpression())->partition('test')->range(null);
         $this->assertEqualsSql(
             'PARTITION BY test RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->orderBy('test')->range(null);
         $this->assertEqualsSql(
             'ORDER BY test RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->partition('test')->orderBy('test')->range(null);
         $this->assertEqualsSql(
             'PARTITION BY test ORDER BY test RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w = (new WindowExpression())->partition('test')->orderBy('test')->range(null)->excludeCurrent();
         $this->assertEqualsSql(
             'PARTITION BY test ORDER BY test RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE CURRENT ROW',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
     }
 
@@ -384,20 +384,20 @@ class WindowExpressionTest extends TestCase
         $this->assertTrue($w->isNamedOnly());
         $this->assertEqualsSql(
             'name',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w->name('new_name');
         $this->assertEqualsSql(
             'new_name',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
 
         $w->orderBy('test');
         $this->assertFalse($w->isNamedOnly());
         $this->assertEqualsSql(
             'new_name ORDER BY test',
-            $w->sql(new ValueBinder())
+            $w->sql(new ValueBinder()),
         );
     }
 

@@ -253,7 +253,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $logs[0]);
         $this->assertStringContainsString(
             str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
-            $logs[0]
+            $logs[0],
         );
         $this->assertStringContainsString('Request URL: /target/url', $logs[0]);
         $this->assertStringContainsString('Referer URL: /other/path', $logs[0]);
@@ -284,11 +284,11 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $logs[0]);
         $this->assertStringContainsString(
             'Caused by: [Cake\Datasource\Exception\RecordNotFoundException]',
-            $logs[0]
+            $logs[0],
         );
         $this->assertStringContainsString(
             str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
-            $logs[0]
+            $logs[0],
         );
         $this->assertStringContainsString('Request URL: /target/url', $logs[0]);
         $this->assertStringContainsString('Referer URL: /other/path', $logs[0]);
@@ -330,7 +330,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $logs = $this->logger->read();
         $this->assertStringContainsString(
             '[Cake\Http\Exception\MissingControllerException] Controller class `Articles` could not be found.',
-            $logs[0]
+            $logs[0],
         );
         $this->assertStringContainsString('Exception Attributes:', $logs[0]);
         $this->assertStringContainsString("'controller' => 'Articles'", $logs[0]);
@@ -351,7 +351,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             'Exception.beforeRender',
             function (EventInterface $event, Throwable $e, ServerRequestInterface $req) {
                 return 'Response string from event';
-            }
+            },
         );
 
         $result = $middleware->process($request, $handler);
@@ -404,7 +404,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             new ExceptionTrap([
                 'exceptionRenderer' => WebExceptionRenderer::class,
             ]),
-            $app
+            $app,
         );
 
         $this->assertSame([], Router::routes());

@@ -144,23 +144,23 @@ class AssetMiddlewareTest extends TestCase
 
         $this->assertSame(
             'application/javascript',
-            $res->getHeaderLine('Content-Type')
+            $res->getHeaderLine('Content-Type'),
         );
         $this->assertSame(
             gmdate(DATE_RFC7231, $time),
-            $res->getHeaderLine('Date')
+            $res->getHeaderLine('Date'),
         );
         $this->assertSame(
             'public,max-age=' . ($expires - $time),
-            $res->getHeaderLine('Cache-Control')
+            $res->getHeaderLine('Cache-Control'),
         );
         $this->assertSame(
             gmdate(DATE_RFC7231, $modified),
-            $res->getHeaderLine('Last-Modified')
+            $res->getHeaderLine('Last-Modified'),
         );
         $this->assertSame(
             gmdate(DATE_RFC7231, $expires),
-            $res->getHeaderLine('Expires')
+            $res->getHeaderLine('Expires'),
         );
     }
 

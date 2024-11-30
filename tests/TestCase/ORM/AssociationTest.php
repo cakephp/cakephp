@@ -336,7 +336,7 @@ class AssociationTest extends TestCase
 
         $this->assertTrue(
             $this->getTableLocator()->exists('TestPlugin.ThisAssociationName'),
-            'The association class will use this registry key'
+            'The association class will use this registry key',
         );
         $this->assertFalse($this->getTableLocator()->exists('TestPlugin.Comments'), 'The association class will NOT use this key');
         $this->assertFalse($this->getTableLocator()->exists('Comments'), 'Should also not be set');
@@ -483,15 +483,15 @@ class AssociationTest extends TestCase
         $this->association->setFinder('publishedWithArgOnly');
         $this->assertEquals(
             ['custom', 'this' => 'custom'],
-            $this->association->find(null, 'custom')->getOptions()
+            $this->association->find(null, 'custom')->getOptions(),
         );
         $this->assertEquals(
             ['what' => 'custom', 'this' => 'custom'],
-            $this->association->find(null, what: 'custom')->getOptions()
+            $this->association->find(null, what: 'custom')->getOptions(),
         );
         $this->assertEquals(
             ['what' => 'custom', 'this' => 'custom'],
-            $this->association->find(what: 'custom')->getOptions()
+            $this->association->find(what: 'custom')->getOptions(),
         );
     }
 
@@ -503,12 +503,12 @@ class AssociationTest extends TestCase
         $this->deprecated(function (): void {
             $this->assertEquals(
                 ['this' => 'worked'],
-                $this->association->find(null)->getOptions()
+                $this->association->find(null)->getOptions(),
             );
 
             $this->assertEquals(
                 ['that' => 'custom', 'this' => 'worked'],
-                $this->association->find(null, ['that' => 'custom'])->getOptions()
+                $this->association->find(null, ['that' => 'custom'])->getOptions(),
             );
         });
     }

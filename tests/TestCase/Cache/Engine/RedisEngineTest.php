@@ -275,7 +275,7 @@ class RedisEngineTest extends TestCase
                 null,
                 0,
                 0.0,
-                $context
+                $context,
             )
             ->willReturn(true);
 
@@ -313,7 +313,7 @@ class RedisEngineTest extends TestCase
                 $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
-                $expectedPersistentId
+                $expectedPersistentId,
             )
             ->willReturn(true);
 
@@ -340,7 +340,7 @@ class RedisEngineTest extends TestCase
                 'tls://' . $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
-                $expectedPersistentId
+                $expectedPersistentId,
             )
             ->willReturn(true);
 
@@ -387,7 +387,7 @@ class RedisEngineTest extends TestCase
                 $expectedPersistentId,
                 0,
                 0.0,
-                $context
+                $context,
             )
             ->willReturn(true);
 

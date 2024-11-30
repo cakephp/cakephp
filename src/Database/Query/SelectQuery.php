@@ -409,7 +409,7 @@ class SelectQuery extends Query implements IteratorAggregate
     public function leftJoin(
         array|string $table,
         ExpressionInterface|Closure|array|string $conditions = [],
-        array $types = []
+        array $types = [],
     ) {
         $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_LEFT), $types);
 
@@ -434,7 +434,7 @@ class SelectQuery extends Query implements IteratorAggregate
     public function rightJoin(
         array|string $table,
         ExpressionInterface|Closure|array|string $conditions = [],
-        array $types = []
+        array $types = [],
     ) {
         $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_RIGHT), $types);
 
@@ -459,7 +459,7 @@ class SelectQuery extends Query implements IteratorAggregate
     public function innerJoin(
         array|string $table,
         ExpressionInterface|Closure|array|string $conditions = [],
-        array $types = []
+        array $types = [],
     ) {
         $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_INNER), $types);
 
@@ -478,7 +478,7 @@ class SelectQuery extends Query implements IteratorAggregate
     protected function _makeJoin(
         array|string $table,
         ExpressionInterface|Closure|array|string $conditions,
-        string $type
+        string $type,
     ): array {
         $alias = $table;
 
@@ -587,7 +587,7 @@ class SelectQuery extends Query implements IteratorAggregate
     public function having(
         ExpressionInterface|Closure|array|string|null $conditions = null,
         array $types = [],
-        bool $overwrite = false
+        bool $overwrite = false,
     ) {
         if ($overwrite) {
             $this->_parts['having'] = $this->newExpr();

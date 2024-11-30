@@ -102,7 +102,7 @@ class CurlTest extends TestCase
         $request = new Request(
             'http://localhost/things',
             'GET',
-            ['Cookie' => 'testing=value']
+            ['Cookie' => 'testing=value'],
         );
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
@@ -134,7 +134,7 @@ class CurlTest extends TestCase
             'http://localhost/things',
             'GET',
             ['Cookie' => 'testing=value'],
-            '{"some":"body"}'
+            '{"some":"body"}',
         );
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
@@ -166,7 +166,7 @@ class CurlTest extends TestCase
             'http://localhost/things',
             'POST',
             ['Cookie' => 'testing=value'],
-            ['name' => 'cakephp', 'yes' => 1]
+            ['name' => 'cakephp', 'yes' => 1],
         );
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
@@ -196,7 +196,7 @@ class CurlTest extends TestCase
         $request = new Request(
             'http://localhost/things',
             'PUT',
-            ['Cookie' => 'testing=value']
+            ['Cookie' => 'testing=value'],
         );
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
@@ -227,7 +227,7 @@ class CurlTest extends TestCase
             'http://localhost/things',
             'POST',
             ['Content-type' => 'application/json'],
-            $content
+            $content,
         );
         $result = $this->curl->buildOptions($request, $options);
         $expected = [
@@ -319,7 +319,7 @@ class CurlTest extends TestCase
         $request = new Request(
             'http://localhost/things',
             'HEAD',
-            ['Cookie' => 'testing=value']
+            ['Cookie' => 'testing=value'],
         );
         $result = $this->curl->buildOptions($request, $options);
         $expected = [

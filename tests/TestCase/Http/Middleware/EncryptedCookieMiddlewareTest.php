@@ -57,7 +57,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $this->middleware = new EncryptedCookieMiddleware(
             ['secret', 'ninja'],
             $this->_getCookieEncryptionKey(),
-            'aes'
+            'aes',
         );
     }
 
@@ -102,7 +102,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $middleware = new EncryptedCookieMiddleware(
             ['secret'],
             $this->_getCookieEncryptionKey(),
-            'aes'
+            'aes',
         );
         $middleware->process($request, $handler);
     }
@@ -141,7 +141,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $this->assertTrue($cookies->has('ninja'));
         $this->assertSame(
             'shuriken',
-            $this->_decrypt($cookies->get('ninja')->getValue(), 'aes')
+            $this->_decrypt($cookies->get('ninja')->getValue(), 'aes'),
         );
     }
 
@@ -160,7 +160,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $this->assertNotSame('shuriken', $response->getCookie('ninja'));
         $this->assertSame(
             'shuriken',
-            $this->_decrypt($response->getCookie('ninja')['value'], 'aes')
+            $this->_decrypt($response->getCookie('ninja')['value'], 'aes'),
         );
     }
 }

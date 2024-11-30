@@ -862,7 +862,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function paginate(
         RepositoryInterface|QueryInterface|string|null $object = null,
-        array $settings = []
+        array $settings = [],
     ): PaginatedInterface {
         if (!is_object($object)) {
             $object = $this->fetchTable($object);

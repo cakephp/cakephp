@@ -117,15 +117,15 @@ class ResponseTest extends TestCase
 
         $this->assertSame(
             'application/pdf',
-            $response->withType('pdf')->getType()
+            $response->withType('pdf')->getType(),
         );
         $this->assertSame(
             'custom/stuff',
-            $response->withType('custom/stuff')->getType()
+            $response->withType('custom/stuff')->getType(),
         );
         $this->assertSame(
             'application/json',
-            $response->withType('json')->getType()
+            $response->withType('json')->getType(),
         );
     }
 
@@ -156,7 +156,7 @@ class ResponseTest extends TestCase
         $this->assertSame(
             'text/html; charset=UTF-8',
             $response->getHeaderLine('Content-Type'),
-            'Default content-type should match'
+            'Default content-type should match',
         );
 
         $new = $response->withType('pdf');
@@ -165,7 +165,7 @@ class ResponseTest extends TestCase
         $this->assertSame(
             'text/html; charset=UTF-8',
             $response->getHeaderLine('Content-Type'),
-            'Original object should not be modified'
+            'Original object should not be modified',
         );
         $this->assertSame('application/pdf', $new->getHeaderLine('Content-Type'));
 
@@ -183,17 +183,17 @@ class ResponseTest extends TestCase
         $this->assertSame(
             'application/json',
             $response->withType('application/json')->getHeaderLine('Content-Type'),
-            'Should not add charset to explicit type'
+            'Should not add charset to explicit type',
         );
         $this->assertSame(
             'custom/stuff',
             $response->withType('custom/stuff')->getHeaderLine('Content-Type'),
-            'Should allow arbitrary types'
+            'Should allow arbitrary types',
         );
         $this->assertSame(
             'text/html; charset=UTF-8',
             $response->withType('text/html; charset=UTF-8')->getHeaderLine('Content-Type'),
-            'Should allow charset types'
+            'Should allow charset types',
         );
     }
 
@@ -241,7 +241,7 @@ class ResponseTest extends TestCase
         $this->assertSame('', $new->getType());
         $this->assertFalse(
             $new->hasHeader('Content-Type'),
-            'Type should not be retained because of status code.'
+            'Type should not be retained because of status code.',
         );
 
         $response = new Response();
@@ -765,7 +765,7 @@ class ResponseTest extends TestCase
             $expiry,
             '/test',
             '',
-            true
+            true,
         );
 
         $new = $response->withCookie($cookie);
@@ -833,7 +833,7 @@ class ResponseTest extends TestCase
         $cookie = Cookie::create(
             $options['name'],
             $options['value'],
-            $options['options']
+            $options['options'],
         );
 
         $response = new Response();
@@ -1042,20 +1042,20 @@ class ResponseTest extends TestCase
             [
                 'name' => 'something_special.css',
                 'download' => true,
-            ]
+            ],
         );
         $this->assertSame(
             'text/html; charset=UTF-8',
             $response->getHeaderLine('Content-Type'),
-            'No mutation'
+            'No mutation',
         );
         $this->assertSame(
             'text/css; charset=UTF-8',
-            $new->getHeaderLine('Content-Type')
+            $new->getHeaderLine('Content-Type'),
         );
         $this->assertSame(
             'attachment; filename="something_special.css"',
-            $new->getHeaderLine('Content-Disposition')
+            $new->getHeaderLine('Content-Disposition'),
         );
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
         $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
@@ -1078,7 +1078,7 @@ class ResponseTest extends TestCase
         $this->assertSame('text/html; charset=UTF-8', $new->getHeaderLine('Content-Type'));
         $this->assertSame(
             'attachment; filename="no_section.ini"',
-            $new->getHeaderLine('Content-Disposition')
+            $new->getHeaderLine('Content-Disposition'),
         );
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
         $body = $new->getBody();
@@ -1098,7 +1098,7 @@ class ResponseTest extends TestCase
         $this->assertSame('application/octet-stream', $new->getHeaderLine('Content-Type'));
         $this->assertSame(
             'attachment; filename="no_section.ini"',
-            $new->getHeaderLine('Content-Disposition')
+            $new->getHeaderLine('Content-Disposition'),
         );
     }
 
@@ -1125,7 +1125,7 @@ class ResponseTest extends TestCase
         ]);
         $this->assertSame(
             'text/html; charset=UTF-8',
-            $new->getHeaderLine('Content-Type')
+            $new->getHeaderLine('Content-Type'),
         );
         $this->assertFalse($new->hasHeader('Content-Disposition'));
         $this->assertFalse($new->hasHeader('Content-Transfer-Encoding'));
@@ -1183,11 +1183,11 @@ class ResponseTest extends TestCase
         $response = new Response();
         $new = $response->withFile(
             TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
+            ['download' => true],
         );
         $this->assertSame(
             'attachment; filename="test_asset.css"',
-            $new->getHeaderLine('Content-Disposition')
+            $new->getHeaderLine('Content-Disposition'),
         );
         $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
@@ -1204,12 +1204,12 @@ class ResponseTest extends TestCase
         $response = new Response();
         $new = $response->withFile(
             TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
+            ['download' => true],
         );
 
         $this->assertSame(
             'attachment; filename="test_asset.css"',
-            $new->getHeaderLine('Content-Disposition')
+            $new->getHeaderLine('Content-Disposition'),
         );
         $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
@@ -1248,12 +1248,12 @@ class ResponseTest extends TestCase
         $response = new Response();
         $new = $response->withFile(
             TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
+            ['download' => true],
         );
 
         $this->assertSame(
             'attachment; filename="test_asset.css"',
-            $new->getHeaderLine('Content-Disposition')
+            $new->getHeaderLine('Content-Disposition'),
         );
         $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));
@@ -1271,12 +1271,12 @@ class ResponseTest extends TestCase
         $response = new Response();
         $new = $response->withFile(
             TEST_APP . 'vendor' . DS . 'css' . DS . 'test_asset.css',
-            ['download' => true]
+            ['download' => true],
         );
 
         $this->assertSame(
             'attachment; filename="test_asset.css"',
-            $new->getHeaderLine('Content-Disposition')
+            $new->getHeaderLine('Content-Disposition'),
         );
         $this->assertSame('binary', $new->getHeaderLine('Content-Transfer-Encoding'));
         $this->assertSame('bytes', $new->getHeaderLine('Accept-Ranges'));

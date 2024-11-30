@@ -111,7 +111,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         string $col,
         ?int $length = null,
         ?int $precision = null,
-        ?int $scale = null
+        ?int $scale = null,
     ): array {
         $col = strtolower($col);
 

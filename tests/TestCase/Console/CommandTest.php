@@ -137,7 +137,7 @@ class CommandTest extends TestCase
 
         $this->assertSame(
             CommandInterface::CODE_SUCCESS,
-            $command->run(['-h'], $this->getMockIo($output))
+            $command->run(['-h'], $this->getMockIo($output)),
         );
         $messages = implode("\n", $output->messages());
         $this->assertStringNotContainsString('Demo', $messages);
@@ -155,7 +155,7 @@ class CommandTest extends TestCase
 
         $this->assertSame(
             CommandInterface::CODE_SUCCESS,
-            $command->run(['--help'], $this->getMockIo($output))
+            $command->run(['--help'], $this->getMockIo($output)),
         );
         $messages = implode("\n", $output->messages());
         $this->assertStringNotContainsString('Demo', $messages);
@@ -217,7 +217,7 @@ class CommandTest extends TestCase
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString(
             'Error: Missing required argument. The `name` argument is required',
-            $messages
+            $messages,
         );
     }
 

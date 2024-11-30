@@ -48,7 +48,7 @@ class SchemaLoader
         array|string $paths,
         string $connectionName = 'test',
         bool $dropTables = true,
-        bool $truncateTables = false
+        bool $truncateTables = false,
     ): void {
         $files = (array)$paths;
 

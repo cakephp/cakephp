@@ -86,7 +86,7 @@ class CommandRunner implements EventDispatcherInterface
     public function __construct(
         ConsoleApplicationInterface $app,
         string $root = 'cake',
-        ?CommandFactoryInterface $factory = null
+        ?CommandFactoryInterface $factory = null,
     ) {
         $this->app = $app;
         $this->root = $root;

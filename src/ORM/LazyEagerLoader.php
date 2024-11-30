@@ -141,7 +141,7 @@ class LazyEagerLoader
         array $entities,
         SelectQuery $query,
         array $associations,
-        Table $source
+        Table $source,
     ): array {
         $injected = [];
         $properties = $this->_getPropertyMap($source, $associations);

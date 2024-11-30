@@ -796,7 +796,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function select(
         ExpressionInterface|Table|Association|Closure|array|string|float|int $fields = [],
-        bool $overwrite = false
+        bool $overwrite = false,
     ) {
         if ($fields instanceof Association) {
             $fields = $fields->getTarget();
@@ -824,7 +824,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @return $this
      */
     public function selectAlso(
-        ExpressionInterface|Table|Association|Closure|array|string|float|int $fields
+        ExpressionInterface|Table|Association|Closure|array|string|float|int $fields,
     ) {
         $this->select($fields);
         $this->_autoFields = true;

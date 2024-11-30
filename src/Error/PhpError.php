@@ -92,7 +92,7 @@ class PhpError
         string $message,
         ?string $file = null,
         ?int $line = null,
-        array $trace = []
+        array $trace = [],
     ) {
         if (version_compare(PHP_VERSION, '8.4.0-dev', '<')) {
             $this->levelMap[E_STRICT] = 'strict';

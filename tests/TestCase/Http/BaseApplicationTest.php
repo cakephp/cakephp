@@ -116,15 +116,15 @@ class BaseApplicationTest extends TestCase
 
         $this->assertSame(
             TEST_APP . 'Plugin' . DS . 'PluginJs' . DS,
-            $plugin->getPath()
+            $plugin->getPath(),
         );
         $this->assertSame(
             TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'config' . DS,
-            $plugin->getConfigPath()
+            $plugin->getConfigPath(),
         );
         $this->assertSame(
             TEST_APP . 'Plugin' . DS . 'PluginJs' . DS . 'src' . DS,
-            $plugin->getClassPath()
+            $plugin->getClassPath(),
         );
     }
 
@@ -213,15 +213,15 @@ class BaseApplicationTest extends TestCase
         $app->pluginBootstrap();
         $this->assertTrue(
             Configure::check('Named.bootstrap'),
-            'Plugin bootstrap should be run'
+            'Plugin bootstrap should be run',
         );
         $this->assertTrue(
             Configure::check('PluginTest.test_plugin.bootstrap'),
-            'Nested plugin should have bootstrap run'
+            'Nested plugin should have bootstrap run',
         );
         $this->assertTrue(
             Configure::check('PluginTest.test_plugin_two.bootstrap'),
-            'Nested plugin should have bootstrap run'
+            'Nested plugin should have bootstrap run',
         );
     }
 

@@ -48,7 +48,7 @@ trait DateFormatTrait
     protected function _formatObject(
         DateTimeInterface $date,
         array|string $format,
-        ?string $locale
+        ?string $locale,
     ): string {
         $pattern = '';
 
@@ -133,7 +133,7 @@ trait DateFormatTrait
     protected static function _parseDateTime(
         string $time,
         array|string $format,
-        DateTimeZone|string|null $tz = null
+        DateTimeZone|string|null $tz = null,
     ): ?static {
         $pattern = '';
 

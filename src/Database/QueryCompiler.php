@@ -351,7 +351,7 @@ class QueryCompiler
         string $operation,
         array $parts,
         Query $query,
-        ValueBinder $binder
+        ValueBinder $binder,
     ): string {
         $setOperationsOrderBy = $query
             ->getConnection()

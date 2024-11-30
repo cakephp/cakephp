@@ -31,7 +31,7 @@ class ContextFactoryTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage(
             'No context provider found for value of type `bool`.'
-            . ' Use `null` as 1st argument of FormHelper::create() to create a context-less form.'
+            . ' Use `null` as 1st argument of FormHelper::create() to create a context-less form.',
         );
 
         $factory = new ContextFactory();

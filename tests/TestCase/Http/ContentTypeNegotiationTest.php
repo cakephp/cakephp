@@ -96,7 +96,7 @@ class ContentTypeNegotiationTest extends TestCase
         $request = $request->withEnv('HTTP_ACCEPT', 'application/json');
         $this->assertEquals(
             'application/json',
-            $content->preferredType($request, ['text/html', 'application/json'])
+            $content->preferredType($request, ['text/html', 'application/json']),
         );
     }
 
@@ -119,7 +119,7 @@ class ContentTypeNegotiationTest extends TestCase
 
         $request = $request->withEnv(
             'HTTP_ACCEPT',
-            'application/pdf;q=0.3,application/json;q=0.5,application/xml;q=0.5'
+            'application/pdf;q=0.3,application/json;q=0.5,application/xml;q=0.5',
         );
         $result = $content->parseAccept($request);
         $expected = [

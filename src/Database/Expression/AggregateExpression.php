@@ -143,7 +143,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
         ExpressionInterface|string|int|null $startOffset,
         string $startDirection,
         ExpressionInterface|string|int|null $endOffset,
-        string $endDirection
+        string $endDirection,
     ) {
         $this->getWindow()->frame($type, $startOffset, $startDirection, $endOffset, $endDirection);
 

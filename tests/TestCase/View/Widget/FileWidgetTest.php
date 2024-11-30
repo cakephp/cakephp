@@ -112,7 +112,7 @@ class FileWidgetTest extends TestCase
 
         $this->assertEquals(
             ['image'],
-            $input->secureFields($data)
+            $input->secureFields($data),
         );
     }
 }

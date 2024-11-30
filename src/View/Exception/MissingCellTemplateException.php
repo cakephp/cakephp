@@ -45,7 +45,7 @@ class MissingCellTemplateException extends MissingTemplateException
         string $file,
         array $paths = [],
         ?int $code = null,
-        ?Throwable $previous = null
+        ?Throwable $previous = null,
     ) {
         $this->name = $name;
 

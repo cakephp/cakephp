@@ -129,7 +129,7 @@ abstract class SchemaDialect
     protected function _getTypeSpecificColumnSql(
         string $columnType,
         TableSchemaInterface $schema,
-        string $column
+        string $column,
     ): ?string {
         if (!TypeFactory::getMap($columnType)) {
             return null;
@@ -283,7 +283,7 @@ abstract class SchemaDialect
         TableSchema $schema,
         array $columns,
         array $constraints,
-        array $indexes
+        array $indexes,
     ): array;
 
     /**

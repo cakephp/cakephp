@@ -86,7 +86,7 @@ class TestFixtureTest extends TestCase
         $this->expectExceptionMessage(
             sprintf(
                 'Cannot describe schema for table `letters` for fixture `%s`. The table does not exist.',
-                LettersFixture::class
+                LettersFixture::class,
             ),
         );
 
@@ -198,8 +198,8 @@ class TestFixtureTest extends TestCase
                 ...self::withConsecutive(
                     [$expected[0]],
                     [$expected[1]],
-                    [$expected[2]]
-                )
+                    [$expected[2]],
+                ),
             )
             ->willReturnSelf();
 

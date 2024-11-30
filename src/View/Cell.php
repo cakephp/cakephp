@@ -120,7 +120,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
         ServerRequest $request,
         Response $response,
         ?EventManagerInterface $eventManager = null,
-        array $cellOptions = []
+        array $cellOptions = [],
     ) {
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);

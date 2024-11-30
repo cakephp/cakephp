@@ -370,7 +370,7 @@ abstract class Driver
     protected function createQueryException(
         PDOException $exception,
         StatementInterface $statement,
-        ?array $params = null
+        ?array $params = null,
     ): QueryException {
         $loggedQuery = new LoggedQuery();
         $loggedQuery->setContext([

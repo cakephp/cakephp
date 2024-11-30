@@ -354,7 +354,7 @@ class StringTemplate
     public function addClass(
         mixed $input,
         array|string|false|null $newClass,
-        string $useIndex = 'class'
+        string $useIndex = 'class',
     ): array|string|null {
         // NOOP
         if (!$newClass) {

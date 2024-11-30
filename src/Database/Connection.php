@@ -301,7 +301,7 @@ class Connection implements ConnectionInterface
     public function selectQuery(
         ExpressionInterface|Closure|array|string|float|int $fields = [],
         array|string $table = [],
-        array $types = []
+        array $types = [],
     ): SelectQuery {
         return $this->queryFactory()->select($fields, $table, $types);
     }
@@ -332,7 +332,7 @@ class Connection implements ConnectionInterface
         ExpressionInterface|string|null $table = null,
         array $values = [],
         array $conditions = [],
-        array $types = []
+        array $types = [],
     ): UpdateQuery {
         return $this->queryFactory()->update($table, $values, $conditions, $types);
     }

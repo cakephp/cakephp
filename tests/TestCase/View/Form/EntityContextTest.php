@@ -861,11 +861,11 @@ class EntityContextTest extends TestCase
 
         $this->assertTrue(
             $context->isRequired('comments.0.comment'),
-            'comment is required as object is not new'
+            'comment is required as object is not new',
         );
         $this->assertFalse(
             $context->isRequired('comments.1.comment'),
-            'comment is not required as missing object is "new"'
+            'comment is not required as missing object is "new"',
         );
     }
 
@@ -1244,7 +1244,7 @@ class EntityContextTest extends TestCase
         $tagTwo = new Tag(['name' => 'second-post']);
         $tagOne->setError(
             'metadata',
-            ['description' => ['_empty' => 'required value']]
+            ['description' => ['_empty' => 'required value']],
         );
         $row = new Article([
             'title' => 'My title',

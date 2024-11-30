@@ -49,7 +49,7 @@ abstract class MiddlewareApplication implements HttpApplicationInterface
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function handle(
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): ResponseInterface {
         return new Response(['body' => 'Not found', 'status' => 404]);
     }

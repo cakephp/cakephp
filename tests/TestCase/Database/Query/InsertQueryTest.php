@@ -116,7 +116,7 @@ class InsertQueryTest extends TestCase
             'INSERT INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?' .
             'VALUES \(:c0\)',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -137,7 +137,7 @@ class InsertQueryTest extends TestCase
             'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
             'VALUES \(:c0, :c1\)',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $result = $query->execute();
@@ -176,7 +176,7 @@ class InsertQueryTest extends TestCase
             'INSERT INTO <articles> \(<123>\) (OUTPUT INSERTED\.\* )?' .
             'VALUES \(:c0\)',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -197,7 +197,7 @@ class InsertQueryTest extends TestCase
             'INSERT INTO <articles> \(<title>, <body>\) (OUTPUT INSERTED\.\* )?' .
             'VALUES \(:c0, :c1\)',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $result = $query->execute();
@@ -274,7 +274,7 @@ class InsertQueryTest extends TestCase
         $query = new InsertQuery($this->connection);
         $query->insert(
             ['title', 'body', 'author_id'],
-            ['title' => 'string', 'body' => 'string', 'author_id' => 'integer']
+            ['title' => 'string', 'body' => 'string', 'author_id' => 'integer'],
         )
         ->into('articles')
         ->values($select);
@@ -283,12 +283,12 @@ class InsertQueryTest extends TestCase
         $this->assertQuotedQuery(
             'INSERT INTO <articles> \(<title>, <body>, <author_id>\) (OUTPUT INSERTED\.\* )?SELECT',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
         $this->assertQuotedQuery(
             "SELECT <name>, 'some text', 99 FROM <authors>",
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
         $result = $query->execute();
         $result->closeCursor();
@@ -421,7 +421,7 @@ class InsertQueryTest extends TestCase
         $this->assertQuotedQuery(
             'INSERT IGNORE INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new InsertQuery($this->connection);
@@ -433,7 +433,7 @@ class InsertQueryTest extends TestCase
         $this->assertQuotedQuery(
             'INSERT IGNORE LOW_PRIORITY INTO <articles> \(<title>\) (OUTPUT INSERTED\.\* )?',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 

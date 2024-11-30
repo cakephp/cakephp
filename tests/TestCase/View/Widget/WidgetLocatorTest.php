@@ -77,7 +77,7 @@ class WidgetLocatorTest extends TestCase
         $inputs = new WidgetLocator(
             $this->templates,
             $this->view,
-            ['test' => [TestUsingViewWidget::class, '_view']]
+            ['test' => [TestUsingViewWidget::class, '_view']],
         );
 
         /** @var \TestApp\View\Widget\TestUsingViewWidget $widget */

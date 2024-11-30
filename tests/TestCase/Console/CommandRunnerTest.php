@@ -102,7 +102,7 @@ class CommandRunnerTest extends TestCase
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString(
             'Unknown command `cake nope`. Run `cake --help` to get the list of commands.',
-            $messages
+            $messages,
         );
     }
 
@@ -119,7 +119,7 @@ class CommandRunnerTest extends TestCase
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString(
             'Unknown command `cake s/pec[ial`. Run `cake --help` to get the list of commands.',
-            $messages
+            $messages,
         );
     }
 
@@ -139,7 +139,7 @@ class CommandRunnerTest extends TestCase
             "Other valid choices:\n" .
             "\n" .
             '- help',
-            $messages
+            $messages,
         );
     }
 

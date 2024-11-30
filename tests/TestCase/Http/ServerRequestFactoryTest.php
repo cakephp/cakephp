@@ -915,7 +915,7 @@ class ServerRequestFactoryTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals(
             $data['SERVER'] ?? null,
-            $data['GET'] ?? null
+            $data['GET'] ?? null,
         );
         $uri = $request->getUri();
 
@@ -990,7 +990,7 @@ class ServerRequestFactoryTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_METHOD' => 'POST'],
             [],
-            ['_method' => 'PUT']
+            ['_method' => 'PUT'],
         );
         $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
         $this->assertSame('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
@@ -1026,7 +1026,7 @@ class ServerRequestFactoryTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_METHOD' => 'POST'],
             [],
-            $body
+            $body,
         );
         $this->assertEmpty($request->getParsedBody());
 
@@ -1036,7 +1036,7 @@ class ServerRequestFactoryTest extends TestCase
                 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET',
             ],
             [],
-            ['foo' => 'bar']
+            ['foo' => 'bar'],
         );
         $this->assertEmpty($request->getParsedBody());
     }
@@ -1129,7 +1129,7 @@ class ServerRequestFactoryTest extends TestCase
                     17178,
                     0,
                     'born on.txt',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
             'pictures' => [
@@ -1140,7 +1140,7 @@ class ServerRequestFactoryTest extends TestCase
                         17188,
                         0,
                         'a-file.png',
-                        'image/png'
+                        'image/png',
                     ),
                 ],
                 1 => [
@@ -1150,7 +1150,7 @@ class ServerRequestFactoryTest extends TestCase
                         2010,
                         0,
                         'a-moose.png',
-                        'image/jpg'
+                        'image/jpg',
                     ),
                 ],
             ],
@@ -1161,7 +1161,7 @@ class ServerRequestFactoryTest extends TestCase
                     1490,
                     0,
                     'scratch.text',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
         ];
@@ -1314,7 +1314,7 @@ class ServerRequestFactoryTest extends TestCase
                 1,
                 0,
                 'flat.txt',
-                'text/plain'
+                'text/plain',
             ),
             'nested' => [
                 'name' => 'nested',
@@ -1323,7 +1323,7 @@ class ServerRequestFactoryTest extends TestCase
                     12,
                     0,
                     'nested.txt',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
             'deep' => [
@@ -1334,7 +1334,7 @@ class ServerRequestFactoryTest extends TestCase
                         12345,
                         0,
                         'deep-1.txt',
-                        'text/plain'
+                        'text/plain',
                     ),
                 ],
                 1 => [
@@ -1344,7 +1344,7 @@ class ServerRequestFactoryTest extends TestCase
                         123456,
                         0,
                         'deep-2.txt',
-                        'text/plain'
+                        'text/plain',
                     ),
                 ],
             ],
@@ -1353,7 +1353,7 @@ class ServerRequestFactoryTest extends TestCase
                 123,
                 0,
                 'numeric.txt',
-                'text/plain'
+                'text/plain',
             ),
             1 => [
                 'name' => 'numeric nested',
@@ -1362,7 +1362,7 @@ class ServerRequestFactoryTest extends TestCase
                     1234,
                     0,
                     'numeric-nested.txt',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
         ];

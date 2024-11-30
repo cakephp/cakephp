@@ -184,7 +184,7 @@ class DateTimeWidget extends BasicWidget
      */
     protected function formatDateTime(
         ChronosDate|ChronosTime|DateTimeInterface|string|int|null $value,
-        array $options
+        array $options,
     ): string {
         if ($value === '' || $value === null) {
             return '';

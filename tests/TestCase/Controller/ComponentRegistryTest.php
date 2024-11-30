@@ -201,7 +201,7 @@ class ComponentRegistryTest extends TestCase
         $this->assertSame(
             $instance,
             $this->Components->FormProtection,
-            'Instance in registry should be the same as previously loaded'
+            'Instance in registry should be the same as previously loaded',
         );
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
 

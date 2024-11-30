@@ -76,11 +76,11 @@ class HelpCommandTest extends TestCase
         $this->assertOutputContains('- sample', 'plugin command should appear');
         $this->assertOutputNotContains(
             '- test_plugin.sample',
-            'only short alias for plugin command.'
+            'only short alias for plugin command.',
         );
         $this->assertOutputNotContains(
             ' - abstract',
-            'Abstract command classes should not appear.'
+            'Abstract command classes should not appear.',
         );
         $this->assertOutputContains('<info>App</info>', 'app header should appear');
         $this->assertOutputContains('- sample', 'app shell');

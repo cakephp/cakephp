@@ -378,7 +378,7 @@ trait IntegrationTestTrait
         string $name,
         array|string $value,
         string|false $encrypt = 'aes',
-        ?string $key = null
+        ?string $key = null,
     ): void {
         $this->_cookieEncryptionKey = $key;
         $this->_cookie[$name] = $this->_encrypt($value, $encrypt);
@@ -1423,7 +1423,7 @@ trait IntegrationTestTrait
         string $name,
         string $encrypt = 'aes',
         ?string $key = null,
-        string $message = ''
+        string $message = '',
     ): void {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($name, new CookieSet($this->_response), $verboseMessage);

@@ -75,13 +75,13 @@ class BindingKeyTest extends TestCase
         $expected = array_combine($expected, $expected);
         $this->assertEquals(
             $expected,
-            $result->all()->combine('username', 'auth_user.username')->toArray()
+            $result->all()->combine('username', 'auth_user.username')->toArray(),
         );
 
         $expected = [1 => 1, 2 => 5, 3 => 2, 4 => 4];
         $this->assertEquals(
             $expected,
-            $result->all()->combine('id', 'auth_user.id')->toArray()
+            $result->all()->combine('id', 'auth_user.id')->toArray(),
         );
     }
 

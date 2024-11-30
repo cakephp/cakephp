@@ -632,7 +632,7 @@ class TranslateBehaviorEavTest extends TestCase
         $driver = ConnectionManager::get('test')->getDriver();
         $this->skipIf(
             $driver instanceof Mysql &&
-            version_compare($driver->version(), '8.0.0', '>=')
+            version_compare($driver->version(), '8.0.0', '>='),
         );
 
         $table = $this->getTableLocator()->get('Articles');
@@ -1272,7 +1272,7 @@ class TranslateBehaviorEavTest extends TestCase
         $table->hasMany('OtherComments', ['className' => 'Comments']);
         $table->OtherComments->addBehavior(
             'Translate',
-            ['fields' => ['comment']]
+            ['fields' => ['comment']],
         );
 
         $items = $table->OtherComments->associations();
@@ -1300,7 +1300,7 @@ class TranslateBehaviorEavTest extends TestCase
         $table->setAlias('FavoritePost');
         $table->addBehavior(
             'Translate',
-            ['fields' => ['body'], 'referenceName' => 'Posts']
+            ['fields' => ['body'], 'referenceName' => 'Posts'],
         );
 
         $items = $table->associations();
@@ -1424,7 +1424,7 @@ class TranslateBehaviorEavTest extends TestCase
         );
         $this->assertSame(
             ['notBlank' => 'The provided value is invalid'],
-            $article->getError('title')
+            $article->getError('title'),
         );
 
         $data = [
@@ -1528,7 +1528,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertNotFalse($table->save($article));
 
         $results = $this->_extractTranslations(
-            $table->find('translations')->where(['id' => 1])
+            $table->find('translations')->where(['id' => 1]),
         )->first();
 
         $this->assertArrayHasKey('es', $results, 'New translation added');
@@ -1566,7 +1566,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertNotFalse($table->save($article));
 
         $results = $this->_extractTranslations(
-            $table->find('translations')->where(['id' => 1])
+            $table->find('translations')->where(['id' => 1]),
         )->first();
 
         $this->assertSame('Mi nuevo titulo', $results['spa']['title']);

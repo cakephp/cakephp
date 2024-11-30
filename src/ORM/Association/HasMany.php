@@ -212,7 +212,7 @@ class HasMany extends Association
         array $foreignKeyReference,
         EntityInterface $parentEntity,
         array $entities,
-        array $options
+        array $options,
     ): bool {
         $foreignKey = array_keys($foreignKeyReference);
         $table = $this->getTarget();
@@ -471,7 +471,7 @@ class HasMany extends Association
         EntityInterface $entity,
         Table $target,
         iterable $remainingEntities = [],
-        array $options = []
+        array $options = [],
     ): bool {
         $primaryKey = (array)$target->getPrimaryKey();
         $exclusions = new Collection($remainingEntities);

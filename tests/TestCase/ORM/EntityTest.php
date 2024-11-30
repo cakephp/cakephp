@@ -87,7 +87,7 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(
             ['false' => false, 'null' => null, 'zero' => 0, 'empty' => ''],
-            ['markNew' => true]
+            ['markNew' => true],
         );
         $this->assertNull($entity->getOriginal('null'));
         $this->assertFalse($entity->getOriginal('false'));
@@ -109,7 +109,7 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(
             ['foo' => 'foo', 'bar' => 'bar'],
-            ['markNew' => true]
+            ['markNew' => true],
         );
         $this->assertNull($entity->getOriginal('baz', true));
         $this->expectException(InvalidArgumentException::class);
@@ -256,8 +256,8 @@ class EntityTest extends TestCase
                     [
                     ['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false],
                     ],
-                    [['foo' => 'bar'], ['setter' => false, 'guard' => false]]
-                )
+                    [['foo' => 'bar'], ['setter' => false, 'guard' => false]],
+                ),
             );
 
         $entity->__construct(['a' => 'b', 'c' => 'd']);
@@ -574,7 +574,7 @@ class EntityTest extends TestCase
         $entity->expects($this->exactly(2))
             ->method('get')
             ->with(
-                ...self::withConsecutive(['foo'], ['bar'])
+                ...self::withConsecutive(['foo'], ['bar']),
             )
             ->willReturn('worked', 'worked too');
 
@@ -595,7 +595,7 @@ class EntityTest extends TestCase
         $entity->expects($this->exactly(2))
             ->method('set')
             ->with(
-                ...self::withConsecutive(['foo', 1], ['bar', 2])
+                ...self::withConsecutive(['foo', 1], ['bar', 2]),
             )
             ->willReturnSelf();
 
@@ -1511,7 +1511,7 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(
             ['a' => 1, 'b' => 2],
-            ['markNew' => false, 'markClean' => true]
+            ['markNew' => false, 'markClean' => true],
         );
 
         $this->assertFalse($entity->isNew());

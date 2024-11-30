@@ -213,7 +213,7 @@ class Socket
         string &$errStr,
         int $timeout,
         int $connectAs,
-        $context
+        $context,
     ) {
         $resource = stream_socket_client(
             $remoteSocketTarget,

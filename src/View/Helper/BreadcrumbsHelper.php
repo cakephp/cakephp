@@ -188,7 +188,7 @@ class BreadcrumbsHelper extends Helper
         string $matchingTitle,
         string $title,
         array|string|null $url = null,
-        array $options = []
+        array $options = [],
     ) {
         $key = $this->findCrumb($matchingTitle);
 
@@ -222,7 +222,7 @@ class BreadcrumbsHelper extends Helper
         string $matchingTitle,
         string $title,
         array|string|null $url = null,
-        array $options = []
+        array $options = [],
     ) {
         $key = $this->findCrumb($matchingTitle);
 

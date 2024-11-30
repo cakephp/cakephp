@@ -41,7 +41,7 @@ class RulesCheckerTest extends TestCase
                 return false;
             },
             'ruleName',
-            ['errorField' => 'name']
+            ['errorField' => 'name'],
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::CREATE));
@@ -68,7 +68,7 @@ class RulesCheckerTest extends TestCase
                 return false;
             },
             'ruleName',
-            ['errorField' => 'name']
+            ['errorField' => 'name'],
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::CREATE));
@@ -95,7 +95,7 @@ class RulesCheckerTest extends TestCase
                 return false;
             },
             'ruleName',
-            ['errorField' => 'name']
+            ['errorField' => 'name'],
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::UPDATE));
@@ -122,7 +122,7 @@ class RulesCheckerTest extends TestCase
                 return false;
             },
             'ruleName',
-            ['errorField' => 'name']
+            ['errorField' => 'name'],
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
@@ -143,7 +143,7 @@ class RulesCheckerTest extends TestCase
             function () {
                 return 'worst thing ever';
             },
-            ['errorField' => 'name']
+            ['errorField' => 'name'],
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
@@ -164,7 +164,7 @@ class RulesCheckerTest extends TestCase
             function () {
                 return false;
             },
-            ['message' => 'this is bad', 'errorField' => 'name']
+            ['message' => 'this is bad', 'errorField' => 'name'],
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));

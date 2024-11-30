@@ -99,7 +99,7 @@ class Text
         string $data,
         string $separator = ',',
         string $leftBound = '(',
-        string $rightBound = ')'
+        string $rightBound = ')',
     ): array {
         if (!$data) {
             return [];

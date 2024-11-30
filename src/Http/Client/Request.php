@@ -45,7 +45,7 @@ class Request extends Message implements RequestInterface
         UriInterface|string $url = '',
         string $method = self::METHOD_GET,
         array $headers = [],
-        array|string|null $data = null
+        array|string|null $data = null,
     ) {
         $this->setMethod($method);
         $this->uri = $this->createUri($url);

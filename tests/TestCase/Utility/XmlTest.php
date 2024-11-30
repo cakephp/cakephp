@@ -86,7 +86,7 @@ class XmlTest extends TestCase
 
         $this->assertEquals(
             Xml::build($xml, ['readFile' => true]),
-            Xml::build(file_get_contents($xml))
+            Xml::build(file_get_contents($xml)),
         );
 
         $obj = Xml::build($xml, ['return' => 'domdocument', 'readFile' => true]);
@@ -94,7 +94,7 @@ class XmlTest extends TestCase
 
         $this->assertEquals(
             Xml::build($xml, ['return' => 'domdocument', 'readFile' => true]),
-            Xml::build(file_get_contents($xml), ['return' => 'domdocument'])
+            Xml::build(file_get_contents($xml), ['return' => 'domdocument']),
         );
 
         $xml = ['tag' => 'value'];

@@ -95,7 +95,7 @@ trait LogTestTrait
         string $level,
         string $expectedMessage,
         ?string $scope = null,
-        string $failMsg = ''
+        string $failMsg = '',
     ): void {
         $this->_expectLogMessage($level, $expectedMessage, $scope, $failMsg);
     }
@@ -112,7 +112,7 @@ trait LogTestTrait
         string $level,
         string $expectedMessage,
         ?string $scope = null,
-        string $failMsg = ''
+        string $failMsg = '',
     ): void {
         $this->_expectLogMessage($level, $expectedMessage, $scope, $failMsg, true);
     }
@@ -131,7 +131,7 @@ trait LogTestTrait
         string $expectedMessage,
         ?string $scope,
         string $failMsg = '',
-        bool $contains = false
+        bool $contains = false,
     ): void {
         $messageFound = false;
         $expectedMessage = sprintf('%s: %s', $level, $expectedMessage);

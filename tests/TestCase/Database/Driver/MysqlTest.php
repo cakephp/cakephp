@@ -115,7 +115,7 @@ class MysqlTest extends TestCase
         $connection->expects($this->exactly(3))
             ->method('exec')
             ->with(
-                ...self::withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antarctica'"])
+                ...self::withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antarctica'"]),
             );
 
         $driver->expects($this->once())->method('createPdo')
@@ -234,7 +234,7 @@ class MysqlTest extends TestCase
         foreach ($featureVersions[$serverType] as $feature => $version) {
             $this->assertSame(
                 version_compare($driver->version(), $version, '>='),
-                $driver->supports(DriverFeatureEnum::from($feature))
+                $driver->supports(DriverFeatureEnum::from($feature)),
             );
         }
 

@@ -156,7 +156,7 @@ class RadioWidget extends BasicWidget
         string|int $val,
         array|string|int $text,
         array $data,
-        ContextInterface $context
+        ContextInterface $context,
     ): string {
         $escape = $data['escape'];
         if (is_array($text) && isset($text['text'], $text['value'])) {
@@ -252,7 +252,7 @@ class RadioWidget extends BasicWidget
         array|string|bool|null $label,
         string $input,
         ContextInterface $context,
-        bool $escape
+        bool $escape,
     ): string|false {
         if (isset($radio['label'])) {
             $label = $radio['label'];

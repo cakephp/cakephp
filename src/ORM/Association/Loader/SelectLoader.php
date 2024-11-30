@@ -355,7 +355,7 @@ class SelectLoader
         SelectQuery $query,
         array $keys,
         mixed $filter,
-        string $operator
+        string $operator,
     ): TupleComparison {
         $types = [];
         $defaults = $query->getDefaultTypes();

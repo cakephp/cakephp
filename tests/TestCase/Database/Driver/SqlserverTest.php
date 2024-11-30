@@ -172,8 +172,8 @@ class SqlserverTest extends TestCase
                     ['Execute this'],
                     ['this too'],
                     ['SET config1 value1'],
-                    ['SET config2 value2']
-                )
+                    ['SET config2 value2'],
+                ),
             );
 
         $driver->expects($this->once())->method('createPdo')
@@ -265,7 +265,7 @@ class SqlserverTest extends TestCase
                         PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
                     ]],
                     ['', []],
-                )
+                ),
             )
             ->willReturn($statement);
 
@@ -439,7 +439,7 @@ class SqlserverTest extends TestCase
                 '(ROW_NUMBER() OVER (ORDER BY (SELECT count(*) FROM articles a WHERE (a.id = articles.id AND a.published = :c2)) ASC)) AS _cake_page_rownum_ FROM articles' .
             ') _cake_paging_ ' .
             'WHERE _cake_paging_._cake_page_rownum_ > 10',
-            $query->sql()
+            $query->sql(),
         );
     }
 
@@ -536,7 +536,7 @@ class SqlserverTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server'
+            'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server',
         );
         $connection->getDriver()->prepare($query);
     }

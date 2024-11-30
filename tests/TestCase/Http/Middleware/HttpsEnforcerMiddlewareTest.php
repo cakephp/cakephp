@@ -144,7 +144,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
                 'location' => ['https://localhost/foo'],
                 'X-Foo' => ['bar'],
             ],
-            $result->getHeaders()
+            $result->getHeaders(),
         );
     }
 

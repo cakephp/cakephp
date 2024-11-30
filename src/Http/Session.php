@@ -270,7 +270,7 @@ class Session
      */
     public function engine(
         SessionHandlerInterface|string|null $class = null,
-        array $options = []
+        array $options = [],
     ): ?SessionHandlerInterface {
         if ($class === null) {
             return $this->_engine;

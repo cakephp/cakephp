@@ -211,7 +211,7 @@ class SelectBoxWidget extends BasicWidget
         ?array $disabled,
         mixed $selected,
         array $templateVars,
-        bool $escape
+        bool $escape,
     ): string {
         $opts = $optgroup;
         $attrs = [];
@@ -247,7 +247,7 @@ class SelectBoxWidget extends BasicWidget
         ?array $disabled,
         mixed $selected,
         array $templateVars,
-        bool $escape
+        bool $escape,
     ): array {
         $out = [];
         foreach ($options as $key => $val) {

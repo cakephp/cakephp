@@ -75,7 +75,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
                         'precision',
                         'scale',
                     ],
-                    array_keys($definition)
+                    array_keys($definition),
                 );
 
                 return null;

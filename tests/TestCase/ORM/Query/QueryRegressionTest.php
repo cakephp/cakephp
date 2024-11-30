@@ -456,7 +456,7 @@ class QueryRegressionTest extends TestCase
         $this->assertSame('Second top article', $highlights->top_articles[1]->title);
         $this->assertEquals(
             new DateTime('2014-06-01 10:10:00'),
-            $highlights->_joinData->highlighted_time
+            $highlights->_joinData->highlighted_time,
         );
     }
 
@@ -478,11 +478,11 @@ class QueryRegressionTest extends TestCase
 
         $this->assertNotEmpty(
             $result->comments[0]->id,
-            'No SQL error and comment exists.'
+            'No SQL error and comment exists.',
         );
         $this->assertNotEmpty(
             $result->author->id,
-            'No SQL error and author exists.'
+            'No SQL error and author exists.',
         );
         $this->clearPlugins();
     }
@@ -552,7 +552,7 @@ class QueryRegressionTest extends TestCase
 
         $this->assertEquals(
             ['tag1', 'tag3'],
-            collection($result[2]->articles[0]->tags)->sortBy('name')->extract('name')->toArray()
+            collection($result[2]->articles[0]->tags)->sortBy('name')->extract('name')->toArray(),
         );
     }
 
@@ -579,7 +579,7 @@ class QueryRegressionTest extends TestCase
             ->toArray();
         $this->assertEquals(
             ['tag1', 'tag2'],
-            collection($result[0]->author->tags)->extract('name')->toArray()
+            collection($result[0]->author->tags)->extract('name')->toArray(),
         );
         $this->assertSame(3, $result[0]->author->id);
     }
@@ -596,7 +596,7 @@ class QueryRegressionTest extends TestCase
 
         $this->skipIf(
             $tags->getConnection()->getDriver() instanceof Sqlserver,
-            'SQL server is temporarily weird in this test, will investigate later'
+            'SQL server is temporarily weird in this test, will investigate later',
         );
         $tags = $this->getTableLocator()->get('Tags');
         $featuredTags = $this->getTableLocator()->get('FeaturedTags');
@@ -1117,14 +1117,14 @@ class QueryRegressionTest extends TestCase
             'id',
             'coalesced' => $query->func()->coalesce(
                 ['published' => 'identifier', -1],
-                ['integer']
+                ['integer'],
             ),
         ]);
         $result = $query->all()->first();
         $this->assertSame(
             -1,
             $result['coalesced'],
-            'Output values for functions should be casted'
+            'Output values for functions should be casted',
         );
     }
 
@@ -1457,7 +1457,7 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
         $query->orderByDesc(
-            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0)
+            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0),
         );
         $query->orderBy(['title' => 'desc']);
         // Executing the normal query before getting the count
@@ -1467,7 +1467,7 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
         $query->orderByDesc(
-            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0)
+            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0),
         );
         $query->orderByDesc($query->newExpr()->add(['id' => 3]));
         // Not executing the query first, just getting the count
@@ -1617,7 +1617,7 @@ class QueryRegressionTest extends TestCase
                                     ->selectQuery(1.23456),
                                 2,
                             ],
-                            [null, 'integer']
+                            [null, 'integer'],
                         )
                         ->setReturnType('float'),
                 ];
@@ -1637,7 +1637,7 @@ class QueryRegressionTest extends TestCase
 
         $this->assertSame(
             1,
-            $table->getAssociation('Authors')->updateAll(['name' => null], ['id' => 3])
+            $table->getAssociation('Authors')->updateAll(['name' => null], ['id' => 3]),
         );
 
         $query = $table

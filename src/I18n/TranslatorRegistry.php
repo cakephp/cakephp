@@ -103,7 +103,7 @@ class TranslatorRegistry
     public function __construct(
         PackageLocator $packages,
         FormatterLocator $formatters,
-        string $locale
+        string $locale,
     ) {
         $this->packages = $packages;
         $this->formatters = $formatters;

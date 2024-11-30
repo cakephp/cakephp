@@ -177,8 +177,8 @@ class ConsoleIoTest extends TestCase
                     ['Just a test', 1],
                     [['Just', 'a', 'test'], 1],
                     [['Just', 'a', 'test'], 2],
-                    ['', 1]
-                )
+                    ['', 1],
+                ),
             );
 
         $this->io->out('Just a test');
@@ -198,8 +198,8 @@ class ConsoleIoTest extends TestCase
                 ...self::withConsecutive(
                     ['Verbose', 1],
                     ['Normal', 1],
-                    ['Quiet', 1]
-                )
+                    ['Quiet', 1],
+                ),
             );
 
         $this->io->level(ConsoleIo::VERBOSE);
@@ -220,8 +220,8 @@ class ConsoleIoTest extends TestCase
                 ...self::withConsecutive(
                     ['Verbose', 1],
                     ['Normal', 1],
-                    ['Quiet', 1]
-                )
+                    ['Quiet', 1],
+                ),
             );
 
         $this->io->level(ConsoleIo::VERBOSE);
@@ -241,8 +241,8 @@ class ConsoleIoTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     ['Quiet', 1],
-                    ['Quiet', 1]
-                )
+                    ['Quiet', 1],
+                ),
             );
 
         $this->io->level(ConsoleIo::QUIET);
@@ -266,8 +266,8 @@ class ConsoleIoTest extends TestCase
                     ['Just a test', 1],
                     [['Just', 'a', 'test'], 1],
                     [['Just', 'a', 'test'], 2],
-                    ['', 1]
-                )
+                    ['', 1],
+                ),
             );
 
         $this->io->err('Just a test');
@@ -346,8 +346,8 @@ class ConsoleIoTest extends TestCase
                     ['', 0],
                     ['', true],
                     [$bar, 1],
-                    ['', true]
-                )
+                    ['', true],
+                ),
             );
 
         $this->io->hr();
@@ -369,15 +369,15 @@ class ConsoleIoTest extends TestCase
                     [str_repeat("\x08", $number), 0],
                     ['Less text', 0],
                     [str_repeat(' ', $number - 9), 0],
-                    [PHP_EOL, 0]
-                )
+                    [PHP_EOL, 0],
+                ),
             )
             ->willReturn(
                 $number,
                 9,
                 9,
                 1,
-                0
+                0,
             );
 
         $this->io->out('Some <info>text</info> I want to overwrite', 0);
@@ -404,8 +404,8 @@ class ConsoleIoTest extends TestCase
                     // Backspaces
                     [str_repeat("\x08", $length), 0],
                     ['12', 0],
-                    [str_repeat(' ', $length - 2), 0]
-                )
+                    [str_repeat(' ', $length - 2), 0],
+                ),
             )
             ->willReturn(
                 $length,
@@ -414,7 +414,7 @@ class ConsoleIoTest extends TestCase
                 $length - 3,
                 $length,
                 2,
-                $length - 2
+                $length - 2,
             );
 
         $this->io->out('12345');
@@ -437,15 +437,15 @@ class ConsoleIoTest extends TestCase
                     ['123', 0],
                     // Backspaces
                     [str_repeat("\x08", 3), 0],
-                    ['12345', 0]
-                )
+                    ['12345', 0],
+                ),
             )
             ->willReturn(
                 1,
                 1,
                 3,
                 3,
-                5
+                5,
             );
 
         $this->io->out('1');
@@ -598,8 +598,8 @@ class ConsoleIoTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     [ "<{$method}>Just a test</{$method}>", 1],
-                    [["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1]
-                )
+                    [["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1],
+                ),
             );
 
         $this->io->{$method}('Just a test');
@@ -617,8 +617,8 @@ class ConsoleIoTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     [ "<{$method}>Just a test</{$method}>", 1],
-                    [["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1]
-                )
+                    [["<{$method}>Just</{$method}>", "<{$method}>a test</{$method}>"], 1],
+                ),
             );
 
         $this->io->{$method}('Just a test');
@@ -789,7 +789,7 @@ class ConsoleIoTest extends TestCase
         $this->assertStringEqualsFile(
             $file,
             'newest content',
-            'overwrite state replaces parameter'
+            'overwrite state replaces parameter',
         );
     }
 }

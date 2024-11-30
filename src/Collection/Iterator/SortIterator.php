@@ -67,7 +67,7 @@ class SortIterator extends Collection
         iterable $items,
         callable|string $callback,
         int $dir = SORT_DESC,
-        int $type = SORT_NUMERIC
+        int $type = SORT_NUMERIC,
     ) {
         if (!is_array($items)) {
             $items = iterator_to_array((new Collection($items))->unwrap(), false);

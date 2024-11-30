@@ -777,7 +777,7 @@ trait PaginatorTestTrait
         } catch (PageOutOfBoundsException $exception) {
             $this->assertEquals(
                 'Page number `3000` could not be found.',
-                $exception->getMessage()
+                $exception->getMessage(),
             );
 
             $attributes = $exception->getAttributes();
@@ -835,7 +835,7 @@ trait PaginatorTestTrait
         $this->assertEquals(
             $expected,
             $result['order'],
-            'Trusted fields in schema should be prefixed'
+            'Trusted fields in schema should be prefixed',
         );
     }
 
@@ -883,7 +883,7 @@ trait PaginatorTestTrait
         $this->assertEquals(
             $expected,
             $result['order'],
-            'Trusted fields not in schema should not be altered'
+            'Trusted fields not in schema should not be altered',
         );
     }
 

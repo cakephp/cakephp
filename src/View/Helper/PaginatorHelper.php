@@ -462,7 +462,7 @@ class PaginatorHelper extends Helper
     public function generateUrl(
         array $options = [],
         array $url = [],
-        array $urlOptions = []
+        array $urlOptions = [],
     ): string {
         $urlOptions += [
             'escape' => true,

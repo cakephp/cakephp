@@ -398,7 +398,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function sortBy(
         callable|string $path,
         int $order = SORT_DESC,
-        int $sort = SORT_NUMERIC
+        int $sort = SORT_NUMERIC,
     ): CollectionInterface;
 
     /**
@@ -737,7 +737,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function combine(
         callable|string $keyPath,
         callable|string $valuePath,
-        callable|string|null $groupPath = null
+        callable|string|null $groupPath = null,
     ): CollectionInterface;
 
     /**
@@ -754,7 +754,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function nest(
         callable|string $idPath,
         callable|string $parentPath,
-        string $nestingKey = 'children'
+        string $nestingKey = 'children',
     ): CollectionInterface;
 
     /**
@@ -920,7 +920,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      */
     public function listNested(
         string|int $order = 'desc',
-        callable|string $nestingKey = 'children'
+        callable|string $nestingKey = 'children',
     ): CollectionInterface;
 
     /**

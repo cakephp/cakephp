@@ -702,7 +702,7 @@ class HashTest extends TestCase
     {
         $result = Hash::merge(
             ['hkuc' => ['lion']],
-            ['hkuc' => 'lion']
+            ['hkuc' => 'lion'],
         );
         $expected = ['hkuc' => 'lion'];
         $this->assertSame($expected, $result);
@@ -710,7 +710,7 @@ class HashTest extends TestCase
         $result = Hash::merge(
             ['hkuc' => ['lion']],
             ['hkuc' => ['lion']],
-            ['hkuc' => 'lion']
+            ['hkuc' => 'lion'],
         );
         $this->assertSame($expected, $result);
 
@@ -1405,11 +1405,11 @@ class HashTest extends TestCase
         ];
         $this->assertSame(
             ['test1', 'test2'],
-            Hash::extract($data, 'Level1.Level2')
+            Hash::extract($data, 'Level1.Level2'),
         );
         $this->assertSame(
             ['test3', 'test4'],
-            Hash::extract($data, 'Level1.Level2bis')
+            Hash::extract($data, 'Level1.Level2bis'),
         );
 
         $data = new ArrayObject([
@@ -1420,11 +1420,11 @@ class HashTest extends TestCase
         ]);
         $this->assertSame(
             ['test1', 'test2'],
-            Hash::extract($data, 'Level1.Level2')
+            Hash::extract($data, 'Level1.Level2'),
         );
         $this->assertSame(
             ['test3', 'test4'],
-            Hash::extract($data, 'Level1.Level2bis')
+            Hash::extract($data, 'Level1.Level2bis'),
         );
 
         $data = [
@@ -2517,7 +2517,7 @@ class HashTest extends TestCase
             $a,
             '{n}.User.id',
             ['%1$s: %2$s', '{n}.User.Data.user', '{n}.User.Data.name'],
-            '{n}.User.group_id'
+            '{n}.User.group_id',
         );
         $expected = [
             1 => [
@@ -2534,7 +2534,7 @@ class HashTest extends TestCase
             $a,
             null,
             ['%1$s: %2$s', '{n}.User.Data.user', '{n}.User.Data.name'],
-            '{n}.User.group_id'
+            '{n}.User.group_id',
         );
         $expected = [
             1 => [
@@ -2554,7 +2554,7 @@ class HashTest extends TestCase
                 '{n}.User.Data.user',
                 '{n}.User.Data.name',
             ],
-            '{n}.User.id'
+            '{n}.User.id',
         );
         $expected = [
             'mariano.iglesias: Mariano Iglesias' => 2,
@@ -2566,7 +2566,7 @@ class HashTest extends TestCase
         $result = Hash::combine(
             $a,
             ['%1$s: %2$d', '{n}.User.Data.user', '{n}.User.id'],
-            '{n}.User.Data.name'
+            '{n}.User.Data.name',
         );
         $expected = [
             'mariano.iglesias: 2' => 'Mariano Iglesias',
@@ -2578,7 +2578,7 @@ class HashTest extends TestCase
         $result = Hash::combine(
             $a,
             ['%2$d: %1$s', '{n}.User.Data.user', '{n}.User.id'],
-            '{n}.User.Data.name'
+            '{n}.User.Data.name',
         );
         $expected = [
             '2: mariano.iglesias' => 'Mariano Iglesias',
@@ -2598,7 +2598,7 @@ class HashTest extends TestCase
         $result = Hash::format(
             $data,
             ['{n}.User.Data.user', '{n}.User.id'],
-            '%s, %s'
+            '%s, %s',
         );
         $expected = [
             'mariano.iglesias, 2',
@@ -2610,7 +2610,7 @@ class HashTest extends TestCase
         $result = Hash::format(
             $data,
             ['{n}.User.Data.user', '{n}.User.id'],
-            '%2$s, %1$s'
+            '%2$s, %1$s',
         );
         $expected = [
             '2, mariano.iglesias',

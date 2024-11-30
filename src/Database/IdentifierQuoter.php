@@ -40,7 +40,7 @@ class IdentifierQuoter
      */
     public function __construct(
         protected string $startQuote,
-        protected string $endQuote
+        protected string $endQuote,
     ) {
     }
 

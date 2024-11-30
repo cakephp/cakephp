@@ -272,7 +272,7 @@ class ClientTest extends TestCase
                 $this->assertEmpty($request->getHeaderLine('Content-Type'), 'Should have no content-type set');
                 $this->assertSame(
                     'http://cakephp.org/search',
-                    $request->getUri() . ''
+                    $request->getUri() . '',
                 );
 
                 return true;
@@ -303,7 +303,7 @@ class ClientTest extends TestCase
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame(
                     'http://cakephp.org/search?q=hi%20there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
-                    $request->getUri() . ''
+                    $request->getUri() . '',
                 );
 
                 return true;
@@ -336,7 +336,7 @@ class ClientTest extends TestCase
             ->with($this->callback(function ($request) {
                 $this->assertSame(
                     'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
-                    $request->getUri() . ''
+                    $request->getUri() . '',
                 );
 
                 return true;
@@ -777,8 +777,8 @@ class ClientTest extends TestCase
                         return true;
                     }),
                     [],
-                    ]
-                )
+                    ],
+                ),
             )
             ->willReturn([$redirect], [$redirect2], [$response]);
 
@@ -832,7 +832,7 @@ class ClientTest extends TestCase
             'http://cakephp.org/test.html',
             Request::METHOD_GET,
             'php://temp',
-            $headers
+            $headers,
         );
         $result = $http->sendRequest($request);
 
@@ -847,7 +847,7 @@ class ClientTest extends TestCase
             'HttpClient.beforeSend',
             function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) use (&$eventTriggered): void {
                 $eventTriggered = true;
-            }
+            },
         );
 
         Client::addMockResponse('GET', 'http://foo.test', new Response(body: 'test'));
@@ -866,7 +866,7 @@ class ClientTest extends TestCase
             function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
                 $event->setRequest(new Request('http://bar.test'));
                 $event->setAdapterOptions(['some' => 'value']);
-            }
+            },
         );
 
         Client::addMockResponse(
@@ -877,7 +877,7 @@ class ClientTest extends TestCase
                 $this->assertSame(['some' => 'value'], $options);
 
                 return true;
-            }]
+            }],
         );
 
         $response = $client->get('http://foo.test');
@@ -892,14 +892,14 @@ class ClientTest extends TestCase
             'HttpClient.beforeSend',
             function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
                 return new Response(body: 'short circuit');
-            }
+            },
         );
 
         $client->getEventManager()->on(
             'HttpClient.afterSend',
             function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
                 $this->assertFalse($event->getData('requestSent'));
-            }
+            },
         );
 
         $response = $client->get('http://foo.test');
@@ -914,7 +914,7 @@ class ClientTest extends TestCase
             'HttpClient.afterSend',
             function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
                 return new Response(body: 'modified response');
-            }
+            },
         );
 
         Client::addMockResponse('GET', 'http://foo.test', new Response(body: 'response text'));
@@ -953,8 +953,8 @@ class ClientTest extends TestCase
 
                         return true;
                     }),
-                    ]
-                )
+                    ],
+                ),
             )
             ->willReturn([$redirect], [$response]);
 

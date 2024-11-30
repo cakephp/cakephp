@@ -353,7 +353,7 @@ class Hash
         string $op,
         ArrayAccess|array $data,
         array $path,
-        mixed $values = null
+        mixed $values = null,
     ): ArrayAccess|array {
         $_list = &$data;
 
@@ -471,7 +471,7 @@ class Hash
         array $data,
         array|string|null $keyPath,
         array|string|null $valuePath = null,
-        ?string $groupPath = null
+        ?string $groupPath = null,
     ): array {
         if (!$data) {
             return [];
@@ -996,7 +996,7 @@ class Hash
         array $data,
         string $path,
         string|int $dir = 'asc',
-        array|string $type = 'regular'
+        array|string $type = 'regular',
     ): array {
         if (!$data) {
             return [];

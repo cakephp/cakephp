@@ -338,7 +338,7 @@ class View implements EventDispatcherInterface
         ?ServerRequest $request = null,
         ?Response $response = null,
         ?EventManagerInterface $eventManager = null,
-        array $viewOptions = []
+        array $viewOptions = [],
     ) {
         if ($eventManager !== null) {
             // Set the event manager before accessing the helper registry below

@@ -154,7 +154,7 @@ class Cookie implements CookieInterface
         ?string $domain = null,
         ?bool $secure = null,
         ?bool $httpOnly = null,
-        SameSiteEnum|string|null $sameSite = null
+        SameSiteEnum|string|null $sameSite = null,
     ) {
         $this->validateName($name);
         $this->name = $name;

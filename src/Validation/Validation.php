@@ -250,7 +250,7 @@ class Validation
         mixed $check,
         array|string $type = 'fast',
         bool $deep = false,
-        ?string $regex = null
+        ?string $regex = null,
     ): bool {
         if (!is_string($check) && !is_int($check)) {
             return false;

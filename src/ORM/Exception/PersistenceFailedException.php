@@ -49,7 +49,7 @@ class PersistenceFailedException extends CakeException
         EntityInterface $entity,
         array|string $message,
         ?int $code = null,
-        ?Throwable $previous = null
+        ?Throwable $previous = null,
     ) {
         $this->_entity = $entity;
         if (is_array($message)) {

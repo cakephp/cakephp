@@ -83,7 +83,7 @@ class TupleComparisonQueryTest extends TestCase
         ) {
             $this->expectException(InvalidArgumentException::class);
             $this->expectExceptionMessage(
-                'Tuple comparison transform only supports the `IN` and `=` operators, `NOT IN` given.'
+                'Tuple comparison transform only supports the `IN` and `=` operators, `NOT IN` given.',
             );
         } else {
             $this->markTestSkipped('Tuple comparisons are only being transformed for Sqlite and Sqlserver.');
@@ -97,11 +97,11 @@ class TupleComparisonQueryTest extends TestCase
                     ['articles.id', 'articles.author_id'],
                     $this->connection->selectQuery(
                         ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles']
+                        ['ArticlesAlias' => 'articles'],
                     )
                     ->where(['ArticlesAlias.author_id' => 1]),
                     [],
-                    'NOT IN'
+                    'NOT IN',
                 ),
             ])
             ->orderByAsc('articles.id')
@@ -123,11 +123,11 @@ class TupleComparisonQueryTest extends TestCase
                     ['articles.id', 'articles.author_id'],
                     $this->connection->selectQuery(
                         ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles']
+                        ['ArticlesAlias' => 'articles'],
                     )
                     ->where(['ArticlesAlias.author_id' => 1]),
                     [],
-                    'IN'
+                    'IN',
                 ),
             ])
             ->orderByAsc('articles.id')
@@ -161,11 +161,11 @@ class TupleComparisonQueryTest extends TestCase
                     ['articles.id', 'articles.author_id'],
                     $this->connection->selectQuery(
                         ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles']
+                        ['ArticlesAlias' => 'articles'],
                     )
                     ->where(['ArticlesAlias.id' => 1]),
                     [],
-                    'IN'
+                    'IN',
                 ),
             ])
             ->setSelectTypeMap($typeMap);
@@ -194,7 +194,7 @@ class TupleComparisonQueryTest extends TestCase
                     ['articles.id', 'articles.author_id'],
                     [[1, 1], [3, 1]],
                     ['integer', 'integer'],
-                    'IN'
+                    'IN',
                 ),
             ])
             ->orderByAsc('articles.id')
@@ -226,7 +226,7 @@ class TupleComparisonQueryTest extends TestCase
             // Due to the way tuple comparisons are being translated, the DBMS will
             // not run into a cardinality violation scenario.
             $this->markTestSkipped(
-                'Sqlite and Sqlserver currently do not fail with subqueries returning incompatible results.'
+                'Sqlite and Sqlserver currently do not fail with subqueries returning incompatible results.',
             );
         }
 
@@ -238,11 +238,11 @@ class TupleComparisonQueryTest extends TestCase
                     ['articles.id', 'articles.author_id'],
                     $this->connection->selectQuery(
                         ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        ['ArticlesAlias' => 'articles']
+                        ['ArticlesAlias' => 'articles'],
                     )
                     ->where(['ArticlesAlias.author_id' => 1]),
                     [],
-                    '='
+                    '=',
                 ),
             ])
             ->orderByAsc('articles.id')
@@ -264,11 +264,11 @@ class TupleComparisonQueryTest extends TestCase
                     ['articles.id', 'articles.author_id'],
                     $this->connection->selectQuery(
                         fields: ['ArticlesAlias.id', 'ArticlesAlias.author_id'],
-                        table: ['ArticlesAlias' => 'articles']
+                        table: ['ArticlesAlias' => 'articles'],
                     )
                     ->where(['ArticlesAlias.id' => 1]),
                     [],
-                    '='
+                    '=',
                 ),
             ])
             ->setSelectTypeMap($typeMap);
@@ -297,7 +297,7 @@ class TupleComparisonQueryTest extends TestCase
                     ['articles.id', 'articles.author_id'],
                     [1, 1],
                     ['integer', 'integer'],
-                    '='
+                    '=',
                 ),
             ])
             ->orderByAsc('articles.id')

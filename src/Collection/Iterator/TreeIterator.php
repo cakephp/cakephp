@@ -48,7 +48,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
     public function __construct(
         RecursiveIterator $items,
         int $mode = RecursiveIteratorIterator::SELF_FIRST,
-        int $flags = 0
+        int $flags = 0,
     ) {
         parent::__construct($items, $mode, $flags);
         $this->_mode = $mode;
@@ -95,7 +95,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
     public function printer(
         callable|string $valuePath,
         callable|string|null $keyPath = null,
-        string $spacer = '__'
+        string $spacer = '__',
     ): TreePrinter {
         if (!$keyPath) {
             $counter = 0;

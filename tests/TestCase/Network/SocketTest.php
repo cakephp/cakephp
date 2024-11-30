@@ -259,7 +259,7 @@ class SocketTest extends TestCase
         $this->assertEquals(
             $expected,
             $anotherSocket->getConfig(),
-            'Reset should cause config to return the defaults defined in _defaultConfig'
+            'Reset should cause config to return the defaults defined in _defaultConfig',
         );
     }
 

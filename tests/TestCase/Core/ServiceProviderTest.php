@@ -34,7 +34,7 @@ class ServiceProviderTest extends TestCase
 
         $this->assertTrue(
             $container->has('boot'),
-            'Should have service defined in bootstrap.'
+            'Should have service defined in bootstrap.',
         );
         $this->assertSame('boot', $container->get('boot')->name);
     }

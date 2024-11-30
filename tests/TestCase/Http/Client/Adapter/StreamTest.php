@@ -120,7 +120,7 @@ class StreamTest extends TestCase
                 'User-Agent' => 'CakePHP TestSuite',
                 'Content-Type' => 'application/json',
                 'Cookie' => 'a=b; c=do%20it',
-            ]
+            ],
         );
 
         $options = [
@@ -149,7 +149,7 @@ class StreamTest extends TestCase
             'http://localhost',
             'GET',
             ['Content-Type' => 'application/json'],
-            $content
+            $content,
         );
 
         $options = [
@@ -177,7 +177,7 @@ class StreamTest extends TestCase
             [
                 'Content-Type' => 'application/json',
             ],
-            ['a' => 'my value']
+            ['a' => 'my value'],
         );
 
         $this->stream->send($request, []);
@@ -201,7 +201,7 @@ class StreamTest extends TestCase
             'http://localhost',
             'GET',
             ['Content-Type' => 'application/json'],
-            ['upload' => fopen(CORE_PATH . 'VERSION.txt', 'r')]
+            ['upload' => fopen(CORE_PATH . 'VERSION.txt', 'r')],
         );
 
         $this->stream->send($request, []);

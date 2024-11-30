@@ -156,7 +156,7 @@ class ConnectionTest extends TestCase
         $this->expectException(MissingExtensionException::class);
         $this->expectExceptionMessageMatches(
             '/Database driver `.+` cannot be used due to a missing PHP extension or unmet dependency\. ' .
-            'Requested by connection `custom_connection_name`/'
+            'Requested by connection `custom_connection_name`/',
         );
         $driver = new class extends StubDriver {
             public function enabled(): bool
@@ -301,9 +301,9 @@ class ConnectionTest extends TestCase
         $this->assertStringStartsWith(
             sprintf(
                 'Connection to %s could not be established:',
-                App::shortName($connection->getDriver()::class, 'Database/Driver')
+                App::shortName($connection->getDriver()::class, 'Database/Driver'),
             ),
-            $e->getMessage()
+            $e->getMessage(),
         );
         $this->assertInstanceOf('PDOException', $e->getPrevious());
     }
@@ -393,7 +393,7 @@ class ConnectionTest extends TestCase
         $result = $this->connection->insert(
             'things',
             $data,
-            ['id' => 'integer', 'title' => 'string', 'body' => 'string']
+            ['id' => 'integer', 'title' => 'string', 'body' => 'string'],
         );
         $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
@@ -413,7 +413,7 @@ class ConnectionTest extends TestCase
         $query = $this->connection->insertQuery(
             'things',
             $data,
-            ['id' => 'integer', 'title' => 'string', 'body' => 'string']
+            ['id' => 'integer', 'title' => 'string', 'body' => 'string'],
         );
         $result = $query->execute();
         $this->assertInstanceOf(StatementInterface::class, $result);
@@ -434,7 +434,7 @@ class ConnectionTest extends TestCase
         $result = $this->connection->insert(
             'things',
             $data,
-            ['integer', 'string', 'string']
+            ['integer', 'string', 'string'],
         );
         $result->closeCursor();
         $this->assertInstanceOf(StatementInterface::class, $result);
@@ -841,7 +841,7 @@ class ConnectionTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlserver,
-            'SQLServer fails when this test is included.'
+            'SQLServer fails when this test is included.',
         );
         $this->connection->enableSavePoints(false);
         $this->assertFalse($this->connection->isSavePointsEnabled());
@@ -1194,7 +1194,7 @@ class ConnectionTest extends TestCase
             ->method('execute')
             ->willReturnOnConsecutiveCalls(
                 $this->throwException(new Exception('server gone away')),
-                $statement
+                $statement,
             );
 
         $res = $conn->execute('SELECT 1');

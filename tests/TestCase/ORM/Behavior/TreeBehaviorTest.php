@@ -734,7 +734,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = new Entity(
             ['name' => 'New Orphan', 'parent_id' => null, 'level' => null],
-            ['markNew' => true]
+            ['markNew' => true],
         );
         $this->assertSame($entity, $table->save($entity));
         $this->assertSame(23, $entity->lft);
@@ -765,7 +765,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = new Entity(
             ['name' => 'laptops', 'parent_id' => 1],
-            ['markNew' => true]
+            ['markNew' => true],
         );
         $this->assertSame($entity, $table->save($entity));
         $this->assertSame(20, $entity->lft);
@@ -796,7 +796,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = new Entity(
             ['name' => 'laptops', 'parent_id' => 2],
-            ['markNew' => true]
+            ['markNew' => true],
         );
         $this->assertSame($entity, $table->save($entity));
         $this->assertSame(9, $entity->lft);
@@ -1455,7 +1455,7 @@ class TreeBehaviorTest extends TestCase
                     str_pad((string)$item->lft, 2, ' ', STR_PAD_LEFT),
                     str_pad((string)$item->rght, 2, ' ', STR_PAD_LEFT),
                     str_pad((string)$item->$primaryKey, 2, ' ', STR_PAD_LEFT),
-                    $item->{$displayField}
+                    $item->{$displayField},
                 );
             },
         ];

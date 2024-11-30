@@ -318,7 +318,7 @@ class HasOneTest extends TestCase
                 $this->assertInstanceOf(Query::class, $query);
                 $this->assertEquals($options, $opts);
                 $this->assertFalse($primary);
-            }
+            },
         );
         $association = new HasOne('Profiles', $config);
         $query = $this->user->find();

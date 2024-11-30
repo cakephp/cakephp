@@ -119,7 +119,7 @@ class ConsoleIo
         ?ConsoleOutput $out = null,
         ?ConsoleOutput $err = null,
         ?ConsoleInput $in = null,
-        ?HelperRegistry $helpers = null
+        ?HelperRegistry $helpers = null,
     ) {
         $this->_out = $out ?: new ConsoleOutput('php://stdout');
         $this->_err = $err ?: new ConsoleOutput('php://stderr');

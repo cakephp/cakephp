@@ -172,7 +172,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         ExpressionInterface|string|int|null $startOffset,
         string $startDirection,
         ExpressionInterface|string|int|null $endOffset,
-        string $endDirection
+        string $endDirection,
     ) {
         $this->frame = [
             'type' => $type,
@@ -309,7 +309,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     protected function buildOffsetSql(
         ValueBinder $binder,
         ExpressionInterface|string|int|null $offset,
-        string $direction
+        string $direction,
     ): string {
         if ($offset === 0) {
             return 'CURRENT ROW';

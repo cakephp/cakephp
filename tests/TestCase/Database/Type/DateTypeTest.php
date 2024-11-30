@@ -109,7 +109,7 @@ class DateTypeTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+            $this->type->manyToPHP($values, array_keys($values), $this->driver),
         );
     }
 

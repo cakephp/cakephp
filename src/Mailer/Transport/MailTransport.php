@@ -85,7 +85,7 @@ class MailTransport extends AbstractTransport
         string $subject,
         string $message,
         string $headers = '',
-        string $params = ''
+        string $params = '',
     ): void {
         // phpcs:disable
         if (!@mail($to, $subject, $message, $headers, $params)) {

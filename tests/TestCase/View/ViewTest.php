@@ -974,8 +974,8 @@ class ViewTest extends TestCase
                     })],
                     [$this->callback(function (EventInterface $event) {
                         return $event->getName() === 'View.afterLayout';
-                    })]
-                )
+                    })],
+                ),
             );
 
         $View->render('index');
@@ -1033,7 +1033,7 @@ class ViewTest extends TestCase
         $this->assertEquals(['Form', 'Number', 'Html'], $attached);
 
         $this->PostsController->viewBuilder()->addHelpers(
-            ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper']
+            ['Html', 'Form', 'Number', 'TestPlugin.PluggedHelper'],
         );
         $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath($this->PostsController->getName());
@@ -1061,7 +1061,7 @@ class ViewTest extends TestCase
 
         $this->PostsController->viewBuilder()->addHelpers(['Html']);
         $this->PostsController->setRequest(
-            $this->PostsController->getRequest()->withParam('action', 'index')
+            $this->PostsController->getRequest()->withParam('action', 'index'),
         );
         Configure::write('Cache.check', true);
 
@@ -1332,7 +1332,7 @@ class ViewTest extends TestCase
     public function testBlockSetObjectWithoutToString(): void
     {
         $this->checkException(
-            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string',
         );
 
         $objectWithToString = new TestObjectWithoutToString();
@@ -1384,7 +1384,7 @@ class ViewTest extends TestCase
     public function testBlockAppendObjectWithoutToString(): void
     {
         $this->checkException(
-            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string',
         );
 
         $object = new TestObjectWithoutToString();
@@ -1414,7 +1414,7 @@ class ViewTest extends TestCase
     public function testBlockPrependObjectWithoutToString(): void
     {
         $this->checkException(
-            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string'
+            'Object of class ' . TestObjectWithoutToString::class . ' could not be converted to string',
         );
 
         $object = new TestObjectWithoutToString();

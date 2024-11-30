@@ -50,7 +50,7 @@ trait RulesAwareTrait
     public function checkRules(
         EntityInterface $entity,
         string $operation = RulesChecker::CREATE,
-        ArrayObject|array|null $options = null
+        ArrayObject|array|null $options = null,
     ): bool {
         $rules = $this->rulesChecker();
         $options = $options ?: new ArrayObject();

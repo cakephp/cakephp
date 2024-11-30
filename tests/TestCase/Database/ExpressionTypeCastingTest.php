@@ -133,7 +133,7 @@ class ExpressionTypeCastingTest extends TestCase
         $sql = $values->sql($binder);
         $this->assertSame(
             ' VALUES ((CONCAT(:param0, :param1))), ((CONCAT(:param2, :param3)))',
-            $sql
+            $sql,
         );
         $this->assertSame('foo', $binder->bindings()[':param0']['value']);
         $this->assertSame('bar', $binder->bindings()[':param2']['value']);

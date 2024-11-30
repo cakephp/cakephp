@@ -76,7 +76,7 @@ class ConsoleInputArgument
         string $help = '',
         bool $required = false,
         array $choices = [],
-        ?string $default = null
+        ?string $default = null,
     ) {
         if (is_array($name) && isset($name['name'])) {
             foreach ($name as $key => $value) {

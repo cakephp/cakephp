@@ -724,7 +724,7 @@ class BelongsToMany extends Association
     protected function _saveTarget(
         EntityInterface $parentEntity,
         array $entities,
-        array $options
+        array $options,
     ): EntityInterface|false {
         $joinAssociations = false;
         if (isset($options['associated']) && is_array($options['associated'])) {
@@ -1272,7 +1272,7 @@ class BelongsToMany extends Association
         SelectQuery $existing,
         array $jointEntities,
         array $targetEntities,
-        array $options = []
+        array $options = [],
     ): array|false {
         $junction = $this->junction();
         $target = $this->getTarget();

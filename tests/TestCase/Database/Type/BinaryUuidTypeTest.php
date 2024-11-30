@@ -60,7 +60,7 @@ class BinaryUuidTypeTest extends TestCase
         preg_match_all(
             $uuidRegex,
             $result,
-            $matches
+            $matches,
         );
 
         $result = $matches[0];

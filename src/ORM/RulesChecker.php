@@ -100,7 +100,7 @@ class RulesChecker extends BaseRulesChecker
     public function existsIn(
         array|string $field,
         Table|Association|string $table,
-        array|string|null $message = null
+        array|string|null $message = null,
     ): RuleInvoker {
         $options = [];
         if (is_array($message)) {
@@ -144,7 +144,7 @@ class RulesChecker extends BaseRulesChecker
     public function isLinkedTo(
         Association|string $association,
         ?string $field = null,
-        ?string $message = null
+        ?string $message = null,
     ): RuleInvoker {
         return $this->_addLinkConstraintRule(
             $association,
@@ -177,7 +177,7 @@ class RulesChecker extends BaseRulesChecker
     public function isNotLinkedTo(
         Association|string $association,
         ?string $field = null,
-        ?string $message = null
+        ?string $message = null,
     ): RuleInvoker {
         return $this->_addLinkConstraintRule(
             $association,
@@ -210,7 +210,7 @@ class RulesChecker extends BaseRulesChecker
         ?string $errorField,
         ?string $message,
         string $linkStatus,
-        string $ruleName
+        string $ruleName,
     ): RuleInvoker {
         if ($association instanceof Association) {
             $associationAlias = $association->getName();
@@ -265,7 +265,7 @@ class RulesChecker extends BaseRulesChecker
         string $field,
         int $count = 0,
         string $operator = '>',
-        ?string $message = null
+        ?string $message = null,
     ): RuleInvoker {
         if (!$message) {
             if ($this->_useI18n) {

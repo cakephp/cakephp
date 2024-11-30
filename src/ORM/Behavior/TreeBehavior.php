@@ -489,7 +489,7 @@ class TreeBehavior extends Behavior
         SelectQuery $query,
         Closure|string|null $keyPath = null,
         Closure|string|null $valuePath = null,
-        ?string $spacer = null
+        ?string $spacer = null,
     ): SelectQuery {
         $left = $this->_table->aliasField($this->getConfig('left'));
 
@@ -516,7 +516,7 @@ class TreeBehavior extends Behavior
         SelectQuery $query,
         Closure|string|null $keyPath = null,
         Closure|string|null $valuePath = null,
-        ?string $spacer = null
+        ?string $spacer = null,
     ): SelectQuery {
         return $query->formatResults(
             function (CollectionInterface $results) use ($keyPath, $valuePath, $spacer) {

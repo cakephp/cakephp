@@ -72,8 +72,8 @@ class PostgresTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     ['SET NAMES utf8'],
-                    ['SET search_path TO public']
-                )
+                    ['SET search_path TO public'],
+                ),
             );
 
         $driver->expects($this->once())->method('createPdo')
@@ -131,8 +131,8 @@ class PostgresTest extends TestCase
                     ['SET search_path TO fooblic'],
                     ['Execute this'],
                     ['this too'],
-                    ['SET timezone = Antarctica']
-                )
+                    ['SET timezone = Antarctica'],
+                ),
             );
 
         $driver->expects($this->once())->method('createPdo')

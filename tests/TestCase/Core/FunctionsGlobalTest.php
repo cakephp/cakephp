@@ -274,7 +274,7 @@ class FunctionsGlobalTest extends TestCase
         });
         $this->assertMatchesRegularExpression(
             '/This is deprecated \w+\n(.*?)[\/\\\]FunctionsGlobalTest.php, line\: \d+/',
-            $error->getMessage()
+            $error->getMessage(),
         );
     }
 
@@ -288,7 +288,7 @@ class FunctionsGlobalTest extends TestCase
         });
         $this->assertMatchesRegularExpression(
             '/This is going away too \w+\n(.*?)[\/\\\]TestCase.php, line\: \d+/',
-            $error->getMessage()
+            $error->getMessage(),
         );
     }
 

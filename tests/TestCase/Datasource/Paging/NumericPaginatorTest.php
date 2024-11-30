@@ -150,7 +150,7 @@ class NumericPaginatorTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage(
             'The `order` config must be an associative array.'
-            . ' Found invalid value with numeric key: `PaginatorPosts.title ASC`'
+            . ' Found invalid value with numeric key: `PaginatorPosts.title ASC`',
         );
 
         $settings = [
@@ -171,7 +171,7 @@ class NumericPaginatorTest extends TestCase
             function (): void {
                 $table = $this->getTableLocator()->get('PaginatorPosts');
                 $this->Paginator->paginate($table, [], ['fields' => ['title']]);
-            }
+            },
         );
     }
 }

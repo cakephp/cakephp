@@ -331,11 +331,11 @@ class TableLocatorTest extends TestCase
         $this->assertInstanceOf(TestPluginCommentsTable::class, $table);
         $this->assertFalse(
             $this->_locator->exists('TestPluginComments'),
-            'Short form should NOT exist'
+            'Short form should NOT exist',
         );
         $this->assertTrue(
             $this->_locator->exists('TestPlugin.TestPluginComments'),
-            'Long form should exist'
+            'Long form should exist',
         );
 
         $second = $this->_locator->get('TestPlugin.TestPluginComments');

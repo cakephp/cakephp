@@ -598,7 +598,7 @@ class CacheTest extends TestCase
         ]);
         $this->assertInstanceOf(
             TestAppCacheEngine::class,
-            Cache::pool('unconfigTest')
+            Cache::pool('unconfigTest'),
         );
         $this->assertTrue(Cache::drop('unconfigTest'));
     }

@@ -76,7 +76,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
         callable|string $valuePath,
         callable|string $keyPath,
         string $spacer,
-        int $mode = RecursiveIteratorIterator::SELF_FIRST
+        int $mode = RecursiveIteratorIterator::SELF_FIRST,
     ) {
         parent::__construct($items, $mode);
         $this->_value = $this->_propertyExtractor($valuePath);

@@ -215,7 +215,7 @@ function __dxn(
     string $singular,
     string $plural,
     int $count,
-    mixed ...$args
+    mixed ...$args,
 ): string {
     if (!$singular) {
         return '';

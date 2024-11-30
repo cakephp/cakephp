@@ -80,7 +80,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
         ExpressionInterface|string $field,
         mixed $value,
         ?string $type = null,
-        string $operator = '='
+        string $operator = '=',
     ) {
         $this->_type = $type;
         $this->setField($field);

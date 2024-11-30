@@ -748,7 +748,7 @@ class CompositeKeysTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlite,
-            'SQLite does not support the requirements of this test.'
+            'SQLite does not support the requirements of this test.',
         );
     }
 }

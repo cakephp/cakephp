@@ -127,7 +127,7 @@ class CounterCacheBehaviorTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlserver,
-            'This test fails sporadically in SQLServer'
+            'This test fails sporadically in SQLServer',
         );
 
         $this->post->belongsTo('Users');
