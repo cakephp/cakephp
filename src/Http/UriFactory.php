@@ -55,14 +55,7 @@ class UriFactory implements UriFactoryInterface
         $uri = DiactorosUriFactory::createFromSapi($server, $headers);
         ['base' => $base, 'webroot' => $webroot] = static::getBase($uri, $server);
 
-        // Look in PATH_INFO first, as this is the exact value we need prepared
-        // by PHP.
-        $pathInfo = $server['PATH_INFO'] ?? null;
-        if ($pathInfo) {
-            $uri = $uri->withPath($pathInfo);
-        } else {
-            $uri = static::updatePath($base, $uri);
-        }
+        $uri = static::updatePath($base, $uri);
 
         if (!$uri->getHost()) {
             $uri = $uri->withHost('localhost');
@@ -90,12 +83,19 @@ class UriFactory implements UriFactoryInterface
         if (!$path || $path === '/' || $path === '//' || $path === '/index.php') {
             $path = '/';
         }
-        $endsWithIndex = '/' . (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
-        $endsWithLength = strlen($endsWithIndex);
-        if (
-            strlen($path) >= $endsWithLength &&
-            substr($path, -$endsWithLength) === $endsWithIndex
-        ) {
+
+        // Check for $webroot/index.php at the start and end of the path.
+        $search = '';
+        if ($path[0] === '/') {
+            $search .= '/';
+        }
+        $search .= (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
+        if (str_starts_with($path, $search)) {
+            $path = substr($path, strlen($search));
+        } elseif (str_ends_with($path, $search)) {
+            $path = '/';
+        }
+        if (!$path) {
             $path = '/';
         }
 
@@ -135,9 +135,9 @@ class UriFactory implements UriFactoryInterface
             // Clean up additional / which cause following code to fail..
             $base = (string)preg_replace('#/+#', '/', $base);
 
-            $indexPos = strpos($base, '/' . $webroot . '/index.php');
+            $indexPos = strpos($base, '/index.php');
             if ($indexPos !== false) {
-                $base = substr($base, 0, $indexPos) . '/' . $webroot;
+                $base = substr($base, 0, $indexPos);
             }
             if ($webroot === basename($base)) {
                 $base = dirname($base);
