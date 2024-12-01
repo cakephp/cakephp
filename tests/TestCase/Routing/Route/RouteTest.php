@@ -1048,7 +1048,7 @@ class RouteTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'GET',
-                'PATH_INFO' => '/forward',
+                'REQUEST_URI' => '/forward',
             ],
         ]);
         $result = $route->parseRequest($request);
@@ -1069,7 +1069,7 @@ class RouteTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'a.example.com',
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         $result = $route->parseRequest($request);
@@ -1085,7 +1085,7 @@ class RouteTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'foo.bar.example.com',
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         $result = $route->parseRequest($request);
@@ -1760,7 +1760,7 @@ class RouteTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'a.example.com',
-                'PATH_INFO' => '/reviews',
+                'REQUEST_URI' => '/reviews',
             ],
         ]);
         $this->assertNull($route->parseRequest($request));
