@@ -221,7 +221,7 @@ class Session
             'handler' => [],
         ];
 
-        if (!is_null($config['timeout'])) {
+        if ($config['timeout'] !== null) {
             $this->configureSessionLifetime((int)$config['timeout'] * 60);
         }
 
