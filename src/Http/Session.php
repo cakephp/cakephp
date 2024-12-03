@@ -708,7 +708,7 @@ class Session
      * @param int $lifetime
      * @return void
      */
-    private function configureSessionLifetime(int $lifetime): void
+    protected function configureSessionLifetime(int $lifetime): void
     {
         if ($lifetime !== 0) {
             $this->options([
