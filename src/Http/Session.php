@@ -685,9 +685,9 @@ class Session
     }
 
     /**
-     * Allow to set session timeout before session is started in Middleware.
-     * Setting it in bootstrap when fetching the value from database result in query not showing DebugKit
-     * and other issues due to using ORM before bootstrapping of other plugins.
+     * Set the session timeout period.
+     *
+     * If set to `0`, no server side timeout will be applied.
      *
      * @param int $lifetime in seconds
      * @return void
