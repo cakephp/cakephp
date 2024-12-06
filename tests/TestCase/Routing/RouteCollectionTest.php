@@ -367,7 +367,7 @@ class RouteCollectionTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'a.example.com',
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         $result = $this->collection->parseRequest($request);
@@ -384,7 +384,7 @@ class RouteCollectionTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'foo.bar.example.com',
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         $result = $this->collection->parseRequest($request);
@@ -394,7 +394,7 @@ class RouteCollectionTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'example.test.com',
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         try {
@@ -438,7 +438,7 @@ class RouteCollectionTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => $host,
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         $this->collection->parseRequest($request);
@@ -564,6 +564,20 @@ class RouteCollectionTest extends TestCase
         $result = $this->collection->parseRequest($request);
         unset($result['_route']);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test parsing routes that match non-ascii urls
+     */
+    public function testParseRequestNoDecode2f(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/b', []);
+        $routes->connect('/media/confirm', ['controller' => 'Media', 'action' => 'confirm']);
+
+        $request = new ServerRequest(['url' => '/b/media%2fconfirm']);
+
+        $this->expectException(MissingRouteException::class);
+        $this->collection->parseRequest($request);
     }
 
     /**
