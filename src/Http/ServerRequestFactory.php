@@ -281,9 +281,9 @@ abstract class ServerRequestFactory implements ServerRequestFactoryInterface
             $search .= '/';
         }
         $search .= (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
-        if (str_starts_with($path, $search)) {
+        if (strpos($path, $search) === 0) {
             $path = substr($path, strlen($search));
-        } elseif (str_ends_with($path, $search)) {
+        } elseif (substr($path, -strlen($search)) === $search) {
             $path = '/';
         }
         if (!$path) {
