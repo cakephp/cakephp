@@ -11,13 +11,13 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         6.0.0
+ * @since         5.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\ORM;
 
 use ArrayObject;
-use Cake\Database\Query\SelectQuery;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\Validation\Validator;
@@ -75,7 +75,7 @@ trait TableEventsTrait
      * The Model.beforeFind event is fired before each find operation.
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Model event.
-     * @param \Cake\Database\Query\SelectQuery $query Query.
+     * @param \Cake\ORM\Query\SelectQuery $query Query.
      * @param \ArrayObject<string, mixed> $options Options.
      * @param bool $primary `true` if it is the root query, `false` if it is the associated query.
      * @return void
