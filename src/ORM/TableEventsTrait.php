@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\ORM;
 
 use ArrayObject;
-use Cake\ORM\Query\SelectQuery;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
+use Cake\ORM\Query\SelectQuery;
 use Cake\Validation\Validator;
 
 /**
