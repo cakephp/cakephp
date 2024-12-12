@@ -1191,11 +1191,14 @@ trait PaginatorTestTrait
         $table = $this->_getMockPosts(['find']);
         $query = $this->_getMockFindQuery($table);
         $table->expects($this->never())->method('find');
-
-        $regex = '/Finder option \(.+?\) from pagination config is not applied when a `SelectQuery` instance is passed to `paginate\(\)`/';
-        $this->expectWarningMessageMatches($regex, function () use ($query, $params, $settings) {
-            $this->Paginator->paginate($query, $params, $settings);
-        });
+        $query->expects($this->once())
+            ->method('applyOptions')
+            ->with([
+                'limit' => 10,
+                'order' => ['PaginatorPosts.id' => 'ASC'],
+                'page' => 1,
+            ]);
+        $this->Paginator->paginate($query, $params, $settings);
     }
 
     /**
@@ -1210,11 +1213,7 @@ trait PaginatorTestTrait
             ->where(['PaginatorPosts.author_id BETWEEN :start AND :end'])
             ->bind(':start', 1)
             ->bind(':end', 2);
-
-        $regex = '/Finder option \(.+?\) from pagination config is not applied when a `SelectQuery` instance is passed to `paginate\(\)`/';
-        $this->expectWarningMessageMatches($regex, function () use ($query, &$results) {
-            $results = $this->Paginator->paginate($query, []);
-        });
+        $results = $this->Paginator->paginate($query, []);
 
         $result = $results->toArray();
         $this->assertCount(2, $result);
@@ -1240,11 +1239,14 @@ trait PaginatorTestTrait
         $query = $this->_getMockFindQuery($table);
         $query->limit(2);
         $table->expects($this->never())->method('find');
-
-        $regex = '/Finder option \(.+?\) from pagination config is not applied when a `SelectQuery` instance is passed to `paginate\(\)`/';
-        $this->expectWarningMessageMatches($regex, function () use ($query, $params, $settings) {
-            $this->Paginator->paginate($query, $params, $settings);
-        });
+        $query->expects($this->once())
+            ->method('applyOptions')
+            ->with([
+                'limit' => 5,
+                'order' => ['PaginatorPosts.id' => 'ASC'],
+                'page' => 1,
+            ]);
+        $this->Paginator->paginate($query, $params, $settings);
     }
 
     /**
