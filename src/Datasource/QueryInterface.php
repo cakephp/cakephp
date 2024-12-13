@@ -279,6 +279,7 @@ interface QueryInterface
      *
      * @param \Cake\Datasource\RepositoryInterface $repository The default repository object to use
      * @return $this
+     * @deprecated
      */
     public function repository(RepositoryInterface $repository);
 
