@@ -44,6 +44,7 @@
         "cakephp/cache": "self.version",
         "cakephp/collection": "self.version",
         "cakephp/console": "self.version",
+        "cakephp/container": "self.version",
         "cakephp/core": "self.version",
         "cakephp/database": "self.version",
         "cakephp/datasource": "self.version",
