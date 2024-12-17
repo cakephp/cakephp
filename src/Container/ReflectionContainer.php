@@ -7,7 +7,6 @@ use Cake\Container\Argument\ArgumentResolverInterface;
 use Cake\Container\Argument\ArgumentResolverTrait;
 use Cake\Container\Exception\ContainerException;
 use Cake\Container\Exception\NotFoundException;
-use Closure;
 use Psr\Container\ContainerInterface;
 use ReflectionClass;
 use ReflectionFunction;
@@ -80,16 +79,16 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
     }
 
     /**
-     * @param callable $callable
+     * @param callable|string $callable
      * @param array $args
      * @return mixed
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      * @throws \ReflectionException
      */
-    public function call(callable $callable, array $args = []): mixed
+    public function call(callable|string $callable, array $args = []): mixed
     {
-        if (is_string($callable) && strpos($callable, '::') !== false) {
+        if (is_string($callable) && str_contains($callable, '::')) {
             $callable = explode('::', $callable);
         }
 
@@ -118,8 +117,15 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
             return $reflection->invokeArgs($callable, $this->reflectArguments($reflection, $args));
         }
 
-        $reflection = new ReflectionFunction(Closure::fromCallable($callable));
+        if (is_callable($callable)) {
+            $reflection = new ReflectionFunction($callable(...));
 
-        return $reflection->invokeArgs($this->reflectArguments($reflection, $args));
+            return $reflection->invokeArgs($this->reflectArguments($reflection, $args));
+        }
+
+        throw new NotFoundException(sprintf(
+            'Callable (%s) is not a valid callable',
+            $callable
+        ));
     }
 }

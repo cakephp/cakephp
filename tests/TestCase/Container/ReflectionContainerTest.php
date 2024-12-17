@@ -188,11 +188,18 @@ class ReflectionContainerTest extends TestCase
 
     public function testCallResolvesFunction(): void
     {
-        require CORE_TEST_CASES . DS . 'Container' . DS . 'Asset' . DS . 'function.php';
         $container = new ReflectionContainer();
-        $foo = $container->call(Asset\test::class, [new Bar()]);
+        $foo = $container->call('\Cake\Test\TestCase\Container\Asset\test', [new Bar()]);
         self::assertInstanceOf(Foo::class, $foo);
         self::assertInstanceOf(Bar::class, $foo->bar);
+    }
+
+    public function testCallThrowsOnUnknownString(): void
+    {
+        $container = new ReflectionContainer();
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage('Callable (Unknown) is not a valid callable');
+        $container->call('Unknown', [new Bar()]);
     }
 
     public function testGetInstantiatesClassWithConstructorAndSkipsProtectedConstructor(): void

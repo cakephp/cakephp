@@ -116,7 +116,10 @@
             "Named\\": "tests/test_app/Plugin/Named/src/",
             "TestTheme\\": "tests/test_app/Plugin/TestTheme/src/",
             "PluginJs\\": "tests/test_app/Plugin/PluginJs/src/"
-        }
+        },
+        "files": [
+            "tests/TestCase/Container/Asset/function.php"
+        ]
     },
     "scripts": {
         "check": [

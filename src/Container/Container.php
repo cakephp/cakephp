@@ -132,6 +132,8 @@ class Container implements DefinitionContainerInterface
      * @template RequestedType
      * @param class-string<RequestedType>|string $id
      * @return RequestedType|mixed
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function get(string $id)
     {
@@ -142,6 +144,8 @@ class Container implements DefinitionContainerInterface
      * @template RequestedType
      * @param class-string<RequestedType>|string $id
      * @return RequestedType|mixed
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
      */
     public function getNew(mixed $id): mixed
     {
