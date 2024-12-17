@@ -158,6 +158,7 @@ class ContainerTest extends TestCase
     {
         $this->expectException(NotFoundException::class);
         $container = new Container();
+        $container->disableAutoWiring();
         self::assertFalse($container->has(Foo::class));
         $container->get(Foo::class);
     }
@@ -197,6 +198,7 @@ class ContainerTest extends TestCase
     {
         $this->expectException(NotFoundException::class);
         $container = new Container();
+        $container->disableAutoWiring();
         self::assertFalse($container->has(Foo::class));
         $container->extend(Foo::class);
     }

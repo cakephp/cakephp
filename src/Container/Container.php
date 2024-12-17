@@ -60,6 +60,8 @@ class Container implements DefinitionContainerInterface
         $this->definitions->setContainer($this);
         $this->providers->setContainer($this);
         $this->inflectors->setContainer($this);
+
+        $this->enableAutoWiring();
     }
 
     /**
@@ -193,6 +195,23 @@ class Container implements DefinitionContainerInterface
         }
 
         return $this;
+    }
+
+    /**
+     * @param bool $cache
+     * @return void
+     */
+    public function enableAutoWiring(bool $cache = true): void
+    {
+        $this->delegate(new ReflectionContainer($cache));
+    }
+
+    /**
+     * @return void
+     */
+    public function disableAutoWiring(): void
+    {
+        $this->delegates = [];
     }
 
     /**
