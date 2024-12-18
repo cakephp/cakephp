@@ -51,6 +51,14 @@ class ContentsRegExp extends ContentsBase
     {
         return '`' . $other . '` ' . $this->toString();
     }
+
+    /**
+     * @inheritDoc
+     */
+    protected function additionalFailureDescription(mixed $other): string
+    {
+        return sprintf("actual result:\n%s", $this->contents);
+    }
 }
 
 // phpcs:disable

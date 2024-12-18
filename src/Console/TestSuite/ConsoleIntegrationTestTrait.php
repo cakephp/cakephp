@@ -136,7 +136,11 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertExitCode(int $expected, string $message = ''): void
     {
-        $this->assertThat($expected, new ExitCode($this->_exitCode), $message);
+        $this->assertThat(
+            $expected,
+            new ExitCode($this->_exitCode, $this->_out->messages(), $this->_err->messages()),
+            $message
+        );
     }
 
     /**
@@ -147,7 +151,11 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertExitSuccess(string $message = ''): void
     {
-        $this->assertThat(Command::CODE_SUCCESS, new ExitCode($this->_exitCode), $message);
+        $this->assertThat(
+            Command::CODE_SUCCESS,
+            new ExitCode($this->_exitCode, $this->_out->messages(), $this->_err->messages()),
+            $message
+        );
     }
 
     /**
@@ -158,7 +166,11 @@ trait ConsoleIntegrationTestTrait
      */
     public function assertExitError(string $message = ''): void
     {
-        $this->assertThat(Command::CODE_ERROR, new ExitCode($this->_exitCode), $message);
+        $this->assertThat(
+            Command::CODE_ERROR,
+            new ExitCode($this->_exitCode, $this->_out->messages(), $this->_err->messages()),
+            $message
+        );
     }
 
     /**

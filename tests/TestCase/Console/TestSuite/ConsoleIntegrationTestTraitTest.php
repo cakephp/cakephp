@@ -229,7 +229,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     public function testAssertionFailureMessages($assertion, $message, $command, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessageMatches('#' . $message . '.?#');
+        $this->expectExceptionMessageMatches('#' . $message . '.?#sm');
 
         $this->exec($command);
 
@@ -245,6 +245,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     {
         return [
             'assertExitCode' => ['assertExitCode', 'Failed asserting that `1` matches exit code `0`', 'routes', CommandInterface::CODE_ERROR],
+            'assertExitCodeOutput' => ['assertExitCode', "STDOUT.*Route name.*STDERR", 'routes', CommandInterface::CODE_ERROR],
             'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty', 'routes'],
             'assertOutputContains' => ['assertOutputContains', "Failed asserting that 'missing' is in output", 'routes', 'missing'],
             'assertOutputNotContains' => ['assertOutputNotContains', "Failed asserting that 'controller' is not in output", 'routes', 'controller'],
