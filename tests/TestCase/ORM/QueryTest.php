@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Collection\Collection;
 use Cake\Collection\Iterator\BufferedIterator;
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverInterface;
@@ -4111,5 +4112,18 @@ class QueryTest extends TestCase
             ->disableHydration()
             ->disableResultsCasting()
             ->firstOrFail();
+    }
+
+    public function testORMQueryUseReadRoleWorks(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        // Make sure it defaults to the write role
+        $query = $articles->find();
+        $this->assertEquals(Connection::ROLE_WRITE, $query->getConnectionRole());
+
+        // Make sure it can be changed to the read role
+        $query = $articles->find()->useReadRole();
+        $this->assertEquals(Connection::ROLE_READ, $query->getConnectionRole());
     }
 }
