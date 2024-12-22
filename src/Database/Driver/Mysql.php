@@ -30,24 +30,21 @@ use PDO;
  */
 class Mysql extends Driver
 {
-    /**
-     * @inheritDoc
-     */
-    protected const MAX_ALIAS_LENGTH = 256;
+    protected const int MAX_ALIAS_LENGTH = 256;
 
     /**
      * Server type MySQL
      *
      * @var string
      */
-    protected const SERVER_TYPE_MYSQL = 'mysql';
+    protected const string SERVER_TYPE_MYSQL = 'mysql';
 
     /**
      * Server type MariaDB
      *
      * @var string
      */
-    protected const SERVER_TYPE_MARIADB = 'mariadb';
+    protected const string SERVER_TYPE_MARIADB = 'mariadb';
 
     /**
      * Base configuration settings for MySQL driver

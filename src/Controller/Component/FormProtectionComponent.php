@@ -42,7 +42,7 @@ class FormProtectionComponent extends Component
      *
      * @var string
      */
-    public const DEFAULT_EXCEPTION_MESSAGE = 'Form tampering protection token validation failed.';
+    public const string DEFAULT_EXCEPTION_MESSAGE = 'Form tampering protection token validation failed.';
 
     /**
      * Default config

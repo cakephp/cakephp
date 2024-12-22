@@ -32,23 +32,23 @@ class Digest
     /**
      * Algorithms
      */
-    public const ALGO_MD5 = 'MD5';
-    public const ALGO_SHA_256 = 'SHA-256';
-    public const ALGO_SHA_512_256 = 'SHA-512-256';
-    public const ALGO_MD5_SESS = 'MD5-sess';
-    public const ALGO_SHA_256_SESS = 'SHA-256-sess';
-    public const ALGO_SHA_512_256_SESS = 'SHA-512-256-sess';
+    public const string ALGO_MD5 = 'MD5';
+    public const string ALGO_SHA_256 = 'SHA-256';
+    public const string ALGO_SHA_512_256 = 'SHA-512-256';
+    public const string ALGO_MD5_SESS = 'MD5-sess';
+    public const string ALGO_SHA_256_SESS = 'SHA-256-sess';
+    public const string ALGO_SHA_512_256_SESS = 'SHA-512-256-sess';
 
     /**
      * QOP
      */
-    public const QOP_AUTH = 'auth';
-    public const QOP_AUTH_INT = 'auth-int';
+    public const string QOP_AUTH = 'auth';
+    public const string QOP_AUTH_INT = 'auth-int';
 
     /**
      * Algorithms <-> Hash type
      */
-    public const HASH_ALGORITHMS = [
+    public const array HASH_ALGORITHMS = [
         self::ALGO_MD5 => 'md5',
         self::ALGO_SHA_256 => 'sha256',
         self::ALGO_SHA_512_256 => 'sha512/256',

@@ -26,12 +26,12 @@ interface ConnectionInterface
     /**
      * @var string
      */
-    public const ROLE_WRITE = 'write';
+    public const string ROLE_WRITE = 'write';
 
     /**
      * @var string
      */
-    public const ROLE_READ = 'read';
+    public const string ROLE_READ = 'read';
 
     /**
      * Gets the driver instance.

@@ -30,7 +30,7 @@ interface StatementInterface extends IteratorAggregate
      * @var string
      * @link https://www.php.net/manual/en/pdo.constants.php
      */
-    public const FETCH_TYPE_NUM = 'num';
+    public const string FETCH_TYPE_NUM = 'num';
 
     /**
      * Maps to PDO::FETCH_ASSOC.
@@ -38,7 +38,7 @@ interface StatementInterface extends IteratorAggregate
      * @var string
      * @link https://www.php.net/manual/en/pdo.constants.php
      */
-    public const FETCH_TYPE_ASSOC = 'assoc';
+    public const string FETCH_TYPE_ASSOC = 'assoc';
 
     /**
      * Maps to PDO::FETCH_OBJ.
@@ -46,7 +46,7 @@ interface StatementInterface extends IteratorAggregate
      * @var string
      * @link https://www.php.net/manual/en/pdo.constants.php
      */
-    public const FETCH_TYPE_OBJ = 'obj';
+    public const string FETCH_TYPE_OBJ = 'obj';
 
     /**
      * Assign a value to a positional or named variable in prepared query. If using

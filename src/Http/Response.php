@@ -49,12 +49,12 @@ class Response implements ResponseInterface, Stringable
     /**
      * @var int
      */
-    public const STATUS_CODE_MIN = 100;
+    public const int STATUS_CODE_MIN = 100;
 
     /**
      * @var int
      */
-    public const STATUS_CODE_MAX = 599;
+    public const int STATUS_CODE_MAX = 599;
 
     /**
      * Allowed HTTP status codes and their default description.

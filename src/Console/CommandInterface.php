@@ -27,14 +27,14 @@ interface CommandInterface
      *
      * @var int
      */
-    public const CODE_ERROR = 1;
+    public const int CODE_ERROR = 1;
 
     /**
      * Default success code
      *
      * @var int
      */
-    public const CODE_SUCCESS = 0;
+    public const int CODE_SUCCESS = 0;
 
     /**
      * Set the name this command uses in the collection.

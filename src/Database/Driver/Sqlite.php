@@ -36,7 +36,7 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
-    protected const STATEMENT_CLASS = SqliteStatement::class;
+    protected const string STATEMENT_CLASS = SqliteStatement::class;
 
     /**
      * Base configuration settings for Sqlite driver

@@ -33,12 +33,12 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
     /**
      * @var string
      */
-    protected const CHECK_KEY = 'key';
+    protected const string CHECK_KEY = 'key';
 
     /**
      * @var string
      */
-    protected const CHECK_VALUE = 'value';
+    protected const string CHECK_VALUE = 'value';
 
     /**
      * The default cache configuration is overridden in most cache adapters. These are

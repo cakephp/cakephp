@@ -75,7 +75,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * @var int
      */
-    public const TOKEN_VALUE_LENGTH = 32;
+    public const int TOKEN_VALUE_LENGTH = 32;
 
     /**
      * Constructor

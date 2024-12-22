@@ -28,7 +28,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @const int
      */
-    public const DEFAULT_SRID = 4326;
+    public const int DEFAULT_SRID = 4326;
 
     /**
      * Generate the SQL to list the tables and views.

@@ -30,7 +30,7 @@ class Statement implements StatementInterface
     /**
      * @var array<string, int>
      */
-    protected const MODE_NAME_MAP = [
+    protected const array MODE_NAME_MAP = [
         self::FETCH_TYPE_ASSOC => PDO::FETCH_ASSOC,
         self::FETCH_TYPE_NUM => PDO::FETCH_NUM,
         self::FETCH_TYPE_OBJ => PDO::FETCH_OBJ,

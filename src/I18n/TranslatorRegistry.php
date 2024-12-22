@@ -30,7 +30,7 @@ class TranslatorRegistry
      *
      * @var string
      */
-    public const FALLBACK_LOADER = '_fallback';
+    public const string FALLBACK_LOADER = '_fallback';
 
     /**
      * A registry to retain translator objects.

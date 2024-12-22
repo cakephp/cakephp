@@ -44,68 +44,68 @@ class Validation
      *
      * @var string
      */
-    public const DEFAULT_LOCALE = 'en_US';
+    public const string DEFAULT_LOCALE = 'en_US';
 
     /**
      * Same as operator.
      *
      * @var string
      */
-    public const COMPARE_SAME = '===';
+    public const string COMPARE_SAME = '===';
 
     /**
      * Not same as comparison operator.
      *
      * @var string
      */
-    public const COMPARE_NOT_SAME = '!==';
+    public const string COMPARE_NOT_SAME = '!==';
 
     /**
      * Equal to comparison operator.
      *
      * @var string
      */
-    public const COMPARE_EQUAL = '==';
+    public const string COMPARE_EQUAL = '==';
 
     /**
      * Not equal to comparison operator.
      *
      * @var string
      */
-    public const COMPARE_NOT_EQUAL = '!=';
+    public const string COMPARE_NOT_EQUAL = '!=';
 
     /**
      * Greater than comparison operator.
      *
      * @var string
      */
-    public const COMPARE_GREATER = '>';
+    public const string COMPARE_GREATER = '>';
 
     /**
      * Greater than or equal to comparison operator.
      *
      * @var string
      */
-    public const COMPARE_GREATER_OR_EQUAL = '>=';
+    public const string COMPARE_GREATER_OR_EQUAL = '>=';
 
     /**
      * Less than comparison operator.
      *
      * @var string
      */
-    public const COMPARE_LESS = '<';
+    public const string COMPARE_LESS = '<';
 
     /**
      * Less than or equal to comparison operator.
      *
      * @var string
      */
-    public const COMPARE_LESS_OR_EQUAL = '<=';
+    public const string COMPARE_LESS_OR_EQUAL = '<=';
 
     /**
      * @var array<string>
      */
-    protected const COMPARE_STRING = [
+    protected const array COMPARE_STRING = [
         self::COMPARE_EQUAL,
         self::COMPARE_NOT_EQUAL,
         self::COMPARE_SAME,
@@ -117,7 +117,7 @@ class Validation
      *
      * @var string
      */
-    public const DATETIME_ISO8601 = 'iso8601';
+    public const string DATETIME_ISO8601 = 'iso8601';
 
     /**
      * Some complex patterns needed in multiple places

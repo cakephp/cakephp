@@ -44,21 +44,21 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var string
      */
-    public const WHEN_CREATE = 'create';
+    public const string WHEN_CREATE = 'create';
 
     /**
      * By using 'update', you can make fields required when they are updated.
      *
      * @var string
      */
-    public const WHEN_UPDATE = 'update';
+    public const string WHEN_UPDATE = 'update';
 
     /**
      * Used to flag nested rules created with addNested() and addNestedMany()
      *
      * @var string
      */
-    public const NESTED = '_nested';
+    public const string NESTED = '_nested';
 
     /**
      * A flag for allowEmptyFor()
@@ -67,7 +67,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    public const EMPTY_NULL = 0;
+    public const int EMPTY_NULL = 0;
 
     /**
      * A flag for allowEmptyFor()
@@ -76,7 +76,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    public const EMPTY_STRING = 1;
+    public const int EMPTY_STRING = 1;
 
     /**
      * A flag for allowEmptyFor()
@@ -85,7 +85,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    public const EMPTY_ARRAY = 2;
+    public const int EMPTY_ARRAY = 2;
 
     /**
      * A flag for allowEmptyFor()
@@ -95,7 +95,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    public const EMPTY_FILE = 4;
+    public const int EMPTY_FILE = 4;
 
     /**
      * A flag for allowEmptyFor()
@@ -105,7 +105,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    public const EMPTY_DATE = 8;
+    public const int EMPTY_DATE = 8;
 
     /**
      * A flag for allowEmptyFor()
@@ -115,14 +115,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var int
      */
-    public const EMPTY_TIME = 16;
+    public const int EMPTY_TIME = 16;
 
     /**
      * A combination of the all EMPTY_* flags
      *
      * @var int
      */
-    public const EMPTY_ALL = self::EMPTY_STRING
+    public const int EMPTY_ALL = self::EMPTY_STRING
         | self::EMPTY_ARRAY
         | self::EMPTY_FILE
         | self::EMPTY_DATE

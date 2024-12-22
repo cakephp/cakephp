@@ -51,19 +51,19 @@ abstract class Driver
     use LoggerAwareTrait;
 
     /**
-     * @var int|null Maximum alias length or null if no limit
+     * Maximum alias length or null if no limit
      */
-    protected const MAX_ALIAS_LENGTH = null;
+    protected const int|null MAX_ALIAS_LENGTH = null;
 
     /**
      * @var array<int>  DB-specific error codes that allow connect retry
      */
-    protected const RETRY_ERROR_CODES = [];
+    protected const array RETRY_ERROR_CODES = [];
 
     /**
      * @var class-string<\Cake\Database\Statement\Statement>
      */
-    protected const STATEMENT_CLASS = Statement::class;
+    protected const string STATEMENT_CLASS = Statement::class;
 
     /**
      * Instance of PDO.

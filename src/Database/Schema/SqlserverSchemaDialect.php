@@ -26,7 +26,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @var string
      */
-    public const DEFAULT_SCHEMA_NAME = 'dbo';
+    public const string DEFAULT_SCHEMA_NAME = 'dbo';
 
     /**
      * Generate the SQL to list the tables and views.

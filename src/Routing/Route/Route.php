@@ -100,14 +100,14 @@ class Route
      *
      * @var array<string>
      */
-    public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
+    public const array VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
     /**
      * Regex for matching braced placholders in route template.
      *
      * @var string
      */
-    protected const PLACEHOLDER_REGEX = '#\{([a-z][a-z0-9-_]*)\}#i';
+    protected const string PLACEHOLDER_REGEX = '#\{([a-z][a-z0-9-_]*)\}#i';
 
     /**
      * Constructor for a Route

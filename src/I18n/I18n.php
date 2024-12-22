@@ -34,7 +34,7 @@ class I18n
      *
      * @var string
      */
-    public const DEFAULT_LOCALE = 'en_US';
+    public const string DEFAULT_LOCALE = 'en_US';
 
     /**
      * The translators collection

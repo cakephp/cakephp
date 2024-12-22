@@ -37,14 +37,14 @@ class RouteBuilder
      *
      * @var string
      */
-    public const ID = '[0-9]+';
+    public const string ID = '[0-9]+';
 
     /**
      * Regular expression for UUIDs
      *
      * @var string
      */
-    public const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
+    public const string UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
 
     /**
      * Default HTTP request method => controller action map.

@@ -33,14 +33,14 @@ class ServerCommand extends Command
      *
      * @var string
      */
-    public const DEFAULT_HOST = 'localhost';
+    public const string DEFAULT_HOST = 'localhost';
 
     /**
      * Default ListenPort
      *
      * @var int
      */
-    public const DEFAULT_PORT = 8765;
+    public const int DEFAULT_PORT = 8765;
 
     /**
      * server host

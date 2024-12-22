@@ -52,7 +52,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      *
      * @var string
      */
-    public const TEMPLATE_FOLDER = 'cell';
+    public const string TEMPLATE_FOLDER = 'cell';
 
     /**
      * Instance of the View created during rendering. Won't be set until after

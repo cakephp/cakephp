@@ -30,14 +30,14 @@ class UnaryExpression implements ExpressionInterface
      *
      * @var int
      */
-    public const PREFIX = 0;
+    public const int PREFIX = 0;
 
     /**
      * Indicates that the operation is in post-order
      *
      * @var int
      */
-    public const POSTFIX = 1;
+    public const int POSTFIX = 1;
 
     /**
      * The operator this unary expression represents

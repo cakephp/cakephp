@@ -31,21 +31,21 @@ class ViewBlock
      *
      * @var string
      */
-    public const OVERRIDE = 'override';
+    public const string OVERRIDE = 'override';
 
     /**
      * Append content
      *
      * @var string
      */
-    public const APPEND = 'append';
+    public const string APPEND = 'append';
 
     /**
      * Prepend content
      *
      * @var string
      */
-    public const PREPEND = 'prepend';
+    public const string PREPEND = 'prepend';
 
     /**
      * Block content. An array of blocks indexed by name.

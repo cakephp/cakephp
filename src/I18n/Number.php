@@ -32,21 +32,21 @@ class Number
      *
      * @var string
      */
-    public const DEFAULT_LOCALE = 'en_US';
+    public const string DEFAULT_LOCALE = 'en_US';
 
     /**
      * Format type to format as currency
      *
      * @var string
      */
-    public const FORMAT_CURRENCY = 'currency';
+    public const string FORMAT_CURRENCY = 'currency';
 
     /**
      * Format type to format as currency, accounting style (negative numbers in parentheses)
      *
      * @var string
      */
-    public const FORMAT_CURRENCY_ACCOUNTING = 'currency_accounting';
+    public const string FORMAT_CURRENCY_ACCOUNTING = 'currency_accounting';
 
     /**
      * A list of number formatters indexed by locale and type

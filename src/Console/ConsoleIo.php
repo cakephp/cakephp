@@ -36,21 +36,21 @@ class ConsoleIo
      *
      * @var int
      */
-    public const VERBOSE = 2;
+    public const int VERBOSE = 2;
 
     /**
      * Output constant for making normal shells.
      *
      * @var int
      */
-    public const NORMAL = 1;
+    public const int NORMAL = 1;
 
     /**
      * Output constants for making quiet shells.
      *
      * @var int
      */
-    public const QUIET = 0;
+    public const int QUIET = 0;
 
     /**
      * The output stream

@@ -28,126 +28,126 @@ class Message
      *
      * @var int
      */
-    public const STATUS_OK = 200;
+    public const int STATUS_OK = 200;
 
     /**
      * HTTP 201 code
      *
      * @var int
      */
-    public const STATUS_CREATED = 201;
+    public const int STATUS_CREATED = 201;
 
     /**
      * HTTP 202 code
      *
      * @var int
      */
-    public const STATUS_ACCEPTED = 202;
+    public const int STATUS_ACCEPTED = 202;
 
     /**
      * HTTP 203 code
      *
      * @var int
      */
-    public const STATUS_NON_AUTHORITATIVE_INFORMATION = 203;
+    public const int STATUS_NON_AUTHORITATIVE_INFORMATION = 203;
 
     /**
      * HTTP 204 code
      *
      * @var int
      */
-    public const STATUS_NO_CONTENT = 204;
+    public const int STATUS_NO_CONTENT = 204;
 
     /**
      * HTTP 301 code
      *
      * @var int
      */
-    public const STATUS_MOVED_PERMANENTLY = 301;
+    public const int STATUS_MOVED_PERMANENTLY = 301;
 
     /**
      * HTTP 302 code
      *
      * @var int
      */
-    public const STATUS_FOUND = 302;
+    public const int STATUS_FOUND = 302;
 
     /**
      * HTTP 303 code
      *
      * @var int
      */
-    public const STATUS_SEE_OTHER = 303;
+    public const int STATUS_SEE_OTHER = 303;
 
     /**
      * HTTP 307 code
      *
      * @var int
      */
-    public const STATUS_TEMPORARY_REDIRECT = 307;
+    public const int STATUS_TEMPORARY_REDIRECT = 307;
 
     /**
      * HTTP 308 code
      *
      * @var int
      */
-    public const STATUS_PERMANENT_REDIRECT = 308;
+    public const int STATUS_PERMANENT_REDIRECT = 308;
 
     /**
      * HTTP GET method
      *
      * @var string
      */
-    public const METHOD_GET = 'GET';
+    public const string METHOD_GET = 'GET';
 
     /**
      * HTTP POST method
      *
      * @var string
      */
-    public const METHOD_POST = 'POST';
+    public const string METHOD_POST = 'POST';
 
     /**
      * HTTP PUT method
      *
      * @var string
      */
-    public const METHOD_PUT = 'PUT';
+    public const string METHOD_PUT = 'PUT';
 
     /**
      * HTTP DELETE method
      *
      * @var string
      */
-    public const METHOD_DELETE = 'DELETE';
+    public const string METHOD_DELETE = 'DELETE';
 
     /**
      * HTTP PATCH method
      *
      * @var string
      */
-    public const METHOD_PATCH = 'PATCH';
+    public const string METHOD_PATCH = 'PATCH';
 
     /**
      * HTTP OPTIONS method
      *
      * @var string
      */
-    public const METHOD_OPTIONS = 'OPTIONS';
+    public const string METHOD_OPTIONS = 'OPTIONS';
 
     /**
      * HTTP TRACE method
      *
      * @var string
      */
-    public const METHOD_TRACE = 'TRACE';
+    public const string METHOD_TRACE = 'TRACE';
 
     /**
      * HTTP HEAD method
      *
      * @var string
      */
-    public const METHOD_HEAD = 'HEAD';
+    public const string METHOD_HEAD = 'HEAD';
 
     /**
      * The array of cookies in the response.

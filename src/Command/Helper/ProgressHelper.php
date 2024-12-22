@@ -39,12 +39,12 @@ class ProgressHelper extends Helper
      * Default value for progress bar total value.
      * Percent completion is derived from progress/total
      */
-    protected const DEFAULT_TOTAL = 100;
+    protected const int DEFAULT_TOTAL = 100;
 
     /**
      * Default value for progress bar width
      */
-    protected const DEFAULT_WIDTH = 80;
+    protected const int DEFAULT_WIDTH = 80;
 
     /**
      * The current progress.

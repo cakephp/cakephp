@@ -41,42 +41,42 @@ class Message implements JsonSerializable
      *
      * @var int
      */
-    public const LINE_LENGTH_SHOULD = 78;
+    public const int LINE_LENGTH_SHOULD = 78;
 
     /**
      * Line length - no must more - RFC 2822 - 2.1.1
      *
      * @var int
      */
-    public const LINE_LENGTH_MUST = 998;
+    public const int LINE_LENGTH_MUST = 998;
 
     /**
      * Type of message - HTML
      *
      * @var string
      */
-    public const MESSAGE_HTML = 'html';
+    public const string MESSAGE_HTML = 'html';
 
     /**
      * Type of message - TEXT
      *
      * @var string
      */
-    public const MESSAGE_TEXT = 'text';
+    public const string MESSAGE_TEXT = 'text';
 
     /**
      * Type of message - BOTH
      *
      * @var string
      */
-    public const MESSAGE_BOTH = 'both';
+    public const string MESSAGE_BOTH = 'both';
 
     /**
      * Holds the regex pattern for email validation
      *
      * @var string
      */
-    public const EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
+    public const string EMAIL_PATTERN = '/^((?:[\p{L}0-9.!#$%&\'*+\/=?^_`{|}~-]+)*@[\p{L}0-9-._]+)$/ui';
 
     /**
      * Recipient of the email

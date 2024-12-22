@@ -24,7 +24,7 @@ class RetryDriver extends Sqlserver
     /**
      * @inheritDoc
      */
-    protected const RETRY_ERROR_CODES = [18456];
+    protected const array RETRY_ERROR_CODES = [18456];
 
     /**
      * @inheritDoc

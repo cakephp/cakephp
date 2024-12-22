@@ -55,21 +55,21 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @var int
      */
-    public const APPEND = 0;
+    public const int APPEND = 0;
 
     /**
      * Indicates that the operation should prepend to the list
      *
      * @var int
      */
-    public const PREPEND = 1;
+    public const int PREPEND = 1;
 
     /**
      * Indicates that the operation should overwrite the list
      *
      * @var bool
      */
-    public const OVERWRITE = true;
+    public const bool OVERWRITE = true;
 
     /**
      * Whether the user select any fields before being executed, this is used

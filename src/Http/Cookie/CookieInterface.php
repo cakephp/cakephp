@@ -27,35 +27,35 @@ interface CookieInterface
      *
      * @var string
      */
-    public const EXPIRES_FORMAT = 'D, d-M-Y H:i:s T';
+    public const string EXPIRES_FORMAT = 'D, d-M-Y H:i:s T';
 
     /**
      * SameSite attribute value: Lax
      *
      * @var string
      */
-    public const SAMESITE_LAX = 'Lax';
+    public const string SAMESITE_LAX = 'Lax';
 
     /**
      * SameSite attribute value: Strict
      *
      * @var string
      */
-    public const SAMESITE_STRICT = 'Strict';
+    public const string SAMESITE_STRICT = 'Strict';
 
     /**
      * SameSite attribute value: None
      *
      * @var string
      */
-    public const SAMESITE_NONE = 'None';
+    public const string SAMESITE_NONE = 'None';
 
     /**
      * Valid values for "SameSite" attribute.
      *
      * @var array<string>
      */
-    public const SAMESITE_VALUES = [
+    public const array SAMESITE_VALUES = [
         self::SAMESITE_LAX,
         self::SAMESITE_STRICT,
         self::SAMESITE_NONE,

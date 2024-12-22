@@ -141,7 +141,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
      *
      * @var string
      */
-    public const UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
+    public const string UNIX_TIMESTAMP_FORMAT = 'unixTimestampFormat';
 
     /**
      * Gets the default locale.

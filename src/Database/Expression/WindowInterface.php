@@ -27,27 +27,27 @@ interface WindowInterface
     /**
      * @var string
      */
-    public const PRECEDING = 'PRECEDING';
+    public const string PRECEDING = 'PRECEDING';
 
     /**
      * @var string
      */
-    public const FOLLOWING = 'FOLLOWING';
+    public const string FOLLOWING = 'FOLLOWING';
 
     /**
      * @var string
      */
-    public const RANGE = 'RANGE';
+    public const string RANGE = 'RANGE';
 
     /**
      * @var string
      */
-    public const ROWS = 'ROWS';
+    public const string ROWS = 'ROWS';
 
     /**
      * @var string
      */
-    public const GROUPS = 'GROUPS';
+    public const string GROUPS = 'GROUPS';
 
     /**
      * Adds one or more partition expressions to the window.

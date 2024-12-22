@@ -203,7 +203,7 @@ class FormHelper extends Helper
      *
      * @var string
      */
-    public const SECURE_SKIP = 'skip';
+    public const string SECURE_SKIP = 'skip';
 
     /**
      * Defines the type of form being created. Set by FormHelper::create().

@@ -34,10 +34,7 @@ use PDO;
  */
 class Postgres extends Driver
 {
-    /**
-     * @inheritDoc
-     */
-    protected const MAX_ALIAS_LENGTH = 63;
+    protected const int MAX_ALIAS_LENGTH = 63;
 
     /**
      * Base configuration settings for Postgres driver

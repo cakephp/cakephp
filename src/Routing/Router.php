@@ -55,42 +55,42 @@ class Router
      *
      * @var string
      */
-    public const ACTION = 'index|show|add|create|edit|update|remove|del|delete|view|item';
+    public const string ACTION = 'index|show|add|create|edit|update|remove|del|delete|view|item';
 
     /**
      * Regular expression for years
      *
      * @var string
      */
-    public const YEAR = '[12][0-9]{3}';
+    public const string YEAR = '[12][0-9]{3}';
 
     /**
      * Regular expression for months
      *
      * @var string
      */
-    public const MONTH = '0[1-9]|1[012]';
+    public const string MONTH = '0[1-9]|1[012]';
 
     /**
      * Regular expression for days
      *
      * @var string
      */
-    public const DAY = '0[1-9]|[12][0-9]|3[01]';
+    public const string DAY = '0[1-9]|[12][0-9]|3[01]';
 
     /**
      * Regular expression for auto increment IDs
      *
      * @var string
      */
-    public const ID = '[0-9]+';
+    public const string ID = '[0-9]+';
 
     /**
      * Regular expression for UUIDs
      *
      * @var string
      */
-    public const UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
+    public const string UUID = '[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}';
 
     /**
      * The route collection routes would be added to.

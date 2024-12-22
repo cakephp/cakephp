@@ -42,22 +42,19 @@ class Sqlserver extends Driver
 {
     use TupleComparisonTranslatorTrait;
 
-    /**
-     * @inheritDoc
-     */
-    protected const MAX_ALIAS_LENGTH = 128;
+    protected const int MAX_ALIAS_LENGTH = 128;
 
     /**
      * @inheritDoc
      */
-    protected const RETRY_ERROR_CODES = [
+    protected const array RETRY_ERROR_CODES = [
         40613, // Azure Sql Database paused
     ];
 
     /**
      * @inheritDoc
      */
-    protected const STATEMENT_CLASS = SqlserverStatement::class;
+    protected const string STATEMENT_CLASS = SqlserverStatement::class;
 
     /**
      * Base configuration settings for Sqlserver driver

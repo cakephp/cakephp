@@ -86,7 +86,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     /**
      * @var int
      */
-    public const TOKEN_VALUE_LENGTH = 16;
+    public const int TOKEN_VALUE_LENGTH = 16;
 
     /**
      * Tokens have an hmac generated so we can ensure
@@ -99,7 +99,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *
      * @var int
      */
-    public const TOKEN_WITH_CHECKSUM_LENGTH = 56;
+    public const int TOKEN_WITH_CHECKSUM_LENGTH = 56;
 
     /**
      * Constructor

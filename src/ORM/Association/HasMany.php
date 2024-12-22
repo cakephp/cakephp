@@ -76,14 +76,14 @@ class HasMany extends Association
      *
      * @var string
      */
-    public const SAVE_APPEND = 'append';
+    public const string SAVE_APPEND = 'append';
 
     /**
      * Saving strategy that will replace the links with the provided set
      *
      * @var string
      */
-    public const SAVE_REPLACE = 'replace';
+    public const string SAVE_REPLACE = 'replace';
 
     /**
      * Saving strategy to be used by this association

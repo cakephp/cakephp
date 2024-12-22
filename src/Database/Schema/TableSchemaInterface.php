@@ -28,182 +28,182 @@ interface TableSchemaInterface extends SchemaInterface
      *
      * @var string
      */
-    public const TYPE_BINARY = 'binary';
+    public const string TYPE_BINARY = 'binary';
 
     /**
      * Binary UUID column type
      *
      * @var string
      */
-    public const TYPE_BINARY_UUID = 'binaryuuid';
+    public const string TYPE_BINARY_UUID = 'binaryuuid';
 
     /**
      * Date column type
      *
      * @var string
      */
-    public const TYPE_DATE = 'date';
+    public const string TYPE_DATE = 'date';
 
     /**
      * Datetime column type
      *
      * @var string
      */
-    public const TYPE_DATETIME = 'datetime';
+    public const string TYPE_DATETIME = 'datetime';
 
     /**
      * Datetime with fractional seconds column type
      *
      * @var string
      */
-    public const TYPE_DATETIME_FRACTIONAL = 'datetimefractional';
+    public const string TYPE_DATETIME_FRACTIONAL = 'datetimefractional';
 
     /**
      * Time column type
      *
      * @var string
      */
-    public const TYPE_TIME = 'time';
+    public const string TYPE_TIME = 'time';
 
     /**
      * Timestamp column type
      *
      * @var string
      */
-    public const TYPE_TIMESTAMP = 'timestamp';
+    public const string TYPE_TIMESTAMP = 'timestamp';
 
     /**
      * Timestamp with fractional seconds column type
      *
      * @var string
      */
-    public const TYPE_TIMESTAMP_FRACTIONAL = 'timestampfractional';
+    public const string TYPE_TIMESTAMP_FRACTIONAL = 'timestampfractional';
 
     /**
      * Timestamp with time zone column type
      *
      * @var string
      */
-    public const TYPE_TIMESTAMP_TIMEZONE = 'timestamptimezone';
+    public const string TYPE_TIMESTAMP_TIMEZONE = 'timestamptimezone';
 
     /**
      * JSON column type
      *
      * @var string
      */
-    public const TYPE_JSON = 'json';
+    public const string TYPE_JSON = 'json';
 
     /**
      * String column type
      *
      * @var string
      */
-    public const TYPE_STRING = 'string';
+    public const string TYPE_STRING = 'string';
 
     /**
      * Char column type
      *
      * @var string
      */
-    public const TYPE_CHAR = 'char';
+    public const string TYPE_CHAR = 'char';
 
     /**
      * Text column type
      *
      * @var string
      */
-    public const TYPE_TEXT = 'text';
+    public const string TYPE_TEXT = 'text';
 
     /**
      * Tiny Integer column type
      *
      * @var string
      */
-    public const TYPE_TINYINTEGER = 'tinyinteger';
+    public const string TYPE_TINYINTEGER = 'tinyinteger';
 
     /**
      * Small Integer column type
      *
      * @var string
      */
-    public const TYPE_SMALLINTEGER = 'smallinteger';
+    public const string TYPE_SMALLINTEGER = 'smallinteger';
 
     /**
      * Integer column type
      *
      * @var string
      */
-    public const TYPE_INTEGER = 'integer';
+    public const string TYPE_INTEGER = 'integer';
 
     /**
      * Big Integer column type
      *
      * @var string
      */
-    public const TYPE_BIGINTEGER = 'biginteger';
+    public const string TYPE_BIGINTEGER = 'biginteger';
 
     /**
      * Float column type
      *
      * @var string
      */
-    public const TYPE_FLOAT = 'float';
+    public const string TYPE_FLOAT = 'float';
 
     /**
      * Decimal column type
      *
      * @var string
      */
-    public const TYPE_DECIMAL = 'decimal';
+    public const string TYPE_DECIMAL = 'decimal';
 
     /**
      * Boolean column type
      *
      * @var string
      */
-    public const TYPE_BOOLEAN = 'boolean';
+    public const string TYPE_BOOLEAN = 'boolean';
 
     /**
      * UUID column type
      *
      * @var string
      */
-    public const TYPE_UUID = 'uuid';
+    public const string TYPE_UUID = 'uuid';
 
     /**
      * Geometry column type
      *
      * @var string
      */
-    public const TYPE_GEOMETRY = 'geometry';
+    public const string TYPE_GEOMETRY = 'geometry';
 
     /**
      * Point column type
      *
      * @var string
      */
-    public const TYPE_POINT = 'point';
+    public const string TYPE_POINT = 'point';
 
     /**
      * Linestring column type
      *
      * @var string
      */
-    public const TYPE_LINESTRING = 'linestring';
+    public const string TYPE_LINESTRING = 'linestring';
 
     /**
      * Polgon column type
      *
      * @var string
      */
-    public const TYPE_POLYGON = 'polygon';
+    public const string TYPE_POLYGON = 'polygon';
 
     /**
      * Geospatial column types
      *
      * @var array
      */
-    public const GEOSPATIAL_TYPES = [
+    public const array GEOSPATIAL_TYPES = [
         self::TYPE_GEOMETRY,
         self::TYPE_POINT,
         self::TYPE_LINESTRING,

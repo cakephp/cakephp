@@ -41,7 +41,7 @@ class RoutingMiddleware implements MiddlewareInterface
      *
      * @var string
      */
-    public const ROUTE_COLLECTION_CACHE_KEY = 'routeCollection';
+    public const string ROUTE_COLLECTION_CACHE_KEY = 'routeCollection';
 
     /**
      * The application that will have its routing hook invoked.

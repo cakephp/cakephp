@@ -29,11 +29,11 @@ use function Cake\Core\env;
  */
 class SmtpTransport extends AbstractTransport
 {
-    public const AUTH_PLAIN = 'PLAIN';
-    public const AUTH_LOGIN = 'LOGIN';
-    public const AUTH_XOAUTH2 = 'XOAUTH2';
+    public const string AUTH_PLAIN = 'PLAIN';
+    public const string AUTH_LOGIN = 'LOGIN';
+    public const string AUTH_XOAUTH2 = 'XOAUTH2';
 
-    public const SUPPORTED_AUTH_TYPES = [
+    public const array SUPPORTED_AUTH_TYPES = [
         self::AUTH_PLAIN,
         self::AUTH_LOGIN,
         self::AUTH_XOAUTH2,

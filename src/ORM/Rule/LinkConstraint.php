@@ -32,14 +32,14 @@ class LinkConstraint
      *
      * @var string
      */
-    public const STATUS_LINKED = 'linked';
+    public const string STATUS_LINKED = 'linked';
 
     /**
      * Status that requires a link to not be present.
      *
      * @var string
      */
-    public const STATUS_NOT_LINKED = 'notLinked';
+    public const string STATUS_NOT_LINKED = 'notLinked';
 
     /**
      * The association that should be checked.

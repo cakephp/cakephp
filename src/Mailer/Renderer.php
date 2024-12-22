@@ -32,7 +32,7 @@ class Renderer
      *
      * @var string
      */
-    public const TEMPLATE_FOLDER = 'email';
+    public const string TEMPLATE_FOLDER = 'email';
 
     /**
      * Constructor

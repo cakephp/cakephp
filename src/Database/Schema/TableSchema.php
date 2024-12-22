@@ -34,6 +34,97 @@ use Cake\Database\TypeFactory;
 class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 {
     /**
+     * Column length when using a `tiny` column type
+     *
+     * @var int
+     */
+    public const int LENGTH_TINY = 255;
+
+    /**
+     * Column length when using a `medium` column type
+     *
+     * @var int
+     */
+    public const int LENGTH_MEDIUM = 16777215;
+
+    /**
+     * Column length when using a `long` column type
+     *
+     * @var int
+     */
+    public const int LENGTH_LONG = 4294967295;
+
+    /**
+     * Primary constraint type
+     *
+     * @var string
+     */
+    public const string CONSTRAINT_PRIMARY = 'primary';
+
+    /**
+     * Unique constraint type
+     *
+     * @var string
+     */
+    public const string CONSTRAINT_UNIQUE = 'unique';
+
+    /**
+     * Foreign constraint type
+     *
+     * @var string
+     */
+    public const string CONSTRAINT_FOREIGN = 'foreign';
+
+    /**
+     * Index - index type
+     *
+     * @var string
+     */
+    public const string INDEX_INDEX = 'index';
+
+    /**
+     * Fulltext index type
+     *
+     * @var string
+     */
+    public const string INDEX_FULLTEXT = 'fulltext';
+
+    /**
+     * Foreign key cascade action
+     *
+     * @var string
+     */
+    public const string ACTION_CASCADE = 'cascade';
+
+    /**
+     * Foreign key set null action
+     *
+     * @var string
+     */
+    public const string ACTION_SET_NULL = 'setNull';
+
+    /**
+     * Foreign key no action
+     *
+     * @var string
+     */
+    public const string ACTION_NO_ACTION = 'noAction';
+
+    /**
+     * Foreign key restrict action
+     *
+     * @var string
+     */
+    public const string ACTION_RESTRICT = 'restrict';
+
+    /**
+     * Foreign key restrict default
+     *
+     * @var string
+     */
+    public const string ACTION_SET_DEFAULT = 'setDefault';
+
+    /**
      * The name of the table
      *
      * @var string
@@ -81,27 +172,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * @var bool
      */
     protected bool $_temporary = false;
-
-    /**
-     * Column length when using a `tiny` column type
-     *
-     * @var int
-     */
-    public const LENGTH_TINY = 255;
-
-    /**
-     * Column length when using a `medium` column type
-     *
-     * @var int
-     */
-    public const LENGTH_MEDIUM = 16777215;
-
-    /**
-     * Column length when using a `long` column type
-     *
-     * @var int
-     */
-    public const LENGTH_LONG = 4294967295;
 
     /**
      * Valid column length that can be used with text type columns
@@ -229,76 +299,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         self::ACTION_NO_ACTION,
         self::ACTION_RESTRICT,
     ];
-
-    /**
-     * Primary constraint type
-     *
-     * @var string
-     */
-    public const CONSTRAINT_PRIMARY = 'primary';
-
-    /**
-     * Unique constraint type
-     *
-     * @var string
-     */
-    public const CONSTRAINT_UNIQUE = 'unique';
-
-    /**
-     * Foreign constraint type
-     *
-     * @var string
-     */
-    public const CONSTRAINT_FOREIGN = 'foreign';
-
-    /**
-     * Index - index type
-     *
-     * @var string
-     */
-    public const INDEX_INDEX = 'index';
-
-    /**
-     * Fulltext index type
-     *
-     * @var string
-     */
-    public const INDEX_FULLTEXT = 'fulltext';
-
-    /**
-     * Foreign key cascade action
-     *
-     * @var string
-     */
-    public const ACTION_CASCADE = 'cascade';
-
-    /**
-     * Foreign key set null action
-     *
-     * @var string
-     */
-    public const ACTION_SET_NULL = 'setNull';
-
-    /**
-     * Foreign key no action
-     *
-     * @var string
-     */
-    public const ACTION_NO_ACTION = 'noAction';
-
-    /**
-     * Foreign key restrict action
-     *
-     * @var string
-     */
-    public const ACTION_RESTRICT = 'restrict';
-
-    /**
-     * Foreign key restrict default
-     *
-     * @var string
-     */
-    public const ACTION_SET_DEFAULT = 'setDefault';
 
     /**
      * Constructor.
