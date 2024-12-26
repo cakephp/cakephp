@@ -7489,6 +7489,28 @@ class FormHelperTest extends TestCase
             '/form',
         ];
         $this->assertHtml($expected, $result);
+
+        $this->Form->setConfig('defaultPostLinkBlock', 'foobaz');
+        $result = $this->Form->postLink('Delete', '/posts/delete/4');
+        $expected = [
+            'a' => ['href' => '#', 'onclick' => 'preg:/document\.post_\w+\.submit\(\); event\.returnValue = false; return false;/'],
+            'Delete',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $result = $this->View->fetch('foobaz');
+        $expected = [
+            'form' => [
+                'method' => 'post', 'action' => '/posts/delete/4',
+                'name' => 'preg:/post_\w+/', 'style' => 'display:none;',
+            ],
+            'input' => ['type' => 'hidden', 'name' => '_method', 'value' => 'POST'],
+            '/form',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Form->setConfig('defaultPostLinkBlock', null);
     }
 
     /**

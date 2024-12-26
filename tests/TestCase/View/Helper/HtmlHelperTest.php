@@ -638,12 +638,22 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result[1]);
         $this->assertCount(2, $result);
 
-        $this->View->expects($this->exactly(2))
+        $result = $this->Html->css('import-screen', ['rel' => 'import']);
+        $expected = [
+            '<style',
+            'preg:/@import url\(.*css\/import-screen\.css\);/',
+            '/style',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->View->expects($this->exactly(4))
             ->method('append')
             ->with(
                 ...self::withConsecutive(
                     ['css', $this->matchesRegularExpression('/css_in_head.css/')],
                     ['css', $this->matchesRegularExpression('/more_css_in_head.css/')],
+                    ['css', $this->matchesRegularExpression('/css_in_head_2.css/')],
+                    ['css', $this->matchesRegularExpression('/more_css_in_head_2.css/')],
                 ),
             );
 
@@ -653,13 +663,15 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->css('more_css_in_head', ['block' => true]);
         $this->assertNull($result);
 
-        $result = $this->Html->css('import-screen', ['rel' => 'import']);
-        $expected = [
-            '<style',
-            'preg:/@import url\(.*css\/import-screen\.css\);/',
-            '/style',
-        ];
-        $this->assertHtml($expected, $result);
+        $this->Html->setConfig('defaultCssBlock', true);
+        $result = $this->Html->css('css_in_head_2');
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultCssBlock', 'css');
+        $result = $this->Html->css('more_css_in_head_2');
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultCssBlock', null);
     }
 
     /**
@@ -1118,12 +1130,14 @@ class HtmlHelperTest extends TestCase
      */
     public function testScriptWithBlocks(): void
     {
-        $this->View->expects($this->exactly(2))
+        $this->View->expects($this->exactly(4))
             ->method('append')
             ->with(
                 ...self::withConsecutive(
                     ['script', $this->matchesRegularExpression('/script_in_head.js/')],
                     ['headScripts', $this->matchesRegularExpression('/second_script.js/')],
+                    ['script', $this->matchesRegularExpression('/script_in_head_2.js/')],
+                    ['headScripts', $this->matchesRegularExpression('/second_script_2.js/')],
                 ),
             );
 
@@ -1132,6 +1146,16 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->script('second_script', ['block' => 'headScripts']);
         $this->assertNull($result);
+
+        $this->Html->setConfig('defaultScriptBlock', true);
+        $result = $this->Html->script('script_in_head_2');
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultScriptBlock', 'headScripts');
+        $result = $this->Html->script('second_script_2');
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultScriptBlock', null);
     }
 
     /**
@@ -1210,12 +1234,22 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->expects($this->exactly(2))
+        $result = $this->Html->scriptBlock('window.foo = 2;', ['encoding' => 'utf-8']);
+        $expected = [
+            'script' => ['encoding' => 'utf-8'],
+            'window.foo = 2;',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->View->expects($this->exactly(4))
             ->method('append')
             ->with(
                 ...self::withConsecutive(
                     ['script', $this->matchesRegularExpression('/window\.foo\s\=\s2;/')],
-                    ['scriptTop', $this->stringContains('alert(')],
+                    ['scriptTop', $this->stringContains('alert("hi")')],
+                    ['script', $this->matchesRegularExpression('/window\.foo\s\=\s3;/')],
+                    ['scriptTop', $this->stringContains('alert("his")')],
                 ),
             );
 
@@ -1225,13 +1259,13 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->scriptBlock('alert("hi")', ['block' => 'scriptTop']);
         $this->assertNull($result);
 
-        $result = $this->Html->scriptBlock('window.foo = 2;', ['encoding' => 'utf-8']);
-        $expected = [
-            'script' => ['encoding' => 'utf-8'],
-            'window.foo = 2;',
-            '/script',
-        ];
-        $this->assertHtml($expected, $result);
+        $this->Html->setConfig('defaultScriptBlock', true);
+        $result = $this->Html->scriptBlock('window.foo = 3;');
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultScriptBlock', 'scriptTop');
+        $result = $this->Html->scriptBlock('alert("his")');
+        $this->assertNull($result);
     }
 
     /**
@@ -1583,6 +1617,18 @@ class HtmlHelperTest extends TestCase
             'meta' => ['name' => 'csrf-token', 'content' => 'test'],
         ];
         $this->assertHtml($expected, $result);
+
+        $this->View->expects($this->exactly(1))
+            ->method('append')
+            ->with(
+                'myMeta',
+                $this->matchesRegularExpression('/csrf-token/'),
+            );
+
+        $this->Html->setConfig('defaultMetaBlock', 'myMeta');
+        $this->assertNull($this->Html->meta('csrf-token'));
+        $this->assertHtml($expected, $result);
+        $this->Html->setConfig('defaultMetaBlock', null);
     }
 
     /**

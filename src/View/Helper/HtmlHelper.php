@@ -47,6 +47,9 @@ class HtmlHelper extends Helper
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
+        'defaultScriptBlock' => null,
+        'defaultCssBlock' => null,
+        'defaultMetaBlock' => null,
         'templates' => [
             'meta' => '<meta{{attrs}}>',
             'metalink' => '<link href="{{url}}"{{attrs}}>',
@@ -177,7 +180,7 @@ class HtmlHelper extends Helper
             }
         }
 
-        $options += $type + ['block' => null];
+        $options += $type + ['block' => $this->getConfig('defaultMetaBlock')];
         $out = '';
 
         if (isset($options['link'])) {
@@ -385,7 +388,7 @@ class HtmlHelper extends Helper
     {
         $options += [
             'once' => true,
-            'block' => null,
+            'block' => $this->getConfig('defaultCssBlock'),
             'rel' => 'stylesheet',
             'nonce' => $this->_View->getRequest()->getAttribute('cspStyleNonce'),
         ];
@@ -484,7 +487,7 @@ class HtmlHelper extends Helper
     public function script(array|string $url, array $options = []): ?string
     {
         $defaults = [
-            'block' => null,
+            'block' => $this->getConfig('defaultScriptBlock'),
             'once' => true,
             'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
         ];
@@ -542,7 +545,10 @@ class HtmlHelper extends Helper
      */
     public function scriptBlock(string $script, array $options = []): ?string
     {
-        $options += ['block' => null, 'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce')];
+        $options += [
+            'block' => $this->getConfig('defaultScriptBlock'),
+            'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
+        ];
 
         $out = $this->formatTemplate('javascriptblock', [
             'attrs' => $this->templater()->formatAttributes($options, ['block']),

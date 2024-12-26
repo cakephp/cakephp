@@ -78,6 +78,7 @@ class FormHelper extends Helper
         'idPrefix' => null,
         // Deprecated option, use templates.errorClass intead.
         'errorClass' => null,
+        'defaultPostLinkBlock' => null,
         'typeMap' => [
             'string' => 'text',
             'text' => 'textarea',
@@ -1893,7 +1894,7 @@ class FormHelper extends Helper
      */
     public function postLink(string $title, array|string|null $url = null, array $options = []): string
     {
-        $options += ['block' => null, 'confirm' => null];
+        $options += ['block' => $this->getConfig('defaultPostLinkBlock'), 'confirm' => null];
 
         $requestMethod = 'POST';
         if (!empty($options['method'])) {
