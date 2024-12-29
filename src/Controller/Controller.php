@@ -42,7 +42,6 @@ use InvalidArgumentException;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\UriInterface;
 use Psr\Http\Server\MiddlewareInterface;
-use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
 use function Cake\Core\namespaceSplit;
@@ -281,7 +280,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function loadComponent(string $name, array $config = []): Component
     {
-        /** @var \Cake\Controller\Component */
         return $this->components()->load($name, $config);
     }
 
@@ -306,7 +304,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         }
 
         if ($this->components()->has($name)) {
-            /** @var \Cake\Controller\Component */
             return $this->components()->get($name);
         }
 
@@ -904,10 +901,10 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      */
     public function isAction(string $action): bool
     {
-        $baseClass = new ReflectionClass(self::class);
-        if ($baseClass->hasMethod($action)) {
+        if (method_exists(self::class, $action)) {
             return false;
         }
+
         try {
             $method = new ReflectionMethod($this, $action);
         } catch (ReflectionException) {
