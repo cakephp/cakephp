@@ -10,6 +10,7 @@ use Cake\Container\Definition\Definition;
 use Cake\Test\TestCase\Container\Asset\Bar;
 use Cake\Test\TestCase\Container\Asset\Foo;
 use Cake\Test\TestCase\Container\Asset\FooCallable;
+use Error;
 use PHPUnit\Framework\TestCase;
 
 class DefinitionTest extends TestCase
@@ -49,6 +50,24 @@ class DefinitionTest extends TestCase
         $definition->addArgument(new Bar());
         $actual = $definition->resolve();
         self::assertInstanceOf(Foo::class, $actual);
+    }
+
+    public function testDefinitionAddsArgumentWithName(): void
+    {
+        $definition = new Definition('class', Foo::class);
+        $definition->addArgument('something', 'myString');
+        $actual = $definition->resolve();
+        self::assertInstanceOf(Foo::class, $actual);
+        self::assertSame('something', $actual->myString);
+    }
+
+    public function testDefinitionAddsArgumentWithUnknownNameThrows(): void
+    {
+        $definition = new Definition('class', Foo::class);
+        $definition->addArgument('something', 'unknown');
+        $this->expectException(Error::class);
+        $this->expectExceptionMessage('Unknown named parameter $unknown');
+        $definition->resolve();
     }
 
     public function testDefinitionResolvesClassWithMethodCalls(): void

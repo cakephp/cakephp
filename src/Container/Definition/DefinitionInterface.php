@@ -9,9 +9,10 @@ interface DefinitionInterface extends ContainerAwareInterface
 {
     /**
      * @param mixed $arg
+     * @param string|null $name
      * @return $this
      */
-    public function addArgument(mixed $arg): DefinitionInterface;
+    public function addArgument(mixed $arg, ?string $name = null): DefinitionInterface;
 
     /**
      * @param array $args

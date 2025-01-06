@@ -7,13 +7,16 @@ class Foo
 {
     public $bar;
 
+    public $myString;
+
     public static $staticBar;
 
     public static $staticHello;
 
-    public function __construct(?Bar $bar = null)
+    public function __construct(?Bar $bar = null, ?string $myString = null)
     {
         $this->bar = $bar;
+        $this->myString = $myString;
     }
 
     public function setBar(Bar $bar): void

@@ -280,4 +280,16 @@ class ContainerTest extends TestCase
         self::assertTrue($container->has(NonExistent::class));
         self::assertSame(NonExistent::class, $container->get(NonExistent::class));
     }
+
+//    public function testContainerResolvesWithNamedArgument(): void
+//    {
+//        $container = new Container();
+//        $container->add(Foo::class)
+//            ->addArgument('something', 'myString');
+//        self::assertTrue($container->has(Foo::class));
+//        $foo = $container->get(Foo::class);
+//        self::assertInstanceOf(Foo::class, $foo);
+//        self::assertInstanceOf(Bar::class, $foo->bar);
+//        self::assertSame('something', $foo->myString);
+//    }
 }

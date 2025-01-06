@@ -148,9 +148,13 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
     /**
      * @inheritDoc
      */
-    public function addArgument($arg): DefinitionInterface
+    public function addArgument($arg, ?string $name = null): DefinitionInterface
     {
-        $this->arguments[] = $arg;
+        if ($name) {
+            $this->arguments[$name] = $arg;
+        } else {
+            $this->arguments[] = $arg;
+        }
 
         return $this;
     }
@@ -160,8 +164,12 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
      */
     public function addArguments(array $args): DefinitionInterface
     {
-        foreach ($args as $arg) {
-            $this->addArgument($arg);
+        foreach ($args as $argName => $arg) {
+            if (is_string($argName)) {
+                $this->addArgument($arg, $argName);
+            } else {
+                $this->addArgument($arg);
+            }
         }
 
         return $this;
@@ -276,6 +284,22 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
      */
     protected function resolveClass(string $concrete): object
     {
+//        $reflector = new ReflectionClass($concrete);
+//        $construct = $reflector->getConstructor();
+//        $params = $construct->getParameters();
+//        if (count($params) !== count($this->arguments)) {
+//            // This indicates, that certain arguments need to be auto wired
+//            $tmpArgs = $this->arguments;
+//            $this->arguments = [];
+//            foreach($params as $param) {
+//                if (!array_key_exists($param->getName(), $tmpArgs)) {
+//                    $this->addArgument($param->getType()->getName(), $param->getName());
+//                } else {
+//                    $this->addArgument($tmpArgs[$param->getName()], $param->getName());
+//                }
+//            }
+//        }
+
         $resolved = $this->resolveArguments($this->arguments);
         $reflection = new ReflectionClass($concrete);
 
