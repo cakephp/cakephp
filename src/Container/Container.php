@@ -89,6 +89,51 @@ class Container implements DefinitionContainerInterface
     }
 
     /**
+     * Add multiple definitions at once.
+     *
+     * Examples:
+     *
+     * ```
+     * $container->addDefinitions([
+     *     Foo::class,
+     *     Bar::class
+     * ]);
+     * ```
+     *
+     * ```
+     * $container->addDefinitions([
+     *     Foo::class => [Bar::class],
+     *     Bar::class
+     * ]);
+     * ```
+     *
+     * ```
+     * $container->addDefinitions([
+     *    'foo' => Foo::class,
+     *    'bar' => Bar::class
+     * ]);
+     * ```
+     *
+     * @param array<int|string, array<class-string>|class-string> $definitions
+     * @return \Cake\Container\DefinitionContainerInterface
+     */
+    public function addDefinitions(array $definitions): DefinitionContainerInterface
+    {
+        foreach ($definitions as $id => $definition) {
+            if (is_int($id) && is_string($definition)) {
+                $this->add($definition);
+            } elseif (is_string($id) && is_string($definition)) {
+                $this->add($id, $definition);
+            } elseif (is_string($id) && is_array($definition)) {
+                $this->add($id)
+                    ->addArguments($definition);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
      * @param bool $shared
      * @return \Psr\Container\ContainerInterface
      */

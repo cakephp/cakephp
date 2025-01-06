@@ -35,6 +35,52 @@ class ContainerTest extends TestCase
         self::assertInstanceOf(Foo::class, $foo);
     }
 
+    public function testContainerAddsMultipleAndGets(): void
+    {
+        $container = new Container();
+        $container->addDefinitions([
+            Foo::class,
+            Bar::class,
+        ]);
+        self::assertTrue($container->has(Foo::class));
+        self::assertTrue($container->has(Bar::class));
+        $foo = $container->get(Foo::class);
+        $bar = $container->get(Bar::class);
+        self::assertInstanceOf(Foo::class, $foo);
+        self::assertInstanceOf(Bar::class, $bar);
+    }
+
+    public function testContainerAddsMultipleWithArgsAndGets(): void
+    {
+        $container = new Container();
+        $container->addDefinitions([
+            Foo::class => [Bar::class],
+            Bar::class,
+        ]);
+        self::assertTrue($container->has(Foo::class));
+        self::assertTrue($container->has(Bar::class));
+        $foo = $container->get(Foo::class);
+        $bar = $container->get(Bar::class);
+        self::assertInstanceOf(Foo::class, $foo);
+        self::assertInstanceOf(Bar::class, $bar);
+        self::assertInstanceOf(Bar::class, $foo->bar);
+    }
+
+    public function testContainerAddsMultipleWithCustomNamesAndGets(): void
+    {
+        $container = new Container();
+        $container->addDefinitions([
+            'foo' => Foo::class,
+            'bar' => Bar::class,
+        ]);
+        self::assertTrue($container->has('foo'));
+        self::assertTrue($container->has('bar'));
+        $foo = $container->get('foo');
+        $bar = $container->get('bar');
+        self::assertInstanceOf(Foo::class, $foo);
+        self::assertInstanceOf(Bar::class, $bar);
+    }
+
     public function testContainerAddsAndGetsShared(): void
     {
         $container = new Container();
