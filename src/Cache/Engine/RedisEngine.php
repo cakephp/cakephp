@@ -57,7 +57,8 @@ class RedisEngine extends CacheEngine
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
      * - `readTimeout` Read timeout in seconds (float).
-     * - `nodes` URL or IP addresses of the Redis cluster nodes.
+     * - `nodes` When using redis-cluster, the URL or IP addresses of the 
+     *   Redis cluster nodes.
      *   Format: an array of strings in the form `<ip>:<port>`, like:
      *   [
      *       '<ip>:<port>',
