@@ -26,14 +26,11 @@ class RedisClusterEngineTest extends TestCase
             'Redis extension is not installed or configured properly.'
         );
 
-        $nodes = [
-            ['host' => '172.18.0.7', 'port' => 6379],
-            ['host' => '172.18.0.2', 'port' => 6379],
-            ['host' => '172.18.0.3', 'port' => 6379],
-            ['host' => '172.18.0.5', 'port' => 6379],
-            ['host' => '172.18.0.4', 'port' => 6379],
-            ['host' => '172.18.0.6', 'port' => 6379],
-        ];
+        $nodes = array_map(function ($node) {
+            [$host, $port] = explode(':', $node);
+
+            return ['host' => $host, 'port' => (int)$port];
+        }, $this->redisClusterNodes());
 
         foreach ($nodes as $node) {
             $socket = fsockopen($node['host'], $node['port'], $errno, $errstr, 1);
