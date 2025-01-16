@@ -93,7 +93,7 @@ class ControllerFactoryTest extends TestCase
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
             PostsController::class,
-            $result
+            $result,
         );
         $this->assertSame($request, $result->getRequest());
     }
@@ -114,7 +114,7 @@ class ControllerFactoryTest extends TestCase
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
             SubPostsController::class,
-            $result
+            $result,
         );
         $this->assertSame($request, $result->getRequest());
     }
@@ -135,7 +135,7 @@ class ControllerFactoryTest extends TestCase
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
             TestPluginController::class,
-            $result
+            $result,
         );
         $this->assertSame($request, $result->getRequest());
     }
@@ -156,7 +156,7 @@ class ControllerFactoryTest extends TestCase
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
             OvensController::class,
-            $result
+            $result,
         );
         $this->assertSame($request, $result->getRequest());
     }
@@ -178,7 +178,7 @@ class ControllerFactoryTest extends TestCase
         $result = $this->factory->create($request);
         $this->assertInstanceOf(
             CommentsController::class,
-            $result
+            $result,
         );
         $this->assertSame($request, $result->getRequest());
     }
@@ -557,7 +557,7 @@ class ControllerFactoryTest extends TestCase
 
         $this->expectException(InvalidParameterException::class);
         $this->expectExceptionMessage(
-            'Failed to inject dependency from service container for parameter `dep` with type `stdClass` in action `Dependencies::requiredDep()`'
+            'Failed to inject dependency from service container for parameter `dep` with type `stdClass` in action `Dependencies::requiredDep()`',
         );
         $this->factory->invoke($controller);
     }

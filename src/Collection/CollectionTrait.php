@@ -319,7 +319,7 @@ trait CollectionTrait
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
                     'Cannot group by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.'
+                    'Use a callback to return a default value for that path.',
                 );
             }
             if ($pathValue instanceof BackedEnum) {
@@ -351,7 +351,7 @@ trait CollectionTrait
             if ($pathValue === null) {
                 throw new InvalidArgumentException(
                     'Cannot index by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.'
+                    'Use a callback to return a default value for that path.',
                 );
             }
             if ($pathValue instanceof BackedEnum) {
@@ -640,7 +640,7 @@ trait CollectionTrait
     public function combine(
         callable|string $keyPath,
         callable|string $valuePath,
-        callable|string|null $groupPath = null
+        callable|string|null $groupPath = null,
     ): CollectionInterface {
         $options = [
             'keyPath' => $this->_propertyExtractor($keyPath),
@@ -657,7 +657,7 @@ trait CollectionTrait
                 if ($mapKey === null) {
                     throw new InvalidArgumentException(
                         'Cannot index by path that does not exist or contains a null value. ' .
-                        'Use a callback to return a default value for that path.'
+                        'Use a callback to return a default value for that path.',
                     );
                 }
 
@@ -676,7 +676,7 @@ trait CollectionTrait
             if ($key === null) {
                 throw new InvalidArgumentException(
                     'Cannot group by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.'
+                    'Use a callback to return a default value for that path.',
                 );
             }
 
@@ -684,13 +684,13 @@ trait CollectionTrait
             if ($mapKey === null) {
                 throw new InvalidArgumentException(
                     'Cannot index by path that does not exist or contains a null value. ' .
-                    'Use a callback to return a default value for that path.'
+                    'Use a callback to return a default value for that path.',
                 );
             }
 
             $mapReduce->emitIntermediate(
                 [$mapKey => $rowVal($value, $key)],
-                $key
+                $key,
             );
         };
 
@@ -711,7 +711,7 @@ trait CollectionTrait
     public function nest(
         callable|string $idPath,
         callable|string $parentPath,
-        string $nestingKey = 'children'
+        string $nestingKey = 'children',
     ): CollectionInterface {
         $parents = [];
         $idPath = $this->_propertyExtractor($idPath);
@@ -835,7 +835,7 @@ trait CollectionTrait
      */
     public function listNested(
         string|int $order = 'desc',
-        callable|string $nestingKey = 'children'
+        callable|string $nestingKey = 'children',
     ): CollectionInterface {
         if (is_string($order)) {
             $order = strtolower($order);
@@ -848,15 +848,21 @@ trait CollectionTrait
             if (!isset($modes[$order])) {
                 throw new InvalidArgumentException(sprintf(
                     "Invalid direction `%s` provided. Must be one of: 'desc', 'asc', 'leaves'.",
-                    $order
+                    $order,
                 ));
             }
             $order = $modes[$order];
         }
 
+        assert(
+            $order === RecursiveIteratorIterator::LEAVES_ONLY ||
+            $order === RecursiveIteratorIterator::SELF_FIRST ||
+            $order === RecursiveIteratorIterator::CHILD_FIRST,
+        );
+
         return new TreeIterator(
             new NestIterator($this, $nestingKey),
-            $order
+            $order,
         );
     }
 
@@ -882,8 +888,8 @@ trait CollectionTrait
         return $this->newCollection(
             new RecursiveIteratorIterator(
                 new UnfoldIterator($this->unwrap(), $callback),
-                RecursiveIteratorIterator::LEAVES_ONLY
-            )
+                RecursiveIteratorIterator::LEAVES_ONLY,
+            ),
         );
     }
 

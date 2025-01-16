@@ -34,7 +34,7 @@ trait IdGeneratorTrait
     /**
      * A list of id suffixes used in the current rendering.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_idSuffixes = [];
 

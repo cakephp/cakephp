@@ -72,7 +72,7 @@ class Security
             throw new InvalidArgumentException(sprintf(
                 'The hash type `%s` was not found. Available algorithms are: `%s`.',
                 $algorithm,
-                implode(', ', $availableAlgorithms)
+                implode(', ', $availableAlgorithms),
             ));
         }
 
@@ -102,7 +102,7 @@ class Security
     /**
      * Get random bytes from a secure source.
      *
-     * This method will fall back to an insecure source an trigger a warning
+     * This method will fall back to an insecure source and trigger a warning
      * if it cannot find a secure source of random data.
      *
      * @param int $length The number of bytes you want.
@@ -128,7 +128,7 @@ class Security
         return substr(
             bin2hex(Security::randomBytes((int)ceil($length / 2))),
             0,
-            $length
+            $length,
         );
     }
 
@@ -177,7 +177,7 @@ class Security
         }
         throw new InvalidArgumentException(
             'No compatible crypto engine available. ' .
-            'Load the openssl extension.'
+            'Load the openssl extension.',
         );
     }
 
@@ -222,7 +222,7 @@ class Security
     {
         if (mb_strlen($key, '8bit') < 32) {
             throw new InvalidArgumentException(
-                sprintf('Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method)
+                sprintf('Invalid key for %s, key must be at least 256 bits (32 bytes) long.', $method),
             );
         }
     }
@@ -286,7 +286,7 @@ class Security
     {
         if (static::$_salt === null) {
             throw new CakeException(
-                'Salt not set. Use Security::setSalt() to set one, ideally in `config/bootstrap.php`.'
+                'Salt not set. Use Security::setSalt() to set one, ideally in `config/bootstrap.php`.',
             );
         }
 

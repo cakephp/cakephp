@@ -149,7 +149,7 @@ trait IntegrationTestTrait
 
     /**
      * Boolean flag for whether the request should have
-     * a SecurityComponent token added.
+     * a FormProtectionComponent token added.
      *
      * @var bool
      */
@@ -186,7 +186,7 @@ trait IntegrationTestTrait
     /**
      * List of fields that are excluded from field validation.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_unlockedFields = [];
 
@@ -222,9 +222,9 @@ trait IntegrationTestTrait
     }
 
     /**
-     * Calling this method will enable a SecurityComponent
+     * Calling this method will enable a FormProtectionComponent
      * compatible token to be added to request data. This
-     * lets you easily test actions protected by SecurityComponent.
+     * lets you easily test actions protected by FormProtectionComponent.
      *
      * @return void
      */
@@ -236,7 +236,7 @@ trait IntegrationTestTrait
     /**
      * Set list of fields that are excluded from field validation.
      *
-     * @param list<string> $unlockedFields List of fields that are excluded from field validation.
+     * @param array<string> $unlockedFields List of fields that are excluded from field validation.
      * @return void
      */
     public function setUnlockedFields(array $unlockedFields = []): void
@@ -378,7 +378,7 @@ trait IntegrationTestTrait
         string $name,
         array|string $value,
         string|false $encrypt = 'aes',
-        ?string $key = null
+        ?string $key = null,
     ): void {
         $this->_cookieEncryptionKey = $key;
         $this->_cookie[$name] = $this->_encrypt($value, $encrypt);
@@ -610,7 +610,7 @@ trait IntegrationTestTrait
             $controller = $event->getSubject();
             $this->_flashMessages = Hash::merge(
                 $this->_flashMessages,
-                $controller->getRequest()->getSession()->read('Flash')
+                $controller->getRequest()->getSession()->read('Flash'),
             );
         };
         $events->on('Controller.beforeRedirect', ['priority' => -100], $flashCapture);
@@ -719,7 +719,7 @@ trait IntegrationTestTrait
     }
 
     /**
-     * Add the CSRF and Security Component tokens if necessary.
+     * Add the CSRF and FormProtectionComponent tokens if necessary.
      *
      * @param string $url The URL the form is being submitted on.
      * @param array $data The request body data.
@@ -928,7 +928,7 @@ trait IntegrationTestTrait
             $this->assertThat(
                 Router::url($url, true),
                 new HeaderEquals($this->_response, 'Location'),
-                $verboseMessage
+                $verboseMessage,
             );
         }
     }
@@ -1303,7 +1303,7 @@ trait IntegrationTestTrait
         $this->assertThat(
             $expected,
             new FlashParamEquals($this->_requestSession, $key, 'message', $at),
-            $verboseMessage
+            $verboseMessage,
         );
     }
 
@@ -1321,7 +1321,7 @@ trait IntegrationTestTrait
         $this->assertThat(
             $expected,
             new FlashParamEquals($this->_requestSession, $key, 'element'),
-            $verboseMessage
+            $verboseMessage,
         );
     }
 
@@ -1340,7 +1340,7 @@ trait IntegrationTestTrait
         $this->assertThat(
             $expected,
             new FlashParamEquals($this->_requestSession, $key, 'element', $at),
-            $verboseMessage
+            $verboseMessage,
         );
     }
 
@@ -1423,7 +1423,7 @@ trait IntegrationTestTrait
         string $name,
         string $encrypt = 'aes',
         ?string $key = null,
-        string $message = ''
+        string $message = '',
     ): void {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat($name, new CookieSet($this->_response), $verboseMessage);
@@ -1431,7 +1431,7 @@ trait IntegrationTestTrait
         $this->_cookieEncryptionKey = $key;
         $this->assertThat(
             $expected,
-            new CookieEncryptedEquals($this->_response, $name, $encrypt, $this->_getCookieEncryptionKey())
+            new CookieEncryptedEquals($this->_response, $name, $encrypt, $this->_getCookieEncryptionKey()),
         );
     }
 

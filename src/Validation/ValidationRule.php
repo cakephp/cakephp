@@ -20,7 +20,8 @@ declare(strict_types=1);
  */
 namespace Cake\Validation;
 
-use InvalidArgumentException;
+use Closure;
+use ReflectionFunction;
 
 /**
  * ValidationRule object. Represents a validation method, error message and
@@ -120,32 +121,28 @@ class ValidationRule
 
         if (is_string($this->_rule)) {
             $provider = $providers[$this->_provider];
-            /** @var callable $callable */
-            $callable = [$provider, $this->_rule];
-            $isCallable = is_callable($callable);
+            /** @phpstan-ignore-next-line */
+            $callable = [$provider, $this->_rule](...);
         } else {
             $callable = $this->_rule;
-            $isCallable = true;
+            if (!$callable instanceof Closure) {
+                $callable = $callable(...);
+            }
         }
 
-        if (!$isCallable) {
-            /** @var string $method */
-            $method = $this->_rule;
-            $message = sprintf(
-                'Unable to call method `%s` in `%s` provider for field `%s`',
-                $method,
-                $this->_provider,
-                $context['field']
-            );
-            throw new InvalidArgumentException($message);
-        }
+        $args = [$value];
 
         if ($this->_pass) {
-            $args = array_values(array_merge([$value], $this->_pass, [$context]));
-            $result = $callable(...$args);
-        } else {
-            $result = $callable($value, $context);
+            $args = array_merge([$value], array_values($this->_pass));
         }
+
+        $params = (new ReflectionFunction($callable))->getParameters();
+        $lastParm = array_pop($params);
+        if ($lastParm && $lastParm->getName() === 'context') {
+            $args['context'] = $context;
+        }
+
+        $result = $callable(...$args);
 
         if ($result === false) {
             return $this->_message ?: false;

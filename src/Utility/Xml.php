@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Utility;
 
+use BackedEnum;
 use Cake\Core\Exception\CakeException;
 use Cake\Utility\Exception\XmlException;
 use Closure;
@@ -25,6 +26,7 @@ use DOMNode;
 use DOMText;
 use Exception;
 use SimpleXMLElement;
+use UnitEnum;
 
 /**
  * XML handling for CakePHP.
@@ -157,7 +159,7 @@ class Xml
                 }
 
                 return $xml;
-            }
+            },
         );
     }
 
@@ -189,7 +191,7 @@ class Xml
                 }
 
                 return $xml;
-            }
+            },
         );
     }
 
@@ -313,7 +315,7 @@ class Xml
         DOMDocument $dom,
         DOMDocument|DOMElement $node,
         mixed $data,
-        string $format
+        string $format,
     ): void {
         if (!$data || !is_array($data)) {
             return;
@@ -341,7 +343,14 @@ class Xml
                             // https://www.w3.org/TR/REC-xml/#syntax
                             // https://bugs.php.net/bug.php?id=36795
                             $child = $dom->createElement($key, '');
-                            $child->appendChild(new DOMText((string)$value));
+                            if ($value instanceof BackedEnum) {
+                                $value = (string)$value->value;
+                            } elseif ($value instanceof UnitEnum) {
+                                $value = $value->name;
+                            } else {
+                                $value = (string)$value;
+                            }
+                            $child->appendChild(new DOMText($value));
                         } else {
                             $child = $dom->createElement($key, (string)$value);
                         }
@@ -456,7 +465,7 @@ class Xml
      * @param \SimpleXMLElement $xml SimpleXMLElement object
      * @param array<string, mixed> $parentData Parent array with data
      * @param string $ns Namespace of current child
-     * @param list<string> $namespaces List of namespaces in XML
+     * @param array<string> $namespaces List of namespaces in XML
      * @return void
      */
     protected static function _toArray(SimpleXMLElement $xml, array &$parentData, string $ns, array $namespaces): void
@@ -464,9 +473,7 @@ class Xml
         $data = [];
 
         foreach ($namespaces as $namespace) {
-            /** @var \SimpleXMLElement $attributes */
             $attributes = $xml->attributes($namespace, true);
-            /** @var string $key */
             foreach ($attributes as $key => $value) {
                 if ($namespace) {
                     $key = $namespace . ':' . $key;

@@ -40,7 +40,7 @@ trait HttpClientTrait
      * Create a new response.
      *
      * @param int $code The response code to use. Defaults to 200
-     * @param list<string> $headers A list of headers for the response. Example `Content-Type: application/json`
+     * @param array<string> $headers A list of headers for the response. Example `Content-Type: application/json`
      * @param string $body The body for the response.
      * @return \Cake\Http\Client\Response
      */

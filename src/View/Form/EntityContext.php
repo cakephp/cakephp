@@ -163,7 +163,7 @@ class EntityContext implements ContextInterface
      *
      * Gets the primary key columns from the root entity's schema.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getPrimaryKey(): array
     {
@@ -279,7 +279,7 @@ class EntityContext implements ContextInterface
     /**
      * Get default value from table schema for given entity field.
      *
-     * @param list<string> $parts Each one of the parts in a path for a field name
+     * @param array<string> $parts Each one of the parts in a path for a field name
      * @return mixed
      */
     protected function _schemaDefault(array $parts): mixed
@@ -302,7 +302,7 @@ class EntityContext implements ContextInterface
      * primary key column is guessed out of the provided $path array
      *
      * @param mixed $values The list from which to extract primary keys from
-     * @param list<string> $path Each one of the parts in a path for a field name
+     * @param array<string> $path Each one of the parts in a path for a field name
      * @return array|null
      */
     protected function _extractMultiple(mixed $values, array $path): ?array
@@ -324,7 +324,7 @@ class EntityContext implements ContextInterface
      *
      * If you only want the terminal Entity for a path use `leafEntity` instead.
      *
-     * @param list<string>|null $path Each one of the parts in a path for a field name
+     * @param array<string>|null $path Each one of the parts in a path for a field name
      *  or null to get the entity passed in constructor context.
      * @return \Cake\Datasource\EntityInterface|iterable|null
      * @throws \Cake\Core\Exception\CakeException When properties cannot be read.
@@ -372,7 +372,7 @@ class EntityContext implements ContextInterface
         }
         throw new CakeException(sprintf(
             'Unable to fetch property `%s`.',
-            implode('.', $path)
+            implode('.', $path),
         ));
     }
 
@@ -398,7 +398,7 @@ class EntityContext implements ContextInterface
         if ($oneElement && $this->_isCollection) {
             throw new CakeException(sprintf(
                 'Unable to fetch property `%s`.',
-                implode('.', $path)
+                implode('.', $path),
             ));
         }
         $entity = $this->_context['entity'];
@@ -438,7 +438,7 @@ class EntityContext implements ContextInterface
         }
         throw new CakeException(sprintf(
             'Unable to fetch property `%s`.',
-            implode('.', $path)
+            implode('.', $path),
         ));
     }
 
@@ -552,7 +552,7 @@ class EntityContext implements ContextInterface
      *
      * If the context is for an array of entities, the 0th index will be used.
      *
-     * @return list<string> Array of field names in the table/entity.
+     * @return array<string> Array of field names in the table/entity.
      */
     public function fieldNames(): array
     {
@@ -568,7 +568,7 @@ class EntityContext implements ContextInterface
      * Get the validator associated to an entity based on naming
      * conventions.
      *
-     * @param array $parts Each one of the parts in a path for a field name
+     * @param array<string> $parts Each one of the parts in a path for a field name
      * @return \Cake\Validation\Validator
      * @throws \Cake\Core\Exception\CakeException If validator cannot be retrieved based on the parts.
      */
@@ -613,7 +613,7 @@ class EntityContext implements ContextInterface
     /**
      * Get the table instance from a property path
      *
-     * @param \Cake\Datasource\EntityInterface|list<string>|string $parts Each one of the parts in a path for a field name
+     * @param \Cake\Datasource\EntityInterface|array<string>|string $parts Each one of the parts in a path for a field name
      * @param bool $fallback Whether to fallback to the last found table
      *  when a nonexistent field/property is being encountered.
      * @return \Cake\ORM\Table|null Table instance or null
@@ -697,7 +697,7 @@ class EntityContext implements ContextInterface
 
         return array_intersect_key(
             (array)$table->getSchema()->getColumn(array_pop($parts)),
-            array_flip(static::VALID_ATTRIBUTES)
+            array_flip(static::VALID_ATTRIBUTES),
         );
     }
 
@@ -724,7 +724,7 @@ class EntityContext implements ContextInterface
         try {
             /**
              * @var \Cake\Datasource\EntityInterface|null $entity
-             * @var list<string> $remainingParts
+             * @var array<string> $remainingParts
              */
             [$entity, $remainingParts] = $this->leafEntity($parts);
         } catch (CakeException) {

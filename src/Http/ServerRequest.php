@@ -107,7 +107,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Trusted proxies list
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $trustedProxies = [];
 
@@ -183,7 +183,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * A list of properties that emulated by the PSR7 attribute methods.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $emulatedAttributes = ['session', 'flash', 'webroot', 'base', 'params', 'here'];
 
@@ -301,7 +301,7 @@ class ServerRequest implements ServerRequestInterface
             throw new InvalidArgumentException(sprintf(
                 '`post` key must be an array, object or null.'
                 . ' Got `%s` instead.',
-                get_debug_type($post)
+                get_debug_type($post),
             ));
         }
         $this->data = $post;
@@ -406,7 +406,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * register trusted proxies
      *
-     * @param list<string> $proxies ips list of trusted proxies
+     * @param array<string> $proxies ips list of trusted proxies
      * @return void
      */
     public function setTrustedProxies(array $proxies): void
@@ -419,7 +419,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get trusted proxies
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getTrustedProxies(): array
     {
@@ -488,7 +488,7 @@ class ServerRequest implements ServerRequestInterface
      * defined with {@link \Cake\Http\ServerRequest::addDetector()}. Any detector can be called
      * as `is($type)` or `is$Type()`.
      *
-     * @param list<string>|string $type The type of request you want to check. If an array
+     * @param array<string>|string $type The type of request you want to check. If an array
      *   this method will return true if the request matches any type.
      * @param mixed ...$args List of arguments
      * @return bool Whether the request is the type you are checking.
@@ -663,7 +663,7 @@ class ServerRequest implements ServerRequestInterface
      * See Request::is() for how to add additional types and the
      * built-in types.
      *
-     * @param list<string> $types The types to check.
+     * @param array<string> $types The types to check.
      * @return bool Success.
      * @see \Cake\Http\ServerRequest::is()
      */
@@ -796,7 +796,7 @@ class ServerRequest implements ServerRequestInterface
      * While header names are not case-sensitive, getHeaders() will normalize
      * the headers.
      *
-     * @return array<list<string>> An associative array of headers and their values.
+     * @return array<string, array<string>> An associative array of headers and their values.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getHeaders(): array
@@ -962,7 +962,7 @@ class ServerRequest implements ServerRequestInterface
         if (!preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)) {
             throw new InvalidArgumentException(sprintf(
                 'Unsupported HTTP method `%s` provided.',
-                $method
+                $method,
             ));
         }
         $new->_environment['REQUEST_METHOD'] = $method;
@@ -1080,7 +1080,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
      *   While `example.co.uk` contains 2.
-     * @return list<string> An array of subdomains.
+     * @return array<string> An array of subdomains.
      */
     public function subdomains(int $tldLength = 1): array
     {
@@ -1114,7 +1114,7 @@ class ServerRequest implements ServerRequestInterface
      * by the client.
      *
      * @param string|null $type The content type to check for. Leave null to get all types a client accepts.
-     * @return list<string>|bool Either an array of all the types the client accepts or a boolean if they accept the
+     * @return array<string>|bool Either an array of all the types the client accepts or a boolean if they accept the
      *   provided type.
      */
     public function accepts(?string $type = null): array|bool
@@ -1426,7 +1426,7 @@ class ServerRequest implements ServerRequestInterface
      * If the request would be GET, response header "Allow: POST, DELETE" will be set
      * and a 405 error will be returned.
      *
-     * @param list<string>|string $methods Allowed HTTP request methods.
+     * @param array<string>|string $methods Allowed HTTP request methods.
      * @return true
      * @throws \Cake\Http\Exception\MethodNotAllowedException
      */
@@ -1548,7 +1548,7 @@ class ServerRequest implements ServerRequestInterface
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
             throw new InvalidArgumentException(
-                "You cannot unset '{$name}'. It is a required CakePHP attribute."
+                "You cannot unset '{$name}'. It is a required CakePHP attribute.",
             );
         }
         unset($new->attributes[$name]);

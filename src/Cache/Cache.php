@@ -143,7 +143,7 @@ class Cache
 
         if (empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
-                sprintf('The `%s` cache configuration does not exist.', $name)
+                sprintf('The `%s` cache configuration does not exist.', $name),
             );
         }
 
@@ -166,7 +166,7 @@ class Cache
             if ($config['fallback'] === $name) {
                 throw new InvalidArgumentException(sprintf(
                     '`%s` cache configuration cannot fallback to itself.',
-                    $name
+                    $name,
                 ), 0, $e);
             }
 
@@ -253,7 +253,7 @@ class Cache
                 "%s cache was unable to write '%s' to %s cache",
                 $config,
                 $key,
-                $backend::class
+                $backend::class,
             ));
         }
 

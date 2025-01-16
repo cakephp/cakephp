@@ -22,14 +22,14 @@ namespace Cake\View\Form;
 interface ContextInterface
 {
     /**
-     * @var list<string>
+     * @var array<string>
      */
     public const VALID_ATTRIBUTES = ['length', 'precision', 'comment', 'null', 'default'];
 
     /**
      * Get the fields used in the context as a primary key.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getPrimaryKey(): array;
 
@@ -96,7 +96,7 @@ interface ContextInterface
     /**
      * Get the field names of the top level object in this context.
      *
-     * @return list<string> A list of the field names in the context.
+     * @return array<string> A list of the field names in the context.
      */
     public function fieldNames(): array;
 

@@ -337,9 +337,9 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * Runs `aliasField()` for each field in the provided list and returns
      * the result under a single array.
      *
-     * @param array $fields The fields to alias
+     * @param array<int|string, string|\Cake\Database\Expression\IdentifierExpression> $fields The fields to alias
      * @param string|null $defaultAlias The default alias
-     * @return array<string, string>
+     * @return array<int|string, string|\Cake\Database\Expression\IdentifierExpression>
      */
     public function aliasFields(array $fields, ?string $defaultAlias = null): array
     {
@@ -376,15 +376,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             return $this->_results;
         }
 
-        $results = null;
-        if ($this->_cache) {
-            $results = $this->_cache->fetch($this);
-        }
+        $results = $this->_cache?->fetch($this);
         if ($results === null) {
             $results = $this->_decorateResults($this->_execute());
-            if ($this->_cache) {
-                $this->_cache->store($this, $results);
-            }
+            $this->_cache?->store($this, $results);
         }
         $this->_results = $results;
 
@@ -603,7 +598,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             $table = $this->getRepository();
             throw new RecordNotFoundException(sprintf(
                 'Record not found in table `%s`.',
-                $table->getTable()
+                $table->getTable(),
             ));
         }
 
@@ -771,7 +766,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * If a callback is passed, the returning array of the function will
      * be used as the list of fields.
      *
-     * By default this function will append any passed argument to the list of fields
+     * By default, this function will append any passed argument to the list of fields
      * to be selected, unless the second argument is set to true.
      *
      * ### Examples:
@@ -786,7 +781,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * })
      * ```
      *
-     * By default no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
+     * By default, no fields are selected, if you have an instance of `Cake\ORM\Query` and try to append
      * fields you should also call `Cake\ORM\Query::enableAutoFields()` to select the default fields
      * from the table.
      *
@@ -801,7 +796,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function select(
         ExpressionInterface|Table|Association|Closure|array|string|float|int $fields = [],
-        bool $overwrite = false
+        bool $overwrite = false,
     ) {
         if ($fields instanceof Association) {
             $fields = $fields->getTarget();
@@ -829,7 +824,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @return $this
      */
     public function selectAlso(
-        ExpressionInterface|Table|Association|Closure|array|string|float|int $fields
+        ExpressionInterface|Table|Association|Closure|array|string|float|int $fields,
     ) {
         $this->select($fields);
         $this->_autoFields = true;
@@ -845,7 +840,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * pass overwrite boolean true which will reset the select clause removing all previous additions.
      *
      * @param \Cake\ORM\Table|\Cake\ORM\Association $table The table to use to get an array of columns
-     * @param list<string> $excludedFields The un-aliased column names you do not want selected from $table
+     * @param array<string> $excludedFields The un-aliased column names you do not want selected from $table
      * @param bool $overwrite Whether to reset/remove previous selected fields
      * @return $this
      */
@@ -1021,7 +1016,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         $this->_addAssociationsToTypeMap(
             $this->getRepository(),
             $this->getTypeMap(),
-            $loader->getContain()
+            $loader->getContain(),
         );
 
         return $this;
@@ -1748,7 +1743,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Sets whether the ORM should automatically append fields.
      *
-     * By default calling select() will disable auto-fields. You can re-enable
+     * By default, calling select() will disable auto-fields. You can re-enable
      * auto-fields with this method.
      *
      * @param bool $value Set true to enable, false to disable.
@@ -1776,7 +1771,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Gets whether the ORM should automatically append fields.
      *
-     * By default calling select() will disable auto-fields. You can re-enable
+     * By default, calling select() will disable auto-fields. You can re-enable
      * auto-fields with enableAutoFields().
      *
      * @return bool|null The current value. Returns null if neither enabled or disabled yet.

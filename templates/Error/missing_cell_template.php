@@ -13,7 +13,7 @@
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  * @var string $name
  * @var string $file
- * @var list<string> $paths
+ * @var array<string> $paths
  */
 use function Cake\Core\h;
 

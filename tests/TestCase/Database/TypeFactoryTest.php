@@ -185,7 +185,7 @@ class TypeFactoryTest extends TestCase
     {
         $this->skipIf(
             PHP_INT_SIZE === 4,
-            'This test requires a php version compiled for 64 bits'
+            'This test requires a php version compiled for 64 bits',
         );
         $type = TypeFactory::build('biginteger');
         $integer = time() * time();

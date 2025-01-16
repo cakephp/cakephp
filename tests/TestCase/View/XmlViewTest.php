@@ -326,7 +326,7 @@ class XmlViewTest extends TestCase
         $this->assertSame(
             '<?xml version="1.0" encoding="UTF-8"?>' . "\n"
             . '<response><authors><id>1</id><name>mariano</name></authors></response>' . "\n",
-            $output
+            $output,
         );
         $this->assertSame('application/xml', $View->getResponse()->getType());
     }

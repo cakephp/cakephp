@@ -137,7 +137,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         $event = $this->dispatchEvent(
             'Exception.beforeRender',
             ['exception' => $exception, 'request' => $request],
-            $trap
+            $trap,
         );
 
         $exception = $event->getData('exception');
@@ -172,7 +172,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         return new RedirectResponse(
             $exception->getMessage(),
             $exception->getCode(),
-            $exception->getHeaders()
+            $exception->getHeaders(),
         );
     }
 
@@ -230,7 +230,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             triggerWarning(sprintf(
                 "Exception loading routes when rendering an error page: \n %s - %s",
                 $e::class,
-                $e->getMessage()
+                $e->getMessage(),
             ));
         }
     }

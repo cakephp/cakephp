@@ -32,7 +32,7 @@ use InvalidArgumentException;
  * - `DEFAULT_VALIDATOR` - The default validator name.
  * - `VALIDATOR_PROVIDER_NAME ` - The provider name the including class is assigned
  *   in validators.
- * - `BUILD_VALIDATOR_EVENT` - The name of the event to be triggred when validators
+ * - `BUILD_VALIDATOR_EVENT` - The name of the event to be triggered when validators
  *   are built.
  *
  * If the including class also implements events the `Model.buildValidator` event
@@ -59,7 +59,7 @@ trait ValidatorAwareTrait
      * multiple different named validation sets, this is useful when you need
      * to use varying rules when saving from different routines in your system.
      *
-     * If a validator has not been set earlier, this method will build a valiator
+     * If a validator has not been set earlier, this method will build a validator
      * using a method inside your class.
      *
      * For example, if you wish to create a validation set called 'forSubscription',
@@ -132,8 +132,8 @@ trait ValidatorAwareTrait
                 'The `%s::%s()` validation method must return an instance of `%s`.',
                 static::class,
                 $method,
-                Validator::class
-            )
+                Validator::class,
+            ),
         );
 
         return $validator;

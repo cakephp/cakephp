@@ -37,7 +37,7 @@ class HasOneTest extends TestCase
     /**
      * Fixtures to load
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.NullableAuthors', 'core.Users', 'core.Profiles'];
 
@@ -318,7 +318,7 @@ class HasOneTest extends TestCase
                 $this->assertInstanceOf(Query::class, $query);
                 $this->assertEquals($options, $opts);
                 $this->assertFalse($primary);
-            }
+            },
         );
         $association = new HasOne('Profiles', $config);
         $query = $this->user->find();

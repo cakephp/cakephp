@@ -36,7 +36,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Contains a list of locations where table classes should be looked for.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $locations = [];
 
@@ -83,7 +83,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Constructor.
      *
-     * @param list<string>|null $locations Locations where tables should be looked for.
+     * @param array<string>|null $locations Locations where tables should be looked for.
      *   If none provided, the default `Model\Table` under your app's namespace is used.
      */
     public function __construct(?array $locations = null, ?QueryFactory $queryFactory = null)
@@ -149,7 +149,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         if (isset($this->instances[$alias])) {
             throw new DatabaseException(sprintf(
                 'You cannot configure `%s`, it has already been constructed.',
-                $alias
+                $alias,
             ));
         }
 
@@ -254,7 +254,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             if (!empty($options['connectionName'])) {
                 $connectionName = $options['connectionName'];
             } else {
-                /** @var \Cake\ORM\Table $className */
+                /** @var class-string<\Cake\ORM\Table> $className */
                 $className = $options['className'];
                 $connectionName = $className::defaultConnectionName();
             }

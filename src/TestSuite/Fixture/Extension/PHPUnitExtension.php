@@ -35,7 +35,7 @@ class PHPUnitExtension implements Extension
     public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
         $facade->registerSubscriber(
-            new PHPUnitStartedSubscriber()
+            new PHPUnitStartedSubscriber(),
         );
     }
 }

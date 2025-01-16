@@ -95,7 +95,7 @@ class Marshaller
                     throw new InvalidArgumentException(sprintf(
                         'Cannot marshal data for `%s` association. It is not associated with `%s`.',
                         (string)$key,
-                        $this->_table->getAlias()
+                        $this->_table->getAlias(),
                     ));
                 }
                 continue;
@@ -108,10 +108,10 @@ class Marshaller
             if (isset($options['isMerge'])) {
                 $callback = function (
                     $value,
-                    EntityInterface $entity
+                    EntityInterface $entity,
                 ) use (
                     $assoc,
-                    $nested
+                    $nested,
                 ): array|EntityInterface|null {
                     $options = $nested + ['associated' => [], 'association' => $assoc];
 
@@ -746,7 +746,7 @@ class Marshaller
     /**
      * Creates a new sub-marshaller and merges the associated data.
      *
-     * @param \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface>|null $original The original entity
+     * @param \Cake\Datasource\EntityInterface|non-empty-array<\Cake\Datasource\EntityInterface>|null $original The original entity
      * @param \Cake\ORM\Association $assoc The association to merge
      * @param mixed $value The array of data to hydrate. If not an array, this method will return null.
      * @param array<string, mixed> $options List of options.
@@ -756,7 +756,7 @@ class Marshaller
         EntityInterface|array|null $original,
         Association $assoc,
         mixed $value,
-        array $options
+        array $options,
     ): EntityInterface|array|null {
         if (!$original) {
             return $this->_marshalAssociation($assoc, $value, $options);
@@ -773,11 +773,9 @@ class Marshaller
             /** @var \Cake\Datasource\EntityInterface $original */
             return $marshaller->merge($original, $value, $options);
         }
-        if ($type === Association::MANY_TO_MANY) {
-            /**
-             * @var array<\Cake\Datasource\EntityInterface> $original
-             * @var \Cake\ORM\Association\BelongsToMany $assoc
-             */
+        if ($type === Association::MANY_TO_MANY && is_array($original)) {
+            assert($assoc instanceof BelongsToMany);
+
             return $marshaller->_mergeBelongsToMany($original, $assoc, $value, $options);
         }
 
@@ -793,7 +791,7 @@ class Marshaller
         }
 
         /**
-         * @var array<\Cake\Datasource\EntityInterface> $original
+         * @var non-empty-array<\Cake\Datasource\EntityInterface> $original
          */
         return $marshaller->mergeMany($original, $value, $options);
     }

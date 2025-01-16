@@ -56,7 +56,7 @@ class Oauth
                 $hasKeys = isset(
                     $credentials['consumerSecret'],
                     $credentials['token'],
-                    $credentials['tokenSecret']
+                    $credentials['tokenSecret'],
                 );
                 if (!$hasKeys) {
                     return $request;
@@ -75,7 +75,7 @@ class Oauth
                 $hasKeys = isset(
                     $credentials['consumerSecret'],
                     $credentials['token'],
-                    $credentials['tokenSecret']
+                    $credentials['tokenSecret'],
                 );
                 if (!$hasKeys) {
                     return $request;
@@ -156,7 +156,7 @@ class Oauth
         $key = implode('&', $key);
 
         $values['oauth_signature'] = base64_encode(
-            hash_hmac('sha1', $baseString, $key, true)
+            hash_hmac('sha1', $baseString, $key, true),
         );
 
         return $this->_buildAuth($values);
@@ -217,9 +217,11 @@ class Oauth
             rewind($resource);
             $credentials['privateKeyPassphrase'] = $passphrase;
         }
-        /** @var \OpenSSLAsymmetricKey|\OpenSSLCertificate|array|string $privateKey */
+        /** @var \OpenSSLAsymmetricKey|false $privateKey */
         $privateKey = openssl_pkey_get_private($credentials['privateKey'], $credentials['privateKeyPassphrase']);
         $this->checkSslError();
+
+        assert($privateKey !== false);
 
         $signature = '';
         openssl_sign($baseString, $signature, $privateKey);

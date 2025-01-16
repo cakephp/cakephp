@@ -42,7 +42,7 @@ class FormProtector
     /**
      * Unlocked fields.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $unlockedFields = [];
 
@@ -75,7 +75,7 @@ class FormProtector
             $hashParts['fields'],
             $hashParts['unlockedFields'],
             $url,
-            $sessionId
+            $sessionId,
         );
 
         if (hash_equals($generatedToken, $extractedToken)) {
@@ -107,7 +107,7 @@ class FormProtector
     /**
      * Determine which fields of a form should be used for hash.
      *
-     * @param list<string>|string $field Reference to field to be secured. Can be dot
+     * @param array<string>|string $field Reference to field to be secured. Can be dot
      *   separated string to indicate nesting or array of fieldname parts.
      * @param bool $lock Whether this field should be part of the validation
      *   or excluded as part of the unlockedFields. Default `true`.
@@ -159,7 +159,7 @@ class FormProtector
      * fieldname parts like ['Model', 'field'] is returned.
      *
      * @param string $name The form inputs name attribute.
-     * @return list<string> Array of field name params like ['Model.field'] or
+     * @return array<string> Array of field name params like ['Model.field'] or
      *   ['Model', 'field'] for array fields or empty array if $name is empty.
      */
     protected function getFieldNameArray(string $name): array
@@ -271,7 +271,7 @@ class FormProtector
      *
      * @param array<string, array> $formData Form data.
      * @return array<string, array>
-     * @psalm-return array{fields: array, unlockedFields: array}
+     * @psalm-return array{fields: array, unlockedFields: array<string>}
      */
     protected function extractHashParts(array $formData): array
     {
@@ -325,8 +325,8 @@ class FormProtector
         $unlockedFields = array_unique(
             array_merge(
                 $this->unlockedFields,
-                $unlocked
-            )
+                $unlocked,
+            ),
         );
 
         /** @var string $key */
@@ -360,7 +360,7 @@ class FormProtector
      * Get the sorted unlocked string
      *
      * @param array $formData Data array
-     * @return list<string>
+     * @return array<string>
      */
     protected function sortedUnlockedFields(array $formData): array
     {
@@ -422,7 +422,7 @@ class FormProtector
      * Generate validation hash.
      *
      * @param array $fields Fields list.
-     * @param list<string> $unlockedFields Unlocked fields.
+     * @param array<string> $unlockedFields Unlocked fields.
      * @param string $url Form URL.
      * @param string $sessionId Session Id.
      * @return string
@@ -469,7 +469,7 @@ class FormProtector
             $expectedFields,
             'Unexpected field `%s` in POST data',
             'Tampered field `%s` in POST data (expected value `%s` but found `%s`)',
-            'Missing field `%s` in POST data'
+            'Missing field `%s` in POST data',
         );
         $expectedUnlockedFields = Hash::get($expectedParts, 2);
         $dataUnlockedFields = Hash::get($hashParts, 'unlockedFields') ?: [];
@@ -478,7 +478,7 @@ class FormProtector
             $expectedUnlockedFields,
             'Unexpected unlocked field `%s` in POST data',
             '',
-            'Missing unlocked field: `%s`'
+            'Missing unlocked field: `%s`',
         );
 
         $messages = array_merge($messages, $fieldsMessages, $unlockFieldsMessages);
@@ -495,14 +495,14 @@ class FormProtector
      * @param string $stringKeyMessage Message string if tampered found in
      *  data fields indexed by string (protected).
      * @param string $missingMessage Message string if missing field
-     * @return list<string> Messages
+     * @return array<string> Messages
      */
     protected function debugCheckFields(
         array $dataFields,
         array $expectedFields = [],
         string $intKeyMessage = '',
         string $stringKeyMessage = '',
-        string $missingMessage = ''
+        string $missingMessage = '',
     ): array {
         $messages = $this->matchExistingFields($dataFields, $expectedFields, $intKeyMessage, $stringKeyMessage);
         $expectedFieldsMessage = $this->debugExpectedFields($expectedFields, $missingMessage);
@@ -522,13 +522,13 @@ class FormProtector
      * @param string $intKeyMessage Message string if unexpected found in data fields indexed by int (not protected)
      * @param string $stringKeyMessage Message string if tampered found in
      *   data fields indexed by string (protected)
-     * @return list<string> Error messages
+     * @return array<string> Error messages
      */
     protected function matchExistingFields(
         array $dataFields,
         array &$expectedFields,
         string $intKeyMessage,
-        string $stringKeyMessage
+        string $stringKeyMessage,
     ): array {
         $messages = [];
         foreach ($dataFields as $key => $value) {

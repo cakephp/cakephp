@@ -61,7 +61,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     }
 
     /**
-     * Adds an empty `OVER()` window expression or a named window epression.
+     * Adds an empty `OVER()` window expression or a named window expression.
      *
      * @param string|null $name Window name
      * @return $this
@@ -143,7 +143,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
         ExpressionInterface|string|int|null $startOffset,
         string $startDirection,
         ExpressionInterface|string|int|null $endOffset,
-        string $endDirection
+        string $endDirection,
     ) {
         $this->getWindow()->frame($type, $startOffset, $startDirection, $endOffset, $endDirection);
 

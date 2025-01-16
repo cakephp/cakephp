@@ -56,14 +56,14 @@ class ColumnSchemaAwareType extends BaseType implements ExpressionTypeInterface,
                     new FunctionExpression('LOWER', [$value]),
                     'should be',
                     'has been',
-                ]
+                ],
             );
         }
 
         throw new InvalidArgumentException(sprintf(
             'The `$value` argument must be an instance of `\%s`, or a string, `%s` given.',
             ColumnSchemaAwareTypeValueObject::class,
-            get_debug_type($value)
+            get_debug_type($value),
         ));
     }
 

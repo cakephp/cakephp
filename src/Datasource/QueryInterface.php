@@ -62,9 +62,9 @@ interface QueryInterface
      * Runs `aliasField()` for each field in the provided list and returns
      * the result under a single array.
      *
-     * @param array $fields The fields to alias
+     * @param array<int|string, string|\Cake\Database\Expression\IdentifierExpression> $fields The fields to alias
      * @param string|null $defaultAlias The default alias
-     * @return array<string, string>
+     * @return array<int|string, string|\Cake\Database\Expression\IdentifierExpression>
      */
     public function aliasFields(array $fields, ?string $defaultAlias = null): array;
 

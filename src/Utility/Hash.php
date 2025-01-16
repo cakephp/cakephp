@@ -46,7 +46,7 @@ class Hash
      *
      * @param \ArrayAccess|array $data Array of data or object implementing
      *   \ArrayAccess interface to operate on.
-     * @param list<string>|string|int|null $path The path being searched for. Either a dot
+     * @param array<string>|string|int|null $path The path being searched for. Either a dot
      *   separated string, or an array of path segments.
      * @param mixed $default The return value when the path does not exist
      * @throws \InvalidArgumentException
@@ -230,7 +230,7 @@ class Hash
             '/(\[ (?P<attr>[^=><!]+?) (\s* (?P<op>[><!]?[=]|[><]) \s* (?P<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',
             $selector,
             $conditions,
-            PREG_SET_ORDER
+            PREG_SET_ORDER,
         );
 
         foreach ($conditions as $cond) {
@@ -345,7 +345,7 @@ class Hash
      *
      * @param string $op The operation to do.
      * @param \ArrayAccess|array $data The data to operate on.
-     * @param list<string> $path The path to work on.
+     * @param array<string> $path The path to work on.
      * @param mixed $values The values to insert when doing inserts.
      * @return \ArrayAccess|array
      */
@@ -353,7 +353,7 @@ class Hash
         string $op,
         ArrayAccess|array $data,
         array $path,
-        mixed $values = null
+        mixed $values = null,
     ): ArrayAccess|array {
         $_list = &$data;
 
@@ -460,8 +460,8 @@ class Hash
      * following the path specified in `$groupPath`.
      *
      * @param array $data Array from where to extract keys and values
-     * @param list<string>|string|null $keyPath A dot-separated string.
-     * @param list<string>|string|null $valuePath A dot-separated string.
+     * @param array<string>|string|null $keyPath A dot-separated string.
+     * @param array<string>|string|null $valuePath A dot-separated string.
      * @param string|null $groupPath A dot-separated string.
      * @return array Combined array
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::combine
@@ -471,7 +471,7 @@ class Hash
         array $data,
         array|string|null $keyPath,
         array|string|null $valuePath = null,
-        ?string $groupPath = null
+        ?string $groupPath = null,
     ): array {
         if (!$data) {
             return [];
@@ -507,7 +507,7 @@ class Hash
 
         if (is_array($keys) && count($keys) !== count($vals)) {
             throw new InvalidArgumentException(
-                '`Hash::combine()` needs an equal number of keys + values.'
+                '`Hash::combine()` needs an equal number of keys + values.',
             );
         }
 
@@ -549,9 +549,9 @@ class Hash
      * The `$format` string can use any format options that `vsprintf()` and `sprintf()` do.
      *
      * @param array $data Source array from which to extract the data
-     * @param list<string> $paths An array containing one or more Hash::extract()-style key paths
+     * @param array<string> $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
-     * @return list<string>|null An array of strings extracted from `$path` and formatted with `$format`
+     * @return array<string>|null An array of strings extracted from `$path` and formatted with `$format`
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
@@ -996,7 +996,7 @@ class Hash
         array $data,
         string $path,
         string|int $dir = 'asc',
-        array|string $type = 'regular'
+        array|string $type = 'regular',
     ): array {
         if (!$data) {
             return [];
@@ -1212,7 +1212,7 @@ class Hash
      *
      * @param array $data The data to nest.
      * @param array<string, string|null> $options Options.
-     * @return list<array> of results, nested
+     * @return array<array> of results, nested
      * @see \Cake\Utility\Hash::extract()
      * @throws \InvalidArgumentException When providing invalid data.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::nest
@@ -1278,7 +1278,7 @@ class Hash
             }
         }
 
-        /** @var list<array> */
+        /** @var array<array> */
         return array_values($return);
     }
 }

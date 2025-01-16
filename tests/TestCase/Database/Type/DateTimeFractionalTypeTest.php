@@ -122,7 +122,7 @@ class DateTimeFractionalTypeTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+            $this->type->manyToPHP($values, array_keys($values), $this->driver),
         );
 
         $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
@@ -140,7 +140,7 @@ class DateTimeFractionalTypeTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+            $this->type->manyToPHP($values, array_keys($values), $this->driver),
         );
     }
 

@@ -104,7 +104,7 @@ class MailTransportTest extends TestCase
                 $encoded,
                 implode($eol, ['First Line', 'Second Line', '.Third Line', '', '']),
                 $data,
-                '-f'
+                '-f',
             );
 
         $result = $this->MailTransport->send($message);

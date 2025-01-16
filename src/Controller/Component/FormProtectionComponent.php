@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\Controller\Component;
 
 use Cake\Controller\Component;
+use Cake\Controller\Exception\FormProtectionException;
 use Cake\Core\Configure;
 use Cake\Event\EventInterface;
 use Cake\Form\FormProtector;
-use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Response;
 use Cake\Routing\Router;
 use Closure;
@@ -148,14 +148,14 @@ class FormProtectionComponent extends Component
      *
      * @param \Cake\Form\FormProtector $formProtector Form Protector instance.
      * @return \Cake\Http\Response|null If specified, validationFailureCallback's response, or no return otherwise.
-     * @throws \Cake\Http\Exception\BadRequestException
+     * @throws \Cake\Controller\Exception\FormProtectionException
      */
     protected function validationFailure(FormProtector $formProtector): ?Response
     {
         if (Configure::read('debug')) {
-            $exception = new BadRequestException($formProtector->getError());
+            $exception = new FormProtectionException($formProtector->getError());
         } else {
-            $exception = new BadRequestException(static::DEFAULT_EXCEPTION_MESSAGE);
+            $exception = new FormProtectionException(static::DEFAULT_EXCEPTION_MESSAGE);
         }
 
         if ($this->_config['validationFailureCallback']) {
@@ -169,10 +169,10 @@ class FormProtectionComponent extends Component
      * Execute callback.
      *
      * @param \Closure $callback Callback
-     * @param \Cake\Http\Exception\BadRequestException $exception Exception instance.
+     * @param \Cake\Controller\Exception\FormProtectionException $exception Exception instance.
      * @return \Cake\Http\Response|null
      */
-    protected function executeCallback(Closure $callback, BadRequestException $exception): ?Response
+    protected function executeCallback(Closure $callback, FormProtectionException $exception): ?Response
     {
         return $callback($exception);
     }

@@ -51,7 +51,7 @@ class Runner implements RequestHandlerInterface
     public function run(
         MiddlewareQueue $queue,
         ServerRequestInterface $request,
-        ?RequestHandlerInterface $fallbackHandler = null
+        ?RequestHandlerInterface $fallbackHandler = null,
     ): ResponseInterface {
         $this->queue = $queue;
         $this->queue->rewind();

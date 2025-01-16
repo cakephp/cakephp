@@ -51,7 +51,7 @@ class PluginCollection implements Iterator, Countable
     /**
      * Names of plugins
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $names = [];
 
@@ -98,18 +98,17 @@ class PluginCollection implements Iterator, Countable
      */
     public function addFromConfig(array $config): void
     {
-        $debug = Configure::read('debug');
-        $cli = PHP_SAPI === 'cli';
+        $notDebug = !Configure::read('debug');
+        $notCli = PHP_SAPI !== 'cli';
 
-        foreach (Hash::normalize($config) as $name => $options) {
-            $options = (array)$options;
+        foreach (Hash::normalize($config, default: []) as $name => $options) {
             $onlyDebug = $options['onlyDebug'] ?? false;
             $onlyCli = $options['onlyCli'] ?? false;
             $optional = $options['optional'] ?? false;
 
             if (
-                ($onlyDebug && !$debug)
-                || ($onlyCli && !$cli)
+                ($onlyDebug && $notDebug)
+                || ($onlyCli && $notCli)
             ) {
                 continue;
             }

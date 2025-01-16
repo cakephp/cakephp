@@ -44,7 +44,7 @@ class IcuFormatterTest extends TestCase
         $result = $formatter->format(
             '1 Orange',
             '{0, number} {1}',
-            [1.0, 'Orange']
+            [1.0, 'Orange'],
         );
         $this->assertSame('1 Orange', $result);
     }

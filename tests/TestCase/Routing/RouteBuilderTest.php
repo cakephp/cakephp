@@ -110,7 +110,7 @@ class RouteBuilderTest extends TestCase
             $this->collection,
             '/l',
             [],
-            ['routeClass' => 'InflectedRoute']
+            ['routeClass' => 'InflectedRoute'],
         );
         $routes->connect('/{controller}', ['action' => 'index']);
         $routes->connect('/{controller}/{action}/*');
@@ -318,7 +318,7 @@ class RouteBuilderTest extends TestCase
             $this->collection,
             '/l',
             [],
-            ['extensions' => ['json']]
+            ['extensions' => ['json']],
         );
         $this->assertEquals(['json'], $routes->getExtensions());
 
@@ -343,7 +343,7 @@ class RouteBuilderTest extends TestCase
             $this->collection,
             '/l',
             [],
-            ['extensions' => ['json']]
+            ['extensions' => ['json']],
         );
         $this->assertEquals(['json'], $routes->getExtensions());
 
@@ -488,7 +488,7 @@ class RouteBuilderTest extends TestCase
             $route = $this->collection->routes()[0];
             $this->assertEquals(
                 ['key' => 'value', 'plugin' => 'Contacts', 'action' => 'index'],
-                $route->defaults
+                $route->defaults,
             );
         });
         $this->assertSame($routes, $res);
@@ -537,7 +537,7 @@ class RouteBuilderTest extends TestCase
         $this->assertSame('/api/articles', $all[4]->template);
         $this->assertEquals(
             ['controller', 'action', '_method', 'prefix', 'plugin'],
-            array_keys($all[0]->defaults)
+            array_keys($all[0]->defaults),
         );
         $this->assertSame('json', $all[0]->options['_ext']);
         $this->assertSame('Articles', $all[0]->defaults['controller']);
@@ -559,7 +559,7 @@ class RouteBuilderTest extends TestCase
         $this->assertSame(
             '/api/posts/{article_id}/comments',
             $all[4]->template,
-            'parameter name should reflect resource name'
+            'parameter name should reflect resource name',
         );
     }
 
@@ -606,7 +606,7 @@ class RouteBuilderTest extends TestCase
         $this->assertSame('/api/blog-posts', $all[4]->template);
         $this->assertEquals(
             ['controller', 'action', '_method', 'prefix', 'plugin'],
-            array_keys($all[0]->defaults)
+            array_keys($all[0]->defaults),
         );
         $this->assertSame('BlogPosts', $all[0]->defaults['controller']);
     }
@@ -622,7 +622,7 @@ class RouteBuilderTest extends TestCase
             ['inflect' => 'dasherize'],
             function (RouteBuilder $routes): void {
                 $routes->resources('Attributes');
-            }
+            },
         );
 
         $all = $this->collection->routes();
@@ -653,7 +653,7 @@ class RouteBuilderTest extends TestCase
         $this->assertSame('/api/articles/delete_all', $all[1]->template, 'Path defaults to key name.');
         $this->assertEquals(
             ['controller', 'action', '_method', 'prefix', 'plugin'],
-            array_keys($all[5]->defaults)
+            array_keys($all[5]->defaults),
         );
         $this->assertSame('Articles', $all[5]->defaults['controller']);
         $this->assertSame('deleteAll', $all[1]->defaults['action']);
@@ -661,7 +661,7 @@ class RouteBuilderTest extends TestCase
         $this->assertSame('/api/articles/updateAll', $all[0]->template, 'Explicit path option');
         $this->assertEquals(
             ['controller', 'action', '_method', 'prefix', 'plugin'],
-            array_keys($all[6]->defaults)
+            array_keys($all[6]->defaults),
         );
         $this->assertSame('Articles', $all[6]->defaults['controller']);
         $this->assertSame('updateAll', $all[0]->defaults['action']);
@@ -945,7 +945,7 @@ class RouteBuilderTest extends TestCase
             $this->collection,
             '/api',
             ['prefix' => 'Api'],
-            ['middleware' => ['auth']]
+            ['middleware' => ['auth']],
         );
         $routes->scope('/v1', function (RouteBuilder $routes): void {
             $this->assertSame(['auth'], $routes->getMiddleware(), 'Should inherit middleware');
@@ -1128,7 +1128,7 @@ class RouteBuilderTest extends TestCase
         $this->assertSame('/bookmarks/{id}', $route->template);
         $this->assertEquals(
             ['plugin' => null, 'controller' => 'Bookmarks', 'action' => 'view', '_method' => $method],
-            $route->defaults
+            $route->defaults,
         );
     }
 
@@ -1150,7 +1150,7 @@ class RouteBuilderTest extends TestCase
         $this->assertSame('/bookmarks/{id}', $route->template);
         $this->assertEquals(
             ['plugin' => null, 'controller' => 'Bookmarks', 'action' => 'view', '_method' => $method],
-            $route->defaults
+            $route->defaults,
         );
     }
 

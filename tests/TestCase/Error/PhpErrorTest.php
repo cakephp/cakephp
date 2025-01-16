@@ -36,14 +36,18 @@ class PhpErrorTest extends TestCase
     public static function errorCodeProvider(): array
     {
         // [php error code, label, log-level]
-        return [
+        $return = [
             [E_ERROR, 'error', LOG_ERR],
             [E_WARNING, 'warning', LOG_WARNING],
             [E_NOTICE, 'notice', LOG_NOTICE],
-            [E_STRICT, 'strict', LOG_NOTICE],
-            [E_STRICT, 'strict', LOG_NOTICE],
             [E_USER_DEPRECATED, 'deprecated', LOG_NOTICE],
         ];
+
+        if (version_compare(PHP_VERSION, '8.4.0-dev', '<')) {
+            $return[] = [E_STRICT, 'strict', LOG_NOTICE];
+        }
+
+        return $return;
     }
 
     #[DataProvider('errorCodeProvider')]

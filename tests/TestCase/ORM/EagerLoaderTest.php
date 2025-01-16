@@ -262,8 +262,8 @@ class EagerLoaderTest extends TestCase
                             ['categories.id' => new IdentifierExpression('companies.category_id')],
                         ], $this->categoriesTypeMap),
                     ]],
-                    ]
-                )
+                    ],
+                ),
             )
             ->willReturn($query);
 
@@ -528,11 +528,11 @@ class EagerLoaderTest extends TestCase
         $assocs = $assocs['stuff']->associations();
         $this->assertSame(
             'clients.orders.stuff.stuffTypes',
-            $assocs['stuffTypes']->aliasPath()
+            $assocs['stuffTypes']->aliasPath(),
         );
         $this->assertSame(
             'client.order.stuff.stuff_type',
-            $assocs['stuffTypes']->propertyPath()
+            $assocs['stuffTypes']->propertyPath(),
         );
     }
 
@@ -620,7 +620,7 @@ class EagerLoaderTest extends TestCase
 
             return array_combine(
                 array_map($quoter, array_keys($elements)),
-                array_map($quoter, array_values($elements))
+                array_map($quoter, array_values($elements)),
             );
         }
 

@@ -17,12 +17,15 @@ declare(strict_types=1);
 namespace Cake\Validation;
 
 use ReflectionClass;
+use function Cake\Core\deprecationWarning;
 
 /**
  * A Proxy class used to remove any extra arguments when the user intended to call
  * a method in another class that is not aware of validation providers signature
  *
  * @method bool extension(mixed $check, array $extensions, array $context = [])
+ * @deprecated 5.2.0 This class is no longer used. Cake\Validation\Validation
+ *  is now directly used as a provider in Cake\Validation\Validator.
  */
 class RulesProvider
 {
@@ -49,6 +52,15 @@ class RulesProvider
      */
     public function __construct(object|string $class = Validation::class)
     {
+        deprecationWarning(
+            '5.2.0',
+            sprintf(
+                'The class Cake\Validation\RulesProvider is deprecated. '
+                . 'Directly set %s as a validation provider.',
+                (is_string($class) ? $class : get_class($class)),
+            ),
+        );
+
         $this->_class = $class;
         $this->_reflection = new ReflectionClass($class);
     }

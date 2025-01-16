@@ -85,7 +85,7 @@ class LocatorAwareTraitTest extends TestCase
     {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(
-            'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
+            'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.',
         );
 
         $stub = new LocatorAwareStub();
@@ -96,7 +96,7 @@ class LocatorAwareTraitTest extends TestCase
     {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage(
-            'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
+            'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.',
         );
 
         $stub = new LocatorAwareStub('');

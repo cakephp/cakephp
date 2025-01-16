@@ -106,7 +106,8 @@ class Postgres extends Driver
         }
 
         foreach ($config['init'] as $command) {
-            $this->getPdo()->exec($command);
+            /** @phpstan-ignore-next-line */
+            $this->pdo->exec($command);
         }
     }
 

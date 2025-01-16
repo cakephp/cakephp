@@ -18,10 +18,13 @@ namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
 use Cake\Validation\RulesProvider;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use TestApp\Validation\CustomProvider;
 
 /**
  * Tests RulesProvider class
+ *
+ * @deprecated
  */
 class RulesProviderTest extends TestCase
 {
@@ -30,23 +33,29 @@ class RulesProviderTest extends TestCase
      * extra arguments that are passed according to the signature of validation
      * methods.
      */
+    #[WithoutErrorHandler]
     public function testProxyToValidation(): void
     {
-        $provider = new RulesProvider();
-        $this->assertTrue($provider->extension('foo.jpg', compact('provider')));
-        $this->assertFalse($provider->extension('foo.jpg', ['png'], compact('provider')));
+        $this->deprecated(function () {
+            $provider = new RulesProvider();
+            $this->assertTrue($provider->extension('foo.jpg', compact('provider')));
+            $this->assertFalse($provider->extension('foo.jpg', ['png'], compact('provider')));
+        });
     }
 
     /**
      * Tests that it is possible to use a custom object as the provider to
      * be decorated
      */
+    #[WithoutErrorHandler]
     public function testCustomObject(): void
     {
-        $object = new CustomProvider();
+        $this->deprecated(function () {
+            $object = new CustomProvider();
 
-        /** @var \TestApp\Validation\CustomProvider|\Cake\Validation\RulesProvider $provider */
-        $provider = new RulesProvider($object);
-        $this->assertFalse($provider->validate('string', 'context'));
+            /** @var \TestApp\Validation\CustomProvider|\Cake\Validation\RulesProvider $provider */
+            $provider = new RulesProvider($object);
+            $this->assertFalse($provider->validate('string', 'context'));
+        });
     }
 }

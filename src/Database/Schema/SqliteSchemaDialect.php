@@ -74,7 +74,7 @@ class SqliteSchemaDialect extends SchemaDialect
 
         $type = $this->_applyTypeSpecificColumnConversion(
             $col,
-            compact('length', 'precision', 'scale')
+            compact('length', 'precision', 'scale'),
         );
         if ($type !== null) {
             return $type;
@@ -207,7 +207,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $sql = sprintf(
             'PRAGMA %s(%s)',
             $pragma,
-            $this->_driver->quoteIdentifier($tableName)
+            $this->_driver->quoteIdentifier($tableName),
         );
 
         return [$sql, []];
@@ -278,7 +278,7 @@ class SqliteSchemaDialect extends SchemaDialect
     {
         $sql = sprintf(
             'PRAGMA index_list(%s)',
-            $this->_driver->quoteIdentifier($tableName)
+            $this->_driver->quoteIdentifier($tableName),
         );
 
         return [$sql, []];
@@ -360,7 +360,7 @@ class SqliteSchemaDialect extends SchemaDialect
 
         $sql = sprintf(
             'PRAGMA index_info(%s)',
-            $this->_driver->quoteIdentifier($row['name'])
+            $this->_driver->quoteIdentifier($row['name']),
         );
         $statement = $this->_driver->prepare($sql);
         $statement->execute();
@@ -375,7 +375,7 @@ class SqliteSchemaDialect extends SchemaDialect
 
                 $sql = sprintf(
                     'SELECT sql FROM sqlite_master WHERE type = "table" AND tbl_name = %s',
-                    $this->_driver->quoteIdentifier($schema->name())
+                    $this->_driver->quoteIdentifier($schema->name()),
                 );
                 $statement = $this->_driver->prepare($sql);
                 $statement->execute();
@@ -388,8 +388,8 @@ class SqliteSchemaDialect extends SchemaDialect
                         '\s*,\s*',
                         array_map(
                             fn ($column) => '(?:' . $this->possiblyQuotedIdentifierRegex($column) . ')',
-                            $columns
-                        )
+                            $columns,
+                        ),
                     );
 
                     $regex = "/CONSTRAINT\s*(['\"`\[ ].+?['\"`\] ])\s*UNIQUE\s*\(\s*(?:{$columnsPattern})\s*\)/i";
@@ -418,7 +418,7 @@ class SqliteSchemaDialect extends SchemaDialect
     {
         $sql = sprintf(
             'SELECT id FROM pragma_foreign_key_list(%s) GROUP BY id',
-            $this->_driver->quoteIdentifier($tableName)
+            $this->_driver->quoteIdentifier($tableName),
         );
 
         return [$sql, []];
@@ -432,7 +432,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $sql = sprintf(
             'SELECT * FROM pragma_foreign_key_list(%s) WHERE id = %d ORDER BY seq',
             $this->_driver->quoteIdentifier($schema->name()),
-            $row['id']
+            $row['id'],
         );
         $statement = $this->_driver->prepare($sql);
         $statement->execute();
@@ -652,12 +652,12 @@ class SqliteSchemaDialect extends SchemaDialect
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
-                $this->_foreignOnClause($data['delete'])
+                $this->_foreignOnClause($data['delete']),
             );
         }
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns']
+            $data['columns'],
         );
 
         return sprintf(
@@ -665,7 +665,7 @@ class SqliteSchemaDialect extends SchemaDialect
             $this->_driver->quoteIdentifier($name),
             $type,
             implode(', ', $columns),
-            $clause
+            $clause,
         );
     }
 
@@ -706,14 +706,14 @@ class SqliteSchemaDialect extends SchemaDialect
         assert($data !== null);
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns']
+            $data['columns'],
         );
 
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
-            implode(', ', $columns)
+            implode(', ', $columns),
         );
     }
 
@@ -759,7 +759,7 @@ class SqliteSchemaDialect extends SchemaDialect
     public function hasSequences(): bool
     {
         $result = $this->_driver->prepare(
-            'SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"'
+            'SELECT 1 FROM sqlite_master WHERE name = "sqlite_sequence"',
         );
         $result->execute();
         $this->_hasSequences = (bool)$result->fetch();

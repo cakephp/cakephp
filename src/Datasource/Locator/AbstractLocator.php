@@ -56,7 +56,7 @@ abstract class AbstractLocator implements LocatorInterface
             if ($storeOptions && isset($this->options[$alias]) && $this->options[$alias] !== $storeOptions) {
                 throw new CakeException(sprintf(
                     'You cannot configure `%s`, it already exists in the registry.',
-                    $alias
+                    $alias,
                 ));
             }
 
@@ -100,7 +100,7 @@ abstract class AbstractLocator implements LocatorInterface
     {
         unset(
             $this->instances[$alias],
-            $this->options[$alias]
+            $this->options[$alias],
         );
     }
 

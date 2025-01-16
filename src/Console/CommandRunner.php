@@ -86,7 +86,7 @@ class CommandRunner implements EventDispatcherInterface
     public function __construct(
         ConsoleApplicationInterface $app,
         string $root = 'cake',
-        ?CommandFactoryInterface $factory = null
+        ?CommandFactoryInterface $factory = null,
     ) {
         $this->app = $app;
         $this->root = $root;
@@ -299,7 +299,7 @@ class CommandRunner implements EventDispatcherInterface
                 "Unknown command `{$this->root} {$name}`. " .
                 "Run `{$this->root} --help` to get the list of commands.",
                 $name,
-                $commands->keys()
+                $commands->keys(),
             );
         }
 
@@ -346,7 +346,9 @@ class CommandRunner implements EventDispatcherInterface
             if ($this->app instanceof ContainerApplicationInterface) {
                 $container = $this->app->getContainer();
             }
+
             $this->factory = new CommandFactory($container);
+            $container?->add(CommandFactoryInterface::class, $this->factory);
         }
 
         return $this->factory->create($className);

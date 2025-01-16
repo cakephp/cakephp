@@ -35,14 +35,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
 
     protected EncryptedCookieMiddleware $middleware;
 
-    protected static string $encryptedString;
-
-    public function __construct(string $name)
-    {
-        parent::__construct($name);
-
-        static::$encryptedString = $this->_encrypt('secret data', 'aes');
-    }
+    protected static string $encryptedString = '';
 
     protected function _getCookieEncryptionKey(): string
     {
@@ -54,10 +47,14 @@ class EncryptedCookieMiddlewareTest extends TestCase
      */
     public function setUp(): void
     {
+        parent::setup();
+
+        static::$encryptedString = $this->_encrypt('secret data', 'aes');
+
         $this->middleware = new EncryptedCookieMiddleware(
             ['secret', 'ninja'],
             $this->_getCookieEncryptionKey(),
-            'aes'
+            'aes',
         );
     }
 
@@ -102,7 +99,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $middleware = new EncryptedCookieMiddleware(
             ['secret'],
             $this->_getCookieEncryptionKey(),
-            'aes'
+            'aes',
         );
         $middleware->process($request, $handler);
     }
@@ -141,7 +138,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $this->assertTrue($cookies->has('ninja'));
         $this->assertSame(
             'shuriken',
-            $this->_decrypt($cookies->get('ninja')->getValue(), 'aes')
+            $this->_decrypt($cookies->get('ninja')->getValue(), 'aes'),
         );
     }
 
@@ -160,7 +157,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $this->assertNotSame('shuriken', $response->getCookie('ninja'));
         $this->assertSame(
             'shuriken',
-            $this->_decrypt($response->getCookie('ninja')['value'], 'aes')
+            $this->_decrypt($response->getCookie('ninja')['value'], 'aes'),
         );
     }
 }

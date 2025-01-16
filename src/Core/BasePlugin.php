@@ -255,7 +255,7 @@ class BasePlugin implements PluginInterface
             throw new InvalidArgumentException(sprintf(
                 '`%s` is not a valid hook name. Must be one of `%s.`',
                 $hook,
-                implode(', ', static::VALID_HOOKS)
+                implode(', ', static::VALID_HOOKS),
             ));
         }
     }

@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
-use Cake\Validation\RulesProvider;
 use Cake\Validation\Validation;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
@@ -687,7 +686,7 @@ class ValidatorTest extends TestCase
             'picture' => new UploadedFile(
                 '',
                 0,
-                UPLOAD_ERR_NO_FILE
+                UPLOAD_ERR_NO_FILE,
             ),
         ];
         $result = $validator->validate($data);
@@ -747,7 +746,7 @@ class ValidatorTest extends TestCase
             'very required',
             function ($context) {
                 return $context['data']['otherField'] === true;
-            }
+            },
         )
             ->scalar('title');
 
@@ -1480,7 +1479,7 @@ class ValidatorTest extends TestCase
         $this->assertSame($validator, $validator->setProvider('bar', $another));
         $this->assertSame($another, $validator->getProvider('bar'));
 
-        $this->assertEquals(new RulesProvider(), $validator->getProvider('default'));
+        $this->assertEquals(Validation::class, $validator->getProvider('default'));
     }
 
     /**
@@ -1523,27 +1522,16 @@ class ValidatorTest extends TestCase
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 
-        $thing = $this->getMockBuilder(stdMock::class)->getMock();
-        $thing->expects($this->once())->method('isCool')
-            ->willReturnCallback(function ($data, $context) use ($thing) {
-                $this->assertSame('bar', $data);
-                $expected = [
-                    'default' => new RulesProvider(),
-                    'thing' => $thing,
-                ];
-                $expected = [
-                    'newRecord' => true,
-                    'providers' => $expected,
-                    'data' => [
-                        'email' => '!',
-                        'title' => 'bar',
-                    ],
-                    'field' => 'title',
-                ];
-                $this->assertEquals($expected, $context);
+        $thing = new class {
+            public $args = [];
+
+            public function isCool($data, $context)
+            {
+                $this->args = [$data, $context];
 
                 return "That ain't cool, yo";
-            });
+            }
+        };
 
         $validator->setProvider('thing', $thing);
         $errors = $validator->validate(['email' => '!', 'title' => 'bar']);
@@ -1552,6 +1540,26 @@ class ValidatorTest extends TestCase
             'title' => ['cool' => "That ain't cool, yo"],
         ];
         $this->assertEquals($expected, $errors);
+
+        $this->assertSame('bar', $thing->args[0]);
+
+        $context = $thing->args[1];
+        $provider = $context['providers']['thing'];
+        $this->assertSame($thing, $provider);
+
+        unset($context['providers']['thing']);
+        $expected = [
+            'newRecord' => true,
+            'providers' => [
+                'default' => 'Cake\Validation\Validation',
+            ],
+            'data' => [
+                'email' => '!',
+                'title' => 'bar',
+            ],
+            'field' => 'title',
+        ];
+        $this->assertEquals($expected, $context);
     }
 
     /**
@@ -1565,35 +1573,45 @@ class ValidatorTest extends TestCase
             'rule' => ['isCool', 'and', 'awesome'],
             'provider' => 'thing',
         ]);
-        $thing = $this->getMockBuilder(stdMock::class)->getMock();
-        $thing->expects($this->once())->method('isCool')
-            ->willReturnCallback(function ($data, $a, $b, $context) use ($thing) {
-                $this->assertSame('bar', $data);
-                $this->assertSame('and', $a);
-                $this->assertSame('awesome', $b);
-                $expected = [
-                    'default' => new RulesProvider(),
-                    'thing' => $thing,
-                ];
-                $expected = [
-                    'newRecord' => true,
-                    'providers' => $expected,
-                    'data' => [
-                        'email' => '!',
-                        'title' => 'bar',
-                    ],
-                    'field' => 'title',
-                ];
-                $this->assertEquals($expected, $context);
+        $thing = new class {
+            public $args = [];
+
+            public function isCool($data, $a, $b, $context)
+            {
+                $this->args = [$data, $a, $b, $context];
 
                 return "That ain't cool, yo";
-            });
+            }
+        };
+
         $validator->setProvider('thing', $thing);
         $errors = $validator->validate(['email' => '!', 'title' => 'bar']);
         $expected = [
             'title' => ['cool' => "That ain't cool, yo"],
         ];
         $this->assertEquals($expected, $errors);
+
+        $this->assertSame('bar', $thing->args[0]);
+        $this->assertSame('and', $thing->args[1]);
+        $this->assertSame('awesome', $thing->args[2]);
+
+        $context = $thing->args[3];
+        $provider = $context['providers']['thing'];
+        $this->assertSame($thing, $provider);
+
+        unset($context['providers']['thing']);
+        $expected = [
+            'newRecord' => true,
+            'providers' => [
+                'default' => 'Cake\Validation\Validation',
+            ],
+            'data' => [
+                'email' => '!',
+                'title' => 'bar',
+            ],
+            'field' => 'title',
+        ];
+        $this->assertEquals($expected, $context);
     }
 
     /**
@@ -1603,7 +1621,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->add('name', 'myRule', [
-            'rule' => function ($data, $provider) {
+            'rule' => function ($data) {
                 $this->assertSame('foo', $data);
 
                 return 'You fail';
@@ -2771,7 +2789,7 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['username' => [1, 2, 3]]));
         $this->assertSame(
             ['username' => ['array' => 'The provided value must be an array']],
-            $validator->validate(['username' => 'is not an array'])
+            $validator->validate(['username' => 'is not an array']),
         );
 
         $fieldName = 'field_name';
@@ -2790,7 +2808,7 @@ class ValidatorTest extends TestCase
         $this->assertEmpty($validator->validate(['username' => 'scalar']));
         $this->assertSame(
             ['username' => ['scalar' => 'The provided value must be scalar']],
-            $validator->validate(['username' => ['array']])
+            $validator->validate(['username' => ['array']]),
         );
 
         $fieldName = 'field_name';
@@ -2826,7 +2844,7 @@ class ValidatorTest extends TestCase
             'multipleOptions',
             ['min' => 1, 'caseInsensitive' => true],
             [['min' => 1], true],
-            'multiple'
+            'multiple',
         );
 
         $this->assertProxyMethod(
@@ -2834,7 +2852,7 @@ class ValidatorTest extends TestCase
             'multipleOptions',
             ['min' => 1, 'caseInsensitive' => false],
             [['min' => 1], false],
-            'multiple'
+            'multiple',
         );
 
         $this->assertNotEmpty($validator->validate(['username' => '']));
@@ -2990,6 +3008,21 @@ class ValidatorTest extends TestCase
     }
 
     /**
+     * Test ensuring that context array doesn't get passed for an optional validation method argument.
+     * Validation::decimal() has 2 arguments and only 1 is being passed here.
+     *
+     * @return void
+     */
+    public function testWithoutPassingAllArguments(): void
+    {
+        $validator = new Validator();
+        $validator->setProvider('default', Validation::class);
+
+        $validator->decimal('field', 2);
+        $this->assertEmpty($validator->validate(['field' => 1.23]));
+    }
+
+    /**
      * Assert for the data validation message for a given field's rule for a I18n-enabled & a I18n-disabled validator
      *
      * @param string $fieldName The field name.
@@ -3002,7 +3035,7 @@ class ValidatorTest extends TestCase
         string $fieldName,
         string $rule,
         string $expectedMessage,
-        mixed $additional = null
+        mixed $additional = null,
     ): void {
         $validator = new Validator();
         if ($additional !== null) {
@@ -3013,7 +3046,7 @@ class ValidatorTest extends TestCase
 
         $this->assertSame(
             $expectedMessage,
-            $validator->field($fieldName)->rule($rule)->get('message')
+            $validator->field($fieldName)->rule($rule)->get('message'),
         );
 
         $noI18nValidator = new NoI18nValidator();
@@ -3025,7 +3058,7 @@ class ValidatorTest extends TestCase
 
         $this->assertSame(
             $expectedMessage,
-            $noI18nValidator->field($fieldName)->rule($rule)->get('message')
+            $noI18nValidator->field($fieldName)->rule($rule)->get('message'),
         );
     }
 }

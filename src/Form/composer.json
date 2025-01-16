@@ -22,12 +22,14 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/event": "^5.1",
-        "cakephp/validation": "^5.1"
+        "cakephp/event": "^5.2",
+        "cakephp/validation": "^5.2"
     },
     "autoload": {
         "psr-4": {
             "Cake\\Form\\": "."
         }
-    }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
 }

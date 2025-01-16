@@ -155,7 +155,7 @@ class XmlView extends SerializedView
         $result = Xml::fromArray($data, $options)->saveXML();
         if ($result === false) {
             throw new SerializationFailureException(
-                'XML serialization of View data failed.'
+                'XML serialization of View data failed.',
             );
         }
 

@@ -41,7 +41,7 @@ class ConnectionHelperTest extends TestCase
 
         $this->assertSame(
             ConnectionManager::get('test'),
-            ConnectionManager::get('default')
+            ConnectionManager::get('default'),
         );
     }
 
@@ -56,7 +56,7 @@ class ConnectionHelperTest extends TestCase
         // connection for simpler CI configuration
         $this->assertSame(
             ConnectionManager::get('test_something'),
-            ConnectionManager::get('something')
+            ConnectionManager::get('something'),
         );
     }
 

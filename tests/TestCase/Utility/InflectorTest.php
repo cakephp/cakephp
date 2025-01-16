@@ -211,11 +211,11 @@ class InflectorTest extends TestCase
         $this->assertSame('pregunta_frecuente', Inflector::singularize('preguntas_frecuentes'));
         $this->assertSame(
             'categoria_pregunta_frecuente',
-            Inflector::singularize('categorias_preguntas_frecuentes')
+            Inflector::singularize('categorias_preguntas_frecuentes'),
         );
         $this->assertSame(
             'faq_categoria_pregunta_frecuente',
-            Inflector::singularize('faq_categorias_preguntas_frecuentes')
+            Inflector::singularize('faq_categorias_preguntas_frecuentes'),
         );
     }
 
@@ -327,11 +327,11 @@ class InflectorTest extends TestCase
         $this->assertSame('preguntas_frecuentes', Inflector::pluralize('pregunta_frecuente'));
         $this->assertSame(
             'categorias_preguntas_frecuentes',
-            Inflector::pluralize('categoria_pregunta_frecuente')
+            Inflector::pluralize('categoria_pregunta_frecuente'),
         );
         $this->assertSame(
             'faq_categorias_preguntas_frecuentes',
-            Inflector::pluralize('faq_categoria_pregunta_frecuente')
+            Inflector::pluralize('faq_categoria_pregunta_frecuente'),
         );
     }
 

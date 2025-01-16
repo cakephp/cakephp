@@ -37,6 +37,14 @@ class CacheClearCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Clear all data in a single cache engine.';
+    }
+
+    /**
      * Hook method for defining this command's option parser.
      *
      * @see https://book.cakephp.org/5/en/console-commands/option-parsers.html
@@ -47,7 +55,7 @@ class CacheClearCommand extends Command
     {
         $parser = parent::buildOptionParser($parser);
         $parser
-            ->setDescription('Clear all data in a single cache engine')
+            ->setDescription(static::getDescription())
             ->addArgument('engine', [
                 'help' => 'The cache engine to clear.' .
                     'For example, `cake cache clear _cake_model_` will clear the model cache.' .

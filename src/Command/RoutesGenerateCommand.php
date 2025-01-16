@@ -36,6 +36,14 @@ class RoutesGenerateCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Check a routing array against the routes.';
+    }
+
+    /**
      * Display all routes in an application
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -62,7 +70,7 @@ class RoutesGenerateCommand extends Command
     /**
      * Split the CLI arguments into a hash.
      *
-     * @param list<string> $args The arguments to split.
+     * @param array<string> $args The arguments to split.
      * @return array<string|bool>
      */
     protected function _splitArgs(array $args): array
@@ -91,13 +99,13 @@ class RoutesGenerateCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription(
-            'Check a routing array against the routes. ' .
+        $parser->setDescription([
+            static::getDescription(),
             'Will output the URL if there is a match.' .
             "\n\n" .
             'Routing parameters should be supplied in a key:value format. ' .
-            'For example `controller:Articles action:view 2`'
-        );
+            'For example `controller:Articles action:view 2`',
+        ]);
 
         return $parser;
     }

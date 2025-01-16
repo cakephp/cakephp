@@ -38,7 +38,7 @@ class SchemaLoader
     /**
      * Load and apply schema sql file, or an array of files.
      *
-     * @param list<string>|string $paths Schema files to load
+     * @param array<string>|string $paths Schema files to load
      * @param string $connectionName Connection name
      * @param bool $dropTables Drop all tables prior to loading schema files
      * @param bool $truncateTables Truncate all tables after loading schema files
@@ -48,7 +48,7 @@ class SchemaLoader
         array|string $paths,
         string $connectionName = 'test',
         bool $dropTables = true,
-        bool $truncateTables = false
+        bool $truncateTables = false,
     ): void {
         $files = (array)$paths;
 
@@ -158,7 +158,7 @@ class SchemaLoader
                 if (!is_string($name)) {
                     throw new InvalidArgumentException(
                         sprintf('`%s` is not a valid table name. Either use a string key for the table definition'
-                            . "(`'articles' => [...]`) or define the `table` key in the table definition.", $name)
+                            . "(`'articles' => [...]`) or define the `table` key in the table definition.", $name),
                     );
                 }
                 $schema = new TableSchema($name, $table['columns']);

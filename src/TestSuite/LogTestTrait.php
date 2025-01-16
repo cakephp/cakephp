@@ -85,9 +85,9 @@ trait LogTestTrait
 
     /**
      * @param string $level The level of the expected message
+     * @param string $expectedMessage The message which should be inside the log engine
      * @param string|null $scope The scope of the expected message. If a message has
      *   multiple scopes, the provided scope must be within the message's set.
-     * @param string $expectedMessage The message which should be inside the log engine
      * @param string $failMsg The error message if the message was not in the log engine
      * @return void
      */
@@ -95,7 +95,7 @@ trait LogTestTrait
         string $level,
         string $expectedMessage,
         ?string $scope = null,
-        string $failMsg = ''
+        string $failMsg = '',
     ): void {
         $this->_expectLogMessage($level, $expectedMessage, $scope, $failMsg);
     }
@@ -112,7 +112,7 @@ trait LogTestTrait
         string $level,
         string $expectedMessage,
         ?string $scope = null,
-        string $failMsg = ''
+        string $failMsg = '',
     ): void {
         $this->_expectLogMessage($level, $expectedMessage, $scope, $failMsg, true);
     }
@@ -131,7 +131,7 @@ trait LogTestTrait
         string $expectedMessage,
         ?string $scope,
         string $failMsg = '',
-        bool $contains = false
+        bool $contains = false,
     ): void {
         $messageFound = false;
         $expectedMessage = sprintf('%s: %s', $level, $expectedMessage);

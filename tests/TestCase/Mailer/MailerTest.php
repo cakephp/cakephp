@@ -355,7 +355,7 @@ class MailerTest extends TestCase
         $this->assertInstanceOf(Mailer::class, $result);
         $this->assertSame(
             ['ApplicationWithDefaultRoutes.php' => ['file' => APP . 'ApplicationWithDefaultRoutes.php', 'mimetype' => 'text/plain']],
-            $result->getMessage()->getAttachments()
+            $result->getMessage()->getAttachments(),
         );
     }
 
@@ -454,7 +454,7 @@ class MailerTest extends TestCase
     {
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage(
-            'Transport was not defined. You must set on using setTransport() or set `transport` option in your mailer profile.'
+            'Transport was not defined. You must set on using setTransport() or set `transport` option in your mailer profile.',
         );
         $this->mailer->setTo('cake@cakephp.org');
         $this->mailer->setFrom('cake@cakephp.org');
@@ -1332,7 +1332,7 @@ class MailerTest extends TestCase
         foreach ($lines as $line) {
             $this->assertTrue(
                 strlen($line) <= Message::LINE_LENGTH_MUST,
-                'Line length exceeds the max. limit of Message::LINE_LENGTH_MUST'
+                'Line length exceeds the max. limit of Message::LINE_LENGTH_MUST',
             );
         }
     }

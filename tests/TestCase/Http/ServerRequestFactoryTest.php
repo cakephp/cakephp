@@ -124,6 +124,23 @@ class ServerRequestFactoryTest extends TestCase
     }
 
     /**
+     * Test fromGlobals with urlencoded path separators
+     */
+    public function testFromGlobalsUrlEncoded(): void
+    {
+        $server = [
+            'DOCUMENT_ROOT' => '/cake/repo/branches/webroot',
+            'PHP_SELF' => '/index.php',
+            'REQUEST_URI' => '/posts%2fadd',
+        ];
+        $res = ServerRequestFactory::fromGlobals($server);
+
+        $this->assertSame('', $res->getAttribute('base'));
+        $this->assertSame('/', $res->getAttribute('webroot'));
+        $this->assertSame('/posts%2fadd', $res->getUri()->getPath());
+    }
+
+    /**
      * Test fromGlobals with mod-rewrite server configuration.
      */
     public function testFromGlobalsUrlModRewrite(): void
@@ -144,7 +161,7 @@ class ServerRequestFactoryTest extends TestCase
         $request = ServerRequestFactory::fromGlobals([
             'DOCUMENT_ROOT' => '/cake/repo/branches',
             'PHP_SELF' => '/1.2.x.x/webroot/index.php',
-            'PATH_INFO' => '/posts/view/1',
+            'REQUEST_URI' => '/posts/view/1',
         ]);
         $this->assertSame('/1.2.x.x', $request->getAttribute('base'));
         $this->assertSame('/1.2.x.x/', $request->getAttribute('webroot'));
@@ -276,23 +293,6 @@ class ServerRequestFactoryTest extends TestCase
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
         $this->assertSame('/bananas/eat/tasty_banana', $request->getRequestTarget());
-    }
-
-    /**
-     * Test that even if mod_rewrite is on, and the url contains index.php
-     * and there are numerous //s that the base/webroot is calculated correctly.
-     */
-    public function testBaseUrlWithModRewriteAndExtraSlashes(): void
-    {
-        $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/cakephp/webroot///index.php/bananas/eat',
-            'PHP_SELF' => '/cakephp/webroot///index.php/bananas/eat',
-            'PATH_INFO' => '/bananas/eat',
-        ]);
-
-        $this->assertSame('/cakephp', $request->getAttribute('base'));
-        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/bananas/eat', $request->getRequestTarget());
     }
 
     /**
@@ -915,7 +915,7 @@ class ServerRequestFactoryTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals(
             $data['SERVER'] ?? null,
-            $data['GET'] ?? null
+            $data['GET'] ?? null,
         );
         $uri = $request->getUri();
 
@@ -990,7 +990,7 @@ class ServerRequestFactoryTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_METHOD' => 'POST'],
             [],
-            ['_method' => 'PUT']
+            ['_method' => 'PUT'],
         );
         $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
         $this->assertSame('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
@@ -1026,7 +1026,7 @@ class ServerRequestFactoryTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_METHOD' => 'POST'],
             [],
-            $body
+            $body,
         );
         $this->assertEmpty($request->getParsedBody());
 
@@ -1036,7 +1036,7 @@ class ServerRequestFactoryTest extends TestCase
                 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET',
             ],
             [],
-            ['foo' => 'bar']
+            ['foo' => 'bar'],
         );
         $this->assertEmpty($request->getParsedBody());
     }
@@ -1046,8 +1046,6 @@ class ServerRequestFactoryTest extends TestCase
      */
     public function testFromGlobalsWithFiles(): void
     {
-        $this->assertNull(Configure::read('App.uploadedFilesAsObjects'));
-
         $files = [
             'file' => [
                 'name' => 'file.txt',
@@ -1129,7 +1127,7 @@ class ServerRequestFactoryTest extends TestCase
                     17178,
                     0,
                     'born on.txt',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
             'pictures' => [
@@ -1140,7 +1138,7 @@ class ServerRequestFactoryTest extends TestCase
                         17188,
                         0,
                         'a-file.png',
-                        'image/png'
+                        'image/png',
                     ),
                 ],
                 1 => [
@@ -1150,7 +1148,7 @@ class ServerRequestFactoryTest extends TestCase
                         2010,
                         0,
                         'a-moose.png',
-                        'image/jpg'
+                        'image/jpg',
                     ),
                 ],
             ],
@@ -1161,7 +1159,7 @@ class ServerRequestFactoryTest extends TestCase
                     1490,
                     0,
                     'scratch.text',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
         ];
@@ -1314,7 +1312,7 @@ class ServerRequestFactoryTest extends TestCase
                 1,
                 0,
                 'flat.txt',
-                'text/plain'
+                'text/plain',
             ),
             'nested' => [
                 'name' => 'nested',
@@ -1323,7 +1321,7 @@ class ServerRequestFactoryTest extends TestCase
                     12,
                     0,
                     'nested.txt',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
             'deep' => [
@@ -1334,7 +1332,7 @@ class ServerRequestFactoryTest extends TestCase
                         12345,
                         0,
                         'deep-1.txt',
-                        'text/plain'
+                        'text/plain',
                     ),
                 ],
                 1 => [
@@ -1344,7 +1342,7 @@ class ServerRequestFactoryTest extends TestCase
                         123456,
                         0,
                         'deep-2.txt',
-                        'text/plain'
+                        'text/plain',
                     ),
                 ],
             ],
@@ -1353,7 +1351,7 @@ class ServerRequestFactoryTest extends TestCase
                 123,
                 0,
                 'numeric.txt',
-                'text/plain'
+                'text/plain',
             ),
             1 => [
                 'name' => 'numeric nested',
@@ -1362,7 +1360,7 @@ class ServerRequestFactoryTest extends TestCase
                     1234,
                     0,
                     'numeric-nested.txt',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
         ];

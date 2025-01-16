@@ -118,7 +118,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
         $result = $this->connection->selectQuery('id', 'ordered_uuid_items')
             ->where(
                 ['id' => ['48298a29-81c0-4c26-a7fb-413140cf8569', '482b7756-8da0-419a-b21f-27da40cf8569']],
-                ['id' => 'ordered_uuid[]']
+                ['id' => 'ordered_uuid[]'],
             )
             ->orderBy('id')
             ->execute()
@@ -141,7 +141,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
                     'id',
                     '482b7756-8da0-419a-b21f-27da40cf8569',
                     '48298a29-81c0-4c26-a7fb-413140cf8569',
-                    'ordered_uuid'
+                    'ordered_uuid',
                 );
             })
             ->execute()
@@ -161,7 +161,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
                 return $exp->eq(
                     'id',
                     $q->func()->concat(['48298a29-81c0-4c26-a7fb', '-413140cf8569'], []),
-                    'ordered_uuid'
+                    'ordered_uuid',
                 );
             })
             ->execute()

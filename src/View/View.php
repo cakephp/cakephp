@@ -217,7 +217,7 @@ class View implements EventDispatcherInterface
     /**
      * List of variables to collect from the associated controller.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
@@ -234,14 +234,14 @@ class View implements EventDispatcherInterface
     /**
      * Holds an array of paths.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_paths = [];
 
     /**
      * Holds an array of plugin paths.
      *
-     * @var array<string, list<string>>
+     * @var array<string, array<string>>
      */
     protected array $_pathsForPlugin = [];
 
@@ -270,7 +270,7 @@ class View implements EventDispatcherInterface
     /**
      * Content stack, used for nested templates that all use View::extend();
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_stack = [];
 
@@ -338,7 +338,7 @@ class View implements EventDispatcherInterface
         ?ServerRequest $request = null,
         ?Response $response = null,
         ?EventManagerInterface $eventManager = null,
-        array $viewOptions = []
+        array $viewOptions = [],
     ) {
         if ($eventManager !== null) {
             // Set the event manager before accessing the helper registry below
@@ -357,7 +357,7 @@ class View implements EventDispatcherInterface
 
         $this->setConfig(array_diff_key(
             $viewOptions,
-            array_flip($this->_passedVars)
+            array_flip($this->_passedVars),
         ));
 
         $request ??= Router::getRequest() ?: new ServerRequest(['base' => '', 'url' => '', 'webroot' => '/']);
@@ -661,7 +661,7 @@ class View implements EventDispatcherInterface
             $options['cache'] = $this->_elementCache(
                 $name,
                 $data,
-                array_diff_key($options, ['callbacks' => false, 'plugin' => null, 'ignoreMissing' => null])
+                array_diff_key($options, ['callbacks' => false, 'plugin' => null, 'ignoreMissing' => null]),
             );
         }
 
@@ -789,7 +789,7 @@ class View implements EventDispatcherInterface
             if (!$this->layout) {
                 throw new CakeException(
                     'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering use method `View::disableAutoLayout()` instead.'
+                    'To disable layout rendering use method `View::disableAutoLayout()` instead.',
                 );
             }
 
@@ -844,7 +844,7 @@ class View implements EventDispatcherInterface
     /**
      * Returns a list of variables available in the current View context
      *
-     * @return list<string> Array of the set view variable names.
+     * @return array<string> Array of the set view variable names.
      */
     public function getVars(): array
     {
@@ -876,11 +876,10 @@ class View implements EventDispatcherInterface
     {
         if (is_array($name)) {
             if (is_array($value)) {
-                /** @var array|false $data Coerce phpstan to accept failure case */
                 $data = array_combine($name, $value);
                 if ($data === false) {
                     throw new CakeException(
-                        'Invalid data provided for array_combine() to work: Both $name and $value require same count.'
+                        'Invalid data provided for array_combine() to work: Both $name and $value require same count.',
                     );
                 }
             } else {
@@ -897,7 +896,7 @@ class View implements EventDispatcherInterface
     /**
      * Get the names of all the existing blocks.
      *
-     * @return list<string> An array containing the blocks.
+     * @return array<string> An array containing the blocks.
      * @see \Cake\View\ViewBlock::keys()
      */
     public function blocks(): array
@@ -1063,7 +1062,7 @@ class View implements EventDispatcherInterface
                     $defaultPath = $paths[0] . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR;
                     throw new LogicException(sprintf(
                         'You cannot extend an element which does not exist (%s).',
-                        $defaultPath . $name . $this->_ext
+                        $defaultPath . $name . $this->_ext,
                     ));
                 }
                 break;
@@ -1162,7 +1161,7 @@ class View implements EventDispatcherInterface
         if ($initialBlocks !== $remainingBlocks) {
             throw new LogicException(sprintf(
                 'The `%s` block was left open. Blocks are not allowed to cross files.',
-                (string)$this->Blocks->active()
+                (string)$this->Blocks->active(),
             ));
         }
 
@@ -1348,7 +1347,7 @@ class View implements EventDispatcherInterface
         $name ??= $this->template;
 
         if (!$name) {
-            throw new CakeException('Template name not provided');
+            throw new MissingTemplateException('');
         }
 
         [$plugin, $name] = $this->pluginSplit($name);
@@ -1408,7 +1407,7 @@ class View implements EventDispatcherInterface
         if ($absolute === false || !str_starts_with($absolute, $path)) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot use `%s` as a template, it is not within any view template path.',
-                $file
+                $file,
             ));
         }
 
@@ -1454,7 +1453,7 @@ class View implements EventDispatcherInterface
             if (!$this->layout) {
                 throw new CakeException(
                     'View::$layout must be a non-empty string.' .
-                    'To disable layout rendering use method `View::disableAutoLayout()` instead.'
+                    'To disable layout rendering use method `View::disableAutoLayout()` instead.',
                 );
             }
             $name = $this->layout;
@@ -1539,7 +1538,7 @@ class View implements EventDispatcherInterface
      * and layouts.
      *
      * @param string $basePath Base path on which to get the prefixed one.
-     * @return list<string> Array with all the templates paths.
+     * @return array<string> Array with all the templates paths.
      */
     protected function _getSubPaths(string $basePath): array
     {
@@ -1552,7 +1551,7 @@ class View implements EventDispatcherInterface
 
                 array_unshift(
                     $paths,
-                    $path . $basePath
+                    $path . $basePath,
                 );
             }
         }
@@ -1565,7 +1564,7 @@ class View implements EventDispatcherInterface
      *
      * @param string|null $plugin Optional plugin name to scan for view files.
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
-     * @return list<string> paths
+     * @return array<string> paths
      */
     protected function _paths(?string $plugin = null, bool $cached = true): array
     {
@@ -1609,7 +1608,7 @@ class View implements EventDispatcherInterface
             $themePaths,
             $pluginPaths,
             $templatePaths,
-            App::core('templates')
+            App::core('templates'),
         );
 
         if ($plugin !== null) {
@@ -1651,7 +1650,7 @@ class View implements EventDispatcherInterface
         $keys = array_merge(
             [$pluginKey, $elementKey],
             array_keys($options),
-            array_keys($data)
+            array_keys($data),
         );
         $config = [
             'config' => $this->elementCache,

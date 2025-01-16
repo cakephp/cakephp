@@ -565,7 +565,7 @@ class ViewBuilder implements JsonSerializable
     public function build(
         ?ServerRequest $request = null,
         ?Response $response = null,
-        ?EventManagerInterface $events = null
+        ?EventManagerInterface $events = null,
     ): View {
         $className = $this->_className ?? App::className('App', 'View', 'View') ?? View::class;
         if ($className === 'View') {
@@ -651,7 +651,7 @@ class ViewBuilder implements JsonSerializable
                 'Failed serializing the `%s` %s in the `%s` view var',
                 is_resource($item) ? get_resource_type($item) : $item::class,
                 is_resource($item) ? 'resource' : 'object',
-                $key
+                $key,
             ));
         }
     }

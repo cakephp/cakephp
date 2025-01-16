@@ -71,7 +71,7 @@ class FlashMessageTest extends TestCase
 
         $this->Flash->set(
             'This is a test message',
-            ['element' => 'test', 'params' => ['foo' => 'bar']]
+            ['element' => 'test', 'params' => ['foo' => 'bar']],
         );
         $expected[] = [
             'message' => 'This is a test message',
@@ -109,12 +109,12 @@ class FlashMessageTest extends TestCase
     {
         $this->Flash = new FlashMessage(
             $this->Session,
-            ['params' => ['foo' => 'bar']]
+            ['params' => ['foo' => 'bar']],
         );
 
         $this->Flash->set(
             'This is a test message',
-            ['params' => ['username' => 'ADmad']]
+            ['params' => ['username' => 'ADmad']],
         );
         $expected[] = [
             'message' => 'This is a test message',
@@ -143,7 +143,7 @@ class FlashMessageTest extends TestCase
 
         $this->Flash->set(
             'This is a <b>test</b> message',
-            ['escape' => false, 'params' => ['foo' => 'bar']]
+            ['escape' => false, 'params' => ['foo' => 'bar']],
         );
         $expected = [
             [
@@ -158,7 +158,7 @@ class FlashMessageTest extends TestCase
 
         $this->Flash->set(
             'This is a test message',
-            ['key' => 'escaped', 'escape' => false, 'params' => ['foo' => 'bar', 'escape' => true]]
+            ['key' => 'escaped', 'escape' => false, 'params' => ['foo' => 'bar', 'escape' => true]],
         );
         $expected = [
             [
@@ -251,7 +251,7 @@ class FlashMessageTest extends TestCase
 
         $this->Flash->setExceptionMessage(
             new Exception('This is a test message'),
-            ['element' => 'default', 'clear' => true]
+            ['element' => 'default', 'clear' => true],
         );
         $expected = [
             [

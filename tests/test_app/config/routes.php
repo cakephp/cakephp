@@ -27,7 +27,7 @@ return function (RouteBuilder $routes): void {
             [
                 '_name' => 'some_alias',
                 'routeClass' => 'InflectedRoute',
-            ]
+            ],
         );
         $routes->fallbacks();
     });

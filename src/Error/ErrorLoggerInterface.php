@@ -37,7 +37,7 @@ interface ErrorLoggerInterface
     public function logException(
         Throwable $exception,
         ?ServerRequestInterface $request = null,
-        bool $includeTrace = false
+        bool $includeTrace = false,
     ): void;
 
     /**
@@ -51,6 +51,6 @@ interface ErrorLoggerInterface
     public function logError(
         PhpError $error,
         ?ServerRequestInterface $request = null,
-        bool $includeTrace = false
+        bool $includeTrace = false,
     ): void;
 }

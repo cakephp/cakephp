@@ -30,7 +30,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Test case for Sqlite Schema Dialect.
  */
-class SqliteSchemaTest extends TestCase
+class SqliteSchemaDialectTest extends TestCase
 {
     protected PDO $pdo;
 
@@ -577,11 +577,11 @@ SQL;
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
         $this->assertEquals(
             $expected['title_idx'],
-            $result->getConstraint('title_idx')
+            $result->getConstraint('title_idx'),
         );
         $this->assertEquals(
             $expected['author_id_0_fk'],
-            $result->getConstraint('author_id_0_fk')
+            $result->getConstraint('author_id_0_fk'),
         );
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
@@ -1190,7 +1190,7 @@ SQL;
         $this->assertTextEquals($expected, $result[0]);
         $this->assertSame(
             'CREATE INDEX "title_idx" ON "articles" ("title")',
-            $result[1]
+            $result[1],
         );
     }
 

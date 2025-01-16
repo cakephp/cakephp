@@ -55,7 +55,7 @@ class ChainMessagesLoader
             if (!is_callable($loader)) {
                 throw new CakeException(sprintf(
                     'Loader `%s` in the chain is not a valid callable.',
-                    $k
+                    $k,
                 ));
             }
 
@@ -67,7 +67,7 @@ class ChainMessagesLoader
             if (!($package instanceof Package)) {
                 throw new CakeException(sprintf(
                     'Loader `%s` in the chain did not return a valid Package object.',
-                    $k
+                    $k,
                 ));
             }
 

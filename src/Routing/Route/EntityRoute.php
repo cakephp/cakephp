@@ -75,7 +75,7 @@ class EntityRoute extends Route
                 'Route `%s` expects the URL option `_entity` to be an array or object implementing \ArrayAccess, '
                 . 'but `%s` passed.',
                 $this->template,
-                get_debug_type($entity)
+                get_debug_type($entity),
             ));
         }
     }

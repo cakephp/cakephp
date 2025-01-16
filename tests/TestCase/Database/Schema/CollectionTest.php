@@ -35,7 +35,7 @@ class CollectionTest extends TestCase
     protected $connection;
 
     /**
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.Users',

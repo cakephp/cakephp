@@ -106,7 +106,7 @@ class SqliteTest extends TestCase
         $connection->expects($this->exactly(2))
             ->method('exec')
             ->with(
-                ...self::withConsecutive(['Execute this'], ['this too'])
+                ...self::withConsecutive(['Execute this'], ['this too']),
             );
 
         $driver->expects($this->once())->method('createPdo')
@@ -209,7 +209,7 @@ class SqliteTest extends TestCase
         foreach ($featureVersions as $feature => $version) {
             $this->assertSame(
                 version_compare($driver->version(), $version, '>='),
-                $driver->supports(DriverFeatureEnum::from($feature))
+                $driver->supports(DriverFeatureEnum::from($feature)),
             );
         }
 

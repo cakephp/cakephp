@@ -179,7 +179,7 @@ class ComponentTest extends TestCase
     {
         $Component = new ConfiguredComponent(
             new ComponentRegistry(new Controller(new ServerRequest())),
-            ['chicken' => 'soup']
+            ['chicken' => 'soup'],
         );
         $this->assertEquals(['chicken' => 'soup'], $Component->configCopy);
         $this->assertEquals(['chicken' => 'soup'], $Component->getConfig());
@@ -193,7 +193,7 @@ class ComponentTest extends TestCase
         $Component = new ConfiguredComponent(
             new ComponentRegistry(new Controller(new ServerRequest())),
             [],
-            ['Apple', 'Banana', 'Orange']
+            ['Apple', 'Banana', 'Orange'],
         );
         $this->assertInstanceOf(AppleComponent::class, $Component->Apple, 'class is wrong');
         $this->assertInstanceOf(OrangeComponent::class, $Component->Orange, 'class is wrong');
@@ -219,7 +219,7 @@ class ComponentTest extends TestCase
         $Component = new ConfiguredComponent(
             new ComponentRegistry(new Controller(new ServerRequest())),
             [],
-            ['Configured' => ['foo' => 'bar']]
+            ['Configured' => ['foo' => 'bar']],
         );
         $this->assertInstanceOf(ConfiguredComponent::class, $Component->Configured, 'class is wrong');
         $this->assertNotSame($Component, $Component->Configured, 'Component instance was reused');

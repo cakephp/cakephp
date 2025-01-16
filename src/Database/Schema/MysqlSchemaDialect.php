@@ -119,7 +119,7 @@ class MysqlSchemaDialect extends SchemaDialect
 
         $type = $this->_applyTypeSpecificColumnConversion(
             $col,
-            compact('length', 'precision', 'scale')
+            compact('length', 'precision', 'scale'),
         );
         if ($type !== null) {
             return $type;
@@ -171,6 +171,9 @@ class MysqlSchemaDialect extends SchemaDialect
         }
         if ($col === 'binary' && $length === 16) {
             return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
+        }
+        if ($col === 'uuid') {
+            return ['type' => TableSchemaInterface::TYPE_NATIVE_UUID, 'length' => null];
         }
         if (str_contains($col, 'blob') || in_array($col, ['binary', 'varbinary'])) {
             $lengthName = substr($col, 0, -4);
@@ -385,6 +388,7 @@ class MysqlSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMP',
             TableSchemaInterface::TYPE_CHAR => ' CHAR',
             TableSchemaInterface::TYPE_UUID => ' CHAR(36)',
+            TableSchemaInterface::TYPE_NATIVE_UUID => ' UUID',
             TableSchemaInterface::TYPE_JSON => $nativeJson ? ' JSON' : ' LONGTEXT',
             TableSchemaInterface::TYPE_GEOMETRY => ' GEOMETRY',
             TableSchemaInterface::TYPE_POINT => ' POINT',
@@ -570,7 +574,7 @@ class MysqlSchemaDialect extends SchemaDialect
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $columns = array_map(
                 $this->_driver->quoteIdentifier(...),
-                $data['columns']
+                $data['columns'],
             );
 
             return sprintf('PRIMARY KEY (%s)', implode(', ', $columns));
@@ -659,7 +663,7 @@ class MysqlSchemaDialect extends SchemaDialect
     {
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns']
+            $data['columns'],
         );
         foreach ($data['columns'] as $i => $column) {
             if (isset($data['length'][$column])) {
@@ -673,7 +677,7 @@ class MysqlSchemaDialect extends SchemaDialect
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
-                $this->_foreignOnClause($data['delete'])
+                $this->_foreignOnClause($data['delete']),
             );
         }
 

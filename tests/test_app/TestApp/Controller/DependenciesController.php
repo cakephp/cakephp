@@ -20,7 +20,7 @@ class DependenciesController extends Controller
         ?ServerRequest $request = null,
         ?string $name = null,
         ?EventManagerInterface $eventManager = null,
-        ?stdClass $inject = null
+        ?stdClass $inject = null,
     ) {
         parent::__construct($request, $name, $eventManager);
         $this->inject = $inject;
@@ -46,7 +46,7 @@ class DependenciesController extends Controller
     {
         return $this->response->withStringBody(json_encode(
             compact('one', 'two', 'three', 'four'),
-            JSON_PRESERVE_ZERO_FRACTION
+            JSON_PRESERVE_ZERO_FRACTION,
         ));
     }
 

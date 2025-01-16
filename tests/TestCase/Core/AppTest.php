@@ -114,7 +114,7 @@ class AppTest extends TestCase
         $return = TestApp::shortName(
             'TestApp/Nested/Controller/PagesController',
             'Controller',
-            'Controller'
+            'Controller',
         );
         $this->assertSame('Pages', $return);
 

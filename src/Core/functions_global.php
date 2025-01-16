@@ -36,7 +36,7 @@ if (!function_exists('pathCombine')) {
      *
      * Skips adding a forward-slash if either `/` or `\` already exists.
      *
-     * @param list<string> $parts
+     * @param array<string> $parts
      * @param bool|null $trailing Determines how trailing slashes are handled
      *  - If true, ensures a trailing forward-slash is added if one doesn't exist
      *  - If false, ensures any trailing slash is removed

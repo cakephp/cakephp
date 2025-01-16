@@ -38,7 +38,7 @@ class BelongsToTest extends TestCase
     /**
      * Fixtures to use.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
@@ -209,7 +209,7 @@ class BelongsToTest extends TestCase
         $this->assertSame(
             'integer',
             $query->getTypeMap()->type('Companies__id'),
-            'Associations should map types.'
+            'Associations should map types.',
         );
     }
 

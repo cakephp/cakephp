@@ -266,7 +266,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
 
         throw new InvalidCsrfTokenException(__d(
             'cake',
-            'CSRF token from either the request body or request headers did not match or is missing.'
+            'CSRF token from either the request body or request headers did not match or is missing.',
         ));
     }
 

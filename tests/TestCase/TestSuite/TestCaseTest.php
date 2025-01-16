@@ -460,7 +460,7 @@ class TestCaseTest extends TestCase
         $Mock = $this->getMockForModel(
             'Table',
             ['save'],
-            ['alias' => 'Comments', 'className' => Table::class]
+            ['alias' => 'Comments', 'className' => Table::class],
         );
 
         $result = $this->getTableLocator()->get('Comments');
@@ -477,7 +477,7 @@ class TestCaseTest extends TestCase
         $allMethodsStubs = $this->getMockForModel(
             'Table',
             [],
-            ['alias' => 'Comments', 'className' => Table::class]
+            ['alias' => 'Comments', 'className' => Table::class],
         );
         $result = $this->getTableLocator()->get('Comments');
         $this->assertInstanceOf(Table::class, $result);

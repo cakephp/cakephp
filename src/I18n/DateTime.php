@@ -280,7 +280,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
     public static function parseDateTime(
         string $time,
         array|string|int|null $format = null,
-        DateTimeZone|string|null $tz = null
+        DateTimeZone|string|null $tz = null,
     ): ?static {
         $format ??= static::$_toStringFormat;
         $format = is_int($format) ? [$format, $format] : $format;
@@ -428,7 +428,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
     public function i18nFormat(
         array|string|int|null $format = null,
         DateTimeZone|string|null $timezone = null,
-        ?string $locale = null
+        ?string $locale = null,
     ): string|int {
         if ($format === DateTime::UNIX_TIMESTAMP_FORMAT) {
             return $this->getTimestamp();
@@ -470,7 +470,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
      * ### Options:
      *
      * - `from` => another Time object representing the "now" time
-     * - `format` => a fall back format if the relative time is longer than the duration specified by end
+     * - `format` => a fallback format if the relative time is longer than the duration specified by end
      * - `accuracy` => Specifies how accurate the date should be described (array)
      *     - year =>   The format if years > 0   (default "day")
      *     - month =>  The format if months > 0  (default "day")
@@ -523,7 +523,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
     public static function listTimezones(
         string|int|null $filter = null,
         ?string $country = null,
-        array|bool $options = []
+        array|bool $options = [],
     ): array {
         if (is_bool($options)) {
             $options = [

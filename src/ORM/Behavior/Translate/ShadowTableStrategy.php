@@ -86,7 +86,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $this->table = $table;
         $this->translationTable = $this->getTableLocator()->get(
             $this->_config['translationTable'],
-            ['allowFallbackClass' => true]
+            ['allowFallbackClass' => true],
         );
 
         $this->setupAssociations();
@@ -155,7 +155,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $query->formatResults(
             fn (CollectionInterface $results) => $this->rowMapper($results, $locale),
-            $query::PREPEND
+            $query::PREPEND,
         );
     }
 
@@ -179,7 +179,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 [
                     'className' => $config['translationTable'],
                     'allowFallbackClass' => true,
-                ]
+                ],
             );
         }
 
@@ -287,7 +287,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 }
 
                 return $c;
-            }
+            },
         );
 
         return $joinRequired;
@@ -339,7 +339,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 if (in_array($field, $mainTableFields, true)) {
                     $expression->setField("{$mainTableAlias}.{$field}");
                 }
-            }
+            },
         );
 
         return $joinRequired;
@@ -426,7 +426,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 [
                     'useSetters' => false,
                     'markNew' => true,
-                ]
+                ],
             );
         }
 
@@ -486,7 +486,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $allowEmpty = $this->_config['allowEmptyTranslations'];
 
         return $results->map(function ($row) use ($allowEmpty, $locale) {
-            /** @var \Cake\Datasource\EntityInterface|array|null $row */
             if ($row === null) {
                 return $row;
             }
@@ -505,14 +504,14 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 return $row;
             }
 
-            /** @var \Cake\Datasource\EntityInterface|array $translation */
             $translation = $row['translation'];
+            assert($translation instanceof EntityInterface || is_array($translation));
 
             if ($hydrated) {
                 /** @var \Cake\Datasource\EntityInterface $translation */
                 $keys = $translation->getVisible();
             } else {
-                /** @var array $translation */
+                /** @var non-empty-array $translation */
                 $keys = array_keys($translation);
             }
 
@@ -569,9 +568,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
             $row['_translations'] = $result;
             unset($row['_i18n']);
-            if ($row instanceof EntityInterface) {
-                $row->setDirty('_translations', false);
-            }
+            $row->setDirty('_translations', false);
 
             return $row;
         });
@@ -613,11 +610,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the main table fields.
      *
-     * @return list<string>
+     * @return array<string>
      */
     protected function mainFields(): array
     {
-        /** @var list<string> $fields */
+        /** @var array<string> $fields */
         $fields = $this->getConfig('mainTableFields');
 
         if ($fields) {
@@ -634,7 +631,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the translation table fields.
      *
-     * @return list<string>
+     * @return array<string>
      */
     protected function translatedFields(): array
     {

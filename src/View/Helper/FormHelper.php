@@ -34,6 +34,7 @@ use Cake\View\View;
 use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 use function Cake\Core\h;
 use function Cake\I18n\__;
 use function Cake\I18n\__d;
@@ -75,7 +76,9 @@ class FormHelper extends Helper
      */
     protected array $_defaultConfig = [
         'idPrefix' => null,
-        'errorClass' => 'form-error',
+        // Deprecated option, use templates.errorClass intead.
+        'errorClass' => null,
+        'defaultPostLinkBlock' => null,
         'typeMap' => [
             'string' => 'text',
             'text' => 'textarea',
@@ -122,7 +125,7 @@ class FormHelper extends Helper
             // General grouping container for control(). Defines input/label ordering.
             'formGroup' => '{{label}}{{input}}',
             // Wrapper content used to hide other content.
-            'hiddenBlock' => '<div style="display:none;">{{content}}</div>',
+            'hiddenBlock' => '<div{{attrs}}>{{content}}</div>',
             // Generic input element.
             'input' => '<input type="{{type}}" name="{{name}}"{{attrs}}>',
             // Submit input element.
@@ -159,10 +162,17 @@ class FormHelper extends Helper
             'submitContainer' => '<div class="submit">{{content}}</div>',
             // Confirm javascript template for postLink()
             'confirmJs' => '{{confirm}}',
+            // Templates for postLink() JS for <script> tag. (used for CSP)
+            'postLinkJs'
+                => 'document.getElementById("{{linkId}}").addEventListener("click", function(event) { {{content}} });',
             // selected class
             'selectedClass' => 'selected',
             // required class
             'requiredClass' => 'required',
+            // CSS class added to the input when the field has validation errors
+            'errorClass' => 'form-error',
+            // Class to use instead of "display:none" style attribute for hidden elements
+            'hiddenClass' => '',
         ],
         // set HTML5 validation message to custom required/empty messages
         'autoSetCustomValidity' => true,
@@ -171,7 +181,7 @@ class FormHelper extends Helper
     /**
      * Default widgets
      *
-     * @var array<string, list<string>>
+     * @var array<string, array<string>>
      */
     protected array $_defaultWidgets = [
         'button' => ['Button'],
@@ -239,7 +249,7 @@ class FormHelper extends Helper
      * `data` - Corresponds to request data (POST/PUT).
      * `query` - Corresponds to request's query string.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $supportedValueSources = ['context', 'data', 'query'];
 
@@ -247,14 +257,14 @@ class FormHelper extends Helper
      * The default sources.
      *
      * @see FormHelper::$supportedValueSources for valid values.
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_valueSources = ['data', 'context'];
 
     /**
      * Grouped input types.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_groupedInputTypes = ['radio', 'multicheckbox'];
 
@@ -401,7 +411,7 @@ class FormHelper extends Helper
             'valueSources' => null,
         ];
 
-        if (isset($options['valueSources'])) {
+        if ($options['valueSources'] !== null) {
             $this->setValueSources($options['valueSources']);
             unset($options['valueSources']);
         }
@@ -476,7 +486,7 @@ class FormHelper extends Helper
         }
 
         if ($append) {
-            $append = $templater->format('hiddenBlock', ['content' => $append]);
+            $append = $this->wrapInHiddenBlock($append);
         }
 
         $actionAttr = $templater->formatAttributes(['action' => $action, 'escape' => false]);
@@ -624,7 +634,7 @@ class FormHelper extends Helper
 
         $tokenData = $this->formProtector->buildTokenData(
             $this->_lastAction,
-            $this->_getFormProtectorSessionId()
+            $this->_getFormProtectorSessionId(),
         );
         $tokenFields = array_merge($secureAttributes, [
             'value' => $tokenData['fields'],
@@ -641,7 +651,26 @@ class FormHelper extends Helper
             $out .= $this->hidden('_Token.debug', $tokenDebug);
         }
 
-        return $this->formatTemplate('hiddenBlock', ['content' => $out]);
+        return $this->wrapInHiddenBlock($out);
+    }
+
+    /**
+     * Wrap the given content in a hidden div.
+     *
+     * @param string $content Content to wrap.
+     * @return string
+     */
+    protected function wrapInHiddenBlock(string $content): string
+    {
+        $hiddenClass = $this->templater()->get('hiddenClass');
+        $hiddenBlockAttrs = $hiddenClass
+            ? ['class' => $hiddenClass]
+            : ['style' => 'display:none;'];
+
+        return $this->formatTemplate('hiddenBlock', [
+            'content' => $content,
+            'attrs' => $this->templater()->formatAttributes($hiddenBlockAttrs),
+        ]);
     }
 
     /**
@@ -683,7 +712,7 @@ class FormHelper extends Helper
         $session->start();
 
         return new FormProtector(
-            $formTokenData
+            $formTokenData,
         );
     }
 
@@ -917,7 +946,7 @@ class FormHelper extends Helper
 
         $fields = array_merge(
             Hash::normalize($modelFields),
-            Hash::normalize($fields)
+            Hash::normalize($fields),
         );
 
         return $this->controls($fields, $options);
@@ -985,7 +1014,7 @@ class FormHelper extends Helper
         if ($legend === true) {
             $isCreate = $context->isCreate();
             $modelName = Inflector::humanize(
-                Inflector::singularize($this->_View->getRequest()->getParam('controller'))
+                Inflector::singularize($this->_View->getRequest()->getParam('controller')),
             );
             if (!$isCreate) {
                 $legend = __d('cake', 'Edit {0}', $modelName);
@@ -1025,9 +1054,10 @@ class FormHelper extends Helper
      * - `error` - Control the error message that is produced. Set to `false` to disable any kind of error reporting
      *   (field error and error messages).
      * - `empty` - String or boolean to enable empty select box options.
-     * - `nestedInput` - Used with checkbox and radio inputs. Set to false to render inputs outside of label
-     *   elements. Can be set to true on any input to force the input inside the label. If you
-     *   enable this option for radio buttons you will also need to modify the default `radioWrapper` template.
+     * - `nestedInput` - Used with checkbox inputs. Set to false to render inputs outside of label
+     *   elements. By default the checkbox input are rendered inside the label. If you disable this
+     *   option you will also need to modify the default `checkboxWrapper` template to include the
+     *   `{{input}}` template variable.
      * - `templates` - The templates you want to use for this input. Any templates will be merged on top of
      *   the already loaded templates. This option can either be a filename in /config that contains
      *   the templates you want to load, or an array of templates to use.
@@ -1065,9 +1095,15 @@ class FormHelper extends Helper
         }
         unset($options['templates']);
 
-        // Hidden inputs don't need aria.
-        // Multiple checkboxes can't have aria generated for them at this layer.
-        if ($options['type'] !== 'hidden' && ($options['type'] !== 'select' && !isset($options['multiple']))) {
+        $addAriaAttributes = true;
+        if (
+            $options['type'] === 'hidden' ||
+            ($options['type'] === 'select' && isset($options['multiple']) && $options['multiple'] === 'checkbox')
+        ) {
+            $addAriaAttributes = false;
+        }
+
+        if ($addAriaAttributes) {
             $isFieldError = $this->isFieldError($fieldName);
             $options += [
                 'aria-invalid' => $isFieldError ? 'true' : null,
@@ -1097,7 +1133,7 @@ class FormHelper extends Helper
             } else {
                 $error = $this->error($fieldName, $options['error']);
             }
-            $errorSuffix = empty($error) ? '' : 'Error';
+            $errorSuffix = $error ? 'Error' : '';
             unset($options['error']);
         }
 
@@ -1224,7 +1260,7 @@ class FormHelper extends Helper
             case 'input':
                 throw new InvalidArgumentException(sprintf(
                     'Invalid type `input` used for field `%s`.',
-                    $fieldName
+                    $fieldName,
                 ));
 
             default:
@@ -1329,7 +1365,7 @@ class FormHelper extends Helper
         $fieldName = array_slice(explode('.', $fieldName), -1)[0];
 
         $varName = Inflector::variable(
-            $pluralize ? Inflector::pluralize($fieldName) : $fieldName
+            $pluralize ? Inflector::pluralize($fieldName) : $fieldName,
         );
         $varOptions = $this->_View->get($varName);
         if (!is_iterable($varOptions)) {
@@ -1353,7 +1389,15 @@ class FormHelper extends Helper
     {
         assert(is_subclass_of($enumClass, BackedEnum::class));
 
-        $hasLabel = is_a($enumClass, EnumLabelInterface::class, true) || method_exists($enumClass, 'label');
+        if (is_a($enumClass, EnumLabelInterface::class, true)) {
+            $hasLabel = true;
+        } elseif (method_exists($enumClass, 'label')) {
+            $hasLabel = true;
+            deprecationWarning('5.2.0', 'Enums with the `label()` method must implement the `EnumLabelInterface`.');
+        } else {
+            $hasLabel = false;
+        }
+
         $values = [];
         foreach ($enumClass::cases() as $enumClass) {
             /**
@@ -1591,7 +1635,7 @@ class FormHelper extends Helper
      *   the radio label will be 'empty'. Set this option to a string to control the label value.
      *
      * @param string $fieldName Name of a field, like this "modelname.fieldname"
-     * @param iterable $options Radio button options array.
+     * @param iterable<string, mixed> $options Radio button options array.
      * @param array<string, mixed> $attributes Array of attributes.
      * @return string Completed radio widget set.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-radio-buttons
@@ -1700,14 +1744,14 @@ class FormHelper extends Helper
 
         $options = $this->_initInputField($fieldName, array_merge(
             $options,
-            ['secure' => static::SECURE_SKIP]
+            ['secure' => static::SECURE_SKIP],
         ));
 
         if ($secure === true && $this->formProtector) {
             $this->formProtector->addField(
                 $options['name'],
                 true,
-                $options['val'] === false ? '0' : (string)$options['val']
+                $options['val'] === false ? '0' : (string)$options['val'],
             );
         }
 
@@ -1850,7 +1894,7 @@ class FormHelper extends Helper
      */
     public function postLink(string $title, array|string|null $url = null, array $options = []): string
     {
-        $options += ['block' => null, 'confirm' => null];
+        $options += ['block' => $this->getConfig('defaultPostLinkBlock'), 'confirm' => null];
 
         $requestMethod = 'POST';
         if (!empty($options['method'])) {
@@ -1864,9 +1908,14 @@ class FormHelper extends Helper
         $formName = str_replace('.', '', uniqid('post_', true));
         $formOptions = [
             'name' => $formName,
-            'style' => 'display:none;',
             'method' => 'post',
         ];
+        $hiddenClass = $this->templater()->get('hiddenClass');
+        if ($hiddenClass === '' || $hiddenClass === null) {
+            $formOptions['style'] = 'display:none;';
+        } else {
+            $formOptions['class'] = $hiddenClass;
+        }
         if (isset($options['target'])) {
             $formOptions['target'] = $options['target'];
             unset($options['target']);
@@ -1917,7 +1966,6 @@ class FormHelper extends Helper
             $this->_View->append($options['block'], $out);
             $out = '';
         }
-        unset($options['block']);
 
         $url = '#';
         $onClick = 'document.' . $formName . '.submit();';
@@ -1933,9 +1981,22 @@ class FormHelper extends Helper
         } else {
             $onClick .= ' event.returnValue = false; return false;';
         }
-        $options['onclick'] = $onClick;
 
-        $out .= $this->Html->link($title, $url, $options);
+        $script = null;
+        if ($this->_View->getRequest()->getAttribute('cspScriptNonce')) {
+            $options['id'] ??= $this->_domId('link-' . $formName);
+            $script = $this->templater()->format('postLinkJs', [
+                'linkId' => $options['id'],
+                'content' => $onClick,
+            ]);
+            $script = $this->Html->scriptBlock($script, ['block' => $options['block']]);
+        } else {
+            $options['onclick'] = $onClick;
+        }
+
+        unset($options['block']);
+
+        $out .= $this->Html->link($title, $url, $options) . $script;
 
         return $out;
     }
@@ -1971,7 +2032,7 @@ class FormHelper extends Helper
         if (isset($options['name']) && $this->formProtector) {
             $this->formProtector->addField(
                 $options['name'],
-                $options['secure']
+                $options['secure'],
             );
         }
         unset($options['secure']);
@@ -2071,7 +2132,7 @@ class FormHelper extends Helper
      * ```
      *
      * @param string $fieldName Name attribute of the SELECT
-     * @param iterable $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
+     * @param iterable<string, mixed> $options Array of the OPTION elements (as 'value'=>'Text' pairs) to be used in the
      *   SELECT element
      * @param array<string, mixed> $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
@@ -2150,7 +2211,7 @@ class FormHelper extends Helper
      * Can be used in place of a select box with the multiple attribute.
      *
      * @param string $fieldName Name attribute of the SELECT
-     * @param iterable $options Array of the OPTION elements
+     * @param iterable<string, mixed> $options Array of the OPTION elements
      *   (as 'value'=>'Text' pairs) to be used in the checkboxes element.
      * @param array<string, mixed> $attributes The HTML attributes of the select element.
      * @return string Formatted SELECT element
@@ -2385,7 +2446,17 @@ class FormHelper extends Helper
         }
 
         if ($context->hasError($field)) {
-            $options = $this->addClass($options, $this->_config['errorClass']);
+            $errorClass = $this->getConfig('errorClass');
+            if ($errorClass !== null) {
+                deprecationWarning(
+                    '5.2.0',
+                    'The `errorClass` config is deprecated. Use the `templates.errorClass` template variable instead.',
+                );
+            } else {
+                $errorClass = $this->templater()->get('errorClass');
+            }
+
+            $options = $this->addClass($options, $errorClass);
         }
         $isDisabled = $this->_isDisabled($options);
         if ($isDisabled) {
@@ -2422,7 +2493,7 @@ class FormHelper extends Helper
             if (is_array($first)) {
                 $disabled = array_filter(
                     $options['options'],
-                    fn ($i) => in_array($i['value'], $options['disabled'], true)
+                    fn ($i) => in_array($i['value'], $options['disabled'], true),
                 );
 
                 return $disabled !== [];
@@ -2567,7 +2638,7 @@ class FormHelper extends Helper
      *
      * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
      *
-     * @return list<string> List of value sources.
+     * @return array<string> List of value sources.
      */
     public function getValueSources(): array
     {
@@ -2577,7 +2648,7 @@ class FormHelper extends Helper
     /**
      * Validate value sources.
      *
-     * @param list<string> $sources A list of strings identifying a source.
+     * @param array<string> $sources A list of strings identifying a source.
      * @return void
      * @throws \InvalidArgumentException If sources list contains invalid value.
      */
@@ -2591,7 +2662,7 @@ class FormHelper extends Helper
             throw new InvalidArgumentException(sprintf(
                 'Invalid value source(s): %s. Valid values are: %s.',
                 implode(', ', $diff),
-                implode(', ', $this->supportedValueSources)
+                implode(', ', $this->supportedValueSources),
             ));
         }
     }
@@ -2603,7 +2674,7 @@ class FormHelper extends Helper
      * Order sets priority.
      *
      * @see FormHelper::$supportedValueSources for valid values.
-     * @param list<string>|string $sources A string or a list of strings identifying a source.
+     * @param array<string>|string $sources A string or a list of strings identifying a source.
      * @return $this
      * @throws \InvalidArgumentException If sources list contains invalid value.
      */

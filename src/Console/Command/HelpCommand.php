@@ -180,9 +180,9 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     }
 
     /**
-     * @param list<string> $names Names
+     * @param array<string> $names Names
      * @return string
-     * @psalm-param non-empty-list<string> $names
+     * @psalm-param non-empty-array<string> $names
      */
     protected function getShortestName(array $names): string
     {
@@ -226,7 +226,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
-            'Get the list of available commands for this application.'
+            'Get the list of available commands for this application.',
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
             'boolean' => true,

@@ -106,13 +106,13 @@ class TextHelper extends Helper
         $text = (string)preg_replace_callback(
             $pattern,
             [&$this, '_insertPlaceHolder'],
-            $text
+            $text,
         );
         // phpcs:disable Generic.Files.LineLength
         $text = preg_replace_callback(
             '#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://)www\.[^\s\n\%\ <]+[^\s<\n\%\,\.\ ](?<!\))#i',
             [&$this, '_insertPlaceHolder'],
-            $text
+            $text,
         );
         // phpcs:enable Generic.Files.LineLength
         if ($options['escape']) {
@@ -242,7 +242,7 @@ class TextHelper extends Helper
         $text = preg_replace_callback(
             '/(?<=\s|^|\(|\>|\;)(' . $atom . '*(?:\.' . $atom . '+)*@[\p{L}0-9-]+(?:\.[\p{L}0-9-]+)+)/ui',
             [&$this, '_insertPlaceholder'],
-            $text
+            $text,
         );
         if ($options['escape']) {
             $text = h($text);

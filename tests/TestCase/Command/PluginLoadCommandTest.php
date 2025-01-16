@@ -98,7 +98,7 @@ class PluginLoadCommandTest extends TestCase
         $this->assertSame(['onlyDebug' => true, 'onlyCli' => true], $config['Company/TestPluginThree']);
         $this->assertSame(
             ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false],
-            $config['TestPluginTwo']
+            $config['TestPluginTwo'],
         );
     }
 

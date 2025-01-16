@@ -9,6 +9,6 @@ return function (RouteBuilder $routes): void {
     $routes->get(
         '/test_plugin',
         ['controller' => 'TestPlugin', 'plugin' => 'TestPlugin', 'action' => 'index'],
-        'test_plugin:index'
+        'test_plugin:index',
     );
 };

@@ -432,6 +432,35 @@ class EventManagerTest extends TestCase
     }
 
     /**
+     * Tests subscribing an invokable listener class
+     */
+    public function testOnListenerClass(): void
+    {
+        $manager = new EventManager();
+        $listener = new class implements EventListenerInterface {
+            public array $callList = [];
+
+            final public function __invoke(EventInterface $event): void
+            {
+                $this->callList[] = __FUNCTION__;
+            }
+
+            public function implementedEvents(): array
+            {
+                return [
+                    'some.event' => $this,
+                ];
+            }
+        };
+        $manager->on($listener);
+
+        $event = new Event('some.event');
+        $manager->dispatch($event);
+
+        $this->assertEquals(['__invoke'], $listener->callList);
+    }
+
+    /**
      * Tests subscribing a listener object and firing the events it subscribed to
      */
     public function testDetachSubscriber(): void
@@ -729,7 +758,7 @@ class EventManagerTest extends TestCase
                 '_generalManager' => '(object) EventManager',
                 '_dispatchedEvents' => null,
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
 
         $eventManager->setEventList(new EventList());
@@ -744,7 +773,7 @@ class EventManagerTest extends TestCase
                     'Foo with subject Cake\Test\TestCase\Event\EventManagerTest',
                 ],
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
 
         $eventManager->unsetEventList();
@@ -763,7 +792,7 @@ class EventManagerTest extends TestCase
                 '_generalManager' => '(object) EventManager',
                 '_dispatchedEvents' => null,
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
 
         $eventManager->off('foo', $func);
@@ -778,7 +807,7 @@ class EventManagerTest extends TestCase
                 '_generalManager' => '(object) EventManager',
                 '_dispatchedEvents' => null,
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
 
         $eventManager->on('bar', function (): void {
@@ -802,7 +831,7 @@ class EventManagerTest extends TestCase
                 '_generalManager' => '(object) EventManager',
                 '_dispatchedEvents' => null,
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
     }
 
@@ -830,7 +859,7 @@ class EventManagerTest extends TestCase
                     'example with no subject',
                 ],
             ],
-            $eventManager->__debugInfo()
+            $eventManager->__debugInfo(),
         );
     }
 

@@ -28,7 +28,7 @@ use Cake\Core\ObjectRegistry;
 class TransportRegistry extends ObjectRegistry
 {
     /**
-     * Resolve a mailer tranport classname.
+     * Resolve a mailer transport classname.
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *

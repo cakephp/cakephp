@@ -34,7 +34,7 @@ class PaginatedResultSetTest extends TestCase
         };
         $paginatedResults = new PaginatedResultSet(
             $resultSet,
-            []
+            [],
         );
 
         $this->assertInstanceOf(ResultSetInterface::class, $paginatedResults->items());
@@ -59,7 +59,7 @@ class PaginatedResultSetTest extends TestCase
 
         $paginatedResults = new PaginatedResultSet(
             $resultSet,
-            []
+            [],
         );
 
         $this->deprecated(function () use ($paginatedResults): void {
@@ -72,7 +72,7 @@ class PaginatedResultSetTest extends TestCase
     {
         $paginatedResults = new PaginatedResultSet(
             new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),
-            []
+            [],
         );
 
         $this->assertEquals('{"1":"a","2":"b","3":"c"}', json_encode($paginatedResults));
@@ -82,7 +82,7 @@ class PaginatedResultSetTest extends TestCase
     {
         $paginatedResults = new PaginatedResultSet(
             new ArrayIterator([1 => 'a', 2 => 'b', 3 => 'c']),
-            ['foo' => 'bar']
+            ['foo' => 'bar'],
         );
 
         $serialized = serialize($paginatedResults);

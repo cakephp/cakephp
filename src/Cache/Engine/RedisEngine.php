@@ -218,7 +218,7 @@ class RedisEngine extends CacheEngine
             return $this->_Redis->connect(
                 $server,
                 (int)$this->_config['port'],
-                (int)$this->_config['timeout']
+                (int)$this->_config['timeout'],
             );
         }
 
@@ -229,7 +229,7 @@ class RedisEngine extends CacheEngine
             null,
             0,
             0.0,
-            ['ssl' => $ssl]
+            ['ssl' => $ssl],
         );
     }
 
@@ -250,7 +250,7 @@ class RedisEngine extends CacheEngine
                 $server,
                 (int)$this->_config['port'],
                 (int)$this->_config['timeout'],
-                $persistentId
+                $persistentId,
             );
         }
 
@@ -261,7 +261,7 @@ class RedisEngine extends CacheEngine
             $persistentId,
             0,
             0.0,
-            ['ssl' => $ssl]
+            ['ssl' => $ssl],
         );
     }
 
@@ -511,7 +511,7 @@ class RedisEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function groups(): array
     {

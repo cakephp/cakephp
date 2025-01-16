@@ -169,7 +169,7 @@ trait StaticConfigTrait
     /**
      * Returns an array containing the named configurations
      *
-     * @return list<string> Array of configurations.
+     * @return array<string> Array of configurations.
      */
     public static function configured(): array
     {
@@ -209,7 +209,7 @@ trait StaticConfigTrait
      * Note that querystring arguments are also parsed and set as values in the returned configuration.
      *
      * @param string $dsn The DSN string to convert to a configuration array
-     * @return array<string, mixed> The configuration array to be stored after parsing the DSN
+     * @return array<int|string, array|bool|string|null> The configuration array to be stored after parsing the DSN
      * @throws \InvalidArgumentException If not passed a string, or passed an invalid string
      */
     public static function parseDsn(string $dsn): array
@@ -293,7 +293,6 @@ REGEXP;
             }
         }
 
-        /** @var array<string, mixed> $parsed */
         $parsed = $queryArgs + $parsed;
 
         if (empty($parsed['className'])) {

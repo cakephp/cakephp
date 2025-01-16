@@ -123,7 +123,7 @@ class PaginatorHelperTest extends TestCase
         $this->assertSame(
             $this->Paginator,
             $result,
-            'Setting should return the same object'
+            'Setting should return the same object',
         );
 
         $result = $this->Paginator->getTemplates();
@@ -540,7 +540,7 @@ class PaginatorHelperTest extends TestCase
                 'direction' => 'asc',
                 'page' => 1,
                 'scope' => 'tags',
-            ]
+            ],
         ));
 
         $result = $this->Paginator->sort('tag', 'Tag', ['model' => 'Tags']);
@@ -1812,7 +1812,7 @@ class PaginatorHelperTest extends TestCase
         $this->assertStringContainsString(
             '<li',
             $this->Paginator->templater()->get('current'),
-            'Templates were not restored.'
+            'Templates were not restored.',
         );
     }
 

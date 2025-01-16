@@ -20,7 +20,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
-use InvalidArgumentException;
+use Error;
 
 /**
  * ValidationRuleTest
@@ -93,8 +93,8 @@ class ValidationRuleTest extends TestCase
      */
     public function testCustomMethodMissingError(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Unable to call method `totallyMissing` in `default` provider for field `test`');
+        $this->expectException(Error::class);
+        $this->expectExceptionMessage('Call to undefined method Cake\Test\TestCase\Validation\ValidationRuleTest::totallyMissing()');
         $def = ['rule' => ['totallyMissing']];
         $data = 'some data';
         $providers = ['default' => $this];

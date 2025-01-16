@@ -142,7 +142,7 @@ class RoutesCommandTest extends TestCase
     {
         Configure::write('TestApp.routes', function ($routes): void {
             $routes->connect(
-                new Route('/a/route/sorted', [], ['_name' => '_aRoute'])
+                new Route('/a/route/sorted', [], ['_name' => '_aRoute']),
             );
         });
 
@@ -316,24 +316,24 @@ class RoutesCommandTest extends TestCase
     {
         Configure::write('TestApp.routes', function ($builder): void {
             $builder->connect(
-                new Route('/unique-path', [], ['_name' => '_aRoute'])
+                new Route('/unique-path', [], ['_name' => '_aRoute']),
             );
             $builder->connect(
-                new Route('/unique-path', [], ['_name' => '_bRoute'])
-            );
-
-            $builder->connect(
-                new Route('/blog', ['_method' => 'GET'], ['_name' => 'blog-get'])
-            );
-            $builder->connect(
-                new Route('/blog', [], ['_name' => 'blog-all'])
+                new Route('/unique-path', [], ['_name' => '_bRoute']),
             );
 
             $builder->connect(
-                new Route('/events', ['_method' => ['POST', 'PUT']], ['_name' => 'events-post'])
+                new Route('/blog', ['_method' => 'GET'], ['_name' => 'blog-get']),
             );
             $builder->connect(
-                new Route('/events', ['_method' => 'GET'], ['_name' => 'events-get'])
+                new Route('/blog', [], ['_name' => 'blog-all']),
+            );
+
+            $builder->connect(
+                new Route('/events', ['_method' => ['POST', 'PUT']], ['_name' => 'events-post']),
+            );
+            $builder->connect(
+                new Route('/events', ['_method' => 'GET'], ['_name' => 'events-get']),
             );
         });
 

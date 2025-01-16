@@ -71,13 +71,13 @@ class CommandCollection implements IteratorAggregate, Countable
                     'It is not a subclass of `%s`.',
                     $command,
                     $name,
-                    CommandInterface::class
-                )
+                    CommandInterface::class,
+                ),
             );
         }
         if (!preg_match('/^[^\s]+(?:(?: [^\s]+){1,2})?$/ui', $name)) {
             throw new InvalidArgumentException(
-                "The command name `{$name}` is invalid. Names can only be a maximum of three words."
+                "The command name `{$name}` is invalid. Names can only be a maximum of three words.",
             );
         }
 
@@ -242,7 +242,7 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Get the list of available command names.
      *
-     * @return list<string> Command names
+     * @return array<string> Command names
      */
     public function keys(): array
     {

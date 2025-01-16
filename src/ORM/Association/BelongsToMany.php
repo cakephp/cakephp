@@ -111,7 +111,7 @@ class BelongsToMany extends Association
     /**
      * The name of the field representing the foreign key to the target table
      *
-     * @var list<string>|string|null
+     * @var array<string>|string|null
      */
     protected array|string|null $_targetForeignKey = null;
 
@@ -125,7 +125,7 @@ class BelongsToMany extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_validStrategies = [
         self::STRATEGY_SELECT,
@@ -166,7 +166,7 @@ class BelongsToMany extends Association
     /**
      * Sets the name of the field representing the foreign key to the target table.
      *
-     * @param list<string>|string $key the key to be used to link both tables together
+     * @param array<string>|string $key the key to be used to link both tables together
      * @return $this
      */
     public function setTargetForeignKey(array|string $key)
@@ -179,7 +179,7 @@ class BelongsToMany extends Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return list<string>|string
+     * @return array<string>|string
      */
     public function getTargetForeignKey(): array|string
     {
@@ -289,7 +289,7 @@ class BelongsToMany extends Association
             throw new InvalidArgumentException(sprintf(
                 'The `%s` association on `%s` cannot target the same table.',
                 $this->getName(),
-                $source->getAlias()
+                $source->getAlias(),
             ));
         }
 
@@ -417,7 +417,7 @@ class BelongsToMany extends Association
             ) {
                 throw new InvalidArgumentException(
                     "The existing `{$tAlias}` association on `{$junction->getAlias()}` " .
-                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`"
+                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`",
                 );
             }
         }
@@ -584,7 +584,7 @@ class BelongsToMany extends Association
             return true;
         }
 
-        /** @var list<string> $foreignKeys */
+        /** @var array<string> $foreignKeys */
         $foreignKeys = (array)$this->getForeignKey();
         $bindingKeys = (array)$this->getBindingKey();
         $conditions = [];
@@ -724,7 +724,7 @@ class BelongsToMany extends Association
     protected function _saveTarget(
         EntityInterface $parentEntity,
         array $entities,
-        array $options
+        array $options,
     ): EntityInterface|false {
         $joinAssociations = false;
         if (isset($options['associated']) && is_array($options['associated'])) {
@@ -794,9 +794,9 @@ class BelongsToMany extends Association
         $junction = $this->junction();
         $entityClass = $junction->getEntityClass();
         $belongsTo = $junction->getAssociation($target->getAlias());
-        /** @var list<string> $foreignKey */
+        /** @var array<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
-        /** @var list<string> $assocForeignKey */
+        /** @var array<string> $assocForeignKey */
         $assocForeignKey = (array)$belongsTo->getForeignKey();
         $targetBindingKey = (array)$belongsTo->getBindingKey();
         $bindingKey = (array)$this->getBindingKey();
@@ -876,7 +876,7 @@ class BelongsToMany extends Association
         return $this->junction()->getConnection()->transactional(
             function () use ($sourceEntity, $targetEntities, $options) {
                 return $this->_saveLinks($sourceEntity, $targetEntities, $options);
-            }
+            },
         );
     }
 
@@ -935,7 +935,7 @@ class BelongsToMany extends Association
                 foreach ($links as $entity) {
                     $this->_junctionTable->delete($entity, $options);
                 }
-            }
+            },
         );
 
         /** @var array<\Cake\Datasource\EntityInterface> $existing */
@@ -1195,7 +1195,7 @@ class BelongsToMany extends Association
                 $junction = $this->junction();
                 $target = $this->getTarget();
 
-                /** @var list<string> $foreignKey */
+                /** @var array<string> $foreignKey */
                 $foreignKey = (array)$this->getForeignKey();
                 $assocForeignKey = (array)$junction->getAssociation($target->getAlias())->getForeignKey();
                 $prefixedForeignKey = array_map($junction->aliasField(...), $foreignKey);
@@ -1223,7 +1223,7 @@ class BelongsToMany extends Association
                     ->from([$junctionQueryAlias => $matches])
                     ->innerJoin(
                         [$junction->getAlias() => $junction->getTable()],
-                        $matchesConditions
+                        $matchesConditions,
                     );
 
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
@@ -1242,7 +1242,7 @@ class BelongsToMany extends Association
                     /** @psalm-suppress RedundantConditionGivenDocblockType */
                     $inserted = array_combine(
                         array_keys($inserts),
-                        (array)$sourceEntity->get($property)
+                        (array)$sourceEntity->get($property),
                     ) ?: [];
                     $targetEntities = $inserted + $targetEntities;
                 }
@@ -1252,7 +1252,7 @@ class BelongsToMany extends Association
                 $sourceEntity->setDirty($property, false);
 
                 return true;
-            }
+            },
         );
     }
 
@@ -1272,14 +1272,14 @@ class BelongsToMany extends Association
         SelectQuery $existing,
         array $jointEntities,
         array $targetEntities,
-        array $options = []
+        array $options = [],
     ): array|false {
         $junction = $this->junction();
         $target = $this->getTarget();
         $belongsTo = $junction->getAssociation($target->getAlias());
-        /** @var list<string> $foreignKey */
+        /** @var array<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
-        /** @var list<string> $assocForeignKey */
+        /** @var array<string> $assocForeignKey */
         $assocForeignKey = (array)$belongsTo->getForeignKey();
 
         $keys = array_merge($foreignKey, $assocForeignKey);
@@ -1419,7 +1419,7 @@ class BelongsToMany extends Association
 
         $belongsTo = $junction->getAssociation($target->getAlias());
         $hasMany = $source->getAssociation($junction->getAlias());
-        /** @var list<string> $foreignKey */
+        /** @var array<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
         $foreignKey = array_map(function ($key) {
             return $key . ' IS';

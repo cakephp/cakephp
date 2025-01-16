@@ -29,7 +29,7 @@ class DateTimeTimezoneType extends DateTimeType
     /**
      * {@inheritDoc}
      *
-     * @var list<string>
+     * @var array<string>
      */
 
     protected array $_marshalFormats = [

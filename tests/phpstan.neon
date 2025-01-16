@@ -11,6 +11,8 @@ parameters:
         - ../src/Routing/functions_global.php
     paths:
         - TestCase/
-
+    ignoreErrors:
+        -
+            identifier: includeOnce.fileNotFound
     excludePaths:
         - TestCase/Routing/RouterTest.php

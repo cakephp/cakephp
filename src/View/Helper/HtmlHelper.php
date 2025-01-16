@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
+use Cake\Http\MimeType;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use function Cake\Core\h;
@@ -46,6 +47,9 @@ class HtmlHelper extends Helper
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
+        'defaultScriptBlock' => null,
+        'defaultCssBlock' => null,
+        'defaultMetaBlock' => null,
         'templates' => [
             'meta' => '<meta{{attrs}}>',
             'metalink' => '<link href="{{url}}"{{attrs}}>',
@@ -176,7 +180,7 @@ class HtmlHelper extends Helper
             }
         }
 
-        $options += $type + ['block' => null];
+        $options += $type + ['block' => $this->getConfig('defaultMetaBlock')];
         $out = '';
 
         if (isset($options['link'])) {
@@ -373,7 +377,7 @@ class HtmlHelper extends Helper
      * `cspStyleNonce` attribute, that value will be applied as the `nonce` attribute on the
      * generated HTML.
      *
-     * @param list<string>|string $path The name of a CSS style sheet or an array containing names of
+     * @param array<string>|string $path The name of a CSS style sheet or an array containing names of
      *   CSS stylesheets. If `$path` is prefixed with '/', the path will be relative to the webroot
      *   of your application. Otherwise, the path will be relative to your CSS path, usually webroot/css.
      * @param array<string, mixed> $options Array of options and HTML arguments.
@@ -384,7 +388,7 @@ class HtmlHelper extends Helper
     {
         $options += [
             'once' => true,
-            'block' => null,
+            'block' => $this->getConfig('defaultCssBlock'),
             'rel' => 'stylesheet',
             'nonce' => $this->_View->getRequest()->getAttribute('cspStyleNonce'),
         ];
@@ -474,7 +478,7 @@ class HtmlHelper extends Helper
      * If the current request has a `cspScriptNonce` attribute, that value will
      * be inserted as a `nonce` attribute on the script tag.
      *
-     * @param list<string>|string $url String or array of javascript files to include
+     * @param array<string>|string $url String or array of javascript files to include
      * @param array<string, mixed> $options Array of options, and html attributes see above.
      * @return string|null String of `<script>` tags or null if block is specified in options
      *   or if $once is true and the file has been included before.
@@ -483,7 +487,7 @@ class HtmlHelper extends Helper
     public function script(array|string $url, array $options = []): ?string
     {
         $defaults = [
-            'block' => null,
+            'block' => $this->getConfig('defaultScriptBlock'),
             'once' => true,
             'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
         ];
@@ -541,7 +545,10 @@ class HtmlHelper extends Helper
      */
     public function scriptBlock(string $script, array $options = []): ?string
     {
-        $options += ['block' => null, 'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce')];
+        $options += [
+            'block' => $this->getConfig('defaultScriptBlock'),
+            'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
+        ];
 
         $out = $this->formatTemplate('javascriptblock', [
             'attrs' => $this->templater()->formatAttributes($options, ['block']),
@@ -744,7 +751,7 @@ class HtmlHelper extends Helper
         array|bool|null $oddTrOptions = null,
         array|bool|null $evenTrOptions = null,
         bool $useCount = false,
-        bool $continueOddEven = true
+        bool $continueOddEven = true,
     ): string {
         if (!is_array($data)) {
             $data = [[$data]];
@@ -789,7 +796,7 @@ class HtmlHelper extends Helper
      *
      * @param array $line Line data to render.
      * @param bool $useCount Renders the count into the row. Default is false.
-     * @return list<string>
+     * @return array<string>
      */
     protected function _renderCells(array $line, bool $useCount = false): array
     {
@@ -1016,8 +1023,7 @@ class HtmlHelper extends Helper
                     ];
                 }
                 if (!isset($source['type'])) {
-                    $ext = pathinfo($source['src'], PATHINFO_EXTENSION);
-                    $source['type'] = $this->_View->getResponse()->getMimeType($ext);
+                    $source['type'] = MimeType::getMimeTypeForFile($source['src']);
                 }
                 $source['src'] = $this->Url->assetUrl($source['src'], $options);
                 $sourceTags .= $this->formatTemplate('tagselfclosing', [
@@ -1040,8 +1046,7 @@ class HtmlHelper extends Helper
             if (is_array($path)) {
                 $mimeType = $path[0]['type'];
             } else {
-                $mimeType = $this->_View->getResponse()->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
-                assert(is_string($mimeType));
+                $mimeType = MimeType::getMimeTypeForFile($path);
             }
             if (str_starts_with($mimeType, 'video/')) {
                 $tag = 'video';
@@ -1053,7 +1058,7 @@ class HtmlHelper extends Helper
         if (isset($options['poster'])) {
             $options['poster'] = $this->Url->assetUrl(
                 $options['poster'],
-                ['pathPrefix' => Configure::read('App.imageBaseUrl')] + $options
+                ['pathPrefix' => Configure::read('App.imageBaseUrl')] + $options,
             );
         }
         $text = $options['text'];

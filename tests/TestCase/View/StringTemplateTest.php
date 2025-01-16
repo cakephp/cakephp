@@ -62,7 +62,7 @@ class StringTemplateTest extends TestCase
         $this->assertSame(
             $this->template,
             $result,
-            'The same instance should be returned'
+            'The same instance should be returned',
         );
 
         $this->assertSame($templates['link'], $this->template->get('link'));
@@ -218,14 +218,14 @@ class StringTemplateTest extends TestCase
         $result = $this->template->formatAttributes($attrs);
         $this->assertSame(
             ' disabled="disabled" selected="selected" checked="checked" multiple="multiple"',
-            $result
+            $result,
         );
 
         $attrs = ['disabled' => false, 'selected' => 0, 'checked' => '0', 'multiple' => null];
         $result = $this->template->formatAttributes($attrs);
         $this->assertSame(
             '',
-            $result
+            $result,
         );
     }
 
@@ -238,28 +238,28 @@ class StringTemplateTest extends TestCase
         $result = $this->template->formatAttributes($attrs);
         $this->assertSame(
             ' name="bruce" data-hero="&lt;batman&gt;" spellcheck="true"',
-            $result
+            $result,
         );
 
         $attrs = ['escape' => false, 'name' => 'bruce', 'data-hero' => '<batman>'];
         $result = $this->template->formatAttributes($attrs);
         $this->assertSame(
             ' name="bruce" data-hero="<batman>"',
-            $result
+            $result,
         );
 
         $attrs = ['name' => 'bruce', 'data-hero' => '<batman>'];
         $result = $this->template->formatAttributes($attrs, ['name']);
         $this->assertSame(
             ' data-hero="&lt;batman&gt;"',
-            $result
+            $result,
         );
 
         $attrs = ['name' => 'bruce', 'data-hero' => '<batman>', 'templateVars' => ['foo' => 'bar']];
         $result = $this->template->formatAttributes($attrs, ['name']);
         $this->assertSame(
             ' data-hero="&lt;batman&gt;"',
-            $result
+            $result,
         );
 
         $evilKey = '><script>alert(1)</script>';
@@ -268,7 +268,7 @@ class StringTemplateTest extends TestCase
         $result = $this->template->formatAttributes($attrs);
         $this->assertSame(
             ' &gt;&lt;script&gt;alert(1)&lt;/script&gt;="some value"',
-            $result
+            $result,
         );
     }
 
@@ -281,7 +281,7 @@ class StringTemplateTest extends TestCase
         $result = $this->template->formatAttributes($attrs);
         $this->assertSame(
             ' name="bruce wayne"',
-            $result
+            $result,
         );
     }
 
@@ -381,7 +381,7 @@ class StringTemplateTest extends TestCase
                 'type' => 'text',
             ],
             'new_class',
-            'class'
+            'class',
         );
         $this->assertEquals($result, [
             'class' => ['current_class', 'new_class'],
@@ -396,7 +396,7 @@ class StringTemplateTest extends TestCase
                 'type' => 'text',
             ],
             'new_class',
-            'my_class'
+            'my_class',
         );
         $this->assertEquals($result, [
             'other_index1' => false,
@@ -412,7 +412,7 @@ class StringTemplateTest extends TestCase
                 ],
             ],
             'new_class',
-            'nonexistent'
+            'nonexistent',
         );
         $this->assertEquals($result, [
             'class' => [

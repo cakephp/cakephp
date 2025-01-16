@@ -78,8 +78,8 @@ class SyslogLogTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     [LOG_DEBUG, 'debug: Foo'],
-                    [LOG_DEBUG, 'debug: Bar']
-                )
+                    [LOG_DEBUG, 'debug: Bar'],
+                ),
             );
         $log->log('debug', "Foo\nBar");
     }

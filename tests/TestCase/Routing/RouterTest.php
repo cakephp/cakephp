@@ -606,19 +606,19 @@ class RouterTest extends TestCase
         $routes->connect(
             '{language}/galleries',
             ['controller' => 'Galleries', 'action' => 'index'],
-            ['language' => '[a-z]{3}']
+            ['language' => '[a-z]{3}'],
         );
 
         $routes->connect(
             '/{language}/{admin}/{controller}/{action}/*',
             ['admin' => 'admin'],
-            ['language' => '[a-z]{3}', 'admin' => 'admin']
+            ['language' => '[a-z]{3}', 'admin' => 'admin'],
         );
 
         $routes->connect(
             '/{language}/{controller}/{action}/*',
             [],
-            ['language' => '[a-z]{3}']
+            ['language' => '[a-z]{3}'],
         );
 
         $result = Router::url(['admin' => false, 'language' => 'dan', 'action' => 'index', 'controller' => 'Galleries']);
@@ -634,7 +634,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/{language}/pages',
             ['controller' => 'Pages', 'action' => 'index'],
-            ['language' => '[a-z]{3}']
+            ['language' => '[a-z]{3}'],
         );
         $routes->connect('/{language}/{controller}/{action}/*', [], ['language' => '[a-z]{3}']);
 
@@ -654,7 +654,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/forestillinger/{month}/{year}/*',
             ['plugin' => 'Shows', 'controller' => 'Shows', 'action' => 'calendar'],
-            ['month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}']
+            ['month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}'],
         );
 
         $result = Router::url([
@@ -673,7 +673,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/kalender/{month}/{year}/*',
             ['plugin' => 'Shows', 'controller' => 'Shows', 'action' => 'calendar'],
-            ['month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}']
+            ['month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}'],
         );
         $routes->connect('/kalender/*', ['plugin' => 'Shows', 'controller' => 'Shows', 'action' => 'calendar']);
 
@@ -1007,17 +1007,17 @@ class RouterTest extends TestCase
         $routes->connect(
             '/users',
             ['controller' => 'Users', 'action' => 'index'],
-            ['_name' => 'users-index']
+            ['_name' => 'users-index'],
         );
         $routes->connect(
             '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
-            ['_name' => 'test']
+            ['_name' => 'test'],
         );
         $routes->connect(
             '/view/*',
             ['action' => 'view'],
-            ['_name' => 'Articles::view']
+            ['_name' => 'Articles::view'],
         );
 
         $url = Router::url(['_name' => 'test', 'name' => 'mark']);
@@ -1052,7 +1052,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
-            ['_name' => 'test']
+            ['_name' => 'test'],
         );
         Router::url(['_name' => 'junk', 'name' => 'mark']);
     }
@@ -1067,17 +1067,17 @@ class RouterTest extends TestCase
         $routes->connect(
             '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
-            ['_name' => 'test']
+            ['_name' => 'test'],
         );
         $routes->connect(
             '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
-            ['_name' => 'otherName']
+            ['_name' => 'otherName'],
         );
         $routes->connect(
             '/users/{name}',
             ['controller' => 'Users', 'action' => 'view'],
-            ['_name' => 'test']
+            ['_name' => 'test'],
         );
     }
 
@@ -1124,7 +1124,7 @@ class RouterTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessageMatches(
             '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
-            ' The filter failed with: nope/'
+            ' The filter failed with: nope/',
         );
         $routes = Router::createRouteBuilder('/');
         $routes->connect('/{lang}/{controller}/{action}/*');
@@ -1152,7 +1152,7 @@ class RouterTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessageMatches(
             '/URL filter defined in .*RouterTest\.php on line \d+ could not be applied\.' .
-            ' The filter failed with: /'
+            ' The filter failed with: /',
         );
         $routes = Router::createRouteBuilder('/');
         $routes->connect('/{lang}/{controller}/{action}/*');
@@ -1264,7 +1264,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/posts/{value}/{somevalue}/{othervalue}/*',
             ['controller' => 'Posts', 'action' => 'view'],
-            ['value', 'somevalue', 'othervalue']
+            ['value', 'somevalue', 'othervalue'],
         );
         $result = Router::parseRequest($this->makeRequest('/posts/2007/08/01/title-of-post-here', 'GET'));
         unset($result['_route']);
@@ -1285,7 +1285,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/posts/{year}/{month}/{day}/*',
             ['controller' => 'Posts', 'action' => 'view'],
-            ['year' => $Year, 'month' => $Month, 'day' => $Day]
+            ['year' => $Year, 'month' => $Month, 'day' => $Day],
         );
         $result = Router::parseRequest($this->makeRequest('/posts/2007/08/01/title-of-post-here', 'GET'));
         unset($result['_route']);
@@ -1306,7 +1306,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/posts/{day}/{year}/{month}/*',
             ['controller' => 'Posts', 'action' => 'view'],
-            ['year' => $Year, 'month' => $Month, 'day' => $Day]
+            ['year' => $Year, 'month' => $Month, 'day' => $Day],
         );
         $result = Router::parseRequest($this->makeRequest('/posts/01/2007/08/title-of-post-here', 'GET'));
         unset($result['_route']);
@@ -1327,7 +1327,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/posts/{month}/{day}/{year}/*',
             ['controller' => 'Posts', 'action' => 'view'],
-            ['year' => $Year, 'month' => $Month, 'day' => $Day]
+            ['year' => $Year, 'month' => $Month, 'day' => $Day],
         );
         $result = Router::parseRequest($this->makeRequest('/posts/08/01/2007/title-of-post-here', 'GET'));
         unset($result['_route']);
@@ -1347,7 +1347,7 @@ class RouterTest extends TestCase
         $routes = Router::createRouteBuilder('/');
         $routes->connect(
             '/posts/{year}/{month}/{day}/*',
-            ['controller' => 'Posts', 'action' => 'view']
+            ['controller' => 'Posts', 'action' => 'view'],
         );
         $result = Router::parseRequest($this->makeRequest('/posts/2007/08/01/title-of-post-here', 'GET'));
         unset($result['_route']);
@@ -1403,7 +1403,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/{language}/contact',
             ['language' => 'eng', 'plugin' => 'Contact', 'controller' => 'Contact', 'action' => 'index'],
-            ['language' => '[a-z]{3}']
+            ['language' => '[a-z]{3}'],
         );
         $result = Router::parseRequest($this->makeRequest('/eng/contact', 'GET'));
         unset($result['_route']);
@@ -1422,7 +1422,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/forestillinger/{month}/{year}/*',
             ['plugin' => 'Shows', 'controller' => 'Shows', 'action' => 'calendar'],
-            ['month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}']
+            ['month' => '0[1-9]|1[012]', 'year' => '[12][0-9]{3}'],
         );
 
         $result = Router::parseRequest($this->makeRequest('/forestillinger/10/2007/min-forestilling', 'GET'));
@@ -1469,7 +1469,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/Posts/{id}:{url_title}',
             ['controller' => 'Posts', 'action' => 'view'],
-            ['pass' => ['id', 'url_title'], 'id' => '[\d]+']
+            ['pass' => ['id', 'url_title'], 'id' => '[\d]+'],
         );
         $result = Router::parseRequest($this->makeRequest('/Posts/5:sample-post-title', 'GET'));
         unset($result['_route']);
@@ -1489,7 +1489,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/Posts/{id}:{url_title}/*',
             ['controller' => 'Posts', 'action' => 'view'],
-            ['pass' => ['id', 'url_title'], 'id' => '[\d]+']
+            ['pass' => ['id', 'url_title'], 'id' => '[\d]+'],
         );
         $result = Router::parseRequest($this->makeRequest('/Posts/5:sample-post-title/other/params/4', 'GET'));
         unset($result['_route']);
@@ -1524,7 +1524,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/posts/{url_title}-(uuid:{id})',
             ['controller' => 'Posts', 'action' => 'view'],
-            ['pass' => ['id', 'url_title'], 'id' => $UUID]
+            ['pass' => ['id', 'url_title'], 'id' => $UUID],
         );
         $result = Router::parseRequest($this->makeRequest('/posts/sample-post-title-(uuid:47fc97a9-019c-41d1-a058-1fa3cbdd56cb)', 'GET'));
         unset($result['_route']);
@@ -1583,7 +1583,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/subjects/add/{category_id}',
             ['controller' => 'Subjects', 'action' => 'add'],
-            ['category_id' => '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}']
+            ['category_id' => '\w{8}-\w{4}-\w{4}-\w{4}-\w{12}'],
         );
         $result = Router::parseRequest($this->makeRequest('/subjects/add/4795d601-19c8-49a6-930e-06a8b01d17b7', 'GET'));
         unset($result['_route']);
@@ -1607,7 +1607,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/{extra}/page/{slug}/*',
             ['controller' => 'Pages', 'action' => 'view', 'extra' => null],
-            ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view']
+            ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view'],
         );
 
         $result = Router::parseRequest($this->makeRequest('/some_extra/page/this_is_the_slug', 'GET'));
@@ -1641,7 +1641,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/{extra}/page/{slug}/*',
             ['controller' => 'Pages', 'action' => 'view', 'extra' => null],
-            ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+']
+            ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+'],
         );
 
         $result = Router::url([
@@ -2095,7 +2095,7 @@ class RouterTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage(
-            'Value for `plugin` in $defaults when connecting routes must be of type `string` or `null`'
+            'Value for `plugin` in $defaults when connecting routes must be of type `string` or `null`',
         );
 
         $routes = Router::createRouteBuilder('/');
@@ -2230,7 +2230,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/blog/{action}/*',
             ['controller' => 'BlogPosts'],
-            ['action' => 'other|actions']
+            ['action' => 'other|actions'],
         );
 
         $result = Router::parseRequest($this->makeRequest('/blog/other', 'GET'));
@@ -2492,7 +2492,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/blog/{action}/*',
             ['controller' => 'BlogPosts'],
-            ['action' => 'other|actions']
+            ['action' => 'other|actions'],
         );
 
         $result = Router::url(['controller' => 'BlogPosts', 'action' => 'actions']);
@@ -2608,7 +2608,7 @@ class RouterTest extends TestCase
         $routes = Router::createRouteBuilder('/');
         $routes->connect(
             '/admin/login',
-            ['controller' => 'Users', 'action' => 'login', 'prefix' => 'Admin']
+            ['controller' => 'Users', 'action' => 'login', 'prefix' => 'Admin'],
         );
         $request = new ServerRequest([
             'url' => '/',
@@ -2712,7 +2712,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/{slug}',
             ['plugin' => 'TestPlugin', 'action' => 'index'],
-            ['routeClass' => 'PluginShortRoute', 'slug' => '[a-z_-]+']
+            ['routeClass' => 'PluginShortRoute', 'slug' => '[a-z_-]+'],
         );
         $result = Router::parseRequest($this->makeRequest('/the-best', 'GET'));
         unset($result['_route']);
@@ -2737,7 +2737,7 @@ class RouterTest extends TestCase
         $routes->connect(
             '/{slug}',
             ['controller' => 'Posts', 'action' => 'view'],
-            ['routeClass' => 'TestPlugin.TestRoute', 'slug' => '[a-z_-]+']
+            ['routeClass' => 'TestPlugin.TestRoute', 'slug' => '[a-z_-]+'],
         );
         $this->assertTrue(true); // Just to make sure the connect do not throw exception
         $this->removePlugins(['TestPlugin']);
@@ -3061,7 +3061,7 @@ class RouterTest extends TestCase
         $route = new Route(
             '/blog/{action}/*',
             ['controller' => 'BlogPosts'],
-            ['action' => 'other|actions']
+            ['action' => 'other|actions'],
         );
         $result = $route->match(['controller' => 'BlogPosts', 'action' => 'foo']);
         $this->assertNull($result);
@@ -3113,7 +3113,7 @@ class RouterTest extends TestCase
             $this->assertEquals(
                 ['rss'],
                 $routes->getExtensions(),
-                'Should include new extensions.'
+                'Should include new extensions.',
             );
             $routes->connect('/home', []);
         });

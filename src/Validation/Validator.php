@@ -330,7 +330,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             return null;
         }
 
-        $this->_providers[$name] = new RulesProvider();
+        $this->_providers[$name] = Validation::class;
 
         return $this->_providers[$name];
     }
@@ -362,7 +362,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of default providers.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public static function getDefaultProviders(): array
     {
@@ -372,7 +372,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of providers in this validator.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function providers(): array
     {
@@ -494,7 +494,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             }
             if (!is_string($name)) {
                 throw new InvalidArgumentException(
-                    'You cannot add validation rules without a `name` key. Update rules array to have string keys.'
+                    'You cannot add validation rules without a `name` key. Update rules array to have string keys.',
                 );
             }
 
@@ -528,7 +528,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         Validator $validator,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         $extra = array_filter(['message' => $message, 'on' => $when]);
 
@@ -576,7 +576,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         Validator $validator,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         $extra = array_filter(['message' => $message, 'on' => $when]);
 
@@ -751,7 +751,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         ?int $flags = null,
         Closure|string|bool $when = true,
-        ?string $message = null
+        ?string $message = null,
     ) {
         $this->field($field)->allowEmpty($when);
         if ($message) {
@@ -1028,7 +1028,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     protected function _convertValidatorToArray(
         string $fieldName,
         array $defaults = [],
-        array|string|int $settings = []
+        array|string|int $settings = [],
     ): array {
         if (!is_array($settings)) {
             $fieldName = (string)$settings;
@@ -1211,7 +1211,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         array $range,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if (count($range) !== 2) {
             throw new InvalidArgumentException('The $range argument requires 2 numbers');
@@ -1224,14 +1224,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = sprintf(
                     'The length of the provided value must be between `%s` and `%s`, inclusively',
                     $lowerBound,
-                    $upperBound
+                    $upperBound,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The length of the provided value must be between `{0}` and `{1}`, inclusively',
                     $lowerBound,
-                    $upperBound
+                    $upperBound,
                 );
             }
         }
@@ -1259,7 +1259,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         array|string $type = 'all',
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if (is_array($type)) {
             $typeEnumeration = implode(', ', $type);
@@ -1274,19 +1274,19 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 } else {
                     $message = sprintf(
                         'The provided value must be a valid credit card number of these types: `%s`',
-                        $typeEnumeration
+                        $typeEnumeration,
                     );
                 }
             } elseif ($type === 'all') {
                 $message = __d(
                     'cake',
-                    'The provided value must be a valid credit card number of any type'
+                    'The provided value must be a valid credit card number of any type',
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be a valid credit card number of these types: `{0}`',
-                    $typeEnumeration
+                    $typeEnumeration,
                 );
             }
         }
@@ -1313,7 +1313,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         float|int $value,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1345,7 +1345,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         float|int $value,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1377,7 +1377,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         float|int $value,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1409,7 +1409,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         float|int $value,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1441,7 +1441,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         mixed $value,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1473,7 +1473,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         mixed $value,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1507,7 +1507,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         string $secondField,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1540,7 +1540,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         string $secondField,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1573,7 +1573,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         string $secondField,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1582,7 +1582,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = __d(
                     'cake',
                     'The provided value must be equal to the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1610,7 +1610,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         string $secondField,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1619,7 +1619,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = __d(
                     'cake',
                     'The provided value must not be equal to the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1647,7 +1647,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         string $secondField,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1656,7 +1656,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = __d(
                     'cake',
                     'The provided value must be greater than the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1684,19 +1684,19 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         string $secondField,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
                 $message = sprintf(
                     'The provided value must be greater than or equal to the one of field `%s`',
-                    $secondField
+                    $secondField,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be greater than or equal to the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1724,7 +1724,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         string $secondField,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1733,7 +1733,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = __d(
                     'cake',
                     'The provided value must be less than the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1761,19 +1761,19 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         string $secondField,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
                 $message = sprintf(
                     'The provided value must be less than or equal to the one of field `%s`',
-                    $secondField
+                    $secondField,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be less than or equal to the one of field `{0}`',
-                    $secondField
+                    $secondField,
                 );
             }
         }
@@ -1788,8 +1788,22 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a date format validation rule to a field.
      *
+     * Years are valid from 0001 to 2999.
+     *
+     * ### Formats:
+     *
+     * - `ymd` 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
+     * - `dmy` 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
+     * - `mdy` 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
+     * - `dMy` 27 December 2006 or 27 Dec 2006
+     * - `Mdy` December 27, 2006 or Dec 27, 2006 comma is optional
+     * - `My` December 2006 or Dec 2006
+     * - `my` 12/2006 or 12/06 separators can be a space, period, dash, forward slash
+     * - `ym` 2006/12 or 06/12 separators can be a space, period, dash, forward slash
+     * - `y` 2006 just the year without any separators
+     *
      * @param string $field The field you want to apply the rule to.
-     * @param list<string> $formats A list of accepted date formats.
+     * @param array<string> $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.
@@ -1800,7 +1814,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         array $formats = ['ymd'],
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         $formatEnumeration = implode(', ', $formats);
 
@@ -1808,13 +1822,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             if (!$this->_useI18n) {
                 $message = sprintf(
                     'The provided value must be a date of one of these formats: `%s`',
-                    $formatEnumeration
+                    $formatEnumeration,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be a date of one of these formats: `{0}`',
-                    $formatEnumeration
+                    $formatEnumeration,
                 );
             }
         }
@@ -1829,8 +1843,29 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Add a date time format validation rule to a field.
      *
+     * All values matching the "date" core validation rule, and the "time" one will be valid
+     *
+     * Years are valid from 0001 to 2999.
+     *
+     * ### Formats:
+     *
+     * - `ymd` 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
+     * - `dmy` 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
+     * - `mdy` 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
+     * - `dMy` 27 December 2006 or 27 Dec 2006
+     * - `Mdy` December 27, 2006 or Dec 27, 2006 comma is optional
+     * - `My` December 2006 or Dec 2006
+     * - `my` 12/2006 or 12/06 separators can be a space, period, dash, forward slash
+     * - `ym` 2006/12 or 06/12 separators can be a space, period, dash, forward slash
+     * - `y` 2006 just the year without any separators
+     *
+     * Time is validated as 24hr (HH:MM[:SS][.FFFFFF]) or am/pm ([H]H:MM[a|p]m)
+     *
+     * Seconds and fractional seconds (microseconds) are allowed but optional
+     * in 24hr format.
+     *
      * @param string $field The field you want to apply the rule to.
-     * @param list<string> $formats A list of accepted date formats.
+     * @param array<string> $formats A list of accepted date formats.
      * @param string|null $message The error message when the rule fails.
      * @param \Closure|string|null $when Either 'create' or 'update' or a Closure that returns
      *   true when the validation rule should be applied.
@@ -1841,7 +1876,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         array $formats = ['ymd'],
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         $formatEnumeration = implode(', ', $formats);
 
@@ -1849,13 +1884,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             if (!$this->_useI18n) {
                 $message = sprintf(
                     'The provided value must be a date and time of one of these formats: `%s`',
-                    $formatEnumeration
+                    $formatEnumeration,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be a date and time of one of these formats: `{0}`',
-                    $formatEnumeration
+                    $formatEnumeration,
                 );
             }
         }
@@ -1909,7 +1944,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         string $type = 'datetime',
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1968,7 +2003,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         ?int $places = null,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -1980,13 +2015,13 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             } elseif ($places === null) {
                 $message = __d(
                     'cake',
-                    'The provided value must be decimal with any number of decimal places, including none'
+                    'The provided value must be decimal with any number of decimal places, including none',
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be decimal with `{0}` decimal places',
-                    $places
+                    $places,
                 );
             }
         }
@@ -2013,7 +2048,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         bool $checkMX = false,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -2046,11 +2081,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         string $enumClassName,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if (!in_array(BackedEnum::class, (array)class_implements($enumClassName), true)) {
             throw new InvalidArgumentException(
-                'The `$enumClassName` argument must be the classname of a valid backed enum.'
+                'The `$enumClassName` argument must be the classname of a valid backed enum.',
             );
         }
 
@@ -2372,14 +2407,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = sprintf(
                     'The provided value must be between `%s` and `%s`, inclusively',
                     $lowerBound,
-                    $upperBound
+                    $upperBound,
                 );
             } else {
                 $message = __d(
                     'cake',
                     'The provided value must be between `{0}` and `{1}`, inclusively',
                     $lowerBound,
-                    $upperBound
+                    $upperBound,
                 );
             }
         }
@@ -2471,7 +2506,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $message = __d(
                     'cake',
                     'The provided value must be one of: `{0}`',
-                    $listEnumeration
+                    $listEnumeration,
                 );
             }
         }
@@ -2525,7 +2560,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         array $options,
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             if (!$this->_useI18n) {
@@ -2830,7 +2865,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         string $field,
         array $options = [],
         ?string $message = null,
-        Closure|string|null $when = null
+        Closure|string|null $when = null,
     ) {
         if ($message === null) {
             $message = 'The provided value must be a set of multiple options';

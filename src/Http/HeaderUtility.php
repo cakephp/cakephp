@@ -42,26 +42,26 @@ class HeaderUtility
         $parsedParams = ['link' => $url];
 
         $params = $matches[2];
-        if ($params) {
-            $explodedParams = explode(';', $params);
-            foreach ($explodedParams as $param) {
-                $explodedParam = explode('=', $param);
-                $trimedKey = trim($explodedParam[0]);
-                $trimedValue = trim($explodedParam[1], '"');
-                if ($trimedKey === 'title*') {
-                    // See https://www.rfc-editor.org/rfc/rfc8187#section-3.2.3
-                    preg_match("/(.*)'(.*)'(.*)/i", $trimedValue, $matches);
-                    $trimedValue = [
-                        /** @phpstan-ignore-next-line */
-                        'language' => $matches[2],
-                        /** @phpstan-ignore-next-line */
-                        'encoding' => $matches[1],
-                        /** @phpstan-ignore-next-line */
-                        'value' => urldecode($matches[3]),
-                    ];
-                }
-                $parsedParams[$trimedKey] = $trimedValue;
+        if (!$params) {
+            return $parsedParams;
+        }
+
+        $explodedParams = explode(';', $params);
+        foreach ($explodedParams as $param) {
+            $explodedParam = explode('=', $param);
+            $trimmedKey = trim($explodedParam[0]);
+            $trimmedValue = trim($explodedParam[1], '"');
+            if ($trimmedKey === 'title*') {
+                // See https://www.rfc-editor.org/rfc/rfc8187#section-3.2.3
+                preg_match("/(.*)'(.*)'(.*)/i", $trimmedValue, $matches);
+                assert(!empty($matches[1]) && !empty($matches[2]) && !empty($matches[3]));
+                $trimmedValue = [
+                    'language' => $matches[2],
+                    'encoding' => $matches[1],
+                    'value' => urldecode($matches[3]),
+                ];
             }
+            $parsedParams[$trimmedKey] = $trimmedValue;
         }
 
         return $parsedParams;
@@ -71,7 +71,7 @@ class HeaderUtility
      * Parse the Accept header value into weight => value mapping.
      *
      * @param string $header The header value to parse
-     * @return array<string, list<string>>
+     * @return array<string, array<string>>
      */
     public static function parseAccept(string $header): array
     {
@@ -119,7 +119,7 @@ class HeaderUtility
             '@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@',
             $value,
             $matches,
-            PREG_SET_ORDER
+            PREG_SET_ORDER,
         );
 
         $return = [];

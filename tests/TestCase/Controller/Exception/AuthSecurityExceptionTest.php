@@ -21,6 +21,8 @@ use Cake\TestSuite\TestCase;
 
 /**
  * AuthSecurityException Test class
+ *
+ * @deprecated
  */
 class AuthSecurityExceptionTest extends TestCase
 {
@@ -46,7 +48,7 @@ class AuthSecurityExceptionTest extends TestCase
         $this->assertSame(
             'auth',
             $this->authSecurityException->getType(),
-            '::getType should always return the type of `auth`.'
+            '::getType should always return the type of `auth`.',
         );
     }
 }

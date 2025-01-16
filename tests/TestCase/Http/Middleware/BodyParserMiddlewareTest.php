@@ -98,7 +98,7 @@ class BodyParserMiddlewareTest extends TestCase
         $this->assertEquals(
             ['application/xml', 'text/xml'],
             array_keys($parser->getParsers()),
-            'Default XML parsers are not set.'
+            'Default XML parsers are not set.',
         );
     }
 
@@ -114,7 +114,7 @@ class BodyParserMiddlewareTest extends TestCase
         $this->assertEquals(
             ['application/json', 'text/json'],
             array_keys($parser->getParsers()),
-            'Default JSON parsers are not set.'
+            'Default JSON parsers are not set.',
         );
     }
 

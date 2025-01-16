@@ -35,7 +35,7 @@ class DateType extends BaseType implements BatchCastingInterface
     protected string $_format = 'Y-m-d';
 
     /**
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_marshalFormats = [
         'Y-m-d',
@@ -216,7 +216,7 @@ class DateType extends BaseType implements BatchCastingInterface
             return $this;
         }
         throw new DatabaseException(
-            sprintf('Cannot use locale parsing with %s', $this->_className)
+            sprintf('Cannot use locale parsing with %s', $this->_className),
         );
     }
 

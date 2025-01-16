@@ -110,14 +110,14 @@ abstract class Association
     /**
      * The field name in the owning side table that is used to match with the foreignKey
      *
-     * @var list<string>|string
+     * @var array<string>|string
      */
     protected array|string $_bindingKey;
 
     /**
      * The name of the field representing the foreign key to the table to load
      *
-     * @var list<string>|string|false
+     * @var array<string>|string|false
      */
     protected array|string|false $_foreignKey;
 
@@ -193,7 +193,7 @@ abstract class Association
     /**
      * Valid strategies for this association. Subclasses can narrow this down.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_validStrategies = [
         self::STRATEGY_JOIN,
@@ -295,7 +295,7 @@ abstract class Association
             throw new InvalidArgumentException(sprintf(
                 "The class name `%s` doesn't match the target table class name of `%s`.",
                 $className,
-                $this->_targetTable::class
+                $this->_targetTable::class,
             ));
         }
 
@@ -388,7 +388,7 @@ abstract class Association
                         $this->getName(),
                         $this->type(),
                         $this->_targetTable::class,
-                        $className
+                        $className,
                     ));
                 }
             }
@@ -428,7 +428,7 @@ abstract class Association
      * Sets the name of the field representing the binding field with the target table.
      * When not manually specified the primary key of the owning side table is used.
      *
-     * @param list<string>|string $key the table field or fields to be used to link both tables together
+     * @param array<string>|string $key the table field or fields to be used to link both tables together
      * @return $this
      */
     public function setBindingKey(array|string $key)
@@ -442,7 +442,7 @@ abstract class Association
      * Gets the name of the field representing the binding field with the target table.
      * When not manually specified the primary key of the owning side table is used.
      *
-     * @return list<string>|string
+     * @return array<string>|string
      */
     public function getBindingKey(): array|string
     {
@@ -458,7 +458,7 @@ abstract class Association
     /**
      * Gets the name of the field representing the foreign key to the target table.
      *
-     * @return list<string>|string|false
+     * @return array<string>|string|false
      */
     public function getForeignKey(): array|string|false
     {
@@ -468,7 +468,7 @@ abstract class Association
     /**
      * Sets the name of the field representing the foreign key to the target table.
      *
-     * @param list<string>|string $key the key or keys to be used to link both tables together
+     * @param array<string>|string $key the key or keys to be used to link both tables together
      * @return $this
      */
     public function setForeignKey(array|string $key)
@@ -574,7 +574,7 @@ abstract class Association
                     ' You should explicitly specify the `propertyName` option.';
                 trigger_error(
                     sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
-                    E_USER_WARNING
+                    E_USER_WARNING,
                 );
             }
         }
@@ -609,7 +609,7 @@ abstract class Association
             throw new InvalidArgumentException(sprintf(
                 'Invalid strategy `%s` was provided. Valid options are `(%s)`.',
                 $name,
-                implode(', ', $this->_validStrategies)
+                implode(', ', $this->_validStrategies),
             ));
         }
         $this->_strategy = $name;
@@ -727,7 +727,7 @@ abstract class Association
             if (!($dummy instanceof SelectQuery)) {
                 throw new DatabaseException(sprintf(
                     'Query builder for association `%s` did not return a query.',
-                    $this->getName()
+                    $this->getName(),
                 ));
             }
         }
@@ -739,7 +739,7 @@ abstract class Association
         ) {
             throw new DatabaseException(sprintf(
                 '`%s` association cannot contain() associations when using JOIN strategy.',
-                $this->getName()
+                $this->getName(),
             ));
         }
 
@@ -791,7 +791,7 @@ abstract class Association
      * @param bool $joined Whether the row is a result of a direct join
      *   with this association
      * @param string|null $targetProperty The property name in the source results where the association
-     * data shuld be nested in. Will use the default one if not provided.
+     * data should be nested in. Will use the default one if not provided.
      * @return array
      */
     public function transformRow(array $row, string $nestKey, bool $joined, ?string $targetProperty = null): array
@@ -878,7 +878,7 @@ abstract class Association
      */
     public function updateAll(
         QueryExpression|Closure|array|string $fields,
-        QueryExpression|Closure|array|string|null $conditions
+        QueryExpression|Closure|array|string|null $conditions,
     ): int {
         $expression = $this->find()
             ->where($conditions)
@@ -1014,7 +1014,7 @@ abstract class Association
 
                 return $results;
             },
-            SelectQuery::PREPEND
+            SelectQuery::PREPEND,
         );
     }
 
@@ -1055,7 +1055,7 @@ abstract class Association
             $eagerLoader->setMatching(
                 $options['aliasPath'] . '.' . $alias,
                 $value['queryBuilder'],
-                $value
+                $value,
             );
         }
     }
@@ -1092,7 +1092,7 @@ abstract class Association
                 $msg,
                 $this->_name,
                 implode(', ', $foreignKey),
-                implode(', ', $bindingKey)
+                implode(', ', $bindingKey),
             ));
         }
 

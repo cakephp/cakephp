@@ -40,7 +40,7 @@ class IdentifierQuoter
      */
     public function __construct(
         protected string $startQuote,
-        protected string $endQuote
+        protected string $endQuote,
     ) {
     }
 
@@ -121,14 +121,13 @@ class IdentifierQuoter
             default =>
                 throw new DatabaseException(sprintf(
                     'Instance of SelectQuery, UpdateQuery, InsertQuery, DeleteQuery expected. Found `%s` instead.',
-                    get_debug_type($query)
+                    get_debug_type($query),
                 ))
         };
 
         $query->traverseExpressions($this->quoteExpression(...));
-        $query->setValueBinder($binder);
 
-        return $query;
+        return $query->setValueBinder($binder);
     }
 
     /**
@@ -342,7 +341,7 @@ class IdentifierQuoter
     protected function _quoteIdentifierExpression(IdentifierExpression $expression): void
     {
         $expression->setIdentifier(
-            $this->quoteIdentifier($expression->getIdentifier())
+            $this->quoteIdentifier($expression->getIdentifier()),
         );
     }
 }

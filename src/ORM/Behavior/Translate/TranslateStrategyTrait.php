@@ -71,7 +71,7 @@ trait TranslateStrategyTrait
      *
      * @param string|null $locale The locale to use for fetching and saving
      *   records. Pass `null` in order to unset the current locale, and to make
-     *   the behavior fall back to using the globally configured locale.
+     *   the behavior falls back to using the globally configured locale.
      * @return $this
      */
     public function setLocale(?string $locale)
@@ -139,7 +139,7 @@ trait TranslateStrategyTrait
      * of translations by setting `'translations' => false` in the options
      * provided to `Table::newEntity()` or `Table::patchEntity()`.
      *
-     * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
+     * @param \Cake\ORM\Marshaller $marshaller The marshaller of the table the behavior is attached to.
      * @param array $map The property map being built.
      * @param array<string, mixed> $options The options array used in the marshalling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.

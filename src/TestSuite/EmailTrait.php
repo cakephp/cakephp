@@ -177,7 +177,7 @@ trait EmailTrait
     /**
      * Asserts an email was sent from an address
      *
-     * @param list<string>|string $address Email address
+     * @param array<string>|string $address Email address
      * @param string $message Message
      * @return void
      */

@@ -123,7 +123,7 @@ class OauthTest extends TestCase
         $this->assertStringContainsString('GET&', $result, 'method was missing.');
         $this->assertStringContainsString(
             'http%3A%2F%2Fexample.com%2Fsearch&',
-            $result
+            $result,
         );
         $this->assertStringContainsString(
             'cat%3D2%26oauth_consumer_key%3Dconsumer-key' .
@@ -133,7 +133,7 @@ class OauthTest extends TestCase
             '%26oauth_token%3Dtoken' .
             '%26oauth_version%3D1.0' .
             '%26q%3Dpogo',
-            $result
+            $result,
         );
     }
 
@@ -159,7 +159,7 @@ class OauthTest extends TestCase
                         'value' => 'one two',
                     ],
                 ],
-            ]
+            ],
         );
 
         $auth = new Oauth();
@@ -176,7 +176,7 @@ class OauthTest extends TestCase
         $this->assertStringContainsString('POST&', $result, 'method was missing.');
         $this->assertStringContainsString(
             'http%3A%2F%2Fexample.com%2Fsearch&',
-            $result
+            $result,
         );
         $this->assertStringContainsString(
             '&oauth_consumer_key%3Dconsumer-key' .
@@ -188,7 +188,7 @@ class OauthTest extends TestCase
             '%26q%3Dpogo' .
             '%26search%5Bfilters%5D%5Bfield%5D%3Ddate' .
             '%26search%5Bfilters%5D%5Bvalue%5D%3Done%20two',
-            $result
+            $result,
         );
     }
 
@@ -212,7 +212,7 @@ class OauthTest extends TestCase
                 'address' => 'post',
                 'zed' => 'last',
                 'tags' => ['oauth', 'cake'],
-            ]
+            ],
         );
 
         $auth = new Oauth();
@@ -229,7 +229,7 @@ class OauthTest extends TestCase
         $this->assertStringContainsString('POST&', $result, 'method was missing.');
         $this->assertStringContainsString(
             'http%3A%2F%2Fexample.com%2Fsearch&',
-            $result
+            $result,
         );
         $this->assertStringContainsString(
             '&address%3Dpost' .
@@ -243,7 +243,7 @@ class OauthTest extends TestCase
             '%26tags%3Dcake' .
             '%26tags%3Doauth' .
             '%26zed%3Dlast',
-            $result
+            $result,
         );
     }
 
@@ -264,7 +264,7 @@ class OauthTest extends TestCase
             [
                 'Content-Type' => 'application/xml',
             ],
-            '<xml>stuff</xml>'
+            '<xml>stuff</xml>',
         );
 
         $auth = new Oauth();
@@ -281,7 +281,7 @@ class OauthTest extends TestCase
         $this->assertStringContainsString('POST&', $result, 'method was missing.');
         $this->assertStringContainsString(
             'http%3A%2F%2Fexample.com%2Fsearch&',
-            $result
+            $result,
         );
         $this->assertStringContainsString(
             'oauth_consumer_key%3Dconsumer-key' .
@@ -291,7 +291,7 @@ class OauthTest extends TestCase
             '%26oauth_token%3Dtoken' .
             '%26oauth_version%3D1.0' .
             '%26q%3Dpogo',
-            $result
+            $result,
         );
     }
 
@@ -307,7 +307,7 @@ class OauthTest extends TestCase
             'http://photos.example.net/photos',
             'GET',
             [],
-            ['file' => 'vacation.jpg', 'size' => 'original']
+            ['file' => 'vacation.jpg', 'size' => 'original'],
         );
 
         $options = [
@@ -332,7 +332,7 @@ class OauthTest extends TestCase
     {
         $request = new Request(
             'http://photos.example.net/photos',
-            'GET'
+            'GET',
         );
 
         $options = [
@@ -362,7 +362,7 @@ class OauthTest extends TestCase
             'http://photos.example.net/photos',
             'GET',
             [],
-            ['file' => 'vacaction.jpg', 'size' => 'original']
+            ['file' => 'vacaction.jpg', 'size' => 'original'],
         );
         $privateKey = $this->privateKeyString;
 
@@ -393,7 +393,7 @@ class OauthTest extends TestCase
             'http://photos.example.net/photos',
             'GET',
             [],
-            ['file' => 'vacaction.jpg', 'size' => 'original']
+            ['file' => 'vacaction.jpg', 'size' => 'original'],
         );
 
         $options = [
@@ -421,7 +421,7 @@ class OauthTest extends TestCase
             'http://photos.example.net/photos',
             'GET',
             [],
-            ['file' => 'vacaction.jpg', 'size' => 'original']
+            ['file' => 'vacaction.jpg', 'size' => 'original'],
         );
         $privateKey = fopen(TEST_APP . DS . 'config' . DS . 'key.pem', 'r');
 
@@ -451,7 +451,7 @@ class OauthTest extends TestCase
             'http://photos.example.net/photos',
             'GET',
             [],
-            ['file' => 'vacaction.jpg', 'size' => 'original']
+            ['file' => 'vacaction.jpg', 'size' => 'original'],
         );
         $privateKey = fopen(TEST_APP . DS . 'config' . DS . 'key_with_passphrase.pem', 'r');
         $passphrase = 'fancy-cakephp-passphrase';
@@ -483,7 +483,7 @@ class OauthTest extends TestCase
             'http://photos.example.net/photos',
             'GET',
             [],
-            ['file' => 'vacaction.jpg', 'size' => 'original']
+            ['file' => 'vacaction.jpg', 'size' => 'original'],
         );
         $privateKey = $this->privateKeyStringEnc;
         $passphrase = 'fancy-cakephp-passphrase';
@@ -517,7 +517,7 @@ class OauthTest extends TestCase
             'http://photos.example.net/photos',
             'GET',
             [],
-            ['file' => 'vacaction.jpg', 'size' => 'original']
+            ['file' => 'vacaction.jpg', 'size' => 'original'],
         );
         $privateKey = fopen(TEST_APP . DS . 'config' . DS . 'key_with_passphrase.pem', 'r');
         $passphrase = fopen(TEST_APP . DS . 'config' . DS . 'key_passphrase_lf', 'r');
@@ -553,7 +553,7 @@ class OauthTest extends TestCase
             'http://photos.example.net/photos',
             'GET',
             [],
-            ['file' => 'vacaction.jpg', 'size' => 'original']
+            ['file' => 'vacaction.jpg', 'size' => 'original'],
         );
         $privateKey = $this->privateKeyStringEnc;
         $passphrase = fopen(TEST_APP . DS . 'config' . DS . 'key_passphrase_lf', 'r');
@@ -579,7 +579,7 @@ class OauthTest extends TestCase
     {
         $this->assertMatchesRegularExpression(
             '/oauth_signature="[a-zA-Z0-9\/=+]+"/',
-            urldecode($result)
+            urldecode($result),
         );
     }
 }

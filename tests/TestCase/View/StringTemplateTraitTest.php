@@ -54,7 +54,7 @@ class StringTemplateTraitTest extends TestCase
                 'text' => '<p>{{text}}</p>',
             ],
             $this->Template->getTemplates(),
-            'newly added template should be included in template list'
+            'newly added template should be included in template list',
         );
     }
 
@@ -65,7 +65,7 @@ class StringTemplateTraitTest extends TestCase
     {
         $this->Template->setConfig(
             'templates.text',
-            '<p>{{text}}</p>'
+            '<p>{{text}}</p>',
         );
 
         $this->assertEquals(
@@ -73,7 +73,7 @@ class StringTemplateTraitTest extends TestCase
                 'text' => '<p>{{text}}</p>',
             ],
             $this->Template->getTemplates(),
-            'Configured templates should be included in template list'
+            'Configured templates should be included in template list',
         );
     }
 
@@ -91,7 +91,7 @@ class StringTemplateTraitTest extends TestCase
         ]);
         $this->assertSame(
             '<p>CakePHP</p>',
-            $result
+            $result,
         );
     }
 

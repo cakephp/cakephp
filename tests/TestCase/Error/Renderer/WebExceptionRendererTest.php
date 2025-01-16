@@ -52,6 +52,8 @@ use Mockery;
 use OutOfBoundsException;
 use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
+use ReflectionMethod;
 use RuntimeException;
 use TestApp\Controller\Admin\ErrorController as PrefixErrorController;
 use TestApp\Error\Exception\MissingWidgetThing;
@@ -113,7 +115,7 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertInstanceOf(
             PrefixErrorController::class,
-            $ExceptionRenderer->__debugInfo()['controller']
+            $ExceptionRenderer->__debugInfo()['controller'],
         );
     }
 
@@ -139,7 +141,7 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertInstanceOf(
             PluginErrorController::class,
-            $ExceptionRenderer->__debugInfo()['controller']
+            $ExceptionRenderer->__debugInfo()['controller'],
         );
     }
 
@@ -177,7 +179,7 @@ class WebExceptionRendererTest extends TestCase
         $this->assertSame('error400', $controller->viewBuilder()->getTemplate());
         $this->assertSame(
             'Admin' . DIRECTORY_SEPARATOR . 'Error',
-            $controller->viewBuilder()->getTemplatePath()
+            $controller->viewBuilder()->getTemplatePath(),
         );
     }
 
@@ -208,12 +210,12 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertSame(
             'missingWidgetThing',
-            $ExceptionRenderer->__debugInfo()['method']
+            $ExceptionRenderer->__debugInfo()['method'],
         );
         $this->assertSame(
             'widget thing is missing',
             (string)$result->getBody(),
-            'Method declared in subclass converted to error400'
+            'Method declared in subclass converted to error400',
         );
     }
 
@@ -232,7 +234,7 @@ class WebExceptionRendererTest extends TestCase
         $this->assertMatchesRegularExpression(
             '/Not Found/',
             (string)$result->getBody(),
-            'Method declared in error handler not converted to error400. %s'
+            'Method declared in error handler not converted to error400. %s',
         );
     }
 
@@ -246,7 +248,7 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertInstanceOf(
             ErrorController::class,
-            $ExceptionRenderer->__debugInfo()['controller']
+            $ExceptionRenderer->__debugInfo()['controller'],
         );
         $this->assertEquals($exception, $ExceptionRenderer->__debugInfo()['error']);
     }
@@ -262,7 +264,7 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertInstanceOf(
             ErrorController::class,
-            $ExceptionRenderer->__debugInfo()['controller']
+            $ExceptionRenderer->__debugInfo()['controller'],
         );
         $this->assertEquals($exception, $ExceptionRenderer->__debugInfo()['error']);
 
@@ -484,7 +486,7 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertSame(
             'missingController',
-            $ExceptionRenderer->__debugInfo()['template']
+            $ExceptionRenderer->__debugInfo()['template'],
         );
         $this->assertStringContainsString('Missing Controller', $result);
         $this->assertStringContainsString('<em>PostsController</em>', $result);
@@ -506,7 +508,7 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertSame(
             'missingController',
-            $ExceptionRenderer->__debugInfo()['template']
+            $ExceptionRenderer->__debugInfo()['template'],
         );
         $this->assertStringContainsString('Missing Controller', $result);
         $this->assertStringContainsString('<em>PostsController</em>', $result);
@@ -760,7 +762,7 @@ class WebExceptionRendererTest extends TestCase
             function (EventInterface $event): void {
                 $this->called = true;
                 $event->getSubject()->viewBuilder()->setLayoutPath('boom');
-            }
+            },
         );
         $controller->setRequest(new ServerRequest());
         $ExceptionRenderer->setController($controller);
@@ -789,7 +791,7 @@ class WebExceptionRendererTest extends TestCase
                 $this->called = true;
                 $event->getSubject()->viewBuilder()->setTemplatePath('Error');
                 $event->getSubject()->viewBuilder()->setLayout('does-not-exist');
-            }
+            },
         );
         $controller->setRequest(new ServerRequest());
         $ExceptionRenderer->setController($controller);
@@ -989,5 +991,19 @@ class WebExceptionRendererTest extends TestCase
 
         $result = (string)$exceptionRenderer->render()->getBody();
         $this->assertStringContainsString('<xml>rendered xml exception</xml>', $result);
+    }
+
+    #[WithoutErrorHandler]
+    public function testDeprecatedHttpErrorCodeMapping(): void
+    {
+        $this->deprecated(function () {
+            $exception = new MissingWidgetThing();
+            $exceptionRenderer = new MyCustomExceptionRenderer($exception);
+
+            $reflectedMethod = new ReflectionMethod($exceptionRenderer, 'getHttpCode');
+            $reflectedMethod->setAccessible(true);
+
+            $this->assertSame(404, $reflectedMethod->invoke($exceptionRenderer, $exception));
+        });
     }
 }

@@ -30,13 +30,27 @@ class ExitCode extends Constraint
     private ?int $exitCode = null;
 
     /**
+     * @var array $out
+     */
+    private array $out;
+
+    /**
+     * @var array $err
+     */
+    private array $err;
+
+    /**
      * Constructor
      *
      * @param int|null $exitCode Exit code
+     * @param array $out stdout stream
+     * @param array $err stderr stream
      */
-    public function __construct(?int $exitCode)
+    public function __construct(?int $exitCode, array $out, array $err)
     {
         $this->exitCode = $exitCode;
+        $this->out = $out;
+        $this->err = $err;
     }
 
     /**
@@ -69,6 +83,18 @@ class ExitCode extends Constraint
     public function failureDescription(mixed $other): string
     {
         return '`' . $other . '` ' . $this->toString();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function additionalFailureDescription(mixed $other): string
+    {
+        return sprintf(
+            "STDOUT\n%s\n\nSTDERR\n%s\n",
+            implode("\n", $this->out),
+            implode("\n", $this->err),
+        );
     }
 }
 

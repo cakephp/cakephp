@@ -55,14 +55,14 @@ class ViewBuilderTest extends TestCase
         $builder->setVars($update);
         $this->assertEquals(
             ['foo' => 'bar', 'test' => 'updated'],
-            $builder->getVars()
+            $builder->getVars(),
         );
 
         $update = ['overwrite' => 'yes'];
         $builder->setVars($update, false);
         $this->assertEquals(
             ['overwrite' => 'yes'],
-            $builder->getVars()
+            $builder->getVars(),
         );
     }
 
@@ -230,7 +230,7 @@ class ViewBuilderTest extends TestCase
         $view = $builder->build(
             $request,
             $response,
-            $events
+            $events,
         );
         $this->assertInstanceOf(AjaxView::class, $view);
         $this->assertSame('edit', $view->getTemplate());

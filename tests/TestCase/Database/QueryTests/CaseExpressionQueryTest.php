@@ -219,7 +219,7 @@ class CaseExpressionQueryTest extends TestCase
                 return $exp->gt(
                     $query->func()->sum($expression),
                     2,
-                    'integer'
+                    'integer',
                 );
             });
 

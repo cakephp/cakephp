@@ -447,7 +447,7 @@ class TableSchemaTest extends TestCase
 
         $this->assertEquals(
             ['author_idx', 'texty'],
-            $table->indexes()
+            $table->indexes(),
         );
     }
 
@@ -544,7 +544,7 @@ class TableSchemaTest extends TestCase
         $connection = $table->getConnection();
         $this->skipIf(
             $connection->getDriver() instanceof Postgres,
-            'Constraints get dropped in postgres for some reason'
+            'Constraints get dropped in postgres for some reason',
         );
 
         $name = 'product_category_fk';

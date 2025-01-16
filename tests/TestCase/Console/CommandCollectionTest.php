@@ -233,18 +233,18 @@ class CommandCollectionTest extends TestCase
         $this->assertArrayHasKey(
             'example',
             $result,
-            'Used short name for unique plugin shell'
+            'Used short name for unique plugin shell',
         );
         $this->assertArrayHasKey(
             'test_plugin.example',
             $result,
-            'Long names are stored for unique shells'
+            'Long names are stored for unique shells',
         );
         $this->assertArrayNotHasKey('sample', $result, 'Existing command not output');
         $this->assertArrayHasKey(
             'test_plugin.sample',
             $result,
-            'Duplicate shell was given a full alias'
+            'Duplicate shell was given a full alias',
         );
         $this->assertSame(ExampleCommand::class, $result['example']);
         $this->assertSame($result['example'], $result['test_plugin.example']);
@@ -254,12 +254,12 @@ class CommandCollectionTest extends TestCase
         $this->assertArrayHasKey(
             'company',
             $result,
-            'Used short name for unique plugin shell'
+            'Used short name for unique plugin shell',
         );
         $this->assertArrayHasKey(
             'company/test_plugin_three.company',
             $result,
-            'Long names are stored as well'
+            'Long names are stored as well',
         );
         $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
         $this->clearPlugins();

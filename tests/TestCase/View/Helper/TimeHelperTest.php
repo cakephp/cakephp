@@ -102,7 +102,7 @@ class TimeHelperTest extends TestCase
         $timestamp = strtotime('+2 weeks');
         $result = $Time->timeAgoInWords(
             $timestamp,
-            ['end' => '1 years', 'element' => 'div']
+            ['end' => '1 years', 'element' => 'div'],
         );
         $expected = [
             'div' => [
@@ -559,7 +559,7 @@ class TimeHelperTest extends TestCase
     {
         $this->assertSame(
             str_replace([',', '(', ')', ' at', ' à'], '', $expected),
-            str_replace([',', '(', ')', ' at', ' à'], '', $result)
+            str_replace([',', '(', ')', ' at', ' à'], '', $result),
         );
     }
 

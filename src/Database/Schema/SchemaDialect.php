@@ -17,15 +17,22 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 use Cake\Database\Driver;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Type\ColumnSchemaAwareInterface;
 use Cake\Database\TypeFactory;
 use InvalidArgumentException;
+use PDOException;
 
 /**
  * Base class for schema implementations.
  *
  * This class contains methods that are common across
  * the various SQL dialects.
+ *
+ * Provides methods for performing schema reflection. Results
+ * will be in the form of structured arrays. The structure
+ * of each result will be documented in this class. Subclasses
+ * are free to include *additional* data that is not documented.
  *
  * @method array<mixed> listTablesWithoutViewsSql(array $config) Generate the SQL to list the tables, excluding all views.
  */
@@ -101,7 +108,7 @@ abstract class SchemaDialect
      * Convert foreign key constraints references to a valid
      * stringified list
      *
-     * @param list<string>|string $references The referenced columns of a foreign key constraint statement
+     * @param array<string>|string $references The referenced columns of a foreign key constraint statement
      * @return string
      */
     protected function _convertConstraintColumns(array|string $references): string
@@ -112,7 +119,7 @@ abstract class SchemaDialect
 
         return implode(', ', array_map(
             $this->_driver->quoteIdentifier(...),
-            $references
+            $references,
         ));
     }
 
@@ -129,7 +136,7 @@ abstract class SchemaDialect
     protected function _getTypeSpecificColumnSql(
         string $columnType,
         TableSchemaInterface $schema,
-        string $column
+        string $column,
     ): ?string {
         if (!TypeFactory::getMap($columnType)) {
             return null;
@@ -176,7 +183,7 @@ abstract class SchemaDialect
     {
         $sql = sprintf(
             'DROP TABLE %s',
-            $this->_driver->quoteIdentifier($schema->name())
+            $this->_driver->quoteIdentifier($schema->name()),
         );
 
         return [$sql];
@@ -274,16 +281,16 @@ abstract class SchemaDialect
      * Generate the SQL to create a table.
      *
      * @param \Cake\Database\Schema\TableSchema $schema Table instance.
-     * @param list<string> $columns The columns to go inside the table.
-     * @param list<string> $constraints The constraints for the table.
-     * @param list<string> $indexes The indexes for the table.
-     * @return list<string> SQL statements to create a table.
+     * @param array<string> $columns The columns to go inside the table.
+     * @param array<string> $constraints The constraints for the table.
+     * @param array<string> $indexes The indexes for the table.
+     * @return array<string> SQL statements to create a table.
      */
     abstract public function createTableSql(
         TableSchema $schema,
         array $columns,
         array $constraints,
-        array $indexes
+        array $indexes,
     ): array;
 
     /**
@@ -336,4 +343,94 @@ abstract class SchemaDialect
      * @return array SQL statements to truncate a table.
      */
     abstract public function truncateTableSql(TableSchema $schema): array;
+
+    /**
+     * Get the list of tables, excluding any views, available in the current connection.
+     *
+     * @return array<string> The list of tables in the connected database/schema.
+     */
+    public function listTablesWithoutViews(): array
+    {
+        [$sql, $params] = $this->listTablesWithoutViewsSql($this->_driver->config());
+        $result = [];
+        $statement = $this->_driver->execute($sql, $params);
+        while ($row = $statement->fetch()) {
+            $result[] = $row[0];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the list of tables and views available in the current connection.
+     *
+     * @return array<string> The list of tables and views in the connected database/schema.
+     */
+    public function listTables(): array
+    {
+        [$sql, $params] = $this->listTablesSql($this->_driver->config());
+        $result = [];
+        $statement = $this->_driver->execute($sql, $params);
+        while ($row = $statement->fetch()) {
+            $result[] = $row[0];
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the column metadata for a table.
+     *
+     * The name can include a database schema name in the form 'schema.table'.
+     *
+     * @param string $name The name of the table to describe.
+     * @return \Cake\Database\Schema\TableSchemaInterface Object with column metadata.
+     * @throws \Cake\Database\Exception\DatabaseException when table cannot be described.
+     */
+    public function describe(string $name): TableSchemaInterface
+    {
+        $config = $this->_driver->config();
+        if (str_contains($name, '.')) {
+            [$config['schema'], $name] = explode('.', $name);
+        }
+        // This is kind of a lie, but the convert methods
+        // would have a breaking change to change their parameter type.
+        /** @var \Cake\Database\Schema\TableSchema $table */
+        $table = $this->_driver->newTableSchema($name);
+
+        [$sql, $params] = $this->describeColumnSql($name, $config);
+        try {
+            $statement = $this->_driver->execute($sql, $params);
+        } catch (PDOException $e) {
+            throw new DatabaseException($e->getMessage(), 500, $e);
+        }
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $this->convertColumnDescription($table, $row);
+        }
+        if ($table->columns() === []) {
+            throw new DatabaseException(sprintf('Cannot describe %s. It has 0 columns.', $name));
+        }
+
+        [$sql, $params] = $this->describeForeignKeySql($name, $config);
+        $statement = $this->_driver->execute($sql, $params);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $this->convertForeignKeyDescription($table, $row);
+        }
+
+        [$sql, $params] = $this->describeIndexSql($name, $config);
+        $statement = $this->_driver->execute($sql, $params);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $this->convertIndexDescription($table, $row);
+        }
+
+        [$sql, $params] = $this->describeOptionsSql($name, $config);
+        if ($sql) {
+            $statement = $this->_driver->execute($sql, $params);
+            foreach ($statement->fetchAll('assoc') as $row) {
+                $this->convertOptionsDescription($table, $row);
+            }
+        }
+
+        return $table;
+    }
 }

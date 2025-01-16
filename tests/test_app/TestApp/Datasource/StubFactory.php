@@ -19,7 +19,7 @@ class StubFactory implements LocatorInterface
         if (!isset($this->instances[$alias])) {
             throw new MissingModelException(sprintf(
                 'Model class "%s" of type "Test" could not be found.',
-                $alias
+                $alias,
             ));
         }
 

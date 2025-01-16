@@ -50,7 +50,7 @@ class RequestTest extends TestCase
     #[DataProvider('additionProvider')]
     public function testMethods(array $headers, $data, $method): void
     {
-        $request = new Request('http://example.com', $method, $headers, json_encode($data));
+        $request = new Request('http://example.com', $method, $headers, $data);
 
         $this->assertSame($request->getMethod(), $method);
         $this->assertSame('http://example.com', (string)$request->getUri());
@@ -58,7 +58,6 @@ class RequestTest extends TestCase
         $this->assertSame(json_encode($data), $request->getBody()->__toString());
     }
 
-    #[DataProvider('additionProvider')]
     public static function additionProvider(): array
     {
         $headers = [
@@ -81,7 +80,6 @@ class RequestTest extends TestCase
     public function testConstructorArrayData(): void
     {
         $headers = [
-            'Content-Type' => 'application/json',
             'Authorization' => 'Bearer valid-token',
         ];
         $data = ['a' => 'b', 'c' => 'd'];
@@ -91,6 +89,15 @@ class RequestTest extends TestCase
         $this->assertSame('POST', $request->getMethod());
         $this->assertSame('application/x-www-form-urlencoded', $request->getHeaderLine('Content-Type'));
         $this->assertSame('a=b&c=d', $request->getBody()->__toString());
+
+        $headers = [
+            'Content-Type' => 'application/xml',
+        ];
+        $data = ['tag' => 'value'];
+        $request = new Request('http://example.com', 'POST', $headers, $data);
+
+        $this->assertSame('application/xml', $request->getHeaderLine('Content-Type'));
+        $this->assertSame('value', $request->getBody()->__toString());
     }
 
     /**
@@ -99,7 +106,6 @@ class RequestTest extends TestCase
     public function testConstructorArrayNestedData(): void
     {
         $headers = [
-            'Content-Type' => 'application/json',
             'Authorization' => 'Bearer valid-token',
         ];
         $data = ['a' => 'b', 'c' => ['foo', 'bar']];
@@ -137,7 +143,7 @@ class RequestTest extends TestCase
         $this->assertSame(
             'a=b&c=d&e%5B0%5D=f&e%5B1%5D=g',
             $request->getBody()->__toString(),
-            'Body should be serialized'
+            'Body should be serialized',
         );
     }
 

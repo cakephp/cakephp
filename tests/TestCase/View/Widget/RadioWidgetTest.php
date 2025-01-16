@@ -716,11 +716,11 @@ class RadioWidgetTest extends TestCase
         $result = $radio->render($data, $this->context);
         $this->assertStringContainsString(
             '<div class="radio"><input type="radio"',
-            $result
+            $result,
         );
         $this->assertStringContainsString(
             '</label></div>',
-            $result
+            $result,
         );
     }
 

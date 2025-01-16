@@ -40,7 +40,7 @@ class BelongsTo extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_validStrategies = [
         self::STRATEGY_JOIN,
@@ -62,7 +62,7 @@ class BelongsTo extends Association
     /**
      * Sets the name of the field representing the foreign key to the target table.
      *
-     * @param list<string>|string|false $key the key or keys to be used to link both tables together, if set to `false`
+     * @param array<string>|string|false $key the key or keys to be used to link both tables together, if set to `false`
      *  no join conditions will be generated automatically.
      * @return $this
      */
@@ -147,11 +147,11 @@ class BelongsTo extends Association
             return false;
         }
 
-        /** @var list<string> $foreignKeys */
+        /** @var array<string> $foreignKeys */
         $foreignKeys = (array)$this->getForeignKey();
         $properties = array_combine(
             $foreignKeys,
-            $targetEntity->extract((array)$this->getBindingKey())
+            $targetEntity->extract((array)$this->getBindingKey()),
         );
         $entity->set($properties, ['guard' => false]);
 
@@ -186,7 +186,7 @@ class BelongsTo extends Association
                 $msg,
                 $this->_name,
                 implode(', ', $foreignKey),
-                implode(', ', $bindingKey)
+                implode(', ', $bindingKey),
             ));
         }
 

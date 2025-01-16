@@ -120,7 +120,7 @@ class PostgresSchemaDialect extends SchemaDialect
 
         $type = $this->_applyTypeSpecificColumnConversion(
             $col,
-            compact('length', 'precision', 'scale')
+            compact('length', 'precision', 'scale'),
         );
         if ($type !== null) {
             return $type;
@@ -264,7 +264,7 @@ class PostgresSchemaDialect extends SchemaDialect
         return preg_replace(
             "/^'(.*)'(?:::.*)$/",
             '$1',
-            $default
+            $default,
         );
     }
 
@@ -358,11 +358,13 @@ class PostgresSchemaDialect extends SchemaDialect
         c.conname AS name,
         c.contype AS type,
         a.attname AS column_name,
+        array_position(c.conkey, a.attnum) AS column_order,
         c.confmatchtype AS match_type,
         c.confupdtype AS on_update,
         c.confdeltype AS on_delete,
         c.confrelid::regclass AS references_table,
-        ab.attname AS references_field
+        ab.attname AS references_field,
+        array_position(c.confkey, ab.attnum) AS references_field_order
         FROM pg_catalog.pg_namespace n
         INNER JOIN pg_catalog.pg_class cl ON (n.oid = cl.relnamespace)
         INNER JOIN pg_catalog.pg_constraint c ON (n.oid = c.connamespace)
@@ -370,9 +372,8 @@ class PostgresSchemaDialect extends SchemaDialect
         INNER JOIN pg_catalog.pg_attribute ab ON (a.attrelid = cl.oid AND c.confrelid = ab.attrelid AND ab.attnum = ANY(c.confkey))
         WHERE n.nspname = ?
         AND cl.relname = ?
-        ORDER BY name, a.attnum, ab.attnum DESC';
+        ORDER BY name, column_order ASC, references_field_order ASC';
         // phpcs:enable Generic.Files.LineLength
-
         $schema = empty($config['schema']) ? 'public' : $config['schema'];
 
         return [$sql, [$schema, $tableName]];
@@ -442,6 +443,7 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMP',
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMPTZ',
             TableSchemaInterface::TYPE_UUID => ' UUID',
+            TableSchemaInterface::TYPE_NATIVE_UUID => ' UUID',
             TableSchemaInterface::TYPE_CHAR => ' CHAR',
             TableSchemaInterface::TYPE_JSON => ' JSONB',
             TableSchemaInterface::TYPE_GEOMETRY => ' GEOGRAPHY(GEOMETRY, %s)',
@@ -608,14 +610,14 @@ class PostgresSchemaDialect extends SchemaDialect
         assert($data !== null);
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns']
+            $data['columns'],
         );
 
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
-            implode(', ', $columns)
+            implode(', ', $columns),
         );
     }
 
@@ -648,7 +650,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns']
+            $data['columns'],
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
@@ -657,7 +659,7 @@ class PostgresSchemaDialect extends SchemaDialect
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
-                $this->_foreignOnClause($data['delete'])
+                $this->_foreignOnClause($data['delete']),
             );
         }
 
@@ -689,7 +691,7 @@ class PostgresSchemaDialect extends SchemaDialect
                     'COMMENT ON COLUMN %s.%s IS %s',
                     $tableName,
                     $this->_driver->quoteIdentifier($column),
-                    $this->_driver->schemaValue($columnData['comment'])
+                    $this->_driver->schemaValue($columnData['comment']),
                 );
             }
         }
@@ -719,7 +721,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $sql = sprintf(
             'DROP TABLE %s CASCADE',
-            $this->_driver->quoteIdentifier($schema->name())
+            $this->_driver->quoteIdentifier($schema->name()),
         );
 
         return [$sql];

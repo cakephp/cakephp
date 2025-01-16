@@ -182,7 +182,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     {
         $config = array_diff_key(
             $this->_config,
-            ['implementedFinders', 'implementedMethods', 'strategyClass']
+            ['implementedFinders', 'implementedMethods', 'strategyClass'],
         );
         /** @var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $className */
         $className = $this->getConfig('strategyClass', static::$defaultStrategyClass);
@@ -256,7 +256,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * of translations by setting `'translations' => false` in the options
      * provided to `Table::newEntity()` or `Table::patchEntity()`.
      *
-     * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
+     * @param \Cake\ORM\Marshaller $marshaller The marshaller of the table the behavior is attached to.
      * @param array $map The property map being built.
      * @param array<string, mixed> $options The options array used in the marshalling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
@@ -279,7 +279,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * that matter)!
      *
      * @param string|null $locale The locale to use for fetching and saving records. Pass `null`
-     * in order to unset the current locale, and to make the behavior fall back to using the
+     * in order to unset the current locale, and to make the behavior falls back to using the
      * globally configured locale.
      * @return $this
      * @see \Cake\ORM\Behavior\TranslateBehavior::getLocale()
@@ -342,7 +342,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * for each record.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The original query to modify
-     * @param list<string> $locales A list of locales or options with the `locales` key defined
+     * @param array<string> $locales A list of locales or options with the `locales` key defined
      * @return \Cake\ORM\Query\SelectQuery
      */
     public function findTranslations(SelectQuery $query, array $locales = []): SelectQuery

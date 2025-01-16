@@ -178,7 +178,7 @@ if (!function_exists('__dxn')) {
         string $singular,
         string $plural,
         int $count,
-        mixed ...$args
+        mixed ...$args,
     ): string {
         return cake__dxn($domain, $context, $singular, $plural, $count, ...$args);
     }

@@ -239,7 +239,7 @@ class Mysql extends Driver
             return version_compare(
                 $this->version(),
                 $this->featureVersions[$this->serverType][$feature->value],
-                '>='
+                '>=',
             );
         };
 

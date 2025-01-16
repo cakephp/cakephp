@@ -171,7 +171,7 @@ class DateTimeTest extends TestCase
                 'timezone' => 'America/Vancouver',
                 'end' => '+1month',
                 'format' => 'dd-MM-YYYY HH:mm:ss',
-            ]
+            ],
         );
         $this->assertSame('on 31-07-1990 13:33:00', $result);
     }
@@ -325,13 +325,13 @@ class DateTimeTest extends TestCase
 
         $time = new DateTime('-1 month -1 week -6 days');
         $result = $time->timeAgoInWords(
-            ['end' => '1 year', 'accuracy' => ['month' => 'month']]
+            ['end' => '1 year', 'accuracy' => ['month' => 'month']],
         );
         $this->assertSame('1 month ago', $result);
 
         $time = new DateTime('-1 years -2 weeks -3 days');
         $result = $time->timeAgoInWords(
-            ['accuracy' => ['year' => 'year']]
+            ['accuracy' => ['year' => 'year']],
         );
         $expected = 'on ' . $time->format('n/j/y');
         $this->assertSame($expected, $result);

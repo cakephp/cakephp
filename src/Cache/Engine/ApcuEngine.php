@@ -30,7 +30,7 @@ class ApcuEngine extends CacheEngine
      * Contains the compiled group names
      * (prefixed with the global configuration prefix)
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_compiledGroupNames = [];
 
@@ -145,7 +145,7 @@ class ApcuEngine extends CacheEngine
         if (class_exists(APCUIterator::class, false)) {
             $iterator = new APCUIterator(
                 '/^' . preg_quote($this->_config['prefix'], '/') . '/',
-                APC_ITER_NONE
+                APC_ITER_NONE,
             );
             apcu_delete($iterator);
 
@@ -184,7 +184,7 @@ class ApcuEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return list<string>
+     * @return array<string>
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
@@ -204,7 +204,7 @@ class ApcuEngine extends CacheEngine
                     $value = 1;
                     if (apcu_store($group, $value) === false) {
                         $this->warning(
-                            sprintf('Failed to store key `%s` with value `%s` into APCu cache.', $group, $value)
+                            sprintf('Failed to store key `%s` with value `%s` into APCu cache.', $group, $value),
                         );
                     }
                     $groups[$group] = $value;
