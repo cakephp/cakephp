@@ -232,7 +232,7 @@ trait StaticConfigTrait
         @
     )?
     (?P<_host>
-        (?P<host>[^?#/:@]+)
+        (?P<host>\[[^]]+]|[^?#/:@]+)
         (?P<_port>
             :(?P<port>\d+)
         )?

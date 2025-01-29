@@ -182,6 +182,36 @@ class StaticConfigTraitTest extends TestCase
         ];
         $this->assertEquals($expected, TestEmailStaticConfig::parseDsn($dsn));
 
+        $dsn = 'mail://user:secret@192.168.0.1:25?timeout=30&client=null&tls=null#fragment';
+        $expected = [
+            'className' => MailTransport::class,
+            'client' => null,
+            'host' => '192.168.0.1',
+            'password' => 'secret',
+            'port' => 25,
+            'scheme' => 'mail',
+            'timeout' => '30',
+            'tls' => null,
+            'username' => 'user',
+            'fragment' => 'fragment',
+        ];
+        $this->assertEquals($expected, TestEmailStaticConfig::parseDsn($dsn));
+
+        $dsn = 'mysql://user:secret@[2a00:1450:4002:416::200e]:3306?timeout=30&client=null&tls=null#fragment';
+        $expected = [
+            'className' => 'mysql',
+            'client' => null,
+            'host' => '[2a00:1450:4002:416::200e]',
+            'password' => 'secret',
+            'port' => 3306,
+            'scheme' => 'mysql',
+            'timeout' => '30',
+            'tls' => null,
+            'username' => 'user',
+            'fragment' => 'fragment',
+        ];
+        $this->assertEquals($expected, TestEmailStaticConfig::parseDsn($dsn));
+
         $dsn = 'file:///?prefix=myapp_cake_translations_&serialize=true&duration=%2B2 minutes';
         $expected = [
             'className' => FileLog::class,
