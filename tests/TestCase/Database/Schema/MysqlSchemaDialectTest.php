@@ -647,7 +647,7 @@ SQL;
         $keys = $dialect->describeForeignKeys('schema_articles');
         foreach ($keys as $foreignKey) {
             $this->assertArrayHasKey($foreignKey['name'], $expected);
-            $expectedItem = $expected[$index['name']];
+            $expectedItem = $expected[$foreignKey['name']];
             $expectedFields = array_intersect_key($expectedItem, $foreignKey);
             $resultFields = array_intersect_key($index, $expectedFields);
 
