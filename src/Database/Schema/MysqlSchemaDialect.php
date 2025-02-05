@@ -190,6 +190,25 @@ class MysqlSchemaDialect extends SchemaDialect
     }
 
     /**
+     * @inheritDoc
+     */
+    public function describeOptions(string $tableName): array
+    {
+        $config = $this->_driver->config();
+        if (str_contains($tableName, '.')) {
+            [$config['database'], $tableName] = explode('.', $tableName);
+        }
+        $sql = 'SHOW TABLE STATUS WHERE Name = ?';
+        $statement = $this->_driver->execute($sql, [$tableName]);
+        $row = $statement->fetch('assoc');
+
+        return [
+            'engine' => $row['Engine'],
+            'collation' => $row['Collation'],
+        ];
+    }
+
+    /**
      * Convert a MySQL column type into an abstract type.
      *
      * The returned type will be a type that Cake\Database\TypeFactory can handle.

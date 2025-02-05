@@ -733,10 +733,10 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
-        $this->assertArrayHasKey('engine', $result->getOptions());
-        $this->assertArrayHasKey('collation', $result->getOptions());
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describeOptions('schema_articles');
+        $this->assertArrayHasKey('engine', $result);
+        $this->assertArrayHasKey('collation', $result);
     }
 
     public function testDescribeNonPrimaryAutoIncrement(): void
