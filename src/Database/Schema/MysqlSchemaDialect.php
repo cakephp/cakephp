@@ -81,7 +81,7 @@ class MysqlSchemaDialect extends SchemaDialect
     {
         $config = $this->_driver->config();
         if (str_contains($tableName, '.')) {
-            [$config['schema'], $tableName] = explode('.', $tableName);
+            [$config['database'], $tableName] = explode('.', $tableName);
         }
         $sql = $this->describeColumnQuery($tableName);
         $columns = [];
@@ -132,7 +132,7 @@ class MysqlSchemaDialect extends SchemaDialect
     {
         $config = $this->_driver->config();
         if (str_contains($tableName, '.')) {
-            [$config['schema'], $tableName] = explode('.', $tableName);
+            [$config['database'], $tableName] = explode('.', $tableName);
         }
         $sql = $this->describeIndexQuery($tableName);
         $statement = $this->_driver->execute($sql);
@@ -423,6 +423,48 @@ class MysqlSchemaDialect extends SchemaDialect
         ];
         $name = $row['CONSTRAINT_NAME'];
         $schema->addConstraint($name, $data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeForeignKeys(string $tableName): array
+    {
+        $config = $this->_driver->config();
+        if (str_contains($tableName, '.')) {
+            [$config['database'], $tableName] = explode('.', $tableName);
+        }
+
+        $sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
+            INNER JOIN information_schema.referential_constraints AS rc
+            ON (
+                kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
+                AND kcu.CONSTRAINT_SCHEMA = rc.CONSTRAINT_SCHEMA
+            )
+            WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ? AND rc.TABLE_NAME = ?
+            ORDER BY kcu.ORDINAL_POSITION ASC';
+        $params = [$config['database'], $tableName, $tableName];
+        $statement = $this->_driver->execute($sql, $params);
+        $keys = [];
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $name = $row['CONSTRAINT_NAME'];
+            if (!isset($keys[$name])) {
+                $keys[$name] = [
+                    'name' => $name,
+                    'type' => TableSchema::CONSTRAINT_FOREIGN,
+                    'columns' => [],
+                    'references' => [$row['REFERENCED_TABLE_NAME'], []],
+                    'update' => $this->_convertOnClause($row['UPDATE_RULE'] ?? ''),
+                    'delete' => $this->_convertOnClause($row['DELETE_RULE'] ?? ''),
+                    'length' => [],
+                ];
+            }
+            // Add the columns incrementally
+            $keys[$name]['columns'][] = $row['COLUMN_NAME'];
+            $keys[$name]['references'][1][] = $row['REFERENCED_COLUMN_NAME'];
+        }
+
+        return array_values($keys);
     }
 
     /**

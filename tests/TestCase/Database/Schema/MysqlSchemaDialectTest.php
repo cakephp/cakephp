@@ -642,6 +642,17 @@ SQL;
 
             $this->assertEquals($expectedFields, $resultFields);
         }
+
+        // Compare describeForeignKeys()
+        $keys = $dialect->describeForeignKeys('schema_articles');
+        foreach ($keys as $foreignKey) {
+            $this->assertArrayHasKey($foreignKey['name'], $expected);
+            $expectedItem = $expected[$index['name']];
+            $expectedFields = array_intersect_key($expectedItem, $foreignKey);
+            $resultFields = array_intersect_key($index, $expectedFields);
+
+            $this->assertEquals($expectedFields, $resultFields);
+        }
     }
 
     /**
