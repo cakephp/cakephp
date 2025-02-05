@@ -364,8 +364,8 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
         $expected = [
             'id' => [
@@ -397,6 +397,16 @@ SQL;
                 'collate' => 'utf8_general_ci',
             ],
             'author_id' => [
+                'type' => 'integer',
+                'null' => false,
+                'unsigned' => false,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'autoIncrement' => null,
+            ],
+            'unique_id' => [
                 'type' => 'integer',
                 'null' => false,
                 'unsigned' => false,
@@ -466,6 +476,16 @@ SQL;
                 $result->getColumn($field),
                 'Field definition does not match for ' . $field,
             );
+        }
+
+        // Compare with describeColumns as well
+        $columns = $dialect->describeColumns('schema_articles');
+        foreach ($columns as $column) {
+            $this->assertArrayHasKey($column['name'], $expected);
+            $expectedItem = $expected[$column['name']];
+            $expectedFields = array_intersect_key($expectedItem, $column);
+            $resultFields = array_intersect_key($column, $expectedFields);
+            $this->assertEquals($expectedFields, $resultFields);
         }
     }
 

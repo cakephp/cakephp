@@ -58,7 +58,50 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function describeColumnSql(string $tableName, array $config): array
     {
-        return ['SHOW FULL COLUMNS FROM ' . $this->_driver->quoteIdentifier($tableName), []];
+        $sql = $this->describeColumnQuery($tableName);
+
+        return [$sql, []];
+    }
+
+    /**
+     * Helper method for creating SQL to describe columns in a table.
+     *
+     * @param string $tableName The table to describe.
+     * @return string SQL to reflect columns
+     */
+    private function describeColumnQuery(string $tableName): string
+    {
+        return 'SHOW FULL COLUMNS FROM ' . $this->_driver->quoteIdentifier($tableName);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeColumns(string $tableName): array
+    {
+        $config = $this->_driver->config();
+        if (str_contains($tableName, '.')) {
+            [$config['schema'], $tableName] = explode('.', $tableName);
+        }
+        $sql = $this->describeColumnQuery($tableName);
+        $columns = [];
+        $statement = $this->_driver->execute($sql);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $field = $this->_convertColumn($row['Type']);
+            $field += [
+                'name' => $row['Field'],
+                'null' => $row['Null'] === 'YES',
+                'default' => $row['Default'],
+                'comment' => $row['Comment'],
+                'length' => null,
+            ];
+            if (isset($row['Extra']) && $row['Extra'] === 'auto_increment') {
+                $field['autoIncrement'] = true;
+            }
+            $columns[] = $field;
+        }
+
+        return $columns;
     }
 
     /**
