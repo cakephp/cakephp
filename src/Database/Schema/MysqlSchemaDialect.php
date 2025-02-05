@@ -109,7 +109,65 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function describeIndexSql(string $tableName, array $config): array
     {
-        return ['SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($tableName), []];
+        $sql = $this->describeIndexQuery($tableName);
+
+        return [$sql, []];
+    }
+
+    /**
+     * Helper method for creating SQL to reflect indexes in a table.
+     *
+     * @param string $tableName The table to get indexes from.
+     * @return string SQL to reflect indexes
+     */
+    private function describeIndexQuery(string $tableName): string
+    {
+        return 'SHOW INDEXES FROM ' . $this->_driver->quoteIdentifier($tableName);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeIndexes(string $tableName): array
+    {
+        $config = $this->_driver->config();
+        if (str_contains($tableName, '.')) {
+            [$config['schema'], $tableName] = explode('.', $tableName);
+        }
+        $sql = $this->describeIndexQuery($tableName);
+        $statement = $this->_driver->execute($sql);
+        $indexes = [];
+
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $name = $row['Key_name'];
+            $type = null;
+            if ($name === 'PRIMARY') {
+                $name = TableSchema::CONSTRAINT_PRIMARY;
+                $type = TableSchema::CONSTRAINT_PRIMARY;
+            }
+            if ($row['Index_type'] === 'FULLTEXT') {
+                $type = TableSchema::INDEX_FULLTEXT;
+            } elseif ((int)$row['Non_unique'] === 0 && $type !== TableSchema::CONSTRAINT_PRIMARY) {
+                $type = TableSchema::CONSTRAINT_UNIQUE;
+            } elseif ($type !== TableSchema::CONSTRAINT_PRIMARY) {
+                $type = TableSchema::INDEX_INDEX;
+            }
+            if (!isset($indexes[$name])) {
+                $indexes[$name] = [
+                    'name' => $name,
+                    'type' => $type,
+                    'columns' => [],
+                    'length' => [],
+                ];
+            }
+
+            $indexes[$name]['columns'][] = $row['Column_name'];
+            if (!empty($row['Sub_part'])) {
+                $indexes[$name]['length'][$row['Column_name']] = $row['Sub_part'];
+            }
+        }
+
+        return array_values($indexes);
     }
 
     /**

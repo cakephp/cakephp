@@ -580,8 +580,8 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
 
         $this->assertCount(4, $result->constraints());
@@ -613,6 +613,11 @@ SQL;
                 ],
                 'length' => [],
             ],
+            'author_idx' => [
+                'type' => 'index',
+                'columns' => ['author_id'],
+                'length' => [],
+            ],
         ];
 
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
@@ -625,12 +630,18 @@ SQL;
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
         $this->assertCount(1, $result->indexes());
-        $expected = [
-            'type' => 'index',
-            'columns' => ['author_id'],
-            'length' => [],
-        ];
-        $this->assertEquals($expected, $result->getIndex('author_idx'));
+        $this->assertEquals($expected['author_idx'], $result->getIndex('author_idx'));
+
+        // Compare with describeIndexes() which includes indexes + uniques
+        $indexes = $dialect->describeIndexes('schema_articles');
+        foreach ($indexes as $index) {
+            $this->assertArrayHasKey($index['name'], $expected);
+            $expectedItem = $expected[$index['name']];
+            $expectedFields = array_intersect_key($expectedItem, $index);
+            $resultFields = array_intersect_key($index, $expectedFields);
+
+            $this->assertEquals($expectedFields, $resultFields);
+        }
     }
 
     /**
