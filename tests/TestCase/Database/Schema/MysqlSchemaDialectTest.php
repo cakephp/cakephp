@@ -640,6 +640,7 @@ SQL;
             $expectedFields = array_intersect_key($expectedItem, $index);
             $resultFields = array_intersect_key($index, $expectedFields);
 
+            $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
         }
 
@@ -649,8 +650,9 @@ SQL;
             $this->assertArrayHasKey($foreignKey['name'], $expected);
             $expectedItem = $expected[$foreignKey['name']];
             $expectedFields = array_intersect_key($expectedItem, $foreignKey);
-            $resultFields = array_intersect_key($index, $expectedFields);
+            $resultFields = array_intersect_key($foreignKey, $expectedFields);
 
+            $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
         }
     }
