@@ -653,7 +653,7 @@ SQL;
                 $name = 'schema_articles_ibfk_1';
             }
             $this->assertArrayHasKey($name, $expected);
-            $expectedItem = $expected[$foreignKey['name']];
+            $expectedItem = $expected[$name];
             $expectedFields = array_intersect_key($expectedItem, $foreignKey);
             $resultFields = array_intersect_key($foreignKey, $expectedFields);
 
