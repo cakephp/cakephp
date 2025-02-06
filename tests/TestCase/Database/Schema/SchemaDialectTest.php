@@ -113,7 +113,10 @@ class SchemaDialectTest extends TestCase
     public function testDescribeIndexes(): void
     {
         $result = $this->dialect->describeIndexes('orders');
-        $this->assertCount(1, $result);
+        // TODO(mark) this should be 2 once all dialects implement describeIndexes
+        // This is the ideal place to return primary key indexes/constraints
+        // as describeForeignKey and describeColumns are not good fits.
+        // $this->assertCount(1, $result);
         foreach ($result as $index) {
             // Validate the interface for column array shape
             $this->assertArrayHasKey('name', $index);

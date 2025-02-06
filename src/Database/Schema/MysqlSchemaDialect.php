@@ -482,6 +482,11 @@ class MysqlSchemaDialect extends SchemaDialect
             $keys[$name]['columns'][] = $row['COLUMN_NAME'];
             $keys[$name]['references'][1][] = $row['REFERENCED_COLUMN_NAME'];
         }
+        foreach ($keys as $id => $key) {
+            if (count($key['references'][1]) === 1) {
+                $keys[$id]['references'][1] = $key['references'][1][0];
+            }
+        }
 
         return array_values($keys);
     }
