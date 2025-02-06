@@ -646,6 +646,7 @@ SQL;
 
         // Compare describeForeignKeys()
         $keys = $dialect->describeForeignKeys('schema_articles');
+        debug([$keys, $expected]);
         foreach ($keys as $foreignKey) {
             $this->assertArrayHasKey($foreignKey['name'], $expected);
             $expectedItem = $expected[$foreignKey['name']];
