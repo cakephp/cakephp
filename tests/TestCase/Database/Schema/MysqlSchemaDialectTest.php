@@ -646,9 +646,13 @@ SQL;
 
         // Compare describeForeignKeys()
         $keys = $dialect->describeForeignKeys('schema_articles');
-        debug([$keys, $expected]);
+        $isMariaDb = ConnectionManager::get('test')->getDriver()->isMariaDb();
         foreach ($keys as $foreignKey) {
-            $this->assertArrayHasKey($foreignKey['name'], $expected);
+            $name = $foreignKey['name'];
+            if ($name === 'author_idx' && $isMariaDb) {
+                $name = 'schema_articles_ibfk_1';
+            }
+            $this->assertArrayHasKey($name, $expected);
             $expectedItem = $expected[$foreignKey['name']];
             $expectedFields = array_intersect_key($expectedItem, $foreignKey);
             $resultFields = array_intersect_key($foreignKey, $expectedFields);
