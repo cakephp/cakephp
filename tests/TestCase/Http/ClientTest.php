@@ -542,6 +542,40 @@ class ClientTest extends TestCase
         $http->post('/projects/add', $data, ['type' => $type]);
     }
 
+    public function testPostWithContentType(): void
+    {
+        $response = new Response();
+        $headers = [
+            'Content-Type' => 'application/octet-stream',
+        ];
+
+        $mock = $this->getMockBuilder(Stream::class)
+            ->onlyMethods(['send'])
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function ($request) use ($headers) {
+                $this->assertSame(Request::METHOD_POST, $request->getMethod());
+                $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
+
+                return true;
+            }))
+            ->willReturn([$response]);
+
+        $http = new Client([
+            'adapter' => $mock,
+        ]);
+        $http->post(
+            'https://example.org/2/files/upload',
+            [],
+            [
+                'headers' => [
+                    'Content-Type' => 'application/octet-stream',
+                ],
+            ]
+        );
+    }
+
     /**
      * Test that string payloads with no content type have a default content-type set.
      */

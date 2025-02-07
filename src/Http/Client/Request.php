@@ -55,7 +55,6 @@ class Request extends Message implements RequestInterface
             'User-Agent' => ini_get('user_agent') ?: 'CakePHP',
         ];
         $this->addHeaders($headers);
-
         if ($data === null) {
             $this->stream = new Stream('php://memory', 'rw');
         } else {
@@ -101,9 +100,11 @@ class Request extends Message implements RequestInterface
             } else {
                 $formData = new FormData();
                 $formData->addMany($content);
-                /** @phpstan-var array<non-empty-string, non-empty-string> $headers */
-                $headers = ['Content-Type' => $formData->contentType()];
-                $this->addHeaders($headers);
+                if ($formData->count()) {
+                    /** @phpstan-var array<non-empty-string, non-empty-string> $headers */
+                    $headers = ['Content-Type' => $formData->contentType()];
+                    $this->addHeaders($headers);
+                }
                 $content = (string)$formData;
             }
         }
