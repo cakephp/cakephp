@@ -67,7 +67,20 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function describeColumnSql(string $tableName, array $config): array
     {
-        $sql = 'SELECT DISTINCT table_schema AS schema,
+        $sql = $this->describeColumnQuery();
+        $schema = empty($config['schema']) ? 'public' : $config['schema'];
+
+        return [$sql, [$tableName, $schema, $config['database']]];
+    }
+
+    /**
+     * Helper method for creating SQL to describe columns in a table.
+     *
+     * @return string SQL to reflect columns
+     */
+    private function describeColumnQuery(): string
+    {
+        return 'SELECT DISTINCT table_schema AS schema,
             column_name AS name,
             data_type AS type,
             udt_name,
@@ -90,10 +103,6 @@ class PostgresSchemaDialect extends SchemaDialect
         LEFT JOIN pg_catalog.pg_attribute attr ON (cl.oid = attr.attrelid AND column_name = attr.attname)
         WHERE table_name = ? AND table_schema = ? AND table_catalog = ?
         ORDER BY ordinal_position';
-
-        $schema = empty($config['schema']) ? 'public' : $config['schema'];
-
-        return [$sql, [$tableName, $schema, $config['database']]];
     }
 
     /**
@@ -238,6 +247,62 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         $schema->addColumn($row['name'], $field);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeColumns(string $tableName): array
+    {
+        $config = $this->_driver->config();
+        $schema = empty($config['schema']) ? 'public' : $config['schema'];
+
+        $sql = $this->describeColumnQuery();
+        $statement = $this->_driver->execute($sql, [$tableName, $schema, $config['database']]);
+        $columns = [];
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $field = $this->_convertColumn($row['type']);
+            if ($field['type'] === TableSchemaInterface::TYPE_BOOLEAN) {
+                if ($row['default'] === 'true') {
+                    $row['default'] = 1;
+                }
+                if ($row['default'] === 'false') {
+                    $row['default'] = 0;
+                }
+            }
+            if (!empty($row['has_serial'])) {
+                $field['autoIncrement'] = true;
+            }
+
+            $field += [
+                'name' => $row['name'],
+                'default' => $this->_defaultValue($row['default']),
+                'null' => $row['null'] === 'YES',
+                'collate' => $row['collation_name'],
+                'comment' => $row['comment'],
+            ];
+            $field['length'] = $row['char_length'] ?: $field['length'];
+
+            if ($field['type'] === 'numeric' || $field['type'] === 'decimal') {
+                $field['length'] = $row['column_precision'];
+                $field['precision'] = $row['column_scale'] ?: null;
+            }
+
+            if ($field['type'] === TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL) {
+                $field['precision'] = $row['datetime_precision'];
+                if ($field['precision'] === 0) {
+                    $field['type'] = TableSchemaInterface::TYPE_TIMESTAMP;
+                }
+            }
+
+            if ($field['type'] === TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE) {
+                $field['precision'] = $row['datetime_precision'];
+            }
+
+            $columns[] = $field;
+        }
+
+        return $columns;
     }
 
     /**

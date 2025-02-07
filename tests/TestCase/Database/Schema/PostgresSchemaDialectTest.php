@@ -347,8 +347,8 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describe('schema_articles');
         $expected = [
             'id' => [
                 'type' => 'biginteger',
@@ -385,6 +385,16 @@ SQL;
                 'length' => 10,
                 'precision' => null,
                 'unsigned' => null,
+                'comment' => null,
+                'autoIncrement' => null,
+            ],
+            'unique_id' => [
+                'type' => 'integer',
+                'null' => false,
+                'unsigned' => null,
+                'default' => null,
+                'length' => 10,
+                'precision' => null,
                 'comment' => null,
                 'autoIncrement' => null,
             ],
@@ -476,6 +486,16 @@ SQL;
         $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->getColumn($field));
+        }
+
+        // Compare with describeColumns as well
+        $columns = $dialect->describeColumns('schema_articles');
+        foreach ($columns as $column) {
+            $this->assertArrayHasKey($column['name'], $expected);
+            $expectedItem = $expected[$column['name']];
+            $expectedFields = array_intersect_key($expectedItem, $column);
+            $resultFields = array_intersect_key($column, $expectedFields);
+            $this->assertEquals($expectedFields, $resultFields, 'difference in ' . $column['name']);
         }
     }
 
