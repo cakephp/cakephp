@@ -336,6 +336,11 @@ class PostgresSchemaDialect extends SchemaDialect
         );
     }
 
+    /**
+     * Get the query to describe indexes
+     *
+     * @return string
+     */
     private function describeIndexQuery(): string
     {
         return 'SELECT
