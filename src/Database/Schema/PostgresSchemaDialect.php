@@ -352,7 +352,6 @@ class PostgresSchemaDialect extends SchemaDialect
         AND a.attnum = ANY(i.indkey)
         AND c.relname = ?
         ORDER BY i.indisprimary DESC, i.indisunique DESC, c.relname, a.attnum';
-
     }
 
     /**
@@ -443,7 +442,6 @@ class PostgresSchemaDialect extends SchemaDialect
      * @param string $type The index type.
      * @param array $row The metadata record to update with.
      * @return void
-     * @deprecated 5.2.0 Part of the deprecated reflection API.
      */
     protected function _convertConstraint(TableSchema $schema, string $name, string $type, array $row): void
     {
@@ -462,6 +460,71 @@ class PostgresSchemaDialect extends SchemaDialect
      * @inheritDoc
      */
     public function describeForeignKeySql(string $tableName, array $config): array
+    {
+        $sql = $this->describeForeignKeyQuery();
+        $schema = empty($config['schema']) ? 'public' : $config['schema'];
+
+        return [$sql, [$schema, $tableName]];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function convertForeignKeyDescription(TableSchema $schema, array $row): void
+    {
+        $data = [
+            'type' => TableSchema::CONSTRAINT_FOREIGN,
+            'columns' => $row['column_name'],
+            'references' => [$row['references_table'], $row['references_field']],
+            'update' => $this->_convertOnClause($row['on_update']),
+            'delete' => $this->_convertOnClause($row['on_delete']),
+        ];
+        $schema->addConstraint($row['name'], $data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeForeignKeys(string $tableName): array
+    {
+        $schema = 'public';
+        $config = $this->_driver->config();
+        if (!empty($config['schema'])) {
+            $schema = $config['schema'];
+        }
+        $sql = $this->describeForeignKeyQuery();
+        $keys = [];
+        $statement = $this->_driver->execute($sql, [$schema, $tableName]);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $name = $row['name'];
+            if (!isset($keys[$name])) {
+                $keys[$name] = [
+                    'name' => $name,
+                    'type' => TableSchema::CONSTRAINT_FOREIGN,
+                    'columns' => [],
+                    'references' => [$row['references_table'], []],
+                    'update' => $this->_convertOnClause($row['on_update']),
+                    'delete' => $this->_convertOnClause($row['on_delete']),
+                ];
+            }
+            $keys[$name]['columns'][] = $row['column_name'];
+            $keys[$name]['references'][1][] = $row['references_field'];
+        }
+        foreach ($keys as $id => $key) {
+            if (count($key['references'][1]) === 1) {
+                $keys[$id]['references'][1] = $key['references'][1][0];
+            }
+        }
+
+        return array_values($keys);
+    }
+
+    /**
+     * Get the query to describe foreign keys
+     *
+     * @return string
+     */
+    private function describeForeignKeyQuery(): string
     {
         // phpcs:disable Generic.Files.LineLength
         $sql = 'SELECT
@@ -484,24 +547,8 @@ class PostgresSchemaDialect extends SchemaDialect
         AND cl.relname = ?
         ORDER BY name, column_order ASC, references_field_order ASC';
         // phpcs:enable Generic.Files.LineLength
-        $schema = empty($config['schema']) ? 'public' : $config['schema'];
 
-        return [$sql, [$schema, $tableName]];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertForeignKeyDescription(TableSchema $schema, array $row): void
-    {
-        $data = [
-            'type' => TableSchema::CONSTRAINT_FOREIGN,
-            'columns' => $row['column_name'],
-            'references' => [$row['references_table'], $row['references_field']],
-            'update' => $this->_convertOnClause($row['on_update']),
-            'delete' => $this->_convertOnClause($row['on_delete']),
-        ];
-        $schema->addConstraint($row['name'], $data);
+        return $sql;
     }
 
     /**
