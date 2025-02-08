@@ -426,6 +426,7 @@ class PostgresSchemaDialect extends SchemaDialect
                     'name' => $name,
                     'type' => $type,
                     'columns' => [],
+                    'length' => [],
                 ];
             }
             $indexes[$name]['columns'][] = $row['attname'];
@@ -507,8 +508,12 @@ class PostgresSchemaDialect extends SchemaDialect
                     'delete' => $this->_convertOnClause($row['on_delete']),
                 ];
             }
-            $keys[$name]['columns'][] = $row['column_name'];
-            $keys[$name]['references'][1][] = $row['references_field'];
+            // column indexes start at 1
+            $columnOrder = $row['column_order'] - 1;
+            $referencedColumnOrder = $row['references_field_order'] - 1;
+
+            $keys[$name]['columns'][$columnOrder] = $row['column_name'];
+            $keys[$name]['references'][1][$referencedColumnOrder] = $row['references_field'];
         }
         foreach ($keys as $id => $key) {
             if (count($key['references'][1]) === 1) {
