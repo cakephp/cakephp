@@ -336,12 +336,9 @@ class PostgresSchemaDialect extends SchemaDialect
         );
     }
 
-    /**
-     * @inheritDoc
-     */
-    public function describeIndexSql(string $tableName, array $config): array
+    private function describeIndexQuery(): string
     {
-        $sql = 'SELECT
+        return 'SELECT
         c2.relname,
         a.attname,
         i.indisprimary,
@@ -356,6 +353,14 @@ class PostgresSchemaDialect extends SchemaDialect
         AND c.relname = ?
         ORDER BY i.indisprimary DESC, i.indisunique DESC, c.relname, a.attnum';
 
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeIndexSql(string $tableName, array $config): array
+    {
+        $sql = $this->describeIndexQuery();
         $schema = 'public';
         if (!empty($config['schema'])) {
             $schema = $config['schema'];
@@ -395,6 +400,42 @@ class PostgresSchemaDialect extends SchemaDialect
     }
 
     /**
+     * @inheritDoc
+     */
+    public function describeIndexes(string $tableName): array
+    {
+        $sql = $this->describeIndexQuery();
+        $schema = 'public';
+        $config = $this->_driver->config();
+        if (!empty($config['schema'])) {
+            $schema = $config['schema'];
+        }
+        $indexes = [];
+        $statement = $this->_driver->execute($sql, [$schema, $tableName]);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $type = TableSchema::INDEX_INDEX;
+            $name = $row['relname'];
+            if ($row['indisprimary']) {
+                $name = TableSchema::CONSTRAINT_PRIMARY;
+                $type = TableSchema::CONSTRAINT_PRIMARY;
+            }
+            if ($row['indisunique'] && $type === TableSchema::INDEX_INDEX) {
+                $type = TableSchema::CONSTRAINT_UNIQUE;
+            }
+            if (!isset($indexes[$name])) {
+                $indexes[$name] = [
+                    'name' => $name,
+                    'type' => $type,
+                    'columns' => [],
+                ];
+            }
+            $indexes[$name]['columns'][] = $row['attname'];
+        }
+
+        return array_values($indexes);
+    }
+
+    /**
      * Add/update a constraint into the schema object.
      *
      * @param \Cake\Database\Schema\TableSchema $schema The table to update.
@@ -402,6 +443,7 @@ class PostgresSchemaDialect extends SchemaDialect
      * @param string $type The index type.
      * @param array $row The metadata record to update with.
      * @return void
+     * @deprecated 5.2.0 Part of the deprecated reflection API.
      */
     protected function _convertConstraint(TableSchema $schema, string $name, string $type, array $row): void
     {
