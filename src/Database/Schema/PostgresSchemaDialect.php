@@ -41,7 +41,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables
                 WHERE table_schema = ? ORDER BY name';
-        $schema = empty($config['schema']) ? 'public' : $config['schema'];
+        $schema = $config['schema'] ?? 'public';
 
         return [$sql, [$schema]];
     }
@@ -57,7 +57,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables
                 WHERE table_schema = ? AND table_type = \'BASE TABLE\' ORDER BY name';
-        $schema = empty($config['schema']) ? 'public' : $config['schema'];
+        $schema = $config['schema'] ?? 'public';
 
         return [$sql, [$schema]];
     }
@@ -68,7 +68,7 @@ class PostgresSchemaDialect extends SchemaDialect
     public function describeColumnSql(string $tableName, array $config): array
     {
         $sql = $this->describeColumnQuery();
-        $schema = empty($config['schema']) ? 'public' : $config['schema'];
+        $schema = $config['schema'] ?? 'public';
 
         return [$sql, [$tableName, $schema, $config['database']]];
     }
@@ -255,7 +255,7 @@ class PostgresSchemaDialect extends SchemaDialect
     public function describeColumns(string $tableName): array
     {
         $config = $this->_driver->config();
-        $schema = empty($config['schema']) ? 'public' : $config['schema'];
+        $schema = $config['schema'] ?? 'public';
 
         $sql = $this->describeColumnQuery();
         $statement = $this->_driver->execute($sql, [$tableName, $schema, $config['database']]);
@@ -265,8 +265,7 @@ class PostgresSchemaDialect extends SchemaDialect
             if ($field['type'] === TableSchemaInterface::TYPE_BOOLEAN) {
                 if ($row['default'] === 'true') {
                     $row['default'] = 1;
-                }
-                if ($row['default'] === 'false') {
+                } elseif ($row['default'] === 'false') {
                     $row['default'] = 0;
                 }
             }
@@ -365,10 +364,7 @@ class PostgresSchemaDialect extends SchemaDialect
     public function describeIndexSql(string $tableName, array $config): array
     {
         $sql = $this->describeIndexQuery();
-        $schema = 'public';
-        if (!empty($config['schema'])) {
-            $schema = $config['schema'];
-        }
+        $schema = $config['schema'] ?? 'public';
 
         return [$sql, [$schema, $tableName]];
     }
@@ -409,11 +405,8 @@ class PostgresSchemaDialect extends SchemaDialect
     public function describeIndexes(string $tableName): array
     {
         $sql = $this->describeIndexQuery();
-        $schema = 'public';
         $config = $this->_driver->config();
-        if (!empty($config['schema'])) {
-            $schema = $config['schema'];
-        }
+        $schema = $config['schema'] ?? 'public';
         $indexes = [];
         $statement = $this->_driver->execute($sql, [$schema, $tableName]);
         foreach ($statement->fetchAll('assoc') as $row) {
@@ -468,7 +461,7 @@ class PostgresSchemaDialect extends SchemaDialect
     public function describeForeignKeySql(string $tableName, array $config): array
     {
         $sql = $this->describeForeignKeyQuery();
-        $schema = empty($config['schema']) ? 'public' : $config['schema'];
+        $schema = $config['schema'] ?? 'public';
 
         return [$sql, [$schema, $tableName]];
     }
@@ -493,11 +486,8 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function describeForeignKeys(string $tableName): array
     {
-        $schema = 'public';
         $config = $this->_driver->config();
-        if (!empty($config['schema'])) {
-            $schema = $config['schema'];
-        }
+        $schema = $config['schema'] ?? 'public';
         $sql = $this->describeForeignKeyQuery();
         $keys = [];
         $statement = $this->_driver->execute($sql, [$schema, $tableName]);
@@ -521,6 +511,8 @@ class PostgresSchemaDialect extends SchemaDialect
             $keys[$name]['references'][1][$referencedColumnOrder] = $row['references_field'];
         }
         foreach ($keys as $id => $key) {
+            // references.1 is the referenced columns. Backwards compat
+            // requires a single column to be a string, but multiple to be an array.
             if (count($key['references'][1]) === 1) {
                 $keys[$id]['references'][1] = $key['references'][1][0];
             }
