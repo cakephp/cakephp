@@ -71,7 +71,20 @@ class SqlserverSchemaDialect extends SchemaDialect
      */
     public function describeColumnSql(string $tableName, array $config): array
     {
-        $sql = 'SELECT DISTINCT
+        $sql = $this->describeColumnQuery();
+        $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+
+        return [$sql, [$tableName, $schema]];
+    }
+
+    /**
+     * Helper method for creating SQL to describe columns in a table.
+     *
+     * @return string SQL to reflect columns
+     */
+    private function describeColumnQuery(): string
+    {
+        return 'SELECT DISTINCT
             AC.column_id AS [column_id],
             AC.name AS [name],
             TY.name AS [type],
@@ -88,10 +101,6 @@ class SqlserverSchemaDialect extends SchemaDialect
             INNER JOIN sys.[types] TY ON TY.[user_type_id] = AC.[user_type_id]
             WHERE T.[name] = ? AND S.[name] = ?
             ORDER BY column_id';
-
-        $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
-
-        return [$sql, [$tableName, $schema]];
     }
 
     /**
@@ -237,6 +246,41 @@ class SqlserverSchemaDialect extends SchemaDialect
             'collate' => $row['collation_name'],
         ];
         $schema->addColumn($row['name'], $field);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeColumns(string $tableName): array
+    {
+        $config = $this->_driver->config();
+        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
+
+        $sql = $this->describeColumnQuery();
+        $statement = $this->_driver->execute($sql, [$tableName, $schema]);
+        $columns = [];
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $field = $this->_convertColumn(
+                $row['type'],
+                $row['char_length'] !== null ? (int)$row['char_length'] : null,
+                $row['precision'] !== null ? (int)$row['precision'] : null,
+                $row['scale'] !== null ? (int)$row['scale'] : null,
+            );
+
+            if (!empty($row['autoincrement'])) {
+                $field['autoIncrement'] = true;
+            }
+
+            $field += [
+                'name' => $row['name'],
+                'null' => $row['null'] === '1',
+                'default' => $this->_defaultValue($field['type'], $row['default']),
+                'collate' => $row['collation_name'],
+            ];
+            $columns[] = $field;
+        }
+
+        return $columns;
     }
 
     /**

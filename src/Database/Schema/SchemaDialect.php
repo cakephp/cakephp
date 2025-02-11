@@ -456,6 +456,8 @@ abstract class SchemaDialect
      * - null : boolean indicating whether the column can be null.
      * - comment : the column comment or null.
      *
+     * Additionaly the `autoIncrement` key will be set for columns that are a primary key.
+     *
      * @param string $tableName The name of the table to describe columns on.
      * @return array
      */

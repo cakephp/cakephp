@@ -381,8 +381,8 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describe('schema_articles');
         $expected = [
             'id' => [
                 'type' => 'biginteger',
@@ -421,6 +421,16 @@ SQL;
                 'unsigned' => null,
                 'autoIncrement' => null,
                 'comment' => null,
+            ],
+            'unique_id' => [
+                'type' => 'integer',
+                'null' => false,
+                'unsigned' => null,
+                'default' => null,
+                'length' => 10,
+                'precision' => null,
+                'comment' => null,
+                'autoIncrement' => null,
             ],
             'published' => [
                 'type' => 'boolean',
@@ -514,6 +524,19 @@ SQL;
             $this->assertEquals($definition, $column, 'Failed to match field ' . $field);
             $this->assertSame($definition['length'], $column['length']);
             $this->assertSame($definition['precision'], $column['precision']);
+        }
+
+        // Compare with describeColumns()
+        $columns = $dialect->describeColumns('schema_articles');
+        foreach ($columns as $column) {
+            $name = $column['name'];
+            $this->assertArrayHasKey($name, $expected);
+            $expectedItem = $expected[$name];
+            $expectedFields = array_intersect_key($expectedItem, $column);
+            $resultFields = array_intersect_key($column, $expectedFields);
+
+            $this->assertNotEmpty($resultFields);
+            $this->assertEquals($expectedFields, $resultFields);
         }
     }
 
