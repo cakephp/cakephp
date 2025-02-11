@@ -557,6 +557,7 @@ class ClientTest extends TestCase
             ->with($this->callback(function ($request) use ($headers) {
                 $this->assertSame(Request::METHOD_POST, $request->getMethod());
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
+                $this->assertEquals('', (string)$request->getBody());
 
                 return true;
             }))
@@ -568,6 +569,41 @@ class ClientTest extends TestCase
         $http->post(
             'https://example.org/2/files/upload',
             [],
+            [
+                'headers' => [
+                    'Content-Type' => 'application/octet-stream',
+                ],
+            ]
+        );
+    }
+
+    public function testPostWithZero(): void
+    {
+        $response = new Response();
+        $headers = [
+            'Content-Type' => 'application/octet-stream',
+        ];
+
+        $mock = $this->getMockBuilder(Stream::class)
+            ->onlyMethods(['send'])
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function ($request) use ($headers) {
+                $this->assertSame(Request::METHOD_POST, $request->getMethod());
+                $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
+                $this->assertEquals('0', (string)$request->getBody());
+
+                return true;
+            }))
+            ->willReturn([$response]);
+
+        $http = new Client([
+            'adapter' => $mock,
+        ]);
+        $http->post(
+            'https://example.org/2/files/upload',
+            '0',
             [
                 'headers' => [
                     'Content-Type' => 'application/octet-stream',
