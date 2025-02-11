@@ -326,7 +326,20 @@ class SqlserverSchemaDialect extends SchemaDialect
      */
     public function describeIndexSql(string $tableName, array $config): array
     {
-        $sql = "SELECT
+        $sql = $this->describeIndexQuery();
+        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
+
+        return [$sql, [$tableName, $schema]];
+    }
+
+    /**
+     * Get the query to describe indexes
+     *
+     * @return string
+     */
+    private function describeIndexQuery(): string
+    {
+        return "SELECT
                 I.[name] AS [index_name],
                 IC.[index_column_id] AS [index_order],
                 AC.[name] AS [column_name],
@@ -339,10 +352,6 @@ class SqlserverSchemaDialect extends SchemaDialect
             INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id]
             WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ? AND S.[name] = ?
             ORDER BY I.[index_id], IC.[index_column_id]";
-
-        $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
-
-        return [$sql, [$tableName, $schema]];
     }
 
     /**
@@ -383,6 +392,41 @@ class SqlserverSchemaDialect extends SchemaDialect
             'type' => $type,
             'columns' => $columns,
         ]);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeIndexes(string $tableName): array
+    {
+        $sql = $this->describeIndexQuery();
+        $config = $this->_driver->config();
+        $schema = $config['schema'] ?? 'public';
+        $indexes = [];
+        $statement = $this->_driver->execute($sql, [$schema, $tableName]);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $type = TableSchema::INDEX_INDEX;
+            $name = $row['index_name'];
+            if ($row['is_primary_key']) {
+                $name = TableSchema::CONSTRAINT_PRIMARY;
+                $type = TableSchema::CONSTRAINT_PRIMARY;
+            }
+            if (($row['is_unique'] || $row['is_unique_constraint']) && $type === TableSchema::INDEX_INDEX) {
+                $type = TableSchema::CONSTRAINT_UNIQUE;
+            }
+
+            if (!isset($indexes[$name])) {
+                $indexes[$name] = [
+                    'name' => $name,
+                    'type' => $type,
+                    'columns' => [],
+                    'length' => [],
+                ];
+            }
+            $indexes[$name]['columns'][] = $row['column_name'];
+        }
+
+        return array_values($indexes);
     }
 
     /**
