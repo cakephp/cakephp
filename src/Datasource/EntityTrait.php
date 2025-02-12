@@ -1387,16 +1387,6 @@ trait EntityTrait
     }
 
     /**
-     * Returns a string representation of this object in a human readable format.
-     *
-     * @return string
-     */
-    public function __toString(): string
-    {
-        return (string)json_encode($this, JSON_PRETTY_PRINT);
-    }
-
-    /**
      * Returns an array that can be used to describe the internal state of this
      * object.
      *

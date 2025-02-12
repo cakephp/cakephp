@@ -1445,15 +1445,6 @@ class EntityTest extends TestCase
     }
 
     /**
-     * Tests the entity's __toString method
-     */
-    public function testToString(): void
-    {
-        $entity = new Entity(['foo' => 1, 'bar' => 2]);
-        $this->assertEquals(json_encode($entity, JSON_PRETTY_PRINT), (string)$entity);
-    }
-
-    /**
      * Tests __debugInfo
      */
     public function testDebugInfo(): void

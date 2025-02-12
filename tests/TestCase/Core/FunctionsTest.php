@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\Configure;
 use Cake\Http\Response;
-use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
@@ -449,7 +448,6 @@ class FunctionsTest extends TestCase
             '(other) int-array' => [[5], null],
             '(other) string-array' => [['5'], null],
             '(other) simple object' => [new stdClass(), null],
-            '(other) Stringable object' => [new Entity(), '[]'],
         ];
     }
 

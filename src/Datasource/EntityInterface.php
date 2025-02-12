@@ -18,7 +18,6 @@ namespace Cake\Datasource;
 
 use ArrayAccess;
 use JsonSerializable;
-use Stringable;
 
 /**
  * Describes the methods that any class representing a data storage should
@@ -28,7 +27,7 @@ use Stringable;
  * @template-extends \ArrayAccess<string, mixed>
  * @method bool hasValue(string $field)
  */
-interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
+interface EntityInterface extends ArrayAccess, JsonSerializable
 {
     /**
      * Sets hidden fields.
