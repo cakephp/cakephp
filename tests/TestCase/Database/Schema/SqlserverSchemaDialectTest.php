@@ -624,6 +624,20 @@ SQL;
         $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
+        // Compare describeForeignKeys()
+        $keys = $dialect->describeForeignKeys('schema_articles');
+        $this->assertCount(1, $keys);
+        foreach ($keys as $foreignKey) {
+            $name = $foreignKey['name'];
+            $this->assertArrayHasKey($name, $expected);
+            $expectedItem = $expected[$name];
+            $expectedFields = array_intersect_key($expectedItem, $foreignKey);
+            $resultFields = array_intersect_key($foreignKey, $expectedFields);
+
+            $this->assertNotEmpty($resultFields);
+            $this->assertEquals($expectedFields, $resultFields);
+        }
+
         $this->assertCount(1, $result->indexes());
         $authorIdx = [
             'type' => 'index',
@@ -635,6 +649,7 @@ SQL;
         // Compare with describeIndexes() which includes indexes + uniques
         $expected['author_idx'] = $authorIdx;
         $indexes = $dialect->describeIndexes('schema_articles');
+        $this->assertCount(4, $indexes);
         foreach ($indexes as $index) {
             $name = $index['name'];
             $this->assertArrayHasKey($name, $expected);

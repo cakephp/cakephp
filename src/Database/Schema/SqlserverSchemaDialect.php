@@ -401,9 +401,9 @@ class SqlserverSchemaDialect extends SchemaDialect
     {
         $sql = $this->describeIndexQuery();
         $config = $this->_driver->config();
-        $schema = $config['schema'] ?? 'public';
+        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
         $indexes = [];
-        $statement = $this->_driver->execute($sql, [$schema, $tableName]);
+        $statement = $this->_driver->execute($sql, [$tableName, $schema]);
         foreach ($statement->fetchAll('assoc') as $row) {
             $type = TableSchema::INDEX_INDEX;
             $name = $row['index_name'];
@@ -430,14 +430,19 @@ class SqlserverSchemaDialect extends SchemaDialect
     }
 
     /**
-     * @inheritDoc
+     * Get the query to describe foreign keys
+     *
+     * @return string
      */
-    public function describeForeignKeySql(string $tableName, array $config): array
+    private function describeForeignKeyQuery(): string
     {
         // phpcs:disable Generic.Files.LineLength
-        $sql = 'SELECT FK.[name] AS [foreign_key_name], FK.[delete_referential_action_desc] AS [delete_type],
-                FK.[update_referential_action_desc] AS [update_type], C.name AS [column], RT.name AS [reference_table],
-                RC.name AS [reference_column]
+        return 'SELECT FK.[name] AS [foreign_key_name],
+            FK.[delete_referential_action_desc] AS [delete_type],
+            FK.[update_referential_action_desc] AS [update_type],
+            C.name AS [column],
+            RT.name AS [reference_table],
+            RC.name AS [reference_column]
             FROM sys.foreign_keys FK
             INNER JOIN sys.foreign_key_columns FKC ON FKC.constraint_object_id = FK.object_id
             INNER JOIN sys.tables T ON T.object_id = FKC.parent_object_id
@@ -448,8 +453,52 @@ class SqlserverSchemaDialect extends SchemaDialect
             WHERE FK.is_ms_shipped = 0 AND T.name = ? AND S.name = ?
             ORDER BY FKC.constraint_column_id';
         // phpcs:enable Generic.Files.LineLength
+    }
 
-        $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+    /**
+     * @inheritDoc
+     */
+    public function describeForeignKeys(string $tableName): array
+    {
+        $config = $this->_driver->config();
+        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
+        $sql = $this->describeForeignKeyQuery();
+        $keys = [];
+        $statement = $this->_driver->execute($sql, [$tableName, $schema]);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $name = $row['foreign_key_name'];
+            if (!isset($keys[$name])) {
+                $keys[$name] = [
+                    'name' => $name,
+                    'type' => TableSchema::CONSTRAINT_FOREIGN,
+                    'columns' => [],
+                    'references' => [$row['reference_table'], []],
+                    'update' => $this->_convertOnClause($row['update_type']),
+                    'delete' => $this->_convertOnClause($row['delete_type']),
+                ];
+            }
+            $keys[$name]['columns'][] = $row['column'];
+            $keys[$name]['references'][1][] = $row['reference_column'];
+        }
+
+        foreach ($keys as $id => $key) {
+            // references.1 is the referenced columns. Backwards compat
+            // requires a single column to be a string, but multiple to be an array.
+            if (count($key['references'][1]) === 1) {
+                $keys[$id]['references'][1] = $key['references'][1][0];
+            }
+        }
+
+        return array_values($keys);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeForeignKeySql(string $tableName, array $config): array
+    {
+        $sql = $this->describeForeignKeyQuery();
+        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
 
         return [$sql, [$tableName, $schema]];
     }
