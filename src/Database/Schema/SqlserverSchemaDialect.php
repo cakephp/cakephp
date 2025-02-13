@@ -522,6 +522,14 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    public function describeOptions(string $tableName): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function _foreignOnClause(string $on): string
     {
         $parent = parent::_foreignOnClause($on);

@@ -621,6 +621,14 @@ class SqliteSchemaDialect extends SchemaDialect
     }
 
     /**
+     * @inheritDoc
+     */
+    public function describeOptions(string $tableName): array
+    {
+        return [];
+    }
+
+    /**
      * {@inheritDoc}
      *
      * @param \Cake\Database\Schema\TableSchema $schema The table instance the column is in.

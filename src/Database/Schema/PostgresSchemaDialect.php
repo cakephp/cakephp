@@ -556,6 +556,14 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    public function describeOptions(string $tableName): array
+    {
+        return [];
+    }
+
+    /**
+     * @inheritDoc
+     */
     protected function _convertOnClause(string $clause): string
     {
         if ($clause === 'r') {
