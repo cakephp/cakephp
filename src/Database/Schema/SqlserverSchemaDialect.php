@@ -275,6 +275,7 @@ class SqlserverSchemaDialect extends SchemaDialect
                 'name' => $row['name'],
                 'null' => $row['null'] === '1',
                 'default' => $this->_defaultValue($field['type'], $row['default']),
+                'comment' => null,
                 'collate' => $row['collation_name'],
             ];
             $columns[] = $field;
@@ -437,6 +438,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     private function describeForeignKeyQuery(): string
     {
         // phpcs:disable Generic.Files.LineLength
+
         return 'SELECT FK.[name] AS [foreign_key_name],
             FK.[delete_referential_action_desc] AS [delete_type],
             FK.[update_referential_action_desc] AS [update_type],
