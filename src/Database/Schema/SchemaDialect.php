@@ -401,45 +401,33 @@ abstract class SchemaDialect
     public function describe(string $name): TableSchemaInterface
     {
         $config = $this->_driver->config();
+        $tableName = $name;
         if (str_contains($name, '.')) {
-            [$config['schema'], $name] = explode('.', $name);
+            [$config['schema'], $tableName] = explode('.', $name);
         }
         // This is kind of a lie, but the convert methods
         // would have a breaking change to change their parameter type.
         /** @var \Cake\Database\Schema\TableSchema $table */
-        $table = $this->_driver->newTableSchema($name);
-
-        [$sql, $params] = $this->describeColumnSql($name, $config);
-        try {
-            $statement = $this->_driver->execute($sql, $params);
-        } catch (PDOException $e) {
-            throw new DatabaseException($e->getMessage(), 500, $e);
+        $table = $this->_driver->newTableSchema($tableName);
+        foreach ($this->describeColumns($name) as $column) {
+            $table->addColumn($column['name'], $column);
         }
-        foreach ($statement->fetchAll('assoc') as $row) {
-            $this->convertColumnDescription($table, $row);
+        foreach ($this->describeIndexes($name) as $index) {
+            if (in_array($index['type'], [TableSchema::CONSTRAINT_UNIQUE, TableSchema::CONSTRAINT_PRIMARY])) {
+                $table->addConstraint($index['name'], $index);
+            } else {
+                $table->addIndex($index['name'], $index);
+            }
+        }
+        foreach ($this->describeForeignKeys($name) as $key) {
+            $table->addConstraint($key['name'], $key);
+        }
+        $options = $this->describeOptions($name);
+        if ($options) {
+            $table->setOptions($options);
         }
         if ($table->columns() === []) {
             throw new DatabaseException(sprintf('Cannot describe %s. It has 0 columns.', $name));
-        }
-
-        [$sql, $params] = $this->describeForeignKeySql($name, $config);
-        $statement = $this->_driver->execute($sql, $params);
-        foreach ($statement->fetchAll('assoc') as $row) {
-            $this->convertForeignKeyDescription($table, $row);
-        }
-
-        [$sql, $params] = $this->describeIndexSql($name, $config);
-        $statement = $this->_driver->execute($sql, $params);
-        foreach ($statement->fetchAll('assoc') as $row) {
-            $this->convertIndexDescription($table, $row);
-        }
-
-        [$sql, $params] = $this->describeOptionsSql($name, $config);
-        if ($sql) {
-            $statement = $this->_driver->execute($sql, $params);
-            foreach ($statement->fetchAll('assoc') as $row) {
-                $this->convertOptionsDescription($table, $row);
-            }
         }
 
         return $table;

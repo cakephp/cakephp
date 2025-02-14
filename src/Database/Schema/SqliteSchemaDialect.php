@@ -272,20 +272,27 @@ class SqliteSchemaDialect extends SchemaDialect
         $sql = $this->describeColumnQuery($tableName);
         $columns = [];
         $statement = $this->_driver->execute($sql);
-        foreach ($statement->fetchAll('assoc') as $row) {
+        $primary = [];
+        foreach ($statement->fetchAll('assoc') as $i => $row) {
+            $name = $row['name'];
             $field = $this->_convertColumn($row['type']);
             $field += [
-                'name' => $row['name'],
+                'name' => $name,
                 'null' => !$row['notnull'],
                 'default' => $this->_defaultValue($row['dflt_value']),
                 'comment' => null,
                 'length' => null,
             ];
             if ($row['pk']) {
-                $field['null'] = false;
-                $field['autoIncrement'] = true;
+                $primary[] = $i;
             }
             $columns[] = $field;
+        }
+        // If sqlite has a single primary column, it can be marked as autoIncrement
+        if (count($primary) == 1) {
+            $offset = $primary[0];
+            $columns[$offset]['autoIncrement'] = true;
+            $columns[$offset]['null'] = false;
         }
 
         return $columns;
@@ -491,6 +498,9 @@ class SqliteSchemaDialect extends SchemaDialect
         $indexes = [];
 
         foreach ($statement->fetchAll('assoc') as $row) {
+            if ($row['origin'] == 'pk') {
+                continue;
+            }
             $indexName = $row['name'];
             $indexSql = sprintf(
                 'PRAGMA index_info(%s)',
@@ -519,6 +529,24 @@ class SqliteSchemaDialect extends SchemaDialect
                 'columns' => $columns,
                 'length' => [],
             ];
+        }
+        // Primary keys aren't available from the index_info pragma
+        // instead we have to read the columns again.
+        $sql = $this->describeColumnQuery($tableName);
+        $statement = $this->_driver->execute($sql);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            if (!$row['pk']) {
+                continue;
+            }
+            if (!isset($indexes['primary'])) {
+                $indexes['primary'] = [
+                    'name' => 'primary',
+                    'type' => TableSchema::CONSTRAINT_PRIMARY,
+                    'columns' => [],
+                    'length' => [],
+                ];
+            }
+            $indexes['primary']['columns'][] = $row['name'];
         }
 
         return array_values($indexes);

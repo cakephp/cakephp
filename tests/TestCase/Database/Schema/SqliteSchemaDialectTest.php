@@ -506,8 +506,8 @@ SQL;
                 'length' => null,
                 'null' => true,
                 'default' => null,
-                'precision' => null,
                 'comment' => null,
+                'precision' => null,
                 'collate' => null,
             ],
         ];
@@ -548,7 +548,7 @@ SQL;
 
         // Includes unique keys.
         $indexes = $dialect->describeIndexes('schema_articles');
-        $this->assertCount(3, $indexes);
+        $this->assertCount(4, $indexes);
 
         $foreignKeys = $dialect->describeForeignKeys('schema_articles');
         $this->assertCount(1, $foreignKeys);
@@ -688,7 +688,7 @@ SQL;
         // Because all our 'constraints' are unique indexes
         // they are treated as indexes by the basic reflection API
         $indexes = $dialect->describeIndexes('schema_unique_constraint_variations');
-        $this->assertCount(6, $indexes);
+        $this->assertCount(7, $indexes);
         foreach ($indexes as $index) {
             $expectedIndex = $expected[$index['name']];
             unset($index['name']);
