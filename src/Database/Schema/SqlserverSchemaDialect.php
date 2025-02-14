@@ -42,7 +42,7 @@ class SqlserverSchemaDialect extends SchemaDialect
             WHERE TABLE_SCHEMA = ?
             AND (TABLE_TYPE = 'BASE TABLE' OR TABLE_TYPE = 'VIEW')
             ORDER BY TABLE_NAME";
-        $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
 
         return [$sql, [$schema]];
     }
@@ -61,7 +61,7 @@ class SqlserverSchemaDialect extends SchemaDialect
             WHERE TABLE_SCHEMA = ?
             AND (TABLE_TYPE = 'BASE TABLE')
             ORDER BY TABLE_NAME";
-        $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
 
         return [$sql, [$schema]];
     }
@@ -72,7 +72,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     public function describeColumnSql(string $tableName, array $config): array
     {
         $sql = $this->describeColumnQuery();
-        $schema = empty($config['schema']) ? static::DEFAULT_SCHEMA_NAME : $config['schema'];
+        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
 
         return [$sql, [$tableName, $schema]];
     }
