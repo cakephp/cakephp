@@ -249,15 +249,33 @@ class SqlserverSchemaDialect extends SchemaDialect
     }
 
     /**
+     * Split a tablename into a tuple of schema, table
+     * If the table does not have a schema name included, the connection
+     * schema will be used.
+     *
+     * @param string $tableName The table name to split
+     * @return array A tuple of [schema, tablename]
+     */
+    private function splitTablename(string $tableName): array
+    {
+        $config = $this->_driver->config();
+        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
+        if (str_contains($tableName, '.')) {
+            return explode('.', $tableName);
+        }
+
+        return [$schema, $tableName];
+    }
+
+    /**
      * @inheritDoc
      */
     public function describeColumns(string $tableName): array
     {
-        $config = $this->_driver->config();
-        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
+        [$schema, $name] = $this->splitTablename($tableName);
 
         $sql = $this->describeColumnQuery();
-        $statement = $this->_driver->execute($sql, [$tableName, $schema]);
+        $statement = $this->_driver->execute($sql, [$name, $schema]);
         $columns = [];
         foreach ($statement->fetchAll('assoc') as $row) {
             $field = $this->_convertColumn(
@@ -400,11 +418,10 @@ class SqlserverSchemaDialect extends SchemaDialect
      */
     public function describeIndexes(string $tableName): array
     {
+        [$schema, $name] = $this->splitTablename($tableName);
         $sql = $this->describeIndexQuery();
-        $config = $this->_driver->config();
-        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
         $indexes = [];
-        $statement = $this->_driver->execute($sql, [$tableName, $schema]);
+        $statement = $this->_driver->execute($sql, [$name, $schema]);
         foreach ($statement->fetchAll('assoc') as $row) {
             $type = TableSchema::INDEX_INDEX;
             $name = $row['index_name'];
@@ -462,11 +479,10 @@ class SqlserverSchemaDialect extends SchemaDialect
      */
     public function describeForeignKeys(string $tableName): array
     {
-        $config = $this->_driver->config();
-        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
+        [$schema, $name] = $this->splitTablename($tableName);
         $sql = $this->describeForeignKeyQuery();
         $keys = [];
-        $statement = $this->_driver->execute($sql, [$tableName, $schema]);
+        $statement = $this->_driver->execute($sql, [$name, $schema]);
         foreach ($statement->fetchAll('assoc') as $row) {
             $name = $row['foreign_key_name'];
             if (!isset($keys[$name])) {
