@@ -405,9 +405,6 @@ abstract class SchemaDialect
         if (str_contains($name, '.')) {
             [$config['schema'], $tableName] = explode('.', $name);
         }
-        // This is kind of a lie, but the convert methods
-        // would have a breaking change to change their parameter type.
-        /** @var \Cake\Database\Schema\TableSchema $table */
         $table = $this->_driver->newTableSchema($tableName);
         foreach ($this->describeColumns($name) as $column) {
             $table->addColumn($column['name'], $column);

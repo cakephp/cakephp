@@ -250,15 +250,34 @@ class PostgresSchemaDialect extends SchemaDialect
     }
 
     /**
+     * Split a tablename into a tuple of schema, table
+     * If the table does not have a schema name included, the connection
+     * schema will be used.
+     *
+     * @param string $tableName The table name to split
+     * @return array A tuple of [schema, tablename]
+     */
+    protected function splitTablename(string $tableName): array
+    {
+        $config = $this->_driver->config();
+        $schema = $config['schema'] ?? 'public';
+        if (str_contains($tableName, '.')) {
+            return explode('.', $tableName);
+        }
+
+        return [$schema, $tableName];
+    }
+
+    /**
      * @inheritDoc
      */
     public function describeColumns(string $tableName): array
     {
         $config = $this->_driver->config();
-        $schema = $config['schema'] ?? 'public';
+        [$schema, $name] = $this->splitTablename($tableName);
 
         $sql = $this->describeColumnQuery();
-        $statement = $this->_driver->execute($sql, [$tableName, $schema, $config['database']]);
+        $statement = $this->_driver->execute($sql, [$name, $schema, $config['database']]);
         $columns = [];
         foreach ($statement->fetchAll('assoc') as $row) {
             $field = $this->_convertColumn($row['type']);
@@ -364,9 +383,9 @@ class PostgresSchemaDialect extends SchemaDialect
     public function describeIndexSql(string $tableName, array $config): array
     {
         $sql = $this->describeIndexQuery();
-        $schema = $config['schema'] ?? 'public';
+        [$schema, $name] = $this->splitTablename($tableName);
 
-        return [$sql, [$schema, $tableName]];
+        return [$sql, [$schema, $name]];
     }
 
     /**
@@ -404,11 +423,11 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function describeIndexes(string $tableName): array
     {
+        [$schema, $name] = $this->splitTablename($tableName);
         $sql = $this->describeIndexQuery();
-        $config = $this->_driver->config();
-        $schema = $config['schema'] ?? 'public';
+
         $indexes = [];
-        $statement = $this->_driver->execute($sql, [$schema, $tableName]);
+        $statement = $this->_driver->execute($sql, [$schema, $name]);
         foreach ($statement->fetchAll('assoc') as $row) {
             $type = TableSchema::INDEX_INDEX;
             $name = $row['relname'];
@@ -461,9 +480,9 @@ class PostgresSchemaDialect extends SchemaDialect
     public function describeForeignKeySql(string $tableName, array $config): array
     {
         $sql = $this->describeForeignKeyQuery();
-        $schema = $config['schema'] ?? 'public';
+        [$schema, $name] = $this->splitTablename($tableName);
 
-        return [$sql, [$schema, $tableName]];
+        return [$sql, [$schema, $name]];
     }
 
     /**
@@ -486,11 +505,10 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function describeForeignKeys(string $tableName): array
     {
-        $config = $this->_driver->config();
-        $schema = $config['schema'] ?? 'public';
+        [$schema, $name] = $this->splitTablename($tableName);
         $sql = $this->describeForeignKeyQuery();
         $keys = [];
-        $statement = $this->_driver->execute($sql, [$schema, $tableName]);
+        $statement = $this->_driver->execute($sql, [$schema, $name]);
         foreach ($statement->fetchAll('assoc') as $row) {
             $name = $row['name'];
             if (!isset($keys[$name])) {
