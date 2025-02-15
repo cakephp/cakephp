@@ -18,6 +18,7 @@ namespace Cake\Database\Schema;
 
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
+use PDOException;
 
 /**
  * Schema generation/reflection features for MySQL
@@ -85,13 +86,18 @@ class MysqlSchemaDialect extends SchemaDialect
         }
         $sql = $this->describeColumnQuery($tableName);
         $columns = [];
-        $statement = $this->_driver->execute($sql);
+        try {
+            $statement = $this->_driver->execute($sql);
+        } catch (PDOException $e) {
+            throw new DatabaseException("Could not describe columns on `{$tableName}`", null, $e);
+        }
         foreach ($statement->fetchAll('assoc') as $row) {
             $field = $this->_convertColumn($row['Type']);
             $field += [
                 'name' => $row['Field'],
                 'null' => $row['Null'] === 'YES',
                 'default' => $row['Default'],
+                'collate' => $row['Collation'],
                 'comment' => $row['Comment'],
                 'length' => null,
             ];
@@ -160,8 +166,10 @@ class MysqlSchemaDialect extends SchemaDialect
                     'length' => [],
                 ];
             }
-
-            $indexes[$name]['columns'][] = $row['Column_name'];
+            // conditional indexes can have null columns
+            if ($row['Column_name'] !== null) {
+                $indexes[$name]['columns'][] = $row['Column_name'];
+            }
             if (!empty($row['Sub_part'])) {
                 $indexes[$name]['length'][$row['Column_name']] = $row['Sub_part'];
             }

@@ -53,9 +53,6 @@ class SchemaDialectTest extends TestCase
 
     /**
      * Test that describing nonexistent tables fails.
-     *
-     * Tests for positive describe() calls are in each platformSchema
-     * test case.
      */
     public function testDescribeIncorrectTable(): void
     {

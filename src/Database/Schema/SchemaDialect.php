@@ -503,7 +503,10 @@ abstract class SchemaDialect
      */
     public function describeOptions(string $tableName): array
     {
-        throw new RuntimeException(static::class . ' does not implement describeOptions(). This method will become abstract in the future.');
+        throw new RuntimeException(
+            static::class . ' does not implement describeOptions(). ' .
+            'This method will become abstract in the future.'
+        );
     }
 
     /**
@@ -517,7 +520,7 @@ abstract class SchemaDialect
     {
         try {
             $columns = $this->describeColumns($tableName);
-        } catch (QueryException) {
+        } catch (PDOException | DatabaseException) {
             return false;
         }
         foreach ($columns as $column) {
