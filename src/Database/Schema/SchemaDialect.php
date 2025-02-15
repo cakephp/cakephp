@@ -402,7 +402,7 @@ abstract class SchemaDialect
     {
         $tableName = $name;
         if (str_contains($name, '.')) {
-            [$_, $tableName] = explode('.', $name);
+            $tableName = explode('.', $name)[1];
         }
         $table = $this->_driver->newTableSchema($tableName);
         foreach ($this->describeColumns($name) as $column) {
@@ -448,7 +448,10 @@ abstract class SchemaDialect
      */
     public function describeColumns(string $tableName): array
     {
-        throw new RuntimeException(static::class . ' does not implement describeColumns(). This method will become abstract in the future.');
+        throw new RuntimeException(
+            static::class . ' does not implement describeColumns(). ' .
+                'This method will become abstract in the future.'
+        );
     }
 
     /**
@@ -468,7 +471,10 @@ abstract class SchemaDialect
      */
     public function describeForeignKeys(string $tableName): array
     {
-        throw new RuntimeException(static::class . ' does not implement describeForeignKeys(). This method will become abstract in the future.');
+        throw new RuntimeException(
+            static::class . ' does not implement describeForeignKeys(). ' .
+                'This method will become abstract in the future.'
+        );
     }
 
     /**
@@ -486,7 +492,10 @@ abstract class SchemaDialect
      */
     public function describeIndexes(string $tableName): array
     {
-        throw new RuntimeException(static::class . ' does not implement describeIndexes(). This method will become abstract in the future.');
+        throw new RuntimeException(
+            static::class . ' does not implement describeIndexes(). ' .
+                'This method will become abstract in the future.'
+        );
     }
 
     /**
