@@ -490,6 +490,20 @@ SQL;
     }
 
     /**
+     * Test describing a table with MySQL
+     */
+    public function testDescribeTableDatabasePrefix(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $config = $connection->getDriver()->config();
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describe($config['database'] . '.schema_articles');
+        $this->assertInstanceOf(TableSchema::class, $result);
+    }
+
+    /**
      * Test that schema reflection works for geosptial columns.
      *
      * We currently cannot reflect the postgis types from postgres.

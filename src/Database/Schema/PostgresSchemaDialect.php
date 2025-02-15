@@ -257,7 +257,7 @@ class PostgresSchemaDialect extends SchemaDialect
      * @param string $tableName The table name to split
      * @return array A tuple of [schema, tablename]
      */
-    protected function splitTablename(string $tableName): array
+    private function splitTablename(string $tableName): array
     {
         $config = $this->_driver->config();
         $schema = $config['schema'] ?? 'public';

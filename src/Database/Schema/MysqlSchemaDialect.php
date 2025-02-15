@@ -76,14 +76,29 @@ class MysqlSchemaDialect extends SchemaDialect
     }
 
     /**
+     * Split a tablename into a tuple of database, table
+     * If the table does not have a database name included, the connection
+     * database will be used.
+     *
+     * @param string $tableName The table name to split
+     * @return array A tuple of [database, tablename]
+     */
+    private function splitTablename(string $tableName): array
+    {
+        $config = $this->_driver->config();
+        $db = $config['database'];
+        if (str_contains($tableName, '.')) {
+            return explode('.', $tableName);
+        }
+
+        return [$db, $tableName];
+    }
+
+    /**
      * @inheritDoc
      */
     public function describeColumns(string $tableName): array
     {
-        $config = $this->_driver->config();
-        if (str_contains($tableName, '.')) {
-            [$config['database'], $tableName] = explode('.', $tableName);
-        }
         $sql = $this->describeColumnQuery($tableName);
         $columns = [];
         try {
@@ -136,10 +151,6 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function describeIndexes(string $tableName): array
     {
-        $config = $this->_driver->config();
-        if (str_contains($tableName, '.')) {
-            [$config['database'], $tableName] = explode('.', $tableName);
-        }
         $sql = $this->describeIndexQuery($tableName);
         $statement = $this->_driver->execute($sql);
         $indexes = [];
@@ -202,12 +213,9 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function describeOptions(string $tableName): array
     {
-        $config = $this->_driver->config();
-        if (str_contains($tableName, '.')) {
-            [$config['database'], $tableName] = explode('.', $tableName);
-        }
+        [$_, $name] = $this->splitTablename($tableName);
         $sql = 'SHOW TABLE STATUS WHERE Name = ?';
-        $statement = $this->_driver->execute($sql, [$tableName]);
+        $statement = $this->_driver->execute($sql, [$name]);
         $row = $statement->fetch('assoc');
 
         return [
@@ -457,11 +465,7 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function describeForeignKeys(string $tableName): array
     {
-        $config = $this->_driver->config();
-        if (str_contains($tableName, '.')) {
-            [$config['database'], $tableName] = explode('.', $tableName);
-        }
-
+        [$database, $name] = $this->splitTablename($tableName);
         $sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
             INNER JOIN information_schema.referential_constraints AS rc
             ON (
@@ -470,8 +474,7 @@ class MysqlSchemaDialect extends SchemaDialect
             )
             WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ? AND rc.TABLE_NAME = ?
             ORDER BY kcu.ORDINAL_POSITION ASC';
-        $params = [$config['database'], $tableName, $tableName];
-        $statement = $this->_driver->execute($sql, $params);
+        $statement = $this->_driver->execute($sql, [$database, $name, $name]);
         $keys = [];
         foreach ($statement->fetchAll('assoc') as $row) {
             $name = $row['CONSTRAINT_NAME'];
