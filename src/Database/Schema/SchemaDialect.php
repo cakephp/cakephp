@@ -400,10 +400,9 @@ abstract class SchemaDialect
      */
     public function describe(string $name): TableSchemaInterface
     {
-        $config = $this->_driver->config();
         $tableName = $name;
         if (str_contains($name, '.')) {
-            [$config['schema'], $tableName] = explode('.', $name);
+            [$_, $tableName] = explode('.', $name);
         }
         $table = $this->_driver->newTableSchema($tableName);
         foreach ($this->describeColumns($name) as $column) {
