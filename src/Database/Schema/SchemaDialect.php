@@ -448,10 +448,26 @@ abstract class SchemaDialect
      */
     public function describeColumns(string $tableName): array
     {
-        throw new RuntimeException(
-            static::class . ' does not implement describeColumns(). ' .
-                'This method will become abstract in the future.'
-        );
+        $config = $this->_driver->config();
+        if (str_contains($tableName, '.')) {
+            [$config['schema'], $tableName] = explode('.', $tableName);
+        }
+        /** @var \Cake\Database\Schema\TableSchema $table */
+        $table = $this->_driver->newTableSchema($tableName);
+
+        [$sql, $params] = $this->describeColumnSql($tableName, $config);
+        $statement = $this->_driver->execute($sql, $params);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $this->convertColumnDescription($table, $row);
+        }
+        $columns = [];
+        foreach ($table->columns() as $columnName) {
+            $column = $table->getColumn($columnName);
+            $column['name'] = $columnName;
+            $columns[] = $column;
+        }
+
+        return $columns;
     }
 
     /**
@@ -471,10 +487,30 @@ abstract class SchemaDialect
      */
     public function describeForeignKeys(string $tableName): array
     {
-        throw new RuntimeException(
-            static::class . ' does not implement describeForeignKeys(). ' .
-                'This method will become abstract in the future.'
-        );
+        $config = $this->_driver->config();
+        if (str_contains($tableName, '.')) {
+            [$config['schema'], $tableName] = explode('.', $tableName);
+        }
+        /** @var \Cake\Database\Schema\TableSchema $table */
+        $table = $this->_driver->newTableSchema($tableName);
+        // Add the columns because TableSchema needs them.
+        foreach ($this->describeColumns($tableName) as $column) {
+            $table->addColumn($column['name'], $column);
+        }
+
+        [$sql, $params] = $this->describeForeignKeySql($tableName, $config);
+        $statement = $this->_driver->execute($sql, $params);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $this->convertForeignKeyDescription($table, $row);
+        }
+        $keys = [];
+        foreach ($table->constraints() as $name) {
+            $key = $table->getConstraint($name);
+            $key['name'] = $name;
+            $keys[] = $key;
+        }
+
+        return $keys;
     }
 
     /**
@@ -492,10 +528,30 @@ abstract class SchemaDialect
      */
     public function describeIndexes(string $tableName): array
     {
-        throw new RuntimeException(
-            static::class . ' does not implement describeIndexes(). ' .
-                'This method will become abstract in the future.'
-        );
+        $config = $this->_driver->config();
+        if (str_contains($tableName, '.')) {
+            [$config['schema'], $tableName] = explode('.', $tableName);
+        }
+        /** @var \Cake\Database\Schema\TableSchema $table */
+        $table = $this->_driver->newTableSchema($tableName);
+        // Add the columns because TableSchema needs them.
+        foreach ($this->describeColumns($tableName) as $column) {
+            $table->addColumn($column['name'], $column);
+        }
+
+        [$sql, $params] = $this->describeIndexSql($tableName, $config);
+        $statement = $this->_driver->execute($sql, $params);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $this->convertIndexDescription($table, $row);
+        }
+        $indexes = [];
+        foreach ($table->indexes() as $name) {
+            $index = $table->getIndex($name);
+            $index['name'] = $name;
+            $indexes[] = $index;
+        }
+
+        return $indexes;
     }
 
     /**
@@ -508,10 +564,22 @@ abstract class SchemaDialect
      */
     public function describeOptions(string $tableName): array
     {
-        throw new RuntimeException(
-            static::class . ' does not implement describeOptions(). ' .
-            'This method will become abstract in the future.'
-        );
+        $config = $this->_driver->config();
+        if (str_contains($tableName, '.')) {
+            [$config['schema'], $tableName] = explode('.', $tableName);
+        }
+        /** @var \Cake\Database\Schema\TableSchema $table */
+        $table = $this->_driver->newTableSchema($tableName);
+
+        [$sql, $params] = $this->describeOptionsSql($tableName, $config);
+        if ($sql) {
+            $statement = $this->_driver->execute($sql, $params);
+            foreach ($statement->fetchAll('assoc') as $row) {
+                $this->convertOptionsDescription($table, $row);
+            }
+        }
+
+        return $table->getOptions();
     }
 
     /**
