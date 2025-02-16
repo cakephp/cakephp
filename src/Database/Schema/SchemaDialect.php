@@ -25,6 +25,8 @@ use InvalidArgumentException;
 use PDOException;
 use RuntimeException;
 
+use function Cake\Core\deprecationWarning;
+
 /**
  * Base class for schema implementations.
  *
@@ -448,6 +450,10 @@ abstract class SchemaDialect
      */
     public function describeColumns(string $tableName): array
     {
+        deprecationWarning(
+            '5.2.0',
+            'SchemaDialect subclasses need to implement `describeColumns` before 6.0.0',
+        );
         $config = $this->_driver->config();
         if (str_contains($tableName, '.')) {
             [$config['schema'], $tableName] = explode('.', $tableName);
@@ -487,6 +493,10 @@ abstract class SchemaDialect
      */
     public function describeForeignKeys(string $tableName): array
     {
+        deprecationWarning(
+            '5.2.0',
+            'SchemaDialect subclasses need to implement `describeForeignKeys` before 6.0.0',
+        );
         $config = $this->_driver->config();
         if (str_contains($tableName, '.')) {
             [$config['schema'], $tableName] = explode('.', $tableName);
@@ -528,6 +538,10 @@ abstract class SchemaDialect
      */
     public function describeIndexes(string $tableName): array
     {
+        deprecationWarning(
+            '5.2.0',
+            'SchemaDialect subclasses need to implement `describeIndexes` before 6.0.0',
+        );
         $config = $this->_driver->config();
         if (str_contains($tableName, '.')) {
             [$config['schema'], $tableName] = explode('.', $tableName);
@@ -564,6 +578,10 @@ abstract class SchemaDialect
      */
     public function describeOptions(string $tableName): array
     {
+        deprecationWarning(
+            '5.2.0',
+            'SchemaDialect subclasses need to implement `describeOptions` before 6.0.0',
+        );
         $config = $this->_driver->config();
         if (str_contains($tableName, '.')) {
             [$config['schema'], $tableName] = explode('.', $tableName);

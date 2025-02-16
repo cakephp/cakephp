@@ -235,11 +235,13 @@ class SchemaDialectTest extends TestCase
         /** @var \Cake\Database\Driver $driver */
         $driver = ConnectionManager::get('test')->getDriver();
         $this->skipIf(!($driver instanceof Sqlite), 'requires sqlite connection');
-        $dialect = new CompatDialect($driver);
-        $table = $dialect->describe('orders');
+        $this->deprecated(function () use ($driver): void {
+            $dialect = new CompatDialect($driver);
+            $table = $dialect->describe('orders');
 
-        $this->assertNotEmpty($table->columns());
-        $this->assertNotEmpty($table->indexes());
-        $this->assertNotEmpty($table->constraints());
+            $this->assertNotEmpty($table->columns());
+            $this->assertNotEmpty($table->indexes());
+            $this->assertNotEmpty($table->constraints());
+        });
     }
 }
