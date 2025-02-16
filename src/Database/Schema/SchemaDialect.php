@@ -23,8 +23,6 @@ use Cake\Database\Type\ColumnSchemaAwareInterface;
 use Cake\Database\TypeFactory;
 use InvalidArgumentException;
 use PDOException;
-use RuntimeException;
-
 use function Cake\Core\deprecationWarning;
 
 /**
