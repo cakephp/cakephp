@@ -213,7 +213,7 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function describeOptions(string $tableName): array
     {
-        $name = $this->splitTablename($tableName)[1];
+        [, $name] = $this->splitTablename($tableName);
         $sql = 'SHOW TABLE STATUS WHERE Name = ?';
         $statement = $this->_driver->execute($sql, [$name]);
         $row = $statement->fetch('assoc');
