@@ -594,6 +594,7 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
+        $database = $connection->getDriver()->config()['database'];
         $dialect = $connection->getDriver()->schemaDialect();
         $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
@@ -648,6 +649,9 @@ SQL;
 
         // Compare with describeIndexes() which includes indexes + uniques
         $indexes = $dialect->describeIndexes('schema_articles');
+        $prefixed = $dialect->describeIndexes("{$database}.schema_articles");
+        $this->assertEquals($indexes, $prefixed, 'prefixed tables should work');
+
         foreach ($indexes as $index) {
             $this->assertArrayHasKey($index['name'], $expected);
             $expectedItem = $expected[$index['name']];
@@ -660,6 +664,9 @@ SQL;
 
         // Compare describeForeignKeys()
         $keys = $dialect->describeForeignKeys('schema_articles');
+        $prefixed = $dialect->describeForeignKeys("{$database}.schema_articles");
+        $this->assertEquals($keys, $prefixed, 'prefixed tables should work');
+
         $isMariaDb = ConnectionManager::get('test')->getDriver()->isMariaDb();
         foreach ($keys as $foreignKey) {
             $name = $foreignKey['name'];
