@@ -63,23 +63,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     public function getVirtual(): array;
 
     /**
-     * Returns whether a field is an original one.
-     * Original fields are those that an entity was instantiated with.
-     *
-     * @param string $name Name
-     * @return bool
-     */
-    public function isOriginalField(string $name): bool;
-
-    /**
-     * Returns an array of original fields.
-     * Original fields are those that an entity was initialized with.
-     *
-     * @return array<string>
-     */
-    public function getOriginalFields(): array;
-
-    /**
      * Sets the dirty status of a single field.
      *
      * @param string $field the field to set or check status for
@@ -187,24 +170,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     public function getSource(): string;
 
     /**
-     * Returns an array with the requested original fields
-     * stored in this entity, indexed by field name.
-     *
-     * @param array<string> $fields List of fields to be returned
-     * @return array<string, mixed>
-     */
-    public function extractOriginal(array $fields): array;
-
-    /**
-     * Returns an array with only the original fields
-     * stored in this entity, indexed by field name.
-     *
-     * @param array<string> $fields List of fields to be returned
-     * @return array<string, mixed>
-     */
-    public function extractOriginalChanged(array $fields): array;
-
-    /**
      * Sets one or multiple fields to the specified value
      *
      * @param array<string, mixed>|string $field the name of field to set or a list of
@@ -233,30 +198,6 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * @param bool $value `true` to enable, `false` to disable.
      */
     public function requireFieldPresence(bool $value = true): void;
-
-    /**
-     * Returns whether a field has an original value
-     *
-     * @param string $field
-     * @return bool
-     */
-    public function hasOriginal(string $field): bool;
-
-    /**
-     * Returns the original value of a field.
-     *
-     * @param string $field The name of the field.
-     * @param bool $allowFallback whether to allow falling back to the current field value if no original exists
-     * @return mixed
-     */
-    public function getOriginal(string $field, bool $allowFallback = true): mixed;
-
-    /**
-     * Gets all original values of the entity.
-     *
-     * @return array
-     */
-    public function getOriginalValues(): array;
 
     /**
      * Returns whether this entity contains a field named $field.
