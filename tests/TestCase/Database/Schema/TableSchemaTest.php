@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Postgres;
-use Cake\Database\Driver\Sqlite;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
