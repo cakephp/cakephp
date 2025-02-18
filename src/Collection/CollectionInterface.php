@@ -101,7 +101,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
 
     /**
      * Loops through each value in the collection and returns a new collection
-     * with only unique values based on the value returned by ``callback``.
+     * with only unique values based on the value returned by the callback.
      *
      * The callback is passed the value as the first argument and the key as the
      * second argument.
