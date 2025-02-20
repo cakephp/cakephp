@@ -5809,6 +5809,26 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test that findOrCreate with array data.
+     */
+    public function testFindOrCreateArrayData(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $firstArticle = $articles->findOrCreate(['title' => 'Not there'], ['body' => 'New body']);
+        $this->assertFalse($firstArticle->isNew());
+        $this->assertNotNull($firstArticle->id);
+        $this->assertSame('Not there', $firstArticle->title);
+        $this->assertSame('New body', $firstArticle->body);
+
+        $secondArticle = $articles->findOrCreate(['title' => 'Not there'], ['body' => 'New body']);
+        $this->assertFalse($secondArticle->isNew());
+        $this->assertNotNull($secondArticle->id);
+        $this->assertSame('Not there', $secondArticle->title);
+        $this->assertEquals($firstArticle->id, $secondArticle->id);
+    }
+
+    /**
      * Test that creating a table fires the initialize event.
      */
     public function testInitializeEvent(): void
