@@ -2298,8 +2298,7 @@ class TableTest extends TestCase
         ]);
         $listener = function (EventInterface $event, $entity) {
             $event->stopPropagation();
-
-            return $entity;
+            $event->setResult($entity);
         };
         $table->getEventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($data, $table->save($data));
@@ -2330,7 +2329,7 @@ class TableTest extends TestCase
     public function testBeforeSaveException(): void
     {
         $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage('The beforeSave callback must return `false` or `EntityInterface` instance. Got `int` instead.');
+        $this->expectExceptionMessage('The result for the `Model.beforeSave` event must be `false` or `EntityInterface` instance. Got `int` instead.');
 
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
@@ -2340,8 +2339,7 @@ class TableTest extends TestCase
         ]);
         $listener = function (EventInterface $event, $entity) {
             $event->stopPropagation();
-
-            return 1;
+            $event->setResult(1);
         };
         $table->getEventManager()->on('Model.beforeSave', $listener);
         $table->save($data);

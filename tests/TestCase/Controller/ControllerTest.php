@@ -448,7 +448,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(new ServerRequest());
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
-            return false;
+            $event->stopPropagation();
         });
 
         $result = $Controller->render('index');
@@ -542,7 +542,7 @@ class ControllerTest extends TestCase
 
         $newResponse = new Response();
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse) {
-            return $newResponse;
+            $event->setResult($newResponse);
         });
 
         $result = $Controller->redirect('http://cakephp.org');

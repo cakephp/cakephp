@@ -2029,7 +2029,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 assert(
                     $result instanceof EntityInterface,
                     sprintf(
-                        'The beforeSave callback must return `false` or `EntityInterface` instance. Got `%s` instead.',
+                        'The result for the `Model.beforeSave` event must be `false` or `EntityInterface` instance.'
+                        . ' Got `%s` instead.',
                         get_debug_type($result),
                     ),
                 );

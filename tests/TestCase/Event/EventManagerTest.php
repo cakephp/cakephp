@@ -284,11 +284,11 @@ class EventManagerTest extends TestCase
         $listener = new class implements EventListenerInterface {
             public array $callList = [];
 
-            public function listenerFunction(EventInterface $event): string
+            public function listenerFunction(EventInterface $event): void
             {
                 $this->callList[] = 'listenerFunction';
 
-                return 'something special';
+                $event->setResult('something special');
             }
 
             public function implementedEvents(): array
@@ -330,11 +330,11 @@ class EventManagerTest extends TestCase
         $listener = new class implements EventListenerInterface {
             public array $callList = [];
 
-            public function listenerFunction(EventInterface $event): bool
+            public function listenerFunction(EventInterface $event): void
             {
                 $this->callList[] = 'listenerFunction';
 
-                return false;
+                $event->setResult(false);
             }
 
             public function implementedEvents(): array

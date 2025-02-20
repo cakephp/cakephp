@@ -1919,7 +1919,7 @@ class MarshallerTest extends TestCase
             ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$called) {
                 $called = true;
 
-                return $query->where(['Tags.id >=' => 1]);
+                $query->where(['Tags.id >=' => 1]);
             });
 
         $entity = new Entity([
@@ -2589,7 +2589,7 @@ class MarshallerTest extends TestCase
             ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
         ];
         $this->comments->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
-            return $query->contain(['Articles']);
+            $query->contain(['Articles']);
         });
         $marshall = new Marshaller($this->comments);
         $result = $marshall->mergeMany($entities, $data);

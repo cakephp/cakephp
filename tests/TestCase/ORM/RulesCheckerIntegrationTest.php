@@ -673,7 +673,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 $this->assertSame('create', $operation);
                 $event->stopPropagation();
 
-                return true;
+                $event->setResult(true);
             },
         );
 
@@ -712,7 +712,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 $this->assertFalse($result);
                 $event->stopPropagation();
 
-                return true;
+                $event->setResult(true);
             },
         );
 

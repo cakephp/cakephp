@@ -18,6 +18,7 @@ namespace Cake\Event;
 
 use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * The event manager is responsible for keeping track of event listeners, passing the correct
@@ -309,13 +310,8 @@ class EventManager implements EventManagerInterface
             if ($event->isStopped()) {
                 break;
             }
-            $result = $this->_callListener($listener['callable'], $event);
-            if ($result === false) {
-                $event->stopPropagation();
-            }
-            if ($result !== null) {
-                $event->setResult($result);
-            }
+
+            $this->_callListener($listener['callable'], $event);
         }
 
         return $event;
@@ -327,11 +323,24 @@ class EventManager implements EventManagerInterface
      * @template TSubject of object
      * @param callable $listener The listener to trigger.
      * @param \Cake\Event\EventInterface<TSubject> $event Event instance.
-     * @return mixed The result of the $listener function.
+     * @return void
      */
-    protected function _callListener(callable $listener, EventInterface $event): mixed
+    protected function _callListener(callable $listener, EventInterface $event): void
     {
-        return $listener($event, ...array_values($event->getData()));
+        $result = $listener($event, ...array_values($event->getData()));
+
+        if ($result !== null) {
+            deprecationWarning(
+                '5.2.0',
+                'Returning a value from event listeners is deprecated. ' .
+                'Use `$event->setResult()` instead.'
+            );
+            $event->setResult($result);
+        }
+
+        if ($event->getResult() === false) {
+            $event->stopPropagation();
+        }
     }
 
     /**
