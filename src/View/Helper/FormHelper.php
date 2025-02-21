@@ -1955,7 +1955,7 @@ class FormHelper extends Helper
         }
 
         $url = '#';
-        $onClick = 'document.' . $formName . '.submit();';
+        $onClick = 'document.' . $formName . '.requestSubmit();';
         if ($confirmMessage) {
             $onClick = $this->_confirm($onClick, '');
             $onClick .= 'event.returnValue = false; return false;';
