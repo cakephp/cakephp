@@ -255,15 +255,16 @@ class PostgresSchemaDialect extends SchemaDialect
      * schema will be used.
      *
      * @param string $tableName The table name to split
+     * @param array $config Additional configuration data
      * @return array A tuple of [schema, tablename]
      */
-    private function splitTablename(string $tableName): array
+    private function splitTablename(string $tableName, array $config = []): array
     {
-        $config = $this->_driver->config();
-        $schema = $config['schema'] ?? 'public';
         if (str_contains($tableName, '.')) {
             return explode('.', $tableName);
         }
+        $driverConfig = $this->_driver->config();
+        $schema = $config['schema'] ?? $driverConfig['schema'] ?? 'public';
 
         return [$schema, $tableName];
     }
@@ -383,7 +384,7 @@ class PostgresSchemaDialect extends SchemaDialect
     public function describeIndexSql(string $tableName, array $config): array
     {
         $sql = $this->describeIndexQuery();
-        [$schema, $name] = $this->splitTablename($tableName);
+        [$schema, $name] = $this->splitTablename($tableName, $config);
 
         return [$sql, [$schema, $name]];
     }
@@ -480,7 +481,7 @@ class PostgresSchemaDialect extends SchemaDialect
     public function describeForeignKeySql(string $tableName, array $config): array
     {
         $sql = $this->describeForeignKeyQuery();
-        [$schema, $name] = $this->splitTablename($tableName);
+        [$schema, $name] = $this->splitTablename($tableName, $config);
 
         return [$sql, [$schema, $name]];
     }

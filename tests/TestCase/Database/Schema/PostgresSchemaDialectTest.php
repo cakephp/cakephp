@@ -337,6 +337,7 @@ SQL;
         $result = $schema->describe('public.schema_articles');
         $this->assertEquals(['id'], $result->getPrimaryKey());
         $this->assertSame('schema_articles', $result->name());
+        $this->assertCount(1, $result->indexes());
     }
 
     /**
@@ -1517,6 +1518,30 @@ SQL;
         $result = $table->truncateSql($connection);
         $this->assertCount(1, $result);
         $this->assertSame('TRUNCATE "schema_articles" RESTART IDENTITY CASCADE', $result[0]);
+    }
+
+    public function testDescribeIndexSql(): void
+    {
+        $driver = $this->getMockBuilder(Postgres::class)->getMock();
+        $dialect = new PostgresSchemaDialect($driver);
+
+        $result = $dialect->describeIndexSql('schema_name.table_name', []);
+        $this->assertEquals(['schema_name', 'table_name'], $result[1]);
+
+        $result = $dialect->describeIndexSql('table_name', ['schema' => 'schema_name']);
+        $this->assertEquals(['schema_name', 'table_name'], $result[1]);
+    }
+
+    public function testDescribeForeignKeySql(): void
+    {
+        $driver = $this->getMockBuilder(Postgres::class)->getMock();
+        $dialect = new PostgresSchemaDialect($driver);
+
+        $result = $dialect->describeForeignKeySql('schema_name.table_name', []);
+        $this->assertEquals(['schema_name', 'table_name'], $result[1]);
+
+        $result = $dialect->describeForeignKeySql('table_name', ['schema' => 'schema_name']);
+        $this->assertEquals(['schema_name', 'table_name'], $result[1]);
     }
 
     /**
