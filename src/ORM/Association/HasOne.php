@@ -131,11 +131,7 @@ class HasOne extends Association
             $foreignKeys,
             $entity->extract((array)$this->getBindingKey()),
         );
-        if (method_exists($targetEntity, 'patch')) {
-            $targetEntity = $targetEntity->patch($properties, ['guard' => false]);
-        } else {
-            $targetEntity->set($properties, ['guard' => false]);
-        }
+        $targetEntity->patch($properties, ['guard' => false]);
 
         if (!$this->getTarget()->save($targetEntity, $options)) {
             $targetEntity->unset(array_keys($properties));

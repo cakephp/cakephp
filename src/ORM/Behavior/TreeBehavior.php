@@ -949,11 +949,7 @@ class TreeBehavior extends Behavior
         }
 
         $fresh = $this->_table->get($entity->get($this->_getPrimaryKey()));
-        if (method_exists($entity, 'patch')) {
-            $entity->patch($fresh->extract($fields), ['guard' => false]);
-        } else {
-            $entity->set($fresh->extract($fields), ['guard' => false]);
-        }
+        $entity->patch($fresh->extract($fields), ['guard' => false]);
 
         foreach ($fields as $field) {
             $entity->setDirty($field, false);

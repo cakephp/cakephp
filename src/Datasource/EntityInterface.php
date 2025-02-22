@@ -27,7 +27,6 @@ use Stringable;
  * @property mixed $id Alias for commonly used primary key.
  * @template-extends \ArrayAccess<string, mixed>
  * @method bool hasValue(string $field)
- * @method static patch(array $values, array $options = [])
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
 {
@@ -206,17 +205,25 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
     public function extractOriginalChanged(array $fields): array;
 
     /**
-     * Sets one or multiple fields to the specified value
+     * Sets a field to the specified value.
      *
-     * @param array<string, mixed>|string $field the name of field to set or a list of
-     * fields with their respective values
-     * @param mixed $value The value to set to the field or an array if the
-     * first argument is also an array, in which case will be treated as $options
+     * @param string $field The name of field to set.
+     * @param mixed $value The value to set to the field.
      * @param array<string, mixed> $options Options to be used for setting the field. Allowed option
      * keys are `setter` and `guard`
      * @return $this
      */
-    public function set(array|string $field, mixed $value = null, array $options = []): static;
+    public function set(string $field, mixed $value, array $options = []): static;
+
+    /**
+     * Patch the entity with provided values.
+     *
+     * @param array<string, mixed> $values Map of fields with their respective values.
+     * @param array<string, mixed> $options Options to be used for setting the field. Allowed option
+     * keys are `setter` and `guard`
+     * @return $this
+     */
+    public function patch(array $values, array $options = []): static;
 
     /**
      * Returns the value of a field by name

@@ -54,15 +54,6 @@ class EntityTest extends TestCase
         $this->assertSame('bar', $entity->getOriginal('foo'));
     }
 
-    #[WithoutErrorHandler]
-    public function testEntitySetDeprecated(): void
-    {
-        $this->deprecated(function () {
-            $entity = new Entity();
-            $entity->set(['foo' => 'bar']);
-        });
-    }
-
     /**
      * Tests setting multiple properties without custom setters
      */

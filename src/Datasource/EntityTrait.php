@@ -219,32 +219,18 @@ trait EntityTrait
      * print_r($entity->getOriginalFields()) // prints ['name', 'id', 'phone_number']
      * ```
      *
-     * @param array|string $field The name of field to set.
+     * @param string $field The name of field to set.
      * @param mixed $value The value to set to the field.
      * @param array<string, mixed> $options Options to be used for setting the field. Allowed option
      * keys are `setter`, `guard` and `asOriginal`
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function set(array|string $field, mixed $value = null, array $options = []): static
+    public function set(string $field, mixed $value, array $options = []): static
     {
-        if (is_string($field)) {
-            $options += ['guard' => false];
+        $options += ['guard' => false];
 
-            return $this->patch([$field => $value], $options);
-        }
-
-        deprecationWarning(
-            '5.2.0',
-            sprintf(
-                'Passing an array as the first argument to `%s::set()` is deprecated. '
-                . 'Use `%s::patch()` instead.',
-                static::class,
-                static::class
-            )
-        );
-
-        return $this->patch($field, (array)$value);
+        return $this->patch([$field => $value], $options);
     }
 
     /**
@@ -293,7 +279,7 @@ trait EntityTrait
      * @return $this
      * @throws \InvalidArgumentException
      */
-    public function patch(array $values, array $options = [])
+    public function patch(array $values, array $options = []): static
     {
         $options += ['setter' => true, 'guard' => true, 'asOriginal' => false];
 

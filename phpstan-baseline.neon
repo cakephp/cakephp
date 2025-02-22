@@ -205,28 +205,10 @@ parameters:
 			path: src/Mailer/MailerAwareTrait.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ORM/Association/BelongsTo.php
-
-		-
 			message: '#^PHPDoc tag @var with type callable\(\)\: mixed is not subtype of native type Closure\(string\)\: string\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: src/ORM/Association/DependentDeleteHelper.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ORM/Association/HasMany.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ORM/Association/HasOne.php
 
 		-
 			message: '#^Trait Cake\\ORM\\Behavior\\Translate\\TranslateTrait is used zero times and is not analysed\.$#'
@@ -235,22 +217,10 @@ parameters:
 			path: src/ORM/Behavior/Translate/TranslateTrait.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ORM/Behavior/TreeBehavior.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2
 			path: src/ORM/EagerLoader.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 2
-			path: src/ORM/Marshaller.php
 
 		-
 			message: '#^Method Cake\\ORM\\Query\\SelectQuery\:\:find\(\) should return static\(Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\) but returns Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\.$#'
@@ -263,12 +233,6 @@ parameters:
 			identifier: return.phpDocType
 			count: 1
 			path: src/ORM/Query/SelectQuery.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ORM/Table.php
 
 		-
 			message: '#^PHPDoc tag @var with type class\-string\<Cake\\Datasource\\RulesChecker\> is not subtype of native type ''Cake\\\\Datasource\\\\RulesChecker''\|class\-string\<Cake\\ORM\\RulesChecker\>\.$#'
