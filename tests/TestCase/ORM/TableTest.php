@@ -5815,17 +5815,18 @@ class TableTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
 
-        $firstArticle = $articles->findOrCreate(['title' => 'Not there'], ['body' => 'New body']);
+        $firstArticle = $articles->findOrCreate(['title' => 'Some title'], ['body' => 'Some body']);
         $this->assertFalse($firstArticle->isNew());
         $this->assertNotNull($firstArticle->id);
-        $this->assertSame('Not there', $firstArticle->title);
-        $this->assertSame('New body', $firstArticle->body);
+        $this->assertSame('Some title', $firstArticle->title);
+        $this->assertSame('Some body', $firstArticle->body);
 
-        $secondArticle = $articles->findOrCreate(['title' => 'Not there'], ['body' => 'New body']);
+        $secondArticle = $articles->findOrCreate(['title' => 'Some title'], ['body' => 'Different body']);
         $this->assertFalse($secondArticle->isNew());
         $this->assertNotNull($secondArticle->id);
-        $this->assertSame('Not there', $secondArticle->title);
+        $this->assertSame('Some title', $secondArticle->title);
         $this->assertEquals($firstArticle->id, $secondArticle->id);
+        $this->assertSame('Some body', $secondArticle->body);
     }
 
     /**
