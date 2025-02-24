@@ -272,8 +272,9 @@ class EavStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $primaryKey = (array)$this->table->getPrimaryKey();
-        $key = $entity->get((string)current($primaryKey));
+        /** @var string $primaryKey */
+        $primaryKey = current((array)$this->table->getPrimaryKey());
+        $key = $entity->has($primaryKey) ? $entity->get($primaryKey) : null;
 
         // When we have no key and bundled translations, we
         // need to mark the entity dirty so the root
@@ -418,10 +419,20 @@ class EavStrategy implements TranslateStrategyInterface
             if (!$row instanceof EntityInterface) {
                 return $row;
             }
-            $translations = $row->has('_i18n') ? $row->get('_i18n') : null;
-            if (!$translations && $row->get('_translations')) {
+
+            $translations = $row->has('_i18n') ? $row->get('_i18n') : [];
+            if ($translations === []) {
+                if ($row->has('_translations')) {
+                    return $row;
+                }
+
+                $row->set('_translations', [])
+                    ->setDirty('_translations', false);
+                unset($row['_i18n']);
+
                 return $row;
             }
+
             $grouped = new Collection($translations);
 
             $entityClass = $this->table->getEntityClass();
@@ -435,9 +446,8 @@ class EavStrategy implements TranslateStrategyInterface
                 $result[$locale] = $translation;
             }
 
-            $options = ['setter' => false, 'guard' => false];
-            $row->set('_translations', $result, $options);
-            $row->setDirty('_translations', false);
+            $row->set('_translations', $result, ['setter' => false, 'guard' => false])
+                ->setDirty('_translations', false);
             unset($row['_i18n']);
 
             return $row;
@@ -455,7 +465,7 @@ class EavStrategy implements TranslateStrategyInterface
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {
         /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
-        $translations = $entity->has('_translations') ? $entity->get('_translations') : null;
+        $translations = $entity->has('_translations') ? $entity->get('_translations') : [];
 
         if (!$translations && !$entity->isDirty('_translations')) {
             return;

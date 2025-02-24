@@ -683,16 +683,52 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     }
 
     /**
-     * testFindTranslations
-     *
-     * The parent test expects description translations in only some of the records
-     * that's incompatible with the shadow-translate behavior, since the schema
-     * dictates what fields to expect to be translated and doesn't permit any EAV
-     * style translations
+     * Tests that it is possible to get all translated fields at once
      */
     public function testFindTranslations(): void
     {
-        $this->assertTrue(true, 'Skipped');
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+        $results = $table->find('translations', locales: ['eng', 'deu', 'cze', 'spa']);
+        $expected = [
+            [
+                'eng' => ['title' => 'Title #1', 'body' => 'Content #1', 'locale' => 'eng'],
+                'deu' => ['title' => 'Titel #1', 'body' => 'Inhalt #1', 'locale' => 'deu'],
+                'cze' => ['title' => 'Titulek #1', 'body' => 'Obsah #1', 'locale' => 'cze'],
+                'spa' => ['title' => 'First Article', 'body' => 'Contenido #1', 'locale' => 'spa'],
+            ],
+            [
+                'eng' => ['title' => 'Title #2', 'body' => 'Content #2', 'locale' => 'eng'],
+                'deu' => ['title' => 'Titel #2', 'body' => 'Inhalt #2', 'locale' => 'deu'],
+                'cze' => ['title' => 'Titulek #2', 'body' => 'Obsah #2', 'locale' => 'cze'],
+            ],
+            [
+                'eng' => ['title' => 'Title #3', 'body' => 'Content #3', 'locale' => 'eng'],
+                'deu' => ['title' => 'Titel #3', 'body' => 'Inhalt #3', 'locale' => 'deu'],
+                'cze' => ['title' => 'Titulek #3', 'body' => 'Obsah #3', 'locale' => 'cze'],
+            ],
+        ];
+
+        $translations = $this->_extractTranslations($results);
+        $this->assertEquals($expected, $translations->toArray());
+        $expected = [
+            1 => ['First Article' => 'First Article Body'],
+            2 => ['Second Article' => 'Second Article Body'],
+            3 => ['Third Article' => 'Third Article Body'],
+        ];
+
+        $grouped = $results->all()->combine('title', 'body', 'id');
+        $this->assertEquals($expected, $grouped->toArray());
+
+        $entity = $table->newEntity(['title' => 'Fourth Title']);
+        $table->save($entity);
+
+        $expected = [[]];
+        $result = $table->find('translations')->where(['Articles.id' => $entity->id])->all();
+        $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+
+        $entity = $result->first();
+        $this->assertSame('Fourth Title', $entity->title);
     }
 
     /**
@@ -940,6 +976,18 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $entity = $result->first();
         $this->assertSame('Title EN', $entity->title);
         $this->assertSame('Body EN', $entity->body);
+
+        $data = [
+            'title' => 'New title',
+            'author_id' => 1,
+            'published' => 'N',
+            '_translations' => null,
+        ];
+
+        $article = $table->patchEntity($table->newEmptyEntity(), $data);
+        $result = $table->save($article);
+
+        $this->assertNotFalse($result);
     }
 
     /**

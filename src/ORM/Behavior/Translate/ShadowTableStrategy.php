@@ -388,8 +388,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $primaryKey = (array)$this->table->getPrimaryKey();
-        $id = $entity->get((string)current($primaryKey));
+        /** @var string $primaryKey */
+        $primaryKey = current((array)$this->table->getPrimaryKey());
+        $id = $entity->has($primaryKey) ? $entity->get($primaryKey) : null;
 
         // When we have no key and bundled translations, we
         // need to mark the entity dirty so the root
@@ -553,11 +554,20 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     public function groupTranslations(CollectionInterface $results): CollectionInterface
     {
         return $results->map(function ($row) {
-            if (!($row instanceof EntityInterface)) {
+            if (!$row instanceof EntityInterface) {
                 return $row;
             }
-            $translations = $row->has('_i18n') ? $row->get('_i18n') : null;
-            if (!$translations && $row->get('_translations')) {
+
+            $translations = $row->has('_i18n') ? $row->get('_i18n') : [];
+            if ($translations === []) {
+                if ($row->has('_translations')) {
+                    return $row;
+                }
+
+                $row->set('_translations', [])
+                    ->setDirty('_translations', false);
+                unset($row['_i18n']);
+
                 return $row;
             }
 
@@ -567,11 +577,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 $result[$translation['locale']] = $translation;
             }
 
-            $row['_translations'] = $result;
+            $row->set('_translations', $result)
+                ->setDirty('_translations', false);
             unset($row['_i18n']);
-            if ($row instanceof EntityInterface) {
-                $row->setDirty('_translations', false);
-            }
 
             return $row;
         });
@@ -588,7 +596,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {
         /** @var array<string, \Cake\ORM\Entity> $translations */
-        $translations = $entity->has('_translations') ? $entity->get('_translations') : null;
+        $translations = $entity->has('_translations') ? $entity->get('_translations') : [];
 
         if (!$translations && !$entity->isDirty('_translations')) {
             return;

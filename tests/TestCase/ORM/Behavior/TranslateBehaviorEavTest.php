@@ -495,6 +495,16 @@ class TranslateBehaviorEavTest extends TestCase
 
         $grouped = $results->all()->combine('title', 'body', 'id');
         $this->assertEquals($expected, $grouped->toArray());
+
+        $entity = $table->newEntity(['title' => 'Fourth Title']);
+        $table->save($entity);
+
+        $expected = [[]];
+        $result = $table->find('translations')->where(['Articles.id' => $entity->id])->all();
+        $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+
+        $entity = $result->first();
+        $this->assertSame('Fourth Title', $entity->title);
     }
 
     /**
@@ -1467,6 +1477,18 @@ class TranslateBehaviorEavTest extends TestCase
         $entity = $result->first();
         $this->assertSame('Title EN', $entity->title);
         $this->assertSame('Body EN', $entity->body);
+
+        $data = [
+            'title' => 'New title',
+            'author_id' => 1,
+            'published' => 'N',
+            '_translations' => null,
+        ];
+
+        $article = $table->patchEntity($table->newEmptyEntity(), $data);
+        $result = $table->save($article);
+
+        $this->assertNotFalse($result);
     }
 
     /**
