@@ -1,0 +1,21 @@
+name: Split Packages Next Branch
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read # to fetch code (actions/checkout)
+
+jobs:
+  split-packages:
+    runs-on: ubuntu-24.04
+
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        persist-credentials: false
+
+    - name: Push split packages
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_SPLIT_PACKAGES_WRITE_TOKEN }}
+      run: make components-next
