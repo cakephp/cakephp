@@ -223,6 +223,20 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function validate(array $data, bool $newRecord = true): array
     {
+        return $this->runValidate($data, $newRecord);
+    }
+
+    /**
+     * Run all main and nested validation rules and returns an array of failed fields and their error messages.
+     *
+     * @param array $data The data to be checked for errors
+     * @param bool $newRecord whether the data to be validated is new or to be updated.
+     * @param array|null $parentContext parent validator context used in nested rules
+     * @param int|null $nestedManyIndex index of the current validation data element used in nested many rules
+     * @return array<array> Array of failed fields
+     */
+    protected function runValidate(array $data, bool $newRecord = true, ?array $parentContext = null, ?int $nestedManyIndex = null): array
+    {
         $errors = [];
 
         foreach ($this->_fields as $name => $field) {
@@ -230,7 +244,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $keyPresent = array_key_exists($name, $data);
 
             $providers = $this->_providers;
-            $context = compact('data', 'newRecord', 'field', 'providers');
+            $context = compact('data', 'newRecord', 'field', 'providers', 'parentContext', 'nestedManyIndex');
 
             if (!$keyPresent && !$this->_checkPresence($field, $context)) {
                 $errors[$name]['_required'] = $this->getRequiredMessage($name);
@@ -258,7 +272,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 continue;
             }
 
-            $result = $this->_processRules($name, $field, $data, $newRecord);
+            $result = $this->_processRules($name, $field, $data[$field], $context);
             if ($result) {
                 $errors[$name] = $result;
             }
@@ -542,7 +556,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $provider = $this->getProvider($name);
                 $validator->setProvider($name, $provider);
             }
-            $errors = $validator->validate($value, $context['newRecord']);
+            $errors = $validator->runValidate($value, $context['newRecord'], $context);
 
             $message = $message ? [static::NESTED => $message] : [];
 
@@ -595,7 +609,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 if (!is_array($row)) {
                     return false;
                 }
-                $check = $validator->validate($row, $context['newRecord']);
+                $check = $validator->runValidate($row, $context['newRecord'], $context, $i);
                 if ($check) {
                     $errors[$i] = $check;
                 }
@@ -3174,11 +3188,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field that is being processed
      * @param \Cake\Validation\ValidationSet $rules the list of rules for a field
-     * @param array $data the full data passed to the validator
-     * @param bool $newRecord whether is it a new record or an existing one
+     * @param mixed $data field value to validate
+     * @param array $context context data used in validation rules
      * @return array<string, mixed>
      */
-    protected function _processRules(string $field, ValidationSet $rules, array $data, bool $newRecord): array
+    protected function _processRules(string $field, ValidationSet $rules, mixed $value, array $context): array
     {
         $errors = [];
         // Loading default provider in case there is none
@@ -3191,7 +3205,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         foreach ($rules as $name => $rule) {
-            $result = $rule->process($data[$field], $this->_providers, compact('newRecord', 'data', 'field'));
+            $result = $rule->process($value, $this->_providers, $context);
             if ($result === true) {
                 continue;
             }
