@@ -65,6 +65,12 @@ class TestFixture implements FixtureInterface
     protected TableSchemaInterface&SqlGeneratorInterface $_schema;
 
     /**
+     * Whether to be strict about invalid fields.
+     * Useful for catching typos.
+     */
+    protected bool $strictFields = false;
+
+    /**
      * Instantiate the fixture.
      *
      * @throws \Cake\Core\Exception\CakeException on invalid datasource usage.
@@ -195,11 +201,23 @@ class TestFixture implements FixtureInterface
         $values = [];
         $types = [];
         $columns = $this->_schema->columns();
-        foreach ($this->records as $record) {
-            $fields = array_merge($fields, array_intersect(array_keys($record), $columns));
+        foreach ($this->records as $index => $record) {
+            $recordFields = array_keys($record);
+            if ($this->strictFields) {
+                $invalidFields = array_values(array_filter($recordFields, fn ($f) => !in_array($f, $columns, true)));
+                if ($invalidFields !== []) {
+                    throw new CakeException(
+                        "Record #{$index} in fixture has invalid fields: " . json_encode($invalidFields)
+                    );
+                }
+            } else {
+                $recordFields = array_intersect($recordFields, $columns);
+            }
+
+            $fields = array_unique(array_merge($fields, $recordFields));
         }
-        /** @var array<string> $fields */
-        $fields = array_values(array_unique($fields));
+        /** @var list<string> $fields */
+        $fields = array_values($fields);
         foreach ($fields as $field) {
             $column = $this->_schema->getColumn($field);
             assert($column !== null);
