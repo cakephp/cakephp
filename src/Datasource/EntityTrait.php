@@ -151,7 +151,7 @@ trait EntityTrait
      */
     public function &__get(string $field): mixed
     {
-        return $this->get($field);
+        return $this->getEx($field, $this->requireFieldPresence);
     }
 
     /**
@@ -383,6 +383,27 @@ trait EntityTrait
      */
     public function &get(string $field): mixed
     {
+        return $this->getEx($field, false);
+    }
+
+    /**
+     * Returns the value of a field by name
+     *
+     * @param string $field the name of the field to retrieve
+     * @return mixed
+     * @throws \InvalidArgumentException if an empty field name is passed
+     * @throws \Cake\Datasource\Exception\MissingPropertyException If property does not exist
+     */
+    public function &getOrFail(string $field): mixed
+    {
+        return $this->getEx($field, true);
+    }
+
+    /**
+     * Get with option for requireFieldPresence
+     */
+    protected function &getEx(string $field, bool $requireFieldPresence): mixed
+    {
         if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');
         }
@@ -402,7 +423,7 @@ trait EntityTrait
             return $result;
         }
 
-        if (!$fieldIsPresent && $this->requireFieldPresence) {
+        if (!$fieldIsPresent && $requireFieldPresence) {
             throw new MissingPropertyException([
                 'property' => $field,
                 'entity' => $this::class,
