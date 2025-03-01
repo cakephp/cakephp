@@ -75,7 +75,7 @@ class WebExceptionRendererTest extends TestCase
     /**
      * setup create a request object to get out of router later.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('Config.language', 'eng');
@@ -89,7 +89,7 @@ class WebExceptionRendererTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();

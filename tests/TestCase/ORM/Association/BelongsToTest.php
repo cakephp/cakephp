@@ -60,7 +60,7 @@ class BelongsToTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->company = $this->getTableLocator()->get('Companies', [

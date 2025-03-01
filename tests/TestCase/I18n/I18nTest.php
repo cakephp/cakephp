@@ -39,7 +39,7 @@ class I18nTest extends TestCase
     /**
      * Set Up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
     }
@@ -47,7 +47,7 @@ class I18nTest extends TestCase
     /**
      * Tear down method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::clear();

@@ -39,7 +39,7 @@ class LabelWidgetTest extends TestCase
     /**
      * setup method.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $templates = [

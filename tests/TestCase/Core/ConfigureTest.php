@@ -31,7 +31,7 @@ class ConfigureTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::disable();
@@ -40,7 +40,7 @@ class ConfigureTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         if (file_exists(TMP . 'cache/persistent/cake_core_core_paths')) {

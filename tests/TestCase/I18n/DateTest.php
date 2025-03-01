@@ -33,7 +33,7 @@ class DateTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -51,7 +51,7 @@ class DateTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         DateTime::setDefaultLocale(null);

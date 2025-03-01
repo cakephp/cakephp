@@ -43,7 +43,7 @@ class TimeHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -53,7 +53,7 @@ class TimeHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         DateTime::setDefaultLocale(null);

@@ -50,7 +50,7 @@ class ResponseTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->server = $_SERVER;
@@ -59,7 +59,7 @@ class ResponseTest extends TestCase
     /**
      * teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $_SERVER = $this->server;

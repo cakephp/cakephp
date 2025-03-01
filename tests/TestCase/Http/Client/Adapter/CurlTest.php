@@ -37,7 +37,7 @@ class CurlTest extends TestCase
      */
     protected $caFile;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!function_exists('curl_init'), 'Skipping as ext/curl is not installed.');

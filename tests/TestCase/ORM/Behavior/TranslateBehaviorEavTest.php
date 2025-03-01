@@ -74,7 +74,7 @@ class TranslateBehaviorEavTest extends TestCase
         parent::tearDownAfterClass();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());

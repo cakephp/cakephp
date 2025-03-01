@@ -40,7 +40,7 @@ class CheckHttpCacheComponentTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();

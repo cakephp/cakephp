@@ -32,7 +32,7 @@ class TransportFactoryTest extends TestCase
      */
     protected $transports;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->transports = [
@@ -49,7 +49,7 @@ class TransportFactoryTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         TransportFactory::drop('debug');

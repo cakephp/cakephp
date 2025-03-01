@@ -33,7 +33,7 @@ class XmlViewTest extends TestCase
 {
     protected array $fixtures = ['core.Authors'];
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('debug', false);

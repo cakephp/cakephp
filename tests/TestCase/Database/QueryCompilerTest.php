@@ -41,7 +41,7 @@ class QueryCompilerTest extends TestCase
 
     protected ValueBinder $binder;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');

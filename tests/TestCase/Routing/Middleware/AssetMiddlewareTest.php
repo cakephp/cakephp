@@ -30,7 +30,7 @@ class AssetMiddlewareTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
@@ -39,7 +39,7 @@ class AssetMiddlewareTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->clearPlugins();
         parent::tearDown();

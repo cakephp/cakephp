@@ -38,7 +38,7 @@ class BaseLogTest extends TestCase
      * Setting up the test case.
      * Creates a stub logger implementing the log() function missing from abstract class BaseLog.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

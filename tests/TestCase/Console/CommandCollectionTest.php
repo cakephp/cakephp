@@ -33,7 +33,7 @@ use TestPlugin\Command\SampleCommand as PluginSampleCommand;
  */
 class CommandCollectionTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');

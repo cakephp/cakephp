@@ -46,7 +46,7 @@ use function Cake\Core\deprecationWarning;
  */
 class TestCaseTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->clearPlugins();

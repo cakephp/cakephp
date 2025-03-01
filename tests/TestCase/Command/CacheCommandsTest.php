@@ -31,7 +31,7 @@ class CacheCommandsTest extends TestCase
     /**
      * setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::setConfig('test', ['engine' => 'File', 'path' => CACHE, 'groups' => ['test_group']]);

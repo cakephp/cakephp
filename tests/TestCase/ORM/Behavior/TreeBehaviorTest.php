@@ -42,7 +42,7 @@ class TreeBehaviorTest extends TestCase
      */
     protected $table;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->table = $this->getTableLocator()->get('NumberTrees');

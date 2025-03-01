@@ -48,7 +48,7 @@ class CaseExpressionQueryTest extends TestCase
      */
     protected $query;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -56,7 +56,7 @@ class CaseExpressionQueryTest extends TestCase
         $this->query = new SelectQuery($this->connection);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 

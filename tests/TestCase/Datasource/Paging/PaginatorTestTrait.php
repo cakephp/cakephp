@@ -43,7 +43,7 @@ trait PaginatorTestTrait
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -77,7 +77,7 @@ trait PaginatorTestTrait
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();

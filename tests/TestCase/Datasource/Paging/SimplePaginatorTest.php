@@ -23,7 +23,7 @@ use Cake\ORM\Entity;
 
 class SimplePaginatorTest extends NumericPaginatorTest
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

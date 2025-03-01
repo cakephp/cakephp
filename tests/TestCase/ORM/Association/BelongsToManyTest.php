@@ -78,7 +78,7 @@ class BelongsToManyTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->tag = $this->getMockBuilder(Table::class)
@@ -105,7 +105,7 @@ class BelongsToManyTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         ConnectionManager::drop('test_read_write');

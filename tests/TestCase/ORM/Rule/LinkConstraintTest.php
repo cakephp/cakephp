@@ -53,7 +53,7 @@ class LinkConstraintTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
@@ -62,7 +62,7 @@ class LinkConstraintTest extends TestCase
     /**
      * Tear down.
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();

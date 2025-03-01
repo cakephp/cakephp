@@ -44,7 +44,7 @@ class ExceptionTrapTest extends TestCase
 
     private $triggered = false;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->memoryLimit = ini_get('memory_limit');

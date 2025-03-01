@@ -35,7 +35,7 @@ class QueryCacherTest extends TestCase
     /**
      * Setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::setConfig('queryCache', ['className' => 'Array']);
@@ -46,7 +46,7 @@ class QueryCacherTest extends TestCase
     /**
      * Teardown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('queryCache');

@@ -38,7 +38,7 @@ class DateTimeTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->now = DateTime::getTestNow();
@@ -47,7 +47,7 @@ class DateTimeTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         DateTime::setTestNow($this->now);
