@@ -1042,11 +1042,15 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
 
         $table->save($article);
 
-        // Remove the Behavior to unset the content != '' condition
-        $table->removeBehavior('Translate');
-
         $noFra = $table->ArticlesTranslations->find()->where(['locale' => 'fra'])->first();
         $this->assertEmpty($noFra);
+
+        $article = $table->find()->where(['id' => 2])->first();
+
+        $this->assertSame('Second Article', $article->get('title'));
+        $table->patchEntity($article, ['title' => 'Second Article updated']);
+
+        $this->assertNotFalse($table->save($article));
     }
 
     /**

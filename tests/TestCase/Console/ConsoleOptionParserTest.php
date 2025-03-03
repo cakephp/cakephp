@@ -37,7 +37,7 @@ class ConsoleOptionParserTest extends TestCase
      */
     private $io;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->io = new ConsoleIo(new StubConsoleOutput(), new StubConsoleOutput(), new StubConsoleInput([]));

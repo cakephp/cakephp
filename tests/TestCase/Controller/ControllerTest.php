@@ -75,7 +75,7 @@ class ControllerTest extends TestCase
     /**
      * reset environment.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -86,7 +86,7 @@ class ControllerTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();

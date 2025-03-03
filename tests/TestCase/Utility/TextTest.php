@@ -38,14 +38,14 @@ class TextTest extends TestCase
      */
     protected $encoding;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->encoding = mb_internal_encoding();
         $this->Text = new Text();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         mb_internal_encoding($this->encoding);

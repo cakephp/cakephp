@@ -74,7 +74,7 @@ class TranslateBehaviorEavTest extends TestCase
         parent::tearDownAfterClass();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
@@ -962,11 +962,15 @@ class TranslateBehaviorEavTest extends TestCase
 
         $table->save($article);
 
-        // Remove the Behavior to unset the content != '' condition
-        $table->removeBehavior('Translate');
-
         $noFra = $table->I18n->find()->where(['locale' => 'fra'])->first();
         $this->assertEmpty($noFra);
+
+        $article = $table->find()->where(['id' => 2])->first();
+
+        $this->assertSame('Second Article', $article->get('title'));
+        $table->patchEntity($article, ['title' => 'Second Article updated']);
+
+        $this->assertNotFalse($table->save($article));
     }
 
     /**

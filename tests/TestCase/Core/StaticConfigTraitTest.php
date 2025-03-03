@@ -37,7 +37,7 @@ class StaticConfigTraitTest extends TestCase
     /**
      * setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->subject = new class {
@@ -48,7 +48,7 @@ class StaticConfigTraitTest extends TestCase
     /**
      * teardown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         unset($this->subject);
         parent::tearDown();

@@ -34,7 +34,7 @@ class ExpressionTypeCastingTest extends TestCase
     /**
      * Setups a mock for FunctionsBuilder
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         TypeFactory::set('test', new TestType());

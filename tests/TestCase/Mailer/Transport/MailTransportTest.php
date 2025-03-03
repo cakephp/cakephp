@@ -36,7 +36,7 @@ class MailTransportTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->MailTransport = $this->getMockBuilder(MailTransport::class)

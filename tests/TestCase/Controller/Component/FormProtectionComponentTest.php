@@ -48,7 +48,7 @@ class FormProtectionComponentTest extends TestCase
      *
      * Initializes environment state.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

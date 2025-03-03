@@ -50,7 +50,7 @@ class SchemaCacheCommandsTest extends TestCase
     /**
      * setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->setAppNamespace();
@@ -67,7 +67,7 @@ class SchemaCacheCommandsTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->connection->cacheMetadata(false);
         parent::tearDown();

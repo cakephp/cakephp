@@ -106,8 +106,12 @@ trait TranslateStrategyTrait
      */
     protected function unsetEmptyFields(EntityInterface $entity): void
     {
-        /** @var array<\Cake\ORM\Entity> $translations */
-        $translations = (array)$entity->get('_translations');
+        if (!$entity->has('_translations')) {
+            return;
+        }
+
+        /** @var array<\Cake\Datasource\EntityInterface> $translations */
+        $translations = $entity->get('_translations');
         foreach ($translations as $locale => $translation) {
             $fields = $translation->extract($this->_config['fields'], false);
             foreach ($fields as $field => $value) {
@@ -120,15 +124,16 @@ trait TranslateStrategyTrait
 
             // If now, the current locale property is empty,
             // unset it completely.
-            if (empty(array_filter($translation))) {
-                unset($entity->get('_translations')[$locale]);
+            if (array_filter($translation) === []) {
+                unset($translations[$locale]);
             }
         }
 
-        // If now, the whole _translations property is empty,
-        // unset it completely and return
-        if (empty($entity->get('_translations'))) {
+        // If now, the whole $translations is empty, unset _translations property completely
+        if ($translations === []) {
             $entity->unset('_translations');
+        } else {
+            $entity->set('_translations', $translations);
         }
     }
 

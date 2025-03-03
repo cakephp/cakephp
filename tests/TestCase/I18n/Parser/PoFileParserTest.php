@@ -41,7 +41,7 @@ class PoFileParserTest extends TestCase
     /**
      * Set Up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->path = Configure::read('App.paths.locales.0');
@@ -50,7 +50,7 @@ class PoFileParserTest extends TestCase
     /**
      * Tear down method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::clear();

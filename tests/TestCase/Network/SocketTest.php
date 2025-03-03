@@ -35,7 +35,7 @@ class SocketTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->Socket = new Socket(['timeout' => 1]);
@@ -44,7 +44,7 @@ class SocketTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->Socket);

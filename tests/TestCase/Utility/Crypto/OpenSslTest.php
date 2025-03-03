@@ -32,7 +32,7 @@ class OpenSslTest extends TestCase
     /**
      * Setup function.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!function_exists('openssl_encrypt'), 'No openssl skipping tests');

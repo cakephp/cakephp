@@ -16,7 +16,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
 
     protected array $typeMap;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->typeMap = TypeFactory::getMap();
 

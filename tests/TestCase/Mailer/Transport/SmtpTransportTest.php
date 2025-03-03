@@ -56,7 +56,7 @@ class SmtpTransportTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->socket = $this->getMockBuilder(Socket::class)

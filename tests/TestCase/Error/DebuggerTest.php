@@ -56,7 +56,7 @@ class DebuggerTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('debug', true);
@@ -68,7 +68,7 @@ class DebuggerTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         if ($this->restoreError) {

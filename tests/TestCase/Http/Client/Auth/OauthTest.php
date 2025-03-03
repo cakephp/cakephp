@@ -40,7 +40,7 @@ class OauthTest extends TestCase
      *
      * @return void
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->privateKeyString = file_get_contents(TEST_APP . DS . 'config' . DS . 'key.pem');
