@@ -3188,7 +3188,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $field The name of the field that is being processed
      * @param \Cake\Validation\ValidationSet $rules the list of rules for a field
-     * @param mixed $data field value to validate
+     * @param mixed $value field value to validate
      * @param array $context context data used in validation rules
      * @return array<string, mixed>
      */
