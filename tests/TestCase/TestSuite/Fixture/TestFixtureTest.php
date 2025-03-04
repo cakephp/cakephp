@@ -50,7 +50,7 @@ class TestFixtureTest extends TestCase
         };
 
         $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Record #0 in fixture has additional fields that do not exist in the schema.'.
+        $this->expectExceptionMessage('Record #0 in fixture has additional fields that do not exist in the schema.' .
             ' Remove the following fields: ["non_existent_field"]');
         $fixture->insert(ConnectionManager::get('test'));
     }

@@ -207,7 +207,8 @@ class TestFixture implements FixtureInterface
                 $invalidFields = array_values(array_filter($recordFields, fn ($f) => !in_array($f, $columns, true)));
                 if ($invalidFields !== []) {
                     throw new CakeException(
-                        "Record #{$index} in fixture has additional fields that do not exist in the schema. Remove the following fields: " . json_encode($invalidFields)
+                        "Record #{$index} in fixture has additional fields that do not exist in the schema. " .
+                        "Remove the following fields: " . json_encode($invalidFields)
                     );
                 }
             } else {
