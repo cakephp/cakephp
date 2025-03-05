@@ -51,6 +51,11 @@ class PostgresTest extends TestCase
             'flags' => [],
             'init' => [],
             'log' => false,
+            'ssl_key' => null,
+            'ssl_crt' => null,
+            'ssl_ca' => null,
+            'ssl' => false,
+            'ssl_mode' => null,
         ];
 
         $expected['flags'] += [
@@ -101,12 +106,17 @@ class PostgresTest extends TestCase
             'schema' => 'fooblic',
             'init' => ['Execute this', 'this too'],
             'log' => false,
+            'ssl_key' => '/path/to/key',
+            'ssl_crt' => '/path/to/crt',
+            'ssl_ca' => '/path/to/ca',
+            'ssl' => true,
+            'ssl_mode' => 'verify-ca',
         ];
         $driver = $this->getMockBuilder(Postgres::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
-        $dsn = 'pgsql:host=foo;port=3440;dbname=bar';
+        $dsn = 'pgsql:host=foo;port=3440;dbname=bar;sslmode=verify-ca;sslkey=/path/to/key;sslcert=/path/to/crt;sslrootcert=/path/to/ca';
 
         $expected = $config;
         $expected['flags'] += [

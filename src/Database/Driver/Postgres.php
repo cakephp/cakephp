@@ -56,6 +56,11 @@ class Postgres extends Driver
         'timezone' => null,
         'flags' => [],
         'init' => [],
+        'ssl_key' => null,
+        'ssl_crt' => null,
+        'ssl_ca' => null,
+        'ssl' => false,
+        'ssl_mode' => null,
     ];
 
     /**
@@ -90,6 +95,24 @@ class Postgres extends Driver
             $dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
         } else {
             $dsn = "pgsql:dbname={$config['database']}";
+        }
+
+        if ($this->_config['ssl']) {
+            if ($this->_config['ssl_mode']) {
+                $dsn .= ';sslmode=' . $this->_config['ssl_mode'];
+            } else {
+                $dsn .= ';sslmode=' . 'allow';
+            }
+
+            if ($this->_config['ssl_key']) {
+                $dsn .= ';sslkey=' . $this->_config['ssl_key'];
+            }
+            if ($this->_config['ssl_crt']) {
+                $dsn .= ';sslcert=' . $this->_config['ssl_crt'];
+            }
+            if ($this->_config['ssl_ca']) {
+                $dsn .= ';sslrootcert=' . $this->_config['ssl_ca'];
+            }
         }
 
         $this->pdo = $this->createPdo($dsn, $config);
