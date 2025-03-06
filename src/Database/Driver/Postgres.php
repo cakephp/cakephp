@@ -108,7 +108,7 @@ class Postgres extends Driver
                 $dsn .= ';sslkey=' . $this->_config['ssl_key'];
             }
             if ($this->_config['ssl_crt']) {
-                $dsn .= ';sslcert=' . $this->_config['ssl_crt'];
+                $dsn .= ';sslcert=' . $this->_config['ssl_cert'];
             }
             if ($this->_config['ssl_ca']) {
                 $dsn .= ';sslrootcert=' . $this->_config['ssl_ca'];
