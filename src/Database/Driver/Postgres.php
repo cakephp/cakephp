@@ -101,7 +101,7 @@ class Postgres extends Driver
             if ($this->_config['ssl_mode']) {
                 $dsn .= ';sslmode=' . $this->_config['ssl_mode'];
             } else {
-                $dsn .= ';sslmode=' . 'allow';
+                $dsn .= ';sslmode=allow';
             }
 
             if ($this->_config['ssl_key']) {
