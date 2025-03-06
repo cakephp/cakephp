@@ -57,7 +57,7 @@ class Postgres extends Driver
         'flags' => [],
         'init' => [],
         'ssl_key' => null,
-        'ssl_crt' => null,
+        'ssl_cert' => null,
         'ssl_ca' => null,
         'ssl' => false,
         'ssl_mode' => null,
@@ -107,7 +107,7 @@ class Postgres extends Driver
             if ($this->_config['ssl_key']) {
                 $dsn .= ';sslkey=' . $this->_config['ssl_key'];
             }
-            if ($this->_config['ssl_crt']) {
+            if ($this->_config['ssl_cert']) {
                 $dsn .= ';sslcert=' . $this->_config['ssl_cert'];
             }
             if ($this->_config['ssl_ca']) {
