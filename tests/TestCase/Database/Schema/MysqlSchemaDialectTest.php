@@ -310,6 +310,7 @@ SQL;
                 location POINT,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+                updated DATETIME ON UPDATE CURRENT_TIMESTAMP,
                 KEY `author_idx` (`author_id`),
                 CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
                 FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
@@ -457,6 +458,14 @@ SQL;
                 'precision' => 3,
                 'comment' => null,
             ],
+            'updated' => [
+                'type' => 'datetime',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
         ];
 
         $driver = ConnectionManager::get('test')->getDriver();
@@ -478,7 +487,10 @@ SQL;
             );
         }
 
-        // Compare with describeColumns as well
+        // Compare with describeColumns which has some more platform specific keys
+        // that are also public API.
+        $expected['updated']['onUpdate'] = 'CURRENT_TIMESTAMP';
+
         $columns = $dialect->describeColumns('schema_articles');
         foreach ($columns as $column) {
             $this->assertArrayHasKey($column['name'], $expected);
@@ -499,6 +511,7 @@ SQL;
 
         $config = $connection->getDriver()->config();
         $dialect = $connection->getDriver()->schemaDialect();
+
         $result = $dialect->describe($config['database'] . '.schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
     }

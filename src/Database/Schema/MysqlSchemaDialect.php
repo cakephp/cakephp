@@ -95,7 +95,24 @@ class MysqlSchemaDialect extends SchemaDialect
     }
 
     /**
-     * @inheritDoc
+     * Get a list of column metadata as a array
+     *
+     * Each item in the array will contain the following:
+     *
+     * - name : the name of the column.
+     * - type : the abstract type of the column.
+     * - length : the length of the column.
+     * - default : the default value of the column or null.
+     * - null : boolean indicating whether the column can be null.
+     * - comment : the column comment or null.
+     *
+     * The following keys will be set as required:
+     *
+     * - autoIncrement : set for columns that are an integer primary key.
+     * - onUpdate : set for datetime/timestamp columns with `ON UPDATE` clauses.
+     *
+     * @param string $tableName The name of the table to describe columns on.
+     * @return array
      */
     public function describeColumns(string $tableName): array
     {
@@ -118,6 +135,11 @@ class MysqlSchemaDialect extends SchemaDialect
             ];
             if (isset($row['Extra']) && $row['Extra'] === 'auto_increment') {
                 $field['autoIncrement'] = true;
+            }
+            if ($row['Extra'] === 'on update CURRENT_TIMESTAMP') {
+                $field['onUpdate'] = 'CURRENT_TIMESTAMP';
+            } elseif ($row['Extra'] === 'on update current_timestamp()') {
+                $field['onUpdate'] = 'CURRENT_TIMESTAMP';
             }
             $columns[] = $field;
         }
