@@ -390,9 +390,7 @@ class FormProtector
 
         $locked = [];
         foreach ($fields as $key => $value) {
-            if (is_bool($value)) {
-                $value = (string)$value;
-            } elseif (is_numeric($value)) {
+            if (is_numeric($value) || is_bool($value)) {
                 $value = (string)$value;
             }
 
