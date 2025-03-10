@@ -23,6 +23,7 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Type\EnumType;
 use Cake\Form\Form;
+use Cake\Form\FormProtector;
 use Cake\Http\ServerRequest;
 use Cake\I18n\Date;
 use Cake\I18n\DateTime;
@@ -42,10 +43,13 @@ use Cake\View\View;
 use Cake\View\Widget\LabelWidget;
 use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
+use DOMDocument;
+use DOMXPath;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
+use SimpleXMLElement;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\ArticleStatusLabel;
@@ -2233,6 +2237,51 @@ class FormHelperTest extends TestCase
         ];
         $result = $this->Form->getFormProtector()->__debugInfo()['fields'];
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test that postLink() with additional data generates a valid secure token.
+     */
+    public function testFormSecuredControlPostLink(): void
+    {
+        $this->View->setRequest($this->View->getRequest()
+            ->withAttribute('formTokenData', [])
+            ->withAttribute('csrfToken', 'testKey'));
+
+        $options = [
+            'data' => ['string' => 'value', 'boolean' => true],
+        ];
+        $result = $this->Form->postLink('title', '/articles/add', $options);
+
+        // Because postLink() creates a standalone form protector
+        // we can't inspect its internal state at all.
+        // Use the generated HTML to extract token data so we
+        // can craft a request.
+        $dom = new DOMDocument();
+        $dom->loadHTML($result);
+        $xpath = new DOMXPath($dom);
+        $inputs = $xpath->query("//form//input[contains(@name,'_Token')]");
+        $token = [];
+        foreach ($inputs as $item) {
+            $name = $item->getAttribute('name');
+            [, $field] = explode('[', $name);
+            $field = trim($field, ']');
+            $token[$field] = $item->getAttribute('value');
+        }
+
+        // Create a simulated request
+        // boolean is `'1'` because that is what the request
+        // data will be.
+        $data = [
+            'boolean' => '1',
+            'string' => 'value',
+            '_Token' => $token,
+        ];
+        $formProtector = new FormProtector([]);
+        $this->assertTrue(
+            $formProtector->validate($data, '/articles/add', 'cli'),
+            $formProtector->getError() ?? 'no formprotector->getError'
+        );
     }
 
     /**
