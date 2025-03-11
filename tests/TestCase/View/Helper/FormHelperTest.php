@@ -49,7 +49,6 @@ use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
-use SimpleXMLElement;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\ArticleStatusLabel;
@@ -2249,7 +2248,7 @@ class FormHelperTest extends TestCase
             ->withAttribute('csrfToken', 'testKey'));
 
         $options = [
-            'data' => ['string' => 'value', 'boolean' => true],
+            'data' => ['string' => 'value', 'boolean' => true, 'falsey' => false],
         ];
         $result = $this->Form->postLink('title', '/articles/add', $options);
 
@@ -2271,9 +2270,11 @@ class FormHelperTest extends TestCase
 
         // Create a simulated request
         // boolean is `'1'` because that is what the request
+        // same with falsey being '0'
         // data will be.
         $data = [
             'boolean' => '1',
+            'falsey' => '0',
             'string' => 'value',
             '_Token' => $token,
         ];
