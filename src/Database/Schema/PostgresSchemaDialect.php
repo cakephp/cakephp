@@ -94,6 +94,7 @@ class PostgresSchemaDialect extends SchemaDialect
             c.datetime_precision,
             c.numeric_precision as column_precision,
             c.numeric_scale as column_scale,
+            c.identity_generation,
             pg_get_serial_sequence(attr.attrelid::regclass::text, attr.attname) IS NOT NULL AS has_serial
         FROM information_schema.columns c
         INNER JOIN pg_catalog.pg_namespace ns ON (ns.nspname = table_schema)
@@ -316,6 +317,9 @@ class PostgresSchemaDialect extends SchemaDialect
 
             if ($field['type'] === TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE) {
                 $field['precision'] = $row['datetime_precision'];
+            }
+            if (isset($row['identity_generation']) && $row['identity_generation']) {
+                $field['generated'] = $row['identity_generation'];
             }
 
             $columns[] = $field;
