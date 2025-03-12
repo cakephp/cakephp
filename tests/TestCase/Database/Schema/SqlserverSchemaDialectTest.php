@@ -86,6 +86,15 @@ INDEX [unique_id_idx] UNIQUE ([unique_id])
 )
 SQL;
         $connection->execute($table);
+
+        $comment = <<<SQL
+            EXECUTE sp_addextendedproperty
+            N'MS_Description', N'is published or not',
+            N'SCHEMA', N'dbo',
+            N'TABLE', N'schema_articles',
+            N'COLUMN', N'published';
+SQL;
+        $connection->execute($comment);
         $connection->execute('CREATE INDEX [author_idx] ON [schema_articles] ([author_id])');
 
         $table = <<<SQL
@@ -438,7 +447,7 @@ SQL;
                 'default' => 0,
                 'length' => null,
                 'precision' => null,
-                'comment' => null,
+                'comment' => 'is published or not',
             ],
             'views' => [
                 'type' => 'smallinteger',
