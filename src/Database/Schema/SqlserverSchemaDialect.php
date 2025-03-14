@@ -856,8 +856,37 @@ class SqlserverSchemaDialect extends SchemaDialect
         foreach ($indexes as $index) {
             $out[] = $index;
         }
+        foreach ($schema->columns() as $name) {
+            $column = $schema->getColumn($name);
+            $comment = $column['comment'] ?? null;
+            if ($comment !== null) {
+                $out[] = $this->columnCommentSql($schema, $name, $comment);
+            }
+        }
 
         return $out;
+    }
+
+    /**
+     * Generate the SQL to create a column comment.
+     *
+     * @param \Cake\Database\Schema\TableSchema $schema The table schema.
+     * @param string $name The column name.
+     * @param string $comment The column comment.
+     * @return string
+     */
+    protected function columnCommentSql(TableSchema $schema, string $name, string $comment): string
+    {
+        $tableName = $this->_driver->quoteIdentifier($schema->name());
+        $columnName = $this->_driver->quoteIdentifier($name);
+        $comment = $this->_driver->schemaValue($comment);
+
+        return sprintf(
+            "EXEC sp_addextendedproperty N'MS_Description', %s, N'SCHEMA', N'dbo', N'TABLE', %s, N'COLUMN', %s;",
+            $comment,
+            $tableName,
+            $columnName,
+        );
     }
 
     /**

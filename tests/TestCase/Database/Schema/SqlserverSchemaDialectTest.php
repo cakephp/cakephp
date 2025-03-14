@@ -1254,6 +1254,47 @@ SQL;
         );
     }
 
+    public function testCreateTableColumnComment(): void
+    {
+        $this->_needsConnection();
+
+        $columns = [
+            'id' => [
+                'type' => 'biginteger',
+                'default' => null,
+                'null' => false,
+                'length' => 19,
+                'precision' => null,
+                'unsigned' => null,
+                'autoIncrement' => true,
+                'comment' => null,
+            ],
+            'title' => [
+                'type' => 'string',
+                'length' => 20,
+                'null' => true,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'body' => [
+                'type' => 'string',
+                'null' => true,
+                'length' => 1000,
+                'precision' => null,
+                'comment' => 'the body field',
+            ],
+        ];
+        $schema = new TableSchema('schema_comment');
+        foreach ($columns as $name => $column) {
+            $schema->addColumn($name, $column);
+        }
+        $connection = ConnectionManager::get('test');
+        $sql = $schema->createSql($connection);
+        $comment = $sql[1];
+        $this->assertStringContainsString('the body field', $comment);
+        $this->assertStringContainsString("EXEC sp_addextendedproperty N'MS_Description'", $comment);
+    }
+
     /**
      * Get a schema instance with a mocked driver/pdo instances
      */
