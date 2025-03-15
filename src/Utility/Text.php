@@ -58,7 +58,7 @@ class Text
     protected static bool $useI18n;
 
     /**
-     * Generate a random UUID version 4
+     * Generate a random UUID version 7
      *
      * Warning: This method should not be used as a random seed for any cryptographic operations.
      * Instead, you should use `Security::randomBytes()` or `Security::randomString()` instead.
@@ -66,30 +66,30 @@ class Text
      * It should also not be used to create identifiers that have security implications, such as
      * 'unguessable' URL identifiers. Instead, you should use {@link \Cake\Utility\Security::randomBytes()}` for that.
      *
-     * @see https://www.ietf.org/rfc/rfc4122.txt
-     * @return string RFC 4122 UUID
-     * @copyright Matt Farina MIT License https://github.com/lootils/uuid/blob/master/LICENSE
+     * @see https://www.ietf.org/rfc/rfc9562.txt
+     * @return string RFC 9562 UUID
      */
     public static function uuid(): string
     {
-        return sprintf(
-            '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
-            // 32 bits for "time_low"
-            random_int(0, 65535),
-            random_int(0, 65535),
-            // 16 bits for "time_mid"
-            random_int(0, 65535),
-            // 12 bits before the 0100 of (version) 4 for "time_hi_and_version"
-            random_int(0, 4095) | 0x4000,
-            // 16 bits, 8 bits for "clk_seq_hi_res",
-            // 8 bits for "clk_seq_low",
-            // two most significant bits holds zero and one for variant DCE1.1
-            random_int(0, 0x3fff) | 0x8000,
-            // 48 bits for "node"
-            random_int(0, 65535),
-            random_int(0, 65535),
-            random_int(0, 65535),
-        );
+        // random bytes
+        $value = random_bytes(16);
+
+        // current timestamp in ms
+        $timestamp = intval(microtime(true) * 1000);
+
+        // timestamp
+        $value[0] = chr(($timestamp >> 40) & 0xFF);
+        $value[1] = chr(($timestamp >> 32) & 0xFF);
+        $value[2] = chr(($timestamp >> 24) & 0xFF);
+        $value[3] = chr(($timestamp >> 16) & 0xFF);
+        $value[4] = chr(($timestamp >> 8) & 0xFF);
+        $value[5] = chr($timestamp & 0xFF);
+
+        // version and variant
+        $value[6] = chr((ord($value[6]) & 0x0F) | 0x70);
+        $value[8] = chr((ord($value[8]) & 0x3F) | 0x80);
+
+        return vsprintf('%s%s-%s-%s-%s-%s%s%s', str_split(bin2hex($value), 4));
     }
 
     /**
