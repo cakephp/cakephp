@@ -96,7 +96,7 @@ class Socket
      * Used to capture connection warnings which can happen when there are
      * SSL errors for example.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_connectionErrors = [];
 
@@ -162,7 +162,7 @@ class Socket
             $errStr,
             (int)$this->_config['timeout'],
             $connectAs,
-            $context
+            $context,
         );
         restore_error_handler();
 
@@ -203,7 +203,7 @@ class Socket
      * @param int $errNum error number
      * @param string $errStr error string
      * @param int $timeout timeout
-     * @param int $connectAs flags
+     * @param int<0, 7> $connectAs flags
      * @param resource $context context
      * @return resource|null
      */
@@ -213,7 +213,7 @@ class Socket
         string &$errStr,
         int $timeout,
         int $connectAs,
-        $context
+        $context,
     ) {
         $resource = stream_socket_client(
             $remoteSocketTarget,
@@ -221,7 +221,7 @@ class Socket
             $errStr,
             $timeout,
             $connectAs,
-            $context
+            $context,
         );
 
         if (!$resource) {
@@ -324,7 +324,7 @@ class Socket
     /**
      * Get all IP addresses associated with the current connection.
      *
-     * @return list<string> IP addresses
+     * @return array<string> IP addresses
      */
     public function addresses(): array
     {

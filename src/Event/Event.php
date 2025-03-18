@@ -149,6 +149,8 @@ class Event implements EventInterface
     /**
      * Listeners can attach a result value to the event.
      *
+     * Setting the result to `false` will also stop event propagation.
+     *
      * @param mixed $value The value to set.
      * @return $this
      */

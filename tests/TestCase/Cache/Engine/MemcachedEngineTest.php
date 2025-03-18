@@ -37,7 +37,7 @@ class MemcachedEngineTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!class_exists('Memcached'), 'Memcached is not installed or configured properly.');
@@ -73,7 +73,7 @@ class MemcachedEngineTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('memcached');
@@ -190,7 +190,7 @@ class MemcachedEngineTest extends TestCase
     {
         $this->skipIf(
             !Memcached::HAVE_JSON,
-            'Memcached extension is not compiled with json support'
+            'Memcached extension is not compiled with json support',
         );
 
         $Memcached = new MemcachedEngine();
@@ -212,7 +212,7 @@ class MemcachedEngineTest extends TestCase
     {
         $this->skipIf(
             !Memcached::HAVE_IGBINARY,
-            'Memcached extension is not compiled with igbinary support'
+            'Memcached extension is not compiled with igbinary support',
         );
 
         $Memcached = new MemcachedEngine();
@@ -234,7 +234,7 @@ class MemcachedEngineTest extends TestCase
     {
         $this->skipIf(
             !defined('Memcached::HAVE_MSGPACK') || !Memcached::HAVE_MSGPACK,
-            'Memcached extension is not compiled with msgpack support'
+            'Memcached extension is not compiled with msgpack support',
         );
 
         $Memcached = new MemcachedEngine();
@@ -256,7 +256,7 @@ class MemcachedEngineTest extends TestCase
     {
         $this->skipIf(
             (bool)Memcached::HAVE_JSON,
-            'Memcached extension is compiled with json support'
+            'Memcached extension is compiled with json support',
         );
 
         $Memcached = new MemcachedEngine();
@@ -279,11 +279,11 @@ class MemcachedEngineTest extends TestCase
     {
         $this->skipIf(
             !defined('Memcached::HAVE_MSGPACK'),
-            'Memcached::HAVE_MSGPACK constant is not available in Memcached below 3.0.0'
+            'Memcached::HAVE_MSGPACK constant is not available in Memcached below 3.0.0',
         );
         $this->skipIf(
             (bool)Memcached::HAVE_MSGPACK,
-            'Memcached extension is compiled with msgpack support'
+            'Memcached extension is compiled with msgpack support',
         );
 
         $Memcached = new MemcachedEngine();
@@ -306,7 +306,7 @@ class MemcachedEngineTest extends TestCase
     {
         $this->skipIf(
             (bool)Memcached::HAVE_IGBINARY,
-            'Memcached extension is compiled with igbinary support'
+            'Memcached extension is compiled with igbinary support',
         );
 
         $Memcached = new MemcachedEngine();
@@ -332,7 +332,7 @@ class MemcachedEngineTest extends TestCase
         $this->expectExceptionMessage('Memcached extension is not build with SASL support');
         $this->skipIf(
             method_exists(Memcached::class, 'setSaslAuthData'),
-            'Cannot test exception when sasl has been compiled in.'
+            'Cannot test exception when sasl has been compiled in.',
         );
         $MemcachedEngine = new MemcachedEngine();
         $config = [

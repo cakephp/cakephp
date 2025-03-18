@@ -27,7 +27,7 @@ class NumericPaginatorTest extends TestCase
     /**
      * fixtures property
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.Posts', 'core.Articles', 'core.Tags', 'core.ArticlesTags',
@@ -63,6 +63,11 @@ class NumericPaginatorTest extends TestCase
 
         $settings = ['finder' => 'published'];
         $result = $this->Paginator->paginate($table, [], $settings);
+        $this->assertCount(3, $result, '3 rows should come back');
+        $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
+
+        $settings = ['finder' => 'published'];
+        $result = $this->Paginator->paginate($table->find(), [], $settings);
         $this->assertCount(3, $result, '3 rows should come back');
         $this->assertEquals(['First Post', 'Second Post', 'Third Post'], $titleExtractor($result));
 
@@ -150,7 +155,7 @@ class NumericPaginatorTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage(
             'The `order` config must be an associative array.'
-            . ' Found invalid value with numeric key: `PaginatorPosts.title ASC`'
+            . ' Found invalid value with numeric key: `PaginatorPosts.title ASC`',
         );
 
         $settings = [
@@ -171,7 +176,7 @@ class NumericPaginatorTest extends TestCase
             function (): void {
                 $table = $this->getTableLocator()->get('PaginatorPosts');
                 $this->Paginator->paginate($table, [], ['fields' => ['title']]);
-            }
+            },
         );
     }
 }

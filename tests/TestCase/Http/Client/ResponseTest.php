@@ -42,11 +42,11 @@ class ResponseTest extends TestCase
         $this->assertSame('OK', $response->getReasonPhrase());
         $this->assertSame(
             'text/html;charset="UTF-8"',
-            $response->getHeaderLine('content-type')
+            $response->getHeaderLine('content-type'),
         );
         $this->assertSame(
             'Tue, 25 Dec 2012 04:43:47 GMT',
-            $response->getHeaderLine('Date')
+            $response->getHeaderLine('Date'),
         );
         $this->assertSame('winner!', '' . $response->getBody());
     }
@@ -67,16 +67,16 @@ class ResponseTest extends TestCase
         $this->assertSame('1.0', $response->getProtocolVersion());
         $this->assertSame(
             'text/html;charset="UTF-8"',
-            $response->getHeaderLine('content-type')
+            $response->getHeaderLine('content-type'),
         );
         $this->assertSame(
             'Tue, 25 Dec 2012 04:43:47 GMT',
-            $response->getHeaderLine('Date')
+            $response->getHeaderLine('Date'),
         );
 
         $this->assertSame(
             'text/html;charset="UTF-8"',
-            $response->getHeaderLine('Content-Type')
+            $response->getHeaderLine('Content-Type'),
         );
 
         $headers = [
@@ -339,7 +339,7 @@ XML;
         $this->assertTrue($result['secure']);
         $this->assertSame(
             strtotime('Wed, 09-Jun-2021 10:18:14 GMT'),
-            $result['expires']
+            $result['expires'],
         );
         $this->assertSame('/', $result['path']);
 

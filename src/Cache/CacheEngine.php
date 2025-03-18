@@ -318,7 +318,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * and returns the `group value` for each of them, this is
      * the token representing each group in the cache key
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function groups(): array
     {

@@ -24,10 +24,10 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/core": "^5.1",
-        "cakephp/event": "^5.1",
-        "cakephp/log": "^5.1",
-        "cakephp/utility": "^5.1"
+        "cakephp/core": "5.2.*@dev",
+        "cakephp/event": "5.2.*@dev",
+        "cakephp/log": "5.2.*@dev",
+        "cakephp/utility": "5.2.*@dev"
     },
     "suggest": {
         "cakephp/datasource": "To use the Command base classes",
@@ -36,6 +36,12 @@
     "autoload": {
         "psr-4": {
             "Cake\\Console\\": "."
+        }
+    },
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.2.x-dev"
         }
     }
 }

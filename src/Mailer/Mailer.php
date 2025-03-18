@@ -266,7 +266,7 @@ class Mailer implements EventListenerInterface
     {
         deprecationWarning(
             '5.1.0',
-            'Setting the message instance is deprecated. Configure the mailer according to the documentation instead.'
+            'Setting the message instance is deprecated. Configure the mailer according to the documentation instead.',
         );
         $this->message = $message;
 
@@ -307,6 +307,9 @@ class Mailer implements EventListenerInterface
     /**
      * Sends email.
      *
+     * If an `$action` is specified the internal state of the mailer will be
+     * backed up and restored after the action is run.
+     *
      * @param string|null $action The name of the mailer action to trigger.
      *   If no action is specified then all other method arguments will be ignored.
      * @param array $args Arguments to pass to the triggered mailer action.
@@ -329,11 +332,7 @@ class Mailer implements EventListenerInterface
             ]);
         }
 
-        $this->clonedInstances['message'] = clone $this->message;
-        $this->clonedInstances['renderer'] = clone $this->getRenderer();
-        if ($this->transport !== null) {
-            $this->clonedInstances['transport'] = clone $this->transport;
-        }
+        $this->backup();
 
         $this->getMessage()->setHeaders($headers);
         if (!$this->viewBuilder()->getTemplate()) {
@@ -361,7 +360,7 @@ class Mailer implements EventListenerInterface
     {
         $content = $this->getRenderer()->render(
             $content,
-            $this->message->getBodyTypes()
+            $this->message->getBodyTypes(),
         );
 
         $this->message->setBody($content);
@@ -484,11 +483,27 @@ class Mailer implements EventListenerInterface
         if ($this->transport === null) {
             throw new BadMethodCallException(
                 'Transport was not defined. '
-                . 'You must set on using setTransport() or set `transport` option in your mailer profile.'
+                . 'You must set on using setTransport() or set `transport` option in your mailer profile.',
             );
         }
 
         return $this->transport;
+    }
+
+    /**
+     * Backup message, renderer, transport instances before an action is run.
+     *
+     * @return void
+     */
+    protected function backup(): void
+    {
+        $this->clonedInstances['message'] = clone $this->message;
+        if ($this->renderer !== null) {
+            $this->clonedInstances['renderer'] = clone $this->renderer;
+        }
+        if ($this->transport !== null) {
+            $this->clonedInstances['transport'] = clone $this->transport;
+        }
     }
 
     /**
@@ -500,7 +515,11 @@ class Mailer implements EventListenerInterface
     {
         foreach (array_keys($this->clonedInstances) as $key) {
             if ($this->clonedInstances[$key] === null) {
-                $this->{$key} = null;
+                if ($key === 'message') {
+                    $this->message->reset();
+                } else {
+                    $this->{$key} = null;
+                }
             } else {
                 $this->{$key} = clone $this->clonedInstances[$key];
                 $this->clonedInstances[$key] = null;
@@ -545,7 +564,7 @@ class Mailer implements EventListenerInterface
         Log::write(
             $this->logConfig['level'],
             PHP_EOL . $this->flatten($contents['headers']) . PHP_EOL . PHP_EOL . $this->flatten($contents['message']),
-            $this->logConfig['scope']
+            $this->logConfig['scope'],
         );
     }
 
@@ -574,7 +593,7 @@ class Mailer implements EventListenerInterface
     /**
      * Converts given value to string
      *
-     * @param list<string>|string $value The value to convert
+     * @param array<string>|string $value The value to convert
      * @return string
      */
     protected function flatten(array|string $value): string

@@ -41,7 +41,7 @@ class BinaryUuidTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new BinaryUuidType();
@@ -60,7 +60,7 @@ class BinaryUuidTypeTest extends TestCase
         preg_match_all(
             $uuidRegex,
             $result,
-            $matches
+            $matches,
         );
 
         $result = $matches[0];

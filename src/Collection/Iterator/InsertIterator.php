@@ -44,7 +44,7 @@ class InsertIterator extends Collection
      * An array containing each of the properties to be traversed to reach the
      * point where the values should be inserted.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_path;
 

@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Query;
 
+use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
@@ -116,7 +117,18 @@ class UpdateQuery extends Query
             return $this;
         }
 
-        if (is_array($key) || $key instanceof ExpressionInterface) {
+        if (is_array($key)) {
+            $typeMap = $this->getTypeMap()->setTypes($value ?? []);
+            /** @var \Cake\Database\Expression\QueryExpression $setExpr */
+            $setExpr = $this->_parts['set'];
+            foreach ($key as $k => $v) {
+                $setExpr->add(new ComparisonExpression($k, $v, $typeMap->type($k)));
+            }
+
+            return $this;
+        }
+
+        if ($key instanceof ExpressionInterface) {
             $types = (array)$value;
             /** @var \Cake\Database\Expression\QueryExpression $setExpr */
             $setExpr = $this->_parts['set'];

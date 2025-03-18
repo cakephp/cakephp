@@ -80,7 +80,7 @@ class Server implements EventDispatcherInterface
      */
     public function run(
         ?ServerRequestInterface $request = null,
-        ?MiddlewareQueue $middlewareQueue = null
+        ?MiddlewareQueue $middlewareQueue = null,
     ): ResponseInterface {
         $this->bootstrap();
 

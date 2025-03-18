@@ -40,7 +40,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
             throw new InvalidArgumentException(sprintf(
                 'Cannot convert value `%s` of type `%s` to int',
                 print_r($value, true),
-                get_debug_type($value)
+                get_debug_type($value),
             ));
         }
     }
@@ -113,7 +113,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
      */
     public function marshal(mixed $value): ?int
     {
-        if ($value === null || $value === '' || !is_numeric($value)) {
+        if ($value === '' || !is_numeric($value)) {
             return null;
         }
 

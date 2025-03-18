@@ -120,7 +120,7 @@ class Sqlserver extends Driver
         if (isset($config['persistent']) && $config['persistent']) {
             throw new InvalidArgumentException(
                 'Config setting "persistent" cannot be set to true, '
-                . 'as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT'
+                . 'as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT',
             );
         }
 
@@ -192,6 +192,11 @@ class Sqlserver extends Driver
      */
     public function prepare(Query|string $query): StatementInterface
     {
+        $options = [
+            PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
+            PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
+        ];
+
         $sql = $query;
         if ($query instanceof Query) {
             $sql = $query->sql();
@@ -200,18 +205,19 @@ class Sqlserver extends Driver
                     'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server. ' .
                     'This is probably due to a very large WHERE IN () clause which generates a parameter ' .
                     'for each value in the array. ' .
-                    'If using an Association, try changing the `strategy` from select to subquery.'
+                    'If using an Association, try changing the `strategy` from select to subquery.',
                 );
+            }
+
+            if ($query instanceof SelectQuery && !$query->isBufferedResultsEnabled()) {
+                $options = [];
             }
         }
 
         /** @var string $sql */
         $statement = $this->getPdo()->prepare(
             $sql,
-            [
-                PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
-                PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
-            ]
+            $options,
         );
 
         /** @var \Cake\Database\StatementInterface */

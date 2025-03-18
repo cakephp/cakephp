@@ -90,7 +90,7 @@ class Schema
     /**
      * Get the list of fields in the schema.
      *
-     * @return list<string> The list of field names.
+     * @return array<string> The list of field names.
      */
     public function fields(): array
     {

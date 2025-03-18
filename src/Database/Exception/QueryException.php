@@ -29,7 +29,9 @@ class QueryException extends PDOException
      */
     public function __construct(protected LoggedQuery|string $query, PDOException $previous)
     {
-        parent::__construct($previous->getMessage(), (int)$previous->getCode(), $previous);
+        $message = $previous->getMessage() . "\nQuery: " . $this->getQueryString();
+
+        parent::__construct($message, (int)$previous->getCode(), $previous);
     }
 
     /**

@@ -30,7 +30,7 @@ class ExistsIn
     /**
      * The list of fields to check
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_fields;
 
@@ -54,7 +54,7 @@ class ExistsIn
      * Available option for $options is 'allowNullableNulls' flag.
      * Set to true to accept composite foreign keys where one or more nullable columns are null.
      *
-     * @param list<string>|string $fields The field or fields to check existence as primary key.
+     * @param array<string>|string $fields The field or fields to check existence as primary key.
      * @param \Cake\ORM\Table|\Cake\ORM\Association|string $repository The repository where the
      * field will be looked for, or the association name for the repository.
      * @param array<string, mixed> $options The options that modify the rule's behavior.
@@ -90,7 +90,7 @@ class ExistsIn
                     'ExistsIn rule for `%s` is invalid. `%s` is not associated with `%s`.',
                     implode(', ', $this->_fields),
                     $this->_repository,
-                    $options['repository']::class
+                    $options['repository']::class,
                 ));
             }
             $repository = $table->getAssociation($this->_repository);
@@ -139,11 +139,11 @@ class ExistsIn
 
         $primary = array_map(
             fn ($key) => $target->aliasField($key) . ' IS',
-            $bindingKey
+            $bindingKey,
         );
         $conditions = array_combine(
             $primary,
-            $entity->extract($fields)
+            $entity->extract($fields),
         );
 
         return $target->exists($conditions);

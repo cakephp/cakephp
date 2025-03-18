@@ -53,7 +53,7 @@ class BehaviorRegistryTest extends TestCase
     /**
      * setup method.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->Table = new Table(['table' => 'articles']);
@@ -65,7 +65,7 @@ class BehaviorRegistryTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->clearPlugins();
         unset($this->Table, $this->EventManager, $this->Behaviors);
@@ -103,6 +103,13 @@ class BehaviorRegistryTest extends TestCase
 
         $result = $this->Behaviors->load('TestPlugin.PersisterOne');
         $this->assertInstanceOf(PersisterOneBehavior::class, $result);
+
+        $config = ['className' => 'TestPlugin.PersisterOne'];
+        $this->assertSame($config, $result->getConfig());
+
+        $this->Behaviors->unload('PersisterOne');
+        $this->Behaviors->load('TestPlugin.PersisterOne', $config);
+        $this->assertInstanceOf(PersisterOneBehavior::class, $this->Behaviors->PersisterOne);
     }
 
     /**

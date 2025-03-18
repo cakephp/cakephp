@@ -117,7 +117,7 @@ class RulesChecker
     }
 
     /**
-     * Adds a rule that will be applied to the entity both on create and update
+     * Adds a rule that will be applied to the entity on create, update and delete
      * operations.
      *
      * ### Options
@@ -331,7 +331,7 @@ class RulesChecker
         return $this->_checkRules(
             $entity,
             $options,
-            array_merge(array_values($this->_rules), array_values($this->_createRules))
+            array_merge(array_values($this->_rules), array_values($this->_createRules)),
         );
     }
 
@@ -348,7 +348,7 @@ class RulesChecker
         return $this->_checkRules(
             $entity,
             $options,
-            array_merge(array_values($this->_rules), array_values($this->_updateRules))
+            array_merge(array_values($this->_rules), array_values($this->_updateRules)),
         );
     }
 
@@ -365,7 +365,7 @@ class RulesChecker
         return $this->_checkRules(
             $entity,
             $options,
-            array_merge(array_values($this->_rules), array_values($this->_deleteRules))
+            array_merge(array_values($this->_rules), array_values($this->_deleteRules)),
         );
     }
 

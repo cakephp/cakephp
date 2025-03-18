@@ -44,7 +44,7 @@ class HeaderContains extends HeaderEquals
         return sprintf(
             "is in header '%s' (`%s`)",
             $this->headerName,
-            $this->response->getHeaderLine($this->headerName)
+            $this->response->getHeaderLine($this->headerName),
         );
     }
 }

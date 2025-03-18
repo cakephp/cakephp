@@ -1,10 +1,6 @@
 includes:
 	- phpstan-baseline.neon
 
-rules:
-	- Symplify\PHPStanRules\Rules\Explicit\NoMixedPropertyFetcherRule
-	- Symplify\PHPStanRules\Rules\Explicit\NoMixedMethodCallerRule
-
 parameters:
 	level: 8
 	treatPhpDocTypesAsCertain: false
@@ -17,6 +13,8 @@ parameters:
 			identifier: missingType.iterableValue
 		-
 			identifier: missingType.generics
+		-
+			identifier: include.fileNotFound
 
 services:
 	-

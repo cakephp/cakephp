@@ -32,7 +32,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class JsonViewTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('debug', false);

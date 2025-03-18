@@ -42,7 +42,7 @@ class AssociationCollectionTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->associations = new AssociationCollection();
@@ -286,7 +286,7 @@ class AssociationCollectionTest extends TestCase
             $table,
             $entity,
             ['Parent', 'Child'],
-            $options
+            $options,
         );
         $this->assertTrue($result, 'Save should work.');
     }
@@ -333,7 +333,7 @@ class AssociationCollectionTest extends TestCase
             $table,
             $entity,
             ['Parents' => ['associated' => ['Others']]],
-            $options
+            $options,
         );
         $this->assertTrue($result, 'Save should work.');
     }
@@ -380,7 +380,7 @@ class AssociationCollectionTest extends TestCase
             $table,
             $entity,
             ['Comments' => ['associated' => ['Other']]],
-            $options
+            $options,
         );
         $this->assertTrue($result, 'Should succeed.');
     }
@@ -404,7 +404,7 @@ class AssociationCollectionTest extends TestCase
             $table,
             $entity,
             ['Profiles'],
-            ['atomic' => true]
+            ['atomic' => true],
         );
     }
 

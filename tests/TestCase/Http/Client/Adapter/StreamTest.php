@@ -34,7 +34,7 @@ class StreamTest extends TestCase
      */
     protected $stream;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->stream = $this->getMockBuilder(Stream::class)
@@ -44,7 +44,7 @@ class StreamTest extends TestCase
         stream_wrapper_register('http', CakeStreamWrapper::class);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         stream_wrapper_restore('http');
@@ -120,7 +120,7 @@ class StreamTest extends TestCase
                 'User-Agent' => 'CakePHP TestSuite',
                 'Content-Type' => 'application/json',
                 'Cookie' => 'a=b; c=do%20it',
-            ]
+            ],
         );
 
         $options = [
@@ -149,7 +149,7 @@ class StreamTest extends TestCase
             'http://localhost',
             'GET',
             ['Content-Type' => 'application/json'],
-            $content
+            $content,
         );
 
         $options = [
@@ -174,18 +174,16 @@ class StreamTest extends TestCase
         $request = new Request(
             'http://localhost',
             'GET',
-            [
-                'Content-Type' => 'application/json',
-            ],
-            ['a' => 'my value']
+            [],
+            ['a' => 'my value'],
         );
 
         $this->stream->send($request, []);
         $result = $this->stream->contextOptions();
         $expected = [
-            'Content-Type: application/x-www-form-urlencoded',
             'Connection: close',
             'User-Agent: CakePHP',
+            'Content-Type: application/x-www-form-urlencoded',
         ];
         $this->assertStringStartsWith(implode("\r\n", $expected), $result['header']);
         $this->assertStringContainsString('a=my+value', $result['content']);
@@ -200,8 +198,8 @@ class StreamTest extends TestCase
         $request = new Request(
             'http://localhost',
             'GET',
-            ['Content-Type' => 'application/json'],
-            ['upload' => fopen(CORE_PATH . 'VERSION.txt', 'r')]
+            [],
+            ['upload' => fopen(CORE_PATH . 'VERSION.txt', 'r')],
         );
 
         $this->stream->send($request, []);

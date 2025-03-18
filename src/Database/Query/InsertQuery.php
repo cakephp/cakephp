@@ -106,7 +106,7 @@ class InsertQuery extends Query
     {
         if (empty($this->_parts['insert'])) {
             throw new DatabaseException(
-                'You cannot add values before defining columns to use.'
+                'You cannot add values before defining columns to use.',
             );
         }
 

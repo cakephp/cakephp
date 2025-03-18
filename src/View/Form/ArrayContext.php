@@ -98,7 +98,7 @@ class ArrayContext implements ContextInterface
     /**
      * Get the fields used in the context as a primary key.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getPrimaryKey(): array
     {
@@ -181,7 +181,7 @@ class ArrayContext implements ContextInterface
             return null;
         }
 
-        // Using Hash::check here incase the default value is actually null
+        // Using Hash::check here in case the default value is actually null
         if (Hash::check($this->_context['defaults'], $field)) {
             return Hash::get($this->_context['defaults'], $field);
         }
@@ -260,7 +260,7 @@ class ArrayContext implements ContextInterface
         $schema = $this->_context['schema'];
         unset($schema['_constraints'], $schema['_indexes']);
 
-        /** @var list<string> */
+        /** @var array<string> */
         return array_keys($schema);
     }
 
@@ -299,7 +299,7 @@ class ArrayContext implements ContextInterface
 
         return array_intersect_key(
             (array)$schema,
-            array_flip(static::VALID_ATTRIBUTES)
+            array_flip(static::VALID_ATTRIBUTES),
         );
     }
 

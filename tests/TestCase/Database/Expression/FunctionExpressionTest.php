@@ -105,7 +105,7 @@ class FunctionExpressionTest extends TestCase
         $function = new $this->expressionClass('MyFunction', [$query]);
         $this->assertSame(
             'MyFunction((SELECT column))',
-            preg_replace('/[`"\[\]]/', '', $function->sql($binder))
+            preg_replace('/[`"\[\]]/', '', $function->sql($binder)),
         );
     }
 

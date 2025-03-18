@@ -52,14 +52,14 @@ class DeleteQueryTest extends TestCase
      */
     protected $autoQuote;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -181,7 +181,7 @@ class DeleteQueryTest extends TestCase
                 '\)' .
             '\)',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -216,7 +216,7 @@ class DeleteQueryTest extends TestCase
         $this->assertQuotedQuery(
             'DELETE IGNORE FROM <authors> WHERE 1 = 1',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new DeleteQuery($this->connection);
@@ -227,7 +227,7 @@ class DeleteQueryTest extends TestCase
         $this->assertQuotedQuery(
             'DELETE IGNORE QUICK FROM <authors> WHERE 1 = 1',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 }

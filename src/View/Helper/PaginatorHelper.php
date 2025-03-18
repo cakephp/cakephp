@@ -74,9 +74,9 @@ class PaginatorHelper extends Helper
         'options' => [],
         'templates' => [
             'nextActive' => '<li class="next"><a rel="next" href="{{url}}">{{text}}</a></li>',
-            'nextDisabled' => '<li class="next disabled"><a href="" onclick="return false;">{{text}}</a></li>',
+            'nextDisabled' => '<li class="next disabled"><a>{{text}}</a></li>',
             'prevActive' => '<li class="prev"><a rel="prev" href="{{url}}">{{text}}</a></li>',
-            'prevDisabled' => '<li class="prev disabled"><a href="" onclick="return false;">{{text}}</a></li>',
+            'prevDisabled' => '<li class="prev disabled"><a>{{text}}</a></li>',
             'counterRange' => '{{start}} - {{end}} of {{count}}',
             'counterPages' => '{{page}} of {{pages}}',
             'first' => '<li class="first"><a href="{{url}}">{{text}}</a></li>',
@@ -113,7 +113,7 @@ class PaginatorHelper extends Helper
         unset($query['page'], $query['limit'], $query['sort'], $query['direction']);
         $this->setConfig(
             'options.url',
-            array_merge($this->_View->getRequest()->getParam('pass', []), ['?' => $query])
+            array_merge($this->_View->getRequest()->getParam('pass', []), ['?' => $query]),
         );
     }
 
@@ -276,7 +276,7 @@ class PaginatorHelper extends Helper
 
         $url = $this->generateUrl(
             ['page' => $this->paginated()->currentPage() + $options['step']],
-            $options['url']
+            $options['url'],
         );
 
         $out = $templater->format($template, [
@@ -462,7 +462,7 @@ class PaginatorHelper extends Helper
     public function generateUrl(
         array $options = [],
         array $url = [],
-        array $urlOptions = []
+        array $urlOptions = [],
     ): string {
         $urlOptions += [
             'escape' => true,
@@ -503,7 +503,7 @@ class PaginatorHelper extends Helper
 
         $options += array_intersect_key(
             $paging,
-            ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null]
+            ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null],
         );
 
         if (!empty($options['page']) && $options['page'] === 1) {
@@ -733,7 +733,7 @@ class PaginatorHelper extends Helper
         $end = max(1 + $options['modulus'], $params['currentPage'] + $half);
         $start = min(
             $params['pageCount'] - $options['modulus'],
-            $params['currentPage'] - $half - $options['modulus'] % 2
+            $params['currentPage'] - $half - $options['modulus'] % 2,
         );
 
         if ($options['first']) {
@@ -1074,8 +1074,8 @@ class PaginatorHelper extends Helper
                 $this->generateUrl(
                     ['page' => $this->paginated()->currentPage() - 1],
                     [],
-                    ['escape' => false, 'fullBase' => true]
-                )
+                    ['escape' => false, 'fullBase' => true],
+                ),
             );
         }
 
@@ -1085,15 +1085,15 @@ class PaginatorHelper extends Helper
                 $this->generateUrl(
                     ['page' => $this->paginated()->currentPage() + 1],
                     [],
-                    ['escape' => false, 'fullBase' => true]
-                )
+                    ['escape' => false, 'fullBase' => true],
+                ),
             );
         }
 
         if ($options['first']) {
             $links[] = $this->Html->meta(
                 'first',
-                $this->generateUrl(['page' => 1], [], ['escape' => false, 'fullBase' => true])
+                $this->generateUrl(['page' => 1], [], ['escape' => false, 'fullBase' => true]),
             );
         }
 
@@ -1103,8 +1103,8 @@ class PaginatorHelper extends Helper
                 $this->generateUrl(
                     ['page' => $this->paginated()->pageCount()],
                     [],
-                    ['escape' => false, 'fullBase' => true]
-                )
+                    ['escape' => false, 'fullBase' => true],
+                ),
             );
         }
 
@@ -1152,11 +1152,27 @@ class PaginatorHelper extends Helper
         $default ??= $this->paginated()->perPage();
         $scope = $this->param('scope');
         assert($scope === null || is_string($scope));
+
+        $url = null;
+        $currentPage = $this->paginated()->currentPage();
+
+        if ($currentPage > 1) {
+            $query = $this->_View->getRequest()->getQueryParams();
+
+            if ($scope) {
+                $query[$scope]['page'] = 1;
+            } else {
+                $query['page'] = 1;
+            }
+
+            $url = $this->_View->getRequest()->getPath();
+            $url .= '?' . http_build_query($query);
+        }
+
         if ($scope) {
             $scope .= '.';
         }
-
-        $out = $this->Form->create(null, ['type' => 'get']);
+        $out = $this->Form->create(null, ['type' => 'get', 'url' => $url]);
         $out .= $this->Form->control($scope . 'limit', $options + [
             'type' => 'select',
             'label' => __('View'),

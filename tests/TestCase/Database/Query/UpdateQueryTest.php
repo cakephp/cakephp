@@ -56,14 +56,14 @@ class UpdateQueryTest extends TestCase
      */
     protected $autoQuote;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -88,6 +88,29 @@ class UpdateQueryTest extends TestCase
     }
 
     /**
+     * Test query construction with fields containing spaces.
+     */
+    public function testUpdateSpaceColumnNames(): void
+    {
+        $data = [
+            'Column with spaces' => '1',
+            'Column_without_spaces' => '1',
+        ];
+
+        $query = new UpdateQuery($this->connection);
+        $query->update('example')
+            ->set($data)
+            ->where(['id' => 1]);
+
+        $result = $query->sql();
+        $this->assertQuotedQuery(
+            'UPDATE <example> SET <Column with spaces> = :c0 , <Column_without_spaces> = :c1',
+            $result,
+            !$this->autoQuote
+        );
+    }
+
+    /**
      * Test update with multiple fields.
      */
     public function testUpdateMultipleFields(): void
@@ -102,7 +125,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
@@ -128,7 +151,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
         $this->assertQuotedQuery('WHERE <id> = :', $result, !$this->autoQuote);
 
@@ -154,7 +177,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <comments> SET <article_id> = <user_id> WHERE <id> = :',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $result = $query->execute();
@@ -181,7 +204,7 @@ class UpdateQueryTest extends TestCase
 
         $this->assertEqualsSql(
             'UPDATE comments SET updated = (SELECT created FROM comments c WHERE c.id = comments.id)',
-            $query->sql(new ValueBinder())
+            $query->sql(new ValueBinder()),
         );
 
         $result = $query->execute();
@@ -210,7 +233,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <comments> SET <comment> = :c0 , <created> = :c1',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
@@ -242,7 +265,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <comments> SET <comment> = :c0 , <created> = :c1',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
@@ -286,7 +309,7 @@ class UpdateQueryTest extends TestCase
                 '\)' .
             '\)',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -411,7 +434,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE TOP 10 PERCENT <authors> SET <name> = :c0',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new UpdateQuery($this->connection);
@@ -422,7 +445,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE TOP 10 PERCENT FOO <authors> SET <name> = :c0',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new UpdateQuery($this->connection);
@@ -433,7 +456,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE TOP 10 PERCENT <authors> SET <name> = :c0',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 

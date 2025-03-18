@@ -50,7 +50,7 @@ class HelperRegistryTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -61,7 +61,7 @@ class HelperRegistryTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->clearPlugins();
         unset($this->Helpers, $this->View);
@@ -194,7 +194,7 @@ class HelperRegistryTest extends TestCase
         $this->assertInstanceOf(
             OtherHelperHelper::class,
             $this->Helpers->get('thing.helper'),
-            'Class is wrong'
+            'Class is wrong',
         );
         $this->assertTrue($this->Helpers->has('thing.helper'));
         $this->assertFalse($this->Helpers->has('thing'));
@@ -215,7 +215,7 @@ class HelperRegistryTest extends TestCase
         $this->assertSame(
             $instance,
             $this->Helpers->EventListenerTest,
-            'Instance in registry should be the same as previously loaded'
+            'Instance in registry should be the same as previously loaded',
         );
         $this->assertCount(1, $this->Events->listeners('View.beforeRender'));
 
@@ -236,7 +236,7 @@ class HelperRegistryTest extends TestCase
         $this->assertSame(
             $instance,
             $this->Helpers->EventListenerTest,
-            'Instance in registry should be the same as previously loaded'
+            'Instance in registry should be the same as previously loaded',
         );
         $this->assertCount(1, $this->Events->listeners('View.beforeRender'));
 

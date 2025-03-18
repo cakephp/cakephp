@@ -38,7 +38,7 @@ class SchemaLoaderTest extends TestCase
 
     protected $truncateDbFile = TMP . 'schema_loader_test.sqlite';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -50,7 +50,7 @@ class SchemaLoaderTest extends TestCase
         $this->loader = new SchemaLoader();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 

@@ -51,7 +51,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         ?array $query = null,
         ?array $parsedBody = null,
         ?array $cookies = null,
-        ?array $files = null
+        ?array $files = null,
     ): ServerRequest {
         $server = normalizeServer($server ?? $_SERVER);
         ['uri' => $uri, 'base' => $base, 'webroot' => $webroot] = UriFactory::marshalUriAndBaseFromSapi($server);

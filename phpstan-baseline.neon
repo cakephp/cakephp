@@ -1,181 +1,439 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Call to function method_exists\(\) with Memcached and ''setSaslAuthData'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Cache/Engine/MemcachedEngine.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Collection/Iterator/NestIterator.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Collection/Iterator/NoChildrenIterator.php
 
 		-
-			message: "#^Property Cake\\\\Console\\\\ConsoleInput\\:\\:\\$_input \\(resource\\) in isset\\(\\) is not nullable\\.$#"
+			message: '#^Parameter \#1 \$args of method Cake\\Command\\RoutesGenerateCommand\:\:_splitArgs\(\) expects array\<string\>, array\<int, array\<string\>\|string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Command/RoutesGenerateCommand.php
+
+		-
+			message: '#^Property Cake\\Console\\ConsoleInput\:\:\$_input \(resource\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
 			count: 1
 			path: src/Console/ConsoleInput.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 2
 			path: src/Console/ConsoleOptionParser.php
 
 		-
-			message: "#^Property Cake\\\\Console\\\\ConsoleOutput\\:\\:\\$_output \\(resource\\) in isset\\(\\) is not nullable\\.$#"
+			message: '#^PHPDoc tag @var with type Closure is not subtype of native type Closure\(array\<string, string\>\)\: string\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/Console/ConsoleOutput.php
+
+		-
+			message: '#^Property Cake\\Console\\ConsoleOutput\:\:\$_output \(resource\) in isset\(\) is not nullable\.$#'
+			identifier: isset.property
 			count: 2
 			path: src/Console/ConsoleOutput.php
 
 		-
-			message: "#^Call to an undefined method ReflectionType\\:\\:getName\\(\\)\\.$#"
+			message: '#^Trait Cake\\Console\\TestSuite\\ConsoleIntegrationTestTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Console/TestSuite/ConsoleIntegrationTestTrait.php
+
+		-
+			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Unknown parameter \\$components in call to method ReflectionClass\\<Cake\\\\Controller\\\\Controller\\>\\:\\:newInstance\\(\\)\\.$#"
+			message: '#^Unknown parameter \$components in call to method ReflectionClass\<Cake\\Controller\\Controller\>\:\:newInstance\(\)\.$#'
+			identifier: argument.unknown
 			count: 1
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Unknown parameter \\$request in call to method ReflectionClass\\<Cake\\\\Controller\\\\Controller\\>\\:\\:newInstance\\(\\)\\.$#"
+			message: '#^Unknown parameter \$request in call to method ReflectionClass\<Cake\\Controller\\Controller\>\:\:newInstance\(\)\.$#'
+			identifier: argument.unknown
 			count: 1
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Trait Cake\\Core\\TestSuite\\ContainerStubTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Core/TestSuite/ContainerStubTrait.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 8
 			path: src/Database/Expression/QueryExpression.php
 
 		-
-			message: "#^Result of && is always false\\.$#"
+			message: '#^Strict comparison using \!\=\= between Cake\\Database\\TypeMap and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: src/Database/Expression/WhenThenExpression.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
 			count: 1
 			path: src/Database/Type/EnumType.php
 
 		-
-			message: "#^Strict comparison using \\=\\=\\= between \\*NEVER\\* and '' will always evaluate to false\\.$#"
+			message: '#^Strict comparison using \=\=\= between \*NEVER\* and '''' will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
 			count: 1
 			path: src/Database/Type/EnumType.php
 
 		-
-			message: "#^Template type T of method Cake\\\\Datasource\\\\QueryInterface\\:\\:all\\(\\) is not referenced in a parameter\\.$#"
+			message: '#^Trait Cake\\Datasource\\ModelAwareTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Datasource/ModelAwareTrait.php
+
+		-
+			message: '#^Template type T of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
+			identifier: method.templateTypeNotInParameter
 			count: 1
 			path: src/Datasource/QueryInterface.php
 
 		-
-			message: "#^Method Cake\\\\Error\\\\ErrorLogger\\:\\:log\\(\\) has parameter \\$level with no type specified\\.$#"
+			message: '#^Method Cake\\Error\\ErrorLogger\:\:log\(\) has parameter \$level with no type specified\.$#'
+			identifier: missingType.parameter
 			count: 1
 			path: src/Error/ErrorLogger.php
 
 		-
-			message: "#^Constructor of class Cake\\\\Error\\\\Renderer\\\\ConsoleExceptionRenderer has an unused parameter \\$request\\.$#"
+			message: '#^Constructor of class Cake\\Error\\Renderer\\ConsoleExceptionRenderer has an unused parameter \$request\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/Error/Renderer/ConsoleExceptionRenderer.php
 
 		-
-			message: "#^Method Cake\\\\Event\\\\EventManager\\:\\:dispatch\\(\\) should return Cake\\\\Event\\\\EventInterface\\<TSubject of object\\> but returns Cake\\\\Event\\\\Event\\<object\\>\\|Cake\\\\Event\\\\EventInterface\\<TSubject of object\\>\\.$#"
+			message: '#^Method Cake\\Event\\EventManager\:\:dispatch\(\) should return Cake\\Event\\EventInterface\<TSubject of object\> but returns Cake\\Event\\Event\<object\>\|Cake\\Event\\EventInterface\<TSubject of object\>\.$#'
+			identifier: return.type
 			count: 2
 			path: src/Event/EventManager.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Event/EventManager.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\Core\\\\PluginInterface\\:\\:events\\(\\)\\.$#"
+			message: '#^Call to an undefined method Cake\\Core\\PluginInterface\:\:events\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/Http/BaseApplication.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Http/Client.php
 
 		-
-			message: "#^Constructor of class Cake\\\\Http\\\\Client\\\\Auth\\\\Digest has an unused parameter \\$options\\.$#"
+			message: '#^Constructor of class Cake\\Http\\Client\\Auth\\Digest has an unused parameter \$options\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/Http/Client/Auth/Digest.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Http/Cookie/Cookie.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 2
 			path: src/Http/Cookie/CookieCollection.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Http/Session.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\I18n\\\\Date\\|Cake\\\\I18n\\\\DateTime\\:\\:setTimezone\\(\\)\\.$#"
+			message: '#^Trait Cake\\Http\\TestSuite\\HttpClientTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Http/TestSuite/HttpClientTrait.php
+
+		-
+			message: '#^@readonly property cannot have a default value\.$#'
+			identifier: property.readOnlyByPhpDocDefaultValue
+			count: 7
+			path: src/I18n/Date.php
+
+		-
+			message: '#^@readonly property cannot have a default value\.$#'
+			identifier: property.readOnlyByPhpDocDefaultValue
+			count: 9
+			path: src/I18n/DateTime.php
+
+		-
+			message: '#^Call to an undefined method Cake\\I18n\\Date\|Cake\\I18n\\DateTime\:\:setTimezone\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/I18n/RelativeTimeFormatter.php
 
 		-
-			message: "#^Method Cake\\\\ORM\\\\Behavior\\\\TreeBehavior\\:\\:_scope\\(\\) should return T of Cake\\\\ORM\\\\Query\\\\DeleteQuery\\|Cake\\\\ORM\\\\Query\\\\SelectQuery\\|Cake\\\\ORM\\\\Query\\\\UpdateQuery but returns Cake\\\\ORM\\\\Query\\\\DeleteQuery\\|Cake\\\\ORM\\\\Query\\\\SelectQuery\\|Cake\\\\ORM\\\\Query\\\\UpdateQuery\\.$#"
+			message: '#^@readonly property cannot have a default value\.$#'
+			identifier: property.readOnlyByPhpDocDefaultValue
+			count: 4
+			path: src/I18n/Time.php
+
+		-
+			message: '#^Trait Cake\\Mailer\\MailerAwareTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Mailer/MailerAwareTrait.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/ORM/Association/BelongsTo.php
+
+		-
+			message: '#^PHPDoc tag @var with type callable\(\)\: mixed is not subtype of native type Closure\(string\)\: string\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/ORM/Association/DependentDeleteHelper.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/ORM/Association/HasMany.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/ORM/Association/HasOne.php
+
+		-
+			message: '#^Trait Cake\\ORM\\Behavior\\Translate\\TranslateTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/ORM/Behavior/Translate/TranslateTrait.php
+
+		-
+			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/ORM/Behavior/TreeBehavior.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 2
 			path: src/ORM/EagerLoader.php
 
 		-
-			message: "#^Method Cake\\\\ORM\\\\Query\\\\SelectQuery\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\) but returns Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\.$#"
+			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 2
+			path: src/ORM/Marshaller.php
+
+		-
+			message: '#^Method Cake\\ORM\\Query\\SelectQuery\:\:find\(\) should return static\(Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\) but returns Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\.$#'
+			identifier: return.type
 			count: 1
 			path: src/ORM/Query/SelectQuery.php
 
 		-
-			message: "#^PHPDoc tag @return with type Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\> is not subtype of native type static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\)\\.$#"
+			message: '#^PHPDoc tag @return with type Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\> is not subtype of native type static\(Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\)\.$#'
+			identifier: return.phpDocType
 			count: 1
 			path: src/ORM/Query/SelectQuery.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/ORM/Table.php
+
+		-
+			message: '#^PHPDoc tag @var with type class\-string\<Cake\\Datasource\\RulesChecker\> is not subtype of native type ''Cake\\\\Datasource\\\\RulesChecker''\|class\-string\<Cake\\ORM\\RulesChecker\>\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/ORM/Table.php
+
+		-
+			message: '#^Call to function assert\(\) with true will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/Routing/Route/Route.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: "#^Parameter \\#1 \\$methods of method PHPUnit\\\\Framework\\\\MockObject\\\\MockBuilder\\<Cake\\\\ORM\\\\Table\\>\\:\\:addMethods\\(\\) expects array\\<int, non\\-empty\\-string\\>, non\\-empty\\-array\\<int, string\\> given\\.$#"
+			message: '#^Trait Cake\\TestSuite\\EmailTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/TestSuite/EmailTrait.php
+
+		-
+			message: '#^Trait Cake\\TestSuite\\IntegrationTestTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/TestSuite/IntegrationTestTrait.php
+
+		-
+			message: '#^Trait Cake\\TestSuite\\LogTestTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/TestSuite/LogTestTrait.php
+
+		-
+			message: '#^Trait Cake\\TestSuite\\StringCompareTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/TestSuite/StringCompareTrait.php
+
+		-
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with false and non\-falsy\-string will always evaluate to false\.$#'
+			identifier: method.impossibleType
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Unreachable statement \\- code above always terminates\\.$#"
+			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with true and ''%%s'' will always evaluate to true\.$#'
+			identifier: method.alreadyNarrowedType
 			count: 1
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: "#^Unable to resolve the template type T in call to method static method Cake\\\\Utility\\\\Hash\\:\\:insert\\(\\)$#"
+			message: '#^PHPDoc tag @var with type array\<int, mixed\> is not subtype of native type array\{explains\?\: list\<string\>, attrs\?\: non\-empty\-list\<non\-empty\-string\>, 0\?\: string, 1\?\: string, 2\?\: int\<1, max\>\}\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: '#^PHPDoc tag @var with type array\<string, mixed\> is not subtype of native type array\{explains\?\: list\<string\>, attrs\: non\-empty\-list\<non\-empty\-string\>, 0\?\: string, 1\?\: string, 2\?\: int\<1, max\>\}\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<int\<0, max\>, non\-falsy\-string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between null and null will always evaluate to true\.$#'
+			identifier: identical.alwaysTrue
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: src/TestSuite/TestCase.php
+
+		-
+			message: '#^Unable to resolve the template type T in call to method static method Cake\\Utility\\Hash\:\:insert\(\)$#'
+			identifier: argument.templateType
 			count: 1
 			path: src/Utility/Hash.php
 
 		-
-			message: "#^Unsafe usage of new static\\(\\)\\.$#"
+			message: '#^Trait Cake\\Utility\\MergeVariablesTrait is used zero times and is not analysed\.$#'
+			identifier: trait.unused
+			count: 1
+			path: src/Utility/MergeVariablesTrait.php
+
+		-
+			message: '#^Call to function is_callable\(\) with array\{object, ''toArray''\} will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 3
+			path: src/Utility/Xml.php
+
+		-
+			message: '#^Parameter \#1 \$objectOrClass of class ReflectionEnum constructor expects class\-string\<UnitEnum\>\|UnitEnum, class\-string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Validation/Validation.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
 			count: 1
 			path: src/View/Form/ContextFactory.php
 
 		-
-			message: "#^Constructor of class Cake\\\\View\\\\Form\\\\NullContext has an unused parameter \\$context\\.$#"
+			message: '#^Constructor of class Cake\\View\\Form\\NullContext has an unused parameter \$context\.$#'
+			identifier: constructor.unusedParameter
 			count: 1
 			path: src/View/Form/NullContext.php
 
 		-
-			message: "#^Call to an undefined method DateTimeInterface\\:\\:setTimezone\\(\\)\\.$#"
+			message: '#^Call to an undefined method DateTimeInterface\:\:setTimezone\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/View/Helper/TimeHelper.php
 
 		-
-			message: "#^Cannot access constant class on Closure\\|PDO\\|resource\\.$#"
+			message: '#^Call to function method_exists\(\) with \*NEVER\* and ''viewBuilder'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/View/View.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between array and false will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: src/View/View.php
+
+		-
+			message: '#^Cannot access constant class on Closure\|PDO\|resource\.$#'
+			identifier: classConstant.nonObject
 			count: 1
 			path: src/View/ViewBuilder.php
 
 		-
-			message: "#^Call to an undefined method Cake\\\\Chronos\\\\ChronosDate\\|DateTime\\|DateTimeImmutable\\:\\:setTimezone\\(\\)\\.$#"
+			message: '#^Call to an undefined method Cake\\Chronos\\ChronosDate\|DateTime\|DateTimeImmutable\:\:setTimezone\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: src/View/Widget/DateTimeWidget.php
+
+		-
+			message: '#^Call to function is_numeric\(\) with int\|\(non\-empty\-string&numeric\-string\) will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: src/View/Widget/DateTimeWidget.php
+
+		-
+			message: '#^PHPDoc tag @var with type array\<mixed\>\|bool\|int\|string\|null is not subtype of native type mixed\.$#'
+			identifier: varTag.nativeType
+			count: 1
+			path: src/View/XmlView.php

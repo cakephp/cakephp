@@ -155,12 +155,12 @@ class Behavior implements EventListenerInterface
         $config = $this->_resolveMethodAliases(
             'implementedFinders',
             $this->_defaultConfig,
-            $config
+            $config,
         );
         $config = $this->_resolveMethodAliases(
             'implementedMethods',
             $this->_defaultConfig,
-            $config
+            $config,
         );
         $this->_table = $table;
         $this->setConfig($config);
@@ -203,7 +203,7 @@ class Behavior implements EventListenerInterface
         if (!isset($defaults[$key], $config[$key])) {
             return $config;
         }
-        if (isset($config[$key]) && $config[$key] === []) {
+        if ($config[$key] === []) {
             $this->setConfig($key, [], false);
             unset($config[$key]);
 
@@ -244,7 +244,7 @@ class Behavior implements EventListenerInterface
                     throw new CakeException(sprintf(
                         'The method `%s` is not callable on class `%s`.',
                         $method,
-                        static::class
+                        static::class,
                     ));
                 }
             }

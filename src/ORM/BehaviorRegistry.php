@@ -187,7 +187,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
                     '`%s` contains duplicate finder `%s` which is already provided by `%s`.',
                     $class,
                     $finder,
-                    $duplicate[0]
+                    $duplicate[0],
                 );
                 throw new LogicException($error);
             }
@@ -201,7 +201,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
                     '`%s` contains duplicate method `%s` which is already provided by `%s`.',
                     $class,
                     $method,
-                    $duplicate[0]
+                    $duplicate[0],
                 );
                 throw new LogicException($error);
             }
@@ -286,7 +286,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call `%s`, it does not belong to any attached behavior.', $method)
+            sprintf('Cannot call `%s`, it does not belong to any attached behavior.', $method),
         );
     }
 
@@ -313,7 +313,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call finder `%s`, it does not belong to any attached behavior.', $type)
+            sprintf('Cannot call finder `%s`, it does not belong to any attached behavior.', $type),
         );
     }
 }

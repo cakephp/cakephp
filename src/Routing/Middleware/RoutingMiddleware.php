@@ -103,14 +103,13 @@ class RoutingMiddleware implements MiddlewareInterface
                 $request = $request->withAttribute('route', $route);
                 $request = $request->withAttribute('params', $params);
 
-                assert($request instanceof ServerRequest);
                 Router::setRequest($request);
             }
         } catch (RedirectException $e) {
             return new RedirectResponse(
                 $e->getMessage(),
                 $e->getCode(),
-                $e->getHeaders()
+                $e->getHeaders(),
             );
         }
         $matching = Router::getRouteCollection()->getMiddleware($middleware);

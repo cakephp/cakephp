@@ -85,8 +85,8 @@ class CacheRegistry extends ObjectRegistry
             throw new CakeException(
                 sprintf(
                     'Cache engine `%s` is not properly configured. Check error log for additional information.',
-                    $instance::class
-                )
+                    $instance::class,
+                ),
             );
         }
 

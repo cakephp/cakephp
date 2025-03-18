@@ -35,6 +35,14 @@ class CacheListCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Show a list of configured caches.';
+    }
+
+    /**
      * Hook method for defining this command's option parser.
      *
      * @see https://book.cakephp.org/5/en/console-commands/option-parsers.html
@@ -44,7 +52,7 @@ class CacheListCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
-        $parser->setDescription('Show a list of configured caches.');
+        $parser->setDescription(static::getDescription());
 
         return $parser;
     }

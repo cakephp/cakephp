@@ -197,7 +197,7 @@ class Message implements JsonSerializable
     /**
      * Available formats to be sent.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $emailFormatAvailable = [self::MESSAGE_TEXT, self::MESSAGE_HTML, self::MESSAGE_BOTH];
 
@@ -234,7 +234,7 @@ class Message implements JsonSerializable
     /**
      * Available encoding to be set for transfer.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $transferEncodingAvailable = [
         '7bit',
@@ -277,7 +277,7 @@ class Message implements JsonSerializable
     /**
      * 8Bit character sets
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $charset8bit = ['UTF-8', 'SHIFT_JIS'];
 
@@ -303,7 +303,7 @@ class Message implements JsonSerializable
     /**
      * Properties that could be serialized
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $serializableProperties = [
         'to', 'from', 'sender', 'replyTo', 'cc', 'bcc', 'subject',
@@ -435,7 +435,7 @@ class Message implements JsonSerializable
             'readReceipt',
             $email,
             $name,
-            'Disposition-Notification-To requires only 1 email address.'
+            'Disposition-Notification-To requires only 1 email address.',
         );
     }
 
@@ -642,8 +642,8 @@ class Message implements JsonSerializable
                 throw new InvalidArgumentException(
                     sprintf(
                         'Transfer encoding not available. Can be : %s.',
-                        implode(', ', $this->transferEncodingAvailable)
-                    )
+                        implode(', ', $this->transferEncodingAvailable),
+                    ),
                 );
             }
         }
@@ -892,7 +892,7 @@ class Message implements JsonSerializable
                 'from', 'sender', 'replyTo', 'readReceipt', 'returnPath',
                 'to', 'cc', 'bcc', 'subject',
             ],
-            false
+            false,
         );
         $include += $defaults;
 
@@ -962,7 +962,7 @@ class Message implements JsonSerializable
     /**
      * Get headers as string.
      *
-     * @param list<string> $include List of headers.
+     * @param array<string> $include List of headers.
      * @param string $eol End of line string for concatenating headers.
      * @param \Closure|null $callback Callback to run each header value through before stringifying.
      * @return string
@@ -1076,7 +1076,7 @@ class Message implements JsonSerializable
         } else {
             if (!preg_match('/^\<.+@.+\>$/', $message)) {
                 throw new InvalidArgumentException(
-                    'Invalid format to Message-ID. The text should be something like "<uuid@server.com>"'
+                    'Invalid format to Message-ID. The text should be something like "<uuid@server.com>"',
                 );
             }
             $this->messageId = $message;
@@ -1202,7 +1202,7 @@ class Message implements JsonSerializable
             } else {
                 throw new InvalidArgumentException(sprintf(
                     'File must be a filepath or UploadedFileInterface instance. Found `%s` instead.',
-                    gettype($fileInfo['file'])
+                    gettype($fileInfo['file']),
                 ));
             }
             if (
@@ -1299,7 +1299,7 @@ class Message implements JsonSerializable
     /**
      * Generate full message.
      *
-     * @return list<string>
+     * @return array<string>
      */
     protected function generateMessage(): array
     {
@@ -1393,7 +1393,7 @@ class Message implements JsonSerializable
      * Attach non-embedded files by adding file contents inside boundaries.
      *
      * @param string|null $boundary Boundary to use. If null, will default to $this->boundary
-     * @return list<string> An array of lines to add to the message
+     * @return array<string> An array of lines to add to the message
      */
     protected function attachFiles(?string $boundary = null): array
     {
@@ -1430,7 +1430,7 @@ class Message implements JsonSerializable
      * Attach inline/embedded files to the message.
      *
      * @param string|null $boundary Boundary to use. If null, will default to $this->boundary
-     * @return list<string> An array of lines to add to the message
+     * @return array<string> An array of lines to add to the message
      */
     protected function attachInlineFiles(?string $boundary = null): array
     {
@@ -1518,7 +1518,7 @@ class Message implements JsonSerializable
             if (!in_array($type, $this->emailFormatAvailable, true)) {
                 throw new InvalidArgumentException(sprintf(
                     'Invalid message type: `%s`. Valid types are: `text`, `html`.',
-                    $type
+                    $type,
                 ));
             }
 
@@ -1610,7 +1610,7 @@ class Message implements JsonSerializable
      *
      * @param string|null $message Message to wrap
      * @param int $wrapLength The line length
-     * @return list<string> Wrapped message
+     * @return array<string> Wrapped message
      */
     protected function wrap(?string $message = null, int $wrapLength = self::LINE_LENGTH_MUST): array
     {
@@ -1634,7 +1634,7 @@ class Message implements JsonSerializable
             if (!preg_match('/<[a-z]+.*>/i', $line)) {
                 $formatted = array_merge(
                     $formatted,
-                    explode("\n", Text::wordWrap($line, $wrapLength, "\n", $cut))
+                    explode("\n", Text::wordWrap($line, $wrapLength, "\n", $cut)),
                 );
                 continue;
             }
@@ -1656,7 +1656,7 @@ class Message implements JsonSerializable
                             if ($tmpLineLength > 0) {
                                 $formatted = array_merge(
                                     $formatted,
-                                    explode("\n", Text::wordWrap(trim($tmpLine), $wrapLength, "\n", $cut))
+                                    explode("\n", Text::wordWrap(trim($tmpLine), $wrapLength, "\n", $cut)),
                                 );
                                 $tmpLine = '';
                                 $tmpLineLength = 0;

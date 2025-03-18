@@ -33,14 +33,14 @@ use UnexpectedValueException;
  */
 class HttpsEnforcerMiddlewareTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
         Configure::write('debug', false);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -144,7 +144,7 @@ class HttpsEnforcerMiddlewareTest extends TestCase
                 'location' => ['https://localhost/foo'],
                 'X-Foo' => ['bar'],
             ],
-            $result->getHeaders()
+            $result->getHeaders(),
         );
     }
 

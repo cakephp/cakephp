@@ -40,7 +40,7 @@ class EntityRouteTest extends TestCase
             '/articles/{category_id}/{slug}',
             [
                 '_name' => 'articlesView',
-            ]
+            ],
         );
 
         $result = $route->match([
@@ -66,7 +66,7 @@ class EntityRouteTest extends TestCase
             '/articles/{category_id}/{slug}',
             [
                 '_name' => 'articlesView',
-            ]
+            ],
         );
 
         $result = $route->match([
@@ -91,7 +91,7 @@ class EntityRouteTest extends TestCase
             '/articles/{category_id}_{slug}',
             [
                 '_name' => 'articlesView',
-            ]
+            ],
         );
 
         $result = $route->match([
@@ -117,7 +117,7 @@ class EntityRouteTest extends TestCase
             [
                 '_name' => 'articlesView',
                 '_entity' => $entity,
-            ]
+            ],
         );
 
         $result = $route->match([

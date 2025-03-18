@@ -42,7 +42,7 @@ class CommandScanner
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Command' . DIRECTORY_SEPARATOR,
             'Cake\Command\\',
             '',
-            ['command_list']
+            ['command_list'],
         );
     }
 
@@ -59,7 +59,7 @@ class CommandScanner
             App::classPath('Command')[0],
             $appNamespace . '\Command\\',
             '',
-            []
+            [],
         );
     }
 
@@ -88,7 +88,7 @@ class CommandScanner
      * @param string $path The directory to read.
      * @param string $namespace The namespace the shells live in.
      * @param string $prefix The prefix to apply to commands for their full name.
-     * @param list<string> $hide A list of command names to hide as they are internal commands.
+     * @param array<string> $hide A list of command names to hide as they are internal commands.
      * @return array The list of shell info arrays based on scanning the filesystem and inflection.
      */
     protected function scanDir(string $path, string $namespace, string $prefix, array $hide): array
@@ -102,7 +102,7 @@ class CommandScanner
 
         $classPattern = '/Command\.php$/';
         $fs = new Filesystem();
-        /** @var array<\SplFileInfo> $files */
+        /** @var \Iterator<\SplFileInfo> $files */
         $files = $fs->find($path, $classPattern);
 
         $commands = [];

@@ -33,6 +33,13 @@ use Cake\Utility\Hash;
 class PluginLoadCommand extends Command
 {
     /**
+     * Config file
+     *
+     * @var string
+     */
+    protected string $configFile = CONFIG . 'plugins.php';
+
+    /**
      * @inheritDoc
      */
     public static function defaultName(): string
@@ -41,11 +48,12 @@ class PluginLoadCommand extends Command
     }
 
     /**
-     * Config file
-     *
-     * @var string
+     * @inheritDoc
      */
-    protected string $configFile = CONFIG . 'plugins.php';
+    public static function getDescription(): string
+    {
+        return 'Command for loading plugins.';
+    }
 
     /**
      * Execute the command
@@ -136,37 +144,43 @@ class PluginLoadCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription([
-                'Command for loading plugins.',
-            ])->addArgument('plugin', [
+        return $parser
+            ->setDescription(static::getDescription())
+            ->addArgument('plugin', [
                 'help' => 'Name of the plugin to load. Must be in CamelCase format. Example: cake plugin load Example',
                 'required' => true,
-            ])->addOption('only-debug', [
+            ])
+            ->addOption('only-debug', [
                 'boolean' => true,
                 'help' => 'Load the plugin only when `debug` is enabled.',
-            ])->addOption('only-cli', [
+            ])
+            ->addOption('only-cli', [
                 'boolean' => true,
                 'help' => 'Load the plugin only for CLI.',
-            ])->addOption('optional', [
+            ])
+            ->addOption('optional', [
                 'boolean' => true,
                 'help' => 'Do not throw an error if the plugin is not available.',
-            ])->addOption('no-bootstrap', [
+            ])
+            ->addOption('no-bootstrap', [
                 'boolean' => true,
                 'help' => 'Do not run the `bootstrap()` hook.',
-            ])->addOption('no-console', [
+            ])
+            ->addOption('no-console', [
                 'boolean' => true,
                 'help' => 'Do not run the `console()` hook.',
-            ])->addOption('no-middleware', [
+            ])
+            ->addOption('no-middleware', [
                 'boolean' => true,
                 'help' => 'Do not run the `middleware()` hook..',
-            ])->addOption('no-routes', [
+            ])
+            ->addOption('no-routes', [
                 'boolean' => true,
                 'help' => 'Do not run the `routes()` hook.',
-            ])->addOption('no-services', [
+            ])
+            ->addOption('no-services', [
                 'boolean' => true,
                 'help' => 'Do not run the `services()` hook.',
             ]);
-
-        return $parser;
     }
 }

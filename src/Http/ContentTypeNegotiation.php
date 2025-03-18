@@ -6,7 +6,7 @@ namespace Cake\Http;
 use Psr\Http\Message\RequestInterface;
 
 /**
- * Negotiates the prefered content type from what the application
+ * Negotiates the preferred content type from what the application
  * provides and what the request has in its Accept header.
  */
 class ContentTypeNegotiation
@@ -18,7 +18,7 @@ class ContentTypeNegotiation
      * discarded as they are not frequently used.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to get an accept from.
-     * @return array<string, list<string>> A mapping of preference values => content types
+     * @return array<string, array<string>> A mapping of preference values => content types
      */
     public function parseAccept(RequestInterface $request): array
     {
@@ -34,7 +34,7 @@ class ContentTypeNegotiation
      * as they are not frequently used.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to get an accept from.
-     * @return array<string, list<string>> A mapping of preference values => languages
+     * @return array<string, array<string>> A mapping of preference values => languages
      */
     public function parseAcceptLanguage(RequestInterface $request): array
     {
@@ -47,7 +47,7 @@ class ContentTypeNegotiation
      * Parse a header value into preference => value mapping
      *
      * @param string $header The header value to parse
-     * @return array<string, list<string>>
+     * @return array<string, array<string>>
      */
     protected function parseQualifiers(string $header): array
     {
@@ -64,7 +64,7 @@ class ContentTypeNegotiation
      * You can expect null when the request has no Accept header.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to use.
-     * @param list<string> $choices The supported content type choices.
+     * @param array<string> $choices The supported content type choices.
      * @return string|null The preferred type or null if there is no match with choices or if the
      *   request had no Accept header.
      */
@@ -97,7 +97,7 @@ class ContentTypeNegotiation
      * `_` replaced with `-`.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to read headers from.
-     * @return list<string> A list of language codes that are accepted.
+     * @return array<string> A list of language codes that are accepted.
      */
     public function acceptedLanguages(RequestInterface $request): array
     {

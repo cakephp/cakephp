@@ -370,7 +370,7 @@ class Number
     {
         static::$_formatters[$locale][$type] = static::_setAttributes(
             new NumberFormatter($locale, $type),
-            $options
+            $options,
         );
     }
 

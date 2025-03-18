@@ -18,10 +18,11 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\Configure;
 use Cake\Http\Response;
-use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use stdClass;
+use Stringable;
 use function Cake\Core\deprecationWarning;
 use function Cake\Core\env;
 use function Cake\Core\h;
@@ -388,6 +389,7 @@ class FunctionsTest extends TestCase
     /**
      * Test no error when warning level is off.
      */
+    #[WithoutErrorHandler]
     public function testTriggerWarningLevelDisabled(): void
     {
         $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function (): void {
@@ -407,6 +409,13 @@ class FunctionsTest extends TestCase
      */
     public static function toStringProvider(): array
     {
+        $stringable = new class implements Stringable {
+            public function __toString(): string
+            {
+                return 'stringable';
+            }
+        };
+
         return [
             // input like string
             '(string) empty' => ['', ''],
@@ -447,7 +456,7 @@ class FunctionsTest extends TestCase
             '(other) int-array' => [[5], null],
             '(other) string-array' => [['5'], null],
             '(other) simple object' => [new stdClass(), null],
-            '(other) Stringable object' => [new Entity(), '[]'],
+            '(other) Stringable object' => [$stringable, 'stringable'],
         ];
     }
 
@@ -473,18 +482,24 @@ class FunctionsTest extends TestCase
             '(string) binary' => ['0b10100111001', null],
             '(string) scientific e' => ['1.2e+2', null],
             '(string) scientific E' => ['1.2E+2', null],
-            '(string) octal old' => ['0123', null],
+            '(string) octal old' => ['0123', 123],
             '(string) octal new' => ['0o123', null],
             '(string) decimal php74' => ['1_234_567', null],
             '(string) zero' => ['0', 0],
             '(string) number' => ['55', 55],
             '(string) number_space_before' => [' 55', 55],
             '(string) number_space_after' => ['55 ', 55],
+            '(string) padded number' => ['00055', 55],
+            '(string) padded number_space_before' => [' 00055', 55],
+            '(string) padded number_space_after' => ['00055 ', 55],
             '(string) negative number' => ['-5', -5],
             '(string) float round' => ['5.0', null],
             '(string) float round negative' => ['-5.0', null],
             '(string) float real' => ['5.1', null],
             '(string) float round slovak' => ['5,0', null],
+            '(string) padded float round' => ['0005.0', null],
+            '(string) padded float real' => ['0005.1', null],
+            '(string) padded float round slovak' => ['0005,0', null],
             '(string) money' => ['5 €', null],
             '(string) PHP_INT_MAX + 1' => ['9223372036854775808', null],
             '(string) PHP_INT_MAX + 0' => ['9223372036854775807', 9223372036854775807],
@@ -573,11 +588,17 @@ class FunctionsTest extends TestCase
             '(string) number' => ['55', 55.0],
             '(string) number_space_before' => [' 55', 55.0],
             '(string) number_space_after' => ['55 ', 55.0],
+            '(string) padded number' => ['00055', 55.0],
+            '(string) padded number_space_before' => [' 00055', 55.0],
+            '(string) padded number_space_after' => ['00055 ', 55.0],
             '(string) negative number' => ['-5', -5.0],
             '(string) float round' => ['5.0', 5.0],
             '(string) float round negative' => ['-5.0', -5.0],
             '(string) float real' => ['5.1', 5.1],
             '(string) float round slovak' => ['5,0', null],
+            '(string) padded float round' => ['0005.0', 5.0],
+            '(string) padded float real' => ['0005.1', 5.1],
+            '(string) padded float round slovak' => ['0005,0', null],
             '(string) money' => ['5 €', null],
             '(string) PHP_INT_MAX + 1' => ['9223372036854775808', PHP_INT_MAX],
             '(string) PHP_INT_MAX + 0' => ['9223372036854775807', 9223372036854775807],

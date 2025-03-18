@@ -286,7 +286,7 @@ class ConsoleOptionParser
     /**
      * Sets the description text for shell/task.
      *
-     * @param list<string>|string $text The text to set. If an array the
+     * @param array<string>|string $text The text to set. If an array the
      *   text will be imploded with "\n".
      * @return $this
      */
@@ -314,7 +314,7 @@ class ConsoleOptionParser
      * Sets an epilog to the parser. The epilog is added to the end of
      * the options and arguments listing when help is generated.
      *
-     * @param list<string>|string $text The text to set. If an array the text will
+     * @param array<string>|string $text The text to set. If an array the text will
      *   be imploded with "\n".
      * @return $this
      */
@@ -374,6 +374,7 @@ class ConsoleOptionParser
                 'default' => null,
                 'boolean' => false,
                 'multiple' => false,
+                'separator' => null,
                 'choices' => [],
                 'required' => false,
                 'prompt' => null,
@@ -388,7 +389,8 @@ class ConsoleOptionParser
                 $options['choices'],
                 $options['multiple'],
                 $options['required'],
-                $options['prompt']
+                $options['prompt'],
+                $options['separator'],
             );
         }
         $this->_options[$name] = $option;
@@ -426,6 +428,7 @@ class ConsoleOptionParser
      *   option will be overwritten.
      * - `choices` A list of valid choices for this argument. If left empty all values are valid..
      *   An exception will be raised when parse() encounters an invalid value.
+     * - `separator` A separator to allow writing argument in a list form.
      *
      * @param \Cake\Console\ConsoleInputArgument|string $name The name of the argument.
      *   Will also accept an instance of ConsoleInputArgument.
@@ -444,6 +447,7 @@ class ConsoleOptionParser
                 'index' => count($this->_args),
                 'required' => false,
                 'choices' => [],
+                'separator' => null,
             ];
             $options = $params + $defaults;
             $index = $options['index'];
@@ -519,7 +523,7 @@ class ConsoleOptionParser
     /**
      * Get the list of argument names.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function argumentNames(): array
     {
@@ -585,7 +589,7 @@ class ConsoleOptionParser
             if (!isset($args[$i])) {
                 if ($arg->isRequired()) {
                     throw new ConsoleException(
-                        sprintf('Missing required argument. The `%s` argument is required.', $arg->name())
+                        sprintf('Missing required argument. The `%s` argument is required.', $arg->name()),
                     );
                 }
                 if ($arg->defaultValue() !== null) {
@@ -610,7 +614,7 @@ class ConsoleOptionParser
                 if (!$io) {
                     throw new ConsoleException(
                         'Cannot use interactive option prompts without a ConsoleIo instance. ' .
-                        'Please provide a `$io` parameter to `parse()`.'
+                        'Please provide a `$io` parameter to `parse()`.',
                     );
                 }
                 $choices = $option->choices();
@@ -623,7 +627,7 @@ class ConsoleOptionParser
             }
             if ($option->isRequired() && !isset($params[$name])) {
                 throw new ConsoleException(
-                    sprintf('Missing required option. The `%s` option is required and has no default value.', $name)
+                    sprintf('Missing required option. The `%s` option is required and has no default value.', $name),
                 );
             }
         }
@@ -716,7 +720,7 @@ class ConsoleOptionParser
             throw new MissingOptionException(
                 sprintf('Unknown short option `%s`.', $key),
                 $key,
-                $options
+                $options,
             );
         }
         $name = $this->_shortOptions[$key];
@@ -738,7 +742,7 @@ class ConsoleOptionParser
             throw new MissingOptionException(
                 sprintf('Unknown option `%s`.', $name),
                 $name,
-                array_keys($this->_options)
+                array_keys($this->_options),
             );
         }
         $option = $this->_options[$name];
@@ -756,7 +760,11 @@ class ConsoleOptionParser
 
         $option->validChoice($value);
         if ($option->acceptsMultiple()) {
-            $params[$name][] = $value;
+            $values = [$value];
+            if (is_string($value) && $option->separator()) {
+                $values = explode($option->separator(), $value);
+            }
+            $params[$name] = array_merge($params[$name] ?? [], $values);
         } else {
             $params[$name] = $value;
         }
@@ -788,7 +796,7 @@ class ConsoleOptionParser
      *
      * @param string $argument The argument to append
      * @param array $args The array of parsed args to append to.
-     * @return list<string> Args
+     * @return array<string> Args
      * @throws \Cake\Console\Exception\ConsoleException
      */
     protected function _parseArg(string $argument, array $args): array
@@ -804,12 +812,18 @@ class ConsoleOptionParser
             throw new ConsoleException(sprintf(
                 'Received too many arguments. Got `%s` but only `%s` arguments are defined.',
                 $next,
-                $expected
+                $expected,
             ));
         }
 
-        $this->_args[$next]->validChoice($argument);
-        $args[] = $argument;
+        $arg = $this->_args[$next];
+
+        $arg->validChoice($argument);
+        if ($arg->separator()) {
+            $args[] = explode($arg->separator(), $argument);
+        } else {
+            $args[] = $argument;
+        }
 
         return $args;
     }

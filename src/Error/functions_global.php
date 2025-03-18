@@ -134,7 +134,7 @@ if (!function_exists('breakpoint')) {
         }
         trigger_error(
             'psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function',
-            E_USER_WARNING
+            E_USER_WARNING,
         );
 
         return null;

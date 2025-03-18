@@ -132,7 +132,7 @@ trait ConventionsTrait
      * Find the correct path for a plugin. Scans $pluginPaths for the plugin you want.
      *
      * @param string $pluginName Name of the plugin you want ie. DebugKit
-     * @return string path path to the correct plugin.
+     * @return string Path to the correct plugin.
      */
     protected function _pluginPath(string $pluginName): string
     {

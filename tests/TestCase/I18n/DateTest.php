@@ -33,7 +33,7 @@ class DateTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -51,7 +51,7 @@ class DateTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         DateTime::setDefaultLocale(null);
@@ -228,7 +228,7 @@ class DateTest extends TestCase
                 'timezone' => 'America/Vancouver',
                 'end' => '+1month',
                 'format' => 'dd-MM-YYYY',
-            ]
+            ],
         );
         $this->assertSame('on 31-07-1990', $result);
     }
@@ -421,13 +421,13 @@ class DateTest extends TestCase
 
         $date = new Date('-1 month -1 week -6 days');
         $result = $date->timeAgoInWords(
-            ['end' => '1 year', 'accuracy' => ['month' => 'month']]
+            ['end' => '1 year', 'accuracy' => ['month' => 'month']],
         );
         $this->assertSame('1 month ago', $result);
 
         $date = new Date('-1 years -2 weeks -3 days');
         $result = $date->timeAgoInWords(
-            ['accuracy' => ['year' => 'year']]
+            ['accuracy' => ['year' => 'year']],
         );
         $expected = 'on ' . $date->format('n/j/y');
         $this->assertSame($expected, $result);

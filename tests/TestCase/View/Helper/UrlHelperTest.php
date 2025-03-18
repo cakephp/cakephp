@@ -50,7 +50,7 @@ class UrlHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -70,7 +70,7 @@ class UrlHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -137,7 +137,7 @@ class UrlHelperTest extends TestCase
         $this->assertSame('/magazine/subscribe', $this->Helper->build());
         $this->assertSame(
             '/magazine/articles/add',
-            $this->Helper->build(['controller' => 'Articles', 'action' => 'add'])
+            $this->Helper->build(['controller' => 'Articles', 'action' => 'add']),
         );
     }
 
@@ -355,7 +355,7 @@ class UrlHelperTest extends TestCase
     {
         $result = $this->Helper->script(
             'post.js',
-            ['fullBase' => true]
+            ['fullBase' => true],
         );
         $this->assertSame(Router::fullBaseUrl() . '/js/post.js', $result);
     }
@@ -472,7 +472,7 @@ class UrlHelperTest extends TestCase
     {
         $request = $this->View->getRequest()->withAttribute('webroot', '/');
         $this->View->setRequest(
-            $request
+            $request,
         );
         Router::setRequest($request);
         $result = $this->Helper->webroot('/img/cake.power.gif');

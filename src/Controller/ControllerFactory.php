@@ -83,7 +83,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         }
         $this->container->addShared(
             ComponentRegistry::class,
-            new ComponentRegistry(container: $this->container)
+            new ComponentRegistry(container: $this->container),
         );
 
         // Get the controller from the container if defined.
@@ -161,7 +161,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $action = $controller->getAction();
         $args = $this->getActionArgs(
             $action,
-            array_values((array)$controller->getRequest()->getParam('pass'))
+            array_values((array)$controller->getRequest()->getParam('pass')),
         );
         $controller->invokeAction($action, $args);
 
@@ -197,7 +197,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
 
                 // Use passedParams as a source of typed dependencies.
                 // The accepted types for passedParams was never defined and userland code relies on that.
-                if ($passedParams && is_object($passedParams[0]) && $passedParams[0] instanceof $typeName) {
+                if ($passedParams && $passedParams[0] instanceof $typeName) {
                     $resolved[] = array_shift($passedParams);
                     continue;
                 }

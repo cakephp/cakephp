@@ -132,7 +132,7 @@ class QueryExpressionTest extends TestCase
             [
                 'Users.username' => 'string',
                 'Users.active' => 'boolean',
-            ]
+            ],
         );
 
         $result = $expr->sql($binder);
@@ -249,7 +249,7 @@ class QueryExpressionTest extends TestCase
         $expr->notInOrNull('test', ['one', 'two']);
         $this->assertEqualsSql(
             '(test NOT IN (:c0,:c1) OR (test) IS NULL)',
-            $expr->sql(new ValueBinder())
+            $expr->sql(new ValueBinder()),
         );
     }
 
@@ -262,7 +262,7 @@ class QueryExpressionTest extends TestCase
 
         $this->assertEqualsSql(
             'CASE WHEN :c0 THEN :c1 ELSE NULL END',
-            $expression->sql(new ValueBinder())
+            $expression->sql(new ValueBinder()),
         );
     }
 
@@ -275,7 +275,7 @@ class QueryExpressionTest extends TestCase
 
         $this->assertEqualsSql(
             'CASE NULL WHEN :c0 THEN :c1 ELSE NULL END',
-            $expression->sql(new ValueBinder())
+            $expression->sql(new ValueBinder()),
         );
     }
 
@@ -290,7 +290,7 @@ class QueryExpressionTest extends TestCase
 
         $this->assertEqualsSql(
             'CASE :c0 WHEN :c1 THEN :c2 ELSE NULL END',
-            $expression->sql($valueBinder)
+            $expression->sql($valueBinder),
         );
 
         $this->assertSame(
@@ -299,7 +299,7 @@ class QueryExpressionTest extends TestCase
                 'type' => 'integer',
                 'placeholder' => 'c0',
             ],
-            $valueBinder->bindings()[':c0']
+            $valueBinder->bindings()[':c0'],
         );
     }
 }

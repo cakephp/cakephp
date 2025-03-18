@@ -25,22 +25,28 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/core": "^5.1",
+        "cakephp/core": "5.2.*@dev",
         "cakephp/chronos": "^3.1",
-        "cakephp/datasource": "^5.1",
+        "cakephp/datasource": "5.2.*@dev",
         "psr/log": "^3.0"
     },
-    "suggest": {
-        "cakephp/i18n": "If you are using locale-aware datetime formats.",
-        "cakephp/log": "If you want to use query logging without providing a logger yourself."
+    "require-dev": {
+        "cakephp/i18n": "5.2.*@dev",
+        "cakephp/log": "5.2.*@dev"
     },
     "autoload": {
         "psr-4": {
             "Cake\\Database\\": "."
         }
     },
-    "require-dev": {
-        "cakephp/i18n": "^5.1",
-        "cakephp/log": "^5.1"
+    "suggest": {
+        "cakephp/i18n": "If you are using locale-aware datetime formats.",
+        "cakephp/log": "If you want to use query logging without providing a logger yourself."
+    },
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.2.x-dev"
+        }
     }
 }

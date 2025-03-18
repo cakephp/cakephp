@@ -23,7 +23,7 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/core": "^5.1",
+        "cakephp/core": "5.2.*@dev",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
     "provide": {
@@ -32,6 +32,12 @@
     "autoload": {
         "psr-4": {
             "Cake\\Cache\\": "."
+        }
+    },
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.2.x-dev"
         }
     }
 }

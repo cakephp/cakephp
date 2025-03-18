@@ -45,7 +45,7 @@ class WidgetLocatorTest extends TestCase
     /**
      * setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->templates = new StringTemplate();
@@ -77,7 +77,7 @@ class WidgetLocatorTest extends TestCase
         $inputs = new WidgetLocator(
             $this->templates,
             $this->view,
-            ['test' => [TestUsingViewWidget::class, '_view']]
+            ['test' => [TestUsingViewWidget::class, '_view']],
         );
 
         /** @var \TestApp\View\Widget\TestUsingViewWidget $widget */

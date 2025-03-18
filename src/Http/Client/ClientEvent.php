@@ -66,7 +66,7 @@ class ClientEvent extends Event
     {
         if ($value !== null && !$value instanceof Response) {
             throw new InvalidArgumentException(
-                'The result for Http Client events must be a `Cake\Http\Client\Response` instance.'
+                'The result for Http Client events must be a `Cake\Http\Client\Response` instance.',
             );
         }
 

@@ -92,7 +92,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable $callback the method that will receive each of the elements and
+     * @param callable|null $callback the method that will receive each of the elements and
      *   returns true whether they should be out of the resulting collection.
      *   If left null, a callback that filters out truthy values will be used.
      * @return self
@@ -101,12 +101,12 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
 
     /**
      * Loops through each value in the collection and returns a new collection
-     * with only unique values based on the value returned by ``callback``.
+     * with only unique values based on the value returned by the callback.
      *
      * The callback is passed the value as the first argument and the key as the
      * second argument.
      *
-     * @param callable $callback the method that will receive each of the elements and
+     * @param callable|null $callback the method that will receive each of the elements and
      * returns the value used to determine uniqueness.
      * @return self
      */
@@ -191,10 +191,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
 
     /**
      * Folds the values in this collection to a single value, as the result of
-     * applying the callback function to all elements. $zero is the initial state
+     * applying the callback function to all elements. $initial is the initial state
      * of the reduction, and each successive step of it should be returned
      * by the callback function.
-     * If $zero is omitted the first value of the collection will be used in its place
+     * If $initial is omitted the first value of the collection will be used in its place
      * and reduction will start from the second item.
      *
      * @param callable $callback The callback function to be called
@@ -398,7 +398,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function sortBy(
         callable|string $path,
         int $order = SORT_DESC,
-        int $sort = SORT_NUMERIC
+        int $sort = SORT_NUMERIC,
     ): CollectionInterface;
 
     /**
@@ -737,7 +737,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function combine(
         callable|string $keyPath,
         callable|string $valuePath,
-        callable|string|null $groupPath = null
+        callable|string|null $groupPath = null,
     ): CollectionInterface;
 
     /**
@@ -754,7 +754,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function nest(
         callable|string $idPath,
         callable|string $parentPath,
-        string $nestingKey = 'children'
+        string $nestingKey = 'children',
     ): CollectionInterface;
 
     /**
@@ -920,7 +920,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      */
     public function listNested(
         string|int $order = 'desc',
-        callable|string $nestingKey = 'children'
+        callable|string $nestingKey = 'children',
     ): CollectionInterface;
 
     /**

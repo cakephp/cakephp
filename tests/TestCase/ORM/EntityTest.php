@@ -21,6 +21,7 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Exception;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use stdClass;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
@@ -53,31 +54,49 @@ class EntityTest extends TestCase
         $this->assertSame('bar', $entity->getOriginal('foo'));
     }
 
+    #[WithoutErrorHandler]
+    public function testEntitySetDeprecated(): void
+    {
+        $this->deprecated(function () {
+            $entity = new Entity();
+            $entity->set(['foo' => 'bar']);
+        });
+    }
+
     /**
      * Tests setting multiple properties without custom setters
      */
-    public function testSetMultiplePropertiesNoSetters(): void
+    public function testPatchPropertiesNoSetters(): void
     {
         $entity = new Entity();
         $entity->setAccess('*', true);
 
-        $entity->set(['foo' => 'bar', 'id' => 1], ['asOriginal' => true]);
+        $entity->patch(['foo' => 'bar', 'id' => 1], ['asOriginal' => true]);
         $this->assertSame('bar', $entity->foo);
         $this->assertSame(1, $entity->id);
 
-        $entity->set(['foo' => 'baz', 'id' => 2, 'thing' => 3]);
+        $entity->patch(['foo' => 'baz', 'id' => 2, 'thing' => 3]);
         $this->assertSame('baz', $entity->foo);
         $this->assertSame(2, $entity->id);
         $this->assertSame(3, $entity->thing);
         $this->assertSame('bar', $entity->getOriginal('foo'));
         $this->assertSame(1, $entity->getOriginal('id'));
 
-        $entity->set(['foo', 'bar']);
+        $entity->patch(['foo', 'bar']);
         $this->assertSame('foo', $entity->get('0'));
         $this->assertSame('bar', $entity->get('1'));
 
-        $entity->set(['sample']);
+        $entity->patch(['sample']);
         $this->assertSame('sample', $entity->get('0'));
+    }
+
+    public function testEntitySetException(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot set an empty field');
+
+        $entity = new Entity();
+        $entity->set('', 'value');
     }
 
     /**
@@ -87,14 +106,14 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(
             ['false' => false, 'null' => null, 'zero' => 0, 'empty' => ''],
-            ['markNew' => true]
+            ['markNew' => true],
         );
         $this->assertNull($entity->getOriginal('null'));
         $this->assertFalse($entity->getOriginal('false'));
         $this->assertSame(0, $entity->getOriginal('zero'));
         $this->assertSame('', $entity->getOriginal('empty'));
 
-        $entity->set(['false' => 'y', 'null' => 'y', 'zero' => 'y', 'empty' => '']);
+        $entity->patch(['false' => 'y', 'null' => 'y', 'zero' => 'y', 'empty' => '']);
         $this->assertNull($entity->getOriginal('null'));
         $this->assertFalse($entity->getOriginal('false'));
         $this->assertSame(0, $entity->getOriginal('zero'));
@@ -109,7 +128,7 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(
             ['foo' => 'foo', 'bar' => 'bar'],
-            ['markNew' => true]
+            ['markNew' => true],
         );
         $this->assertNull($entity->getOriginal('baz', true));
         $this->expectException(InvalidArgumentException::class);
@@ -207,7 +226,7 @@ class EntityTest extends TestCase
             }
         };
         $entity->setAccess('*', true);
-        $entity->set(['name' => 'Jones', 'stuff' => ['a', 'b']]);
+        $entity->patch(['name' => 'Jones', 'stuff' => ['a', 'b']]);
         $this->assertSame('Dr. Jones', $entity->name);
         $this->assertEquals(['c', 'd'], $entity->stuff);
     }
@@ -236,7 +255,7 @@ class EntityTest extends TestCase
         $entity->set('stuff', 'Thing', ['setter' => false]);
         $this->assertSame('Thing', $entity->stuff);
 
-        $entity->set(['name' => 'foo', 'stuff' => 'bar'], ['setter' => false]);
+        $entity->patch(['name' => 'foo', 'stuff' => 'bar'], ['setter' => false]);
         $this->assertSame('bar', $entity->stuff);
     }
 
@@ -246,18 +265,18 @@ class EntityTest extends TestCase
     public function testConstructor(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['set'])
+            ->onlyMethods(['patch'])
             ->disableOriginalConstructor()
             ->getMock();
         $entity->expects($this->exactly(2))
-            ->method('set')
+            ->method('patch')
             ->with(
                 ...self::withConsecutive(
                     [
                     ['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false],
                     ],
-                    [['foo' => 'bar'], ['setter' => false, 'guard' => false]]
-                )
+                    [['foo' => 'bar'], ['setter' => false, 'guard' => false]],
+                ),
             );
 
         $entity->__construct(['a' => 'b', 'c' => 'd']);
@@ -271,11 +290,11 @@ class EntityTest extends TestCase
     public function testConstructorWithGuard(): void
     {
         $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['set'])
+            ->onlyMethods(['patch'])
             ->disableOriginalConstructor()
             ->getMock();
         $entity->expects($this->once())
-            ->method('set')
+            ->method('patch')
             ->with(['foo' => 'bar'], ['setter' => true, 'guard' => true]);
         $entity->__construct(['foo' => 'bar'], ['guard' => true]);
     }
@@ -574,7 +593,7 @@ class EntityTest extends TestCase
         $entity->expects($this->exactly(2))
             ->method('get')
             ->with(
-                ...self::withConsecutive(['foo'], ['bar'])
+                ...self::withConsecutive(['foo'], ['bar']),
             )
             ->willReturn('worked', 'worked too');
 
@@ -595,7 +614,7 @@ class EntityTest extends TestCase
         $entity->expects($this->exactly(2))
             ->method('set')
             ->with(
-                ...self::withConsecutive(['foo', 1], ['bar', 2])
+                ...self::withConsecutive(['foo', 1], ['bar', 2]),
             )
             ->willReturnSelf();
 
@@ -791,9 +810,10 @@ class EntityTest extends TestCase
         $this->assertFalse($entity->isDirty('title'));
 
         $entity->set('title', 'Foo');
-        $this->assertTrue($entity->isDirty('title'));
+        // Not dirty as the value set is the same as the existing value
+        $this->assertFalse($entity->isDirty('title'));
 
-        $entity->set('title', 'Foo');
+        $entity->set('title', 'Bar');
         $this->assertTrue($entity->isDirty('title'));
 
         $entity->set('something', 'else');
@@ -989,7 +1009,7 @@ class EntityTest extends TestCase
             }
         };
         $entity->setAccess('*', true);
-        $entity->set(['name' => 'Mark', 'email' => 'mark@example.com']);
+        $entity->patch(['name' => 'Mark', 'email' => 'mark@example.com']);
         $expected = ['name' => 'Jose', 'email' => 'mark@example.com'];
         $this->assertEquals($expected, $entity->toArray());
     }
@@ -1057,7 +1077,7 @@ class EntityTest extends TestCase
             }
         };
         $entity->setAccess('*', true);
-        $entity->set(['email' => 'mark@example.com']);
+        $entity->patch(['email' => 'mark@example.com']);
 
         $entity->setVirtual(['name']);
         $expected = ['name' => 'Jose', 'email' => 'mark@example.com'];
@@ -1116,6 +1136,9 @@ class EntityTest extends TestCase
 
         $entity->setError('foo', 'bar');
         $this->assertEquals(['bar'], $entity->getError('foo'));
+
+        $entity->requireFieldPresence(true);
+        $this->assertEquals([], $entity->getError('non_existent'));
 
         $expected = [
             'foo' => ['bar'],
@@ -1200,7 +1223,7 @@ class EntityTest extends TestCase
         $this->assertFalse($hasErrors);
 
         $nestedEntity = new Entity();
-        $entity->set([
+        $entity->patch([
             'nested' => $nestedEntity,
         ]);
         $hasErrors = $entity->hasErrors();
@@ -1401,12 +1424,12 @@ class EntityTest extends TestCase
         $options = ['guard' => true];
         $entity->setAccess('*', false);
         $entity->setAccess('foo', true);
-        $entity->set(['bar' => 3, 'foo' => 4], $options);
+        $entity->patch(['bar' => 3, 'foo' => 4], $options);
         $this->assertSame(2, $entity->get('bar'));
         $this->assertSame(4, $entity->get('foo'));
 
         $entity->setAccess('bar', true);
-        $entity->set(['bar' => 3, 'foo' => 5], $options);
+        $entity->patch(['bar' => 3, 'foo' => 5], $options);
         $this->assertSame(3, $entity->get('bar'));
         $this->assertSame(5, $entity->get('foo'));
     }
@@ -1420,7 +1443,7 @@ class EntityTest extends TestCase
         $entity->setAccess('*', false);
         $entity->setAccess('title', true);
 
-        $entity->set(['title' => 'test', 'body' => 'Nope']);
+        $entity->patch(['title' => 'test', 'body' => 'Nope']);
         $this->assertSame('test', $entity->title);
         $this->assertNull($entity->body);
 
@@ -1433,11 +1456,16 @@ class EntityTest extends TestCase
 
     /**
      * Tests the entity's __toString method
+     *
+     * @deprecated
      */
+    #[WithoutErrorHandler]
     public function testToString(): void
     {
-        $entity = new Entity(['foo' => 1, 'bar' => 2]);
-        $this->assertEquals(json_encode($entity, JSON_PRETTY_PRINT), (string)$entity);
+        $this->deprecated(function () {
+            $entity = new Entity(['foo' => 1, 'bar' => 2]);
+            $this->assertEquals(json_encode($entity, JSON_PRETTY_PRINT), (string)$entity);
+        });
     }
 
     /**
@@ -1511,7 +1539,7 @@ class EntityTest extends TestCase
     {
         $entity = new Entity(
             ['a' => 1, 'b' => 2],
-            ['markNew' => false, 'markClean' => true]
+            ['markNew' => false, 'markClean' => true],
         );
 
         $this->assertFalse($entity->isNew());

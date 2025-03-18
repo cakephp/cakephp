@@ -243,7 +243,7 @@ class SelectLoader
      * If the required fields are missing, throws an exception.
      *
      * @param \Cake\ORM\Query\SelectQuery $fetchQuery The association fetching query
-     * @param list<string> $key The foreign key fields to check
+     * @param array<string> $key The foreign key fields to check
      * @return void
      * @throws \InvalidArgumentException
      */
@@ -278,8 +278,8 @@ class SelectLoader
             throw new InvalidArgumentException(
                 sprintf(
                     'You are required to select the "%s" field(s)',
-                    implode(', ', $key)
-                )
+                    implode(', ', $key),
+                ),
             );
         }
     }
@@ -290,7 +290,7 @@ class SelectLoader
      * filtering needs to be done using a subquery.
      *
      * @param \Cake\ORM\Query\SelectQuery $query Target table's query
-     * @param list<string>|string $key the fields that should be used for filtering
+     * @param array<string>|string $key the fields that should be used for filtering
      * @param \Cake\ORM\Query\SelectQuery $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query\SelectQuery
      */
@@ -317,7 +317,7 @@ class SelectLoader
 
         return $query->innerJoin(
             [$aliasedTable => $subquery],
-            $conditions
+            $conditions,
         );
     }
 
@@ -326,7 +326,7 @@ class SelectLoader
      * target table query given a filter key and some filtering values.
      *
      * @param \Cake\ORM\Query\SelectQuery $query Target table's query
-     * @param list<string>|string $key The fields that should be used for filtering
+     * @param array<string>|string $key The fields that should be used for filtering
      * @param mixed $filter The value that should be used to match for $key
      * @return \Cake\ORM\Query\SelectQuery
      */
@@ -346,7 +346,7 @@ class SelectLoader
      * from $keys with the tuple values in $filter using the provided operator.
      *
      * @param \Cake\ORM\Query\SelectQuery $query Target table's query
-     * @param list<string> $keys the fields that should be used for filtering
+     * @param array<string> $keys the fields that should be used for filtering
      * @param mixed $filter the value that should be used to match for $key
      * @param string $operator The operator for comparing the tuples
      * @return \Cake\Database\Expression\TupleComparison
@@ -355,7 +355,7 @@ class SelectLoader
         SelectQuery $query,
         array $keys,
         mixed $filter,
-        string $operator
+        string $operator,
     ): TupleComparison {
         $types = [];
         $defaults = $query->getDefaultTypes();
@@ -373,7 +373,7 @@ class SelectLoader
      * which the filter should be applied
      *
      * @param array<string, mixed> $options The options for getting the link field.
-     * @return list<string>|string
+     * @return array<string>|string
      * @throws \Cake\Database\Exception\DatabaseException
      */
     protected function _linkField(array $options): array|string
@@ -553,7 +553,7 @@ class SelectLoader
      * be done with multiple foreign keys
      *
      * @param array<string, mixed> $resultMap A keyed arrays containing the target table
-     * @param list<string> $sourceKeys An array with aliased keys to match
+     * @param array<string> $sourceKeys An array with aliased keys to match
      * @param string $nestKey The key under which results should be nested
      * @return \Closure
      */

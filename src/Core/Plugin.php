@@ -104,7 +104,7 @@ class Plugin
     /**
      * Return a list of loaded plugins.
      *
-     * @return list<string> A list of plugins that have been loaded
+     * @return array<string> A list of plugins that have been loaded
      */
     public static function loaded(): array
     {

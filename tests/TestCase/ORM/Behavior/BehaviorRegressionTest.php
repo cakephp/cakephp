@@ -30,7 +30,7 @@ class BehaviorRegressionTest extends TestCase
     /**
      * fixtures
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.NumberTrees',
@@ -47,7 +47,7 @@ class BehaviorRegressionTest extends TestCase
         $connection = ConnectionManager::get('test');
         $this->skipIf(
             $connection->getDriver() instanceof Sqlserver,
-            'This test fails sporadically in SQLServer'
+            'This test fails sporadically in SQLServer',
         );
 
         $table = $this->getTableLocator()->get('NumberTrees');

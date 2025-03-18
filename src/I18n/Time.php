@@ -190,7 +190,7 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
      */
     public function i18nFormat(
         string|int|null $format = null,
-        ?string $locale = null
+        ?string $locale = null,
     ): string|int {
         if ($format === DateTime::UNIX_TIMESTAMP_FORMAT) {
             throw new InvalidArgumentException('UNIT_TIMESTAMP_FORMAT is not supported for Time.');

@@ -38,7 +38,7 @@ class CacheSessionTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::setConfig(['session_test' => ['engine' => 'File']]);
@@ -48,7 +48,7 @@ class CacheSessionTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::clear('session_test');

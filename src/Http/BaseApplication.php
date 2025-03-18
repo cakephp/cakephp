@@ -23,6 +23,7 @@ use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\Container;
 use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\ContainerInterface;
+use Cake\Core\EventAwareApplicationInterface;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\Plugin;
@@ -58,6 +59,7 @@ use Psr\Http\Message\ServerRequestInterface;
 abstract class BaseApplication implements
     ConsoleApplicationInterface,
     ContainerApplicationInterface,
+    EventAwareApplicationInterface,
     EventDispatcherInterface,
     HttpApplicationInterface,
     PluginApplicationInterface,
@@ -104,7 +106,7 @@ abstract class BaseApplication implements
     public function __construct(
         string $configDir,
         ?EventManagerInterface $eventManager = null,
-        ?ControllerFactoryInterface $controllerFactory = null
+        ?ControllerFactoryInterface $controllerFactory = null,
     ) {
         $this->configDir = rtrim($configDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->plugins = new PluginCollection();
@@ -339,14 +341,14 @@ abstract class BaseApplication implements
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function handle(
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): ResponseInterface {
         $container = $this->getContainer();
         $container->add(ServerRequest::class, $request);
         $container->add(ContainerInterface::class, $container);
 
-        $eventManager = $this->pluginEvents($this->getEventManager());
-        $this->setEventManager($this->events($eventManager));
+        $eventManager = $this->events($this->getEventManager());
+        $this->setEventManager($this->pluginEvents($eventManager));
 
         $this->controllerFactory ??= new ControllerFactory($container);
 

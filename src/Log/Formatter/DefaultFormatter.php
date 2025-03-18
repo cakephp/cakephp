@@ -32,14 +32,6 @@ class DefaultFormatter extends AbstractFormatter
     ];
 
     /**
-     * @param array<string, mixed> $config Formatter config
-     */
-    public function __construct(array $config = [])
-    {
-        $this->setConfig($config);
-    }
-
-    /**
      * @inheritDoc
      */
     public function format($level, string $message, array $context = []): string

@@ -211,7 +211,7 @@ class ConsoleOutput
      * Outputs a single or multiple messages to stdout or stderr. If no parameters
      * are passed, outputs just a newline.
      *
-     * @param list<string>|string $message A string or an array of strings to output
+     * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to output.
      */
@@ -242,7 +242,7 @@ class ConsoleOutput
             $output = preg_replace_callback(
                 '/<(?P<tag>[a-z0-9-_.]+)>(?P<text>.*?)<\/(\1)>/ims',
                 $replaceTags,
-                $text
+                $text,
             );
             if ($output !== null) {
                 return $output;

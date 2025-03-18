@@ -62,8 +62,8 @@ trait TupleComparisonTranslatorTrait
             throw new InvalidArgumentException(
                 sprintf(
                     'Tuple comparison transform only supports the `IN` and `=` operators, `%s` given.',
-                    $operator
-                )
+                    $operator,
+                ),
             );
         }
 
@@ -71,7 +71,7 @@ trait TupleComparisonTranslatorTrait
         $true = new QueryExpression('1');
 
         if ($value instanceof SelectQuery) {
-            /** @var list<string> $selected */
+            /** @var array<string> $selected */
             $selected = array_values($value->clause('select'));
             foreach ($fields as $i => $field) {
                 $value->andWhere([$field => new IdentifierExpression($selected[$i])]);

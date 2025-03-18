@@ -57,7 +57,7 @@ class Entity implements EntityInterface, InvalidPropertyInterface
             'source' => null,
         ];
 
-        if (!empty($options['source'])) {
+        if ($options['source'] !== null) {
             $this->setSource($options['source']);
         }
 
@@ -75,7 +75,7 @@ class Entity implements EntityInterface, InvalidPropertyInterface
                 return;
             }
 
-            $this->set($properties, [
+            $this->patch($properties, [
                 'setter' => $options['useSetters'],
                 'guard' => $options['guard'],
             ]);

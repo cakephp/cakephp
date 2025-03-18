@@ -29,13 +29,13 @@ class CommonTableExpressionTest extends TestCase
      */
     protected $connection;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->connection);

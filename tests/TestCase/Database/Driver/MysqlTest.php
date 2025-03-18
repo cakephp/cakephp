@@ -31,7 +31,7 @@ class MysqlTest extends TestCase
     /**
      * setup
      */
-    public function setup(): void
+    protected function setup(): void
     {
         parent::setUp();
         $config = ConnectionManager::getConfig('test');
@@ -115,7 +115,7 @@ class MysqlTest extends TestCase
         $connection->expects($this->exactly(3))
             ->method('exec')
             ->with(
-                ...self::withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antarctica'"])
+                ...self::withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antarctica'"]),
             );
 
         $driver->expects($this->once())->method('createPdo')
@@ -222,7 +222,6 @@ class MysqlTest extends TestCase
                 'window' => '8.0.0',
                 'intersect' => '8.0.31',
                 'intersect-all' => '8.0.31',
-                'set-operations-order-by' => '8.0.31',
             ],
             'mariadb' => [
                 'json' => '10.2.7',
@@ -230,13 +229,12 @@ class MysqlTest extends TestCase
                 'window' => '10.2.0',
                 'intersect' => '10.3.0',
                 'intersect-all' => '10.5.0',
-                'set-operations-order-by' => '8.0.31',
             ],
         ];
         foreach ($featureVersions[$serverType] as $feature => $version) {
             $this->assertSame(
                 version_compare($driver->version(), $version, '>='),
-                $driver->supports(DriverFeatureEnum::from($feature))
+                $driver->supports(DriverFeatureEnum::from($feature)),
             );
         }
 
@@ -347,6 +345,35 @@ class MysqlTest extends TestCase
 
         $result = $driver->quoteIdentifier('Model.näme Datum as y');
         $expected = '`Model`.`näme Datum` AS `y`';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests value quoting
+     */
+    public function testQuote(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(!$driver instanceof Mysql);
+
+        $result = $driver->quote('name');
+        $expected = "'name'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote('Model.*');
+        $expected = "'Model.*'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O'hare");
+        $expected = "'O\\'hare'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O''hare");
+        $expected = "'O\\'\\'hare'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O\slash");
+        $expected = "'O\\\\slash'";
         $this->assertEquals($expected, $result);
     }
 }

@@ -24,11 +24,17 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/core": "^5.1"
+        "cakephp/core": "5.2.*@dev"
     },
     "autoload": {
         "psr-4": {
             "Cake\\Event\\": "."
+        }
+    },
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.2.x-dev"
         }
     }
 }

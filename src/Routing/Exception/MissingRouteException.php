@@ -15,14 +15,20 @@ declare(strict_types=1);
 namespace Cake\Routing\Exception;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Core\Exception\HttpErrorCodeInterface;
 use Throwable;
 
 /**
  * Exception raised when a URL cannot be reverse routed
  * or when a URL cannot be parsed.
  */
-class MissingRouteException extends CakeException
+class MissingRouteException extends CakeException implements HttpErrorCodeInterface
 {
+    /**
+     * @inheritDoc
+     */
+    protected int $_defaultCode = 404;
+
     /**
      * @inheritDoc
      */

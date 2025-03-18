@@ -60,7 +60,7 @@ interface EventManagerInterface
     public function on(
         EventListenerInterface|string $eventKey,
         callable|array $options = [],
-        ?callable $callable = null
+        ?callable $callable = null,
     );
 
     /**
@@ -97,7 +97,7 @@ interface EventManagerInterface
      */
     public function off(
         EventListenerInterface|callable|string $eventKey,
-        EventListenerInterface|callable|null $callable = null
+        EventListenerInterface|callable|null $callable = null,
     );
 
     /**

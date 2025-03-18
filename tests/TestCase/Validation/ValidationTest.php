@@ -46,7 +46,7 @@ class ValidationTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
@@ -2361,14 +2361,14 @@ class ValidationTest extends TestCase
                 'file1' => ['name' => 'file.jpg'],
                 'file2' => ['name' => 'file.gif'],
             ],
-            ['gif']
+            ['gif'],
         ), 'Only the first element should be checked');
         $this->assertTrue(Validation::extension(
             [
                 'file1' => ['name' => 'file.gif'],
                 'file2' => ['name' => 'file.jpg'],
             ],
-            ['gif']
+            ['gif'],
         ), 'Only the first element should be checked');
 
         $file = [

@@ -33,24 +33,16 @@ use Cake\Utility\Inflector;
 class I18nExtractCommand extends Command
 {
     /**
-     * @inheritDoc
-     */
-    public static function defaultName(): string
-    {
-        return 'i18n extract';
-    }
-
-    /**
      * Paths to use when looking for strings
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_paths = [];
 
     /**
      * Files from where to extract
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_files = [];
 
@@ -99,7 +91,7 @@ class I18nExtractCommand extends Command
     /**
      * An array of directories to exclude.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_exclude = [];
 
@@ -125,6 +117,22 @@ class I18nExtractCommand extends Command
     protected int $_countMarkerError = 0;
 
     /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'i18n extract';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Extract i18n POT files from application source files.';
+    }
+
+    /**
      * Method to interact with the user and get path selections.
      *
      * @param \Cake\Console\ConsoleIo $io The io instance.
@@ -136,14 +144,14 @@ class I18nExtractCommand extends Command
         $defaultPaths = array_merge(
             [APP],
             array_values(App::path('templates')),
-            ['D'] // This is required to break the loop below
+            ['D'], // This is required to break the loop below
         );
         $defaultPathIndex = 0;
         while (true) {
             $currentPaths = $this->_paths !== [] ? $this->_paths : ['None'];
             $message = sprintf(
                 "Current paths: %s\nWhat is the path you would like to extract?\n[Q]uit [D]one",
-                implode(', ', $currentPaths)
+                implode(', ', $currentPaths),
             );
             $response = $io->ask($message, $defaultPaths[$defaultPathIndex] ?? 'D');
             if (strtoupper($response) === 'Q') {
@@ -201,7 +209,7 @@ class I18nExtractCommand extends Command
             $response = $io->askChoice(
                 'Would you like to extract the messages from the CakePHP core?',
                 ['y', 'n'],
-                'n'
+                'n',
             );
             $this->_extractCore = strtolower($response) === 'y';
         }
@@ -229,7 +237,7 @@ class I18nExtractCommand extends Command
             while (true) {
                 $response = $io->ask(
                     $message,
-                    $localePaths[0]
+                    $localePaths[0],
                 );
                 if (strtoupper($response) === 'Q') {
                     $io->err('Extract Aborted');
@@ -244,7 +252,7 @@ class I18nExtractCommand extends Command
                 $io->err('');
                 $io->err(
                     '<error>The directory path you supplied was ' .
-                    'not found. Please try again.</error>'
+                    'not found. Please try again.</error>',
                 );
                 $io->err('');
             }
@@ -257,7 +265,7 @@ class I18nExtractCommand extends Command
             $response = $io->askChoice(
                 'Would you like to merge all domain strings into the default.pot file?',
                 ['y', 'n'],
-                'n'
+                'n',
             );
             $this->_merge = strtolower($response) === 'y';
         }
@@ -354,11 +362,11 @@ class I18nExtractCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription(
-            'Extract i18n POT files from application source files. ' .
+        $parser->setDescription([
+            static::getDescription(),
             'Source files are parsed and string literal format strings ' .
-            'provided to the <info>__</info> family of functions are extracted.'
-        )->addOption('app', [
+            'provided to the <info>__</info> family of functions are extracted.',
+        ])->addOption('app', [
             'help' => 'Directory where your application is located.',
         ])->addOption('paths', [
             'help' => 'Comma separated list of paths that are searched for source files.',
@@ -637,7 +645,7 @@ class I18nExtractCommand extends Command
                 $response = $io->askChoice(
                     sprintf('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
                     ['y', 'n', 'a'],
-                    'y'
+                    'y',
                 );
                 if (strtoupper($response) === 'N') {
                     $response = '';
@@ -860,7 +868,7 @@ class I18nExtractCommand extends Command
      */
     protected function _isExtractingApp(): bool
     {
-        /** @psalm-suppress UndefinedConstant, TypeDoesNotContainType */
+        /** @psalm-suppress UndefinedConstant */
         return $this->_paths === [APP];
     }
 

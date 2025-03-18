@@ -33,7 +33,7 @@ class AppTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -114,7 +114,7 @@ class AppTest extends TestCase
         $return = TestApp::shortName(
             'TestApp/Nested/Controller/PagesController',
             'Controller',
-            'Controller'
+            'Controller',
         );
         $this->assertSame('Pages', $return);
 

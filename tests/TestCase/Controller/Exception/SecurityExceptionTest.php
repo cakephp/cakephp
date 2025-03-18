@@ -21,6 +21,8 @@ use Cake\TestSuite\TestCase;
 
 /**
  * SecurityException Test class
+ *
+ * @deprecated
  */
 class SecurityExceptionTest extends TestCase
 {
@@ -32,7 +34,7 @@ class SecurityExceptionTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->securityException = new SecurityException();
@@ -46,7 +48,7 @@ class SecurityExceptionTest extends TestCase
         $this->assertSame(
             'secure',
             $this->securityException->getType(),
-            '::getType should always return the type of `secure`.'
+            '::getType should always return the type of `secure`.',
         );
     }
 
@@ -60,7 +62,7 @@ class SecurityExceptionTest extends TestCase
         $this->assertSame(
             $sampleMessage,
             $this->securityException->getMessage(),
-            '::getMessage should always return the message set.'
+            '::getMessage should always return the message set.',
         );
     }
 
@@ -74,7 +76,7 @@ class SecurityExceptionTest extends TestCase
         $this->assertSame(
             $sampleReason,
             $this->securityException->getReason(),
-            '::getReason should always return the reason set.'
+            '::getReason should always return the reason set.',
         );
     }
 }

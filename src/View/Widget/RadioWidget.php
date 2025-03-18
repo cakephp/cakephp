@@ -72,7 +72,8 @@ class RadioWidget extends BasicWidget
      */
     public function __construct(StringTemplate $templates, LabelWidget $label)
     {
-        $this->_templates = $templates;
+        parent::__construct($templates);
+
         $this->_label = $label;
     }
 
@@ -155,7 +156,7 @@ class RadioWidget extends BasicWidget
         string|int $val,
         array|string|int $text,
         array $data,
-        ContextInterface $context
+        ContextInterface $context,
     ): string {
         $escape = $data['escape'];
         if (is_array($text) && isset($text['text'], $text['value'])) {
@@ -174,7 +175,7 @@ class RadioWidget extends BasicWidget
             if (isset($data['id'])) {
                 $radio['id'] = $data['id'] . '-' . rtrim(
                     $this->_idSuffix((string)$radio['value']),
-                    '-'
+                    '-',
                 );
             } else {
                 $radio['id'] = $this->_id((string)$radio['name'], (string)$radio['value']);
@@ -207,7 +208,7 @@ class RadioWidget extends BasicWidget
             'templateVars' => $radio['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $radio + $data,
-                ['name', 'value', 'text', 'options', 'label', 'val', 'type']
+                ['name', 'value', 'text', 'options', 'label', 'val', 'type'],
             ),
         ]);
 
@@ -216,7 +217,7 @@ class RadioWidget extends BasicWidget
             $data['label'],
             $input,
             $context,
-            $escape
+            $escape,
         );
 
         if (
@@ -251,7 +252,7 @@ class RadioWidget extends BasicWidget
         array|string|bool|null $label,
         string $input,
         ContextInterface $context,
-        bool $escape
+        bool $escape,
     ): string|false {
         if (isset($radio['label'])) {
             $label = $radio['label'];

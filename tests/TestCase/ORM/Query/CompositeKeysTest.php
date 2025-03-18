@@ -37,7 +37,7 @@ class CompositeKeysTest extends TestCase
     /**
      * Fixture to be used
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.CompositeIncrements',
@@ -55,7 +55,7 @@ class CompositeKeysTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -748,7 +748,7 @@ class CompositeKeysTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlite,
-            'SQLite does not support the requirements of this test.'
+            'SQLite does not support the requirements of this test.',
         );
     }
 }

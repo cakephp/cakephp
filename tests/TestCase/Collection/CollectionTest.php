@@ -1140,7 +1140,7 @@ class CollectionTest extends TestCase
         $matched = $collection->match(['thing.parent_id' => 10]);
         $this->assertEquals(
             [0 => $items[0], 2 => $items[2]],
-            $matched->toArray()
+            $matched->toArray(),
         );
 
         $matched = $collection->match(['thing.parent_id' => 500]);
@@ -1164,13 +1164,13 @@ class CollectionTest extends TestCase
         $matched = $collection->firstMatch(['thing.parent_id' => 10]);
         $this->assertEquals(
             ['id' => 1, 'name' => 'foo', 'thing' => ['parent_id' => 10]],
-            $matched
+            $matched,
         );
 
         $matched = $collection->firstMatch(['thing.parent_id' => 10, 'name' => 'baz']);
         $this->assertEquals(
             ['id' => 3, 'name' => 'baz', 'thing' => ['parent_id' => 10]],
-            $matched
+            $matched,
         );
     }
 
@@ -1354,7 +1354,7 @@ class CollectionTest extends TestCase
             },
             function ($value, $key) {
                 return $key . '-' . $value['id'];
-            }
+            },
         );
         $this->assertEquals($expected, $collection->toArray());
 
@@ -1748,7 +1748,7 @@ class CollectionTest extends TestCase
         $this->assertInstanceOf(InsertIterator::class, $iterator);
         $this->assertEquals(
             [['a' => 1, 'c' => 3], ['b' => 2, 'c' => 4]],
-            iterator_to_array($iterator)
+            iterator_to_array($iterator),
         );
     }
 

@@ -35,7 +35,7 @@ class SocketTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->Socket = new Socket(['timeout' => 1]);
@@ -44,7 +44,7 @@ class SocketTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->Socket);
@@ -259,7 +259,7 @@ class SocketTest extends TestCase
         $this->assertEquals(
             $expected,
             $anotherSocket->getConfig(),
-            'Reset should cause config to return the defaults defined in _defaultConfig'
+            'Reset should cause config to return the defaults defined in _defaultConfig',
         );
     }
 
@@ -378,7 +378,9 @@ class SocketTest extends TestCase
         // testing on tls server
         $this->_connectSocketToSslTls();
         $this->Socket->enableCrypto('tls', 'client');
-        $this->Socket->enableCrypto('tls', 'client');
+        $this->expectWarningMessageMatches('/^Unable to perform enableCrypto operation on the current socket$/', function () {
+            $this->Socket->enableCrypto('tls', 'client');
+        });
     }
 
     /**

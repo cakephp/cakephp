@@ -39,7 +39,7 @@ class FileWidgetTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $templates = [
@@ -112,7 +112,7 @@ class FileWidgetTest extends TestCase
 
         $this->assertEquals(
             ['image'],
-            $input->secureFields($data)
+            $input->secureFields($data),
         );
     }
 }

@@ -32,7 +32,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Test case for MySQL Schema Dialect.
  */
-class MysqlSchemaTest extends TestCase
+class MysqlSchemaDialectTest extends TestCase
 {
     protected PDO $pdo;
 
@@ -140,6 +140,10 @@ class MysqlSchemaTest extends TestCase
             [
                 'CHAR(36)',
                 ['type' => 'uuid', 'length' => null],
+            ],
+            [
+                'UUID',
+                ['type' => 'nativeuuid', 'length' => null],
             ],
             [
                 'BINARY(16)',
@@ -306,6 +310,7 @@ SQL;
                 location POINT,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+                updated DATETIME ON UPDATE CURRENT_TIMESTAMP,
                 KEY `author_idx` (`author_id`),
                 CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
                 FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
@@ -360,8 +365,8 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
         $expected = [
             'id' => [
@@ -393,6 +398,16 @@ SQL;
                 'collate' => 'utf8_general_ci',
             ],
             'author_id' => [
+                'type' => 'integer',
+                'null' => false,
+                'unsigned' => false,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'autoIncrement' => null,
+            ],
+            'unique_id' => [
                 'type' => 'integer',
                 'null' => false,
                 'unsigned' => false,
@@ -443,6 +458,14 @@ SQL;
                 'precision' => 3,
                 'comment' => null,
             ],
+            'updated' => [
+                'type' => 'datetime',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
         ];
 
         $driver = ConnectionManager::get('test')->getDriver();
@@ -460,8 +483,119 @@ SQL;
             $this->assertEquals(
                 $definition,
                 $result->getColumn($field),
-                'Field definition does not match for ' . $field
+                'Field definition does not match for ' . $field,
             );
+        }
+
+        // Compare with describeColumns which has some more platform specific keys
+        // that are also public API.
+        $expected['updated']['onUpdate'] = 'CURRENT_TIMESTAMP';
+
+        $columns = $dialect->describeColumns('schema_articles');
+        foreach ($columns as $column) {
+            $this->assertArrayHasKey($column['name'], $expected);
+            $expectedItem = $expected[$column['name']];
+            $expectedFields = array_intersect_key($expectedItem, $column);
+            $resultFields = array_intersect_key($column, $expectedFields);
+            $this->assertEquals($expectedFields, $resultFields);
+        }
+    }
+
+    /**
+     * Test describing a table with MySQL
+     */
+    public function testDescribeTableDatabasePrefix(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $config = $connection->getDriver()->config();
+        $dialect = $connection->getDriver()->schemaDialect();
+
+        $result = $dialect->describe($config['database'] . '.schema_articles');
+        $this->assertInstanceOf(TableSchema::class, $result);
+    }
+
+    /**
+     * Test that schema reflection works for geosptial columns.
+     *
+     * We currently cannot reflect the postgis types from postgres.
+     *
+     * @return void
+     */
+    public function testDescribeTableGeometry(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+
+        $hasGeometry = $driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=');
+        $this->skipIf(!$hasGeometry, 'This test requires geometry type support');
+
+        $table = <<<SQL
+CREATE TABLE schema_geometry (
+    id INTEGER,
+    geo_line LINESTRING,
+    geo_geometry GEOMETRY,
+    geo_point POINT,
+    geo_polygon POLYGON
+)
+SQL;
+        $connection->execute($table);
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_geometry');
+        $connection->execute('DROP TABLE schema_geometry');
+
+        $expected = [
+            'id' => [
+                'type' => 'integer',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'unsigned' => false,
+                'comment' => '',
+                'autoIncrement' => null,
+            ],
+            'geo_line' => [
+                'type' => 'linestring',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+            'geo_geometry' => [
+                'type' => 'geometry',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+            'geo_point' => [
+                'type' => 'point',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+            'geo_polygon' => [
+                'type' => 'polygon',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+        ];
+        foreach ($expected as $field => $definition) {
+            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in {$field} column");
         }
     }
 
@@ -473,8 +607,9 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
+        $database = $connection->getDriver()->config()['database'];
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
 
         $this->assertCount(4, $result->constraints());
@@ -506,6 +641,11 @@ SQL;
                 ],
                 'length' => [],
             ],
+            'author_idx' => [
+                'type' => 'index',
+                'columns' => ['author_id'],
+                'length' => [],
+            ],
         ];
 
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
@@ -518,12 +658,42 @@ SQL;
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
         $this->assertCount(1, $result->indexes());
-        $expected = [
-            'type' => 'index',
-            'columns' => ['author_id'],
-            'length' => [],
-        ];
-        $this->assertEquals($expected, $result->getIndex('author_idx'));
+        $this->assertEquals($expected['author_idx'], $result->getIndex('author_idx'));
+
+        // Compare with describeIndexes() which includes indexes + uniques
+        $indexes = $dialect->describeIndexes('schema_articles');
+        $prefixed = $dialect->describeIndexes("{$database}.schema_articles");
+        $this->assertEquals($indexes, $prefixed, 'prefixed tables should work');
+
+        foreach ($indexes as $index) {
+            $this->assertArrayHasKey($index['name'], $expected);
+            $expectedItem = $expected[$index['name']];
+            $expectedFields = array_intersect_key($expectedItem, $index);
+            $resultFields = array_intersect_key($index, $expectedFields);
+
+            $this->assertNotEmpty($resultFields);
+            $this->assertEquals($expectedFields, $resultFields);
+        }
+
+        // Compare describeForeignKeys()
+        $keys = $dialect->describeForeignKeys('schema_articles');
+        $prefixed = $dialect->describeForeignKeys("{$database}.schema_articles");
+        $this->assertEquals($keys, $prefixed, 'prefixed tables should work');
+
+        $isMariaDb = ConnectionManager::get('test')->getDriver()->isMariaDb();
+        foreach ($keys as $foreignKey) {
+            $name = $foreignKey['name'];
+            if ($name === 'author_idx' && $isMariaDb) {
+                $name = 'schema_articles_ibfk_1';
+            }
+            $this->assertArrayHasKey($name, $expected);
+            $expectedItem = $expected[$name];
+            $expectedFields = array_intersect_key($expectedItem, $foreignKey);
+            $resultFields = array_intersect_key($foreignKey, $expectedFields);
+
+            $this->assertNotEmpty($resultFields);
+            $this->assertEquals($expectedFields, $resultFields);
+        }
     }
 
     /**
@@ -604,10 +774,10 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
-        $this->assertArrayHasKey('engine', $result->getOptions());
-        $this->assertArrayHasKey('collation', $result->getOptions());
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describeOptions('schema_articles');
+        $this->assertArrayHasKey('engine', $result);
+        $this->assertArrayHasKey('collation', $result);
     }
 
     public function testDescribeNonPrimaryAutoIncrement(): void
@@ -680,6 +850,11 @@ SQL;
                 'id',
                 ['type' => 'uuid'],
                 '`id` CHAR(36)',
+            ],
+            [
+                'id',
+                ['type' => 'nativeuuid'],
+                '`id` UUID',
             ],
             [
                 'id',
@@ -1501,7 +1676,7 @@ SQL;
         $this->assertEquals(
             $expected,
             $result->getColumn('data'),
-            'Field definition does not match for data'
+            'Field definition does not match for data',
         );
     }
 

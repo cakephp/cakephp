@@ -169,7 +169,7 @@ class StringTemplate
     /**
      * Compile templates into a more efficient printf() compatible format.
      *
-     * @param list<string> $templates The template names to compile. If empty all templates will be compiled.
+     * @param array<string> $templates The template names to compile. If empty all templates will be compiled.
      * @return void
      */
     protected function _compileTemplates(array $templates = []): void
@@ -185,7 +185,7 @@ class StringTemplate
 
             assert(
                 is_string($template),
-                sprintf('Template for `%s` must be of type `string`, but is `%s`', $name, gettype($template))
+                sprintf('Template for `%s` must be of type `string`, but is `%s`', $name, gettype($template)),
             );
 
             $template = str_replace('%', '%%', $template);
@@ -284,7 +284,7 @@ class StringTemplate
      * templates to change how attributes are formatted.
      *
      * @param array<string, mixed>|null $options Array of options.
-     * @param list<string>|null $exclude Array of options to be excluded, the options here will not be part of the return.
+     * @param array<string>|null $exclude Array of options to be excluded, the options here will not be part of the return.
      * @return string Composed attributes.
      */
     public function formatAttributes(?array $options, ?array $exclude = null): string
@@ -347,14 +347,14 @@ class StringTemplate
      * Adds a class and returns a unique list either in array or space separated
      *
      * @param mixed $input The array or string to add the class to
-     * @param list<string>|string|false|null $newClass the new class or classes to add
+     * @param array<string>|string|false|null $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return list<string>|string|null
+     * @return array<string, string>|string|null
      */
     public function addClass(
         mixed $input,
         array|string|false|null $newClass,
-        string $useIndex = 'class'
+        string $useIndex = 'class',
     ): array|string|null {
         // NOOP
         if (!$newClass) {

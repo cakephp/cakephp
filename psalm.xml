@@ -5,6 +5,7 @@
     findUnusedPsalmSuppress="true"
     findUnusedBaselineEntry="true"
     findUnusedCode="false"
+    ignoreInternalFunctionFalseReturn="true"
     resolveFromConfigFile="true"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns="https://getpsalm.org/schema/config"
@@ -30,26 +31,6 @@
     </enableExtensions>
 
     <issueHandlers>
-        <UndefinedClass>
-            <errorLevel type="suppress">
-                <referencedClass name="Memcached"/>
-                <referencedClass name="Redis"/>
-                <referencedClass name="RedisException"/>
-            </errorLevel>
-        </UndefinedClass>
-        <UndefinedDocblockClass>
-            <errorLevel type="suppress">
-                <referencedClass name="Memcached"/>
-                <referencedClass name="Redis"/>
-            </errorLevel>
-        </UndefinedDocblockClass>
-        <UndefinedConstant>
-            <errorLevel type="suppress">
-                <file name="src/Cache/Engine/ApcuEngine.php"/>
-                <file name="src/Database/Driver/Sqlserver.php"/>
-                <file name="src/Database/Statement/SqlserverStatement.php"/>
-            </errorLevel>
-        </UndefinedConstant>
         <RedundantPropertyInitializationCheck errorLevel="suppress"/>
         <RedundantCast errorLevel="suppress"/>
         <UndefinedAttributeClass errorLevel="suppress"/>
