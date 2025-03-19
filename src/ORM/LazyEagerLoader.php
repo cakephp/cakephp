@@ -75,7 +75,7 @@ class LazyEagerLoader
         $primaryKey = $source->getPrimaryKey();
         $method = is_string($primaryKey) ? 'get' : 'extract';
 
-        $keys = Hash::map($entities, '{*}', fn (EntityInterface $entity) => $entity->{$method}($primaryKey));
+        $keys = Hash::map($entities, '{*}', fn(EntityInterface $entity) => $entity->{$method}($primaryKey));
 
         $query = $source
             ->find()
@@ -149,7 +149,7 @@ class LazyEagerLoader
         /** @var array<\Cake\Datasource\EntityInterface> $results */
         $results = $query
             ->all()
-            ->indexBy(fn (EntityInterface $e) => implode(';', $e->extract($primaryKey)))
+            ->indexBy(fn(EntityInterface $e) => implode(';', $e->extract($primaryKey)))
             ->toArray();
 
         foreach ($entities as $k => $object) {

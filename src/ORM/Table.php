@@ -1387,7 +1387,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ['keyField', 'valueField', 'groupField'],
         );
 
-        return $query->formatResults(fn (CollectionInterface $results) => $results->combine(
+        return $query->formatResults(fn(CollectionInterface $results) => $results->combine(
             $options['keyField'],
             $options['valueField'],
             $options['groupField'],
@@ -1426,7 +1426,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $options = $this->_setFieldMatchers(compact('keyField', 'parentField'), ['keyField', 'parentField']);
 
-        return $query->formatResults(fn (CollectionInterface $results) => $results->nest(
+        return $query->formatResults(fn(CollectionInterface $results) => $results->nest(
             $options['keyField'],
             $options['parentField'],
             $nestingKey,
@@ -1579,7 +1579,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function _executeTransaction(callable $worker, bool $atomic = true): mixed
     {
         if ($atomic) {
-            return $this->getConnection()->transactional(fn () => $worker());
+            return $this->getConnection()->transactional(fn() => $worker());
         }
 
         return $worker();
@@ -1642,7 +1642,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         ]);
 
         $entity = $this->_executeTransaction(
-            fn () => $this->_processFindOrCreate($search, $callback, $options->getArrayCopy()),
+            fn() => $this->_processFindOrCreate($search, $callback, $options->getArrayCopy()),
             $options['atomic'],
         );
 
@@ -1948,7 +1948,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         $success = $this->_executeTransaction(
-            fn () => $this->_processSave($entity, $options),
+            fn() => $this->_processSave($entity, $options),
             $options['atomic'],
         );
 
@@ -2415,7 +2415,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         ]);
 
         $success = $this->_executeTransaction(
-            fn () => $this->_processDelete($entity, $options),
+            fn() => $this->_processDelete($entity, $options),
             $options['atomic'],
         );
 

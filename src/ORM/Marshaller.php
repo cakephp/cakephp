@@ -76,7 +76,7 @@ class Marshaller
             $prop = (string)$prop;
             $columnType = $schema->getColumnType($prop);
             if ($columnType) {
-                $map[$prop] = fn ($value) => TypeFactory::build($columnType)->marshal($value);
+                $map[$prop] = fn($value) => TypeFactory::build($columnType)->marshal($value);
             }
         }
 
@@ -119,7 +119,7 @@ class Marshaller
                         $this->fieldValue($entity, $assoc->getProperty()),
                         $assoc,
                         $value,
-                        $options
+                        $options,
                     );
                 };
             } else {
@@ -428,7 +428,7 @@ class Marshaller
         if ($conditions) {
             /** @var \Traversable<\Cake\Datasource\EntityInterface> $results */
             $results = $target->find()
-                ->andWhere(fn (QueryExpression $exp) => $exp->or($conditions))
+                ->andWhere(fn(QueryExpression $exp) => $exp->or($conditions))
                 ->all();
 
             $keyFields = array_keys($primaryKey);
@@ -717,7 +717,7 @@ class Marshaller
             ->map(function ($data, $key) {
                 return explode(';', (string)$key);
             })
-            ->filter(fn ($keys) => count(Hash::filter($keys)) === count($primary))
+            ->filter(fn($keys) => count(Hash::filter($keys)) === count($primary))
             ->reduce(function ($conditions, $keys) use ($primary) {
                 $fields = array_map($this->_table->aliasField(...), $primary);
                 $conditions['OR'][] = array_combine($fields, $keys);

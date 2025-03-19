@@ -265,7 +265,7 @@ class Connection implements ConnectionInterface
      */
     public function execute(string $sql, array $params = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(fn () => $this->getDriver()->execute($sql, $params, $types));
+        return $this->getDisconnectRetry()->run(fn() => $this->getDriver()->execute($sql, $params, $types));
     }
 
     /**
@@ -277,7 +277,7 @@ class Connection implements ConnectionInterface
      */
     public function run(Query $query): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(fn () => $this->getDriver($query->getConnectionRole())->run($query));
+        return $this->getDisconnectRetry()->run(fn() => $this->getDriver($query->getConnectionRole())->run($query));
     }
 
     /**

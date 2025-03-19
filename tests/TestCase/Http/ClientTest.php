@@ -573,7 +573,7 @@ class ClientTest extends TestCase
                 'headers' => [
                     'Content-Type' => 'application/octet-stream',
                 ],
-            ]
+            ],
         );
     }
 
@@ -608,7 +608,7 @@ class ClientTest extends TestCase
                 'headers' => [
                     'Content-Type' => 'application/octet-stream',
                 ],
-            ]
+            ],
         );
     }
 

@@ -2281,7 +2281,7 @@ class FormHelperTest extends TestCase
         $formProtector = new FormProtector([]);
         $this->assertTrue(
             $formProtector->validate($data, '/articles/add', 'cli'),
-            $formProtector->getError() ?? 'no formprotector->getError'
+            $formProtector->getError() ?? 'no formprotector->getError',
         );
     }
 

@@ -199,7 +199,7 @@ class LinkConstraintTest extends TestCase
             [[
                 'alias' => 'Articles',
                 'table' => 'articles',
-            ]]
+            ]],
         );
         $Articles->shouldReceive('buildRules')
             ->atLeast()->once()

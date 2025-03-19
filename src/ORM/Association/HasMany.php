@@ -293,7 +293,7 @@ class HasMany extends Association
 
         $sourceEntity->set($property, $currentEntities);
 
-        $savedEntity = $this->getConnection()->transactional(fn () => $this->saveAssociated($sourceEntity, $options));
+        $savedEntity = $this->getConnection()->transactional(fn() => $this->saveAssociated($sourceEntity, $options));
         $ok = ($savedEntity instanceof EntityInterface);
 
         $this->setSaveStrategy($saveStrategy);

@@ -82,7 +82,7 @@ trait CollectionTrait
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v) => (bool)$v;
+        $callback ??= fn($v) => (bool)$v;
 
         return new FilterIterator($this->unwrap(), $callback);
     }
@@ -92,9 +92,9 @@ trait CollectionTrait
      */
     public function reject(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v) => (bool)$v;
+        $callback ??= fn($v) => (bool)$v;
 
-        return new FilterIterator($this->unwrap(), fn ($value, $key, $items) => !$callback($value, $key, $items));
+        return new FilterIterator($this->unwrap(), fn($value, $key, $items) => !$callback($value, $key, $items));
     }
 
     /**
@@ -102,7 +102,7 @@ trait CollectionTrait
      */
     public function unique(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v) => $v;
+        $callback ??= fn($v) => $v;
 
         return new UniqueIterator($this->unwrap(), $callback);
     }
@@ -373,8 +373,8 @@ trait CollectionTrait
     {
         $callback = $this->_propertyExtractor($path);
 
-        $mapper = fn ($value, $key, MapReduce $mr) => $mr->emitIntermediate($value, $callback($value));
-        $reducer = fn ($values, $key, MapReduce $mr) => $mr->emit(count($values), $key);
+        $mapper = fn($value, $key, MapReduce $mr) => $mr->emitIntermediate($value, $callback($value));
+        $reducer = fn($values, $key, MapReduce $mr) => $mr->emit(count($values), $key);
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer));
     }
@@ -877,7 +877,7 @@ trait CollectionTrait
      */
     public function unfold(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v) => $v;
+        $callback ??= fn($v) => $v;
 
         return $this->newCollection(
             new RecursiveIteratorIterator(

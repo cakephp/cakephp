@@ -106,7 +106,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <example> SET <Column with spaces> = :c0 , <Column_without_spaces> = :c1',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 

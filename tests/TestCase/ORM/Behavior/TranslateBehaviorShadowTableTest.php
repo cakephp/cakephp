@@ -1017,7 +1017,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $this->assertSame(
             'New Comment',
             $entity->get('comment'),
-            'New translation should not be modified'
+            'New translation should not be modified',
         );
     }
 

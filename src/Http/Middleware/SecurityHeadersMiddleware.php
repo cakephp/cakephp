@@ -253,7 +253,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
     protected function checkValues(string $value, array $allowed): void
     {
         if (!in_array($value, $allowed, true)) {
-            array_walk($allowed, fn (&$x) => $x = "`{$x}`");
+            array_walk($allowed, fn(&$x) => $x = "`{$x}`");
             throw new InvalidArgumentException(sprintf(
                 'Invalid arg `%s`, use one of these: %s.',
                 $value,

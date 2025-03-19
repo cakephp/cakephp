@@ -141,7 +141,7 @@ class FixtureHelper
                 } else {
                     ConnectionHelper::runWithoutConstraints(
                         $connection,
-                        fn (Connection $connection) => $this->insertConnection($connection, $groupFixtures),
+                        fn(Connection $connection) => $this->insertConnection($connection, $groupFixtures),
                     );
                 }
             } else {
@@ -196,7 +196,7 @@ class FixtureHelper
                     $helper = new ConnectionHelper();
                     $helper->runWithoutConstraints(
                         $connection,
-                        fn (Connection $connection) => $this->truncateConnection($connection, $groupFixtures),
+                        fn(Connection $connection) => $this->truncateConnection($connection, $groupFixtures),
                     );
                 }
             } else {

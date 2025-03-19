@@ -388,7 +388,7 @@ class SqliteSchemaDialect extends SchemaDialect
                     $columnsPattern = implode(
                         '\s*,\s*',
                         array_map(
-                            fn ($column) => '(?:' . $this->possiblyQuotedIdentifierRegex($column) . ')',
+                            fn($column) => '(?:' . $this->possiblyQuotedIdentifierRegex($column) . ')',
                             $columns,
                         ),
                     );
