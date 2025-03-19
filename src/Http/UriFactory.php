@@ -21,6 +21,7 @@ use Laminas\Diactoros\Uri;
 use Laminas\Diactoros\UriFactory as DiactorosUriFactory;
 use Psr\Http\Message\UriFactoryInterface;
 use Psr\Http\Message\UriInterface;
+use RuntimeException;
 use function Laminas\Diactoros\marshalHeadersFromSapi;
 
 /**
@@ -170,6 +171,9 @@ class UriFactory implements UriFactoryInterface
         $webrootDir = $base . '/';
 
         $docRoot = $server['DOCUMENT_ROOT'] ?? null;
+        if ($docRoot === null) {
+            throw new RuntimeException("`\$server['DOCUMENT_ROOT']` cannot be null");
+        }
         if (
             ($base || $docRoot && !str_contains($docRoot, $webroot))
             && !str_contains($webrootDir, '/' . $webroot . '/')
