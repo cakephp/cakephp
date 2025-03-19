@@ -49,7 +49,8 @@ class UriFactory implements UriFactoryInterface
      */
     public static function marshalUriAndBaseFromSapi(?array $server = null): array
     {
-        $server ??= $_SERVER;
+        $server += $_SERVER;
+        $server = normalizeServer($server);
         $headers = marshalHeadersFromSapi($server);
 
         $uri = DiactorosUriFactory::createFromSapi($server, $headers);
