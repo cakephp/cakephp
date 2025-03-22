@@ -24,6 +24,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
+use TestApp\Routing\Route\AddQueryParamRoute;
 
 class RouteCollectionTest extends TestCase
 {
@@ -138,8 +139,8 @@ class RouteCollectionTest extends TestCase
             $this->assertEquals($expected, $result);
         });
     }
-
     /**
+
      * Test parse() handling query strings.
      */
     public function testParseQueryString(): void
@@ -348,6 +349,31 @@ class RouteCollectionTest extends TestCase
             'plugin' => null,
             '_matchedRoute' => '/{id}',
             '?' => ['one' => 'two'],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test parseRequest() handling query strings.
+     */
+    public function testParseRequestQueryStringFromRoute(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect(
+            '/test',
+            ['controller' => 'Articles', 'action' => 'view'],
+            ['routeClass' => AddQueryParamRoute::class],
+        );
+        $request = new ServerRequest(['url' => '/test?y=2']);
+        $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'view',
+            'pass' => [],
+            'plugin' => null,
+            '_matchedRoute' => '/test',
+            '?' => ['x' => '1', 'y' => '2'],
         ];
         $this->assertEquals($expected, $result);
     }

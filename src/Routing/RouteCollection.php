@@ -225,7 +225,7 @@ class RouteCollection
                 }
                 if ($uri->getQuery()) {
                     parse_str($uri->getQuery(), $queryParameters);
-                    $r['?'] = $queryParameters;
+                    $r['?'] = array_merge($r['?'] ?? [], $queryParameters);
                 }
 
                 return $r;
