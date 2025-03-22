@@ -139,8 +139,8 @@ class RouteCollectionTest extends TestCase
             $this->assertEquals($expected, $result);
         });
     }
-    /**
 
+    /**
      * Test parse() handling query strings.
      */
     public function testParseQueryString(): void
