@@ -4279,7 +4279,7 @@ class TableTest extends TestCase
 
         $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertEquals($article->tags[2]->id, $tags[0]->id);
-        $this->assertEqualsCanonicalizing($article->tags[3], $tags[1]);
+        $this->assertEqualsCanonicalizing($article->tags[3]->toArray(), $tags[1]->toArray());
     }
 
     /**

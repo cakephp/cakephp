@@ -800,7 +800,7 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertNotEmpty($entity->author->name);
 
         $expected = $table->get(1, ...['contain' => ['Authors']]);
-        $this->assertEqualsCanonicalizing($expected, $result);
+        $this->assertEqualsCanonicalizing($expected->toArray(), $result->toArray());
         $this->assertNotEmpty($entity->author);
         $this->assertNotEmpty($entity->author->name);
     }

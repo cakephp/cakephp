@@ -1801,7 +1801,7 @@ class MarshallerTest extends TestCase
         $this->assertCount(1, $result->comments);
         $this->assertTrue($result->isDirty('comments'), 'Updated prop should be dirty');
         $this->assertInstanceOf(Entity::class, $result->comments[0]);
-        $this->assertNotEquals('Nope', $result->comments[0]);
+        $this->assertNotEquals('Nope', $result->comments[0]->comment);
     }
 
     /**
