@@ -33,6 +33,7 @@ use PHPUnit\Framework\AssertionFailedError;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestStatus\Skipped;
 use PHPUnit\Framework\TestStatus\Success;
+use PHPUnit\Runner\Version;
 use TestApp\Model\Entity\Tag;
 use TestApp\Model\Table\PostsTable;
 use TestApp\Model\Table\SecondaryPostsTable;
@@ -374,6 +375,8 @@ class TestCaseTest extends TestCase
      */
     public function testGetMockForModel(): void
     {
+        $this->skipIf(version_compare(Version::id(), '12.0.0', '>='), 'This test is not compatible with PHPUnit 12');
+
         static::setAppNamespace();
         // No methods will be mocked if $methods argument of getMockForModel() is empty.
         $Posts = $this->getMockForModel('Posts');

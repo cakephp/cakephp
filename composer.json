@@ -58,11 +58,10 @@
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "^5.2",
-        "http-interop/http-factory-tests": "^2.0",
         "mikey179/vfsstream": "^1.6.10",
         "mockery/mockery": "^1.6",
         "paragonie/csp-builder": "^2.3 || ^3.0",
-        "phpunit/phpunit": "^10.5.5 || ^11.1.3"
+        "phpunit/phpunit": "^10.5.5 || ^11.1.3 || ^12.0.9"
     },
     "suggest": {
         "ext-curl": "To enable more efficient network calls in Http\\Client.",
