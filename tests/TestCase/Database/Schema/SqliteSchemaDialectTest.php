@@ -454,6 +454,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'field1' => [
                 'type' => 'string',

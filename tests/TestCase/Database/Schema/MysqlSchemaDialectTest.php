@@ -449,6 +449,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created_with_precision' => [
                 'type' => 'datetimefractional',
@@ -457,6 +458,7 @@ SQL;
                 'length' => null,
                 'precision' => 3,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'updated' => [
                 'type' => 'datetime',
@@ -465,6 +467,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'onUpdate' => 'CURRENT_TIMESTAMP',
             ],
         ];
 
@@ -486,10 +489,6 @@ SQL;
                 'Field definition does not match for ' . $field,
             );
         }
-
-        // Compare with describeColumns which has some more platform specific keys
-        // that are also public API.
-        $expected['updated']['onUpdate'] = 'CURRENT_TIMESTAMP';
 
         $columns = $dialect->describeColumns('schema_articles');
         foreach ($columns as $column) {
@@ -1100,6 +1099,16 @@ SQL;
                 ['type' => 'timestampfractional', 'precision' => 3, 'null' => false, 'default' => 'current_timestamp'],
                 '`created_with_precision` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)',
             ],
+            [
+                'updated',
+                [
+                    'type' => 'timestamp',
+                    'null' => false,
+                    'default' => 'CURRENT_TIMESTAMP',
+                    'onUpdate' => 'CURRENT_TIMESTAMP',
+                ],
+                '`updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+            ],
             // Geospatial types
             [
                 'g',
@@ -1151,10 +1160,13 @@ SQL;
     public function testColumnSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchemaDialect($driver);
+        $dialect = new MysqlSchemaDialect($driver);
 
         $table = (new TableSchema('articles'))->addColumn($name, $data);
-        $this->assertEquals($expected, $schema->columnSql($table, $name));
+        $this->assertEquals($expected, $dialect->columnSql($table, $name));
+
+        $data['name'] = $name;
+        $this->assertEquals($expected, $dialect->columnDefinitionSql($data));
     }
 
     /**

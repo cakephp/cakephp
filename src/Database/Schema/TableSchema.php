@@ -179,6 +179,21 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         'polygon' => [
             'srid' => null,
         ],
+        'datetime' => [
+            'onUpdate' => null,
+        ],
+        'datetimefractional' => [
+            'onUpdate' => null,
+        ],
+        'timestamp' => [
+            'onUpdate' => null,
+        ],
+        'timestampfractional' => [
+            'onUpdate' => null,
+        ],
+        'timestamptimezone' => [
+            'onUpdate' => null,
+        ],
     ];
 
     /**

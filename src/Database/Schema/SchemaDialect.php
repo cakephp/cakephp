@@ -356,6 +356,25 @@ abstract class SchemaDialect
     abstract public function truncateTableSql(TableSchema $schema): array;
 
     /**
+     * Create a SQL snippet for a column based on the array shape
+     * that `describeColumns()` creates.
+     *
+     * @param array $data The column metadata
+     * @return string Generated SQL fragment for a column
+     */
+    public function columnDefinitionSql(array $column): string
+    {
+        deprecationWarning(
+            '5.2.0',
+            'SchemaDialect subclasses need to implement `columnDefinitionSql` before 6.0.0',
+        );
+        $table = new TableSchema('placeholder');
+        $table->addColumn($column['name'], $column);
+
+        return $this->columnSql($table, $column['name']);
+    }
+
+    /**
      * Get the list of tables, excluding any views, available in the current connection.
      *
      * @return array<string> The list of tables in the connected database/schema.

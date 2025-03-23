@@ -466,6 +466,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created2' => [
                 'type' => 'datetimefractional',
@@ -474,6 +475,7 @@ SQL;
                 'length' => null,
                 'precision' => 7,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created2_with_default' => [
                 'type' => 'datetimefractional',
@@ -482,6 +484,7 @@ SQL;
                 'length' => null,
                 'precision' => 7,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created2_with_precision' => [
                 'type' => 'datetimefractional',
@@ -490,6 +493,7 @@ SQL;
                 'length' => null,
                 'precision' => 3,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created2_without_precision' => [
                 'type' => 'datetime',
@@ -498,6 +502,7 @@ SQL;
                 'length' => null,
                 'precision' => 0,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'field1' => [
                 'type' => 'string',

@@ -458,6 +458,7 @@ SQL;
                 'length' => null,
                 'precision' => 6,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created_without_precision' => [
                 'type' => 'timestamp',
@@ -466,6 +467,7 @@ SQL;
                 'length' => null,
                 'precision' => 0,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created_with_precision' => [
                 'type' => 'timestampfractional',
@@ -474,6 +476,7 @@ SQL;
                 'length' => null,
                 'precision' => 3,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created_with_timezone' => [
                 'type' => 'timestamptimezone',
@@ -482,6 +485,7 @@ SQL;
                 'length' => null,
                 'precision' => 6,
                 'comment' => null,
+                'onUpdate' => null,
             ],
         ];
         $this->assertEquals(['id'], $result->getPrimaryKey());
@@ -583,6 +587,7 @@ SQL;
                 'length' => null,
                 'precision' => 6,
                 'comment' => null,
+                'onUpdate' => null,
             ],
         ];
         $this->assertEquals(['id'], $result->getPrimaryKey());
