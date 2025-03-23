@@ -581,6 +581,18 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test positional argument parsing.
+     */
+    public function testAddArgumentWithDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addArgument('name', ['help' => 'An argument', 'default' => 'foo']);
+        $args = $parser->arguments();
+        $this->assertEquals($parser, $result, 'Should return this');
+        $this->assertEquals('foo', $args[0]->defaultValue());
+    }
+
+    /**
      * Add arguments that were once considered the same
      */
     public function testAddArgumentDuplicate(): void
@@ -711,6 +723,21 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertEquals($expected, $result[1], 'Got the correct value.');
 
         $result = $parser->parse(['jose', 'coder'], $this->io);
+    }
+
+    /**
+     * test argument with default value.
+     */
+    public function testPositionalArgumentWithDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addArgument('name', ['help' => 'An argument', 'default' => 'foo']);
+
+        $result = $parser->parse(['bar'], $this->io);
+        $this->assertEquals(['bar'], $result[1], 'Got the correct value.');
+
+        $result = $parser->parse([], $this->io);
+        $this->assertEquals(['foo'], $result[1], 'Got the correct default value.');
     }
 
     /**
@@ -930,7 +957,7 @@ TEXT;
         ])->addOption('connection', [
             'help' => 'Db connection.',
             'short' => 'c',
-        ])->addArgument('name', ['required' => false]);
+        ])->addArgument('name', ['required' => false, 'default' => 'foo']);
 
         $result = $parser->help('build');
         $expected = <<<TEXT
@@ -948,7 +975,7 @@ cake mycommand build [-c] [-h] [-q] [-v] [<name>]
 
 <info>Arguments:</info>
 
-name   <comment>(optional)</comment>
+name   <comment>(optional)</comment> <comment>default: "foo"</comment>
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');
@@ -1191,7 +1218,7 @@ TEXT;
         $spec = [
             'command' => 'test',
             'arguments' => [
-                'name' => ['help' => 'The name'],
+                'name' => ['help' => 'The name', 'default' => 'foo'],
                 'other' => ['help' => 'The other arg'],
             ],
             'options' => [

@@ -310,7 +310,7 @@ xml;
                 'choices' => ['aco', 'aro'],
                 'required' => true,
             ])
-            ->addArgument('other_longer', ['help' => 'Another argument.']);
+            ->addArgument('other_longer', ['help' => 'Another argument.', 'default' => 'foo']);
 
         $formatter = new HelpFormatter($parser);
         $result = $formatter->xml();
@@ -340,7 +340,7 @@ xml;
 			<choice>aro</choice>
 		</choices>
 	</argument>
-	<argument name="other_longer" help="Another argument." required="0">
+	<argument name="other_longer" help="Another argument." required="0" default="foo">
 		<choices></choices>
 	</argument>
 </arguments>
