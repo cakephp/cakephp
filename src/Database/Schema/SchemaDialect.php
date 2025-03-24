@@ -359,7 +359,7 @@ abstract class SchemaDialect
      * Create a SQL snippet for a column based on the array shape
      * that `describeColumns()` creates.
      *
-     * @param array $data The column metadata
+     * @param array $column The column metadata
      * @return string Generated SQL fragment for a column
      */
     public function columnDefinitionSql(array $column): string
