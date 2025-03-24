@@ -680,6 +680,42 @@ class SqliteSchemaDialect extends SchemaDialect
             return $sql;
         }
 
+        $data['name'] = $name;
+        $autoIncrementTypes = [
+            TableSchemaInterface::TYPE_TINYINTEGER,
+            TableSchemaInterface::TYPE_SMALLINTEGER,
+            TableSchemaInterface::TYPE_INTEGER,
+            TableSchemaInterface::TYPE_BIGINTEGER,
+        ];
+        $primaryKey = $schema->getPrimaryKey();
+        if (
+            in_array($data['type'], $autoIncrementTypes, true) &&
+            $primaryKey === [$name]
+        ) {
+            $data['autoIncrement'] = true;
+        }
+        // Composite autoincrement columns are not supported.
+        if (count($primaryKey) > 1) {
+            unset($data['autoIncrement']);
+        }
+
+        return $this->columnDefinitionSql($data);
+    }
+
+    /**
+     * Create a SQL snippet for a column based on the array shape
+     * that `describeColumns()` creates.
+     *
+     * @param array $column The column metadata
+     * @return string Generated SQL fragment for a column
+     */
+    public function columnDefinitionSql(array $column): string
+    {
+        $name = $column['name'];
+        $column += [
+            'length' => null,
+            'precision' => null,
+        ];
         $typeMap = [
             TableSchemaInterface::TYPE_BINARY_UUID => ' BINARY(16)',
             TableSchemaInterface::TYPE_UUID => ' CHAR(36)',
@@ -715,44 +751,45 @@ class SqliteSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_DECIMAL,
         ];
 
+        $autoIncrement = (bool)($column['autoIncrement'] ?? false);
         if (
-            in_array($data['type'], $hasUnsigned, true) &&
-            isset($data['unsigned']) &&
-            $data['unsigned'] === true &&
-            ($data['type'] !== TableSchemaInterface::TYPE_INTEGER || $schema->getPrimaryKey() !== [$name])
+            in_array($column['type'], $hasUnsigned, true) &&
+            isset($column['unsigned']) &&
+            $column['unsigned'] === true &&
+            ($column['type'] !== TableSchemaInterface::TYPE_INTEGER && $autoIncrement !== true)
         ) {
             $out .= ' UNSIGNED';
         }
 
-        if (isset($typeMap[$data['type']])) {
-            $out .= $typeMap[$data['type']];
+        if (isset($typeMap[$column['type']])) {
+            $out .= $typeMap[$column['type']];
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
+        if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_CHAR) {
-            $out .= '(' . $data['length'] . ')';
+        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
+            $out .= '(' . $column['length'] . ')';
         }
 
         if (
-            $data['type'] === TableSchemaInterface::TYPE_STRING ||
+            $column['type'] === TableSchemaInterface::TYPE_STRING ||
             (
-                $data['type'] === TableSchemaInterface::TYPE_TEXT &&
-                $data['length'] === TableSchema::LENGTH_TINY
+                $column['type'] === TableSchemaInterface::TYPE_TEXT &&
+                $column['length'] === TableSchema::LENGTH_TINY
             )
         ) {
             $out .= ' VARCHAR';
 
-            if (isset($data['length'])) {
-                $out .= '(' . $data['length'] . ')';
+            if (isset($column['length'])) {
+                $out .= '(' . $column['length'] . ')';
             }
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_BINARY) {
-            if (isset($data['length'])) {
-                $out .= ' BLOB(' . $data['length'] . ')';
+        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
+            if (isset($column['length'])) {
+                $out .= ' BLOB(' . $column['length'] . ')';
             } else {
                 $out .= ' BLOB';
             }
@@ -764,34 +801,30 @@ class SqliteSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_INTEGER,
         ];
         if (
-            in_array($data['type'], $integerTypes, true) &&
-            isset($data['length']) &&
-            $schema->getPrimaryKey() !== [$name]
+            in_array($column['type'], $integerTypes, true) &&
+            isset($column['length']) && $autoIncrement !== true
         ) {
-            $out .= '(' . (int)$data['length'] . ')';
+            $out .= '(' . (int)$column['length'] . ')';
         }
 
         $hasPrecision = [TableSchemaInterface::TYPE_FLOAT, TableSchemaInterface::TYPE_DECIMAL];
         if (
-            in_array($data['type'], $hasPrecision, true) &&
+            in_array($column['type'], $hasPrecision, true) &&
             (
-                isset($data['length']) ||
-                isset($data['precision'])
+                isset($column['length']) ||
+                isset($column['precision'])
             )
         ) {
-            $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
+            $out .= '(' . (int)$column['length'] . ',' . (int)$column['precision'] . ')';
         }
 
-        if (isset($data['null']) && $data['null'] === false) {
+        if (isset($column['null']) && $column['null'] === false) {
             $out .= ' NOT NULL';
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_INTEGER && $schema->getPrimaryKey() === [$name]) {
-            $out .= ' PRIMARY KEY';
-            if (($name === 'id' || $data['autoIncrement']) && $data['autoIncrement'] !== false) {
-                $out .= ' AUTOINCREMENT';
-                unset($data['default']);
-            }
+        if ($column['type'] === TableSchemaInterface::TYPE_INTEGER && $autoIncrement) {
+            $out .= ' PRIMARY KEY AUTOINCREMENT';
+            unset($column['default']);
         }
 
         $timestampTypes = [
@@ -801,11 +834,11 @@ class SqliteSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL,
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
-        if (isset($data['null']) && $data['null'] === true && in_array($data['type'], $timestampTypes, true)) {
+        if (isset($column['null']) && $column['null'] === true && in_array($column['type'], $timestampTypes, true)) {
             $out .= ' DEFAULT NULL';
         }
-        if (isset($data['default'])) {
-            $out .= ' DEFAULT ' . $this->_driver->schemaValue($data['default']);
+        if (isset($column['default'])) {
+            $out .= ' DEFAULT ' . $this->_driver->schemaValue($column['default']);
         }
 
         return $out;
