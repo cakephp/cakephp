@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Cache\Engine;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\NullEngine;
 use Cake\TestSuite\TestCase;
+use Exception;
 
 /**
  * ArrayEngineTest class
@@ -56,7 +57,7 @@ class NullEngineTest extends TestCase
             'key3' => null,
         ], $result1);
 
-        $e = new \Exception('Cache key not found');
+        $e = new Exception('Cache key not found');
         $result2 = Cache::pool('null')->getMultiple($keys, $e);
 
         $this->assertSame([
