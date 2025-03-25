@@ -1120,6 +1120,9 @@ SQL;
 
         $table = (new TableSchema('schema_articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
+
+        $data['name'] = $name;
+        $this->assertEquals($expected, $schema->columnDefinitionSql($data));
     }
 
     /**

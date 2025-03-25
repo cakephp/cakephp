@@ -609,12 +609,39 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $data = $schema->getColumn($name);
         assert($data !== null);
+        $data['name'] = $name;
 
         $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
             return $sql;
         }
+        $autoIncrementTypes = [
+            TableSchemaInterface::TYPE_TINYINTEGER,
+            TableSchemaInterface::TYPE_SMALLINTEGER,
+            TableSchemaInterface::TYPE_INTEGER,
+            TableSchemaInterface::TYPE_BIGINTEGER,
+        ];
+        $primaryKey = $schema->getPrimaryKey();
+        if (
+            in_array($data['type'], $autoIncrementTypes, true) &&
+            $primaryKey === [$name]
+        ) {
+            $data['autoIncrement'] = true;
+        }
 
+        return $this->columnDefinitionSql($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function columnDefinitionSql(array $column): string
+    {
+        $name = $column['name'];
+        $column += [
+            'length' => null,
+            'precision' => null,
+        ];
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
             TableSchemaInterface::TYPE_TINYINTEGER => ' SMALLINT',
@@ -648,41 +675,40 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_INTEGER,
             TableSchemaInterface::TYPE_BIGINTEGER,
         ];
+        $autoIncrement = (bool)($column['autoIncrement'] ?? false);
         if (
-            in_array($data['type'], $autoIncrementTypes, true) &&
-            (
-                ($schema->getPrimaryKey() === [$name] && $name === 'id') || $data['autoIncrement']
-            )
+            in_array($column['type'], $autoIncrementTypes, true) &&
+            $autoIncrement
         ) {
-            $typeMap[$data['type']] = str_replace('INT', 'SERIAL', $typeMap[$data['type']]);
-            unset($data['default']);
+            $typeMap[$column['type']] = str_replace('INT', 'SERIAL', $typeMap[$column['type']]);
+            unset($column['default']);
         }
 
-        if (isset($typeMap[$data['type']])) {
-            $out .= $typeMap[$data['type']];
+        if (isset($typeMap[$column['type']])) {
+            $out .= $typeMap[$column['type']];
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
+        if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
         }
-        if ($data['type'] === TableSchemaInterface::TYPE_BINARY) {
+        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
             $out .= ' BYTEA';
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_CHAR) {
-            $out .= '(' . $data['length'] . ')';
+        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
+            $out .= '(' . $column['length'] . ')';
         }
 
         if (
-            $data['type'] === TableSchemaInterface::TYPE_STRING ||
+            $column['type'] === TableSchemaInterface::TYPE_STRING ||
             (
-                $data['type'] === TableSchemaInterface::TYPE_TEXT &&
-                $data['length'] === TableSchema::LENGTH_TINY
+                $column['type'] === TableSchemaInterface::TYPE_TEXT &&
+                $column['length'] === TableSchema::LENGTH_TINY
             )
         ) {
             $out .= ' VARCHAR';
-            if (isset($data['length']) && $data['length'] !== '') {
-                $out .= '(' . $data['length'] . ')';
+            if (isset($column['length']) && $column['length'] !== '') {
+                $out .= '(' . $column['length'] . ')';
             }
         }
 
@@ -691,8 +717,8 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_STRING,
             TableSchemaInterface::TYPE_CHAR,
         ];
-        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
-            $out .= ' COLLATE "' . $data['collate'] . '"';
+        if (in_array($column['type'], $hasCollate, true) && isset($column['collate']) && $column['collate'] !== '') {
+            $out .= ' COLLATE "' . $column['collate'] . '"';
         }
 
         $hasPrecision = [
@@ -703,24 +729,24 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL,
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
-        if (in_array($data['type'], $hasPrecision) && isset($data['precision'])) {
-            $out .= '(' . $data['precision'] . ')';
+        if (in_array($column['type'], $hasPrecision) && isset($column['precision'])) {
+            $out .= '(' . $column['precision'] . ')';
         }
 
         if (
-            $data['type'] === TableSchemaInterface::TYPE_DECIMAL &&
+            $column['type'] === TableSchemaInterface::TYPE_DECIMAL &&
             (
-                isset($data['length']) ||
-                isset($data['precision'])
+                isset($column['length']) ||
+                isset($column['precision'])
             )
         ) {
-            $out .= '(' . $data['length'] . ',' . (int)$data['precision'] . ')';
+            $out .= '(' . $column['length'] . ',' . (int)$column['precision'] . ')';
         }
-        if (in_array($data['type'], TableSchemaInterface::GEOSPATIAL_TYPES)) {
-            $out = sprintf($out, $data['srid'] ?? self::DEFAULT_SRID);
+        if (in_array($column['type'], TableSchemaInterface::GEOSPATIAL_TYPES)) {
+            $out = sprintf($out, $column['srid'] ?? self::DEFAULT_SRID);
         }
 
-        if (isset($data['null']) && $data['null'] === false) {
+        if (isset($column['null']) && $column['null'] === false) {
             $out .= ' NOT NULL';
         }
 
@@ -732,18 +758,18 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
         if (
-            isset($data['default']) &&
-            in_array($data['type'], $datetimeTypes) &&
-            strtolower($data['default']) === 'current_timestamp'
+            isset($column['default']) &&
+            in_array($column['type'], $datetimeTypes) &&
+            strtolower($column['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
-        } elseif (isset($data['default'])) {
-            $defaultValue = $data['default'];
-            if ($data['type'] === 'boolean') {
+        } elseif (isset($column['default'])) {
+            $defaultValue = $column['default'];
+            if ($column['type'] === 'boolean') {
                 $defaultValue = (bool)$defaultValue;
             }
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($defaultValue);
-        } elseif (isset($data['null']) && $data['null'] !== false) {
+        } elseif (isset($column['null']) && $column['null'] !== false) {
             $out .= ' DEFAULT NULL';
         }
 
