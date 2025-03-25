@@ -581,12 +581,39 @@ class SqlserverSchemaDialect extends SchemaDialect
     {
         $data = $schema->getColumn($name);
         assert($data !== null);
+        $data['name'] = $name;
 
         $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
             return $sql;
         }
+        $autoIncrementTypes = [
+            TableSchemaInterface::TYPE_TINYINTEGER,
+            TableSchemaInterface::TYPE_SMALLINTEGER,
+            TableSchemaInterface::TYPE_INTEGER,
+            TableSchemaInterface::TYPE_BIGINTEGER,
+        ];
+        $primaryKey = $schema->getPrimaryKey();
+        if (
+            in_array($data['type'], $autoIncrementTypes, true) &&
+            $primaryKey === [$name]
+        ) {
+            $data['autoIncrement'] = true;
+        }
 
+        return $this->columnDefinitionSql($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function columnDefinitionSql(array $column): string
+    {
+        $name = $column['name'];
+        $column += [
+            'length' => null,
+            'precision' => null,
+        ];
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
             TableSchemaInterface::TYPE_TINYINTEGER => ' TINYINT',
@@ -614,8 +641,8 @@ class SqlserverSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_POLYGON => ' GEOGRAPHY',
         ];
 
-        if (isset($typeMap[$data['type']])) {
-            $out .= $typeMap[$data['type']];
+        if (isset($typeMap[$column['type']])) {
+            $out .= $typeMap[$column['type']];
         }
 
         $autoIncrementTypes = [
@@ -624,50 +651,49 @@ class SqlserverSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_INTEGER,
             TableSchemaInterface::TYPE_BIGINTEGER,
         ];
+        $autoIncrement = (bool)($column['autoIncrement'] ?? false);
         if (
-            in_array($data['type'], $autoIncrementTypes, true) &&
-            (
-                ($schema->getPrimaryKey() === [$name] && $name === 'id') || $data['autoIncrement']
-            )
+            in_array($column['type'], $autoIncrementTypes, true) &&
+            $autoIncrement
         ) {
             $out .= ' IDENTITY(1, 1)';
-            unset($data['default']);
+            unset($column['default']);
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
+        if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' NVARCHAR(MAX)';
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_CHAR) {
-            $out .= '(' . $data['length'] . ')';
+        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
+            $out .= '(' . $column['length'] . ')';
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_BINARY) {
+        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
             if (
-                !isset($data['length'])
-                || in_array($data['length'], [TableSchema::LENGTH_MEDIUM, TableSchema::LENGTH_LONG], true)
+                !isset($column['length'])
+                || in_array($column['length'], [TableSchema::LENGTH_MEDIUM, TableSchema::LENGTH_LONG], true)
             ) {
-                $data['length'] = 'MAX';
+                $column['length'] = 'MAX';
             }
 
-            if ($data['length'] === 1) {
+            if ($column['length'] === 1) {
                 $out .= ' BINARY(1)';
             } else {
                 $out .= ' VARBINARY';
 
-                $out .= sprintf('(%s)', $data['length']);
+                $out .= sprintf('(%s)', $column['length']);
             }
         }
 
         if (
-            $data['type'] === TableSchemaInterface::TYPE_STRING ||
+            $column['type'] === TableSchemaInterface::TYPE_STRING ||
             (
-                $data['type'] === TableSchemaInterface::TYPE_TEXT &&
-                $data['length'] === TableSchema::LENGTH_TINY
+                $column['type'] === TableSchemaInterface::TYPE_TEXT &&
+                $column['length'] === TableSchema::LENGTH_TINY
             )
         ) {
             $type = ' NVARCHAR';
-            $length = $data['length'] ?? TableSchema::LENGTH_TINY;
+            $length = $column['length'] ?? TableSchema::LENGTH_TINY;
             $out .= sprintf('%s(%d)', $type, $length);
         }
 
@@ -676,8 +702,8 @@ class SqlserverSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_STRING,
             TableSchemaInterface::TYPE_CHAR,
         ];
-        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
-            $out .= ' COLLATE ' . $data['collate'];
+        if (in_array($column['type'], $hasCollate, true) && isset($column['collate']) && $column['collate'] !== '') {
+            $out .= ' COLLATE ' . $column['collate'];
         }
 
         $precisionTypes = [
@@ -687,21 +713,21 @@ class SqlserverSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP,
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL,
         ];
-        if (in_array($data['type'], $precisionTypes, true) && isset($data['precision'])) {
-            $out .= '(' . (int)$data['precision'] . ')';
+        if (in_array($column['type'], $precisionTypes, true) && isset($column['precision'])) {
+            $out .= '(' . (int)$column['precision'] . ')';
         }
 
         if (
-            $data['type'] === TableSchemaInterface::TYPE_DECIMAL &&
+            $column['type'] === TableSchemaInterface::TYPE_DECIMAL &&
             (
-                isset($data['length']) ||
-                isset($data['precision'])
+                isset($column['length']) ||
+                isset($column['precision'])
             )
         ) {
-            $out .= '(' . (int)$data['length'] . ',' . (int)$data['precision'] . ')';
+            $out .= '(' . (int)$column['length'] . ',' . (int)$column['precision'] . ')';
         }
 
-        if (isset($data['null']) && $data['null'] === false) {
+        if (isset($column['null']) && $column['null'] === false) {
             $out .= ' NOT NULL';
         }
 
@@ -720,17 +746,17 @@ class SqlserverSchemaDialect extends SchemaDialect
             'sysdatetimeoffset()',
         ];
         if (
-            isset($data['default']) &&
-            in_array($data['type'], $dateTimeTypes, true) &&
-            in_array(strtolower($data['default']), $dateTimeDefaults, true)
+            isset($column['default']) &&
+            in_array($column['type'], $dateTimeTypes, true) &&
+            in_array(strtolower($column['default']), $dateTimeDefaults, true)
         ) {
-            $out .= ' DEFAULT ' . strtoupper($data['default']);
-        } elseif (isset($data['default'])) {
-            $default = is_bool($data['default'])
-                ? (int)$data['default']
-                : $this->_driver->schemaValue($data['default']);
+            $out .= ' DEFAULT ' . strtoupper($column['default']);
+        } elseif (isset($column['default'])) {
+            $default = is_bool($column['default'])
+                ? (int)$column['default']
+                : $this->_driver->schemaValue($column['default']);
             $out .= ' DEFAULT ' . $default;
-        } elseif (isset($data['null']) && $data['null'] !== false) {
+        } elseif (isset($column['null']) && $column['null'] !== false) {
             $out .= ' DEFAULT NULL';
         }
 
