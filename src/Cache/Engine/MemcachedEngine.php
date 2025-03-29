@@ -365,7 +365,7 @@ class MemcachedEngine extends CacheEngine
         $values = $this->_Memcached->getMulti($cacheKeys);
         $return = [];
         foreach ($cacheKeys as $original => $prefixed) {
-            $return[$original] = $values[$prefixed] ?? $default;
+            $return[$original] = array_key_exists($prefixed, $values) ? $values[$prefixed] : $default;
         }
 
         return $return;
