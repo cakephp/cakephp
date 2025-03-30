@@ -118,7 +118,7 @@ use function Cake\Core\deprecationWarning;
  * @method $this setHeaders(array $headers) Sets headers for the message. {@see \Cake\Mailer\Message::setHeaders()}
  * @method $this addHeaders(array $headers) Add header for the message. {@see \Cake\Mailer\Message::addHeaders()}
  * @method $this getHeaders(array $include = []) Get list of headers. {@see \Cake\Mailer\Message::getHeaders()}
- * @method $this setEmailFormat($format) Sets email format. {@see \Cake\Mailer\Message::getHeaders()}
+ * @method $this setEmailFormat($format) Sets email format. {@see \Cake\Mailer\Message::setEmailFormat()}
  * @method string getEmailFormat() Gets email format. {@see \Cake\Mailer\Message::getEmailFormat()}
  * @method $this setMessageId($message) Sets message ID. {@see \Cake\Mailer\Message::setMessageId()}
  * @method string|bool getMessageId() Gets message ID. {@see \Cake\Mailer\Message::getMessageId()}
