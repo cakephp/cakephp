@@ -998,9 +998,9 @@ class Message implements JsonSerializable
      * in address header fields.
      *
      * @param array $address Addresses to format.
-     * @return array
+     * @return array<string>
      */
-    protected function formatAddress(array $address): array
+    public function formatAddress(array $address): array
     {
         $return = [];
         foreach ($address as $email => $alias) {
