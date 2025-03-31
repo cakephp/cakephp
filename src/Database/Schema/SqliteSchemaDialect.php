@@ -840,6 +840,9 @@ class SqliteSchemaDialect extends SchemaDialect
         if (isset($column['default'])) {
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($column['default']);
         }
+        if (isset($column['comment']) && $column['comment']) {
+            $out .= " /* {$column['comment']} */";
+        }
 
         return $out;
     }

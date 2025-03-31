@@ -917,8 +917,8 @@ SQL;
             // Text
             [
                 'body',
-                ['type' => 'text', 'null' => false],
-                '"body" TEXT NOT NULL',
+                ['type' => 'text', 'null' => false, 'comment' => 'a comment'],
+                '"body" TEXT NOT NULL /* a comment */',
             ],
             [
                 'body',
