@@ -64,7 +64,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-5.next": "5.2.x-dev"
+            "dev-5.x": "5.2.x-dev"
         }
     }
 }
