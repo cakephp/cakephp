@@ -109,7 +109,7 @@ class ReconnectStrategy implements RetryStrategyInterface
         }
 
         try {
-            $this->connection->connect();
+            $this->connection->getDriver()->connect();
             if ($this->connection->isQueryLoggingEnabled()) {
                 $this->connection->log('[RECONNECT]');
             }
