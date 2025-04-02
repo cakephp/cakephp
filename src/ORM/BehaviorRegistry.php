@@ -204,6 +204,24 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     }
 
     /**
+     * Set an object directly into the registry by name.
+     *
+     * @param string $name The name of the object to set in the registry.
+     * @param \Cake\ORM\Behavior $object instance to store in the registry
+     * @return $this
+     */
+    public function set(string $name, object $object)
+    {
+        parent::set($name, $object);
+
+        $methods = $this->_getMethods($object, get_class($object), $name);
+        $this->_methodMap += $methods['methods'];
+        $this->_finderMap += $methods['finders'];
+
+        return $this;
+    }
+
+    /**
      * Remove an object from the registry.
      *
      * If this registry has an event manager, the object will be detached from any events as well.
