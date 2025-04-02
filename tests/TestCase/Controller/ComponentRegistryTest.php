@@ -22,6 +22,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Container;
+use Cake\Core\Exception\CakeException;
 use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
@@ -262,9 +263,19 @@ class ComponentRegistryTest extends TestCase
      */
     public function testUnloadUnknown(): void
     {
-        $this->expectException(MissingComponentException::class);
-        $this->expectExceptionMessage('Component class `FooComponent` could not be found.');
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Object with alias `Foo` was not found in the registry.');
         $this->Components->unload('Foo');
+    }
+
+    public function testUnloadException(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage(
+            'Plugin prefixed names are not supported for ObjectRegistry::unload().'
+                . '  Use an alias without the plugin prefix.',
+        );
+        $this->Components->unload('Foo.Bar');
     }
 
     /**
@@ -281,6 +292,18 @@ class ComponentRegistryTest extends TestCase
         $this->assertEquals($this->Components, $result);
         $this->assertTrue(isset($this->Components->FormProtection), 'Should be present');
         $this->assertCount(1, $eventManager->listeners('Controller.startup'));
+    }
+
+    public function testSetException(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage(
+            'Plugin prefixed names are not supported for ObjectRegistry::set().'
+                . '  Use an alias without the plugin prefix.',
+        );
+
+        $other = new OtherComponent($this->Components);
+        $this->Components->set('TestPlugin.Other', $other);
     }
 
     /**

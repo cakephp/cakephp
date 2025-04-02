@@ -344,7 +344,12 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function set(string $name, object $object)
     {
-        [, $objName] = pluginSplit($name);
+        if (str_contains($name, '.')) {
+            throw new CakeException(
+                'Plugin prefixed names are not supported for ObjectRegistry::set().'
+                . '  Use an alias without the plugin prefix.',
+            );
+        }
 
         // Just call unload if the object was loaded before
         if (array_key_exists($name, $this->_loaded)) {
@@ -353,7 +358,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
         if ($this instanceof EventDispatcherInterface && $object instanceof EventListenerInterface) {
             $this->getEventManager()->on($object);
         }
-        $this->_loaded[$objName] = $object;
+        $this->_loaded[$name] = $object;
 
         return $this;
     }
@@ -368,9 +373,18 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function unload(string $name)
     {
-        if (empty($this->_loaded[$name])) {
-            [$plugin, $name] = pluginSplit($name);
-            $this->_throwMissingClassError($name, $plugin);
+        if (str_contains($name, '.')) {
+            throw new CakeException(
+                'Plugin prefixed names are not supported for ObjectRegistry::unload().'
+                . '  Use an alias without the plugin prefix.',
+            );
+        }
+
+        if (!isset($this->_loaded[$name])) {
+            throw new CakeException(sprintf(
+                'Object with alias `%s` was not found in the registry.',
+                $name,
+            ));
         }
 
         $object = $this->_loaded[$name];
