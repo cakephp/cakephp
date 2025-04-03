@@ -155,8 +155,8 @@ class Session
                     'session.use_trans_sid' => 0,
                     'session.serialize_handler' => 'php',
                     'session.use_cookies' => 1,
-                    'session.save_path' => (defined('TMP') ? TMP : sys_get_temp_dir())
-                        . DIRECTORY_SEPARATOR . 'sessions',
+                    'session.save_path' => (defined('TMP') ? TMP : sys_get_temp_dir() . DIRECTORY_SEPARATOR)
+                         . 'sessions',
                     'session.save_handler' => 'files',
                 ],
             ],
