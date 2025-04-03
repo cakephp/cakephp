@@ -77,4 +77,44 @@ class NumberHelperTest extends TestCase
         $helper = new NumberHelper($this->View);
         $this->assertNotNull($helper->{$method}($arg));
     }
+
+    /**
+     * test format() and empty values
+     */
+    public function testFormatEmpty(): void
+    {
+        $helper = new NumberHelper($this->View);
+
+        $value = null;
+        $result = $helper->format($value);
+        $this->assertSame('', $result);
+
+        $value = '';
+        $result = $helper->format($value);
+        $this->assertSame('0', $result); // Should be ''
+
+        $value = null;
+        $result = $helper->format($value, ['default' => '-']);
+        $this->assertSame('-', $result);
+    }
+
+    /**
+     * test format() and empty values
+     */
+    public function testCurrencyEmpty(): void
+    {
+        $helper = new NumberHelper($this->View);
+
+        $value = null;
+        $result = $helper->currency($value);
+        $this->assertSame('', $result);
+
+        $value = '';
+        $result = $helper->currency($value);
+        $this->assertSame('$0.00', $result); // Should be ''
+
+        $value = null;
+        $result = $helper->currency($value, null, ['default' => '-']);
+        $this->assertSame('-', $result);
+    }
 }

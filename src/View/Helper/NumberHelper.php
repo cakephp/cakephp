@@ -58,13 +58,17 @@ class NumberHelper extends Helper
      * - `after` - The string to place after decimal numbers, e.g. ']'
      * - `escape` - Whether to escape html in resulting string
      *
-     * @param string|float|int $number A floating point number.
+     * @param string|float|int|null $number A floating point number.
      * @param array<string, mixed> $options An array with options.
      * @return string Formatted number
      * @link https://book.cakephp.org/5/en/views/helpers/number.html#formatting-numbers
      */
-    public function format(string|float|int $number, array $options = []): string
+    public function format(string|float|int|null $number, array $options = []): string
     {
+        if ($number === null) {
+            return $options['default'] ?? '';
+        }
+
         $formatted = Number::format($number, $options);
         $options += ['escape' => true];
 
@@ -92,13 +96,17 @@ class NumberHelper extends Helper
      *   currency code.
      * - `escape` - Whether to escape html in resulting string
      *
-     * @param string|float $number Value to format.
+     * @param string|float|null $number Value to format.
      * @param string|null $currency International currency name such as 'USD', 'EUR', 'JPY', 'CAD'
      * @param array<string, mixed> $options Options list.
      * @return string Number formatted as a currency.
      */
-    public function currency(string|float $number, ?string $currency = null, array $options = []): string
+    public function currency(string|float|null $number, ?string $currency = null, array $options = []): string
     {
+        if ($number === null) {
+            return $options['default'] ?? '';
+        }
+
         $formatted = Number::currency($number, $currency, $options);
         $options += ['escape' => true];
 
