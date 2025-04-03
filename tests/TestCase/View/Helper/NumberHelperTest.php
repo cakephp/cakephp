@@ -91,7 +91,7 @@ class NumberHelperTest extends TestCase
 
         $value = '';
         $result = $helper->format($value);
-        $this->assertSame('0', $result); // Should be ''
+        $this->assertSame('', $result);
 
         $value = null;
         $result = $helper->format($value, ['default' => '-']);
@@ -99,7 +99,7 @@ class NumberHelperTest extends TestCase
     }
 
     /**
-     * test format() and empty values
+     * test currency() and empty values
      */
     public function testCurrencyEmpty(): void
     {
@@ -111,7 +111,7 @@ class NumberHelperTest extends TestCase
 
         $value = '';
         $result = $helper->currency($value);
-        $this->assertSame('$0.00', $result); // Should be ''
+        $this->assertSame('', $result);
 
         $value = null;
         $result = $helper->currency($value, null, ['default' => '-']);
