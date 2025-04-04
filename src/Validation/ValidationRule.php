@@ -20,6 +20,7 @@ declare(strict_types=1);
  */
 namespace Cake\Validation;
 
+use Cake\ORM\Table;
 use Closure;
 use ReflectionFunction;
 
@@ -121,6 +122,20 @@ class ValidationRule
 
         if (is_string($this->_rule)) {
             $provider = $providers[$this->_provider];
+            if (
+                class_exists(Table::class)
+                && $provider instanceof Table
+                && !method_exists($provider, $this->_rule)
+                && $provider->behaviors()->hasMethod($this->_rule)
+            ) {
+                foreach ($provider->behaviors() as $behavior) {
+                    if (in_array($this->_rule, $behavior->implementedMethods(), true)) {
+                        $provider = $behavior;
+                        break;
+                    }
+                }
+            }
+
             /** @phpstan-ignore-next-line */
             $callable = [$provider, $this->_rule](...);
         } else {

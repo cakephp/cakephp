@@ -3481,6 +3481,34 @@ class TableTest extends TestCase
     }
 
     /**
+     * https://github.com/cakephp/cakephp/issues/18273
+     */
+    public function testValidatorWithMethodInBehavior(): void
+    {
+        $table = new Table();
+        $table->addBehavior('Validation');
+
+        $table->getValidator('default')->add(
+            'name',
+            'customValidationRule',
+            ['rule' => 'customValidationRule', 'provider' => 'table'],
+        );
+
+        $result = $table->getValidator('default')->validate([
+            'name' => 'test',
+        ], true);
+
+        $this->assertSame(
+            [
+                'name' => [
+                    'customValidationRule' => 'The provided value is invalid',
+                ],
+            ],
+            $result,
+        );
+    }
+
+    /**
      * Tests that a InvalidArgumentException is thrown if the custom validator method does not exist.
      */
     public function testValidatorWithMissingMethod(): void
