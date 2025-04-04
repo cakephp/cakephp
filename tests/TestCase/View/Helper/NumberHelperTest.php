@@ -89,13 +89,13 @@ class NumberHelperTest extends TestCase
         $result = $helper->format($value);
         $this->assertSame('', $result);
 
-        $value = '';
-        $result = $helper->format($value);
-        $this->assertSame('', $result);
-
-        $value = null;
         $result = $helper->format($value, ['default' => '-']);
         $this->assertSame('-', $result);
+
+        // We should revisit this for 6.x
+        $value = '';
+        $result = $helper->format($value);
+        $this->assertSame('0', $result);
     }
 
     /**
@@ -109,12 +109,12 @@ class NumberHelperTest extends TestCase
         $result = $helper->currency($value);
         $this->assertSame('', $result);
 
-        $value = '';
-        $result = $helper->currency($value);
-        $this->assertSame('', $result);
-
-        $value = null;
         $result = $helper->currency($value, null, ['default' => '-']);
         $this->assertSame('-', $result);
+
+        // We should revisit this for 6.x
+        $value = '';
+        $result = $helper->currency($value);
+        $this->assertSame('$0.00', $result);
     }
 }

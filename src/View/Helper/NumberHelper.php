@@ -65,7 +65,7 @@ class NumberHelper extends Helper
      */
     public function format(string|float|int|null $number, array $options = []): string
     {
-        if ($number === null || $number === '') {
+        if ($number === null) {
             return $options['default'] ?? '';
         }
 
@@ -103,7 +103,7 @@ class NumberHelper extends Helper
      */
     public function currency(string|float|null $number, ?string $currency = null, array $options = []): string
     {
-        if ($number === null || $number === '') {
+        if ($number === null) {
             return $options['default'] ?? '';
         }
 
