@@ -600,41 +600,41 @@ HTML;
      */
     public function testFormatAddress(): void
     {
-        $result = $this->message->fmtAddress(['cake@cakephp.org' => 'cake@cakephp.org']);
+        $result = $this->message->formatAddress(['cake@cakephp.org' => 'cake@cakephp.org']);
         $expected = ['cake@cakephp.org'];
         $this->assertSame($expected, $result);
 
-        $result = $this->message->fmtAddress([
+        $result = $this->message->formatAddress([
             'cake@cakephp.org' => 'cake@cakephp.org',
             'php@cakephp.org' => 'php@cakephp.org',
         ]);
         $expected = ['cake@cakephp.org', 'php@cakephp.org'];
         $this->assertSame($expected, $result);
 
-        $result = $this->message->fmtAddress([
+        $result = $this->message->formatAddress([
             'cake@cakephp.org' => 'CakePHP',
             'php@cakephp.org' => 'Cake',
         ]);
         $expected = ['CakePHP <cake@cakephp.org>', 'Cake <php@cakephp.org>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->message->fmtAddress(['me@example.com' => 'Last, First']);
+        $result = $this->message->formatAddress(['me@example.com' => 'Last, First']);
         $expected = ['"Last, First" <me@example.com>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->message->fmtAddress(['me@example.com' => '"Last" First']);
+        $result = $this->message->formatAddress(['me@example.com' => '"Last" First']);
         $expected = ['"\"Last\" First" <me@example.com>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->message->fmtAddress(['me@example.com' => 'Last First']);
+        $result = $this->message->formatAddress(['me@example.com' => 'Last First']);
         $expected = ['Last First <me@example.com>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->message->fmtAddress(['cake@cakephp.org' => 'ÄÖÜTest']);
+        $result = $this->message->formatAddress(['cake@cakephp.org' => 'ÄÖÜTest']);
         $expected = ['=?UTF-8?B?w4TDlsOcVGVzdA==?= <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->message->fmtAddress(['cake@cakephp.org' => '日本語Test']);
+        $result = $this->message->formatAddress(['cake@cakephp.org' => '日本語Test']);
         $expected = ['=?UTF-8?B?5pel5pys6KqeVGVzdA==?= <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
     }
@@ -645,11 +645,11 @@ HTML;
     public function testFormatAddressJapanese(): void
     {
         $this->message->setHeaderCharset('ISO-2022-JP');
-        $result = $this->message->fmtAddress(['cake@cakephp.org' => '日本語Test']);
+        $result = $this->message->formatAddress(['cake@cakephp.org' => '日本語Test']);
         $expected = ['=?ISO-2022-JP?B?GyRCRnxLXDhsGyhCVGVzdA==?= <cake@cakephp.org>'];
         $this->assertSame($expected, $result);
 
-        $result = $this->message->fmtAddress(['cake@cakephp.org' => '寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末食う寝る処に住む処やぶら小路の藪柑子パイポパイポパイポのシューリンガンシューリンガンのグーリンダイグーリンダイのポンポコピーのポンポコナーの長久命の長助']);
+        $result = $this->message->formatAddress(['cake@cakephp.org' => '寿限無寿限無五劫の擦り切れ海砂利水魚の水行末雲来末風来末食う寝る処に住む処やぶら小路の藪柑子パイポパイポパイポのシューリンガンシューリンガンのグーリンダイグーリンダイのポンポコピーのポンポコナーの長久命の長助']);
         $expected = ["\"=?ISO-2022-JP?B?GyRCPHc4Qkw1PHc4Qkw1OF45ZSROOyQkakBaJGwzJDo9TXg/ZTV7GyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCJE4/ZTlUS3YxQE1oS3ZJd01oS3Y/KSQmPzIkaz1oJEs9OyRgGyhC?=\r\n" .
             " =?ISO-2022-JP?B?GyRCPWgkZCRWJGk+Lk8pJE5pLjQ7O1IlUSUkJV0lUSUkJV0lUSUkGyhC?=\r\n" .
