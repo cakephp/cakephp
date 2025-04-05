@@ -21,17 +21,17 @@ use Cake\TestSuite\TestCase;
 
 class MimeTypeTest extends TestCase
 {
-    public function testAll(): void
-    {
-        $list = MimeType::all();
-        $this->assertNotEmpty($list);
-    }
-
     public function testGetMimeTypes(): void
     {
         $this->assertSame(['text/html', '*/*'], MimeType::getMimeTypes('html'));
         $this->assertSame(['application/json'], MimeType::getMimeTypes('json'));
         $this->assertNull(MimeType::getMimeTypes('unknown'));
+    }
+
+    public function testGetMimeTypesAll(): void
+    {
+        $list = MimeType::getMimeTypes();
+        $this->assertNotEmpty($list);
     }
 
     public function testGetMimeType(): void
