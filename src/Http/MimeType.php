@@ -287,6 +287,14 @@ class MimeType
     ];
 
     /**
+     * @return array<string, array<string>>
+     */
+    public static function all(): array
+    {
+        return static::$mimeTypes;
+    }
+
+    /**
      * Get the MIME types associated with a given file extension.
      *
      * @param string $ext The file extension to look up.

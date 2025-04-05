@@ -21,6 +21,12 @@ use Cake\TestSuite\TestCase;
 
 class MimeTypeTest extends TestCase
 {
+    public function testAll(): void
+    {
+        $list = MimeType::all();
+        $this->assertNotEmpty($list);
+    }
+
     public function testGetMimeTypes(): void
     {
         $this->assertSame(['text/html', '*/*'], MimeType::getMimeTypes('html'));
