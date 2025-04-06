@@ -51,7 +51,7 @@ trait PluginAssetsTrait
      *   If null all plugins will be processed.
      * @return array<string, mixed> List of plugins with meta data.
      */
-    protected function _list(?string $name = null): array
+    protected function list(?string $name = null): array
     {
         if ($name === null) {
             $pluginsList = Plugin::loaded();
@@ -102,7 +102,7 @@ trait PluginAssetsTrait
      * @param bool $overwrite Overwrite existing files.
      * @return void
      */
-    protected function _process(array $plugins, bool $copy = false, bool $overwrite = false): void
+    protected function process(array $plugins, bool $copy = false, bool $overwrite = false): void
     {
         foreach ($plugins as $plugin => $config) {
             $this->io->out();
@@ -112,7 +112,7 @@ trait PluginAssetsTrait
             if (
                 $config['namespaced'] &&
                 !is_dir($config['destDir']) &&
-                !$this->_createDirectory($config['destDir'])
+                !$this->createDirectory($config['destDir'])
             ) {
                 continue;
             }
@@ -120,7 +120,7 @@ trait PluginAssetsTrait
             $dest = $config['destDir'] . $config['link'];
 
             if (file_exists($dest)) {
-                if ($overwrite && !$this->_remove($config)) {
+                if ($overwrite && !$this->remove($config)) {
                     continue;
                 }
                 if (!$overwrite) {
@@ -133,7 +133,7 @@ trait PluginAssetsTrait
             }
 
             if (!$copy) {
-                $result = $this->_createSymlink(
+                $result = $this->createSymlink(
                     $config['srcPath'],
                     $dest,
                 );
@@ -142,7 +142,7 @@ trait PluginAssetsTrait
                 }
             }
 
-            $this->_copyDirectory(
+            $this->copyDirectory(
                 $config['srcPath'],
                 $dest,
             );
@@ -158,7 +158,7 @@ trait PluginAssetsTrait
      * @param array<string, mixed> $config Plugin config.
      * @return bool
      */
-    protected function _remove(array $config): bool
+    protected function remove(array $config): bool
     {
         if ($config['namespaced'] && !is_dir($config['destDir'])) {
             $this->io->verbose(
@@ -210,7 +210,7 @@ trait PluginAssetsTrait
      * @param string $dir Directory name
      * @return bool
      */
-    protected function _createDirectory(string $dir): bool
+    protected function createDirectory(string $dir): bool
     {
         $old = umask(0);
         // phpcs:disable
@@ -236,7 +236,7 @@ trait PluginAssetsTrait
      * @param string $link Link name
      * @return bool
      */
-    protected function _createSymlink(string $target, string $link): bool
+    protected function createSymlink(string $target, string $link): bool
     {
         // phpcs:disable
         $result = @symlink($target, $link);
@@ -258,7 +258,7 @@ trait PluginAssetsTrait
      * @param string $destination Destination directory
      * @return bool
      */
-    protected function _copyDirectory(string $source, string $destination): bool
+    protected function copyDirectory(string $source, string $destination): bool
     {
         $fs = new Filesystem();
         if ($fs->copyDir($source, $destination)) {
