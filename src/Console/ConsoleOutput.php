@@ -221,7 +221,7 @@ class ConsoleOutput
             $message = implode(static::LF, $message);
         }
 
-        return $this->_write($this->styleText($message . str_repeat(static::LF, $newlines)));
+        return $this->writeMessage($this->styleText($message . str_repeat(static::LF, $newlines)));
     }
 
     /**
@@ -237,7 +237,7 @@ class ConsoleOutput
         }
         if ($this->_outputAs !== static::PLAIN) {
             /** @var \Closure $replaceTags */
-            $replaceTags = $this->_replaceTags(...);
+            $replaceTags = $this->replaceTags(...);
 
             $output = preg_replace_callback(
                 '/<(?P<tag>[a-z0-9-_.]+)>(?P<text>.*?)<\/(\1)>/ims',
@@ -261,7 +261,7 @@ class ConsoleOutput
      * @param array<string, string> $matches An array of matches to replace.
      * @return string
      */
-    protected function _replaceTags(array $matches): string
+    protected function replaceTags(array $matches): string
     {
         $style = $this->getStyle($matches['tag']);
         if (!$style) {
@@ -291,7 +291,7 @@ class ConsoleOutput
      * @param string $message Message to write.
      * @return int The number of bytes returned from writing to output.
      */
-    protected function _write(string $message): int
+    protected function writeMessage(string $message): int
     {
         if (!isset($this->_output)) {
             return 0;

@@ -568,16 +568,16 @@ class ConsoleOptionParser
             }
             if ($afterDoubleDash) {
                 // only positional arguments after --
-                $args = $this->_parseArg($token, $args);
+                $args = $this->parseArg($token, $args);
                 continue;
             }
 
             if (str_starts_with($token, '--')) {
-                $params = $this->_parseLongOption($token, $params);
+                $params = $this->parseLongOption($token, $params);
             } elseif (str_starts_with($token, '-')) {
-                $params = $this->_parseShortOption($token, $params);
+                $params = $this->parseShortOption($token, $params);
             } else {
-                $args = $this->_parseArg($token, $args);
+                $args = $this->parseArg($token, $args);
             }
         }
 
@@ -681,7 +681,7 @@ class ConsoleOptionParser
      * @param array<string, mixed> $params The params to append the parsed value into
      * @return array Params with $option added in.
      */
-    protected function _parseLongOption(string $option, array $params): array
+    protected function parseLongOption(string $option, array $params): array
     {
         $name = substr($option, 2);
         if (str_contains($name, '=')) {
@@ -689,7 +689,7 @@ class ConsoleOptionParser
             array_unshift($this->_tokens, $value);
         }
 
-        return $this->_parseOption($name, $params);
+        return $this->parseOption($name, $params);
     }
 
     /**
@@ -702,7 +702,7 @@ class ConsoleOptionParser
      * @return array<string, mixed> Params with $option added in.
      * @throws \Cake\Console\Exception\ConsoleException When unknown short options are encountered.
      */
-    protected function _parseShortOption(string $option, array $params): array
+    protected function parseShortOption(string $option, array $params): array
     {
         $key = substr($option, 1);
         if (strlen($key) > 1) {
@@ -725,7 +725,7 @@ class ConsoleOptionParser
         }
         $name = $this->_shortOptions[$key];
 
-        return $this->_parseOption($name, $params);
+        return $this->parseOption($name, $params);
     }
 
     /**
@@ -736,7 +736,7 @@ class ConsoleOptionParser
      * @return array<string, mixed> Params with $option added in.
      * @throws \Cake\Console\Exception\ConsoleException
      */
-    protected function _parseOption(string $name, array $params): array
+    protected function parseOption(string $name, array $params): array
     {
         if (!isset($this->_options[$name])) {
             throw new MissingOptionException(
@@ -747,9 +747,9 @@ class ConsoleOptionParser
         }
         $option = $this->_options[$name];
         $isBoolean = $option->isBoolean();
-        $nextValue = $this->_nextToken();
+        $nextValue = $this->nextToken();
         $emptyNextValue = (empty($nextValue) && $nextValue !== '0');
-        if (!$isBoolean && !$emptyNextValue && !$this->_optionExists($nextValue)) {
+        if (!$isBoolean && !$emptyNextValue && !$this->optionExists($nextValue)) {
             array_shift($this->_tokens);
             $value = $nextValue;
         } elseif ($isBoolean) {
@@ -778,7 +778,7 @@ class ConsoleOptionParser
      * @param string $name The name of the option.
      * @return bool
      */
-    protected function _optionExists(string $name): bool
+    protected function optionExists(string $name): bool
     {
         if (str_starts_with($name, '--')) {
             return isset($this->_options[substr($name, 2)]);
@@ -799,7 +799,7 @@ class ConsoleOptionParser
      * @return array<string> Args
      * @throws \Cake\Console\Exception\ConsoleException
      */
-    protected function _parseArg(string $argument, array $args): array
+    protected function parseArg(string $argument, array $args): array
     {
         if (!$this->_args) {
             $args[] = $argument;
@@ -833,7 +833,7 @@ class ConsoleOptionParser
      *
      * @return string next token or ''
      */
-    protected function _nextToken(): string
+    protected function nextToken(): string
     {
         return $this->_tokens[0] ?? '';
     }
