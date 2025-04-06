@@ -10,12 +10,12 @@ use Cake\Http\Session;
  */
 class TestWebSession extends Session
 {
-    protected function _hasSession(): bool
+    protected function hasSession(): bool
     {
         $isCLI = $this->_isCLI;
         $this->_isCLI = false;
 
-        $result = parent::_hasSession();
+        $result = parent::hasSession();
 
         $this->_isCLI = $isCLI;
 
