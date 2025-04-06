@@ -621,7 +621,7 @@ class ViewBuilder implements JsonSerializable
             $array[$property] = $this->{$property};
         }
 
-        array_walk_recursive($array['_vars'], $this->_checkViewVars(...));
+        array_walk_recursive($array['_vars'], $this->checkViewVars(...));
 
         return array_filter($array, function ($i) {
             return !is_array($i) && strlen((string)$i) || !empty($i);
@@ -636,7 +636,7 @@ class ViewBuilder implements JsonSerializable
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function _checkViewVars(mixed &$item, string $key): void
+    protected function checkViewVars(mixed &$item, string $key): void
     {
         if ($item instanceof Exception) {
             $item = (string)$item;

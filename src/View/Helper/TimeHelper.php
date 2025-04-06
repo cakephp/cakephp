@@ -53,7 +53,7 @@ class TimeHelper extends Helper
      * @param \DateTimeZone|string|null $timezone The override timezone if applicable.
      * @return \DateTimeZone|string|null The chosen timezone or null.
      */
-    protected function _getTimezone(DateTimeZone|string|null $timezone): DateTimeZone|string|null
+    protected function getTimezone(DateTimeZone|string|null $timezone): DateTimeZone|string|null
     {
         if ($timezone) {
             return $timezone;
@@ -94,7 +94,7 @@ class TimeHelper extends Helper
         DateTimeZone|string|null $timezone = null,
         ?string $locale = null,
     ): string {
-        $timezone = $this->_getTimezone($timezone);
+        $timezone = $this->getTimezone($timezone);
 
         return (new DateTime($dateString))->nice($timezone, $locale);
     }
@@ -253,7 +253,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): string {
-        $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
+        $timezone = $this->getTimezone($timezone) ?: date_default_timezone_get();
 
         return (new DateTime($dateString))->setTimezone($timezone)->toAtomString();
     }
@@ -269,7 +269,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): string {
-        $timezone = $this->_getTimezone($timezone) ?: date_default_timezone_get();
+        $timezone = $this->getTimezone($timezone) ?: date_default_timezone_get();
 
         return (new DateTime($dateString))->setTimezone($timezone)->toRssString();
     }
@@ -300,7 +300,7 @@ class TimeHelper extends Helper
             'element' => null,
             'timezone' => null,
         ];
-        $options['timezone'] = $this->_getTimezone($options['timezone']);
+        $options['timezone'] = $this->getTimezone($options['timezone']);
         if ($options['timezone'] && $dateTime instanceof DateTimeInterface) {
             if ($dateTime instanceof DateTime) {
                 $dateTime = clone $dateTime;
@@ -432,7 +432,7 @@ class TimeHelper extends Helper
         if ($date === null) {
             return $invalid;
         }
-        $timezone = $this->_getTimezone($timezone);
+        $timezone = $this->getTimezone($timezone);
 
         try {
             if ($date instanceof DateTime) {

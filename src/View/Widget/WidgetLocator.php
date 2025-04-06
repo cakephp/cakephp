@@ -167,7 +167,7 @@ class WidgetLocator
             return $this->_widgets[$name];
         }
 
-        return $this->_widgets[$name] = $this->_resolveWidget($this->_widgets[$name]);
+        return $this->_widgets[$name] = $this->resolveWidget($this->_widgets[$name]);
     }
 
     /**
@@ -187,7 +187,7 @@ class WidgetLocator
      * @return \Cake\View\Widget\WidgetInterface Widget instance.
      * @throws \InvalidArgumentException
      */
-    protected function _resolveWidget(array|string $config): WidgetInterface
+    protected function resolveWidget(array|string $config): WidgetInterface
     {
         if (is_string($config)) {
             $config = [$config];
