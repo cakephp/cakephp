@@ -451,7 +451,10 @@ class Validation
      */
     public static function date(mixed $check, array|string $format = 'ymd', ?string $regex = null): bool
     {
-        if ($check instanceof ChronosDate || $check instanceof DateTimeInterface) {
+        if (
+            (class_exists(ChronosDate::class) && $check instanceof ChronosDate)
+            || $check instanceof DateTimeInterface
+        ) {
             return true;
         }
         if (is_object($check)) {
@@ -616,7 +619,10 @@ class Validation
      */
     public static function time(mixed $check): bool
     {
-        if ($check instanceof ChronosTime || $check instanceof DateTimeInterface) {
+        if (
+            (class_exists(ChronosTime::class) && $check instanceof ChronosTime)
+            || $check instanceof DateTimeInterface
+        ) {
             return true;
         }
         if (is_array($check)) {
@@ -648,7 +654,16 @@ class Validation
      */
     public static function localizedTime(mixed $check, string $type = 'datetime', string|int|null $format = null): bool
     {
-        if ($check instanceof ChronosTime || $check instanceof DateTimeInterface) {
+        if (!class_exists(DateTime::class)) {
+            throw new CakeException(
+                'The Cake\I18n\DateTime class is not available. Install the cakephp/i18n package.',
+            );
+        }
+
+        if (
+            (class_exists(ChronosTime::class) && $check instanceof ChronosTime)
+            || $check instanceof DateTimeInterface
+        ) {
             return true;
         }
         if (!is_string($check)) {
@@ -990,7 +1005,7 @@ class Validation
      */
     public static function extension(mixed $check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
     {
-        if ($check instanceof UploadedFileInterface) {
+        if (interface_exists(UploadedFileInterface::class) && $check instanceof UploadedFileInterface) {
             $check = $check->getClientFilename();
         } elseif (is_array($check) && isset($check['name'])) {
             $check = $check['name'];
