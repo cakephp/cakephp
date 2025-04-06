@@ -32,20 +32,20 @@ class SyslogLogTest extends TestCase
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)
-            ->onlyMethods(['_open', '_write'])
+            ->onlyMethods(['open', 'write'])
             ->getMock();
-        $log->expects($this->once())->method('_open')->with('', LOG_ODELAY, LOG_USER);
+        $log->expects($this->once())->method('open')->with('', LOG_ODELAY, LOG_USER);
         $log->log('debug', 'message');
 
         $log = $this->getMockBuilder(SyslogLog::class)
-            ->onlyMethods(['_open', '_write'])
+            ->onlyMethods(['open', 'write'])
             ->getMock();
         $log->setConfig([
             'prefix' => 'thing',
             'flag' => LOG_NDELAY,
             'facility' => LOG_MAIL,
         ]);
-        $log->expects($this->once())->method('_open')
+        $log->expects($this->once())->method('open')
             ->with('thing', LOG_NDELAY, LOG_MAIL);
         $log->log('debug', 'message');
     }
@@ -58,9 +58,9 @@ class SyslogLogTest extends TestCase
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)
-            ->onlyMethods(['_open', '_write'])
+            ->onlyMethods(['open', 'write'])
             ->getMock();
-        $log->expects($this->once())->method('_write')->with($expected, $type . ': Foo');
+        $log->expects($this->once())->method('write')->with($expected, $type . ': Foo');
         $log->log($type, 'Foo');
     }
 
@@ -71,10 +71,10 @@ class SyslogLogTest extends TestCase
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
         $log = $this->getMockBuilder(SyslogLog::class)
-            ->onlyMethods(['_open', '_write'])
+            ->onlyMethods(['open', 'write'])
             ->getMock();
         $log->expects($this->exactly(2))
-            ->method('_write')
+            ->method('write')
             ->with(
                 ...self::withConsecutive(
                     [LOG_DEBUG, 'debug: Foo'],
