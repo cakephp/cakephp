@@ -49,7 +49,7 @@ class EntityRoute extends Route
 
         if (isset($url['_entity'])) {
             $entity = $url['_entity'];
-            $this->_checkEntity($entity);
+            $this->checkEntity($entity);
 
             foreach ($this->keys as $field) {
                 if (!isset($url[$field]) && isset($entity[$field])) {
@@ -68,7 +68,7 @@ class EntityRoute extends Route
      * @param mixed $entity Entity value from the URL options
      * @return void
      */
-    protected function _checkEntity(mixed $entity): void
+    protected function checkEntity(mixed $entity): void
     {
         if (!$entity instanceof ArrayAccess && !is_array($entity)) {
             throw new CakeException(sprintf(

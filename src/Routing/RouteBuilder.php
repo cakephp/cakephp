@@ -442,7 +442,7 @@ class RouteBuilder
      */
     public function get(string $template, array|string $target, ?string $name = null): Route
     {
-        return $this->_methodRoute('GET', $template, $target, $name);
+        return $this->methodRoute('GET', $template, $target, $name);
     }
 
     /**
@@ -456,7 +456,7 @@ class RouteBuilder
      */
     public function post(string $template, array|string $target, ?string $name = null): Route
     {
-        return $this->_methodRoute('POST', $template, $target, $name);
+        return $this->methodRoute('POST', $template, $target, $name);
     }
 
     /**
@@ -470,7 +470,7 @@ class RouteBuilder
      */
     public function put(string $template, array|string $target, ?string $name = null): Route
     {
-        return $this->_methodRoute('PUT', $template, $target, $name);
+        return $this->methodRoute('PUT', $template, $target, $name);
     }
 
     /**
@@ -484,7 +484,7 @@ class RouteBuilder
      */
     public function patch(string $template, array|string $target, ?string $name = null): Route
     {
-        return $this->_methodRoute('PATCH', $template, $target, $name);
+        return $this->methodRoute('PATCH', $template, $target, $name);
     }
 
     /**
@@ -498,7 +498,7 @@ class RouteBuilder
      */
     public function delete(string $template, array|string $target, ?string $name = null): Route
     {
-        return $this->_methodRoute('DELETE', $template, $target, $name);
+        return $this->methodRoute('DELETE', $template, $target, $name);
     }
 
     /**
@@ -512,7 +512,7 @@ class RouteBuilder
      */
     public function head(string $template, array|string $target, ?string $name = null): Route
     {
-        return $this->_methodRoute('HEAD', $template, $target, $name);
+        return $this->methodRoute('HEAD', $template, $target, $name);
     }
 
     /**
@@ -526,7 +526,7 @@ class RouteBuilder
      */
     public function options(string $template, array|string $target, ?string $name = null): Route
     {
-        return $this->_methodRoute('OPTIONS', $template, $target, $name);
+        return $this->methodRoute('OPTIONS', $template, $target, $name);
     }
 
     /**
@@ -539,7 +539,7 @@ class RouteBuilder
      * @param string|null $name The name of the route.
      * @return \Cake\Routing\Route\Route
      */
-    protected function _methodRoute(string $method, string $template, array|string $target, ?string $name): Route
+    protected function methodRoute(string $method, string $template, array|string $target, ?string $name): Route
     {
         if ($name !== null) {
             $name = $this->_namePrefix . $name;
@@ -554,7 +554,7 @@ class RouteBuilder
         $target = $this->parseDefaults($target);
         $target['_method'] = $method;
 
-        $route = $this->_makeRoute($template, $target, $options);
+        $route = $this->makeRoute($template, $target, $options);
         $this->_collection->add($route, $options);
 
         return $route;
@@ -684,7 +684,7 @@ class RouteBuilder
             $options['_middleware'] = $this->middleware;
         }
 
-        $route = $this->_makeRoute($route, $defaults, $options);
+        $route = $this->makeRoute($route, $defaults, $options);
         $this->_collection->add($route, $options);
 
         return $route;
@@ -715,7 +715,7 @@ class RouteBuilder
      * @throws \InvalidArgumentException when route class or route object is invalid.
      * @throws \BadMethodCallException when the route to make conflicts with the current scope
      */
-    protected function _makeRoute(Route|string $route, array $defaults, array $options): Route
+    protected function makeRoute(Route|string $route, array $defaults, array $options): Route
     {
         if (is_string($route)) {
             /** @var class-string<\Cake\Routing\Route\Route>|null $routeClass */
