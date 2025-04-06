@@ -126,9 +126,9 @@ class FileLog extends BaseLog
         $message = $this->interpolate($message, $context);
         $message = $this->formatter->format($level, $message, $context);
 
-        $filename = $this->_getFilename($level);
+        $filename = $this->getFilename($level);
         if ($this->_size) {
-            $this->_rotateFile($filename);
+            $this->rotateFile($filename);
         }
 
         $pathname = $this->_path . $filename;
@@ -159,7 +159,7 @@ class FileLog extends BaseLog
      * @param string $level The level of log.
      * @return string File name
      */
-    protected function _getFilename(string $level): string
+    protected function getFilename(string $level): string
     {
         $debugTypes = ['notice', 'info', 'debug'];
 
@@ -184,7 +184,7 @@ class FileLog extends BaseLog
      * @return bool|null True if rotated successfully or false in case of error.
      *   Null if file doesn't need to be rotated.
      */
-    protected function _rotateFile(string $filename): ?bool
+    protected function rotateFile(string $filename): ?bool
     {
         $filePath = $this->_path . $filename;
         clearstatcache(true, $filePath);

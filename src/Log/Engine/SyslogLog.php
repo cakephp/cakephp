@@ -103,7 +103,7 @@ class SyslogLog extends BaseLog
     {
         if (!$this->_open) {
             $config = $this->_config;
-            $this->_open($config['prefix'], $config['flag'], $config['facility']);
+            $this->open($config['prefix'], $config['flag'], $config['facility']);
             $this->_open = true;
         }
 
@@ -114,7 +114,7 @@ class SyslogLog extends BaseLog
 
         $lines = explode("\n", $this->interpolate($message, $context));
         foreach ($lines as $line) {
-            $this->_write($priority, $this->formatter->format($level, $line, $context));
+            $this->write($priority, $this->formatter->format($level, $line, $context));
         }
     }
 
@@ -127,7 +127,7 @@ class SyslogLog extends BaseLog
      * @param int $facility the stream or facility to log to
      * @return void
      */
-    protected function _open(string $ident, int $options, int $facility): void
+    protected function open(string $ident, int $options, int $facility): void
     {
         openlog($ident, $options, $facility);
     }
@@ -140,7 +140,7 @@ class SyslogLog extends BaseLog
      * @param string $message Message to log.
      * @return bool
      */
-    protected function _write(int $priority, string $message): bool
+    protected function write(int $priority, string $message): bool
     {
         return syslog($priority, $message);
     }
