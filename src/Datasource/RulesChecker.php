@@ -140,9 +140,9 @@ class RulesChecker
     {
         if (is_string($name)) {
             $this->checkName($name, $this->_rules);
-            $this->_rules[$name] = $this->_addError($rule, $name, $options);
+            $this->_rules[$name] = $this->addError($rule, $name, $options);
         } else {
-            $this->_rules[] = $this->_addError($rule, $name, $options);
+            $this->_rules[] = $this->addError($rule, $name, $options);
         }
 
         return $this;
@@ -185,9 +185,9 @@ class RulesChecker
     {
         if (is_string($name)) {
             $this->checkName($name, $this->_createRules);
-            $this->_createRules[$name] = $this->_addError($rule, $name, $options);
+            $this->_createRules[$name] = $this->addError($rule, $name, $options);
         } else {
-            $this->_createRules[] = $this->_addError($rule, $name, $options);
+            $this->_createRules[] = $this->addError($rule, $name, $options);
         }
 
         return $this;
@@ -230,9 +230,9 @@ class RulesChecker
     {
         if (is_string($name)) {
             $this->checkName($name, $this->_updateRules);
-            $this->_updateRules[$name] = $this->_addError($rule, $name, $options);
+            $this->_updateRules[$name] = $this->addError($rule, $name, $options);
         } else {
-            $this->_updateRules[] = $this->_addError($rule, $name, $options);
+            $this->_updateRules[] = $this->addError($rule, $name, $options);
         }
 
         return $this;
@@ -275,9 +275,9 @@ class RulesChecker
     {
         if (is_string($name)) {
             $this->checkName($name, $this->_deleteRules);
-            $this->_deleteRules[$name] = $this->_addError($rule, $name, $options);
+            $this->_deleteRules[$name] = $this->addError($rule, $name, $options);
         } else {
-            $this->_deleteRules[] = $this->_addError($rule, $name, $options);
+            $this->_deleteRules[] = $this->addError($rule, $name, $options);
         }
 
         return $this;
@@ -328,7 +328,7 @@ class RulesChecker
      */
     public function checkCreate(EntityInterface $entity, array $options = []): bool
     {
-        return $this->_checkRules(
+        return $this->checkRules(
             $entity,
             $options,
             array_merge(array_values($this->_rules), array_values($this->_createRules)),
@@ -345,7 +345,7 @@ class RulesChecker
      */
     public function checkUpdate(EntityInterface $entity, array $options = []): bool
     {
-        return $this->_checkRules(
+        return $this->checkRules(
             $entity,
             $options,
             array_merge(array_values($this->_rules), array_values($this->_updateRules)),
@@ -362,7 +362,7 @@ class RulesChecker
      */
     public function checkDelete(EntityInterface $entity, array $options = []): bool
     {
-        return $this->_checkRules(
+        return $this->checkRules(
             $entity,
             $options,
             array_merge(array_values($this->_rules), array_values($this->_deleteRules)),
@@ -378,7 +378,7 @@ class RulesChecker
      * @param array<\Cake\Datasource\RuleInvoker> $rules The list of rules that must be checked.
      * @return bool
      */
-    protected function _checkRules(EntityInterface $entity, array $options = [], array $rules = []): bool
+    protected function checkRules(EntityInterface $entity, array $options = [], array $rules = []): bool
     {
         $success = true;
         $options += $this->_options;
@@ -398,7 +398,7 @@ class RulesChecker
      * @param array<string, mixed> $options The options containing the error message and field.
      * @return \Cake\Datasource\RuleInvoker
      */
-    protected function _addError(callable $rule, array|string|null $name = null, array $options = []): RuleInvoker
+    protected function addError(callable $rule, array|string|null $name = null, array $options = []): RuleInvoker
     {
         if (is_array($name)) {
             $options = $name;

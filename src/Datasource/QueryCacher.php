@@ -66,8 +66,8 @@ class QueryCacher
      */
     public function fetch(object $query): mixed
     {
-        $key = $this->_resolveKey($query);
-        $storage = $this->_resolveCacher();
+        $key = $this->resolveKey($query);
+        $storage = $this->resolveCacher();
         $result = $storage->get($key);
         if (!$result) {
             return null;
@@ -85,8 +85,8 @@ class QueryCacher
      */
     public function store(object $query, Traversable $results): bool
     {
-        $key = $this->_resolveKey($query);
-        $storage = $this->_resolveCacher();
+        $key = $this->resolveKey($query);
+        $storage = $this->resolveCacher();
 
         return $storage->set($key, $results);
     }
@@ -98,7 +98,7 @@ class QueryCacher
      * @return string
      * @throws \Cake\Core\Exception\CakeException
      */
-    protected function _resolveKey(object $query): string
+    protected function resolveKey(object $query): string
     {
         if (is_string($this->_key)) {
             return $this->_key;
@@ -118,7 +118,7 @@ class QueryCacher
      *
      * @return \Psr\SimpleCache\CacheInterface
      */
-    protected function _resolveCacher(): CacheInterface
+    protected function resolveCacher(): CacheInterface
     {
         if (is_string($this->_config)) {
             return Cache::pool($this->_config);
