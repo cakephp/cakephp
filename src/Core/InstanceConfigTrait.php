@@ -77,7 +77,7 @@ trait InstanceConfigTrait
             $this->_configInitialized = true;
         }
 
-        $this->_configWrite($key, $value, $merge);
+        $this->configWrite($key, $value, $merge);
 
         return $this;
     }
@@ -122,7 +122,7 @@ trait InstanceConfigTrait
             $this->_configInitialized = true;
         }
 
-        return $this->_configRead($key) ?? $default;
+        return $this->configRead($key) ?? $default;
     }
 
     /**
@@ -177,7 +177,7 @@ trait InstanceConfigTrait
             $this->_configInitialized = true;
         }
 
-        $this->_configWrite($key, $value, 'shallow');
+        $this->configWrite($key, $value, 'shallow');
 
         return $this;
     }
@@ -188,7 +188,7 @@ trait InstanceConfigTrait
      * @param string|null $key Key to read.
      * @return mixed
      */
-    protected function _configRead(?string $key): mixed
+    protected function configRead(?string $key): mixed
     {
         if ($key === null) {
             return $this->_config;
@@ -222,10 +222,10 @@ trait InstanceConfigTrait
      * @return void
      * @throws \Cake\Core\Exception\CakeException if attempting to clobber existing config
      */
-    protected function _configWrite(array|string $key, mixed $value, string|bool $merge = false): void
+    protected function configWrite(array|string $key, mixed $value, string|bool $merge = false): void
     {
         if (is_string($key) && $value === null) {
-            $this->_configDelete($key);
+            $this->configDelete($key);
 
             return;
         }
@@ -243,7 +243,7 @@ trait InstanceConfigTrait
 
         if (is_array($key)) {
             foreach ($key as $k => $val) {
-                $this->_configWrite($k, $val);
+                $this->configWrite($k, $val);
             }
 
             return;
@@ -278,7 +278,7 @@ trait InstanceConfigTrait
      * @return void
      * @throws \Cake\Core\Exception\CakeException if attempting to clobber existing config
      */
-    protected function _configDelete(string $key): void
+    protected function configDelete(string $key): void
     {
         if (!str_contains($key, '.')) {
             unset($this->_config[$key]);

@@ -74,7 +74,7 @@ class JsonConfig implements ConfigEngineInterface
      */
     public function read(string $key): array
     {
-        $file = $this->_getFilePath($key, true);
+        $file = $this->getFilePath($key, true);
 
         $jsonContent = file_get_contents($file);
         if ($jsonContent === false) {
@@ -109,7 +109,7 @@ class JsonConfig implements ConfigEngineInterface
      */
     public function dump(string $key, array $data): bool
     {
-        $filename = $this->_getFilePath($key);
+        $filename = $this->getFilePath($key);
 
         return file_put_contents($filename, json_encode($data, JSON_PRETTY_PRINT)) > 0;
     }

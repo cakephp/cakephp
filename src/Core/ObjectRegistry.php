@@ -97,7 +97,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
 
         $loaded = isset($this->_loaded[$objName]);
         if ($loaded && $config !== []) {
-            $this->_checkDuplicate($objName, $config);
+            $this->checkDuplicate($objName, $config);
         }
         if ($loaded) {
             return $this->_loaded[$objName];
@@ -134,7 +134,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @return void
      * @throws \Cake\Core\Exception\CakeException When a duplicate is found.
      */
-    protected function _checkDuplicate(string $name, array $config): void
+    protected function checkDuplicate(string $name, array $config): void
     {
         $existing = $this->_loaded[$name];
         $msg = sprintf('The `%s` alias has already been loaded.', $name);

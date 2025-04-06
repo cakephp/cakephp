@@ -42,7 +42,7 @@ trait FileConfigTrait
      * @throws \Cake\Core\Exception\CakeException When files don't exist or when
      *  files contain '..' as this could lead to abusive reads.
      */
-    protected function _getFilePath(string $key, bool $checkExists = false): string
+    protected function getFilePath(string $key, bool $checkExists = false): string
     {
         if (str_contains($key, '..')) {
             throw new CakeException('Cannot load/dump configuration files with ../ in them.');
