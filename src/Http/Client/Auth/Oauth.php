@@ -61,14 +61,14 @@ class Oauth
                 if (!$hasKeys) {
                     return $request;
                 }
-                $value = $this->_hmacSha1($request, $credentials);
+                $value = $this->hmacSha1($request, $credentials);
                 break;
 
             case 'RSA-SHA1':
                 if (!isset($credentials['privateKey'])) {
                     return $request;
                 }
-                $value = $this->_rsaSha1($request, $credentials);
+                $value = $this->rsaSha1($request, $credentials);
                 break;
 
             case 'PLAINTEXT':
@@ -80,7 +80,7 @@ class Oauth
                 if (!$hasKeys) {
                     return $request;
                 }
-                $value = $this->_plaintext($request, $credentials);
+                $value = $this->plaintext($request, $credentials);
                 break;
 
             default:
@@ -101,7 +101,7 @@ class Oauth
      * @param array $credentials Authentication credentials.
      * @return string Authorization header.
      */
-    protected function _plaintext(Request $request, array $credentials): string
+    protected function plaintext(Request $request, array $credentials): string
     {
         $values = [
             'oauth_version' => '1.0',
@@ -118,7 +118,7 @@ class Oauth
         $key = implode('&', $key);
         $values['oauth_signature'] = $key;
 
-        return $this->_buildAuth($values);
+        return $this->buildAuth($values);
     }
 
     /**
@@ -130,7 +130,7 @@ class Oauth
      * @param array $credentials Authentication credentials.
      * @return string
      */
-    protected function _hmacSha1(Request $request, array $credentials): string
+    protected function hmacSha1(Request $request, array $credentials): string
     {
         $nonce = $credentials['nonce'] ?? uniqid();
         $timestamp = $credentials['timestamp'] ?? time();
@@ -140,7 +140,7 @@ class Oauth
             'oauth_timestamp' => $timestamp,
             'oauth_signature_method' => 'HMAC-SHA1',
             'oauth_token' => $credentials['token'],
-            'oauth_consumer_key' => $this->_encode($credentials['consumerKey']),
+            'oauth_consumer_key' => $this->encode($credentials['consumerKey']),
         ];
         $baseString = $this->baseString($request, $values);
 
@@ -152,14 +152,14 @@ class Oauth
             $values['oauth_realm'] = $credentials['realm'];
         }
         $key = [$credentials['consumerSecret'], $credentials['tokenSecret']];
-        $key = array_map($this->_encode(...), $key);
+        $key = array_map($this->encode(...), $key);
         $key = implode('&', $key);
 
         $values['oauth_signature'] = base64_encode(
             hash_hmac('sha1', $baseString, $key, true),
         );
 
-        return $this->_buildAuth($values);
+        return $this->buildAuth($values);
     }
 
     /**
@@ -171,7 +171,7 @@ class Oauth
      * @param array $credentials Authentication credentials.
      * @return string
      */
-    protected function _rsaSha1(Request $request, array $credentials): string
+    protected function rsaSha1(Request $request, array $credentials): string
     {
         if (!function_exists('openssl_pkey_get_private')) {
             throw new CakeException('RSA-SHA1 signature method requires the OpenSSL extension.');
@@ -229,7 +229,7 @@ class Oauth
 
         $values['oauth_signature'] = base64_encode($signature);
 
-        return $this->_buildAuth($values);
+        return $this->buildAuth($values);
     }
 
     /**
@@ -249,10 +249,10 @@ class Oauth
     {
         $parts = [
             $request->getMethod(),
-            $this->_normalizedUrl($request->getUri()),
-            $this->_normalizedParams($request, $oauthValues),
+            $this->normalizedUrl($request->getUri()),
+            $this->normalizedParams($request, $oauthValues),
         ];
-        $parts = array_map($this->_encode(...), $parts);
+        $parts = array_map($this->encode(...), $parts);
 
         return implode('&', $parts);
     }
@@ -265,7 +265,7 @@ class Oauth
      * @param \Psr\Http\Message\UriInterface $uri Uri object to build a normalized version of.
      * @return string Normalized URL
      */
-    protected function _normalizedUrl(UriInterface $uri): string
+    protected function normalizedUrl(UriInterface $uri): string
     {
         $out = $uri->getScheme() . '://';
         $out .= strtolower($uri->getHost());
@@ -286,7 +286,7 @@ class Oauth
      * @param array $oauthValues Oauth values.
      * @return string sorted and normalized values
      */
-    protected function _normalizedParams(Request $request, array $oauthValues): string
+    protected function normalizedParams(Request $request, array $oauthValues): string
     {
         $query = parse_url((string)$request->getUri(), PHP_URL_QUERY);
         parse_str((string)$query, $queryArgs);
@@ -297,7 +297,7 @@ class Oauth
             parse_str((string)$request->getBody(), $post);
         }
         $args = array_merge($queryArgs, $oauthValues, $post);
-        $pairs = $this->_normalizeData($args);
+        $pairs = $this->normalizeData($args);
         $data = [];
         foreach ($pairs as $pair) {
             $data[] = implode('=', $pair);
@@ -315,7 +315,7 @@ class Oauth
      * @see https://tools.ietf.org/html/rfc5849#section-3.4.1.3.2
      * @return array
      */
-    protected function _normalizeData(array $args, string $path = ''): array
+    protected function normalizeData(array $args, string $path = ''): array
     {
         $data = [];
         foreach ($args as $key => $value) {
@@ -331,7 +331,7 @@ class Oauth
             }
             if (is_array($value)) {
                 uksort($value, 'strcmp');
-                $data = array_merge($data, $this->_normalizeData($value, $key));
+                $data = array_merge($data, $this->normalizeData($value, $key));
             } else {
                 $data[] = [$key, $value];
             }
@@ -346,12 +346,12 @@ class Oauth
      * @param array $data The oauth_* values to build
      * @return string
      */
-    protected function _buildAuth(array $data): string
+    protected function buildAuth(array $data): string
     {
         $out = 'OAuth ';
         $params = [];
         foreach ($data as $key => $value) {
-            $params[] = $key . '="' . $this->_encode((string)$value) . '"';
+            $params[] = $key . '="' . $this->encode((string)$value) . '"';
         }
         $out .= implode(',', $params);
 
@@ -364,7 +364,7 @@ class Oauth
      * @param string $value Value to encode.
      * @return string
      */
-    protected function _encode(string $value): string
+    protected function encode(string $value): string
     {
         return str_replace(['%7E', '+'], ['~', ' '], rawurlencode($value));
     }

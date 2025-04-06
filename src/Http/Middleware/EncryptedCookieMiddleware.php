@@ -108,7 +108,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
      *
      * @return string
      */
-    protected function _getCookieEncryptionKey(): string
+    protected function getCookieEncryptionKey(): string
     {
         return $this->key;
     }

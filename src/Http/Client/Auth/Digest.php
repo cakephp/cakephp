@@ -127,14 +127,14 @@ class Digest
             return $request;
         }
         if (!isset($credentials['realm'])) {
-            $credentials = $this->_getServerInfo($request, $credentials);
+            $credentials = $this->getServerInfo($request, $credentials);
         }
         if (!isset($credentials['realm'])) {
             return $request;
         }
 
         $this->setAlgorithm($credentials);
-        $value = $this->_generateHeader($request, $credentials);
+        $value = $this->generateHeader($request, $credentials);
 
         return $request->withHeader('Authorization', $value);
     }
@@ -150,7 +150,7 @@ class Digest
      * @param array $credentials Authentication credentials.
      * @return array modified credentials.
      */
-    protected function _getServerInfo(Request $request, array $credentials): array
+    protected function getServerInfo(Request $request, array $credentials): array
     {
         $response = $this->_client->get(
             (string)$request->getUri(),
@@ -187,7 +187,7 @@ class Digest
      * @param array<string, mixed> $credentials Authentication credentials.
      * @return string
      */
-    protected function _generateHeader(Request $request, array $credentials): string
+    protected function generateHeader(Request $request, array $credentials): string
     {
         $path = $request->getRequestTarget();
 

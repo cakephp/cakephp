@@ -127,9 +127,9 @@ class Response extends Message implements ResponseInterface
      */
     public function __construct(array $headers = [], string $body = '')
     {
-        $this->_parseHeaders($headers);
+        $this->parseHeaders($headers);
         if ($this->getHeaderLine('Content-Encoding') === 'gzip') {
-            $body = $this->_decodeGzipBody($body);
+            $body = $this->decodeGzipBody($body);
         }
         $stream = new Stream('php://memory', 'wb+');
         $stream->write($body);
@@ -147,7 +147,7 @@ class Response extends Message implements ResponseInterface
      * @return string
      * @throws \Cake\Core\Exception\CakeException When attempting to decode gzip content without gzinflate.
      */
-    protected function _decodeGzipBody(string $body): string
+    protected function decodeGzipBody(string $body): string
     {
         if (!function_exists('gzinflate')) {
             throw new CakeException('Cannot decompress gzip response body without gzinflate()');
@@ -174,7 +174,7 @@ class Response extends Message implements ResponseInterface
      * @param array<string> $headers Headers to parse.
      * @return void
      */
-    protected function _parseHeaders(array $headers): void
+    protected function parseHeaders(array $headers): void
     {
         foreach ($headers as $value) {
             if (str_starts_with($value, 'HTTP/')) {
@@ -307,7 +307,12 @@ class Response extends Message implements ResponseInterface
      */
     public function getCookies(): array
     {
-        return $this->_getCookies();
+        $out = [];
+        foreach ($this->buildCookieCollection() as $cookie) {
+            $out[$cookie->getName()] = $cookie->toArray();
+        }
+
+        return $out;
     }
 
     /**
@@ -370,28 +375,13 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * Property accessor for `$this->cookies`
-     *
-     * @return array Array of Cookie data.
-     */
-    protected function _getCookies(): array
-    {
-        $out = [];
-        foreach ($this->buildCookieCollection() as $cookie) {
-            $out[$cookie->getName()] = $cookie->toArray();
-        }
-
-        return $out;
-    }
-
-    /**
      * Get the response body as string.
      *
      * @return string
      */
     public function getStringBody(): string
     {
-        return $this->_getBody();
+        return $this->getBodyContents();
     }
 
     /**
@@ -401,21 +391,11 @@ class Response extends Message implements ResponseInterface
      */
     public function getJson(): mixed
     {
-        return $this->_getJson();
-    }
-
-    /**
-     * Get the response body as JSON decoded data.
-     *
-     * @return mixed
-     */
-    protected function _getJson(): mixed
-    {
         if ($this->_json) {
             return $this->_json;
         }
 
-        return $this->_json = json_decode($this->_getBody(), true);
+        return $this->_json = json_decode($this->getBodyContents(), true);
     }
 
     /**
@@ -425,21 +405,11 @@ class Response extends Message implements ResponseInterface
      */
     public function getXml(): ?SimpleXMLElement
     {
-        return $this->_getXml();
-    }
-
-    /**
-     * Get the response body as XML decoded data.
-     *
-     * @return \SimpleXMLElement|null
-     */
-    protected function _getXml(): ?SimpleXMLElement
-    {
         if ($this->_xml !== null) {
             return $this->_xml;
         }
         libxml_use_internal_errors();
-        $data = simplexml_load_string($this->_getBody());
+        $data = simplexml_load_string($this->getBodyContents());
         if (!$data) {
             return null;
         }
@@ -450,11 +420,9 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * Provides magic __get() support.
-     *
      * @return array<string>
      */
-    protected function _getHeaders(): array
+    protected function getParsedHeaders(): array
     {
         $out = [];
         foreach ($this->headers as $key => $values) {
@@ -465,11 +433,9 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * Provides magic __get() support.
-     *
      * @return string
      */
-    protected function _getBody(): string
+    protected function getBodyContents(): string
     {
         $this->stream->rewind();
 

@@ -129,7 +129,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             && $this->skipCheckCallback !== null
             && call_user_func($this->skipCheckCallback, $request) === true
         ) {
-            $request = $this->_unsetTokenField($request);
+            $request = $this->unsetTokenField($request);
 
             return $handler->handle($request);
         }
@@ -158,12 +158,12 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             $request = $request->withAttribute('csrfToken', $this->saltToken($token));
             $response = $handler->handle($request);
 
-            return $this->_addTokenCookie($token, $request, $response);
+            return $this->addTokenCookie($token, $request, $response);
         }
 
         if ($hasData) {
-            $this->_validateToken($request);
-            $request = $this->_unsetTokenField($request);
+            $this->validateToken($request);
+            $request = $this->unsetTokenField($request);
         }
 
         return $handler->handle($request);
@@ -191,7 +191,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request The request object.
      * @return \Psr\Http\Message\ServerRequestInterface
      */
-    protected function _unsetTokenField(ServerRequestInterface $request): ServerRequestInterface
+    protected function unsetTokenField(ServerRequestInterface $request): ServerRequestInterface
     {
         $body = $request->getParsedBody();
         if (is_array($body)) {
@@ -297,7 +297,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * @param string $token The CSRF token.
      * @return bool
      */
-    protected function _verifyToken(string $token): bool
+    protected function verifyToken(string $token): bool
     {
         // If we have a hexadecimal value we're in a compatibility mode from before
         // tokens were salted on each request.
@@ -326,12 +326,12 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ResponseInterface $response The response.
      * @return \Psr\Http\Message\ResponseInterface $response Modified response.
      */
-    protected function _addTokenCookie(
+    protected function addTokenCookie(
         string $token,
         ServerRequestInterface $request,
         ResponseInterface $response,
     ): ResponseInterface {
-        $cookie = $this->_createCookie($token, $request);
+        $cookie = $this->createCookie($token, $request);
         if ($response instanceof Response) {
             return $response->withCookie($cookie);
         }
@@ -346,7 +346,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * @return void
      * @throws \Cake\Http\Exception\InvalidCsrfTokenException When the CSRF token is invalid or missing.
      */
-    protected function _validateToken(ServerRequestInterface $request): void
+    protected function validateToken(ServerRequestInterface $request): void
     {
         $cookie = Hash::get($request->getCookieParams(), $this->_config['cookieName']);
 
@@ -354,10 +354,10 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
             throw new InvalidCsrfTokenException(__d('cake', 'Missing or incorrect CSRF cookie type.'));
         }
 
-        if (!$this->_verifyToken($cookie)) {
+        if (!$this->verifyToken($cookie)) {
             $exception = new InvalidCsrfTokenException(__d('cake', 'Missing or invalid CSRF cookie.'));
 
-            $expiredCookie = $this->_createCookie('', $request)->withExpired();
+            $expiredCookie = $this->createCookie('', $request)->withExpired();
             $exception->setHeader('Set-Cookie', $expiredCookie->toHeaderValue());
 
             throw $exception;
@@ -391,7 +391,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request The request object.
      * @return \Cake\Http\Cookie\CookieInterface
      */
-    protected function _createCookie(string $value, ServerRequestInterface $request): CookieInterface
+    protected function createCookie(string $value, ServerRequestInterface $request): CookieInterface
     {
         return Cookie::create(
             $this->_config['cookieName'],
