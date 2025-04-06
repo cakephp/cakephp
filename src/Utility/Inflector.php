@@ -185,7 +185,7 @@ class Inflector
      * @param string|false $value Inflected value
      * @return string|false Inflected value on cache hit or false on cache miss.
      */
-    protected static function _cache(string $type, string $key, string|false $value = false): string|false
+    protected static function cache(string $type, string $key, string|false $value = false): string|false
     {
         $key = '_' . $key;
         $type = '_' . $type;
@@ -378,11 +378,11 @@ class Inflector
     {
         $cacheKey = __FUNCTION__ . $delimiter;
 
-        $result = static::_cache($cacheKey, $string);
+        $result = static::cache($cacheKey, $string);
 
         if ($result === false) {
             $result = str_replace(' ', '', static::humanize($string, $delimiter));
-            static::_cache($cacheKey, $string, $result);
+            static::cache($cacheKey, $string, $result);
         }
 
         return $result;
@@ -428,7 +428,7 @@ class Inflector
     {
         $cacheKey = __FUNCTION__ . $delimiter;
 
-        $result = static::_cache($cacheKey, $string);
+        $result = static::cache($cacheKey, $string);
 
         if ($result === false) {
             $result = explode(' ', str_replace($delimiter, ' ', $string));
@@ -436,7 +436,7 @@ class Inflector
                 $word = mb_strtoupper(mb_substr($word, 0, 1)) . mb_substr($word, 1);
             }
             $result = implode(' ', $result);
-            static::_cache($cacheKey, $string, $result);
+            static::cache($cacheKey, $string, $result);
         }
 
         return $result;
@@ -453,11 +453,11 @@ class Inflector
     {
         $cacheKey = __FUNCTION__ . $delimiter;
 
-        $result = static::_cache($cacheKey, $string);
+        $result = static::cache($cacheKey, $string);
 
         if ($result === false) {
             $result = mb_strtolower((string)preg_replace('/(?<=\\w)([A-Z])/', $delimiter . '\\1', $string));
-            static::_cache($cacheKey, $string, $result);
+            static::cache($cacheKey, $string, $result);
         }
 
         return $result;
@@ -472,11 +472,11 @@ class Inflector
      */
     public static function tableize(string $className): string
     {
-        $result = static::_cache(__FUNCTION__, $className);
+        $result = static::cache(__FUNCTION__, $className);
 
         if ($result === false) {
             $result = static::pluralize(static::underscore($className));
-            static::_cache(__FUNCTION__, $className, $result);
+            static::cache(__FUNCTION__, $className, $result);
         }
 
         return $result;
@@ -491,11 +491,11 @@ class Inflector
      */
     public static function classify(string $tableName): string
     {
-        $result = static::_cache(__FUNCTION__, $tableName);
+        $result = static::cache(__FUNCTION__, $tableName);
 
         if ($result === false) {
             $result = static::camelize(static::singularize($tableName));
-            static::_cache(__FUNCTION__, $tableName, $result);
+            static::cache(__FUNCTION__, $tableName, $result);
         }
 
         return $result;
@@ -510,13 +510,13 @@ class Inflector
      */
     public static function variable(string $string): string
     {
-        $result = static::_cache(__FUNCTION__, $string);
+        $result = static::cache(__FUNCTION__, $string);
 
         if ($result === false) {
             $camelized = static::camelize(static::underscore($string));
             $replace = strtolower(substr($camelized, 0, 1));
             $result = $replace . substr($camelized, 1);
-            static::_cache(__FUNCTION__, $string, $result);
+            static::cache(__FUNCTION__, $string, $result);
         }
 
         return $result;

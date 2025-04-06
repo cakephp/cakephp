@@ -126,11 +126,11 @@ class Xml
                 throw new CakeException(sprintf('Cannot read file content of `%s`', $input));
             }
 
-            return static::_loadXml($content, $options);
+            return static::loadXml($content, $options);
         }
 
         if (str_contains($input, '<')) {
-            return static::_loadXml($input, $options);
+            return static::loadXml($input, $options);
         }
 
         throw new XmlException('XML cannot be read.');
@@ -144,7 +144,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _loadXml(string $input, array $options): SimpleXMLElement|DOMDocument
+    protected static function loadXml(string $input, array $options): SimpleXMLElement|DOMDocument
     {
         return static::load(
             $input,
@@ -291,7 +291,7 @@ class Xml
         if ($options['pretty']) {
             $dom->formatOutput = true;
         }
-        self::_fromArray($dom, $dom, $input, $options['format']);
+        self::doFromArray($dom, $dom, $input, $options['format']);
 
         $options['return'] = strtolower($options['return']);
         if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
@@ -311,7 +311,7 @@ class Xml
      * @return void
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _fromArray(
+    protected static function doFromArray(
         DOMDocument $dom,
         DOMDocument|DOMElement $node,
         mixed $data,
@@ -372,11 +372,11 @@ class Xml
                         foreach ($value as $item) {
                             $itemData = compact('dom', 'node', 'key', 'format');
                             $itemData['value'] = $item;
-                            static::_createChild($itemData);
+                            static::createChild($itemData);
                         }
                     } else {
 // Struct
-                        static::_createChild(compact('dom', 'node', 'key', 'value', 'format'));
+                        static::createChild(compact('dom', 'node', 'key', 'value', 'format'));
                     }
                 }
             } else {
@@ -392,7 +392,7 @@ class Xml
      * @return void
      * @psalm-param {dom: \DOMDocument, node: \DOMDocument|\DOMElement, key: string, format: string, ?value: mixed} $data
      */
-    protected static function _createChild(array $data): void
+    protected static function createChild(array $data): void
     {
         $data += [
             'value' => null,
@@ -431,7 +431,7 @@ class Xml
             $child->setAttribute('xmlns', $childNS);
         }
 
-        static::_fromArray($dom, $child, $value, $format);
+        static::doFromArray($dom, $child, $value, $format);
         $node->appendChild($child);
     }
 
@@ -454,7 +454,7 @@ class Xml
 
         $result = [];
         $namespaces = array_merge(['' => ''], $obj->getNamespaces(true));
-        static::_toArray($obj, $result, '', array_keys($namespaces));
+        static::doToArray($obj, $result, '', array_keys($namespaces));
 
         return $result;
     }
@@ -468,7 +468,7 @@ class Xml
      * @param array<string> $namespaces List of namespaces in XML
      * @return void
      */
-    protected static function _toArray(SimpleXMLElement $xml, array &$parentData, string $ns, array $namespaces): void
+    protected static function doToArray(SimpleXMLElement $xml, array &$parentData, string $ns, array $namespaces): void
     {
         $data = [];
 
@@ -482,7 +482,7 @@ class Xml
             }
 
             foreach ($xml->children($namespace, true) as $child) {
-                static::_toArray($child, $data, $namespace, $namespaces);
+                static::doToArray($child, $data, $namespace, $namespaces);
             }
         }
 
