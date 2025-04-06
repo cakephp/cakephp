@@ -61,7 +61,7 @@ class MailTransport extends AbstractTransport
         $message = $message->getBodyString($eol);
 
         $params = $this->getConfig('additionalParameters', '');
-        $this->_mail($to, $subject, $message, $headers, $params);
+        $this->mail($to, $subject, $message, $headers, $params);
 
         $headers .= $eol . 'To: ' . $to;
         $headers .= $eol . 'Subject: ' . $subject;
@@ -80,7 +80,7 @@ class MailTransport extends AbstractTransport
      * @throws \Cake\Network\Exception\SocketException if mail could not be sent
      * @return void
      */
-    protected function _mail(
+    protected function mail(
         string $to,
         string $subject,
         string $message,
