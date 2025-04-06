@@ -18,7 +18,7 @@ use Cake\Validation\Validator;
 class ContactForm extends Form
 {
 
-    protected function _buildSchema(Schema $schema)
+    protected function buildSchema(Schema $schema)
     {
         return $schema->addField('name', 'string')
             ->addField('email', ['type' => 'string'])
@@ -36,7 +36,7 @@ class ContactForm extends Form
             ]);
     }
 
-    protected function _execute(array $data)
+    protected function onSubmit(array $data)
     {
         // Send an email.
         return true;
