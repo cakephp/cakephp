@@ -64,7 +64,7 @@ class ApcuEngine extends CacheEngine
      */
     public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
         $duration = $this->duration($ttl);
 
         return apcu_store($key, $value, $duration);
@@ -81,7 +81,7 @@ class ApcuEngine extends CacheEngine
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        $value = apcu_fetch($this->_key($key), $success);
+        $value = apcu_fetch($this->key($key), $success);
         if ($success === false) {
             return $default;
         }
@@ -99,7 +99,7 @@ class ApcuEngine extends CacheEngine
      */
     public function increment(string $key, int $offset = 1): int|false
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
 
         return apcu_inc($key, $offset);
     }
@@ -114,7 +114,7 @@ class ApcuEngine extends CacheEngine
      */
     public function decrement(string $key, int $offset = 1): int|false
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
 
         return apcu_dec($key, $offset);
     }
@@ -128,7 +128,7 @@ class ApcuEngine extends CacheEngine
      */
     public function delete(string $key): bool
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
 
         return apcu_delete($key);
     }
@@ -173,7 +173,7 @@ class ApcuEngine extends CacheEngine
      */
     public function add(string $key, mixed $value): bool
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
         $duration = $this->_config['duration'];
 
         return apcu_add($key, $value, $duration);

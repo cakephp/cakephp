@@ -52,7 +52,7 @@ class ArrayEngine extends CacheEngine
      */
     public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
         $expires = time() + $this->duration($ttl);
         $this->data[$key] = ['exp' => $expires, 'val' => $value];
 
@@ -69,7 +69,7 @@ class ArrayEngine extends CacheEngine
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
         if (!isset($this->data[$key])) {
             return $default;
         }
@@ -98,7 +98,7 @@ class ArrayEngine extends CacheEngine
         if ($this->get($key) === null) {
             $this->set($key, 0);
         }
-        $key = $this->_key($key);
+        $key = $this->key($key);
         $this->data[$key]['val'] += $offset;
 
         return $this->data[$key]['val'];
@@ -116,7 +116,7 @@ class ArrayEngine extends CacheEngine
         if ($this->get($key) === null) {
             $this->set($key, 0);
         }
-        $key = $this->_key($key);
+        $key = $this->key($key);
         $this->data[$key]['val'] -= $offset;
 
         return $this->data[$key]['val'];
@@ -130,7 +130,7 @@ class ArrayEngine extends CacheEngine
      */
     public function delete(string $key): bool
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
         unset($this->data[$key]);
 
         return true;

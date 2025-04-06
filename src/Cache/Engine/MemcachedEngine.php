@@ -144,7 +144,7 @@ class MemcachedEngine extends CacheEngine
         } else {
             $this->_Memcached = new Memcached();
         }
-        $this->_setOptions();
+        $this->setOptions();
 
         $serverList = $this->_Memcached->getServerList();
         if ($serverList) {
@@ -207,7 +207,7 @@ class MemcachedEngine extends CacheEngine
      * @throws \Cake\Cache\Exception\InvalidArgumentException When the Memcached extension is not built
      *   with the desired serializer engine.
      */
-    protected function _setOptions(): void
+    protected function setOptions(): void
     {
         $this->_Memcached->setOption(Memcached::OPT_LIBKETAMA_COMPATIBLE, true);
 
@@ -307,7 +307,7 @@ class MemcachedEngine extends CacheEngine
     {
         $duration = $this->duration($ttl);
 
-        return $this->_Memcached->set($this->_key($key), $value, $duration);
+        return $this->_Memcached->set($this->key($key), $value, $duration);
     }
 
     /**
@@ -323,7 +323,7 @@ class MemcachedEngine extends CacheEngine
     {
         $cacheData = [];
         foreach ($values as $key => $value) {
-            $cacheData[$this->_key($key)] = $value;
+            $cacheData[$this->key($key)] = $value;
         }
         $duration = $this->duration($ttl);
 
@@ -340,7 +340,7 @@ class MemcachedEngine extends CacheEngine
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
         $value = $this->_Memcached->get($key);
         if ($this->_Memcached->getResultCode() == Memcached::RES_NOTFOUND) {
             return $default;
@@ -361,7 +361,7 @@ class MemcachedEngine extends CacheEngine
     {
         $cacheKeys = [];
         foreach ($keys as $key) {
-            $cacheKeys[$key] = $this->_key($key);
+            $cacheKeys[$key] = $this->key($key);
         }
 
         $values = $this->_Memcached->getMulti($cacheKeys);
@@ -386,7 +386,7 @@ class MemcachedEngine extends CacheEngine
      */
     public function increment(string $key, int $offset = 1): int|false
     {
-        return $this->_Memcached->increment($this->_key($key), $offset);
+        return $this->_Memcached->increment($this->key($key), $offset);
     }
 
     /**
@@ -398,7 +398,7 @@ class MemcachedEngine extends CacheEngine
      */
     public function decrement(string $key, int $offset = 1): int|false
     {
-        return $this->_Memcached->decrement($this->_key($key), $offset);
+        return $this->_Memcached->decrement($this->key($key), $offset);
     }
 
     /**
@@ -410,7 +410,7 @@ class MemcachedEngine extends CacheEngine
      */
     public function delete(string $key): bool
     {
-        return $this->_Memcached->delete($this->_key($key));
+        return $this->_Memcached->delete($this->key($key));
     }
 
     /**
@@ -424,7 +424,7 @@ class MemcachedEngine extends CacheEngine
     {
         $cacheKeys = [];
         foreach ($keys as $key) {
-            $cacheKeys[] = $this->_key($key);
+            $cacheKeys[] = $this->key($key);
         }
 
         return (bool)$this->_Memcached->deleteMulti($cacheKeys);
@@ -461,7 +461,7 @@ class MemcachedEngine extends CacheEngine
     public function add(string $key, mixed $value): bool
     {
         $duration = $this->_config['duration'];
-        $key = $this->_key($key);
+        $key = $this->key($key);
 
         return $this->_Memcached->add($key, $value, $duration);
     }
