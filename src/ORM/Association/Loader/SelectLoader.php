@@ -124,11 +124,11 @@ class SelectLoader
      */
     public function buildEagerLoader(array $options): Closure
     {
-        $options += $this->_defaultOptions();
-        $fetchQuery = $this->_buildQuery($options);
-        $resultMap = $this->_buildResultMap($fetchQuery, $options);
+        $options += $this->defaultOptions();
+        $fetchQuery = $this->buildQuery($options);
+        $resultMap = $this->buildResultMap($fetchQuery, $options);
 
-        return $this->_resultInjector($fetchQuery, $resultMap, $options);
+        return $this->resultInjector($fetchQuery, $resultMap, $options);
     }
 
     /**
@@ -136,7 +136,7 @@ class SelectLoader
      *
      * @return array<string, mixed>
      */
-    protected function _defaultOptions(): array
+    protected function defaultOptions(): array
     {
         return [
             'foreignKey' => $this->foreignKey,
@@ -156,9 +156,9 @@ class SelectLoader
      * @return \Cake\ORM\Query\SelectQuery
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
-    protected function _buildQuery(array $options): SelectQuery
+    protected function buildQuery(array $options): SelectQuery
     {
-        $key = $this->_linkField($options);
+        $key = $this->linkField($options);
         $filter = $options['keys'];
         $useSubquery = $options['strategy'] === Association::STRATEGY_SUBQUERY;
         $finder = $this->finder;
@@ -167,7 +167,7 @@ class SelectLoader
         $query = $finder();
         assert($query instanceof SelectQuery);
         if (isset($options['finder'])) {
-            [$finderName, $opts] = $this->_extractFinder($options['finder']);
+            [$finderName, $opts] = $this->extractFinder($options['finder']);
             $query = $query->find($finderName, ...$opts);
         }
 
@@ -187,10 +187,10 @@ class SelectLoader
         }
 
         if ($useSubquery) {
-            $filter = $this->_buildSubquery($selectQuery);
-            $fetchQuery = $this->_addFilteringJoin($fetchQuery, $key, $filter);
+            $filter = $this->buildSubquery($selectQuery);
+            $fetchQuery = $this->addFilteringJoin($fetchQuery, $key, $filter);
         } else {
-            $fetchQuery = $this->_addFilteringCondition($fetchQuery, $key, $filter);
+            $fetchQuery = $this->addFilteringCondition($fetchQuery, $key, $filter);
         }
 
         if (!empty($options['sort'])) {
@@ -205,7 +205,7 @@ class SelectLoader
             $fetchQuery = $options['queryBuilder']($fetchQuery);
         }
 
-        $this->_assertFieldsPresent($fetchQuery, (array)$key);
+        $this->assertFieldsPresent($fetchQuery, (array)$key);
 
         return $fetchQuery;
     }
@@ -226,7 +226,7 @@ class SelectLoader
      * and options as value.
      * @return array
      */
-    protected function _extractFinder(array|string $finderData): array
+    protected function extractFinder(array|string $finderData): array
     {
         $finderData = (array)$finderData;
 
@@ -247,7 +247,7 @@ class SelectLoader
      * @return void
      * @throws \InvalidArgumentException
      */
-    protected function _assertFieldsPresent(SelectQuery $fetchQuery, array $key): void
+    protected function assertFieldsPresent(SelectQuery $fetchQuery, array $key): void
     {
         if ($fetchQuery->isAutoFieldsEnabled()) {
             return;
@@ -294,7 +294,7 @@ class SelectLoader
      * @param \Cake\ORM\Query\SelectQuery $subquery The Subquery to use for filtering
      * @return \Cake\ORM\Query\SelectQuery
      */
-    protected function _addFilteringJoin(SelectQuery $query, array|string $key, SelectQuery $subquery): SelectQuery
+    protected function addFilteringJoin(SelectQuery $query, array|string $key, SelectQuery $subquery): SelectQuery
     {
         $filter = [];
         $aliasedTable = $this->sourceAlias;
@@ -309,7 +309,7 @@ class SelectLoader
         $subquery->select($filter, true);
 
         if (is_array($key)) {
-            $conditions = $this->_createTupleCondition($query, $key, $filter, '=');
+            $conditions = $this->createTupleCondition($query, $key, $filter, '=');
         } else {
             $filter = current($filter);
             $conditions = $query->newExpr([$key => $filter]);
@@ -330,10 +330,10 @@ class SelectLoader
      * @param mixed $filter The value that should be used to match for $key
      * @return \Cake\ORM\Query\SelectQuery
      */
-    protected function _addFilteringCondition(SelectQuery $query, array|string $key, mixed $filter): SelectQuery
+    protected function addFilteringCondition(SelectQuery $query, array|string $key, mixed $filter): SelectQuery
     {
         if (is_array($key)) {
-            $conditions = $this->_createTupleCondition($query, $key, $filter, 'IN');
+            $conditions = $this->createTupleCondition($query, $key, $filter, 'IN');
         } else {
             $conditions = [$key . ' IN' => $filter];
         }
@@ -351,7 +351,7 @@ class SelectLoader
      * @param string $operator The operator for comparing the tuples
      * @return \Cake\Database\Expression\TupleComparison
      */
-    protected function _createTupleCondition(
+    protected function createTupleCondition(
         SelectQuery $query,
         array $keys,
         mixed $filter,
@@ -376,7 +376,7 @@ class SelectLoader
      * @return array<string>|string
      * @throws \Cake\Database\Exception\DatabaseException
      */
-    protected function _linkField(array $options): array|string
+    protected function linkField(array $options): array|string
     {
         $links = [];
         $name = $this->alias;
@@ -410,7 +410,7 @@ class SelectLoader
      * @param \Cake\ORM\Query\SelectQuery $query the original query used to load source records
      * @return \Cake\ORM\Query\SelectQuery
      */
-    protected function _buildSubquery(SelectQuery $query): SelectQuery
+    protected function buildSubquery(SelectQuery $query): SelectQuery
     {
         $filterQuery = clone $query;
         $filterQuery->disableAutoFields();
@@ -426,7 +426,7 @@ class SelectLoader
             $filterQuery->offset(null);
         }
 
-        $fields = $this->_subqueryFields($query);
+        $fields = $this->subqueryFields($query);
         $filterQuery->select($fields['select'], true)->groupBy($fields['group']);
 
         return $filterQuery;
@@ -442,7 +442,7 @@ class SelectLoader
      * @param \Cake\ORM\Query\SelectQuery $query The query to get fields from.
      * @return array<string, array> The list of fields for the subquery.
      */
-    protected function _subqueryFields(SelectQuery $query): array
+    protected function subqueryFields(SelectQuery $query): array
     {
         $keys = (array)$this->bindingKey;
 
@@ -476,7 +476,7 @@ class SelectLoader
      * @param array<string, mixed> $options The options passed to the eager loader
      * @return array<string, mixed>
      */
-    protected function _buildResultMap(SelectQuery $fetchQuery, array $options): array
+    protected function buildResultMap(SelectQuery $fetchQuery, array $options): array
     {
         $resultMap = [];
         $singleResult = in_array($this->associationType, [Association::MANY_TO_ONE, Association::ONE_TO_ONE], true);
@@ -519,7 +519,7 @@ class SelectLoader
      * @param array<string, mixed> $options The options passed to the eagerLoader method
      * @return \Closure
      */
-    protected function _resultInjector(SelectQuery $fetchQuery, array $resultMap, array $options): Closure
+    protected function resultInjector(SelectQuery $fetchQuery, array $resultMap, array $options): Closure
     {
         $keys = $this->associationType === Association::MANY_TO_ONE ?
             $this->foreignKey :
@@ -533,7 +533,7 @@ class SelectLoader
 
         $nestKey = $options['nestKey'];
         if (count($sourceKeys) > 1) {
-            return $this->_multiKeysInjector($resultMap, $sourceKeys, $nestKey);
+            return $this->multiKeysInjector($resultMap, $sourceKeys, $nestKey);
         }
 
         $sourceKey = $sourceKeys[0];
@@ -557,7 +557,7 @@ class SelectLoader
      * @param string $nestKey The key under which results should be nested
      * @return \Closure
      */
-    protected function _multiKeysInjector(array $resultMap, array $sourceKeys, string $nestKey): Closure
+    protected function multiKeysInjector(array $resultMap, array $sourceKeys, string $nestKey): Closure
     {
         return function ($row) use ($resultMap, $sourceKeys, $nestKey) {
             $values = [];

@@ -118,7 +118,7 @@ class TimestampBehavior extends Behavior
                     !$new
                 )
             ) {
-                $this->_updateField($entity, $field, $refresh);
+                $this->updateField($entity, $field, $refresh);
             }
         }
     }
@@ -186,7 +186,7 @@ class TimestampBehavior extends Behavior
             if (in_array($when, ['always', 'existing'], true)) {
                 $return = true;
                 $entity->setDirty($field, false);
-                $this->_updateField($entity, $field, $refresh);
+                $this->updateField($entity, $field, $refresh);
             }
         }
 
@@ -201,7 +201,7 @@ class TimestampBehavior extends Behavior
      * @param bool $refreshTimestamp Whether to refresh timestamp.
      * @return void
      */
-    protected function _updateField(EntityInterface $entity, string $field, bool $refreshTimestamp): void
+    protected function updateField(EntityInterface $entity, string $field, bool $refreshTimestamp): void
     {
         if ($entity->isDirty($field)) {
             return;

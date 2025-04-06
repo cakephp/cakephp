@@ -2354,11 +2354,11 @@ class SelectQueryTest extends TestCase
     {
         $query = $this->getMockBuilder(SelectQuery::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['_performCount'])
+            ->onlyMethods(['performCount'])
             ->getMock();
 
         $query->expects($this->once())
-            ->method('_performCount')
+            ->method('performCount')
             ->willReturn(1);
 
         $result = $query->count();
@@ -2376,11 +2376,11 @@ class SelectQueryTest extends TestCase
     {
         $query = $this->getMockBuilder(SelectQuery::class)
             ->disableOriginalConstructor()
-            ->onlyMethods(['_performCount'])
+            ->onlyMethods(['performCount'])
             ->getMock();
 
         $query->expects($this->exactly(2))
-            ->method('_performCount')
+            ->method('performCount')
             ->willReturn(1, 2);
 
         $result = $query->count();

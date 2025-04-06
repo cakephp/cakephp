@@ -71,6 +71,6 @@ class Test3Behavior extends Behavior
      */
     public function testReflectionCache(): array
     {
-        return $this->_reflectionCache();
+        return $this->reflectionCache();
     }
 }

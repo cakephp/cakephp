@@ -146,7 +146,7 @@ class RulesChecker extends BaseRulesChecker
         ?string $field = null,
         ?string $message = null,
     ): RuleInvoker {
-        return $this->_addLinkConstraintRule(
+        return $this->addLinkConstraintRule(
             $association,
             $field,
             $message,
@@ -179,7 +179,7 @@ class RulesChecker extends BaseRulesChecker
         ?string $field = null,
         ?string $message = null,
     ): RuleInvoker {
-        return $this->_addLinkConstraintRule(
+        return $this->addLinkConstraintRule(
             $association,
             $field,
             $message,
@@ -205,7 +205,7 @@ class RulesChecker extends BaseRulesChecker
      * @see \Cake\ORM\Rule\LinkConstraint::STATUS_LINKED
      * @see \Cake\ORM\Rule\LinkConstraint::STATUS_NOT_LINKED
      */
-    protected function _addLinkConstraintRule(
+    protected function addLinkConstraintRule(
         Association|string $association,
         ?string $errorField,
         ?string $message,

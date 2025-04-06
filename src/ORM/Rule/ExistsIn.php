@@ -123,7 +123,7 @@ class ExistsIn
             return true;
         }
 
-        if ($this->_fieldsAreNull($entity, $source)) {
+        if ($this->fieldsAreNull($entity, $source)) {
             return true;
         }
 
@@ -156,7 +156,7 @@ class ExistsIn
      * @param \Cake\ORM\Table $source The table to use schema from.
      * @return bool
      */
-    protected function _fieldsAreNull(EntityInterface $entity, Table $source): bool
+    protected function fieldsAreNull(EntityInterface $entity, Table $source): bool
     {
         $nulls = 0;
         $schema = $source->getSchema();

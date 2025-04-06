@@ -59,7 +59,7 @@ class AssociationTest extends TestCase
         ];
         $this->association = $this->getMockBuilder(Association::class)
             ->onlyMethods([
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'options', 'attachTo', 'joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
@@ -73,7 +73,7 @@ class AssociationTest extends TestCase
     public function testOptionsIsCalled(): void
     {
         $options = ['foo' => 'bar'];
-        $this->association->expects($this->once())->method('_options')->with($options);
+        $this->association->expects($this->once())->method('options')->with($options);
         $this->association->__construct('Name', $options);
     }
 
@@ -157,7 +157,7 @@ class AssociationTest extends TestCase
         ];
         $this->association = $this->getMockBuilder(Association::class)
             ->onlyMethods([
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'options', 'attachTo', 'joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
@@ -179,7 +179,7 @@ class AssociationTest extends TestCase
         ];
         $this->association = $this->getMockBuilder(Association::class)
             ->onlyMethods([
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'options', 'attachTo', 'joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Test', $config])
@@ -204,7 +204,7 @@ class AssociationTest extends TestCase
         ];
         $this->association = $this->getMockBuilder(Association::class)
             ->onlyMethods([
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'options', 'attachTo', 'joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Test', $config])
@@ -411,7 +411,7 @@ class AssociationTest extends TestCase
         ];
         $association = $this->getMockBuilder(Association::class)
             ->onlyMethods([
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
+                'options', 'attachTo', 'joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
             ->setConstructorArgs(['Foo', $config])
