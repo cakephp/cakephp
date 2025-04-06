@@ -26,14 +26,14 @@ abstract class AbstractDecorator
      *
      * @var callable
      */
-    protected $_callable;
+    protected $callable;
 
     /**
      * Decorator options
      *
      * @var array
      */
-    protected array $_options = [];
+    protected array $options = [];
 
     /**
      * Constructor.
@@ -43,8 +43,8 @@ abstract class AbstractDecorator
      */
     public function __construct(callable $callable, array $options = [])
     {
-        $this->_callable = $callable;
-        $this->_options = $options;
+        $this->callable = $callable;
+        $this->options = $options;
     }
 
     /**
@@ -55,7 +55,7 @@ abstract class AbstractDecorator
      */
     public function __invoke(): mixed
     {
-        return $this->_call(func_get_args());
+        return $this->call(func_get_args());
     }
 
     /**
@@ -64,9 +64,9 @@ abstract class AbstractDecorator
      * @param array $args Arguments for the callable.
      * @return mixed
      */
-    protected function _call(array $args): mixed
+    protected function call(array $args): mixed
     {
-        $callable = $this->_callable;
+        $callable = $this->callable;
 
         return $callable(...$args);
     }

@@ -36,7 +36,7 @@ class ConditionDecorator extends AbstractDecorator
             return null;
         }
 
-        return $this->_call($args);
+        return $this->call($args);
     }
 
     /**
@@ -48,8 +48,8 @@ class ConditionDecorator extends AbstractDecorator
      */
     public function canTrigger(EventInterface $event): bool
     {
-        $if = $this->_evaluateCondition('if', $event);
-        $unless = $this->_evaluateCondition('unless', $event);
+        $if = $this->evaluateCondition('if', $event);
+        $unless = $this->evaluateCondition('unless', $event);
 
         return $if && !$unless;
     }
@@ -62,15 +62,15 @@ class ConditionDecorator extends AbstractDecorator
      * @param \Cake\Event\EventInterface<TSubject> $event Event object
      * @return bool
      */
-    protected function _evaluateCondition(string $condition, EventInterface $event): bool
+    protected function evaluateCondition(string $condition, EventInterface $event): bool
     {
-        if (!isset($this->_options[$condition])) {
+        if (!isset($this->options[$condition])) {
             return $condition !== 'unless';
         }
-        if (!is_callable($this->_options[$condition])) {
+        if (!is_callable($this->options[$condition])) {
             throw new InvalidArgumentException(self::class . ' the `' . $condition . '` condition is not a callable!');
         }
 
-        return (bool)$this->_options[$condition]($event);
+        return (bool)$this->options[$condition]($event);
     }
 }
