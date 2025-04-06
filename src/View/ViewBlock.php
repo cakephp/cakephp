@@ -126,7 +126,7 @@ class ViewBlock
 
     /**
      * Concat content to an existing or new block.
-     * Concating to a new block will create the block.
+     * Concatenating to a new block will create the block.
      *
      * Calling concat() without a value will create a new capturing
      * block that needs to be finished with View::end(). The content
@@ -197,7 +197,7 @@ class ViewBlock
     /**
      * Get the names of all the existing blocks.
      *
-     * @return list<string> An array containing the blocks.
+     * @return array<string> An array containing the blocks.
      */
     public function keys(): array
     {

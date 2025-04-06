@@ -39,7 +39,7 @@ class TextHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -50,7 +50,7 @@ class TextHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         unset($this->Text, $this->View);
         parent::tearDown();

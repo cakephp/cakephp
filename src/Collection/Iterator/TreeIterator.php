@@ -35,6 +35,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
      * The iteration mode
      *
      * @var int
+     * @psalm-var \RecursiveIteratorIterator::LEAVES_ONLY|\RecursiveIteratorIterator::SELF_FIRST|\RecursiveIteratorIterator::CHILD_FIRST
      */
     protected int $_mode;
 
@@ -44,11 +45,13 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
      * @param \RecursiveIterator<mixed, mixed> $items The iterator to flatten.
      * @param int $mode Iterator mode.
      * @param int $flags Iterator flags.
+     * @psalm-param \RecursiveIteratorIterator::LEAVES_ONLY|\RecursiveIteratorIterator::SELF_FIRST|\RecursiveIteratorIterator::CHILD_FIRST $mode
+     * @psalm-param \RecursiveIteratorIterator::LEAVES_ONLY|\RecursiveIteratorIterator::CATCH_GET_CHILD $flags
      */
     public function __construct(
         RecursiveIterator $items,
         int $mode = RecursiveIteratorIterator::SELF_FIRST,
-        int $flags = 0
+        int $flags = 0,
     ) {
         parent::__construct($items, $mode, $flags);
         $this->_mode = $mode;
@@ -95,7 +98,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
     public function printer(
         callable|string $valuePath,
         callable|string|null $keyPath = null,
-        string $spacer = '__'
+        string $spacer = '__',
     ): TreePrinter {
         if (!$keyPath) {
             $counter = 0;
@@ -112,7 +115,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
             $valuePath,
             $keyPath,
             $spacer,
-            $this->_mode
+            $this->_mode,
         );
     }
 }

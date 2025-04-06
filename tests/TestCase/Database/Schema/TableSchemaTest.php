@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Postgres;
-use Cake\Database\Driver\Sqlite;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
@@ -41,13 +40,13 @@ class TableSchemaTest extends TestCase
 
     protected $_map;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->_map = TypeFactory::getMap();
         parent::setUp();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         TypeFactory::clear();
         TypeFactory::setMap($this->_map);
@@ -447,7 +446,7 @@ class TableSchemaTest extends TestCase
 
         $this->assertEquals(
             ['author_idx', 'texty'],
-            $table->indexes()
+            $table->indexes(),
         );
     }
 
@@ -515,10 +514,6 @@ class TableSchemaTest extends TestCase
         $table = $this->getTableLocator()->get('ArticlesTags');
 
         $name = 'tag_id_fk';
-        if ($table->getConnection()->getDriver() instanceof Sqlite) {
-            $name = 'tag_id_0_fk';
-        }
-
         $compositeConstraint = $table->getSchema()->getConstraint($name);
         $expected = [
             'type' => 'foreign',
@@ -544,14 +539,10 @@ class TableSchemaTest extends TestCase
         $connection = $table->getConnection();
         $this->skipIf(
             $connection->getDriver() instanceof Postgres,
-            'Constraints get dropped in postgres for some reason'
+            'Constraints get dropped in postgres for some reason',
         );
 
         $name = 'product_category_fk';
-        if ($table->getConnection()->getDriver() instanceof Sqlite) {
-            $name = 'product_category_product_id_0_fk';
-        }
-
         $compositeConstraint = $table->getSchema()->getConstraint($name);
         $expected = [
             'type' => 'foreign',

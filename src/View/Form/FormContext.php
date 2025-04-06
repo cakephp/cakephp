@@ -55,7 +55,7 @@ class FormContext implements ContextInterface
     {
         assert(
             isset($context['entity']) && $context['entity'] instanceof Form,
-            "`\$context['entity']` must be an instance of " . Form::class
+            "`\$context['entity']` must be an instance of " . Form::class,
         );
 
         $this->_form = $context['entity'];
@@ -207,7 +207,7 @@ class FormContext implements ContextInterface
     {
         return array_intersect_key(
             (array)$this->_form->getSchema()->field($field),
-            array_flip(static::VALID_ATTRIBUTES)
+            array_flip(static::VALID_ATTRIBUTES),
         );
     }
 

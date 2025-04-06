@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Http;
 
+use Cake\Core\Configure;
 use Cake\Http\UriFactory;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Uri;
@@ -31,5 +32,17 @@ class UriFactoryTest extends TestCase
         $uri = $factory->createUri('https://cakephp.org');
 
         $this->assertInstanceOf(Uri::class, $uri);
+    }
+
+    public function testMarshalUriAndBaseFromSapi()
+    {
+        Configure::write('App.baseUrl', '/index.php');
+        $result = UriFactory::marshalUriAndBaseFromSapi([]);
+
+        $this->assertInstanceOf(Uri::class, $result['uri']);
+        $this->assertSame('/index.php', $result['base']);
+        $this->assertSame('/webroot/', $result['webroot']);
+
+        Configure::delete('App.baseUrl');
     }
 }

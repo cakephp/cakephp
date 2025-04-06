@@ -162,7 +162,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
 
         return $this->_name . sprintf('(%s)', implode(
             $this->_conjunction . ' ',
-            $parts
+            $parts,
         ));
     }
 

@@ -49,7 +49,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      *
      * @param string|null $locale The locale to use for fetching and saving
      *   records. Pass `null` in order to unset the current locale, and to make
-     *   the behavior fall back to using the globally configured locale.
+     *   the behavior falls back to using the globally configured locale.
      * @return $this
      */
     public function setLocale(?string $locale);

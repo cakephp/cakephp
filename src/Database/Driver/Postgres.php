@@ -56,6 +56,11 @@ class Postgres extends Driver
         'timezone' => null,
         'flags' => [],
         'init' => [],
+        'ssl_key' => null,
+        'ssl_cert' => null,
+        'ssl_ca' => null,
+        'ssl' => false,
+        'ssl_mode' => null,
     ];
 
     /**
@@ -92,6 +97,24 @@ class Postgres extends Driver
             $dsn = "pgsql:dbname={$config['database']}";
         }
 
+        if ($this->_config['ssl']) {
+            if ($this->_config['ssl_mode']) {
+                $dsn .= ';sslmode=' . $this->_config['ssl_mode'];
+            } else {
+                $dsn .= ';sslmode=allow';
+            }
+
+            if ($this->_config['ssl_key']) {
+                $dsn .= ';sslkey=' . $this->_config['ssl_key'];
+            }
+            if ($this->_config['ssl_cert']) {
+                $dsn .= ';sslcert=' . $this->_config['ssl_cert'];
+            }
+            if ($this->_config['ssl_ca']) {
+                $dsn .= ';sslrootcert=' . $this->_config['ssl_ca'];
+            }
+        }
+
         $this->pdo = $this->createPdo($dsn, $config);
         if (!empty($config['encoding'])) {
             $this->setEncoding($config['encoding']);
@@ -106,7 +129,8 @@ class Postgres extends Driver
         }
 
         foreach ($config['init'] as $command) {
-            $this->getPdo()->exec($command);
+            /** @phpstan-ignore-next-line */
+            $this->pdo->exec($command);
         }
     }
 
@@ -224,7 +248,7 @@ class Postgres extends Driver
     /**
      * Changes identifer expression into postgresql format.
      *
-     * @param \Cake\Database\Expression\IdentifierExpression $expression The expression to tranform.
+     * @param \Cake\Database\Expression\IdentifierExpression $expression The expression to transform.
      * @return void
      */
     protected function _transformIdentifierExpression(IdentifierExpression $expression): void
@@ -316,7 +340,7 @@ class Postgres extends Driver
     /**
      * Changes string expression into postgresql format.
      *
-     * @param \Cake\Database\Expression\StringExpression $expression The string expression to tranform.
+     * @param \Cake\Database\Expression\StringExpression $expression The string expression to transform.
      * @return void
      */
     protected function _transformStringExpression(StringExpression $expression): void

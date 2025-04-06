@@ -39,7 +39,7 @@ trait TranslateTrait
             return $this;
         }
 
-        $i18n = $this->get('_translations');
+        $i18n = $this->has('_translations') ? $this->get('_translations') : null;
         $created = false;
 
         if (!$i18n) {

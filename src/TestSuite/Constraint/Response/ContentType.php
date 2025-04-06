@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Constraint\Response;
 
+use Cake\Http\MimeType;
 use Psr\Http\Message\ResponseInterface;
 
 /**
@@ -38,9 +39,9 @@ class ContentType extends ResponseBase
      */
     public function matches($other): bool
     {
-        $alias = $this->response->getMimeType($other);
-        if ($alias !== false) {
-            $other = $alias;
+        $mimeType = MimeType::getMimeType($other);
+        if ($mimeType !== null) {
+            $other = $mimeType;
         }
 
         return $other === $this->response->getType();

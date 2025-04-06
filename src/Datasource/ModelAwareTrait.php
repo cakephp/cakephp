@@ -108,7 +108,7 @@ trait ModelAwareTrait
             $alias = substr(
                 $modelClass,
                 strrpos($modelClass, '\\') + 1,
-                -strlen($modelType)
+                -strlen($modelType),
             );
             $modelClass = $alias;
         }

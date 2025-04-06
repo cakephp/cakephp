@@ -239,7 +239,7 @@ class ServerRequestTest extends TestCase
             123,
             UPLOAD_ERR_OK,
             'test.php',
-            'text/plain'
+            'text/plain',
         );
         $request = new ServerRequest(['files' => ['avatar' => $file]]);
         $this->assertSame(['avatar' => $file], $request->getUploadedFiles());
@@ -268,7 +268,7 @@ class ServerRequestTest extends TestCase
             123,
             UPLOAD_ERR_OK,
             'test.php',
-            'text/plain'
+            'text/plain',
         );
         $request = new ServerRequest();
         $new = $request->withUploadedFiles(['picture' => $file]);
@@ -288,7 +288,7 @@ class ServerRequestTest extends TestCase
             123,
             UPLOAD_ERR_OK,
             'test.php',
-            'text/plain'
+            'text/plain',
         );
         $request = new ServerRequest();
         $new = $request->withUploadedFiles(['picture' => $file]);
@@ -384,7 +384,7 @@ class ServerRequestTest extends TestCase
 
         $request = $request->withEnv(
             'HTTP_X_FORWARDED_FOR',
-            'spoof.fake.ip, real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3'
+            'spoof.fake.ip, real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3',
         );
         $this->assertSame('192.168.1.3', $request->clientIp());
 
@@ -1296,7 +1296,7 @@ class ServerRequestTest extends TestCase
         $this->assertInstanceOf(
             ServerRequest::class,
             $request->withParam('some', 'thing'),
-            'Method has not returned $this'
+            'Method has not returned $this',
         );
 
         $request = $request->withParam('Post.null', null);
@@ -1718,11 +1718,11 @@ class ServerRequestTest extends TestCase
         $result = $request->withData('Model.field.new_value', 'new value');
         $this->assertSame(
             'new value',
-            $result->getData('Model.field.new_value')
+            $result->getData('Model.field.new_value'),
         );
         $this->assertSame(
             'new value',
-            $result->getData()['Model']['field']['new_value']
+            $result->getData()['Model']['field']['new_value'],
         );
     }
 
@@ -1851,7 +1851,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame(
             '/articles/view/1?comments=1&open=0',
             $request->getRequestTarget(),
-            'Should not include basedir.'
+            'Should not include basedir.',
         );
 
         $new = $request->withRequestTarget('/articles/view/3');
@@ -1859,7 +1859,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame(
             '/articles/view/1?comments=1&open=0',
             $request->getRequestTarget(),
-            'should be unchanged.'
+            'should be unchanged.',
         );
         $this->assertSame('/articles/view/3', $new->getRequestTarget(), 'reflects method call');
     }

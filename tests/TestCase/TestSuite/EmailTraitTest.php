@@ -38,7 +38,7 @@ class EmailTraitTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -61,7 +61,7 @@ class EmailTraitTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 

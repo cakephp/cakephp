@@ -41,7 +41,7 @@ class TypeFactoryTest extends TestCase
     /**
      * Backup original Type class state
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->_originalMap = TypeFactory::getMap();
         parent::setUp();
@@ -50,7 +50,7 @@ class TypeFactoryTest extends TestCase
     /**
      * Restores Type class state
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -185,7 +185,7 @@ class TypeFactoryTest extends TestCase
     {
         $this->skipIf(
             PHP_INT_SIZE === 4,
-            'This test requires a php version compiled for 64 bits'
+            'This test requires a php version compiled for 64 bits',
         );
         $type = TypeFactory::build('biginteger');
         $integer = time() * time();

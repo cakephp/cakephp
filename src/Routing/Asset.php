@@ -192,7 +192,7 @@ class Asset
         }
         $webPath = static::assetTimestamp(
             static::webroot($path, $options),
-            $optionTimestamp
+            $optionTimestamp,
         );
 
         $path = static::encodeUrl($webPath);
@@ -233,7 +233,7 @@ class Asset
      * a timestamp will be added.
      *
      * @param string $path The file path to timestamp, the path must be inside `App.wwwRoot` in Configure.
-     * @param string|bool $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
+     * @param string|bool|null $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
     public static function assetTimestamp(string $path, string|bool|null $timestamp = null): string
@@ -248,7 +248,7 @@ class Asset
             $filepath = (string)preg_replace(
                 '/^' . preg_quote(static::requestWebroot(), '/') . '/',
                 '',
-                urldecode($path)
+                urldecode($path),
             );
             $webrootPath = Configure::read('App.wwwRoot') . str_replace('/', DIRECTORY_SEPARATOR, $filepath);
             if (is_file($webrootPath)) {

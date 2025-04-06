@@ -106,7 +106,7 @@ abstract class BaseApplication implements
     public function __construct(
         string $configDir,
         ?EventManagerInterface $eventManager = null,
-        ?ControllerFactoryInterface $controllerFactory = null
+        ?ControllerFactoryInterface $controllerFactory = null,
     ) {
         $this->configDir = rtrim($configDir, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $this->plugins = new PluginCollection();
@@ -341,7 +341,7 @@ abstract class BaseApplication implements
      * @return \Psr\Http\Message\ResponseInterface
      */
     public function handle(
-        ServerRequestInterface $request
+        ServerRequestInterface $request,
     ): ResponseInterface {
         $container = $this->getContainer();
         $container->add(ServerRequest::class, $request);

@@ -57,7 +57,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Fixtures used by this test case.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [];
 
@@ -142,7 +142,7 @@ abstract class TestCase extends BaseTestCase
 
                 return true;
             },
-            $errorLevel
+            $errorLevel,
         );
 
         try {
@@ -184,7 +184,7 @@ abstract class TestCase extends BaseTestCase
                 }
 
                 return false;
-            }
+            },
         );
         try {
             $callable();
@@ -352,7 +352,7 @@ abstract class TestCase extends BaseTestCase
      *
      * Useful in test case teardown methods.
      *
-     * @param list<string> $names A list of plugins you want to remove.
+     * @param array<string> $names A list of plugins you want to remove.
      * @return void
      */
     public function removePlugins(array $names = []): void
@@ -408,7 +408,7 @@ abstract class TestCase extends BaseTestCase
         string $dataKey,
         mixed $dataValue,
         ?EventManager $eventManager = null,
-        string $message = ''
+        string $message = '',
     ): void {
         if (!$eventManager) {
             $eventManager = EventManager::instance();
@@ -530,7 +530,7 @@ abstract class TestCase extends BaseTestCase
         string $needle,
         string $haystack,
         string $message = '',
-        bool $ignoreCase = false
+        bool $ignoreCase = false,
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
@@ -556,7 +556,7 @@ abstract class TestCase extends BaseTestCase
         string $needle,
         string $haystack,
         string $message = '',
-        bool $ignoreCase = false
+        bool $ignoreCase = false,
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
@@ -579,7 +579,7 @@ abstract class TestCase extends BaseTestCase
     public function assertEqualsSql(
         string $expected,
         string $actual,
-        string $message = ''
+        string $message = '',
     ): void {
         $this->assertEquals($expected, preg_replace('/[`"\[\]]/', '', $actual), $message);
     }
@@ -725,7 +725,7 @@ abstract class TestCase extends BaseTestCase
                         $val = str_replace(
                             ['.*', '.+'],
                             ['.*?', '.+?'],
-                            $matches[1]
+                            $matches[1],
                         );
                         $quotes = $val !== $matches[1] ? '["\']' : '["\']?';
 
@@ -788,7 +788,7 @@ abstract class TestCase extends BaseTestCase
                 $this->assertMatchesRegularExpression(
                     $expression,
                     (string)$string,
-                    sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description)
+                    sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description),
                 );
 
                 return false;
@@ -813,7 +813,7 @@ abstract class TestCase extends BaseTestCase
         array $assertions,
         string $string,
         bool $fullDebug = false,
-        array|string $regex = ''
+        array|string $regex = '',
     ): string|false {
         $asserts = $assertions['attrs'];
         $explains = $assertions['explains'];
@@ -924,7 +924,7 @@ abstract class TestCase extends BaseTestCase
      * Mock a model, maintain fixtures and table association
      *
      * @param string $alias The model to get a mock for.
-     * @param list<string> $methods The list of methods to mock
+     * @param array<string> $methods The list of methods to mock
      * @param array<string, mixed> $options The config data for the mock's constructor.
      * @throws \Cake\ORM\Exception\MissingTableClassException
      * @return \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
@@ -946,6 +946,7 @@ abstract class TestCase extends BaseTestCase
         }, $reflection->getMethods());
 
         $existingMethods = array_intersect($classMethods, $methods);
+        /** @var list<non-empty-string> $nonExistingMethods */
         $nonExistingMethods = array_diff($methods, $existingMethods);
 
         $builder = $this->getMockBuilder($className)
@@ -961,15 +962,15 @@ abstract class TestCase extends BaseTestCase
                     'Adding non-existent methods (%s) to model `%s` ' .
                     'when mocking will not work in future PHPUnit versions.',
                     implode(',', $nonExistingMethods),
-                    $alias
+                    $alias,
                 ),
-                E_USER_DEPRECATED
+                E_USER_DEPRECATED,
             );
             $builder->addMethods($nonExistingMethods);
         }
 
-        /** @var \Cake\ORM\Table $mock */
         $mock = $builder->getMock();
+        assert($mock instanceof Table);
 
         if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
             $parts = explode('\\', $className);
@@ -1051,7 +1052,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Get the fixtures this test should use.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getFixtures(): array
     {

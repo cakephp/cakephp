@@ -120,7 +120,7 @@ class TableTest extends TestCase
      */
     protected $articlesTypeMap;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -205,7 +205,7 @@ class TableTest extends TestCase
     /**
      * teardown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -231,7 +231,7 @@ class TableTest extends TestCase
         $this->assertRegExpSql(
             'SELECT <username> FROM <users> <users>',
             $sql,
-            !$this->connection->getDriver()->isAutoQuotingEnabled()
+            !$this->connection->getDriver()->isAutoQuotingEnabled(),
         );
     }
 
@@ -247,7 +247,7 @@ class TableTest extends TestCase
         $this->assertRegExpSql(
             'SELECT <Articles>.<field1> FROM <articles> <Articles>',
             $subquery->sql(),
-            !$this->connection->getDriver()->isAutoQuotingEnabled()
+            !$this->connection->getDriver()->isAutoQuotingEnabled(),
         );
 
         $subquery->select($articles, true);
@@ -573,7 +573,7 @@ class TableTest extends TestCase
         $table->setSchema($schema);
         $this->assertEquals(
             new TableSchema('another', $schema),
-            $table->getSchema()
+            $table->getSchema(),
         );
     }
 
@@ -600,7 +600,7 @@ class TableTest extends TestCase
                 'ORM queries generate field aliases using the table name/alias and column name. ' .
                 "The table alias `very_long_alias_name` and column `this_is_invalid_because_it_is_very_very_very_long` create an alias longer than ({$nameLength}). " .
                 'You must change the table schema in the database and shorten either the table or column ' .
-                'identifier so they fit within the database alias limits.'
+                'identifier so they fit within the database alias limits.',
             );
         }
         $this->assertNotNull($table->setSchema($schema));
@@ -759,7 +759,7 @@ class TableTest extends TestCase
             'Model.beforeFind',
             function (EventInterface $event, $query, $options): void {
                 $query->limit(1);
-            }
+            },
         );
 
         $result = $table->find('all')->all();
@@ -782,7 +782,7 @@ class TableTest extends TestCase
             function (EventInterface $event, $query, $options) use ($expected): void {
                 $query->setResult($expected);
                 $event->stopPropagation();
-            }
+            },
         );
 
         $query = $table->find('all')
@@ -811,7 +811,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf(BelongsToMany::class, $association);
         $this->assertSame(
             $sections->getAssociation('SectionsMembers')->getAssociation('Members')->getAssociation('Sections'),
-            $association
+            $association,
         );
     }
 
@@ -820,7 +820,7 @@ class TableTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
             "The `authors` association is not defined on `Articles`.\n"
-            . 'Valid associations are: Authors, Tags, ArticlesTags'
+            . 'Valid associations are: Authors, Tags, ArticlesTags',
         );
 
         $articles = $this->getTableLocator()->get('Articles', ['className' => ArticlesTable::class]);
@@ -1297,6 +1297,7 @@ class TableTest extends TestCase
         $this->assertSame(2, $author->id);
     }
 
+    #[WithoutErrorHandler]
     public function testFindTypedParameterCompatibility(): void
     {
         $articles = $this->fetchTable('Articles');
@@ -1304,9 +1305,11 @@ class TableTest extends TestCase
         $this->assertNotEmpty($article);
 
         // Options arrays are deprecated but should work
-        $article = $articles->find('titled', ['title' => 'Second Article'])->first();
-        $this->assertNotEmpty($article);
-        $this->assertEquals('Second Article', $article->title);
+        $this->deprecated(function () use ($articles): void {
+            $article = $articles->find('titled', ['title' => 'Second Article'])->first();
+            $this->assertNotEmpty($article);
+            $this->assertEquals('Second Article', $article->title);
+        });
 
         // Named parameters should be compatible with options finders
         $article = $articles->find('titled', title: 'Second Article')->first();
@@ -1773,7 +1776,7 @@ class TableTest extends TestCase
         $this->assertSame($table, $table->setEntityClass('MyPlugin.SuperUser'));
         $this->assertSame(
             'MyPlugin\Model\Entity\SuperUser',
-            $table->getEntityClass()
+            $table->getEntityClass(),
         );
     }
 
@@ -1852,7 +1855,7 @@ class TableTest extends TestCase
         $this->assertInstanceOf(Tag::class, $result->tags[0]);
         $this->assertInstanceOf(
             ArticlesTag::class,
-            $result->tags[0]->_joinData
+            $result->tags[0]->_joinData,
         );
     }
 
@@ -2020,7 +2023,7 @@ class TableTest extends TestCase
         $this->assertTrue($table->behaviors()->has('Timestamp'));
         $this->assertSame(
             $behaviors['Timestamp']['events'],
-            $table->behaviors()->get('Timestamp')->getConfig('events')
+            $table->behaviors()->get('Timestamp')->getConfig('events'),
         );
     }
 
@@ -2295,8 +2298,7 @@ class TableTest extends TestCase
         ]);
         $listener = function (EventInterface $event, $entity) {
             $event->stopPropagation();
-
-            return $entity;
+            $event->setResult($entity);
         };
         $table->getEventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($data, $table->save($data));
@@ -2327,7 +2329,7 @@ class TableTest extends TestCase
     public function testBeforeSaveException(): void
     {
         $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage('The beforeSave callback must return `false` or `EntityInterface` instance. Got `int` instead.');
+        $this->expectExceptionMessage('The result for the `Model.beforeSave` event must be `false` or `EntityInterface` instance. Got `int` instead.');
 
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
@@ -2337,8 +2339,7 @@ class TableTest extends TestCase
         ]);
         $listener = function (EventInterface $event, $entity) {
             $event->stopPropagation();
-
-            return 1;
+            $event->setResult(1);
         };
         $table->getEventManager()->on('Model.beforeSave', $listener);
         $table->save($data);
@@ -2846,7 +2847,7 @@ class TableTest extends TestCase
         $entity = $table->get(1);
 
         $entity->setAccess('*', true);
-        $entity->set($entity->toArray());
+        $entity->patch($entity->toArray());
         $this->assertSame($entity, $table->save($entity));
     }
 
@@ -3282,8 +3283,8 @@ class TableTest extends TestCase
                     [$this->callback(function (EventInterface $event) use ($entity, $options) {
                         return $event->getName() === 'Model.afterDeleteCommit' &&
                         $event->getData() == ['entity' => $entity, 'options' => $options];
-                    })]
-                )
+                    })],
+                ),
             );
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
@@ -3480,6 +3481,34 @@ class TableTest extends TestCase
     }
 
     /**
+     * https://github.com/cakephp/cakephp/issues/18273
+     */
+    public function testValidatorWithMethodInBehavior(): void
+    {
+        $table = new Table();
+        $table->addBehavior('Validation');
+
+        $table->getValidator('default')->add(
+            'name',
+            'customValidationRule',
+            ['rule' => 'customValidationRule', 'provider' => 'table'],
+        );
+
+        $result = $table->getValidator('default')->validate([
+            'name' => 'test',
+        ], true);
+
+        $this->assertSame(
+            [
+                'name' => [
+                    'customValidationRule' => 'The provided value is invalid',
+                ],
+            ],
+            $result,
+        );
+    }
+
+    /**
      * Tests that a InvalidArgumentException is thrown if the custom validator method does not exist.
      */
     public function testValidatorWithMissingMethod(): void
@@ -3637,7 +3666,7 @@ class TableTest extends TestCase
                     'Users.username' => 'garrett',
                     'Users.id' => 4,
                 ],
-            ]
+            ],
         );
         $this->assertEquals($expected, $result->clause('where'));
     }
@@ -3669,7 +3698,7 @@ class TableTest extends TestCase
         $this->assertNull($result->clause('limit'));
         $expected = new QueryExpression(
             ['Users.author_id' => 1, 'Users.published' => 'Y'],
-            $this->usersTypeMap
+            $this->usersTypeMap,
         );
         $this->assertEquals($expected, $result->clause('where'));
     }
@@ -3687,7 +3716,7 @@ class TableTest extends TestCase
         $expected = new QueryExpression();
         $expected->getTypeMap()->setDefaults($this->usersTypeMap->toArray());
         $expected->add(
-            ['or' => ['Users.author_id' => 1, 'Users.published' => 'Y']]
+            ['or' => ['Users.author_id' => 1, 'Users.published' => 'Y']],
         );
         $this->assertEquals($expected, $result->clause('where'));
         $this->assertNull($result->clause('order'));
@@ -4038,7 +4067,7 @@ class TableTest extends TestCase
             ->getMock();
         $entity = new Entity(
             ['id' => 'foo'],
-            ['markNew' => false, 'markClean' => true]
+            ['markNew' => false, 'markClean' => true],
         );
         $table->expects($this->never())->method('_processSave');
         $this->assertSame($entity, $table->save($entity));
@@ -4278,7 +4307,7 @@ class TableTest extends TestCase
 
         $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertEquals($article->tags[2]->id, $tags[0]->id);
-        $this->assertEqualsCanonicalizing($article->tags[3], $tags[1]);
+        $this->assertEqualsCanonicalizing($article->tags[3]->toArray(), $tags[1]->toArray());
     }
 
     /**
@@ -4302,7 +4331,7 @@ class TableTest extends TestCase
                     'title' => 'Spicy cake recipe',
                     'body' => 'chocolate and peppers',
                 ],
-            ]
+            ],
         );
 
         $sizeArticles = count($newArticles);
@@ -4337,7 +4366,7 @@ class TableTest extends TestCase
                     'title' => 'Spicy cake recipe',
                     'body' => 'chocolate and peppers',
                 ],
-            ]
+            ],
         );
 
         $this->assertTrue($authors->Articles->link($author, $newArticles));
@@ -4350,7 +4379,7 @@ class TableTest extends TestCase
                     'title' => 'Nothing but the cake',
                     'body' => 'It is all that we need',
                 ],
-            ]
+            ],
         );
         $this->assertTrue($authors->Articles->link($author, $newArticles));
 
@@ -4384,7 +4413,7 @@ class TableTest extends TestCase
                     'title' => 'Spicy cake recipe',
                     'body' => 'chocolate and peppers',
                 ],
-            ]
+            ],
         );
 
         $this->assertTrue($authors->Articles->link($author, $newArticles));
@@ -4399,8 +4428,8 @@ class TableTest extends TestCase
                         'title' => 'Nothing but the cake',
                         'body' => 'It is all that we need',
                     ],
-                ]
-            )
+                ],
+            ),
         );
         $this->assertTrue($authors->Articles->link($author, $newArticles));
 
@@ -4438,7 +4467,7 @@ class TableTest extends TestCase
                     'title' => 'Creamy cake recipe',
                     'body' => 'chocolate and cream',
                 ],
-            ]
+            ],
         );
 
         $this->assertTrue($authors->Articles->link($author, $newArticles));
@@ -4481,7 +4510,7 @@ class TableTest extends TestCase
                     'title' => 'Creamy cake recipe',
                     'body' => 'chocolate and cream',
                 ],
-            ]
+            ],
         );
 
         $this->assertTrue($authors->Articles->link($author, $newArticles));
@@ -4568,7 +4597,7 @@ class TableTest extends TestCase
                     'title' => 'Spicy cake recipe',
                     'body' => 'chocolate and peppers',
                 ],
-            ]
+            ],
         );
 
         $sizeArticles = count($newArticles);
@@ -4589,8 +4618,8 @@ class TableTest extends TestCase
                         'title' => 'Not another piece of cake',
                         'body' => 'This is the best',
                     ],
-                ]
-            )
+                ],
+            ),
         );
         unset($newArticles[0]);
 
@@ -4623,7 +4652,7 @@ class TableTest extends TestCase
                     'title' => 'Spicy cake recipe',
                     'body' => 'chocolate and peppers',
                 ],
-            ]
+            ],
         );
 
         $sizeArticles = count($newArticles);
@@ -4664,7 +4693,7 @@ class TableTest extends TestCase
                     'title' => 'Spicy cake recipe',
                     'body' => 'chocolate and peppers',
                 ],
-            ]
+            ],
         );
 
         $authors->Articles->deleteAll(['1=1']);
@@ -4699,7 +4728,7 @@ class TableTest extends TestCase
                     'title' => 'Spicy cake recipe',
                     'body' => 'chocolate and peppers',
                 ],
-            ]
+            ],
         );
 
         $sizeArticles = count($newArticles);
@@ -4721,8 +4750,8 @@ class TableTest extends TestCase
                         'title' => 'Not another piece of cake',
                         'body' => 'This is the best',
                     ],
-                ]
-            )
+                ],
+            ),
         );
         unset($newArticles[0]);
 
@@ -4875,7 +4904,7 @@ class TableTest extends TestCase
             'Model.beforeDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
-            }
+            },
         );
 
         $article = $articles->get(1);
@@ -4909,7 +4938,7 @@ class TableTest extends TestCase
             'Model.beforeSave',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
-            }
+            },
         );
 
         $article = $articles->get(1);
@@ -4945,7 +4974,7 @@ class TableTest extends TestCase
             'Model.beforeDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
-            }
+            },
         );
 
         $article = $articles->get(1);
@@ -4976,13 +5005,13 @@ class TableTest extends TestCase
             'Model.beforeSave',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions): void {
                 $actualSaveOptions = $options->getArrayCopy();
-            }
+            },
         );
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions): void {
                 $actualDeleteOptions = $options->getArrayCopy();
-            }
+            },
         );
 
         $article = $articles->get(1);
@@ -4993,7 +5022,7 @@ class TableTest extends TestCase
                 $tags->getTarget()->newEntity(['name' => 'new']),
                 $tags->getTarget()->get(2),
             ],
-            ['foo' => 'bar']
+            ['foo' => 'bar'],
         );
         $this->assertTrue($result);
 
@@ -5034,7 +5063,7 @@ class TableTest extends TestCase
             'Model.beforeDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
-            }
+            },
         );
 
         $author = $authors->get(1);
@@ -5069,7 +5098,7 @@ class TableTest extends TestCase
             'Model.beforeSave',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
-            }
+            },
         );
 
         $author = $authors->get(1);
@@ -5111,7 +5140,7 @@ class TableTest extends TestCase
             'Model.beforeDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
-            }
+            },
         );
 
         $author = $authors->get(1);
@@ -5146,13 +5175,13 @@ class TableTest extends TestCase
             'Model.beforeSave',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions): void {
                 $actualSaveOptions = $options->getArrayCopy();
-            }
+            },
         );
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions): void {
                 $actualDeleteOptions = $options->getArrayCopy();
-            }
+            },
         );
 
         $author = $authors->get(1);
@@ -5163,7 +5192,7 @@ class TableTest extends TestCase
                 $articles->getTarget()->newEntity(['title' => 'new', 'body' => 'new']),
                 $articles->getTarget()->get(1),
             ],
-            ['foo' => 'bar']
+            ['foo' => 'bar'],
         );
         $this->assertTrue($result);
 
@@ -5206,7 +5235,7 @@ class TableTest extends TestCase
             'Model.beforeDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
-            }
+            },
         );
 
         $article = $articles->get(1);
@@ -5236,7 +5265,7 @@ class TableTest extends TestCase
             'Model.beforeDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
-            }
+            },
         );
 
         $author = $authors->get(1);
@@ -5628,9 +5657,9 @@ class TableTest extends TestCase
             ['author_id' => 2, 'title' => 'First Article'],
             function ($article) use (&$callbackExecuted): void {
                 $this->assertInstanceOf(EntityInterface::class, $article);
-                $article->set(['published' => 'N', 'body' => 'New body']);
+                $article->patch(['published' => 'N', 'body' => 'New body']);
                 $callbackExecuted = true;
-            }
+            },
         );
         $this->assertTrue($callbackExecuted);
         $this->assertFalse($article->isNew());
@@ -5757,7 +5786,7 @@ class TableTest extends TestCase
         $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage(
             'Entity findOrCreate failure. ' .
-            'Found the following errors (title._empty: "This field cannot be left empty").'
+            'Found the following errors (title._empty: "This field cannot be left empty").',
         );
 
         $articles = $this->getTableLocator()->get('Articles');
@@ -5799,10 +5828,31 @@ class TableTest extends TestCase
         $this->expectException(PersistenceFailedException::class);
         $this->expectExceptionMessage(
             'Entity findOrCreate failure. ' .
-            'Found the following errors (title._required: "This field is required").'
+            'Found the following errors (title._required: "This field is required").',
         );
 
         $articles->findOrCreate(['body' => 'test']);
+    }
+
+    /**
+     * Test that findOrCreate with array data.
+     */
+    public function testFindOrCreateArrayData(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $firstArticle = $articles->findOrCreate(['title' => 'Some title'], ['body' => 'Some body']);
+        $this->assertFalse($firstArticle->isNew());
+        $this->assertNotNull($firstArticle->id);
+        $this->assertSame('Some title', $firstArticle->title);
+        $this->assertSame('Some body', $firstArticle->body);
+
+        $secondArticle = $articles->findOrCreate(['title' => 'Some title'], ['body' => 'Different body']);
+        $this->assertFalse($secondArticle->isNew());
+        $this->assertNotNull($secondArticle->id);
+        $this->assertSame('Some title', $secondArticle->title);
+        $this->assertEquals($firstArticle->id, $secondArticle->id);
+        $this->assertSame('Some body', $secondArticle->body);
     }
 
     /**
@@ -5879,12 +5929,6 @@ class TableTest extends TestCase
 
         $data = ['username' => 'larry'];
         $this->assertNotEmpty($validator->validate($data, false));
-
-        $validator->add('username', 'unique', [
-            'rule' => 'validateUnique', 'provider' => 'table',
-        ]);
-        $data = ['username' => 'larry'];
-        $this->assertNotEmpty($validator->validate($data, false));
     }
 
     /**
@@ -5959,7 +6003,7 @@ class TableTest extends TestCase
             function (EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary) use (&$associationBeforeFindCount): void {
                 $this->assertIsBool($primary);
                 $associationBeforeFindCount++;
-            }
+            },
         );
 
         $beforeFindCount = 0;
@@ -5968,7 +6012,7 @@ class TableTest extends TestCase
             function (EventInterface $event, SelectQuery $query, ArrayObject $options, bool $primary) use (&$beforeFindCount): void {
                 $this->assertIsBool($primary);
                 $beforeFindCount++;
-            }
+            },
         );
         $table->find()->contain('authors')->first();
         $this->assertSame(1, $associationBeforeFindCount);
@@ -5980,7 +6024,7 @@ class TableTest extends TestCase
             $callback = function (EventInterface $event, Validator $validator, $name) use (&$buildValidatorCount): void {
                 $this->assertIsString($name);
                 $buildValidatorCount++;
-            }
+            },
         );
         $table->getValidator();
         $this->assertSame(1, $buildValidatorCount);
@@ -5993,14 +6037,14 @@ class TableTest extends TestCase
             'Model.buildRules',
             function (EventInterface $event, RulesChecker $rules) use (&$buildRulesCount): void {
                 $buildRulesCount++;
-            }
+            },
         );
         $eventManager->on(
             'Model.beforeRules',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) use (&$beforeRulesCount): void {
                 $this->assertIsString($operation);
                 $beforeRulesCount++;
-            }
+            },
         );
         $eventManager->on(
             'Model.afterRules',
@@ -6008,19 +6052,19 @@ class TableTest extends TestCase
                 $this->assertIsBool($result);
                 $this->assertIsString($operation);
                 $afterRulesCount++;
-            }
+            },
         );
         $eventManager->on(
             'Model.beforeSave',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeSaveCount): void {
                 $beforeSaveCount++;
-            }
+            },
         );
         $eventManager->on(
             'Model.afterSave',
             $afterSaveCallback = function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterSaveCount): void {
                 $afterSaveCount++;
-            }
+            },
         );
         $entity = new Entity(['title' => 'Title']);
         $this->assertNotFalse($table->save($entity));
@@ -6035,13 +6079,13 @@ class TableTest extends TestCase
             'Model.beforeDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeDeleteCount): void {
                 $beforeDeleteCount++;
-            }
+            },
         );
         $eventManager->on(
             'Model.afterDelete',
             function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterDeleteCount): void {
                 $afterDeleteCount++;
-            }
+            },
         );
         $this->assertTrue($table->delete($entity, ['checkRules' => false]));
         $this->assertSame(1, $beforeDeleteCount);
@@ -6076,7 +6120,7 @@ class TableTest extends TestCase
         $this->assertSame($cloned, $table->save($cloned));
         $this->assertEquals(
             $article->extract(['title', 'author_id']),
-            $cloned->extract(['title', 'author_id'])
+            $cloned->extract(['title', 'author_id']),
         );
         $this->assertSame(4, $cloned->id);
     }
@@ -6407,7 +6451,7 @@ class TableTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlserver,
-            'SQLServer does not support the requirements of this test.'
+            'SQLServer does not support the requirements of this test.',
         );
     }
 }

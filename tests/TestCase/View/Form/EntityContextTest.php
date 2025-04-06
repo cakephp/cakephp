@@ -38,7 +38,7 @@ class EntityContextTest extends TestCase
     /**
      * Fixtures to use.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Comments', 'core.Tags', 'core.ArticlesTags'];
 
@@ -428,6 +428,7 @@ class EntityContextTest extends TestCase
         $result = $context->val('body');
         $this->assertEquals($row->body, $result);
 
+        $row->requireFieldPresence(true);
         $result = $context->val('nope');
         $this->assertNull($result);
     }
@@ -861,11 +862,11 @@ class EntityContextTest extends TestCase
 
         $this->assertTrue(
             $context->isRequired('comments.0.comment'),
-            'comment is required as object is not new'
+            'comment is required as object is not new',
         );
         $this->assertFalse(
             $context->isRequired('comments.1.comment'),
-            'comment is not required as missing object is "new"'
+            'comment is not required as missing object is "new"',
         );
     }
 
@@ -1244,7 +1245,7 @@ class EntityContextTest extends TestCase
         $tagTwo = new Tag(['name' => 'second-post']);
         $tagOne->setError(
             'metadata',
-            ['description' => ['_empty' => 'required value']]
+            ['description' => ['_empty' => 'required value']],
         );
         $row = new Article([
             'title' => 'My title',

@@ -112,7 +112,7 @@ class ErrorTrap
         int $code,
         string $description,
         ?string $file = null,
-        ?int $line = null
+        ?int $line = null,
     ): bool {
         if (!(error_reporting() & $code)) {
             return false;
@@ -121,7 +121,7 @@ class ErrorTrap
             throw new FatalErrorException($description, $code, $file, $line);
         }
 
-        $trace = (array)Debugger::trace(['start' => 1, 'format' => 'points']);
+        $trace = (array)Debugger::trace(['start' => 0, 'format' => 'points']);
         $error = new PhpError($code, $description, $file, $line, $trace);
 
         $ignoredPaths = (array)Configure::read('Error.ignoredDeprecationPaths');

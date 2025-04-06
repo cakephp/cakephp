@@ -29,7 +29,7 @@ class StubConsoleInput extends ConsoleInput
     /**
      * Reply values for ask() and askChoice()
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $replies = [];
 
@@ -43,7 +43,7 @@ class StubConsoleInput extends ConsoleInput
     /**
      * Constructor
      *
-     * @param list<string> $replies A list of replies for read()
+     * @param array<string> $replies A list of replies for read()
      */
     public function __construct(array $replies)
     {

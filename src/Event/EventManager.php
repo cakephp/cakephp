@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Event;
 
 use Cake\Core\Exception\CakeException;
-use Closure;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * The event manager is responsible for keeping track of event listeners, passing the correct
@@ -102,7 +102,7 @@ class EventManager implements EventManagerInterface
     public function on(
         EventListenerInterface|string $eventKey,
         callable|array $options = [],
-        ?callable $callable = null
+        ?callable $callable = null,
     ) {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_attachSubscriber($eventKey);
@@ -112,7 +112,7 @@ class EventManager implements EventManagerInterface
 
         if ($callable === null && !is_callable($options)) {
             throw new InvalidArgumentException(
-                'Second argument of `EventManager::on()` must be a callable if `$callable` is null.'
+                'Second argument of `EventManager::on()` must be a callable if `$callable` is null.',
             );
         }
 
@@ -155,7 +155,7 @@ class EventManager implements EventManagerInterface
      */
     public function off(
         EventListenerInterface|callable|string $eventKey,
-        EventListenerInterface|callable|null $callable = null
+        EventListenerInterface|callable|null $callable = null,
     ) {
         if ($eventKey instanceof EventListenerInterface) {
             $this->_detachSubscriber($eventKey);
@@ -226,17 +226,19 @@ class EventManager implements EventManagerInterface
     /**
      * Builds an array of normalized handlers.
      *
-     * A normalized handler is an aray with these keys:
+     * A normalized handler is an array with these keys:
      *
      *  - `callable` - The event handler closure
      *  - `settings` - The event handler settings
      *
      * @param \Cake\Event\EventListenerInterface $subscriber Event subscriber
-     * @param \Closure|array|string $handlers Event handlers
+     * @param callable|array|string $handlers Event handlers
      * @return array
      */
-    protected function normalizeHandlers(EventListenerInterface $subscriber, Closure|array|string $handlers): array
-    {
+    protected function normalizeHandlers(
+        EventListenerInterface $subscriber,
+        callable|array|string $handlers,
+    ): array {
         // Check if an array of handlers not single handler config array
         if (is_array($handlers) && !isset($handlers['callable'])) {
             foreach ($handlers as &$handler) {
@@ -258,11 +260,13 @@ class EventManager implements EventManagerInterface
      *  - `settings` - The event handler settings
      *
      * @param \Cake\Event\EventListenerInterface $subscriber Event subscriber
-     * @param \Closure|array|string $handler Event handler
+     * @param callable|array|string $handler Event handler
      * @return array
      */
-    protected function normalizeHandler(EventListenerInterface $subscriber, Closure|array|string $handler): array
-    {
+    protected function normalizeHandler(
+        EventListenerInterface $subscriber,
+        callable|array|string $handler,
+    ): array {
         $callable = $handler;
         $settings = [];
 
@@ -306,13 +310,8 @@ class EventManager implements EventManagerInterface
             if ($event->isStopped()) {
                 break;
             }
-            $result = $this->_callListener($listener['callable'], $event);
-            if ($result === false) {
-                $event->stopPropagation();
-            }
-            if ($result !== null) {
-                $event->setResult($result);
-            }
+
+            $this->_callListener($listener['callable'], $event);
         }
 
         return $event;
@@ -324,11 +323,24 @@ class EventManager implements EventManagerInterface
      * @template TSubject of object
      * @param callable $listener The listener to trigger.
      * @param \Cake\Event\EventInterface<TSubject> $event Event instance.
-     * @return mixed The result of the $listener function.
+     * @return void
      */
-    protected function _callListener(callable $listener, EventInterface $event): mixed
+    protected function _callListener(callable $listener, EventInterface $event): void
     {
-        return $listener($event, ...array_values($event->getData()));
+        $result = $listener($event, ...array_values($event->getData()));
+
+        if ($result !== null) {
+            deprecationWarning(
+                '5.2.0',
+                'Returning a value from event listeners is deprecated. ' .
+                'Use `$event->setResult()` instead.',
+            );
+            $event->setResult($result);
+        }
+
+        if ($event->getResult() === false) {
+            $event->stopPropagation();
+        }
     }
 
     /**
@@ -387,8 +399,8 @@ class EventManager implements EventManagerInterface
         return array_intersect_key(
             $this->_listeners,
             array_flip(
-                preg_grep($matchPattern, array_keys($this->_listeners), 0) ?: []
-            )
+                preg_grep($matchPattern, array_keys($this->_listeners), 0) ?: [],
+            ),
         );
     }
 

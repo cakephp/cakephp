@@ -43,7 +43,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * The HTTP methods to parse data on.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
 
@@ -65,13 +65,13 @@ class BodyParserMiddleware implements MiddlewareInterface
         if ($options['json']) {
             $this->addParser(
                 ['application/json', 'text/json'],
-                $this->decodeJson(...)
+                $this->decodeJson(...),
             );
         }
         if ($options['xml']) {
             $this->addParser(
                 ['application/xml', 'text/xml'],
-                $this->decodeXml(...)
+                $this->decodeXml(...),
             );
         }
         if ($options['methods']) {
@@ -82,7 +82,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Set the HTTP methods to parse request bodies on.
      *
-     * @param list<string> $methods The methods to parse data on.
+     * @param array<string> $methods The methods to parse data on.
      * @return $this
      */
     public function setMethods(array $methods)
@@ -95,7 +95,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Get the HTTP methods to parse request bodies on.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getMethods(): array
     {
@@ -117,7 +117,7 @@ class BodyParserMiddleware implements MiddlewareInterface
      * });
      * ```
      *
-     * @param list<string> $types An array of content-type header values to match. eg. application/json
+     * @param array<string> $types An array of content-type header values to match. eg. application/json
      * @param \Closure $parser The parser function. Must return an array of data to be inserted
      *   into the request.
      * @return $this

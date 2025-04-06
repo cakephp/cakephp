@@ -38,9 +38,15 @@ foreach ($iterator as $file) {
 }
 ksort($packages);
 
-$mainJsonContent = file_get_contents(dirname(__FILE__, 2) . DS . 'composer.json');
-$mainJson = json_decode($mainJsonContent, true);
-$composerCommand = 'composer require --dev phpstan/phpstan:' . $mainJson['require-dev']['phpstan/phpstan'];
+$phivePharsXml = simplexml_load_file(dirname(__FILE__, 2) . DS . '.phive' . DS . 'phars.xml');
+$phpstanVersion = null;
+foreach ($phivePharsXml->phar as $phar) {
+    if ($phar->attributes()->name == 'phpstan') {
+        $phpstanVersion = (string)$phar->attributes()->version;
+        break;
+    }
+}
+$composerCommand = 'composer require --dev phpstan/phpstan:' . $phpstanVersion;
 
 $issues = [];
 foreach ($packages as $path => $package) {
@@ -59,7 +65,7 @@ foreach ($packages as $path => $package) {
 
         $issues[] = $package . ': ' . PHP_EOL . implode(PHP_EOL, $output);
     }
-    exec('cd ' . $path . ' && rm composer.lock && rm -rf vendor');
+    exec('cd ' . $path . ' && rm composer.lock && rm -rf vendor && git checkout composer.json');
 }
 
 echo implode(PHP_EOL . PHP_EOL, $issues);

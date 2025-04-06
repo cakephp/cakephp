@@ -61,7 +61,7 @@ class ServerTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->server = $_SERVER;
@@ -73,7 +73,7 @@ class ServerTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $_SERVER = $this->server;
@@ -113,12 +113,12 @@ class ServerTest extends TestCase
         $this->assertSame(
             'source header',
             $res->getHeaderLine('X-testing'),
-            'Input response is carried through out middleware'
+            'Input response is carried through out middleware',
         );
         $this->assertSame(
             'request header',
             $res->getHeaderLine('X-pass'),
-            'Request is used in middleware'
+            'Request is used in middleware',
         );
     }
 
@@ -145,12 +145,12 @@ class ServerTest extends TestCase
         $this->assertSame(
             'source header',
             $res->getHeaderLine('X-testing'),
-            'Input response is carried through out middleware'
+            'Input response is carried through out middleware',
         );
         $this->assertSame(
             'request header',
             $res->getHeaderLine('X-pass'),
-            'Request is used in middleware'
+            'Request is used in middleware',
         );
     }
 
@@ -168,7 +168,7 @@ class ServerTest extends TestCase
         $this->assertSame(
             'globalvalue',
             $res->getHeaderLine('X-pass'),
-            'Default request is made from server'
+            'Default request is made from server',
         );
     }
 
@@ -203,12 +203,12 @@ class ServerTest extends TestCase
         $this->assertSame(
             200,
             $res->getStatusCode(),
-            'Application was expected to be executed'
+            'Application was expected to be executed',
         );
         $this->assertSame(
             'source header',
             $res->getHeaderLine('X-testing'),
-            'Application was expected to be executed'
+            'Application was expected to be executed',
         );
     }
 
@@ -227,12 +227,12 @@ class ServerTest extends TestCase
         $this->assertSame(
             200,
             $res->getStatusCode(),
-            'Application was expected to be executed'
+            'Application was expected to be executed',
         );
         $this->assertSame(
             'source header',
             $res->getHeaderLine('X-testing'),
-            'Application was expected to be executed'
+            'Application was expected to be executed',
         );
     }
 
@@ -409,7 +409,7 @@ class ServerTest extends TestCase
                 $triggered = true;
                 $this->assertInstanceOf(ServerRequest::class, $request);
                 $this->assertInstanceOf(Response::class, $response);
-            }
+            },
         );
 
         $emitter = new class extends ResponseEmitter {

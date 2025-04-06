@@ -52,7 +52,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     /**
      * Constructor
      *
-     * @param \Cake\Console\CommandFactoryInterface $factory Command factory instance.
+     * @param \Cake\Console\CommandFactoryInterface|null $factory Command factory instance.
      */
     public function __construct(?CommandFactoryInterface $factory = null)
     {
@@ -66,7 +66,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     {
         assert(
             str_contains($name, ' ') && !str_starts_with($name, ' '),
-            "The name '{$name}' is missing a space. Names should look like `cake routes`"
+            "The name '{$name}' is missing a space. Names should look like `cake routes`",
         );
         $this->name = $name;
 
@@ -138,9 +138,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
         $parser->setRootName($root);
         $parser->setDescription(static::getDescription());
 
-        $parser = $this->buildOptionParser($parser);
-
-        return $parser;
+        return $this->buildOptionParser($parser);
     }
 
     /**
@@ -180,7 +178,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
             $args = new Arguments(
                 $arguments,
                 $options,
-                $parser->argumentNames()
+                $parser->argumentNames(),
             );
         } catch (ConsoleException $e) {
             $io->err('Error: ' . $e->getMessage());
@@ -285,7 +283,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
         if (is_string($command)) {
             assert(
                 is_subclass_of($command, CommandInterface::class),
-                sprintf('Command `%s` is not a subclass of `%s`.', $command, CommandInterface::class)
+                sprintf('Command `%s` is not a subclass of `%s`.', $command, CommandInterface::class),
             );
 
             $command = $this->factory?->create($command) ?? new $command();

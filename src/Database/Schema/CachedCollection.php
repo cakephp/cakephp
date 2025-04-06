@@ -75,7 +75,22 @@ class CachedCollection implements CollectionInterface
     }
 
     /**
-     * @inheritDoc
+     * Get the column metadata for a table.
+     *
+     * The name can include a database schema name in the form 'schema.table'.
+     *
+     * Caching will be applied if `cacheMetadata` key is present in the Connection
+     * configuration options. Defaults to _cake_model_ when true.
+     *
+     * ### Options
+     *
+     * - `forceRefresh` - Set to true to force rebuilding the cached metadata.
+     *   Defaults to false.
+     *
+     * @param string $name The name of the table to describe.
+     * @param array<string, mixed> $options The options to use, see above.
+     * @return \Cake\Database\Schema\TableSchemaInterface Object with column metadata.
+     * @throws \Cake\Database\Exception\DatabaseException when table cannot be described.
      */
     public function describe(string $name, array $options = []): TableSchemaInterface
     {

@@ -111,7 +111,7 @@ class MiddlewareDispatcher
         }
         $environment = array_merge(
             array_merge($_SERVER, ['REQUEST_URI' => $spec['url']]),
-            $spec['environment']
+            $spec['environment'],
         );
         if (str_contains($environment['PHP_SELF'], 'phpunit')) {
             $environment['PHP_SELF'] = '/';
@@ -121,7 +121,7 @@ class MiddlewareDispatcher
             $spec['query'],
             $spec['post'],
             $spec['cookies'],
-            $spec['files']
+            $spec['files'],
         );
 
         return $request

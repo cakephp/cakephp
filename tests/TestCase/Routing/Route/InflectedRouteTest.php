@@ -164,7 +164,7 @@ class InflectedRouteTest extends TestCase
 
         $route = new InflectedRoute(
             '/admin/{controller}',
-            ['prefix' => 'Admin', 'action' => 'index']
+            ['prefix' => 'Admin', 'action' => 'index'],
         );
         $route->compile();
         $result = $route->parse('/admin/', 'GET');
@@ -176,7 +176,7 @@ class InflectedRouteTest extends TestCase
 
         $route = new InflectedRoute(
             '/media/search/*',
-            ['controller' => 'Media', 'action' => 'search_it']
+            ['controller' => 'Media', 'action' => 'search_it'],
         );
         $result = $route->parse('/media/search', 'GET');
         $this->assertSame('Media', $result['controller']);

@@ -19,9 +19,13 @@ namespace Cake\Controller;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
 use Cake\Core\ContainerInterface;
+use Cake\Core\Exception\CakeException;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use League\Container\Argument\ArgumentResolverTrait;
+use League\Container\Exception\NotFoundException;
+use ReflectionClass;
 use RuntimeException;
 
 /**
@@ -39,6 +43,8 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @use \Cake\Event\EventDispatcherTrait<TSubject>
      */
     use EventDispatcherTrait;
+
+    use ArgumentResolverTrait;
 
     /**
      * The controller that this collection is associated with.
@@ -144,9 +150,22 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             return $class;
         }
         if ($this->container?->has($class)) {
+            $constructor = (new ReflectionClass($class))->getConstructor();
+
+            if ($constructor !== null) {
+                $args = $this->reflectArguments($constructor, ['config' => $config]);
+
+                try {
+                    $this->container->extend($class)
+                        ->addArguments($args);
+                } catch (NotFoundException) {
+                    $this->container->add($class)
+                        ->addArguments($args);
+                }
+            }
+
             /** @var \Cake\Controller\Component $instance */
             $instance = $this->container->get($class);
-            $instance->setConfig($config);
         } else {
             $instance = new $class($this, $config);
         }
@@ -156,5 +175,20 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
         }
 
         return $instance;
+    }
+
+    /**
+     * Get container instance.
+     *
+     * @return \Cake\Core\ContainerInterface
+     * @psalm-suppress OverriddenMethodAccess
+     */
+    protected function getContainer(): ContainerInterface
+    {
+        if ($this->container === null) {
+            throw new CakeException('Container not set.');
+        }
+
+        return $this->container;
     }
 }

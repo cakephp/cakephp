@@ -41,7 +41,7 @@ class RulesCheckerTest extends TestCase
                 return false;
             },
             'ruleName',
-            ['errorField' => 'name']
+            ['errorField' => 'name'],
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::CREATE));
@@ -68,7 +68,7 @@ class RulesCheckerTest extends TestCase
                 return false;
             },
             'ruleName',
-            ['errorField' => 'name']
+            ['errorField' => 'name'],
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::CREATE));
@@ -95,7 +95,7 @@ class RulesCheckerTest extends TestCase
                 return false;
             },
             'ruleName',
-            ['errorField' => 'name']
+            ['errorField' => 'name'],
         );
 
         $this->assertTrue($rules->check($entity, RulesChecker::UPDATE));
@@ -122,7 +122,7 @@ class RulesCheckerTest extends TestCase
                 return false;
             },
             'ruleName',
-            ['errorField' => 'name']
+            ['errorField' => 'name'],
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
@@ -143,7 +143,7 @@ class RulesCheckerTest extends TestCase
             function () {
                 return 'worst thing ever';
             },
-            ['errorField' => 'name']
+            ['errorField' => 'name'],
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
@@ -164,7 +164,7 @@ class RulesCheckerTest extends TestCase
             function () {
                 return false;
             },
-            ['message' => 'this is bad', 'errorField' => 'name']
+            ['message' => 'this is bad', 'errorField' => 'name'],
         );
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
@@ -263,40 +263,40 @@ class RulesCheckerTest extends TestCase
     public function testAddDuplicateName(): void
     {
         $rules = new RulesChecker();
-        $rules->add(fn () => false, 'myUniqueName');
+        $rules->add(fn() => false, 'myUniqueName');
 
         $this->expectException(CakeException::class);
-        $rules->add(fn () => true, 'myUniqueName');
+        $rules->add(fn() => true, 'myUniqueName');
         $this->fail('Exception not thrown');
     }
 
     public function testAddCreateDuplicateName(): void
     {
         $rules = new RulesChecker();
-        $rules->addCreate(fn () => false, 'myUniqueName');
+        $rules->addCreate(fn() => false, 'myUniqueName');
 
         $this->expectException(CakeException::class);
-        $rules->addCreate(fn () => true, 'myUniqueName');
+        $rules->addCreate(fn() => true, 'myUniqueName');
         $this->fail('Exception not thrown');
     }
 
     public function testAddUpdateDuplicateName(): void
     {
         $rules = new RulesChecker();
-        $rules->addUpdate(fn () => false, 'myUniqueName');
+        $rules->addUpdate(fn() => false, 'myUniqueName');
 
         $this->expectException(CakeException::class);
-        $rules->addUpdate(fn () => true, 'myUniqueName');
+        $rules->addUpdate(fn() => true, 'myUniqueName');
         $this->fail('Exception not thrown');
     }
 
     public function testAddDeleteDuplicateName(): void
     {
         $rules = new RulesChecker();
-        $rules->addDelete(fn () => false, 'myUniqueName');
+        $rules->addDelete(fn() => false, 'myUniqueName');
 
         $this->expectException(CakeException::class);
-        $rules->addDelete(fn () => true, 'myUniqueName');
+        $rules->addDelete(fn() => true, 'myUniqueName');
         $this->fail('Exception not thrown');
     }
 }

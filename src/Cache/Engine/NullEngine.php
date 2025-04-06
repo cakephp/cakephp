@@ -63,7 +63,13 @@ class NullEngine extends CacheEngine
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
-        return [];
+        $result = [];
+
+        foreach ($keys as $key) {
+            $result[$key] = $default;
+        }
+
+        return $result;
     }
 
     /**

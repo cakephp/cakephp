@@ -164,7 +164,7 @@ class DashedRouteTest extends TestCase
 
         $route = new DashedRoute(
             '/admin/{controller}',
-            ['prefix' => 'Admin', 'action' => 'index']
+            ['prefix' => 'Admin', 'action' => 'index'],
         );
         $route->compile();
         $result = $route->parse('/admin/', 'GET');
@@ -176,7 +176,7 @@ class DashedRouteTest extends TestCase
 
         $route = new DashedRoute(
             '/media/search/*',
-            ['controller' => 'Media', 'action' => 'searchIt']
+            ['controller' => 'Media', 'action' => 'searchIt'],
         );
         $result = $route->parse('/media/search', 'GET');
         $this->assertSame('Media', $result['controller']);

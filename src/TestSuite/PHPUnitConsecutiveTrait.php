@@ -44,7 +44,7 @@ trait PHPUnitConsecutiveTrait
                     &$mockedMethodCall,
                     &$callbackCall,
                     $index,
-                    $numberOfArguments
+                    $numberOfArguments,
                 ): bool {
                     $expected = $argumentList[$index][$mockedMethodCall] ?? null;
 

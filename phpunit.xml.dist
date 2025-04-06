@@ -45,7 +45,7 @@
         <ini name="error_reporting" value="32767"/>
         <env name="FIXTURE_SCHEMA_METADATA" value="./tests/schema.php"/>
 
-        <!-- Enable query logging output for the testrun.
+        <!-- Enable query logging output for the test run.
         <env name="LOG_QUERIES" value="1" />
         -->
         <!-- SQLite

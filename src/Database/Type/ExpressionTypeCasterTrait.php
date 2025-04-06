@@ -49,7 +49,7 @@ trait ExpressionTypeCasterTrait
         $multi = $type !== $baseType;
 
         if ($multi) {
-            /** @var \Cake\Database\Type\ExpressionTypeInterface $converter */
+            /** @var \Cake\Database\Type\ExpressionTypeInterface&\Cake\Database\TypeInterface $converter */
             return array_map($converter->toExpression(...), $value);
         }
 

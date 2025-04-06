@@ -77,7 +77,7 @@ class PluginAssetsSymlinkCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
-            static::getDescription()
+            static::getDescription(),
         )->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'required' => false,

@@ -51,7 +51,7 @@ class QueryTest extends TestCase
 
     protected Query $query;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -59,7 +59,7 @@ class QueryTest extends TestCase
         $this->query = $this->newQuery();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -150,8 +150,8 @@ class QueryTest extends TestCase
             ->with(
                 new CommonTableExpression(
                     'cte',
-                    $this->newQuery()
-                )
+                    $this->newQuery(),
+                ),
             )
             ->with(function (CommonTableExpression $cte, Query $query) {
                 return $cte
@@ -205,15 +205,15 @@ class QueryTest extends TestCase
         $this->query
             ->innerJoin(
                 ['alias_inner' => $this->newQuery()],
-                ['alias_inner.fk = parent.pk']
+                ['alias_inner.fk = parent.pk'],
             )
             ->leftJoin(
                 ['alias_left' => $this->newQuery()],
-                ['alias_left.fk = parent.pk']
+                ['alias_left.fk = parent.pk'],
             )
             ->rightJoin(
                 ['alias_right' => $this->newQuery()],
-                ['alias_right.fk = parent.pk']
+                ['alias_right.fk = parent.pk'],
             );
 
         $clause = $this->query->clause('join');

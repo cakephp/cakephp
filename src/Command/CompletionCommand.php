@@ -72,7 +72,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         }
 
         $parser->setDescription(
-            static::getDescription()
+            static::getDescription(),
         )->addArgument('mode', [
             'help' => 'The type of thing to get completion on.',
             'required' => true,

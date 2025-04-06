@@ -25,7 +25,7 @@ class ArticlesCell extends Cell
     /**
      * valid cell options.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_validCellOptions = ['limit', 'page'];
 

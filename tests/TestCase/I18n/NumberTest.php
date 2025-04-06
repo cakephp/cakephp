@@ -36,7 +36,7 @@ class NumberTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->Number = new Number();
@@ -45,7 +45,7 @@ class NumberTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->Number);

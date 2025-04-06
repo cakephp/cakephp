@@ -51,6 +51,11 @@ class PostgresTest extends TestCase
             'flags' => [],
             'init' => [],
             'log' => false,
+            'ssl_key' => null,
+            'ssl_cert' => null,
+            'ssl_ca' => null,
+            'ssl' => false,
+            'ssl_mode' => null,
         ];
 
         $expected['flags'] += [
@@ -72,8 +77,8 @@ class PostgresTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     ['SET NAMES utf8'],
-                    ['SET search_path TO public']
-                )
+                    ['SET search_path TO public'],
+                ),
             );
 
         $driver->expects($this->once())->method('createPdo')
@@ -101,12 +106,17 @@ class PostgresTest extends TestCase
             'schema' => 'fooblic',
             'init' => ['Execute this', 'this too'],
             'log' => false,
+            'ssl_key' => '/path/to/key',
+            'ssl_cert' => '/path/to/crt',
+            'ssl_ca' => '/path/to/ca',
+            'ssl' => true,
+            'ssl_mode' => 'verify-ca',
         ];
         $driver = $this->getMockBuilder(Postgres::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
-        $dsn = 'pgsql:host=foo;port=3440;dbname=bar';
+        $dsn = 'pgsql:host=foo;port=3440;dbname=bar;sslmode=verify-ca;sslkey=/path/to/key;sslcert=/path/to/crt;sslrootcert=/path/to/ca';
 
         $expected = $config;
         $expected['flags'] += [
@@ -131,8 +141,8 @@ class PostgresTest extends TestCase
                     ['SET search_path TO fooblic'],
                     ['Execute this'],
                     ['this too'],
-                    ['SET timezone = Antarctica']
-                )
+                    ['SET timezone = Antarctica'],
+                ),
             );
 
         $driver->expects($this->once())->method('createPdo')
@@ -236,5 +246,34 @@ class PostgresTest extends TestCase
         $this->assertTrue($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));
 
         $this->assertFalse($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+    }
+
+    /**
+     * Tests value quoting
+     */
+    public function testQuote(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(!$driver instanceof Postgres);
+
+        $result = $driver->quote('name');
+        $expected = "'name'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote('Model.*');
+        $expected = "'Model.*'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O'hare");
+        $expected = "'O''hare'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O''hare");
+        $expected = "'O''''hare'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O\slash");
+        $expected = "'O\slash'";
+        $this->assertEquals($expected, $result);
     }
 }

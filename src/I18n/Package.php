@@ -54,7 +54,7 @@ class Package
     public function __construct(
         string $formatter = 'default',
         ?string $fallback = null,
-        array $messages = []
+        array $messages = [],
     ) {
         $this->formatter = $formatter;
         $this->fallback = $fallback;

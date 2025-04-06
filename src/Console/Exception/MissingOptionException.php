@@ -32,7 +32,7 @@ class MissingOptionException extends ConsoleException
     /**
      * The valid suggestions.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $suggestions = [];
 
@@ -41,7 +41,7 @@ class MissingOptionException extends ConsoleException
      *
      * @param string $message The string message.
      * @param string $requested The requested value.
-     * @param list<string> $suggestions The list of potential values that were valid.
+     * @param array<string> $suggestions The list of potential values that were valid.
      * @param int|null $code The exception code if relevant.
      * @param \Throwable|null $previous the previous exception.
      */
@@ -50,7 +50,7 @@ class MissingOptionException extends ConsoleException
         string $requested = '',
         array $suggestions = [],
         ?int $code = null,
-        ?Throwable $previous = null
+        ?Throwable $previous = null,
     ) {
         $this->suggestions = $suggestions;
         $this->requested = $requested;
@@ -87,7 +87,7 @@ class MissingOptionException extends ConsoleException
      * Find the best match for requested in suggestions
      *
      * @param string $needle Unknown option name trying to be used.
-     * @param list<string> $haystack Suggestions to look through.
+     * @param array<string> $haystack Suggestions to look through.
      * @return string|null The best match
      */
     protected function findClosestItem(string $needle, array $haystack): ?string

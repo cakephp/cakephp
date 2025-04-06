@@ -25,7 +25,7 @@ use Psr\Log\LoggerInterface;
  */
 class LogTraitTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::drop('trait_test');
@@ -42,8 +42,8 @@ class LogTraitTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     ['error', 'Testing'],
-                    ['debug', 'message']
-                )
+                    ['debug', 'message'],
+                ),
             );
 
         Log::setConfig('trait_test', ['engine' => $mock]);

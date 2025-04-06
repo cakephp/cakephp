@@ -95,12 +95,12 @@ class Filesystem
                 }
 
                 return true;
-            }
+            },
         );
 
         $flatten = new RecursiveIteratorIterator(
             $dirFilter,
-            RecursiveIteratorIterator::CHILD_FIRST
+            RecursiveIteratorIterator::CHILD_FIRST,
         );
 
         if ($filter === null) {
@@ -201,13 +201,13 @@ class Filesystem
             throw new CakeException(sprintf('`%s` is not a directory', $path));
         }
 
-        /** @var \RecursiveDirectoryIterator<\SplFileInfo> $iterator Replace type for psalm */
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST
+            RecursiveIteratorIterator::CHILD_FIRST,
         );
 
         $result = true;
+        /** @var \SplFileInfo $fileInfo */
         foreach ($iterator as $fileInfo) {
             $isWindowsLink = DIRECTORY_SEPARATOR === '\\' && $fileInfo->getType() === 'link';
             if ($fileInfo->getType() === self::TYPE_DIR || $isWindowsLink) {
@@ -254,13 +254,13 @@ class Filesystem
             if ($fileInfo->isDir()) {
                 $result = $result && $this->copyDir(
                     $fileInfo->getPathname(),
-                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename()
+                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename(),
                 );
             } else {
                 // phpcs:ignore
                 $result = $result && @copy(
                     $fileInfo->getPathname(),
-                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename()
+                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename(),
                 );
             }
         }

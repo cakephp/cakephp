@@ -28,7 +28,7 @@ class TableRegressionTest extends TestCase
     /**
      * Fixture to be used
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.Authors',
@@ -48,7 +48,7 @@ class TableRegressionTest extends TestCase
             'Model.afterSave',
             function () use ($table): void {
                 $table->getConnection()->rollback();
-            }
+            },
         );
         $entity = $table->newEntity(['name' => 'Jon']);
         $table->save($entity);

@@ -66,7 +66,7 @@ trait ViewVarsTrait
         return $builder->build(
             $this->request ?? null,
             $this->response ?? null,
-            $this instanceof EventDispatcherInterface ? $this->getEventManager() : null
+            $this instanceof EventDispatcherInterface ? $this->getEventManager() : null,
         );
     }
 

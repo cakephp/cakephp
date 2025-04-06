@@ -39,7 +39,7 @@ class ResultSetFactory
     protected string $resultSetClass = ResultSet::class;
 
     /**
-     * Create a resultset instance.
+     * Create a result set instance.
      *
      * @param iterable $results Results.
      * @param \Cake\ORM\Query\SelectQuery<T>|null $query Query from where results came.
@@ -147,7 +147,7 @@ class ResultSetFactory
             $matching = $data['matchingAssoc'][$alias];
             $results['_matchingData'][$alias] = array_combine(
                 $keys,
-                array_intersect_key($row, $keys)
+                array_intersect_key($row, $keys),
             );
             if ($data['hydrate']) {
                 $table = $matching['instance'];
@@ -254,7 +254,7 @@ class ResultSetFactory
             throw new InvalidArgumentException(sprintf(
                 'Invalid ResultSet class `%s`. It must implement `%s`',
                 $resultSetClass,
-                ResultSetInterface::class
+                ResultSetInterface::class,
             ));
         }
 

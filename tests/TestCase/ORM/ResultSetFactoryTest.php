@@ -32,7 +32,7 @@ use Mockery;
 class ResultSetFactoryTest extends TestCase
 {
     /**
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
@@ -59,7 +59,7 @@ class ResultSetFactoryTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');

@@ -35,10 +35,10 @@ use Cake\Database\Schema\SchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\Statement\Statement;
-use Closure;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Stringable;
@@ -47,7 +47,7 @@ use Stringable;
  * Represents a database driver containing all specificities for
  * a database engine including its SQL dialect.
  */
-abstract class Driver
+abstract class Driver implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -155,7 +155,7 @@ abstract class Driver
     {
         if (empty($config['username']) && !empty($config['login'])) {
             throw new InvalidArgumentException(
-                'Please pass "username" instead of "login" for connecting to the database'
+                'Please pass "username" instead of "login" for connecting to the database',
             );
         }
         $config += $this->_baseConfig + ['log' => false];
@@ -188,11 +188,11 @@ abstract class Driver
      */
     protected function createPdo(string $dsn, array $config): PDO
     {
-        $action = fn (): PDO => new PDO(
+        $action = fn(): PDO => new PDO(
             $dsn,
             $config['username'] ?: null,
             $config['password'] ?: null,
-            $config['flags']
+            $config['flags'],
         );
 
         $retry = new CommandRetry(new ErrorCodeWaitStrategy(static::RETRY_ERROR_CODES, 5), 4);
@@ -205,7 +205,7 @@ abstract class Driver
                     'reason' => $e->getMessage(),
                 ],
                 null,
-                $e
+                $e,
             );
         } finally {
             $this->connectRetries = $retry->getRetries();
@@ -371,7 +371,7 @@ abstract class Driver
     protected function createQueryException(
         PDOException $exception,
         StatementInterface $statement,
-        ?array $params = null
+        ?array $params = null,
     ): QueryException {
         $loggedQuery = new LoggedQuery();
         $loggedQuery->setContext([
@@ -396,7 +396,7 @@ abstract class Driver
         } catch (PDOException $e) {
             throw new QueryException(
                 $query instanceof Query ? $query->sql() : $query,
-                $e
+                $e,
             );
         }
 
@@ -416,7 +416,7 @@ abstract class Driver
             $decorators = $query->getResultDecorators();
             if ($query->isResultsCastingEnabled()) {
                 $typeConverter = new FieldTypeConverter($query->getSelectTypeMap(), $this);
-                array_unshift($decorators, Closure::fromCallable($typeConverter));
+                array_unshift($decorators, $typeConverter(...));
             }
 
             return $decorators;
@@ -551,7 +551,7 @@ abstract class Driver
             $query instanceof DeleteQuery => $this->_deleteQueryTranslator($query),
             default => throw new InvalidArgumentException(sprintf(
                 'Instance of SelectQuery, UpdateQuery, InsertQuery, DeleteQuery expected. Found `%s` instead.',
-                get_debug_type($query)
+                get_debug_type($query),
             )),
         };
 
@@ -676,7 +676,7 @@ abstract class Driver
         if ($query->clause('join')) {
             throw new DatabaseException(
                 'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
-                'this can break references to joined tables.'
+                'this can break references to joined tables.',
             );
         }
 
@@ -748,6 +748,25 @@ abstract class Driver
     public function quoteIdentifier(string $identifier): string
     {
         return $this->quoter()->quoteIdentifier($identifier);
+    }
+
+    /**
+     * Quotes a database value.
+     *
+     * This makes values safe for concatenation in SQL queries.
+     *
+     * Using this method **is not** recommended. You should use `execute()`
+     * instead, as it uses prepared statements which are safer than
+     * string concatenation.
+     *
+     * This method should only be used for queries that do not support placeholders.
+     *
+     * @param string $value The value to quote.
+     * @return string
+     */
+    public function quote(string $value): string
+    {
+        return $this->getPdo()->quote($value);
     }
 
     /**
@@ -827,17 +846,15 @@ abstract class Driver
      */
     public function isConnected(): bool
     {
-        if ($this->pdo !== null) {
-            try {
-                $connected = (bool)$this->pdo->query('SELECT 1');
-            } catch (PDOException) {
-                $connected = false;
-            }
-        } else {
-            $connected = false;
+        if ($this->pdo === null) {
+            return false;
         }
 
-        return $connected;
+        try {
+            return (bool)$this->pdo->query('SELECT 1');
+        } catch (PDOException) {
+            return false;
+        }
     }
 
     /**
@@ -963,7 +980,7 @@ abstract class Driver
         if ($className === null) {
             throw new CakeException(
                 'For logging you must either set the `log` config to a FQCN which implemnts Psr\Log\LoggerInterface' .
-                ' or require the cakephp/log package in your composer config.'
+                ' or require the cakephp/log package in your composer config.',
             );
         }
 

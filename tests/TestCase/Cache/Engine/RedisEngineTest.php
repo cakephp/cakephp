@@ -36,11 +36,10 @@ class RedisEngineTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!class_exists('Redis'), 'Redis extension is not installed or configured properly.');
-        $this->skipIf(PHP_VERSION_ID >= 80400, 'redis.io currrently generates an error on PHP 8.4');
 
         $this->port = env('REDIS_PORT', $this->port);
 
@@ -57,7 +56,7 @@ class RedisEngineTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('redis');
@@ -275,7 +274,7 @@ class RedisEngineTest extends TestCase
                 null,
                 0,
                 0.0,
-                $context
+                $context,
             )
             ->willReturn(true);
 
@@ -313,7 +312,7 @@ class RedisEngineTest extends TestCase
                 $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
-                $expectedPersistentId
+                $expectedPersistentId,
             )
             ->willReturn(true);
 
@@ -340,7 +339,7 @@ class RedisEngineTest extends TestCase
                 'tls://' . $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
-                $expectedPersistentId
+                $expectedPersistentId,
             )
             ->willReturn(true);
 
@@ -387,7 +386,7 @@ class RedisEngineTest extends TestCase
                 $expectedPersistentId,
                 0,
                 0.0,
-                $context
+                $context,
             )
             ->willReturn(true);
 

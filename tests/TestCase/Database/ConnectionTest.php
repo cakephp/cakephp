@@ -54,7 +54,7 @@ use function Cake\Core\namespaceSplit;
 class ConnectionTest extends TestCase
 {
     /**
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = ['core.Things'];
 
@@ -87,7 +87,7 @@ class ConnectionTest extends TestCase
      */
     protected $defaultLogger;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -95,7 +95,7 @@ class ConnectionTest extends TestCase
         static::setAppNamespace();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->disableSavePoints();
@@ -112,7 +112,7 @@ class ConnectionTest extends TestCase
      *
      * @return \Cake\Database\Driver
      */
-    public function getDriver(): Driver
+    protected function getDriver(): Driver
     {
         return new class extends Driver {
             use BaseDriverTrait;
@@ -156,7 +156,7 @@ class ConnectionTest extends TestCase
         $this->expectException(MissingExtensionException::class);
         $this->expectExceptionMessageMatches(
             '/Database driver `.+` cannot be used due to a missing PHP extension or unmet dependency\. ' .
-            'Requested by connection `custom_connection_name`/'
+            'Requested by connection `custom_connection_name`/',
         );
         $driver = new class extends StubDriver {
             public function enabled(): bool
@@ -261,6 +261,18 @@ class ConnectionTest extends TestCase
         $this->assertNull($connection->getDriver(Connection::ROLE_WRITE)->getLogger());
     }
 
+    public function testRole(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $config = ConnectionManager::getConfig('test') + ['read' => [], 'write' => []];
+        $connection = new Connection($config);
+        $this->assertEquals(Connection::ROLE_WRITE, $connection->role());
+
+        $config = ['name' => 'test:read'] + $config;
+        $connection = new Connection($config);
+        $this->assertEquals(Connection::ROLE_READ, $connection->role());
+    }
+
     public function testDisabledReadWriteDriver(): void
     {
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
@@ -289,9 +301,9 @@ class ConnectionTest extends TestCase
         $this->assertStringStartsWith(
             sprintf(
                 'Connection to %s could not be established:',
-                App::shortName($connection->getDriver()::class, 'Database/Driver')
+                App::shortName($connection->getDriver()::class, 'Database/Driver'),
             ),
-            $e->getMessage()
+            $e->getMessage(),
         );
         $this->assertInstanceOf('PDOException', $e->getPrevious());
     }
@@ -381,7 +393,7 @@ class ConnectionTest extends TestCase
         $result = $this->connection->insert(
             'things',
             $data,
-            ['id' => 'integer', 'title' => 'string', 'body' => 'string']
+            ['id' => 'integer', 'title' => 'string', 'body' => 'string'],
         );
         $this->assertInstanceOf(StatementInterface::class, $result);
         $result->closeCursor();
@@ -401,7 +413,7 @@ class ConnectionTest extends TestCase
         $query = $this->connection->insertQuery(
             'things',
             $data,
-            ['id' => 'integer', 'title' => 'string', 'body' => 'string']
+            ['id' => 'integer', 'title' => 'string', 'body' => 'string'],
         );
         $result = $query->execute();
         $this->assertInstanceOf(StatementInterface::class, $result);
@@ -422,7 +434,7 @@ class ConnectionTest extends TestCase
         $result = $this->connection->insert(
             'things',
             $data,
-            ['integer', 'string', 'string']
+            ['integer', 'string', 'string'],
         );
         $result->closeCursor();
         $this->assertInstanceOf(StatementInterface::class, $result);
@@ -811,6 +823,9 @@ class ConnectionTest extends TestCase
         $this->connection->commit();
         $this->assertFalse($this->connection->inTransaction());
 
+        $this->assertFalse($this->connection->commit());
+        $this->assertFalse($this->connection->inTransaction());
+
         $this->connection->begin();
         $this->assertTrue($this->connection->inTransaction());
 
@@ -826,11 +841,14 @@ class ConnectionTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlserver,
-            'SQLServer fails when this test is included.'
+            'SQLServer fails when this test is included.',
         );
+        $this->connection->enableSavePoints(false);
+        $this->assertFalse($this->connection->isSavePointsEnabled());
 
         $this->connection->enableSavePoints(true);
         $this->skipIf(!$this->connection->isSavePointsEnabled(), "Database driver doesn't support save points");
+        $this->assertTrue($this->connection->isSavePointsEnabled());
 
         $this->connection->begin();
         $this->assertTrue($this->connection->inTransaction());
@@ -1020,6 +1038,9 @@ class ConnectionTest extends TestCase
         $schema = $connection->getSchemaCollection();
         $this->assertInstanceOf(CachedCollection::class, $schema);
         $this->assertSame('foo_key', $schema->cacheKey('key'));
+
+        // Ensure that the connection was not initialized
+        $this->assertFalse($connection->getDriver()->__debugInfo()['connected']);
     }
 
     /**
@@ -1176,7 +1197,7 @@ class ConnectionTest extends TestCase
             ->method('execute')
             ->willReturnOnConsecutiveCalls(
                 $this->throwException(new Exception('server gone away')),
-                $statement
+                $statement,
             );
 
         $res = $conn->execute('SELECT 1');

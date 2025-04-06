@@ -32,7 +32,7 @@ if (!function_exists('Cake\Core\pathCombine')) {
      *
      * Skips adding a forward-slash if either `/` or `\` already exists.
      *
-     * @param list<string> $parts
+     * @param array<string> $parts
      * @param bool|null $trailing Determines how trailing slashes are handled
      *  - If true, ensures a trailing forward-slash is added if one doesn't exist
      *  - If false, ensures any trailing slash is removed
@@ -356,7 +356,7 @@ if (!function_exists('Cake\Core\deprecationWarning')) {
                 $message,
                 $frame['file'],
                 $frame['line'],
-                $relative
+                $relative,
             );
         }
 
@@ -441,6 +441,11 @@ if (!function_exists('Cake\Core\toInt')) {
             return $value;
         }
         if (is_string($value)) {
+            $value = trim($value);
+            if (preg_match('/^0+[^0]{1}/', $value)) {
+                $value = ltrim($value, '0');
+            }
+
             $value = filter_var($value, FILTER_VALIDATE_INT, FILTER_NULL_ON_FAILURE);
 
             return $value === PHP_INT_MIN ? null : $value;
@@ -477,6 +482,11 @@ if (!function_exists('Cake\Core\toFloat')) {
     function toFloat(mixed $value): ?float
     {
         if (is_string($value)) {
+            $value = trim($value);
+            if (preg_match('/^0+[^0]{1}/', $value)) {
+                $value = ltrim($value, '0');
+            }
+
             $value = filter_var($value, FILTER_VALIDATE_FLOAT, FILTER_NULL_ON_FAILURE);
 
             return $value === PHP_FLOAT_MIN ? null : $value;

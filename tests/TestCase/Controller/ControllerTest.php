@@ -65,7 +65,7 @@ class ControllerTest extends TestCase
     /**
      * fixtures property
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.Comments',
@@ -75,7 +75,7 @@ class ControllerTest extends TestCase
     /**
      * reset environment.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -86,7 +86,7 @@ class ControllerTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -102,7 +102,7 @@ class ControllerTest extends TestCase
 
         $this->assertInstanceOf(
             ArticlesTable::class,
-            $Controller->Articles
+            $Controller->Articles,
         );
     }
 
@@ -130,7 +130,7 @@ class ControllerTest extends TestCase
         $result = $Controller->fetchTable('Articles');
         $this->assertInstanceOf(
             ArticlesTable::class,
-            $result
+            $result,
         );
     }
 
@@ -169,7 +169,7 @@ class ControllerTest extends TestCase
         $result = $Controller->fetchTable('TestPlugin.TestPluginComments');
         $this->assertInstanceOf(
             TestPluginCommentsTable::class,
-            $result
+            $result,
         );
     }
 
@@ -281,7 +281,7 @@ class ControllerTest extends TestCase
         $this->assertSame(
             'application/xml; charset=UTF-8',
             $response->getHeaderLine('Content-Type'),
-            'Has correct header'
+            'Has correct header',
         );
         $this->assertStringContainsString('<?xml', $response->getBody() . '');
     }
@@ -317,7 +317,7 @@ class ControllerTest extends TestCase
         $this->assertSame(
             'text/html; charset=UTF-8',
             $response->getHeaderLine('Content-Type'),
-            'Should not be XML response.'
+            'Should not be XML response.',
         );
         $this->assertStringContainsString('hello world', $response->getBody() . '');
     }
@@ -448,7 +448,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(new ServerRequest());
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
-            return false;
+            $event->stopPropagation();
         });
 
         $result = $Controller->render('index');
@@ -542,7 +542,7 @@ class ControllerTest extends TestCase
 
         $newResponse = new Response();
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse) {
-            return $newResponse;
+            $event->setResult($newResponse);
         });
 
         $result = $Controller->redirect('http://cakephp.org');
@@ -685,7 +685,7 @@ class ControllerTest extends TestCase
 
         $results = $Controller->paginate(
             $this->getTableLocator()->get('Posts'),
-            ['scope' => 'posts', 'className' => 'Numeric']
+            ['scope' => 'posts', 'className' => 'Numeric'],
         );
         $this->assertInstanceOf(PaginatedInterface::class, $results);
         $this->assertCount(1, $results);
@@ -698,7 +698,7 @@ class ControllerTest extends TestCase
 
         $results = $Controller->paginate(
             $this->getTableLocator()->get('Posts'),
-            ['className' => 'Simple']
+            ['className' => 'Simple'],
         );
         $this->assertInstanceOf(PaginatedInterface::class, $results);
 
@@ -869,7 +869,7 @@ class ControllerTest extends TestCase
 
         $this->assertEquals(
             ['testId' => '1', 'test2Id' => '2'],
-            $controller->getRequest()->getData()
+            $controller->getRequest()->getData(),
         );
     }
 
@@ -881,7 +881,7 @@ class ControllerTest extends TestCase
         $this->expectException(AssertionError::class);
         $this->expectExceptionMessage(
             'Controller actions can only return Response instance or null. '
-                . 'Got string instead.'
+                . 'Got string instead.',
         );
 
         $url = new ServerRequest([
@@ -1048,11 +1048,11 @@ class ControllerTest extends TestCase
         $Controller->getEventManager()->on('Controller.beforeRender', function ($event): void {
             $this->assertSame(
                 '/Element/test_element',
-                $event->getSubject()->viewBuilder()->getTemplate()
+                $event->getSubject()->viewBuilder()->getTemplate(),
             );
             $this->assertSame(
                 'default',
-                $event->getSubject()->viewBuilder()->getLayout()
+                $event->getSubject()->viewBuilder()->getLayout(),
             );
 
             $event->getSubject()->viewBuilder()

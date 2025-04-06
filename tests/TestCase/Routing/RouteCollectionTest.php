@@ -25,6 +25,7 @@ use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use TestApp\Routing\Route\AddQueryParamRoute;
 
 class RouteCollectionTest extends TestCase
 {
@@ -36,7 +37,7 @@ class RouteCollectionTest extends TestCase
     /**
      * Setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->collection = new RouteCollection();
@@ -345,6 +346,31 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
+     * Test parseRequest() handling query strings.
+     */
+    public function testParseRequestQueryStringFromRoute(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->connect(
+            '/test',
+            ['controller' => 'Articles', 'action' => 'view'],
+            ['routeClass' => AddQueryParamRoute::class],
+        );
+        $request = new ServerRequest(['url' => '/test?y=2']);
+        $result = $this->collection->parseRequest($request);
+        unset($result['_route']);
+        $expected = [
+            'controller' => 'Articles',
+            'action' => 'view',
+            'pass' => [],
+            'plugin' => null,
+            '_matchedRoute' => '/test',
+            '?' => ['x' => '1', 'y' => '2'],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test parseRequest() checks host conditions
      */
     public function testParseRequestCheckHostCondition(): void
@@ -353,13 +379,13 @@ class RouteCollectionTest extends TestCase
         $routes->connect(
             '/fallback',
             ['controller' => 'Articles', 'action' => 'index'],
-            ['_host' => '*.example.com']
+            ['_host' => '*.example.com'],
         );
 
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'a.example.com',
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         $result = $this->collection->parseRequest($request);
@@ -376,7 +402,7 @@ class RouteCollectionTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'foo.bar.example.com',
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         $result = $this->collection->parseRequest($request);
@@ -386,7 +412,7 @@ class RouteCollectionTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'example.test.com',
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         try {
@@ -423,13 +449,13 @@ class RouteCollectionTest extends TestCase
         $routes->connect(
             '/fallback',
             ['controller' => 'Articles', 'action' => 'index'],
-            ['_host' => '*.example.com']
+            ['_host' => '*.example.com'],
         );
 
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => $host,
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         $this->collection->parseRequest($request);
@@ -558,6 +584,20 @@ class RouteCollectionTest extends TestCase
     }
 
     /**
+     * Test parsing routes that match non-ascii urls
+     */
+    public function testParseRequestNoDecode2f(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/b', []);
+        $routes->connect('/media/confirm', ['controller' => 'Media', 'action' => 'confirm']);
+
+        $request = new ServerRequest(['url' => '/b/media%2fconfirm']);
+
+        $this->expectException(MissingRouteException::class);
+        $this->collection->parseRequest($request);
+    }
+
+    /**
      * Test match() throws an error on unknown routes.
      */
     public function testMatchError(): void
@@ -594,7 +634,7 @@ class RouteCollectionTest extends TestCase
 
         $result = $this->collection->match(
             ['id' => 'thing', 'plugin' => null, 'controller' => 'Articles', 'action' => 'view'],
-            $context
+            $context,
         );
         $this->assertSame('b/thing', $result);
     }

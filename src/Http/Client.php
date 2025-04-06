@@ -238,7 +238,7 @@ class Client implements EventDispatcherInterface, ClientInterface
         if ($parts === false) {
             throw new InvalidArgumentException(sprintf(
                 'String `%s` did not parse.',
-                $url
+                $url,
             ));
         }
 
@@ -310,7 +310,7 @@ class Client implements EventDispatcherInterface, ClientInterface
             Request::METHOD_GET,
             $url,
             $body,
-            $options
+            $options,
         );
     }
 
@@ -441,7 +441,7 @@ class Client implements EventDispatcherInterface, ClientInterface
             $method,
             $url,
             $data,
-            $options
+            $options,
         );
 
         return $this->send($request, $options);
@@ -492,7 +492,7 @@ class Client implements EventDispatcherInterface, ClientInterface
             /** @var \Cake\Http\Client\ClientEvent $event */
             $event = $this->dispatchEvent(
                 'HttpClient.beforeSend',
-                ['request' => $request, 'adapterOptions' => $options, 'redirects' => $redirects]
+                ['request' => $request, 'adapterOptions' => $options, 'redirects' => $redirects],
             );
 
             $request = $event->getRequest();
@@ -512,7 +512,7 @@ class Client implements EventDispatcherInterface, ClientInterface
                     'redirects' => $redirects,
                     'requestSent' => $requestSent,
                     'response' => $response,
-                ]
+                ],
             );
             $response = $event->getResult();
             assert($response instanceof Response);
@@ -710,7 +710,7 @@ class Client implements EventDispatcherInterface, ClientInterface
         if (!isset($typeMap[$type])) {
             throw new CakeException(sprintf(
                 'Unknown type alias `%s`.',
-                $type
+                $type,
             ));
         }
 
@@ -778,7 +778,7 @@ class Client implements EventDispatcherInterface, ClientInterface
         $class = App::className($name, 'Http/Client/Auth');
         if (!$class) {
             throw new CakeException(
-                sprintf('Invalid authentication type `%s`.', $name)
+                sprintf('Invalid authentication type `%s`.', $name),
             );
         }
 

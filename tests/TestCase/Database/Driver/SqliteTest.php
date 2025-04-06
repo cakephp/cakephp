@@ -31,7 +31,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class SqliteTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         ConnectionManager::drop('test_shared_cache');
@@ -106,7 +106,7 @@ class SqliteTest extends TestCase
         $connection->expects($this->exactly(2))
             ->method('exec')
             ->with(
-                ...self::withConsecutive(['Execute this'], ['this too'])
+                ...self::withConsecutive(['Execute this'], ['this too']),
             );
 
         $driver->expects($this->once())->method('createPdo')
@@ -209,7 +209,7 @@ class SqliteTest extends TestCase
         foreach ($featureVersions as $feature => $version) {
             $this->assertSame(
                 version_compare($driver->version(), $version, '>='),
-                $driver->supports(DriverFeatureEnum::from($feature))
+                $driver->supports(DriverFeatureEnum::from($feature)),
             );
         }
 
@@ -348,6 +348,35 @@ class SqliteTest extends TestCase
 
         $result = $driver->quoteIdentifier('Model.näme Datum as y');
         $expected = '"Model"."näme Datum" AS "y"';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests value quoting
+     */
+    public function testQuote(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $driver = new Sqlite();
+
+        $result = $driver->quote('name');
+        $expected = "'name'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote('Model.*');
+        $expected = "'Model.*'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O'hare");
+        $expected = "'O''hare'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O''hare");
+        $expected = "'O''''hare'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O\slash");
+        $expected = "'O\slash'";
         $this->assertEquals($expected, $result);
     }
 }

@@ -51,7 +51,7 @@ class Statement implements StatementInterface
     /**
      * @param \PDOStatement $statement PDO statement
      * @param \Cake\Database\Driver $driver Database driver
-     * @param list<\Closure> $resultDecorators Results decorators
+     * @param array<\Closure> $resultDecorators Results decorators
      */
     public function __construct(
         protected PDOStatement $statement,

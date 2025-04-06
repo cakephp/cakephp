@@ -72,7 +72,8 @@ class MultiCheckboxWidget extends BasicWidget
      */
     public function __construct(StringTemplate $templates, LabelWidget $label)
     {
-        $this->_templates = $templates;
+        parent::__construct($templates);
+
         $this->_label = $label;
     }
 
@@ -133,7 +134,7 @@ class MultiCheckboxWidget extends BasicWidget
      *
      * @param array<string, mixed> $data The data array defining the checkboxes.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
-     * @return list<string> An array of rendered inputs.
+     * @return array<string> An array of rendered inputs.
      */
     protected function _renderInputs(array $data, ContextInterface $context): array
     {
@@ -174,7 +175,7 @@ class MultiCheckboxWidget extends BasicWidget
                 if (isset($data['id'])) {
                     $checkbox['id'] = $data['id'] . '-' . trim(
                         $this->_idSuffix((string)$checkbox['value']),
-                        '-'
+                        '-',
                     );
                 } else {
                     $checkbox['id'] = $this->_id($checkbox['name'], (string)$checkbox['value']);
@@ -201,7 +202,7 @@ class MultiCheckboxWidget extends BasicWidget
             'templateVars' => $checkbox['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $checkbox,
-                ['name', 'value', 'text', 'options', 'label', 'val', 'type']
+                ['name', 'value', 'text', 'options', 'label', 'val', 'type'],
             ),
         ]);
 
@@ -236,7 +237,7 @@ class MultiCheckboxWidget extends BasicWidget
      * Helper method for deciding what options are selected.
      *
      * @param string $key The key to test.
-     * @param list<string>|string|int|false|null $selected The selected values.
+     * @param array<string>|string|int|false|null $selected The selected values.
      * @return bool
      */
     protected function _isSelected(string $key, array|string|int|false|null $selected): bool

@@ -133,10 +133,10 @@ class XmlView extends SerializedView
                 }
             }
         } else {
-            /** @var array<mixed>|string $data */
+            /** @var array<mixed>|string|int|bool|null $data */
             $data = $this->viewVars[$serialize] ?? [];
             if (
-                $data &&
+                $data !== null &&
                 (!is_array($data) || Hash::numeric(array_keys($data)))
             ) {
                 $data = [$rootNode => [$serialize => $data]];
@@ -155,7 +155,7 @@ class XmlView extends SerializedView
         $result = Xml::fromArray($data, $options)->saveXML();
         if ($result === false) {
             throw new SerializationFailureException(
-                'XML serialization of View data failed.'
+                'XML serialization of View data failed.',
             );
         }
 

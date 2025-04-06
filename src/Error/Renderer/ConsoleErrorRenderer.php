@@ -78,7 +78,7 @@ class ConsoleErrorRenderer implements ErrorRendererInterface
             $error->getMessage(),
             $error->getLine() ?? '',
             $error->getFile() ?? '',
-            $trace
+            $trace,
         );
     }
 }

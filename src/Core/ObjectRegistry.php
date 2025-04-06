@@ -159,7 +159,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
                     ' The `%s` key has a value of `%s` but previously had a value of `%s`',
                     $key,
                     json_encode($value, JSON_THROW_ON_ERROR),
-                    json_encode($existingConfig[$key], JSON_THROW_ON_ERROR)
+                    json_encode($existingConfig[$key], JSON_THROW_ON_ERROR),
                 );
                 break;
             }
@@ -206,7 +206,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Get the list of loaded objects.
      *
-     * @return list<string> List of object names.
+     * @return array<string> List of object names.
      */
     public function loaded(): array
     {

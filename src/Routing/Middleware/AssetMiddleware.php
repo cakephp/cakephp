@@ -18,6 +18,7 @@ namespace Cake\Routing\Middleware;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
+use Cake\Http\MimeType;
 use Cake\Http\Response;
 use Cake\Utility\Inflector;
 use Laminas\Diactoros\Stream;
@@ -86,7 +87,7 @@ class AssetMiddleware implements MiddlewareInterface
                 ->withStatus(304)
                 ->withHeader(
                     'Last-Modified',
-                    date(DATE_RFC850, $modifiedTime)
+                    date(DATE_RFC850, $modifiedTime),
                 );
         }
 
@@ -118,7 +119,7 @@ class AssetMiddleware implements MiddlewareInterface
      */
     protected function _getAssetFile(string $url): ?string
     {
-        $parts = explode('/', ltrim($url, '/'));
+        $parts = explode('/', ltrim($url, '/'), 3);
         $pluginPart = [];
         for ($i = 0; $i < 2; $i++) {
             if (!isset($parts[$i])) {
@@ -155,7 +156,7 @@ class AssetMiddleware implements MiddlewareInterface
 
         $response = new Response(['stream' => $stream]);
 
-        $contentType = (array)($response->getMimeType($file->getExtension()) ?: 'application/octet-stream');
+        $contentType = MimeType::getMimeTypeForFile($file->getRealPath());
         $modified = $file->getMTime();
         $expire = strtotime($this->cacheTime);
         if ($expire === false) {
@@ -164,7 +165,7 @@ class AssetMiddleware implements MiddlewareInterface
         $maxAge = $expire - time();
 
         return $response
-            ->withHeader('Content-Type', $contentType[0])
+            ->withHeader('Content-Type', $contentType)
             ->withHeader('Cache-Control', 'public,max-age=' . $maxAge)
             ->withHeader('Date', gmdate(DATE_RFC7231, time()))
             ->withHeader('Last-Modified', gmdate(DATE_RFC7231, $modified))

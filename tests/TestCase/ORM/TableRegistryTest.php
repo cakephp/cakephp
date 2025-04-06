@@ -37,7 +37,7 @@ class TableRegistryTest extends TestCase
      * Remember original instance to set it back on tearDown() just to make sure
      * other tests are not broken.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->_originalLocator = TableRegistry::getTableLocator();
@@ -46,7 +46,7 @@ class TableRegistryTest extends TestCase
     /**
      * tear down
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         TableRegistry::setTableLocator($this->_originalLocator);

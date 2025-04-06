@@ -43,7 +43,7 @@ trait ExtractTrait
         $parts = explode('.', $path);
 
         if (str_contains($path, '{*}')) {
-            return fn ($element) => $this->_extract($element, $parts);
+            return fn($element) => $this->_extract($element, $parts);
         }
 
         return function ($element) use ($parts) {
@@ -61,7 +61,7 @@ trait ExtractTrait
      * It will return arrays for elements in represented with `{*}`
      *
      * @param \ArrayAccess<string|int, mixed>|array $data Data.
-     * @param list<string> $parts Path to extract from.
+     * @param array<string> $parts Path to extract from.
      * @return mixed
      */
     protected function _extract(ArrayAccess|array $data, array $parts): mixed
@@ -104,7 +104,7 @@ trait ExtractTrait
      * by iterating over the column names contained in $path
      *
      * @param \ArrayAccess<string|int, mixed>|array $data Data.
-     * @param list<string> $parts Path to extract from.
+     * @param array<string> $parts Path to extract from.
      * @return mixed
      */
     protected function _simpleExtract(ArrayAccess|array $data, array $parts): mixed

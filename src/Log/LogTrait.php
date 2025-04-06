@@ -36,7 +36,7 @@ trait LogTrait
     public function log(
         Stringable|string $message,
         string|int $level = LogLevel::ERROR,
-        array|string $context = []
+        array|string $context = [],
     ): bool {
         return Log::write($level, $message, $context);
     }

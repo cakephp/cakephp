@@ -83,7 +83,7 @@ class ConnectionHelper
      * Drops all tables.
      *
      * @param string $connectionName Connection name
-     * @param list<string>|null $tables List of tables names or null for all.
+     * @param array<string>|null $tables List of tables names or null for all.
      * @return void
      */
     public static function dropTables(string $connectionName, ?array $tables = null): void
@@ -93,9 +93,14 @@ class ConnectionHelper
         $collection = $connection->getSchemaCollection();
         $allTables = $collection->listTablesWithoutViews();
 
+        // Skip special tables.
+        // spatial_ref_sys - postgis and it is undroppable.
+        $skip = ['spatial_ref_sys'];
+        $allTables = array_diff($allTables, $skip);
+
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
-        $schemas = array_map(fn ($table) => $collection->describe($table), $tables);
+        $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         $dialect = $connection->getDriver()->schemaDialect();
         foreach ($schemas as $schema) {
@@ -114,7 +119,7 @@ class ConnectionHelper
      * Truncates all tables.
      *
      * @param string $connectionName Connection name
-     * @param list<string>|null $tables List of tables names or null for all.
+     * @param array<string>|null $tables List of tables names or null for all.
      * @return void
      */
     public static function truncateTables(string $connectionName, ?array $tables = null): void
@@ -126,7 +131,7 @@ class ConnectionHelper
         $allTables = $collection->listTablesWithoutViews();
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
-        $schemas = array_map(fn ($table) => $collection->describe($table), $tables);
+        $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         self::runWithoutConstraints($connection, function (Connection $connection) use ($schemas): void {
             $dialect = $connection->getDriver()->schemaDialect();
@@ -148,10 +153,10 @@ class ConnectionHelper
     public static function runWithoutConstraints(Connection $connection, Closure $callback): void
     {
         if ($connection->getDriver()->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
-            $connection->disableConstraints(fn (Connection $connection) => $callback($connection));
+            $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
         } else {
             $connection->transactional(function (Connection $connection) use ($callback): void {
-                $connection->disableConstraints(fn (Connection $connection) => $callback($connection));
+                $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
             });
         }
     }

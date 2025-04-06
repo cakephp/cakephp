@@ -146,7 +146,7 @@ class PluginConfig
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new CakeException(sprintf(
                 'Error parsing composer.lock: %s',
-                json_last_error_msg()
+                json_last_error_msg(),
             ));
         }
 
@@ -178,7 +178,7 @@ class PluginConfig
             throw new CakeException(sprintf(
                 'Error parsing %ss: %s',
                 $jsonPath,
-                json_last_error_msg()
+                json_last_error_msg(),
             ));
         }
 

@@ -31,7 +31,7 @@ class PluginConfigTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->clearPlugins();
@@ -48,7 +48,7 @@ class PluginConfigTest extends TestCase
     /**
      * Reverts the changes done to the environment while testing
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();

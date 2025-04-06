@@ -59,7 +59,7 @@ class Session
      *
      * @var int
      */
-    protected int $_lifetime;
+    protected int $_lifetime = 0;
 
     /**
      * Whether this session is running under a CLI environment
@@ -106,10 +106,7 @@ class Session
     public static function create(array $sessionConfig = []): static
     {
         if (isset($sessionConfig['defaults'])) {
-            $defaults = static::_defaultConfig($sessionConfig['defaults']);
-            if ($defaults) {
-                $sessionConfig = Hash::merge($defaults, $sessionConfig);
-            }
+            $sessionConfig = Hash::merge(static::_defaultConfig($sessionConfig['defaults']), $sessionConfig);
         }
 
         if (
@@ -139,14 +136,14 @@ class Session
     }
 
     /**
-     * Get one of the prebaked default session configurations.
+     * Get one of the pre-baked default session configurations.
      *
      * @param string $name Config name.
-     * @return array|false
+     * @return array
+     * @throws \Cake\Core\Exception\CakeException When an invalid name is used.
      */
-    protected static function _defaultConfig(string $name): array|false
+    protected static function _defaultConfig(string $name): array
     {
-        $tmp = defined('TMP') ? TMP : sys_get_temp_dir() . DIRECTORY_SEPARATOR;
         $defaults = [
             'php' => [
                 'ini' => [
@@ -158,7 +155,8 @@ class Session
                     'session.use_trans_sid' => 0,
                     'session.serialize_handler' => 'php',
                     'session.use_cookies' => 1,
-                    'session.save_path' => $tmp . 'sessions',
+                    'session.save_path' => (defined('TMP') ? TMP : sys_get_temp_dir() . DIRECTORY_SEPARATOR)
+                         . 'sessions',
                     'session.save_handler' => 'files',
                 ],
             ],
@@ -184,15 +182,19 @@ class Session
             ],
         ];
 
-        if (isset($defaults[$name])) {
-            if ($name !== 'php' || empty(ini_get('session.cookie_samesite'))) {
-                $defaults['php']['ini']['session.cookie_samesite'] = 'Lax';
-            }
-
-            return $defaults[$name];
+        if (!isset($defaults[$name])) {
+            throw new CakeException(sprintf(
+                'Invalid session defaults name `%s`. Valid values are: %s.',
+                $name,
+                implode(', ', array_keys($defaults)),
+            ));
         }
 
-        return false;
+        if ($name !== 'php' || empty(ini_get('session.cookie_samesite'))) {
+            $defaults['php']['ini']['session.cookie_samesite'] = 'Lax';
+        }
+
+        return $defaults[$name];
     }
 
     /**
@@ -221,12 +223,8 @@ class Session
             'handler' => [],
         ];
 
-        $lifetime = 0;
-        if (isset($config['timeout'])) {
-            $lifetime = (int)$config['timeout'] * 60;
-        }
-        if ($lifetime !== 0) {
-            $config['ini']['session.gc_maxlifetime'] = $lifetime;
+        if ($config['timeout'] !== null) {
+            $this->configureSessionLifetime((int)$config['timeout'] * 60);
         }
 
         if ($config['cookie']) {
@@ -246,7 +244,6 @@ class Session
             $this->engine($class, $config['handler']);
         }
 
-        $this->_lifetime = $lifetime;
         $this->_isCLI = (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
         session_register_shutdown();
     }
@@ -270,7 +267,7 @@ class Session
      */
     public function engine(
         SessionHandlerInterface|string|null $class = null,
-        array $options = []
+        array $options = [],
     ): ?SessionHandlerInterface {
         if ($class === null) {
             return $this->_engine;
@@ -283,7 +280,7 @@ class Session
         $className = App::className($class, 'Http/Session');
         if ($className === null) {
             throw new InvalidArgumentException(
-                sprintf('The class `%s` does not exist and cannot be used as a session engine', $class)
+                sprintf('The class `%s` does not exist and cannot be used as a session engine', $class),
             );
         }
 
@@ -328,7 +325,7 @@ class Session
         foreach ($options as $setting => $value) {
             if (ini_set($setting, (string)$value) === false) {
                 throw new CakeException(
-                    sprintf('Unable to configure the session, setting %s failed.', $setting)
+                    sprintf('Unable to configure the session, setting %s failed.', $setting),
                 );
             }
         }
@@ -516,7 +513,7 @@ class Session
                 $message .= sprintf(
                     ', headers already sent in file `%s` on line `%s`',
                     Debugger::trimPath($this->headerSentInfo['filename']),
-                    $this->headerSentInfo['line']
+                    $this->headerSentInfo['line'],
                 );
             }
 
@@ -653,14 +650,12 @@ class Session
 
         $this->start();
         $params = session_get_cookie_params();
+        unset($params['lifetime']);
+        $params['expires'] = time() - 42000;
         setcookie(
             (string)session_name(),
             '',
-            time() - 42000,
-            $params['path'],
-            $params['domain'],
-            $params['secure'],
-            $params['httponly']
+            $params,
         );
 
         if (session_id() !== '') {
@@ -687,5 +682,40 @@ class Session
         $this->write('Config.time', time());
 
         return $result;
+    }
+
+    /**
+     * Set the session timeout period.
+     *
+     * If set to `0`, no server side timeout will be applied.
+     *
+     * @param int $lifetime in seconds
+     * @return void
+     * @throws \Cake\Core\Exception\CakeException
+     */
+    public function setSessionLifetime(int $lifetime): void
+    {
+        if ($this->started()) {
+            throw new CakeException("Can't modify session lifetime after session has already been started.");
+        }
+
+        $this->configureSessionLifetime($lifetime);
+    }
+
+    /**
+     * Configure session lifetime
+     *
+     * @param int $lifetime
+     * @return void
+     */
+    protected function configureSessionLifetime(int $lifetime): void
+    {
+        if ($lifetime !== 0) {
+            $this->options([
+                'session.gc_maxlifetime' => $lifetime,
+            ]);
+        }
+
+        $this->_lifetime = $lifetime;
     }
 }

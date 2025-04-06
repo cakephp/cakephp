@@ -76,7 +76,7 @@ class PluginAssetsCopyCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
-            static::getDescription()
+            static::getDescription(),
         )->addArgument('name', [
             'help' => 'A specific plugin you want to copy assets for.',
             'required' => false,

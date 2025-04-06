@@ -45,7 +45,7 @@ class CellTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -59,7 +59,7 @@ class CellTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->View);
@@ -206,7 +206,7 @@ class CellTest extends TestCase
         $message = $e->getMessage();
         $this->assertStringContainsString(
             str_replace('/', DS, 'Cell template file `cell/Articles/foo_bar.php` could not be found.'),
-            $message
+            $message,
         );
         $this->assertStringContainsString('The following paths', $message);
         $this->assertStringContainsString(ROOT . DS . 'templates', $message);
@@ -233,14 +233,14 @@ class CellTest extends TestCase
         $cell = $this->View->cell('Articles');
         $this->assertStringContainsString(
             'TestPlugin Articles/display',
-            $cell->render('TestPlugin.display')
+            $cell->render('TestPlugin.display'),
         );
 
         $cell = $this->View->cell('Articles');
         $cell->viewBuilder()->setPlugin('TestPlugin');
         $this->assertStringContainsString(
             'TestPlugin Articles/display',
-            $cell->render('display')
+            $cell->render('display'),
         );
     }
 

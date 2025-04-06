@@ -58,7 +58,7 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -189,7 +189,7 @@ class IntegrationTestTraitTest extends TestCase
             ],
         ]);
         $this->assertSame('test321', $this->_request['headers']['X-CSRF-Token']);
-        $this->assertEmpty($this->_request['webroot']);
+        $this->assertArrayNotHasKey('webroot', $this->_request);
     }
 
     /**
@@ -226,17 +226,17 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertSame(
             $first['cookies']['csrfToken'],
             $second['post']['_csrfToken'],
-            'Csrf token should match cookie'
+            'Csrf token should match cookie',
         );
         $this->assertSame(
             $first['session']->read('csrfToken'),
             $second['post']['_csrfToken'],
-            'Csrf token should match session'
+            'Csrf token should match session',
         );
         $this->assertSame(
             $first['post']['_csrfToken'],
             $second['post']['_csrfToken'],
-            'Tokens should be consistent per test method'
+            'Tokens should be consistent per test method',
         );
     }
 
@@ -1045,7 +1045,7 @@ class IntegrationTestTraitTest extends TestCase
                 $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                     [
                         'cookieName' => 'customCsrfToken',
-                    ]
+                    ],
                 ));
                 $routes->applyMiddleware('cookieCsrf');
                 $routes->connect('/posts/{action}', ['controller' => 'Posts']);
@@ -1071,7 +1071,7 @@ class IntegrationTestTraitTest extends TestCase
                 $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                     [
                         'cookieName' => 'customCsrfToken',
-                    ]
+                    ],
                 ));
                 $routes->applyMiddleware('cookieCsrf');
                 $routes->connect('/posts/{action}', ['controller' => 'Posts']);

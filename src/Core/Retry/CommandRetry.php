@@ -84,7 +84,7 @@ class CommandRetry
     }
 
     /**
-     * Returns the last number of retry attemps.
+     * Returns the last number of retry attempts.
      *
      * @return int
      */

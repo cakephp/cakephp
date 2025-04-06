@@ -50,7 +50,7 @@ class RoutingMiddlewareTest extends TestCase
     /**
      * Setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -263,7 +263,7 @@ class RoutingMiddlewareTest extends TestCase
                 'REQUEST_URI' => '/articles-patch',
             ],
             null,
-            ['_method' => 'PATCH']
+            ['_method' => 'PATCH'],
         );
         $handler = new TestRequestHandler(function ($req) {
             $expected = [

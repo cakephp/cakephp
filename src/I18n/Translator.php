@@ -68,7 +68,7 @@ class Translator
         string $locale,
         Package $package,
         FormatterInterface $formatter,
-        ?Translator $fallback = null
+        ?Translator $fallback = null,
     ) {
         $this->locale = $locale;
         $this->package = $package;

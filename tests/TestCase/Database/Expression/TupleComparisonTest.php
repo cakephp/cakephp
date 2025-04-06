@@ -77,7 +77,7 @@ class TupleComparisonTest extends TestCase
             ['field1', 'field2'],
             [[1, 2], [3, 4]],
             ['integer', 'integer'],
-            'IN'
+            'IN',
         );
         $binder = new ValueBinder();
         $this->assertSame('(field1, field2) IN ((:tuple0,:tuple1), (:tuple2,:tuple3))', $f->sql($binder));
@@ -110,7 +110,7 @@ class TupleComparisonTest extends TestCase
             ['field1', $field2],
             [[1, 2], [3, $value1]],
             ['integer', 'integer'],
-            'IN'
+            'IN',
         );
         $expressions = [];
         $f->traverse($collector);
@@ -152,7 +152,7 @@ class TupleComparisonTest extends TestCase
             ['field1', 'field2'],
             [1, 1],
             ['integer', 'integer'],
-            'IN'
+            'IN',
         );
     }
 
@@ -165,7 +165,7 @@ class TupleComparisonTest extends TestCase
             ['field1', 'field2'],
             [[1, 1], [2, 2]],
             ['integer', 'integer'],
-            '='
+            '=',
         );
     }
 }

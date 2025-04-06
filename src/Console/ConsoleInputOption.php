@@ -72,7 +72,7 @@ class ConsoleInputOption
     /**
      * An array of choices for the option.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_choices;
 
@@ -91,6 +91,13 @@ class ConsoleInputOption
     protected bool $required;
 
     /**
+     * The multiple separator.
+     *
+     * @var string|null
+     */
+    protected ?string $_separator = null;
+
+    /**
      * Make a new Input Option
      *
      * @param string $name The long name of the option, or an array with all the properties.
@@ -98,7 +105,7 @@ class ConsoleInputOption
      * @param string $help The help text for this option
      * @param bool $isBoolean Whether this option is a boolean option. Boolean options don't consume extra tokens
      * @param string|bool|null $default The default value for this option.
-     * @param list<string> $choices Valid choices for this option.
+     * @param array<string> $choices Valid choices for this option.
      * @param bool $multiple Whether this option can accept multiple value definition.
      * @param bool $required Whether this option is required or not.
      * @param string|null $prompt The prompt string.
@@ -113,7 +120,8 @@ class ConsoleInputOption
         array $choices = [],
         bool $multiple = false,
         bool $required = false,
-        ?string $prompt = null
+        ?string $prompt = null,
+        ?string $separator = null,
     ) {
         $this->_name = $name;
         $this->_short = $short;
@@ -123,6 +131,7 @@ class ConsoleInputOption
         $this->_multiple = $multiple;
         $this->required = $required;
         $this->prompt = $prompt;
+        $this->_separator = $separator;
 
         if ($isBoolean) {
             $this->_default = (bool)$default;
@@ -132,13 +141,22 @@ class ConsoleInputOption
 
         if (strlen($this->_short) > 1) {
             throw new ConsoleException(
-                sprintf('Short option `%s` is invalid, short options must be one letter.', $this->_short)
+                sprintf('Short option `%s` is invalid, short options must be one letter.', $this->_short),
             );
         }
         if ($this->_default !== null && $this->prompt) {
             throw new ConsoleException(
                 'You cannot set both `prompt` and `default` options. ' .
-                'Use either a static `default` or interactive `prompt`'
+                'Use either a static `default` or interactive `prompt`',
+            );
+        }
+
+        if ($this->_separator !== null && str_contains($this->_separator, ' ')) {
+            throw new ConsoleException(
+                sprintf(
+                    'The option separator must not contain spaces for `%s`.',
+                    $this->_name,
+                ),
             );
         }
     }
@@ -179,6 +197,10 @@ class ConsoleInputOption
         if ($this->_choices) {
             $default .= sprintf(' <comment>(choices: %s)</comment>', implode('|', $this->_choices));
         }
+        if ($this->_multiple && $this->_separator) {
+            $default .= sprintf(' <comment>(separator: `%s`)</comment>', $this->_separator);
+        }
+
         if ($this->_short !== '') {
             $short = ', -' . $this->_short;
         }
@@ -269,14 +291,24 @@ class ConsoleInputOption
         if ($this->_choices === []) {
             return true;
         }
-        if (!in_array($value, $this->_choices, true)) {
+        if (is_string($value) && $this->_separator) {
+            $values = explode($this->_separator, $value);
+        } else {
+            $values = [$value];
+        }
+        if ($this->_boolean) {
+            $values = array_map('boolval', $values);
+        }
+
+        $unwanted = array_filter($values, fn($value) => !in_array($value, $this->_choices, true));
+        if ($unwanted) {
             throw new ConsoleException(
                 sprintf(
                     '`%s` is not a valid value for `--%s`. Please use one of `%s`',
-                    (string)$value,
+                    $value,
                     $this->_name,
-                    implode(', ', $this->_choices)
-                )
+                    implode('|', $this->_choices),
+                ),
             );
         }
 
@@ -286,7 +318,7 @@ class ConsoleInputOption
     /**
      * Get the list of choices this option has.
      *
-     * @return array
+     * @return array<string>
      */
     public function choices(): array
     {
@@ -334,5 +366,15 @@ class ConsoleInputOption
         }
 
         return $parent;
+    }
+
+    /**
+     * Get the value of the separator.
+     *
+     * @return string|null Value of this->_separator.
+     */
+    public function separator(): ?string
+    {
+        return $this->_separator;
     }
 }

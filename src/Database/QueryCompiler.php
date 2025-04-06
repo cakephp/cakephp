@@ -49,7 +49,7 @@ class QueryCompiler
     /**
      * The list of query clauses to traverse for generating a SELECT statement
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_selectParts = [
         'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
@@ -59,21 +59,21 @@ class QueryCompiler
     /**
      * The list of query clauses to traverse for generating an UPDATE statement
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_updateParts = ['comment', 'with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_deleteParts = ['comment', 'with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_insertParts = ['comment', 'with', 'insert', 'values', 'epilog'];
 
@@ -98,7 +98,7 @@ class QueryCompiler
         $type = $query->type();
         $query->traverseParts(
             $this->_sqlCompiler($sql, $query, $binder),
-            $this->{"_{$type}Parts"}
+            $this->{"_{$type}Parts"},
         );
 
         // Propagate bound parameters from sub-queries if the
@@ -267,7 +267,7 @@ class QueryCompiler
                 throw new DatabaseException(sprintf(
                     'Could not compile join clause for alias `%s`. No table was specified. ' .
                     'Use the `table` key to define a table.',
-                    $join['alias']
+                    $join['alias'],
                 ));
             }
             if ($join['table'] instanceof ExpressionInterface) {
@@ -351,7 +351,7 @@ class QueryCompiler
         string $operation,
         array $parts,
         Query $query,
-        ValueBinder $binder
+        ValueBinder $binder,
     ): string {
         $setOperationsOrderBy = $query
             ->getConnection()
@@ -421,7 +421,7 @@ class QueryCompiler
         if (!isset($parts[0])) {
             throw new DatabaseException(
                 'Could not compile insert query. No table was specified. ' .
-                'Use `into()` to define a table.'
+                'Use `into()` to define a table.',
             );
         }
         $table = $parts[0];

@@ -115,7 +115,7 @@ class ErrorLogger implements ErrorLoggerInterface
     public function logException(
         Throwable $exception,
         ?ServerRequestInterface $request = null,
-        bool $includeTrace = false
+        bool $includeTrace = false,
     ): void {
         $message = $this->getMessage($exception, false, $includeTrace);
 
@@ -141,7 +141,7 @@ class ErrorLogger implements ErrorLoggerInterface
             $exception::class,
             $exception->getMessage(),
             $exception->getFile(),
-            $exception->getLine()
+            $exception->getLine(),
         );
         $debug = Configure::read('debug');
 

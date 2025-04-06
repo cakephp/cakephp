@@ -121,7 +121,7 @@ class Sqlite extends Driver
         if (!is_string($config['database']) || $config['database'] === '') {
             $name = $config['name'] ?? 'unknown';
             throw new InvalidArgumentException(
-                "The `database` key for the `{$name}` SQLite connection needs to be a non-empty string."
+                "The `database` key for the `{$name}` SQLite connection needs to be a non-empty string.",
             );
         }
 
@@ -202,7 +202,7 @@ class Sqlite extends Driver
             DriverFeatureEnum::WINDOW => version_compare(
                 $this->version(),
                 $this->featureVersions[$feature->value],
-                '>='
+                '>=',
             ),
             DriverFeatureEnum::INTERSECT => true,
             DriverFeatureEnum::INTERSECT_ALL => false,

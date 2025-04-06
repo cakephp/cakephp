@@ -35,7 +35,7 @@ class CollectionTest extends TestCase
     protected $connection;
 
     /**
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.Users',
@@ -44,7 +44,7 @@ class CollectionTest extends TestCase
     /**
      * Setup function
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -55,7 +55,7 @@ class CollectionTest extends TestCase
     /**
      * Teardown function
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->connection->cacheMetadata(false);
         parent::tearDown();

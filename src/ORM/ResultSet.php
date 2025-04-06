@@ -38,8 +38,18 @@ class ResultSet extends Collection implements ResultSetInterface
      */
     public function __debugInfo(): array
     {
+        $key = $this->key();
+        $items = $this->toArray();
+
+        $this->rewind();
+        // Move the internal pointer to the previous position otherwise it creates problems with Xdebug
+        // https://github.com/cakephp/cakephp/issues/18234
+        while ($this->key() !== $key) {
+            $this->next();
+        }
+
         return [
-            'items' => $this->toArray(),
+            'items' => $items,
         ];
     }
 }

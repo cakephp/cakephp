@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
  */
 class MessagesFileLoaderTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 

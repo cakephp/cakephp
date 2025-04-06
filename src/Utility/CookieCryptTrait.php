@@ -30,7 +30,7 @@ trait CookieCryptTrait
     /**
      * Valid cipher names for encrypted cookies.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_validCiphers = ['aes'];
 
@@ -81,7 +81,7 @@ trait CookieCryptTrait
         if (!in_array($encrypt, $this->_validCiphers, true)) {
             $msg = sprintf(
                 'Invalid encryption cipher. Must be one of %s or false.',
-                implode(', ', $this->_validCiphers)
+                implode(', ', $this->_validCiphers),
             );
             throw new InvalidArgumentException($msg);
         }
@@ -90,7 +90,7 @@ trait CookieCryptTrait
     /**
      * Decrypts $value using public $type method in Security class
      *
-     * @param list<string>|string $values Values to decrypt
+     * @param array<string>|string $values Values to decrypt
      * @param string|false $mode Encryption mode
      * @param string|null $key Used as the security salt if specified.
      * @return array|string Decrypted values

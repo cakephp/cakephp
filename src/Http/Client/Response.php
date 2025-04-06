@@ -122,7 +122,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Constructor
      *
-     * @param list<string> $headers Unparsed headers.
+     * @param array<string> $headers Unparsed headers.
      * @param string $body The response body.
      */
     public function __construct(array $headers = [], string $body = '')
@@ -168,10 +168,10 @@ class Response extends Message implements ResponseInterface
     /**
      * Parses headers if necessary.
      *
-     * - Decodes the status code and reasonphrase.
+     * - Decodes the status code and reason phrase.
      * - Parses and normalizes header names + values.
      *
-     * @param list<string> $headers Headers to parse.
+     * @param array<string> $headers Headers to parse.
      * @return void
      */
     protected function _parseHeaders(array $headers): void
@@ -192,7 +192,7 @@ class Response extends Message implements ResponseInterface
             }
             [$name, $value] = explode(':', $value, 2);
             $value = trim($value);
-            /** @phpstan-var non-empty-string $name */
+            /** @var non-empty-string $name */
             $name = trim($name);
 
             $normalized = strtolower($name);

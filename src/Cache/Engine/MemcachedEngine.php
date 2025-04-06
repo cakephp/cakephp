@@ -88,7 +88,7 @@ class MemcachedEngine extends CacheEngine
     protected array $_serializers = [];
 
     /**
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_compiledGroupNames = [];
 
@@ -154,7 +154,7 @@ class MemcachedEngine extends CacheEngine
                         throw new InvalidArgumentException(
                             'Invalid cache configuration. Multiple persistent cache configurations are detected' .
                             ' with different `servers` values. `servers` values for persistent cache configurations' .
-                            ' must be the same when using the same persistence id.'
+                            ' must be the same when using the same persistence id.',
                         );
                     }
                 }
@@ -180,20 +180,20 @@ class MemcachedEngine extends CacheEngine
 
         if (empty($this->_config['username']) && !empty($this->_config['login'])) {
             throw new InvalidArgumentException(
-                'Please pass "username" instead of "login" for connecting to Memcached'
+                'Please pass "username" instead of "login" for connecting to Memcached',
             );
         }
 
         if ($this->_config['username'] !== null && $this->_config['password'] !== null) {
             if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
                 throw new InvalidArgumentException(
-                    'Memcached extension is not built with SASL support'
+                    'Memcached extension is not built with SASL support',
                 );
             }
             $this->_Memcached->setOption(Memcached::OPT_BINARY_PROTOCOL, true);
             $this->_Memcached->setSaslAuthData(
                 $this->_config['username'],
-                $this->_config['password']
+                $this->_config['password'],
             );
         }
 
@@ -214,7 +214,7 @@ class MemcachedEngine extends CacheEngine
         $serializer = strtolower($this->_config['serialize']);
         if (!isset($this->_serializers[$serializer])) {
             throw new InvalidArgumentException(
-                sprintf('`%s` is not a valid serializer engine for Memcached.', $serializer)
+                sprintf('`%s` is not a valid serializer engine for Memcached.', $serializer),
             );
         }
 
@@ -223,13 +223,13 @@ class MemcachedEngine extends CacheEngine
             !constant('Memcached::HAVE_' . strtoupper($serializer))
         ) {
             throw new InvalidArgumentException(
-                sprintf('Memcached extension is not compiled with `%s` support.', $serializer)
+                sprintf('Memcached extension is not compiled with `%s` support.', $serializer),
             );
         }
 
         $this->_Memcached->setOption(
             Memcached::OPT_SERIALIZER,
-            $this->_serializers[$serializer]
+            $this->_serializers[$serializer],
         );
 
         // Check for Amazon ElastiCache instance
@@ -242,7 +242,7 @@ class MemcachedEngine extends CacheEngine
 
         $this->_Memcached->setOption(
             Memcached::OPT_COMPRESSION,
-            (bool)$this->_config['compress']
+            (bool)$this->_config['compress'],
         );
     }
 
@@ -355,7 +355,7 @@ class MemcachedEngine extends CacheEngine
      * @param iterable<string> $keys An array of identifiers for the data
      * @param mixed $default Default value to return for keys that do not exist.
      * @return iterable<string, mixed> An array containing, for each of the given $keys, the cached data or
-     *   false if cached data could not be retrieved.
+     *   `$default` if cached data could not be retrieved.
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
@@ -365,9 +365,13 @@ class MemcachedEngine extends CacheEngine
         }
 
         $values = $this->_Memcached->getMulti($cacheKeys);
+        if ($values === false) {
+            return array_fill_keys(array_keys($cacheKeys), $default);
+        }
+
         $return = [];
         foreach ($cacheKeys as $original => $prefixed) {
-            $return[$original] = $values[$prefixed] ?? $default;
+            $return[$original] = array_key_exists($prefixed, $values) ? $values[$prefixed] : $default;
         }
 
         return $return;
@@ -467,7 +471,7 @@ class MemcachedEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function groups(): array
     {

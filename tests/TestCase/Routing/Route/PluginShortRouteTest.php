@@ -29,7 +29,7 @@ class PluginShortRouteTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('Routing', ['prefixes' => []]);

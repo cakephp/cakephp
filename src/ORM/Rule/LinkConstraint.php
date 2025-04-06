@@ -66,7 +66,7 @@ class LinkConstraint
     {
         if (!in_array($requiredLinkStatus, [static::STATUS_LINKED, static::STATUS_NOT_LINKED], true)) {
             throw new InvalidArgumentException(
-                'Argument 2 is expected to match one of the `\Cake\ORM\Rule\LinkConstraint::STATUS_*` constants.'
+                'Argument 2 is expected to match one of the `\Cake\ORM\Rule\LinkConstraint::STATUS_*` constants.',
             );
         }
 
@@ -88,7 +88,7 @@ class LinkConstraint
         $table = $options['repository'] ?? null;
         if (!($table instanceof Table)) {
             throw new InvalidArgumentException(
-                'Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`.'
+                'Argument 2 is expected to have a `repository` key that holds an instance of `\Cake\ORM\Table`.',
             );
         }
 
@@ -118,9 +118,9 @@ class LinkConstraint
     /**
      * Alias fields.
      *
-     * @param list<string> $fields The fields that should be aliased.
+     * @param array<string> $fields The fields that should be aliased.
      * @param \Cake\ORM\Table $source The object to use for aliasing.
-     * @return list<string> The aliased fields
+     * @return array<string> The aliased fields
      */
     protected function _aliasFields(array $fields, Table $source): array
     {
@@ -134,7 +134,7 @@ class LinkConstraint
     /**
      * Build conditions.
      *
-     * @param list<string> $fields The condition fields.
+     * @param array<string> $fields The condition fields.
      * @param array $values The condition values.
      * @return array<string, string> A conditions array combined from the passed fields and values.
      */
@@ -144,7 +144,7 @@ class LinkConstraint
             throw new InvalidArgumentException(sprintf(
                 'The number of fields is expected to match the number of values, got %d field(s) and %d value(s).',
                 count($fields),
-                count($values)
+                count($values),
             ));
         }
 
@@ -162,7 +162,7 @@ class LinkConstraint
     {
         $source = $association->getSource();
 
-        /** @var list<string> $primaryKey */
+        /** @var array<string> $primaryKey */
         $primaryKey = (array)$source->getPrimaryKey();
         if (!$entity->has($primaryKey)) {
             throw new DatabaseException(sprintf(
@@ -170,14 +170,14 @@ class LinkConstraint
                 'conditions, expected values for `(%s)`, got `(%s)`.',
                 $source->getAlias(),
                 implode(', ', $primaryKey),
-                implode(', ', $entity->extract($primaryKey))
+                implode(', ', $entity->extract($primaryKey)),
             ));
         }
 
         $aliasedPrimaryKey = $this->_aliasFields($primaryKey, $source);
         $conditions = $this->_buildConditions(
             $aliasedPrimaryKey,
-            $entity->extract($primaryKey)
+            $entity->extract($primaryKey),
         );
 
         return $source

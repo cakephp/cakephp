@@ -34,7 +34,7 @@ class LoggedQueryTest extends TestCase
 
     protected $false = 'FALSE';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->driver = ConnectionManager::get('test')->getDriver();
 

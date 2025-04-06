@@ -93,7 +93,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the levels this logger is interested in.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function levels(): array
     {
@@ -103,7 +103,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the scopes this logger is interested in.
      *
-     * @return list<string>|null
+     * @return array<string>|null
      */
     public function scopes(): ?array
     {
@@ -128,7 +128,7 @@ abstract class BaseLog extends AbstractLogger
         $found = preg_match_all(
             '/(?<!\\\\)\{([a-z0-9-_]+)\}/i',
             $message,
-            $matches
+            $matches,
         );
         if ($found === false) {
             return $message;

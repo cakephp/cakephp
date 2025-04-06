@@ -15,13 +15,19 @@ declare(strict_types=1);
 namespace Cake\Controller\Exception;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Core\Exception\HttpErrorCodeInterface;
 
 /**
  * Missing Action exception - used when a controller action
  * cannot be found, or when the controller's isAction() method returns false.
  */
-class MissingActionException extends CakeException
+class MissingActionException extends CakeException implements HttpErrorCodeInterface
 {
+    /**
+     * @inheritDoc
+     */
+    protected int $_defaultCode = 404;
+
     /**
      * @inheritDoc
      */

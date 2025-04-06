@@ -24,7 +24,7 @@ class NonExtending implements EntityInterface
         ];
 
         if ($properties) {
-            $this->set($properties, [
+            $this->patch($properties, [
                 'setter' => $options['useSetters'],
                 'guard' => $options['guard'],
             ]);

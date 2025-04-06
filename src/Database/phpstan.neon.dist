@@ -10,6 +10,8 @@ parameters:
 	ignoreErrors:
 		- '#Unsafe usage of new static\(\).#'
 		-
+			identifier: notIdentical.alwaysTrue
+		-
 			identifier: missingType.iterableValue
 		-
 			identifier: missingType.generics

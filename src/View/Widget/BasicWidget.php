@@ -105,7 +105,7 @@ class BasicWidget implements WidgetInterface
             'templateVars' => $data['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $data,
-                ['name', 'type']
+                ['name', 'type'],
             ),
         ]);
     }

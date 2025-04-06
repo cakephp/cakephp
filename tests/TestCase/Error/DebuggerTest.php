@@ -56,7 +56,7 @@ class DebuggerTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('debug', true);
@@ -68,7 +68,7 @@ class DebuggerTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         if ($this->restoreError) {
@@ -333,7 +333,7 @@ TEXT;
     {
         $this->skipIf(
             version_compare(PHP_VERSION, '8.3', '>='),
-            'Due to different get_object_vars() function behavior used in Debugger::exportObject()' // see. https://3v4l.org/DWpRl
+            'Due to different get_object_vars() function behavior used in Debugger::exportObject()', // see. https://3v4l.org/DWpRl
         );
         $subject = new SplFixedArray(2);
         $subject[0] = 'red';
@@ -608,7 +608,7 @@ TEXT;
         $this->assertEquals(
             'CORE' . DS . 'vendor' . DS . 'phpunit' . DS . 'phpunit' . DS . 'src' . DS .
                 'Framework' . DS . 'TestCase.php',
-            $result[0]['file']
+            $result[0]['file'],
         );
     }
 
@@ -787,7 +787,7 @@ EXPECTED;
         $output = Debugger::formatHtmlMessage("Some `code` to <script>alert(\"test\")</script>\nmore");
         $this->assertSame(
             "Some <code>`code`</code> to &lt;script&gt;alert(&quot;test&quot;)&lt;/script&gt;<br />\nmore",
-            $output
+            $output,
         );
     }
 

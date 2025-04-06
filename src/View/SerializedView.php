@@ -28,7 +28,7 @@ abstract class SerializedView extends View
     /**
      * Default config options.
      *
-     * Use ViewBuilder::setOption()/setOptions() in your controlle to set these options.
+     * Use ViewBuilder::setOption()/setOptions() in your controller to set these options.
      *
      * - `serialize`: Option to convert a set of view variables into a serialized response.
      *   Its value can be a string for single variable name or array for multiple
@@ -82,7 +82,7 @@ abstract class SerializedView extends View
                 throw new SerializationFailureException(
                     'Serialization of View data failed.',
                     null,
-                    $e
+                    $e,
                 );
             }
         }
@@ -98,17 +98,7 @@ abstract class SerializedView extends View
         $serialize = $this->getConfig('serialize', false);
 
         if ($serialize === true) {
-            $options = array_map(
-                function ($v) {
-                    return '_' . $v;
-                },
-                array_keys($this->_defaultConfig)
-            );
-
-            $serialize = array_diff(
-                array_keys($this->viewVars),
-                $options
-            );
+            $serialize = array_keys($this->viewVars);
         }
 
         return $serialize;

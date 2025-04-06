@@ -41,7 +41,7 @@ class PluginLoadCommandTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -54,7 +54,7 @@ class PluginLoadCommandTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -98,7 +98,7 @@ class PluginLoadCommandTest extends TestCase
         $this->assertSame(['onlyDebug' => true, 'onlyCli' => true], $config['Company/TestPluginThree']);
         $this->assertSame(
             ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false],
-            $config['TestPluginTwo']
+            $config['TestPluginTwo'],
         );
     }
 

@@ -41,7 +41,7 @@ class QueryCompilerTest extends TestCase
 
     protected ValueBinder $binder;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -49,7 +49,7 @@ class QueryCompilerTest extends TestCase
         $this->binder = new ValueBinder();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->compiler);

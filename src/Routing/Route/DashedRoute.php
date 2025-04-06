@@ -77,7 +77,7 @@ class DashedRoute extends Route
             $params['action'] = Inflector::variable(str_replace(
                 '-',
                 '_',
-                $params['action']
+                $params['action'],
             ));
         }
 

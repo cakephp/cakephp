@@ -41,7 +41,7 @@ class StringTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = TypeFactory::build('string');

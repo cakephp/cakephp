@@ -565,7 +565,7 @@ class ViewBuilder implements JsonSerializable
     public function build(
         ?ServerRequest $request = null,
         ?Response $response = null,
-        ?EventManagerInterface $events = null
+        ?EventManagerInterface $events = null,
     ): View {
         $className = $this->_className ?? App::className('App', 'View', 'View') ?? View::class;
         if ($className === 'View') {
@@ -601,7 +601,7 @@ class ViewBuilder implements JsonSerializable
      *
      * There are  limitations for viewVars that are good to know:
      *
-     * - ORM\Query executed and stored as resultset
+     * - ORM\Query executed and stored as result set
      * - SimpleXMLElements stored as associative array
      * - Exceptions stored as strings
      * - Resources, \Closure and \PDO are not supported.
@@ -651,7 +651,7 @@ class ViewBuilder implements JsonSerializable
                 'Failed serializing the `%s` %s in the `%s` view var',
                 is_resource($item) ? get_resource_type($item) : $item::class,
                 is_resource($item) ? 'resource' : 'object',
-                $key
+                $key,
             ));
         }
     }

@@ -57,7 +57,7 @@ class DateTimeTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new DateTimeType();
@@ -136,7 +136,7 @@ class DateTimeTypeTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+            $this->type->manyToPHP($values, array_keys($values), $this->driver),
         );
 
         $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
@@ -150,7 +150,7 @@ class DateTimeTypeTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+            $this->type->manyToPHP($values, array_keys($values), $this->driver),
         );
     }
 
@@ -336,7 +336,7 @@ class DateTimeTypeTest extends TestCase
     }
 
     /**
-     * Test that the marhsalled datetime instance always has the system's default timezone.
+     * Test that the marshalled datetime instance always has the system's default timezone.
      */
     public function testMarshalDateTimeInstance(): void
     {

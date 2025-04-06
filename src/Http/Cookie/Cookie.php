@@ -154,7 +154,7 @@ class Cookie implements CookieInterface
         ?string $domain = null,
         ?bool $secure = null,
         ?bool $httpOnly = null,
-        SameSiteEnum|string|null $sameSite = null
+        SameSiteEnum|string|null $sameSite = null,
     ) {
         $this->validateName($name);
         $this->name = $name;
@@ -185,7 +185,7 @@ class Cookie implements CookieInterface
      * Valid option keys are:
      *
      * - `expires`: Can be a UNIX timestamp or `strtotime()` compatible string or `DateTimeInterface` instance or `null`.
-     * - `path`: A path string. Defauts to `'/'`.
+     * - `path`: A path string. Defaults to `'/'`.
      * - `domain`: Domain name string. Defaults to `''`.
      * - `httponly`: Boolean. Defaults to `false`.
      * - `secure`: Boolean. Defaults to `false`.
@@ -229,7 +229,7 @@ class Cookie implements CookieInterface
             $options['domain'],
             $options['secure'],
             $options['httponly'],
-            $options['samesite']
+            $options['samesite'],
         );
     }
 
@@ -326,7 +326,7 @@ class Cookie implements CookieInterface
         return Cookie::create(
             $name,
             $value,
-            $data
+            $data,
         );
     }
 
@@ -410,7 +410,7 @@ class Cookie implements CookieInterface
     {
         if (preg_match("/[=,;\t\r\n\013\014]/", $name)) {
             throw new InvalidArgumentException(
-                sprintf('The cookie name `%s` contains invalid characters.', $name)
+                sprintf('The cookie name `%s` contains invalid characters.', $name),
             );
         }
 

@@ -79,7 +79,7 @@ class RouteCollection
     /**
      * Route extensions
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_extensions = [];
 
@@ -136,11 +136,19 @@ class RouteCollection
     public function parseRequest(ServerRequestInterface $request): array
     {
         $uri = $request->getUri();
-        $urlPath = urldecode($uri->getPath());
+        $urlPath = $uri->getPath();
+        if (strpos($urlPath, '%') !== false) {
+            // decode urlencoded segments, but don't decode %2f aka /
+            $parts = explode('/', $urlPath);
+            $parts = array_map(
+                fn(string $part) => str_replace('/', '%2f', urldecode($part)),
+                $parts,
+            );
+            $urlPath = implode('/', $parts);
+        }
         if ($urlPath !== '/') {
             $urlPath = rtrim($urlPath, '/');
         }
-
         if (isset($this->staticPaths[$urlPath])) {
             foreach ($this->staticPaths[$urlPath] as $route) {
                 $r = $route->parseRequest($request);
@@ -149,7 +157,7 @@ class RouteCollection
                 }
                 if ($uri->getQuery()) {
                     parse_str($uri->getQuery(), $queryParameters);
-                    $r['?'] = $queryParameters;
+                    $r['?'] = array_merge($r['?'] ?? [], $queryParameters);
                 }
 
                 return $r;
@@ -185,7 +193,7 @@ class RouteCollection
      * and newer style urls containing '_name'
      *
      * @param array $url The url to match.
-     * @return list<string> The set of names of the url
+     * @return array<string> The set of names of the url
      */
     protected function _getNames(array $url): array
     {
@@ -323,7 +331,7 @@ class RouteCollection
         return array_reduce(
             $this->_paths,
             'array_merge',
-            []
+            [],
         );
     }
 
@@ -340,7 +348,7 @@ class RouteCollection
     /**
      * Get the extensions that can be handled.
      *
-     * @return list<string> The valid extensions.
+     * @return array<string> The valid extensions.
      */
     public function getExtensions(): array
     {
@@ -350,7 +358,7 @@ class RouteCollection
     /**
      * Set the extensions that the route collection can handle.
      *
-     * @param list<string> $extensions The list of extensions to set.
+     * @param array<string> $extensions The list of extensions to set.
      * @param bool $merge Whether to merge with or override existing extensions.
      *   Defaults to `true`.
      * @return $this
@@ -360,7 +368,7 @@ class RouteCollection
         if ($merge) {
             $extensions = array_unique(array_merge(
                 $this->_extensions,
-                $extensions
+                $extensions,
             ));
         }
         $this->_extensions = $extensions;
@@ -377,7 +385,6 @@ class RouteCollection
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to register.
      * @return $this
-     * @throws \RuntimeException
      */
     public function registerMiddleware(string $name, MiddlewareInterface|Closure|string $middleware)
     {
@@ -390,7 +397,7 @@ class RouteCollection
      * Add middleware to a middleware group
      *
      * @param string $name Name of the middleware group
-     * @param list<string> $middlewareNames Names of the middleware
+     * @param array<string> $middlewareNames Names of the middleware
      * @return $this
      * @throws \InvalidArgumentException
      */
@@ -449,7 +456,7 @@ class RouteCollection
     /**
      * Get an array of middleware given a list of names
      *
-     * @param list<string> $names The names of the middleware or groups to fetch
+     * @param array<string> $names The names of the middleware or groups to fetch
      * @return array An array of middleware. If any of the passed names are groups,
      *   the groups middleware will be flattened into the returned list.
      * @throws \InvalidArgumentException when a requested middleware does not exist.
@@ -465,7 +472,7 @@ class RouteCollection
             if (!$this->hasMiddleware($name)) {
                 throw new InvalidArgumentException(sprintf(
                     'The middleware named `%s` has not been registered. Use registerMiddleware() to define it.',
-                    $name
+                    $name,
                 ));
             }
             $out[] = $this->_middleware[$name];

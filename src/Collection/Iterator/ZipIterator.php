@@ -76,7 +76,7 @@ class ZipIterator implements CollectionInterface
     public function __construct(array $sets, ?callable $callable = null)
     {
         $this->multipleIterator = new MultipleIterator(
-            MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC
+            MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC,
         );
 
         $this->_callback = $callable;
@@ -163,7 +163,7 @@ class ZipIterator implements CollectionInterface
     public function __unserialize(array $data): void
     {
         $this->multipleIterator = new MultipleIterator(
-            MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC
+            MultipleIterator::MIT_NEED_ALL | MultipleIterator::MIT_KEYS_NUMERIC,
         );
 
         $this->_iterators = $data;

@@ -55,14 +55,7 @@ class UriFactory implements UriFactoryInterface
         $uri = DiactorosUriFactory::createFromSapi($server, $headers);
         ['base' => $base, 'webroot' => $webroot] = static::getBase($uri, $server);
 
-        // Look in PATH_INFO first, as this is the exact value we need prepared
-        // by PHP.
-        $pathInfo = $server['PATH_INFO'] ?? null;
-        if ($pathInfo) {
-            $uri = $uri->withPath($pathInfo);
-        } else {
-            $uri = static::updatePath($base, $uri);
-        }
+        $uri = static::updatePath($base, $uri);
 
         if (!$uri->getHost()) {
             $uri = $uri->withHost('localhost');
@@ -84,18 +77,35 @@ class UriFactory implements UriFactoryInterface
         if ($base !== '' && str_starts_with($path, $base)) {
             $path = substr($path, strlen($base));
         }
+
+        // App.baseUrl is meant to be set only when URL rewriting is not used.
+        if (!Configure::read('App.baseUrl')) {
+            if ($path === '' || $path === '//') {
+                $path = '/';
+            }
+
+            return $uri->withPath($path);
+        }
+
         if ($path === '/index.php' && $uri->getQuery()) {
             $path = $uri->getQuery();
         }
-        if (!$path || $path === '/' || $path === '//' || $path === '/index.php') {
+        if ($path === '' || $path === '//' || $path === '/index.php') {
             $path = '/';
         }
-        $endsWithIndex = '/' . (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
-        $endsWithLength = strlen($endsWithIndex);
-        if (
-            strlen($path) >= $endsWithLength &&
-            substr($path, -$endsWithLength) === $endsWithIndex
-        ) {
+
+        // Check for $webroot/index.php at the start and end of the path.
+        $search = '';
+        if (str_starts_with($path, '/')) {
+            $search .= '/';
+        }
+        $search .= (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
+        if (str_starts_with($path, $search)) {
+            $path = substr($path, strlen($search));
+        } elseif (str_ends_with($path, $search)) {
+            $path = '/';
+        }
+        if (!$path) {
             $path = '/';
         }
 
@@ -135,9 +145,9 @@ class UriFactory implements UriFactoryInterface
             // Clean up additional / which cause following code to fail..
             $base = (string)preg_replace('#/+#', '/', $base);
 
-            $indexPos = strpos($base, '/' . $webroot . '/index.php');
+            $indexPos = strpos($base, '/index.php');
             if ($indexPos !== false) {
-                $base = substr($base, 0, $indexPos) . '/' . $webroot;
+                $base = substr($base, 0, $indexPos);
             }
             if ($webroot === basename($base)) {
                 $base = dirname($base);
@@ -159,9 +169,9 @@ class UriFactory implements UriFactoryInterface
         }
         $webrootDir = $base . '/';
 
-        $docRoot = $server['DOCUMENT_ROOT'] ?? null;
+        $docRoot = $server['DOCUMENT_ROOT'] ?? '';
         if (
-            (!empty($base) || !str_contains($docRoot, $webroot))
+            ($base || !str_contains($docRoot, $webroot))
             && !str_contains($webrootDir, '/' . $webroot . '/')
         ) {
             $webrootDir .= $webroot . '/';

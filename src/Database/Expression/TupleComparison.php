@@ -48,7 +48,7 @@ class TupleComparison extends ComparisonExpression
         ExpressionInterface|array|string $fields,
         ExpressionInterface|array $values,
         array $types = [],
-        string $conjunction = '='
+        string $conjunction = '=',
     ) {
         $this->types = $types;
         $this->setField($fields);
@@ -77,12 +77,12 @@ class TupleComparison extends ComparisonExpression
         if ($this->isMulti()) {
             if (is_array($value) && !is_array(current($value))) {
                 throw new InvalidArgumentException(
-                    'Multi-tuple comparisons require a multi-tuple value, single-tuple given.'
+                    'Multi-tuple comparisons require a multi-tuple value, single-tuple given.',
                 );
             }
         } elseif (is_array($value) && is_array(current($value))) {
             throw new InvalidArgumentException(
-                'Single-tuple comparisons require a single-tuple value, multi-tuple given.'
+                'Single-tuple comparisons require a single-tuple value, multi-tuple given.',
             );
         }
 

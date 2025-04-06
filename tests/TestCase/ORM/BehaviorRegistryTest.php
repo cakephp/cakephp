@@ -53,7 +53,7 @@ class BehaviorRegistryTest extends TestCase
     /**
      * setup method.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->Table = new Table(['table' => 'articles']);
@@ -65,7 +65,7 @@ class BehaviorRegistryTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->clearPlugins();
         unset($this->Table, $this->EventManager, $this->Behaviors);
@@ -219,6 +219,14 @@ class BehaviorRegistryTest extends TestCase
             ],
         ]);
         $this->assertTrue($this->Behaviors->hasFinder('renamed'));
+    }
+
+    public function testSet()
+    {
+        $this->Behaviors->set('Sluggable', new SluggableBehavior($this->Table, ['replacement' => '_']));
+
+        $this->assertEquals(['replacement' => '_'], $this->Behaviors->get('Sluggable')->getConfig());
+        $this->assertTrue($this->Behaviors->hasMethod('slugify'));
     }
 
     /**

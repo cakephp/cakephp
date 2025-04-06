@@ -74,7 +74,11 @@ class BannerHelper extends Helper
      */
     public function output(array $args): void
     {
-        $lengths = array_map(fn ($i) => mb_strlen($i), $args);
+        if ($args === []) {
+            throw new InvalidArgumentException('At least one argument is required');
+        }
+
+        $lengths = array_map(fn($i) => mb_strlen($i), $args);
         $maxLength = max($lengths);
         $bannerLength = $maxLength + $this->padding * 2;
         $start = "<{$this->style}>";

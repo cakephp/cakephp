@@ -36,7 +36,7 @@ class NumberHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -47,7 +47,7 @@ class NumberHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -76,5 +76,45 @@ class NumberHelperTest extends TestCase
     {
         $helper = new NumberHelper($this->View);
         $this->assertNotNull($helper->{$method}($arg));
+    }
+
+    /**
+     * test format() and empty values
+     */
+    public function testFormatEmpty(): void
+    {
+        $helper = new NumberHelper($this->View);
+
+        $value = null;
+        $result = $helper->format($value);
+        $this->assertSame('', $result);
+
+        $result = $helper->format($value, ['default' => '-']);
+        $this->assertSame('-', $result);
+
+        // We should revisit this for 6.x
+        $value = '';
+        $result = $helper->format($value);
+        $this->assertSame('0', $result);
+    }
+
+    /**
+     * test currency() and empty values
+     */
+    public function testCurrencyEmpty(): void
+    {
+        $helper = new NumberHelper($this->View);
+
+        $value = null;
+        $result = $helper->currency($value);
+        $this->assertSame('', $result);
+
+        $result = $helper->currency($value, null, ['default' => '-']);
+        $this->assertSame('-', $result);
+
+        // We should revisit this for 6.x
+        $value = '';
+        $result = $helper->currency($value);
+        $this->assertNotEmpty($result);
     }
 }

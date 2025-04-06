@@ -191,7 +191,7 @@ class FormDataTest extends TestCase
             filesize(CORE_PATH . 'VERSION.txt'),
             0,
             'VERSION.txt',
-            'text/plain'
+            'text/plain',
         );
 
         $data = new FormData();

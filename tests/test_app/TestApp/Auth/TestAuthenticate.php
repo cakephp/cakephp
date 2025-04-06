@@ -60,7 +60,7 @@ class TestAuthenticate extends BaseAuthenticate
         $this->authenticationProvider = $event->getData('1');
 
         if ($this->modifiedUser) {
-            return $user + ['extra' => 'foo'];
+            $event->setResult($user + ['extra' => 'foo']);
         }
     }
 

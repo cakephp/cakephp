@@ -125,7 +125,7 @@ class ExceptionTrap
             if (!is_subclass_of($class, ExceptionRendererInterface::class)) {
                 throw new InvalidArgumentException(
                     "Cannot use `{$class}` as an `exceptionRenderer`. " .
-                    'It must be an instance of `Cake\Error\ExceptionRendererInterface`.'
+                    'It must be an instance of `Cake\Error\ExceptionRendererInterface`.',
                 );
             }
 
@@ -279,7 +279,7 @@ class ExceptionTrap
             $error['type'],
             $error['message'],
             $error['file'],
-            $error['line']
+            $error['line'],
         );
     }
 
@@ -359,7 +359,7 @@ class ExceptionTrap
     /**
      * Trigger an error that occurred during rendering an exception.
      *
-     * By triggering an E_USER_ERROR we can end up in the default
+     * By triggering an E_USER_WARNING we can end up in the default
      * exception handling which will log the rendering failure,
      * and hopefully render an error page.
      *
@@ -375,6 +375,6 @@ class ExceptionTrap
             $exception->getFile(),
             $exception->getLine(),
         );
-        trigger_error($message, E_USER_ERROR);
+        trigger_error($message, E_USER_WARNING);
     }
 }

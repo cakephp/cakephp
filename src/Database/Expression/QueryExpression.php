@@ -68,7 +68,7 @@ class QueryExpression implements ExpressionInterface, Countable
     public function __construct(
         ExpressionInterface|array|string $conditions = [],
         TypeMap|array $types = [],
-        string $conjunction = 'AND'
+        string $conjunction = 'AND',
     ) {
         $this->setTypeMap($types);
         $this->setConjunction(strtoupper($conjunction));
@@ -301,7 +301,7 @@ class QueryExpression implements ExpressionInterface, Countable
     public function in(
         ExpressionInterface|string $field,
         ExpressionInterface|array|string $values,
-        ?string $type = null
+        ?string $type = null,
     ) {
         $type ??= $this->_calculateType($field);
         $type = $type ?: 'string';
@@ -355,7 +355,7 @@ class QueryExpression implements ExpressionInterface, Countable
     public function notIn(
         ExpressionInterface|string $field,
         ExpressionInterface|array|string $values,
-        ?string $type = null
+        ?string $type = null,
     ) {
         $type ??= $this->_calculateType($field);
         $type = $type ?: 'string';
@@ -377,7 +377,7 @@ class QueryExpression implements ExpressionInterface, Countable
     public function notInOrNull(
         ExpressionInterface|string $field,
         ExpressionInterface|array|string $values,
-        ?string $type = null
+        ?string $type = null,
     ) {
         $or = new static([], [], 'OR');
         $or
@@ -413,7 +413,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Adds a new condition to the expression object in the form
      * "field BETWEEN from AND to".
      *
-     * @param \Cake\Database\ExpressionInterface|string $field The field name to compare for values inbetween the range.
+     * @param \Cake\Database\ExpressionInterface|string $field The field name to compare for values in between the range.
      * @param mixed $from The initial value of the range.
      * @param mixed $to The ending value in the comparison range.
      * @param string|null $type the type name for $value as configured using the Type map.
@@ -724,7 +724,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return new UnaryExpression(
                 'IS NULL',
                 new IdentifierExpression($expression),
-                UnaryExpression::POSTFIX
+                UnaryExpression::POSTFIX,
             );
         }
 
@@ -732,7 +732,7 @@ class QueryExpression implements ExpressionInterface, Countable
             return new UnaryExpression(
                 'IS NOT NULL',
                 new IdentifierExpression($expression),
-                UnaryExpression::POSTFIX
+                UnaryExpression::POSTFIX,
             );
         }
 
@@ -746,7 +746,7 @@ class QueryExpression implements ExpressionInterface, Countable
 
         if ($value === null && $this->_conjunction !== ',') {
             throw new InvalidArgumentException(
-                sprintf('Expression `%s` is missing operator (IS, IS NOT) with `null` value.', $expression)
+                sprintf('Expression `%s` is missing operator (IS, IS NOT) with `null` value.', $expression),
             );
         }
 

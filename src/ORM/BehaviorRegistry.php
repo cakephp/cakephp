@@ -187,7 +187,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
                     '`%s` contains duplicate finder `%s` which is already provided by `%s`.',
                     $class,
                     $finder,
-                    $duplicate[0]
+                    $duplicate[0],
                 );
                 throw new LogicException($error);
             }
@@ -201,7 +201,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
                     '`%s` contains duplicate method `%s` which is already provided by `%s`.',
                     $class,
                     $method,
-                    $duplicate[0]
+                    $duplicate[0],
                 );
                 throw new LogicException($error);
             }
@@ -209,6 +209,24 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         return compact('methods', 'finders');
+    }
+
+    /**
+     * Set an object directly into the registry by name.
+     *
+     * @param string $name The name of the object to set in the registry.
+     * @param \Cake\ORM\Behavior $object instance to store in the registry
+     * @return $this
+     */
+    public function set(string $name, object $object)
+    {
+        parent::set($name, $object);
+
+        $methods = $this->_getMethods($object, $object::class, $name);
+        $this->_methodMap += $methods['methods'];
+        $this->_finderMap += $methods['finders'];
+
+        return $this;
     }
 
     /**
@@ -286,7 +304,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call `%s`, it does not belong to any attached behavior.', $method)
+            sprintf('Cannot call `%s`, it does not belong to any attached behavior.', $method),
         );
     }
 
@@ -313,7 +331,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call finder `%s`, it does not belong to any attached behavior.', $type)
+            sprintf('Cannot call finder `%s`, it does not belong to any attached behavior.', $type),
         );
     }
 }

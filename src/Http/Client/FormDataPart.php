@@ -69,7 +69,7 @@ class FormDataPart implements Stringable
         protected string $name,
         protected string $value,
         protected string $disposition = 'form-data',
-        protected ?string $charset = null
+        protected ?string $charset = null,
     ) {
     }
 

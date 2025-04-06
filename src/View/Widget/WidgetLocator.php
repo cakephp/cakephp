@@ -128,8 +128,8 @@ class WidgetLocator
                     sprintf(
                         'Widget objects must implement `%s`. Got `%s` instance instead.',
                         WidgetInterface::class,
-                        get_debug_type($widget)
-                    )
+                        get_debug_type($widget),
+                    ),
                 );
             }
 

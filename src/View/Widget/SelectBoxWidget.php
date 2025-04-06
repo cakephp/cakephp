@@ -149,7 +149,7 @@ class SelectBoxWidget extends BasicWidget
      * Render the contents of the select element.
      *
      * @param array<string, mixed> $data The context for rendering a select.
-     * @return list<string>
+     * @return array<string>
      */
     protected function _renderContent(array $data): array
     {
@@ -199,7 +199,7 @@ class SelectBoxWidget extends BasicWidget
      *
      * @param string $label The optgroup label text
      * @param \ArrayAccess<string, mixed>|array<string, mixed> $optgroup The optgroup data.
-     * @param array|null $disabled The options to disable.
+     * @param array<string>|null $disabled The options to disable.
      * @param mixed $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping
@@ -211,7 +211,7 @@ class SelectBoxWidget extends BasicWidget
         ?array $disabled,
         mixed $selected,
         array $templateVars,
-        bool $escape
+        bool $escape,
     ): string {
         $opts = $optgroup;
         $attrs = [];
@@ -236,18 +236,18 @@ class SelectBoxWidget extends BasicWidget
      * Will recursively call itself when option groups are in use.
      *
      * @param iterable $options The options to render.
-     * @param list<string>|null $disabled The options to disable.
+     * @param array<string>|null $disabled The options to disable.
      * @param mixed $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.
-     * @return list<string> Option elements.
+     * @return array<string> Option elements.
      */
     protected function _renderOptions(
         iterable $options,
         ?array $disabled,
         mixed $selected,
         array $templateVars,
-        bool $escape
+        bool $escape,
     ): array {
         $out = [];
         foreach ($options as $key => $val) {
@@ -333,7 +333,7 @@ class SelectBoxWidget extends BasicWidget
      * Helper method for deciding what options are disabled.
      *
      * @param string $key The key to test.
-     * @param list<string>|null $disabled The disabled values.
+     * @param array<string>|null $disabled The disabled values.
      * @return bool
      */
     protected function _isDisabled(string $key, ?array $disabled): bool
