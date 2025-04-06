@@ -549,7 +549,7 @@ class NumericPaginator implements PaginatorInterface
 
             $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
             if ($order && $options['sort'] && !str_contains($options['sort'], '.')) {
-                $order = $this->_removeAliases($order, $object->getAlias());
+                $order = $this->removeAliases($order, $object->getAlias());
             }
 
             $options['order'] = [$options['sort'] => $direction] + $order;
@@ -585,7 +585,7 @@ class NumericPaginator implements PaginatorInterface
             $options['sort'] = key($options['order']);
         }
 
-        $options['order'] = $this->_prefix($object, $options['order'], $sortAllowed);
+        $options['order'] = $this->prefix($object, $options['order'], $sortAllowed);
 
         return $options;
     }
@@ -597,7 +597,7 @@ class NumericPaginator implements PaginatorInterface
      * @param string $model Current model alias
      * @return array<string, mixed> $fields Unaliased fields where applicable
      */
-    protected function _removeAliases(array $fields, string $model): array
+    protected function removeAliases(array $fields, string $model): array
     {
         $result = [];
         foreach ($fields as $field => $sort) {
@@ -634,7 +634,7 @@ class NumericPaginator implements PaginatorInterface
      * @param bool $allowed Whether the field was allowed.
      * @return array Final order array.
      */
-    protected function _prefix(RepositoryInterface $object, array $order, bool $allowed = false): array
+    protected function prefix(RepositoryInterface $object, array $order, bool $allowed = false): array
     {
         $tableAlias = $object->getAlias();
         $tableOrder = [];

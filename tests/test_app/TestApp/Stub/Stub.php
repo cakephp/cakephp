@@ -20,7 +20,7 @@ class Stub
 
     public function setProps(string $name): void
     {
-        $this->_setModelClass($name);
+        $this->setModelClass($name);
     }
 
     public function getModelClass(): ?string
