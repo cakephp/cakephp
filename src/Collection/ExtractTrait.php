@@ -34,7 +34,7 @@ trait ExtractTrait
      * of doing that.
      * @return \Closure
      */
-    protected function _propertyExtractor(callable|string $path): Closure
+    protected function propertyExtractor(callable|string $path): Closure
     {
         if (!is_string($path)) {
             return $path(...);
@@ -43,7 +43,7 @@ trait ExtractTrait
         $parts = explode('.', $path);
 
         if (str_contains($path, '{*}')) {
-            return fn($element) => $this->_extract($element, $parts);
+            return fn($element) => $this->extractColumn($element, $parts);
         }
 
         return function ($element) use ($parts) {
@@ -51,7 +51,7 @@ trait ExtractTrait
                 return null;
             }
 
-            return $this->_simpleExtract($element, $parts);
+            return $this->simpleExtract($element, $parts);
         };
     }
 
@@ -64,7 +64,7 @@ trait ExtractTrait
      * @param array<string> $parts Path to extract from.
      * @return mixed
      */
-    protected function _extract(ArrayAccess|array $data, array $parts): mixed
+    protected function extractColumn(ArrayAccess|array $data, array $parts): mixed
     {
         $value = null;
         $collectionTransform = false;
@@ -107,7 +107,7 @@ trait ExtractTrait
      * @param array<string> $parts Path to extract from.
      * @return mixed
      */
-    protected function _simpleExtract(ArrayAccess|array $data, array $parts): mixed
+    protected function simpleExtract(ArrayAccess|array $data, array $parts): mixed
     {
         $value = null;
         foreach ($parts as $column) {
@@ -130,11 +130,11 @@ trait ExtractTrait
      * value to be compared the item with.
      * @return \Closure
      */
-    protected function _createMatcherFilter(array $conditions): Closure
+    protected function createMatcherFilter(array $conditions): Closure
     {
         $matchers = [];
         foreach ($conditions as $property => $value) {
-            $extractor = $this->_propertyExtractor($property);
+            $extractor = $this->propertyExtractor($property);
             $matchers[] = function ($v) use ($extractor, $value): bool {
                 return $extractor($v) == $value;
             };
