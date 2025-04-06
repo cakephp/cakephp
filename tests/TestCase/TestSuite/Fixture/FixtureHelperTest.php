@@ -114,7 +114,7 @@ class FixtureHelperTest extends TestCase
                 return 'test1';
             }
 
-            protected function _schemaFromReflection(): void
+            protected function schemaFromReflection(): void
             {
             }
         };
@@ -124,7 +124,7 @@ class FixtureHelperTest extends TestCase
                 return 'test2';
             }
 
-            protected function _schemaFromReflection(): void
+            protected function schemaFromReflection(): void
             {
             }
         };
@@ -171,7 +171,7 @@ class FixtureHelperTest extends TestCase
                 return 'test';
             }
 
-            protected function _schemaFromReflection(): void
+            protected function schemaFromReflection(): void
             {
             }
 
@@ -190,7 +190,7 @@ class FixtureHelperTest extends TestCase
                         return 'test';
                     }
 
-                    protected function _schemaFromReflection(): void
+                    protected function schemaFromReflection(): void
                     {
                     }
 
@@ -238,7 +238,7 @@ class FixtureHelperTest extends TestCase
                 return 'test';
             }
 
-            protected function _schemaFromReflection(): void
+            protected function schemaFromReflection(): void
             {
             }
 
@@ -257,7 +257,7 @@ class FixtureHelperTest extends TestCase
                         return 'test';
                     }
 
-                    protected function _schemaFromReflection(): void
+                    protected function schemaFromReflection(): void
                     {
                     }
 

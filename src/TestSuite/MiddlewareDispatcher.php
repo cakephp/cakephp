@@ -53,7 +53,7 @@ class MiddlewareDispatcher
      * @param array<string, mixed> $spec The request spec.
      * @return \Cake\Http\ServerRequest
      */
-    protected function _createRequest(array $spec): ServerRequest
+    protected function createRequest(array $spec): ServerRequest
     {
         if (isset($spec['input'])) {
             $spec['post'] = [];
@@ -90,6 +90,6 @@ class MiddlewareDispatcher
     {
         $server = new Server($this->app);
 
-        return $server->run($this->_createRequest($requestSpec));
+        return $server->run($this->createRequest($requestSpec));
     }
 }
