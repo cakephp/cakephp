@@ -19,7 +19,7 @@ parameters:
 			path: src/Collection/Iterator/NoChildrenIterator.php
 
 		-
-			message: '#^Parameter \#1 \$args of method Cake\\Command\\RoutesGenerateCommand\:\:_splitArgs\(\) expects array\<string\>, array\<int, array\<string\>\|string\> given\.$#'
+			message: '#^Parameter \#1 \$args of method Cake\\Command\\RoutesGenerateCommand\:\:splitArgs\(\) expects array\<string\>, array\<int, array\<string\>\|string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Command/RoutesGenerateCommand.php

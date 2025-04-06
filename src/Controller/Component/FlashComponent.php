@@ -91,7 +91,7 @@ class FlashComponent extends Component
      * Proxy method to FlashMessage instance.
      *
      * @param array<string, mixed>|string $key The key to set, or a complete array of configs.
-     * @param mixed $value The value to set.
+     * @param mixed|null $value The value to set.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
      * @return $this
      * @throws \Cake\Core\Exception\CakeException When trying to set a key that is invalid.
@@ -107,7 +107,7 @@ class FlashComponent extends Component
      * Proxy method to FlashMessage instance.
      *
      * @param string|null $key The key to get or null for the whole config.
-     * @param mixed $default The return value when the key does not exist.
+     * @param mixed|null $default The return value when the key does not exist.
      * @return mixed Configuration data at the named key or null if the key does not exist.
      */
     public function getConfig(?string $key = null, mixed $default = null): mixed
@@ -131,7 +131,7 @@ class FlashComponent extends Component
      * Proxy method to FlashMessage instance.
      *
      * @param array<string, mixed>|string $key The key to set, or a complete array of configs.
-     * @param mixed $value The value to set.
+     * @param mixed|null $value The value to set.
      * @return $this
      */
     public function configShallow(array|string $key, mixed $value = null): static

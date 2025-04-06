@@ -475,7 +475,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param string $type the join type to use
-     * @return array
+     * @return array<string, array{table: string|\Cake\Database\Query\SelectQuery, conditions: \Cake\Database\ExpressionInterface|\Closure|array|string, type: string}>
      */
     protected function makeJoin(
         array|string $table,

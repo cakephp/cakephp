@@ -79,7 +79,7 @@
       <code><![CDATA[static::$_jsonEncodeFormat]]></code>
     </ImpureFunctionCall>
     <ImpureMethodCall>
-      <code><![CDATA[_formatObject]]></code>
+      <code><![CDATA[formatObject]]></code>
       <code><![CDATA[dateAgoInWords]]></code>
       <code><![CDATA[diffFormatter]]></code>
       <code><![CDATA[getDefaultLocale]]></code>
@@ -98,7 +98,7 @@
       <code><![CDATA[static::$_jsonEncodeFormat]]></code>
     </ImpureFunctionCall>
     <ImpureMethodCall>
-      <code><![CDATA[_formatObject]]></code>
+      <code><![CDATA[formatObject]]></code>
       <code><![CDATA[diffFormatter]]></code>
       <code><![CDATA[getDefaultLocale]]></code>
       <code><![CDATA[timeAgoInWords]]></code>
@@ -117,7 +117,7 @@
       <code><![CDATA[static::$_jsonEncodeFormat]]></code>
     </ImpureFunctionCall>
     <ImpureMethodCall>
-      <code><![CDATA[_formatObject]]></code>
+      <code><![CDATA[formatObject]]></code>
       <code><![CDATA[getDefaultLocale]]></code>
       <code><![CDATA[toNative]]></code>
     </ImpureMethodCall>
