@@ -169,7 +169,7 @@ class CounterCacheBehavior extends Behavior
             return;
         }
 
-        $this->_processAssociations($event, $entity);
+        $this->processAssociations($event, $entity);
         $this->_ignoreDirty = [];
     }
 
@@ -189,7 +189,7 @@ class CounterCacheBehavior extends Behavior
             return;
         }
 
-        $this->_processAssociations($event, $entity);
+        $this->processAssociations($event, $entity);
     }
 
     /**
@@ -282,7 +282,7 @@ class CounterCacheBehavior extends Behavior
 
                 $countConditions = array_combine($foreignKeys, $updateConditions);
 
-                $count = $this->_getCount($config, $countConditions);
+                $count = $this->getCount($config, $countConditions);
                 $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
             }
         } while (!$singlePage && $results->count() === $limit);
@@ -295,11 +295,11 @@ class CounterCacheBehavior extends Behavior
      * @param \Cake\Datasource\EntityInterface $entity Entity.
      * @return void
      */
-    protected function _processAssociations(EventInterface $event, EntityInterface $entity): void
+    protected function processAssociations(EventInterface $event, EntityInterface $entity): void
     {
         foreach ($this->_config as $assoc => $settings) {
             $assoc = $this->_table->getAssociation($assoc);
-            $this->_processAssociation($event, $entity, $assoc, $settings);
+            $this->processAssociation($event, $entity, $assoc, $settings);
         }
     }
 
@@ -313,7 +313,7 @@ class CounterCacheBehavior extends Behavior
      * @return void
      * @throws \RuntimeException If invalid callable is passed.
      */
-    protected function _processAssociation(
+    protected function processAssociation(
         EventInterface $event,
         EntityInterface $entity,
         Association $assoc,
@@ -352,22 +352,22 @@ class CounterCacheBehavior extends Behavior
                 continue;
             }
 
-            if ($this->_shouldUpdateCount($updateConditions)) {
+            if ($this->shouldUpdateCount($updateConditions)) {
                 if ($config instanceof Closure) {
                     $count = $config($event, $entity, $this->_table, false);
                 } else {
-                    $count = $this->_getCount($config, $countConditions);
+                    $count = $this->getCount($config, $countConditions);
                 }
                 if ($count !== false) {
                     $assoc->getTarget()->updateAll([$field => $count], $updateConditions);
                 }
             }
 
-            if ($updateOriginalConditions && $this->_shouldUpdateCount($updateOriginalConditions)) {
+            if ($updateOriginalConditions && $this->shouldUpdateCount($updateOriginalConditions)) {
                 if ($config instanceof Closure) {
                     $count = $config($event, $entity, $this->_table, true);
                 } else {
-                    $count = $this->_getCount($config, $countOriginalConditions);
+                    $count = $this->getCount($config, $countOriginalConditions);
                 }
                 if ($count !== false) {
                     $assoc->getTarget()->updateAll([$field => $count], $updateOriginalConditions);
@@ -382,7 +382,7 @@ class CounterCacheBehavior extends Behavior
      * @param array $conditions Conditions to update count.
      * @return bool True if the count update should happen, false otherwise.
      */
-    protected function _shouldUpdateCount(array $conditions): bool
+    protected function shouldUpdateCount(array $conditions): bool
     {
         return !empty(array_filter($conditions, function ($value) {
             return $value !== null;
@@ -397,7 +397,7 @@ class CounterCacheBehavior extends Behavior
      * @return \Cake\ORM\Query\SelectQuery|int The query to fetch the number of
      *   relations matching the given config and conditions or the number itself.
      */
-    protected function _getCount(array $config, array $conditions): SelectQuery|int
+    protected function getCount(array $config, array $conditions): SelectQuery|int
     {
         $finder = 'all';
         if (!empty($config['finder'])) {

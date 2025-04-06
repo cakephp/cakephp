@@ -63,7 +63,7 @@ class InsertQuery extends Query
         if (!$columns) {
             throw new InvalidArgumentException('At least 1 column is required to perform an insert.');
         }
-        $this->_dirty();
+        $this->dirty();
         $this->_parts['insert'][1] = $columns;
         if (!$this->_parts['values']) {
             $this->_parts['values'] = new ValuesExpression($columns, $this->getTypeMap()->setTypes($types));
@@ -84,7 +84,7 @@ class InsertQuery extends Query
      */
     public function into(string $table): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_parts['insert'][0] = $table;
 
         return $this;
@@ -110,7 +110,7 @@ class InsertQuery extends Query
             );
         }
 
-        $this->_dirty();
+        $this->dirty();
         if ($data instanceof ValuesExpression) {
             $this->_parts['values'] = $data;
 

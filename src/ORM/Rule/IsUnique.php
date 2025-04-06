@@ -79,10 +79,10 @@ class IsUnique
         $repository = $options['repository'];
 
         $alias = $repository->getAlias();
-        $conditions = $this->_alias($alias, $fields);
+        $conditions = $this->alias($alias, $fields);
         if ($entity->isNew() === false) {
             $keys = (array)$repository->getPrimaryKey();
-            $keys = $this->_alias($alias, $entity->extract($keys));
+            $keys = $this->alias($alias, $entity->extract($keys));
             if (Hash::filter($keys)) {
                 $conditions['NOT'] = $keys;
             }
@@ -98,7 +98,7 @@ class IsUnique
      * @param array $conditions The conditions to alias.
      * @return array<string, mixed>
      */
-    protected function _alias(string $alias, array $conditions): array
+    protected function alias(string $alias, array $conditions): array
     {
         $aliased = [];
         foreach ($conditions as $key => $value) {

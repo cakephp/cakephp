@@ -1211,7 +1211,7 @@ class BelongsToManyTest extends TestCase
         $table->setSchema([]);
         /** @var \Cake\ORM\Association\BelongsToMany|\PHPUnit\Framework\MockObject\MockObject $assoc */
         $assoc = $this->getMockBuilder(BelongsToMany::class)
-            ->onlyMethods(['_saveTarget', 'replaceLinks'])
+            ->onlyMethods(['saveTarget', 'replaceLinks'])
             ->setConstructorArgs(['tags', ['sourceTable' => $table]])
             ->getMock();
         $entity = new Entity([
@@ -1223,7 +1223,7 @@ class BelongsToManyTest extends TestCase
         $assoc->expects($this->never())
             ->method('replaceLinks');
         $assoc->expects($this->never())
-            ->method('_saveTarget');
+            ->method('saveTarget');
         $this->assertSame($entity, $assoc->saveAssociated($entity));
     }
 
@@ -1241,7 +1241,7 @@ class BelongsToManyTest extends TestCase
         $table->setSchema([]);
         /** @var \Cake\ORM\Association\BelongsToMany|\PHPUnit\Framework\MockObject\MockObject $assoc */
         $assoc = $this->getMockBuilder(BelongsToMany::class)
-            ->onlyMethods(['_saveTarget', 'replaceLinks'])
+            ->onlyMethods(['saveTarget', 'replaceLinks'])
             ->setConstructorArgs(['tags', ['sourceTable' => $table]])
             ->getMock();
         $entity = new Entity([
@@ -1256,7 +1256,7 @@ class BelongsToManyTest extends TestCase
             ->willReturn(true);
 
         $assoc->expects($this->never())
-            ->method('_saveTarget');
+            ->method('saveTarget');
 
         $this->assertSame($entity, $assoc->saveAssociated($entity));
     }

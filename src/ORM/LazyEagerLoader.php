@@ -52,10 +52,10 @@ class LazyEagerLoader
             $returnSingle = true;
         }
 
-        $query = $this->_getQuery($entities, $contain, $source);
+        $query = $this->getQuery($entities, $contain, $source);
         $associations = array_keys($query->getContain());
 
-        $entities = $this->_injectResults($entities, $query, $associations, $source);
+        $entities = $this->injectResults($entities, $query, $associations, $source);
 
         /** @var \Cake\Datasource\EntityInterface|array<\Cake\Datasource\EntityInterface> */
         return $returnSingle ? array_shift($entities) : $entities;
@@ -70,7 +70,7 @@ class LazyEagerLoader
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
      * @return \Cake\ORM\Query\SelectQuery
      */
-    protected function _getQuery(array $entities, array $contain, Table $source): SelectQuery
+    protected function getQuery(array $entities, array $contain, Table $source): SelectQuery
     {
         $primaryKey = $source->getPrimaryKey();
         $method = is_string($primaryKey) ? 'get' : 'extract';
@@ -114,7 +114,7 @@ class LazyEagerLoader
      * @param array<string> $associations The name of the top level associations
      * @return array<string, string>
      */
-    protected function _getPropertyMap(Table $source, array $associations): array
+    protected function getPropertyMap(Table $source, array $associations): array
     {
         $map = [];
         $container = $source->associations();
@@ -137,14 +137,14 @@ class LazyEagerLoader
      * @param \Cake\ORM\Table $source The table where the entities came from
      * @return array<\Cake\Datasource\EntityInterface>
      */
-    protected function _injectResults(
+    protected function injectResults(
         array $entities,
         SelectQuery $query,
         array $associations,
         Table $source,
     ): array {
         $injected = [];
-        $properties = $this->_getPropertyMap($source, $associations);
+        $properties = $this->getPropertyMap($source, $associations);
         $primaryKey = (array)$source->getPrimaryKey();
         /** @var array<\Cake\Datasource\EntityInterface> $results */
         $results = $query

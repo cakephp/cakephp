@@ -155,7 +155,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         if ($enable) {
             $this->getEventManager()->on($instance);
         }
-        $methods = $this->_getMethods($instance, $class, $alias);
+        $methods = $this->getMethods($instance, $class, $alias);
         $this->_methodMap += $methods['methods'];
         $this->_finderMap += $methods['finders'];
 
@@ -175,7 +175,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @return array A list of implemented finders and methods.
      * @throws \LogicException when duplicate methods are connected.
      */
-    protected function _getMethods(Behavior $instance, string $class, string $alias): array
+    protected function getMethods(Behavior $instance, string $class, string $alias): array
     {
         $finders = array_change_key_case($instance->implementedFinders());
         $methods = array_change_key_case($instance->implementedMethods());
@@ -222,7 +222,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     {
         parent::set($name, $object);
 
-        $methods = $this->_getMethods($object, $object::class, $name);
+        $methods = $this->getMethods($object, $object::class, $name);
         $this->_methodMap += $methods['methods'];
         $this->_finderMap += $methods['finders'];
 

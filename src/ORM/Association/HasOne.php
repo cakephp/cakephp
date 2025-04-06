@@ -76,7 +76,7 @@ class HasOne extends Association
      *
      * @return string
      */
-    protected function _propertyName(): string
+    protected function propertyName(): string
     {
         [, $name] = pluginSplit($this->_name);
 

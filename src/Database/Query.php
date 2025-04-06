@@ -171,7 +171,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function setConnection(Connection $connection): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_connection = $connection;
 
         return $this;
@@ -407,7 +407,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         $this->_parts['with'][] = $cte;
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -436,7 +436,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function modifier(ExpressionInterface|array|string $modifiers, bool $overwrite = false): static
     {
-        $this->_dirty();
+        $this->dirty();
         if ($overwrite) {
             $this->_parts['modifier'] = [];
         }
@@ -487,7 +487,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $this->_parts['from'] = array_merge($this->_parts['from'], $tables);
         }
 
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -608,7 +608,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $this->_parts['join'] = array_merge($this->_parts['join'], $joins);
         }
 
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -625,7 +625,7 @@ abstract class Query implements ExpressionInterface, Stringable
     public function removeJoin(string $name): static
     {
         unset($this->_parts['join'][$name]);
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -1288,7 +1288,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function limit(ExpressionInterface|int|null $limit): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_parts['limit'] = $limit;
 
         return $this;
@@ -1314,7 +1314,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function offset(ExpressionInterface|int|null $offset): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_parts['offset'] = $offset;
 
         return $this;
@@ -1360,7 +1360,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function epilog(ExpressionInterface|string|null $expression = null): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_parts['epilog'] = $expression;
 
         return $this;
@@ -1381,7 +1381,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function comment(?string $expression = null): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_parts['comment'] = $expression;
 
         return $this;
@@ -1652,7 +1652,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         $this->_parts[$part] = $expression;
-        $this->_dirty();
+        $this->dirty();
     }
 
     /**
@@ -1661,7 +1661,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * @return void
      */
-    protected function _dirty(): void
+    protected function dirty(): void
     {
         $this->_dirty = true;
 

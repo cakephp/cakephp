@@ -152,12 +152,12 @@ class Behavior implements EventListenerInterface
      */
     public function __construct(Table $table, array $config = [])
     {
-        $config = $this->_resolveMethodAliases(
+        $config = $this->resolveMethodAliases(
             'implementedFinders',
             $this->_defaultConfig,
             $config,
         );
-        $config = $this->_resolveMethodAliases(
+        $config = $this->resolveMethodAliases(
             'implementedMethods',
             $this->_defaultConfig,
             $config,
@@ -198,7 +198,7 @@ class Behavior implements EventListenerInterface
      * @param array<string, mixed> $config The customized method mappings.
      * @return array A de-duped list of config data.
      */
-    protected function _resolveMethodAliases(string $key, array $defaults, array $config): array
+    protected function resolveMethodAliases(string $key, array $defaults, array $config): array
     {
         if (!isset($defaults[$key], $config[$key])) {
             return $config;
@@ -329,7 +329,7 @@ class Behavior implements EventListenerInterface
             return $methods;
         }
 
-        return $this->_reflectionCache()['finders'];
+        return $this->reflectionCache()['finders'];
     }
 
     /**
@@ -361,7 +361,7 @@ class Behavior implements EventListenerInterface
             return $methods;
         }
 
-        return $this->_reflectionCache()['methods'];
+        return $this->reflectionCache()['methods'];
     }
 
     /**
@@ -374,7 +374,7 @@ class Behavior implements EventListenerInterface
      * @return array
      * @throws \ReflectionException
      */
-    protected function _reflectionCache(): array
+    protected function reflectionCache(): array
     {
         $class = static::class;
         if (isset(self::$_reflectionCache[$class])) {

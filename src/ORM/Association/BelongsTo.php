@@ -92,7 +92,7 @@ class BelongsTo extends Association
      *
      * @return string
      */
-    protected function _propertyName(): string
+    protected function propertyName(): string
     {
         [, $name] = pluginSplit($this->_name);
 
@@ -167,7 +167,7 @@ class BelongsTo extends Association
      * @throws \Cake\Database\Exception\DatabaseException if the number of columns in the foreignKey do not
      * match the number of columns in the target table primaryKey
      */
-    protected function _joinCondition(array $options): array
+    protected function joinCondition(array $options): array
     {
         $conditions = [];
         $tAlias = $this->_name;
