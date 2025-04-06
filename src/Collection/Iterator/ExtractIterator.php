@@ -58,7 +58,7 @@ class ExtractIterator extends Collection
      */
     public function __construct(iterable $items, callable|string $path)
     {
-        $this->_extractor = $this->_propertyExtractor($path);
+        $this->_extractor = $this->propertyExtractor($path);
         parent::__construct($items);
     }
 
