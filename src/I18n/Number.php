@@ -28,13 +28,6 @@ use NumberFormatter;
 class Number
 {
     /**
-     * Default locale
-     *
-     * @var string
-     */
-    public const string DEFAULT_LOCALE = 'en_US';
-
-    /**
      * Format type to format as currency
      *
      * @var string
@@ -262,7 +255,7 @@ class Number
     public static function getDefaultCurrency(): string
     {
         if (static::$_defaultCurrency === null) {
-            $locale = ini_get('intl.default_locale') ?: static::DEFAULT_LOCALE;
+            $locale = I18n::getLocale();
             $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
             static::$_defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
         }
@@ -331,11 +324,7 @@ class Number
     public static function formatter(array $options = []): NumberFormatter
     {
         /** @var string $locale */
-        $locale = $options['locale'] ?? ini_get('intl.default_locale');
-
-        if (!$locale) {
-            $locale = static::DEFAULT_LOCALE;
-        }
+        $locale = $options['locale'] ?? I18n::getLocale();
 
         $type = NumberFormatter::DECIMAL;
         if (!empty($options['type'])) {
