@@ -137,7 +137,7 @@ class Cache
      * @throws \RuntimeException If loading of the engine failed.
      * @return void
      */
-    protected static function _buildEngine(string $name): void
+    protected static function buildEngine(string $name): void
     {
         $registry = static::getRegistry();
 
@@ -213,7 +213,7 @@ class Cache
             return $registry->{$config};
         }
 
-        static::_buildEngine($config);
+        static::buildEngine($config);
 
         return $registry->{$config};
     }

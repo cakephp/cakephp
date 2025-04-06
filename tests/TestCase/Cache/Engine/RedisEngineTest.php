@@ -188,7 +188,7 @@ class RedisEngineTest extends TestCase
      */
     public function testConnectTransient(): void
     {
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $Redis = $this->createPartialMock(RedisEngine::class, ['createRedisInstance']);
         $phpredis = $this->createMock(Redis::class);
 
         $phpredis->expects($this->once())
@@ -206,7 +206,7 @@ class RedisEngineTest extends TestCase
             ->willReturn(true);
 
         $Redis->expects($this->once())
-            ->method('_createRedisInstance')
+            ->method('createRedisInstance')
             ->willReturn($phpredis);
 
         $config = [
@@ -215,7 +215,7 @@ class RedisEngineTest extends TestCase
         ];
         $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
 
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $Redis = $this->createPartialMock(RedisEngine::class, ['createRedisInstance']);
         $phpredis = $this->createMock(Redis::class);
 
         $phpredis->expects($this->once())
@@ -233,7 +233,7 @@ class RedisEngineTest extends TestCase
             ->willReturn(true);
 
         $Redis->expects($this->once())
-            ->method('_createRedisInstance')
+            ->method('createRedisInstance')
             ->willReturn($phpredis);
 
         $config = [
@@ -249,7 +249,7 @@ class RedisEngineTest extends TestCase
      */
     public function testConnectTransientContext(): void
     {
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $Redis = $this->createPartialMock(RedisEngine::class, ['createRedisInstance']);
         $phpredis = $this->createMock(Redis::class);
 
         $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
@@ -279,7 +279,7 @@ class RedisEngineTest extends TestCase
             ->willReturn(true);
 
         $Redis->expects($this->once())
-            ->method('_createRedisInstance')
+            ->method('createRedisInstance')
             ->willReturn($phpredis);
 
         $config = [
@@ -296,7 +296,7 @@ class RedisEngineTest extends TestCase
      */
     public function testConnectPersistent(): void
     {
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $Redis = $this->createPartialMock(RedisEngine::class, ['createRedisInstance']);
         $phpredis = $this->createMock(Redis::class);
 
         $expectedPersistentId = $this->port . $Redis->getConfig('timeout') . $Redis->getConfig('database');
@@ -317,7 +317,7 @@ class RedisEngineTest extends TestCase
             ->willReturn(true);
 
         $Redis->expects($this->once())
-            ->method('_createRedisInstance')
+            ->method('createRedisInstance')
             ->willReturn($phpredis);
 
         $config = [
@@ -325,7 +325,7 @@ class RedisEngineTest extends TestCase
         ];
         $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
 
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $Redis = $this->createPartialMock(RedisEngine::class, ['createRedisInstance']);
         $phpredis = $this->createMock(Redis::class);
 
         $phpredis->expects($this->once())
@@ -344,7 +344,7 @@ class RedisEngineTest extends TestCase
             ->willReturn(true);
 
         $Redis->expects($this->once())
-            ->method('_createRedisInstance')
+            ->method('createRedisInstance')
             ->willReturn($phpredis);
 
         $config = [
@@ -359,7 +359,7 @@ class RedisEngineTest extends TestCase
      */
     public function testConnectPersistentContext(): void
     {
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $Redis = $this->createPartialMock(RedisEngine::class, ['createRedisInstance']);
         $phpredis = $this->createMock(Redis::class);
 
         $expectedPersistentId = $this->port . $Redis->getConfig('timeout') . $Redis->getConfig('database');
@@ -391,7 +391,7 @@ class RedisEngineTest extends TestCase
             ->willReturn(true);
 
         $Redis->expects($this->once())
-            ->method('_createRedisInstance')
+            ->method('createRedisInstance')
             ->willReturn($phpredis);
 
         $config = [
