@@ -3033,9 +3033,9 @@ class SelectQueryTest extends TestCase
      * Tests that the values in tuple comparison expression are being bound correctly,
      * specifically for dialects that translate tuple comparisons.
      *
-     * @see \Cake\Database\Driver\TupleComparisonTranslatorTrait::_transformTupleComparison()
-     * @see \Cake\Database\Driver\Sqlite::_expressionTranslators()
-     * @see \Cake\Database\Driver\Sqlserver::_expressionTranslators()
+     * @see \Cake\Database\Driver\TupleComparisonTranslatorTrait::transformTupleComparison()
+     * @see \Cake\Database\Driver\Sqlite::expressionTranslators()
+     * @see \Cake\Database\Driver\Sqlserver::expressionTranslators()
      */
     public function testTupleComparisonValuesAreBeingBoundCorrectly(): void
     {
@@ -3073,9 +3073,9 @@ class SelectQueryTest extends TestCase
      * Tests that the values in tuple comparison expressions are being bound as expected
      * when types are omitted, specifically for dialects that translate tuple comparisons.
      *
-     * @see \Cake\Database\Driver\TupleComparisonTranslatorTrait::_transformTupleComparison()
-     * @see \Cake\Database\Driver\Sqlite::_expressionTranslators()
-     * @see \Cake\Database\Driver\Sqlserver::_expressionTranslators()
+     * @see \Cake\Database\Driver\TupleComparisonTranslatorTrait::transformTupleComparison()
+     * @see \Cake\Database\Driver\Sqlite::expressionTranslators()
+     * @see \Cake\Database\Driver\Sqlserver::expressionTranslators()
      */
     public function testTupleComparisonTypesCanBeOmitted(): void
     {
@@ -4155,7 +4155,7 @@ class SelectQueryTest extends TestCase
      * This replicates what the SQL Server driver would do for <= SQL Server 2008
      * when ordering on fields that are expressions.
      *
-     * @see \Cake\Database\Driver\Sqlserver::_pagingSubquery()
+     * @see \Cake\Database\Driver\Sqlserver::pagingSubquery()
      */
     public function testReusingExpressions(): void
     {

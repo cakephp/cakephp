@@ -114,10 +114,10 @@ class IdentifierQuoter
         $query->setValueBinder(null);
 
         match (true) {
-            $query instanceof InsertQuery => $this->_quoteInsert($query),
-            $query instanceof SelectQuery => $this->_quoteSelect($query),
-            $query instanceof UpdateQuery => $this->_quoteUpdate($query),
-            $query instanceof DeleteQuery => $this->_quoteDelete($query),
+            $query instanceof InsertQuery => $this->quoteInsert($query),
+            $query instanceof SelectQuery => $this->quoteSelect($query),
+            $query instanceof UpdateQuery => $this->quoteUpdate($query),
+            $query instanceof DeleteQuery => $this->quoteDelete($query),
             default =>
                 throw new DatabaseException(sprintf(
                     'Instance of SelectQuery, UpdateQuery, InsertQuery, DeleteQuery expected. Found `%s` instead.',
@@ -139,9 +139,9 @@ class IdentifierQuoter
     public function quoteExpression(ExpressionInterface $expression): void
     {
         match (true) {
-            $expression instanceof FieldInterface => $this->_quoteComparison($expression),
-            $expression instanceof OrderByExpression => $this->_quoteOrderBy($expression),
-            $expression instanceof IdentifierExpression => $this->_quoteIdentifierExpression($expression),
+            $expression instanceof FieldInterface => $this->quoteComparison($expression),
+            $expression instanceof OrderByExpression => $this->quoteOrderBy($expression),
+            $expression instanceof IdentifierExpression => $this->quoteIdentifierExpression($expression),
             default => null // Nothing to do if there is no match
         };
     }
@@ -153,7 +153,7 @@ class IdentifierQuoter
      * @param array $parts Query clauses.
      * @return void
      */
-    protected function _quoteParts(Query $query, array $parts): void
+    protected function quoteParts(Query $query, array $parts): void
     {
         foreach ($parts as $part) {
             $contents = $query->clause($part);
@@ -162,7 +162,7 @@ class IdentifierQuoter
                 continue;
             }
 
-            $result = $this->_basicQuoter($contents);
+            $result = $this->basicQuoter($contents);
             if ($result) {
                 $part = match ($part) {
                     'group' => 'groupBy',
@@ -181,7 +181,7 @@ class IdentifierQuoter
      * @param array<string, mixed> $part the part of the query to quote
      * @return array<string, mixed>
      */
-    protected function _basicQuoter(array $part): array
+    protected function basicQuoter(array $part): array
     {
         $result = [];
         foreach ($part as $alias => $value) {
@@ -200,7 +200,7 @@ class IdentifierQuoter
      * @param array $joins The joins to quote.
      * @return array<string, array>
      */
-    protected function _quoteJoins(array $joins): array
+    protected function quoteJoins(array $joins): array
     {
         $result = [];
         foreach ($joins as $value) {
@@ -226,13 +226,13 @@ class IdentifierQuoter
      * @param \Cake\Database\Query\SelectQuery<mixed> $query The query to quote.
      * @return void
      */
-    protected function _quoteSelect(SelectQuery $query): void
+    protected function quoteSelect(SelectQuery $query): void
     {
-        $this->_quoteParts($query, ['select', 'distinct', 'from', 'group']);
+        $this->quoteParts($query, ['select', 'distinct', 'from', 'group']);
 
         $joins = $query->clause('join');
         if ($joins) {
-            $joins = $this->_quoteJoins($joins);
+            $joins = $this->quoteJoins($joins);
             $query->join($joins, [], true);
         }
     }
@@ -243,13 +243,13 @@ class IdentifierQuoter
      * @param \Cake\Database\Query\DeleteQuery $query The query to quote.
      * @return void
      */
-    protected function _quoteDelete(DeleteQuery $query): void
+    protected function quoteDelete(DeleteQuery $query): void
     {
-        $this->_quoteParts($query, ['from']);
+        $this->quoteParts($query, ['from']);
 
         $joins = $query->clause('join');
         if ($joins) {
-            $joins = $this->_quoteJoins($joins);
+            $joins = $this->quoteJoins($joins);
             $query->join($joins, [], true);
         }
     }
@@ -260,7 +260,7 @@ class IdentifierQuoter
      * @param \Cake\Database\Query\InsertQuery $query The insert query to quote.
      * @return void
      */
-    protected function _quoteInsert(InsertQuery $query): void
+    protected function quoteInsert(InsertQuery $query): void
     {
         $insert = $query->clause('insert');
         if (!isset($insert[0]) || !isset($insert[1])) {
@@ -282,7 +282,7 @@ class IdentifierQuoter
      * @param \Cake\Database\Query\UpdateQuery $query The update query to quote.
      * @return void
      */
-    protected function _quoteUpdate(UpdateQuery $query): void
+    protected function quoteUpdate(UpdateQuery $query): void
     {
         $table = $query->clause('update')[0];
 
@@ -297,7 +297,7 @@ class IdentifierQuoter
      * @param \Cake\Database\Expression\FieldInterface $expression The expression to quote.
      * @return void
      */
-    protected function _quoteComparison(FieldInterface $expression): void
+    protected function quoteComparison(FieldInterface $expression): void
     {
         $field = $expression->getField();
         if (is_string($field)) {
@@ -322,7 +322,7 @@ class IdentifierQuoter
      * @param \Cake\Database\Expression\OrderByExpression $expression The expression to quote.
      * @return void
      */
-    protected function _quoteOrderBy(OrderByExpression $expression): void
+    protected function quoteOrderBy(OrderByExpression $expression): void
     {
         $expression->iterateParts(function ($part, &$field) {
             if (is_string($field)) {
@@ -344,7 +344,7 @@ class IdentifierQuoter
      * @param \Cake\Database\Expression\IdentifierExpression $expression The identifiers to quote.
      * @return void
      */
-    protected function _quoteIdentifierExpression(IdentifierExpression $expression): void
+    protected function quoteIdentifierExpression(IdentifierExpression $expression): void
     {
         $expression->setIdentifier(
             $this->quoteIdentifier($expression->getIdentifier()),

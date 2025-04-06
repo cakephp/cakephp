@@ -61,8 +61,8 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
     public function __construct(ExpressionInterface|string $field, mixed $from, mixed $to, ?string $type = null)
     {
         if ($type !== null) {
-            $from = $this->_castToExpression($from, $type);
-            $to = $this->_castToExpression($to, $type);
+            $from = $this->castToExpression($from, $type);
+            $to = $this->castToExpression($to, $type);
         }
 
         $this->_field = $field;
@@ -91,7 +91,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
                 $parts[$name] = $part->sql($binder);
                 continue;
             }
-            $parts[$name] = $this->_bindValue($part, $binder, $this->_type);
+            $parts[$name] = $this->bindValue($part, $binder, $this->_type);
         }
         assert(is_string($field));
 
@@ -120,7 +120,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
      * @param string|null $type The type of $value
      * @return string generated placeholder
      */
-    protected function _bindValue(mixed $value, ValueBinder $binder, ?string $type): string
+    protected function bindValue(mixed $value, ValueBinder $binder, ?string $type): string
     {
         $placeholder = $binder->placeholder('c');
         $binder->bind($placeholder, $value, $type);

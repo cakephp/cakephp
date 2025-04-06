@@ -178,7 +178,7 @@ class SelectQuery extends Query implements IteratorAggregate
             $this->_parts['select'] = array_merge($this->_parts['select'], $fields);
         }
 
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -228,7 +228,7 @@ class SelectQuery extends Query implements IteratorAggregate
         }
 
         $this->_parts['distinct'] = $on;
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -349,7 +349,7 @@ class SelectQuery extends Query implements IteratorAggregate
             $this->_parts['join'] = array_merge($this->_parts['join'], $joins);
         }
 
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -366,7 +366,7 @@ class SelectQuery extends Query implements IteratorAggregate
     public function removeJoin(string $name): static
     {
         unset($this->_parts['join'][$name]);
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -413,7 +413,7 @@ class SelectQuery extends Query implements IteratorAggregate
         ExpressionInterface|Closure|array|string $conditions = [],
         array $types = [],
     ): static {
-        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_LEFT), $types);
+        $this->join($this->makeJoin($table, $conditions, static::JOIN_TYPE_LEFT), $types);
 
         return $this;
     }
@@ -438,7 +438,7 @@ class SelectQuery extends Query implements IteratorAggregate
         ExpressionInterface|Closure|array|string $conditions = [],
         array $types = [],
     ): static {
-        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_RIGHT), $types);
+        $this->join($this->makeJoin($table, $conditions, static::JOIN_TYPE_RIGHT), $types);
 
         return $this;
     }
@@ -463,7 +463,7 @@ class SelectQuery extends Query implements IteratorAggregate
         ExpressionInterface|Closure|array|string $conditions = [],
         array $types = [],
     ): static {
-        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_INNER), $types);
+        $this->join($this->makeJoin($table, $conditions, static::JOIN_TYPE_INNER), $types);
 
         return $this;
     }
@@ -477,7 +477,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * @param string $type the join type to use
      * @return array
      */
-    protected function _makeJoin(
+    protected function makeJoin(
         array|string $table,
         ExpressionInterface|Closure|array|string $conditions,
         string $type,
@@ -535,7 +535,7 @@ class SelectQuery extends Query implements IteratorAggregate
         }
 
         $this->_parts['group'] = array_merge($this->_parts['group'], array_values($fields));
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -563,7 +563,7 @@ class SelectQuery extends Query implements IteratorAggregate
         if ($overwrite) {
             $this->_parts['having'] = $this->newExpr();
         }
-        $this->_conjugate('having', $conditions, 'AND', $types);
+        $this->conjugate('having', $conditions, 'AND', $types);
 
         return $this;
     }
@@ -584,7 +584,7 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function andHaving(ExpressionInterface|Closure|array|string $conditions, array $types = []): static
     {
-        $this->_conjugate('having', $conditions, 'AND', $types);
+        $this->conjugate('having', $conditions, 'AND', $types);
 
         return $this;
     }
@@ -613,7 +613,7 @@ class SelectQuery extends Query implements IteratorAggregate
         }
 
         $this->_parts['window'][] = ['name' => new IdentifierExpression($name), 'window' => $window];
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -688,7 +688,7 @@ class SelectQuery extends Query implements IteratorAggregate
             'all' => false,
             'query' => $query,
         ];
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -723,7 +723,7 @@ class SelectQuery extends Query implements IteratorAggregate
             'all' => true,
             'query' => $query,
         ];
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -761,7 +761,7 @@ class SelectQuery extends Query implements IteratorAggregate
             'all' => false,
             'query' => $query,
         ];
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -796,7 +796,7 @@ class SelectQuery extends Query implements IteratorAggregate
             'all' => true,
             'query' => $query,
         ];
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -854,7 +854,7 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function decorateResults(?Closure $callback, bool $overwrite = false): static
     {
-        $this->_dirty();
+        $this->dirty();
         if ($overwrite) {
             $this->_resultDecorators = [];
         }
@@ -890,7 +890,7 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function enableBufferedResults(): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->bufferedResults = true;
 
         return $this;
@@ -906,7 +906,7 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function disableBufferedResults(): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->bufferedResults = false;
 
         return $this;
@@ -939,7 +939,7 @@ class SelectQuery extends Query implements IteratorAggregate
     public function setSelectTypeMap(TypeMap|array $typeMap): static
     {
         $this->_selectTypeMap = is_array($typeMap) ? new TypeMap($typeMap) : $typeMap;
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }

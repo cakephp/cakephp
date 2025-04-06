@@ -603,7 +603,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
 
         if ($attrs['type'] === static::CONSTRAINT_FOREIGN) {
-            $attrs = $this->_checkForeignKey($attrs);
+            $attrs = $this->checkForeignKey($attrs);
 
             if (isset($this->_constraints[$name])) {
                 $this->_constraints[$name]['columns'] = array_unique(array_merge(
@@ -664,7 +664,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * @return array<string, mixed>
      * @throws \Cake\Database\Exception\DatabaseException When foreign key definition is not valid.
      */
-    protected function _checkForeignKey(array $attrs): array
+    protected function checkForeignKey(array $attrs): array
     {
         if (count($attrs['references']) < 2) {
             throw new DatabaseException('References must contain a table and column.');

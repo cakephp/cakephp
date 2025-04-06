@@ -84,7 +84,7 @@ trait CaseExpressionTrait
             $type !== null &&
             !($value instanceof ExpressionInterface)
         ) {
-            $value = $this->_castToExpression($value, $type);
+            $value = $this->castToExpression($value, $type);
         }
 
         if ($value === null) {

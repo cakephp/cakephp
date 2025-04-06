@@ -67,7 +67,7 @@ abstract class SchemaDialect
      * @param string $on The on clause
      * @return string
      */
-    protected function _foreignOnClause(string $on): string
+    protected function foreignOnClause(string $on): string
     {
         if ($on === TableSchema::ACTION_SET_NULL) {
             return 'SET NULL';
@@ -94,7 +94,7 @@ abstract class SchemaDialect
      * @param string $clause The on clause to convert.
      * @return string
      */
-    protected function _convertOnClause(string $clause): string
+    protected function convertOnClause(string $clause): string
     {
         if ($clause === 'CASCADE' || $clause === 'RESTRICT') {
             return strtolower($clause);
@@ -113,7 +113,7 @@ abstract class SchemaDialect
      * @param array<string>|string $references The referenced columns of a foreign key constraint statement
      * @return string
      */
-    protected function _convertConstraintColumns(array|string $references): string
+    protected function convertConstraintColumns(array|string $references): string
     {
         if (is_string($references)) {
             return $this->_driver->quoteIdentifier($references);
@@ -135,7 +135,7 @@ abstract class SchemaDialect
      * @return string|null An SQL fragment, or `null` in case no corresponding type was found or the type didn't provide
      *  custom column SQL.
      */
-    protected function _getTypeSpecificColumnSql(
+    protected function getTypeSpecificColumnSql(
         string $columnType,
         TableSchemaInterface $schema,
         string $column,
@@ -161,7 +161,7 @@ abstract class SchemaDialect
      * @return array|null Array of column information, or `null` in case no corresponding type was found or the type
      *  didn't provide custom column information.
      */
-    protected function _applyTypeSpecificColumnConversion(string $columnType, array $definition): ?array
+    protected function applyTypeSpecificColumnConversion(string $columnType, array $definition): ?array
     {
         if (!TypeFactory::getMap($columnType)) {
             return null;

@@ -67,7 +67,7 @@ class OrderByExpression extends QueryExpression
      * @param array $types list of types associated on fields referenced in $conditions
      * @return void
      */
-    protected function _addConditions(array $conditions, array $types): void
+    protected function addConditions(array $conditions, array $types): void
     {
         foreach ($conditions as $key => $val) {
             if (
