@@ -308,17 +308,6 @@ if (!function_exists('Cake\Core\triggerWarning')) {
      */
     function triggerWarning(string $message): void
     {
-        $trace = debug_backtrace();
-        if (isset($trace[1])) {
-            $frame = $trace[1];
-            $frame += ['file' => '[internal]', 'line' => '??'];
-            $message = sprintf(
-                '%s - %s, line: %s',
-                $message,
-                $frame['file'],
-                $frame['line']
-            );
-        }
         trigger_error($message, E_USER_WARNING);
     }
 }
