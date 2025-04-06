@@ -114,10 +114,10 @@ class RadioWidget extends BasicWidget
         unset($data['empty']);
 
         $this->_idPrefix = $data['idPrefix'];
-        $this->_clearIds();
+        $this->clearIds();
         $opts = [];
         foreach ($options as $val => $text) {
-            $opts[] = $this->_renderInput($val, $text, $data, $context);
+            $opts[] = $this->renderInput($val, $text, $data, $context);
         }
 
         return implode('', $opts);
@@ -130,7 +130,7 @@ class RadioWidget extends BasicWidget
      * @param array|string|true|null $disabled The disabled values.
      * @return bool
      */
-    protected function _isDisabled(array $radio, array|string|bool|null $disabled): bool
+    protected function isDisabled(array $radio, array|string|bool|null $disabled): bool
     {
         if (!$disabled) {
             return false;
@@ -152,7 +152,7 @@ class RadioWidget extends BasicWidget
      * @param \Cake\View\Form\ContextInterface $context The form context
      * @return string
      */
-    protected function _renderInput(
+    protected function renderInput(
         string|int $val,
         array|string|int $text,
         array $data,
@@ -174,11 +174,11 @@ class RadioWidget extends BasicWidget
         if (empty($radio['id'])) {
             if (isset($data['id'])) {
                 $radio['id'] = $data['id'] . '-' . rtrim(
-                    $this->_idSuffix((string)$radio['value']),
+                    $this->idSuffix((string)$radio['value']),
                     '-',
                 );
             } else {
-                $radio['id'] = $this->_id((string)$radio['name'], (string)$radio['value']);
+                $radio['id'] = $this->id((string)$radio['name'], (string)$radio['value']);
             }
         }
         if (isset($data['val']) && is_bool($data['val'])) {
@@ -194,7 +194,7 @@ class RadioWidget extends BasicWidget
             $data['label'] = $this->_templates->addClass($data['label'], $selectedClass);
         }
 
-        $radio['disabled'] = $this->_isDisabled($radio, $data['disabled']);
+        $radio['disabled'] = $this->isDisabled($radio, $data['disabled']);
         if (!empty($data['required'])) {
             $radio['required'] = true;
         }
@@ -212,7 +212,7 @@ class RadioWidget extends BasicWidget
             ),
         ]);
 
-        $label = $this->_renderLabel(
+        $label = $this->renderLabel(
             $radio,
             $data['label'],
             $input,
@@ -247,7 +247,7 @@ class RadioWidget extends BasicWidget
      * @param bool $escape Whether to HTML escape the label.
      * @return string|false Generated label.
      */
-    protected function _renderLabel(
+    protected function renderLabel(
         array $radio,
         array|string|bool|null $label,
         string $input,

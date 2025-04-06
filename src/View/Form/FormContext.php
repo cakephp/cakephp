@@ -105,7 +105,7 @@ class FormContext implements ContextInterface
             return $options['default'];
         }
 
-        return $this->_schemaDefault($field);
+        return $this->schemaDefault($field);
     }
 
     /**
@@ -114,7 +114,7 @@ class FormContext implements ContextInterface
      * @param string $field Field name.
      * @return mixed
      */
-    protected function _schemaDefault(string $field): mixed
+    protected function schemaDefault(string $field): mixed
     {
         $field = $this->_form->getSchema()->field($field);
         if (!$field) {
