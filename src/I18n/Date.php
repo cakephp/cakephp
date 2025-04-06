@@ -170,7 +170,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
             $format = [$format, IntlDateFormatter::NONE];
         }
 
-        return static::_parseDateTime($date, $format);
+        return static::doParseDateTime($date, $format);
     }
 
     /**
@@ -248,7 +248,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
         $format = is_int($format) ? [$format, IntlDateFormatter::NONE] : $format;
         $locale = $locale ?: DateTime::getDefaultLocale();
 
-        return $this->_formatObject($this->native, $format, $locale);
+        return $this->formatObject($this->native, $format, $locale);
     }
 
     /**
