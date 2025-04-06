@@ -79,7 +79,7 @@ class PhpConfig implements ConfigEngineInterface
      */
     public function read(string $key): array
     {
-        $file = $this->_getFilePath($key, true);
+        $file = $this->getFilePath($key, true);
 
         $return = include $file;
         if (is_array($return)) {
@@ -102,7 +102,7 @@ class PhpConfig implements ConfigEngineInterface
     {
         $contents = '<?php' . "\n" . 'return ' . var_export($data, true) . ';';
 
-        $filename = $this->_getFilePath($key);
+        $filename = $this->getFilePath($key);
 
         return file_put_contents($filename, $contents) > 0;
     }

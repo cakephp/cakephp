@@ -108,7 +108,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @param string $class Partial classname to resolve.
      * @return class-string<\Cake\Controller\Component>|null Either the correct class name or null.
      */
-    protected function _resolveClassName(string $class): ?string
+    protected function resolveClassName(string $class): ?string
     {
         /** @var class-string<\Cake\Controller\Component>|null */
         return App::className($class, 'Controller/Component', 'Component');
@@ -125,7 +125,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @return void
      * @throws \Cake\Controller\Exception\MissingComponentException
      */
-    protected function _throwMissingClassError(string $class, ?string $plugin): void
+    protected function throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingComponentException([
             'class' => $class . 'Component',
@@ -144,7 +144,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @param array<string, mixed> $config An array of config to use for the component.
      * @return \Cake\Controller\Component The constructed component class.
      */
-    protected function _create(object|string $class, string $alias, array $config): Component
+    protected function create(object|string $class, string $alias, array $config): Component
     {
         if (is_object($class)) {
             return $class;
