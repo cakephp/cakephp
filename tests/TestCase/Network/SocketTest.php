@@ -477,10 +477,10 @@ class SocketTest extends TestCase
     {
         $socketName = 'unix:///tmp/test.socket';
         $socket = $this->getMockBuilder(Socket::class)
-            ->onlyMethods(['_getStreamSocketClient'])
+            ->onlyMethods(['getStreamSocketClient'])
             ->getMock();
         $socket->expects($this->once())
-            ->method('_getStreamSocketClient')
+            ->method('getStreamSocketClient')
             ->with('unix:///tmp/test.socket', null, null, 1)
             ->willReturn(false);
         $socket->setConfig([
