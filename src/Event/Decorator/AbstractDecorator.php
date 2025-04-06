@@ -55,7 +55,7 @@ abstract class AbstractDecorator
      */
     public function __invoke(): mixed
     {
-        return $this->_call(func_get_args());
+        return $this->call(func_get_args());
     }
 
     /**
@@ -64,7 +64,7 @@ abstract class AbstractDecorator
      * @param array $args Arguments for the callable.
      * @return mixed
      */
-    protected function _call(array $args): mixed
+    protected function call(array $args): mixed
     {
         $callable = $this->_callable;
 
