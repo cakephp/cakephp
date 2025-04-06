@@ -152,7 +152,7 @@ class Validation
             return false;
         }
 
-        return static::_check($check, '/[^\s]+/m');
+        return static::check($check, '/[^\s]+/m');
     }
 
     /**
@@ -170,7 +170,7 @@ class Validation
             return false;
         }
 
-        return self::_check($check, '/^[\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]+$/Du');
+        return self::check($check, '/^[\p{Ll}\p{Lm}\p{Lo}\p{Lt}\p{Lu}\p{Nd}]+$/Du');
     }
 
     /**
@@ -199,7 +199,7 @@ class Validation
             return false;
         }
 
-        return self::_check($check, '/^[[:alnum:]]+$/');
+        return self::check($check, '/^[[:alnum:]]+$/');
     }
 
     /**
@@ -261,7 +261,7 @@ class Validation
             return false;
         }
 
-        if ($regex !== null && static::_check($check, $regex)) {
+        if ($regex !== null && static::check($check, $regex)) {
             return !$deep || static::luhn($check);
         }
         $cards = [
@@ -289,7 +289,7 @@ class Validation
             foreach ($type as $value) {
                 $regex = $cards['all'][strtolower($value)];
 
-                if (static::_check($check, $regex)) {
+                if (static::check($check, $regex)) {
                     return static::luhn($check);
                 }
             }
@@ -297,14 +297,14 @@ class Validation
             foreach ($cards['all'] as $value) {
                 $regex = $value;
 
-                if (static::_check($check, $regex)) {
+                if (static::check($check, $regex)) {
                     return static::luhn($check);
                 }
             }
         } else {
             $regex = $cards['fast'];
 
-            if (static::_check($check, $regex)) {
+            if (static::check($check, $regex)) {
                 return static::luhn($check);
             }
         }
@@ -422,7 +422,7 @@ class Validation
             return false;
         }
 
-        return static::_check($check, $regex);
+        return static::check($check, $regex);
     }
 
     /**
@@ -458,12 +458,12 @@ class Validation
             return false;
         }
         if (is_array($check)) {
-            $check = static::_getDateString($check);
+            $check = static::getDateString($check);
             $format = 'ymd';
         }
 
         if ($regex !== null) {
-            return static::_check($check, $regex);
+            return static::check($check, $regex);
         }
         $month = '(0[123456789]|10|11|12)';
         $separator = '([- /.])';
@@ -505,7 +505,7 @@ class Validation
 
         $format = (array)$format;
         foreach ($format as $key) {
-            if (static::_check($check, $regex[$key])) {
+            if (static::check($check, $regex[$key])) {
                 return true;
             }
         }
@@ -563,7 +563,7 @@ class Validation
 
         $valid = false;
         if (is_array($check)) {
-            $check = static::_getDateString($check);
+            $check = static::getDateString($check);
             $dateFormat = 'ymd';
         }
         $parts = preg_split('/[\sT]+/', $check);
@@ -601,7 +601,7 @@ class Validation
         // phpcs:ignore Generic.Files.LineLength
         $regex = '/^([\+-]?\d{4}(?!\d{2}\b))((-?)((0[1-9]|1[0-2])(\3([12]\d|0[1-9]|3[01]))?|W([0-4]\d|5[0-2])(-?[1-7])?|(00[1-9]|0[1-9]\d|[12]\d{2}|3([0-5]\d|6[1-6])))([T\s]((([01]\d|2[0-3])((:?)[0-5]\d)?|24\:?00)([\.,]\d+(?!:))?)?(\17[0-5]\d([\.,]\d+)?)?([zZ]|([\+-])([01]\d|2[0-3]):?([0-5]\d)?)?)?)?$/';
 
-        return static::_check($check, $regex);
+        return static::check($check, $regex);
     }
 
     /**
@@ -620,7 +620,7 @@ class Validation
             return true;
         }
         if (is_array($check)) {
-            $check = static::_getDateString($check);
+            $check = static::getDateString($check);
         }
 
         if (!is_scalar($check)) {
@@ -630,7 +630,7 @@ class Validation
         $meridianClockRegex = '^((0?[1-9]|1[012])(:[0-5]\d){0,2} ?([AP]M|[ap]m))$';
         $standardClockRegex = '^([01]\d|2[0-3])((:[0-5]\d){1,2}|(:[0-5]\d){2}\.\d{0,6})$';
 
-        return static::_check($check, '%' . $meridianClockRegex . '|' . $standardClockRegex . '%');
+        return static::check($check, '%' . $meridianClockRegex . '|' . $standardClockRegex . '%');
     }
 
     /**
@@ -733,7 +733,7 @@ class Validation
             [$check, $regex] = static::getDecimalRegex($check, $places);
         }
 
-        return static::_check($check, $regex);
+        return static::check($check, $regex);
     }
 
     /**
@@ -780,7 +780,7 @@ class Validation
 
         $check = str_replace([$groupingSep, $decimalPoint], ['', '.'], $check);
 
-        return static::_check($check, $regex);
+        return static::check($check, $regex);
     }
 
     /**
@@ -833,7 +833,7 @@ class Validation
         // phpcs:ignore Generic.Files.LineLength
         $regex ??= '/^[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+(?:\.[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]+)*@' . self::$_pattern['hostname'] . '$/ui';
 
-        $return = static::_check($check, $regex);
+        $return = static::check($check, $regex);
         if ($deep === false || $deep === null) {
             return $return;
         }
@@ -1162,7 +1162,7 @@ class Validation
             $regex = '/^(?!\x{00a2})\p{Sc}?' . $money . '$/u';
         }
 
-        return static::_check($check, $regex);
+        return static::check($check, $regex);
     }
 
     /**
@@ -1237,7 +1237,7 @@ class Validation
     {
         $regex = $allowZero ? '/^(?:0|[1-9][0-9]*)$/' : '/^[1-9][0-9]*$/';
 
-        return static::_check($check, $regex);
+        return static::check($check, $regex);
     }
 
     /**
@@ -1291,7 +1291,7 @@ class Validation
             return false;
         }
 
-        static::_populateIp();
+        static::populateIp();
 
         $emoji = '\x{1F190}-\x{1F9EF}';
         $alpha = '0-9\p{L}\p{N}' . $emoji;
@@ -1307,7 +1307,7 @@ class Validation
             '(?:#' . $fragmentAndQuery . '*)?$/iu';
         // phpcs:enable Generic.Files.LineLength
 
-        return static::_check($check, $regex);
+        return static::check($check, $regex);
     }
 
     /**
@@ -1343,7 +1343,7 @@ class Validation
     {
         $regex = '/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[0-5][a-fA-F0-9]{3}-[089aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$/';
 
-        return self::_check($check, $regex);
+        return self::check($check, $regex);
     }
 
     /**
@@ -1353,7 +1353,7 @@ class Validation
      * @param string $regex Regular expression
      * @return bool Success of match
      */
-    protected static function _check(mixed $check, string $regex): bool
+    protected static function check(mixed $check, string $regex): bool
     {
         return is_scalar($check) && preg_match($regex, (string)$check);
     }
@@ -1421,7 +1421,7 @@ class Validation
         }
 
         if (is_string($mimeTypes)) {
-            return self::_check($mime, $mimeTypes);
+            return self::check($mime, $mimeTypes);
         }
 
         foreach ($mimeTypes as $key => $val) {
@@ -1840,7 +1840,7 @@ class Validation
      */
     public static function hexColor(mixed $check): bool
     {
-        return static::_check($check, '/^#[0-9a-f]{6}$/iD');
+        return static::check($check, '/^#[0-9a-f]{6}$/iD');
     }
 
     /**
@@ -1888,7 +1888,7 @@ class Validation
      * @param array<string, mixed> $value The array representing a date or datetime.
      * @return string
      */
-    protected static function _getDateString(array $value): string
+    protected static function getDateString(array $value): string
     {
         $formatted = '';
         if (
@@ -1934,7 +1934,7 @@ class Validation
      *
      * @return void
      */
-    protected static function _populateIp(): void
+    protected static function populateIp(): void
     {
         // phpcs:disable Generic.Files.LineLength
         if (!isset(static::$_pattern['IPv6'])) {
@@ -1967,7 +1967,7 @@ class Validation
      *
      * @return void
      */
-    protected static function _reset(): void
+    protected static function reset(): void
     {
         static::$errors = [];
     }
