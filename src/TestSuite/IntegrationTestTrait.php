@@ -355,7 +355,7 @@ trait IntegrationTestTrait
      *
      * @return string
      */
-    protected function _getCookieEncryptionKey(): string
+    protected function getCookieEncryptionKey(): string
     {
         return $this->_cookieEncryptionKey ?? Security::getSalt();
     }
@@ -372,7 +372,7 @@ trait IntegrationTestTrait
      * @param string|null $key Encryption key used. Defaults
      *   to Security.salt.
      * @return void
-     * @see \Cake\Utility\CookieCryptTrait::_encrypt()
+     * @see \Cake\Utility\CookieCryptTrait::encrypt()
      */
     public function cookieEncrypted(
         string $name,
@@ -381,7 +381,7 @@ trait IntegrationTestTrait
         ?string $key = null,
     ): void {
         $this->_cookieEncryptionKey = $key;
-        $this->_cookie[$name] = $this->_encrypt($value, $encrypt);
+        $this->_cookie[$name] = $this->encrypt($value, $encrypt);
     }
 
     /**
@@ -1416,7 +1416,7 @@ trait IntegrationTestTrait
      *   to Security.salt.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
-     * @see \Cake\Utility\CookieCryptTrait::_encrypt()
+     * @see \Cake\Utility\CookieCryptTrait::encrypt()
      */
     public function assertCookieEncrypted(
         mixed $expected,
@@ -1431,7 +1431,7 @@ trait IntegrationTestTrait
         $this->_cookieEncryptionKey = $key;
         $this->assertThat(
             $expected,
-            new CookieEncryptedEquals($this->_response, $name, $encrypt, $this->_getCookieEncryptionKey()),
+            new CookieEncryptedEquals($this->_response, $name, $encrypt, $this->getCookieEncryptionKey()),
         );
     }
 

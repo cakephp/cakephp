@@ -33,7 +33,7 @@ trait MergeVariablesTrait
      * @param array<string, mixed> $options The options to use when merging properties.
      * @return void
      */
-    protected function _mergeVars(array $properties, array $options = []): void
+    protected function mergeVars(array $properties, array $options = []): void
     {
         $class = static::class;
         $parents = [];
@@ -53,7 +53,7 @@ trait MergeVariablesTrait
             if ($thisValue === null || $thisValue === false) {
                 continue;
             }
-            $this->_mergeProperty($property, $parents, $options);
+            $this->mergeProperty($property, $parents, $options);
         }
     }
 
@@ -65,7 +65,7 @@ trait MergeVariablesTrait
      * @param array<string, mixed> $options Options for merging the property, see _mergeVars()
      * @return void
      */
-    protected function _mergeProperty(string $property, array $parentClasses, array $options): void
+    protected function mergeProperty(string $property, array $parentClasses, array $options): void
     {
         $thisValue = $this->{$property};
         $isAssoc = false;
@@ -88,7 +88,7 @@ trait MergeVariablesTrait
             if (!is_array($parentProperty)) {
                 continue;
             }
-            $thisValue = $this->_mergePropertyData($thisValue, $parentProperty, $isAssoc);
+            $thisValue = $this->mergePropertyData($thisValue, $parentProperty, $isAssoc);
         }
         $this->{$property} = $thisValue;
     }
@@ -101,7 +101,7 @@ trait MergeVariablesTrait
      * @param bool $isAssoc Whether the merging should be done in associative mode.
      * @return array The updated value.
      */
-    protected function _mergePropertyData(array $current, array $parent, bool $isAssoc): array
+    protected function mergePropertyData(array $current, array $parent, bool $isAssoc): array
     {
         if (!$isAssoc) {
             return array_merge($parent, $current);

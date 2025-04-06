@@ -37,7 +37,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
 
     protected static string $encryptedString = '';
 
-    protected function _getCookieEncryptionKey(): string
+    protected function getCookieEncryptionKey(): string
     {
         return 'super secret key that no one can guess';
     }
@@ -49,11 +49,11 @@ class EncryptedCookieMiddlewareTest extends TestCase
     {
         parent::setup();
 
-        static::$encryptedString = $this->_encrypt('secret data', 'aes');
+        static::$encryptedString = $this->encrypt('secret data', 'aes');
 
         $this->middleware = new EncryptedCookieMiddleware(
             ['secret', 'ninja'],
-            $this->_getCookieEncryptionKey(),
+            $this->getCookieEncryptionKey(),
             'aes',
         );
     }
@@ -66,7 +66,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $request = $request->withCookieParams([
             'plain' => 'always plain',
-            'secret' => $this->_encrypt('decoded', 'aes'),
+            'secret' => $this->encrypt('decoded', 'aes'),
         ]);
         $this->assertNotEquals('decoded', $request->getCookie('decoded'));
 
@@ -98,7 +98,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         });
         $middleware = new EncryptedCookieMiddleware(
             ['secret'],
-            $this->_getCookieEncryptionKey(),
+            $this->getCookieEncryptionKey(),
             'aes',
         );
         $middleware->process($request, $handler);
@@ -138,7 +138,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $this->assertTrue($cookies->has('ninja'));
         $this->assertSame(
             'shuriken',
-            $this->_decrypt($cookies->get('ninja')->getValue(), 'aes'),
+            $this->decrypt($cookies->get('ninja')->getValue(), 'aes'),
         );
     }
 
@@ -157,7 +157,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         $this->assertNotSame('shuriken', $response->getCookie('ninja'));
         $this->assertSame(
             'shuriken',
-            $this->_decrypt($response->getCookie('ninja')['value'], 'aes'),
+            $this->decrypt($response->getCookie('ninja')['value'], 'aes'),
         );
     }
 }

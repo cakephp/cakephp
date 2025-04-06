@@ -197,7 +197,7 @@ class Security
      */
     public static function encrypt(string $plain, string $key, ?string $hmacSalt = null): string
     {
-        self::_checkKey($key, 'encrypt()');
+        self::checkKey($key, 'encrypt()');
 
         $hmacSalt ??= static::getSalt();
         // Generate the encryption and hmac key.
@@ -218,7 +218,7 @@ class Security
      * @return void
      * @throws \InvalidArgumentException When key length is not 256 bit/32 bytes
      */
-    protected static function _checkKey(string $key, string $method): void
+    protected static function checkKey(string $key, string $method): void
     {
         if (mb_strlen($key, '8bit') < 32) {
             throw new InvalidArgumentException(
@@ -239,7 +239,7 @@ class Security
      */
     public static function decrypt(string $cipher, string $key, ?string $hmacSalt = null): ?string
     {
-        self::_checkKey($key, 'decrypt()');
+        self::checkKey($key, 'decrypt()');
         if (!$cipher) {
             throw new InvalidArgumentException('The data to decrypt cannot be empty.');
         }
