@@ -40,7 +40,7 @@ class TestFixtureTest extends TestCase
                 ];
             }
 
-            protected function _schemaFromReflection(): void
+            protected function schemaFromReflection(): void
             {
                 $this->_schema = new TableSchema(
                     'my_table',

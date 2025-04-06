@@ -37,7 +37,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
 
     protected static string $encryptedString = '';
 
-    protected function _getCookieEncryptionKey(): string
+    protected function getCookieEncryptionKey(): string
     {
         return 'super secret key that no one can guess';
     }
@@ -53,7 +53,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
 
         $this->middleware = new EncryptedCookieMiddleware(
             ['secret', 'ninja'],
-            $this->_getCookieEncryptionKey(),
+            $this->getCookieEncryptionKey(),
             'aes',
         );
     }
@@ -98,7 +98,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
         });
         $middleware = new EncryptedCookieMiddleware(
             ['secret'],
-            $this->_getCookieEncryptionKey(),
+            $this->getCookieEncryptionKey(),
             'aes',
         );
         $middleware->process($request, $handler);

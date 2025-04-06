@@ -39,7 +39,7 @@ trait CookieCryptTrait
      *
      * @return string
      */
-    abstract protected function _getCookieEncryptionKey(): string;
+    abstract protected function getCookieEncryptionKey(): string;
 
     /**
      * Encrypts $value using public $type method in Security class
@@ -61,7 +61,7 @@ trait CookieCryptTrait
         $this->_checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
         $cipher = '';
-        $key ??= $this->_getCookieEncryptionKey();
+        $key ??= $this->getCookieEncryptionKey();
         if ($encrypt === 'aes') {
             $cipher = Security::encrypt($value, $key);
         }
@@ -136,7 +136,7 @@ trait CookieCryptTrait
             return '';
         }
 
-        $key ??= $this->_getCookieEncryptionKey();
+        $key ??= $this->getCookieEncryptionKey();
         if ($encrypt === 'aes') {
             $value = Security::decrypt($value, $key);
         }

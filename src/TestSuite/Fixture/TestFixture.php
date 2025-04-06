@@ -116,10 +116,10 @@ class TestFixture implements FixtureInterface
     public function init(): void
     {
         if (!$this->table) {
-            $this->table = $this->_tableFromClass();
+            $this->table = $this->tableFromClass();
         }
 
-        $this->_schemaFromReflection();
+        $this->schemaFromReflection();
     }
 
     /**
@@ -127,7 +127,7 @@ class TestFixture implements FixtureInterface
      *
      * @return string
      */
-    protected function _tableFromClass(): string
+    protected function tableFromClass(): string
     {
         [, $class] = namespaceSplit(static::class);
         preg_match('/^(.*)Fixture$/', $class, $matches);
@@ -142,7 +142,7 @@ class TestFixture implements FixtureInterface
      * @return void
      * @throws \Cake\Core\Exception\CakeException when trying to reflect a table that does not exist
      */
-    protected function _schemaFromReflection(): void
+    protected function schemaFromReflection(): void
     {
         $db = ConnectionManager::get($this->connection());
         assert($db instanceof Connection);
@@ -176,7 +176,7 @@ class TestFixture implements FixtureInterface
     {
         assert($connection instanceof Connection);
         if ($this->records) {
-            [$fields, $values, $types] = $this->_getRecords();
+            [$fields, $values, $types] = $this->getRecords();
             $query = $connection->insertQuery()
                 ->insert($fields, $types)
                 ->into($this->sourceName());
@@ -195,7 +195,7 @@ class TestFixture implements FixtureInterface
      *
      * @return array
      */
-    protected function _getRecords(): array
+    protected function getRecords(): array
     {
         $fields = [];
         $values = [];

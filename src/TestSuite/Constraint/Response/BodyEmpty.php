@@ -30,7 +30,7 @@ class BodyEmpty extends ResponseBase
      */
     public function matches(mixed $other): bool
     {
-        return empty($this->_getBodyAsString());
+        return empty($this->getBodyAsString());
     }
 
     /**
