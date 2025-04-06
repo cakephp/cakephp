@@ -1040,7 +1040,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function clearContain(): static
     {
         $this->getEagerLoader()->clearContain();
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -1127,7 +1127,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     {
         $result = $this->getEagerLoader()->setMatching($assoc, $builder)->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -1204,7 +1204,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             ])
             ->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -1253,7 +1253,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             ])
             ->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -1318,7 +1318,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             ])
             ->getMatching();
         $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -1364,7 +1364,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function clearResult(): static
     {
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -1490,7 +1490,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function enableHydration(bool $enable = true): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_hydrate = $enable;
 
         return $this;
@@ -1506,7 +1506,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function disableHydration(): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_hydrate = false;
 
         return $this;
@@ -1701,11 +1701,11 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return void
      */
-    protected function _dirty(): void
+    protected function dirty(): void
     {
         $this->_results = null;
         $this->_resultsCount = null;
-        parent::_dirty();
+        parent::dirty();
     }
 
     /**

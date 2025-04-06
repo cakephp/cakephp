@@ -171,7 +171,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function setConnection(Connection $connection): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_connection = $connection;
 
         return $this;
@@ -407,7 +407,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         $this->_parts['with'][] = $cte;
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -436,7 +436,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function modifier(ExpressionInterface|array|string $modifiers, bool $overwrite = false): static
     {
-        $this->_dirty();
+        $this->dirty();
         if ($overwrite) {
             $this->_parts['modifier'] = [];
         }
@@ -487,7 +487,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $this->_parts['from'] = array_merge($this->_parts['from'], $tables);
         }
 
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -608,7 +608,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $this->_parts['join'] = array_merge($this->_parts['join'], $joins);
         }
 
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -625,7 +625,7 @@ abstract class Query implements ExpressionInterface, Stringable
     public function removeJoin(string $name): static
     {
         unset($this->_parts['join'][$name]);
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -672,7 +672,7 @@ abstract class Query implements ExpressionInterface, Stringable
         ExpressionInterface|Closure|array|string $conditions = [],
         array $types = [],
     ): static {
-        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_LEFT), $types);
+        $this->join($this->makeJoin($table, $conditions, static::JOIN_TYPE_LEFT), $types);
 
         return $this;
     }
@@ -697,7 +697,7 @@ abstract class Query implements ExpressionInterface, Stringable
         ExpressionInterface|Closure|array|string $conditions = [],
         array $types = [],
     ): static {
-        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_RIGHT), $types);
+        $this->join($this->makeJoin($table, $conditions, static::JOIN_TYPE_RIGHT), $types);
 
         return $this;
     }
@@ -722,7 +722,7 @@ abstract class Query implements ExpressionInterface, Stringable
         ExpressionInterface|Closure|array|string $conditions = [],
         array $types = [],
     ): static {
-        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_INNER), $types);
+        $this->join($this->makeJoin($table, $conditions, static::JOIN_TYPE_INNER), $types);
 
         return $this;
     }
@@ -736,7 +736,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * @param string $type the join type to use
      * @return array<string, array{table: string|\Cake\Database\Query\SelectQuery, conditions: \Cake\Database\ExpressionInterface|\Closure|array|string, type: string}>
      */
-    protected function _makeJoin(
+    protected function makeJoin(
         array|string $table,
         ExpressionInterface|Closure|array|string $conditions,
         string $type,
@@ -899,7 +899,7 @@ abstract class Query implements ExpressionInterface, Stringable
         if ($overwrite) {
             $this->_parts['where'] = $this->newExpr();
         }
-        $this->_conjugate('where', $conditions, 'AND', $types);
+        $this->conjugate('where', $conditions, 'AND', $types);
 
         return $this;
     }
@@ -1098,7 +1098,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function andWhere(ExpressionInterface|Closure|array|string $conditions, array $types = []): static
     {
-        $this->_conjugate('where', $conditions, 'AND', $types);
+        $this->conjugate('where', $conditions, 'AND', $types);
 
         return $this;
     }
@@ -1175,7 +1175,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         $this->_parts['order'] ??= new OrderByExpression();
-        $this->_conjugate('order', $fields, '', []);
+        $this->conjugate('order', $fields, '', []);
 
         return $this;
     }
@@ -1288,7 +1288,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function limit(ExpressionInterface|int|null $limit): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_parts['limit'] = $limit;
 
         return $this;
@@ -1314,7 +1314,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function offset(ExpressionInterface|int|null $offset): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_parts['offset'] = $offset;
 
         return $this;
@@ -1360,7 +1360,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function epilog(ExpressionInterface|string|null $expression = null): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_parts['epilog'] = $expression;
 
         return $this;
@@ -1381,7 +1381,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function comment(?string $expression = null): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_parts['comment'] = $expression;
 
         return $this;
@@ -1529,7 +1529,7 @@ abstract class Query implements ExpressionInterface, Stringable
     public function traverseExpressions(Closure $callback): static
     {
         foreach ($this->_parts as $part) {
-            $this->_expressionsVisitor($part, $callback);
+            $this->expressionsVisitor($part, $callback);
         }
 
         return $this;
@@ -1544,18 +1544,18 @@ abstract class Query implements ExpressionInterface, Stringable
      *   found inside this query.
      * @return void
      */
-    protected function _expressionsVisitor(mixed $expression, Closure $callback): void
+    protected function expressionsVisitor(mixed $expression, Closure $callback): void
     {
         if (is_array($expression)) {
             foreach ($expression as $e) {
-                $this->_expressionsVisitor($e, $callback);
+                $this->expressionsVisitor($e, $callback);
             }
 
             return;
         }
 
         if ($expression instanceof ExpressionInterface) {
-            $expression->traverse(fn($exp) => $this->_expressionsVisitor($exp, $callback));
+            $expression->traverse(fn($exp) => $this->expressionsVisitor($exp, $callback));
 
             if (!$expression instanceof self) {
                 $callback($expression);
@@ -1625,7 +1625,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * @param array<string, string> $types Associative array of type names used to bind values to query
      * @return void
      */
-    protected function _conjugate(
+    protected function conjugate(
         string $part,
         ExpressionInterface|Closure|array|string|null $append,
         string $conjunction,
@@ -1652,7 +1652,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         $this->_parts[$part] = $expression;
-        $this->_dirty();
+        $this->dirty();
     }
 
     /**
@@ -1661,7 +1661,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * @return void
      */
-    protected function _dirty(): void
+    protected function dirty(): void
     {
         $this->_dirty = true;
 

@@ -142,7 +142,7 @@ class ValuesExpression implements ExpressionInterface
      *
      * @return array
      */
-    protected function _columnNames(): array
+    protected function columnNames(): array
     {
         $columns = [];
         foreach ($this->_columns as $col) {
@@ -177,7 +177,7 @@ class ValuesExpression implements ExpressionInterface
     public function getValues(): array
     {
         if (!$this->_castedExpressions) {
-            $this->_processExpressions();
+            $this->processExpressions();
         }
 
         return $this->_values;
@@ -218,10 +218,10 @@ class ValuesExpression implements ExpressionInterface
         }
 
         if (!$this->_castedExpressions) {
-            $this->_processExpressions();
+            $this->processExpressions();
         }
 
-        $columns = $this->_columnNames();
+        $columns = $this->columnNames();
         $defaults = array_fill_keys($columns, null);
         $placeholders = [];
 
@@ -269,7 +269,7 @@ class ValuesExpression implements ExpressionInterface
         }
 
         if (!$this->_castedExpressions) {
-            $this->_processExpressions();
+            $this->processExpressions();
         }
 
         foreach ($this->_values as $v) {
@@ -295,12 +295,12 @@ class ValuesExpression implements ExpressionInterface
      *
      * @return void
      */
-    protected function _processExpressions(): void
+    protected function processExpressions(): void
     {
         $types = [];
         $typeMap = $this->getTypeMap();
 
-        $columns = $this->_columnNames();
+        $columns = $this->columnNames();
         foreach ($columns as $c) {
             if (!is_string($c) && !is_int($c)) {
                 continue;
@@ -308,7 +308,7 @@ class ValuesExpression implements ExpressionInterface
             $types[$c] = $typeMap->type($c);
         }
 
-        $types = $this->_requiresToExpressionCasting($types);
+        $types = $this->requiresToExpressionCasting($types);
 
         if (!$types) {
             return;

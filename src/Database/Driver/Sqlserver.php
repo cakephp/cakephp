@@ -306,7 +306,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    protected function _selectQueryTranslator(SelectQuery $query): SelectQuery
+    protected function selectQueryTranslator(SelectQuery $query): SelectQuery
     {
         $limit = $query->clause('limit');
         $offset = $query->clause('offset');
@@ -320,10 +320,10 @@ class Sqlserver extends Driver
         }
 
         if ($this->version() < 11 && $offset !== null) {
-            return $this->_pagingSubquery($query, $limit, $offset);
+            return $this->pagingSubquery($query, $limit, $offset);
         }
 
-        return $this->_transformDistinct($query);
+        return $this->transformDistinct($query);
     }
 
     /**
@@ -337,7 +337,7 @@ class Sqlserver extends Driver
      * @param int|null $offset The number of rows to offset.
      * @return \Cake\Database\Query\SelectQuery<mixed> Modified query object.
      */
-    protected function _pagingSubquery(SelectQuery $original, ?int $limit, ?int $offset): SelectQuery
+    protected function pagingSubquery(SelectQuery $original, ?int $limit, ?int $offset): SelectQuery
     {
         $field = '_cake_paging_._cake_page_rownum_';
 
@@ -404,7 +404,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    protected function _transformDistinct(SelectQuery $query): SelectQuery
+    protected function transformDistinct(SelectQuery $query): SelectQuery
     {
         if (!is_array($query->clause('distinct'))) {
             return $query;
@@ -455,11 +455,11 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
-    protected function _expressionTranslators(): array
+    protected function expressionTranslators(): array
     {
         return [
-            FunctionExpression::class => '_transformFunctionExpression',
-            TupleComparison::class => '_transformTupleComparison',
+            FunctionExpression::class => 'transformFunctionExpression',
+            TupleComparison::class => 'transformTupleComparison',
         ];
     }
 
@@ -470,7 +470,7 @@ class Sqlserver extends Driver
      * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert to TSQL.
      * @return void
      */
-    protected function _transformFunctionExpression(FunctionExpression $expression): void
+    protected function transformFunctionExpression(FunctionExpression $expression): void
     {
         switch ($expression->getName()) {
             case 'CONCAT':

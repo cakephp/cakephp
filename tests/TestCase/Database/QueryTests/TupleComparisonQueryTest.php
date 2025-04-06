@@ -37,7 +37,7 @@ use PDOException;
  * Sqlserver, for which the tuple comparison will be transformed when
  * composite fields are used.
  *
- * @see \Cake\Database\Driver\TupleComparisonTranslatorTrait::_transformTupleComparison()
+ * @see \Cake\Database\Driver\TupleComparisonTranslatorTrait::transformTupleComparison()
  */
 class TupleComparisonQueryTest extends TestCase
 {

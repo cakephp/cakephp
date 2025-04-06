@@ -221,7 +221,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
-    protected function _transformDistinct(SelectQuery $query): SelectQuery
+    protected function transformDistinct(SelectQuery $query): SelectQuery
     {
         return $query;
     }
@@ -229,7 +229,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
-    protected function _insertQueryTranslator(InsertQuery $query): InsertQuery
+    protected function insertQueryTranslator(InsertQuery $query): InsertQuery
     {
         if (!$query->clause('epilog')) {
             $query->epilog('RETURNING *');
@@ -241,12 +241,12 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
-    protected function _expressionTranslators(): array
+    protected function expressionTranslators(): array
     {
         return [
-            IdentifierExpression::class => '_transformIdentifierExpression',
-            FunctionExpression::class => '_transformFunctionExpression',
-            StringExpression::class => '_transformStringExpression',
+            IdentifierExpression::class => 'transformIdentifierExpression',
+            FunctionExpression::class => 'transformFunctionExpression',
+            StringExpression::class => 'transformStringExpression',
         ];
     }
 
@@ -256,7 +256,7 @@ class Postgres extends Driver
      * @param \Cake\Database\Expression\IdentifierExpression $expression The expression to transform.
      * @return void
      */
-    protected function _transformIdentifierExpression(IdentifierExpression $expression): void
+    protected function transformIdentifierExpression(IdentifierExpression $expression): void
     {
         $collation = $expression->getCollation();
         if ($collation) {
@@ -273,7 +273,7 @@ class Postgres extends Driver
      *   to postgres SQL.
      * @return void
      */
-    protected function _transformFunctionExpression(FunctionExpression $expression): void
+    protected function transformFunctionExpression(FunctionExpression $expression): void
     {
         switch ($expression->getName()) {
             case 'CONCAT':
@@ -348,7 +348,7 @@ class Postgres extends Driver
      * @param \Cake\Database\Expression\StringExpression $expression The string expression to transform.
      * @return void
      */
-    protected function _transformStringExpression(StringExpression $expression): void
+    protected function transformStringExpression(StringExpression $expression): void
     {
         // use trim() to work around expression being transformed multiple times
         $expression->setCollation('"' . trim($expression->getCollation(), '"') . '"');

@@ -33,7 +33,7 @@ trait ExpressionTypeCasterTrait
      * @param string|null $type The type name
      * @return mixed
      */
-    protected function _castToExpression(mixed $value, ?string $type = null): mixed
+    protected function castToExpression(mixed $value, ?string $type = null): mixed
     {
         if ($type === null) {
             return $value;
@@ -64,7 +64,7 @@ trait ExpressionTypeCasterTrait
      * @param array $types List of type names
      * @return array
      */
-    protected function _requiresToExpressionCasting(array $types): array
+    protected function requiresToExpressionCasting(array $types): array
     {
         $result = [];
         $types = array_filter($types);

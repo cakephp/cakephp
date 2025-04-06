@@ -33,14 +33,14 @@ class PostgresCompiler extends QueryCompiler
      *
      * @var bool
      */
-    protected bool $_quotedSelectAliases = true;
+    protected bool $quotedSelectAliases = true;
 
     /**
      * {@inheritDoc}
      *
      * @var array<string, string>
      */
-    protected array $_templates = [
+    protected array $templates = [
         'delete' => 'DELETE',
         'where' => ' WHERE %s',
         'group' => ' GROUP BY %s',
@@ -61,7 +61,7 @@ class PostgresCompiler extends QueryCompiler
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string
      */
-    protected function _buildHavingPart(array $parts, Query $query, ValueBinder $binder): string
+    protected function buildHavingPart(array $parts, Query $query, ValueBinder $binder): string
     {
         $selectParts = $query->clause('select');
 

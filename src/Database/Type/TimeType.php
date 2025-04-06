@@ -95,10 +95,10 @@ class TimeType extends BaseType implements BatchCastingInterface
 
         if (is_string($value)) {
             if ($this->_useLocaleMarshal) {
-                return $this->_parseLocalTimeValue($value);
+                return $this->parseLocalTimeValue($value);
             }
 
-            return $this->_parseTimeValue($value);
+            return $this->parseTimeValue($value);
         }
 
         if (!is_array($value)) {
@@ -198,7 +198,7 @@ class TimeType extends BaseType implements BatchCastingInterface
      * @param string $value The value to parse and convert to an object.
      * @return \Cake\Chronos\ChronosTime|null
      */
-    protected function _parseTimeValue(string $value): ?ChronosTime
+    protected function parseTimeValue(string $value): ?ChronosTime
     {
         try {
             return $this->_className::parse($value);
@@ -214,7 +214,7 @@ class TimeType extends BaseType implements BatchCastingInterface
      * @param string $value The value to parse and convert to an object.
      * @return \Cake\Chronos\ChronosTime|null
      */
-    protected function _parseLocalTimeValue(string $value): ?ChronosTime
+    protected function parseLocalTimeValue(string $value): ?ChronosTime
     {
         assert(is_a($this->_className, Time::class, true));
 
