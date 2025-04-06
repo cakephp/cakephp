@@ -80,7 +80,7 @@ class ValidationRule
      */
     public function __construct(array $validator)
     {
-        $this->_addValidatorProps($validator);
+        $this->addValidatorProps($validator);
     }
 
     /**
@@ -116,7 +116,7 @@ class ValidationRule
     {
         $context += ['data' => [], 'newRecord' => true, 'providers' => $providers];
 
-        if ($this->_skip($context)) {
+        if ($this->skip($context)) {
             return true;
         }
 
@@ -178,7 +178,7 @@ class ValidationRule
      *   be passed as the last argument for the validation method
      * @return bool True if the ValidationRule should be skipped
      */
-    protected function _skip(array $context): bool
+    protected function skip(array $context): bool
     {
         if (is_string($this->_on)) {
             $newRecord = $context['newRecord'];
@@ -202,7 +202,7 @@ class ValidationRule
      * @param array<string, mixed> $validator [optional]
      * @return void
      */
-    protected function _addValidatorProps(array $validator = []): void
+    protected function addValidatorProps(array $validator = []): void
     {
         foreach ($validator as $key => $value) {
             if (!$value) {

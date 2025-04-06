@@ -233,7 +233,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $providers = $this->_providers;
             $context = compact('data', 'newRecord', 'field', 'providers');
 
-            if (!$keyPresent && !$this->_checkPresence($field, $context)) {
+            if (!$keyPresent && !$this->checkPresence($field, $context)) {
                 $errors[$name]['_required'] = $this->getRequiredMessage($name);
                 continue;
             }
@@ -241,7 +241,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 continue;
             }
 
-            $canBeEmpty = $this->_canBeEmpty($field, $context);
+            $canBeEmpty = $this->canBeEmpty($field, $context);
 
             $flags = static::EMPTY_NULL;
             if (isset($this->_allowEmptyFlags[$name])) {
@@ -259,7 +259,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 continue;
             }
 
-            $result = $this->_processRules($name, $field, $data, $newRecord);
+            $result = $this->processRules($name, $field, $data, $newRecord);
             if ($result) {
                 $errors[$name] = $result;
             }
@@ -656,11 +656,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         ];
 
         if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray((string)$field, $defaults);
+            $field = $this->convertValidatorToArray((string)$field, $defaults);
         }
 
         foreach ($field as $fieldName => $setting) {
-            $settings = $this->_convertValidatorToArray((string)$fieldName, $defaults, $setting);
+            $settings = $this->convertValidatorToArray((string)$fieldName, $defaults, $setting);
             /** @var string $fieldName */
             $fieldName = current(array_keys($settings));
 
@@ -1020,7 +1020,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @return array<string, array<string|int, mixed>>
      * @throws \InvalidArgumentException
      */
-    protected function _convertValidatorToArray(
+    protected function convertValidatorToArray(
         string $fieldName,
         array $defaults = [],
         array|string|int $settings = [],
@@ -3032,7 +3032,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $data = [];
         $context = compact('data', 'newRecord', 'field', 'providers');
 
-        return $this->_canBeEmpty($this->field($field), $context);
+        return $this->canBeEmpty($this->field($field), $context);
     }
 
     /**
@@ -3049,7 +3049,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $data = [];
         $context = compact('data', 'newRecord', 'field', 'providers');
 
-        return !$this->_checkPresence($this->field($field), $context);
+        return !$this->checkPresence($this->field($field), $context);
     }
 
     /**
@@ -3143,7 +3143,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array<string, mixed> $context A key value list of data containing the validation context.
      * @return bool
      */
-    protected function _checkPresence(ValidationSet $field, array $context): bool
+    protected function checkPresence(ValidationSet $field, array $context): bool
     {
         $required = $field->isPresenceRequired();
 
@@ -3167,7 +3167,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array<string, mixed> $context a key value list of data containing the validation context.
      * @return bool
      */
-    protected function _canBeEmpty(ValidationSet $field, array $context): bool
+    protected function canBeEmpty(ValidationSet $field, array $context): bool
     {
         $allowed = $field->isEmptyAllowed();
 
@@ -3247,7 +3247,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param bool $newRecord whether is it a new record or an existing one
      * @return array<string, mixed>
      */
-    protected function _processRules(string $field, ValidationSet $rules, array $data, bool $newRecord): array
+    protected function processRules(string $field, ValidationSet $rules, array $data, bool $newRecord): array
     {
         $errors = [];
 
