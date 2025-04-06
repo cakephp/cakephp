@@ -414,7 +414,7 @@ class ConsoleIo
      */
     public function ask(string $prompt, ?string $default = null): string
     {
-        return $this->_getInput($prompt, null, $default);
+        return $this->getInput($prompt, null, $default);
     }
 
     /**
@@ -493,7 +493,7 @@ class ConsoleIo
         );
         $in = '';
         while ($in === '' || !in_array($in, $options, true)) {
-            $in = $this->_getInput($prompt, $printOptions, $default);
+            $in = $this->getInput($prompt, $printOptions, $default);
         }
 
         return $in;
@@ -507,7 +507,7 @@ class ConsoleIo
      * @param string|null $default Default input value. Pass null to omit.
      * @return string Either the default value, or the user-provided input.
      */
-    protected function _getInput(string $prompt, ?string $options, ?string $default): string
+    protected function getInput(string $prompt, ?string $options, ?string $default): string
     {
         if (!$this->interactive) {
             return (string)$default;
