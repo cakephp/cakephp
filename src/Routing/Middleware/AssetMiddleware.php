@@ -74,7 +74,7 @@ class AssetMiddleware implements MiddlewareInterface
             return $handler->handle($request);
         }
 
-        $assetFile = $this->_getAssetFile($url);
+        $assetFile = $this->getAssetFile($url);
         if ($assetFile === null || !is_file($assetFile)) {
             return $handler->handle($request);
         }
@@ -117,7 +117,7 @@ class AssetMiddleware implements MiddlewareInterface
      * @param string $url Asset URL
      * @return string|null Absolute path for asset file, null on failure
      */
-    protected function _getAssetFile(string $url): ?string
+    protected function getAssetFile(string $url): ?string
     {
         $parts = explode('/', ltrim($url, '/'), 3);
         $pluginPart = [];

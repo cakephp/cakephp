@@ -41,7 +41,7 @@ class DashedRoute extends Route
      * @param string $plugin Plugin name
      * @return string
      */
-    protected function _camelizePlugin(string $plugin): string
+    protected function camelizePlugin(string $plugin): string
     {
         $plugin = str_replace('-', '_', $plugin);
         if (!str_contains($plugin, '/')) {
@@ -71,7 +71,7 @@ class DashedRoute extends Route
             $params['controller'] = Inflector::camelize($params['controller'], '-');
         }
         if (!empty($params['plugin'])) {
-            $params['plugin'] = $this->_camelizePlugin($params['plugin']);
+            $params['plugin'] = $this->camelizePlugin($params['plugin']);
         }
         if (!empty($params['action'])) {
             $params['action'] = Inflector::variable(str_replace(
@@ -96,10 +96,10 @@ class DashedRoute extends Route
      */
     public function match(array $url, array $context = []): ?string
     {
-        $url = $this->_dasherize($url);
+        $url = $this->dasherize($url);
         if ($this->_inflectedDefaults === null) {
             $this->compile();
-            $this->_inflectedDefaults = $this->_dasherize($this->defaults);
+            $this->_inflectedDefaults = $this->dasherize($this->defaults);
         }
         $restore = $this->defaults;
         try {
@@ -117,7 +117,7 @@ class DashedRoute extends Route
      * @param array $url An array of URL keys.
      * @return array
      */
-    protected function _dasherize(array $url): array
+    protected function dasherize(array $url): array
     {
         foreach (['controller', 'plugin', 'action'] as $element) {
             if (!empty($url[$element])) {
