@@ -159,7 +159,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function getSchema(): Schema
     {
-        $this->_schema ??= $this->_buildSchema(new $this->_schemaClass());
+        $this->_schema ??= $this->buildSchema(new $this->_schemaClass());
 
         return $this->_schema;
     }
@@ -174,7 +174,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param \Cake\Form\Schema $schema The schema to customize.
      * @return \Cake\Form\Schema The schema to use.
      */
-    protected function _buildSchema(Schema $schema): Schema
+    protected function buildSchema(Schema $schema): Schema
     {
         return $schema;
     }
@@ -265,12 +265,12 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         $options += ['validate' => true];
 
         if ($options['validate'] === false) {
-            return $this->_execute($data);
+            return $this->doExecute($data);
         }
 
         $validator = $options['validate'] === true ? static::DEFAULT_VALIDATOR : $options['validate'];
 
-        return $this->validate($data, $validator) && $this->_execute($data);
+        return $this->validate($data, $validator) && $this->doExecute($data);
     }
 
     /**
@@ -281,7 +281,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param array $data Form data.
      * @return bool
      */
-    protected function _execute(array $data): bool
+    protected function doExecute(array $data): bool
     {
         return true;
     }
