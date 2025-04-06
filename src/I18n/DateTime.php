@@ -285,7 +285,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
         $format ??= static::$_toStringFormat;
         $format = is_int($format) ? [$format, $format] : $format;
 
-        return static::_parseDateTime($time, $format, $tz);
+        return static::doParseDateTime($time, $format, $tz);
     }
 
     /**
@@ -317,7 +317,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
             $format = [$format, IntlDateFormatter::NONE];
         }
 
-        return static::parseDateTime($date, $format);
+        return static::doParseDateTime($date, $format);
     }
 
     /**
@@ -347,7 +347,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
         }
         $format = $format ?: [IntlDateFormatter::NONE, IntlDateFormatter::SHORT];
 
-        return static::parseDateTime($time, $format);
+        return static::doParseDateTime($time, $format);
     }
 
     /**
@@ -444,7 +444,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
         $format = is_int($format) ? [$format, $format] : $format;
         $locale = $locale ?: DateTime::getDefaultLocale();
 
-        return $this->_formatObject($time, $format, $locale);
+        return $this->formatObject($time, $format, $locale);
     }
 
     /**

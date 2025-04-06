@@ -644,7 +644,7 @@ class Validation
      * @throws \InvalidArgumentException when unsupported $type given
      * @see \Cake\I18n\Time::parseDate()
      * @see \Cake\I18n\Time::parseTime()
-     * @see \Cake\I18n\Time::parseDateTime()
+     * @see \Cake\I18n\Time::doParseDateTime()
      */
     public static function localizedTime(mixed $check, string $type = 'datetime', string|int|null $format = null): bool
     {

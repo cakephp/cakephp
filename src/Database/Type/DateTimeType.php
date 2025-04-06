@@ -401,7 +401,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
      *
      * @param array|string $format The locale-aware format
-     * @see \Cake\I18n\Time::parseDateTime()
+     * @see \Cake\I18n\Time::doParseDateTime()
      * @return $this
      */
     public function setLocaleFormat(array|string $format): static
