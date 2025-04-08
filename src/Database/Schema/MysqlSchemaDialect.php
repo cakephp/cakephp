@@ -724,6 +724,14 @@ class MysqlSchemaDialect extends SchemaDialect
         if (isset($column['srid']) && in_array($column['type'], TableSchemaInterface::GEOSPATIAL_TYPES)) {
             $out .= " SRID {$column['srid']}";
         }
+        if (
+            in_array($column['type'], TableSchemaInterface::GEOSPATIAL_TYPES)
+            && isset($column['default'])
+        ) {
+            // Geospatial types need to be wrapped in () to create an expression.
+            $out .= ' DEFAULT (' . $this->_driver->schemaValue($column['default']). ')';
+            unset($column['default']);
+        }
 
         $dateTimeTypes = [
             TableSchemaInterface::TYPE_DATETIME,

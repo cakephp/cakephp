@@ -1147,6 +1147,11 @@ SQL;
             ],
             [
                 'p',
+                ['type' => 'polygon', 'default' => 'POLYGON((30 10,40 40,20 40,10 20,30 10))'],
+                "`p` POLYGON DEFAULT ('POLYGON((30 10,40 40,20 40,10 20,30 10))')",
+            ],
+            [
+                'p',
                 ['type' => 'polygon', 'null' => false, 'srid' => 4326],
                 '`p` POLYGON NOT NULL SRID 4326',
             ],
