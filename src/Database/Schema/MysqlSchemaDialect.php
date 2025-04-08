@@ -725,11 +725,21 @@ class MysqlSchemaDialect extends SchemaDialect
             $out .= " SRID {$column['srid']}";
         }
         if (
-            in_array($column['type'], TableSchemaInterface::GEOSPATIAL_TYPES)
-            && isset($column['default'])
+            isset($column['default']) &&
+            in_array(
+                $column['type'],
+                array_merge(
+                    TableSchemaInterface::GEOSPATIAL_TYPES,
+                    [
+                        TableSchemaInterface::TYPE_BINARY,
+                        TableSchemaInterface::TYPE_JSON,
+                        TableSchemaInterface::TYPE_TEXT
+                    ],
+                ),
+            )
         ) {
-            // Geospatial types need to be wrapped in () to create an expression.
-            $out .= ' DEFAULT (' . $this->_driver->schemaValue($column['default']). ')';
+            // Complex types need default values to be wrapped in () to create an expression.
+            $out .= ' DEFAULT (' . $this->_driver->schemaValue($column['default']) . ')';
             unset($column['default']);
         }
 

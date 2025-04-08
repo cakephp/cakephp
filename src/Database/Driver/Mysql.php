@@ -286,6 +286,9 @@ class Mysql extends Driver
                 /** @phpstan-ignore-next-line */
                 $this->_version = $matches[1];
             }
+            if (str_contains($this->_version, '-')) {
+                [$this->_version,] = explode('-', $this->_version);
+            }
         }
 
         return $this->_version;

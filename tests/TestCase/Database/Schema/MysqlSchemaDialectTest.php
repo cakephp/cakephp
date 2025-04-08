@@ -896,11 +896,27 @@ SQL;
                 ['type' => 'text', 'null' => false, 'collate' => 'utf8_unicode_ci'],
                 '`body` TEXT COLLATE utf8_unicode_ci NOT NULL',
             ],
+            // JSON
+            [
+                'config',
+                ['type' => 'json', 'null' => false],
+                '`config` JSON NOT NULL',
+            ],
+            [
+                'config',
+                ['type' => 'json', 'null' => false, 'default' => '{"key":"val"}'],
+                '`config` JSON NOT NULL DEFAULT (\'{"key":"val"}\')',
+            ],
             // Blob / binary
             [
                 'body',
                 ['type' => 'binary', 'null' => false],
                 '`body` BLOB NOT NULL',
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'null' => false, 'default' => 'abc'],
+                "`body` BLOB NOT NULL DEFAULT ('abc')",
             ],
             [
                 'body',
@@ -1708,19 +1724,23 @@ SQL;
             ->onlyMethods(['quote', 'getAttribute', 'quoteIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-            $this->pdo->expects($this->any())
+        $this->pdo->expects($this->any())
             ->method('quote')
             ->willReturnCallback(function ($value) {
                 return "'{$value}'";
             });
 
         $driver = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['createPdo'])
+            ->onlyMethods(['createPdo', 'version'])
             ->getMock();
 
         $driver->expects($this->any())
             ->method('createPdo')
             ->willReturn($this->pdo);
+
+        $driver->expects($this->any())
+            ->method('version')
+            ->willReturn('8.0.7');
 
         $driver->connect();
 
