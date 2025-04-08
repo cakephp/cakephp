@@ -119,7 +119,7 @@ class Curl implements AdapterInterface
         $out[CURLOPT_POSTFIELDS] = $body->getContents();
         // GET requests with bodies require custom request to be used.
         if ($out[CURLOPT_POSTFIELDS] !== '' && isset($out[CURLOPT_HTTPGET])) {
-            $out[CURLOPT_CUSTOMREQUEST] = 'get';
+            $out[CURLOPT_CUSTOMREQUEST] = 'GET';
         }
         if ($out[CURLOPT_POSTFIELDS] === '') {
             unset($out[CURLOPT_POSTFIELDS]);
