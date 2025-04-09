@@ -149,7 +149,7 @@ class CurlTest extends TestCase
             ],
             CURLOPT_HTTPGET => true,
             CURLOPT_POSTFIELDS => '{"some":"body"}',
-            CURLOPT_CUSTOMREQUEST => 'get',
+            CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_TIMEOUT => 5,
             CURLOPT_CAINFO => $this->caFile,
         ];
