@@ -1445,17 +1445,12 @@ SQL;
      */
     public function testCreateSql(): void
     {
-        $driver = $this->_getMockedDriver();
+        $driver = $this->_getMockedDriver('5.6.0');
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
             ->willReturn($driver);
-
-        $this->pdo
-            ->expects($this->any())
-            ->method('getAttribute')
-            ->willReturn('5.6.0');
 
         $table = (new TableSchema('posts'))->addColumn('id', [
                 'type' => 'integer',
@@ -1716,7 +1711,7 @@ SQL;
     /**
      * Get a schema instance with a mocked driver/pdo instances
      */
-    protected function _getMockedDriver(): Driver
+    protected function _getMockedDriver($version = '8.0.7'): Driver
     {
         $this->_needsConnection();
 
@@ -1740,7 +1735,7 @@ SQL;
 
         $driver->expects($this->any())
             ->method('version')
-            ->willReturn('8.0.7');
+            ->willReturn($version);
 
         $driver->connect();
 
