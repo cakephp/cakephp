@@ -125,10 +125,12 @@ class MysqlSchemaDialect extends SchemaDialect
         }
         foreach ($statement->fetchAll('assoc') as $row) {
             $field = $this->_convertColumn($row['Type']);
+            $default = $this->parseDefault($field['type'], $row);
+
             $field += [
                 'name' => $row['Field'],
                 'null' => $row['Null'] === 'YES',
-                'default' => $row['Default'],
+                'default' => $default,
                 'collate' => $row['Collation'],
                 'comment' => $row['Comment'],
                 'length' => null,
@@ -145,6 +147,36 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         return $columns;
+    }
+
+    /**
+     * Parse the default value if required.
+     *
+     * @param string $type The type of column
+     * @param array $row a Row of schema reflection data
+     * @return ?string The default value of a column.
+     */
+    protected function parseDefault(string $type, array $row): ?string
+    {
+        $default = $row['Default'];
+        if (
+            is_string($default) &&
+            in_array(
+                $type,
+                array_merge(
+                    TableSchema::GEOSPATIAL_TYPES,
+                    [TableSchema::TYPE_BINARY, TableSchema::TYPE_JSON, TableSchema::TYPE_TEXT],
+                ),
+            )
+        ) {
+            // The default that comes back from MySQL for these types prefixes the collation type and
+            // surrounds the value with escaped single quotes, for example "_utf8mbf4\'abc\'", and so
+            // this converts that then down to the default value of "abc" to correspond to what the user
+            // would have specified in a migration.
+            $default = preg_replace("/^_(?:[a-zA-Z0-9]+?)\\\'(.*)\\\'$/", '\1', $default);
+        }
+
+        return $default;
     }
 
     /**
@@ -377,9 +409,10 @@ class MysqlSchemaDialect extends SchemaDialect
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
         $field = $this->_convertColumn($row['Type']);
+        $default = $this->parseDefault($field['type'], $row);
         $field += [
             'null' => $row['Null'] === 'YES',
-            'default' => $row['Default'],
+            'default' => $default,
             'collate' => $row['Collation'],
             'comment' => $row['Comment'],
         ];
@@ -724,21 +757,13 @@ class MysqlSchemaDialect extends SchemaDialect
         if (isset($column['srid']) && in_array($column['type'], TableSchemaInterface::GEOSPATIAL_TYPES)) {
             $out .= " SRID {$column['srid']}";
         }
-        if (
-            isset($column['default']) &&
-            in_array(
-                $column['type'],
-                array_merge(
-                    TableSchemaInterface::GEOSPATIAL_TYPES,
-                    [
-                        TableSchemaInterface::TYPE_BINARY,
-                        TableSchemaInterface::TYPE_JSON,
-                        TableSchemaInterface::TYPE_TEXT
-                    ],
-                ),
-            )
-        ) {
-            // Complex types need default values to be wrapped in () to create an expression.
+
+        $defaultExpressionTypes = array_merge(
+            TableSchemaInterface::GEOSPATIAL_TYPES,
+            [TableSchemaInterface::TYPE_BINARY, TableSchemaInterface::TYPE_TEXT, TableSchemaInterface::TYPE_JSON],
+        );
+        if (in_array($column['type'], $defaultExpressionTypes) && isset($column['default'])) {
+            // Geospatial, blob and text types need to be wrapped in () to create an expression.
             $out .= ' DEFAULT (' . $this->_driver->schemaValue($column['default']) . ')';
             unset($column['default']);
         }

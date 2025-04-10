@@ -275,6 +275,26 @@ class MysqlSchemaDialectTest extends TestCase
         $this->assertSame($expected, $actual);
     }
 
+    public function testConvertColumnBlobDefault(): void
+    {
+        $field = [
+            'Field' => 'field',
+            'Type' => 'binary',
+            'Null' => 'YES',
+            'Default' => "_utf8mb4\\'abc\\'",
+            'Collation' => 'utf8_general_ci',
+            'Comment' => 'Comment section',
+        ];
+        $driver = $this->getMockBuilder(Mysql::class)->getMock();
+        $dialect = new MysqlSchemaDialect($driver);
+
+        $table = new TableSchema('table');
+        $dialect->convertColumnDescription($table, $field);
+
+        $actual = $table->getColumn('field');
+        $this->assertSame('abc', $actual['default']);
+    }
+
     /**
      * Helper method for testing methods.
      *
@@ -537,7 +557,7 @@ CREATE TABLE schema_geometry (
     geo_line LINESTRING,
     geo_geometry GEOMETRY,
     geo_point POINT,
-    geo_polygon POLYGON
+    geo_polygon POLYGON DEFAULT ('POLYGON(0 0,10 10,20 20)')
 )
 SQL;
         $connection->execute($table);
@@ -586,7 +606,7 @@ SQL;
             'geo_polygon' => [
                 'type' => 'polygon',
                 'null' => true,
-                'default' => null,
+                'default' => 'POLYGON(0 0,10 10,20 20)',
                 'precision' => null,
                 'length' => null,
                 'comment' => '',
@@ -875,6 +895,11 @@ SQL;
                 'body',
                 ['type' => 'text', 'null' => false],
                 '`body` TEXT NOT NULL',
+            ],
+            [
+                'body',
+                ['type' => 'text', 'null' => false, 'default' => 'abc'],
+                '`body` TEXT NOT NULL DEFAULT (\'abc\')',
             ],
             [
                 'body',
