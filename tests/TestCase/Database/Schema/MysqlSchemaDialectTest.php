@@ -556,8 +556,8 @@ CREATE TABLE schema_geometry (
     id INTEGER,
     geo_line LINESTRING,
     geo_geometry GEOMETRY,
-    geo_point POINT,
-    geo_polygon POLYGON DEFAULT ('POLYGON(0 0,10 10,20 20)')
+    geo_point POINT DEFAULT ('POINT(10 10)'),
+    geo_polygon POLYGON
 )
 SQL;
         $connection->execute($table);
@@ -597,7 +597,7 @@ SQL;
             'geo_point' => [
                 'type' => 'point',
                 'null' => true,
-                'default' => null,
+                'default' => 'POINT(10 10)',
                 'precision' => null,
                 'length' => null,
                 'comment' => '',
@@ -606,7 +606,7 @@ SQL;
             'geo_polygon' => [
                 'type' => 'polygon',
                 'null' => true,
-                'default' => 'POLYGON(0 0,10 10,20 20)',
+                'default' => '',
                 'precision' => null,
                 'length' => null,
                 'comment' => '',
