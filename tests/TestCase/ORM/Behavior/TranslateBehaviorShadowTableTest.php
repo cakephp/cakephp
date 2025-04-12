@@ -208,7 +208,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
 
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
         $table->find()->select(['title'])->first();
 
         $expected = ['title', 'body'];
@@ -255,7 +255,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             "The default locale doesn't need a join",
         );
 
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $query = $table->find()->select(['id']);
         $this->assertStringNotContainsString(
@@ -279,7 +279,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $query = $table->find();
         $this->assertStringContainsString(
@@ -310,7 +310,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $query = $table->find()->select(['id'])->where(['title' => 'First Article']);
         $this->assertStringContainsString(
@@ -330,7 +330,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table->addBehavior('Translate', [
             'onlyTranslated' => true,
         ]);
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $query = $table->find()->select(['id'])->disableAutoFields();
         $this->assertStringContainsString(
@@ -342,7 +342,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table
             ->removeBehavior('Translate')
             ->addBehavior('Translate');
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $query = $table->find('all', filterByCurrentLocale: true)->select(['id'])->disableAutoFields();
         $this->assertStringContainsString(
@@ -359,7 +359,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $query = $table->find()->select()->where(function (ExpressionInterface $exp) {
             return $exp->lt(new QueryExpression('1'), 50);
@@ -379,7 +379,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $query = $table->find()->select(['id'])->orderBy(['title' => 'desc']);
         $this->assertStringContainsString(
@@ -407,11 +407,11 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $table->belongsTo('Copy', ['className' => 'Articles', 'foreignKey' => 'author_id']);
         $table->Copy->addBehavior('Translate');
-        $table->Copy->setLocale('deu');
+        $table->Copy->getBehavior('Translate')->setLocale('deu');
 
         $query = $table->find()
             ->where(['Articles.id' => 3])
@@ -452,7 +452,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             'translationTable' => 'articles_more_translations',
         ]);
 
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
         $results = $table->find()->all()->combine('title', 'subtitle', 'id')->toArray();
         $expected = [
             1 => ['Title #1' => 'SubTitle #1'],
@@ -485,7 +485,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $article = $table->find('all')
             ->select(['id'])
@@ -507,7 +507,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $article = $table->find('all')
             ->where(['id' => 1])
@@ -529,7 +529,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $article = $table->find('all')
             ->orderBy(['id' => 'desc'])
@@ -571,7 +571,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table->belongsTo('Authors');
 
         $table->addBehavior('Translate');
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $query = $table
             ->find('translations')
@@ -614,8 +614,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $Articles->addBehavior('Translate');
         $Tags->addBehavior('Translate');
 
-        $Articles->setLocale('deu');
-        $Tags->setLocale('deu');
+        $Articles->getBehavior('Translate')->setLocale('deu');
+        $Tags->getBehavior('Translate')->setLocale('deu');
 
         $Articles->belongsToMany('Tags');
 
@@ -669,7 +669,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $articles->deleteAll('1=1');
 
         $articles->addBehavior('Translate');
-        $articles->setLocale('eng');
+        $articles->getBehavior('Translate')->setLocale('eng');
 
         $query = $comments
             ->find()
@@ -738,7 +738,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
-        $table->setLocale('zzz');
+        $table->getBehavior('Translate')->setLocale('zzz');
         $result = $table->get(1);
 
         $this->assertSame('', $result->title, 'The empty translation should be used');
@@ -755,7 +755,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table->addBehavior('Translate', [
             'allowEmptyTranslations' => false,
         ]);
-        $table->setLocale('zzz');
+        $table->getBehavior('Translate')->setLocale('zzz');
         $result = $table->get(1);
 
         $this->assertSame('First Article', $result->title, 'The empty translation should be ignored');
@@ -776,7 +776,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate');
 
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
         $query = $table->find()->select();
         $query->select([
             'title',
@@ -834,15 +834,15 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $expectedSameLocale = 'Articles.title';
         $expectedOtherLocale = 'ArticlesTranslation.title';
 
-        $field = $table->translationField('title');
+        $field = $table->getBehavior('Translate')->translationField('title');
         $this->assertSame($expectedSameLocale, $field);
 
         I18n::setLocale('es_ES');
-        $field = $table->translationField('title');
+        $field = $table->getBehavior('Translate')->translationField('title');
         $this->assertSame($expectedOtherLocale, $field);
 
         I18n::setLocale('en');
-        $field = $table->translationField('title');
+        $field = $table->getBehavior('Translate')->translationField('title');
         $this->assertSame($expectedOtherLocale, $field);
 
         $table->removeBehavior('Translate');
@@ -852,19 +852,19 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         ]);
 
         I18n::setLocale('de_DE');
-        $field = $table->translationField('title');
+        $field = $table->getBehavior('Translate')->translationField('title');
         $this->assertSame($expectedSameLocale, $field);
 
         I18n::setLocale('en_US');
-        $field = $table->translationField('title');
+        $field = $table->getBehavior('Translate')->translationField('title');
         $this->assertSame($expectedOtherLocale, $field);
 
-        $table->setLocale('de_DE');
-        $field = $table->translationField('title');
+        $table->getBehavior('Translate')->setLocale('de_DE');
+        $field = $table->getBehavior('Translate')->translationField('title');
         $this->assertSame($expectedSameLocale, $field);
 
-        $table->setLocale('es');
-        $field = $table->translationField('title');
+        $table->getBehavior('Translate')->setLocale('es');
+        $field = $table->getBehavior('Translate')->translationField('title');
         $this->assertSame($expectedOtherLocale, $field);
     }
 
@@ -1006,8 +1006,8 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
 
         $table = $this->getTableLocator()->get('Comments');
         $table->addBehavior('Translate', ['fields' => ['comment']]);
-        $table->setLocale('spa');
-        $table->getStrategy()->getTranslationTable()->setEntityClass($shadowEntity::class);
+        $table->getBehavior('Translate')->setLocale('spa');
+        $table->getBehavior('Translate')->getStrategy()->getTranslationTable()->setEntityClass($shadowEntity::class);
 
         $entity = $table->get(1);
         $entity->comment = 'New Comment';
@@ -1195,7 +1195,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     protected function _testFind($tableAlias = 'Articles'): void
     {
         $table = $this->getTableLocator()->get($tableAlias);
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
 
         $query = $table->find()->select();
         $result = array_intersect_key(
@@ -1221,7 +1221,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->setLocale('fra');
+        $table->getBehavior('Translate')->setLocale('fra');
 
         $articles = $table->find()->all();
         $articles->each(function ($article): void {

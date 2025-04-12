@@ -526,7 +526,7 @@ class QueryRegressionTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
         $query = $table->find('translations')
             ->orderBy(['Articles.id' => 'ASC'])
             ->limit(10)

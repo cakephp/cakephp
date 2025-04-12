@@ -353,6 +353,7 @@ class Behavior implements EventListenerInterface
      *
      * @return array
      * @throws \ReflectionException
+     * @deprecated 5.3.0 Calling behavior methods on the table instance is deprecated.
      */
     public function implementedMethods(): array
     {

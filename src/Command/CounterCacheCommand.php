@@ -72,8 +72,11 @@ class CounterCacheCommand extends Command
             $methodArgs['page'] = (int)$args->getOption('page');
         }
 
-        /** @phpstan-ignore-next-line */
-        $table->updateCounterCache(...$methodArgs);
+        /**
+         * @psalm-suppress UndefinedMethod
+         * @phpstan-ignore-next-line
+         */
+        $table->getBehavior('CounterCache')->updateCounterCache(...$methodArgs);
 
         $io->success('Counter cache updated successfully.');
 

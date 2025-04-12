@@ -27,6 +27,7 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use LogicException;
 use Mockery;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use TestApp\Model\Behavior\SluggableBehavior;
 use TestPlugin\Model\Behavior\PersisterOneBehavior;
 
@@ -275,11 +276,14 @@ class BehaviorRegistryTest extends TestCase
      * Setup a behavior, then replace it with a mock to verify methods are called.
      * use dummy return values to verify the return value makes it back
      */
+    #[WithoutErrorHandler]
     public function testCall(): void
     {
-        $this->Behaviors->load('Sluggable');
-        $return = $this->Behaviors->call('slugify', ['some value']);
-        $this->assertSame('some-value', $return);
+        $this->deprecated(function () {
+            $this->Behaviors->load('Sluggable');
+            $return = $this->Behaviors->call('slugify', ['some value']);
+            $this->assertSame('some-value', $return);
+        });
     }
 
     /**

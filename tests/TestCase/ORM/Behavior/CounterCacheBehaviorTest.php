@@ -638,7 +638,7 @@ class CounterCacheBehaviorTest extends TestCase
         $user = $this->_getUser(1);
         $this->assertSame(0, $user->get('post_count'));
 
-        $this->post->updateCounterCache('Users');
+        $this->post->getBehavior('CounterCache')->updateCounterCache('Users');
 
         $user = $this->_getUser(1);
         $this->assertSame(2, $user->get('post_count'));
@@ -647,7 +647,7 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->user->updateAll(['post_count' => 0], []);
 
-        $this->post->updateCounterCache(limit: 1, page: 2);
+        $this->post->getBehavior('CounterCache')->updateCounterCache(limit: 1, page: 2);
 
         $user = $this->_getUser(1);
         $this->assertSame(0, $user->get('post_count'));
