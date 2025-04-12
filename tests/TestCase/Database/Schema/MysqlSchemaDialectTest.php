@@ -556,7 +556,7 @@ CREATE TABLE schema_geometry (
     id INTEGER,
     geo_line LINESTRING,
     geo_geometry GEOMETRY,
-    geo_point POINT DEFAULT (ST_PointFromText('POINT(10 10)')),
+    geo_point POINT DEFAULT (ST_GeometryFromText('POINT(10 10)')),
     geo_polygon POLYGON
 )
 SQL;
@@ -597,7 +597,7 @@ SQL;
             'geo_point' => [
                 'type' => 'point',
                 'null' => true,
-                'default' => "st_pointfromtext('POINT(10 10)')",
+                'default' => "st_geometryfromtext('POINT(10 10)')",
                 'precision' => null,
                 'length' => null,
                 'comment' => '',
