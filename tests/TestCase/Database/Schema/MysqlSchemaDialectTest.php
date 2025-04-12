@@ -597,7 +597,7 @@ SQL;
             'geo_point' => [
                 'type' => 'point',
                 'null' => true,
-                'default' => "st_pointfromtext(_utf8mb4\\'POINT(10 10)\\')",
+                'default' => "st_pointfromtext('POINT(10 10)')",
                 'precision' => null,
                 'length' => null,
                 'comment' => '',
