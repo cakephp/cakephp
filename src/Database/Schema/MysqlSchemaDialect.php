@@ -173,14 +173,14 @@ class MysqlSchemaDialect extends SchemaDialect
             // surrounds the value with escaped single quotes, for example "_utf8mbf4\'abc\'", and so
             // this converts that then down to the default value of "abc" to correspond to what the user
             // would have specified in a migration.
-            $default = preg_replace("/^_(?:[a-zA-Z0-9]+?)\\\'(.*)\\\'$/", '\1', $default);
+            $default = (string)preg_replace("/^_(?:[a-zA-Z0-9]+?)\\\'(.*)\\\'$/", '\1', $default);
 
             // If the default is wrapped in a function, and has a collation marker on it, strip
             // the collation marker out
-            $default = preg_replace(
+            $default = (string)preg_replace(
                 "/^(?<prefix>[a-zA-Z0-9_]*\()(?<collation>_[a-zA-Z0-9]+)\\\'(?<args>.*)\\\'\)$/",
                 "\\1'\\3')",
-                $default
+                $default,
             );
         }
 
