@@ -263,7 +263,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      *
      * @param string $method The method to check for.
      * @return bool
-     * @deprec version 5.3.0 Calling behavior methods on the table instance is deprecated.
+     * @deprecated 5.3.0 Calling behavior methods on the table instance is deprecated.
      */
     public function hasMethod(string $method): bool
     {
