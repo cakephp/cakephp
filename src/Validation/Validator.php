@@ -220,13 +220,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
+     * @param array<string> $fields Fields to validate.
      * @return array<array> Array of failed fields
      */
-    public function validate(array $data, bool $newRecord = true): array
+    public function validate(array $data, bool $newRecord = true, array $fields = []): array
     {
         $errors = [];
 
         foreach ($this->_fields as $name => $field) {
+            if ($fields && !in_array($name, $fields, true)) {
+                continue;
+            }
+
             $name = (string)$name;
             $keyPresent = array_key_exists($name, $data);
 

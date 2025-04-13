@@ -270,10 +270,11 @@ class Marshaller
      * @param array $data The data to validate.
      * @param string|bool $validator Validator name or `true` for default validator.
      * @param bool $isNew Whether it is a new entity or one to be updated.
-     * @return array The list of validation errors.
+     * @param array<string> $fields Fields to validate.
+     * @return array<array> The list of validation errors.
      * @throws \RuntimeException If no validator can be created.
      */
-    protected function _validate(array $data, string|bool $validator, bool $isNew): array
+    protected function _validate(array $data, string|bool $validator, bool $isNew, array $fields = []): array
     {
         if (!$validator) {
             return [];
@@ -283,7 +284,7 @@ class Marshaller
             $validator = null;
         }
 
-        return $this->_table->getValidator($validator)->validate($data, $isNew);
+        return $this->_table->getValidator($validator)->validate($data, $isNew, $fields);
     }
 
     /**
@@ -295,7 +296,7 @@ class Marshaller
      */
     protected function _prepareDataAndOptions(array $data, array $options): array
     {
-        $options += ['validate' => true];
+        $options += ['validate' => true, 'fields' => []];
 
         $tableName = $this->_table->getAlias();
         if (isset($data[$tableName]) && is_array($data[$tableName])) {
@@ -584,7 +585,7 @@ class Marshaller
             }
         }
 
-        $errors = $this->_validate($data + $keys, $options['validate'], $isNew);
+        $errors = $this->_validate($data + $keys, $options['validate'], $isNew, (array)$options['fields']);
         $options['isMerge'] = true;
         $propertyMap = $this->_buildPropertyMap($data, $options);
         $properties = [];

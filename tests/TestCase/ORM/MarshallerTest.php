@@ -2741,6 +2741,67 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Tests that it is possible to pass a strict fields option to the merge method
+     */
+    public function testMergeWithFieldsStrict(): void
+    {
+        $this->articles->getValidator()
+            ->requirePresence('title')
+            ->notEmptyString('title');
+
+        $data = [
+            'title' => null,
+            'body' => 'My body',
+            'author_id' => 1,
+        ];
+        $marshall = new Marshaller($this->articles);
+
+        $entity = new Entity([
+            'title' => 'Foo',
+            'body' => 'My content',
+            'author_id' => 2,
+        ]);
+
+        $entity->setAccess('*', false);
+        $entity->setNew(false);
+        $entity->clean();
+        $result = $marshall->merge($entity, $data, ['fields' => null]);
+
+        $expected = [
+            'title' => 'Foo',
+            'body' => 'My content',
+            'author_id' => 2,
+        ];
+
+        $this->assertSame($entity, $result);
+        $this->assertEquals($expected, $result->toArray());
+        $this->assertFalse($entity->isAccessible('*'));
+        $this->assertNotEmpty($entity->getErrors());
+
+        $entity = new Entity([
+            'title' => 'Foo',
+            'body' => 'My content',
+            'author_id' => 2,
+        ]);
+
+        $entity->setAccess('*', false);
+        $entity->setNew(false);
+        $entity->clean();
+        $result = $marshall->merge($entity, $data, ['fields' => ['body']]);
+
+        $expected = [
+            'title' => 'Foo',
+            'body' => 'My body',
+            'author_id' => 2,
+        ];
+
+        $this->assertSame($entity, $result);
+        $this->assertEquals($expected, $result->toArray());
+        $this->assertFalse($entity->isAccessible('*'));
+        $this->assertEmpty($entity->getErrors());
+    }
+
+    /**
      * Test that many() also receives a fields option
      */
     public function testManyFields(): void
