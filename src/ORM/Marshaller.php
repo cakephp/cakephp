@@ -296,7 +296,7 @@ class Marshaller
      */
     protected function _prepareDataAndOptions(array $data, array $options): array
     {
-        $options += ['validate' => true, 'fields' => null];
+        $options += ['validate' => true, 'fields' => null, 'strictFields' => false];
 
         $tableName = $this->_table->getAlias();
         if (isset($data[$tableName]) && is_array($data[$tableName])) {
@@ -585,7 +585,8 @@ class Marshaller
             }
         }
 
-        $errors = $this->_validate($data + $keys, $options['validate'], $isNew, (array)$options['fields']);
+        $fieldsToValidate = $options['strictFields'] ? (array)$options['fields'] : [];
+        $errors = $this->_validate($data + $keys, $options['validate'], $isNew, $fieldsToValidate);
         $options['isMerge'] = true;
         $propertyMap = $this->_buildPropertyMap($data, $options);
         $properties = [];

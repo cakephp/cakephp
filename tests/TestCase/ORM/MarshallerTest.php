@@ -2765,28 +2765,6 @@ class MarshallerTest extends TestCase
         $entity->setAccess('*', false);
         $entity->setNew(false);
         $entity->clean();
-        $result = $marshall->merge($entity, $data, ['fields' => null]);
-
-        $expected = [
-            'title' => 'Foo',
-            'body' => 'My content',
-            'author_id' => 2,
-        ];
-
-        $this->assertSame($entity, $result);
-        $this->assertEquals($expected, $result->toArray());
-        $this->assertFalse($entity->isAccessible('*'));
-        $this->assertNotEmpty($entity->getErrors());
-
-        $entity = new Entity([
-            'title' => 'Foo',
-            'body' => 'My content',
-            'author_id' => 2,
-        ]);
-
-        $entity->setAccess('*', false);
-        $entity->setNew(false);
-        $entity->clean();
         $result = $marshall->merge($entity, $data, ['fields' => ['body']]);
 
         $expected = [
@@ -2798,6 +2776,24 @@ class MarshallerTest extends TestCase
         $this->assertSame($entity, $result);
         $this->assertEquals($expected, $result->toArray());
         $this->assertFalse($entity->isAccessible('*'));
+        // We have validation errors though
+        $this->assertNotEmpty($entity->getErrors());
+
+        $entity = new Entity([
+            'title' => 'Foo',
+            'body' => 'My content',
+            'author_id' => 2,
+        ]);
+
+        $entity->setAccess('*', false);
+        $entity->setNew(false);
+        $entity->clean();
+        $result = $marshall->merge($entity, $data, ['fields' => ['body'], 'strictFields' => true]);
+
+        $this->assertSame($entity, $result);
+        $this->assertEquals($expected, $result->toArray());
+        $this->assertFalse($entity->isAccessible('*'));
+        // We only validate fields list now
         $this->assertEmpty($entity->getErrors());
     }
 
