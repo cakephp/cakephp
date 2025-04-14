@@ -274,7 +274,9 @@ abstract class TestCase extends BaseTestCase
      */
     protected function getFixtureStrategy(): FixtureStrategyInterface
     {
-        return new TruncateStrategy();
+        $className = Configure::read('TestCase.fixtureStrategy') ?: TruncateStrategy::class;
+
+        return new $className();
     }
 
     /**
