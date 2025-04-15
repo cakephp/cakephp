@@ -184,6 +184,23 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test adding an option and using the short value for parsing throws deprecation if conflicting.
+     */
+    public function testAddOptionShortConflict(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('test', [
+            'short' => 't',
+        ]);
+
+        $this->deprecated(function () use ($parser) {
+            $parser->addOption('other', [
+                'short' => 't',
+            ]);
+        });
+    }
+
+    /**
      * test adding an option and using the short value for parsing.
      */
     public function testAddOptionWithMultipleShort(): void
