@@ -55,6 +55,7 @@ class RequestException extends RuntimeException implements RequestExceptionInter
      *
      * @return \Psr\Http\Message\RequestInterface
      */
+    #[\Override]
     public function getRequest(): RequestInterface
     {
         return $this->request;

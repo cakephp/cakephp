@@ -43,6 +43,7 @@ class InsertQuery extends DbInsertQuery
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(?ValueBinder $binder = null): string
     {
         if (empty($this->_parts['into'])) {

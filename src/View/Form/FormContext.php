@@ -65,6 +65,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getPrimaryKey(): array
     {
         return [];
@@ -73,6 +74,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isPrimaryKey(string $field): bool
     {
         return false;
@@ -81,6 +83,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isCreate(): bool
     {
         return true;
@@ -89,6 +92,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function val(string $field, array $options = []): mixed
     {
         $options += [
@@ -127,6 +131,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isRequired(string $field): ?bool
     {
         $validator = $this->_form->getValidator($this->_validator);
@@ -143,6 +148,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getRequiredMessage(string $field): ?string
     {
         $parts = explode('.', $field);
@@ -164,6 +170,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMaxLength(string $field): ?int
     {
         $validator = $this->_form->getValidator($this->_validator);
@@ -187,6 +194,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function fieldNames(): array
     {
         return $this->_form->getSchema()->fields();
@@ -195,6 +203,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function type(string $field): ?string
     {
         return $this->_form->getSchema()->fieldType($field);
@@ -203,6 +212,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function attributes(string $field): array
     {
         return array_intersect_key(
@@ -214,6 +224,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function hasError(string $field): bool
     {
         $errors = $this->error($field);
@@ -224,6 +235,7 @@ class FormContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function error(string $field): array
     {
         return (array)Hash::get($this->_form->getErrors(), $field, []);

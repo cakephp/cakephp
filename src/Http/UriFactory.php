@@ -34,6 +34,7 @@ class UriFactory implements UriFactoryInterface
      * @param string $uri The URI to parse.
      * @throws \InvalidArgumentException If the given URI cannot be parsed.
      */
+    #[\Override]
     public function createUri(string $uri = ''): UriInterface
     {
         return new Uri($uri);

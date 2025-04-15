@@ -28,6 +28,7 @@ class I18nCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function getDescription(): string
     {
         return 'I18n commands let you generate .pot files to power translations in your application.';
@@ -40,6 +41,7 @@ class I18nCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $io->out('<info>I18n Command</info>');
@@ -85,6 +87,7 @@ class I18nCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to update
      * @return \Cake\Console\ConsoleOptionParser
      */
+    #[\Override]
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(static::getDescription());

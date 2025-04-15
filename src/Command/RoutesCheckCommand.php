@@ -32,6 +32,7 @@ class RoutesCheckCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function defaultName(): string
     {
         return 'routes check';
@@ -40,6 +41,7 @@ class RoutesCheckCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Check a URL string against the routes.';
@@ -53,6 +55,7 @@ class RoutesCheckCommand extends Command
      * @return int|null The exit code or null for success
      * @throws \JsonException
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $url = $args->getArgument('url');
@@ -92,6 +95,7 @@ class RoutesCheckCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
      * @return \Cake\Console\ConsoleOptionParser
      */
+    #[\Override]
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription([

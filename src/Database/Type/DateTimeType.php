@@ -129,6 +129,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
+    #[\Override]
     public function toDatabase(mixed $value, Driver $driver): ?string
     {
         if ($value === null || is_string($value)) {
@@ -205,6 +206,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted
      * @return \Cake\I18n\DateTime|\DateTimeImmutable|null
      */
+    #[\Override]
     public function toPHP(mixed $value, Driver $driver): DateTime|DateTimeImmutable|null
     {
         if ($value === null) {
@@ -255,6 +257,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
@@ -294,6 +297,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param mixed $value Request data
      * @return \DateTimeInterface|null
      */
+    #[\Override]
     public function marshal(mixed $value): ?DateTimeInterface
     {
         if ($value instanceof DateTimeInterface) {
@@ -467,6 +471,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function toStatement(mixed $value, Driver $driver): int
     {
         return PDO::PARAM_STR;

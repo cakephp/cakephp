@@ -100,6 +100,7 @@ class HasMany extends Association
      * @param \Cake\ORM\Table $side The potential Table with ownership
      * @return bool
      */
+    #[\Override]
     public function isOwningSide(Table $side): bool
     {
         return $side === $this->getSource();
@@ -147,6 +148,7 @@ class HasMany extends Association
      * @see \Cake\ORM\Table::save()
      * @throws \InvalidArgumentException when the association data cannot be traversed.
      */
+    #[\Override]
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntities = $entity->get($this->getProperty());
@@ -596,6 +598,7 @@ class HasMany extends Association
      *
      * @return string
      */
+    #[\Override]
     public function type(): string
     {
         return self::ONE_TO_MANY;
@@ -608,6 +611,7 @@ class HasMany extends Association
      * @return bool if the 'matching' key in $option is true then this function
      * will return true, false otherwise
      */
+    #[\Override]
     public function canBeJoined(array $options = []): bool
     {
         return !empty($options['matching']);
@@ -616,6 +620,7 @@ class HasMany extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getForeignKey(): array|string|false
     {
         if (!isset($this->_foreignKey)) {
@@ -651,6 +656,7 @@ class HasMany extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function defaultRowValue(array $row, bool $joined): array
     {
         $sourceAlias = $this->getSource()->getAlias();
@@ -667,6 +673,7 @@ class HasMany extends Association
      * @param array<string, mixed> $options original list of options passed in constructor
      * @return void
      */
+    #[\Override]
     protected function _options(array $options): void
     {
         if (!empty($options['saveStrategy'])) {
@@ -680,6 +687,7 @@ class HasMany extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function eagerLoader(array $options): Closure
     {
         $loader = new SelectLoader([
@@ -700,6 +708,7 @@ class HasMany extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function cascadeDelete(EntityInterface $entity, array $options = []): bool
     {
         $helper = new DependentDeleteHelper();

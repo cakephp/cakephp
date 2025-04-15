@@ -27,6 +27,7 @@ class StatusCode extends StatusCodeBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf('matches response status code `%d`', $this->response->getStatusCode());
@@ -38,6 +39,7 @@ class StatusCode extends StatusCodeBase
      * @param mixed $other Expected code
      * @return string
      */
+    #[\Override]
     public function failureDescription(mixed $other): string
     {
         return '`' . $other . '` ' . $this->toString();

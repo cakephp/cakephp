@@ -50,6 +50,7 @@ class ArrayEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
      */
+    #[\Override]
     public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         $key = $this->_key($key);
@@ -67,6 +68,7 @@ class ArrayEngine extends CacheEngine
      * @return mixed The cached data, or default value if the data doesn't exist, has
      * expired, or if there was an error fetching it.
      */
+    #[\Override]
     public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->_key($key);
@@ -93,6 +95,7 @@ class ArrayEngine extends CacheEngine
      * @param int $offset How much to increment
      * @return int|false New incremented value, false otherwise
      */
+    #[\Override]
     public function increment(string $key, int $offset = 1): int|false
     {
         if ($this->get($key) === null) {
@@ -111,6 +114,7 @@ class ArrayEngine extends CacheEngine
      * @param int $offset How much to subtract
      * @return int|false New decremented value, false otherwise
      */
+    #[\Override]
     public function decrement(string $key, int $offset = 1): int|false
     {
         if ($this->get($key) === null) {
@@ -128,6 +132,7 @@ class ArrayEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
+    #[\Override]
     public function delete(string $key): bool
     {
         $key = $this->_key($key);
@@ -141,6 +146,7 @@ class ArrayEngine extends CacheEngine
      *
      * @return bool True Returns true.
      */
+    #[\Override]
     public function clear(): bool
     {
         $this->data = [];
@@ -155,6 +161,7 @@ class ArrayEngine extends CacheEngine
      *
      * @return array<string>
      */
+    #[\Override]
     public function groups(): array
     {
         $result = [];
@@ -177,6 +184,7 @@ class ArrayEngine extends CacheEngine
      * @param string $group The group to clear.
      * @return bool success
      */
+    #[\Override]
     public function clearGroup(string $group): bool
     {
         $key = $this->_config['prefix'] . $group;

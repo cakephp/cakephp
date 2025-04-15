@@ -99,6 +99,7 @@ class IdentifierExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         $sql = $this->_identifier;
@@ -112,6 +113,7 @@ class IdentifierExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         return $this;

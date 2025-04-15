@@ -156,6 +156,7 @@ class LoggedQuery implements JsonSerializable, Stringable
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function jsonSerialize(): array
     {
         $error = $this->error;
@@ -181,6 +182,7 @@ class LoggedQuery implements JsonSerializable, Stringable
      *
      * @return string
      */
+    #[\Override]
     public function __toString(): string
     {
         if ($this->params) {

@@ -28,6 +28,7 @@ class SqlserverStatement extends Statement
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function performBind(string|int $column, mixed $value, int $type): void
     {
         if ($type === PDO::PARAM_LOB) {

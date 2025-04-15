@@ -62,6 +62,7 @@ class ClosureDecoratorMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Server\RequestHandlerInterface $handler Request handler instance.
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         return ($this->callable)(

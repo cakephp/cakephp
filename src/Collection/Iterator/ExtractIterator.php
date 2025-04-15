@@ -68,6 +68,7 @@ class ExtractIterator extends Collection
      *
      * @return mixed
      */
+    #[\Override]
     public function current(): mixed
     {
         $extractor = $this->_extractor;
@@ -78,6 +79,7 @@ class ExtractIterator extends Collection
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function unwrap(): Iterator
     {
         $iterator = $this->getInnerIterator();

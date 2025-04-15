@@ -62,6 +62,7 @@ class RedirectRoute extends Route
      * @throws \Cake\Http\Exception\RedirectException An exception is raised on successful match.
      *   This is used to halt route matching and signal to the middleware that a redirect should happen.
      */
+    #[\Override]
     public function parse(string $url, string $method = ''): ?array
     {
         $params = parent::parse($url, $method);
@@ -97,6 +98,7 @@ class RedirectRoute extends Route
      * @param array $context Array of request context parameters.
      * @return string|null Always null, string return result unused.
      */
+    #[\Override]
     public function match(array $url, array $context = []): ?string
     {
         return null;

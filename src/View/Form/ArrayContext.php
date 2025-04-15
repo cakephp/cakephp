@@ -100,6 +100,7 @@ class ArrayContext implements ContextInterface
      *
      * @return array<string>
      */
+    #[\Override]
     public function getPrimaryKey(): array
     {
         if (
@@ -120,6 +121,7 @@ class ArrayContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isPrimaryKey(string $field): bool
     {
         $primaryKey = $this->getPrimaryKey();
@@ -136,6 +138,7 @@ class ArrayContext implements ContextInterface
      *
      * @return bool
      */
+    #[\Override]
     public function isCreate(): bool
     {
         $primary = $this->getPrimaryKey();
@@ -163,6 +166,7 @@ class ArrayContext implements ContextInterface
      *     context's schema should be used if it's not explicitly provided.
      * @return mixed
      */
+    #[\Override]
     public function val(string $field, array $options = []): mixed
     {
         $options += [
@@ -197,6 +201,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to check required-ness for.
      * @return bool|null
      */
+    #[\Override]
     public function isRequired(string $field): ?bool
     {
         if (!is_array($this->_context['required'])) {
@@ -216,6 +221,7 @@ class ArrayContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getRequiredMessage(string $field): ?string
     {
         if (!is_array($this->_context['required'])) {
@@ -243,6 +249,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to check required-ness for.
      * @return int|null
      */
+    #[\Override]
     public function getMaxLength(string $field): ?int
     {
         if (!is_array($this->_context['schema'])) {
@@ -255,6 +262,7 @@ class ArrayContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function fieldNames(): array
     {
         $schema = $this->_context['schema'];
@@ -271,6 +279,7 @@ class ArrayContext implements ContextInterface
      * @return string|null An abstract data type or null.
      * @see \Cake\Database\TypeFactory
      */
+    #[\Override]
     public function type(string $field): ?string
     {
         if (!is_array($this->_context['schema'])) {
@@ -289,6 +298,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to get additional data on.
      * @return array An array of data describing the additional attributes on a field.
      */
+    #[\Override]
     public function attributes(string $field): array
     {
         if (!is_array($this->_context['schema'])) {
@@ -309,6 +319,7 @@ class ArrayContext implements ContextInterface
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.
      */
+    #[\Override]
     public function hasError(string $field): bool
     {
         if (empty($this->_context['errors'])) {
@@ -325,6 +336,7 @@ class ArrayContext implements ContextInterface
      * @return array An array of errors, an empty array will be returned when the
      *    context has no errors.
      */
+    #[\Override]
     public function error(string $field): array
     {
         if (empty($this->_context['errors'])) {

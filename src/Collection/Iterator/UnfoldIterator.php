@@ -68,6 +68,7 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
      *
      * @return bool
      */
+    #[\Override]
     public function hasChildren(): bool
     {
         return true;
@@ -79,6 +80,7 @@ class UnfoldIterator extends IteratorIterator implements RecursiveIterator
      *
      * @return \RecursiveIterator<mixed, mixed>
      */
+    #[\Override]
     public function getChildren(): RecursiveIterator
     {
         $current = $this->current();

@@ -64,6 +64,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @throws \Cake\View\Exception\MissingHelperException When a helper could not be found.
      *    App helpers are searched, and then plugin helpers.
      */
+    #[\Override]
     public function __isset(string $name): bool
     {
         if (isset($this->_loaded[$name])) {
@@ -94,6 +95,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param string $name Name of property to read
      * @return \Cake\View\Helper|null
      */
+    #[\Override]
     public function __get(string $name): ?Helper
     {
         // This calls __isset() and loading the named helper if it isn't already loaded.
@@ -112,6 +114,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param string $class Partial classname to resolve.
      * @return class-string<\Cake\View\Helper>|null Either the correct class name or null.
      */
+    #[\Override]
     protected function _resolveClassName(string $class): ?string
     {
         /** @var class-string<\Cake\View\Helper>|null */
@@ -129,6 +132,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @return void
      * @throws \Cake\View\Exception\MissingHelperException
      */
+    #[\Override]
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingHelperException([
@@ -148,6 +152,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param array<string, mixed> $config An array of settings to use for the helper.
      * @return \Cake\View\Helper The constructed helper class.
      */
+    #[\Override]
     protected function _create(object|string $class, string $alias, array $config): Helper
     {
         if (is_object($class)) {

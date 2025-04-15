@@ -81,6 +81,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function partition(ExpressionInterface|Closure|array|string $partitions)
     {
         $this->getWindow()->partition($partitions);
@@ -91,6 +92,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function order(ExpressionInterface|Closure|array|string $fields)
     {
         deprecationWarning(
@@ -104,6 +106,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function orderBy(ExpressionInterface|Closure|array|string $fields)
     {
         $this->getWindow()->orderBy($fields);
@@ -114,6 +117,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function range(ExpressionInterface|string|int|null $start, ExpressionInterface|string|int|null $end = 0)
     {
         $this->getWindow()->range($start, $end);
@@ -124,6 +128,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function rows(?int $start, ?int $end = 0)
     {
         $this->getWindow()->rows($start, $end);
@@ -134,6 +139,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function groups(?int $start, ?int $end = 0)
     {
         $this->getWindow()->groups($start, $end);
@@ -144,6 +150,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function frame(
         string $type,
         ExpressionInterface|string|int|null $startOffset,
@@ -159,6 +166,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function excludeCurrent()
     {
         $this->getWindow()->excludeCurrent();
@@ -169,6 +177,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function excludeGroup()
     {
         $this->getWindow()->excludeGroup();
@@ -179,6 +188,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function excludeTies()
     {
         $this->getWindow()->excludeTies();
@@ -199,6 +209,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         $sql = parent::sql($binder);
@@ -219,6 +230,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         parent::traverse($callback);
@@ -237,6 +249,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function count(): int
     {
         $count = parent::count();
@@ -252,6 +265,7 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
      *
      * @return void
      */
+    #[\Override]
     public function __clone()
     {
         parent::__clone();

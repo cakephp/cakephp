@@ -29,6 +29,7 @@ class BodyNotEquals extends BodyEquals
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         return parent::matches($other) === false;
@@ -39,6 +40,7 @@ class BodyNotEquals extends BodyEquals
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'does not match response body';

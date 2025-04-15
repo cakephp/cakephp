@@ -108,6 +108,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @param string $class Partial classname to resolve.
      * @return class-string<\Cake\Controller\Component>|null Either the correct class name or null.
      */
+    #[\Override]
     protected function _resolveClassName(string $class): ?string
     {
         /** @var class-string<\Cake\Controller\Component>|null */
@@ -125,6 +126,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @return void
      * @throws \Cake\Controller\Exception\MissingComponentException
      */
+    #[\Override]
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingComponentException([
@@ -144,6 +146,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @param array<string, mixed> $config An array of config to use for the component.
      * @return \Cake\Controller\Component The constructed component class.
      */
+    #[\Override]
     protected function _create(object|string $class, string $alias, array $config): Component
     {
         if (is_object($class)) {
@@ -183,6 +186,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * @return \Cake\Core\ContainerInterface
      * @psalm-suppress OverriddenMethodAccess
      */
+    #[\Override]
     protected function getContainer(): ContainerInterface
     {
         if ($this->container === null) {

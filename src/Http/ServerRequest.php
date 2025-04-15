@@ -799,6 +799,7 @@ class ServerRequest implements ServerRequestInterface
      * @return array<string, array<string>> An associative array of headers and their values.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
+    #[\Override]
     public function getHeaders(): array
     {
         $headers = [];
@@ -827,6 +828,7 @@ class ServerRequest implements ServerRequestInterface
      * @return bool Whether the header is defined.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
+    #[\Override]
     public function hasHeader(string $name): bool
     {
         $name = $this->normalizeHeaderName($name);
@@ -845,6 +847,7 @@ class ServerRequest implements ServerRequestInterface
      *   If the header doesn't exist, an empty array will be returned.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
+    #[\Override]
     public function getHeader(string $name): array
     {
         $name = $this->normalizeHeaderName($name);
@@ -862,6 +865,7 @@ class ServerRequest implements ServerRequestInterface
      * @return string Header values collapsed into a comma separated string.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
+    #[\Override]
     public function getHeaderLine(string $name): string
     {
         $value = $this->getHeader($name);
@@ -878,6 +882,7 @@ class ServerRequest implements ServerRequestInterface
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function withHeader(string $name, $value): static
     {
         $new = clone $this;
@@ -899,6 +904,7 @@ class ServerRequest implements ServerRequestInterface
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function withAddedHeader(string $name, $value): static
     {
         $new = clone $this;
@@ -920,6 +926,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
+    #[\Override]
     public function withoutHeader(string $name): static
     {
         $new = clone $this;
@@ -943,6 +950,7 @@ class ServerRequest implements ServerRequestInterface
      * @return string The name of the HTTP method used.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
+    #[\Override]
     public function getMethod(): string
     {
         return (string)$this->getEnv('REQUEST_METHOD');
@@ -955,6 +963,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static A new instance with the updated method.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
+    #[\Override]
     public function withMethod(string $method): static
     {
         $new = clone $this;
@@ -979,6 +988,7 @@ class ServerRequest implements ServerRequestInterface
      * @return array
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
+    #[\Override]
     public function getServerParams(): array
     {
         return $this->_environment;
@@ -991,6 +1001,7 @@ class ServerRequest implements ServerRequestInterface
      * @return array
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
+    #[\Override]
     public function getQueryParams(): array
     {
         return $this->query;
@@ -1003,6 +1014,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static A new instance with the updated query string data.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
+    #[\Override]
     public function withQueryParams(array $query): static
     {
         $new = clone $this;
@@ -1282,6 +1294,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return array<string, mixed> An array of cookie data.
      */
+    #[\Override]
     public function getCookieParams(): array
     {
         return $this->cookies;
@@ -1293,6 +1306,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array $cookies The new cookie data to use.
      * @return static
      */
+    #[\Override]
     public function withCookieParams(array $cookies): static
     {
         $new = clone $this;
@@ -1312,6 +1326,7 @@ class ServerRequest implements ServerRequestInterface
      * @return object|array|null The deserialized body parameters, if any.
      *     These will typically be an array.
      */
+    #[\Override]
     public function getParsedBody(): object|array|null
     {
         return $this->data;
@@ -1325,6 +1340,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function withParsedBody($data): static
     {
         $new = clone $this;
@@ -1338,6 +1354,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return string HTTP protocol version.
      */
+    #[\Override]
     public function getProtocolVersion(): string
     {
         if ($this->protocol) {
@@ -1364,6 +1381,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $version HTTP protocol version
      * @return static
      */
+    #[\Override]
     public function withProtocolVersion(string $version): static
     {
         if (!preg_match('/^(1\.[01]|2)$/', $version)) {
@@ -1524,6 +1542,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $value The value of the attribute.
      * @return static
      */
+    #[\Override]
     public function withAttribute(string $name, mixed $value): static
     {
         $new = clone $this;
@@ -1543,6 +1562,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @throws \InvalidArgumentException
      */
+    #[\Override]
     public function withoutAttribute(string $name): static
     {
         $new = clone $this;
@@ -1563,6 +1583,7 @@ class ServerRequest implements ServerRequestInterface
      * @param mixed $default The default value if the attribute has not been set.
      * @return mixed
      */
+    #[\Override]
     public function getAttribute(string $name, mixed $default = null): mixed
     {
         if (in_array($name, $this->emulatedAttributes, true)) {
@@ -1587,6 +1608,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function getAttributes(): array
     {
         $emulated = [
@@ -1620,6 +1642,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return array
      */
+    #[\Override]
     public function getUploadedFiles(): array
     {
         return $this->uploadedFiles;
@@ -1632,6 +1655,7 @@ class ServerRequest implements ServerRequestInterface
      * @return static
      * @throws \InvalidArgumentException when $files contains an invalid object.
      */
+    #[\Override]
     public function withUploadedFiles(array $uploadedFiles): static
     {
         $this->validateUploadedFiles($uploadedFiles, '');
@@ -1668,6 +1692,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return \Psr\Http\Message\StreamInterface Returns the body as a stream.
      */
+    #[\Override]
     public function getBody(): StreamInterface
     {
         return $this->stream;
@@ -1679,6 +1704,7 @@ class ServerRequest implements ServerRequestInterface
      * @param \Psr\Http\Message\StreamInterface $body The new request body
      * @return static
      */
+    #[\Override]
     public function withBody(StreamInterface $body): static
     {
         $new = clone $this;
@@ -1693,6 +1719,7 @@ class ServerRequest implements ServerRequestInterface
      * @return \Psr\Http\Message\UriInterface Returns a UriInterface instance
      *   representing the URI of the request.
      */
+    #[\Override]
     public function getUri(): UriInterface
     {
         return $this->uri;
@@ -1708,6 +1735,7 @@ class ServerRequest implements ServerRequestInterface
      * @param bool $preserveHost Whether the host should be retained.
      * @return static
      */
+    #[\Override]
     public function withUri(UriInterface $uri, bool $preserveHost = false): static
     {
         $new = clone $this;
@@ -1742,6 +1770,7 @@ class ServerRequest implements ServerRequestInterface
      * @param string $requestTarget The request target.
      * @return static
      */
+    #[\Override]
     public function withRequestTarget(string $requestTarget): static
     {
         $new = clone $this;
@@ -1760,6 +1789,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @return string
      */
+    #[\Override]
     public function getRequestTarget(): string
     {
         if ($this->requestTarget !== null) {

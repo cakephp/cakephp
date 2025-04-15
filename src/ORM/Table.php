@@ -416,6 +416,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $alias Table alias
      * @return $this
      */
+    #[\Override]
     public function setAlias(string $alias)
     {
         $this->_alias = $alias;
@@ -428,6 +429,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return string
      */
+    #[\Override]
     public function getAlias(): string
     {
         if ($this->_alias === null) {
@@ -452,6 +454,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $field The field to alias.
      * @return string The field prefixed with the table alias.
      */
+    #[\Override]
     public function aliasField(string $field): string
     {
         if (str_contains($field, '.')) {
@@ -467,6 +470,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $registryAlias The key used to access this object.
      * @return $this
      */
+    #[\Override]
     public function setRegistryAlias(string $registryAlias)
     {
         $this->_registryAlias = $registryAlias;
@@ -479,6 +483,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return string
      */
+    #[\Override]
     public function getRegistryAlias(): string
     {
         return $this->_registryAlias ??= $this->getAlias();
@@ -611,6 +616,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $field The field to check for.
      * @return bool True if the field exists, false if it does not.
      */
+    #[\Override]
     public function hasField(string $field): bool
     {
         return $this->getSchema()->getColumn($field) !== null;
@@ -1275,6 +1281,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return \Cake\ORM\Query\SelectQuery The query builder
      */
+    #[\Override]
     public function find(string $type = 'all', mixed ...$args): SelectQuery
     {
         return $this->callFinder($type, $this->selectQuery(), ...$args);
@@ -1504,6 +1511,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *      incorrect number of elements.
      * @see \Cake\Datasource\RepositoryInterface::find()
      */
+    #[\Override]
     public function get(
         mixed $primaryKey,
         array|string $finder = 'all',
@@ -1734,6 +1742,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return \Cake\ORM\Query\SelectQuery
      */
+    #[\Override]
     public function query(): SelectQuery
     {
         return $this->selectQuery();
@@ -1802,6 +1811,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
      * @return int Count Returns the affected rows.
      */
+    #[\Override]
     public function updateAll(
         QueryExpression|Closure|array|string $fields,
         QueryExpression|Closure|array|string|null $conditions,
@@ -1828,6 +1838,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * can take.
      * @return int Returns the number of affected rows.
      */
+    #[\Override]
     public function deleteAll(QueryExpression|Closure|array|string|null $conditions): int
     {
         $statement = $this->deleteQuery()
@@ -1840,6 +1851,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function exists(QueryExpression|Closure|array|string|null $conditions): bool
     {
         return (bool)count(
@@ -1938,6 +1950,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
+    #[\Override]
     public function save(
         EntityInterface $entity,
         array $options = [],
@@ -2425,6 +2438,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string, mixed> $options The options for the delete.
      * @return bool success
      */
+    #[\Override]
     public function delete(EntityInterface $entity, array $options = []): bool
     {
         $options = new ArrayObject($options + [
@@ -2887,6 +2901,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return \Cake\Datasource\EntityInterface
      */
+    #[\Override]
     public function newEmptyEntity(): EntityInterface
     {
         $class = $this->getEntityClass();
@@ -2953,6 +2968,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Marshaller::one()
      */
+    #[\Override]
     public function newEntity(array $data, array $options = []): EntityInterface
     {
         $options['associated'] ??= $this->_associations->keys();
@@ -2992,6 +3008,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string, mixed> $options A list of options for the objects hydration.
      * @return array<\Cake\Datasource\EntityInterface> An array of hydrated records.
      */
+    #[\Override]
     public function newEntities(array $data, array $options = []): array
     {
         $options['associated'] ??= $this->_associations->keys();
@@ -3050,6 +3067,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return \Cake\Datasource\EntityInterface
      * @see \Cake\ORM\Marshaller::merge()
      */
+    #[\Override]
     public function patchEntity(EntityInterface $entity, array $data, array $options = []): EntityInterface
     {
         $options['associated'] ??= $this->_associations->keys();
@@ -3088,6 +3106,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string, mixed> $options A list of options for the objects hydration.
      * @return array<\Cake\Datasource\EntityInterface>
      */
+    #[\Override]
     public function patchEntities(iterable $entities, array $data, array $options = []): array
     {
         $options['associated'] ??= $this->_associations->keys();
@@ -3184,6 +3203,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function implementedEvents(): array
     {
         $eventMap = [

@@ -31,6 +31,7 @@ class UuidType extends StringType
      * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
      * @return string|null
      */
+    #[\Override]
     public function toDatabase(mixed $value, Driver $driver): ?string
     {
         if ($value === null || $value === '' || $value === false) {
@@ -45,6 +46,7 @@ class UuidType extends StringType
      *
      * @return string A new primary key value.
      */
+    #[\Override]
     public function newId(): string
     {
         return Text::uuid();
@@ -56,6 +58,7 @@ class UuidType extends StringType
      * @param mixed $value The value to convert.
      * @return string|null Converted value.
      */
+    #[\Override]
     public function marshal(mixed $value): ?string
     {
         if ($value === null || $value === '' || is_array($value)) {

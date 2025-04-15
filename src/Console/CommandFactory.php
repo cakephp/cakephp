@@ -42,6 +42,7 @@ class CommandFactory implements CommandFactoryInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function create(string $className): CommandInterface
     {
         if ($this->container?->has($className)) {

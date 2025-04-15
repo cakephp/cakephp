@@ -141,6 +141,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         $field = $this->_field;
@@ -166,6 +167,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         if ($this->_field instanceof ExpressionInterface) {

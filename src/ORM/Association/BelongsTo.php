@@ -50,6 +50,7 @@ class BelongsTo extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getForeignKey(): array|string|false
     {
         if (!isset($this->_foreignKey)) {
@@ -66,6 +67,7 @@ class BelongsTo extends Association
      *  no join conditions will be generated automatically.
      * @return $this
      */
+    #[\Override]
     public function setForeignKey(array|string|false $key)
     {
         $this->_foreignKey = $key;
@@ -82,6 +84,7 @@ class BelongsTo extends Association
      * @param array<string, mixed> $options The options for the original delete.
      * @return bool Success.
      */
+    #[\Override]
     public function cascadeDelete(EntityInterface $entity, array $options = []): bool
     {
         return true;
@@ -92,6 +95,7 @@ class BelongsTo extends Association
      *
      * @return string
      */
+    #[\Override]
     protected function _propertyName(): string
     {
         [, $name] = pluginSplit($this->_name);
@@ -107,6 +111,7 @@ class BelongsTo extends Association
      * @param \Cake\ORM\Table $side The potential Table with ownership
      * @return bool
      */
+    #[\Override]
     public function isOwningSide(Table $side): bool
     {
         return $side === $this->getTarget();
@@ -117,6 +122,7 @@ class BelongsTo extends Association
      *
      * @return string
      */
+    #[\Override]
     public function type(): string
     {
         return self::MANY_TO_ONE;
@@ -134,6 +140,7 @@ class BelongsTo extends Association
      * the saved entity
      * @see \Cake\ORM\Table::save()
      */
+    #[\Override]
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
@@ -172,6 +179,7 @@ class BelongsTo extends Association
      * @throws \Cake\Database\Exception\DatabaseException if the number of columns in the foreignKey do not
      * match the number of columns in the target table primaryKey
      */
+    #[\Override]
     protected function _joinCondition(array $options): array
     {
         $conditions = [];
@@ -207,6 +215,7 @@ class BelongsTo extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function eagerLoader(array $options): Closure
     {
         $loader = new SelectLoader([

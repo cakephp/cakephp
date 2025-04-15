@@ -129,6 +129,7 @@ class MapReduce implements IteratorAggregate
      *
      * @return \Traversable
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         if (!$this->_executed) {

@@ -29,6 +29,7 @@ class BodyEquals extends ResponseBase
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         return $this->_getBodyAsString() === $other;
@@ -39,6 +40,7 @@ class BodyEquals extends ResponseBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'matches response body';

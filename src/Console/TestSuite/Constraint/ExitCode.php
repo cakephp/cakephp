@@ -59,6 +59,7 @@ class ExitCode extends Constraint
      * @param mixed $other Constraint check
      * @return bool
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         return $other === $this->exitCode;
@@ -69,6 +70,7 @@ class ExitCode extends Constraint
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf('matches exit code `%s`', $this->exitCode ?? 'null');
@@ -80,6 +82,7 @@ class ExitCode extends Constraint
      * @param mixed $other Expected
      * @return string
      */
+    #[\Override]
     public function failureDescription(mixed $other): string
     {
         return '`' . $other . '` ' . $this->toString();
@@ -88,6 +91,7 @@ class ExitCode extends Constraint
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function additionalFailureDescription(mixed $other): string
     {
         return sprintf(

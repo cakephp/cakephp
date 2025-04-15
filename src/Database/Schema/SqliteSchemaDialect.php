@@ -169,6 +169,7 @@ class SqliteSchemaDialect extends SchemaDialect
      *    getting tables from.
      * @return array An array of (sql, params) to execute.
      */
+    #[\Override]
     public function listTablesSql(array $config): array
     {
         return [
@@ -198,6 +199,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeColumnSql(string $tableName, array $config): array
     {
         $sql = $this->describeColumnQuery($tableName);
@@ -208,6 +210,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
         $field = $this->_convertColumn($row['type']);
@@ -263,6 +266,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeColumns(string $tableName): array
     {
         $config = $this->_driver->config();
@@ -324,6 +328,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeIndexSql(string $tableName, array $config): array
     {
         $sql = $this->describeIndexQuery($tableName);
@@ -389,6 +394,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * @return void
      * @deprecated 5.2.0 Use `describeIndexes` instead.
      */
+    #[\Override]
     public function convertIndexDescription(TableSchema $schema, array $row): void
     {
         // Skip auto-indexes created for non-ROWID primary keys.
@@ -484,6 +490,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeIndexes(string $tableName): array
     {
         $config = $this->_driver->config();
@@ -553,6 +560,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeForeignKeySql(string $tableName, array $config): array
     {
         $sql = sprintf(
@@ -566,6 +574,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function convertForeignKeyDescription(TableSchema $schema, array $row): void
     {
         $sql = sprintf(
@@ -604,6 +613,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeForeignKeys(string $tableName): array
     {
         $config = $this->_driver->config();
@@ -657,6 +667,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeOptions(string $tableName): array
     {
         return [];
@@ -670,6 +681,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * @return string SQL fragment.
      * @throws \Cake\Database\Exception\DatabaseException when the column type is unknown
      */
+    #[\Override]
     public function columnSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getColumn($name);
@@ -709,6 +721,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * @param array $column The column metadata
      * @return string Generated SQL fragment for a column
      */
+    #[\Override]
     public function columnDefinitionSql(array $column): string
     {
         $name = $column['name'];
@@ -857,6 +870,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * @param string $name The name of the column.
      * @return string SQL fragment.
      */
+    #[\Override]
     public function constraintSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getConstraint($name);
@@ -914,6 +928,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * @param \Cake\Database\Schema\TableSchema $schema The table instance the foreign key constraints are.
      * @return array SQL fragment.
      */
+    #[\Override]
     public function addConstraintSql(TableSchema $schema): array
     {
         return [];
@@ -928,6 +943,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * @param \Cake\Database\Schema\TableSchema $schema The table instance the foreign key constraints are.
      * @return array SQL fragment.
      */
+    #[\Override]
     public function dropConstraintSql(TableSchema $schema): array
     {
         return [];
@@ -936,6 +952,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function indexSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getIndex($name);
@@ -956,6 +973,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function createTableSql(TableSchema $schema, array $columns, array $constraints, array $indexes): array
     {
         $lines = array_merge($columns, $constraints);
@@ -973,6 +991,7 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function truncateTableSql(TableSchema $schema): array
     {
         $name = $schema->name();

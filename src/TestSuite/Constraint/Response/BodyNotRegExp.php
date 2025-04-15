@@ -29,6 +29,7 @@ class BodyNotRegExp extends BodyRegExp
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         return parent::matches($other) === false;
@@ -39,6 +40,7 @@ class BodyNotRegExp extends BodyRegExp
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'PCRE pattern not found in response body';

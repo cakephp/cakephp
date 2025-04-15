@@ -64,6 +64,7 @@ class EventFiredWith extends Constraint
      * @return bool
      * @throws \PHPUnit\Framework\AssertionFailedError
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         $firedEvents = [];
@@ -110,6 +111,7 @@ class EventFiredWith extends Constraint
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return "was fired with `{$this->_dataKey}` matching `" . json_encode($this->_dataValue) . '`';

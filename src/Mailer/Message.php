@@ -1850,6 +1850,7 @@ class Message implements JsonSerializable
      * @return array Serializable array of configuration properties.
      * @throws \Exception When a view var object can not be properly serialized.
      */
+    #[\Override]
     public function jsonSerialize(): array
     {
         $array = [];

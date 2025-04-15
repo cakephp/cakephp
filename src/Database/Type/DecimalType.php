@@ -53,6 +53,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @return string|float|int|null
      * @throws \InvalidArgumentException
      */
+    #[\Override]
     public function toDatabase(mixed $value, Driver $driver): string|float|int|null
     {
         if ($value === null || $value === '') {
@@ -85,6 +86,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
+    #[\Override]
     public function toPHP(mixed $value, Driver $driver): ?string
     {
         if ($value === null) {
@@ -97,6 +99,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
@@ -113,6 +116,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function toStatement(mixed $value, Driver $driver): int
     {
         return PDO::PARAM_STR;
@@ -124,6 +128,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @return string|null Converted value.
      */
+    #[\Override]
     public function marshal(mixed $value): ?string
     {
         if ($value === null || $value === '') {

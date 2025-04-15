@@ -71,6 +71,7 @@ class StoppableIterator extends Collection
      *
      * @return bool
      */
+    #[\Override]
     public function valid(): bool
     {
         if (!parent::valid()) {
@@ -87,6 +88,7 @@ class StoppableIterator extends Collection
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function unwrap(): Iterator
     {
         $iterator = $this->_innerIterator;

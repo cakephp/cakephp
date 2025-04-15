@@ -29,6 +29,7 @@ class BodyNotContains extends BodyContains
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         return parent::matches($other) === false;
@@ -39,6 +40,7 @@ class BodyNotContains extends BodyContains
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'is not in response body';

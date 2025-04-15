@@ -36,6 +36,7 @@ class CallbackStream extends BaseCallbackStream
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getContents(): string
     {
         $callback = $this->detach();

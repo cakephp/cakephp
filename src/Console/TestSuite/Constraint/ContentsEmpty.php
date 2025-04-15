@@ -28,6 +28,7 @@ class ContentsEmpty extends ContentsBase
      * @param mixed $other Expected
      * @return bool
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         return $this->contents === '';
@@ -38,6 +39,7 @@ class ContentsEmpty extends ContentsBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf('%s is empty.', $this->output);
@@ -49,6 +51,7 @@ class ContentsEmpty extends ContentsBase
      * @param mixed $other Value
      * @return string
      */
+    #[\Override]
     protected function failureDescription(mixed $other): string
     {
         return $this->toString();
@@ -57,6 +60,7 @@ class ContentsEmpty extends ContentsBase
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function additionalFailureDescription(mixed $other): string
     {
         return sprintf("actual result:\n%s", $this->contents);

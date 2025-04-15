@@ -36,6 +36,7 @@ class MailContains extends MailConstraintBase
      * @param mixed $other Constraint check
      * @return bool
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         $other = preg_quote($other, '/');
@@ -87,6 +88,7 @@ class MailContains extends MailConstraintBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         if ($this->at) {

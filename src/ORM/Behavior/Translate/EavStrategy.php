@@ -171,6 +171,7 @@ class EavStrategy implements TranslateStrategyInterface
      * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
      */
+    #[\Override]
     public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void
     {
         $locale = Hash::get($options, 'locale', $this->getLocale());
@@ -238,6 +239,7 @@ class EavStrategy implements TranslateStrategyInterface
      * @param \ArrayObject<string, mixed> $options the options passed to the save method
      * @return void
      */
+    #[\Override]
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
         $locale = $entity->has('_locale') ? $entity->get('_locale') : $this->getLocale();
@@ -342,6 +344,7 @@ class EavStrategy implements TranslateStrategyInterface
      * @param string $field Field name to be aliased.
      * @return string
      */
+    #[\Override]
     public function translationField(string $field): string
     {
         $table = $this->table;
@@ -413,6 +416,7 @@ class EavStrategy implements TranslateStrategyInterface
      * @param \Cake\Collection\CollectionInterface $results Results to modify.
      * @return \Cake\Collection\CollectionInterface
      */
+    #[\Override]
     public function groupTranslations(CollectionInterface $results): CollectionInterface
     {
         return $results->map(function ($row) {

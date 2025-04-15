@@ -339,6 +339,7 @@ class Response implements ResponseInterface, Stringable
      *
      * @return int Status code.
      */
+    #[\Override]
     public function getStatusCode(): int
     {
         return $this->_status;
@@ -373,6 +374,7 @@ class Response implements ResponseInterface, Stringable
      * @return static
      * @throws \InvalidArgumentException For invalid status code arguments.
      */
+    #[\Override]
     public function withStatus(int $code, string $reasonPhrase = ''): static
     {
         $new = clone $this;
@@ -423,6 +425,7 @@ class Response implements ResponseInterface, Stringable
      * @link https://www.iana.org/assignments/http-status-codes/http-status-codes.xhtml
      * @return string Reason phrase; must return an empty string if none present.
      */
+    #[\Override]
     public function getReasonPhrase(): string
     {
         return $this->_reasonPhrase;
@@ -964,6 +967,7 @@ class Response implements ResponseInterface, Stringable
      *
      * @return string
      */
+    #[\Override]
     public function __toString(): string
     {
         $this->stream->rewind();

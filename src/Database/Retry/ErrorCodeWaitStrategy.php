@@ -50,6 +50,7 @@ class ErrorCodeWaitStrategy implements RetryStrategyInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function shouldRetry(Exception $exception, int $retryCount): bool
     {
         if (

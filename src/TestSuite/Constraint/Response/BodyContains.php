@@ -49,6 +49,7 @@ class BodyContains extends ResponseBase
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         $method = 'mb_strpos';
@@ -64,6 +65,7 @@ class BodyContains extends ResponseBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'is in response body';

@@ -229,6 +229,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return \Cake\Datasource\ResultSetInterface<\Cake\Datasource\EntityInterface|array>
      */
+    #[\Override]
     public function getIterator(): ResultSetInterface
     {
         return $this->all();
@@ -319,6 +320,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param string|null $alias the alias used to prefix the field
      * @return array<string, string>
      */
+    #[\Override]
     public function aliasField(string $field, ?string $alias = null): array
     {
         if (str_contains($field, '.')) {
@@ -342,6 +344,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param string|null $defaultAlias The default alias
      * @return array<int|string, string|\Cake\Database\Expression\IdentifierExpression>
      */
+    #[\Override]
     public function aliasFields(array $fields, ?string $defaultAlias = null): array
     {
         $aliased = [];
@@ -367,6 +370,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return \Cake\Datasource\ResultSetInterface<mixed>
      */
+    #[\Override]
     public function all(): ResultSetInterface
     {
         if ($this->_results !== null) {
@@ -393,6 +397,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return array
      */
+    #[\Override]
     public function toArray(): array
     {
         return $this->all()->toArray();
@@ -578,6 +583,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return mixed The first result from the ResultSet.
      */
+    #[\Override]
     public function first(): mixed
     {
         if ($this->_dirty) {
@@ -691,6 +697,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @return $this
      * @see getOptions()
      */
+    #[\Override]
     public function applyOptions(array $options)
     {
         $valid = [
@@ -796,6 +803,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param bool $overwrite whether to reset fields with passed list or not
      * @return $this
      */
+    #[\Override]
     public function select(
         ExpressionInterface|Table|Association|Closure|array|string|float|int $fields = [],
         bool $overwrite = false,
@@ -1374,6 +1382,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * Handles cloning eager loaders.
      */
+    #[\Override]
     public function __clone()
     {
         parent::__clone();
@@ -1391,6 +1400,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         return $this->_resultsCount ??= $this->_performCount();
@@ -1546,6 +1556,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(?ValueBinder $binder = null): string
     {
         $this->triggerBeforeFind();
@@ -1675,6 +1686,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @return static<TSubject> Returns a modified query.
      * @psalm-suppress MoreSpecificReturnType
      */
+    #[\Override]
     public function find(string $finder, mixed ...$args): static
     {
         $table = $this->getRepository();
@@ -1701,6 +1713,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return void
      */
+    #[\Override]
     protected function _dirty(): void
     {
         $this->_results = null;
@@ -1711,6 +1724,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function __debugInfo(): array
     {
         $eagerLoader = $this->getEagerLoader();
@@ -1733,6 +1747,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return \Cake\Datasource\ResultSetInterface<(\Cake\Datasource\EntityInterface|mixed)> The data to convert to JSON.
      */
+    #[\Override]
     public function jsonSerialize(): ResultSetInterface
     {
         return $this->all();

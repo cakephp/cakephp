@@ -102,6 +102,7 @@ class CookieCollection implements IteratorAggregate, Countable
      *
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         return count($this->cookies);
@@ -237,6 +238,7 @@ class CookieCollection implements IteratorAggregate, Countable
      *
      * @return \Traversable<string, \Cake\Http\Cookie\CookieInterface>
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->cookies);

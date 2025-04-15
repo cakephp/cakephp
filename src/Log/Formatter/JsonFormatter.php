@@ -32,6 +32,7 @@ class JsonFormatter extends AbstractFormatter
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function format($level, string $message, array $context = []): string
     {
         $log = ['date' => date($this->_config['dateFormat']), 'level' => (string)$level, 'message' => $message];

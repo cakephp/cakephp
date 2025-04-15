@@ -204,6 +204,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      */
+    #[\Override]
     protected function setUp(): void
     {
         parent::setUp();
@@ -224,6 +225,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @return void
      */
+    #[\Override]
     protected function tearDown(): void
     {
         parent::tearDown();
@@ -327,6 +329,7 @@ abstract class TestCase extends BaseTestCase
              * @param \Cake\Http\MiddlewareQueue $middlewareQueue
              * @return \Cake\Http\MiddlewareQueue
              */
+            #[\Override]
             public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
             {
                 return $middlewareQueue;

@@ -37,6 +37,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Used by shells like bash to autocomplete command name, options and arguments';
@@ -48,6 +49,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      * @param \Cake\Console\CommandCollection $commands The command collection
      * @return void
      */
+    #[\Override]
     public function setCommandCollection(CommandCollection $commands): void
     {
         $this->commands = $commands;
@@ -59,6 +61,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to build
      * @return \Cake\Console\ConsoleOptionParser
      */
+    #[\Override]
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $modes = [
@@ -103,6 +106,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         return match ($args->getArgument('mode')) {

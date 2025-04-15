@@ -31,6 +31,7 @@ class MailSubjectContains extends MailConstraintBase
      * @param mixed $other Constraint check
      * @return bool
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         if (!is_string($other)) {
@@ -75,6 +76,7 @@ class MailSubjectContains extends MailConstraintBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         if ($this->at) {

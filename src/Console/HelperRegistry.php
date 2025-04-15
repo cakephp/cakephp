@@ -54,6 +54,7 @@ class HelperRegistry extends ObjectRegistry
      * @param string $class Partial classname to resolve.
      * @return class-string<\Cake\Console\Helper>|null Either the correct class name or null.
      */
+    #[\Override]
     protected function _resolveClassName(string $class): ?string
     {
         /** @var class-string<\Cake\Console\Helper>|null */
@@ -71,6 +72,7 @@ class HelperRegistry extends ObjectRegistry
      * @return void
      * @throws \Cake\Console\Exception\MissingHelperException
      */
+    #[\Override]
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingHelperException([
@@ -89,6 +91,7 @@ class HelperRegistry extends ObjectRegistry
      * @param array<string, mixed> $config An array of settings to use for the helper.
      * @return \Cake\Console\Helper The constructed helper class.
      */
+    #[\Override]
     protected function _create(object|string $class, string $alias, array $config): Helper
     {
         if (is_object($class)) {

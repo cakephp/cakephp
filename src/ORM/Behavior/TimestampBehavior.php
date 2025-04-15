@@ -76,6 +76,7 @@ class TimestampBehavior extends Behavior
      * @param array<string, mixed> $config The config for this behavior.
      * @return void
      */
+    #[\Override]
     public function initialize(array $config): void
     {
         if (isset($config['events'])) {
@@ -130,6 +131,7 @@ class TimestampBehavior extends Behavior
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function implementedEvents(): array
     {
         /** @var array<string, mixed> */

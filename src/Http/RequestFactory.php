@@ -33,6 +33,7 @@ class RequestFactory implements RequestFactoryInterface
      * @return \Psr\Http\Message\RequestInterface
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function createRequest(string $method, $uri): RequestInterface
     {
         return new Request($uri, $method);

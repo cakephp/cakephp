@@ -29,6 +29,7 @@ class CacheListCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function defaultName(): string
     {
         return 'cache list';
@@ -37,6 +38,7 @@ class CacheListCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Show a list of configured caches.';
@@ -49,6 +51,7 @@ class CacheListCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
      * @return \Cake\Console\ConsoleOptionParser The built parser.
      */
+    #[\Override]
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
@@ -64,6 +67,7 @@ class CacheListCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $engines = Cache::configured();

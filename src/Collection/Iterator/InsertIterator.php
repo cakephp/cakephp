@@ -86,6 +86,7 @@ class InsertIterator extends Collection
      *
      * @return void
      */
+    #[\Override]
     public function next(): void
     {
         parent::next();
@@ -101,6 +102,7 @@ class InsertIterator extends Collection
      *
      * @return mixed
      */
+    #[\Override]
     public function current(): mixed
     {
         $row = parent::current();
@@ -127,6 +129,7 @@ class InsertIterator extends Collection
      *
      * @return void
      */
+    #[\Override]
     public function rewind(): void
     {
         parent::rewind();

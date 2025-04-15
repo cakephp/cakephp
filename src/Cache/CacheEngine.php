@@ -135,6 +135,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @throws \Cake\Cache\Exception\InvalidArgumentException If $keys is neither an array nor a Traversable,
      *   or if any of the $keys are not a legal value.
      */
+    #[\Override]
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         $this->ensureValidType($keys);
@@ -158,6 +159,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @throws \Cake\Cache\Exception\InvalidArgumentException If $values is neither an array nor a Traversable,
      *   or if any of the $values are not a legal value.
      */
+    #[\Override]
     public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
     {
         $this->ensureValidType($values, self::CHECK_KEY);
@@ -195,6 +197,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @throws \Cake\Cache\Exception\InvalidArgumentException If $keys is neither an array nor a Traversable,
      *   or if any of the $keys are not a legal value.
      */
+    #[\Override]
     public function deleteMultiple(iterable $keys): bool
     {
         $this->ensureValidType($keys);
@@ -221,6 +224,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return bool
      * @throws \Cake\Cache\Exception\InvalidArgumentException If the $key string is not a legal value.
      */
+    #[\Override]
     public function has(string $key): bool
     {
         return $this->get($key) !== null;
@@ -234,6 +238,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @return mixed The value of the item from the cache, or $default in case of cache miss.
      * @throws \Cake\Cache\Exception\InvalidArgumentException If the $key string is not a legal value.
      */
+    #[\Override]
     abstract public function get(string $key, mixed $default = null): mixed;
 
     /**
@@ -248,6 +253,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @throws \Cake\Cache\Exception\InvalidArgumentException
      *   MUST be thrown if the $key string is not a legal value.
      */
+    #[\Override]
     abstract public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool;
 
     /**
@@ -257,6 +263,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param int $offset How much to add
      * @return int|false New incremented value, false otherwise
      */
+    #[\Override]
     abstract public function increment(string $key, int $offset = 1): int|false;
 
     /**
@@ -266,6 +273,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param int $offset How much to subtract
      * @return int|false New incremented value, false otherwise
      */
+    #[\Override]
     abstract public function decrement(string $key, int $offset = 1): int|false;
 
     /**
@@ -274,6 +282,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
+    #[\Override]
     abstract public function delete(string $key): bool;
 
     /**
@@ -281,6 +290,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      *
      * @return bool True if the cache was successfully cleared, false otherwise
      */
+    #[\Override]
     abstract public function clear(): bool;
 
     /**
@@ -293,6 +303,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param mixed $value Data to be cached.
      * @return bool True if the data was successfully cached, false on failure.
      */
+    #[\Override]
     public function add(string $key, mixed $value): bool
     {
         $cachedValue = $this->get($key);
@@ -311,6 +322,7 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface
      * @param string $group name of the group to be cleared
      * @return bool
      */
+    #[\Override]
     abstract public function clearGroup(string $group): bool;
 
     /**

@@ -46,6 +46,7 @@ abstract class SerializedView extends View
      *
      * @return $this
      */
+    #[\Override]
     public function loadHelpers()
     {
         if (!$this->getConfig('serialize')) {
@@ -72,6 +73,7 @@ abstract class SerializedView extends View
      * @return string The rendered view.
      * @throws \Cake\View\Exception\SerializationFailureException When serialization fails.
      */
+    #[\Override]
     public function render(?string $template = null, string|false|null $layout = null): string
     {
         $serialize = $this->serializeKeys();

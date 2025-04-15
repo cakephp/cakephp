@@ -32,6 +32,7 @@ class ErrorController extends Controller
      *
      * @return array<string>
      */
+    #[\Override]
     public function viewClasses(): array
     {
         return [JsonView::class];
@@ -44,6 +45,7 @@ class ErrorController extends Controller
      * @return \Cake\Http\Response|null|void
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function beforeRender(EventInterface $event)
     {
         $builder = $this->viewBuilder();

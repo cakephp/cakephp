@@ -29,6 +29,7 @@ class BodyRegExp extends ResponseBase
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         return preg_match($other, $this->_getBodyAsString()) > 0;
@@ -39,6 +40,7 @@ class BodyRegExp extends ResponseBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'PCRE pattern found in response body';
@@ -48,6 +50,7 @@ class BodyRegExp extends ResponseBase
      * @param mixed $other Expected
      * @return string
      */
+    #[\Override]
     public function failureDescription(mixed $other): string
     {
         return '`' . $other . '`' . ' ' . $this->toString();

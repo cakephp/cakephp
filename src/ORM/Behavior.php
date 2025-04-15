@@ -262,6 +262,7 @@ class Behavior implements EventListenerInterface
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function implementedEvents(): array
     {
         $eventMap = [

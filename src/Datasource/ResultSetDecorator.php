@@ -31,6 +31,7 @@ class ResultSetDecorator extends Collection implements ResultSetInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function __debugInfo(): array
     {
         $parentInfo = parent::__debugInfo();

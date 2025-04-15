@@ -485,6 +485,7 @@ class QueryExpression implements ExpressionInterface, Countable
      *
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         return count($this->_conditions);
@@ -513,6 +514,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         $len = $this->count();
@@ -539,6 +541,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         foreach ($this->_conditions as $c) {

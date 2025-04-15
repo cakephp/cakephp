@@ -41,6 +41,7 @@ class EntityRoute extends Route
      *   directory.
      * @return string|null Either a string URL or null.
      */
+    #[\Override]
     public function match(array $url, array $context = []): ?string
     {
         if (!$this->_compiledRoute) {

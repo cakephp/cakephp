@@ -44,6 +44,7 @@ class QueryLogger extends BaseLog
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function log($level, string|Stringable $message, array $context = []): void
     {
         $context += [

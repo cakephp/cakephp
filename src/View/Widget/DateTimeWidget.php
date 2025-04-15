@@ -109,6 +109,7 @@ class DateTimeWidget extends BasicWidget
      * @param \Cake\View\Form\ContextInterface $context The current form context.
      * @return string HTML elements.
      */
+    #[\Override]
     public function render(array $data, ContextInterface $context): string
     {
         $data += $this->mergeDefaults($data, $context);
@@ -144,6 +145,7 @@ class DateTimeWidget extends BasicWidget
      * @param string $fieldName Field name.
      * @return array<string, mixed> Updated data array.
      */
+    #[\Override]
     protected function setStep(array $data, ContextInterface $context, string $fieldName): array
     {
         if (array_key_exists('step', $data)) {
@@ -234,6 +236,7 @@ class DateTimeWidget extends BasicWidget
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function secureFields(array $data): array
     {
         if (!isset($data['name']) || $data['name'] === '') {

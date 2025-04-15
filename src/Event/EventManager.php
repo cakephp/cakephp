@@ -99,6 +99,7 @@ class EventManager implements EventManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function on(
         EventListenerInterface|string $eventKey,
         callable|array $options = [],
@@ -153,6 +154,7 @@ class EventManager implements EventManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function off(
         EventListenerInterface|callable|string $eventKey,
         EventListenerInterface|callable|null $callable = null,
@@ -286,6 +288,7 @@ class EventManager implements EventManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function dispatch(EventInterface|string $event): EventInterface
     {
         if (is_string($event)) {
@@ -346,6 +349,7 @@ class EventManager implements EventManagerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function listeners(string $eventKey): array
     {
         $localListeners = [];

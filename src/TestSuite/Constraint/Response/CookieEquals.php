@@ -55,6 +55,7 @@ class CookieEquals extends ResponseBase
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         $cookie = $this->readCookie($this->cookieName);
@@ -67,6 +68,7 @@ class CookieEquals extends ResponseBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf("is in cookie '%s'", $this->cookieName);

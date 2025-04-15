@@ -41,6 +41,7 @@ class SpecialNode implements NodeInterface
      *
      * @return string
      */
+    #[\Override]
     public function getValue(): string
     {
         return $this->value;
@@ -49,6 +50,7 @@ class SpecialNode implements NodeInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getChildren(): array
     {
         return [];

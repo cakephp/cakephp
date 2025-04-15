@@ -42,6 +42,7 @@ class InflectedRoute extends Route
      * @param string $method The HTTP method being matched.
      * @return array|null An array of request parameters, or null on failure.
      */
+    #[\Override]
     public function parse(string $url, string $method = ''): ?array
     {
         $params = parent::parse($url, $method);
@@ -73,6 +74,7 @@ class InflectedRoute extends Route
      *   directory.
      * @return string|null Either a string URL for the parameters if they match or null.
      */
+    #[\Override]
     public function match(array $url, array $context = []): ?string
     {
         $url = $this->_underscore($url);

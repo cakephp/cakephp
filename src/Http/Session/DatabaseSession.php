@@ -89,6 +89,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param string $name The session name.
      * @return bool Success
      */
+    #[\Override]
     public function open(string $path, string $name): bool
     {
         return true;
@@ -99,6 +100,7 @@ class DatabaseSession implements SessionHandlerInterface
      *
      * @return bool Success
      */
+    #[\Override]
     public function close(): bool
     {
         return true;
@@ -110,6 +112,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in database.
      * @return string|false Session data or false if it does not exist.
      */
+    #[\Override]
     public function read(string $id): string|false
     {
         $pkField = $this->_table->getPrimaryKey();
@@ -145,6 +148,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param string $data The data to be saved.
      * @return bool True for successful write, false otherwise.
      */
+    #[\Override]
     public function write(string $id, string $data): bool
     {
         if (!$id) {
@@ -168,6 +172,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param string $id ID that uniquely identifies session in database.
      * @return bool True for successful delete, false otherwise.
      */
+    #[\Override]
     public function destroy(string $id): bool
     {
         /** @var string $pkField */
@@ -183,6 +188,7 @@ class DatabaseSession implements SessionHandlerInterface
      * @param int $max_lifetime Sessions that have not updated for the last maxlifetime seconds will be removed.
      * @return int|false The number of deleted sessions on success, or false on failure.
      */
+    #[\Override]
     public function gc(int $max_lifetime): int|false
     {
         return $this->_table->deleteAll(['expires <' => time()]);

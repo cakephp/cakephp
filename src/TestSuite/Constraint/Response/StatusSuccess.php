@@ -32,6 +32,7 @@ class StatusSuccess extends StatusCodeBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf('%d is between 200 and 308', $this->response->getStatusCode());

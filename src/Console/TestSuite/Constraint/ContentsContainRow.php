@@ -30,6 +30,7 @@ class ContentsContainRow extends ContentsRegExp
      * @param mixed $other Row
      * @return bool
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         $row = array_map(function ($cell) {
@@ -46,6 +47,7 @@ class ContentsContainRow extends ContentsRegExp
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf('row was in %s', $this->output);
@@ -55,6 +57,7 @@ class ContentsContainRow extends ContentsRegExp
      * @param mixed $other Expected content
      * @return string
      */
+    #[\Override]
     public function failureDescription(mixed $other): string
     {
         return '`' . (new Exporter())->shortenedExport($other) . '` ' . $this->toString();

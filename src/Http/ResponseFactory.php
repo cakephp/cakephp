@@ -32,6 +32,7 @@ class ResponseFactory implements ResponseFactoryInterface
      *   in the generated response. If none is provided, implementations MAY use
      *   the defaults as suggested in the HTTP specification.
      */
+    #[\Override]
     public function createResponse(int $code = 200, string $reasonPhrase = ''): ResponseInterface
     {
         return (new Response())->withStatus($code, $reasonPhrase);

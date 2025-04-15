@@ -183,6 +183,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         $fields = '';
@@ -205,6 +206,7 @@ class CommonTableExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         $callback($this->name);

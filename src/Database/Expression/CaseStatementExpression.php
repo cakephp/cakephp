@@ -439,6 +439,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      * @return string
      * @see CaseStatementExpression::then()
      */
+    #[\Override]
     public function getReturnType(): string
     {
         if ($this->returnType !== null) {
@@ -475,6 +476,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      * @param string $type The type name to use.
      * @return $this
      */
+    #[\Override]
     public function setReturnType(string $type)
     {
         $this->returnType = $type;
@@ -515,6 +517,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         if ($this->whenBuffer !== null) {
@@ -544,6 +547,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         if ($this->whenBuffer !== null) {

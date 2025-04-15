@@ -31,6 +31,7 @@ class SqliteStatement extends Statement
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function execute(?array $params = null): bool
     {
         $this->affectedRows = null;
@@ -41,6 +42,7 @@ class SqliteStatement extends Statement
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function rowCount(): int
     {
         if ($this->affectedRows !== null) {

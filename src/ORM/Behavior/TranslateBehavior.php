@@ -128,6 +128,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param array<string, mixed> $config The config for this behavior.
      * @return void
      */
+    #[\Override]
     public function initialize(array $config): void
     {
         $this->getStrategy();
@@ -210,6 +211,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function implementedEvents(): array
     {
         return [
@@ -262,6 +264,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param array<string, mixed> $options The options array used in the marshalling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
      */
+    #[\Override]
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
     {
         return $this->getStrategy()->buildMarshalMap($marshaller, $map, $options);

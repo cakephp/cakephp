@@ -58,6 +58,7 @@ class ScalarNode implements NodeInterface
      *
      * @return resource|string|float|int|bool|null
      */
+    #[\Override]
     public function getValue(): mixed
     {
         return $this->value;
@@ -66,6 +67,7 @@ class ScalarNode implements NodeInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getChildren(): array
     {
         return [];

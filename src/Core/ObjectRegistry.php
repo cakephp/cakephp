@@ -385,6 +385,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @return \Traversable
      * @psalm-return \Traversable<string, TObject>
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->_loaded);
@@ -395,6 +396,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         return count($this->_loaded);

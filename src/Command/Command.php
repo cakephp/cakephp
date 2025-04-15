@@ -42,6 +42,7 @@ class Command extends BaseCommand
      * @return int|null|void The exit code or null for success
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io)
     {
     }

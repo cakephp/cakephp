@@ -33,6 +33,7 @@ class SprintfFormatter implements FormatterInterface
      * @param array $tokenValues The list of values to interpolate in the message
      * @return string The formatted message
      */
+    #[\Override]
     public function format(string $locale, string $message, array $tokenValues): string
     {
         return vsprintf($message, $tokenValues);

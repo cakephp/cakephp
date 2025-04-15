@@ -93,6 +93,7 @@ class Event implements EventInterface
      *
      * @return string
      */
+    #[\Override]
     public function getName(): string
     {
         return $this->_name;
@@ -107,6 +108,7 @@ class Event implements EventInterface
      * @throws \Cake\Core\Exception\CakeException
      * @psalm-return TSubject
      */
+    #[\Override]
     public function getSubject(): object
     {
         if ($this->_subject === null) {
@@ -121,6 +123,7 @@ class Event implements EventInterface
      *
      * @return void
      */
+    #[\Override]
     public function stopPropagation(): void
     {
         $this->_stopped = true;
@@ -131,6 +134,7 @@ class Event implements EventInterface
      *
      * @return bool True if the event is stopped
      */
+    #[\Override]
     public function isStopped(): bool
     {
         return $this->_stopped;
@@ -141,6 +145,7 @@ class Event implements EventInterface
      *
      * @return mixed
      */
+    #[\Override]
     public function getResult(): mixed
     {
         return $this->result;
@@ -154,6 +159,7 @@ class Event implements EventInterface
      * @param mixed $value The value to set.
      * @return $this
      */
+    #[\Override]
     public function setResult(mixed $value = null)
     {
         $this->result = $value;
@@ -164,6 +170,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getData(?string $key = null): mixed
     {
         if ($key !== null) {
@@ -176,6 +183,7 @@ class Event implements EventInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function setData(array|string $key, $value = null)
     {
         if (is_array($key)) {

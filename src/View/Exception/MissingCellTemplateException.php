@@ -58,6 +58,7 @@ class MissingCellTemplateException extends MissingTemplateException
      * @return array<string, mixed>
      * @psalm-return array{name: string, file: string, paths: array<string>}
      */
+    #[\Override]
     public function getAttributes(): array
     {
         return [

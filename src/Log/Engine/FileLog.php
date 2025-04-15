@@ -121,6 +121,7 @@ class FileLog extends BaseLog
      * @see \Cake\Log\Log::$_levels
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function log($level, Stringable|string $message, array $context = []): void
     {
         $message = $this->interpolate($message, $context);

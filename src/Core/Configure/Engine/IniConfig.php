@@ -95,6 +95,7 @@ class IniConfig implements ConfigEngineInterface
      * @throws \Cake\Core\Exception\CakeException when files don't exist.
      *  Or when files contain '..' as this could lead to abusive reads.
      */
+    #[\Override]
     public function read(string $key): array
     {
         $file = $this->_getFilePath($key, true);
@@ -155,6 +156,7 @@ class IniConfig implements ConfigEngineInterface
      * @param array $data The data to convert to ini file.
      * @return bool Success.
      */
+    #[\Override]
     public function dump(string $key, array $data): bool
     {
         $result = [];

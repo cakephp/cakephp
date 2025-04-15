@@ -379,6 +379,7 @@ class AssociationCollection implements IteratorAggregate
      *
      * @return \Traversable<string, \Cake\ORM\Association>
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->_items);

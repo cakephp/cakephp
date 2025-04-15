@@ -66,6 +66,7 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
      *
      * @return \Psr\Http\Message\ResponseInterface|string
      */
+    #[\Override]
     public function render(): ResponseInterface|string
     {
         $exceptions = [$this->error];
@@ -132,6 +133,7 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
      * @param \Psr\Http\Message\ResponseInterface|string $output The output to print.
      * @return void
      */
+    #[\Override]
     public function write(ResponseInterface|string $output): void
     {
         if (is_string($output)) {

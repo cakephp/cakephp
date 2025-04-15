@@ -608,6 +608,7 @@ class ViewBuilder implements JsonSerializable
      *
      * @return array Serializable array of configuration properties.
      */
+    #[\Override]
     public function jsonSerialize(): array
     {
         $properties = [

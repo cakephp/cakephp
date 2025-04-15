@@ -192,6 +192,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param string $index name of the rule
      * @return bool
      */
+    #[\Override]
     public function offsetExists(mixed $index): bool
     {
         return isset($this->_rules[$index]);
@@ -203,6 +204,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param string $index name of the rule
      * @return \Cake\Validation\ValidationRule
      */
+    #[\Override]
     public function offsetGet(mixed $index): ValidationRule
     {
         return $this->_rules[$index];
@@ -215,6 +217,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param \Cake\Validation\ValidationRule|array $value Rule to add to $index
      * @return void
      */
+    #[\Override]
     public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->add($offset, $value);
@@ -226,6 +229,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param string $index name of the rule
      * @return void
      */
+    #[\Override]
     public function offsetUnset(mixed $index): void
     {
         unset($this->_rules[$index]);
@@ -236,6 +240,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      *
      * @return \Traversable<string, \Cake\Validation\ValidationRule>
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->_rules);
@@ -246,6 +251,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      *
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         return count($this->_rules);

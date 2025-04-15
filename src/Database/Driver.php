@@ -1046,6 +1046,7 @@ abstract class Driver implements LoggerAwareInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function setLogger(LoggerInterface $logger): void
     {
         $this->logger = $logger;

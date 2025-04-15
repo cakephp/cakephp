@@ -81,6 +81,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      * @return \Psr\Http\Message\ResponseInterface A response.
      * @throws \Cake\Http\Exception\BadRequestException
      */
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($request instanceof ServerRequest && is_array($this->config['trustedProxies'])) {

@@ -69,6 +69,7 @@ class Stream implements AdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function send(RequestInterface $request, array $options): array
     {
         $this->_stream = null;

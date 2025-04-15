@@ -58,6 +58,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function count(): int
     {
         return $this->params['count'];
@@ -80,6 +81,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
      *
      * @return \Traversable<T> The paginated items result set.
      */
+    #[\Override]
     public function items(): Traversable
     {
         return $this->results;
@@ -90,6 +92,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
      *
      * @return array
      */
+    #[\Override]
     public function jsonSerialize(): array
     {
         return iterator_to_array($this->items());
@@ -98,6 +101,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function totalCount(): ?int
     {
         return $this->params['totalCount'];
@@ -106,6 +110,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function perPage(): int
     {
         return $this->params['perPage'];
@@ -114,6 +119,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function pageCount(): ?int
     {
         return $this->params['pageCount'];
@@ -122,6 +128,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function currentPage(): int
     {
         return $this->params['currentPage'];
@@ -130,6 +137,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function hasPrevPage(): bool
     {
         return $this->params['hasPrevPage'];
@@ -138,6 +146,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function hasNextPage(): bool
     {
         return $this->params['hasNextPage'];
@@ -146,6 +155,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function pagingParam(string $name): mixed
     {
         return $this->params[$name] ?? null;
@@ -154,6 +164,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function pagingParams(): array
     {
         return $this->params;
@@ -162,6 +173,7 @@ class PaginatedResultSet implements IteratorAggregate, JsonSerializable, Paginat
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         return $this->results;

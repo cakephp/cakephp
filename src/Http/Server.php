@@ -175,6 +175,7 @@ class Server implements EventDispatcherInterface
      *
      * @return \Cake\Event\EventManagerInterface
      */
+    #[\Override]
     public function getEventManager(): EventManagerInterface
     {
         if ($this->app instanceof EventDispatcherInterface) {
@@ -193,6 +194,7 @@ class Server implements EventDispatcherInterface
      * @return $this
      * @throws \InvalidArgumentException
      */
+    #[\Override]
     public function setEventManager(EventManagerInterface $eventManager)
     {
         if ($this->app instanceof EventDispatcherInterface) {

@@ -28,6 +28,7 @@ class VersionCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Show the CakePHP version.';
@@ -40,6 +41,7 @@ class VersionCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $io->out(Configure::version());

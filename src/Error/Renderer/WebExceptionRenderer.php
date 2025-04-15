@@ -210,6 +210,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      *
      * @return \Psr\Http\Message\ResponseInterface The response to be sent.
      */
+    #[\Override]
     public function render(): ResponseInterface
     {
         $exception = $this->error;
@@ -283,6 +284,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
      * @param \Psr\Http\Message\ResponseInterface|string $output The response to output.
      * @return void
      */
+    #[\Override]
     public function write(ResponseInterface|string $output): void
     {
         if (is_string($output)) {

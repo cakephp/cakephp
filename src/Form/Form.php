@@ -122,6 +122,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function implementedEvents(): array
     {
         if (method_exists($this, 'buildValidator')) {

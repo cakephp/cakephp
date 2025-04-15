@@ -29,6 +29,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function init(array $config = []): bool
     {
         return true;
@@ -37,6 +38,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         return true;
@@ -45,6 +47,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function setMultiple(iterable $values, DateInterval|int|null $ttl = null): bool
     {
         return true;
@@ -53,6 +56,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function get(string $key, mixed $default = null): mixed
     {
         return $default;
@@ -61,6 +65,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
         $result = [];
@@ -75,6 +80,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function increment(string $key, int $offset = 1): int|false
     {
         return 1;
@@ -83,6 +89,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function decrement(string $key, int $offset = 1): int|false
     {
         return 0;
@@ -91,6 +98,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function delete(string $key): bool
     {
         return true;
@@ -99,6 +107,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function deleteMultiple(iterable $keys): bool
     {
         return true;
@@ -107,6 +116,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function clear(): bool
     {
         return true;
@@ -115,6 +125,7 @@ class NullEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function clearGroup(string $group): bool
     {
         return true;

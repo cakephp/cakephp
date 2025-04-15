@@ -166,6 +166,7 @@ class EntityContext implements ContextInterface
      *
      * @return array<string>
      */
+    #[\Override]
     public function getPrimaryKey(): array
     {
         return (array)$this->_tables[$this->_rootName]->getPrimaryKey();
@@ -174,6 +175,7 @@ class EntityContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isPrimaryKey(string $field): bool
     {
         $parts = explode('.', $field);
@@ -197,6 +199,7 @@ class EntityContext implements ContextInterface
      *
      * @return bool
      */
+    #[\Override]
     public function isCreate(): bool
     {
         $entity = $this->_context['entity'];
@@ -227,6 +230,7 @@ class EntityContext implements ContextInterface
      *     schema should be used if it's not explicitly provided.
      * @return mixed The value of the field or null on a miss.
      */
+    #[\Override]
     public function val(string $field, array $options = []): mixed
     {
         $options += [
@@ -477,6 +481,7 @@ class EntityContext implements ContextInterface
      * @param string $field The dot separated path to the field you want to check.
      * @return bool|null
      */
+    #[\Override]
     public function isRequired(string $field): ?bool
     {
         $parts = explode('.', $field);
@@ -502,6 +507,7 @@ class EntityContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getRequiredMessage(string $field): ?string
     {
         $parts = explode('.', $field);
@@ -526,6 +532,7 @@ class EntityContext implements ContextInterface
      * @param string $field The dot separated path to the field you want to check.
      * @return int|null
      */
+    #[\Override]
     public function getMaxLength(string $field): ?int
     {
         $parts = explode('.', $field);
@@ -555,6 +562,7 @@ class EntityContext implements ContextInterface
      *
      * @return array<string> Array of field names in the table/entity.
      */
+    #[\Override]
     public function fieldNames(): array
     {
         $table = $this->_getTable('0');
@@ -671,6 +679,7 @@ class EntityContext implements ContextInterface
      * @return string|null An abstract data type or null.
      * @see \Cake\Database\TypeFactory
      */
+    #[\Override]
     public function type(string $field): ?string
     {
         $parts = explode('.', $field);
@@ -685,6 +694,7 @@ class EntityContext implements ContextInterface
      * @param string $field A dot separated path to get additional data on.
      * @return array An array of data describing the additional attributes on a field.
      */
+    #[\Override]
     public function attributes(string $field): array
     {
         $parts = explode('.', $field);
@@ -705,6 +715,7 @@ class EntityContext implements ContextInterface
      * @param string $field A dot separated path to check errors on.
      * @return bool Returns true if the errors for the field are not empty.
      */
+    #[\Override]
     public function hasError(string $field): bool
     {
         return $this->error($field) !== [];
@@ -716,6 +727,7 @@ class EntityContext implements ContextInterface
      * @param string $field A dot separated path to check errors on.
      * @return array An array of errors.
      */
+    #[\Override]
     public function error(string $field): array
     {
         $parts = explode('.', $field);

@@ -47,6 +47,7 @@ class TextExceptionRenderer implements ExceptionRendererInterface
      *
      * @return \Psr\Http\Message\ResponseInterface|string
      */
+    #[\Override]
     public function render(): ResponseInterface|string
     {
         return sprintf(
@@ -65,6 +66,7 @@ class TextExceptionRenderer implements ExceptionRendererInterface
      * @param \Psr\Http\Message\ResponseInterface|string $output The output to print.
      * @return void
      */
+    #[\Override]
     public function write(ResponseInterface|string $output): void
     {
         assert(is_string($output));

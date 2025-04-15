@@ -191,6 +191,7 @@ class SmtpTransport extends AbstractTransport
      * @return array{headers: string, message: string}
      * @throws \Cake\Network\Exception\SocketException
      */
+    #[\Override]
     public function send(Message $message): array
     {
         $this->checkRecipient($message);

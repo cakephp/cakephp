@@ -66,6 +66,7 @@ class Runner implements RequestHandlerInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request The server request
      * @return \Psr\Http\Message\ResponseInterface An updated response
      */
+    #[\Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         if (

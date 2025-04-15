@@ -51,6 +51,7 @@ class UrlHelper extends Helper
      * @param array<string, mixed> $config The configuration settings provided to this helper.
      * @return void
      */
+    #[\Override]
     public function initialize(array $config): void
     {
         parent::initialize($config);
@@ -252,6 +253,7 @@ class UrlHelper extends Helper
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function implementedEvents(): array
     {
         return [];

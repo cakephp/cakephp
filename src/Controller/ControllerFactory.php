@@ -69,6 +69,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * @return \Cake\Controller\Controller
      * @throws \Cake\Http\Exception\MissingControllerException
      */
+    #[\Override]
     public function create(ServerRequestInterface $request): Controller
     {
         assert($request instanceof ServerRequest);
@@ -125,6 +126,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * @throws \Cake\Controller\Exception\MissingActionException If controller action is not found.
      * @throws \UnexpectedValueException If return value of action method is not null or ResponseInterface instance.
      */
+    #[\Override]
     public function invoke(mixed $controller): ResponseInterface
     {
         $this->controller = $controller;
@@ -147,6 +149,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * @param \Psr\Http\Message\ServerRequestInterface $request Request instance.
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[\Override]
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
         assert($request instanceof ServerRequest);

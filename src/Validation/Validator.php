@@ -377,6 +377,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field name of the field to check
      * @return bool
      */
+    #[\Override]
     public function offsetExists(mixed $field): bool
     {
         return isset($this->_fields[$field]);
@@ -388,6 +389,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string|int $field name of the field to check
      * @return \Cake\Validation\ValidationSet
      */
+    #[\Override]
     public function offsetGet(mixed $field): ValidationSet
     {
         return $this->field((string)$field);
@@ -400,6 +402,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param \Cake\Validation\ValidationSet|array $value set of rules to apply to field
      * @return void
      */
+    #[\Override]
     public function offsetSet(mixed $offset, mixed $value): void
     {
         if (!$value instanceof ValidationSet) {
@@ -418,6 +421,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param string $field name of the field to unset
      * @return void
      */
+    #[\Override]
     public function offsetUnset(mixed $field): void
     {
         unset($this->_fields[$field]);
@@ -428,6 +432,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @return \Traversable<string, \Cake\Validation\ValidationSet>
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->_fields);
@@ -438,6 +443,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         return count($this->_fields);

@@ -29,6 +29,7 @@ class MailContainsAttachment extends MailContains
      * @param mixed $other Constraint check
      * @return bool
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         [$expectedFilename, $expectedFileInfo] = $other;
@@ -53,6 +54,7 @@ class MailContainsAttachment extends MailContains
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         if ($this->at) {
@@ -68,6 +70,7 @@ class MailContainsAttachment extends MailContains
      * @param mixed $other Value
      * @return string
      */
+    #[\Override]
     protected function failureDescription(mixed $other): string
     {
         [$expectedFilename] = $other;

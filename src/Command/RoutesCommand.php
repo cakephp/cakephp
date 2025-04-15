@@ -29,6 +29,7 @@ class RoutesCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Get the list of routes connected in this application.';
@@ -42,6 +43,7 @@ class RoutesCommand extends Command
      * @return int|null The exit code or null for success
      * @throws \JsonException
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $header = ['Route name', 'URI template', 'Plugin', 'Prefix', 'Controller', 'Action', 'Method(s)'];
@@ -141,6 +143,7 @@ class RoutesCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
      * @return \Cake\Console\ConsoleOptionParser
      */
+    #[\Override]
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser

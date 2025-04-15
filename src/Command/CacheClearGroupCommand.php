@@ -32,6 +32,7 @@ class CacheClearGroupCommand extends Command
      *
      * @return string
      */
+    #[\Override]
     public static function defaultName(): string
     {
         return 'cache clear_group';
@@ -40,6 +41,7 @@ class CacheClearGroupCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Clear all data in a single cache group.';
@@ -52,6 +54,7 @@ class CacheClearGroupCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
      * @return \Cake\Console\ConsoleOptionParser The built parser.
      */
+    #[\Override]
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
@@ -75,6 +78,7 @@ class CacheClearGroupCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $group = (string)$args->getArgument('group');

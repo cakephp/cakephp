@@ -28,6 +28,7 @@ class ContentsContain extends ContentsBase
      * @param mixed $other Expected
      * @return bool
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         return mb_strpos($this->contents, $other) !== false;
@@ -38,6 +39,7 @@ class ContentsContain extends ContentsBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf('is in %s.', $this->output);
@@ -46,6 +48,7 @@ class ContentsContain extends ContentsBase
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function additionalFailureDescription(mixed $other): string
     {
         return sprintf("actual result:\n%s", $this->contents);

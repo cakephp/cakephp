@@ -119,11 +119,13 @@ abstract class BaseApplication implements
      * @param \Cake\Http\MiddlewareQueue $middlewareQueue The middleware queue to set in your App Class
      * @return \Cake\Http\MiddlewareQueue
      */
+    #[\Override]
     abstract public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue;
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function pluginMiddleware(MiddlewareQueue $middleware): MiddlewareQueue
     {
         foreach ($this->plugins->with('middleware') as $plugin) {
@@ -136,6 +138,7 @@ abstract class BaseApplication implements
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function addPlugin($name, array $config = [])
     {
         if (is_string($name)) {
@@ -181,6 +184,7 @@ abstract class BaseApplication implements
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function bootstrap(): void
     {
         require_once $this->configDir . 'bootstrap.php';
@@ -195,6 +199,7 @@ abstract class BaseApplication implements
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function pluginBootstrap(): void
     {
         foreach ($this->plugins->with('bootstrap') as $plugin) {
@@ -210,6 +215,7 @@ abstract class BaseApplication implements
      * @param \Cake\Routing\RouteBuilder $routes A route builder to add routes into.
      * @return void
      */
+    #[\Override]
     public function routes(RouteBuilder $routes): void
     {
         // Only load routes if the router is empty
@@ -224,6 +230,7 @@ abstract class BaseApplication implements
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function pluginRoutes(RouteBuilder $routes): RouteBuilder
     {
         foreach ($this->plugins->with('routes') as $plugin) {
@@ -242,6 +249,7 @@ abstract class BaseApplication implements
      * @param \Cake\Console\CommandCollection $commands The CommandCollection to add commands into.
      * @return \Cake\Console\CommandCollection The updated collection.
      */
+    #[\Override]
     public function console(CommandCollection $commands): CommandCollection
     {
         return $commands->addMany($commands->autoDiscover());
@@ -250,6 +258,7 @@ abstract class BaseApplication implements
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function pluginConsole(CommandCollection $commands): CommandCollection
     {
         foreach ($this->plugins->with('console') as $plugin) {
@@ -263,6 +272,7 @@ abstract class BaseApplication implements
      * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
      * @return \Cake\Event\EventManagerInterface
      */
+    #[\Override]
     public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
     {
         foreach ($this->plugins->with('events') as $plugin) {
@@ -280,6 +290,7 @@ abstract class BaseApplication implements
      *
      * @return \Cake\Core\ContainerInterface
      */
+    #[\Override]
     public function getContainer(): ContainerInterface
     {
         return $this->container ??= $this->buildContainer();
@@ -315,6 +326,7 @@ abstract class BaseApplication implements
      * @param \Cake\Core\ContainerInterface $container The Container to update.
      * @return void
      */
+    #[\Override]
     public function services(ContainerInterface $container): void
     {
     }
@@ -325,6 +337,7 @@ abstract class BaseApplication implements
      * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
      * @return \Cake\Event\EventManagerInterface
      */
+    #[\Override]
     public function events(EventManagerInterface $eventManager): EventManagerInterface
     {
         return $eventManager;
@@ -340,6 +353,7 @@ abstract class BaseApplication implements
      * @param \Psr\Http\Message\ServerRequestInterface $request The request
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[\Override]
     public function handle(
         ServerRequestInterface $request,
     ): ResponseInterface {

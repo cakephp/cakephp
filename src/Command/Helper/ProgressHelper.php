@@ -80,6 +80,7 @@ class ProgressHelper extends Helper
      * @param array $args The arguments/options to use when outputting the progress bar.
      * @return void
      */
+    #[\Override]
     public function output(array $args): void
     {
         $args += ['callback' => null];

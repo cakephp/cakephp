@@ -39,6 +39,7 @@ class Curl implements AdapterInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function send(RequestInterface $request, array $options): array
     {
         if (!extension_loaded('curl')) {

@@ -108,6 +108,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      * @return $this
      * @psalm-suppress MoreSpecificImplementedParamType
      */
+    #[\Override]
     public function add(ExpressionInterface|array|string $conditions, array $types = [], bool $prepend = false)
     {
         $put = $prepend ? 'array_unshift' : 'array_push';
@@ -144,6 +145,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         $parts = [];
@@ -172,6 +174,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
      *
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         return 1 + count($this->_conditions);

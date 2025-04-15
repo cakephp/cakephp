@@ -86,6 +86,7 @@ class FileEngine extends CacheEngine
      * @param array<string, mixed> $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
      */
+    #[\Override]
     public function init(array $config = []): bool
     {
         parent::init($config);
@@ -111,6 +112,7 @@ class FileEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool True on success and false on failure.
      */
+    #[\Override]
     public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         if ($value === '' || !$this->_init) {
@@ -155,6 +157,7 @@ class FileEngine extends CacheEngine
      * @return mixed The cached data, or default value if the data doesn't exist, has
      *   expired, or if there was an error fetching it
      */
+    #[\Override]
     public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->_key($key);
@@ -207,6 +210,7 @@ class FileEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't
      *   exist or couldn't be removed
      */
+    #[\Override]
     public function delete(string $key): bool
     {
         $key = $this->_key($key);
@@ -232,6 +236,7 @@ class FileEngine extends CacheEngine
      *
      * @return bool True if the cache was successfully cleared, false otherwise
      */
+    #[\Override]
     public function clear(): bool
     {
         if (!$this->_init) {
@@ -331,6 +336,7 @@ class FileEngine extends CacheEngine
      * @return int|false
      * @throws \LogicException
      */
+    #[\Override]
     public function decrement(string $key, int $offset = 1): int|false
     {
         throw new LogicException('Files cannot be atomically decremented.');
@@ -344,6 +350,7 @@ class FileEngine extends CacheEngine
      * @return int|false
      * @throws \LogicException
      */
+    #[\Override]
     public function increment(string $key, int $offset = 1): int|false
     {
         throw new LogicException('Files cannot be atomically incremented.');
@@ -433,6 +440,7 @@ class FileEngine extends CacheEngine
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _key(string $key): string
     {
         $key = parent::_key($key);
@@ -446,6 +454,7 @@ class FileEngine extends CacheEngine
      * @param string $group The group to clear.
      * @return bool success
      */
+    #[\Override]
     public function clearGroup(string $group): bool
     {
         unset($this->_File);

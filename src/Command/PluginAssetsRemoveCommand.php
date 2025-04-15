@@ -32,6 +32,7 @@ class PluginAssetsRemoveCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function defaultName(): string
     {
         return 'plugin assets remove';
@@ -40,6 +41,7 @@ class PluginAssetsRemoveCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function getDescription(): string
     {
         return "Remove plugin assets from app's webroot.";
@@ -54,6 +56,7 @@ class PluginAssetsRemoveCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $this->io = $io;
@@ -82,6 +85,7 @@ class PluginAssetsRemoveCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
      * @return \Cake\Console\ConsoleOptionParser
      */
+    #[\Override]
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(

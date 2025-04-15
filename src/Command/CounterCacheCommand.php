@@ -28,6 +28,7 @@ class CounterCacheCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function defaultName(): string
     {
         return 'counter_cache';
@@ -36,6 +37,7 @@ class CounterCacheCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Update counter cache for a model.';
@@ -51,6 +53,7 @@ class CounterCacheCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int The exit code or null for success
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): int
     {
         $table = $this->fetchTable($args->getArgument('model'));
@@ -83,6 +86,7 @@ class CounterCacheCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(static::getDescription())

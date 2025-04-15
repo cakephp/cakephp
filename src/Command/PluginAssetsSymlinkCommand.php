@@ -32,6 +32,7 @@ class PluginAssetsSymlinkCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function defaultName(): string
     {
         return 'plugin assets symlink';
@@ -40,6 +41,7 @@ class PluginAssetsSymlinkCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function getDescription(): string
     {
         return "Symlink (copy as fallback) plugin assets to app's webroot.";
@@ -56,6 +58,7 @@ class PluginAssetsSymlinkCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $this->io = $io;
@@ -74,6 +77,7 @@ class PluginAssetsSymlinkCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
      * @return \Cake\Console\ConsoleOptionParser
      */
+    #[\Override]
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(

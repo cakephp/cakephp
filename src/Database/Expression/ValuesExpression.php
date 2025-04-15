@@ -211,6 +211,7 @@ class ValuesExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         if (!$this->_values && $this->_query === null) {
@@ -262,6 +263,7 @@ class ValuesExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         if ($this->_query) {

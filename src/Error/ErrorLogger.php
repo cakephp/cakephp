@@ -58,6 +58,7 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function log($level, Stringable|string $message, array $context = []): void
     {
         Log::write($level, $message, $context);
@@ -66,6 +67,7 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function logError(PhpError $error, ?ServerRequestInterface $request = null, bool $includeTrace = false): void
     {
         $message = $this->getErrorMessage($error, $includeTrace);
@@ -112,6 +114,7 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function logException(
         Throwable $exception,
         ?ServerRequestInterface $request = null,

@@ -35,6 +35,7 @@ class TransportRegistry extends ObjectRegistry
      * @param string $class Partial classname to resolve or transport instance.
      * @return class-string<\Cake\Mailer\AbstractTransport>|null Either the correct classname or null.
      */
+    #[\Override]
     protected function _resolveClassName(string $class): ?string
     {
         /** @var class-string<\Cake\Mailer\AbstractTransport>|null */
@@ -51,6 +52,7 @@ class TransportRegistry extends ObjectRegistry
      * @return void
      * @throws \BadMethodCallException
      */
+    #[\Override]
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new BadMethodCallException(sprintf('Mailer transport `%s` is not available.', $class));
@@ -66,6 +68,7 @@ class TransportRegistry extends ObjectRegistry
      * @param array<string, mixed> $config An array of settings to use for the cache engine.
      * @return \Cake\Mailer\AbstractTransport The constructed transport class.
      */
+    #[\Override]
     protected function _create(object|string $class, string $alias, array $config): AbstractTransport
     {
         if (is_object($class)) {
@@ -81,6 +84,7 @@ class TransportRegistry extends ObjectRegistry
      * @param string $name The adapter name.
      * @return $this
      */
+    #[\Override]
     public function unload(string $name)
     {
         unset($this->_loaded[$name]);

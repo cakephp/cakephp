@@ -110,6 +110,7 @@ class Sqlserver extends Driver
      * @throws \InvalidArgumentException if an unsupported setting is in the driver config
      * @return void
      */
+    #[\Override]
     public function connect(): void
     {
         if ($this->pdo !== null) {
@@ -182,6 +183,7 @@ class Sqlserver extends Driver
      *
      * @return bool true if it is valid to use this driver
      */
+    #[\Override]
     public function enabled(): bool
     {
         return in_array('sqlsrv', PDO::getAvailableDrivers(), true);
@@ -190,6 +192,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function prepare(Query|string $query): StatementInterface
     {
         $options = [
@@ -227,6 +230,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function savePointSQL($name): string
     {
         return 'SAVE TRANSACTION t' . $name;
@@ -235,6 +239,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function releaseSavePointSQL($name): string
     {
         // SQLServer has no release save point operation.
@@ -244,6 +249,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function rollbackSavePointSQL($name): string
     {
         return 'ROLLBACK TRANSACTION t' . $name;
@@ -252,6 +258,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function disableForeignKeySQL(): string
     {
         return 'EXEC sp_MSforeachtable "ALTER TABLE ? NOCHECK CONSTRAINT all"';
@@ -260,6 +267,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function enableForeignKeySQL(): string
     {
         return 'EXEC sp_MSforeachtable "ALTER TABLE ? WITH CHECK CHECK CONSTRAINT all"';
@@ -268,6 +276,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function supports(DriverFeatureEnum $feature): bool
     {
         return match ($feature) {
@@ -286,6 +295,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function schemaDialect(): SchemaDialect
     {
         return $this->_schemaDialect ??= new SqlserverSchemaDialect($this);
@@ -296,6 +306,7 @@ class Sqlserver extends Driver
      *
      * @return \Cake\Database\SqlserverCompiler
      */
+    #[\Override]
     public function newCompiler(): QueryCompiler
     {
         return new SqlserverCompiler();
@@ -304,6 +315,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _selectQueryTranslator(SelectQuery $query): SelectQuery
     {
         $limit = $query->clause('limit');
@@ -402,6 +414,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _transformDistinct(SelectQuery $query): SelectQuery
     {
         if (!is_array($query->clause('distinct'))) {
@@ -453,6 +466,7 @@ class Sqlserver extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _expressionTranslators(): array
     {
         return [

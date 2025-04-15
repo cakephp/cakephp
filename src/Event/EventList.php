@@ -61,6 +61,7 @@ class EventList implements ArrayAccess, Countable
      * @param mixed $offset An offset to check for.
      * @return bool True on success or false on failure.
      */
+    #[\Override]
     public function offsetExists(mixed $offset): bool
     {
         return isset($this->_events[$offset]);
@@ -73,6 +74,7 @@ class EventList implements ArrayAccess, Countable
      * @param mixed $offset The offset to retrieve.
      * @return \Cake\Event\EventInterface<object>|null
      */
+    #[\Override]
     public function offsetGet(mixed $offset): ?EventInterface
     {
         if (!$this->offsetExists($offset)) {
@@ -90,6 +92,7 @@ class EventList implements ArrayAccess, Countable
      * @param mixed $value The value to set.
      * @return void
      */
+    #[\Override]
     public function offsetSet(mixed $offset, mixed $value): void
     {
         $this->_events[$offset] = $value;
@@ -102,6 +105,7 @@ class EventList implements ArrayAccess, Countable
      * @param mixed $offset The offset to unset.
      * @return void
      */
+    #[\Override]
     public function offsetUnset(mixed $offset): void
     {
         unset($this->_events[$offset]);
@@ -113,6 +117,7 @@ class EventList implements ArrayAccess, Countable
      * @link https://secure.php.net/manual/en/countable.count.php
      * @return int The custom count as an integer.
      */
+    #[\Override]
     public function count(): int
     {
         return count($this->_events);

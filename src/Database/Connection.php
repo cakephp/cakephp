@@ -207,6 +207,7 @@ class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function config(): array
     {
         return $this->_config;
@@ -215,6 +216,7 @@ class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function configName(): string
     {
         return $this->_config['name'] ?? '';
@@ -247,6 +249,7 @@ class Connection implements ConnectionInterface
      * @param string $role Connection role ('read' or 'write')
      * @return \Cake\Database\Driver
      */
+    #[\Override]
     public function getDriver(string $role = self::ROLE_WRITE): Driver
     {
         assert($role === self::ROLE_READ || $role === self::ROLE_WRITE);
@@ -742,6 +745,7 @@ class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function setCacher(CacheInterface $cacher)
     {
         $this->cacher = $cacher;
@@ -752,6 +756,7 @@ class Connection implements ConnectionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getCacher(): CacheInterface
     {
         if ($this->cacher !== null) {

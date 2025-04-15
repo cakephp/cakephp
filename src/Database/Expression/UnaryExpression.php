@@ -77,6 +77,7 @@ class UnaryExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         $operand = $this->_value;
@@ -94,6 +95,7 @@ class UnaryExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         if ($this->_value instanceof ExpressionInterface) {

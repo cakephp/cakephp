@@ -301,6 +301,7 @@ class TextHelper extends Helper
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function implementedEvents(): array
     {
         return [];

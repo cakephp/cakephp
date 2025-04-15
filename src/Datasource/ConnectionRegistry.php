@@ -37,6 +37,7 @@ class ConnectionRegistry extends ObjectRegistry
      * @param string $class Partial classname to resolve.
      * @return class-string<\Cake\Datasource\ConnectionInterface>|null Either the correct class name or null.
      */
+    #[\Override]
     protected function _resolveClassName(string $class): ?string
     {
         /** @var class-string<\Cake\Datasource\ConnectionInterface>|null */
@@ -53,6 +54,7 @@ class ConnectionRegistry extends ObjectRegistry
      * @return void
      * @throws \Cake\Datasource\Exception\MissingDatasourceException
      */
+    #[\Override]
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingDatasourceException([
@@ -74,6 +76,7 @@ class ConnectionRegistry extends ObjectRegistry
      * @param array<string, mixed> $config An array of settings to use for the datasource.
      * @return \Cake\Datasource\ConnectionInterface A connection with the correct settings.
      */
+    #[\Override]
     protected function _create(object|string $class, string $alias, array $config): ConnectionInterface
     {
         if (is_string($class)) {
@@ -95,6 +98,7 @@ class ConnectionRegistry extends ObjectRegistry
      * @param string $name The adapter name.
      * @return $this
      */
+    #[\Override]
     public function unload(string $name)
     {
         unset($this->_loaded[$name]);

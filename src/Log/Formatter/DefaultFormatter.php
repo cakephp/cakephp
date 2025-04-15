@@ -34,6 +34,7 @@ class DefaultFormatter extends AbstractFormatter
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function format($level, string $message, array $context = []): string
     {
         if ($this->_config['includeDate']) {

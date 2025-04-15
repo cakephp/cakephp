@@ -100,6 +100,7 @@ class SortIterator extends Collection
      *
      * @return \Iterator
      */
+    #[\Override]
     public function unwrap(): Iterator
     {
         /** @var \Iterator */

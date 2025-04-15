@@ -261,6 +261,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      * @return string Rendered cell
      * @throws \Error Include error details for PHP 7 fatal errors.
      */
+    #[\Override]
     public function __toString(): string
     {
         try {

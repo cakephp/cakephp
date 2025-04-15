@@ -36,6 +36,7 @@ class ResultSet extends Collection implements ResultSetInterface
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function __debugInfo(): array
     {
         $key = $this->key();

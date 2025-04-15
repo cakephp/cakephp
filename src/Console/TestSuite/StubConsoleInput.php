@@ -58,6 +58,7 @@ class StubConsoleInput extends ConsoleInput
      *
      * @return string The value of the reply
      */
+    #[\Override]
     public function read(): string
     {
         $this->currentIndex += 1;
@@ -82,6 +83,7 @@ class StubConsoleInput extends ConsoleInput
      * @param int $timeout An optional time to wait for data
      * @return bool True for data available, false otherwise
      */
+    #[\Override]
     public function dataAvailable(int $timeout = 0): bool
     {
         return true;

@@ -33,6 +33,7 @@ class StreamFactory implements StreamFactoryInterface
      *
      * @param string $content String content with which to populate the stream.
      */
+    #[\Override]
     public function createStream(string $content = ''): StreamInterface
     {
         $resource = fopen('php://temp', 'r+');
@@ -56,6 +57,7 @@ class StreamFactory implements StreamFactoryInterface
      * @throws \RuntimeException If the file cannot be opened.
      * @throws \InvalidArgumentException If the mode is invalid.
      */
+    #[\Override]
     public function createStreamFromFile(string $filename, string $mode = 'r'): StreamInterface
     {
         if (!is_readable($filename)) {
@@ -72,6 +74,7 @@ class StreamFactory implements StreamFactoryInterface
      *
      * @param resource $resource The PHP resource to use as the basis for the stream.
      */
+    #[\Override]
     public function createStreamFromResource($resource): StreamInterface
     {
         return new Stream($resource);

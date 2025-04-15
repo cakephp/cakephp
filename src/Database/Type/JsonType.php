@@ -48,6 +48,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @throws \InvalidArgumentException
      * @throws \JsonException
      */
+    #[\Override]
     public function toDatabase(mixed $value, Driver $driver): ?string
     {
         if (is_resource($value)) {
@@ -68,6 +69,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return mixed
      */
+    #[\Override]
     public function toPHP(mixed $value, Driver $driver): mixed
     {
         if (!is_string($value)) {
@@ -80,6 +82,7 @@ class JsonType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
@@ -96,6 +99,7 @@ class JsonType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function toStatement(mixed $value, Driver $driver): int
     {
         return PDO::PARAM_STR;
@@ -107,6 +111,7 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @return mixed Converted value.
      */
+    #[\Override]
     public function marshal(mixed $value): mixed
     {
         return $value;

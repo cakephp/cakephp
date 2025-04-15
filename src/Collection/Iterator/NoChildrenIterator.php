@@ -33,6 +33,7 @@ class NoChildrenIterator extends Collection implements RecursiveIterator
      *
      * @return bool
      */
+    #[\Override]
     public function hasChildren(): bool
     {
         return false;
@@ -43,6 +44,7 @@ class NoChildrenIterator extends Collection implements RecursiveIterator
      *
      * @return \RecursiveIterator<mixed, mixed>
      */
+    #[\Override]
     public function getChildren(): RecursiveIterator
     {
         return new static([]);

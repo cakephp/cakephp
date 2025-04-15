@@ -40,6 +40,7 @@ class TestEmailTransport extends DebugTransport
      * @param \Cake\Mailer\Message $message Message
      * @return array{headers: string, message: string}
      */
+    #[\Override]
     public function send(Message $message): array
     {
         static::$messages[] = clone $message;

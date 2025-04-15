@@ -207,6 +207,7 @@ class FormData implements Countable, Stringable
      *
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         return count($this->_parts);
@@ -260,6 +261,7 @@ class FormData implements Countable, Stringable
      *
      * @return string
      */
+    #[\Override]
     public function __toString(): string
     {
         if ($this->isMultipart()) {

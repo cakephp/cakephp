@@ -133,6 +133,7 @@ class FormProtectionComponent extends Component
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function implementedEvents(): array
     {
         return [

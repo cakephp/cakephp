@@ -107,6 +107,7 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function connect(): void
     {
         if ($this->pdo !== null) {
@@ -163,6 +164,7 @@ class Sqlite extends Driver
      *
      * @return bool true if it is valid to use this driver
      */
+    #[\Override]
     public function enabled(): bool
     {
         return in_array('sqlite', PDO::getAvailableDrivers(), true);
@@ -173,6 +175,7 @@ class Sqlite extends Driver
      *
      * @return string
      */
+    #[\Override]
     public function disableForeignKeySQL(): string
     {
         return 'PRAGMA foreign_keys = OFF';
@@ -181,6 +184,7 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function enableForeignKeySQL(): string
     {
         return 'PRAGMA foreign_keys = ON';
@@ -189,6 +193,7 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function supports(DriverFeatureEnum $feature): bool
     {
         return match ($feature) {
@@ -213,6 +218,7 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function schemaDialect(): SchemaDialect
     {
         return $this->_schemaDialect ?? ($this->_schemaDialect = new SqliteSchemaDialect($this));
@@ -221,6 +227,7 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _expressionTranslators(): array
     {
         return [

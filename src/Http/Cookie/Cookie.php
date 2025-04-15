@@ -335,6 +335,7 @@ class Cookie implements CookieInterface
      *
      * @return string
      */
+    #[\Override]
     public function toHeaderValue(): string
     {
         $value = $this->value;
@@ -373,6 +374,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withName(string $name): static
     {
         $this->validateName($name);
@@ -385,6 +387,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getId(): string
     {
         return "{$this->name};{$this->domain};{$this->path}";
@@ -393,6 +396,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getName(): string
     {
         return $this->name;
@@ -422,6 +426,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getValue(): array|string
     {
         return $this->value;
@@ -430,6 +435,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getScalarValue(): string
     {
         if ($this->isExpanded) {
@@ -446,6 +452,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withValue(array|string|float|int|bool $value): static
     {
         $new = clone $this;
@@ -469,6 +476,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withPath(string $path): static
     {
         $new = clone $this;
@@ -480,6 +488,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getPath(): string
     {
         return $this->path;
@@ -488,6 +497,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withDomain(string $domain): static
     {
         $new = clone $this;
@@ -499,6 +509,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getDomain(): string
     {
         return $this->domain;
@@ -507,6 +518,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isSecure(): bool
     {
         return $this->secure;
@@ -515,6 +527,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withSecure(bool $secure): static
     {
         $new = clone $this;
@@ -526,6 +539,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withHttpOnly(bool $httpOnly): static
     {
         $new = clone $this;
@@ -537,6 +551,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isHttpOnly(): bool
     {
         return $this->httpOnly;
@@ -545,6 +560,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withExpiry(DateTimeInterface $dateTime): static
     {
         if ($dateTime instanceof DateTime) {
@@ -560,6 +576,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getExpiry(): ?DateTimeInterface
     {
         return $this->expiresAt;
@@ -568,6 +585,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getExpiresTimestamp(): ?int
     {
         if (!$this->expiresAt) {
@@ -580,6 +598,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getFormattedExpires(): string
     {
         if (!$this->expiresAt) {
@@ -592,6 +611,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isExpired(?DateTimeInterface $time = null): bool
     {
         $time = $time ?: new DateTimeImmutable('now', new DateTimeZone('UTC'));
@@ -609,6 +629,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withNeverExpire(): static
     {
         $new = clone $this;
@@ -620,6 +641,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withExpired(): static
     {
         $new = clone $this;
@@ -631,6 +653,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getSameSite(): ?SameSiteEnum
     {
         return $this->sameSite;
@@ -639,6 +662,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function withSameSite(SameSiteEnum|string|null $sameSite): static
     {
         $new = clone $this;
@@ -764,6 +788,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getOptions(): array
     {
         $options = [
@@ -784,6 +809,7 @@ class Cookie implements CookieInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function toArray(): array
     {
         return [

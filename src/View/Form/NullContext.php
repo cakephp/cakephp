@@ -36,6 +36,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getPrimaryKey(): array
     {
         return [];
@@ -44,6 +45,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isPrimaryKey(string $field): bool
     {
         return false;
@@ -52,6 +54,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isCreate(): bool
     {
         return true;
@@ -60,6 +63,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function val(string $field, array $options = []): mixed
     {
         return null;
@@ -68,6 +72,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isRequired(string $field): ?bool
     {
         return null;
@@ -76,6 +81,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getRequiredMessage(string $field): ?string
     {
         return null;
@@ -84,6 +90,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getMaxLength(string $field): ?int
     {
         return null;
@@ -92,6 +99,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function fieldNames(): array
     {
         return [];
@@ -100,6 +108,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function type(string $field): ?string
     {
         return null;
@@ -108,6 +117,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function attributes(string $field): array
     {
         return [];
@@ -116,6 +126,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function hasError(string $field): bool
     {
         return false;
@@ -124,6 +135,7 @@ class NullContext implements ContextInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function error(string $field): array
     {
         return [];

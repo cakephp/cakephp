@@ -48,6 +48,7 @@ class TransactionFixtureStrategy implements FixtureStrategyInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function setupTest(array $fixtureNames): void
     {
         $this->fixtures = $this->helper->loadFixtures($fixtureNames);
@@ -78,6 +79,7 @@ class TransactionFixtureStrategy implements FixtureStrategyInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function teardownTest(): void
     {
         $this->helper->runPerConnection(function (Connection $connection): void {

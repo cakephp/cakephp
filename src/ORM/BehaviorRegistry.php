@@ -107,6 +107,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param string $class Partial classname to resolve.
      * @return class-string<\Cake\ORM\Behavior>|null Either the correct class name or null.
      */
+    #[\Override]
     protected function _resolveClassName(string $class): ?string
     {
         /** @var class-string<\Cake\ORM\Behavior>|null */
@@ -124,6 +125,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @return void
      * @throws \Cake\ORM\Exception\MissingBehaviorException
      */
+    #[\Override]
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingBehaviorException([
@@ -143,6 +145,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param array<string, mixed> $config An array of config to use for the behavior.
      * @return \Cake\ORM\Behavior The constructed behavior class.
      */
+    #[\Override]
     protected function _create(object|string $class, string $alias, array $config): Behavior
     {
         if (is_object($class)) {
@@ -218,6 +221,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param \Cake\ORM\Behavior $object instance to store in the registry
      * @return $this
      */
+    #[\Override]
     public function set(string $name, object $object)
     {
         parent::set($name, $object);
@@ -237,6 +241,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param string $name The name of the object to remove from the registry.
      * @return $this
      */
+    #[\Override]
     public function unload(string $name)
     {
         $instance = $this->get($name);

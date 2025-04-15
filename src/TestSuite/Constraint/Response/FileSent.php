@@ -36,6 +36,7 @@ class FileSent extends ResponseBase
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         return $this->response->getFile() !== null;
@@ -46,6 +47,7 @@ class FileSent extends ResponseBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'file was sent';
@@ -57,6 +59,7 @@ class FileSent extends ResponseBase
      * @param mixed $other Value
      * @return string
      */
+    #[\Override]
     protected function failureDescription(mixed $other): string
     {
         return $this->toString();

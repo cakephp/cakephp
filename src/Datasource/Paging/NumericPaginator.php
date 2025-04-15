@@ -199,6 +199,7 @@ class NumericPaginator implements PaginatorInterface
      * @return \Cake\Datasource\Paging\PaginatedInterface
      * @throws \Cake\Datasource\Paging\Exception\PageOutOfBoundsException
      */
+    #[\Override]
     public function paginate(
         mixed $target,
         array $params = [],

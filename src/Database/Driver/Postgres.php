@@ -80,6 +80,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function connect(): void
     {
         if ($this->pdo !== null) {
@@ -139,6 +140,7 @@ class Postgres extends Driver
      *
      * @return bool true if it is valid to use this driver
      */
+    #[\Override]
     public function enabled(): bool
     {
         return in_array('pgsql', PDO::getAvailableDrivers(), true);
@@ -147,6 +149,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function schemaDialect(): SchemaDialect
     {
         return $this->_schemaDialect ?? ($this->_schemaDialect = new PostgresSchemaDialect($this));
@@ -182,6 +185,7 @@ class Postgres extends Driver
      *
      * @return string
      */
+    #[\Override]
     public function disableForeignKeySQL(): string
     {
         return 'SET CONSTRAINTS ALL DEFERRED';
@@ -190,6 +194,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function enableForeignKeySQL(): string
     {
         return 'SET CONSTRAINTS ALL IMMEDIATE';
@@ -198,6 +203,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function supports(DriverFeatureEnum $feature): bool
     {
         return match ($feature) {
@@ -216,6 +222,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _transformDistinct(SelectQuery $query): SelectQuery
     {
         return $query;
@@ -224,6 +231,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _insertQueryTranslator(InsertQuery $query): InsertQuery
     {
         if (!$query->clause('epilog')) {
@@ -236,6 +244,7 @@ class Postgres extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _expressionTranslators(): array
     {
         return [
@@ -354,6 +363,7 @@ class Postgres extends Driver
      *
      * @return \Cake\Database\PostgresCompiler
      */
+    #[\Override]
     public function newCompiler(): QueryCompiler
     {
         return new PostgresCompiler();

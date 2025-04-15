@@ -43,6 +43,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function setCommandCollection(CommandCollection $commands): void
     {
         $this->commands = $commands;
@@ -55,6 +56,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $commands = $this->commands->getIterator();
@@ -223,6 +225,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to build
      * @return \Cake\Console\ConsoleOptionParser
      */
+    #[\Override]
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(

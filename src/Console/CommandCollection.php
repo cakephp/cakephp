@@ -148,6 +148,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * @return \Traversable
      * @psalm-return \Traversable<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>>
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         return new ArrayIterator($this->commands);
@@ -160,6 +161,7 @@ class CommandCollection implements IteratorAggregate, Countable
      *
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         return count($this->commands);

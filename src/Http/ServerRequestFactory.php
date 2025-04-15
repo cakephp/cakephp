@@ -168,6 +168,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
      * @return \Psr\Http\Message\ServerRequestInterface
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function createServerRequest(string $method, $uri, array $serverParams = []): ServerRequestInterface
     {
         $serverParams['REQUEST_METHOD'] = $method;

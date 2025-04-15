@@ -35,6 +35,7 @@ class MailContainsHtml extends MailContains
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         if ($this->at) {

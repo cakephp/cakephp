@@ -27,6 +27,7 @@ class LayoutFileEquals extends TemplateFileEquals
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf('equals layout file `%s`', $this->filename);

@@ -30,6 +30,7 @@ class PHPUnitStartedSubscriber implements PHPUnitStarted
      * @param \PHPUnit\Event\TestSuite\Started $event The event
      * @return void
      */
+    #[\Override]
     public function notify(Started $event): void
     {
         ConnectionHelper::addTestAliases();

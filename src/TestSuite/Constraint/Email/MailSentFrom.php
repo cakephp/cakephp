@@ -33,6 +33,7 @@ class MailSentFrom extends MailSentWith
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         if ($this->at) {

@@ -84,6 +84,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
      * @param \Psr\Http\Server\RequestHandlerInterface $handler The request handler.
      * @return \Psr\Http\Message\ResponseInterface A response.
      */
+    #[\Override]
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         if ($request->getCookieParams()) {
@@ -108,6 +109,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
      *
      * @return string
      */
+    #[\Override]
     protected function _getCookieEncryptionKey(): string
     {
         return $this->key;

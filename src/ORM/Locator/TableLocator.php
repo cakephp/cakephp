@@ -138,6 +138,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function setConfig(array|string $alias, ?array $options = null)
     {
         if (!is_string($alias)) {
@@ -161,6 +162,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getConfig(?string $alias = null): array
     {
         if ($alias === null) {
@@ -206,6 +208,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @return \Cake\ORM\Table
      * @throws \RuntimeException When you try to configure an alias that already exists.
      */
+    #[\Override]
     public function get(string $alias, array $options = []): Table
     {
         /** @var \Cake\ORM\Table */
@@ -215,6 +218,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function createInstance(string $alias, array $options): Table
     {
         if (!str_contains($alias, '\\')) {
@@ -327,6 +331,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @return \Cake\ORM\Table
      * @psalm-suppress MoreSpecificImplementedParamType
      */
+    #[\Override]
     public function set(string $alias, RepositoryInterface $repository): Table
     {
         return $this->instances[$alias] = $repository;
@@ -335,6 +340,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function clear(): void
     {
         parent::clear();
@@ -359,6 +365,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function remove(string $alias): void
     {
         parent::remove($alias);

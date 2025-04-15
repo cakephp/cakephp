@@ -34,6 +34,7 @@ class SchemacacheClearCommand extends Command
      *
      * @return string
      */
+    #[\Override]
     public static function defaultName(): string
     {
         return 'schema_cache clear';
@@ -42,6 +43,7 @@ class SchemacacheClearCommand extends Command
     /**
      * @inheritDoc
      */
+    #[\Override]
     public static function getDescription(): string
     {
         return 'Clear all metadata caches for the connection.';
@@ -54,6 +56,7 @@ class SchemacacheClearCommand extends Command
      * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
      */
+    #[\Override]
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         try {
@@ -83,6 +86,7 @@ class SchemacacheClearCommand extends Command
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser to update
      * @return \Cake\Console\ConsoleOptionParser
      */
+    #[\Override]
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription([

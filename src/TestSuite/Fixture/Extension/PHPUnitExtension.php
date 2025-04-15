@@ -32,6 +32,7 @@ class PHPUnitExtension implements Extension
      * @param \PHPUnit\Runner\Extension\ParameterCollection $parameters
      * @return void
      */
+    #[\Override]
     public function bootstrap(Configuration $configuration, Facade $facade, ParameterCollection $parameters): void
     {
         $facade->registerSubscriber(

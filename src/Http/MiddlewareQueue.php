@@ -239,6 +239,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      *
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         return count($this->queue);
@@ -251,6 +252,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return void
      * @see \SeekableIterator::seek()
      */
+    #[\Override]
     public function seek(int $position): void
     {
         if (!isset($this->queue[$position])) {
@@ -266,6 +268,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return void
      * @see \Iterator::rewind()
      */
+    #[\Override]
     public function rewind(): void
     {
         $this->position = 0;
@@ -277,6 +280,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return \Psr\Http\Server\MiddlewareInterface
      * @see \Iterator::current()
      */
+    #[\Override]
     public function current(): MiddlewareInterface
     {
         if (!isset($this->queue[$this->position])) {
@@ -296,6 +300,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return int
      * @see \Iterator::key()
      */
+    #[\Override]
     public function key(): int
     {
         return $this->position;
@@ -307,6 +312,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return void
      * @see \Iterator::next()
      */
+    #[\Override]
     public function next(): void
     {
         ++$this->position;
@@ -318,6 +324,7 @@ class MiddlewareQueue implements Countable, SeekableIterator
      * @return bool
      * @see \Iterator::valid()
      */
+    #[\Override]
     public function valid(): bool
     {
         return isset($this->queue[$this->position]);

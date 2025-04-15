@@ -89,6 +89,7 @@ class MissingTemplateException extends CakeException
      * @return array<string, mixed>
      * @psalm-return array{file: string, paths: array<string>}
      */
+    #[\Override]
     public function getAttributes(): array
     {
         return [

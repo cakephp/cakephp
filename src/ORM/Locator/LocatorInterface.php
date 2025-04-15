@@ -54,6 +54,7 @@ interface LocatorInterface extends BaseLocatorInterface
      * @param array<string, mixed> $options The options you want to build the table with.
      * @return \Cake\ORM\Table
      */
+    #[\Override]
     public function get(string $alias, array $options = []): Table;
 
     /**
@@ -64,5 +65,6 @@ interface LocatorInterface extends BaseLocatorInterface
      * @return \Cake\ORM\Table
      * @psalm-suppress MoreSpecificImplementedParamType
      */
+    #[\Override]
     public function set(string $alias, RepositoryInterface $repository): Table;
 }

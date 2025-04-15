@@ -49,6 +49,7 @@ class HeaderEquals extends ResponseBase
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         return $this->response->getHeaderLine($this->headerName) === $other;
@@ -59,6 +60,7 @@ class HeaderEquals extends ResponseBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         $responseHeader = $this->response->getHeaderLine($this->headerName);

@@ -116,6 +116,7 @@ class Mysql extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function connect(): void
     {
         if ($this->pdo !== null) {
@@ -167,6 +168,7 @@ class Mysql extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function run(Query $query): StatementInterface
     {
         $statement = $this->prepare($query);
@@ -191,6 +193,7 @@ class Mysql extends Driver
      *
      * @return bool true if it is valid to use this driver
      */
+    #[\Override]
     public function enabled(): bool
     {
         return in_array('mysql', PDO::getAvailableDrivers(), true);
@@ -199,6 +202,7 @@ class Mysql extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function schemaDialect(): SchemaDialect
     {
         return $this->_schemaDialect ?? ($this->_schemaDialect = new MysqlSchemaDialect($this));
@@ -207,6 +211,7 @@ class Mysql extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function schema(): string
     {
         return $this->_config['database'];
@@ -217,6 +222,7 @@ class Mysql extends Driver
      *
      * @return string
      */
+    #[\Override]
     public function disableForeignKeySQL(): string
     {
         return 'SET foreign_key_checks = 0';
@@ -225,6 +231,7 @@ class Mysql extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function enableForeignKeySQL(): string
     {
         return 'SET foreign_key_checks = 1';
@@ -233,6 +240,7 @@ class Mysql extends Driver
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function supports(DriverFeatureEnum $feature): bool
     {
         $versionCompare = function () use ($feature) {
@@ -275,6 +283,7 @@ class Mysql extends Driver
      *
      * @return string
      */
+    #[\Override]
     public function version(): string
     {
         if ($this->_version === null) {

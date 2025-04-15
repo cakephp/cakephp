@@ -48,6 +48,7 @@ class TestExceptionRenderer implements ExceptionRendererInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function render(): ResponseInterface
     {
         throw new LogicException('You cannot use this class to render exceptions.');
@@ -59,6 +60,7 @@ class TestExceptionRenderer implements ExceptionRendererInterface
      * @param \Psr\Http\Message\ResponseInterface|string $output The output or response to send.
      * @return void
      */
+    #[\Override]
     public function write(ResponseInterface|string $output): void
     {
     }

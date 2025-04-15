@@ -72,6 +72,7 @@ class TupleComparison extends ComparisonExpression
      * @param mixed $value The value to compare
      * @return void
      */
+    #[\Override]
     public function setValue(mixed $value): void
     {
         if ($this->isMulti()) {
@@ -92,6 +93,7 @@ class TupleComparison extends ComparisonExpression
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         $template = '(%s) %s (%s)';
@@ -164,6 +166,7 @@ class TupleComparison extends ComparisonExpression
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _bindValue(mixed $value, ValueBinder $binder, ?string $type = null): string
     {
         $placeholder = $binder->placeholder('tuple');
@@ -175,6 +178,7 @@ class TupleComparison extends ComparisonExpression
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         $fields = (array)$this->getField();

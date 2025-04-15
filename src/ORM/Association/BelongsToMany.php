@@ -193,6 +193,7 @@ class BelongsToMany extends Association
      * @return bool if the 'matching' key in $option is true then this function
      * will return true, false otherwise
      */
+    #[\Override]
     public function canBeJoined(array $options = []): bool
     {
         return !empty($options['matching']);
@@ -201,6 +202,7 @@ class BelongsToMany extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getForeignKey(): array|string|false
     {
         if (!isset($this->_foreignKey)) {
@@ -236,6 +238,7 @@ class BelongsToMany extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function defaultRowValue(array $row, bool $joined): array
     {
         $sourceAlias = $this->getSource()->getAlias();
@@ -471,6 +474,7 @@ class BelongsToMany extends Association
      * @param array<string, mixed> $options Any extra options or overrides to be taken in account
      * @return void
      */
+    #[\Override]
     public function attachTo(SelectQuery $query, array $options = []): void
     {
         if (!empty($options['negateMatch'])) {
@@ -509,6 +513,7 @@ class BelongsToMany extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _appendNotMatching(SelectQuery $query, array $options): void
     {
         if (empty($options['negateMatch'])) {
@@ -551,6 +556,7 @@ class BelongsToMany extends Association
      *
      * @return string
      */
+    #[\Override]
     public function type(): string
     {
         return self::MANY_TO_MANY;
@@ -562,6 +568,7 @@ class BelongsToMany extends Association
      * @param array<string, mixed> $options list of options passed to attachTo method
      * @return array
      */
+    #[\Override]
     protected function _joinCondition(array $options): array
     {
         return [];
@@ -570,6 +577,7 @@ class BelongsToMany extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function eagerLoader(array $options): Closure
     {
         $name = $this->_junctionAssociationName();
@@ -601,6 +609,7 @@ class BelongsToMany extends Association
      * @param array<string, mixed> $options The options for the original delete.
      * @return bool Success.
      */
+    #[\Override]
     public function cascadeDelete(EntityInterface $entity, array $options = []): bool
     {
         if (!$this->getDependent()) {
@@ -648,6 +657,7 @@ class BelongsToMany extends Association
      * @param \Cake\ORM\Table $side The potential Table with ownership
      * @return bool
      */
+    #[\Override]
     public function isOwningSide(Table $side): bool
     {
         return true;
@@ -706,6 +716,7 @@ class BelongsToMany extends Association
      * @see \Cake\ORM\Table::save()
      * @see \Cake\ORM\Association\BelongsToMany::replaceLinks()
      */
+    #[\Override]
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
@@ -992,6 +1003,7 @@ class BelongsToMany extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function setConditions(Closure|array $conditions)
     {
         parent::setConditions($conditions);
@@ -1103,6 +1115,7 @@ class BelongsToMany extends Association
      * @see \Cake\ORM\Table::find()
      * @return \Cake\ORM\Query\SelectQuery
      */
+    #[\Override]
     public function find(array|string|null $type = null, mixed ...$args): SelectQuery
     {
         $type = $type ?: $this->getFinder();
@@ -1522,6 +1535,7 @@ class BelongsToMany extends Association
      * @param array<string, mixed> $options original list of options passed in constructor
      * @return void
      */
+    #[\Override]
     protected function _options(array $options): void
     {
         if (!empty($options['targetForeignKey'])) {

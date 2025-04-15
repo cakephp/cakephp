@@ -117,6 +117,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * @return void
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public static function setToStringFormat($format): void
     {
         static::$_toStringFormat = $format;
@@ -179,6 +180,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * @param \Cake\Chronos\DifferenceFormatterInterface|null $formatter Difference formatter
      * @return \Cake\I18n\RelativeTimeFormatter
      */
+    #[\Override]
     public static function diffFormatter(?DifferenceFormatterInterface $formatter = null): RelativeTimeFormatter
     {
         if ($formatter) {
@@ -308,6 +310,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      *
      * @return string|int
      */
+    #[\Override]
     public function jsonSerialize(): mixed
     {
         if (static::$_jsonEncodeFormat instanceof Closure) {
@@ -320,6 +323,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function __toString(): string
     {
         return (string)$this->i18nFormat();

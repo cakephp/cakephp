@@ -35,6 +35,7 @@ abstract class StatusCodeBase extends ResponseBase
      * @psalm-suppress MoreSpecificImplementedParamType
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         if (!$other) {
@@ -66,6 +67,7 @@ abstract class StatusCodeBase extends ResponseBase
      * @param mixed $other Value
      * @return string
      */
+    #[\Override]
     protected function failureDescription(mixed $other): string
     {
         /** @psalm-suppress InternalMethod */

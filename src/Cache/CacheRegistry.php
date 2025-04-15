@@ -38,6 +38,7 @@ class CacheRegistry extends ObjectRegistry
      * @param string $class Partial classname to resolve.
      * @return class-string<\Cake\Cache\CacheEngine>|null Either the correct classname or null.
      */
+    #[\Override]
     protected function _resolveClassName(string $class): ?string
     {
         /** @var class-string<\Cake\Cache\CacheEngine>|null */
@@ -54,6 +55,7 @@ class CacheRegistry extends ObjectRegistry
      * @return void
      * @throws \BadMethodCallException
      */
+    #[\Override]
     protected function _throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new BadMethodCallException(sprintf('Cache engine `%s` is not available.', $class));
@@ -70,6 +72,7 @@ class CacheRegistry extends ObjectRegistry
      * @return \Cake\Cache\CacheEngine The constructed CacheEngine class.
      * @throws \Cake\Core\Exception\CakeException When the cache engine cannot be initialized.
      */
+    #[\Override]
     protected function _create(object|string $class, string $alias, array $config): CacheEngine
     {
         if (is_object($class)) {
@@ -99,6 +102,7 @@ class CacheRegistry extends ObjectRegistry
      * @param string $name The adapter name.
      * @return $this
      */
+    #[\Override]
     public function unload(string $name)
     {
         unset($this->_loaded[$name]);

@@ -29,6 +29,7 @@ class BodyEmpty extends ResponseBase
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         return empty($this->_getBodyAsString());
@@ -39,6 +40,7 @@ class BodyEmpty extends ResponseBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'response body is empty';
@@ -50,6 +52,7 @@ class BodyEmpty extends ResponseBase
      * @param mixed $other Value
      * @return string
      */
+    #[\Override]
     protected function failureDescription(mixed $other): string
     {
         return $this->toString();

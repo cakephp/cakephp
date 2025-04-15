@@ -43,6 +43,7 @@ class DeleteQuery extends DbDeleteQuery
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(?ValueBinder $binder = null): string
     {
         if (empty($this->_parts['from'])) {

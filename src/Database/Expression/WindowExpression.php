@@ -88,6 +88,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function partition(ExpressionInterface|Closure|array|string $partitions)
     {
         if (!$partitions) {
@@ -116,6 +117,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function order(ExpressionInterface|Closure|array|string $fields)
     {
         deprecationWarning(
@@ -129,6 +131,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function orderBy(ExpressionInterface|Closure|array|string $fields)
     {
         if (!$fields) {
@@ -149,6 +152,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function range(ExpressionInterface|string|int|null $start, ExpressionInterface|string|int|null $end = 0)
     {
         return $this->frame(self::RANGE, $start, self::PRECEDING, $end, self::FOLLOWING);
@@ -157,6 +161,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function rows(?int $start, ?int $end = 0)
     {
         return $this->frame(self::ROWS, $start, self::PRECEDING, $end, self::FOLLOWING);
@@ -165,6 +170,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function groups(?int $start, ?int $end = 0)
     {
         return $this->frame(self::GROUPS, $start, self::PRECEDING, $end, self::FOLLOWING);
@@ -173,6 +179,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function frame(
         string $type,
         ExpressionInterface|string|int|null $startOffset,
@@ -198,6 +205,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function excludeCurrent()
     {
         $this->exclusion = 'CURRENT ROW';
@@ -208,6 +216,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function excludeGroup()
     {
         $this->exclusion = 'GROUP';
@@ -218,6 +227,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function excludeTies()
     {
         $this->exclusion = 'TIES';
@@ -228,6 +238,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         $clauses = [];
@@ -275,6 +286,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         $callback($this->name);

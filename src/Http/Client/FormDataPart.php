@@ -183,6 +183,7 @@ class FormDataPart implements Stringable
      *
      * @return string
      */
+    #[\Override]
     public function __toString(): string
     {
         $out = '';

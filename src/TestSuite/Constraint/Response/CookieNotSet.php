@@ -29,6 +29,7 @@ class CookieNotSet extends CookieSet
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         return parent::matches($other) === false;
@@ -39,6 +40,7 @@ class CookieNotSet extends CookieSet
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'cookie is not set';

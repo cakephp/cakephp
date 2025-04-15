@@ -86,6 +86,7 @@ class BufferedIterator extends Collection
      *
      * @return mixed
      */
+    #[\Override]
     public function key(): mixed
     {
         return $this->_key;
@@ -96,6 +97,7 @@ class BufferedIterator extends Collection
      *
      * @return mixed
      */
+    #[\Override]
     public function current(): mixed
     {
         return $this->_current;
@@ -106,6 +108,7 @@ class BufferedIterator extends Collection
      *
      * @return void
      */
+    #[\Override]
     public function rewind(): void
     {
         if ($this->_index === 0 && !$this->_started) {
@@ -123,6 +126,7 @@ class BufferedIterator extends Collection
      *
      * @return bool
      */
+    #[\Override]
     public function valid(): bool
     {
         if ($this->_buffer->offsetExists($this->_index)) {
@@ -154,6 +158,7 @@ class BufferedIterator extends Collection
      *
      * @return void
      */
+    #[\Override]
     public function next(): void
     {
         $this->_index++;
@@ -172,6 +177,7 @@ class BufferedIterator extends Collection
      *
      * @return int
      */
+    #[\Override]
     public function count(): int
     {
         if (!$this->_started) {
@@ -190,6 +196,7 @@ class BufferedIterator extends Collection
      *
      * @return array
      */
+    #[\Override]
     public function __serialize(): array
     {
         if (!$this->_finished) {
@@ -205,6 +212,7 @@ class BufferedIterator extends Collection
      * @param array $data Data array.
      * @return void
      */
+    #[\Override]
     public function __unserialize(array $data): void
     {
         $this->__construct([]);

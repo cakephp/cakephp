@@ -64,6 +64,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function bind(array $params, array $types): void
     {
         if (!$params) {
@@ -86,6 +87,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function bindValue(string|int $column, mixed $value, string|int|null $type = 'string'): void
     {
         $type ??= 'string';
@@ -122,6 +124,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getBoundParams(): array
     {
         return $this->params;
@@ -141,6 +144,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function execute(?array $params = null): bool
     {
         return $this->statement->execute($params);
@@ -149,6 +153,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function fetch(string|int $mode = PDO::FETCH_NUM): mixed
     {
         $mode = $this->convertMode($mode);
@@ -167,6 +172,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function fetchAssoc(): array
     {
         return $this->fetch(PDO::FETCH_ASSOC) ?: [];
@@ -175,6 +181,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function fetchColumn(int $position): mixed
     {
         $row = $this->fetch(PDO::FETCH_NUM);
@@ -188,6 +195,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function fetchAll(string|int $mode = PDO::FETCH_NUM): array
     {
         $mode = $this->convertMode($mode);
@@ -222,6 +230,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function closeCursor(): void
     {
         $this->statement->closeCursor();
@@ -230,6 +239,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function rowCount(): int
     {
         return $this->statement->rowCount();
@@ -238,6 +248,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function columnCount(): int
     {
         return $this->statement->columnCount();
@@ -246,6 +257,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function errorCode(): string
     {
         return $this->statement->errorCode() ?: '';
@@ -254,6 +266,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function errorInfo(): array
     {
         return $this->statement->errorInfo();
@@ -262,6 +275,7 @@ class Statement implements StatementInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function lastInsertId(?string $table = null, ?string $column = null): string|int
     {
         if ($column && $this->columnCount()) {
@@ -280,6 +294,7 @@ class Statement implements StatementInterface
      *
      * @return string
      */
+    #[\Override]
     public function queryString(): string
     {
         return $this->statement->queryString;
@@ -290,6 +305,7 @@ class Statement implements StatementInterface
      *
      * @return \Generator
      */
+    #[\Override]
     public function getIterator(): Generator
     {
         $this->statement->setFetchMode(PDO::FETCH_ASSOC);

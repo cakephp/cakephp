@@ -32,6 +32,7 @@ class StatusFailure extends StatusCodeBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf('%d is between 500 and 505', $this->response->getStatusCode());

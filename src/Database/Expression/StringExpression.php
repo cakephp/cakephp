@@ -69,6 +69,7 @@ class StringExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         $placeholder = $binder->placeholder('c');
@@ -80,6 +81,7 @@ class StringExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         return $this;

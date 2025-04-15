@@ -82,6 +82,7 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
      * @return void
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public static function setToStringFormat($format): void
     {
         static::$_toStringFormat = $format;
@@ -93,6 +94,7 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
      *
      * @return void
      */
+    #[\Override]
     public static function resetToStringFormat(): void
     {
         static::setToStringFormat(IntlDateFormatter::SHORT);
@@ -221,6 +223,7 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
      *
      * @return string|int
      */
+    #[\Override]
     public function jsonSerialize(): mixed
     {
         if (static::$_jsonEncodeFormat instanceof Closure) {
@@ -233,6 +236,7 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function __toString(): string
     {
         return (string)$this->i18nFormat();

@@ -77,6 +77,7 @@ class ReconnectStrategy implements RetryStrategyInterface
      * Checks whether the exception was caused by a lost connection,
      * and returns true if it was able to successfully reconnect.
      */
+    #[\Override]
     public function shouldRetry(Exception $exception, int $retryCount): bool
     {
         $message = $exception->getMessage();

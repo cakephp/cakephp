@@ -85,6 +85,7 @@ class TreeBehavior extends Behavior
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function initialize(array $config): void
     {
         $this->_config['leftField'] = new IdentifierExpression($this->_config['left']);

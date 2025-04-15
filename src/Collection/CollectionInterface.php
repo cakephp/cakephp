@@ -822,6 +822,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @return array The data to convert to JSON
      */
+    #[\Override]
     public function jsonSerialize(): array;
 
     /**
@@ -1175,6 +1176,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * @return int
      */
+    #[\Override]
     public function count(): int;
 
     /**

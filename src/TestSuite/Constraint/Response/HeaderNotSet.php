@@ -29,6 +29,7 @@ class HeaderNotSet extends HeaderSet
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         return parent::matches($other) === false;
@@ -39,6 +40,7 @@ class HeaderNotSet extends HeaderSet
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf('did not have header `%s`', $this->headerName);

@@ -80,6 +80,7 @@ class RedisEngine extends CacheEngine
      * @param array<string, mixed> $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
      */
+    #[\Override]
     public function init(array $config = []): bool
     {
         if (!extension_loaded('redis')) {
@@ -214,6 +215,7 @@ class RedisEngine extends CacheEngine
      *   for it or let the driver take care of that.
      * @return bool True if the data was successfully cached, false on failure
      */
+    #[\Override]
     public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         $key = $this->_key($key);
@@ -235,6 +237,7 @@ class RedisEngine extends CacheEngine
      * @return mixed The cached data, or the default if the data doesn't exist, has
      *   expired, or if there was an error fetching it
      */
+    #[\Override]
     public function get(string $key, mixed $default = null): mixed
     {
         $value = $this->_Redis->get($this->_key($key));
@@ -252,6 +255,7 @@ class RedisEngine extends CacheEngine
      * @param int $offset How much to increment
      * @return int|false New incremented value, false otherwise
      */
+    #[\Override]
     public function increment(string $key, int $offset = 1): int|false
     {
         $duration = $this->_config['duration'];
@@ -272,6 +276,7 @@ class RedisEngine extends CacheEngine
      * @param int $offset How much to subtract
      * @return int|false New decremented value, false otherwise
      */
+    #[\Override]
     public function decrement(string $key, int $offset = 1): int|false
     {
         $duration = $this->_config['duration'];
@@ -291,6 +296,7 @@ class RedisEngine extends CacheEngine
      * @param string $key Identifier for the data
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      */
+    #[\Override]
     public function delete(string $key): bool
     {
         $key = $this->_key($key);
@@ -318,6 +324,7 @@ class RedisEngine extends CacheEngine
      *
      * @return bool True if the cache was successfully cleared, false otherwise
      */
+    #[\Override]
     public function clear(): bool
     {
         $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
@@ -382,6 +389,7 @@ class RedisEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure.
      * @link https://github.com/phpredis/phpredis#set
      */
+    #[\Override]
     public function add(string $key, mixed $value): bool
     {
         $duration = $this->_config['duration'];
@@ -402,6 +410,7 @@ class RedisEngine extends CacheEngine
      *
      * @return array<string>
      */
+    #[\Override]
     public function groups(): array
     {
         $result = [];
@@ -424,6 +433,7 @@ class RedisEngine extends CacheEngine
      * @param string $group name of the group to be cleared
      * @return bool success
      */
+    #[\Override]
     public function clearGroup(string $group): bool
     {
         return (bool)$this->_Redis->incr($this->_config['prefix'] . $group);

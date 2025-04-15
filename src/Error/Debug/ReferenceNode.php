@@ -52,6 +52,7 @@ class ReferenceNode implements NodeInterface
      *
      * @return string
      */
+    #[\Override]
     public function getValue(): string
     {
         return $this->class;
@@ -70,6 +71,7 @@ class ReferenceNode implements NodeInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getChildren(): array
     {
         return [];

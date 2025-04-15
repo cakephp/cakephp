@@ -61,6 +61,7 @@ class FilterIterator extends Collection
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function unwrap(): Iterator
     {
         /** @var \IteratorIterator $filter */

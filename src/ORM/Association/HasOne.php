@@ -48,6 +48,7 @@ class HasOne extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getForeignKey(): array|string|false
     {
         if (!isset($this->_foreignKey)) {
@@ -64,6 +65,7 @@ class HasOne extends Association
      *  no join conditions will be generated automatically.
      * @return $this
      */
+    #[\Override]
     public function setForeignKey(array|string|false $key)
     {
         $this->_foreignKey = $key;
@@ -76,6 +78,7 @@ class HasOne extends Association
      *
      * @return string
      */
+    #[\Override]
     protected function _propertyName(): string
     {
         [, $name] = pluginSplit($this->_name);
@@ -91,6 +94,7 @@ class HasOne extends Association
      * @param \Cake\ORM\Table $side The potential Table with ownership
      * @return bool
      */
+    #[\Override]
     public function isOwningSide(Table $side): bool
     {
         return $side === $this->getSource();
@@ -101,6 +105,7 @@ class HasOne extends Association
      *
      * @return string
      */
+    #[\Override]
     public function type(): string
     {
         return self::ONE_TO_ONE;
@@ -118,6 +123,7 @@ class HasOne extends Association
      * the saved entity
      * @see \Cake\ORM\Table::save()
      */
+    #[\Override]
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
@@ -149,6 +155,7 @@ class HasOne extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function eagerLoader(array $options): Closure
     {
         $loader = new SelectLoader([
@@ -168,6 +175,7 @@ class HasOne extends Association
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function cascadeDelete(EntityInterface $entity, array $options = []): bool
     {
         $helper = new DependentDeleteHelper();

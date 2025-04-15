@@ -141,6 +141,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getName(): string
     {
         if ($this->name !== null) {
@@ -155,6 +156,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getPath(): string
     {
         if ($this->path !== null) {
@@ -174,6 +176,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getConfigPath(): string
     {
         if ($this->configPath !== null) {
@@ -187,6 +190,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getClassPath(): string
     {
         if ($this->classPath !== null) {
@@ -200,6 +204,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getTemplatePath(): string
     {
         if ($this->templatePath !== null) {
@@ -213,6 +218,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function enable(string $hook)
     {
         $this->checkHook($hook);
@@ -224,6 +230,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function disable(string $hook)
     {
         $this->checkHook($hook);
@@ -235,6 +242,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function isEnabled(string $hook): bool
     {
         $this->checkHook($hook);
@@ -263,6 +271,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function routes(RouteBuilder $routes): void
     {
         $path = $this->getConfigPath() . 'routes.php';
@@ -277,6 +286,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function bootstrap(PluginApplicationInterface $app): void
     {
         $bootstrap = $this->getConfigPath() . 'bootstrap.php';
@@ -288,6 +298,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function console(CommandCollection $commands): CommandCollection
     {
         return $commands->addMany($commands->discoverPlugin($this->getName()));
@@ -296,6 +307,7 @@ class BasePlugin implements PluginInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         return $middlewareQueue;
@@ -307,6 +319,7 @@ class BasePlugin implements PluginInterface
      * @param \Cake\Core\ContainerInterface $container The container to add services to.
      * @return void
      */
+    #[\Override]
     public function services(ContainerInterface $container): void
     {
     }

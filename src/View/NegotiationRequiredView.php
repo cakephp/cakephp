@@ -32,6 +32,7 @@ class NegotiationRequiredView extends View
      *
      * @return string
      */
+    #[\Override]
     public static function contentType(): string
     {
         return static::TYPE_MATCH_ALL;
@@ -42,6 +43,7 @@ class NegotiationRequiredView extends View
      *
      * @return void
      */
+    #[\Override]
     public function initialize(): void
     {
         $response = $this->getResponse()->withStatus(406);
@@ -55,6 +57,7 @@ class NegotiationRequiredView extends View
      * @param string|false|null $layout Layout to use. False to disable.
      * @return string Rendered content.
      */
+    #[\Override]
     public function render(?string $template = null, string|false|null $layout = null): string
     {
         return '';

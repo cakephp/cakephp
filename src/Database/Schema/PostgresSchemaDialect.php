@@ -37,6 +37,7 @@ class PostgresSchemaDialect extends SchemaDialect
      *    getting tables from.
      * @return array An array of (sql, params) to execute.
      */
+    #[\Override]
     public function listTablesSql(array $config): array
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables
@@ -65,6 +66,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeColumnSql(string $tableName, array $config): array
     {
         $sql = $this->describeColumnQuery();
@@ -207,6 +209,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
         $field = $this->_convertColumn($row['type']);
@@ -273,6 +276,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeColumns(string $tableName): array
     {
         $config = $this->_driver->config();
@@ -385,6 +389,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeIndexSql(string $tableName, array $config): array
     {
         $sql = $this->describeIndexQuery();
@@ -396,6 +401,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function convertIndexDescription(TableSchema $schema, array $row): void
     {
         $type = TableSchema::INDEX_INDEX;
@@ -426,6 +432,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeIndexes(string $tableName): array
     {
         [$schema, $name] = $this->splitTablename($tableName);
@@ -482,6 +489,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeForeignKeySql(string $tableName, array $config): array
     {
         $sql = $this->describeForeignKeyQuery();
@@ -493,6 +501,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function convertForeignKeyDescription(TableSchema $schema, array $row): void
     {
         $data = [
@@ -508,6 +517,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeForeignKeys(string $tableName): array
     {
         [$schema, $name] = $this->splitTablename($tableName);
@@ -579,6 +589,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeOptions(string $tableName): array
     {
         return [];
@@ -587,6 +598,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _convertOnClause(string $clause): string
     {
         if ($clause === 'r') {
@@ -605,6 +617,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function columnSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getColumn($name);
@@ -753,6 +766,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function addConstraintSql(TableSchema $schema): array
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s;';
@@ -773,6 +787,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function dropConstraintSql(TableSchema $schema): array
     {
         $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s;';
@@ -794,6 +809,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function indexSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getIndex($name);
@@ -814,6 +830,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function constraintSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getConstraint($name);
@@ -859,6 +876,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function createTableSql(TableSchema $schema, array $columns, array $constraints, array $indexes): array
     {
         $content = array_merge($columns, $constraints);
@@ -892,6 +910,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function truncateTableSql(TableSchema $schema): array
     {
         $name = $this->_driver->quoteIdentifier($schema->name());
@@ -907,6 +926,7 @@ class PostgresSchemaDialect extends SchemaDialect
      * @param \Cake\Database\Schema\TableSchema $schema Table instance
      * @return array SQL statements to drop a table.
      */
+    #[\Override]
     public function dropTableSql(TableSchema $schema): array
     {
         $sql = sprintf(

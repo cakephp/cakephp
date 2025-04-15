@@ -94,6 +94,7 @@ class TestFixture implements FixtureInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function connection(): string
     {
         return $this->connection;
@@ -102,6 +103,7 @@ class TestFixture implements FixtureInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sourceName(): string
     {
         return $this->table;
@@ -172,6 +174,7 @@ class TestFixture implements FixtureInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function insert(ConnectionInterface $connection): bool
     {
         assert($connection instanceof Connection);
@@ -235,6 +238,7 @@ class TestFixture implements FixtureInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function truncate(ConnectionInterface $connection): bool
     {
         assert($connection instanceof Connection);

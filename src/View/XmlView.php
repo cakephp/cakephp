@@ -101,6 +101,7 @@ class XmlView extends SerializedView
      *
      * @return string The JSON content type.
      */
+    #[\Override]
     public static function contentType(): string
     {
         return 'application/xml';
@@ -109,6 +110,7 @@ class XmlView extends SerializedView
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _serialize(array|string $serialize): string
     {
         /** @var string $rootNode */

@@ -465,6 +465,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * @return \Psr\Http\Message\ResponseInterface Response instance.
      * @throws \Psr\Http\Client\ClientExceptionInterface If an error happens while processing the request.
      */
+    #[\Override]
     public function sendRequest(RequestInterface $request): ResponseInterface
     {
         return $this->send($request, $this->_config);

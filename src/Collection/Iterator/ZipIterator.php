@@ -94,6 +94,7 @@ class ZipIterator implements CollectionInterface
      *
      * @return mixed
      */
+    #[\Override]
     public function current(): mixed
     {
         $current = $this->multipleIterator->current();
@@ -109,6 +110,7 @@ class ZipIterator implements CollectionInterface
      *
      * @return mixed
      */
+    #[\Override]
     public function key(): mixed
     {
         return $this->multipleIterator->key();
@@ -119,6 +121,7 @@ class ZipIterator implements CollectionInterface
      *
      * @return void
      */
+    #[\Override]
     public function next(): void
     {
         $this->multipleIterator->next();
@@ -129,6 +132,7 @@ class ZipIterator implements CollectionInterface
      *
      * @return void
      */
+    #[\Override]
     public function rewind(): void
     {
         $this->multipleIterator->rewind();
@@ -139,6 +143,7 @@ class ZipIterator implements CollectionInterface
      *
      * @return bool
      */
+    #[\Override]
     public function valid(): bool
     {
         return $this->multipleIterator->valid();

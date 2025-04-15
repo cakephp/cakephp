@@ -37,6 +37,7 @@ class ContentType extends ResponseBase
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         $mimeType = MimeType::getMimeType($other);
@@ -52,6 +53,7 @@ class ContentType extends ResponseBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'is set as the Content-Type (`' . $this->response->getType() . '`)';

@@ -37,6 +37,7 @@ class SimplePaginator extends NumericPaginator
      * @param array $data Paging data.
      * @return \Cake\Datasource\ResultSetInterface
      */
+    #[\Override]
     protected function getItems(QueryInterface $query, array $data): ResultSetInterface
     {
         return $query->limit($data['options']['limit'] + 1)->all();
@@ -45,6 +46,7 @@ class SimplePaginator extends NumericPaginator
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function buildParams(array $data): array
     {
         $hasNextPage = false;
@@ -70,6 +72,7 @@ class SimplePaginator extends NumericPaginator
      * @param array $pagingParams
      * @return \Cake\Datasource\Paging\PaginatedInterface
      */
+    #[\Override]
     protected function buildPaginated(ResultSetInterface $items, array $pagingParams): PaginatedInterface
     {
         if (count($items) > $this->pagingParams['perPage']) {
@@ -86,6 +89,7 @@ class SimplePaginator extends NumericPaginator
      * @param array $data Pagination data.
      * @return int|null
      */
+    #[\Override]
     protected function getCount(QueryInterface $query, array $data): ?int
     {
         return null;

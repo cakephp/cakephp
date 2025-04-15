@@ -66,6 +66,7 @@ class ReplaceIterator extends Collection
      *
      * @return mixed
      */
+    #[\Override]
     public function current(): mixed
     {
         return ($this->_callback)(parent::current(), $this->key(), $this->_innerIterator);
@@ -74,6 +75,7 @@ class ReplaceIterator extends Collection
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function unwrap(): Iterator
     {
         $iterator = $this->_innerIterator;

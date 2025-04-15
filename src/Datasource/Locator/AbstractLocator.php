@@ -47,6 +47,7 @@ abstract class AbstractLocator implements LocatorInterface
      * @throws \Cake\Core\Exception\CakeException When trying to get alias for which instance
      *   has already been created with different options.
      */
+    #[\Override]
     public function get(string $alias, array $options = []): RepositoryInterface
     {
         $storeOptions = $options;
@@ -80,6 +81,7 @@ abstract class AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function set(string $alias, RepositoryInterface $repository): RepositoryInterface
     {
         return $this->instances[$alias] = $repository;
@@ -88,6 +90,7 @@ abstract class AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function exists(string $alias): bool
     {
         return isset($this->instances[$alias]);
@@ -96,6 +99,7 @@ abstract class AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function remove(string $alias): void
     {
         unset(
@@ -107,6 +111,7 @@ abstract class AbstractLocator implements LocatorInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function clear(): void
     {
         $this->instances = [];

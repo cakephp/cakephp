@@ -50,6 +50,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return float|null
      */
+    #[\Override]
     public function toDatabase(mixed $value, Driver $driver): ?float
     {
         if ($value === null || $value === '') {
@@ -66,6 +67,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return float|null
      */
+    #[\Override]
     public function toPHP(mixed $value, Driver $driver): ?float
     {
         if ($value === null) {
@@ -78,6 +80,7 @@ class FloatType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
@@ -94,6 +97,7 @@ class FloatType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function toStatement(mixed $value, Driver $driver): int
     {
         return PDO::PARAM_STR;
@@ -105,6 +109,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @return string|float|null Converted value.
      */
+    #[\Override]
     public function marshal(mixed $value): string|float|null
     {
         if ($value === null || $value === '') {

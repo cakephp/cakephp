@@ -62,6 +62,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function setName(string $name)
     {
         assert(
@@ -168,6 +169,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function run(array $argv, ConsoleIo $io): ?int
     {
         $this->initialize();

@@ -399,6 +399,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * @return $this
      * @throws \InvalidArgumentException If page number < 1.
      */
+    #[\Override]
     public function page(int $num, ?int $limit = null)
     {
         if ($num < 1) {
@@ -575,6 +576,7 @@ class SelectQuery extends Query implements IteratorAggregate
      *
      * @return \Traversable
      */
+    #[\Override]
     public function getIterator(): Traversable
     {
         if ($this->bufferedResults) {
@@ -774,6 +776,7 @@ class SelectQuery extends Query implements IteratorAggregate
      *
      * @return void
      */
+    #[\Override]
     public function __clone()
     {
         parent::__clone();
@@ -790,6 +793,7 @@ class SelectQuery extends Query implements IteratorAggregate
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function __debugInfo(): array
     {
         $return = parent::__debugInfo();

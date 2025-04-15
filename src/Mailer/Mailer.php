@@ -606,6 +606,7 @@ class Mailer implements EventListenerInterface
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function implementedEvents(): array
     {
         return [];

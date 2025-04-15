@@ -43,6 +43,7 @@ class UpdateQuery extends DbUpdateQuery
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(?ValueBinder $binder = null): string
     {
         if (empty($this->_parts['update'])) {

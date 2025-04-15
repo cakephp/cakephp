@@ -250,6 +250,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return int The status code.
      */
+    #[\Override]
     public function getStatusCode(): int
     {
         return $this->code;
@@ -262,6 +263,7 @@ class Response extends Message implements ResponseInterface
      * @param string $reasonPhrase The status reason phrase.
      * @return static A copy of the current object with an updated status code.
      */
+    #[\Override]
     public function withStatus(int $code, string $reasonPhrase = ''): static
     {
         $new = clone $this;
@@ -276,6 +278,7 @@ class Response extends Message implements ResponseInterface
      *
      * @return string The current reason phrase.
      */
+    #[\Override]
     public function getReasonPhrase(): string
     {
         return $this->reasonPhrase;

@@ -67,6 +67,7 @@ class Collection implements CollectionInterface
      *
      * @return array<string> The list of tables and views in the connected database/schema.
      */
+    #[\Override]
     public function listTables(): array
     {
         return $this->getDialect()->listTables();
@@ -82,6 +83,7 @@ class Collection implements CollectionInterface
      * @return \Cake\Database\Schema\TableSchemaInterface Object with column metadata.
      * @throws \Cake\Database\Exception\DatabaseException when table cannot be described.
      */
+    #[\Override]
     public function describe(string $name, array $options = []): TableSchemaInterface
     {
         return $this->getDialect()->describe($name);

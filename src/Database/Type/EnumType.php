@@ -86,6 +86,7 @@ class EnumType extends BaseType
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|int|null
      */
+    #[\Override]
     public function toDatabase(mixed $value, Driver $driver): string|int|null
     {
         if ($value === null) {
@@ -131,6 +132,7 @@ class EnumType extends BaseType
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return \BackedEnum|null
      */
+    #[\Override]
     public function toPHP(mixed $value, Driver $driver): ?BackedEnum
     {
         if ($value === null) {
@@ -150,6 +152,7 @@ class EnumType extends BaseType
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function toStatement(mixed $value, Driver $driver): int
     {
         if ($this->backingType === 'int') {
@@ -165,6 +168,7 @@ class EnumType extends BaseType
      * @param mixed $value The value to convert.
      * @return \BackedEnum|null Converted value.
      */
+    #[\Override]
     public function marshal(mixed $value): ?BackedEnum
     {
         if ($value === null) {

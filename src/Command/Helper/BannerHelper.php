@@ -72,6 +72,7 @@ class BannerHelper extends Helper
      * @param array $args The messages to output
      * @return void
      */
+    #[\Override]
     public function output(array $args): void
     {
         if ($args === []) {

@@ -80,6 +80,7 @@ class SelectWithPivotLoader extends SelectLoader
      * @return \Cake\ORM\Query\SelectQuery
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
+    #[\Override]
     protected function _buildQuery(array $options): SelectQuery
     {
         $name = $this->junctionAssociationName;
@@ -137,6 +138,7 @@ class SelectWithPivotLoader extends SelectLoader
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _assertFieldsPresent(SelectQuery $fetchQuery, array $key): void
     {
         // _buildQuery() manually adds in required fields from junction table
@@ -149,6 +151,7 @@ class SelectWithPivotLoader extends SelectLoader
      * @param array<string, mixed> $options the options to use for getting the link field.
      * @return array<string>|string
      */
+    #[\Override]
     protected function _linkField(array $options): array|string
     {
         $links = [];
@@ -174,6 +177,7 @@ class SelectWithPivotLoader extends SelectLoader
      * @return array<string, mixed>
      * @throws \Cake\Database\Exception\DatabaseException when the association property is not part of the results set.
      */
+    #[\Override]
     protected function _buildResultMap(SelectQuery $fetchQuery, array $options): array
     {
         $resultMap = [];

@@ -51,6 +51,7 @@ class ClientEvent extends Event
      *
      * @return \Cake\Http\Client\Response|null
      */
+    #[\Override]
     public function getResult(): ?Response
     {
         return $this->result;
@@ -62,6 +63,7 @@ class ClientEvent extends Event
      * @param mixed $value The value to set.
      * @return $this
      */
+    #[\Override]
     public function setResult(mixed $value = null)
     {
         if ($value !== null && !$value instanceof Response) {

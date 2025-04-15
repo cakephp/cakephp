@@ -28,6 +28,7 @@ class ContentsRegExp extends ContentsBase
      * @param mixed $other Expected
      * @return bool
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         return preg_match($other, $this->contents) > 0;
@@ -38,6 +39,7 @@ class ContentsRegExp extends ContentsBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf('PCRE pattern found in %s', $this->output);
@@ -47,6 +49,7 @@ class ContentsRegExp extends ContentsBase
      * @param mixed $other Expected
      * @return string
      */
+    #[\Override]
     public function failureDescription(mixed $other): string
     {
         return '`' . $other . '` ' . $this->toString();
@@ -55,6 +58,7 @@ class ContentsRegExp extends ContentsBase
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function additionalFailureDescription(mixed $other): string
     {
         return sprintf("actual result:\n%s", $this->contents);

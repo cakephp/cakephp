@@ -62,6 +62,7 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string
      */
+    #[\Override]
     protected function _buildWithPart(array $parts, Query $query, ValueBinder $binder): string
     {
         $expressions = [];
@@ -84,6 +85,7 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string
      */
+    #[\Override]
     protected function _buildInsertPart(array $parts, Query $query, ValueBinder $binder): string
     {
         if (!isset($parts[0])) {

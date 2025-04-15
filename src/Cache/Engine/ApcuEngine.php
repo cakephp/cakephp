@@ -42,6 +42,7 @@ class ApcuEngine extends CacheEngine
      * @param array<string, mixed> $config array of setting for the engine
      * @return bool True if the engine has been successfully initialized, false if not
      */
+    #[\Override]
     public function init(array $config = []): bool
     {
         if (!extension_loaded('apcu')) {
@@ -62,6 +63,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True on success and false on failure.
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
+    #[\Override]
     public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
         $key = $this->_key($key);
@@ -79,6 +81,7 @@ class ApcuEngine extends CacheEngine
      *   has expired, or if there was an error fetching it
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      */
+    #[\Override]
     public function get(string $key, mixed $default = null): mixed
     {
         $value = apcu_fetch($this->_key($key), $success);
@@ -97,6 +100,7 @@ class ApcuEngine extends CacheEngine
      * @return int|false New incremented value, false otherwise
      * @link https://secure.php.net/manual/en/function.apcu-inc.php
      */
+    #[\Override]
     public function increment(string $key, int $offset = 1): int|false
     {
         $key = $this->_key($key);
@@ -112,6 +116,7 @@ class ApcuEngine extends CacheEngine
      * @return int|false New decremented value, false otherwise
      * @link https://secure.php.net/manual/en/function.apcu-dec.php
      */
+    #[\Override]
     public function decrement(string $key, int $offset = 1): int|false
     {
         $key = $this->_key($key);
@@ -126,6 +131,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the value was successfully deleted, false if it didn't exist or couldn't be removed
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
+    #[\Override]
     public function delete(string $key): bool
     {
         $key = $this->_key($key);
@@ -140,6 +146,7 @@ class ApcuEngine extends CacheEngine
      * @link https://secure.php.net/manual/en/function.apcu-cache-info.php
      * @link https://secure.php.net/manual/en/function.apcu-delete.php
      */
+    #[\Override]
     public function clear(): bool
     {
         if (class_exists(APCUIterator::class, false)) {
@@ -171,6 +178,7 @@ class ApcuEngine extends CacheEngine
      * @return bool True if the data was successfully cached, false on failure.
      * @link https://secure.php.net/manual/en/function.apcu-add.php
      */
+    #[\Override]
     public function add(string $key, mixed $value): bool
     {
         $key = $this->_key($key);
@@ -188,6 +196,7 @@ class ApcuEngine extends CacheEngine
      * @link https://secure.php.net/manual/en/function.apcu-fetch.php
      * @link https://secure.php.net/manual/en/function.apcu-store.php
      */
+    #[\Override]
     public function groups(): array
     {
         if (!$this->_compiledGroupNames) {
@@ -230,6 +239,7 @@ class ApcuEngine extends CacheEngine
      * @return bool success
      * @link https://secure.php.net/manual/en/function.apcu-inc.php
      */
+    #[\Override]
     public function clearGroup(string $group): bool
     {
         $success = false;

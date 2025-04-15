@@ -77,6 +77,7 @@ class PhpConfig implements ConfigEngineInterface
      * @throws \Cake\Core\Exception\CakeException when files don't exist or they don't contain `$config`.
      *  Or when files contain '..' as this could lead to abusive reads.
      */
+    #[\Override]
     public function read(string $key): array
     {
         $file = $this->_getFilePath($key, true);
@@ -98,6 +99,7 @@ class PhpConfig implements ConfigEngineInterface
      * @param array $data Data to dump.
      * @return bool Success
      */
+    #[\Override]
     public function dump(string $key, array $data): bool
     {
         $contents = '<?php' . "\n" . 'return ' . var_export($data, true) . ';';

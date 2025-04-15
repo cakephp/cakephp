@@ -83,6 +83,7 @@ class TimeType extends BaseType implements BatchCastingInterface
      * @param mixed $value Request data
      * @return \Cake\Chronos\ChronosTime|null
      */
+    #[\Override]
     public function marshal(mixed $value): ?ChronosTime
     {
         if ($value instanceof $this->_className) {
@@ -133,6 +134,7 @@ class TimeType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
@@ -155,6 +157,7 @@ class TimeType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return mixed
      */
+    #[\Override]
     public function toDatabase(mixed $value, Driver $driver): mixed
     {
         if ($value === null || is_string($value)) {
@@ -173,6 +176,7 @@ class TimeType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return \Cake\Chronos\ChronosTime|null
      */
+    #[\Override]
     public function toPHP(mixed $value, Driver $driver): ?ChronosTime
     {
         if ($value === null) {

@@ -35,6 +35,7 @@ class SqlserverSchemaDialect extends SchemaDialect
      *    getting tables from.
      * @return array An array of (sql, params) to execute.
      */
+    #[\Override]
     public function listTablesSql(array $config): array
     {
         $sql = "SELECT TABLE_NAME
@@ -69,6 +70,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeColumnSql(string $tableName, array $config): array
     {
         $sql = $this->describeColumnQuery();
@@ -232,6 +234,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
         $field = $this->_convertColumn(
@@ -275,6 +278,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeColumns(string $tableName): array
     {
         [$schema, $name] = $this->splitTablename($tableName);
@@ -348,6 +352,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeIndexSql(string $tableName, array $config): array
     {
         $sql = $this->describeIndexQuery();
@@ -381,6 +386,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function convertIndexDescription(TableSchema $schema, array $row): void
     {
         $type = TableSchema::INDEX_INDEX;
@@ -421,6 +427,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeIndexes(string $tableName): array
     {
         [$schema, $name] = $this->splitTablename($tableName);
@@ -482,6 +489,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeForeignKeys(string $tableName): array
     {
         [$schema, $name] = $this->splitTablename($tableName);
@@ -518,6 +526,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeForeignKeySql(string $tableName, array $config): array
     {
         $sql = $this->describeForeignKeyQuery();
@@ -529,6 +538,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function convertForeignKeyDescription(TableSchema $schema, array $row): void
     {
         $data = [
@@ -545,6 +555,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function describeOptions(string $tableName): array
     {
         return [];
@@ -553,6 +564,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _foreignOnClause(string $on): string
     {
         $parent = parent::_foreignOnClause($on);
@@ -563,6 +575,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _convertOnClause(string $clause): string
     {
         return match ($clause) {
@@ -577,6 +590,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function columnSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getColumn($name);
@@ -740,6 +754,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function addConstraintSql(TableSchema $schema): array
     {
         $sqlPattern = 'ALTER TABLE %s ADD %s;';
@@ -760,6 +775,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function dropConstraintSql(TableSchema $schema): array
     {
         $sqlPattern = 'ALTER TABLE %s DROP CONSTRAINT %s;';
@@ -781,6 +797,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function indexSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getIndex($name);
@@ -801,6 +818,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function constraintSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getConstraint($name);
@@ -846,6 +864,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function createTableSql(TableSchema $schema, array $columns, array $constraints, array $indexes): array
     {
         $content = array_merge($columns, $constraints);
@@ -892,6 +911,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function truncateTableSql(TableSchema $schema): array
     {
         $name = $this->_driver->quoteIdentifier($schema->name());

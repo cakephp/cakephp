@@ -64,6 +64,7 @@ class ClassNode implements NodeInterface
      *
      * @return string
      */
+    #[\Override]
     public function getValue(): string
     {
         return $this->class;
@@ -84,6 +85,7 @@ class ClassNode implements NodeInterface
      *
      * @return array<\Cake\Error\Debug\PropertyNode>
      */
+    #[\Override]
     public function getChildren(): array
     {
         return $this->properties;

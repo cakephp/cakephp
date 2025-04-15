@@ -45,6 +45,7 @@ class TemplateFileEquals extends Constraint
      * @param mixed $other Expected filename
      * @return bool
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         return str_contains($this->filename, $other);
@@ -55,6 +56,7 @@ class TemplateFileEquals extends Constraint
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf('equals template file `%s`', $this->filename);

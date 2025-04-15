@@ -60,6 +60,7 @@ class StubConsoleOutput extends ConsoleOutput
      * @param int $newlines Number of newlines to append
      * @return int
      */
+    #[\Override]
     public function write(array|string $message, int $newlines = 1): int
     {
         foreach ((array)$message as $line) {

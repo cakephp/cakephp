@@ -30,6 +30,7 @@ class DebugTransport extends AbstractTransport
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function send(Message $message): array
     {
         $headers = $message->getHeadersString(

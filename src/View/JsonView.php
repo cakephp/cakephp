@@ -100,6 +100,7 @@ class JsonView extends SerializedView
      *
      * @return string The JSON content type.
      */
+    #[\Override]
     public static function contentType(): string
     {
         return 'application/json';
@@ -112,6 +113,7 @@ class JsonView extends SerializedView
      * @param string|false|null $layout The layout being rendered.
      * @return string The rendered view.
      */
+    #[\Override]
     public function render(?string $template = null, string|false|null $layout = null): string
     {
         $return = parent::render($template, $layout);
@@ -133,6 +135,7 @@ class JsonView extends SerializedView
     /**
      * @inheritDoc
      */
+    #[\Override]
     protected function _serialize(array|string $serialize): string
     {
         $data = $this->_dataToSerialize($serialize);

@@ -46,6 +46,7 @@ class SessionEquals extends Constraint
      * @param mixed $other Value to compare with
      * @return bool
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         // Server::run calls Session::close at the end of the request.
@@ -60,6 +61,7 @@ class SessionEquals extends Constraint
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf("is in session path '%s'", $this->path);

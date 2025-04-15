@@ -42,6 +42,7 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
      * @param string|null $clientMediaType The media type as provided by the client, if any.
      * @throws \InvalidArgumentException If the file resource is not readable.
      */
+    #[\Override]
     public function createUploadedFile(
         StreamInterface $stream,
         ?int $size = null,

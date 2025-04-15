@@ -36,6 +36,7 @@ class CookieSet extends ResponseBase
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         $cookie = $this->readCookie($other);
@@ -48,6 +49,7 @@ class CookieSet extends ResponseBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'cookie is set';

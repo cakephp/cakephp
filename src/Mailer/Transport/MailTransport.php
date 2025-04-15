@@ -30,6 +30,7 @@ class MailTransport extends AbstractTransport
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function send(Message $message): array
     {
         $this->checkRecipient($message);

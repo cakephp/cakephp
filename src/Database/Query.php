@@ -276,6 +276,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * @param \Cake\Database\ValueBinder|null $binder Value binder that generates parameter placeholders
      * @return string
      */
+    #[\Override]
     public function sql(?ValueBinder $binder = null): string
     {
         if (!$binder) {
@@ -307,6 +308,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * @param \Closure $callback Callback to be executed for each part
      * @return $this
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         foreach ($this->_parts as $name => $part) {
@@ -1822,6 +1824,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * @return string
      */
+    #[\Override]
     public function __toString(): string
     {
         return $this->sql();

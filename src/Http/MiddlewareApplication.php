@@ -35,11 +35,13 @@ abstract class MiddlewareApplication implements HttpApplicationInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     abstract public function bootstrap(): void;
 
     /**
      * @inheritDoc
      */
+    #[\Override]
     abstract public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue;
 
     /**
@@ -48,6 +50,7 @@ abstract class MiddlewareApplication implements HttpApplicationInterface
      * @param \Psr\Http\Message\ServerRequestInterface $request The request
      * @return \Psr\Http\Message\ResponseInterface
      */
+    #[\Override]
     public function handle(
         ServerRequestInterface $request,
     ): ResponseInterface {

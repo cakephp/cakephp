@@ -69,6 +69,7 @@ class CachedCollection implements CollectionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function listTables(): array
     {
         return $this->collection->listTables();
@@ -92,6 +93,7 @@ class CachedCollection implements CollectionInterface
      * @return \Cake\Database\Schema\TableSchemaInterface Object with column metadata.
      * @throws \Cake\Database\Exception\DatabaseException when table cannot be described.
      */
+    #[\Override]
     public function describe(string $name, array $options = []): TableSchemaInterface
     {
         $options += ['forceRefresh' => false];

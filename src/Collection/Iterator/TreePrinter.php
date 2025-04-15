@@ -90,6 +90,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      *
      * @return mixed
      */
+    #[\Override]
     public function key(): mixed
     {
         $extractor = $this->_key;
@@ -102,6 +103,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      *
      * @return string
      */
+    #[\Override]
     public function current(): string
     {
         $extractor = $this->_value;
@@ -116,6 +118,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      *
      * @return void
      */
+    #[\Override]
     public function next(): void
     {
         parent::next();

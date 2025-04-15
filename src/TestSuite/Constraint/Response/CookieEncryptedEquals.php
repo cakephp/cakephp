@@ -66,6 +66,7 @@ class CookieEncryptedEquals extends CookieEquals
      * @return bool
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
+    #[\Override]
     public function matches($other): bool
     {
         $cookie = $this->response->getCookie($this->cookieName);
@@ -78,6 +79,7 @@ class CookieEncryptedEquals extends CookieEquals
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return sprintf("is encrypted in cookie '%s'", $this->cookieName);
@@ -88,6 +90,7 @@ class CookieEncryptedEquals extends CookieEquals
      *
      * @return string
      */
+    #[\Override]
     protected function _getCookieEncryptionKey(): string
     {
         return $this->key;

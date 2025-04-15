@@ -54,6 +54,7 @@ class NetworkException extends RuntimeException implements NetworkExceptionInter
      *
      * @return \Psr\Http\Message\RequestInterface
      */
+    #[\Override]
     public function getRequest(): RequestInterface
     {
         return $this->request;

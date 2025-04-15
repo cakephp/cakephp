@@ -45,6 +45,7 @@ abstract class BaseType implements TypeInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getName(): ?string
     {
         return $this->_name;
@@ -53,6 +54,7 @@ abstract class BaseType implements TypeInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function getBaseType(): ?string
     {
         return $this->_name;
@@ -61,6 +63,7 @@ abstract class BaseType implements TypeInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function toStatement(mixed $value, Driver $driver): int
     {
         if ($value === null) {
@@ -73,6 +76,7 @@ abstract class BaseType implements TypeInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function newId(): mixed
     {
         return null;

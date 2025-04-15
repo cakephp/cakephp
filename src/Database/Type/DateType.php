@@ -81,6 +81,7 @@ class DateType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|null
      */
+    #[\Override]
     public function toDatabase(mixed $value, Driver $driver): ?string
     {
         if ($value === null || is_string($value)) {
@@ -103,6 +104,7 @@ class DateType extends BaseType implements BatchCastingInterface
      * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted
      * @return \Cake\Chronos\ChronosDate|null
      */
+    #[\Override]
     public function toPHP(mixed $value, Driver $driver): ?ChronosDate
     {
         if ($value === null) {
@@ -124,6 +126,7 @@ class DateType extends BaseType implements BatchCastingInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function manyToPHP(array $values, array $fields, Driver $driver): array
     {
         foreach ($fields as $field) {
@@ -155,6 +158,7 @@ class DateType extends BaseType implements BatchCastingInterface
      * @param mixed $value Request data
      * @return \Cake\Chronos\ChronosDate|null
      */
+    #[\Override]
     public function marshal(mixed $value): ?ChronosDate
     {
         if ($value instanceof $this->_className) {

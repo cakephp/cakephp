@@ -29,6 +29,7 @@ class MailCount extends MailConstraintBase
      * @param mixed $other Constraint check
      * @return bool
      */
+    #[\Override]
     public function matches(mixed $other): bool
     {
         return count($this->getMessages()) === $other;
@@ -39,6 +40,7 @@ class MailCount extends MailConstraintBase
      *
      * @return string
      */
+    #[\Override]
     public function toString(): string
     {
         return 'emails were sent';

@@ -248,6 +248,7 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function sql(ValueBinder $binder): string
     {
         if ($this->when === null) {
@@ -288,6 +289,7 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * @inheritDoc
      */
+    #[\Override]
     public function traverse(Closure $callback)
     {
         if ($this->when instanceof ExpressionInterface) {

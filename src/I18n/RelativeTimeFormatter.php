@@ -36,6 +36,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * @return string The difference between the two days in a human readable format.
      * @see \Cake\Chronos\Chronos::diffForHumans
      */
+    #[\Override]
     public function diffForHumans(
         ChronosDate|DateTimeInterface $first,
         ChronosDate|DateTimeInterface|null $second = null,

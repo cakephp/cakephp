@@ -74,6 +74,7 @@ class Mock implements AdapterInterface
      * @param array<string, mixed> $options Unused.
      * @return array<\Cake\Http\Client\Response> The matched response or an empty array for no matches.
      */
+    #[\Override]
     public function send(RequestInterface $request, array $options): array
     {
         $found = null;
