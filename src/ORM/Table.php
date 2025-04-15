@@ -663,9 +663,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Returns the display field.
      *
-     * @return array<string>|string|null
+     * @return array<string>|string
      */
-    public function getDisplayField(): array|string|null
+    public function getDisplayField(): array|string
     {
         if ($this->_displayField !== null) {
             return $this->_displayField;
