@@ -397,7 +397,6 @@ class ConsoleOptionParser
         $this->_options[$name] = $option;
         asort($this->_options);
         if ($option->short()) {
-            debug($this->_shortOptions);
             if (isset($this->_shortOptions[$option->short()])) {
                 deprecationWarning('5.2.0', 'You cannot redefine short options. This will throw an error in 5.3.0+.');
             }
