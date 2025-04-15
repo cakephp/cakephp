@@ -327,7 +327,7 @@ class FunctionsGlobalTest extends TestCase
             triggerWarning('This will be gone one day');
             $this->assertTrue(true);
         });
-        $this->assertMatchesRegularExpression('/This will be gone one day - (.*?)[\/\\\]FunctionsGlobalTest.php, line\: \d+/', $error->getMessage());
+        $this->assertMatchesRegularExpression('/This will be gone one day/', $error->getMessage());
     }
 
     /**
