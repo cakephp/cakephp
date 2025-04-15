@@ -241,47 +241,47 @@ class HtmlHelper extends Helper
      * it is treated as a path to controller/action and parsed with the
      * UrlHelper::build() method.
      *
-     * If the $url is empty, $title is used instead.
+     * If the $url is empty, $content is used instead.
      *
      * ### Options
      *
-     * - `escape` Set to false to disable escaping of title and attributes.
-     * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
+     * - `escape` Set to false to disable escaping of content and attributes.
+     * - `escapeContent` Set to false to disable escaping of content. Takes precedence
      *   over value of `escape`)
      * - `confirm` JavaScript confirmation message.
      *
-     * @param array|string $title The content to be wrapped by `<a>` tags.
-     *   Can be an array if $url is null. If $url is null, $title will be used as both the URL and title.
+     * @param array|string $content The content to be wrapped by `<a>` tags.
+     *   Can be an array if $url is null. If $url is null, $content will be used as both the URL and content.
      * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string An `<a>` element.
      * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-links
      */
-    public function link(array|string $title, array|string|null $url = null, array $options = []): string
+    public function link(array|string $content, array|string|null $url = null, array $options = []): string
     {
-        $escapeTitle = true;
+        $escapeContent = true;
         if ($url !== null) {
             $url = $this->Url->build($url, $options);
             unset($options['fullBase']);
         } else {
-            $url = $this->Url->build($title);
-            $title = htmlspecialchars_decode($url, ENT_QUOTES);
-            $title = h(urldecode($title));
-            $escapeTitle = false;
+            $url = $this->Url->build($content);
+            $content = htmlspecialchars_decode($url, ENT_QUOTES);
+            $content = h(urldecode($content));
+            $escapeContent = false;
         }
 
-        if (isset($options['escapeTitle'])) {
-            $escapeTitle = $options['escapeTitle'];
-            unset($options['escapeTitle']);
+        if (isset($options['escapeContent'])) {
+            $escapeContent = $options['escapeContent'];
+            unset($options['escapeContent']);
         } elseif (isset($options['escape'])) {
-            $escapeTitle = $options['escape'];
+            $escapeContent = $options['escape'];
         }
 
-        if ($escapeTitle === true) {
-            $title = h($title);
-        } elseif (is_string($escapeTitle)) {
-            $title = htmlentities($title, ENT_QUOTES, $escapeTitle);
+        if ($escapeContent === true) {
+            $content = h($content);
+        } elseif (is_string($escapeContent)) {
+            $content = htmlentities($content, ENT_QUOTES, $escapeContent);
         }
 
         $templater = $this->templater();
@@ -302,7 +302,7 @@ class HtmlHelper extends Helper
         return $templater->format('link', [
             'url' => $url,
             'attrs' => $templater->formatAttributes($options),
-            'content' => $title,
+            'content' => $content,
         ]);
     }
 
@@ -312,11 +312,11 @@ class HtmlHelper extends Helper
      * ### Options
      *
      * - `escape` Set to false to disable escaping of title and attributes.
-     * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
+     * - `escapeContent` Set to false to disable escaping of title. Takes precedence
      *   over value of `escape`)
      * - `confirm` JavaScript confirmation message.
      *
-     * @param string $title The content to be wrapped by `<a>` tags.
+     * @param string $content The content to be wrapped by `<a>` tags.
      * @param string $path Cake-relative route path.
      * @param array $params An array specifying any additional parameters.
      *   Can be also any special parameters supported by `Router::url()`.
@@ -325,9 +325,9 @@ class HtmlHelper extends Helper
      * @see \Cake\Routing\Router::pathUrl()
      * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-links
      */
-    public function linkFromPath(string $title, string $path, array $params = [], array $options = []): string
+    public function linkFromPath(string $content, string $path, array $params = [], array $options = []): string
     {
-        return $this->link($title, ['_path' => $path] + $params, $options);
+        return $this->link($content, ['_path' => $path] + $params, $options);
     }
 
     /**

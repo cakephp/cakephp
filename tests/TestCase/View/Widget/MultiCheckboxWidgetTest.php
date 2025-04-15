@@ -50,7 +50,7 @@ class MultiCheckboxWidgetTest extends TestCase
             'nestingLabel' => '<label{{attrs}}>{{input}}{{text}}</label>',
             'checkboxWrapper' => '<div class="checkbox">{{input}}{{label}}</div>',
             'multicheckboxWrapper' => '<fieldset{{attrs}}>{{content}}</fieldset>',
-            'multicheckboxTitle' => '<legend>{{text}}</legend>',
+            'multicheckboxLabel' => '<legend>{{text}}</legend>',
             'selectedClass' => 'selected',
         ];
         $this->templates = new StringTemplate($templates);

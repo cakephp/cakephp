@@ -98,7 +98,7 @@ class ButtonWidgetTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $data['escapeTitle'] = false;
+        $data['escapeContent'] = false;
         $result = $button->render($data, $this->context);
         $expected = [
             'button' => ['type' => 'submit', 'onclick' => '&lt;escape me&gt;'],

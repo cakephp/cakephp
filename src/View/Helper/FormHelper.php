@@ -135,8 +135,8 @@ class FormHelper extends Helper
             'nestingLabel' => '{{hidden}}<label{{attrs}}>{{input}}{{text}}</label>',
             // Legends created by allControls()
             'legend' => '<legend>{{text}}</legend>',
-            // Multi-Checkbox input set title element.
-            'multicheckboxTitle' => '<legend>{{text}}</legend>',
+            // Multi-Checkbox input set label element.
+            'multicheckboxLabel' => '<legend>{{text}}</legend>',
             // Multi-Checkbox wrapping container.
             'multicheckboxWrapper' => '<fieldset{{attrs}}>{{content}}</fieldset>',
             // Option element used in select pickers.
@@ -1789,25 +1789,25 @@ class FormHelper extends Helper
      * ### Options:
      *
      * - `type` - Value for "type" attribute of button. Defaults to "submit".
-     * - `escapeTitle` - HTML entity encode the title of the button. Defaults to true.
+     * - `escapeContent` - HTML entity encode the content of the button. Defaults to true.
      * - `escape` - HTML entity encode the attributes of button tag. Defaults to true.
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
-     * @param string $title The button's caption. Not automatically HTML encoded
+     * @param string $content The button's caption. Not automatically HTML encoded
      * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string An HTML button tag.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-button-elements
      */
-    public function button(string $title, array $options = []): string
+    public function button(string $content, array $options = []): string
     {
         $options += [
             'type' => 'submit',
-            'escapeTitle' => true,
+            'escapeContent' => true,
             'escape' => true,
             'secure' => false,
             'confirm' => null,
         ];
-        $options['text'] = $title;
+        $options['text'] = $content;
 
         $confirmMessage = $options['confirm'];
         unset($options['confirm']);
@@ -1838,13 +1838,13 @@ class FormHelper extends Helper
      * - Other options is the same of button method.
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
-     * @param string $title The button's caption. Not automatically HTML encoded
+     * @param string $content The button's caption. Not automatically HTML encoded
      * @param array|string $url URL as string or array
      * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string An HTML button tag.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
-    public function postButton(string $title, array|string $url, array $options = []): string
+    public function postButton(string $content, array|string $url, array $options = []): string
     {
         $formOptions = ['url' => $url];
         if (isset($options['method'])) {
@@ -1862,7 +1862,7 @@ class FormHelper extends Helper
             }
             unset($options['data']);
         }
-        $out .= $this->button($title, $options);
+        $out .= $this->button($content, $options);
         $out .= $this->end();
 
         return $out;
@@ -1890,14 +1890,14 @@ class FormHelper extends Helper
      * - Other options are the same of HtmlHelper::link() method.
      * - The option `onclick` will be replaced.
      *
-     * @param string $title The content to be wrapped by <a> tags.
+     * @param string $content The content to be wrapped by <a> tags.
      * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array<string, mixed> $options Array of HTML attributes.
      * @return string A form based `<a>` element.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
-    public function postLink(string $title, array|string|null $url = null, array $options = []): string
+    public function postLink(string $content, array|string|null $url = null, array $options = []): string
     {
         $options += ['block' => $this->getConfig('defaultPostLinkBlock'), 'confirm' => null];
 
@@ -2001,7 +2001,7 @@ class FormHelper extends Helper
 
         unset($options['block']);
 
-        $out .= $this->Html->link($title, $url, $options) . $script;
+        $out .= $this->Html->link($content, $url, $options) . $script;
 
         return $out;
     }
@@ -2010,7 +2010,7 @@ class FormHelper extends Helper
      * Creates an HTML link, that submits a form to the given URL using the DELETE method.
      *  Requires javascript to be enabled in browser.
      *
-     * @param string $title The content to be wrapped by <a> tags.
+     * @param string $content The content to be wrapped by <a> tags.
      * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *    external URL (starts with http://)
      * @param array<string, mixed> $options Array of HTML attributes.
@@ -2019,11 +2019,11 @@ class FormHelper extends Helper
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      * @since 5.2.0
      */
-    public function deleteLink(string $title, array|string|null $url = null, array $options = []): string
+    public function deleteLink(string $content, array|string|null $url = null, array $options = []): string
     {
         $options['method'] = 'delete';
 
-        return $this->postLink($title, $url, $options);
+        return $this->postLink($content, $url, $options);
     }
 
     /**

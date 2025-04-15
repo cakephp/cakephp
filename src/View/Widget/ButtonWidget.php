@@ -53,7 +53,7 @@ class ButtonWidget implements WidgetInterface
      *
      * - `text` The text of the button. Unlike all other form controls, buttons
      *   do not escape their contents by default.
-     * - `escapeTitle` Set to false to disable escaping of button text.
+     * - `escapeContent` Set to false to disable escaping of button text.
      * - `escape` Set to false to disable escaping of attributes.
      * - `type` The button type defaults to 'submit'.
      *
@@ -68,15 +68,15 @@ class ButtonWidget implements WidgetInterface
         $data += [
             'text' => '',
             'type' => 'submit',
-            'escapeTitle' => true,
+            'escapeContent' => true,
             'escape' => true,
             'templateVars' => [],
         ];
 
         return $this->_templates->format('button', [
-            'text' => $data['escapeTitle'] ? h($data['text']) : $data['text'],
+            'text' => $data['escapeContent'] ? h($data['text']) : $data['text'],
             'templateVars' => $data['templateVars'],
-            'attrs' => $this->_templates->formatAttributes($data, ['text', 'escapeTitle']),
+            'attrs' => $this->_templates->formatAttributes($data, ['text', 'escapeContent']),
         ]);
     }
 

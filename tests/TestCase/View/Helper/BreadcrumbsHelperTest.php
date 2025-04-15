@@ -56,14 +56,14 @@ class BreadcrumbsHelperTest extends TestCase
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => [
                     'class' => 'first',
                 ],
             ],
             [
-                'title' => 'Some text',
+                'content' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
                     'action' => 'text',
@@ -82,30 +82,30 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs
             ->add([
                 [
-                    'title' => 'Home',
+                    'content' => 'Home',
                     'url' => '/',
                     'options' => ['class' => 'first'],
                 ],
                 [
-                    'title' => 'Some text',
+                    'content' => 'Some text',
                     'url' => ['controller' => 'Some', 'action' => 'text'],
                 ],
                 [
-                    'title' => 'Final',
+                    'content' => 'Final',
                 ],
             ]);
 
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => [
                     'class' => 'first',
                 ],
             ],
             [
-                'title' => 'Some text',
+                'content' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
                     'action' => 'text',
@@ -113,7 +113,7 @@ class BreadcrumbsHelperTest extends TestCase
                 'options' => [],
             ],
             [
-                'title' => 'Final',
+                'content' => 'Final',
                 'url' => null,
                 'options' => [],
             ],
@@ -134,12 +134,12 @@ class BreadcrumbsHelperTest extends TestCase
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'The root',
+                'content' => 'The root',
                 'url' => '/root',
                 'options' => ['data-name' => 'some-name'],
             ],
             [
-                'title' => 'Some text',
+                'content' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
                     'action' => 'text',
@@ -147,7 +147,7 @@ class BreadcrumbsHelperTest extends TestCase
                 'options' => [],
             ],
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => [
                     'class' => 'first',
@@ -165,14 +165,14 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
             ->prepend([
-                ['title' => 'Some text', 'url' => ['controller' => 'Some', 'action' => 'text']],
-                ['title' => 'The root', 'url' => '/root', 'options' => ['data-name' => 'some-name']],
+                ['content' => 'Some text', 'url' => ['controller' => 'Some', 'action' => 'text']],
+                ['content' => 'The root', 'url' => '/root', 'options' => ['data-name' => 'some-name']],
             ]);
 
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'Some text',
+                'content' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
                     'action' => 'text',
@@ -180,12 +180,12 @@ class BreadcrumbsHelperTest extends TestCase
                 'options' => [],
             ],
             [
-                'title' => 'The root',
+                'content' => 'The root',
                 'url' => '/root',
                 'options' => ['data-name' => 'some-name'],
             ],
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => [
                     'class' => 'first',
@@ -225,7 +225,7 @@ class BreadcrumbsHelperTest extends TestCase
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'Some text',
+                'content' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
                     'action' => 'text',
@@ -233,7 +233,7 @@ class BreadcrumbsHelperTest extends TestCase
                 'options' => [],
             ],
             [
-                'title' => 'Insert At Again',
+                'content' => 'Insert At Again',
                 'url' => [
                     'controller' => 'Insert',
                     'action' => 'at_again',
@@ -241,7 +241,7 @@ class BreadcrumbsHelperTest extends TestCase
                 'options' => [],
             ],
             [
-                'title' => 'Insert At',
+                'content' => 'Insert At',
                 'url' => [
                     'controller' => 'Insert',
                     'action' => 'at',
@@ -249,7 +249,7 @@ class BreadcrumbsHelperTest extends TestCase
                 'options' => [],
             ],
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => [
                     'class' => 'first',
@@ -284,17 +284,17 @@ class BreadcrumbsHelperTest extends TestCase
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'The super root',
+                'content' => 'The super root',
                 'url' => null,
                 'options' => [],
             ],
             [
-                'title' => 'The root',
+                'content' => 'The root',
                 'url' => '/root',
                 'options' => ['data-name' => 'some-name'],
             ],
             [
-                'title' => 'Some text',
+                'content' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
                     'action' => 'text',
@@ -302,7 +302,7 @@ class BreadcrumbsHelperTest extends TestCase
                 'options' => [],
             ],
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => [
                     'class' => 'first',
@@ -326,17 +326,17 @@ class BreadcrumbsHelperTest extends TestCase
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'The root',
+                'content' => 'The root',
                 'url' => '/root',
                 'options' => ['data-name' => 'some-name'],
             ],
             [
-                'title' => 'The less super root',
+                'content' => 'The less super root',
                 'url' => null,
                 'options' => [],
             ],
             [
-                'title' => 'Some text',
+                'content' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
                     'action' => 'text',
@@ -344,7 +344,7 @@ class BreadcrumbsHelperTest extends TestCase
                 'options' => [],
             ],
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => [
                     'class' => 'first',
@@ -366,12 +366,12 @@ class BreadcrumbsHelperTest extends TestCase
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => [],
             ],
             [
-                'title' => 'Below Home',
+                'content' => 'Below Home',
                 'url' => '/below',
                 'options' => [
                     'class' => 'second',
@@ -439,8 +439,8 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs = new BreadcrumbsHelper(new View(), [
             'templates' => [
                 'wrapper' => '<ol itemtype="http://schema.org/BreadcrumbList"{{attrs}}>{{content}}</ol>',
-                'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{url}}"{{innerAttrs}}><span itemprop="name">{{title}}</span></a></li>',
-                'itemWithoutLink' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><span itemprop="name"{{innerAttrs}}>{{title}}</span></li>',
+                'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{url}}"{{innerAttrs}}><span itemprop="name">{{content}}</span></a></li>',
+                'itemWithoutLink' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><span itemprop="name"{{innerAttrs}}>{{content}}</span></li>',
             ],
         ]);
         $this->breadcrumbs
@@ -478,8 +478,8 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs = new BreadcrumbsHelper(new View(), [
             'templates' => [
                 'wrapper' => '{{thing}}<ol itemtype="http://schema.org/BreadcrumbList"{{attrs}}>{{content}}</ol>',
-                'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{url}}"{{innerAttrs}}><span itemprop="name">{{title}}</span></a>{{foo}}</li>',
-                'itemWithoutLink' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><span itemprop="name"{{innerAttrs}}>{{title}}</span>{{barbaz}}</li>',
+                'item' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><a itemtype="http://schema.org/Thing" itemprop="item" href="{{url}}"{{innerAttrs}}><span itemprop="name">{{content}}</span></a>{{foo}}</li>',
+                'itemWithoutLink' => '<li itemprop="itemListElement" itemtype="http://schema.org/ListItem"{{attrs}}><span itemprop="name"{{innerAttrs}}>{{content}}</span>{{barbaz}}</li>',
             ],
         ]);
         $this->breadcrumbs
