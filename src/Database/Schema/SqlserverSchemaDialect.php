@@ -596,7 +596,8 @@ class SqlserverSchemaDialect extends SchemaDialect
         $primaryKey = $schema->getPrimaryKey();
         if (
             in_array($data['type'], $autoIncrementTypes, true) &&
-            $primaryKey === [$name]
+            $primaryKey === [$name] &&
+            $name === 'id'
         ) {
             $data['autoIncrement'] = true;
         }
