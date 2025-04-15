@@ -97,7 +97,7 @@ class ErrorLogger implements ErrorLoggerInterface
             '%s in %s on line %s',
             $error->getMessage(),
             $error->getFile(),
-            $error->getLine()
+            $error->getLine(),
         );
 
         if (!$includeTrace) {

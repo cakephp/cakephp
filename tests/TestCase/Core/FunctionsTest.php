@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use stdClass;
 use Stringable;
 use function Cake\Core\deprecationWarning;
