@@ -67,7 +67,6 @@ class ResponseEmitter
 
         $this->emitStatusLine($response);
         $this->emitHeaders($response);
-        $this->flush();
 
         $range = $this->parseContentRange($response->getHeaderLine('Content-Range'));
         if (is_array($range)) {
@@ -227,22 +226,6 @@ class ResponseEmitter
         }
 
         return setcookie($cookie->getName(), $cookie->getScalarValue(), $cookie->getOptions());
-    }
-
-    /**
-     * Loops through the output buffer, flushing each, before emitting
-     * the response.
-     *
-     * @param int|null $maxBufferLevel Flush up to this buffer level.
-     * @return void
-     */
-    protected function flush(?int $maxBufferLevel = null): void
-    {
-        $maxBufferLevel ??= ob_get_level();
-
-        while (ob_get_level() > $maxBufferLevel) {
-            ob_end_flush();
-        }
     }
 
     /**
