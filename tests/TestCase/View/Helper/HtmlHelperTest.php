@@ -211,6 +211,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->link('Next >', '#', [
             'title' => 'to escape &#8230; or not escape?',
             'escape' => false,
+            'escapeAttributes' => false,
         ]);
         $expected = [
             'a' => ['href' => '#', 'title' => 'to escape &#8230; or not escape?'],
@@ -232,7 +233,7 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->link('Next >', '#', [
             'title' => 'Next >',
-            'escapeContent' => false,
+            'escape' => false,
         ]);
         $expected = [
             'a' => ['href' => '#', 'title' => 'Next &gt;'],
@@ -263,7 +264,7 @@ class HtmlHelperTest extends TestCase
 
         $result = $this->Html->link($this->Html->image('test.gif'), '#', [
             'title' => 'hey "howdy"',
-            'escapeContent' => false,
+            'escape' => false,
         ]);
         $expected = [
             'a' => ['href' => '#', 'title' => 'hey &quot;howdy&quot;'],

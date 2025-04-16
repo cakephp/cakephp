@@ -79,6 +79,7 @@ class TextareaWidgetTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $data['escape'] = false;
+        $data['escapeAttributes'] = false;
         $result = $input->render($data, $this->context);
         $expected = [
             'textarea' => ['name' => 'comment', 'rows' => 5, 'data-foo' => '<val>'],

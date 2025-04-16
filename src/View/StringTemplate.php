@@ -274,7 +274,7 @@ class StringTemplate
      * Then the value will be reset to be identical with key's name.
      * If the value is not one of these 4, the parameter is not output.
      *
-     * 'escape' is a special option in that it controls the conversion of
+     * 'escapeAttributes' is a special option in that it controls the conversion of
      * attributes to their HTML-entity encoded equivalents. Set to false to disable HTML-encoding.
      *
      * If value for any option key is set to `null` or `false`, that option will be excluded from output.
@@ -290,20 +290,21 @@ class StringTemplate
     public function formatAttributes(?array $options, ?array $exclude = null): string
     {
         $insertBefore = ' ';
-        $options = (array)$options + ['escape' => true];
+        $options = (array)$options + ['escapeAttributes' => true];
 
         if (!is_array($exclude)) {
             $exclude = [];
         }
 
-        $exclude = ['escape' => true, 'idPrefix' => true, 'templateVars' => true, 'fieldName' => true]
+        $exclude = ['escapeAttributes' => true, 'idPrefix' => true, 'templateVars' => true, 'fieldName' => true]
             + array_flip($exclude);
-        $escape = $options['escape'];
+        $escapeAttributes = $options['escapeAttributes'];
+        unset($options['escape']);
         $attributes = [];
 
         foreach ($options as $key => $value) {
             if (!isset($exclude[$key]) && $value !== false && $value !== null) {
-                $attributes[] = $this->_formatAttribute((string)$key, $value, $escape);
+                $attributes[] = $this->_formatAttribute((string)$key, $value, $escapeAttributes);
             }
         }
         $out = trim(implode(' ', $attributes));

@@ -485,7 +485,7 @@ class FormHelper extends Helper
             $append = $this->wrapInHiddenBlock($append);
         }
 
-        $actionAttr = $templater->formatAttributes(['action' => $action, 'escape' => false]);
+        $actionAttr = $templater->formatAttributes(['action' => $action, 'escapeAttributes' => false]);
 
         return $this->formatTemplate('formStart', [
             'attrs' => $templater->formatAttributes($htmlAttributes) . $actionAttr,
@@ -744,7 +744,7 @@ class FormHelper extends Helper
      *
      * ### Options:
      *
-     * - `escape` boolean - Whether to html escape the contents of the error.
+     * - `escape` boolean - Whether to HTML escape the contents of the error.
      *
      * @param string $field A field name, like "modelname.fieldname"
      * @param array|string|null $text Error message as string or array of messages. If an array,
@@ -1540,30 +1540,30 @@ class FormHelper extends Helper
     protected function _inputLabel(string $fieldName, array|string|null $label = null, array $options = []): string
     {
         $options += ['id' => null, 'input' => null, 'nestedInput' => false, 'templateVars' => []];
-        $labelAttributes = ['templateVars' => $options['templateVars']];
+        $labelOptions = ['templateVars' => $options['templateVars']];
         if (is_array($label)) {
             $labelText = null;
             if (isset($label['text'])) {
                 $labelText = $label['text'];
                 unset($label['text']);
             }
-            $labelAttributes = array_merge($labelAttributes, $label);
+            $labelOptions = array_merge($labelOptions, $label);
         } else {
             $labelText = $label;
         }
 
-        $labelAttributes['for'] = $options['id'];
+        $labelOptions['for'] = $options['id'];
         if (in_array($options['type'], $this->_groupedInputTypes, true)) {
-            $labelAttributes['for'] = false;
+            $labelOptions['for'] = false;
         }
         if ($options['nestedInput']) {
-            $labelAttributes['input'] = $options['input'];
+            $labelOptions['input'] = $options['input'];
         }
         if (isset($options['escape'])) {
-            $labelAttributes['escape'] = $options['escape'];
+            $labelOptions['escape'] = $options['escape'];
         }
 
-        return $this->label($fieldName, $labelText, $labelAttributes);
+        return $this->label($fieldName, $labelText, $labelOptions);
     }
 
     /**
@@ -1789,8 +1789,8 @@ class FormHelper extends Helper
      * ### Options:
      *
      * - `type` - Value for "type" attribute of button. Defaults to "submit".
-     * - `escapeContent` - HTML entity encode the content of the button. Defaults to true.
-     * - `escape` - HTML entity encode the attributes of button tag. Defaults to true.
+     * - `escape` - HTML entity encode the content of the button. Defaults to true.
+     * - `escapeAttributes` - HTML entity encode the attributes of button tag. Defaults to true.
      * - `confirm` - Confirm message to show. Form execution will only continue if confirmed then.
      *
      * @param string $content The button's caption. Not automatically HTML encoded
@@ -1802,8 +1802,8 @@ class FormHelper extends Helper
     {
         $options += [
             'type' => 'submit',
-            'escapeContent' => true,
             'escape' => true,
+            'escapeAttributes' => true,
             'secure' => false,
             'confirm' => null,
         ];
@@ -1933,7 +1933,7 @@ class FormHelper extends Helper
 
         $action = $templater->formatAttributes([
             'action' => $this->Url->build($url),
-            'escape' => false,
+            'escapeAttributes' => false,
         ]);
 
         $out = $this->formatTemplate('formStart', [
@@ -2049,6 +2049,7 @@ class FormHelper extends Helper
     {
         $caption ??= __d('cake', 'Submit');
         $options += [
+            'escape' => true,
             'type' => 'submit',
             'secure' => false,
             'templateVars' => [],
@@ -2097,6 +2098,11 @@ class FormHelper extends Helper
             $options['src'] = $url;
         } else {
             $options['value'] = $caption;
+        }
+
+        if (isset($options['escape'])) {
+            $options['escapeAttributes'] = $options['escape'];
+            unset($options['escape']);
         }
 
         $input = $this->formatTemplate('inputSubmit', [

@@ -6833,11 +6833,11 @@ class FormHelperTest extends TestCase
         $expected = ['button' => ['type' => 'submit'], 'Hi', '/button'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->button('Clear Form >', ['type' => 'reset', 'escapeContent' => false]);
+        $result = $this->Form->button('Clear Form >', ['type' => 'reset', 'escape' => false]);
         $expected = ['button' => ['type' => 'reset'], 'Clear Form >', '/button'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->button('Clear Form >', ['type' => 'reset', 'id' => 'clearForm', 'escapeContent' => false]);
+        $result = $this->Form->button('Clear Form >', ['type' => 'reset', 'id' => 'clearForm', 'escape' => false]);
         $expected = ['button' => ['type' => 'reset', 'id' => 'clearForm'], 'Clear Form >', '/button'];
         $this->assertHtml($expected, $result);
 
@@ -6886,7 +6886,7 @@ class FormHelperTest extends TestCase
         ], 'Hi', '/button'];
         $this->assertHtml($expected, $result);
 
-        $result = $this->Form->button('Hi', ['escape' => false, 'confirm' => 'Confirm "me"!']);
+        $result = $this->Form->button('Hi', ['escapeAttributes' => false, 'confirm' => 'Confirm "me"!']);
         $expected = ['button' => [
             'type' => 'submit',
             'data-confirm-message' => 'Confirm "me"!',
@@ -7116,7 +7116,7 @@ class FormHelperTest extends TestCase
         $result = $this->Form->postLink(
             'Delete',
             '/posts/delete/1',
-            ['escape' => false, 'confirm' => 'Confirm this deletion?'],
+            ['escapeAttributes' => false, 'confirm' => 'Confirm this deletion?'],
         );
         $expected = [
             'form' => [
@@ -8080,6 +8080,7 @@ class FormHelperTest extends TestCase
         $expected = [
             'input' => ['type' => 'url', 'name' => 'website', 'id' => 'website', 'value' => 'http://domain.tld'],
         ];
+
         $this->assertHtml($expected, $result);
     }
 

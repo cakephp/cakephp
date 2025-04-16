@@ -219,7 +219,7 @@ class HtmlHelper extends Helper
      * Returns a charset META-tag.
      *
      * @param string|null $charset The character set to be used in the meta tag. If empty,
-     *  The App.encoding value will be used. Example: "utf-8".
+     *  The `App.encoding` value will be used. Example: "utf-8".
      * @return string A meta tag containing the specified character set.
      * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-charset-tags
      */
@@ -245,9 +245,8 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `escape` Set to false to disable escaping of content and attributes.
-     * - `escapeContent` Set to false to disable escaping of content. Takes precedence
-     *   over value of `escape`)
+     * - `escape` Set to false to disable escaping of content.
+     * - `escapeAttributes` Set to false to disable escaping of attributes.
      * - `confirm` JavaScript confirmation message.
      *
      * @param array|string $content The content to be wrapped by `<a>` tags.
@@ -260,7 +259,7 @@ class HtmlHelper extends Helper
      */
     public function link(array|string $content, array|string|null $url = null, array $options = []): string
     {
-        $escapeContent = true;
+        $escape = true;
         if ($url !== null) {
             $url = $this->Url->build($url, $options);
             unset($options['fullBase']);
@@ -268,20 +267,18 @@ class HtmlHelper extends Helper
             $url = $this->Url->build($content);
             $content = htmlspecialchars_decode($url, ENT_QUOTES);
             $content = h(urldecode($content));
-            $escapeContent = false;
+            $escape = false;
         }
 
-        if (isset($options['escapeContent'])) {
-            $escapeContent = $options['escapeContent'];
-            unset($options['escapeContent']);
-        } elseif (isset($options['escape'])) {
-            $escapeContent = $options['escape'];
+        if (isset($options['escape'])) {
+            $escape = $options['escape'];
+            unset($options['escape']);
         }
 
-        if ($escapeContent === true) {
+        if ($escape === true) {
             $content = h($content);
-        } elseif (is_string($escapeContent)) {
-            $content = htmlentities($content, ENT_QUOTES, $escapeContent);
+        } elseif (is_string($escape)) {
+            $content = htmlentities($content, ENT_QUOTES, $escape);
         }
 
         $templater = $this->templater();
@@ -311,9 +308,8 @@ class HtmlHelper extends Helper
      *
      * ### Options
      *
-     * - `escape` Set to false to disable escaping of title and attributes.
-     * - `escapeContent` Set to false to disable escaping of title. Takes precedence
-     *   over value of `escape`)
+     * - `escape` Set to false to disable escaping of content.
+     * - `escapeAttributes` Set to false to disable escaping of attributes.
      * - `confirm` JavaScript confirmation message.
      *
      * @param string $content The content to be wrapped by `<a>` tags.

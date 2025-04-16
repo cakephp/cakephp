@@ -77,6 +77,7 @@ class LabelWidgetTest extends TestCase
             'text' => 'My > text',
             'for' => 'Some > value',
             'escape' => false,
+            'escapeAttributes' => false,
         ];
         $result = $label->render($data, $this->context);
         $expected = [

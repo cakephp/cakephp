@@ -241,7 +241,7 @@ class StringTemplateTest extends TestCase
             $result,
         );
 
-        $attrs = ['escape' => false, 'name' => 'bruce', 'data-hero' => '<batman>'];
+        $attrs = ['escapeAttributes' => false, 'name' => 'bruce', 'data-hero' => '<batman>'];
         $result = $this->template->formatAttributes($attrs);
         $this->assertSame(
             ' name="bruce" data-hero="<batman>"',
