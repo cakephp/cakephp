@@ -21,12 +21,12 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.1', '8.3']
+        php-version: ['8.2', '8.4']
         db-type: [sqlite, pgsql]
         include:
-          - php-version: '8.1'
+          - php-version: '8.2'
             db-type: 'mariadb'
-          - php-version: '8.1'
+          - php-version: '8.2'
             db-type: 'mysql'
             dependencies: 'lowest'
           - php-version: '8.2'
@@ -91,7 +91,7 @@ jobs:
         composer-options: "${{ matrix.composer-options }}"
 
     - name: Setup problem matchers for PHPUnit
-      if: matrix.php-version == '8.1' && matrix.db-type == 'mysql'
+      if: matrix.php-version == '8.2' && matrix.db-type == 'mysql'
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
     - name: Run PHPUnit
@@ -104,7 +104,7 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
-        if [[ ${{ matrix.php-version }} == '8.1' ]]; then
+        if [[ ${{ matrix.php-version }} == '8.2' ]]; then
           export CODECOVERAGE=1
           vendor/bin/phpunit --display-warnings --display-incomplete --coverage-clover=coverage.xml
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-deprecations --display-warnings --display-incomplete --testsuite=database
@@ -115,7 +115,7 @@ jobs:
         fi
 
     - name: Submit code coverage
-      if: matrix.php-version == '8.1'
+      if: matrix.php-version == '8.2'
       uses: codecov/codecov-action@v5
       with:
         files: coverage.xml,coverage-functions.xml
@@ -123,11 +123,11 @@ jobs:
 
   testsuite-windows:
     runs-on: windows-2022
-    name: Windows - PHP 8.1 & SQL Server
+    name: Windows - PHP 8.2 & SQL Server
 
     env:
       EXTENSIONS: mbstring, intl, apcu, redis, pdo_sqlsrv
-      PHP_VERSION: '8.1'
+      PHP_VERSION: '8.2'
 
     steps:
     - uses: actions/checkout@v4
@@ -201,7 +201,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           extensions: mbstring, intl
           coverage: none
           tools: phive, cs2pr
