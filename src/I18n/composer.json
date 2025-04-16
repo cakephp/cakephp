@@ -28,7 +28,7 @@
         "source": "https://github.com/cakephp/i18n"
     },
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "ext-intl": "*",
         "cakephp/core": "5.3.*@dev",
         "cakephp/chronos": "^3.1"

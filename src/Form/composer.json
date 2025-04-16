@@ -21,7 +21,7 @@
         "source": "https://github.com/cakephp/form"
     },
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "cakephp/event": "5.3.*@dev",
         "cakephp/validation":"5.3.*@dev"
     },

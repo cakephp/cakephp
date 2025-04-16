@@ -25,7 +25,7 @@
         "source": "https://github.com/cakephp/http"
     },
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "cakephp/core": "5.3.*@dev",
         "cakephp/event": "5.3.*@dev",
         "cakephp/utility": "5.3.*@dev",

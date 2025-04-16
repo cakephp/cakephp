@@ -23,7 +23,7 @@
         "source": "https://github.com/cakephp/orm"
     },
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "cakephp/collection": "5.3.*@dev",
         "cakephp/core": "5.3.*@dev",
         "cakephp/datasource": "5.3.*@dev",
