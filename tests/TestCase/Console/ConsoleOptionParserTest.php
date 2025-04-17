@@ -25,6 +25,7 @@ use Cake\Console\TestSuite\StubConsoleInput;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use LogicException;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 
 /**
  * ConsoleOptionParserTest
@@ -186,6 +187,7 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test adding an option and using the short value for parsing throws deprecation if conflicting.
      */
+    #[WithoutErrorHandler]
     public function testAddOptionShortConflict(): void
     {
         $parser = new ConsoleOptionParser('test', false);
