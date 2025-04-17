@@ -311,6 +311,12 @@ trait EntityTrait
                 continue;
             }
 
+            if ($options['asOriginal'] || $this->isModified($name, $value)) {
+                $this->setDirty($name, true);
+            } else {
+                continue;
+            }
+
             if ($options['setter']) {
                 $setter = static::_accessor($name, 'set');
                 if ($setter) {
@@ -327,14 +333,6 @@ trait EntityTrait
                 $this->_original[$name] = $this->_fields[$name];
             }
 
-            // Don't dirty scalar values and objects that didn't
-            // change. Arrays will always be marked as dirty because
-            // the original/updated list could contain references to the
-            // same objects, even though those objects may have changed internally.
-            if ($this->isModified($name, $value)) {
-                $this->setDirty($name, true);
-            }
-
             $this->_fields[$name] = $value;
         }
 
@@ -343,6 +341,12 @@ trait EntityTrait
 
     /**
      * Check if the provided value is same as existing value for a field.
+     *
+     * This check is used to determine if a field should be set as dirty or not.
+     * It will return `false` for scalar values and objects which haven't changed.
+     * For arrays `true` will be returned always because the original/updated list
+     * could contain references to the same objects, even though those objects
+     * may have changed internally.
      *
      * @param string $field The field to check.
      * @return bool
@@ -873,7 +877,7 @@ trait EntityTrait
      */
     public function isOriginalField(string $name): bool
     {
-        return in_array($name, $this->_originalFields);
+        return in_array($name, $this->_originalFields, true);
     }
 
     /**

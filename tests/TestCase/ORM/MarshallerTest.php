@@ -1579,6 +1579,25 @@ class MarshallerTest extends TestCase
         $this->assertFalse($entity->isDirty('title'));
         $this->assertFalse($entity->isDirty('author_id'));
         $this->assertTrue($entity->isDirty('crazy'));
+
+        // https://github.com/cakephp/cakephp/issues/18346
+        $entity = new class ([
+            'title' => 'Foo',
+            'author_id' => 1,
+        ], ['useSetters' => false]) extends Entity {
+            protected function _setTitle(string $name): string
+            {
+                return 'The ' . $name;
+            }
+        };
+        $entity->clean();
+
+        $this->assertSame('Foo', $entity->title);
+        $marshall->merge($entity, ['title' => 'Foo', 'author_id' => 2]);
+        $this->assertSame('Foo', $entity->title, 'Setter should not be called as the value is unchanged');
+        $this->assertFalse($entity->isDirty('title'));
+        $this->assertTrue($entity->isDirty('author_id'));
+        $this->assertSame(2, $entity->author_id);
     }
 
     /**

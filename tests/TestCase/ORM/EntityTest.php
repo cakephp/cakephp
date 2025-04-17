@@ -273,9 +273,9 @@ class EntityTest extends TestCase
             ->with(
                 ...self::withConsecutive(
                     [
-                    ['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false],
+                    ['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false, 'asOriginal' => true],
                     ],
-                    [['foo' => 'bar'], ['setter' => false, 'guard' => false]],
+                    [['foo' => 'bar'], ['setter' => false, 'guard' => false, 'asOriginal' => true]],
                 ),
             );
 
@@ -295,7 +295,7 @@ class EntityTest extends TestCase
             ->getMock();
         $entity->expects($this->once())
             ->method('patch')
-            ->with(['foo' => 'bar'], ['setter' => true, 'guard' => true]);
+            ->with(['foo' => 'bar'], ['setter' => true, 'guard' => true, 'asOriginal' => true]);
         $entity->__construct(['foo' => 'bar'], ['guard' => true]);
     }
 
