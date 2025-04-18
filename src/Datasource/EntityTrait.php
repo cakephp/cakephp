@@ -527,21 +527,11 @@ trait EntityTrait
      *
      * @param string $field The field to check.
      * @return bool
+     * @deprecated 5.3.0 Use hasValue() instead.
      */
     public function isEmpty(string $field): bool
     {
-        $value = $this->get($field);
-        if (
-            $value === null ||
-            (
-                $value === [] ||
-                $value === ''
-            )
-        ) {
-            return true;
-        }
-
-        return false;
+        return !$this->hasValue($field);
     }
 
     /**
@@ -562,7 +552,18 @@ trait EntityTrait
      */
     public function hasValue(string $field): bool
     {
-        return !$this->isEmpty($field);
+        $value = $this->get($field);
+        if (
+            $value === null ||
+            (
+                $value === [] ||
+                $value === ''
+            )
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
