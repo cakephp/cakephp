@@ -155,7 +155,7 @@ use function Cake\Core\namespaceSplit;
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  * @link https://book.cakephp.org/5/en/orm/table-objects.html#event-list
- * @template TBehaviors of array<string, \Cake\ORM\Behavior>
+ * @template TBehaviors of array<string, \Cake\ORM\Behavior> = array{}
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\ORM\Table>
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
