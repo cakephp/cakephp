@@ -89,6 +89,7 @@ class PluginLoadCommand extends Command
             }
         }
 
+        $path = null;
         try {
             $path = Plugin::getCollection()->findPath($plugin);
         } catch (MissingPluginException $e) {
@@ -100,7 +101,7 @@ class PluginLoadCommand extends Command
             }
         }
 
-        $recommendations = $this->recommendations($path);
+        $recommendations = $path ? $this->recommendations($path) : [];
         foreach ($recommendations as $name => $v) {
             if (isset($options[$name]) && $options[$name] === $v) {
                 continue;
@@ -115,10 +116,6 @@ class PluginLoadCommand extends Command
             }
 
             $options[$name] = $v;
-        }
-
-        if (!empty($options['onlyDebug'])) {
-            $options['optional'] = true;
         }
 
         $result = $this->modifyConfigFile($plugin, $options);
@@ -176,7 +173,7 @@ class PluginLoadCommand extends Command
         }
 
         $content = file_get_contents($file);
-        $array = json_decode($content, true);
+        $array = $content ? json_decode($content, true) : [];
         $keywords = $array['keywords'] ?? [];
         if (!$keywords) {
             return [];
@@ -192,6 +189,10 @@ class PluginLoadCommand extends Command
             if (in_array($tag, $keywords, true)) {
                 $recommendations['onlyCli'] = true;
             }
+        }
+
+        if (!empty($recommendations['onlyDebug'])) {
+            $recommendations['optional'] = true;
         }
 
         return $recommendations;
