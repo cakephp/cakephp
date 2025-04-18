@@ -330,10 +330,11 @@ class EventManager implements EventManagerInterface
         $result = $listener($event, ...array_values($event->getData()));
 
         if ($result !== null) {
+            $class = get_class($event->getSubject());
             deprecationWarning(
                 '5.2.0',
                 'Returning a value from event listeners is deprecated. ' .
-                'Use `$event->setResult()` instead.',
+                'Use `$event->setResult()` instead in `' . $event->getName() . '` of `' . $class . '`',
             );
             $event->setResult($result);
         }
