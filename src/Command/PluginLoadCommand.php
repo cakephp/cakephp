@@ -34,6 +34,7 @@ class PluginLoadCommand extends Command
      * @var array<string>
      */
     protected static $devTags = ['dev', 'testing', 'static analysis'];
+
     /**
      * @var array<string>
      */
