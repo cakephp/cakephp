@@ -531,6 +531,8 @@ trait EntityTrait
      */
     public function isEmpty(string $field): bool
     {
+        deprecationWarning('5.3.0', 'isEmpty() is deprecated. Use hasValue() instead.');
+
         return !$this->hasValue($field);
     }
 
