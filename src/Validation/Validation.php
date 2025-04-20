@@ -1071,10 +1071,6 @@ class Validation
 
         [$ip, $mask] = explode('/', $check, 2);
 
-        if (!static::ip($ip, $type)) {
-            return false;
-        }
-
         // Validate mask part (IPv4: 0-32, IPv6: 0-128)
         if (in_array($type, ['both', 'ipv4', true]) && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             return is_numeric($mask) && $mask >= 0 && $mask <= 32;
