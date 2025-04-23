@@ -97,6 +97,20 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test removing an option clears also shortOption.
+     */
+    #[WithoutErrorHandler]
+    public function testRemoveOptionAlsoClearsShort(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addOption('test', ['short' => 't'])
+            ->removeOption('test')
+            ->removeOption('help')
+            ->addOption('test', ['short' => 't']);
+        $this->assertSame($parser, $result, 'Did not return $this from removeOption');
+    }
+
+    /**
      * test adding an option and using the long value for parsing.
      */
     public function testAddOptionLong(): void
