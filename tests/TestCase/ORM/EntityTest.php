@@ -54,7 +54,7 @@ class EntityTest extends TestCase
         $this->assertSame('bar', $entity->getOriginal('foo'));
     }
 
-    #[WithoutErrorHandler]
+    #
     public function testEntitySetDeprecated(): void
     {
         $this->deprecated(function () {
@@ -1459,7 +1459,7 @@ class EntityTest extends TestCase
      *
      * @deprecated
      */
-    #[WithoutErrorHandler]
+    #
     public function testToString(): void
     {
         $this->deprecated(function () {

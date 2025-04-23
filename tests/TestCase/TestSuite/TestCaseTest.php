@@ -236,7 +236,7 @@ class TestCaseTest extends TestCase
     /**
      * test deprecated() with duplicate deprecation with same messsage and line
      */
-    #[WithoutErrorHandler]
+    #
     public function testDeprecatedWithDuplicatedDeprecation(): void
     {
         /**

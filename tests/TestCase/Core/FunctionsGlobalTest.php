@@ -333,7 +333,7 @@ class FunctionsGlobalTest extends TestCase
     /**
      * Test no error when warning level is off.
      */
-    #[WithoutErrorHandler]
+    #
     public function testTriggerWarningLevelDisabled(): void
     {
         $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function (): void {

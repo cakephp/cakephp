@@ -110,7 +110,7 @@ class WindowExpressionTest extends TestCase
         );
     }
 
-    #[WithoutErrorHandler]
+    #
     public function testOrderDeprecated(): void
     {
         $this->deprecated(function () {

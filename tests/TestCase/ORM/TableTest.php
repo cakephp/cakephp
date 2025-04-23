@@ -625,7 +625,7 @@ class TableTest extends TestCase
      * @return void
      * @deprecated
      */
-    #[WithoutErrorHandler]
+    #
     public function testFindAllOldStyleOptionsArray(): void
     {
         $this->deprecated(function (): void {
@@ -1315,7 +1315,7 @@ class TableTest extends TestCase
         $this->assertSame(2, $author->id);
     }
 
-    #[WithoutErrorHandler]
+    #
     public function testFindTypedParameterCompatibility(): void
     {
         $articles = $this->fetchTable('Articles');
@@ -1625,7 +1625,7 @@ class TableTest extends TestCase
     /**
      * Tests find(list) with backwards compatibile options
      */
-    #[WithoutErrorHandler]
+    #
     public function testFindListArrayOptions(): void
     {
         $table = new Table([
@@ -1706,7 +1706,7 @@ class TableTest extends TestCase
      * @return void
      * @deprecated
      */
-    #[WithoutErrorHandler]
+    #
     public function testFindListWithArray(): void
     {
         $this->deprecated(function (): void {
@@ -5443,7 +5443,7 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    #[WithoutErrorHandler]
+    #
     public function testGetBackwardsCompatibility(): void
     {
         $this->deprecated(function (): void {

@@ -1761,7 +1761,7 @@ class SelectQueryTest extends TestCase
         $result->closeCursor();
     }
 
-    #[WithoutErrorHandler]
+    #
     public function testSelectOrderDeprecated(): void
     {
         $this->deprecated(function () {
@@ -2047,7 +2047,7 @@ class SelectQueryTest extends TestCase
         $this->assertCount(3, $result->fetchAll());
     }
 
-    #[WithoutErrorHandler]
+    #
     public function testSelectGroupDeprecated(): void
     {
         $this->deprecated(function () {

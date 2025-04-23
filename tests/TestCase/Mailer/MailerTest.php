@@ -110,7 +110,7 @@ class MailerTest extends TestCase
      *
      * @deprecated
      */
-    #[WithoutErrorHandler]
+    #
     public function testSetMessage(): void
     {
         $message = $this->mailer->getMessage();

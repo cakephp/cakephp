@@ -404,7 +404,7 @@ class LogTest extends TestCase
     /**
      * Test scoped logging backwards compat
      */
-    #[WithoutErrorHandler]
+    #
     public function testScopedLoggingBackwardsCompat(): void
     {
         $this->_deleteLogs();

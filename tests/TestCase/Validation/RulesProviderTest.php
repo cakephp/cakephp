@@ -33,7 +33,7 @@ class RulesProviderTest extends TestCase
      * extra arguments that are passed according to the signature of validation
      * methods.
      */
-    #[WithoutErrorHandler]
+    #
     public function testProxyToValidation(): void
     {
         $this->deprecated(function () {
@@ -47,7 +47,7 @@ class RulesProviderTest extends TestCase
      * Tests that it is possible to use a custom object as the provider to
      * be decorated
      */
-    #[WithoutErrorHandler]
+    #
     public function testCustomObject(): void
     {
         $this->deprecated(function () {

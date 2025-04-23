@@ -201,7 +201,7 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test adding an option and using the short value for parsing throws deprecation if conflicting.
      */
-    #[WithoutErrorHandler]
+    #
     public function testAddOptionShortConflict(): void
     {
         $parser = new ConsoleOptionParser('test', false);

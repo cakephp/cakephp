@@ -495,7 +495,7 @@ class AssociationTest extends TestCase
         );
     }
 
-    #[WithoutErrorHandler]
+    #
     public function testCustomFinderWithOptions(): void
     {
         $this->association->setFinder('withOptions');

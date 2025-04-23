@@ -48,7 +48,7 @@ class PaginatedResultSetTest extends TestCase
         $this->assertSame([1, 2, 3], $out);
     }
 
-    #[WithoutErrorHandler]
+    #
     public function testCall(): void
     {
         $resultSet = Mockery::mock(ResultSet::class);

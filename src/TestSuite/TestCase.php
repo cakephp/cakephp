@@ -164,7 +164,7 @@ abstract class TestCase extends BaseTestCase
      * @param \Closure $callable callable function that will receive asserts
      * @return void
      */
-    #[WithoutErrorHandler]
+    #
     public function deprecated(Closure $callable): void
     {
         $duplicate = Configure::read('Error.allowDuplicateDeprecations');

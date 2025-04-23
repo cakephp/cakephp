@@ -2618,7 +2618,7 @@ class FormHelperTest extends TestCase
     /**
      * @deprecated
      */
-    #[WithoutErrorHandler]
+    #
     public function testWarningForDeprecatedErrorClassConfig(): void
     {
         $this->Form->setConfig('errorClass', 'danger');
@@ -3913,7 +3913,7 @@ class FormHelperTest extends TestCase
     /**
      * @deprecated
      */
-    #[WithoutErrorHandler]
+    #
     public function testEnumOptionsDeprecationMessage(): void
     {
         $this->deprecated(function () {

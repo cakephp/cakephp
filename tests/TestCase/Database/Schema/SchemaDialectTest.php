@@ -230,7 +230,7 @@ class SchemaDialectTest extends TestCase
      * Test that SchemaDialect implementations without describeColumns etc
      * implemented still work with describe().
      */
-    #[WithoutErrorHandler]
+    #
     public function testBackwardsCompatibility(): void
     {
         $this->deprecated(function () {

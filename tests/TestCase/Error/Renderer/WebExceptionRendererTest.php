@@ -993,7 +993,6 @@ class WebExceptionRendererTest extends TestCase
         $this->assertStringContainsString('<xml>rendered xml exception</xml>', $result);
     }
 
-    #[WithoutErrorHandler]
     public function testDeprecatedHttpErrorCodeMapping(): void
     {
         $this->deprecated(function () {
