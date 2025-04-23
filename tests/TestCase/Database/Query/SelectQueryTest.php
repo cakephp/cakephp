@@ -1762,7 +1762,7 @@ class SelectQueryTest extends TestCase
 
     public function testSelectOrderDeprecated(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $query = new SelectQuery($this->connection);
             $result = $query
                 ->select(['id'])
@@ -2047,7 +2047,7 @@ class SelectQueryTest extends TestCase
 
     public function testSelectGroupDeprecated(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $query = new SelectQuery($this->connection);
             $result = $query
                 ->select(['total' => 'count(author_id)', 'author_id'])

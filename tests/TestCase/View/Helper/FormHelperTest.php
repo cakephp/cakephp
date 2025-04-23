@@ -3913,7 +3913,7 @@ class FormHelperTest extends TestCase
      */
     public function testEnumOptionsDeprecationMessage(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $articlesTable = $this->getTableLocator()->get('Articles');
             $articlesTable->getSchema()->setColumnType(
                 'published',

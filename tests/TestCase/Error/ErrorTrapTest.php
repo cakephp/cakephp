@@ -88,7 +88,7 @@ class ErrorTrapTest extends TestCase
     {
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             try {
                 trigger_error('Oh no it was bad', E_USER_ERROR);
                 $this->fail('Should raise a fatal error');

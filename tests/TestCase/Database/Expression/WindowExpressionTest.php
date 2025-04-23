@@ -111,7 +111,7 @@ class WindowExpressionTest extends TestCase
 
     public function testOrderDeprecated(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $w = (new WindowExpression())->order('test');
             $this->assertEqualsSql(
                 'ORDER BY test',

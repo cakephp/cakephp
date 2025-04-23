@@ -231,7 +231,7 @@ class SchemaDialectTest extends TestCase
      */
     public function testBackwardsCompatibility(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             /** @var \Cake\Database\Driver $driver */
             $driver = ConnectionManager::get('test')->getDriver();
             $this->skipIf(!($driver instanceof Sqlite), 'requires sqlite connection');

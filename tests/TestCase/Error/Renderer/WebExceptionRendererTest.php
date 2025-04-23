@@ -681,7 +681,7 @@ class WebExceptionRendererTest extends TestCase
      */
     public function testExceptionNameMangling(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
 
             $result = (string)$exceptionRenderer->render()->getBody();
@@ -996,7 +996,7 @@ class WebExceptionRendererTest extends TestCase
 
     public function testDeprecatedHttpErrorCodeMapping(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $exception = new MissingWidgetThing();
             $exceptionRenderer = new MyCustomExceptionRenderer($exception);
 

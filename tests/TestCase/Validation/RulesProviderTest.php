@@ -34,7 +34,7 @@ class RulesProviderTest extends TestCase
      */
     public function testProxyToValidation(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $provider = new RulesProvider();
             $this->assertTrue($provider->extension('foo.jpg', compact('provider')));
             $this->assertFalse($provider->extension('foo.jpg', ['png'], compact('provider')));
@@ -47,7 +47,7 @@ class RulesProviderTest extends TestCase
      */
     public function testCustomObject(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $object = new CustomProvider();
 
             /** @var \TestApp\Validation\CustomProvider|\Cake\Validation\RulesProvider $provider */

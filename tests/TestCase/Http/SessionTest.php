@@ -634,7 +634,7 @@ class SessionTest extends TestCase
         $_COOKIE = [];
         $_GET[session_name()] = '123abc';
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $session = new TestWebSession([
                 'ini' => [
                     'session.use_cookies' => 1,
