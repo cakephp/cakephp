@@ -234,7 +234,7 @@ abstract class TestCase extends BaseTestCase
 
         EventManager::instance(new EventManager());
 
-        error_reporting(E_ALL);
+        error_reporting(Configure::read('TestSuite.errorLevel', E_ALL));
     }
 
     /**
