@@ -418,6 +418,11 @@ class ConsoleOptionParser
     {
         unset($this->_options[$name]);
 
+        $key = array_search($name, $this->_shortOptions, true);
+        if ($key !== false) {
+            unset($this->_shortOptions[$key]);
+        }
+
         return $this;
     }
 
