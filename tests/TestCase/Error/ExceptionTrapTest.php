@@ -22,6 +22,7 @@ use Cake\Error\ExceptionTrap;
 use Cake\Error\Renderer\ConsoleExceptionRenderer;
 use Cake\Error\Renderer\TextExceptionRenderer;
 use Cake\Error\Renderer\WebExceptionRenderer;
+use Cake\Event\EventInterface;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\ServerRequest;
@@ -316,8 +317,8 @@ class ExceptionTrapTest extends TestCase
     public function testBeforeRenderEventReturnResponse(): void
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
-        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error, ?ServerRequest $req) {
-            return 'Here B Erroz';
+        $trap->getEventManager()->on('Exception.beforeRender', function (EventInterface $event, Throwable $error, ?ServerRequest $req) {
+            $event->setResult('Here B Erroz');
         });
 
         ob_start();
