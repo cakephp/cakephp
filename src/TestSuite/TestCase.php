@@ -234,7 +234,10 @@ abstract class TestCase extends BaseTestCase
 
         EventManager::instance(new EventManager());
 
-        error_reporting(Configure::read('TestSuite.errorLevel', E_ALL));
+        $errorLevelOverwrite = Configure::read('TestSuite.errorLevel', E_ALL);
+        if ($errorLevelOverwrite !== false) {
+            error_reporting($errorLevelOverwrite);
+        }
     }
 
     /**
