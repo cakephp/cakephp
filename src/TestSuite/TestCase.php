@@ -217,6 +217,8 @@ abstract class TestCase extends BaseTestCase
         }
 
         EventManager::instance(new EventManager());
+
+        error_reporting(E_ALL);
     }
 
     /**
