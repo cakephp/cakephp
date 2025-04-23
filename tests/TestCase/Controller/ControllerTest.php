@@ -908,7 +908,7 @@ class ControllerTest extends TestCase
         ]);
         $Controller = new AdminPostsController($request);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
+            $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
@@ -916,7 +916,7 @@ class ControllerTest extends TestCase
         $request = $request->withParam('prefix', 'admin/super');
         $Controller = new AdminPostsController($request);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
+            $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
@@ -929,7 +929,7 @@ class ControllerTest extends TestCase
         ]);
         $Controller = new PagesController($request);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
+            $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();
         $this->assertSame('Pages', $Controller->viewBuilder()->getTemplatePath());

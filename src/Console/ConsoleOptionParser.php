@@ -249,6 +249,13 @@ class ConsoleOptionParser
             $this->addArguments($spec['arguments']);
         }
         if (!empty($spec['options'])) {
+            foreach ($spec['options'] as $name => $params) {
+                if ($params instanceof ConsoleInputOption) {
+                    $name = $params->name();
+                }
+                $this->removeOption($name);
+            }
+
             $this->addOptions($spec['options']);
         }
         if (!empty($spec['description'])) {

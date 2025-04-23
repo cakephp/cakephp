@@ -21,7 +21,6 @@ use Cake\Database\Driver\Sqlite;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use TestApp\Database\Schema\CompatDialect;
 
 /**
@@ -230,7 +229,6 @@ class SchemaDialectTest extends TestCase
      * Test that SchemaDialect implementations without describeColumns etc
      * implemented still work with describe().
      */
-    #
     public function testBackwardsCompatibility(): void
     {
         $this->deprecated(function () {

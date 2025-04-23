@@ -52,7 +52,6 @@ use Mockery;
 use OutOfBoundsException;
 use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use ReflectionMethod;
 use RuntimeException;
 use TestApp\Controller\Admin\ErrorController as PrefixErrorController;
@@ -682,17 +681,19 @@ class WebExceptionRendererTest extends TestCase
      */
     public function testExceptionNameMangling(): void
     {
-        $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
+        $this->deprecated(function () {
+            $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
 
-        $result = (string)$exceptionRenderer->render()->getBody();
-        $this->assertStringContainsString('widget thing is missing', $result);
+            $result = (string)$exceptionRenderer->render()->getBody();
+            $this->assertStringContainsString('widget thing is missing', $result);
 
-        // Custom method should be called even when debug is off.
-        Configure::write('debug', false);
-        $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
+            // Custom method should be called even when debug is off.
+            Configure::write('debug', false);
+            $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
 
-        $result = (string)$exceptionRenderer->render()->getBody();
-        $this->assertStringContainsString('widget thing is missing', $result);
+            $result = (string)$exceptionRenderer->render()->getBody();
+            $this->assertStringContainsString('widget thing is missing', $result);
+        });
     }
 
     /**

@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use stdClass;
 
 require_once CAKE . 'Core/functions_global.php';
@@ -333,7 +332,6 @@ class FunctionsGlobalTest extends TestCase
     /**
      * Test no error when warning level is off.
      */
-    #
     public function testTriggerWarningLevelDisabled(): void
     {
         $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function (): void {

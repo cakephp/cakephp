@@ -39,7 +39,6 @@ use Closure;
 use Exception;
 use LogicException;
 use Mockery;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
@@ -161,20 +160,37 @@ abstract class TestCase extends BaseTestCase
     /**
      * Helper method for check deprecation methods
      *
-     * @param \Closure $callable callable function that will receive asserts
+     * @param \Closure $callable callable function that will receive asserts.
+     * @param int $type Error level to expect, E_DEPRECATED or E_USER_DEPRECATED.
+     * @param string|null $phpVersion If set, only applies to this version forward, e.g. `8.4`.
      * @return void
      */
-    #
-    public function deprecated(Closure $callable): void
+    public function deprecated(Closure $callable, int $type = E_USER_DEPRECATED, ?string $phpVersion = null): void
     {
+        if ($phpVersion !== null && version_compare(PHP_VERSION, $phpVersion, '<')) {
+            $callable();
+
+            return;
+        }
+
         $duplicate = Configure::read('Error.allowDuplicateDeprecations');
         Configure::write('Error.allowDuplicateDeprecations', true);
         /** @var bool $deprecation Expand type for psalm */
         $deprecation = false;
 
         $previousHandler = set_error_handler(
-            function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation): bool {
-                if ($code == E_USER_DEPRECATED) {
+            function (
+                $code,
+                $message,
+                $file,
+                $line,
+                $context = null,
+            ) use (
+                &$previousHandler,
+                &$deprecation,
+                $type,
+            ): bool {
+                if ($code == $type) {
                     $deprecation = true;
 
                     return true;

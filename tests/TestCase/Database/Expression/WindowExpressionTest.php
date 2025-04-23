@@ -23,7 +23,6 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\WindowExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 
 /**
  * Tests WindowExpression class
@@ -110,7 +109,6 @@ class WindowExpressionTest extends TestCase
         );
     }
 
-    #
     public function testOrderDeprecated(): void
     {
         $this->deprecated(function () {

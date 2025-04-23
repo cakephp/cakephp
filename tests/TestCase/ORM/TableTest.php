@@ -62,7 +62,6 @@ use Exception;
 use InvalidArgumentException;
 use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use RuntimeException;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Entity\ArticlesTag;
@@ -625,7 +624,6 @@ class TableTest extends TestCase
      * @return void
      * @deprecated
      */
-    #
     public function testFindAllOldStyleOptionsArray(): void
     {
         $this->deprecated(function (): void {
@@ -1315,7 +1313,6 @@ class TableTest extends TestCase
         $this->assertSame(2, $author->id);
     }
 
-    #
     public function testFindTypedParameterCompatibility(): void
     {
         $articles = $this->fetchTable('Articles');
@@ -1625,7 +1622,6 @@ class TableTest extends TestCase
     /**
      * Tests find(list) with backwards compatibile options
      */
-    #
     public function testFindListArrayOptions(): void
     {
         $table = new Table([
@@ -1706,7 +1702,6 @@ class TableTest extends TestCase
      * @return void
      * @deprecated
      */
-    #
     public function testFindListWithArray(): void
     {
         $this->deprecated(function (): void {
@@ -5443,7 +5438,6 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    #
     public function testGetBackwardsCompatibility(): void
     {
         $this->deprecated(function (): void {

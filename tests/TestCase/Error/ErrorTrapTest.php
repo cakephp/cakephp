@@ -88,15 +88,17 @@ class ErrorTrapTest extends TestCase
     {
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
-        try {
-            trigger_error('Oh no it was bad', E_USER_ERROR);
-            $this->fail('Should raise a fatal error');
-        } catch (FatalErrorException $e) {
-            $this->assertEquals('Oh no it was bad', $e->getMessage());
-            $this->assertEquals(E_USER_ERROR, $e->getCode());
-        } finally {
-            restore_error_handler();
-        }
+        $this->deprecated(function () {
+            try {
+                trigger_error('Oh no it was bad', E_USER_ERROR);
+                $this->fail('Should raise a fatal error');
+            } catch (FatalErrorException $e) {
+                $this->assertEquals('Oh no it was bad', $e->getMessage());
+                $this->assertEquals(E_USER_ERROR, $e->getCode());
+            } finally {
+                restore_error_handler();
+            }
+        }, E_DEPRECATED, '8.4');
     }
 
     public static function logLevelProvider(): array

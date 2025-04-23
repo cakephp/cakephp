@@ -18,7 +18,6 @@ namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
 use Cake\Validation\RulesProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use TestApp\Validation\CustomProvider;
 
 /**
@@ -33,7 +32,6 @@ class RulesProviderTest extends TestCase
      * extra arguments that are passed according to the signature of validation
      * methods.
      */
-    #
     public function testProxyToValidation(): void
     {
         $this->deprecated(function () {
@@ -47,7 +45,6 @@ class RulesProviderTest extends TestCase
      * Tests that it is possible to use a custom object as the provider to
      * be decorated
      */
-    #
     public function testCustomObject(): void
     {
         $this->deprecated(function () {

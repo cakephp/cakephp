@@ -42,7 +42,6 @@ use Cake\I18n\DateTime;
 use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use ReflectionProperty;
 use stdClass;
 use TestApp\Database\Type\BarType;
@@ -1761,7 +1760,6 @@ class SelectQueryTest extends TestCase
         $result->closeCursor();
     }
 
-    #
     public function testSelectOrderDeprecated(): void
     {
         $this->deprecated(function () {
@@ -2047,7 +2045,6 @@ class SelectQueryTest extends TestCase
         $this->assertCount(3, $result->fetchAll());
     }
 
-    #
     public function testSelectGroupDeprecated(): void
     {
         $this->deprecated(function () {
