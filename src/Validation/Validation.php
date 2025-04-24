@@ -1053,13 +1053,13 @@ class Validation
     }
 
     /**
-     * Validation of an IP address or subnet.
+     * Validation of an IP address or range (subnet).
      *
      * @param mixed $check The string to test.
      * @param string $type The IP Protocol version to validate against
      * @return bool Success
      */
-    public static function ipOrSubnet(mixed $check, string $type = 'both'): bool
+    public static function ipOrRange(mixed $check, string $type = 'both'): bool
     {
         if (!is_string($check)) {
             return false;
@@ -1071,7 +1071,6 @@ class Validation
 
         [$ip, $mask] = explode('/', $check, 2);
 
-        // Validate mask part (IPv4: 0-32, IPv6: 0-128)
         if (in_array($type, ['both', 'ipv4', true]) && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
             return is_numeric($mask) && $mask >= 0 && $mask <= 32;
         }
