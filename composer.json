@@ -62,7 +62,7 @@
         "mikey179/vfsstream": "^1.6.11",
         "mockery/mockery": "^1.6.10",
         "paragonie/csp-builder": "^3.0",
-        "phpunit/phpunit": "^11.5 || ^12.0.9"
+        "phpunit/phpunit": "^12.0.9"
     },
     "suggest": {
         "ext-curl": "To enable more efficient network calls in Http\\Client.",
