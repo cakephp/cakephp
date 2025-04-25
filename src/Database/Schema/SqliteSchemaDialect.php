@@ -614,11 +614,8 @@ class SqliteSchemaDialect extends SchemaDialect
             [$config['schema'], $tableName] = explode('.', $tableName);
         }
 
-        $sql = sprintf(
-            'SELECT * FROM pragma_foreign_key_list(%s) ORDER BY id, seq',
-            $this->_driver->quoteIdentifier($tableName),
-        );
         $keys = [];
+        $sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($tableName));
         $statement = $this->_driver->execute($sql);
         foreach ($statement->fetchAll('assoc') as $row) {
             $id = $row['id'];
