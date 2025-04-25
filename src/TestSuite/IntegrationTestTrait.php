@@ -136,13 +136,6 @@ trait IntegrationTestTrait
     protected $_layoutName;
 
     /**
-     * The session instance from the last request
-     *
-     * @var \Cake\Http\Session
-     */
-    protected $_requestSession;
-
-    /**
      * Boolean flag for whether the request should have
      * a SecurityComponent token added.
      *
@@ -209,7 +202,6 @@ trait IntegrationTestTrait
         $this->_controller = null;
         $this->_viewName = null;
         $this->_layoutName = null;
-        $this->_requestSession = null;
         $this->_securityToken = false;
         $this->_csrfToken = false;
         $this->_retainFlashMessages = false;
@@ -476,7 +468,6 @@ trait IntegrationTestTrait
         try {
             $request = $this->_buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
-            $this->_requestSession = $request['session'];
             if ($this->_retainFlashMessages && $this->_flashMessages) {
                 $_SESSION['Flash'] = $this->_flashMessages;
             }
@@ -1174,7 +1165,7 @@ trait IntegrationTestTrait
     public function assertFlashMessage(string $expected, string $key = 'flash', string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($expected, new FlashParamEquals($this->_requestSession, $key, 'message'), $verboseMessage);
+        $this->assertThat($expected, new FlashParamEquals($key, 'message'), $verboseMessage);
     }
 
     /**
@@ -1191,7 +1182,7 @@ trait IntegrationTestTrait
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,
-            new FlashParamEquals($this->_requestSession, $key, 'message', $at),
+            new FlashParamEquals($key, 'message', $at),
             $verboseMessage
         );
     }
@@ -1209,7 +1200,7 @@ trait IntegrationTestTrait
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,
-            new FlashParamEquals($this->_requestSession, $key, 'element'),
+            new FlashParamEquals($key, 'element'),
             $verboseMessage
         );
     }
@@ -1228,7 +1219,7 @@ trait IntegrationTestTrait
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,
-            new FlashParamEquals($this->_requestSession, $key, 'element', $at),
+            new FlashParamEquals($key, 'element', $at),
             $verboseMessage
         );
     }

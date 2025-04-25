@@ -28,11 +28,6 @@ use PHPUnit\Framework\Constraint\Constraint;
 class FlashParamEquals extends Constraint
 {
     /**
-     * @var \Cake\Http\Session
-     */
-    protected $session;
-
-    /**
      * @var string
      */
     protected $key;
@@ -55,15 +50,14 @@ class FlashParamEquals extends Constraint
      * @param string $param Param to check
      * @param int|null $at Expected index
      */
-    public function __construct(?Session $session, string $key, string $param, ?int $at = null)
+    public function __construct(string $key, string $param, ?int $at = null)
     {
-        if (!$session) {
+        if (empty($_SESSION)) {
             $message = 'There is no stored session data. Perhaps you need to run a request?';
             $message .= ' Additionally, ensure `$this->enableRetainFlashMessages()` has been enabled for the test.';
             throw new AssertionFailedError($message);
         }
 
-        $this->session = $session;
         $this->key = $key;
         $this->param = $param;
         $this->at = $at;
