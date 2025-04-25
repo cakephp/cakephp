@@ -638,7 +638,7 @@ class SqliteSchemaDialect extends SchemaDialect
         foreach ($keys as $id => $data) {
             // sqlite doesn't provide a simple way to get foreign key names, but we
             // can extract them from the normalized create table sql.
-            $name = $this->extractIndexName($createTableSql, 'FOREIGN KEY', $data['columns']);
+            $name = $this->extractIndexName($createTableSql, 'FOREIGN\s*KEY', $data['columns']);
             if ($name === null) {
                 $name = implode('_', $data['columns']) . '_' . $id . '_fk';
             }
