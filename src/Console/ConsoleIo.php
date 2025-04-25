@@ -29,29 +29,8 @@ use SplFileObject;
  * consistent interface for shells to use. This class also makes mocking streams
  * easy to do in unit tests.
  */
-class ConsoleIo
+class ConsoleIo implements ConsoleIoInterface
 {
-    /**
-     * Output constant making verbose shells.
-     *
-     * @var int
-     */
-    public const int VERBOSE = 2;
-
-    /**
-     * Output constant for making normal shells.
-     *
-     * @var int
-     */
-    public const int NORMAL = 1;
-
-    /**
-     * Output constants for making quiet shells.
-     *
-     * @var int
-     */
-    public const int QUIET = 0;
-
     /**
      * The output stream
      *
@@ -158,7 +137,7 @@ class ConsoleIo
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout
-     *   or null if current level is less than ConsoleIo::VERBOSE
+     *   or null if current level is less than \Cake\Console\ConsoleIoInterface::VERBOSE
      */
     public function verbose(array|string $message, int $newlines = 1): ?int
     {
@@ -171,7 +150,7 @@ class ConsoleIo
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int|null The number of bytes returned from writing to stdout
-     *   or null if current level is less than ConsoleIo::QUIET
+     *   or null if current level is less than \Cake\Console\ConsoleIoInterface::QUIET
      */
     public function quiet(array|string $message, int $newlines = 1): ?int
     {
@@ -184,10 +163,10 @@ class ConsoleIo
      *
      * ### Output levels
      *
-     * There are 3 built-in output level. ConsoleIo::QUIET, ConsoleIo::NORMAL, ConsoleIo::VERBOSE.
+     * There are 3 built-in output level. \Cake\Console\ConsoleIoInterface::QUIET, \Cake\Console\ConsoleIoInterface::NORMAL, \Cake\Console\ConsoleIoInterface::VERBOSE.
      * The verbose and quiet output levels, map to the `verbose` and `quiet` output switches
-     * present in most shells. Using ConsoleIo::QUIET for a message means it will always display.
-     * While using ConsoleIo::VERBOSE means it will only display when verbose output is toggled.
+     * present in most shells. Using \Cake\Console\ConsoleIoInterface::QUIET for a message means it will always display.
+     * While using \Cake\Console\ConsoleIoInterface::VERBOSE means it will only display when verbose output is toggled.
      *
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
@@ -214,7 +193,7 @@ class ConsoleIo
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if provided $level is greater than current level.
-     * @see https://book.cakephp.org/5/en/console-and-shells.html#ConsoleIo::out
+     * @see https://book.cakephp.org/5/en/console-and-shells.html#\Cake\Console\ConsoleIoInterface::out
      */
     public function info(array|string $message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
@@ -232,7 +211,7 @@ class ConsoleIo
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if provided $level is greater than current level.
-     * @see https://book.cakephp.org/5/en/console-and-shells.html#ConsoleIo::out
+     * @see https://book.cakephp.org/5/en/console-and-shells.html#\Cake\Console\ConsoleIoInterface::out
      */
     public function comment(array|string $message, int $newlines = 1, int $level = self::NORMAL): ?int
     {
@@ -248,7 +227,7 @@ class ConsoleIo
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
-     * @see https://book.cakephp.org/5/en/console-and-shells.html#ConsoleIo::err
+     * @see https://book.cakephp.org/5/en/console-and-shells.html#\Cake\Console\ConsoleIoInterface::err
      */
     public function warning(array|string $message, int $newlines = 1): int
     {
@@ -264,7 +243,7 @@ class ConsoleIo
      * @param array<string>|string $message A string or an array of strings to output
      * @param int $newlines Number of newlines to append
      * @return int The number of bytes returned from writing to stderr.
-     * @see https://book.cakephp.org/5/en/console-and-shells.html#ConsoleIo::err
+     * @see https://book.cakephp.org/5/en/console-and-shells.html#\Cake\Console\ConsoleIoInterface::err
      */
     public function error(array|string $message, int $newlines = 1): int
     {
@@ -282,7 +261,7 @@ class ConsoleIo
      * @param int $level The message's output level, see above.
      * @return int|null The number of bytes returned from writing to stdout
      *   or null if provided $level is greater than current level.
-     * @see https://book.cakephp.org/5/en/console-and-shells.html#ConsoleIo::out
+     * @see https://book.cakephp.org/5/en/console-and-shells.html#\Cake\Console\ConsoleIoInterface::out
      */
     public function success(array|string $message, int $newlines = 1, int $level = self::NORMAL): ?int
     {

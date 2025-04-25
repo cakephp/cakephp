@@ -225,12 +225,12 @@ class CommandRunner implements EventDispatcherInterface
     /**
      * Get the shell instance for a given command name
      *
-     * @param \Cake\Console\ConsoleIo $io The IO wrapper for the created shell class.
+     * @param \Cake\Console\ConsoleIoInterface $io The IO wrapper for the created shell class.
      * @param \Cake\Console\CommandCollection $commands The command collection to find the shell in.
      * @param string $name The command name to find
      * @return \Cake\Console\CommandInterface
      */
-    protected function getCommand(ConsoleIo $io, CommandCollection $commands, string $name): CommandInterface
+    protected function getCommand(ConsoleIoInterface $io, CommandCollection $commands, string $name): CommandInterface
     {
         $instance = $commands->get($name);
         if (is_string($instance)) {

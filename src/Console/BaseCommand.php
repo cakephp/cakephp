@@ -232,14 +232,14 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      */
     protected function setOutputLevel(Arguments $args, ConsoleIo $io): void
     {
-        $io->setLoggers(ConsoleIo::NORMAL);
+        $io->setLoggers(ConsoleIoInterface::NORMAL);
         if ($args->getOption('quiet')) {
-            $io->level(ConsoleIo::QUIET);
-            $io->setLoggers(ConsoleIo::QUIET);
+            $io->level(ConsoleIoInterface::QUIET);
+            $io->setLoggers(ConsoleIoInterface::QUIET);
         }
         if ($args->getOption('verbose')) {
-            $io->level(ConsoleIo::VERBOSE);
-            $io->setLoggers(ConsoleIo::VERBOSE);
+            $io->level(ConsoleIoInterface::VERBOSE);
+            $io->setLoggers(ConsoleIoInterface::VERBOSE);
         }
     }
 

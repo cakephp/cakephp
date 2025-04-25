@@ -19,6 +19,7 @@ namespace Cake\Command;
 use Cake\Command\Helper\ProgressHelper;
 use Cake\Console\Arguments;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -135,10 +136,10 @@ class I18nExtractCommand extends Command
     /**
      * Method to interact with the user and get path selections.
      *
-     * @param \Cake\Console\ConsoleIo $io The io instance.
+     * @param \Cake\Console\ConsoleIoInterface $io The io instance.
      * @return void
      */
-    protected function _getPaths(ConsoleIo $io): void
+    protected function _getPaths(ConsoleIoInterface $io): void
     {
         $defaultPaths = array_merge(
             [APP],
@@ -468,12 +469,12 @@ class I18nExtractCommand extends Command
     /**
      * Parse tokens
      *
-     * @param \Cake\Console\ConsoleIo $io The io instance
+     * @param \Cake\Console\ConsoleIoInterface $io The io instance
      * @param string $functionName Function name that indicates translatable string (e.g: '__')
      * @param array $map Array containing what variables it will find (e.g: domain, singular, plural)
      * @return void
      */
-    protected function _parse(ConsoleIo $io, string $functionName, array $map): void
+    protected function _parse(ConsoleIoInterface $io, string $functionName, array $map): void
     {
         $count = 0;
         $tokenCount = count($this->_tokens);
@@ -780,14 +781,14 @@ class I18nExtractCommand extends Command
     /**
      * Indicate an invalid marker on a processed file
      *
-     * @param \Cake\Console\ConsoleIo $io The io instance.
+     * @param \Cake\Console\ConsoleIoInterface $io The io instance.
      * @param string $file File where invalid marker resides
      * @param int $line Line number
      * @param string $marker Marker found
      * @param int $count Count
      * @return void
      */
-    protected function _markerError(ConsoleIo $io, string $file, int $line, string $marker, int $count): void
+    protected function _markerError(ConsoleIoInterface $io, string $file, int $line, string $marker, int $count): void
     {
         if (!str_contains($this->_file, CAKE_CORE_INCLUDE_PATH)) {
             $this->_countMarkerError++;

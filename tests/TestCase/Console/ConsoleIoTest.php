@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOutput;
 use Cake\Console\Exception\StopException;
 use Cake\Console\Helper;
@@ -202,11 +203,11 @@ class ConsoleIoTest extends TestCase
                 ),
             );
 
-        $this->io->level(ConsoleIo::VERBOSE);
+        $this->io->level(ConsoleIoInterface::VERBOSE);
 
-        $this->io->out('Verbose', 1, ConsoleIo::VERBOSE);
-        $this->io->out('Normal', 1, ConsoleIo::NORMAL);
-        $this->io->out('Quiet', 1, ConsoleIo::QUIET);
+        $this->io->out('Verbose', 1, ConsoleIoInterface::VERBOSE);
+        $this->io->out('Normal', 1, ConsoleIoInterface::NORMAL);
+        $this->io->out('Quiet', 1, ConsoleIoInterface::QUIET);
     }
 
     /**
@@ -224,7 +225,7 @@ class ConsoleIoTest extends TestCase
                 ),
             );
 
-        $this->io->level(ConsoleIo::VERBOSE);
+        $this->io->level(ConsoleIoInterface::VERBOSE);
 
         $this->io->verbose('Verbose');
         $this->io->out('Normal');
@@ -245,11 +246,11 @@ class ConsoleIoTest extends TestCase
                 ),
             );
 
-        $this->io->level(ConsoleIo::QUIET);
+        $this->io->level(ConsoleIoInterface::QUIET);
 
-        $this->io->out('Verbose', 1, ConsoleIo::VERBOSE);
-        $this->io->out('Normal', 1, ConsoleIo::NORMAL);
-        $this->io->out('Quiet', 1, ConsoleIo::QUIET);
+        $this->io->out('Verbose', 1, ConsoleIoInterface::VERBOSE);
+        $this->io->out('Normal', 1, ConsoleIoInterface::NORMAL);
+        $this->io->out('Quiet', 1, ConsoleIoInterface::QUIET);
         $this->io->verbose('Verbose');
         $this->io->quiet('Quiet');
     }
@@ -502,7 +503,7 @@ class ConsoleIoTest extends TestCase
     {
         Log::drop('stdout');
         Log::drop('stderr');
-        $this->io->setLoggers(ConsoleIo::QUIET);
+        $this->io->setLoggers(ConsoleIoInterface::QUIET);
         $this->assertEmpty(Log::engine('stdout'));
         $this->assertNotEmpty(Log::engine('stderr'));
     }
@@ -514,7 +515,7 @@ class ConsoleIoTest extends TestCase
     {
         Log::drop('stdout');
         Log::drop('stderr');
-        $this->io->setLoggers(ConsoleIo::VERBOSE);
+        $this->io->setLoggers(ConsoleIoInterface::VERBOSE);
 
         $this->assertNotEmpty(Log::engine('stderr'));
         /** @var \Cake\Log\Log $engine */

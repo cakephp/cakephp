@@ -22,6 +22,7 @@ use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
 use Cake\Core\Configure;
@@ -76,11 +77,11 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     /**
      * Output text.
      *
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @param iterable<string, string|object> $commands The command collection to output.
      * @return void
      */
-    protected function asText(ConsoleIo $io, iterable $commands): void
+    protected function asText(ConsoleIoInterface $io, iterable $commands): void
     {
         $invert = [];
         foreach ($commands as $name => $class) {
@@ -152,10 +153,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     /**
      * Output relevant paths if defined
      *
-     * @param \Cake\Console\ConsoleIo $io IO object.
+     * @param \Cake\Console\ConsoleIoInterface $io IO object.
      * @return void
      */
-    protected function outputPaths(ConsoleIo $io): void
+    protected function outputPaths(ConsoleIoInterface $io): void
     {
         $paths = [];
         if (Configure::check('App.dir')) {
@@ -196,11 +197,11 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     /**
      * Output as XML
      *
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @param iterable<string, string|object> $commands The command collection to output
      * @return void
      */
-    protected function asXml(ConsoleIo $io, iterable $commands): void
+    protected function asXml(ConsoleIoInterface $io, iterable $commands): void
     {
         $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {
