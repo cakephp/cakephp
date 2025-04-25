@@ -722,6 +722,19 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test asserting session and flash messages.
+     */
+    public function testFlashAssertionsWithSession(): void
+    {
+        $this->enableRetainFlashMessages();
+        $this->get('/posts/flashWithSession');
+        $this->assertRedirect();
+
+        $this->assertFlashElement('flash/error');
+        $this->assertSession(true, 'test');
+    }
+
+    /**
      * Test flash assertions stored with enableRememberFlashMessages() even if
      * no view is rendered
      */
