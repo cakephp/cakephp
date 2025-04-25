@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandRunner;
+use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\BasePlugin;
 use Cake\Core\Configure;

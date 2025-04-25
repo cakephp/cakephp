@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Command\PluginAssetsSymlinkCommand;
 use Cake\Console\CommandInterface;
+use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Console\TestSuite\StubConsoleOutput;
