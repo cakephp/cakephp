@@ -486,7 +486,9 @@ class EntityTest extends TestCase
      */
     public function testHas(): void
     {
-        $entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
+        $entity = new Entity(['id' => 1]);
+        $entity->name = 'Juan';
+        $entity->foo = null;
         $this->assertTrue($entity->has('id'));
         $this->assertTrue($entity->has('name'));
         $this->assertTrue($entity->has('foo'));
