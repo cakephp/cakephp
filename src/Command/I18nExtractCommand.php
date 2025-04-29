@@ -231,7 +231,9 @@ class I18nExtractCommand extends Command
             $message = "What is the path you would like to output?\n[Q]uit";
             $localePaths = array_values(App::path('locales'));
             if (!$localePaths) {
-                $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales';
+                $localePaths[] = ROOT . DIRECTORY_SEPARATOR
+                    . 'resources' . DIRECTORY_SEPARATOR
+                    . 'locales' . DIRECTORY_SEPARATOR;
             }
             while (true) {
                 $response = $io->ask(
