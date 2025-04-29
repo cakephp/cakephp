@@ -387,7 +387,14 @@ class ConsoleOptionParser
                 'required' => false,
                 'prompt' => null,
             ];
+
             $options += $defaults;
+
+            // If a default value is provided and it is not a string, do a cast
+            if ($options['default'] && !is_string($options['default'])) {
+                $options['default'] = (string)$options['default'];
+            }
+
             $option = new ConsoleInputOption(
                 $name,
                 $options['short'],
