@@ -186,6 +186,60 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test adding an option with a non-string default.
+     */
+    public function testAddOptionIntegerDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser
+            ->addOption('test', [
+                'default' => 1,
+            ])
+            ->addOption('no-default', []);
+
+        $result = $parser->parse(['--test'], $this->io);
+        $this->assertSame(
+            ['test' => '1', 'help' => false],
+            $result[0],
+            'Default value did not parse out',
+        );
+
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('test', [
+            'default' => 1,
+        ]);
+        $result = $parser->parse([], $this->io);
+        $this->assertEquals(['test' => '1', 'help' => false], $result[0], 'Default value did not parse out');
+    }
+
+     /**
+     * test adding an option with a non-string default.
+     */
+    public function testAddOptionBooleanDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser
+            ->addOption('test', [
+                'default' => true,
+            ])
+            ->addOption('no-default', []);
+
+        $result = $parser->parse(['--test'], $this->io);
+        $this->assertSame(
+            ['test' => 'true', 'help' => false],
+            $result[0],
+            'Default value did not parse out',
+        );
+
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('test', [
+            'default' => true,
+        ]);
+        $result = $parser->parse([], $this->io);
+        $this->assertEquals(['test' => 'true', 'help' => false], $result[0], 'Default value did not parse out');
+    }
+
+    /**
      * test adding an option and using the short value for parsing.
      */
     public function testAddOptionShort(): void
