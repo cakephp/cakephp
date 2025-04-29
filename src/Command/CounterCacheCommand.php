@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -48,10 +48,10 @@ class CounterCacheCommand extends Command
      * on the model's counter cache behavior's configuration.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io): int
+    public function execute(Arguments $args, ConsoleIoInterface $io): int
     {
         $table = $this->fetchTable($args->getArgument('model'));
 

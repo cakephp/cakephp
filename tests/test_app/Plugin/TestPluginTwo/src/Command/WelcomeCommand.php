@@ -5,11 +5,11 @@ namespace TestPluginTwo\Command;
 
 use Cake\Command\Command;
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 
 class WelcomeCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIoInterface $io)
     {
         $io->out('This is the say_hello method called from TestPluginTwo.WelcomeCommand');
     }

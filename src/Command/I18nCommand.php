@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -37,10 +37,10 @@ class I18nCommand extends Command
      * Execute interactive mode
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
     {
         $io->out('<info>I18n Command</info>');
         $io->hr();

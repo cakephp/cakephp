@@ -167,7 +167,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    public function run(array $argv, ConsoleIo $io): ?int
+    public function run(array $argv, ConsoleIoInterface $io): ?int
     {
         $this->initialize();
 
@@ -209,10 +209,10 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser.
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return void
      */
-    protected function displayHelp(ConsoleOptionParser $parser, Arguments $args, ConsoleIo $io): void
+    protected function displayHelp(ConsoleOptionParser $parser, Arguments $args, ConsoleIoInterface $io): void
     {
         $format = 'text';
         if ($args->getArgumentAt(0) === 'xml') {
@@ -227,10 +227,10 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Set the output level based on the Arguments.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return void
      */
-    protected function setOutputLevel(Arguments $args, ConsoleIo $io): void
+    protected function setOutputLevel(Arguments $args, ConsoleIoInterface $io): void
     {
         $io->setLoggers(ConsoleIoInterface::NORMAL);
         if ($args->getOption('quiet')) {
@@ -247,11 +247,11 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Implement this method with your command's logic.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null|void The exit code or null for success
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
-    abstract public function execute(Arguments $args, ConsoleIo $io);
+    abstract public function execute(Arguments $args, ConsoleIoInterface $io);
 
     /**
      * Halt the current process with a StopException.
@@ -274,11 +274,14 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      *
      * @param \Cake\Console\CommandInterface|string $command The command class name or command instance.
      * @param array $args The arguments to invoke the command with.
-     * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo instance to use for the executed command.
+     * @param \Cake\Console\ConsoleIoInterface|null $io The ConsoleIo instance to use for the executed command.
      * @return int|null The exit code or null for success of the command.
      */
-    public function executeCommand(CommandInterface|string $command, array $args = [], ?ConsoleIo $io = null): ?int
-    {
+    public function executeCommand(
+        CommandInterface|string $command,
+        array $args = [],
+        ?ConsoleIoInterface $io = null,
+    ): ?int {
         if (is_string($command)) {
             assert(
                 is_subclass_of($command, CommandInterface::class),

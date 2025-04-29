@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Command\Helper;
 
 use Cake\Command\Helper\TableHelper;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use UnexpectedValueException;
@@ -33,9 +34,9 @@ class TableHelperTest extends TestCase
     protected StubConsoleOutput $stub;
 
     /**
-     * @var \Cake\Console\ConsoleIo
+     * @var \Cake\Console\ConsoleIoInterface
      */
-    protected ConsoleIo $io;
+    protected ConsoleIoInterface $io;
 
     /**
      * @var \Cake\Shell\Helper\TableHelper

@@ -82,7 +82,7 @@ namespace App\Command;
 
 use Cake\Console\Arguments;
 use Cake\Console\BaseCommand;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 class HelloCommand extends BaseCommand
@@ -103,7 +103,7 @@ class HelloCommand extends BaseCommand
         return $parser;
     }
 
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
     {
         $color = $args->getOption('color');
         if ($color === 'none') {

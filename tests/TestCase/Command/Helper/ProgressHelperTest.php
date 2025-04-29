@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Command\Helper;
 
 use Cake\Command\Helper\ProgressHelper;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -38,9 +39,9 @@ class ProgressHelperTest extends TestCase
     protected StubConsoleOutput $stub;
 
     /**
-     * @var \Cake\Console\ConsoleIo
+     * @var \Cake\Console\ConsoleIoInterface
      */
-    protected ConsoleIo $io;
+    protected ConsoleIoInterface $io;
 
     /**
      * setUp method

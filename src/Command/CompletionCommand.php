@@ -20,7 +20,7 @@ use Cake\Console\Arguments;
 use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use ReflectionClass;
 
@@ -100,10 +100,10 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      * Main function Prints out the list of commands.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
     {
         return match ($args->getArgument('mode')) {
             'commands' => $this->getCommands($args, $io),
@@ -117,10 +117,10 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      * Get the list of defined commands.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int
      */
-    protected function getCommands(Arguments $args, ConsoleIo $io): int
+    protected function getCommands(Arguments $args, ConsoleIoInterface $io): int
     {
         $options = [];
         foreach ($this->commands as $key => $value) {
@@ -137,10 +137,10 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      * Get the list of defined sub-commands.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int
      */
-    protected function getSubcommands(Arguments $args, ConsoleIo $io): int
+    protected function getSubcommands(Arguments $args, ConsoleIoInterface $io): int
     {
         $name = $args->getArgument('command');
         if ($name === null || $name === '') {
@@ -170,10 +170,10 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
      * Get the options for a command or subcommand
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null
      */
-    protected function getOptions(Arguments $args, ConsoleIo $io): ?int
+    protected function getOptions(Arguments $args, ConsoleIoInterface $io): ?int
     {
         $name = $args->getArgument('command');
         $subcommand = $args->getArgument('subcommand');

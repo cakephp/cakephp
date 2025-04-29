@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Routing\Router;
 
@@ -38,11 +38,11 @@ class RoutesCommand extends Command
      * Display all routes in an application
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      * @throws \JsonException
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
     {
         $header = ['Route name', 'URI template', 'Plugin', 'Prefix', 'Controller', 'Action', 'Method(s)'];
         if ($args->getOption('with-middlewares') || $args->getOption('verbose')) {

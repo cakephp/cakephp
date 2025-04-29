@@ -336,7 +336,7 @@ class CommandTest extends TestCase
 
     /**
      * @param \Cake\Console\ConsoleOutput $output
-     * @return \Cake\Console\ConsoleIo|\Mockery\MockInterface
+     * @return \Cake\Console\ConsoleIoInterface|\Mockery\MockInterface
      */
     protected function getMockIo($output)
     {

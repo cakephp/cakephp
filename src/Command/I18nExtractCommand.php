@@ -18,7 +18,6 @@ namespace Cake\Command;
 
 use Cake\Command\Helper\ProgressHelper;
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\App;
@@ -179,10 +178,10 @@ class I18nExtractCommand extends Command
      * Execute the command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
     {
         $plugin = '';
         if ($args->getOption('exclude')) {
@@ -322,10 +321,10 @@ class I18nExtractCommand extends Command
      * Extract text
      *
      * @param \Cake\Console\Arguments $args The Arguments instance
-     * @param \Cake\Console\ConsoleIo $io The io instance
+     * @param \Cake\Console\ConsoleIoInterface $io The io instance
      * @return void
      */
-    protected function _extract(Arguments $args, ConsoleIo $io): void
+    protected function _extract(Arguments $args, ConsoleIoInterface $io): void
     {
         $io->out();
         $io->out();
@@ -413,10 +412,10 @@ class I18nExtractCommand extends Command
      * Extract tokens out of all files to be processed
      *
      * @param \Cake\Console\Arguments $args The io instance
-     * @param \Cake\Console\ConsoleIo $io The io instance
+     * @param \Cake\Console\ConsoleIoInterface $io The io instance
      * @return void
      */
-    protected function _extractTokens(Arguments $args, ConsoleIo $io): void
+    protected function _extractTokens(Arguments $args, ConsoleIoInterface $io): void
     {
         $progress = $io->helper('progress');
         assert($progress instanceof ProgressHelper);
@@ -613,10 +612,10 @@ class I18nExtractCommand extends Command
      * Write the files that need to be stored
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return void
      */
-    protected function _writeFiles(Arguments $args, ConsoleIo $io): void
+    protected function _writeFiles(Arguments $args, ConsoleIoInterface $io): void
     {
         $io->out();
         $overwriteAll = false;

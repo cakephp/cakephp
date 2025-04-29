@@ -5,12 +5,12 @@ namespace TestApp\Command;
 
 use Cake\Command\Command;
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 class IntegrationCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIoInterface $io)
     {
         $io->out('arg: ' . $args->getArgument('arg'));
         $io->out('opt: ' . $args->getOption('opt'));

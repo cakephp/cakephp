@@ -127,10 +127,10 @@ class CommandRunner implements EventDispatcherInterface
      * - Run the requested command.
      *
      * @param array $argv The arguments from the CLI environment.
-     * @param \Cake\Console\ConsoleIo|null $io The ConsoleIo instance. Used primarily for testing.
+     * @param \Cake\Console\ConsoleIoInterface|null $io The ConsoleIo instance. Used primarily for testing.
      * @return int The exit code of the command.
      */
-    public function run(array $argv, ?ConsoleIo $io = null): int
+    public function run(array $argv, ?ConsoleIoInterface $io = null): int
     {
         assert($argv !== [], 'Cannot run any commands. No arguments received.');
 
@@ -279,12 +279,12 @@ class CommandRunner implements EventDispatcherInterface
      * command names take precedence over less specific ones.
      *
      * @param \Cake\Console\CommandCollection $commands The command collection to check.
-     * @param \Cake\Console\ConsoleIo $io ConsoleIo object for errors.
+     * @param \Cake\Console\ConsoleIoInterface $io ConsoleIo object for errors.
      * @param string|null $name The name from the CLI args.
      * @return string The resolved name.
      * @throws \Cake\Console\Exception\MissingOptionException
      */
-    protected function resolveName(CommandCollection $commands, ConsoleIo $io, ?string $name): string
+    protected function resolveName(CommandCollection $commands, ConsoleIoInterface $io, ?string $name): string
     {
         if (!$name) {
             $io->err('<error>No command provided. Choose one of the available commands.</error>', 2);
@@ -311,10 +311,10 @@ class CommandRunner implements EventDispatcherInterface
      *
      * @param \Cake\Console\CommandInterface $command The command to run.
      * @param array $argv The CLI arguments to invoke.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null Exit code
      */
-    protected function runCommand(CommandInterface $command, array $argv, ConsoleIo $io): ?int
+    protected function runCommand(CommandInterface $command, array $argv, ConsoleIoInterface $io): ?int
     {
         try {
             $eventManager = $this->getEventManager();

@@ -554,11 +554,11 @@ class ConsoleOptionParser
      * Parse the argv array into a set of params and args.
      *
      * @param array $argv Array of args (argv) to parse.
-     * @param \Cake\Console\ConsoleIo|null $io A ConsoleIo instance or null. If null prompt options will error.
+     * @param \Cake\Console\ConsoleIoInterface|null $io A ConsoleIo instance or null. If null prompt options will error.
      * @return array [$params, $args]
      * @throws \Cake\Console\Exception\ConsoleException When an invalid parameter is encountered.
      */
-    public function parse(array $argv, ?ConsoleIo $io = null): array
+    public function parse(array $argv, ?ConsoleIoInterface $io = null): array
     {
         $params = [];
         $args = [];

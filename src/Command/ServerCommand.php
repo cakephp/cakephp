@@ -18,7 +18,7 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Configure;
 use function Cake\Core\env;
@@ -83,11 +83,11 @@ class ServerCommand extends Command
      * Allows for checking and configuring prior to command or main execution
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return void
      * @link https://book.cakephp.org/5/en/console-and-shells.html#hook-methods
      */
-    protected function startup(Arguments $args, ConsoleIo $io): void
+    protected function startup(Arguments $args, ConsoleIoInterface $io): void
     {
         if ($args->getOption('host')) {
             $this->_host = (string)$args->getOption('host');
@@ -129,10 +129,10 @@ class ServerCommand extends Command
      * Execute.
      *
      * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
     {
         $this->startup($args, $io);
         $phpBinary = (string)env('PHP', 'php');

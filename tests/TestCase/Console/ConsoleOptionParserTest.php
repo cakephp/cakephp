@@ -33,7 +33,7 @@ use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 class ConsoleOptionParserTest extends TestCase
 {
     /**
-     * @var \Cake\Console\ConsoleIo
+     * @var \Cake\Console\ConsoleIoInterface
      */
     private $io;
 

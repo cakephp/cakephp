@@ -33,7 +33,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class ConsoleIoTest extends TestCase
 {
     /**
-     * @var \Cake\Console\ConsoleIo
+     * @var \Cake\Console\ConsoleIoInterface
      */
     protected $io;
 

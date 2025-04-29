@@ -23,6 +23,7 @@ use Cake\Console\CommandFactoryInterface;
 use Cake\Console\CommandInterface;
 use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
@@ -466,7 +467,7 @@ class CommandRunnerTest extends TestCase
         return $app;
     }
 
-    protected function getMockIo(StubConsoleOutput $output): ConsoleIo
+    protected function getMockIo(StubConsoleOutput $output): ConsoleIoInterface
     {
         return Mockery::mock(ConsoleIo::class, [$output, $output, null, null])
             ->shouldAllowMockingMethod('in')

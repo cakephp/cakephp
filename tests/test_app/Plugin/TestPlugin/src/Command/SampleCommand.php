@@ -5,11 +5,11 @@ namespace TestPlugin\Command;
 
 use Cake\Command\Command;
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 
 class SampleCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIoInterface $io)
     {
     }
 }

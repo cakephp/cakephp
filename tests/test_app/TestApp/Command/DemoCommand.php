@@ -5,7 +5,7 @@ namespace TestApp\Command;
 
 use Cake\Command\Command;
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 
 class DemoCommand extends Command
 {
@@ -14,7 +14,7 @@ class DemoCommand extends Command
         return 'This is a demo command';
     }
 
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
     {
         $io->quiet('Quiet!');
         $io->out('Demo Command!');

@@ -5,7 +5,7 @@ namespace TestPluginTwo\Command;
 
 use Cake\Command\Command;
 use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 
 class WelcomeSayHelloCommand extends Command
 {
@@ -14,7 +14,7 @@ class WelcomeSayHelloCommand extends Command
         return 'welcome say_hello';
     }
 
-    public function execute(Arguments $args, ConsoleIo $io)
+    public function execute(Arguments $args, ConsoleIoInterface $io)
     {
     }
 }
