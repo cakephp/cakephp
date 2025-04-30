@@ -100,9 +100,10 @@ trait PluginAssetsTrait
      * @param array<string, mixed> $plugins List of plugins to process
      * @param bool $copy Force copy mode. Default false.
      * @param bool $overwrite Overwrite existing files.
+     * @param bool $relative Relative. Default false.
      * @return void
      */
-    protected function _process(array $plugins, bool $copy = false, bool $overwrite = false): void
+    protected function _process(array $plugins, bool $copy = false, bool $overwrite = false, bool $relative = false): void
     {
         foreach ($plugins as $plugin => $config) {
             $this->io->out();
@@ -136,6 +137,7 @@ trait PluginAssetsTrait
                 $result = $this->_createSymlink(
                     $config['srcPath'],
                     $dest,
+                    $relative,
                 );
                 if ($result) {
                     continue;
@@ -234,10 +236,15 @@ trait PluginAssetsTrait
      *
      * @param string $target Target directory
      * @param string $link Link name
+     * @param bool $relative Relative (true) or Absolute (false)
      * @return bool
      */
-    protected function _createSymlink(string $target, string $link): bool
+    protected function _createSymlink(string $target, string $link, bool $relative = false): bool
     {
+        if ($relative) {
+            $target = $this->_makeRelativePath($link, $target);
+        }
+
         // phpcs:disable
         $result = @symlink($target, $link);
         // phpcs:enable
@@ -249,6 +256,31 @@ trait PluginAssetsTrait
         }
 
         return false;
+    }
+
+    /**
+     * Generate a relative path from one directory to another.
+     *
+     * @param string $from The symlink path
+     * @param string $to The target path
+     * @return string Relative path
+     */
+    protected function _makeRelativePath(string $from, string $to): string
+    {
+        $from = is_dir($from) ? rtrim($from, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR : dirname($from);
+        $from = realpath($from);
+        $to = realpath($to);
+
+        $fromParts = explode(DIRECTORY_SEPARATOR, $from);
+        $toParts = explode(DIRECTORY_SEPARATOR, $to);
+
+        // Remove common parts
+        while (count($fromParts) && count($toParts) && $fromParts[0] === $toParts[0]) {
+            array_shift($fromParts);
+            array_shift($toParts);
+        }
+
+        return str_repeat('..' . DIRECTORY_SEPARATOR, count($fromParts)) . implode(DIRECTORY_SEPARATOR, $toParts);
     }
 
     /**
