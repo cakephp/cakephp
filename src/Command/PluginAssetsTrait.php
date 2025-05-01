@@ -22,6 +22,7 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Utility\Filesystem;
 use Cake\Utility\Inflector;
+use InvalidArgumentException;
 
 /**
  * trait for symlinking / copying plugin assets to app's webroot.
@@ -276,7 +277,7 @@ trait PluginAssetsTrait
         $to = realpath($to);
 
         if ($from === false || $to === false) {
-            throw new \InvalidArgumentException('Invalid path provided to _makeRelativePath.');
+            throw new InvalidArgumentException('Invalid path provided to _makeRelativePath.');
         }
 
         $fromParts = explode(DIRECTORY_SEPARATOR, $from);
