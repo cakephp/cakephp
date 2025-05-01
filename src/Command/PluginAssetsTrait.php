@@ -104,12 +104,11 @@ trait PluginAssetsTrait
      * @return void
      */
     protected function _process(
-        array $plugins, 
-        bool $copy = false, 
-        bool $overwrite = false, 
+        array $plugins,
+        bool $copy = false,
+        bool $overwrite = false,
         bool $relative = false,
-    ): void
-    {
+    ): void {
         foreach ($plugins as $plugin => $config) {
             $this->io->out();
             $this->io->out('For plugin: ' . $plugin);
