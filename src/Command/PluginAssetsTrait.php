@@ -103,7 +103,12 @@ trait PluginAssetsTrait
      * @param bool $relative Relative. Default false.
      * @return void
      */
-    protected function _process(array $plugins, bool $copy = false, bool $overwrite = false, bool $relative = false): void
+    protected function _process(
+        array $plugins, 
+        bool $copy = false, 
+        bool $overwrite = false, 
+        bool $relative = false,
+    ): void
     {
         foreach ($plugins as $plugin => $config) {
             $this->io->out();
@@ -274,13 +279,18 @@ trait PluginAssetsTrait
         $fromParts = explode(DIRECTORY_SEPARATOR, $from);
         $toParts = explode(DIRECTORY_SEPARATOR, $to);
 
+        $fromCount = count($fromParts);
+        $toCount = count($toParts);
+
         // Remove common parts
-        while (count($fromParts) && count($toParts) && $fromParts[0] === $toParts[0]) {
+        while ($fromCount && $toCount && $fromParts[0] === $toParts[0]) {
             array_shift($fromParts);
             array_shift($toParts);
+            $fromCount--;
+            $toCount--;
         }
 
-        return str_repeat('..' . DIRECTORY_SEPARATOR, count($fromParts)) . implode(DIRECTORY_SEPARATOR, $toParts);
+        return str_repeat('..' . DIRECTORY_SEPARATOR, $fromCount) . implode(DIRECTORY_SEPARATOR, $toParts);
     }
 
     /**
