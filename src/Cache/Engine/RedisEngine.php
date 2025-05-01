@@ -360,7 +360,7 @@ class RedisEngine extends CacheEngine
     public function clearBlocking(): bool
     {
         if ($this->getConfig('flushDb')) {
-            $this->_Redis->flushDB(false);
+            $this->_Redis->flushDB(true);
 
             return true;
         }
