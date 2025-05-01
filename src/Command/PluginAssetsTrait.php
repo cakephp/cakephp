@@ -275,6 +275,10 @@ trait PluginAssetsTrait
         $from = realpath($from);
         $to = realpath($to);
 
+        if ($from === false || $to === false) {
+            throw new \InvalidArgumentException('Invalid path provided to _makeRelativePath.');
+        }
+
         $fromParts = explode(DIRECTORY_SEPARATOR, $from);
         $toParts = explode(DIRECTORY_SEPARATOR, $to);
 
