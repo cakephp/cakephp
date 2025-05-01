@@ -53,6 +53,7 @@ class RedisEngine extends CacheEngine
      * - `server` URL or IP to the Redis server host.
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
+     * - `flushDb` Allow to flush DB in atomic operation, ignoring the prefix
      *
      * @var array<string, mixed>
      */
@@ -70,6 +71,7 @@ class RedisEngine extends CacheEngine
         'timeout' => 0,
         'unix_socket' => false,
         'scanCount' => 10,
+        'flushDb' => false,
     ];
 
     /**
@@ -320,6 +322,12 @@ class RedisEngine extends CacheEngine
      */
     public function clear(): bool
     {
+        if ($this->getConfig('flushDb')) {
+            $this->_Redis->flushDB(false);
+
+            return true;
+        }
+
         $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
 
         $isAllDeleted = true;
@@ -351,6 +359,12 @@ class RedisEngine extends CacheEngine
      */
     public function clearBlocking(): bool
     {
+        if ($this->getConfig('flushDb')) {
+            $this->_Redis->flushDB(false);
+
+            return true;
+        }
+
         $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
 
         $isAllDeleted = true;
