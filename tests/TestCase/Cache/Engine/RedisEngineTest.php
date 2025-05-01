@@ -101,6 +101,7 @@ class RedisEngineTest extends TestCase
             'unix_socket' => false,
             'host' => null,
             'scanCount' => 10,
+            'flushDb' => false,
         ];
         $this->assertEquals($expecting, $config);
     }
@@ -130,6 +131,7 @@ class RedisEngineTest extends TestCase
             'host' => 'localhost',
             'scheme' => 'redis',
             'scanCount' => 10,
+            'flushDb' => false,
         ];
         $this->assertEquals($expecting, $config);
 
