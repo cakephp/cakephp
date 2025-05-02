@@ -437,7 +437,6 @@ class PostgresSchemaDialect extends SchemaDialect
             $type = TableSchema::INDEX_INDEX;
             $name = $row['relname'];
             if ($row['indisprimary']) {
-                $name = TableSchema::CONSTRAINT_PRIMARY;
                 $type = TableSchema::CONSTRAINT_PRIMARY;
             }
             if ($row['indisunique'] && $type === TableSchema::INDEX_INDEX) {

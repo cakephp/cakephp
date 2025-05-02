@@ -608,7 +608,7 @@ SQL;
         $result = $schema->describe('schema_authors');
         $this->assertInstanceOf(TableSchema::class, $result);
         $expected = [
-            'primary' => [
+            'schema_authors_pkey' => [
                 'type' => 'primary',
                 'columns' => ['id'],
                 'length' => [],
@@ -620,7 +620,7 @@ SQL;
             ],
         ];
         $this->assertCount(2, $result->constraints());
-        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['schema_authors_pkey'], $result->getConstraint('schema_authors_pkey'));
         $this->assertEquals($expected['unique_position'], $result->getConstraint('unique_position'));
     }
 
@@ -675,7 +675,7 @@ SQL;
 
         $this->assertCount(4, $result->constraints());
         $expected = [
-            'primary' => [
+            'schema_articles_pkey' => [
                 'type' => 'primary',
                 'columns' => ['id'],
                 'length' => [],
@@ -701,7 +701,7 @@ SQL;
                 'length' => [],
             ],
         ];
-        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertEquals($expected['schema_articles_pkey'], $result->getConstraint('schema_articles_pkey'));
         $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
         $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
