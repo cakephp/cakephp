@@ -22,7 +22,6 @@ use Cake\Database\Driver\Sqlite;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
@@ -1473,8 +1472,7 @@ class BelongsToManyTest extends TestCase
         $this->expectExceptionMessage('The `tags` table does not define a primary key');
         $table = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
-
-        $tags->getSchema()->dropConstraint('tags_pkey');
+        $tags->getSchema()->dropConstraint('primary');
 
         $table->belongsToMany('Tags');
         $table->find()->contain('Tags')->first();

@@ -436,8 +436,10 @@ class PostgresSchemaDialect extends SchemaDialect
         foreach ($statement->fetchAll('assoc') as $row) {
             $type = TableSchema::INDEX_INDEX;
             $name = $row['relname'];
+            $constraint = null;
             if ($row['indisprimary']) {
-                $name = $name ?? 'primary';
+                $constraint = $name;
+                $name = TableSchema::CONSTRAINT_PRIMARY;
                 $type = TableSchema::CONSTRAINT_PRIMARY;
             }
             if ($row['indisunique'] && $type === TableSchema::INDEX_INDEX) {
@@ -450,6 +452,9 @@ class PostgresSchemaDialect extends SchemaDialect
                     'columns' => [],
                     'length' => [],
                 ];
+            }
+            if ($constraint) {
+                $indexes[$name]['constraint'] = $constraint;
             }
             $indexes[$name]['columns'][] = $row['attname'];
         }
