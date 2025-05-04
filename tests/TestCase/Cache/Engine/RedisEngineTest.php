@@ -131,7 +131,7 @@ class RedisEngineTest extends TestCase
             'host' => 'localhost',
             'scheme' => 'redis',
             'scanCount' => 10,
-            'flushDb' => false,
+            'clearUsesFlushDb' => false,
         ];
         $this->assertEquals($expecting, $config);
 
@@ -170,6 +170,7 @@ class RedisEngineTest extends TestCase
             'ssl_ca' => '/tmp/cert.crt',
             'ssl_key' => '/tmp/local.key',
             'ssl_cert' => '/tmp/local.crt',
+            'clearUsesFlushDb' => false,
         ];
         $this->assertEquals($expecting, $config);
 

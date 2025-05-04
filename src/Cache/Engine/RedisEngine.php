@@ -53,7 +53,9 @@ class RedisEngine extends CacheEngine
      * - `server` URL or IP to the Redis server host.
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
-     * - `flushDb` Allow to flush DB in atomic operation, ignoring the prefix
+     * - `clearUsesFlushDb` Enable clear() and clearBlocking() to use FLUSHDB. This will be
+     *   faster than standard clear()/clearBlocking() but will ignore prefixes and will
+     *   cause dataloss if other applications are sharing a redis database.
      *
      * @var array<string, mixed>
      */
@@ -71,7 +73,7 @@ class RedisEngine extends CacheEngine
         'timeout' => 0,
         'unix_socket' => false,
         'scanCount' => 10,
-        'flushDb' => false,
+        'clearUsesFlushDb' => false,
     ];
 
     /**
@@ -322,7 +324,7 @@ class RedisEngine extends CacheEngine
      */
     public function clear(): bool
     {
-        if ($this->getConfig('flushDb')) {
+        if ($this->getConfig('clearUsesFlushDb')) {
             $this->_Redis->flushDB(false);
 
             return true;
@@ -359,7 +361,7 @@ class RedisEngine extends CacheEngine
      */
     public function clearBlocking(): bool
     {
-        if ($this->getConfig('flushDb')) {
+        if ($this->getConfig('clearUsesFlushDb')) {
             $this->_Redis->flushDB(true);
 
             return true;
