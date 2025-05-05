@@ -946,6 +946,7 @@ trait IntegrationTestTrait
 
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
+        $this->assertThat(null, new StatusSuccess($this->_response), $verboseMessage);
 
         $url = $this->_request['url'] ?? null;
         if (!$url) {
