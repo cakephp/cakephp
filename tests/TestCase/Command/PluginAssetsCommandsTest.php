@@ -96,6 +96,7 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testRelativeSymlink(): void
     {
+        $this->skipIf(DS === '\\', 'Cant perform operations with symlinks windows.');
         $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
 
         $this->exec('plugin assets symlink --relative');
