@@ -188,28 +188,24 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test adding an option with a non-string default.
      */
-    public function testAddOptionIntegerDefault(): void
+    public function testAddOptionNonStringDefault(): void
     {
         $parser = new ConsoleOptionParser('test', false);
         $parser
-            ->addOption('test', [
+            ->addOption('test_int', [
                 'default' => 1,
+            ])
+            ->addOption('test_float', [
+                'default' => 1.5,
             ])
             ->addOption('no-default', []);
 
-        $result = $parser->parse(['--test'], $this->io);
-        $this->assertSame(
-            ['test' => '1', 'help' => false],
+        $result = $parser->parse([], $this->io);
+        $this->assertEquals(
+            ['test_int' => '1', 'test_float' => '1.5', 'help' => false],
             $result[0],
             'Default value did not parse out',
         );
-
-        $parser = new ConsoleOptionParser('test', false);
-        $parser->addOption('test', [
-            'default' => 1,
-        ]);
-        $result = $parser->parse([], $this->io);
-        $this->assertEquals(['test' => '1', 'help' => false], $result[0], 'Default value did not parse out');
     }
 
     /**
