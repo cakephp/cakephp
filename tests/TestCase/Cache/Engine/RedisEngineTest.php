@@ -731,6 +731,33 @@ class RedisEngineTest extends TestCase
     }
 
     /**
+     * test clearing redis.
+     */
+    public function testClearWithFlush(): void
+    {
+        Cache::setConfig('redis2', [
+            'engine' => 'Redis',
+            'prefix' => 'cake2_',
+            'duration' => 3600,
+            'port' => $this->port,
+            'clearUsesFlushDb' => true,
+        ]);
+
+        Cache::write('some_value', 'cache1', 'redis');
+        $result = Cache::clear('redis');
+        $this->assertTrue($result);
+        $this->assertNull(Cache::read('some_value', 'redis'));
+
+        Cache::write('some_value', 'cache2', 'redis2');
+        $result = Cache::clear('redis');
+        $this->assertTrue($result);
+
+        // Both cache prefixes are cleared
+        $this->assertNull(Cache::read('some_value', 'redis'));
+        $this->assertNull(Cache::read('some_value', 'redis2'));
+    }
+
+    /**
      * testClearBlocking method
      */
     public function testClearBlocking(): void
@@ -754,6 +781,32 @@ class RedisEngineTest extends TestCase
         $this->assertSame('cache2', Cache::read('some_value', 'redis_clear_blocking'));
 
         Cache::pool('redis_clear_blocking')->clearBlocking();
+    }
+
+    /**
+     * testClearBlocking method
+     */
+    public function testClearBlockingWithFlush(): void
+    {
+        Cache::setConfig('redis_clear_blocking', [
+            'engine' => 'Redis',
+            'prefix' => 'cake2_',
+            'duration' => 3600,
+            'port' => $this->port,
+            'clearUsesFlushDb' => true,
+        ]);
+
+        Cache::write('some_value', 'cache1', 'redis');
+        $result = Cache::pool('redis')->clearBlocking();
+        $this->assertTrue($result);
+        $this->assertNull(Cache::read('some_value', 'redis'));
+
+        Cache::write('some_value', 'cache2', 'redis_clear_blocking');
+        $result = Cache::pool('redis')->clearBlocking();
+        $this->assertTrue($result);
+        // Both cache prefixes are cleared
+        $this->assertNull(Cache::read('some_value', 'redis'));
+        $this->assertNull(Cache::read('some_value', 'redis_clear_blocking'));
     }
 
     /**
