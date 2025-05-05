@@ -1519,7 +1519,7 @@ class QueryRegressionTest extends TestCase
         $articles->hasMany('articlesTags');
         $tags = $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
-        $tags->getTarget()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
+        $tags->getTarget()->getEventManager()->on('Model.beforeFind', function ($e, $query): void {
             $query->formatResults(function ($results) {
                 return $results->map(function (Entity $tag) {
                     $tag->name .= ' - visited';

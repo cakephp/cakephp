@@ -998,7 +998,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         parent::testInsertNewTranslations();
 
         $shadowEntity = new class extends Entity {
-            protected function _setComment($value)
+            protected function _setComment($value): string
             {
                 return $value . ' modified';
             }

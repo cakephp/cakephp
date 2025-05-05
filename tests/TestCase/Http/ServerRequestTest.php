@@ -1227,7 +1227,7 @@ class ServerRequestTest extends TestCase
 
     public function testGetParamQueryParamsDeprecation(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $request = new ServerRequest([
                 'url' => '/',
                 'params' => [

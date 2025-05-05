@@ -960,7 +960,7 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
                 $event->setResult(new Response(body: 'short circuit'));
             },
         );
@@ -982,7 +982,7 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.afterSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
                 $event->setResult(new Response(body: 'modified response'));
             },
         );

@@ -627,7 +627,7 @@ class CounterCacheBehaviorTest extends TestCase
         $this->post->addBehavior('CounterCache', [
             'Users' => [
                 'post_count',
-                'dummy' => function () {
+                'dummy' => function (): void {
                     throw new Exception('Closures are never called by "updateCounterCache()"');
                 },
             ],

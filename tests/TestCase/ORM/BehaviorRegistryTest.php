@@ -221,7 +221,7 @@ class BehaviorRegistryTest extends TestCase
         $this->assertTrue($this->Behaviors->hasFinder('renamed'));
     }
 
-    public function testSet()
+    public function testSet(): void
     {
         $this->Behaviors->set('Sluggable', new SluggableBehavior($this->Table, ['replacement' => '_']));
 
@@ -277,7 +277,7 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testCall(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $this->Behaviors->load('Sluggable');
             $return = $this->Behaviors->call('slugify', ['some value']);
             $this->assertSame('some-value', $return);
@@ -293,7 +293,7 @@ class BehaviorRegistryTest extends TestCase
         $this->expectExceptionMessage('Cannot call `nope`, it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $this->Behaviors->call('nope');
         });
     }
@@ -342,7 +342,7 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testUnloadBehaviorThenCall(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $this->expectException(BadMethodCallException::class);
             $this->expectExceptionMessage('Cannot call `slugify`, it does not belong to any attached behavior.');
             $this->Behaviors->load('Sluggable');

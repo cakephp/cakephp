@@ -1615,7 +1615,7 @@ class EntityTest extends TestCase
      */
     public function testIsEmpty(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $entity = new Entity([
                 'array' => ['foo' => 'bar'],
                 'emptyArray' => [],

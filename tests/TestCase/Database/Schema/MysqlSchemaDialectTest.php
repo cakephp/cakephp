@@ -899,7 +899,7 @@ SQL;
             [
                 'body',
                 ['type' => 'text', 'null' => false, 'default' => 'abc'],
-                '`body` TEXT NOT NULL DEFAULT (\'abc\')',
+                "`body` TEXT NOT NULL DEFAULT ('abc')",
             ],
             [
                 'body',

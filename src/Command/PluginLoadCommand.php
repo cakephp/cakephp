@@ -33,12 +33,12 @@ class PluginLoadCommand extends Command
     /**
      * @var array<string>
      */
-    protected static $devTags = ['dev', 'testing', 'static analysis'];
+    protected static array $devTags = ['dev', 'testing', 'static analysis'];
 
     /**
      * @var array<string>
      */
-    protected static $cliTags = ['cli', 'command line', 'shell'];
+    protected static array $cliTags = ['cli', 'command line', 'shell'];
 
     /**
      * Config file
