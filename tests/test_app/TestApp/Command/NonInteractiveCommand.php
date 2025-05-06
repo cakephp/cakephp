@@ -13,7 +13,5 @@ class NonInteractiveCommand extends Command
     {
         $result = $io->ask('What?', 'Default!');
         $io->quiet('Result: ' . $result);
-
-        return null;
     }
 }

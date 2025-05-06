@@ -369,7 +369,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $this->bundleTranslatedFields($entity);
         $bundled = $entity->has('_i18n') ? (array)$entity->get('_i18n') : [];
-        $noBundled = count($bundled) === 0;
+        $noBundled = $bundled === [];
 
         // No additional translation records need to be saved,
         // as the entity is in the default locale.
