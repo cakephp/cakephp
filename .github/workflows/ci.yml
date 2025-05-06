@@ -244,4 +244,4 @@ jobs:
 
       - name: Run rector
         if: always()
-        run: composer rector-setup && composer rector-dry-run
+        run: composer rector-setup && composer rector-check
