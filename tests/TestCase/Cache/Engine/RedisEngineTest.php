@@ -745,13 +745,13 @@ class RedisEngineTest extends TestCase
             'clearUsesFlushDb' => true,
         ]);
 
-        Cache::write('some_value', 'cache1', 'redis');
-        $result = Cache::clear('redis');
+        Cache::write('some_value', 'cache1', 'redis2');
+        $result = Cache::clear('redis2');
         $this->assertTrue($result);
-        $this->assertNull(Cache::read('some_value', 'redis'));
+        $this->assertNull(Cache::read('some_value', 'redis2'));
 
-        Cache::write('some_value', 'cache2', 'redis2');
-        $result = Cache::clear('redis');
+        Cache::write('some_value', 'cache2', 'redis');
+        $result = Cache::clear('redis2');
         $this->assertTrue($result);
 
         // Both cache prefixes are cleared
@@ -771,18 +771,16 @@ class RedisEngineTest extends TestCase
             'port' => $this->port,
         ]);
 
-        Cache::write('some_value', 'cache1', 'redis');
-        $result = Cache::pool('redis')->clearBlocking();
+        Cache::write('some_value', 'cache1', 'redis_clear_blocking');
+        $result = Cache::pool('redis_clear_blocking')->clearBlocking();
+        $this->assertTrue($result);
+        $this->assertNull(Cache::read('some_value', 'redis_clear_blocking'));
+
+        Cache::write('some_value', 'cache2', 'redis');
+        $result = Cache::pool('redis_clear_blocking')->clearBlocking();
         $this->assertTrue($result);
         $this->assertNull(Cache::read('some_value', 'redis'));
-
-        Cache::write('some_value', 'cache2', 'redis_clear_blocking');
-        $result = Cache::pool('redis')->clearBlocking();
-        $this->assertTrue($result);
-        $this->assertNull(Cache::read('some_value', 'redis'));
-        $this->assertSame('cache2', Cache::read('some_value', 'redis_clear_blocking'));
-
-        Cache::pool('redis_clear_blocking')->clearBlocking();
+        $this->assertNull(Cache::read('some_value', 'redis_clear_blocking'));
     }
 
     /**
