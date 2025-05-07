@@ -187,13 +187,6 @@ class HtmlHelper extends Helper
             } else {
                 $options['link'] = $this->Url->assetUrl($options['link']);
             }
-            if (isset($options['rel']) && $options['rel'] === 'icon') {
-                $out = $this->formatTemplate('metalink', [
-                    'url' => $options['link'],
-                    'attrs' => $this->templater()->formatAttributes($options, ['block', 'link']),
-                ]);
-                $options['rel'] = 'shortcut icon';
-            }
             $out .= $this->formatTemplate('metalink', [
                 'url' => $options['link'],
                 'attrs' => $this->templater()->formatAttributes($options, ['block', 'link']),
