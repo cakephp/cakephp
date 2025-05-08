@@ -25,7 +25,6 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Datasource\Paging\PaginatedInterface;
-use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Exception\NotFoundException;
@@ -628,8 +627,7 @@ class ControllerTest extends TestCase
             ->shouldHaveReceived('dispatch')
             ->withArgs(function ($event) {
                 return $event->getName() === 'Controller.startup';
-            })
-        ;
+            });
     }
 
     /**
