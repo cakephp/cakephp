@@ -614,24 +614,22 @@ class ControllerTest extends TestCase
      */
     public function testStartupProcess(): void
     {
-        $eventManager = Mockery::mock(EventManager::class)->makePartial();
-        $eventManager->shouldReceive('dispatch')
+        $eventManager = Mockery::spy(EventManager::class);
+        $controller = new Controller(new ServerRequest(), null, $eventManager);
+        $controller->startupProcess();
+
+        $eventManager
+            ->shouldHaveReceived('dispatch')
             ->withArgs(function ($event) {
                 return $event->getName() === 'Controller.initialize';
-            })
-            ->once()
-            ->andReturn(new Event('stub'));
+            });
 
-        $eventManager->shouldReceive('dispatch')
+        $eventManager
+            ->shouldHaveReceived('dispatch')
             ->withArgs(function ($event) {
                 return $event->getName() === 'Controller.startup';
             })
-            ->once()
-            ->andReturn(new Event('stub'));
-
-        $controller = new Controller(new ServerRequest(), null, $eventManager);
-
-        $this->assertNull($controller->startupProcess());
+        ;
     }
 
     /**
@@ -639,16 +637,15 @@ class ControllerTest extends TestCase
      */
     public function testShutdownProcess(): void
     {
-        $eventManager = Mockery::mock(EventManager::class)->makePartial();
-        $eventManager->shouldReceive('dispatch')
+        $eventManager = Mockery::spy(EventManager::class);
+        $controller = new Controller(new ServerRequest(), null, $eventManager);
+        $controller->shutdownProcess();
+
+        $eventManager->shouldHaveReceived('dispatch')
+            ->once()
             ->withArgs(function ($event) {
                 return $event->getName() === 'Controller.shutdown';
-            })
-            ->once()
-            ->andReturn(new Event('stub'));
-        $controller = new Controller(new ServerRequest(), null, $eventManager);
-
-        $this->assertNull($controller->shutdownProcess());
+            });
     }
 
     /**

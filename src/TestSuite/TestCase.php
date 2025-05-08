@@ -38,7 +38,6 @@ use Cake\Utility\Inflector;
 use Closure;
 use Exception;
 use LogicException;
-use Mockery;
 use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
 use ReflectionClass;
@@ -258,9 +257,6 @@ abstract class TestCase extends MockeryTestCase
         $this->getTableLocator()->clear();
         $this->_configure = [];
         $this->_tableLocator = null;
-        if (class_exists(Mockery::class)) {
-            Mockery::close();
-        }
     }
 
     /**

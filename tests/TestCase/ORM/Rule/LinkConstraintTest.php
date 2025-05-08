@@ -202,7 +202,7 @@ class LinkConstraintTest extends TestCase
             ]],
         );
         $Articles->shouldReceive('buildRules')
-            ->atLeast()->once()
+            ->between(1, 2)
             ->andReturn($rulesChecker);
 
         $rulesChecker->addDelete(

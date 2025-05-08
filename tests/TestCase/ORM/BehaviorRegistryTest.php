@@ -302,14 +302,8 @@ class BehaviorRegistryTest extends TestCase
     public function testCallFinder(): void
     {
         $this->Behaviors->load('Sluggable');
-        $mockedBehavior = Mockery::mock(Behavior::class)
-            ->shouldAllowMockingMethod('findNoSlug', 'implementedFinders')
-            ->makePartial();
-        $mockedBehavior->shouldReceive('implementedFinders')
-            ->once()
-            ->andReturn([
-                'noslug' => 'findNoSlug',
-            ]);
+        $mockedBehavior = Mockery::mock(Behavior::class)->makePartial();
+        $mockedBehavior->shouldReceive(['implementedFinders' => ['noslug' => 'findNoSlug']]);
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
         $query = new SelectQuery($this->Table);

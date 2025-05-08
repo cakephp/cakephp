@@ -51,8 +51,8 @@ class PaginatedResultSetTest extends TestCase
     {
         $resultSet = Mockery::mock(ResultSet::class);
         $resultSet->shouldReceive('extract')
-            ->with('foo')
             ->once()
+            ->with('foo')
             ->andReturn(collection(['bar']));
 
         $paginatedResults = new PaginatedResultSet(

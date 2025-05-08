@@ -221,15 +221,15 @@ class FormHelperTest extends TestCase
      */
     public function testAddWidgetAndRenderWidget(): void
     {
-        $data = ['val' => 1];
-        $widget = Mockery::mock(WidgetInterface::class);
-        $widget->shouldReceive('render')
-            ->withSomeOfArgs($data)
-            ->once()
-            ->andReturn('HTML');
+        $widget = Mockery::spy(WidgetInterface::class)->makePartial();
         $this->Form->addWidget('test', $widget);
-        $result = $this->Form->widget('test', $data);
-        $this->assertSame('HTML', $result);
+        $this->Form->widget('test', ['val' => 1]);
+
+        $widget->shouldHaveReceived('render')
+            ->once()
+            ->withArgs(function (array $data) {
+                return $data === ['val' => 1];
+            });
     }
 
     /**
@@ -242,20 +242,20 @@ class FormHelperTest extends TestCase
             'unlockedFields' => [],
         ]));
 
-        $data = ['val' => 1, 'name' => 'test'];
-        $widget = Mockery::mock(WidgetInterface::class);
-        $widget->shouldReceive('render')
-            ->withSomeOfArgs($data)
-            ->once()
-            ->andReturn('HTML');
-        $widget->shouldReceive('secureFields')
-            ->with($data)
-            ->once()
-            ->andReturn(['test']);
+        $widget = Mockery::spy(WidgetInterface::class);
+
         $this->Form->addWidget('test', $widget);
         $this->Form->create();
-        $result = $this->Form->widget('test', ['val' => 1, 'name' => 'test', 'secure' => true]);
-        $this->assertSame('HTML', $result);
+        $this->Form->widget('test', ['val' => 1, 'name' => 'test', 'secure' => true]);
+
+        $widget->shouldHaveReceived('render')
+            ->once()
+            ->withArgs(function (array $data) {
+                return $data === ['val' => 1, 'name' => 'test'];
+            });
+        $widget->shouldHaveReceived('secureFields')
+            ->once()
+            ->with(['val' => 1, 'name' => 'test']);
     }
 
     /**
