@@ -962,10 +962,11 @@ trait IntegrationTestTrait
     /**
      * Assert whether the response is redirecting back to the referer.
      *
+     * @param int|null $code Specific status code to validate against, defaults to success (2xx-3xx) range.
      * @param string $message The failure message that will be appended to the generated message.
      * @return void
      */
-    public function assertRedirectBackToReferer(string $message = ''): void
+    public function assertRedirectBackToReferer(?int $code = null, string $message = ''): void
     {
         if (!$this->_response) {
             $this->fail('No response set, cannot assert header.');
@@ -973,7 +974,11 @@ trait IntegrationTestTrait
 
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
-        $this->assertThat(null, new StatusSuccess($this->_response), $verboseMessage);
+        if ($code !== null) {
+            $this->assertThat($code, new StatusCode($this->_response), $message);
+        } else {
+            $this->assertThat(null, new StatusSuccess($this->_response), $verboseMessage);
+        }
 
         $referer = $this->_request['environment']['HTTP_REFERER'] ?? null;
         if (!$referer) {
