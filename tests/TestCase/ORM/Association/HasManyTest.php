@@ -636,10 +636,10 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::spy(Table::class);
+        $spy = Mockery::spy(Table::class);
         $config = [
             'sourceTable' => $this->author,
-            'targetTable' => $mock,
+            'targetTable' => $spy,
         ];
 
         $entity = new Entity([
@@ -655,7 +655,7 @@ class HasManyTest extends TestCase
         $result = $association->saveAssociated($entity);
         $this->assertSame($result, $entity);
 
-        $mock->shouldNotHaveReceived('saveAssociated');
+        $spy->shouldNotHaveReceived('saveAssociated');
     }
 
     /**
