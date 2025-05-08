@@ -38,8 +38,10 @@ use Cake\Utility\Inflector;
 use Closure;
 use Exception;
 use LogicException;
-use Mockery\Adapter\Phpunit\MockeryTestCase;
+use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
+use Mockery\Adapter\Phpunit\MockeryTestCaseSetUp;
 use PHPUnit\Framework\MockObject\MockObject;
+use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use ReflectionException;
 use function Cake\Core\pluginSplit;
@@ -47,9 +49,11 @@ use function Cake\Core\pluginSplit;
 /**
  * Cake TestCase class
  */
-abstract class TestCase extends MockeryTestCase
+abstract class TestCase extends BaseTestCase
 {
     use LocatorAwareTrait;
+    use MockeryPHPUnitIntegration;
+    use MockeryTestCaseSetUp;
     use PHPUnitConsecutiveTrait;
 
     /**
