@@ -39,8 +39,8 @@ use Closure;
 use Exception;
 use LogicException;
 use Mockery;
+use Mockery\Adapter\Phpunit\MockeryTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
-use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use ReflectionException;
 use function Cake\Core\pluginSplit;
@@ -48,7 +48,7 @@ use function Cake\Core\pluginSplit;
 /**
  * Cake TestCase class
  */
-abstract class TestCase extends BaseTestCase
+abstract class TestCase extends MockeryTestCase
 {
     use LocatorAwareTrait;
     use PHPUnitConsecutiveTrait;

@@ -30,6 +30,7 @@ use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestStatus\Skipped;
 use PHPUnit\Framework\TestStatus\Success;
 use PHPUnit\Runner\Version;
@@ -123,6 +124,7 @@ class TestCaseTest extends TestCase
     /**
      * testSkipIf
      */
+    #[WithoutErrorHandler]
     public function testSkipIf(): void
     {
         $test = new FixturizedTestCase('testSkipIfTrue');
