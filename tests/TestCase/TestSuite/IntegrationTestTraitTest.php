@@ -1218,6 +1218,22 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Test the location header assertion.
      */
+    public function testAssertRedirectBackSpecificCode(): void
+    {
+        $this->_response = new Response();
+        $this->_request = [
+            'url' => '/get/tasks/index',
+        ];
+        $this->_response = $this->_response
+            ->withStatus(301)
+            ->withHeader('Location', 'http://localhost/get/tasks/index');
+
+        $this->assertRedirectBack(301);
+    }
+
+    /**
+     * Test the location header assertion.
+     */
     public function testAssertRedirectBackInvalid(): void
     {
         $this->_response = new Response();
