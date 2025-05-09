@@ -430,7 +430,9 @@ class SqlserverSchemaDialect extends SchemaDialect
         foreach ($statement->fetchAll('assoc') as $row) {
             $type = TableSchema::INDEX_INDEX;
             $name = $row['index_name'];
+            $constraint = null;
             if ($row['is_primary_key']) {
+                $constraint = $name;
                 $name = TableSchema::CONSTRAINT_PRIMARY;
                 $type = TableSchema::CONSTRAINT_PRIMARY;
             }
@@ -447,6 +449,9 @@ class SqlserverSchemaDialect extends SchemaDialect
                 ];
             }
             $indexes[$name]['columns'][] = $row['column_name'];
+            if ($constraint) {
+                $indexes[$name]['constraint'] = $constraint;
+            }
         }
 
         return array_values($indexes);
