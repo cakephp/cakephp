@@ -99,15 +99,14 @@ class SqliteTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = $this->getMockBuilder('PDO')
-            ->disableOriginalConstructor()
-            ->onlyMethods(['exec'])
+        $connection = Mockery::mock('PDO')
+            ->shouldReceive('exec')
+            ->with('Execute this')
+            ->once()
+            ->shouldReceive('exec')
+            ->with('this too')
+            ->once()
             ->getMock();
-        $connection->expects($this->exactly(2))
-            ->method('exec')
-            ->with(
-                ...self::withConsecutive(['Execute this'], ['this too']),
-            );
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
