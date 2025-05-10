@@ -60,6 +60,7 @@ use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 use Exception;
 use InvalidArgumentException;
+use Mockery;
 use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
@@ -3273,32 +3274,40 @@ class TableTest extends TestCase
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
         $options = new ArrayObject(['atomic' => true, 'checkRules' => false, '_primary' => true]);
 
-        $mock = $this->getMockBuilder(EventManager::class)->getMock();
+        $mock = Mockery::mock(EventManager::class);
 
-        $mock->expects($this->once())
-            ->method('on');
+        $mock->shouldReceive('on');
 
-        $mock->expects($this->exactly(4))
-            ->method('dispatch')
-            ->with(
-                ...self::withConsecutive(
-                    [$this->anything()],
-                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
-                        return $event->getName() === 'Model.beforeDelete' &&
-                        $event->getData() == ['entity' => $entity, 'options' => $options];
-                    })],
-                    [
-                    $this->callback(function (EventInterface $event) use ($entity, $options) {
-                        return $event->getName() === 'Model.afterDelete' &&
-                            $event->getData() == ['entity' => $entity, 'options' => $options];
-                    }),
-                    ],
-                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
-                        return $event->getName() === 'Model.afterDeleteCommit' &&
-                        $event->getData() == ['entity' => $entity, 'options' => $options];
-                    })],
-                ),
-            );
+        $mock->shouldReceive('dispatch')
+            ->withAnyArgs()
+            ->once();
+
+        $mock->shouldReceive('dispatch')
+            ->withArgs(function (EventInterface $event) use ($entity, $options) {
+                $this->assertSame('Model.beforeDelete', $event->getName());
+                $this->assertEquals(['entity' => $entity, 'options' => $options], $event->getData());
+
+                return true;
+            })
+            ->once();
+
+        $mock->shouldReceive('dispatch')
+            ->withArgs(function (EventInterface $event) use ($entity, $options) {
+                $this->assertSame('Model.afterDelete', $event->getName());
+                $this->assertEquals(['entity' => $entity, 'options' => $options], $event->getData());
+
+                return true;
+            })
+            ->once();
+
+        $mock->shouldReceive('dispatch')
+            ->withArgs(function (EventInterface $event) use ($entity, $options) {
+                $this->assertSame('Model.afterDeleteCommit', $event->getName());
+                $this->assertEquals(['entity' => $entity, 'options' => $options], $event->getData());
+
+                return true;
+            })
+            ->once();
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
         $entity->setNew(false);
