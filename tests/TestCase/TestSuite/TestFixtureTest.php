@@ -26,6 +26,7 @@ use Cake\Log\Log;
 use Cake\Test\Fixture\ArticlesFixture;
 use Cake\Test\Fixture\PostsFixture;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use TestApp\Test\Fixture\FeaturedTagsFixture;
 use TestApp\Test\Fixture\LettersFixture;
 
@@ -167,47 +168,40 @@ class TestFixtureTest extends TestCase
     {
         $fixture = new ArticlesFixture();
 
-        $db = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $query = $this->getMockBuilder(InsertQuery::class)
-            ->setConstructorArgs([$db])
-            ->getMock();
-        $db->expects($this->once())
-            ->method('insertQuery')
-            ->willReturn($query);
+        $db = Mockery::mock(Connection::class);
+        $query = Mockery::mock(InsertQuery::class . '[execute,insert,into,values]', [$db]);
 
-        $query->expects($this->once())
-            ->method('insert')
+        $db->shouldReceive('insertQuery')
+            ->andReturn($query)
+            ->once();
+
+        $query->shouldReceive('insert')
             ->with(['author_id', 'title', 'body', 'published'], ['author_id' => 'integer', 'title' => 'string', 'body' => 'text', 'published' => 'string'])
-            ->willReturnSelf();
+            ->andReturnSelf()
+            ->once();
 
-        $query->expects($this->once())
-            ->method('into')
+        $query->shouldReceive('into')
             ->with('articles')
-            ->willReturnSelf();
+            ->andReturnSelf()
+            ->once();
 
         $expected = [
             ['author_id' => 1, 'title' => 'First Article', 'body' => 'First Article Body', 'published' => 'Y'],
             ['author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
             ['author_id' => 1, 'title' => 'Third Article', 'body' => 'Third Article Body', 'published' => 'Y'],
         ];
-        $query->expects($this->exactly(3))
-            ->method('values')
-            ->with(
-                ...self::withConsecutive(
-                    [$expected[0]],
-                    [$expected[1]],
-                    [$expected[2]],
-                ),
-            )
-            ->willReturnSelf();
+        foreach ($expected as $data) {
+            $query->shouldReceive('values')
+                ->with($data)
+                ->andReturnSelf()
+                ->once();
+        }
 
         $statement = $this->createMock(StatementInterface::class);
 
-        $query->expects($this->once())
-            ->method('execute')
-            ->willReturn($statement);
+        $query->shouldReceive('execute')
+            ->andReturn($statement)
+            ->once();
 
         $this->assertSame(true, $fixture->insert($db));
     }
