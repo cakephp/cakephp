@@ -263,20 +263,15 @@ class EntityTest extends TestCase
      */
     public function testConstructor(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['patch'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->exactly(2))
-            ->method('patch')
-            ->with(
-                ...self::withConsecutive(
-                    [
-                    ['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false, 'asOriginal' => true],
-                    ],
-                    [['foo' => 'bar'], ['setter' => false, 'guard' => false, 'asOriginal' => true]],
-                ),
-            );
+        $entity = Mockery::mock(Entity::class)->makePartial();
+
+        $entity
+            ->shouldReceive('patch')
+            ->with(['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false, 'asOriginal' => true])
+            ->once()
+            ->shouldReceive('patch')
+            ->with(['foo' => 'bar'], ['setter' => false, 'guard' => false, 'asOriginal' => true])
+            ->once();
 
         $entity->__construct(['a' => 'b', 'c' => 'd']);
         $entity->__construct(['foo' => 'bar'], ['useSetters' => false]);

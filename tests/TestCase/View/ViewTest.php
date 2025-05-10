@@ -39,6 +39,7 @@ use Error;
 use Exception;
 use InvalidArgumentException;
 use LogicException;
+use Mockery;
 use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
@@ -944,40 +945,28 @@ class ViewTest extends TestCase
         $View = $this->PostsController->createView();
         $View->setTemplatePath($this->PostsController->getName());
 
-        $manager = $this->getMockBuilder(EventManager::class)->getMock();
+        $expectedEvents = [
+            'View.beforeRender',
+            'View.beforeRenderFile',
+            'View.afterRenderFile',
+            'View.afterRender',
+            'View.beforeLayout',
+            'View.beforeRenderFile',
+            'View.afterRenderFile',
+            'View.afterLayout',
+        ];
+        $manager = Mockery::mock(EventManager::class)->makePartial();
+        foreach ($expectedEvents as $eventName) {
+            $manager->shouldReceive('dispatch')
+                ->withArgs(function (EventInterface $event) use ($eventName) {
+                    $this->assertSame($eventName, $event->getName());
+
+                    return true;
+                })
+                ->once();
+        }
+
         $View->setEventManager($manager);
-
-        $manager->expects($this->exactly(8))
-            ->method('dispatch')
-            ->with(
-                ...self::withConsecutive(
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeRender';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterRender';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeLayout';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.beforeRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterRenderFile';
-                    })],
-                    [$this->callback(function (EventInterface $event) {
-                        return $event->getName() === 'View.afterLayout';
-                    })],
-                ),
-            );
-
         $View->render('index');
     }
 
