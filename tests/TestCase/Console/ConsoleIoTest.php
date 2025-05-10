@@ -60,9 +60,9 @@ class ConsoleIoTest extends TestCase
         parent::setUp();
         static::setAppNamespace();
 
-        $this->out = Mockery::mock(ConsoleOutput::class)->makePartial();
-        $this->err = Mockery::mock(ConsoleOutput::class)->makePartial();
-        $this->in = Mockery::mock(ConsoleInput::class)->makePartial();
+        $this->out = Mockery::mock(ConsoleOutput::class)->shouldIgnoreMissing();
+        $this->err = Mockery::mock(ConsoleOutput::class)->shouldIgnoreMissing();
+        $this->in = Mockery::mock(ConsoleInput::class);
 
         $this->io = new ConsoleIo($this->out, $this->err, $this->in);
     }
