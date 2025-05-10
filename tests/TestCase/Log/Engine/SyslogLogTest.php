@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Log\Engine;
 
 use Cake\Log\Engine\SyslogLog;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -69,18 +70,16 @@ class SyslogLogTest extends TestCase
      */
     public function testWriteMultiLine(): void
     {
-        /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
-        $log = $this->getMockBuilder(SyslogLog::class)
-            ->onlyMethods(['_open', '_write'])
+        $log = Mockery::mock(SyslogLog::class . '[_write]')
+            ->shouldAllowMockingProtectedMethods()
+            ->shouldReceive('_write')
+            ->once()
+            ->with(LOG_DEBUG, 'debug: Foo')
+            ->shouldReceive('_write')
+            ->once()
+            ->with(LOG_DEBUG, 'debug: Bar')
             ->getMock();
-        $log->expects($this->exactly(2))
-            ->method('_write')
-            ->with(
-                ...self::withConsecutive(
-                    [LOG_DEBUG, 'debug: Foo'],
-                    [LOG_DEBUG, 'debug: Bar'],
-                ),
-            );
+
         $log->log('debug', "Foo\nBar");
     }
 

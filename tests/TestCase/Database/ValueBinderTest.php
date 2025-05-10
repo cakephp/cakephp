@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database;
 use Cake\Database\StatementInterface;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use Mockery;
 
 /**
  * Tests ValueBinder class
@@ -144,19 +145,23 @@ class ValueBinderTest extends TestCase
      */
     public function testAttachTo(): void
     {
+        $statementMock = Mockery::spy(StatementInterface::class);
+
         $valueBinder = new ValueBinder();
-        $statementMock = $this->createMock(StatementInterface::class);
-        $statementMock->expects($this->exactly(2))
-            ->method('bindValue')
-            ->with(
-                ...self::withConsecutive(['c0', 'value0', 'string'], ['c1', 'value1', 'string']),
-            );
-
         $valueBinder->attachTo($statementMock); //empty array shouldn't call statement
-
         $valueBinder->bind(':c0', 'value0', 'string');
         $valueBinder->bind(':c1', 'value1', 'string');
         $valueBinder->attachTo($statementMock);
+
+        $statementMock
+            ->shouldHaveReceived('bindValue')
+            ->with('c0', 'value0', 'string')
+            ->once();
+
+        $statementMock
+            ->shouldHaveReceived('bindValue')
+            ->with('c1', 'value1', 'string')
+            ->once();
     }
 
     /**

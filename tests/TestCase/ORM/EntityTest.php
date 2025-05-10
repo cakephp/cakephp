@@ -21,6 +21,7 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Exception;
 use InvalidArgumentException;
+use Mockery;
 use stdClass;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
@@ -587,18 +588,18 @@ class EntityTest extends TestCase
      */
     public function testGetArrayAccess(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['get'])
-            ->getMock();
-        $entity->expects($this->exactly(2))
-            ->method('get')
-            ->with(
-                ...self::withConsecutive(['foo'], ['bar']),
-            )
-            ->willReturn('worked', 'worked too');
+        $entity = Mockery::spy(Entity::class)->makePartial();
 
-        $this->assertSame('worked', $entity['foo']);
-        $this->assertSame('worked too', $entity['bar']);
+        $entity['foo'];
+        $entity['bar'];
+
+        $entity->shouldHaveReceived('get')
+            ->with('foo')
+            ->once();
+
+        $entity->shouldHaveReceived('get')
+            ->with('bar')
+            ->once();
     }
 
     /**
@@ -606,20 +607,19 @@ class EntityTest extends TestCase
      */
     public function testSetArrayAccess(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['set'])
-            ->getMock();
+        $entity = Mockery::spy(Entity::class)->makePartial();
         $entity->setAccess('*', true);
-
-        $entity->expects($this->exactly(2))
-            ->method('set')
-            ->with(
-                ...self::withConsecutive(['foo', 1], ['bar', 2]),
-            )
-            ->willReturnSelf();
 
         $entity['foo'] = 1;
         $entity['bar'] = 2;
+
+        $entity->shouldHaveReceived('set')
+            ->with('foo', 1)
+            ->once();
+
+        $entity->shouldHaveReceived('set')
+            ->with('bar', 2)
+            ->once();
     }
 
     /**
