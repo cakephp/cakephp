@@ -163,18 +163,10 @@ class SqlserverTest extends TestCase
         $connection->shouldReceive('quote')
             ->andReturnArg(0);
 
-        $connection->shouldReceive('exec')
-            ->with('Execute this')
-            ->once()
-            ->shouldReceive('exec')
-            ->with('this too')
-            ->once()
-            ->shouldReceive('exec')
-            ->with('SET config1 value1')
-            ->once()
-            ->shouldReceive('exec')
-            ->with('SET config2 value2')
-            ->once();
+        $connection->shouldReceive('exec')->with('Execute this')->once();
+        $connection->shouldReceive('exec')->with('this too')->once();
+        $connection->shouldReceive('exec')->with('SET config1 value1')->once();
+        $connection->shouldReceive('exec')->with('SET config2 value2')->once();
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
@@ -260,8 +252,9 @@ class SqlserverTest extends TestCase
                 PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
             ])
             ->andReturn($statement)
-            ->once()
-            ->shouldReceice('prepare')
+            ->once();
+
+        $pdo->shouldReceice('prepare')
             ->with('', [])
             ->andReturn($statement)
             ->once();

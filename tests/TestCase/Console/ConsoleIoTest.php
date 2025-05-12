@@ -20,12 +20,12 @@ use Cake\Console\ConsoleInput;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOutput;
 use Cake\Console\Exception\StopException;
-use Cake\Console\Helper;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\TestWith;
 
 /**
  * ConsoleIo test.
@@ -129,11 +129,7 @@ class ConsoleIoTest extends TestCase
     public function testAsk(): void
     {
         $this->out->shouldReceive('write')
-            ->withArgs(function ($message) {
-                $this->assertSame("<question>Just a test?</question>\n> ", $message);
-
-                return true;
-            })
+            ->with("<question>Just a test?</question>\n> ", 0)
             ->once();
 
         $this->in->shouldReceive('read')->andReturn('y')->once();
@@ -148,11 +144,7 @@ class ConsoleIoTest extends TestCase
     public function testAskDefaultValue(): void
     {
         $this->out->shouldReceive('write')
-            ->withArgs(function ($message) {
-                $this->assertSame("<question>Just a test?</question>\n[n] > ", $message);
-
-                return true;
-            })
+            ->with("<question>Just a test?</question>\n[n] > ", 0)
             ->once();
 
         $this->in->shouldReceive('read')->andReturn('')->once();
@@ -164,76 +156,49 @@ class ConsoleIoTest extends TestCase
     /**
      * testOut method
      */
-    public function testOut(): void
+    #[TestWith(['Just a test'])]
+    #[TestWith([['Just', 'a', 'test']])]
+    #[TestWith([['Just', 'a', 'test'], 2])]
+    #[TestWith([''])]
+    public function testOut(string|array $message, int $newLines = 1): void
     {
         $this->out->shouldReceive('write')
-            ->with('Just a test', 1)
+            ->with($message, $newLines)
             ->once();
 
-        $this->out->shouldReceive('write')
-            ->with(['Just', 'a', 'test'], 1)
-            ->once();
-
-        $this->out->shouldReceive('write')
-            ->with(['Just', 'a', 'test'], 2)
-            ->once();
-
-        $this->out->shouldReceive('write')
-            ->with('', 1)
-            ->once();
-
-        $this->io->out('Just a test');
-        $this->io->out(['Just', 'a', 'test']);
-        $this->io->out(['Just', 'a', 'test'], 2);
-        $this->io->out();
+        $this->io->out($message, $newLines);
     }
 
     /**
      * test that verbose and quiet output levels work
      */
-    public function testVerboseOut(): void
+    #[TestWith(['Verbose', 1, ConsoleIo::VERBOSE])]
+    #[TestWith(['Normal', 1, ConsoleIo::NORMAL])]
+    #[TestWith(['Quiet', 1, ConsoleIo::QUIET])]
+    public function testVerboseOut(string $message, int $newlines, int $level): void
     {
         $this->out->shouldReceive('write')
-            ->with('Verbose', 1)
-            ->once();
-
-        $this->out->shouldReceive('write')
-            ->with('Normal', 1)
-            ->once();
-
-        $this->out->shouldReceive('write')
-            ->with('Quiet', 1)
+            ->with($message, $newlines)
             ->once();
 
         $this->io->level(ConsoleIo::VERBOSE);
-
-        $this->io->out('Verbose', 1, ConsoleIo::VERBOSE);
-        $this->io->out('Normal', 1, ConsoleIo::NORMAL);
-        $this->io->out('Quiet', 1, ConsoleIo::QUIET);
+        $this->io->out($message, $newlines, $level);
     }
 
     /**
      * test that verbose and quiet output levels work
      */
-    public function testVerboseOutput(): void
+    #[TestWith(['verbose', 'Verbose'])]
+    #[TestWith(['out', 'Out'])]
+    #[TestWith(['quiet', 'Quiet'])]
+    public function testVerboseOutput(string $method, string $message): void
     {
         $this->out->shouldReceive('write')
-            ->with('Verbose', 1)
-            ->once();
-
-        $this->out->shouldReceive('write')
-            ->with('Normal', 1)
-            ->once();
-
-        $this->out->shouldReceive('write')
-            ->with('Quiet', 1)
+            ->with($message, 1)
             ->once();
 
         $this->io->level(ConsoleIo::VERBOSE);
-
-        $this->io->verbose('Verbose');
-        $this->io->out('Normal');
-        $this->io->quiet('Quiet');
+        $this->io->{$method}($message);
     }
 
     /**
@@ -243,11 +208,7 @@ class ConsoleIoTest extends TestCase
     {
         $this->out->shouldReceive('write')
             ->with('Quiet', 1)
-            ->once();
-
-        $this->out->shouldReceive('write')
-            ->with('Quiet', 1)
-            ->once();
+            ->twice();
 
         $this->io->level(ConsoleIo::QUIET);
 
@@ -261,28 +222,17 @@ class ConsoleIoTest extends TestCase
     /**
      * testErr method
      */
-    public function testErr(): void
+    #[TestWith(['Just a test'])]
+    #[TestWith([['Just', 'a', 'test']])]
+    #[TestWith([['Just', 'a', 'test'], 2])]
+    #[TestWith([''])]
+    public function testErr(string|array $message, int $newLines = 1): void
     {
         $this->err->shouldReceive('write')
-            ->with('Just a test', 1)
+            ->with($message, $newLines)
             ->once();
 
-        $this->err->shouldReceive('write')
-            ->with(['Just', 'a', 'test'], 1)
-            ->once();
-
-        $this->err->shouldReceive('write')
-            ->with(['Just', 'a', 'test'], 2)
-            ->once();
-
-        $this->err->shouldReceive('write')
-            ->with('', 1)
-            ->once();
-
-        $this->io->err('Just a test');
-        $this->io->err(['Just', 'a', 'test']);
-        $this->io->err(['Just', 'a', 'test'], 2);
-        $this->io->err();
+        $this->io->err($message, $newLines);
     }
 
     /**
@@ -342,36 +292,17 @@ class ConsoleIoTest extends TestCase
     /**
      * testHr
      */
-    public function testHr(): void
+    #[TestWith([0])]
+    #[TestWith([2])]
+    public function testHr(int $newlines): void
     {
         $bar = str_repeat('-', 79);
 
-        $this->out->shouldReceive('write')
-            ->with('', 0)
-            ->once();
+        $this->out->shouldReceive('write')->with('', $newlines)->once();
+        $this->out->shouldReceive('write')->with($bar, 1)->once();
+        $this->out->shouldReceive('write')->with('', $newlines)->once();
 
-        $this->out->shouldReceive('write')
-            ->with($bar, 1)
-            ->once();
-
-        $this->out->shouldReceive('write')
-            ->with('', 0)
-            ->once();
-
-        $this->out->shouldReceive('write')
-            ->with('', true)
-            ->once();
-
-        $this->out->shouldReceive('write')
-            ->with($bar, 1)
-            ->once();
-
-        $this->out->shouldReceive('write')
-            ->with('', true)
-            ->once();
-
-        $this->io->hr();
-        $this->io->hr(2);
+        $this->io->hr($newlines);
     }
 
     /**
@@ -610,34 +541,15 @@ class ConsoleIoTest extends TestCase
             ->once();
 
         $helper = $this->io->helper('simple');
-        $this->assertInstanceOf(Helper::class, $helper);
         $helper->output(['well', 'ish']);
-    }
-
-    /**
-     * Provider for output helpers
-     *
-     * @return array
-     */
-    public static function outHelperProvider(): array
-    {
-        return [['info'], ['success'], ['comment']];
-    }
-
-    /**
-     * Provider for err helpers
-     *
-     * @return array
-     */
-    public static function errHelperProvider(): array
-    {
-        return [['warning'], ['error']];
     }
 
     /**
      * test out helper methods
      */
-    #[DataProvider('outHelperProvider')]
+    #[TestWith(['info'])]
+    #[TestWith(['success'])]
+    #[TestWith(['comment'])]
     public function testOutHelpers(string $method): void
     {
         $this->out->shouldReceive('write')
@@ -655,7 +567,8 @@ class ConsoleIoTest extends TestCase
     /**
      * test err helper methods
      */
-    #[DataProvider('errHelperProvider')]
+    #[TestWith(['warning'])]
+    #[TestWith(['error'])]
     public function testErrHelpers(string $method): void
     {
         $this->err->shouldReceive('write')

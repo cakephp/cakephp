@@ -108,17 +108,10 @@ class MysqlTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = Mockery::mock('PDO')
-            ->shouldReceive('exec')
-            ->with('Execute this')
-            ->once()
-            ->shouldReceive('exec')
-            ->with('this too')
-            ->once()
-            ->shouldReceive('exec')
-            ->with("SET time_zone = 'Antarctica'")
-            ->once()
-            ->getMock();
+        $connection = Mockery::mock('PDO');
+        $connection->shouldReceive('exec')->with('Execute this')->once();
+        $connection->shouldReceive('exec')->with('this too')->once();
+        $connection->shouldReceive('exec')->with("SET time_zone = 'Antarctica'")->once();
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)

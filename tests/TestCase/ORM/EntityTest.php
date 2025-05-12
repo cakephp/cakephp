@@ -268,8 +268,9 @@ class EntityTest extends TestCase
         $entity
             ->shouldReceive('patch')
             ->with(['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false, 'asOriginal' => true])
-            ->once()
-            ->shouldReceive('patch')
+            ->once();
+
+        $entity->shouldReceive('patch')
             ->with(['foo' => 'bar'], ['setter' => false, 'guard' => false, 'asOriginal' => true])
             ->once();
 

@@ -70,15 +70,11 @@ class SyslogLogTest extends TestCase
      */
     public function testWriteMultiLine(): void
     {
-        $log = Mockery::mock(SyslogLog::class . '[_write]')
-            ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('_write')
-            ->once()
-            ->with(LOG_DEBUG, 'debug: Foo')
-            ->shouldReceive('_write')
-            ->once()
-            ->with(LOG_DEBUG, 'debug: Bar')
-            ->getMock();
+        $log = Mockery::mock(SyslogLog::class . '[_write]');
+        $log->shouldAllowMockingProtectedMethods();
+
+        $log->shouldReceive('_write')->with(LOG_DEBUG, 'debug: Foo')->once();
+        $log->shouldReceive('_write')->with(LOG_DEBUG, 'debug: Bar')->once();
 
         $log->log('debug', "Foo\nBar");
     }

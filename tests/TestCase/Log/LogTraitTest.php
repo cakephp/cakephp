@@ -38,14 +38,15 @@ class LogTraitTest extends TestCase
      */
     public function testLog(): void
     {
-        $mock = Mockery::mock(LoggerInterface::class)
-            ->shouldReceive('log')
-            ->once()
+        $mock = Mockery::mock(LoggerInterface::class);
+
+        $mock->shouldReceive('log')
             ->withSomeOfArgs(LogLevel::ERROR, 'Testing')
-            ->shouldReceive('log')
-            ->once()
+            ->once();
+
+        $mock->shouldReceive('log')
             ->withSomeOfArgs(LogLevel::DEBUG, 'message')
-            ->getMock();
+            ->once();
 
         Log::setConfig('trait_test', ['engine' => $mock]);
         $subject = new class {

@@ -644,17 +644,16 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View
-            ->shouldReceive('append')
+        $this->View->shouldReceive('append')
             ->with('css', $this->matchesRegularExpression('/css_in_head.css/'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('css', $this->matchesRegularExpression('/more_css_in_head.css/'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('css', $this->matchesRegularExpression('/css_in_head_2.css/'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('css', $this->matchesRegularExpression('/more_css_in_head_2.css/'))
             ->once();
 
@@ -860,11 +859,10 @@ class HtmlHelperTest extends TestCase
      */
     public function testBufferedCssAndScriptWithIdenticalResourceName(): void
     {
-        $this->View
-            ->shouldReceive('append')
+        $this->View->shouldReceive('append')
             ->with('css', $this->stringContains('test.min.css'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('script', $this->stringContains('test.min.js'))
             ->once();
 
@@ -1131,17 +1129,16 @@ class HtmlHelperTest extends TestCase
      */
     public function testScriptWithBlocks(): void
     {
-        $this->View
-            ->shouldReceive('append')
+        $this->View->shouldReceive('append')
             ->with('script', $this->matchesRegularExpression('/script_in_head.js/'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('headScripts', $this->matchesRegularExpression('/second_script.js/'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('script', $this->matchesRegularExpression('/script_in_head_2.js/'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('headScripts', $this->matchesRegularExpression('/second_script_2.js/'))
             ->once();
 
@@ -1246,17 +1243,16 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View
-            ->shouldReceive('append')
+        $this->View->shouldReceive('append')
             ->with('script', $this->matchesRegularExpression('/window\.foo\s\=\s2;/'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('scriptTop', $this->stringContains('alert("hi")'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('script', $this->matchesRegularExpression('/window\.foo\s\=\s3;/'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('scriptTop', $this->stringContains('alert("his")'))
             ->once();
 
@@ -1626,10 +1622,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->View->shouldReceive('append')
-            ->with(
-                'myMeta',
-                $this->matchesRegularExpression('/csrf-token/'),
-            )
+            ->with( 'myMeta', $this->matchesRegularExpression('/csrf-token/'))
             ->once();
 
         $this->Html->setConfig('defaultMetaBlock', 'myMeta');
@@ -1771,8 +1764,8 @@ class HtmlHelperTest extends TestCase
         $this->View
             ->shouldReceive('append')
             ->with('meta', $this->stringContains('robots'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('metaTags', $this->stringContains('favicon.ico'))
             ->once();
 
@@ -1788,11 +1781,10 @@ class HtmlHelperTest extends TestCase
      */
     public function testMetaCustomWithBlock(): void
     {
-        $this->View
-            ->shouldReceive('append')
+        $this->View->shouldReceive('append')
             ->with('meta', $this->stringContains('og:site_name'))
-            ->once()
-            ->shouldReceive('append')
+            ->once();
+        $this->View->shouldReceive('append')
             ->with('meta', $this->stringContains('og:description'))
             ->once();
 

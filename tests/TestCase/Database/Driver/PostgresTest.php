@@ -70,12 +70,8 @@ class PostgresTest extends TestCase
         $connection->shouldReceive('quote')
             ->andReturnArg(0);
 
-        $connection->shouldReceive('exec')
-            ->with('SET NAMES utf8')
-            ->once()
-            ->shouldReceive('exec')
-            ->with('SET search_path TO public')
-            ->once();
+        $connection->shouldReceive('exec')->with('SET NAMES utf8')->once();
+        $connection->shouldReceive('exec')->with('SET search_path TO public')->once();
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
@@ -126,22 +122,11 @@ class PostgresTest extends TestCase
         $connection->shouldReceive('quote')
             ->andReturnArg(0);
 
-        $connection
-            ->shouldReceive('exec')
-            ->with('SET NAMES a-language')
-            ->once()
-            ->shouldReceive('exec')
-            ->with('SET search_path TO fooblic')
-            ->once()
-            ->shouldReceive('exec')
-            ->with('Execute this')
-            ->once()
-            ->shouldReceive('exec')
-            ->with('this too')
-            ->once()
-            ->shouldReceive('exec')
-            ->with('SET timezone = Antarctica')
-            ->once();
+        $connection->shouldReceive('exec')->with('SET NAMES a-language')->once();
+        $connection->shouldReceive('exec')->with('SET search_path TO fooblic')->once();
+        $connection->shouldReceive('exec')->with('Execute this')->once();
+        $connection->shouldReceive('exec')->with('this too')->once();
+        $connection->shouldReceive('exec')->with('SET timezone = Antarctica')->once();
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
