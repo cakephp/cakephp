@@ -170,7 +170,7 @@ class AssociationProxyTest extends TestCase
 
         $spy
             ->shouldHaveReceived('crazy')
-            ->once()
-            ->with('a', 'b');
+            ->with('a', 'b')
+            ->once();
     }
 }

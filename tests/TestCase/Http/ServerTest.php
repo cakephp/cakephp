@@ -150,8 +150,8 @@ class ServerTest extends TestCase
         $app->shouldHaveReceived('pluginBootstrap')
             ->once();
         $app->shouldHaveReceived('pluginMiddleware')
-            ->once()
-            ->with(Mockery::type(MiddlewareQueue::class));
+            ->with(Mockery::type(MiddlewareQueue::class))
+            ->once();
     }
 
     /**
