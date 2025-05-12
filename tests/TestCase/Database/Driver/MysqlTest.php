@@ -20,6 +20,7 @@ use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 
