@@ -834,7 +834,6 @@ class ClientTest extends TestCase
                 $this->assertSame([], $options);
 
                 return true;
-
             })
             ->andReturn([$response])
             ->once();

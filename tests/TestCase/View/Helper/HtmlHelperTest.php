@@ -1622,7 +1622,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->View->shouldReceive('append')
-            ->with( 'myMeta', $this->matchesRegularExpression('/csrf-token/'))
+            ->with('myMeta', $this->matchesRegularExpression('/csrf-token/'))
             ->once();
 
         $this->Html->setConfig('defaultMetaBlock', 'myMeta');

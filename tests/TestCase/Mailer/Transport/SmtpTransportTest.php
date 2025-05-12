@@ -326,7 +326,7 @@ class SmtpTransportTest extends TestCase
                 "250 Accepted\r\n250 AUTH CRAM-MD5\r\n",
             )
             ->twice();
-        $this->socket->shouldReceive('write')->with("EHLO localhost\r\n")->once();;
+        $this->socket->shouldReceive('write')->with("EHLO localhost\r\n")->once();
 
         $this->SmtpTransport->connect();
         $this->assertNull($this->SmtpTransport->getAuthType());
@@ -434,7 +434,7 @@ class SmtpTransportTest extends TestCase
             ->shouldReceive('read')
             ->andReturn(
                 "504 5.7.4 Unrecognized Authentication Type\r\n",
-                "503 5.5.1 Already authenticated\r\n"
+                "503 5.5.1 Already authenticated\r\n",
             )
             ->twice();
 
