@@ -1625,12 +1625,12 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->expects($this->exactly(1))
-            ->method('append')
+        $this->View->shouldReceive('append')
             ->with(
                 'myMeta',
                 $this->matchesRegularExpression('/csrf-token/'),
-            );
+            )
+            ->once();
 
         $this->Html->setConfig('defaultMetaBlock', 'myMeta');
         $this->assertNull($this->Html->meta('csrf-token'));
