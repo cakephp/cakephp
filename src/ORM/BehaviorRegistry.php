@@ -323,7 +323,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     {
         $type = strtolower($type);
 
-        if ($this->hasFinder($type) && $this->has($this->_finderMap[$type][0])) {
+        if ($this->hasFinder($type)) {
             [$behavior, $callMethod] = $this->_finderMap[$type];
             $callable = $this->_loaded[$behavior]->$callMethod(...);
 

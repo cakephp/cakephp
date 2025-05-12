@@ -1050,8 +1050,8 @@ class RouteTest extends TestCase
         $route->parseRequest($request);
 
         $route->shouldHaveReceived('parse')
-            ->once()
-            ->with('/forward', 'GET');
+            ->with('/forward', 'GET')
+            ->once();
     }
 
     /**

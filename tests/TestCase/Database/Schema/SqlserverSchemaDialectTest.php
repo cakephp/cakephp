@@ -662,6 +662,7 @@ SQL;
 
         // Compare with describeIndexes() which includes indexes + uniques
         $expected['author_idx'] = $authorIdx;
+
         $indexes = $dialect->describeIndexes('schema_articles');
         $this->assertCount(4, $indexes);
         foreach ($indexes as $index) {
@@ -670,6 +671,10 @@ SQL;
             $expectedItem = $expected[$name];
             $expectedFields = array_intersect_key($expectedItem, $index);
             $resultFields = array_intersect_key($index, $expectedFields);
+
+            if (isset($index['constraint'])) {
+                $this->assertStringStartsWith('PK__schema', $index['constraint']);
+            }
 
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);

@@ -226,10 +226,10 @@ class FormHelperTest extends TestCase
         $this->Form->widget('test', ['val' => 1]);
 
         $widget->shouldHaveReceived('render')
-            ->once()
             ->withArgs(function (array $data) {
                 return $data === ['val' => 1];
-            });
+            })
+            ->once();
     }
 
     /**
@@ -249,13 +249,13 @@ class FormHelperTest extends TestCase
         $this->Form->widget('test', ['val' => 1, 'name' => 'test', 'secure' => true]);
 
         $widget->shouldHaveReceived('render')
-            ->once()
             ->withArgs(function (array $data) {
                 return $data === ['val' => 1, 'name' => 'test'];
-            });
+            })
+            ->once();
         $widget->shouldHaveReceived('secureFields')
-            ->once()
-            ->with(['val' => 1, 'name' => 'test']);
+            ->with(['val' => 1, 'name' => 'test'])
+            ->once();
     }
 
     /**
