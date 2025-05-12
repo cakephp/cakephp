@@ -254,7 +254,7 @@ class SqlserverTest extends TestCase
             ->andReturn($statement)
             ->once();
 
-        $pdo->shouldReceice('prepare')
+        $pdo->shouldReceive('prepare')
             ->with('', [])
             ->andReturn($statement)
             ->once();
