@@ -809,28 +809,28 @@ class SmtpTransportTest extends TestCase
             )
             ->times(11);
 
-        $callback = function ($arg) {
+        $andReturnCallback = function ($arg) {
             $this->assertNotEquals("QUIT\r\n", $arg);
 
             return 1;
         };
         $expected = [
-            "EHLO localhost\r\n",
-            "MAIL FROM:<noreply@cakephp.org>\r\n",
-            "RCPT TO:<cake@cakephp.org>\r\n",
-            "DATA\r\n",
-            $this->stringContains('First Line'),
-            "RSET\r\n",
+            ["EHLO localhost\r\n"],
+            ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+            ["RCPT TO:<cake@cakephp.org>\r\n"],
+            ["DATA\r\n"],
+            [Mockery::pattern('/First Line/')],
+            ["RSET\r\n"],
             // Second email
-            "MAIL FROM:<noreply@cakephp.org>\r\n",
-            "RCPT TO:<cake@cakephp.org>\r\n",
-            "DATA\r\n",
-            $this->stringContains('First Line'),
+            ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+            ["RCPT TO:<cake@cakephp.org>\r\n"],
+            ["DATA\r\n"],
+            [Mockery::pattern('/First Line/')],
         ];
         foreach ($expected as $data) {
             $this->socket->shouldReceive('write')
-                ->with($data)
-                ->andReturnUsing($callback)
+                ->withArgs($data)
+                ->andReturnUsing($andReturnCallback)
                 ->once();
         }
 
@@ -869,12 +869,19 @@ class SmtpTransportTest extends TestCase
             ->atLeast()
             ->times(6);
 
-        $this->socket->shouldReceive('write')->with("EHLO localhost\r\n")->once();
-        $this->socket->shouldReceive('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n")->once();
-        $this->socket->shouldReceive('write')->with("RCPT TO:<cake@cakephp.org>\r\n")->once();
-        $this->socket->shouldReceive('write')->with("DATA\r\n")->once();
-        $this->socket->shouldReceive('write')->with($this->stringContains('First Line'))->once();
-        $this->socket->shouldReceive('write')->with("QUIT\r\n")->once();
+        $expected = [
+            ["EHLO localhost\r\n"],
+            ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+            ["RCPT TO:<cake@cakephp.org>\r\n"],
+            ["DATA\r\n"],
+            [Mockery::pattern('/First Line/')],
+            ["QUIT\r\n"],
+        ];
+        foreach ($expected as $data) {
+            $this->socket->shouldReceive('write')
+                ->withArgs($data)
+                ->once();
+        }
 
         $this->socket->shouldReceive('disconnect')->once();
 
@@ -909,11 +916,18 @@ class SmtpTransportTest extends TestCase
             ->atLeast()
             ->times(6);
 
-        $this->socket->shouldReceive('write')->with("EHLO localhost\r\n")->once();
-        $this->socket->shouldReceive('write')->with("MAIL FROM:<noreply@cakephp.org>\r\n")->once();
-        $this->socket->shouldReceive('write')->with("RCPT TO:<cake@cakephp.org>\r\n")->once();
-        $this->socket->shouldReceive('write')->with("DATA\r\n")->once();
-        $this->socket->shouldReceive('write')->with($this->stringContains('First Line'))->once();
+        $expected = [
+            ["EHLO localhost\r\n"],
+            ["MAIL FROM:<noreply@cakephp.org>\r\n"],
+            ["RCPT TO:<cake@cakephp.org>\r\n"],
+            ["DATA\r\n"],
+            [Mockery::pattern('/First Line/')],
+        ];
+        foreach ($expected as $data) {
+            $this->socket->shouldReceive('write')
+                ->withArgs($data)
+                ->once();
+        }
 
         $this->expectException(SocketException::class);
         $this->expectExceptionMessage('Message size too large');

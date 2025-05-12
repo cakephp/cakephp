@@ -644,18 +644,17 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->shouldReceive('append')
-            ->with('css', $this->matchesRegularExpression('/css_in_head.css/'))
-            ->once();
-        $this->View->shouldReceive('append')
-            ->with('css', $this->matchesRegularExpression('/more_css_in_head.css/'))
-            ->once();
-        $this->View->shouldReceive('append')
-            ->with('css', $this->matchesRegularExpression('/css_in_head_2.css/'))
-            ->once();
-        $this->View->shouldReceive('append')
-            ->with('css', $this->matchesRegularExpression('/more_css_in_head_2.css/'))
-            ->once();
+        $expectedPatterns = [
+            '/css_in_head.css/',
+            '/more_css_in_head.css/',
+            '/css_in_head_2.css/',
+            '/more_css_in_head_2.css/',
+        ];
+        foreach ($expectedPatterns as $pattern) {
+            $this->View->shouldReceive('append')
+                ->with('css', Mockery::pattern($pattern))
+                ->once();
+        }
 
         $result = $this->Html->css('css_in_head', ['block' => true]);
         $this->assertNull($result);
@@ -860,10 +859,10 @@ class HtmlHelperTest extends TestCase
     public function testBufferedCssAndScriptWithIdenticalResourceName(): void
     {
         $this->View->shouldReceive('append')
-            ->with('css', $this->stringContains('test.min.css'))
+            ->with('css', Mockery::pattern('/test\.min\.css/'))
             ->once();
         $this->View->shouldReceive('append')
-            ->with('script', $this->stringContains('test.min.js'))
+            ->with('script', Mockery::pattern('/test\.min\.js/'))
             ->once();
 
         $this->Html->css('test.min', ['block' => true]);
@@ -1130,16 +1129,16 @@ class HtmlHelperTest extends TestCase
     public function testScriptWithBlocks(): void
     {
         $this->View->shouldReceive('append')
-            ->with('script', $this->matchesRegularExpression('/script_in_head.js/'))
+            ->with('script', Mockery::pattern('/script_in_head.js/'))
             ->once();
         $this->View->shouldReceive('append')
-            ->with('headScripts', $this->matchesRegularExpression('/second_script.js/'))
+            ->with('headScripts', Mockery::pattern('/second_script.js/'))
             ->once();
         $this->View->shouldReceive('append')
-            ->with('script', $this->matchesRegularExpression('/script_in_head_2.js/'))
+            ->with('script', Mockery::pattern('/script_in_head_2.js/'))
             ->once();
         $this->View->shouldReceive('append')
-            ->with('headScripts', $this->matchesRegularExpression('/second_script_2.js/'))
+            ->with('headScripts', Mockery::pattern('/second_script_2.js/'))
             ->once();
 
         $result = $this->Html->script('script_in_head', ['block' => true]);
@@ -1244,16 +1243,16 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->View->shouldReceive('append')
-            ->with('script', $this->matchesRegularExpression('/window\.foo\s\=\s2;/'))
+            ->with('script', Mockery::pattern('/window\.foo\s\=\s2;/'))
             ->once();
         $this->View->shouldReceive('append')
-            ->with('scriptTop', $this->stringContains('alert("hi")'))
+            ->with('scriptTop', Mockery::pattern('/alert\("hi"\)/'))
             ->once();
         $this->View->shouldReceive('append')
-            ->with('script', $this->matchesRegularExpression('/window\.foo\s\=\s3;/'))
+            ->with('script', Mockery::pattern('/window\.foo\s\=\s3;/'))
             ->once();
         $this->View->shouldReceive('append')
-            ->with('scriptTop', $this->stringContains('alert("his")'))
+            ->with('scriptTop', Mockery::pattern('/alert\("his"\)/'))
             ->once();
 
         $result = $this->Html->scriptBlock('window.foo = 2;', ['block' => true]);
@@ -1622,7 +1621,7 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result);
 
         $this->View->shouldReceive('append')
-            ->with('myMeta', $this->matchesRegularExpression('/csrf-token/'))
+            ->with('myMeta', Mockery::pattern('/csrf-token/'))
             ->once();
 
         $this->Html->setConfig('defaultMetaBlock', 'myMeta');
@@ -1763,10 +1762,10 @@ class HtmlHelperTest extends TestCase
     {
         $this->View
             ->shouldReceive('append')
-            ->with('meta', $this->stringContains('robots'))
+            ->with('meta', Mockery::pattern('/robots/'))
             ->once();
         $this->View->shouldReceive('append')
-            ->with('metaTags', $this->stringContains('favicon.ico'))
+            ->with('metaTags', Mockery::pattern('/favicon\.ico/'))
             ->once();
 
         $result = $this->Html->meta('robots', 'ALL', ['block' => true]);
@@ -1782,10 +1781,10 @@ class HtmlHelperTest extends TestCase
     public function testMetaCustomWithBlock(): void
     {
         $this->View->shouldReceive('append')
-            ->with('meta', $this->stringContains('og:site_name'))
+            ->with('meta', Mockery::pattern('/og:site_name/'))
             ->once();
         $this->View->shouldReceive('append')
-            ->with('meta', $this->stringContains('og:description'))
+            ->with('meta', Mockery::pattern('/og:description/'))
             ->once();
 
         $result = $this->Html->meta(['property' => 'og:site_name', 'content' => 'CakePHP', 'block' => true]);
