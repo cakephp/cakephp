@@ -24,7 +24,6 @@ use Cake\Network\Exception\SocketException;
 use Cake\Network\Socket;
 use Cake\TestSuite\TestCase;
 use Mockery;
-use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use TestApp\Mailer\Transport\SmtpTestTransport;
 
 /**
