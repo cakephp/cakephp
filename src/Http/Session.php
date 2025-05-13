@@ -223,9 +223,11 @@ class Session
             'handler' => [],
         ];
 
+        $lifetime = (int)ini_get('session.gc_maxlifetime');
         if ($config['timeout'] !== null) {
-            $this->configureSessionLifetime((int)$config['timeout'] * 60);
+            $lifetime = (int)$config['timeout'] * 60;
         }
+        $this->configureSessionLifetime($lifetime);
 
         if ($config['cookie']) {
             $config['ini']['session.name'] = $config['cookie'];
