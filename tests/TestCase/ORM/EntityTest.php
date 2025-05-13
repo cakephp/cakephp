@@ -314,6 +314,24 @@ class EntityTest extends TestCase
         $entity->{'not_present'};
     }
 
+    public function testGetOrFailException(): void
+    {
+        $this->expectException(MissingPropertyException::class);
+        $this->expectExceptionMessage('Property `not_present` does not exist for the entity `Cake\ORM\Entity`');
+
+        $entity = new Entity();
+        $entity->getOrFail('not_present');
+    }
+
+    // Ensure that requireFieldPresence does not affect get
+    public function testGetNoException(): void
+    {
+        $entity = new Entity();
+        $entity->requireFieldPresence();
+        $entity->get('not_present');
+        $this->addToAssertionCount(1);
+    }
+
     public function testRequirePresenceNoException(): void
     {
         $entity = new Entity(['is_present' => null]);
