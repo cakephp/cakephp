@@ -311,7 +311,7 @@ class EntityTest extends TestCase
 
         $entity = new Entity();
         $entity->requireFieldPresence();
-        $entity->get('not_present');
+        $entity->{'not_present'};
     }
 
     public function testRequirePresenceNoException(): void
