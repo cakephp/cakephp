@@ -323,7 +323,9 @@ class EntityTest extends TestCase
         $entity->getOrFail('not_present');
     }
 
-    // Ensure that requireFieldPresence does not affect get
+    /**
+     * Test to ensure that requireFieldPresence does not affect get
+     */
     public function testGetNoException(): void
     {
         $entity = new Entity();

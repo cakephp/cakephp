@@ -400,7 +400,13 @@ trait EntityTrait
     }
 
     /**
-     * Get with option for requireFieldPresence
+     * Get field with option for requireFieldPresence
+     *
+     * @param string $field the name of the field to retrieve
+     * @param bool $requireFieldPresence Whether to throw an exception if the field is not present
+     * @return mixed
+     * @throws \InvalidArgumentException if an empty field name is passed
+     * @throws \Cake\Datasource\Exception\MissingPropertyException If property does not exist and $requireFieldPresence
      */
     protected function &getEx(string $field, bool $requireFieldPresence): mixed
     {
