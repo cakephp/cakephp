@@ -38,8 +38,7 @@ use Cake\Utility\Inflector;
 use Closure;
 use Exception;
 use LogicException;
-use Mockery\Adapter\Phpunit\MockeryPHPUnitIntegration;
-use Mockery\Adapter\Phpunit\MockeryTestCaseSetUp;
+use Mockery;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
@@ -52,8 +51,6 @@ use function Cake\Core\pluginSplit;
 abstract class TestCase extends BaseTestCase
 {
     use LocatorAwareTrait;
-    use MockeryPHPUnitIntegration;
-    use MockeryTestCaseSetUp;
     use PHPUnitConsecutiveTrait;
 
     /**
@@ -217,6 +214,23 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * This method is called between test and tearDown().
+     *
+     * Gets the count of expectations on the mocks produced through Mockery.
+     *
+     * @return void
+     */
+    protected function assertPostConditions(): void
+    {
+        parent::assertPostConditions();
+
+        if (class_exists(Mockery::class)) {
+            // @phpstan-ignore method.internal
+            $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
+        }
+    }
+
+    /**
      * Setup the test case, backup the static object values so they can be restored.
      * Specifically backs up the contents of Configure and paths in App if they have
      * not already been backed up.
@@ -261,6 +275,9 @@ abstract class TestCase extends BaseTestCase
         $this->getTableLocator()->clear();
         $this->_configure = [];
         $this->_tableLocator = null;
+        if (class_exists(Mockery::class)) {
+            Mockery::close();
+        }
     }
 
     /**
