@@ -22,6 +22,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\PreserveGlobalState;
 use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+use ReflectionProperty;
 use TestApp\Http\Session\TestAppLibSession;
 use TestApp\Http\Session\TestWebSession;
 use TestPlugin\Http\Session\TestPluginSession;
@@ -78,7 +79,26 @@ class SessionTest extends TestCase
     }
 
     /**
-     * test setting ini properties with Session configuration.
+     * test default `session.gc_maxlifetime` value is set as lifetime if timeout is not present.
+     */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
+    public function testSessionLifetimeIsSetToDefaultPHPIni(): void
+    {
+        $_SESSION = null;
+
+        ini_set('session.gc_maxlifetime', 1440);
+
+        $config = ['defaults' => 'php'];
+        $session = new Session($config);
+
+        $prop = new ReflectionProperty($session, '_lifetime');
+        $prop->setAccessible(true);
+        $this->assertSame(1440, $prop->getValue($session));
+    }
+
+    /**
+     * test setting ini properties with Session configuration with timeout set to zero.
      */
     #[PreserveGlobalState(false)]
     #[RunInSeparateProcess]
