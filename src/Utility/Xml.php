@@ -271,7 +271,10 @@ class Xml
             $input = $input->toArray();
         }
         if (!is_array($input) || count($input) !== 1) {
-            throw new XmlException('Invalid input.');
+            throw new XmlException(
+                'Invalid input of type `' . gettype($input) . '`'
+                . (is_array($input) ? ' (Count of ' . count($input) . ')' : '') . '.',
+            );
         }
         $key = key($input);
         if (is_int($key)) {
