@@ -279,10 +279,10 @@ class XmlViewTest extends TestCase
     public static function falseyValues(): array
     {
         return [
-            [0, 0],
-            ['0', 0],
-            [false, 0],
-            ['', null],
+            [0, '<testing>0</testing>'],
+            ['0', '<testing>0</testing>'],
+            [false, '<testing>0</testing>'],
+            ['', '<testing/>'],
         ];
     }
 
@@ -290,7 +290,7 @@ class XmlViewTest extends TestCase
      * Test that rendering with _serialize can work with a single falsey value
      */
     #[DataProvider('falseyValues')]
-    public function testRenderSerializeWithFalseyValue($value, $expectedValue): void
+    public function testRenderSerializeWithFalseyValue($value, $expectedString): void
     {
         $Request = new ServerRequest();
         $Controller = new Controller($Request);
@@ -306,7 +306,6 @@ class XmlViewTest extends TestCase
 
         $expected = Xml::build(['response' => $data])->asXML();
         $this->assertSame($expected, $result);
-        $expectedString = $expectedValue === null ? '<testing/>' : '<testing>' . $expectedValue . '</testing>';
         $this->assertStringContainsString($expectedString, $result);
     }
 
