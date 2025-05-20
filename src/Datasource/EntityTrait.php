@@ -387,7 +387,12 @@ trait EntityTrait
     }
 
     /**
-     * Returns the value of a field by name
+     * Returns the value of an existing field by name.
+     *
+     * Unlike get() this function will throw a MissingPropertyException
+     * if the field does not exist in the entity.
+     *
+     * Note: The returned value might be null if the field is set to null.
      *
      * @param string $field the name of the field to retrieve
      * @return mixed
