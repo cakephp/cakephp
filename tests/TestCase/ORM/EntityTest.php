@@ -320,7 +320,7 @@ class EntityTest extends TestCase
         $this->expectExceptionMessage('Property `not_present` does not exist for the entity `Cake\ORM\Entity`');
 
         $entity = new Entity();
-        $entity->getOrFail('not_present');
+        $entity->getExistingOrFail('not_present');
     }
 
     /**
@@ -330,8 +330,7 @@ class EntityTest extends TestCase
     {
         $entity = new Entity();
         $entity->requireFieldPresence();
-        $entity->get('not_present');
-        $this->addToAssertionCount(1);
+        $this->assertNull($entity->get('not_present'));
     }
 
     public function testRequirePresenceNoException(): void

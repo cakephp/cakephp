@@ -394,7 +394,7 @@ trait EntityTrait
      * @throws \InvalidArgumentException if an empty field name is passed
      * @throws \Cake\Datasource\Exception\MissingPropertyException If property does not exist
      */
-    public function &getOrFail(string $field): mixed
+    public function &getExistingOrFail(string $field): mixed
     {
         return $this->getEx($field, true);
     }
