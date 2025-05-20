@@ -1550,10 +1550,10 @@ class ServerRequestTest extends TestCase
             'REQUEST_METHOD' => 'PUT',
         ]]);
 
-        $this->assertTrue($request->allowMethod('put'));
+        $request->allowMethod('put');
 
         $request = $request->withEnv('REQUEST_METHOD', 'DELETE');
-        $this->assertTrue($request->allowMethod(['post', 'delete']));
+        $request->allowMethod(['post', 'delete']);
     }
 
     /**

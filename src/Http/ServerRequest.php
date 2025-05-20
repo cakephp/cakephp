@@ -1423,19 +1423,19 @@ class ServerRequest implements ServerRequestInterface
      * or
      * $this->request->allowMethod(['post', 'delete']);
      *
-     * If the request would be GET, response header "Allow: POST, DELETE" will be set
+     * If the request is GET, the response header "Allow: POST, DELETE" will be set
      * and a 405 error will be returned.
      *
      * @param array<string>|string $methods Allowed HTTP request methods.
-     * @return true
+     * @return void
      * @throws \Cake\Http\Exception\MethodNotAllowedException
      */
-    public function allowMethod(array|string $methods): bool
+    public function allowMethod(array|string $methods): void
     {
         $methods = (array)$methods;
         foreach ($methods as $method) {
             if ($this->is($method)) {
-                return true;
+                return;
             }
         }
         $allowed = strtoupper(implode(', ', $methods));
