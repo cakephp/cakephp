@@ -96,7 +96,7 @@ class RedisEngine extends CacheEngine
 
         parent::init($config);
 
-        return $this->_connect();
+        return $this->connect();
     }
 
     /**
@@ -104,7 +104,7 @@ class RedisEngine extends CacheEngine
      *
      * @return bool True if Redis server was connected
      */
-    protected function _connect(): bool
+    protected function connect(): bool
     {
         $tls = $this->_config['tls'] === true ? 'tls://' : '';
 
@@ -122,13 +122,13 @@ class RedisEngine extends CacheEngine
         }
 
         try {
-            $this->_Redis = $this->_createRedisInstance();
+            $this->_Redis = $this->createRedisInstance();
             if (!empty($this->_config['unix_socket'])) {
                 $return = $this->_Redis->connect($this->_config['unix_socket']);
             } elseif (empty($this->_config['persistent'])) {
-                $return = $this->_connectTransient($tls . $this->_config['server'], $ssl);
+                $return = $this->connectTransient($tls . $this->_config['server'], $ssl);
             } else {
-                $return = $this->_connectPersistent($tls . $this->_config['server'], $ssl);
+                $return = $this->connectPersistent($tls . $this->_config['server'], $ssl);
             }
         } catch (RedisException $e) {
             if (class_exists(Log::class)) {
@@ -155,7 +155,7 @@ class RedisEngine extends CacheEngine
      * @throws \RedisException
      * @return bool True if Redis server was connected
      */
-    protected function _connectTransient(string $server, array $ssl): bool
+    protected function connectTransient(string $server, array $ssl): bool
     {
         if ($ssl === []) {
             return $this->_Redis->connect(
@@ -184,7 +184,7 @@ class RedisEngine extends CacheEngine
      * @throws \RedisException
      * @return bool True if Redis server was connected
      */
-    protected function _connectPersistent(string $server, array $ssl): bool
+    protected function connectPersistent(string $server, array $ssl): bool
     {
         $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
 
@@ -220,7 +220,7 @@ class RedisEngine extends CacheEngine
      */
     public function set(string $key, mixed $value, DateInterval|int|null $ttl = null): bool
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
         $value = $this->serialize($value);
 
         $duration = $this->duration($ttl);
@@ -241,7 +241,7 @@ class RedisEngine extends CacheEngine
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        $value = $this->_Redis->get($this->_key($key));
+        $value = $this->_Redis->get($this->key($key));
         if ($value === false) {
             return $default;
         }
@@ -259,7 +259,7 @@ class RedisEngine extends CacheEngine
     public function increment(string $key, int $offset = 1): int|false
     {
         $duration = $this->_config['duration'];
-        $key = $this->_key($key);
+        $key = $this->key($key);
 
         $value = $this->_Redis->incrBy($key, $offset);
         if ($duration > 0) {
@@ -279,7 +279,7 @@ class RedisEngine extends CacheEngine
     public function decrement(string $key, int $offset = 1): int|false
     {
         $duration = $this->_config['duration'];
-        $key = $this->_key($key);
+        $key = $this->key($key);
 
         $value = $this->_Redis->decrBy($key, $offset);
         if ($duration > 0) {
@@ -297,7 +297,7 @@ class RedisEngine extends CacheEngine
      */
     public function delete(string $key): bool
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
 
         return (int)$this->_Redis->del($key) > 0;
     }
@@ -312,7 +312,7 @@ class RedisEngine extends CacheEngine
      */
     public function deleteAsync(string $key): bool
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
 
         return (int)$this->_Redis->unlink($key) > 0;
     }
@@ -401,7 +401,7 @@ class RedisEngine extends CacheEngine
     public function add(string $key, mixed $value): bool
     {
         $duration = $this->_config['duration'];
-        $key = $this->_key($key);
+        $key = $this->key($key);
         $value = $this->serialize($value);
 
         if ($this->_Redis->set($key, $value, ['nx', 'ex' => $duration])) {
@@ -484,7 +484,7 @@ class RedisEngine extends CacheEngine
      *
      * @return \Redis
      */
-    protected function _createRedisInstance(): Redis
+    protected function createRedisInstance(): Redis
     {
         return new Redis();
     }

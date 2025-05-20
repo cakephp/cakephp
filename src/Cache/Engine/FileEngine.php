@@ -98,7 +98,7 @@ class FileEngine extends CacheEngine
             $this->_groupPrefix = str_replace('_', DIRECTORY_SEPARATOR, $this->_groupPrefix);
         }
 
-        return $this->_active();
+        return $this->active();
     }
 
     /**
@@ -117,9 +117,9 @@ class FileEngine extends CacheEngine
             return false;
         }
 
-        $key = $this->_key($key);
+        $key = $this->key($key);
 
-        if ($this->_setKey($key, true) === false) {
+        if ($this->setKey($key, true) === false) {
             return false;
         }
 
@@ -157,9 +157,9 @@ class FileEngine extends CacheEngine
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
 
-        if (!$this->_init || $this->_setKey($key) === false) {
+        if (!$this->_init || $this->setKey($key) === false) {
             return $default;
         }
 
@@ -208,9 +208,9 @@ class FileEngine extends CacheEngine
      */
     public function delete(string $key): bool
     {
-        $key = $this->_key($key);
+        $key = $this->key($key);
 
-        if ($this->_setKey($key) === false || !$this->_init) {
+        if ($this->setKey($key) === false || !$this->_init) {
             return false;
         }
 
@@ -238,7 +238,7 @@ class FileEngine extends CacheEngine
         }
         unset($this->_File);
 
-        $this->_clearDirectory($this->_config['path']);
+        $this->clearDirectory($this->_config['path']);
 
         $directory = new RecursiveDirectoryIterator(
             $this->_config['path'],
@@ -264,7 +264,7 @@ class FileEngine extends CacheEngine
 
             $path = $realPath . DIRECTORY_SEPARATOR;
             if (!in_array($path, $cleared, true)) {
-                $this->_clearDirectory($path);
+                $this->clearDirectory($path);
                 $cleared[] = $path;
             }
 
@@ -285,7 +285,7 @@ class FileEngine extends CacheEngine
      * @param string $path The path to search.
      * @return void
      */
-    protected function _clearDirectory(string $path): void
+    protected function clearDirectory(string $path): void
     {
         if (!is_dir($path)) {
             return;
@@ -356,7 +356,7 @@ class FileEngine extends CacheEngine
      * @param bool $createKey Whether the key should be created if it doesn't exists, or not
      * @return bool true if the cache key could be set, false otherwise
      */
-    protected function _setKey(string $key, bool $createKey = false): bool
+    protected function setKey(string $key, bool $createKey = false): bool
     {
         $groups = null;
         if ($this->_groupPrefix) {
@@ -405,7 +405,7 @@ class FileEngine extends CacheEngine
      *
      * @return bool
      */
-    protected function _active(): bool
+    protected function active(): bool
     {
         $dir = new SplFileInfo($this->_config['path']);
         $path = $dir->getPathname();
@@ -431,9 +431,9 @@ class FileEngine extends CacheEngine
     /**
      * @inheritDoc
      */
-    protected function _key(string $key): string
+    protected function key(string $key): string
     {
-        $key = parent::_key($key);
+        $key = parent::key($key);
 
         return rawurlencode($key);
     }
