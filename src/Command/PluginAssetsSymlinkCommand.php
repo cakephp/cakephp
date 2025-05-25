@@ -62,7 +62,7 @@ class PluginAssetsSymlinkCommand extends Command
         $name = $args->getArgument('name');
         $overwrite = (bool)$args->getOption('overwrite');
         $relative = (bool)$args->getOption('relative');
-        $this->_process($this->_list($name), false, $overwrite, $relative);
+        $this->process($this->list($name), false, $overwrite, $relative);
 
         return static::CODE_SUCCESS;
     }

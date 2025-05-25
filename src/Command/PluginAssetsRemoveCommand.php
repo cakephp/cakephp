@@ -58,14 +58,14 @@ class PluginAssetsRemoveCommand extends Command
         $this->args = $args;
 
         $name = $args->getArgument('name');
-        $plugins = $this->_list($name);
+        $plugins = $this->list($name);
 
         foreach ($plugins as $plugin => $config) {
             $this->io->out();
             $this->io->out('For plugin: ' . $plugin);
             $this->io->hr();
 
-            $this->_remove($config);
+            $this->remove($config);
         }
 
         $this->io->out();

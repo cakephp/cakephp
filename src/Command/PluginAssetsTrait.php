@@ -52,7 +52,7 @@ trait PluginAssetsTrait
      *   If null all plugins will be processed.
      * @return array<string, mixed> List of plugins with meta data.
      */
-    protected function _list(?string $name = null): array
+    protected function list(?string $name = null): array
     {
         if ($name === null) {
             $pluginsList = Plugin::loaded();
@@ -104,7 +104,7 @@ trait PluginAssetsTrait
      * @param bool $relative Relative. Default false.
      * @return void
      */
-    protected function _process(
+    protected function process(
         array $plugins,
         bool $copy = false,
         bool $overwrite = false,
@@ -118,7 +118,7 @@ trait PluginAssetsTrait
             if (
                 $config['namespaced'] &&
                 !is_dir($config['destDir']) &&
-                !$this->_createDirectory($config['destDir'])
+                !$this->createDirectory($config['destDir'])
             ) {
                 continue;
             }
@@ -126,7 +126,7 @@ trait PluginAssetsTrait
             $dest = $config['destDir'] . $config['link'];
 
             if (file_exists($dest)) {
-                if ($overwrite && !$this->_remove($config)) {
+                if ($overwrite && !$this->remove($config)) {
                     continue;
                 }
                 if (!$overwrite) {
@@ -139,7 +139,7 @@ trait PluginAssetsTrait
             }
 
             if (!$copy) {
-                $result = $this->_createSymlink(
+                $result = $this->createSymlink(
                     $config['srcPath'],
                     $dest,
                     $relative,
@@ -149,7 +149,7 @@ trait PluginAssetsTrait
                 }
             }
 
-            $this->_copyDirectory(
+            $this->copyDirectory(
                 $config['srcPath'],
                 $dest,
             );
@@ -165,7 +165,7 @@ trait PluginAssetsTrait
      * @param array<string, mixed> $config Plugin config.
      * @return bool
      */
-    protected function _remove(array $config): bool
+    protected function remove(array $config): bool
     {
         if ($config['namespaced'] && !is_dir($config['destDir'])) {
             $this->io->verbose(
@@ -217,7 +217,7 @@ trait PluginAssetsTrait
      * @param string $dir Directory name
      * @return bool
      */
-    protected function _createDirectory(string $dir): bool
+    protected function createDirectory(string $dir): bool
     {
         $old = umask(0);
         // phpcs:disable
@@ -244,10 +244,10 @@ trait PluginAssetsTrait
      * @param bool $relative Relative (true) or Absolute (false)
      * @return bool
      */
-    protected function _createSymlink(string $target, string $link, bool $relative = false): bool
+    protected function createSymlink(string $target, string $link, bool $relative = false): bool
     {
         if ($relative) {
-            $target = $this->_makeRelativePath($link, $target);
+            $target = $this->makeRelativePath($link, $target);
         }
 
         // phpcs:disable
@@ -270,7 +270,7 @@ trait PluginAssetsTrait
      * @param string $to The target path
      * @return string Relative path
      */
-    protected function _makeRelativePath(string $from, string $to): string
+    protected function makeRelativePath(string $from, string $to): string
     {
         $from = is_dir($from) ? rtrim($from, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR : dirname($from);
         $from = realpath($from);
@@ -304,7 +304,7 @@ trait PluginAssetsTrait
      * @param string $destination Destination directory
      * @return bool
      */
-    protected function _copyDirectory(string $source, string $destination): bool
+    protected function copyDirectory(string $source, string $destination): bool
     {
         $fs = new Filesystem();
         if ($fs->copyDir($source, $destination)) {

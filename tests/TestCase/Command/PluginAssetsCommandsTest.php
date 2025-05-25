@@ -143,14 +143,14 @@ class PluginAssetsCommandsTest extends TestCase
         $parser->addOption('overwrite', ['default' => false, 'boolean' => true]);
 
         $command = $this->getMockBuilder(PluginAssetsSymlinkCommand::class)
-            ->onlyMethods(['getOptionParser', '_createSymlink', '_copyDirectory'])
+            ->onlyMethods(['getOptionParser', 'createSymlink', 'copyDirectory'])
             ->getMock();
         $command->method('getOptionParser')->willReturn($parser);
 
         $this->assertDirectoryExists($this->wwwRoot . 'test_theme');
 
-        $command->expects($this->never())->method('_createSymlink');
-        $command->expects($this->never())->method('_copyDirectory');
+        $command->expects($this->never())->method('createSymlink');
+        $command->expects($this->never())->method('copyDirectory');
         $command->run([], $io);
     }
 

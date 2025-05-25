@@ -60,7 +60,7 @@ class PluginAssetsCopyCommand extends Command
 
         $name = $args->getArgument('name');
         $overwrite = (bool)$args->getOption('overwrite');
-        $this->_process($this->_list($name), true, $overwrite);
+        $this->process($this->list($name), true, $overwrite);
 
         return static::CODE_SUCCESS;
     }

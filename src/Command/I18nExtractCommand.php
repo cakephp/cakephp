@@ -138,7 +138,7 @@ class I18nExtractCommand extends Command
      * @param \Cake\Console\ConsoleIoInterface $io The io instance.
      * @return void
      */
-    protected function _getPaths(ConsoleIoInterface $io): void
+    protected function getPaths(ConsoleIoInterface $io): void
     {
         $defaultPaths = array_merge(
             [APP],
@@ -199,7 +199,7 @@ class I18nExtractCommand extends Command
                 $this->_paths = [Plugin::classPath($plugin), Plugin::templatePath($plugin)];
             }
         } elseif (!$args->getOption('paths')) {
-            $this->_getPaths($io);
+            $this->getPaths($io);
         }
 
         if ($args->hasOption('extract-core')) {
@@ -213,7 +213,7 @@ class I18nExtractCommand extends Command
             $this->_extractCore = strtolower($response) === 'y';
         }
 
-        if ($args->hasOption('exclude-plugins') && $this->_isExtractingApp()) {
+        if ($args->hasOption('exclude-plugins') && $this->isExtractingApp()) {
             $this->_exclude = array_merge($this->_exclude, array_values(App::path('plugins')));
         }
 
@@ -245,7 +245,7 @@ class I18nExtractCommand extends Command
 
                     return static::CODE_ERROR;
                 }
-                if ($this->_isPathUsable($response)) {
+                if ($this->isPathUsable($response)) {
                     $this->_output = $response . DIRECTORY_SEPARATOR;
                     break;
                 }
@@ -274,17 +274,17 @@ class I18nExtractCommand extends Command
         $this->_markerError = (bool)$args->getOption('marker-error');
 
         if (!$this->_files) {
-            $this->_searchFiles();
+            $this->searchFiles();
         }
 
         $this->_output = rtrim($this->_output, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
-        if (!$this->_isPathUsable($this->_output)) {
+        if (!$this->isPathUsable($this->_output)) {
             $io->err(sprintf('The output directory `%s` was not found or writable.', $this->_output));
 
             return static::CODE_ERROR;
         }
 
-        $this->_extract($args, $io);
+        $this->extract($args, $io);
 
         return static::CODE_SUCCESS;
     }
@@ -299,7 +299,7 @@ class I18nExtractCommand extends Command
      * @param array<string, mixed> $details Context and plural form if any, file and line references
      * @return void
      */
-    protected function _addTranslation(string $domain, string $msgid, array $details = []): void
+    protected function addTranslation(string $domain, string $msgid, array $details = []): void
     {
         $context = $details['msgctxt'] ?? '';
 
@@ -326,7 +326,7 @@ class I18nExtractCommand extends Command
      * @param \Cake\Console\ConsoleIoInterface $io The io instance
      * @return void
      */
-    protected function _extract(Arguments $args, ConsoleIoInterface $io): void
+    protected function extract(Arguments $args, ConsoleIoInterface $io): void
     {
         $io->out();
         $io->out();
@@ -338,9 +338,9 @@ class I18nExtractCommand extends Command
         }
         $io->out('Output Directory: ' . $this->_output);
         $io->hr();
-        $this->_extractTokens($args, $io);
-        $this->_buildFiles($args);
-        $this->_writeFiles($args, $io);
+        $this->extractTokens($args, $io);
+        $this->buildFiles($args);
+        $this->writeFiles($args, $io);
         $this->_paths = [];
         $this->_files = [];
         $this->_storage = [];
@@ -417,7 +417,7 @@ class I18nExtractCommand extends Command
      * @param \Cake\Console\ConsoleIoInterface $io The io instance
      * @return void
      */
-    protected function _extractTokens(Arguments $args, ConsoleIoInterface $io): void
+    protected function extractTokens(Arguments $args, ConsoleIoInterface $io): void
     {
         $progress = $io->helper('progress');
         assert($progress instanceof ProgressHelper);
@@ -456,7 +456,7 @@ class I18nExtractCommand extends Command
                 unset($allTokens);
 
                 foreach ($functions as $functionName => $map) {
-                    $this->_parse($io, $functionName, $map);
+                    $this->parse($io, $functionName, $map);
                 }
             }
 
@@ -475,7 +475,7 @@ class I18nExtractCommand extends Command
      * @param array $map Array containing what variables it will find (e.g: domain, singular, plural)
      * @return void
      */
-    protected function _parse(ConsoleIoInterface $io, string $functionName, array $map): void
+    protected function parse(ConsoleIoInterface $io, string $functionName, array $map): void
     {
         $count = 0;
         $tokenCount = count($this->_tokens);
@@ -503,7 +503,7 @@ class I18nExtractCommand extends Command
                 }
 
                 $mapCount = count($map);
-                $strings = $this->_getStrings($position, $mapCount);
+                $strings = $this->getStrings($position, $mapCount);
 
                 if ($mapCount === count($strings)) {
                     $singular = '';
@@ -521,9 +521,9 @@ class I18nExtractCommand extends Command
                     if (isset($context)) {
                         $details['msgctxt'] = $context;
                     }
-                    $this->_addTranslation($domain, $singular, $details);
+                    $this->addTranslation($domain, $singular, $details);
                 } else {
-                    $this->_markerError($io, $this->_file, $line, $functionName, $count);
+                    $this->markerError($io, $this->_file, $line, $functionName, $count);
                 }
             }
             $count++;
@@ -536,7 +536,7 @@ class I18nExtractCommand extends Command
      * @param \Cake\Console\Arguments $args Console arguments
      * @return void
      */
-    protected function _buildFiles(Arguments $args): void
+    protected function buildFiles(Arguments $args): void
     {
         $paths = $this->_paths;
         $paths[] = realpath(APP) . DIRECTORY_SEPARATOR;
@@ -582,9 +582,9 @@ class I18nExtractCommand extends Command
                     }
 
                     if ($domain !== 'default' && $this->_merge) {
-                        $this->_store('default', $header, $sentence);
+                        $this->store('default', $header, $sentence);
                     } else {
-                        $this->_store($domain, $header, $sentence);
+                        $this->store($domain, $header, $sentence);
                     }
                 }
             }
@@ -599,7 +599,7 @@ class I18nExtractCommand extends Command
      * @param string $sentence The sentence to store.
      * @return void
      */
-    protected function _store(string $domain, string $header, string $sentence): void
+    protected function store(string $domain, string $header, string $sentence): void
     {
         $this->_storage[$domain] ??= [];
 
@@ -617,7 +617,7 @@ class I18nExtractCommand extends Command
      * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return void
      */
-    protected function _writeFiles(Arguments $args, ConsoleIoInterface $io): void
+    protected function writeFiles(Arguments $args, ConsoleIoInterface $io): void
     {
         $io->out();
         $overwriteAll = false;
@@ -625,7 +625,7 @@ class I18nExtractCommand extends Command
             $overwriteAll = true;
         }
         foreach ($this->_storage as $domain => $sentences) {
-            $output = $this->_writeHeader($domain);
+            $output = $this->writeHeader($domain);
             $headerLength = strlen($output);
             foreach ($sentences as $sentence => $header) {
                 $output .= $header . $sentence;
@@ -668,7 +668,7 @@ class I18nExtractCommand extends Command
      * @param string $domain Domain
      * @return string Translation template header
      */
-    protected function _writeHeader(string $domain): string
+    protected function writeHeader(string $domain): string
     {
         $projectIdVersion = $domain === 'cake' ? 'CakePHP ' . Configure::version() : 'PROJECT VERSION';
 
@@ -724,7 +724,7 @@ class I18nExtractCommand extends Command
      * @param int $target Number of strings to extract
      * @return array Strings extracted
      */
-    protected function _getStrings(int &$position, int $target): array
+    protected function getStrings(int &$position, int $target): array
     {
         $strings = [];
         $count = 0;
@@ -743,13 +743,13 @@ class I18nExtractCommand extends Command
                     || $this->_tokens[$position] === '.'
                 ) {
                     if ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING) {
-                        $string .= $this->_formatString($this->_tokens[$position][1]);
+                        $string .= $this->formatString($this->_tokens[$position][1]);
                     }
                     $position++;
                 }
                 $strings[] = $string;
             } elseif ($this->_tokens[$position][0] === T_CONSTANT_ENCAPSED_STRING) {
-                $strings[] = $this->_formatString($this->_tokens[$position][1]);
+                $strings[] = $this->formatString($this->_tokens[$position][1]);
             } elseif ($this->_tokens[$position][0] === T_LNUMBER) {
                 $strings[] = $this->_tokens[$position][1];
             }
@@ -765,7 +765,7 @@ class I18nExtractCommand extends Command
      * @param string $string String to format
      * @return string Formatted string
      */
-    protected function _formatString(string $string): string
+    protected function formatString(string $string): string
     {
         $quote = substr($string, 0, 1);
         $string = substr($string, 1, -1);
@@ -789,7 +789,7 @@ class I18nExtractCommand extends Command
      * @param int $count Count
      * @return void
      */
-    protected function _markerError(ConsoleIoInterface $io, string $file, int $line, string $marker, int $count): void
+    protected function markerError(ConsoleIoInterface $io, string $file, int $line, string $marker, int $count): void
     {
         if (!str_contains($this->_file, CAKE_CORE_INCLUDE_PATH)) {
             $this->_countMarkerError++;
@@ -827,7 +827,7 @@ class I18nExtractCommand extends Command
      *
      * @return void
      */
-    protected function _searchFiles(): void
+    protected function searchFiles(): void
     {
         $pattern = false;
         if ($this->_exclude) {
@@ -866,7 +866,7 @@ class I18nExtractCommand extends Command
      *
      * @return bool
      */
-    protected function _isExtractingApp(): bool
+    protected function isExtractingApp(): bool
     {
         return $this->_paths === [APP];
     }
@@ -877,7 +877,7 @@ class I18nExtractCommand extends Command
      * @param string $path Path to folder
      * @return bool true if it exists and is writable, false otherwise
      */
-    protected function _isPathUsable(string $path): bool
+    protected function isPathUsable(string $path): bool
     {
         if (!is_dir($path)) {
             mkdir($path, 0770, true);

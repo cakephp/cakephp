@@ -53,7 +53,7 @@ class RoutesGenerateCommand extends Command
     public function execute(Arguments $args, ConsoleIoInterface $io): ?int
     {
         try {
-            $args = $this->_splitArgs($args->getArguments());
+            $args = $this->splitArgs($args->getArguments());
             $url = Router::url($args);
             $io->out("> {$url}");
             $io->out();
@@ -73,7 +73,7 @@ class RoutesGenerateCommand extends Command
      * @param array<string> $args The arguments to split.
      * @return array<string|bool>
      */
-    protected function _splitArgs(array $args): array
+    protected function splitArgs(array $args): array
     {
         $out = [];
         foreach ($args as $arg) {
