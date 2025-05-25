@@ -312,7 +312,7 @@ trait CollectionTrait
      */
     public function groupBy(callable|string $path, bool $preserveKeys = false): CollectionInterface
     {
-        $callback = $this->_propertyExtractor($path);
+        $callback = $this->propertyExtractor($path);
         $group = [];
         foreach ($this->optimizeUnwrap() as $key => $value) {
             $pathValue = $callback($value);
@@ -344,7 +344,7 @@ trait CollectionTrait
      */
     public function indexBy(callable|string $path): CollectionInterface
     {
-        $callback = $this->_propertyExtractor($path);
+        $callback = $this->propertyExtractor($path);
         $group = [];
         foreach ($this->optimizeUnwrap() as $value) {
             $pathValue = $callback($value);
@@ -371,7 +371,7 @@ trait CollectionTrait
      */
     public function countBy(callable|string $path): CollectionInterface
     {
-        $callback = $this->_propertyExtractor($path);
+        $callback = $this->propertyExtractor($path);
 
         $mapper = fn($value, $key, MapReduce $mr) => $mr->emitIntermediate($value, $callback($value));
         $reducer = fn($values, $key, MapReduce $mr) => $mr->emit(count($values), $key);
@@ -388,7 +388,7 @@ trait CollectionTrait
             return array_sum($this->toList());
         }
 
-        $callback = $this->_propertyExtractor($path);
+        $callback = $this->propertyExtractor($path);
         $sum = 0;
         foreach ($this->optimizeUnwrap() as $k => $v) {
             $sum += $callback($v, $k);
@@ -437,7 +437,7 @@ trait CollectionTrait
      */
     public function match(array $conditions): CollectionInterface
     {
-        return $this->filter($this->_createMatcherFilter($conditions));
+        return $this->filter($this->createMatcherFilter($conditions));
     }
 
     /**
@@ -643,9 +643,9 @@ trait CollectionTrait
         callable|string|null $groupPath = null,
     ): CollectionInterface {
         $options = [
-            'keyPath' => $this->_propertyExtractor($keyPath),
-            'valuePath' => $this->_propertyExtractor($valuePath),
-            'groupPath' => $groupPath ? $this->_propertyExtractor($groupPath) : null,
+            'keyPath' => $this->propertyExtractor($keyPath),
+            'valuePath' => $this->propertyExtractor($valuePath),
+            'groupPath' => $groupPath ? $this->propertyExtractor($groupPath) : null,
         ];
 
         $mapper = function ($value, $key, MapReduce $mapReduce) use ($options) {
@@ -714,8 +714,8 @@ trait CollectionTrait
         string $nestingKey = 'children',
     ): CollectionInterface {
         $parents = [];
-        $idPath = $this->_propertyExtractor($idPath);
-        $parentPath = $this->_propertyExtractor($parentPath);
+        $idPath = $this->propertyExtractor($idPath);
+        $parentPath = $this->propertyExtractor($parentPath);
         $isObject = true;
 
         $mapper = function ($row, $key, MapReduce $mapReduce) use (&$parents, $idPath, $parentPath, $nestingKey): void {
@@ -871,7 +871,7 @@ trait CollectionTrait
     public function stopWhen(callable|array $condition): CollectionInterface
     {
         if (!is_callable($condition)) {
-            $condition = $this->_createMatcherFilter($condition);
+            $condition = $this->createMatcherFilter($condition);
         }
 
         return new StoppableIterator($this->unwrap(), $condition);

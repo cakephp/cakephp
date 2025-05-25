@@ -131,7 +131,7 @@ class MapReduce implements IteratorAggregate
     public function getIterator(): Traversable
     {
         if (!$this->_executed) {
-            $this->_execute();
+            $this->execute();
         }
 
         return new ArrayIterator($this->_result);
@@ -180,7 +180,7 @@ class MapReduce implements IteratorAggregate
      * @throws \LogicException if emitIntermediate was called but no reducer function
      * was provided
      */
-    protected function _execute(): void
+    protected function execute(): void
     {
         $mapper = $this->_mapper;
         foreach ($this->_data as $key => $val) {
