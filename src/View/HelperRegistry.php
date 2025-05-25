@@ -112,7 +112,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param string $class Partial classname to resolve.
      * @return class-string<\Cake\View\Helper>|null Either the correct class name or null.
      */
-    protected function _resolveClassName(string $class): ?string
+    protected function resolveClassName(string $class): ?string
     {
         /** @var class-string<\Cake\View\Helper>|null */
         return App::className($class, 'View/Helper', 'Helper');
@@ -129,7 +129,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @return void
      * @throws \Cake\View\Exception\MissingHelperException
      */
-    protected function _throwMissingClassError(string $class, ?string $plugin): void
+    protected function throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingHelperException([
             'class' => $class . 'Helper',
@@ -148,7 +148,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param array<string, mixed> $config An array of settings to use for the helper.
      * @return \Cake\View\Helper The constructed helper class.
      */
-    protected function _create(object|string $class, string $alias, array $config): Helper
+    protected function create(object|string $class, string $alias, array $config): Helper
     {
         if (is_object($class)) {
             return $class;

@@ -31,7 +31,7 @@ class ReadOnlyTestInstanceConfig
      * @param array|string $key
      * @param mixed $value
      */
-    protected function _configWrite($key, $value): void
+    protected function configWrite($key, $value): void
     {
         throw new Exception('This Instance is readonly');
     }

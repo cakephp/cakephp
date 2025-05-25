@@ -9,7 +9,7 @@ class TestApp extends App
 {
     public static $existsInBaseCallback;
 
-    protected static function _classExistsInBase(string $name, string $namespace): bool
+    protected static function classExistsInBase(string $name, string $namespace): bool
     {
         $callback = static::$existsInBaseCallback;
 

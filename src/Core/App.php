@@ -66,13 +66,13 @@ class App
         if ($base !== null) {
             $base = str_replace('/', '\\', rtrim($base, '\\'));
 
-            if (static::_classExistsInBase($fullname, $base)) {
+            if (static::classExistsInBase($fullname, $base)) {
                 /** @var class-string */
                 return $base . $fullname;
             }
         }
 
-        if ($plugin || !static::_classExistsInBase($fullname, 'Cake')) {
+        if ($plugin || !static::classExistsInBase($fullname, 'Cake')) {
             return null;
         }
 
@@ -157,7 +157,7 @@ class App
      * @param string $namespace Namespace.
      * @return bool
      */
-    protected static function _classExistsInBase(string $name, string $namespace): bool
+    protected static function classExistsInBase(string $name, string $namespace): bool
     {
         return class_exists($namespace . $name);
     }

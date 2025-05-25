@@ -325,7 +325,7 @@ class Configure
      */
     public static function load(string $key, string $config = 'default', bool $merge = true): bool
     {
-        $engine = static::_getEngine($config);
+        $engine = static::getEngine($config);
         if (!$engine) {
             throw new CakeException(
                 sprintf(
@@ -378,7 +378,7 @@ class Configure
      */
     public static function dump(string $key, string $config = 'default', array $keys = []): bool
     {
-        $engine = static::_getEngine($config);
+        $engine = static::getEngine($config);
         if (!$engine) {
             throw new CakeException(sprintf('There is no `%s` config engine.', $config));
         }
@@ -397,7 +397,7 @@ class Configure
      * @param string $config The name of the configured adapter
      * @return \Cake\Core\Configure\ConfigEngineInterface|null Engine instance or null
      */
-    protected static function _getEngine(string $config): ?ConfigEngineInterface
+    protected static function getEngine(string $config): ?ConfigEngineInterface
     {
         if (!isset(static::$_engines[$config])) {
             if ($config !== 'default') {

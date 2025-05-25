@@ -97,7 +97,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
 
         $loaded = isset($this->_loaded[$objName]);
         if ($loaded && $config !== []) {
-            $this->_checkDuplicate($objName, $config);
+            $this->checkDuplicate($objName, $config);
         }
         if ($loaded) {
             return $this->_loaded[$objName];
@@ -105,14 +105,14 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
 
         $className = $name;
         if (is_string($name)) {
-            $className = $this->_resolveClassName($name);
+            $className = $this->resolveClassName($name);
             if ($className === null) {
                 [$plugin, $name] = pluginSplit($name);
-                $this->_throwMissingClassError($name, $plugin);
+                $this->throwMissingClassError($name, $plugin);
             }
         }
 
-        $instance = $this->_create($className, $objName, $config);
+        $instance = $this->create($className, $objName, $config);
         $this->_loaded[$objName] = $instance;
 
         return $instance;
@@ -134,7 +134,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @return void
      * @throws \Cake\Core\Exception\CakeException When a duplicate is found.
      */
-    protected function _checkDuplicate(string $name, array $config): void
+    protected function checkDuplicate(string $name, array $config): void
     {
         $existing = $this->_loaded[$name];
         $msg = sprintf('The `%s` alias has already been loaded.', $name);
@@ -176,7 +176,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @return class-string|null The resolved name or null for failure.
      * @phpstan-return class-string<TObject>|null
      */
-    abstract protected function _resolveClassName(string $class): ?string;
+    abstract protected function resolveClassName(string $class): ?string;
 
     /**
      * Throw an exception when the requested object name is missing.
@@ -186,7 +186,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @return void
      * @throws \Exception
      */
-    abstract protected function _throwMissingClassError(string $class, ?string $plugin): void;
+    abstract protected function throwMissingClassError(string $class, ?string $plugin): void;
 
     /**
      * Create an instance of a given classname.
@@ -201,7 +201,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @phpstan-param TObject|class-string<TObject> $class
      * @phpstan-return TObject
      */
-    abstract protected function _create(object|string $class, string $alias, array $config): object;
+    abstract protected function create(object|string $class, string $alias, array $config): object;
 
     /**
      * Get the list of loaded objects.

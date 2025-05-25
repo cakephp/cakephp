@@ -36,7 +36,7 @@ class LogEngineRegistry extends ObjectRegistry
      * @param string $class Partial classname to resolve.
      * @return class-string<\Psr\Log\LoggerInterface>|null Either the correct class name or null.
      */
-    protected function _resolveClassName(string $class): ?string
+    protected function resolveClassName(string $class): ?string
     {
         /** @var class-string<\Psr\Log\LoggerInterface>|null */
         return App::className($class, 'Log/Engine', 'Log');
@@ -52,7 +52,7 @@ class LogEngineRegistry extends ObjectRegistry
      * @return void
      * @throws \Cake\Core\Exception\CakeException
      */
-    protected function _throwMissingClassError(string $class, ?string $plugin): void
+    protected function throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new CakeException(sprintf('Could not load class `%s`.', $class));
     }
@@ -67,7 +67,7 @@ class LogEngineRegistry extends ObjectRegistry
      * @param array<string, mixed> $config An array of settings to use for the logger.
      * @return \Psr\Log\LoggerInterface The constructed logger class.
      */
-    protected function _create(callable|object|string $class, string $alias, array $config): LoggerInterface
+    protected function create(callable|object|string $class, string $alias, array $config): LoggerInterface
     {
         if (is_string($class)) {
             /** @var class-string<\Psr\Log\LoggerInterface> $class */

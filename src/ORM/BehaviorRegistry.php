@@ -100,7 +100,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param string $class Partial classname to resolve.
      * @return class-string<\Cake\ORM\Behavior>|null Either the correct class name or null.
      */
-    protected function _resolveClassName(string $class): ?string
+    protected function resolveClassName(string $class): ?string
     {
         /** @var class-string<\Cake\ORM\Behavior>|null */
         return static::className($class);
@@ -117,7 +117,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @return void
      * @throws \Cake\ORM\Exception\MissingBehaviorException
      */
-    protected function _throwMissingClassError(string $class, ?string $plugin): void
+    protected function throwMissingClassError(string $class, ?string $plugin): void
     {
         throw new MissingBehaviorException([
             'class' => $class . 'Behavior',
@@ -136,7 +136,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param array<string, mixed> $config An array of config to use for the behavior.
      * @return \Cake\ORM\Behavior The constructed behavior class.
      */
-    protected function _create(object|string $class, string $alias, array $config): Behavior
+    protected function create(object|string $class, string $alias, array $config): Behavior
     {
         if (is_object($class)) {
             return $class;

@@ -97,7 +97,7 @@ class IniConfig implements ConfigEngineInterface
      */
     public function read(string $key): array
     {
-        $file = $this->_getFilePath($key, true);
+        $file = $this->getFilePath($key, true);
 
         $contents = parse_ini_file($file, true);
         if ($contents === false) {
@@ -105,14 +105,14 @@ class IniConfig implements ConfigEngineInterface
         }
 
         if ($this->_section && isset($contents[$this->_section])) {
-            $values = $this->_parseNestedValues($contents[$this->_section]);
+            $values = $this->parseNestedValues($contents[$this->_section]);
         } else {
             $values = [];
             foreach ($contents as $section => $attribs) {
                 if (is_array($attribs)) {
-                    $values[$section] = $this->_parseNestedValues($attribs);
+                    $values[$section] = $this->parseNestedValues($attribs);
                 } else {
-                    $parse = $this->_parseNestedValues([$attribs]);
+                    $parse = $this->parseNestedValues([$attribs]);
                     $values[$section] = array_shift($parse);
                 }
             }
@@ -127,7 +127,7 @@ class IniConfig implements ConfigEngineInterface
      * @param array $values Values to be exploded.
      * @return array Array of values exploded
      */
-    protected function _parseNestedValues(array $values): array
+    protected function parseNestedValues(array $values): array
     {
         foreach ($values as $key => $value) {
             if ($value === '1') {
@@ -167,7 +167,7 @@ class IniConfig implements ConfigEngineInterface
             if (is_array($value)) {
                 $kValues = Hash::flatten($value, '.');
                 foreach ($kValues as $k2 => $v) {
-                    $result[] = "{$k2} = " . $this->_value($v);
+                    $result[] = "{$k2} = " . $this->value($v);
                 }
             }
             if ($isSection) {
@@ -176,7 +176,7 @@ class IniConfig implements ConfigEngineInterface
         }
         $contents = trim(implode("\n", $result));
 
-        $filename = $this->_getFilePath($key);
+        $filename = $this->getFilePath($key);
 
         return file_put_contents($filename, $contents) > 0;
     }
@@ -187,7 +187,7 @@ class IniConfig implements ConfigEngineInterface
      * @param mixed $value Value to export.
      * @return string String value for ini file.
      */
-    protected function _value(mixed $value): string
+    protected function value(mixed $value): string
     {
         return match ($value) {
             null => 'null',
