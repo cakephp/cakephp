@@ -682,7 +682,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     {
         $builder = $this->viewBuilder();
         if (!$builder->getTemplatePath()) {
-            $builder->setTemplatePath($this->_templatePath());
+            $builder->setTemplatePath($this->templatePath());
         }
 
         $this->autoRender = false;
@@ -804,7 +804,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *
      * @return string
      */
-    protected function _templatePath(): string
+    protected function templatePath(): string
     {
         $templatePath = $this->name;
         if ($this->request->getParam('prefix')) {

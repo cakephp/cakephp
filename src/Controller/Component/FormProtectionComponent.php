@@ -73,7 +73,7 @@ class FormProtectionComponent extends Component
      *
      * @return string
      */
-    protected function _getSessionId(): string
+    protected function getSessionId(): string
     {
         $session = $this->getController()->getRequest()->getSession();
         $session->start();
@@ -100,7 +100,7 @@ class FormProtectionComponent extends Component
             && $hasData
             && $this->_config['validate']
         ) {
-            $sessionId = $this->_getSessionId();
+            $sessionId = $this->getSessionId();
             $url = Router::url($request->getRequestTarget());
 
             $formProtector = new FormProtector($this->_config);
