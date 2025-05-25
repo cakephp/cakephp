@@ -29,6 +29,7 @@ use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
 
@@ -1543,6 +1544,7 @@ class ServerRequestTest extends TestCase
     /**
      * TestAllowMethod
      */
+    #[DoesNotPerformAssertions]
     public function testAllowMethod(): void
     {
         $request = new ServerRequest(['environment' => [
