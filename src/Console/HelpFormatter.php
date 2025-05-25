@@ -95,12 +95,12 @@ class HelpFormatter
             $out[] = '';
         }
         $out[] = '<info>Usage:</info>';
-        $out[] = $this->_generateUsage();
+        $out[] = $this->generateUsage();
         $out[] = '';
 
         $options = $parser->options();
         if ($options) {
-            $max = $this->_getMaxLength($options) + 8;
+            $max = $this->getMaxLength($options) + 8;
             $out[] = '<info>Options:</info>';
             $out[] = '';
             foreach ($options as $option) {
@@ -115,7 +115,7 @@ class HelpFormatter
 
         $arguments = $parser->arguments();
         if ($arguments) {
-            $max = $this->_getMaxLength($arguments) + 2;
+            $max = $this->getMaxLength($arguments) + 2;
             $out[] = '<info>Arguments:</info>';
             $out[] = '';
             foreach ($arguments as $argument) {
@@ -143,7 +143,7 @@ class HelpFormatter
      *
      * @return string
      */
-    protected function _generateUsage(): string
+    protected function generateUsage(): string
     {
         $usage = [$this->_alias . ' ' . $this->_parser->getCommand()];
         $options = [];
@@ -172,7 +172,7 @@ class HelpFormatter
      * @param array<\Cake\Console\ConsoleInputOption|\Cake\Console\ConsoleInputArgument> $collection The collection to find a max length of.
      * @return int
      */
-    protected function _getMaxLength(array $collection): int
+    protected function getMaxLength(array $collection): int
     {
         $max = 0;
         foreach ($collection as $item) {
