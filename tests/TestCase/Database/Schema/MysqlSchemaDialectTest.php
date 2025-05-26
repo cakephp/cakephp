@@ -190,6 +190,10 @@ class MysqlSchemaDialectTest extends TestCase
                 ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
             ],
             [
+                'FLOAT(24)',
+                ['type' => 'float', 'length' => 24, 'precision' => 0, 'unsigned' => false],
+            ],
+            [
                 'DOUBLE',
                 ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
             ],
