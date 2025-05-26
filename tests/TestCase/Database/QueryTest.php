@@ -319,4 +319,19 @@ class QueryTest extends TestCase
         $this->assertEmpty($this->query->clause('where'));
         $this->query->clause('nope');
     }
+
+    public function testOptimizerHintClause(): void
+    {
+        $this->query->optimizerHint('single_hint()');
+        $this->assertSame(['single_hint()'], $this->query->clause('optimizerHint'));
+
+        $this->query->optimizerHint(['array_hint()', 'array_hint()']);
+        $this->assertSame(['single_hint()', 'array_hint()', 'array_hint()'], $this->query->clause('optimizerHint'));
+
+        $this->query->optimizerHint('single_hint()', true);
+        $this->assertSame(['single_hint()'], $this->query->clause('optimizerHint'));
+
+        $this->query->optimizerHint(['array_hint()', 'array_hint()'], true);
+        $this->assertSame(['array_hint()', 'array_hint()'], $this->query->clause('optimizerHint'));
+    }
 }

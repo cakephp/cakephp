@@ -280,6 +280,7 @@ class Sqlserver extends Driver
             DriverFeatureEnum::INTERSECT_ALL => false,
             DriverFeatureEnum::JSON => false,
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => false,
+            DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => false,
         };
     }
 

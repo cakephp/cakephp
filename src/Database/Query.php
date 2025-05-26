@@ -107,6 +107,7 @@ abstract class Query implements ExpressionInterface, Stringable
         'insert' => [],
         'values' => [],
         'with' => [],
+        'optimizerHint' => [],
         'select' => [],
         'distinct' => false,
         'modifier' => [],
@@ -421,6 +422,22 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         $this->_parts['with'][] = $cte;
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Add engine-specific optimizer hint.
+     *
+     * @param array<string>|string $hint Optimizer hint
+     * @param bool $overwrite Whether to replace existing hints
+     * @return $this
+     */
+    public function optimizerHint(array|string $hint, bool $overwrite = false)
+    {
+        $hints = array_values((array)$hint);
+        $this->_parts['optimizerHint'] = $overwrite ? $hints : array_merge($this->_parts['optimizerHint'], $hints);
         $this->_dirty();
 
         return $this;
