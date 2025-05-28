@@ -124,7 +124,7 @@ class MysqlSchemaDialect extends SchemaDialect
             throw new DatabaseException("Could not describe columns on `{$tableName}`", null, $e);
         }
         foreach ($statement->fetchAll('assoc') as $row) {
-            $field = $this->_convertColumn($row['Type']);
+            $field = $this->convertColumn($row['Type']);
             $default = $this->parseDefault($field['type'], $row);
 
             $field += [
@@ -295,7 +295,7 @@ class MysqlSchemaDialect extends SchemaDialect
      * @return array<string, mixed> Array of column information.
      * @throws \Cake\Database\Exception\DatabaseException When column type cannot be parsed.
      */
-    protected function _convertColumn(string $column): array
+    protected function convertColumn(string $column): array
     {
         preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
         if (!$matches) {
@@ -315,7 +315,7 @@ class MysqlSchemaDialect extends SchemaDialect
             $precision = (int)$precision;
         }
 
-        $type = $this->_applyTypeSpecificColumnConversion(
+        $type = $this->applyTypeSpecificColumnConversion(
             $col,
             compact('length', 'precision', 'scale'),
         );
@@ -416,7 +416,7 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
-        $field = $this->_convertColumn($row['Type']);
+        $field = $this->convertColumn($row['Type']);
         $default = $this->parseDefault($field['type'], $row);
         $field += [
             'null' => $row['Null'] === 'YES',
@@ -516,8 +516,8 @@ class MysqlSchemaDialect extends SchemaDialect
             'type' => TableSchema::CONSTRAINT_FOREIGN,
             'columns' => [$row['COLUMN_NAME']],
             'references' => [$row['REFERENCED_TABLE_NAME'], $row['REFERENCED_COLUMN_NAME']],
-            'update' => $this->_convertOnClause($row['UPDATE_RULE']),
-            'delete' => $this->_convertOnClause($row['DELETE_RULE']),
+            'update' => $this->convertOnClause($row['UPDATE_RULE']),
+            'delete' => $this->convertOnClause($row['DELETE_RULE']),
         ];
         $name = $row['CONSTRAINT_NAME'];
         $schema->addConstraint($name, $data);
@@ -547,8 +547,8 @@ class MysqlSchemaDialect extends SchemaDialect
                     'type' => TableSchema::CONSTRAINT_FOREIGN,
                     'columns' => [],
                     'references' => [$row['REFERENCED_TABLE_NAME'], []],
-                    'update' => $this->_convertOnClause($row['UPDATE_RULE'] ?? ''),
-                    'delete' => $this->_convertOnClause($row['DELETE_RULE'] ?? ''),
+                    'update' => $this->convertOnClause($row['UPDATE_RULE'] ?? ''),
+                    'delete' => $this->convertOnClause($row['DELETE_RULE'] ?? ''),
                     'length' => [],
                 ];
             }
@@ -817,7 +817,7 @@ class MysqlSchemaDialect extends SchemaDialect
         assert($data !== null);
 
         // TODO deprecrate Type defined schema mappings?
-        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
+        $sql = $this->getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
             return $sql;
         }
@@ -865,7 +865,7 @@ class MysqlSchemaDialect extends SchemaDialect
         }
         $out .= $this->_driver->quoteIdentifier($name);
 
-        return $this->_keySql($out, $data);
+        return $this->keySql($out, $data);
     }
 
     /**
@@ -925,7 +925,7 @@ class MysqlSchemaDialect extends SchemaDialect
         }
         $out .= $this->_driver->quoteIdentifier($name);
 
-        return $this->_keySql($out, $data);
+        return $this->keySql($out, $data);
     }
 
     /**
@@ -935,7 +935,7 @@ class MysqlSchemaDialect extends SchemaDialect
      * @param array $data Key data.
      * @return string
      */
-    protected function _keySql(string $prefix, array $data): string
+    protected function keySql(string $prefix, array $data): string
     {
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
@@ -951,9 +951,9 @@ class MysqlSchemaDialect extends SchemaDialect
                 ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 implode(', ', $columns),
                 $this->_driver->quoteIdentifier($data['references'][0]),
-                $this->_convertConstraintColumns($data['references'][1]),
-                $this->_foreignOnClause($data['update']),
-                $this->_foreignOnClause($data['delete']),
+                $this->convertConstraintColumns($data['references'][1]),
+                $this->foreignOnClause($data['update']),
+                $this->foreignOnClause($data['delete']),
             );
         }
 

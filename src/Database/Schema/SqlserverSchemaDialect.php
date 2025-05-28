@@ -121,7 +121,7 @@ class SqlserverSchemaDialect extends SchemaDialect
      * @return array<string, mixed> Array of column information.
      * @link https://technet.microsoft.com/en-us/library/ms187752.aspx
      */
-    protected function _convertColumn(
+    protected function convertColumn(
         string $col,
         ?int $length = null,
         ?int $precision = null,
@@ -129,7 +129,7 @@ class SqlserverSchemaDialect extends SchemaDialect
     ): array {
         $col = strtolower($col);
 
-        $type = $this->_applyTypeSpecificColumnConversion(
+        $type = $this->applyTypeSpecificColumnConversion(
             $col,
             compact('length', 'precision', 'scale'),
         );
@@ -234,7 +234,7 @@ class SqlserverSchemaDialect extends SchemaDialect
      */
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
-        $field = $this->_convertColumn(
+        $field = $this->convertColumn(
             $row['type'],
             $row['char_length'] !== null ? (int)$row['char_length'] : null,
             $row['precision'] !== null ? (int)$row['precision'] : null,
@@ -247,7 +247,7 @@ class SqlserverSchemaDialect extends SchemaDialect
 
         $field += [
             'null' => $row['null'] === '1',
-            'default' => $this->_defaultValue($field['type'], $row['default']),
+            'default' => $this->defaultValue($field['type'], $row['default']),
             'collate' => $row['collation_name'],
         ];
         $schema->addColumn($row['name'], $field);
@@ -283,7 +283,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         $statement = $this->_driver->execute($sql, [$name, $schema]);
         $columns = [];
         foreach ($statement->fetchAll('assoc') as $row) {
-            $field = $this->_convertColumn(
+            $field = $this->convertColumn(
                 $row['type'],
                 $row['char_length'] !== null ? (int)$row['char_length'] : null,
                 $row['precision'] !== null ? (int)$row['precision'] : null,
@@ -297,7 +297,7 @@ class SqlserverSchemaDialect extends SchemaDialect
             $field += [
                 'name' => $row['name'],
                 'null' => $row['null'] === '1',
-                'default' => $this->_defaultValue($field['type'], $row['default']),
+                'default' => $this->defaultValue($field['type'], $row['default']),
                 'comment' => $row['comment'] ?? null,
                 'collate' => $row['collation_name'],
             ];
@@ -317,7 +317,7 @@ class SqlserverSchemaDialect extends SchemaDialect
      * @param string|null $default The default value.
      * @return string|int|null
      */
-    protected function _defaultValue(string $type, ?string $default): string|int|null
+    protected function defaultValue(string $type, ?string $default): string|int|null
     {
         if ($default === null) {
             return null;
@@ -501,8 +501,8 @@ class SqlserverSchemaDialect extends SchemaDialect
                     'type' => TableSchema::CONSTRAINT_FOREIGN,
                     'columns' => [],
                     'references' => [$row['reference_table'], []],
-                    'update' => $this->_convertOnClause($row['update_type']),
-                    'delete' => $this->_convertOnClause($row['delete_type']),
+                    'update' => $this->convertOnClause($row['update_type']),
+                    'delete' => $this->convertOnClause($row['delete_type']),
                 ];
             }
             $keys[$name]['columns'][] = $row['column'];
@@ -540,8 +540,8 @@ class SqlserverSchemaDialect extends SchemaDialect
             'type' => TableSchema::CONSTRAINT_FOREIGN,
             'columns' => [$row['column']],
             'references' => [$row['reference_table'], $row['reference_column']],
-            'update' => $this->_convertOnClause($row['update_type']),
-            'delete' => $this->_convertOnClause($row['delete_type']),
+            'update' => $this->convertOnClause($row['update_type']),
+            'delete' => $this->convertOnClause($row['delete_type']),
         ];
         $name = $row['foreign_key_name'];
         $schema->addConstraint($name, $data);
@@ -558,17 +558,17 @@ class SqlserverSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
-    protected function _foreignOnClause(string $on): string
+    protected function foreignOnClause(string $on): string
     {
-        $parent = parent::_foreignOnClause($on);
+        $parent = parent::foreignOnClause($on);
 
-        return $parent === 'RESTRICT' ? parent::_foreignOnClause(TableSchema::ACTION_NO_ACTION) : $parent;
+        return $parent === 'RESTRICT' ? parent::foreignOnClause(TableSchema::ACTION_NO_ACTION) : $parent;
     }
 
     /**
      * @inheritDoc
      */
-    protected function _convertOnClause(string $clause): string
+    protected function convertOnClause(string $clause): string
     {
         return match ($clause) {
             'NO_ACTION' => TableSchema::ACTION_NO_ACTION,
@@ -588,7 +588,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         assert($data !== null);
         $data['name'] = $name;
 
-        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
+        $sql = $this->getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
             return $sql;
         }
@@ -845,7 +845,7 @@ class SqlserverSchemaDialect extends SchemaDialect
             $out .= ' UNIQUE';
         }
 
-        return $this->_keySql($out, $data);
+        return $this->keySql($out, $data);
     }
 
     /**
@@ -855,7 +855,7 @@ class SqlserverSchemaDialect extends SchemaDialect
      * @param array $data Key data.
      * @return string
      */
-    protected function _keySql(string $prefix, array $data): string
+    protected function keySql(string $prefix, array $data): string
     {
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
@@ -866,9 +866,9 @@ class SqlserverSchemaDialect extends SchemaDialect
                 ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 implode(', ', $columns),
                 $this->_driver->quoteIdentifier($data['references'][0]),
-                $this->_convertConstraintColumns($data['references'][1]),
-                $this->_foreignOnClause($data['update']),
-                $this->_foreignOnClause($data['delete']),
+                $this->convertConstraintColumns($data['references'][1]),
+                $this->foreignOnClause($data['update']),
+                $this->foreignOnClause($data['delete']),
             );
         }
 

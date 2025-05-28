@@ -111,7 +111,7 @@ class FloatType extends BaseType implements BatchCastingInterface
             return null;
         }
         if (is_string($value) && $this->_useLocaleParser) {
-            return $this->_parseValue($value);
+            return $this->parseValue($value);
         }
         if (is_numeric($value)) {
             return (float)$value;
@@ -157,7 +157,7 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param string $value The value to parse and convert to an float.
      * @return float
      */
-    protected function _parseValue(string $value): float
+    protected function parseValue(string $value): float
     {
         $class = static::$numberClass;
 

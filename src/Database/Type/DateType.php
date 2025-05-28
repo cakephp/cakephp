@@ -173,10 +173,10 @@ class DateType extends BaseType implements BatchCastingInterface
 
             if (is_string($value)) {
                 if ($this->_useLocaleMarshal) {
-                    return $this->_parseLocaleValue($value);
+                    return $this->parseLocaleValue($value);
                 }
 
-                return $this->_parseValue($value);
+                return $this->parseValue($value);
             }
         } catch (Exception) {
             return null;
@@ -249,7 +249,7 @@ class DateType extends BaseType implements BatchCastingInterface
      * @param string $value
      * @return \Cake\I18n\Date|null
      */
-    protected function _parseLocaleValue(string $value): ?Date
+    protected function parseLocaleValue(string $value): ?Date
     {
         /** @var class-string<\Cake\I18n\Date> $class */
         $class = $this->_className;
@@ -264,7 +264,7 @@ class DateType extends BaseType implements BatchCastingInterface
      * @param string $value The value to parse and convert to an object.
      * @return \Cake\Chronos\ChronosDate|null
      */
-    protected function _parseValue(string $value): ?ChronosDate
+    protected function parseValue(string $value): ?ChronosDate
     {
         $class = $this->_className;
         foreach ($this->_marshalFormats as $format) {

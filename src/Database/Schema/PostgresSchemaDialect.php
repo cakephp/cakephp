@@ -116,7 +116,7 @@ class PostgresSchemaDialect extends SchemaDialect
      * @throws \Cake\Database\Exception\DatabaseException when column cannot be parsed.
      * @return array<string, mixed> Array of column information.
      */
-    protected function _convertColumn(string $column): array
+    protected function convertColumn(string $column): array
     {
         preg_match('/([a-z\s]+)(?:\(([a-z0-9,]+)(?:,\s*([0-9]+))?\))?/i', $column, $matches);
         if (!$matches) {
@@ -131,7 +131,7 @@ class PostgresSchemaDialect extends SchemaDialect
             $length = (int)$matches[2];
         }
 
-        $type = $this->_applyTypeSpecificColumnConversion(
+        $type = $this->applyTypeSpecificColumnConversion(
             $col,
             compact('length', 'precision', 'scale'),
         );
@@ -209,7 +209,7 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
-        $field = $this->_convertColumn($row['type']);
+        $field = $this->convertColumn($row['type']);
 
         if ($field['type'] === TableSchemaInterface::TYPE_BOOLEAN) {
             if ($row['default'] === 'true') {
@@ -224,7 +224,7 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         $field += [
-            'default' => $this->_defaultValue($row['default']),
+            'default' => $this->defaultValue($row['default']),
             'null' => $row['null'] === 'YES',
             'collate' => $row['collation_name'],
             'comment' => $row['comment'],
@@ -282,7 +282,7 @@ class PostgresSchemaDialect extends SchemaDialect
         $statement = $this->_driver->execute($sql, [$name, $schema, $config['database']]);
         $columns = [];
         foreach ($statement->fetchAll('assoc') as $row) {
-            $field = $this->_convertColumn($row['type']);
+            $field = $this->convertColumn($row['type']);
             if ($field['type'] === TableSchemaInterface::TYPE_BOOLEAN) {
                 if ($row['default'] === 'true') {
                     $row['default'] = 1;
@@ -296,7 +296,7 @@ class PostgresSchemaDialect extends SchemaDialect
 
             $field += [
                 'name' => $row['name'],
-                'default' => $this->_defaultValue($row['default']),
+                'default' => $this->defaultValue($row['default']),
                 'null' => $row['null'] === 'YES',
                 'collate' => $row['collation_name'],
                 'comment' => $row['comment'],
@@ -337,7 +337,7 @@ class PostgresSchemaDialect extends SchemaDialect
      * @param string|int|null $default The default value.
      * @return string|int|null
      */
-    protected function _defaultValue(string|int|null $default): string|int|null
+    protected function defaultValue(string|int|null $default): string|int|null
     {
         if (is_numeric($default) || $default === null) {
             return $default;
@@ -408,7 +408,7 @@ class PostgresSchemaDialect extends SchemaDialect
             $type = TableSchema::CONSTRAINT_UNIQUE;
         }
         if ($type === TableSchema::CONSTRAINT_PRIMARY || $type === TableSchema::CONSTRAINT_UNIQUE) {
-            $this->_convertConstraint($schema, $name, $type, $row);
+            $this->convertConstraint($schema, $name, $type, $row);
 
             return;
         }
@@ -471,7 +471,7 @@ class PostgresSchemaDialect extends SchemaDialect
      * @param array $row The metadata record to update with.
      * @return void
      */
-    protected function _convertConstraint(TableSchema $schema, string $name, string $type, array $row): void
+    protected function convertConstraint(TableSchema $schema, string $name, string $type, array $row): void
     {
         $constraint = $schema->getConstraint($name);
         if (!$constraint) {
@@ -504,8 +504,8 @@ class PostgresSchemaDialect extends SchemaDialect
             'type' => TableSchema::CONSTRAINT_FOREIGN,
             'columns' => $row['column_name'],
             'references' => [$row['references_table'], $row['references_field']],
-            'update' => $this->_convertOnClause($row['on_update']),
-            'delete' => $this->_convertOnClause($row['on_delete']),
+            'update' => $this->convertOnClause($row['on_update']),
+            'delete' => $this->convertOnClause($row['on_delete']),
         ];
         $schema->addConstraint($row['name'], $data);
     }
@@ -527,8 +527,8 @@ class PostgresSchemaDialect extends SchemaDialect
                     'type' => TableSchema::CONSTRAINT_FOREIGN,
                     'columns' => [],
                     'references' => [$row['references_table'], []],
-                    'update' => $this->_convertOnClause($row['on_update']),
-                    'delete' => $this->_convertOnClause($row['on_delete']),
+                    'update' => $this->convertOnClause($row['on_update']),
+                    'delete' => $this->convertOnClause($row['on_delete']),
                 ];
             }
             // column indexes start at 1
@@ -592,7 +592,7 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
-    protected function _convertOnClause(string $clause): string
+    protected function convertOnClause(string $clause): string
     {
         if ($clause === 'r') {
             return TableSchema::ACTION_RESTRICT;
@@ -616,7 +616,7 @@ class PostgresSchemaDialect extends SchemaDialect
         assert($data !== null);
         $data['name'] = $name;
 
-        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
+        $sql = $this->getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
             return $sql;
         }
@@ -857,7 +857,7 @@ class PostgresSchemaDialect extends SchemaDialect
             $out .= ' UNIQUE';
         }
 
-        return $this->_keySql($out, $data);
+        return $this->keySql($out, $data);
     }
 
     /**
@@ -867,7 +867,7 @@ class PostgresSchemaDialect extends SchemaDialect
      * @param array<string, mixed> $data Key data.
      * @return string
      */
-    protected function _keySql(string $prefix, array $data): string
+    protected function keySql(string $prefix, array $data): string
     {
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
@@ -878,9 +878,9 @@ class PostgresSchemaDialect extends SchemaDialect
                 ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERRABLE INITIALLY IMMEDIATE',
                 implode(', ', $columns),
                 $this->_driver->quoteIdentifier($data['references'][0]),
-                $this->_convertConstraintColumns($data['references'][1]),
-                $this->_foreignOnClause($data['update']),
-                $this->_foreignOnClause($data['delete']),
+                $this->convertConstraintColumns($data['references'][1]),
+                $this->foreignOnClause($data['update']),
+                $this->foreignOnClause($data['delete']),
             );
         }
 

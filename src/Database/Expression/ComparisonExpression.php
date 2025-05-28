@@ -96,11 +96,11 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      */
     public function setValue(mixed $value): void
     {
-        $value = $this->_castToExpression($value, $this->_type);
+        $value = $this->castToExpression($value, $this->_type);
 
         $isMultiple = $this->_type && str_contains($this->_type, '[]');
         if ($isMultiple) {
-            [$value, $this->_valueExpressions] = $this->_collectExpressions($value);
+            [$value, $this->_valueExpressions] = $this->collectExpressions($value);
         }
 
         $this->_isMultiple = $isMultiple;
@@ -156,7 +156,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
             $template = '%s %s (%s)';
             $value = $this->_value->sql($binder);
         } else {
-            [$template, $value] = $this->_stringExpression($binder);
+            [$template, $value] = $this->stringExpression($binder);
         }
         assert(is_string($field));
 
@@ -209,7 +209,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      * @param \Cake\Database\ValueBinder $binder The value binder to use.
      * @return array First position containing the template and the second a placeholder
      */
-    protected function _stringExpression(ValueBinder $binder): array
+    protected function stringExpression(ValueBinder $binder): array
     {
         $template = '%s ';
 
@@ -223,7 +223,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
             if ($type !== null) {
                 $type = str_replace('[]', '', $type);
             }
-            $value = $this->_flattenValue($this->_value, $binder, $type);
+            $value = $this->flattenValue($this->_value, $binder, $type);
 
             // To avoid SQL errors when comparing a field to a list of empty values,
             // better just throw an exception here
@@ -236,7 +236,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
             }
         } else {
             $template .= '%s %s';
-            $value = $this->_bindValue($this->_value, $binder, $this->_type);
+            $value = $this->bindValue($this->_value, $binder, $this->_type);
         }
 
         return [$template, $value];
@@ -250,7 +250,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      * @param string|null $type The type of $value
      * @return string generated placeholder
      */
-    protected function _bindValue(mixed $value, ValueBinder $binder, ?string $type = null): string
+    protected function bindValue(mixed $value, ValueBinder $binder, ?string $type = null): string
     {
         $placeholder = $binder->placeholder('c');
         $binder->bind($placeholder, $value, $type);
@@ -267,7 +267,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      * @param string|null $type the type to cast values to
      * @return string
      */
-    protected function _flattenValue(iterable $value, ValueBinder $binder, ?string $type = null): string
+    protected function flattenValue(iterable $value, ValueBinder $binder, ?string $type = null): string
     {
         $parts = [];
         if (is_array($value)) {
@@ -292,7 +292,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
      * @param \Cake\Database\ExpressionInterface|iterable $values The rows to insert
      * @return array
      */
-    protected function _collectExpressions(ExpressionInterface|iterable $values): array
+    protected function collectExpressions(ExpressionInterface|iterable $values): array
     {
         if ($values instanceof ExpressionInterface) {
             return [$values, []];

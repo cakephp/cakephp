@@ -59,7 +59,7 @@ class DeleteQuery extends Query
      */
     public function delete(?string $table = null): static
     {
-        $this->_dirty();
+        $this->dirty();
         if ($table !== null) {
             $this->from($table);
         }

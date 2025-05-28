@@ -68,7 +68,7 @@ class CompatDialect extends SchemaDialect
             $precision = (int)$precision;
         }
 
-        $type = $this->_applyTypeSpecificColumnConversion(
+        $type = $this->applyTypeSpecificColumnConversion(
             $col,
             compact('length', 'precision', 'scale'),
         );
@@ -474,8 +474,8 @@ class CompatDialect extends SchemaDialect
         } else {
             $data['references'] = [$foreignKey['table'], $data['references']];
         }
-        $data['update'] = $this->_convertOnClause($foreignKey['on_update'] ?? '');
-        $data['delete'] = $this->_convertOnClause($foreignKey['on_delete'] ?? '');
+        $data['update'] = $this->convertOnClause($foreignKey['on_update'] ?? '');
+        $data['delete'] = $this->convertOnClause($foreignKey['on_delete'] ?? '');
 
         $name = implode('_', $data['columns']) . '_' . $row['id'] . '_fk';
 

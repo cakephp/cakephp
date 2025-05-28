@@ -130,7 +130,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
             return null;
         }
         if (is_string($value) && $this->_useLocaleParser) {
-            return $this->_parseValue($value);
+            return $this->parseValue($value);
         }
         if (is_numeric($value)) {
             return (string)$value;
@@ -177,7 +177,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
      * @param string $value The value to parse and convert to an float.
      * @return string
      */
-    protected function _parseValue(string $value): string
+    protected function parseValue(string $value): string
     {
         $class = static::$numberClass;
 

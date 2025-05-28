@@ -545,17 +545,17 @@ abstract class Driver implements LoggerAwareInterface
         }
 
         $query = match (true) {
-            $query instanceof SelectQuery => $this->_selectQueryTranslator($query),
-            $query instanceof InsertQuery => $this->_insertQueryTranslator($query),
-            $query instanceof UpdateQuery => $this->_updateQueryTranslator($query),
-            $query instanceof DeleteQuery => $this->_deleteQueryTranslator($query),
+            $query instanceof SelectQuery => $this->selectQueryTranslator($query),
+            $query instanceof InsertQuery => $this->insertQueryTranslator($query),
+            $query instanceof UpdateQuery => $this->updateQueryTranslator($query),
+            $query instanceof DeleteQuery => $this->deleteQueryTranslator($query),
             default => throw new InvalidArgumentException(sprintf(
                 'Instance of SelectQuery, UpdateQuery, InsertQuery, DeleteQuery expected. Found `%s` instead.',
                 get_debug_type($query),
             )),
         };
 
-        $translators = $this->_expressionTranslators();
+        $translators = $this->expressionTranslators();
         if (!$translators) {
             return $query;
         }
@@ -578,7 +578,7 @@ abstract class Driver implements LoggerAwareInterface
      *
      * @return array<class-string, string>
      */
-    protected function _expressionTranslators(): array
+    protected function expressionTranslators(): array
     {
         return [];
     }
@@ -589,9 +589,9 @@ abstract class Driver implements LoggerAwareInterface
      * @param \Cake\Database\Query\SelectQuery<mixed> $query The query to translate
      * @return \Cake\Database\Query\SelectQuery<mixed> The modified query
      */
-    protected function _selectQueryTranslator(SelectQuery $query): SelectQuery
+    protected function selectQueryTranslator(SelectQuery $query): SelectQuery
     {
-        return $this->_transformDistinct($query);
+        return $this->transformDistinct($query);
     }
 
     /**
@@ -601,7 +601,7 @@ abstract class Driver implements LoggerAwareInterface
      * @param \Cake\Database\Query\SelectQuery<mixed> $query The query to be transformed
      * @return \Cake\Database\Query\SelectQuery<mixed>
      */
-    protected function _transformDistinct(SelectQuery $query): SelectQuery
+    protected function transformDistinct(SelectQuery $query): SelectQuery
     {
         if (is_array($query->clause('distinct'))) {
             $query->groupBy($query->clause('distinct'), true);
@@ -623,7 +623,7 @@ abstract class Driver implements LoggerAwareInterface
      * @param \Cake\Database\Query\DeleteQuery $query The query to translate
      * @return \Cake\Database\Query\DeleteQuery The modified query
      */
-    protected function _deleteQueryTranslator(DeleteQuery $query): DeleteQuery
+    protected function deleteQueryTranslator(DeleteQuery $query): DeleteQuery
     {
         $hadAlias = false;
         $tables = [];
@@ -641,7 +641,7 @@ abstract class Driver implements LoggerAwareInterface
             return $query;
         }
 
-        return $this->_removeAliasesFromConditions($query);
+        return $this->removeAliasesFromConditions($query);
     }
 
     /**
@@ -655,9 +655,9 @@ abstract class Driver implements LoggerAwareInterface
      * @param \Cake\Database\Query\UpdateQuery $query The query to translate
      * @return \Cake\Database\Query\UpdateQuery The modified query
      */
-    protected function _updateQueryTranslator(UpdateQuery $query): UpdateQuery
+    protected function updateQueryTranslator(UpdateQuery $query): UpdateQuery
     {
-        return $this->_removeAliasesFromConditions($query);
+        return $this->removeAliasesFromConditions($query);
     }
 
     /**
@@ -671,7 +671,7 @@ abstract class Driver implements LoggerAwareInterface
      * @phpstan-param T $query
      * @phpstan-return T
      */
-    protected function _removeAliasesFromConditions(UpdateQuery|DeleteQuery $query): UpdateQuery|DeleteQuery
+    protected function removeAliasesFromConditions(UpdateQuery|DeleteQuery $query): UpdateQuery|DeleteQuery
     {
         if ($query->clause('join')) {
             throw new DatabaseException(
@@ -720,7 +720,7 @@ abstract class Driver implements LoggerAwareInterface
      * @param \Cake\Database\Query\InsertQuery $query The query to translate
      * @return \Cake\Database\Query\InsertQuery The modified query
      */
-    protected function _insertQueryTranslator(InsertQuery $query): InsertQuery
+    protected function insertQueryTranslator(InsertQuery $query): InsertQuery
     {
         return $query;
     }

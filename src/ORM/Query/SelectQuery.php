@@ -1014,7 +1014,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         if ($associations) {
             $loader->contain($associations, $queryBuilder);
         }
-        $this->_addAssociationsToTypeMap(
+        $this->addAssociationsToTypeMap(
             $this->getRepository(),
             $this->getTypeMap(),
             $loader->getContain(),
@@ -1039,7 +1039,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function clearContain(): static
     {
         $this->getEagerLoader()->clearContain();
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -1054,7 +1054,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param array<string, array> $associations The nested tree of associations to walk.
      * @return void
      */
-    protected function _addAssociationsToTypeMap(Table $table, TypeMap $typeMap, array $associations): void
+    protected function addAssociationsToTypeMap(Table $table, TypeMap $typeMap, array $associations): void
     {
         foreach ($associations as $name => $nested) {
             if (!$table->hasAssociation($name)) {
@@ -1067,7 +1067,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
                 $this->addDefaultTypes($target);
             }
             if ($nested) {
-                $this->_addAssociationsToTypeMap($target, $typeMap, $nested);
+                $this->addAssociationsToTypeMap($target, $typeMap, $nested);
             }
         }
     }
@@ -1125,8 +1125,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function matching(string $assoc, ?Closure $builder = null): static
     {
         $result = $this->getEagerLoader()->setMatching($assoc, $builder)->getMatching();
-        $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
-        $this->_dirty();
+        $this->addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
+        $this->dirty();
 
         return $this;
     }
@@ -1202,8 +1202,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
                 'fields' => false,
             ])
             ->getMatching();
-        $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
-        $this->_dirty();
+        $this->addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
+        $this->dirty();
 
         return $this;
     }
@@ -1251,8 +1251,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
                 'fields' => false,
             ])
             ->getMatching();
-        $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
-        $this->_dirty();
+        $this->addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
+        $this->dirty();
 
         return $this;
     }
@@ -1316,8 +1316,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
                 'negateMatch' => true,
             ])
             ->getMatching();
-        $this->_addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
-        $this->_dirty();
+        $this->addAssociationsToTypeMap($this->getRepository(), $this->getTypeMap(), $result);
+        $this->dirty();
 
         return $this;
     }
@@ -1363,7 +1363,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function clearResult(): static
     {
-        $this->_dirty();
+        $this->dirty();
 
         return $this;
     }
@@ -1392,7 +1392,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function count(): int
     {
-        return $this->_resultsCount ??= $this->_performCount();
+        return $this->_resultsCount ??= $this->performCount();
     }
 
     /**
@@ -1400,7 +1400,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return int
      */
-    protected function _performCount(): int
+    protected function performCount(): int
     {
         $query = $this->cleanCopy();
         $counter = $this->_counter;
@@ -1489,7 +1489,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function enableHydration(bool $enable = true): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_hydrate = $enable;
 
         return $this;
@@ -1505,7 +1505,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function disableHydration(): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_hydrate = false;
 
         return $this;
@@ -1549,7 +1549,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     {
         $this->triggerBeforeFind();
 
-        $this->_transformQuery();
+        $this->transformQuery();
 
         return parent::sql($binder);
     }
@@ -1598,7 +1598,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @see \Cake\Database\Query::execute()
      * @return void
      */
-    protected function _transformQuery(): void
+    protected function transformQuery(): void
     {
         if (!$this->_dirty) {
             return;
@@ -1609,9 +1609,9 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         if (empty($this->_parts['from'])) {
             $this->from([$repository->getAlias() => $repository->getTable()]);
         }
-        $this->_addDefaultFields();
+        $this->addDefaultFields();
         $this->getEagerLoader()->attachAssociations($this, $repository, !$this->_hasFields);
-        $this->_addDefaultSelectTypes();
+        $this->addDefaultSelectTypes();
     }
 
     /**
@@ -1620,7 +1620,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return void
      */
-    protected function _addDefaultFields(): void
+    protected function addDefaultFields(): void
     {
         $select = $this->clause('select');
         $this->_hasFields = true;
@@ -1644,7 +1644,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return void
      */
-    protected function _addDefaultSelectTypes(): void
+    protected function addDefaultSelectTypes(): void
     {
         $typeMap = $this->getTypeMap()->getDefaults();
         $select = $this->clause('select');
@@ -1698,11 +1698,11 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return void
      */
-    protected function _dirty(): void
+    protected function dirty(): void
     {
         $this->_results = null;
         $this->_resultsCount = null;
-        parent::_dirty();
+        parent::dirty();
     }
 
     /**

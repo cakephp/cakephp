@@ -555,7 +555,7 @@ class CompositeKeysTest extends TestCase
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
         $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['_addDefaultFields', 'execute'])
+            ->onlyMethods(['addDefaultFields', 'execute'])
             ->setConstructorArgs([$table])
             ->getMock();
 

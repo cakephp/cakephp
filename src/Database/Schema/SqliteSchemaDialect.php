@@ -43,7 +43,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * @throws \Cake\Database\Exception\DatabaseException when unable to parse column type
      * @return array<string, mixed> Array of column information.
      */
-    protected function _convertColumn(string $column): array
+    protected function convertColumn(string $column): array
     {
         if ($column === '') {
             return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];
@@ -72,7 +72,7 @@ class SqliteSchemaDialect extends SchemaDialect
             $precision = (int)$precision;
         }
 
-        $type = $this->_applyTypeSpecificColumnConversion(
+        $type = $this->applyTypeSpecificColumnConversion(
             $col,
             compact('length', 'precision', 'scale'),
         );
@@ -207,10 +207,10 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function convertColumnDescription(TableSchema $schema, array $row): void
     {
-        $field = $this->_convertColumn($row['type']);
+        $field = $this->convertColumn($row['type']);
         $field += [
             'null' => !$row['notnull'],
-            'default' => $this->_defaultValue($row['dflt_value']),
+            'default' => $this->defaultValue($row['dflt_value']),
         ];
         $primary = $schema->getConstraint('primary');
 
@@ -271,11 +271,11 @@ class SqliteSchemaDialect extends SchemaDialect
         $primary = [];
         foreach ($statement->fetchAll('assoc') as $i => $row) {
             $name = $row['name'];
-            $field = $this->_convertColumn($row['type']);
+            $field = $this->convertColumn($row['type']);
             $field += [
                 'name' => $name,
                 'null' => !$row['notnull'],
-                'default' => $this->_defaultValue($row['dflt_value']),
+                'default' => $this->defaultValue($row['dflt_value']),
                 'comment' => null,
                 'length' => null,
             ];
@@ -303,7 +303,7 @@ class SqliteSchemaDialect extends SchemaDialect
      * @param string|int|null $default The default value.
      * @return string|int|null
      */
-    protected function _defaultValue(string|int|null $default): string|int|null
+    protected function defaultValue(string|int|null $default): string|int|null
     {
         if ($default === 'NULL' || $default === null) {
             return null;
@@ -593,8 +593,8 @@ class SqliteSchemaDialect extends SchemaDialect
         } else {
             $data['references'] = [$foreignKey['table'], $data['references']];
         }
-        $data['update'] = $this->_convertOnClause($foreignKey['on_update'] ?? '');
-        $data['delete'] = $this->_convertOnClause($foreignKey['on_delete'] ?? '');
+        $data['update'] = $this->convertOnClause($foreignKey['on_update'] ?? '');
+        $data['delete'] = $this->convertOnClause($foreignKey['on_delete'] ?? '');
 
         $name = implode('_', $data['columns']) . '_' . $row['id'] . '_fk';
 
@@ -622,8 +622,8 @@ class SqliteSchemaDialect extends SchemaDialect
                     'type' => TableSchema::CONSTRAINT_FOREIGN,
                     'columns' => [],
                     'references' => [$row['table'], []],
-                    'update' => $this->_convertOnClause($row['on_update'] ?? ''),
-                    'delete' => $this->_convertOnClause($row['on_delete'] ?? ''),
+                    'update' => $this->convertOnClause($row['on_update'] ?? ''),
+                    'delete' => $this->convertOnClause($row['on_delete'] ?? ''),
                     'length' => [],
                 ];
             }
@@ -672,7 +672,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $data = $schema->getColumn($name);
         assert($data !== null);
 
-        $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
+        $sql = $this->getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
             return $sql;
         }
@@ -883,9 +883,9 @@ class SqliteSchemaDialect extends SchemaDialect
             $clause = sprintf(
                 ' REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
                 $this->_driver->quoteIdentifier($data['references'][0]),
-                $this->_convertConstraintColumns($data['references'][1]),
-                $this->_foreignOnClause($data['update']),
-                $this->_foreignOnClause($data['delete']),
+                $this->convertConstraintColumns($data['references'][1]),
+                $this->foreignOnClause($data['update']),
+                $this->foreignOnClause($data['delete']),
             );
         }
         $columns = array_map(

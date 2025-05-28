@@ -318,9 +318,9 @@ class DateTimeType extends BaseType implements BatchCastingInterface
 
             if (is_string($value)) {
                 if ($this->_useLocaleMarshal) {
-                    $dateTime = $this->_parseLocaleValue($value);
+                    $dateTime = $this->parseLocaleValue($value);
                 } else {
-                    $dateTime = $this->_parseValue($value);
+                    $dateTime = $this->parseValue($value);
                 }
 
                 if ($dateTime) {
@@ -428,7 +428,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param string $value The value to parse and convert to an object.
      * @return \Cake\I18n\DateTime|null
      */
-    protected function _parseLocaleValue(string $value): ?DateTime
+    protected function parseLocaleValue(string $value): ?DateTime
     {
         /** @var class-string<\Cake\I18n\DateTime> $class */
         $class = $this->_className;
@@ -443,7 +443,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * @param string $value The value to parse and convert to an object.
      * @return \Cake\I18n\DateTime|\DateTimeImmutable|null
      */
-    protected function _parseValue(string $value): DateTime|DateTimeImmutable|null
+    protected function parseValue(string $value): DateTime|DateTimeImmutable|null
     {
         $class = $this->_className;
 

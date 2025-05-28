@@ -262,7 +262,7 @@ class WhenThenExpression implements ExpressionInterface
             is_string($this->whenType) &&
             !($when instanceof ExpressionInterface)
         ) {
-            $when = $this->_castToExpression($when, $this->whenType);
+            $when = $this->castToExpression($when, $this->whenType);
         }
         if ($when instanceof Query) {
             $when = sprintf('(%s)', $when->sql($binder));

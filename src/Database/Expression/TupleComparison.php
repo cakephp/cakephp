@@ -105,7 +105,7 @@ class TupleComparison extends ComparisonExpression
             $fields[] = $field instanceof ExpressionInterface ? $field->sql($binder) : $field;
         }
 
-        $values = $this->_stringifyValues($binder);
+        $values = $this->stringifyValues($binder);
 
         $field = implode(', ', $fields);
 
@@ -119,7 +119,7 @@ class TupleComparison extends ComparisonExpression
      * @param \Cake\Database\ValueBinder $binder The value binder to convert expressions with.
      * @return string
      */
-    protected function _stringifyValues(ValueBinder $binder): string
+    protected function stringifyValues(ValueBinder $binder): string
     {
         $values = [];
         $parts = $this->getValue();
@@ -145,7 +145,7 @@ class TupleComparison extends ComparisonExpression
                 foreach ($value as $k => $val) {
                     $valType = $type && isset($type[$k]) ? $type[$k] : $type;
                     assert($valType === null || is_scalar($valType));
-                    $bound[] = $this->_bindValue($val, $binder, $valType);
+                    $bound[] = $this->bindValue($val, $binder, $valType);
                 }
 
                 $values[] = sprintf('(%s)', implode(',', $bound));
@@ -154,7 +154,7 @@ class TupleComparison extends ComparisonExpression
 
             $valType = $type && isset($type[$i]) ? $type[$i] : $type;
             assert($valType === null || is_scalar($valType));
-            $values[] = $this->_bindValue($value, $binder, $valType);
+            $values[] = $this->bindValue($value, $binder, $valType);
         }
 
         return implode(', ', $values);
@@ -163,7 +163,7 @@ class TupleComparison extends ComparisonExpression
     /**
      * @inheritDoc
      */
-    protected function _bindValue(mixed $value, ValueBinder $binder, ?string $type = null): string
+    protected function bindValue(mixed $value, ValueBinder $binder, ?string $type = null): string
     {
         $placeholder = $binder->placeholder('tuple');
         $binder->bind($placeholder, $value, $type);
@@ -178,7 +178,7 @@ class TupleComparison extends ComparisonExpression
     {
         $fields = (array)$this->getField();
         foreach ($fields as $field) {
-            $this->_traverseValue($field, $callback);
+            $this->traverseValue($field, $callback);
         }
 
         $value = $this->getValue();
@@ -192,10 +192,10 @@ class TupleComparison extends ComparisonExpression
         foreach ($value as $val) {
             if ($this->isMulti()) {
                 foreach ($val as $v) {
-                    $this->_traverseValue($v, $callback);
+                    $this->traverseValue($v, $callback);
                 }
             } else {
-                $this->_traverseValue($val, $callback);
+                $this->traverseValue($val, $callback);
             }
         }
 
@@ -210,7 +210,7 @@ class TupleComparison extends ComparisonExpression
      * @param \Closure $callback The callback to use when traversing
      * @return void
      */
-    protected function _traverseValue(mixed $value, Closure $callback): void
+    protected function traverseValue(mixed $value, Closure $callback): void
     {
         if ($value instanceof ExpressionInterface) {
             $callback($value);

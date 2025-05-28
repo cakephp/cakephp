@@ -62,7 +62,7 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string
      */
-    protected function _buildWithPart(array $parts, Query $query, ValueBinder $binder): string
+    protected function buildWithPart(array $parts, Query $query, ValueBinder $binder): string
     {
         $expressions = [];
         foreach ($parts as $cte) {
@@ -84,7 +84,7 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string
      */
-    protected function _buildInsertPart(array $parts, Query $query, ValueBinder $binder): string
+    protected function buildInsertPart(array $parts, Query $query, ValueBinder $binder): string
     {
         if (!isset($parts[0])) {
             throw new DatabaseException(
@@ -93,8 +93,8 @@ class SqlserverCompiler extends QueryCompiler
             );
         }
         $table = $parts[0];
-        $columns = $this->_stringifyExpressions($parts[1], $binder);
-        $modifiers = $this->_buildModifierPart($query->clause('modifier'), $query, $binder);
+        $columns = $this->stringifyExpressions($parts[1], $binder);
+        $modifiers = $this->buildModifierPart($query->clause('modifier'), $query, $binder);
 
         return sprintf(
             'INSERT%s INTO %s (%s) OUTPUT INSERTED.*',
@@ -111,7 +111,7 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\Query $query The query that is being compiled
      * @return string
      */
-    protected function _buildLimitPart(int $limit, Query $query): string
+    protected function buildLimitPart(int $limit, Query $query): string
     {
         if ($query->clause('offset') === null) {
             return '';
@@ -130,7 +130,7 @@ class SqlserverCompiler extends QueryCompiler
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string
      */
-    protected function _buildHavingPart(array $parts, Query $query, ValueBinder $binder): string
+    protected function buildHavingPart(array $parts, Query $query, ValueBinder $binder): string
     {
         $selectParts = $query->clause('select');
 

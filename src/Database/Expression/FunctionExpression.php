@@ -126,7 +126,7 @@ class FunctionExpression extends QueryExpression implements TypedResultInterface
             $type = $typeMap->type($k);
 
             if ($type !== null && !$p instanceof ExpressionInterface) {
-                $p = $this->_castToExpression($p, $type);
+                $p = $this->castToExpression($p, $type);
             }
 
             if ($p instanceof ExpressionInterface) {

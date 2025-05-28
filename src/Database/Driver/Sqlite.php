@@ -221,11 +221,11 @@ class Sqlite extends Driver
     /**
      * @inheritDoc
      */
-    protected function _expressionTranslators(): array
+    protected function expressionTranslators(): array
     {
         return [
-            FunctionExpression::class => '_transformFunctionExpression',
-            TupleComparison::class => '_transformTupleComparison',
+            FunctionExpression::class => 'transformFunctionExpression',
+            TupleComparison::class => 'transformTupleComparison',
         ];
     }
 
@@ -236,7 +236,7 @@ class Sqlite extends Driver
      * @param \Cake\Database\Expression\FunctionExpression $expression The function expression to convert to TSQL.
      * @return void
      */
-    protected function _transformFunctionExpression(FunctionExpression $expression): void
+    protected function transformFunctionExpression(FunctionExpression $expression): void
     {
         switch ($expression->getName()) {
             case 'CONCAT':

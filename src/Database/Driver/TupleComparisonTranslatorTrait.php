@@ -49,7 +49,7 @@ trait TupleComparisonTranslatorTrait
      * @param \Cake\Database\Query $query The query to update.
      * @return void
      */
-    protected function _transformTupleComparison(TupleComparison $expression, Query $query): void
+    protected function transformTupleComparison(TupleComparison $expression, Query $query): void
     {
         $fields = $expression->getField();
 

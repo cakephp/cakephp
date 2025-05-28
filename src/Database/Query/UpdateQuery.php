@@ -62,7 +62,7 @@ class UpdateQuery extends Query
      */
     public function update(ExpressionInterface|string $table): static
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_parts['update'][0] = $table;
 
         return $this;
