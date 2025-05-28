@@ -36,7 +36,7 @@ class Basic
     public function authentication(Request $request, array $credentials): Request
     {
         if (isset($credentials['username'], $credentials['password'])) {
-            $value = $this->_generateHeader($credentials['username'], $credentials['password']);
+            $value = $this->generateHeader($credentials['username'], $credentials['password']);
             $request = $request->withHeader('Authorization', $value);
         }
 
@@ -54,7 +54,7 @@ class Basic
     public function proxyAuthentication(Request $request, array $credentials): Request
     {
         if (isset($credentials['username'], $credentials['password'])) {
-            $value = $this->_generateHeader($credentials['username'], $credentials['password']);
+            $value = $this->generateHeader($credentials['username'], $credentials['password']);
             $request = $request->withHeader('Proxy-Authorization', $value);
         }
 
@@ -68,7 +68,7 @@ class Basic
      * @param string $pass Password.
      * @return string
      */
-    protected function _generateHeader(string $user, string $pass): string
+    protected function generateHeader(string $user, string $pass): string
     {
         return 'Basic ' . base64_encode($user . ':' . $pass);
     }

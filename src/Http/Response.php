@@ -214,13 +214,13 @@ class Response implements ResponseInterface, Stringable
             }
             $this->stream = $options['stream'];
         } else {
-            $this->_createStream();
+            $this->createStream();
         }
         if (isset($options['body'])) {
             $this->stream->write($options['body']);
         }
         if (isset($options['status'])) {
-            $this->_setStatus($options['status']);
+            $this->setStatus($options['status']);
         }
         if (!isset($options['charset'])) {
             $options['charset'] = Configure::read('App.encoding');
@@ -230,7 +230,7 @@ class Response implements ResponseInterface, Stringable
         if (isset($options['type'])) {
             $type = $this->resolveType($options['type']);
         }
-        $this->_setContentType($type);
+        $this->setContentType($type);
         $this->_cookies = new CookieCollection();
     }
 
@@ -239,7 +239,7 @@ class Response implements ResponseInterface, Stringable
      *
      * @return void
      */
-    protected function _createStream(): void
+    protected function createStream(): void
     {
         $this->stream = new Stream($this->_streamTarget, $this->_streamMode);
     }
@@ -251,10 +251,10 @@ class Response implements ResponseInterface, Stringable
      * @param string $type The type to set.
      * @return void
      */
-    protected function _setContentType(string $type): void
+    protected function setContentType(string $type): void
     {
         if (in_array($this->_status, [304, 204], true)) {
-            $this->_clearHeader('Content-Type');
+            $this->clearHeader('Content-Type');
 
             return;
         }
@@ -274,9 +274,9 @@ class Response implements ResponseInterface, Stringable
         }
 
         if ($charset && !str_contains($type, ';')) {
-            $this->_setHeader('Content-Type', "{$type}; charset={$this->_charset}");
+            $this->setHeader('Content-Type', "{$type}; charset={$this->_charset}");
         } else {
-            $this->_setHeader('Content-Type', $type);
+            $this->setHeader('Content-Type', $type);
         }
     }
 
@@ -307,7 +307,7 @@ class Response implements ResponseInterface, Stringable
      * @param string $value Header value.
      * @return void
      */
-    protected function _setHeader(string $header, string $value): void
+    protected function setHeader(string $header, string $value): void
     {
         $normalized = strtolower($header);
         $this->headerNames[$normalized] = $header;
@@ -321,7 +321,7 @@ class Response implements ResponseInterface, Stringable
      * @param string $header Header key.
      * @return void
      */
-    protected function _clearHeader(string $header): void
+    protected function clearHeader(string $header): void
     {
         $normalized = strtolower($header);
         if (!isset($this->headerNames[$normalized])) {
@@ -376,7 +376,7 @@ class Response implements ResponseInterface, Stringable
     public function withStatus(int $code, string $reasonPhrase = ''): static
     {
         $new = clone $this;
-        $new->_setStatus($code, $reasonPhrase);
+        $new->setStatus($code, $reasonPhrase);
 
         return $new;
     }
@@ -389,7 +389,7 @@ class Response implements ResponseInterface, Stringable
      * @return void
      * @throws \InvalidArgumentException For invalid status code arguments.
      */
-    protected function _setStatus(int $code, string $reasonPhrase = ''): void
+    protected function setStatus(int $code, string $reasonPhrase = ''): void
     {
         if ($code < static::STATUS_CODE_MIN || $code > static::STATUS_CODE_MAX) {
             throw new InvalidArgumentException(sprintf(
@@ -406,7 +406,7 @@ class Response implements ResponseInterface, Stringable
 
         // These status codes don't have bodies and can't have content-types.
         if (in_array($code, [304, 204], true)) {
-            $this->_clearHeader('Content-Type');
+            $this->clearHeader('Content-Type');
         }
     }
 
@@ -472,7 +472,7 @@ class Response implements ResponseInterface, Stringable
     {
         $mappedType = $this->resolveType($contentType);
         $new = clone $this;
-        $new->_setContentType($mappedType);
+        $new->setContentType($mappedType);
 
         return $new;
     }
@@ -554,7 +554,7 @@ class Response implements ResponseInterface, Stringable
     {
         $new = clone $this;
         $new->_charset = $charset;
-        $new->_setContentType($this->getType());
+        $new->setContentType($this->getType());
 
         return $new;
     }
@@ -615,7 +615,7 @@ class Response implements ResponseInterface, Stringable
         if ($time !== null) {
             $new->_cacheDirectives['max-age'] = $time;
         }
-        $new->_setCacheControl();
+        $new->setCacheControl();
 
         return $new;
     }
@@ -633,7 +633,7 @@ class Response implements ResponseInterface, Stringable
     {
         $new = clone $this;
         $new->_cacheDirectives['s-maxage'] = $seconds;
-        $new->_setCacheControl();
+        $new->setCacheControl();
 
         return $new;
     }
@@ -651,7 +651,7 @@ class Response implements ResponseInterface, Stringable
     {
         $new = clone $this;
         $new->_cacheDirectives['max-age'] = $seconds;
-        $new->_setCacheControl();
+        $new->setCacheControl();
 
         return $new;
     }
@@ -675,7 +675,7 @@ class Response implements ResponseInterface, Stringable
         } else {
             unset($new->_cacheDirectives['must-revalidate']);
         }
-        $new->_setCacheControl();
+        $new->setCacheControl();
 
         return $new;
     }
@@ -686,7 +686,7 @@ class Response implements ResponseInterface, Stringable
      *
      * @return void
      */
-    protected function _setCacheControl(): void
+    protected function setCacheControl(): void
     {
         $control = '';
         foreach ($this->_cacheDirectives as $key => $val) {
@@ -694,7 +694,7 @@ class Response implements ResponseInterface, Stringable
             $control .= ', ';
         }
         $control = rtrim($control, ', ');
-        $this->_setHeader('Cache-Control', $control);
+        $this->setHeader('Cache-Control', $control);
     }
 
     /**
@@ -715,7 +715,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function withExpires(DateTimeInterface|string|int|null $time): static
     {
-        $date = $this->_getUTCDate($time);
+        $date = $this->getUTCDate($time);
 
         return $this->withHeader('Expires', $date->format(DATE_RFC7231));
     }
@@ -738,7 +738,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function withModified(DateTimeInterface|string|int $time): static
     {
-        $date = $this->_getUTCDate($time);
+        $date = $this->getUTCDate($time);
 
         return $this->withHeader('Last-Modified', $date->format(DATE_RFC7231));
     }
@@ -755,7 +755,7 @@ class Response implements ResponseInterface, Stringable
     public function withNotModified(): static
     {
         $new = $this->withStatus(304);
-        $new->_createStream();
+        $new->createStream();
         $remove = [
             'Allow',
             'Content-Encoding',
@@ -823,7 +823,7 @@ class Response implements ResponseInterface, Stringable
      * @param \DateTimeInterface|string|int|null $time Valid time string or \DateTimeInterface instance.
      * @return \DateTimeInterface
      */
-    protected function _getUTCDate(DateTimeInterface|string|int|null $time = null): DateTimeInterface
+    protected function getUTCDate(DateTimeInterface|string|int|null $time = null): DateTimeInterface
     {
         if ($time instanceof DateTimeInterface) {
             $result = clone $time;
@@ -1136,7 +1136,7 @@ class Response implements ResponseInterface, Stringable
         $new = $new->withHeader('Accept-Ranges', 'bytes');
         $httpRange = (string)env('HTTP_RANGE');
         if ($httpRange) {
-            $new->_fileRange($file, $httpRange);
+            $new->fileRange($file, $httpRange);
         } else {
             $new = $new->withHeader('Content-Length', (string)$fileSize);
         }
@@ -1155,7 +1155,7 @@ class Response implements ResponseInterface, Stringable
     public function withStringBody(?string $string): static
     {
         $new = clone $this;
-        $new->_createStream();
+        $new->createStream();
         $new->stream->write((string)$string);
 
         return $new;
@@ -1205,7 +1205,7 @@ class Response implements ResponseInterface, Stringable
      * @param string $httpRange The range to use.
      * @return void
      */
-    protected function _fileRange(SplFileInfo $file, string $httpRange): void
+    protected function fileRange(SplFileInfo $file, string $httpRange): void
     {
         $fileSize = $file->getSize();
         $lastByte = $fileSize - 1;
@@ -1227,15 +1227,15 @@ class Response implements ResponseInterface, Stringable
         }
 
         if ($start > $end || $end > $lastByte || $start > $lastByte) {
-            $this->_setStatus(416);
-            $this->_setHeader('Content-Range', 'bytes 0-' . $lastByte . '/' . $fileSize);
+            $this->setStatus(416);
+            $this->setHeader('Content-Range', 'bytes 0-' . $lastByte . '/' . $fileSize);
 
             return;
         }
 
-        $this->_setHeader('Content-Length', (string)((int)$end - (int)$start + 1));
-        $this->_setHeader('Content-Range', 'bytes ' . $start . '-' . $end . '/' . $fileSize);
-        $this->_setStatus(206);
+        $this->setHeader('Content-Length', (string)((int)$end - (int)$start + 1));
+        $this->setHeader('Content-Range', 'bytes ' . $start . '-' . $end . '/' . $fileSize);
+        $this->setStatus(206);
         /**
          * @var int $start
          * @var int $end

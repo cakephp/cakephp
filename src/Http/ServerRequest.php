@@ -246,7 +246,7 @@ class ServerRequest implements ServerRequestInterface
             'input' => null,
         ];
 
-        $this->_setConfig($config);
+        $this->setConfig($config);
     }
 
     /**
@@ -255,7 +255,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array<string, mixed> $config The config data to use.
      * @return void
      */
-    protected function _setConfig(array $config): void
+    protected function setConfig(array $config): void
     {
         if (empty($config['session'])) {
             $config['session'] = new Session([
@@ -542,16 +542,16 @@ class ServerRequest implements ServerRequestInterface
 
             return $detect(...$args);
         }
-        if (isset($detect['env']) && $this->_environmentDetector($detect)) {
+        if (isset($detect['env']) && $this->environmentDetector($detect)) {
             return true;
         }
-        if (isset($detect['header']) && $this->_headerDetector($detect)) {
+        if (isset($detect['header']) && $this->headerDetector($detect)) {
             return true;
         }
-        if (isset($detect['accept']) && $this->_acceptHeaderDetector($detect)) {
+        if (isset($detect['accept']) && $this->acceptHeaderDetector($detect)) {
             return true;
         }
-        if (isset($detect['param']) && $this->_paramDetector($detect)) {
+        if (isset($detect['param']) && $this->paramDetector($detect)) {
             return true;
         }
 
@@ -564,7 +564,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array $detect Detector options array.
      * @return bool Whether the request is the type you are checking.
      */
-    protected function _acceptHeaderDetector(array $detect): bool
+    protected function acceptHeaderDetector(array $detect): bool
     {
         $content = new ContentTypeNegotiation();
         $options = $detect['accept'];
@@ -594,7 +594,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array $detect Detector options array.
      * @return bool Whether the request is the type you are checking.
      */
-    protected function _headerDetector(array $detect): bool
+    protected function headerDetector(array $detect): bool
     {
         foreach ($detect['header'] as $header => $value) {
             $header = $this->getEnv('http_' . $header);
@@ -616,7 +616,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array $detect Detector options array.
      * @return bool Whether the request is the type you are checking.
      */
-    protected function _paramDetector(array $detect): bool
+    protected function paramDetector(array $detect): bool
     {
         $key = $detect['param'];
         if (isset($detect['value'])) {
@@ -637,7 +637,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array $detect Detector options array.
      * @return bool Whether the request is the type you are checking.
      */
-    protected function _environmentDetector(array $detect): bool
+    protected function environmentDetector(array $detect): bool
     {
         if (isset($detect['env'])) {
             if (isset($detect['value'])) {

@@ -159,7 +159,7 @@ class Cookie implements CookieInterface
         $this->validateName($name);
         $this->name = $name;
 
-        $this->_setValue($value);
+        $this->setValue($value);
 
         $this->domain = $domain ?? static::$defaults['domain'];
         $this->httpOnly = $httpOnly ?? static::$defaults['httponly'];
@@ -340,7 +340,7 @@ class Cookie implements CookieInterface
         if ($this->isExpanded) {
             assert(is_array($value), '$value is not an array');
 
-            $value = $this->_flatten($value);
+            $value = $this->flatten($value);
         }
 
         $headerValue = [];
@@ -434,7 +434,7 @@ class Cookie implements CookieInterface
         if ($this->isExpanded) {
             assert(is_array($this->value), '$value is not an array');
 
-            return $this->_flatten($this->value);
+            return $this->flatten($this->value);
         }
 
         assert(is_string($this->value), '$value is not a string');
@@ -448,7 +448,7 @@ class Cookie implements CookieInterface
     public function withValue(array|string|float|int|bool $value): static
     {
         $new = clone $this;
-        $new->_setValue($value);
+        $new->setValue($value);
 
         return $new;
     }
@@ -459,7 +459,7 @@ class Cookie implements CookieInterface
      * @param array|string|float|int|bool $value The value to store.
      * @return void
      */
-    protected function _setValue(array|string|float|int|bool $value): void
+    protected function setValue(array|string|float|int|bool $value): void
     {
         $this->isExpanded = is_array($value);
         $this->value = is_array($value) ? $value : (string)$value;
@@ -674,7 +674,7 @@ class Cookie implements CookieInterface
     {
         if ($this->isExpanded === false) {
             assert(is_string($this->value), '$value is not a string');
-            $this->value = $this->_expand($this->value);
+            $this->value = $this->expand($this->value);
         }
 
         assert(is_array($this->value), '$value is not an array');
@@ -694,7 +694,7 @@ class Cookie implements CookieInterface
         $new = clone $this;
         if ($new->isExpanded === false) {
             assert(is_string($new->value), '$value is not a string');
-            $new->value = $new->_expand($new->value);
+            $new->value = $new->expand($new->value);
         }
 
         assert(is_array($new->value), '$value is not an array');
@@ -714,7 +714,7 @@ class Cookie implements CookieInterface
         $new = clone $this;
         if ($new->isExpanded === false) {
             assert(is_string($new->value), '$value is not a string');
-            $new->value = $new->_expand($new->value);
+            $new->value = $new->expand($new->value);
         }
 
         assert(is_array($new->value), '$value is not an array');
@@ -738,7 +738,7 @@ class Cookie implements CookieInterface
         if ($this->isExpanded === false) {
             assert(is_string($this->value), '$value is not a string');
 
-            $this->value = $this->_expand($this->value);
+            $this->value = $this->expand($this->value);
         }
 
         if ($path === null) {
@@ -797,7 +797,7 @@ class Cookie implements CookieInterface
      * @param array $array Map of key and values
      * @return string A JSON encoded string.
      */
-    protected function _flatten(array $array): string
+    protected function flatten(array $array): string
     {
         return json_encode($array, JSON_THROW_ON_ERROR);
     }
@@ -809,7 +809,7 @@ class Cookie implements CookieInterface
      * @param string $string A string containing JSON encoded data, or a bare string.
      * @return array|string Map of key and values
      */
-    protected function _expand(string $string): array|string
+    protected function expand(string $string): array|string
     {
         $this->isExpanded = true;
         $first = substr($string, 0, 1);

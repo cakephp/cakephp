@@ -69,7 +69,7 @@ class CookieEncryptedEquals extends CookieEquals
     {
         $cookie = $this->response->getCookie($this->cookieName);
 
-        return $cookie !== null && $this->_decrypt($cookie['value'], $this->mode) === $other;
+        return $cookie !== null && $this->decrypt($cookie['value'], $this->mode) === $other;
     }
 
     /**
@@ -87,7 +87,7 @@ class CookieEncryptedEquals extends CookieEquals
      *
      * @return string
      */
-    protected function _getCookieEncryptionKey(): string
+    protected function getCookieEncryptionKey(): string
     {
         return $this->key;
     }

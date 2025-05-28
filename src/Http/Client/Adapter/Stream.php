@@ -77,7 +77,7 @@ class Stream implements AdapterInterface
         $this->_sslContextOptions = [];
         $this->_connectionErrors = [];
 
-        $this->_buildContext($request, $options);
+        $this->buildContext($request, $options);
 
         return $this->_send($request);
     }
@@ -106,7 +106,7 @@ class Stream implements AdapterInterface
             $end = isset($indexes[$i + 1]) ? $indexes[$i + 1] - $start : null;
             $headerSlice = array_slice($headers, $start, $end);
             $body = $i === $last ? $content : '';
-            $responses[] = $this->_buildResponse($headerSlice, $body);
+            $responses[] = $this->buildResponse($headerSlice, $body);
         }
 
         return $responses;
@@ -119,16 +119,16 @@ class Stream implements AdapterInterface
      * @param array<string, mixed> $options Additional request options.
      * @return void
      */
-    protected function _buildContext(RequestInterface $request, array $options): void
+    protected function buildContext(RequestInterface $request, array $options): void
     {
-        $this->_buildContent($request, $options);
-        $this->_buildHeaders($request, $options);
-        $this->_buildOptions($request, $options);
+        $this->buildContent($request, $options);
+        $this->buildHeaders($request, $options);
+        $this->buildOptions($request, $options);
 
         $url = $request->getUri();
         $scheme = parse_url((string)$url, PHP_URL_SCHEME);
         if ($scheme === 'https') {
-            $this->_buildSslContext($request, $options);
+            $this->buildSslContext($request, $options);
         }
         $this->_context = stream_context_create([
             'http' => $this->_contextOptions,
@@ -145,7 +145,7 @@ class Stream implements AdapterInterface
      * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
-    protected function _buildHeaders(RequestInterface $request, array $options): void
+    protected function buildHeaders(RequestInterface $request, array $options): void
     {
         $headers = [];
         foreach ($request->getHeaders() as $name => $values) {
@@ -164,7 +164,7 @@ class Stream implements AdapterInterface
      * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
-    protected function _buildContent(RequestInterface $request, array $options): void
+    protected function buildContent(RequestInterface $request, array $options): void
     {
         $body = $request->getBody();
         $body->rewind();
@@ -178,7 +178,7 @@ class Stream implements AdapterInterface
      * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
-    protected function _buildOptions(RequestInterface $request, array $options): void
+    protected function buildOptions(RequestInterface $request, array $options): void
     {
         $this->_contextOptions['method'] = $request->getMethod();
         $this->_contextOptions['protocol_version'] = $request->getProtocolVersion();
@@ -203,7 +203,7 @@ class Stream implements AdapterInterface
      * @param array<string, mixed> $options Array of options to use.
      * @return void
      */
-    protected function _buildSslContext(RequestInterface $request, array $options): void
+    protected function buildSslContext(RequestInterface $request, array $options): void
     {
         $sslOptions = [
             'ssl_verify_peer',
@@ -247,7 +247,7 @@ class Stream implements AdapterInterface
         }
 
         $url = $request->getUri();
-        $this->_open((string)$url, $request);
+        $this->open((string)$url, $request);
         $content = '';
         $timedOut = false;
 
@@ -289,7 +289,7 @@ class Stream implements AdapterInterface
      * @param string $body The response body.
      * @return \Cake\Http\Client\Response
      */
-    protected function _buildResponse(array $headers, string $body): Response
+    protected function buildResponse(array $headers, string $body): Response
     {
         return new Response($headers, $body);
     }
@@ -302,7 +302,7 @@ class Stream implements AdapterInterface
      * @return void
      * @throws \Psr\Http\Client\RequestExceptionInterface
      */
-    protected function _open(string $url, RequestInterface $request): void
+    protected function open(string $url, RequestInterface $request): void
     {
         if (!(bool)ini_get('allow_url_fopen')) {
             throw new ClientException('The PHP directive `allow_url_fopen` must be enabled.');

@@ -106,7 +106,7 @@ class Session
     public static function create(array $sessionConfig = []): static
     {
         if (isset($sessionConfig['defaults'])) {
-            $sessionConfig = Hash::merge(static::_defaultConfig($sessionConfig['defaults']), $sessionConfig);
+            $sessionConfig = Hash::merge(static::defaultConfig($sessionConfig['defaults']), $sessionConfig);
         }
 
         if (
@@ -142,7 +142,7 @@ class Session
      * @return array
      * @throws \Cake\Core\Exception\CakeException When an invalid name is used.
      */
-    protected static function _defaultConfig(string $name): array
+    protected static function defaultConfig(string $name): array
     {
         $defaults = [
             'php' => [
@@ -369,7 +369,7 @@ class Session
 
         $this->_started = true;
 
-        if ($this->_timedOut()) {
+        if ($this->timedOut()) {
             $this->destroy();
 
             return $this->start();
@@ -422,7 +422,7 @@ class Session
      */
     public function check(?string $name = null): bool
     {
-        if ($this->_hasSession() && !$this->started()) {
+        if ($this->hasSession() && !$this->started()) {
             $this->start();
         }
 
@@ -447,7 +447,7 @@ class Session
      */
     public function read(?string $name = null, mixed $default = null): mixed
     {
-        if ($this->_hasSession() && !$this->started()) {
+        if ($this->hasSession() && !$this->started()) {
             $this->start();
         }
 
@@ -492,7 +492,7 @@ class Session
         }
         $value = $this->read($name);
         if ($value !== null) {
-            $this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
+            $this->overwrite($_SESSION, Hash::remove($_SESSION, $name));
         }
 
         return $value;
@@ -530,7 +530,7 @@ class Session
             $data = Hash::insert($data, $key, $val);
         }
 
-        $this->_overwrite($_SESSION, $data);
+        $this->overwrite($_SESSION, $data);
     }
 
     /**
@@ -565,7 +565,7 @@ class Session
     public function delete(string $name): void
     {
         if ($this->check($name)) {
-            $this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
+            $this->overwrite($_SESSION, Hash::remove($_SESSION, $name));
         }
     }
 
@@ -576,7 +576,7 @@ class Session
      * @param array $new New set of variable => value
      * @return void
      */
-    protected function _overwrite(array &$old, array $new): void
+    protected function overwrite(array &$old, array $new): void
     {
         foreach ($old as $key => $var) {
             if (!isset($new[$key])) {
@@ -596,7 +596,7 @@ class Session
      */
     public function destroy(): void
     {
-        if ($this->_hasSession() && !$this->started()) {
+        if ($this->hasSession() && !$this->started()) {
             $this->start();
         }
 
@@ -629,7 +629,7 @@ class Session
      *
      * @return bool
      */
-    protected function _hasSession(): bool
+    protected function hasSession(): bool
     {
         return !ini_get('session.use_cookies')
             || isset($_COOKIE[session_name()])
@@ -644,7 +644,7 @@ class Session
      */
     public function renew(): void
     {
-        if (!$this->_hasSession() || $this->_isCLI) {
+        if (!$this->hasSession() || $this->_isCLI) {
             return;
         }
 
@@ -669,7 +669,7 @@ class Session
      *
      * @return bool
      */
-    protected function _timedOut(): bool
+    protected function timedOut(): bool
     {
         $time = $this->read('Config.time');
         $result = false;

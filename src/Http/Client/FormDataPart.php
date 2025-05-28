@@ -189,10 +189,10 @@ class FormDataPart implements Stringable
         if ($this->disposition) {
             $out .= 'Content-Disposition: ' . $this->disposition;
             if ($this->name) {
-                $out .= '; ' . $this->_headerParameterToString('name', $this->name);
+                $out .= '; ' . $this->headerParameterToString('name', $this->name);
             }
             if ($this->filename) {
-                $out .= '; ' . $this->_headerParameterToString('filename', $this->filename);
+                $out .= '; ' . $this->headerParameterToString('filename', $this->filename);
             }
             $out .= "\r\n";
         }
@@ -221,7 +221,7 @@ class FormDataPart implements Stringable
      * @param string $value The value of the header parameter
      * @return string
      */
-    protected function _headerParameterToString(string $name, string $value): string
+    protected function headerParameterToString(string $name, string $value): string
     {
         $transliterated = Text::transliterate(str_replace('"', '', $value));
         $return = sprintf('%s="%s"', $name, $transliterated);

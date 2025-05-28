@@ -35,11 +35,11 @@ trait CookieCryptTrait
     protected array $_validCiphers = ['aes'];
 
     /**
-     * Returns the encryption key to be used.
+     * Returns the encryption key to be used.C
      *
      * @return string
      */
-    abstract protected function _getCookieEncryptionKey(): string;
+    abstract protected function getCookieEncryptionKey(): string;
 
     /**
      * Encrypts $value using public $type method in Security class
@@ -50,18 +50,18 @@ trait CookieCryptTrait
      * @param string|null $key Used as the security salt if specified.
      * @return string Encoded values
      */
-    protected function _encrypt(array|string $value, string|false $encrypt, ?string $key = null): string
+    protected function encrypt(array|string $value, string|false $encrypt, ?string $key = null): string
     {
         if (is_array($value)) {
-            $value = $this->_implode($value);
+            $value = $this->implode($value);
         }
         if ($encrypt === false) {
             return $value;
         }
-        $this->_checkCipher($encrypt);
+        $this->checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
         $cipher = '';
-        $key ??= $this->_getCookieEncryptionKey();
+        $key ??= $this->getCookieEncryptionKey();
         if ($encrypt === 'aes') {
             $cipher = Security::encrypt($value, $key);
         }
@@ -76,7 +76,7 @@ trait CookieCryptTrait
      * @return void
      * @throws \RuntimeException When an invalid cipher is provided.
      */
-    protected function _checkCipher(string $encrypt): void
+    protected function checkCipher(string $encrypt): void
     {
         if (!in_array($encrypt, $this->_validCiphers, true)) {
             $msg = sprintf(
@@ -95,15 +95,15 @@ trait CookieCryptTrait
      * @param string|null $key Used as the security salt if specified.
      * @return array|string Decrypted values
      */
-    protected function _decrypt(array|string $values, string|false $mode, ?string $key = null): array|string
+    protected function decrypt(array|string $values, string|false $mode, ?string $key = null): array|string
     {
         if (is_string($values)) {
-            return $this->_decode($values, $mode, $key);
+            return $this->decode($values, $mode, $key);
         }
 
         $decrypted = [];
         foreach ($values as $name => $value) {
-            $decrypted[$name] = $this->_decode($value, $mode, $key);
+            $decrypted[$name] = $this->decode($value, $mode, $key);
         }
 
         return $decrypted;
@@ -117,12 +117,12 @@ trait CookieCryptTrait
      * @param string|null $key Used as the security salt if specified.
      * @return array|string Decoded values.
      */
-    protected function _decode(string $value, string|false $encrypt, ?string $key): array|string
+    protected function decode(string $value, string|false $encrypt, ?string $key): array|string
     {
         if (!$encrypt) {
-            return $this->_explode($value);
+            return $this->explode($value);
         }
-        $this->_checkCipher($encrypt);
+        $this->checkCipher($encrypt);
         $prefix = 'Q2FrZQ==.';
         $prefixLength = strlen($prefix);
 
@@ -136,7 +136,7 @@ trait CookieCryptTrait
             return '';
         }
 
-        $key ??= $this->_getCookieEncryptionKey();
+        $key ??= $this->getCookieEncryptionKey();
         if ($encrypt === 'aes') {
             $value = Security::decrypt($value, $key);
         }
@@ -145,7 +145,7 @@ trait CookieCryptTrait
             return '';
         }
 
-        return $this->_explode($value);
+        return $this->explode($value);
     }
 
     /**
@@ -154,7 +154,7 @@ trait CookieCryptTrait
      * @param array $array Map of key and values
      * @return string A JSON encoded string.
      */
-    protected function _implode(array $array): string
+    protected function implode(array $array): string
     {
         return json_encode($array, JSON_THROW_ON_ERROR);
     }
@@ -166,7 +166,7 @@ trait CookieCryptTrait
      * @param string $string A string containing JSON encoded data, or a bare string.
      * @return array|string Map of key and values
      */
-    protected function _explode(string $string): array|string
+    protected function explode(string $string): array|string
     {
         $first = substr($string, 0, 1);
         if ($first === '{' || $first === '[') {

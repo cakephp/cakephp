@@ -127,9 +127,9 @@ class Response extends Message implements ResponseInterface
      */
     public function __construct(array $headers = [], string $body = '')
     {
-        $this->_parseHeaders($headers);
+        $this->parseHeaders($headers);
         if ($this->getHeaderLine('Content-Encoding') === 'gzip') {
-            $body = $this->_decodeGzipBody($body);
+            $body = $this->decodeGzipBody($body);
         }
         $stream = new Stream('php://memory', 'wb+');
         $stream->write($body);
@@ -147,7 +147,7 @@ class Response extends Message implements ResponseInterface
      * @return string
      * @throws \Cake\Core\Exception\CakeException When attempting to decode gzip content without gzinflate.
      */
-    protected function _decodeGzipBody(string $body): string
+    protected function decodeGzipBody(string $body): string
     {
         if (!function_exists('gzinflate')) {
             throw new CakeException('Cannot decompress gzip response body without gzinflate()');
@@ -174,7 +174,7 @@ class Response extends Message implements ResponseInterface
      * @param array<string> $headers Headers to parse.
      * @return void
      */
-    protected function _parseHeaders(array $headers): void
+    protected function parseHeaders(array $headers): void
     {
         foreach ($headers as $value) {
             if (str_starts_with($value, 'HTTP/')) {
