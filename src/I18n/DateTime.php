@@ -443,7 +443,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
         $format = is_int($format) ? [$format, $format] : $format;
         $locale = $locale ?: DateTime::getDefaultLocale();
 
-        return $this->_formatObject($time, $format, $locale);
+        return $this->formatObject($time, $format, $locale);
     }
 
     /**

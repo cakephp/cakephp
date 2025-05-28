@@ -109,7 +109,7 @@ class CorsBuilder
      */
     public function allowOrigin(array|string $domains): static
     {
-        $allowed = $this->_normalizeDomains((array)$domains);
+        $allowed = $this->normalizeDomains((array)$domains);
         foreach ($allowed as $domain) {
             if (!preg_match($domain['preg'], $this->_origin)) {
                 continue;
@@ -128,7 +128,7 @@ class CorsBuilder
      * @param array<string> $domains Domain names to normalize.
      * @return array<array<string, string>>
      */
-    protected function _normalizeDomains(array $domains): array
+    protected function normalizeDomains(array $domains): array
     {
         $result = [];
         foreach ($domains as $domain) {

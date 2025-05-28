@@ -45,7 +45,7 @@ trait DateFormatTrait
      * @param string|null $locale The locale name in which the date should be displayed.
      * @return string
      */
-    protected function _formatObject(
+    protected function formatObject(
         DateTimeInterface $date,
         array|string $format,
         ?string $locale,

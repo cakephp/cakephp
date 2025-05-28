@@ -344,7 +344,7 @@ class Number
         $formatter = static::$_formatters[$locale][$type];
         $formatter = clone $formatter;
 
-        return static::_setAttributes($formatter, $options);
+        return static::setAttributes($formatter, $options);
     }
 
     /**
@@ -357,7 +357,7 @@ class Number
      */
     public static function config(string $locale, int $type = NumberFormatter::DECIMAL, array $options = []): void
     {
-        static::$_formatters[$locale][$type] = static::_setAttributes(
+        static::$_formatters[$locale][$type] = static::setAttributes(
             new NumberFormatter($locale, $type),
             $options,
         );
@@ -370,7 +370,7 @@ class Number
      * @param array<string, mixed> $options See Number::formatter() for possible options.
      * @return \NumberFormatter
      */
-    protected static function _setAttributes(NumberFormatter $formatter, array $options = []): NumberFormatter
+    protected static function setAttributes(NumberFormatter $formatter, array $options = []): NumberFormatter
     {
         if (isset($options['places'])) {
             $formatter->setAttribute(NumberFormatter::MIN_FRACTION_DIGITS, $options['places']);

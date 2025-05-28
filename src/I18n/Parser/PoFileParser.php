@@ -93,12 +93,12 @@ class PoFileParser
 
             if ($line === '') {
                 // Whitespace indicated current item is done
-                $this->_addMessage($messages, $item);
+                $this->addMessage($messages, $item);
                 $item = $defaults;
                 $stage = [];
             } elseif (str_starts_with($line, 'msgid "')) {
                 // We start a new msg so save previous
-                $this->_addMessage($messages, $item);
+                $this->addMessage($messages, $item);
                 $item['ids']['singular'] = substr($line, 7, -1);
                 $stage = ['ids', 'singular'];
             } elseif (str_starts_with($line, 'msgstr "')) {
@@ -133,7 +133,7 @@ class PoFileParser
             }
         }
         // save last item
-        $this->_addMessage($messages, $item);
+        $this->addMessage($messages, $item);
         fclose($stream);
 
         return $messages;
@@ -146,7 +146,7 @@ class PoFileParser
      * @param array $item The current item being inspected
      * @return void
      */
-    protected function _addMessage(array &$messages, array $item): void
+    protected function addMessage(array &$messages, array $item): void
     {
         if (empty($item['ids']['singular']) && empty($item['ids']['plural'])) {
             return;

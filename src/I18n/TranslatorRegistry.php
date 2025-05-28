@@ -195,7 +195,7 @@ class TranslatorRegistry
         }
 
         if ($this->_cacher === null) {
-            return $this->registry[$name][$locale] = $this->_getTranslator($name, $locale);
+            return $this->registry[$name][$locale] = $this->getTranslator($name, $locale);
         }
 
         // Cache keys cannot contain / if they go to file engine.
@@ -205,7 +205,7 @@ class TranslatorRegistry
         $translator = $this->_cacher->get($key);
 
         if (!$translator) {
-            $translator = $this->_getTranslator($name, $locale);
+            $translator = $this->getTranslator($name, $locale);
             $this->_cacher->set($key, $translator);
         }
 
@@ -220,7 +220,7 @@ class TranslatorRegistry
      * locale.
      * @return \Cake\I18n\Translator A translator object.
      */
-    protected function _getTranslator(string $name, string $locale): Translator
+    protected function getTranslator(string $name, string $locale): Translator
     {
         if ($this->packages->has($name, $locale)) {
             return $this->createInstance($name, $locale);

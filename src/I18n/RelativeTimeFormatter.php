@@ -108,7 +108,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      */
     public function timeAgoInWords(DateTime|Date $time, array $options = []): string
     {
-        $options = $this->_options($options, DateTime::class);
+        $options = $this->options($options, DateTime::class);
         if ($options['timezone']) {
             $time = $time->setTimezone($options['timezone']);
         }
@@ -135,7 +135,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             return sprintf($options['absoluteString'], $time->i18nFormat($options['format']));
         }
 
-        $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
+        $diffData = $this->diffData($futureTime, $pastTime, $backwards, $options);
         [$fNum, $fWord, $years, $months, $weeks, $days, $hours, $minutes, $seconds] = array_values($diffData);
 
         $relativeDate = [];
@@ -203,7 +203,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * @param array<string, mixed> $options An array of options.
      * @return array An array of values.
      */
-    protected function _diffData(string|int $futureTime, string|int $pastTime, bool $backwards, array $options): array
+    protected function diffData(string|int $futureTime, string|int $pastTime, bool $backwards, array $options): array
     {
         $futureTime = (int)$futureTime;
         $pastTime = (int)$pastTime;
@@ -338,7 +338,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      */
     public function dateAgoInWords(DateTime|Date $date, array $options = []): string
     {
-        $options = $this->_options($options, Date::class);
+        $options = $this->options($options, Date::class);
         if ($date instanceof DateTime && $options['timezone']) {
             $date = $date->setTimezone($options['timezone']);
         }
@@ -365,7 +365,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
             return sprintf($options['absoluteString'], $date->i18nFormat($options['format']));
         }
 
-        $diffData = $this->_diffData($futureTime, $pastTime, $backwards, $options);
+        $diffData = $this->diffData($futureTime, $pastTime, $backwards, $options);
         [$fNum, $fWord, $years, $months, $weeks, $days] = array_values($diffData);
 
         $relativeDate = [];
@@ -417,7 +417,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * @return array<string, mixed> Options with defaults applied.
      * @phpstan-param class-string<\Cake\I18n\Date>|class-string<\Cake\I18n\DateTime> $class
      */
-    protected function _options(array $options, string $class): array
+    protected function options(array $options, string $class): array
     {
         $options += [
             'from' => $class::now(),
