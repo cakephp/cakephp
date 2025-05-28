@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Event;
 
-use Cake\Core\Exception\CakeException;
-
 /**
  * Class Event
  *
@@ -101,18 +99,11 @@ class Event implements EventInterface
     /**
      * Returns the subject of this event
      *
-     * If the event has no subject an exception will be raised.
-     *
-     * @return object
-     * @throws \Cake\Core\Exception\CakeException
-     * @phpstan-return TSubject
+     * @return object|null
+     * @phpstan-return TSubject|null
      */
-    public function getSubject(): object
+    public function getSubject(): ?object
     {
-        if ($this->_subject === null) {
-            throw new CakeException('No subject set for this event');
-        }
-
         return $this->_subject;
     }
 

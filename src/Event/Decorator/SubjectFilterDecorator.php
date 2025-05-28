@@ -58,12 +58,8 @@ class SubjectFilterDecorator extends AbstractDecorator
             $this->_options['allowedSubject'] = [$this->_options['allowedSubject']];
         }
 
-        try {
-            $subject = $event->getSubject();
-        } catch (CakeException) {
-            return false;
-        }
+        $subject = $event->getSubject();
 
-        return in_array($subject::class, $this->_options['allowedSubject'], true);
+        return $subject !== null && in_array($subject::class, $this->_options['allowedSubject'], true);
     }
 }

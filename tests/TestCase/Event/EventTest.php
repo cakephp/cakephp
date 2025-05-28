@@ -20,7 +20,6 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Event;
 
-use Cake\Core\Exception\CakeException;
 use Cake\Event\Event;
 use Cake\TestSuite\TestCase;
 
@@ -50,9 +49,6 @@ class EventTest extends TestCase
     {
         $event = new Event('fake.event', $this);
         $this->assertSame($this, $event->getSubject());
-
-        $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('No subject set for this event');
 
         $event = new Event('fake.event');
         $this->assertNull($event->getSubject());

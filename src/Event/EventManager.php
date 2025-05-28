@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Event;
 
-use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 
 /**
@@ -491,10 +490,10 @@ class EventManager implements EventManagerInterface
                 assert(!empty($this->_eventList[$i]), 'Given event item not present');
 
                 $event = $this->_eventList[$i];
-                try {
-                    $subject = $event->getSubject();
+                $subject = $event->getSubject();
+                if ($subject) {
                     $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . $subject::class;
-                } catch (CakeException) {
+                } else {
                     $properties['_dispatchedEvents'][] = $event->getName() . ' with no subject';
                 }
             }

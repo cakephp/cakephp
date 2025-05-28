@@ -35,10 +35,10 @@ interface EventInterface
     /**
      * Returns the subject of this event.
      *
-     * @return object
-     * @phpstan-return TSubject
+     * @return object|null
+     * @phpstan-return TSubject|null
      */
-    public function getSubject(): object;
+    public function getSubject(): ?object;
 
     /**
      * Stops the event from being used anymore.
