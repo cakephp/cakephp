@@ -303,7 +303,7 @@ trait EntityTrait
             }
 
             if ($options['setter']) {
-                $setter = static::_accessor($name, 'set');
+                $setter = static::accessor($name, 'set');
                 if ($setter) {
                     $value = $this->{$setter}($value);
                 }
@@ -379,7 +379,7 @@ trait EntityTrait
             $value = &$this->_fields[$field];
         }
 
-        $method = static::_accessor($field, 'get');
+        $method = static::accessor($field, 'get');
         if ($method) {
             // Must be variable before returning: Only variable references should be returned by reference.
             $result = $this->{$method}($value);
@@ -494,7 +494,7 @@ trait EntityTrait
     public function has(array|string $field): bool
     {
         foreach ((array)$field as $prop) {
-            if (!array_key_exists($prop, $this->_fields) && !static::_accessor($prop, 'get')) {
+            if (!array_key_exists($prop, $this->_fields) && !static::accessor($prop, 'get')) {
                 return false;
             }
         }
@@ -732,7 +732,7 @@ trait EntityTrait
      * @param string $type the accessor type ('get' or 'set')
      * @return string method name or empty string (no method available)
      */
-    protected static function _accessor(string $property, string $type): string
+    protected static function accessor(string $property, string $type): string
     {
         $class = static::class;
 
@@ -1006,7 +1006,7 @@ trait EntityTrait
         $this->_hasBeenVisited = true;
         try {
             foreach ($this->_fields as $field) {
-                if ($this->_readHasErrors($field)) {
+                if ($this->readHasErrors($field)) {
                     return true;
                 }
             }
@@ -1038,7 +1038,7 @@ trait EntityTrait
                     return is_array($value) || $value instanceof EntityInterface;
                 })
                 ->map(function ($value) {
-                    return $this->_readError($value);
+                    return $this->readError($value);
                 })
                 ->filter()
                 ->toArray();
@@ -1057,7 +1057,7 @@ trait EntityTrait
      */
     public function getError(string $field): array
     {
-        return $this->_errors[$field] ?? $this->_nestedErrors($field);
+        return $this->_errors[$field] ?? $this->nestedErrors($field);
     }
 
     /**
@@ -1132,7 +1132,7 @@ trait EntityTrait
      * @param string $field the field in this entity to check for errors
      * @return array Errors in nested entity if any
      */
-    protected function _nestedErrors(string $field): array
+    protected function nestedErrors(string $field): array
     {
         // Only one path element, check for nested entity with error.
         if (!str_contains($field, '.')) {
@@ -1142,7 +1142,7 @@ trait EntityTrait
 
             $entity = $this->get($field);
             if ($entity instanceof EntityInterface || is_iterable($entity)) {
-                return $this->_readError($entity);
+                return $this->readError($entity);
             }
 
             return [];
@@ -1182,7 +1182,7 @@ trait EntityTrait
             }
         }
         if (count($path) <= 1) {
-            return $this->_readError($entity, array_pop($path));
+            return $this->readError($entity, array_pop($path));
         }
 
         return [];
@@ -1194,7 +1194,7 @@ trait EntityTrait
      * @param \Cake\Datasource\EntityInterface|array $object The object to read errors from.
      * @return bool
      */
-    protected function _readHasErrors(mixed $object): bool
+    protected function readHasErrors(mixed $object): bool
     {
         if ($object instanceof EntityInterface && $object->hasErrors()) {
             return true;
@@ -1202,7 +1202,7 @@ trait EntityTrait
 
         if (is_array($object)) {
             foreach ($object as $value) {
-                if ($this->_readHasErrors($value)) {
+                if ($this->readHasErrors($value)) {
                     return true;
                 }
             }
@@ -1218,7 +1218,7 @@ trait EntityTrait
      * @param string|null $path The field name for errors.
      * @return array
      */
-    protected function _readError(EntityInterface|iterable $object, ?string $path = null): array
+    protected function readError(EntityInterface|iterable $object, ?string $path = null): array
     {
         if ($path !== null && $object instanceof EntityInterface) {
             return $object->getError($path);
