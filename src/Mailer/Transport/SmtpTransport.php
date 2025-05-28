@@ -123,7 +123,7 @@ class SmtpTransport extends AbstractTransport
     {
         if (!$this->connected()) {
             $this->_connect();
-            $this->_auth();
+            $this->auth();
         }
     }
 
@@ -197,13 +197,13 @@ class SmtpTransport extends AbstractTransport
 
         if (!$this->connected()) {
             $this->_connect();
-            $this->_auth();
+            $this->auth();
         } else {
-            $this->_smtpSend('RSET');
+            $this->smtpSend('RSET');
         }
 
-        $this->_sendRcpt($message);
-        $this->_sendData($message);
+        $this->sendRcpt($message);
+        $this->sendData($message);
 
         if (!$this->_config['keepAlive']) {
             $this->_disconnect();
@@ -219,7 +219,7 @@ class SmtpTransport extends AbstractTransport
      * @param array<string> $responseLines Response lines to parse.
      * @return void
      */
-    protected function _bufferResponseLines(array $responseLines): void
+    protected function bufferResponseLines(array $responseLines): void
     {
         $response = [];
         foreach ($responseLines as $responseLine) {
@@ -238,7 +238,7 @@ class SmtpTransport extends AbstractTransport
      *
      * @return void
      */
-    protected function _parseAuthType(): void
+    protected function parseAuthType(): void
     {
         $authType = $this->getConfig('authType');
         if ($authType !== null) {
@@ -288,11 +288,11 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _connect(): void
     {
-        $this->_generateSocket();
+        $this->generateSocket();
         if (!$this->_socket->connect()) {
             throw new SocketException('Unable to connect to SMTP server.');
         }
-        $this->_smtpSend(null, '220');
+        $this->smtpSend(null, '220');
 
         $config = $this->_config;
 
@@ -310,11 +310,11 @@ class SmtpTransport extends AbstractTransport
         }
 
         try {
-            $this->_smtpSend("EHLO {$host}", '250');
+            $this->smtpSend("EHLO {$host}", '250');
             if ($config['tls']) {
-                $this->_smtpSend('STARTTLS', '220');
+                $this->smtpSend('STARTTLS', '220');
                 $this->_socket->enableCrypto('tls');
-                $this->_smtpSend("EHLO {$host}", '250');
+                $this->smtpSend("EHLO {$host}", '250');
             }
         } catch (SocketException $e) {
             if ($config['tls']) {
@@ -325,13 +325,13 @@ class SmtpTransport extends AbstractTransport
                 );
             }
             try {
-                $this->_smtpSend("HELO {$host}", '250');
+                $this->smtpSend("HELO {$host}", '250');
             } catch (SocketException $e2) {
                 throw new SocketException('SMTP server did not accept the connection.', null, $e2);
             }
         }
 
-        $this->_parseAuthType();
+        $this->parseAuthType();
     }
 
     /**
@@ -340,7 +340,7 @@ class SmtpTransport extends AbstractTransport
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _auth(): void
+    protected function auth(): void
     {
         if (!isset($this->_config['username'], $this->_config['password'])) {
             return;
@@ -351,24 +351,24 @@ class SmtpTransport extends AbstractTransport
 
         switch ($this->authType) {
             case self::AUTH_PLAIN:
-                $this->_authPlain($username, $password);
+                $this->authPlain($username, $password);
                 break;
 
             case self::AUTH_LOGIN:
-                $this->_authLogin($username, $password);
+                $this->authLogin($username, $password);
                 break;
 
             case self::AUTH_XOAUTH2:
-                $this->_authXoauth2($username, $password);
+                $this->authXoauth2($username, $password);
                 break;
 
             default:
-                $replyCode = $this->_authPlain($username, $password);
+                $replyCode = $this->authPlain($username, $password);
                 if ($replyCode === '235') {
                     break;
                 }
 
-                $this->_authLogin($username, $password);
+                $this->authLogin($username, $password);
         }
     }
 
@@ -379,9 +379,9 @@ class SmtpTransport extends AbstractTransport
      * @param string $password Password.
      * @return string|null Response code for the command.
      */
-    protected function _authPlain(string $username, string $password): ?string
+    protected function authPlain(string $username, string $password): ?string
     {
-        return $this->_smtpSend(
+        return $this->smtpSend(
             sprintf(
                 'AUTH PLAIN %s',
                 base64_encode(chr(0) . $username . chr(0) . $password),
@@ -397,17 +397,17 @@ class SmtpTransport extends AbstractTransport
      * @param string $password Password.
      * @return void
      */
-    protected function _authLogin(string $username, string $password): void
+    protected function authLogin(string $username, string $password): void
     {
-        $replyCode = $this->_smtpSend('AUTH LOGIN', '334|500|502|504');
+        $replyCode = $this->smtpSend('AUTH LOGIN', '334|500|502|504');
         if ($replyCode === '334') {
             try {
-                $this->_smtpSend(base64_encode($username), '334');
+                $this->smtpSend(base64_encode($username), '334');
             } catch (SocketException $e) {
                 throw new SocketException('SMTP server did not accept the username.', null, $e);
             }
             try {
-                $this->_smtpSend(base64_encode($password), '235');
+                $this->smtpSend(base64_encode($password), '235');
             } catch (SocketException $e) {
                 throw new SocketException('SMTP server did not accept the password.', null, $e);
             }
@@ -429,7 +429,7 @@ class SmtpTransport extends AbstractTransport
      * @see https://learn.microsoft.com/en-us/exchange/client-developer/legacy-protocols/how-to-authenticate-an-imap-pop-smtp-application-by-using-oauth#smtp-protocol-exchange
      * @see https://developers.google.com/gmail/imap/xoauth2-protocol#smtp_protocol_exchange
      */
-    protected function _authXoauth2(string $username, string $token): void
+    protected function authXoauth2(string $username, string $token): void
     {
         $authString = base64_encode(sprintf(
             "user=%s\1auth=Bearer %s\1\1",
@@ -437,7 +437,7 @@ class SmtpTransport extends AbstractTransport
             $token,
         ));
 
-        $this->_smtpSend('AUTH XOAUTH2 ' . $authString, '235');
+        $this->smtpSend('AUTH XOAUTH2 ' . $authString, '235');
     }
 
     /**
@@ -446,7 +446,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $message The email address to send with the command.
      * @return string
      */
-    protected function _prepareFromCmd(string $message): string
+    protected function prepareFromCmd(string $message): string
     {
         return 'MAIL FROM:<' . $message . '>';
     }
@@ -457,7 +457,7 @@ class SmtpTransport extends AbstractTransport
      * @param string $message The email address to send with the command.
      * @return string
      */
-    protected function _prepareRcptCmd(string $message): string
+    protected function prepareRcptCmd(string $message): string
     {
         return 'RCPT TO:<' . $message . '>';
     }
@@ -468,7 +468,7 @@ class SmtpTransport extends AbstractTransport
      * @param \Cake\Mailer\Message $message Message instance
      * @return array
      */
-    protected function _prepareFromAddress(Message $message): array
+    protected function prepareFromAddress(Message $message): array
     {
         $from = $message->getReturnPath();
         if (!$from) {
@@ -484,7 +484,7 @@ class SmtpTransport extends AbstractTransport
      * @param \Cake\Mailer\Message $message Message instance
      * @return array
      */
-    protected function _prepareRecipientAddresses(Message $message): array
+    protected function prepareRecipientAddresses(Message $message): array
     {
         $to = $message->getTo();
         $cc = $message->getCc();
@@ -499,7 +499,7 @@ class SmtpTransport extends AbstractTransport
      * @param \Cake\Mailer\Message $message Message instance
      * @return string
      */
-    protected function _prepareMessage(Message $message): string
+    protected function prepareMessage(Message $message): string
     {
         $lines = $message->getBody();
         $messages = [];
@@ -521,14 +521,14 @@ class SmtpTransport extends AbstractTransport
      * @throws \Cake\Network\Exception\SocketException
      * @return void
      */
-    protected function _sendRcpt(Message $message): void
+    protected function sendRcpt(Message $message): void
     {
-        $from = $this->_prepareFromAddress($message);
-        $this->_smtpSend($this->_prepareFromCmd((string)key($from)));
+        $from = $this->prepareFromAddress($message);
+        $this->smtpSend($this->prepareFromCmd((string)key($from)));
 
-        $messages = $this->_prepareRecipientAddresses($message);
+        $messages = $this->prepareRecipientAddresses($message);
         foreach ($messages as $mail) {
-            $this->_smtpSend($this->_prepareRcptCmd($mail));
+            $this->smtpSend($this->prepareRcptCmd($mail));
         }
     }
 
@@ -539,9 +539,9 @@ class SmtpTransport extends AbstractTransport
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _sendData(Message $message): void
+    protected function sendData(Message $message): void
     {
-        $this->_smtpSend('DATA', '354');
+        $this->smtpSend('DATA', '354');
 
         $headers = $message->getHeadersString([
             'from',
@@ -553,9 +553,9 @@ class SmtpTransport extends AbstractTransport
             'subject',
             'returnPath',
         ]);
-        $message = $this->_prepareMessage($message);
+        $message = $this->prepareMessage($message);
 
-        $this->_smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
+        $this->smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
         $this->_content = ['headers' => $headers, 'message' => $message];
     }
 
@@ -567,7 +567,7 @@ class SmtpTransport extends AbstractTransport
      */
     protected function _disconnect(): void
     {
-        $this->_smtpSend('QUIT', false);
+        $this->smtpSend('QUIT', false);
         $this->_socket->disconnect();
         $this->authType = null;
     }
@@ -578,7 +578,7 @@ class SmtpTransport extends AbstractTransport
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _generateSocket(): void
+    protected function generateSocket(): void
     {
         $this->_socket = new Socket($this->_config);
     }
@@ -591,7 +591,7 @@ class SmtpTransport extends AbstractTransport
      * @return string|null The matched code, or null if nothing matched
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _smtpSend(?string $data, string|false $checkCode = '250'): ?string
+    protected function smtpSend(?string $data, string|false $checkCode = '250'): ?string
     {
         $this->_lastResponse = [];
 
@@ -619,7 +619,7 @@ class SmtpTransport extends AbstractTransport
             $responseLines = explode("\r\n", rtrim($response, "\r\n"));
             $response = end($responseLines);
 
-            $this->_bufferResponseLines($responseLines);
+            $this->bufferResponseLines($responseLines);
 
             if (preg_match('/^(' . $checkCode . ')(.)/', $response, $code)) {
                 if ($code[2] === '-') {

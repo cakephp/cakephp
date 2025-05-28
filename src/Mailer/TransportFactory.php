@@ -75,7 +75,7 @@ class TransportFactory
      * @return void
      * @throws \InvalidArgumentException When a tranport cannot be created.
      */
-    protected static function _buildTransport(string $name): void
+    protected static function buildTransport(string $name): void
     {
         if (!isset(static::$_config[$name])) {
             throw new InvalidArgumentException(
@@ -106,7 +106,7 @@ class TransportFactory
             return $registry->{$name};
         }
 
-        static::_buildTransport($name);
+        static::buildTransport($name);
 
         return $registry->{$name};
     }

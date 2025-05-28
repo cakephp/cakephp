@@ -22,7 +22,7 @@ class SmtpTestTransport extends SmtpTransport
     /**
      * Disabled the socket change
      */
-    protected function _generateSocket(): void
+    protected function generateSocket(): void
     {
     }
 
@@ -45,8 +45,6 @@ class SmtpTestTransport extends SmtpTransport
      */
     public function __call($method, $args)
     {
-        $method = '_' . $method;
-
         return call_user_func_array($this->$method(...), $args);
     }
 
