@@ -152,7 +152,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function getSchema(): Schema
     {
-        $this->_schema ??= $this->_buildSchema(new $this->_schemaClass());
+        $this->_schema ??= $this->buildSchema(new $this->_schemaClass());
 
         return $this->_schema;
     }
@@ -167,7 +167,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @param \Cake\Form\Schema $schema The schema to customize.
      * @return \Cake\Form\Schema The schema to use.
      */
-    protected function _buildSchema(Schema $schema): Schema
+    protected function buildSchema(Schema $schema): Schema
     {
         return $schema;
     }
