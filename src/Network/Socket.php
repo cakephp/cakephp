@@ -131,7 +131,7 @@ class Socket
             $scheme = $this->_config['protocol'] . '://';
         }
 
-        $this->_setSslContext($this->_config['host']);
+        $this->setSslContext($this->_config['host']);
         if (!empty($this->_config['context'])) {
             $context = stream_context_create($this->_config['context']);
         } else {
@@ -146,7 +146,7 @@ class Socket
         /**
          * @phpstan-ignore-next-line
          */
-        set_error_handler($this->_connectionErrorHandler(...));
+        set_error_handler($this->connectionErrorHandler(...));
         $remoteSocketTarget = $scheme . $this->_config['host'];
         $port = (int)$this->_config['port'];
         if ($port > 0) {
@@ -155,7 +155,7 @@ class Socket
 
         $errNum = 0;
         $errStr = '';
-        $this->connection = $this->_getStreamSocketClient(
+        $this->connection = $this->getStreamSocketClient(
             $remoteSocketTarget,
             $errNum,
             $errStr,
@@ -206,7 +206,7 @@ class Socket
      * @param resource $context context
      * @return resource|null
      */
-    protected function _getStreamSocketClient(
+    protected function getStreamSocketClient(
         string $remoteSocketTarget,
         int &$errNum,
         string &$errStr,
@@ -236,7 +236,7 @@ class Socket
      * @param string $host The host name being connected to.
      * @return void
      */
-    protected function _setSslContext(string $host): void
+    protected function setSslContext(string $host): void
     {
         foreach ($this->_config as $key => $value) {
             if (!str_starts_with($key, 'ssl_')) {
@@ -273,7 +273,7 @@ class Socket
      * @param string $message Message.
      * @return void
      */
-    protected function _connectionErrorHandler(int $code, string $message): void
+    protected function connectionErrorHandler(int $code, string $message): void
     {
         $this->_connectionErrors[] = $message;
     }
