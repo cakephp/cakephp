@@ -39,7 +39,7 @@ class SubjectFilterDecorator extends AbstractDecorator
             return null;
         }
 
-        return $this->_call($args);
+        return $this->call($args);
     }
 
     /**
