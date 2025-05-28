@@ -15,7 +15,7 @@ class TestAppsExceptionRenderer extends WebExceptionRenderer
     /**
      * @inheritDoc
      */
-    protected function _getController(): Controller
+    protected function getController(): Controller
     {
         $request = $this->request ?: Router::getRequest();
         if ($request === null) {

@@ -500,7 +500,7 @@ class Debugger
             if (!isset($data[$i])) {
                 continue;
             }
-            $string = str_replace(["\r\n", "\n"], '', static::_highlight($data[$i]));
+            $string = str_replace(["\r\n", "\n"], '', static::highlight($data[$i]));
             if ($i === $line) {
                 $lines[] = '<span class="code-highlight">' . $string . '</span>';
             } else {
@@ -518,7 +518,7 @@ class Debugger
      * @param string $str The string to convert.
      * @return string
      */
-    protected static function _highlight(string $str): string
+    protected static function highlight(string $str): string
     {
         $added = false;
         if (!str_contains($str, '<?php')) {
