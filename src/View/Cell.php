@@ -165,7 +165,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
     {
         $cache = [];
         if ($this->_cache) {
-            $cache = $this->_cacheConfig($this->action, $template);
+            $cache = $this->cacheConfig($this->action, $template);
         }
 
         $render = function () use ($template): string {
@@ -230,7 +230,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      * @param string|null $template The name of the template to be rendered.
      * @return array The cache configuration.
      */
-    protected function _cacheConfig(string $action, ?string $template = null): array
+    protected function cacheConfig(string $action, ?string $template = null): array
     {
         if (!$this->_cache) {
             return [];

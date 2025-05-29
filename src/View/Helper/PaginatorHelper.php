@@ -241,7 +241,7 @@ class PaginatorHelper extends Helper
      * @param array<string, mixed> $templates An array of templates with the 'active' and 'disabled' keys.
      * @return string Generated HTML
      */
-    protected function _toggledLink(string|false $text, bool $enabled, array $options, array $templates): string
+    protected function toggledLink(string|false $text, bool $enabled, array $options, array $templates): string
     {
         $template = $templates['active'];
         if (!$enabled) {
@@ -325,7 +325,7 @@ class PaginatorHelper extends Helper
             'disabled' => 'prevDisabled',
         ];
 
-        return $this->_toggledLink($content, $this->hasPrev(), $options, $templates);
+        return $this->toggledLink($content, $this->hasPrev(), $options, $templates);
     }
 
     /**
@@ -362,7 +362,7 @@ class PaginatorHelper extends Helper
             'disabled' => 'nextDisabled',
         ];
 
-        return $this->_toggledLink($content, $this->hasNext(), $options, $templates);
+        return $this->toggledLink($content, $this->hasNext(), $options, $templates);
     }
 
     /**
@@ -491,14 +491,14 @@ class PaginatorHelper extends Helper
             && !empty($options['sort'])
             && !str_contains($options['sort'], '.')
         ) {
-            $paging['sort'] = $this->_removeAlias($paging['sort']);
+            $paging['sort'] = $this->removeAlias($paging['sort']);
         }
         if (
             !empty($paging['sortDefault'])
             && !empty($options['sort'])
             && !str_contains($options['sort'], '.')
         ) {
-            $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $this->param('alias'));
+            $paging['sortDefault'] = $this->removeAlias($paging['sortDefault'], $this->param('alias'));
         }
 
         $options += array_intersect_key(
@@ -552,7 +552,7 @@ class PaginatorHelper extends Helper
      * @param string $field Current field
      * @return string Unaliased field if applicable
      */
-    protected function _removeAlias(string $field, ?string $alias = null): string
+    protected function removeAlias(string $field, ?string $alias = null): string
     {
         $currentModel = $alias ?: $this->param('alias');
 
@@ -707,7 +707,7 @@ class PaginatorHelper extends Helper
         }
 
         if ($options['modulus'] !== false && $params['pageCount'] > $options['modulus']) {
-            $out = $this->_modulusNumbers($templater, $params, $options);
+            $out = $this->modulusNumbers($templater, $params, $options);
         } else {
             $out = $this->_numbers($templater, $params, $options);
         }
@@ -727,7 +727,7 @@ class PaginatorHelper extends Helper
      * @return array An array with the start and end numbers.
      * @phpstan-return array{0: int, 1: int}
      */
-    protected function _getNumbersStartAndEnd(array $params, array $options): array
+    protected function getNumbersStartAndEnd(array $params, array $options): array
     {
         $half = (int)($options['modulus'] / 2);
         $end = max(1 + $options['modulus'], $params['currentPage'] + $half);
@@ -765,7 +765,7 @@ class PaginatorHelper extends Helper
      * @param array<string, mixed> $options Options from the numbers() method.
      * @return string
      */
-    protected function _formatNumber(StringTemplate $templater, array $options): string
+    protected function formatNumber(StringTemplate $templater, array $options): string
     {
         $vars = [
             'text' => $options['text'],
@@ -783,18 +783,18 @@ class PaginatorHelper extends Helper
      * @param array<string, mixed> $options Options from the numbers() method.
      * @return string Markup output.
      */
-    protected function _modulusNumbers(StringTemplate $templater, array $params, array $options): string
+    protected function modulusNumbers(StringTemplate $templater, array $params, array $options): string
     {
         $out = '';
         $ellipsis = $templater->format('ellipsis', []);
 
-        [$start, $end] = $this->_getNumbersStartAndEnd($params, $options);
+        [$start, $end] = $this->getNumbersStartAndEnd($params, $options);
 
-        $out .= $this->_firstNumber($ellipsis, $params, $start, $options);
+        $out .= $this->firstNumber($ellipsis, $params, $start, $options);
         $out .= $options['before'];
 
         for ($i = $start; $i < $params['currentPage']; $i++) {
-            $out .= $this->_formatNumber($templater, [
+            $out .= $this->formatNumber($templater, [
                 'text' => $this->Number->format($i),
                 'page' => $i,
                 'url' => $options['url'],
@@ -809,7 +809,7 @@ class PaginatorHelper extends Helper
         $start = (int)$params['currentPage'] + 1;
         $i = $start;
         while ($i < $end) {
-            $out .= $this->_formatNumber($templater, [
+            $out .= $this->formatNumber($templater, [
                 'text' => $this->Number->format($i),
                 'page' => $i,
                 'url' => $options['url'],
@@ -818,7 +818,7 @@ class PaginatorHelper extends Helper
         }
 
         if ($end !== $params['currentPage']) {
-            $out .= $this->_formatNumber($templater, [
+            $out .= $this->formatNumber($templater, [
                 'text' => $this->Number->format($i),
                 'page' => $end,
                 'url' => $options['url'],
@@ -826,7 +826,7 @@ class PaginatorHelper extends Helper
         }
 
         $out .= $options['after'];
-        $out .= $this->_lastNumber($ellipsis, $params, $end, $options);
+        $out .= $this->lastNumber($ellipsis, $params, $end, $options);
 
         return $out;
     }
@@ -840,7 +840,7 @@ class PaginatorHelper extends Helper
      * @param array<string, mixed> $options Options from the numbers() method.
      * @return string Markup output.
      */
-    protected function _firstNumber(string $ellipsis, array $params, int $start, array $options): string
+    protected function firstNumber(string $ellipsis, array $params, int $start, array $options): string
     {
         $out = '';
         $first = is_int($options['first']) ? $options['first'] : 0;
@@ -864,7 +864,7 @@ class PaginatorHelper extends Helper
      * @param array<string, mixed> $options Options from the numbers() method.
      * @return string Markup output.
      */
-    protected function _lastNumber(string $ellipsis, array $params, int $end, array $options): string
+    protected function lastNumber(string $ellipsis, array $params, int $end, array $options): string
     {
         $out = '';
         $last = is_int($options['last']) ? $options['last'] : 0;

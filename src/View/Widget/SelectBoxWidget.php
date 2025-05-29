@@ -123,7 +123,7 @@ class SelectBoxWidget extends BasicWidget
     {
         $data += $this->mergeDefaults($data, $context);
 
-        $options = $this->_renderContent($data);
+        $options = $this->renderContent($data);
         $name = $data['name'];
         unset($data['name'], $data['options'], $data['empty'], $data['val'], $data['escape']);
         if (isset($data['disabled']) && is_array($data['disabled'])) {
@@ -151,7 +151,7 @@ class SelectBoxWidget extends BasicWidget
      * @param array<string, mixed> $data The context for rendering a select.
      * @return array<string>
      */
-    protected function _renderContent(array $data): array
+    protected function renderContent(array $data): array
     {
         $options = $data['options'];
 
@@ -160,7 +160,7 @@ class SelectBoxWidget extends BasicWidget
         }
 
         if (!empty($data['empty'])) {
-            $options = $this->_emptyValue($data['empty']) + (array)$options;
+            $options = $this->emptyValue($data['empty']) + (array)$options;
         }
         if (!$options) {
             return [];
@@ -173,7 +173,7 @@ class SelectBoxWidget extends BasicWidget
         }
         $templateVars = $data['templateVars'];
 
-        return $this->_renderOptions($options, $disabled, $selected, $templateVars, $data['escape']);
+        return $this->renderOptions($options, $disabled, $selected, $templateVars, $data['escape']);
     }
 
     /**
@@ -182,7 +182,7 @@ class SelectBoxWidget extends BasicWidget
      * @param array|string|bool $value The provided empty value.
      * @return array The generated option key/value.
      */
-    protected function _emptyValue(array|string|bool $value): array
+    protected function emptyValue(array|string|bool $value): array
     {
         if ($value === true) {
             return ['' => ''];
@@ -205,7 +205,7 @@ class SelectBoxWidget extends BasicWidget
      * @param bool $escape Toggle HTML escaping
      * @return string Formatted template string
      */
-    protected function _renderOptgroup(
+    protected function renderOptgroup(
         string $label,
         ArrayAccess|array $optgroup,
         ?array $disabled,
@@ -220,7 +220,7 @@ class SelectBoxWidget extends BasicWidget
             $label = $optgroup['text'];
             $attrs = (array)$optgroup;
         }
-        $groupOptions = $this->_renderOptions($opts, $disabled, $selected, $templateVars, $escape);
+        $groupOptions = $this->renderOptions($opts, $disabled, $selected, $templateVars, $escape);
 
         return $this->_templates->format('optgroup', [
             'label' => $escape ? h($label) : $label,
@@ -242,7 +242,7 @@ class SelectBoxWidget extends BasicWidget
      * @param bool $escape Toggle HTML escaping.
      * @return array<string> Option elements.
      */
-    protected function _renderOptions(
+    protected function renderOptions(
         iterable $options,
         ?array $disabled,
         mixed $selected,
@@ -269,7 +269,7 @@ class SelectBoxWidget extends BasicWidget
                 )
             ) {
                 /** @var \ArrayAccess<string, mixed>|array<string, mixed> $val */
-                $out[] = $this->_renderOptgroup((string)$key, $val, $disabled, $selected, $templateVars, $escape);
+                $out[] = $this->renderOptgroup((string)$key, $val, $disabled, $selected, $templateVars, $escape);
                 continue;
             }
 
@@ -285,10 +285,10 @@ class SelectBoxWidget extends BasicWidget
                 $key = $optAttrs['value'];
             }
             $optAttrs['templateVars'] ??= [];
-            if ($this->_isSelected((string)$key, $selected)) {
+            if ($this->isSelected((string)$key, $selected)) {
                 $optAttrs['selected'] = true;
             }
-            if ($this->_isDisabled((string)$key, $disabled)) {
+            if ($this->isDisabled((string)$key, $disabled)) {
                 $optAttrs['disabled'] = true;
             }
             if ($templateVars) {
@@ -314,7 +314,7 @@ class SelectBoxWidget extends BasicWidget
      * @param mixed $selected The selected values.
      * @return bool
      */
-    protected function _isSelected(string $key, mixed $selected): bool
+    protected function isSelected(string $key, mixed $selected): bool
     {
         if ($selected === null) {
             return false;
@@ -336,7 +336,7 @@ class SelectBoxWidget extends BasicWidget
      * @param array<string>|null $disabled The disabled values.
      * @return bool
      */
-    protected function _isDisabled(string $key, ?array $disabled): bool
+    protected function isDisabled(string $key, ?array $disabled): bool
     {
         if ($disabled === null) {
             return false;

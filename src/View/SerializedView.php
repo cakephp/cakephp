@@ -62,7 +62,7 @@ abstract class SerializedView extends View
      *   need(s) to be serialized
      * @return string The serialized data.
      */
-    abstract protected function _serialize(array|string $serialize): string;
+    abstract protected function serialize(array|string $serialize): string;
 
     /**
      * Render view template or return serialized data.
@@ -77,7 +77,7 @@ abstract class SerializedView extends View
         $serialize = $this->serializeKeys();
         if ($serialize !== false) {
             try {
-                return $this->_serialize($serialize);
+                return $this->serialize($serialize);
             } catch (Exception | TypeError $e) {
                 throw new SerializationFailureException(
                     'Serialization of View data failed.',

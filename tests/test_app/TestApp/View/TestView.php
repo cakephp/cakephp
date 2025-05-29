@@ -16,9 +16,9 @@ class TestView extends AppView
      * @param string|null $name Controller action to find template filename for
      * @return string Template filename
      */
-    public function getTemplateFileName(?string $name = null): string
+    public function innerGetTemplateFileName(?string $name = null): string
     {
-        return $this->_getTemplateFileName($name);
+        return $this->getTemplateFileName($name);
     }
 
     /**
@@ -27,9 +27,9 @@ class TestView extends AppView
      * @param string|null $name The name of the layout to find.
      * @return string Filename for layout file (.php).
      */
-    public function getLayoutFileName(?string $name = null): string
+    public function innerGetLayoutFileName(?string $name = null): string
     {
-        return $this->_getLayoutFileName($name);
+        return $this->getLayoutFileName($name);
     }
 
     /**
@@ -39,9 +39,9 @@ class TestView extends AppView
      * @param bool $cached Set to true to force a refresh of view paths.
      * @return string[] paths
      */
-    public function paths(?string $plugin = null, bool $cached = true): array
+    public function innerPaths(?string $plugin = null, bool $cached = true): array
     {
-        return $this->_paths($plugin, $cached);
+        return $this->paths($plugin, $cached);
     }
 
     /**

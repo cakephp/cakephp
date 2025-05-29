@@ -128,7 +128,7 @@ class Helper implements EventListenerInterface
      * @param string $cancelCode Code to be executed after user chose 'Cancel'
      * @return string "onclick" JS code
      */
-    protected function _confirm(string $okCode, string $cancelCode): string
+    protected function confirm(string $okCode, string $cancelCode): string
     {
         return "if (confirm(this.dataset.confirmMessage)) { {$okCode} } {$cancelCode}";
     }

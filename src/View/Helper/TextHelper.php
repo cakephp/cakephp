@@ -105,13 +105,13 @@ class TextHelper extends Helper
 
         $text = (string)preg_replace_callback(
             $pattern,
-            [&$this, '_insertPlaceHolder'],
+            [&$this, 'insertPlaceHolder'],
             $text,
         );
         // phpcs:disable Generic.Files.LineLength
         $text = preg_replace_callback(
             '#(?<!href="|">)(?<!\b[[:punct:]])(?<!http://|https://|ftp://|nntp://)www\.[^\s\n\%\ <]+[^\s<\n\%\,\.\ ](?<!\))#i',
-            [&$this, '_insertPlaceHolder'],
+            [&$this, 'insertPlaceHolder'],
             $text,
         );
         // phpcs:enable Generic.Files.LineLength
@@ -119,7 +119,7 @@ class TextHelper extends Helper
             $text = h($text);
         }
 
-        return $this->_linkUrls($text, $options);
+        return $this->linkUrls($text, $options);
     }
 
     /**
@@ -129,7 +129,7 @@ class TextHelper extends Helper
      * @param array $matches An array of regexp matches.
      * @return string Replaced values.
      */
-    protected function _insertPlaceHolder(array $matches): string
+    protected function insertPlaceHolder(array $matches): string
     {
         $match = $matches[0];
         $envelope = ['', ''];
@@ -156,7 +156,7 @@ class TextHelper extends Helper
      * @param array<string, mixed> $htmlOptions The options for the generated links.
      * @return string The text with links inserted.
      */
-    protected function _linkUrls(string $text, array $htmlOptions): string
+    protected function linkUrls(string $text, array $htmlOptions): string
     {
         $replace = [];
         foreach ($this->_placeholders as $hash => $content) {
@@ -169,7 +169,7 @@ class TextHelper extends Helper
 
             $linkOptions = $htmlOptions;
             unset($htmlOptions['maxLength'], $htmlOptions['stripProtocol'], $htmlOptions['ellipsis']);
-            $link = $this->_prepareLinkLabel($link, $linkOptions);
+            $link = $this->prepareLinkLabel($link, $linkOptions);
 
             $replace[$hash] = $envelope[0] . $this->Html->link($link, $url, $htmlOptions) . $envelope[1];
         }
@@ -184,7 +184,7 @@ class TextHelper extends Helper
      * @param array $options<string, mixed> $htmlOptions The options for the generated link label.
      * @return string Modified link label.
      */
-    protected function _prepareLinkLabel(string $name, array $options): string
+    protected function prepareLinkLabel(string $name, array $options): string
     {
         if (isset($options['stripProtocol']) && $options['stripProtocol'] === true) {
             $name = (string)preg_replace('(^https?://)', '', $name);
@@ -209,7 +209,7 @@ class TextHelper extends Helper
      * @return string
      * @see \Cake\View\Helper\TextHelper::autoLinkEmails()
      */
-    protected function _linkEmails(string $text, array $options): string
+    protected function linkEmails(string $text, array $options): string
     {
         $replace = [];
         foreach ($this->_placeholders as $hash => $content) {
@@ -241,14 +241,14 @@ class TextHelper extends Helper
         $atom = '[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]';
         $text = preg_replace_callback(
             '/(?<=\s|^|\(|\>|\;)(' . $atom . '*(?:\.' . $atom . '+)*@[\p{L}0-9-]+(?:\.[\p{L}0-9-]+)+)/ui',
-            [&$this, '_insertPlaceholder'],
+            [&$this, 'insertPlaceholder'],
             $text,
         );
         if ($options['escape']) {
             $text = h($text);
         }
 
-        return $this->_linkEmails($text, $options);
+        return $this->linkEmails($text, $options);
     }
 
     /**

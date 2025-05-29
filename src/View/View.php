@@ -658,7 +658,7 @@ class View implements EventDispatcherInterface
     {
         $options += ['callbacks' => false, 'cache' => null, 'plugin' => null, 'ignoreMissing' => false];
         if (isset($options['cache'])) {
-            $options['cache'] = $this->_elementCache(
+            $options['cache'] = $this->elementCache(
                 $name,
                 $data,
                 array_diff_key($options, ['callbacks' => false, 'plugin' => null, 'ignoreMissing' => null]),
@@ -666,14 +666,14 @@ class View implements EventDispatcherInterface
         }
 
         $pluginCheck = $options['plugin'] !== false;
-        $file = $this->_getElementFileName($name, $pluginCheck);
+        $file = $this->getElementFileName($name, $pluginCheck);
         if ($file && $options['cache']) {
             return $this->cache(function () use ($file, $data, $options): void {
-                echo $this->_renderElement($file, $data, $options);
+                echo $this->renderElement($file, $data, $options);
             }, $options['cache']);
         }
         if ($file) {
-            return $this->_renderElement($file, $data, $options);
+            return $this->renderElement($file, $data, $options);
         }
 
         if ($options['ignoreMissing']) {
@@ -740,7 +740,7 @@ class View implements EventDispatcherInterface
      */
     public function elementExists(string $name): bool
     {
-        return (bool)$this->_getElementFileName($name);
+        return (bool)$this->getElementFileName($name);
     }
 
     /**
@@ -779,7 +779,7 @@ class View implements EventDispatcherInterface
             $this->layout = $layout;
         }
 
-        $templateFileName = $this->_getTemplateFileName($template);
+        $templateFileName = $this->getTemplateFileName($template);
         $this->_currentType = static::TYPE_TEMPLATE;
         $this->dispatchEvent('View.beforeRender', [$templateFileName]);
         $this->Blocks->set('content', $this->_render($templateFileName));
@@ -819,7 +819,7 @@ class View implements EventDispatcherInterface
      */
     public function renderLayout(string $content, ?string $layout = null): string
     {
-        $layoutFileName = $this->_getLayoutFileName($layout);
+        $layoutFileName = $this->getLayoutFileName($layout);
 
         if ($content) {
             $this->Blocks->set('content', $content);
@@ -1055,10 +1055,10 @@ class View implements EventDispatcherInterface
         $type = str_starts_with($name, '/') ? static::TYPE_TEMPLATE : $this->_currentType;
         switch ($type) {
             case static::TYPE_ELEMENT:
-                $parent = $this->_getElementFileName($name);
+                $parent = $this->getElementFileName($name);
                 if (!$parent) {
                     [$plugin, $name] = $this->pluginSplit($name);
-                    $paths = $this->_paths($plugin);
+                    $paths = $this->paths($plugin);
                     $defaultPath = $paths[0] . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR;
                     throw new LogicException(sprintf(
                         'You cannot extend an element which does not exist (%s).',
@@ -1067,10 +1067,10 @@ class View implements EventDispatcherInterface
                 }
                 break;
             case static::TYPE_LAYOUT:
-                $parent = $this->_getLayoutFileName($name);
+                $parent = $this->getLayoutFileName($name);
                 break;
             default:
-                $parent = $this->_getTemplateFileName($name);
+                $parent = $this->getTemplateFileName($name);
         }
 
         if ($parent === $this->_current) {
@@ -1141,7 +1141,7 @@ class View implements EventDispatcherInterface
 
         $this->dispatchEvent('View.beforeRenderFile', [$templateFile]);
 
-        $content = $this->_evaluate($templateFile, $data);
+        $content = $this->evaluate($templateFile, $data);
 
         $afterEvent = $this->dispatchEvent('View.afterRenderFile', [$templateFile, $content]);
         if ($afterEvent->getResult() !== null) {
@@ -1175,7 +1175,7 @@ class View implements EventDispatcherInterface
      * @param array $dataForView Data to include in rendered view.
      * @return string Rendered output
      */
-    protected function _evaluate(string $templateFile, array $dataForView): string
+    protected function evaluate(string $templateFile, array $dataForView): string
     {
         extract($dataForView);
 
@@ -1329,7 +1329,7 @@ class View implements EventDispatcherInterface
      * @throws \Cake\View\Exception\MissingTemplateException when a template file could not be found.
      * @throws \Cake\Core\Exception\CakeException When template name not provided.
      */
-    protected function _getTemplateFileName(?string $name = null): string
+    protected function getTemplateFileName(?string $name = null): string
     {
         $templatePath = '';
         $subDir = '';
@@ -1354,7 +1354,7 @@ class View implements EventDispatcherInterface
         $name = str_replace('/', DIRECTORY_SEPARATOR, $name);
 
         if (!str_contains($name, DIRECTORY_SEPARATOR) && $name !== '' && !str_starts_with($name, '.')) {
-            $name = $templatePath . $subDir . $this->_inflectTemplateFileName($name);
+            $name = $templatePath . $subDir . $this->inflectTemplateFileName($name);
         } elseif (str_contains($name, DIRECTORY_SEPARATOR)) {
             if (str_starts_with($name, DIRECTORY_SEPARATOR) || $name[1] === ':') {
                 $name = trim($name, DIRECTORY_SEPARATOR);
@@ -1366,10 +1366,10 @@ class View implements EventDispatcherInterface
         }
 
         $name .= $this->_ext;
-        $paths = $this->_paths($plugin);
+        $paths = $this->paths($plugin);
         foreach ($paths as $path) {
             if (is_file($path . $name)) {
-                return $this->_checkFilePath($path . $name, $path);
+                return $this->checkFilePath($path . $name, $path);
             }
         }
 
@@ -1382,7 +1382,7 @@ class View implements EventDispatcherInterface
      * @param string $name Name of file which should be inflected.
      * @return string File name after conversion
      */
-    protected function _inflectTemplateFileName(string $name): string
+    protected function inflectTemplateFileName(string $name): string
     {
         return Inflector::underscore($name);
     }
@@ -1398,7 +1398,7 @@ class View implements EventDispatcherInterface
      * @return string The file path
      * @throws \InvalidArgumentException
      */
-    protected function _checkFilePath(string $file, string $path): string
+    protected function checkFilePath(string $file, string $path): string
     {
         if (!str_contains($file, '..')) {
             return $file;
@@ -1447,7 +1447,7 @@ class View implements EventDispatcherInterface
      * @throws \Cake\View\Exception\MissingLayoutException when a layout cannot be located
      * @throws \Cake\Core\Exception\CakeException
      */
-    protected function _getLayoutFileName(?string $name = null): string
+    protected function getLayoutFileName(?string $name = null): string
     {
         if ($name === null) {
             if (!$this->layout) {
@@ -1463,7 +1463,7 @@ class View implements EventDispatcherInterface
 
         foreach ($this->getLayoutPaths($plugin) as $path) {
             if (is_file($path . $name)) {
-                return $this->_checkFilePath($path . $name, $path);
+                return $this->checkFilePath($path . $name, $path);
             }
         }
 
@@ -1483,9 +1483,9 @@ class View implements EventDispatcherInterface
         if ($this->layoutPath) {
             $subDir = $this->layoutPath . DIRECTORY_SEPARATOR;
         }
-        $layoutPaths = $this->_getSubPaths(static::TYPE_LAYOUT . DIRECTORY_SEPARATOR . $subDir);
+        $layoutPaths = $this->getSubPaths(static::TYPE_LAYOUT . DIRECTORY_SEPARATOR . $subDir);
 
-        foreach ($this->_paths($plugin) as $path) {
+        foreach ($this->paths($plugin) as $path) {
             foreach ($layoutPaths as $layoutPath) {
                 yield $path . $layoutPath;
             }
@@ -1499,7 +1499,7 @@ class View implements EventDispatcherInterface
      * @param bool $pluginCheck - if false will ignore the request's plugin if parsed plugin is not loaded
      * @return string|false Either a string to the element filename or false when one can't be found.
      */
-    protected function _getElementFileName(string $name, bool $pluginCheck = true): string|false
+    protected function getElementFileName(string $name, bool $pluginCheck = true): string|false
     {
         [$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
@@ -1521,8 +1521,8 @@ class View implements EventDispatcherInterface
      */
     protected function getElementPaths(?string $plugin): Generator
     {
-        $elementPaths = $this->_getSubPaths(static::TYPE_ELEMENT);
-        foreach ($this->_paths($plugin) as $path) {
+        $elementPaths = $this->getSubPaths(static::TYPE_ELEMENT);
+        foreach ($this->paths($plugin) as $path) {
             foreach ($elementPaths as $subDir) {
                 yield $path . $subDir . DIRECTORY_SEPARATOR;
             }
@@ -1540,7 +1540,7 @@ class View implements EventDispatcherInterface
      * @param string $basePath Base path on which to get the prefixed one.
      * @return array<string> Array with all the templates paths.
      */
-    protected function _getSubPaths(string $basePath): array
+    protected function getSubPaths(string $basePath): array
     {
         $paths = [$basePath];
         if ($this->request->getParam('prefix')) {
@@ -1566,7 +1566,7 @@ class View implements EventDispatcherInterface
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
      * @return array<string> paths
      */
-    protected function _paths(?string $plugin = null, bool $cached = true): array
+    protected function paths(?string $plugin = null, bool $cached = true): array
     {
         if ($cached) {
             if ($plugin === null && $this->_paths !== []) {
@@ -1627,7 +1627,7 @@ class View implements EventDispatcherInterface
      * @return array<string, mixed> Element Cache configuration.
      * @phpstan-return array{key:string, config:string}
      */
-    protected function _elementCache(string $name, array $data, array $options): array
+    protected function elementCache(string $name, array $data, array $options): array
     {
         if (isset($options['cache']['key'], $options['cache']['config'])) {
             /** @phpstan-var array{key:string, config:string} $cache */
@@ -1676,7 +1676,7 @@ class View implements EventDispatcherInterface
      * @triggers View.beforeRender $this, [$file]
      * @triggers View.afterRender $this, [$file, $element]
      */
-    protected function _renderElement(string $file, array $data, array $options): string
+    protected function renderElement(string $file, array $data, array $options): string
     {
         $current = $this->_current;
         $restore = $this->_currentType;

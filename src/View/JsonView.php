@@ -133,9 +133,9 @@ class JsonView extends SerializedView
     /**
      * @inheritDoc
      */
-    protected function _serialize(array|string $serialize): string
+    protected function serialize(array|string $serialize): string
     {
-        $data = $this->_dataToSerialize($serialize);
+        $data = $this->dataToSerialize($serialize);
 
         $jsonOptions = $this->getConfig('jsonOptions')
             ?? JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_AMP | JSON_HEX_QUOT | JSON_PARTIAL_OUTPUT_ON_ERROR;
@@ -157,7 +157,7 @@ class JsonView extends SerializedView
      * @param array|string $serialize The name(s) of the view variable(s) that need(s) to be serialized.
      * @return mixed The data to serialize.
      */
-    protected function _dataToSerialize(array|string $serialize): mixed
+    protected function dataToSerialize(array|string $serialize): mixed
     {
         if (is_array($serialize)) {
             $data = [];

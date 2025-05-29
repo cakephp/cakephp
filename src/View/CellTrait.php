@@ -75,7 +75,7 @@ trait CellTrait
 
         $options = ['action' => $action, 'args' => $data] + $options;
 
-        return $this->_createCell($className, $action, $plugin, $options);
+        return $this->createCell($className, $action, $plugin, $options);
     }
 
     /**
@@ -87,7 +87,7 @@ trait CellTrait
      * @param array<string, mixed> $options The constructor options for the cell.
      * @return \Cake\View\Cell
      */
-    protected function _createCell(string $className, string $action, ?string $plugin, array $options): Cell
+    protected function createCell(string $className, string $action, ?string $plugin, array $options): Cell
     {
         /** @var \Cake\View\Cell $instance */
         $instance = new $className($this->request, $this->response, $this->getEventManager(), $options);

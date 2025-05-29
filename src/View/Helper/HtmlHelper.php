@@ -281,7 +281,7 @@ class HtmlHelper extends Helper
             unset($options['confirm']);
         }
         if ($confirmMessage) {
-            $confirm = $this->_confirm('return true;', 'return false;');
+            $confirm = $this->confirm('return true;', 'return false;');
             $options['data-confirm-message'] = $confirmMessage;
             $options['onclick'] = $templater->format('confirmJs', [
                 'confirmMessage' => h($confirmMessage),
@@ -825,7 +825,7 @@ class HtmlHelper extends Helper
         $out = [];
         foreach ($data as $line) {
             $count++;
-            $cellsOut = $this->_renderCells($line, $useCount);
+            $cellsOut = $this->renderCells($line, $useCount);
             $opts = $count % 2 ? $oddTrOptions : $evenTrOptions;
             /** @var array<string, mixed> $options */
             $options = (array)$opts;
@@ -845,7 +845,7 @@ class HtmlHelper extends Helper
      * @param bool $useCount Renders the count into the row. Default is false.
      * @return array<string>
      */
-    protected function _renderCells(array $line, bool $useCount = false): array
+    protected function renderCells(array $line, bool $useCount = false): array
     {
         $i = 0;
         $cellsOut = [];
@@ -1140,7 +1140,7 @@ class HtmlHelper extends Helper
     public function nestedList(array $list, array $options = [], array $itemOptions = []): string
     {
         $options += ['tag' => 'ul'];
-        $items = $this->_nestedListItem($list, $options, $itemOptions);
+        $items = $this->nestedListItem($list, $options, $itemOptions);
 
         return $this->formatTemplate($options['tag'], [
             'attrs' => $this->templater()->formatAttributes($options, ['tag']),
@@ -1157,7 +1157,7 @@ class HtmlHelper extends Helper
      * @return string The nested list element
      * @see \Cake\View\Helper\HtmlHelper::nestedList()
      */
-    protected function _nestedListItem(array $items, array $options, array $itemOptions): string
+    protected function nestedListItem(array $items, array $options, array $itemOptions): string
     {
         $out = '';
 

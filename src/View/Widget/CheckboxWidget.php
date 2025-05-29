@@ -60,7 +60,7 @@ class CheckboxWidget extends BasicWidget
     {
         $data += $this->mergeDefaults($data, $context);
 
-        if ($this->_isChecked($data)) {
+        if ($this->isChecked($data)) {
             $data['checked'] = true;
         }
         unset($data['val']);
@@ -84,7 +84,7 @@ class CheckboxWidget extends BasicWidget
      * @param array<string, mixed> $data Data to look at and determine checked state.
      * @return bool
      */
-    protected function _isChecked(array $data): bool
+    protected function isChecked(array $data): bool
     {
         if (array_key_exists('checked', $data)) {
             return (bool)$data['checked'];

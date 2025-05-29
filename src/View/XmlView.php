@@ -109,7 +109,7 @@ class XmlView extends SerializedView
     /**
      * @inheritDoc
      */
-    protected function _serialize(array|string $serialize): string
+    protected function serialize(array|string $serialize): string
     {
         /** @var string $rootNode */
         $rootNode = $this->getConfig('rootNode', 'response');

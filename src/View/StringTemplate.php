@@ -161,7 +161,7 @@ class StringTemplate
     public function add(array $templates): static
     {
         $this->setConfig($templates);
-        $this->_compileTemplates(array_keys($templates));
+        $this->compileTemplates(array_keys($templates));
 
         return $this;
     }
@@ -172,7 +172,7 @@ class StringTemplate
      * @param array<string> $templates The template names to compile. If empty all templates will be compiled.
      * @return void
      */
-    protected function _compileTemplates(array $templates = []): void
+    protected function compileTemplates(array $templates = []): void
     {
         if (!$templates) {
             $templates = array_keys($this->_config);
@@ -304,7 +304,7 @@ class StringTemplate
 
         foreach ($options as $key => $value) {
             if (!isset($exclude[$key]) && $value !== false && $value !== null) {
-                $attributes[] = $this->_formatAttribute((string)$key, $value, $escapeAttributes);
+                $attributes[] = $this->formatAttribute((string)$key, $value, $escapeAttributes);
             }
         }
         $out = trim(implode(' ', $attributes));
@@ -321,7 +321,7 @@ class StringTemplate
      * @param bool $escape Define if the value must be escaped
      * @return string The composed attribute.
      */
-    protected function _formatAttribute(string $key, mixed $value, bool $escape = true): string
+    protected function formatAttribute(string $key, mixed $value, bool $escape = true): string
     {
         if (is_array($value)) {
             $value = implode(' ', $value);
