@@ -74,6 +74,10 @@ class MysqlSchemaDialectTest extends TestCase
                 ['type' => 'time', 'length' => null],
             ],
             [
+                'YEAR',
+                ['type' => 'year', 'length' => null],
+            ],
+            [
                 'TIMESTAMP',
                 ['type' => 'timestamp', 'length' => null],
             ],
@@ -332,6 +336,8 @@ SQL;
                 published BOOLEAN DEFAULT 0,
                 allow_comments TINYINT(1) DEFAULT 0,
                 location POINT,
+                year_type YEAR,
+                config JSON,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
                 updated DATETIME ON UPDATE CURRENT_TIMESTAMP,
@@ -465,6 +471,22 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'srid' => null,
+            ],
+            'year_type' => [
+                'type' => 'year',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'config' => [
+                'type' => 'json',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
             ],
             'created' => [
                 'type' => 'datetime',
