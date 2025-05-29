@@ -75,10 +75,10 @@ class InflectedRoute extends Route
      */
     public function match(array $url, array $context = []): ?string
     {
-        $url = $this->_underscore($url);
+        $url = $this->underscore($url);
         if ($this->_inflectedDefaults === null) {
             $this->compile();
-            $this->_inflectedDefaults = $this->_underscore($this->defaults);
+            $this->_inflectedDefaults = $this->underscore($this->defaults);
         }
         $restore = $this->defaults;
         try {
@@ -96,7 +96,7 @@ class InflectedRoute extends Route
      * @param array $url An array of URL keys.
      * @return array
      */
-    protected function _underscore(array $url): array
+    protected function underscore(array $url): array
     {
         if (!empty($url['controller'])) {
             $url['controller'] = Inflector::underscore($url['controller']);

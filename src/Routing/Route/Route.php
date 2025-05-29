@@ -310,7 +310,7 @@ class Route
     public function compile(): string
     {
         if ($this->_compiledRoute === null) {
-            $this->_writeRoute();
+            $this->writeRoute();
         }
         assert($this->_compiledRoute !== null);
 
@@ -325,7 +325,7 @@ class Route
      *
      * @return void
      */
-    protected function _writeRoute(): void
+    protected function writeRoute(): void
     {
         if (empty($this->template) || ($this->template === '/')) {
             $this->_compiledRoute = '#^/*$#';
@@ -465,7 +465,7 @@ class Route
         }
 
         $compiledRoute = $this->compile();
-        [$url, $ext] = $this->_parseExtension($url);
+        [$url, $ext] = $this->parseExtension($url);
 
         $urldecode = $this->options['_urldecode'] ?? true;
         if ($urldecode) {
@@ -503,7 +503,7 @@ class Route
         }
 
         if (isset($route['_args_'])) {
-            $pass = $this->_parseArgs($route['_args_'], $route);
+            $pass = $this->parseArgs($route['_args_'], $route);
             $route['pass'] = array_merge($route['pass'], $pass);
             unset($route['_args_']);
         }
@@ -561,7 +561,7 @@ class Route
      * @param string $url The url to parse.
      * @return array containing url, extension
      */
-    protected function _parseExtension(string $url): array
+    protected function parseExtension(string $url): array
     {
         if (count($this->_extensions) && str_contains($url, '.')) {
             foreach ($this->_extensions as $ext) {
@@ -585,7 +585,7 @@ class Route
      * @param array $context The current route context, which should contain controller/action keys.
      * @return array<string> Array of passed args.
      */
-    protected function _parseArgs(string $args, array $context): array
+    protected function parseArgs(string $args, array $context): array
     {
         $pass = [];
         $args = explode('/', $args);
@@ -610,7 +610,7 @@ class Route
      * @param array $params An array of persistent values to replace persistent ones.
      * @return array An array with persistent parameters applied.
      */
-    protected function _persistParams(array $url, array $params): array
+    protected function persistParams(array $url, array $params): array
     {
         foreach ($this->options['persist'] as $persistKey) {
             if (array_key_exists($persistKey, $params) && !isset($url[$persistKey])) {
@@ -646,7 +646,7 @@ class Route
             !empty($this->options['persist']) &&
             is_array($this->options['persist'])
         ) {
-            $url = $this->_persistParams($url, $context['params']);
+            $url = $this->persistParams($url, $context['params']);
         }
         unset($context['params']);
         $hostOptions = array_intersect_key($url, $context);
@@ -697,7 +697,7 @@ class Route
         }
 
         // Check the method first as it is special.
-        if (!$this->_matchMethod($url)) {
+        if (!$this->matchMethod($url)) {
             return null;
         }
         unset($url['_method'], $url['[method]'], $defaults['_method']);
@@ -763,7 +763,7 @@ class Route
             return null;
         }
 
-        return $this->_writeUrl($url, $pass, $query);
+        return $this->writeUrl($url, $pass, $query);
     }
 
     /**
@@ -772,7 +772,7 @@ class Route
      * @param array $url The array for the URL being generated.
      * @return bool
      */
-    protected function _matchMethod(array $url): bool
+    protected function matchMethod(array $url): bool
     {
         if (empty($this->defaults['_method'])) {
             return true;
@@ -802,7 +802,7 @@ class Route
      * @param array $query An array of parameters
      * @return string Composed route string.
      */
-    protected function _writeUrl(array $params, array $pass = [], array $query = []): string
+    protected function writeUrl(array $params, array $pass = [], array $query = []): string
     {
         $pass = array_map(function ($value) {
             return rawurlencode((string)$value);

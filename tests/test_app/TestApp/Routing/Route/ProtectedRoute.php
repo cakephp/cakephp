@@ -14,8 +14,8 @@ class ProtectedRoute extends Route
      * @param string $url
      * @return array
      */
-    public function parseExtension($url): array
+    public function innerParseExtension($url): array
     {
-        return $this->_parseExtension($url);
+        return $this->parseExtension($url);
     }
 }

@@ -313,7 +313,7 @@ class Router
      * @see \Cake\Routing\Router::url()
      * @see \Cake\Routing\Router::addUrlFilter()
      */
-    protected static function _applyUrlFilters(array $url): array
+    protected static function applyUrlFilters(array $url): array
     {
         $request = static::getRequest();
         foreach (static::$_urlFilters as $filter) {
@@ -417,7 +417,7 @@ class Router
             }
             unset($url['_https'], $url['_full'], $url['#']);
 
-            $url = static::_applyUrlFilters($url);
+            $url = static::applyUrlFilters($url);
 
             if (!isset($url['_name'])) {
                 // Copy the current action if the controller is the current one.

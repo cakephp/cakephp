@@ -187,7 +187,7 @@ class RouteCollection
      * @param array $url The url to match.
      * @return array<string> The set of names of the url
      */
-    protected function _getNames(array $url): array
+    protected function getNames(array $url): array
     {
         $plugin = false;
         if (isset($url['plugin']) && $url['plugin'] !== false) {
@@ -295,7 +295,7 @@ class RouteCollection
             throw new MissingRouteException(['url' => $name, 'context' => $context]);
         }
 
-        foreach ($this->_getNames($url) as $name) {
+        foreach ($this->getNames($url) as $name) {
             if (empty($this->_routeTable[$name])) {
                 continue;
             }

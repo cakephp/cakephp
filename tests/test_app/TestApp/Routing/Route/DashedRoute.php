@@ -7,9 +7,9 @@ use Cake\Routing\Route\InflectedRoute;
 
 class DashedRoute extends InflectedRoute
 {
-    protected function _underscore(array $url): array
+    protected function underscore(array $url): array
     {
-        $url = parent::_underscore($url);
+        $url = parent::underscore($url);
 
         if (!empty($url['controller'])) {
             $url['controller'] = str_replace('_', '-', $url['controller']);
