@@ -146,7 +146,7 @@ class Hash
         foreach ($tokens as $token) {
             $next = [];
 
-            [$token, $conditions] = self::_splitConditions($token);
+            [$token, $conditions] = self::splitConditions($token);
 
             foreach ($context[$_key] as $item) {
                 if (is_object($item) && method_exists($item, 'toArray')) {
@@ -154,7 +154,7 @@ class Hash
                     $item = $item->toArray();
                 }
                 foreach ((array)$item as $k => $v) {
-                    if (static::_matchToken($k, $token)) {
+                    if (static::matchToken($k, $token)) {
                         $next[] = $v;
                     }
                 }
@@ -169,7 +169,7 @@ class Hash
                             is_array($item) ||
                             $item instanceof ArrayAccess
                         ) &&
-                        static::_matches($item, $conditions)
+                        static::matches($item, $conditions)
                     ) {
                         $filter[] = $item;
                     }
@@ -188,7 +188,7 @@ class Hash
      * @param string $token the token being split.
      * @return array [token, conditions] with token split
      */
-    protected static function _splitConditions(string $token): array
+    protected static function splitConditions(string $token): array
     {
         $conditions = false;
         $position = strpos($token, '[');
@@ -207,7 +207,7 @@ class Hash
      * @param string $token The token being matched.
      * @return bool
      */
-    protected static function _matchToken(mixed $key, string $token): bool
+    protected static function matchToken(mixed $key, string $token): bool
     {
         return match ($token) {
             '{n}' => is_numeric($key),
@@ -224,7 +224,7 @@ class Hash
      * @param string $selector The patterns to match.
      * @return bool Fitness of expression.
      */
-    protected static function _matches(ArrayAccess|array $data, string $selector): bool
+    protected static function matches(ArrayAccess|array $data, string $selector): bool
     {
         preg_match_all(
             '/(\[ (?P<attr>[^=><!]+?) (\s* (?P<op>[><!]?[=]|[><]) \s* (?P<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',
@@ -313,7 +313,7 @@ class Hash
         }
 
         if ($noTokens && !str_contains($path, '{')) {
-            return static::_simpleOp('insert', $data, $tokens, $values);
+            return static::simpleOp('insert', $data, $tokens, $values);
         }
 
         if (!is_iterable($data)) {
@@ -324,12 +324,12 @@ class Hash
         $token = array_shift($tokens);
         $nextPath = implode('.', $tokens);
 
-        [$token, $conditions] = static::_splitConditions($token);
+        [$token, $conditions] = static::splitConditions($token);
 
         foreach ($data as $k => $v) {
             if (
-                static::_matchToken($k, $token) &&
-                (!$conditions || ((is_array($v) || $v instanceof ArrayAccess) && static::_matches($v, $conditions)))
+                static::matchToken($k, $token) &&
+                (!$conditions || ((is_array($v) || $v instanceof ArrayAccess) && static::matches($v, $conditions)))
             ) {
                 $data[$k] = $nextPath
                     ? static::insert($v, $nextPath, $values)
@@ -349,7 +349,7 @@ class Hash
      * @param mixed $values The values to insert when doing inserts.
      * @return \ArrayAccess|array
      */
-    protected static function _simpleOp(
+    protected static function simpleOp(
         string $op,
         ArrayAccess|array $data,
         array $path,
@@ -415,7 +415,7 @@ class Hash
         $tokens = $noTokens ? explode('.', $path) : Text::tokenize($path, '.', '[', ']');
 
         if ($noExpansion && $noTokens) {
-            return static::_simpleOp('remove', $data, $tokens);
+            return static::simpleOp('remove', $data, $tokens);
         }
 
         if (!is_iterable($data)) {
@@ -426,13 +426,13 @@ class Hash
         $token = array_shift($tokens);
         $nextPath = implode('.', $tokens);
 
-        [$token, $conditions] = self::_splitConditions($token);
+        [$token, $conditions] = self::splitConditions($token);
 
         foreach ($data as $k => $v) {
-            $match = static::_matchToken($k, $token);
+            $match = static::matchToken($k, $token);
             if ($match && (is_array($v) || $v instanceof ArrayAccess)) {
                 if ($conditions) {
-                    if (static::_matches($v, $conditions)) {
+                    if (static::matches($v, $conditions)) {
                         if ($nextPath !== '') {
                             $data[$k] = static::remove($v, $nextPath);
                         } else {
@@ -1022,7 +1022,7 @@ class Hash
         } elseif ($missingData) {
             $sortValues = array_pad($sortValues, $dataCount, null);
         }
-        $result = static::_squash($sortValues);
+        $result = static::squash($sortValues);
         $keys = static::extract($result, '{n}.id');
 
         $values = static::extract($result, '{n}.value');
@@ -1085,7 +1085,7 @@ class Hash
      * @param string|int|null $key The key for the data.
      * @return array
      */
-    protected static function _squash(array $data, string|int|null $key = null): array
+    protected static function squash(array $data, string|int|null $key = null): array
     {
         $stack = [];
         foreach ($data as $k => $r) {
@@ -1094,7 +1094,7 @@ class Hash
                 $id = $key;
             }
             if (is_array($r) && $r !== []) {
-                $stack = array_merge($stack, static::_squash($r, $id));
+                $stack = array_merge($stack, static::squash($r, $id));
             } else {
                 $stack[] = ['id' => $id, 'value' => $r];
             }

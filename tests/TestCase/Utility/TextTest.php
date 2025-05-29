@@ -1857,7 +1857,7 @@ HTML;
      */
     public function testStrlen(): void
     {
-        $method = new ReflectionMethod(Text::class, '_strlen');
+        $method = new ReflectionMethod(Text::class, 'strlen');
         $strlen = function () use ($method) {
             return $method->invokeArgs(null, func_get_args());
         };
@@ -1880,7 +1880,7 @@ HTML;
      */
     public function testSubstr(): void
     {
-        $method = new ReflectionMethod(Text::class, '_substr');
+        $method = new ReflectionMethod(Text::class, 'substr');
         $substr = function () use ($method) {
             return $method->invokeArgs(null, func_get_args());
         };

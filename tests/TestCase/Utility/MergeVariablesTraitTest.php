@@ -31,7 +31,7 @@ class MergeVariablesTraitTest extends TestCase
     public function testMergeVarsAsList(): void
     {
         $object = new Grandchild();
-        $object->mergeVars(['listProperty']);
+        $object->innerMergeVars(['listProperty']);
 
         $expected = ['One', 'Two', 'Three', 'Four', 'Five'];
         $this->assertSame($expected, $object->listProperty);
@@ -43,7 +43,7 @@ class MergeVariablesTraitTest extends TestCase
     public function testMergeVarsAsAssoc(): void
     {
         $object = new Grandchild();
-        $object->mergeVars(['assocProperty'], ['associative' => ['assocProperty']]);
+        $object->innerMergeVars(['assocProperty'], ['associative' => ['assocProperty']]);
         $expected = [
             'Red' => null,
             'Orange' => null,
@@ -60,7 +60,7 @@ class MergeVariablesTraitTest extends TestCase
     public function testMergeVarsAsAssocWithKeyValues(): void
     {
         $object = new Grandchild();
-        $object->mergeVars(['nestedProperty'], ['associative' => ['nestedProperty']]);
+        $object->innerMergeVars(['nestedProperty'], ['associative' => ['nestedProperty']]);
 
         $expected = [
             'Red' => [
@@ -79,7 +79,7 @@ class MergeVariablesTraitTest extends TestCase
     public function testMergeVarsMixedModes(): void
     {
         $object = new Grandchild();
-        $object->mergeVars(['assocProperty', 'listProperty'], ['associative' => ['assocProperty']]);
+        $object->innerMergeVars(['assocProperty', 'listProperty'], ['associative' => ['assocProperty']]);
         $expected = [
             'Red' => null,
             'Orange' => null,
@@ -99,7 +99,7 @@ class MergeVariablesTraitTest extends TestCase
     public function testMergeVarsWithBoolean(): void
     {
         $object = new Child();
-        $object->mergeVars(['hasBoolean']);
+        $object->innerMergeVars(['hasBoolean']);
         $this->assertSame(['test'], $object->hasBoolean);
     }
 }

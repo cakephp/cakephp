@@ -126,11 +126,11 @@ class Xml
                 throw new CakeException(sprintf('Cannot read file content of `%s`', $input));
             }
 
-            return static::_loadXml($content, $options);
+            return static::loadXml($content, $options);
         }
 
         if (str_contains($input, '<')) {
-            return static::_loadXml($input, $options);
+            return static::loadXml($input, $options);
         }
 
         throw new XmlException('XML cannot be read.');
@@ -144,7 +144,7 @@ class Xml
      * @return \SimpleXMLElement|\DOMDocument
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _loadXml(string $input, array $options): SimpleXMLElement|DOMDocument
+    protected static function loadXml(string $input, array $options): SimpleXMLElement|DOMDocument
     {
         return static::load(
             $input,
@@ -375,11 +375,11 @@ class Xml
                         foreach ($value as $item) {
                             $itemData = compact('dom', 'node', 'key', 'format');
                             $itemData['value'] = $item;
-                            static::_createChild($itemData);
+                            static::createChild($itemData);
                         }
                     } else {
 // Struct
-                        static::_createChild(compact('dom', 'node', 'key', 'value', 'format'));
+                        static::createChild(compact('dom', 'node', 'key', 'value', 'format'));
                     }
                 }
             } else {
@@ -395,7 +395,7 @@ class Xml
      * @return void
      * @phpstan-param array{dom: \DOMDocument, node: \DOMNode, key: string, format: string, value?: mixed} $data
      */
-    protected static function _createChild(array $data): void
+    protected static function createChild(array $data): void
     {
         $data += [
             'value' => null,

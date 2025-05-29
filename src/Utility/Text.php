@@ -592,7 +592,7 @@ class Text
         $suffix = $options['ellipsis'];
 
         if ($options['html']) {
-            $ellipsisLength = self::_strlen(strip_tags($options['ellipsis']), $options);
+            $ellipsisLength = self::strlen(strip_tags($options['ellipsis']), $options);
 
             $truncateLength = 0;
             $totalLength = 0;
@@ -603,7 +603,7 @@ class Text
             foreach ($tags as $tag) {
                 $contentLength = 0;
                 if (!in_array($tag[2], static::$_defaultHtmlNoCount, true)) {
-                    $contentLength = self::_strlen($tag[3], $options);
+                    $contentLength = self::strlen($tag[3], $options);
                 }
 
                 if ($truncate === '') {
@@ -650,22 +650,22 @@ class Text
                 $suffix .= '</' . $tag . '>';
             }
         } else {
-            if (self::_strlen($text, $options) <= $length) {
+            if (self::strlen($text, $options) <= $length) {
                 return $text;
             }
-            $ellipsisLength = self::_strlen($options['ellipsis'], $options);
+            $ellipsisLength = self::strlen($options['ellipsis'], $options);
         }
 
-        $result = self::_substr($text, 0, $length - $ellipsisLength, $options);
+        $result = self::substr($text, 0, $length - $ellipsisLength, $options);
 
         if (!$options['exact']) {
-            if (self::_substr($text, $length - $ellipsisLength, 1, $options) !== ' ') {
-                $result = self::_removeLastWord($result);
+            if (self::substr($text, $length - $ellipsisLength, 1, $options) !== ' ') {
+                $result = self::removeLastWord($result);
             }
 
             // If result is empty, then we don't need to count ellipsis in the cut.
             if ($result === '') {
-                $result = self::_substr($text, 0, $length, $options);
+                $result = self::substr($text, 0, $length, $options);
             }
         }
 
@@ -698,7 +698,7 @@ class Text
      * @param array<string, mixed> $options An array of options.
      * @return int
      */
-    protected static function _strlen(string $text, array $options): int
+    protected static function strlen(string $text, array $options): int
     {
         if (empty($options['trimWidth'])) {
             $strlen = 'mb_strlen';
@@ -738,7 +738,7 @@ class Text
      * @param array<string, mixed> $options An array of options.
      * @return string
      */
-    protected static function _substr(string $text, int $start, ?int $length, array $options): string
+    protected static function substr(string $text, int $start, ?int $length, array $options): string
     {
         if (empty($options['trimWidth'])) {
             $substr = 'mb_substr';
@@ -746,7 +746,7 @@ class Text
             $substr = 'mb_strimwidth';
         }
 
-        $maxPosition = self::_strlen($text, ['trimWidth' => false] + $options);
+        $maxPosition = self::strlen($text, ['trimWidth' => false] + $options);
         if ($start < 0) {
             $start += $maxPosition;
             if ($start < 0) {
@@ -757,12 +757,12 @@ class Text
             return '';
         }
 
-        $length ??= self::_strlen($text, $options);
+        $length ??= self::strlen($text, $options);
 
         if ($length < 0) {
-            $text = self::_substr($text, $start, null, $options);
+            $text = self::substr($text, $start, null, $options);
             $start = 0;
-            $length += self::_strlen($text, $options);
+            $length += self::strlen($text, $options);
         }
 
         if ($length <= 0) {
@@ -783,7 +783,7 @@ class Text
             $offset = 0;
 
             if ($totalOffset < $start) {
-                $len = self::_strlen($part, ['trimWidth' => false] + $options);
+                $len = self::strlen($part, ['trimWidth' => false] + $options);
                 if ($totalOffset + $len <= $start) {
                     $totalOffset += $len;
                     continue;
@@ -793,7 +793,7 @@ class Text
                 $totalOffset = $start;
             }
 
-            $len = self::_strlen($part, $options);
+            $len = self::strlen($part, $options);
             if ($offset !== 0 || $totalLength + $len > $length) {
                 if (
                     str_starts_with($part, '&')
@@ -805,7 +805,7 @@ class Text
                 }
 
                 $part = $substr($part, $offset, $length - $totalLength);
-                $len = self::_strlen($part, $options);
+                $len = self::strlen($part, $options);
             }
 
             $result .= $part;
@@ -824,7 +824,7 @@ class Text
      * @param string $text The input text
      * @return string
      */
-    protected static function _removeLastWord(string $text): string
+    protected static function removeLastWord(string $text): string
     {
         $spacepos = mb_strrpos($text, ' ');
 
