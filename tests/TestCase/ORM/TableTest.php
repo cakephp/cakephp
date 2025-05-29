@@ -3918,13 +3918,13 @@ class TableTest extends TestCase
     public function testSaveCleanEntity(): void
     {
         $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['_processSave'])
+            ->onlyMethods(['processSave'])
             ->getMock();
         $entity = new Entity(
             ['id' => 'foo'],
             ['markNew' => false, 'markClean' => true],
         );
-        $table->expects($this->never())->method('_processSave');
+        $table->expects($this->never())->method('processSave');
         $this->assertSame($entity, $table->save($entity));
     }
 
@@ -3955,15 +3955,15 @@ class TableTest extends TestCase
     public function testSaveDeepAssociationOptions(): void
     {
         $articles = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['_insert'])
+            ->onlyMethods(['insert'])
             ->setConstructorArgs([['table' => 'articles', 'connection' => $this->connection]])
             ->getMock();
         $authors = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['_insert'])
+            ->onlyMethods(['insert'])
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
         $supervisors = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['_insert'])
+            ->onlyMethods(['insert'])
             ->setConstructorArgs([[
                 'table' => 'authors',
                 'alias' => 'supervisors',
@@ -3971,7 +3971,7 @@ class TableTest extends TestCase
             ]])
             ->getMock();
         $tags = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['_insert'])
+            ->onlyMethods(['insert'])
             ->setConstructorArgs([['table' => 'tags', 'connection' => $this->connection]])
             ->getMock();
 
@@ -3995,21 +3995,21 @@ class TableTest extends TestCase
         $entity->author->tags[0]->setNew(true);
 
         $articles->expects($this->once())
-            ->method('_insert')
+            ->method('insert')
             ->with($entity, ['title' => 'bar'])
             ->willReturn($entity);
 
         $authors->expects($this->once())
-            ->method('_insert')
+            ->method('insert')
             ->with($entity->author, ['name' => 'Juan'])
             ->willReturn($entity->author);
 
         $supervisors->expects($this->once())
-            ->method('_insert')
+            ->method('insert')
             ->with($entity->author->supervisor, ['name' => 'Marc'])
             ->willReturn($entity->author->supervisor);
 
-        $tags->expects($this->never())->method('_insert');
+        $tags->expects($this->never())->method('insert');
 
         $this->assertSame($entity, $articles->save($entity, [
             'associated' => [
@@ -4026,11 +4026,11 @@ class TableTest extends TestCase
     {
         /** @var \TestApp\Model\Table\ArticlesTable $articles */
         $articles = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['_insert'])
+            ->onlyMethods(['insert'])
             ->setConstructorArgs([['table' => 'articles', 'connection' => $this->connection]])
             ->getMock();
         $authors = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['_insert'])
+            ->onlyMethods(['insert'])
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
 
@@ -4053,7 +4053,7 @@ class TableTest extends TestCase
     {
         /** @var \TestApp\Model\Table\AuthorsTable $authors */
         $authors = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['_insert'])
+            ->onlyMethods(['insert'])
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
 
@@ -4078,7 +4078,7 @@ class TableTest extends TestCase
     {
         /** @var \TestApp\Model\Table\AuthorsTable $authors */
         $authors = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['_insert'])
+            ->onlyMethods(['insert'])
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
 
@@ -4105,7 +4105,7 @@ class TableTest extends TestCase
     {
         /** @var \TestApp\Model\Table\AuthorsTable $authors */
         $authors = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['_insert'])
+            ->onlyMethods(['insert'])
             ->setConstructorArgs([['table' => 'authors', 'connection' => $this->connection]])
             ->getMock();
         try {

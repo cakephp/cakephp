@@ -97,7 +97,7 @@ class LinkConstraint
             $association = $table->getAssociation($association);
         }
 
-        $count = $this->_countLinks($association, $entity);
+        $count = $this->countLinks($association, $entity);
 
         if (
             (
@@ -122,7 +122,7 @@ class LinkConstraint
      * @param \Cake\ORM\Table $source The object to use for aliasing.
      * @return array<string> The aliased fields
      */
-    protected function _aliasFields(array $fields, Table $source): array
+    protected function aliasFields(array $fields, Table $source): array
     {
         foreach ($fields as $key => $value) {
             $fields[$key] = $source->aliasField($value);
@@ -138,7 +138,7 @@ class LinkConstraint
      * @param array $values The condition values.
      * @return array<string, string> A conditions array combined from the passed fields and values.
      */
-    protected function _buildConditions(array $fields, array $values): array
+    protected function buildConditions(array $fields, array $values): array
     {
         if (count($fields) !== count($values)) {
             throw new InvalidArgumentException(sprintf(
@@ -158,7 +158,7 @@ class LinkConstraint
      * @param \Cake\Datasource\EntityInterface $entity The entity involved in the operation.
      * @return int The number of links.
      */
-    protected function _countLinks(Association $association, EntityInterface $entity): int
+    protected function countLinks(Association $association, EntityInterface $entity): int
     {
         $source = $association->getSource();
 
@@ -174,8 +174,8 @@ class LinkConstraint
             ));
         }
 
-        $aliasedPrimaryKey = $this->_aliasFields($primaryKey, $source);
-        $conditions = $this->_buildConditions(
+        $aliasedPrimaryKey = $this->aliasFields($primaryKey, $source);
+        $conditions = $this->buildConditions(
             $aliasedPrimaryKey,
             $entity->extract($primaryKey),
         );

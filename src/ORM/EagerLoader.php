@@ -146,7 +146,7 @@ class EagerLoader
         }
 
         $associations = (array)$associations;
-        $associations = $this->_reformatContain($associations, $this->_containments);
+        $associations = $this->reformatContain($associations, $this->_containments);
         $this->_normalized = null;
         $this->_loadExternal = [];
         $this->_aliasList = [];
@@ -300,7 +300,7 @@ class EagerLoader
                 $contain = $this->_containments;
                 break;
             }
-            $contain[$alias] = $this->_normalizeContain(
+            $contain[$alias] = $this->normalizeContain(
                 $repository,
                 $alias,
                 $options,
@@ -321,7 +321,7 @@ class EagerLoader
      * with the new one.
      * @return array
      */
-    protected function _reformatContain(array $associations, array $original): array
+    protected function reformatContain(array $associations, array $original): array
     {
         $result = $original;
 
@@ -356,7 +356,7 @@ class EagerLoader
                 $options = isset($options['config']) ?
                     $options['config'] + $options['associations'] :
                     $options;
-                $options = $this->_reformatContain(
+                $options = $this->reformatContain(
                     $options,
                     $pointer[$table] ?? [],
                 );
@@ -434,10 +434,10 @@ class EagerLoader
     {
         $contain = $this->normalized($repository);
         $matching = $this->_matching ? $this->_matching->normalized($repository) : [];
-        $this->_fixStrategies();
+        $this->fixStrategies();
         $this->_loadExternal = [];
 
-        return $this->_resolveJoins($contain, $matching);
+        return $this->resolveJoins($contain, $matching);
     }
 
     /**
@@ -473,7 +473,7 @@ class EagerLoader
      * @return \Cake\ORM\EagerLoadable Object with normalized associations
      * @throws \InvalidArgumentException When containments refer to associations that do not exist.
      */
-    protected function _normalizeContain(Table $parent, string $alias, array $options, array $paths): EagerLoadable
+    protected function normalizeContain(Table $parent, string $alias, array $options, array $paths): EagerLoadable
     {
         $defaults = $this->_containOptions;
         $instance = $parent->getAssociation($alias);
@@ -513,7 +513,7 @@ class EagerLoader
         foreach ($extra as $t => $assoc) {
             $eagerLoadable->addAssociation(
                 $t,
-                $this->_normalizeContain($table, $t, $assoc, $paths),
+                $this->normalizeContain($table, $t, $assoc, $paths),
             );
         }
 
@@ -529,7 +529,7 @@ class EagerLoader
      *
      * @return void
      */
-    protected function _fixStrategies(): void
+    protected function fixStrategies(): void
     {
         foreach ($this->_aliasList as $aliases) {
             foreach ($aliases as $configs) {
@@ -539,7 +539,7 @@ class EagerLoader
                 foreach ($configs as $loadable) {
                     assert($loadable instanceof EagerLoadable);
                     if (str_contains($loadable->aliasPath(), '.')) {
-                        $this->_correctStrategy($loadable);
+                        $this->correctStrategy($loadable);
                     }
                 }
             }
@@ -553,7 +553,7 @@ class EagerLoader
      * @param \Cake\ORM\EagerLoadable $loadable The association config.
      * @return void
      */
-    protected function _correctStrategy(EagerLoadable $loadable): void
+    protected function correctStrategy(EagerLoadable $loadable): void
     {
         $config = $loadable->getConfig();
         $currentStrategy = $config['strategy'] ?? Association::STRATEGY_JOIN;
@@ -575,23 +575,23 @@ class EagerLoader
      * @param array<\Cake\ORM\EagerLoadable> $matching List of associations that should be forcibly joined.
      * @return array<\Cake\ORM\EagerLoadable>
      */
-    protected function _resolveJoins(array $associations, array $matching = []): array
+    protected function resolveJoins(array $associations, array $matching = []): array
     {
         $result = [];
         foreach ($matching as $table => $loadable) {
             $result[$table] = $loadable;
-            $result += $this->_resolveJoins($loadable->associations(), []);
+            $result += $this->resolveJoins($loadable->associations(), []);
         }
         foreach ($associations as $table => $loadable) {
             $inMatching = isset($matching[$table]);
             if (!$inMatching && $loadable->canBeJoined()) {
                 $result[$table] = $loadable;
-                $result += $this->_resolveJoins($loadable->associations(), []);
+                $result += $this->resolveJoins($loadable->associations(), []);
                 continue;
             }
 
             if ($inMatching) {
-                $this->_correctStrategy($loadable);
+                $this->correctStrategy($loadable);
             }
 
             $loadable->setCanBeJoined(false);
@@ -628,7 +628,7 @@ class EagerLoader
             return $results;
         }
 
-        $collected = $this->_collectKeys($external, $query, $results);
+        $collected = $this->collectKeys($external, $query, $results);
 
         foreach ($external as $meta) {
             $contain = $meta->associations();
@@ -697,10 +697,10 @@ class EagerLoader
 
         assert($this->_matching !== null, 'EagerLoader not available');
 
-        $map = $this->_buildAssociationsMap($map, $this->_matching->normalized($table), true);
-        $map = $this->_buildAssociationsMap($map, $this->normalized($table));
+        $map = $this->buildAssociationsMap($map, $this->_matching->normalized($table), true);
+        $map = $this->buildAssociationsMap($map, $this->normalized($table));
 
-        return $this->_buildAssociationsMap($map, $this->_joinsMap);
+        return $this->buildAssociationsMap($map, $this->_joinsMap);
     }
 
     /**
@@ -712,7 +712,7 @@ class EagerLoader
      * @param bool $matching Whether it is an association loaded through `matching()`.
      * @return array
      */
-    protected function _buildAssociationsMap(array $map, array $level, bool $matching = false): array
+    protected function buildAssociationsMap(array $map, array $level, bool $matching = false): array
     {
         foreach ($level as $assoc => $meta) {
             $canBeJoined = $meta->canBeJoined();
@@ -729,7 +729,7 @@ class EagerLoader
                 'targetProperty' => $meta->targetProperty(),
             ];
             if ($canBeJoined && $associations) {
-                $map = $this->_buildAssociationsMap($map, $associations, $matching);
+                $map = $this->buildAssociationsMap($map, $associations, $matching);
             }
         }
 
@@ -774,7 +774,7 @@ class EagerLoader
      * @param array $results Results array.
      * @return array
      */
-    protected function _collectKeys(array $external, SelectQuery $query, array $results): array
+    protected function collectKeys(array $external, SelectQuery $query, array $results): array
     {
         $collectKeys = [];
         foreach ($external as $meta) {
@@ -800,7 +800,7 @@ class EagerLoader
             return [];
         }
 
-        return $this->_groupKeys($results, $collectKeys);
+        return $this->groupKeys($results, $collectKeys);
     }
 
     /**
@@ -811,7 +811,7 @@ class EagerLoader
      * @param array<string, array> $collectKeys The keys to collect.
      * @return array
      */
-    protected function _groupKeys(array $results, array $collectKeys): array
+    protected function groupKeys(array $results, array $collectKeys): array
     {
         $keys = [];
         foreach ($results as $result) {

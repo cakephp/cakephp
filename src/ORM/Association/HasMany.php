@@ -180,7 +180,7 @@ class HasMany extends Association
 
         if (
             $this->_saveStrategy === self::SAVE_REPLACE &&
-            !$this->_unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
+            !$this->unlinkAssociated($foreignKeyReference, $entity, $this->getTarget(), $targetEntities, $options)
         ) {
             return false;
         }
@@ -188,7 +188,7 @@ class HasMany extends Association
         if (!is_array($targetEntities)) {
             $targetEntities = iterator_to_array($targetEntities);
         }
-        if (!$this->_saveTarget($foreignKeyReference, $entity, $targetEntities, $options)) {
+        if (!$this->saveTarget($foreignKeyReference, $entity, $targetEntities, $options)) {
             return false;
         }
 
@@ -208,7 +208,7 @@ class HasMany extends Association
      * @param array<string, mixed> $options list of options accepted by `Table::save()`.
      * @return bool `true` on success, `false` otherwise.
      */
-    protected function _saveTarget(
+    protected function saveTarget(
         array $foreignKeyReference,
         EntityInterface $parentEntity,
         array $entities,
@@ -484,7 +484,7 @@ class HasMany extends Association
      * @param array<string, mixed> $options list of options accepted by `Table::delete()`
      * @return bool success
      */
-    protected function _unlinkAssociated(
+    protected function unlinkAssociated(
         array $foreignKeyReference,
         EntityInterface $entity,
         Table $target,
@@ -533,7 +533,7 @@ class HasMany extends Association
      */
     protected function _unlink(array $foreignKey, Table $target, array $conditions = [], array $options = []): bool
     {
-        $mustBeDependent = (!$this->_foreignKeyAcceptsNull($target, $foreignKey) || $this->getDependent());
+        $mustBeDependent = (!$this->foreignKeyAcceptsNull($target, $foreignKey) || $this->getDependent());
 
         if ($mustBeDependent) {
             if ($this->_cascadeCallbacks) {
@@ -573,7 +573,7 @@ class HasMany extends Association
      * @param array $properties the list of fields that compose the foreign key
      * @return bool
      */
-    protected function _foreignKeyAcceptsNull(Table $table, array $properties): bool
+    protected function foreignKeyAcceptsNull(Table $table, array $properties): bool
     {
         return !in_array(
             false,
@@ -662,7 +662,7 @@ class HasMany extends Association
      * @param array<string, mixed> $options original list of options passed in constructor
      * @return void
      */
-    protected function _options(array $options): void
+    protected function options(array $options): void
     {
         if (!empty($options['saveStrategy'])) {
             $this->setSaveStrategy($options['saveStrategy']);

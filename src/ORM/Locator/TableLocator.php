@@ -228,7 +228,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         }
 
         $allowFallbackClass = $options['allowFallbackClass'] ?? $this->allowFallbackClass;
-        $className = $this->_getClassName($alias, $options);
+        $className = $this->getClassName($alias, $options);
         if ($className) {
             $options['className'] = $className;
         } elseif ($allowFallbackClass) {
@@ -268,7 +268,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
         }
 
         $options['registryAlias'] = $alias;
-        $instance = $this->_create($options);
+        $instance = $this->create($options);
 
         if ($options['className'] === $this->fallbackClassName) {
             $this->_fallbacked[$alias] = $instance;
@@ -284,7 +284,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @param array<string, mixed> $options Table options array.
      * @return string|null
      */
-    protected function _getClassName(string $alias, array $options = []): ?string
+    protected function getClassName(string $alias, array $options = []): ?string
     {
         if (empty($options['className'])) {
             $options['className'] = $alias;
@@ -310,7 +310,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @param array<string, mixed> $options The alias to check for.
      * @return \Cake\ORM\Table
      */
-    protected function _create(array $options): Table
+    protected function create(array $options): Table
     {
         /** @var class-string<\Cake\ORM\Table> $class */
         $class = $options['className'];

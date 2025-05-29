@@ -226,7 +226,7 @@ class AssociationCollection implements IteratorAggregate
             return true;
         }
 
-        return $this->_saveAssociations($table, $entity, $associations, $options, false);
+        return $this->saveAssociations($table, $entity, $associations, $options, false);
     }
 
     /**
@@ -248,7 +248,7 @@ class AssociationCollection implements IteratorAggregate
             return true;
         }
 
-        return $this->_saveAssociations($table, $entity, $associations, $options, true);
+        return $this->saveAssociations($table, $entity, $associations, $options, true);
     }
 
     /**
@@ -263,7 +263,7 @@ class AssociationCollection implements IteratorAggregate
      * @return bool Success
      * @throws \InvalidArgumentException When an unknown alias is used.
      */
-    protected function _saveAssociations(
+    protected function saveAssociations(
         Table $table,
         EntityInterface $entity,
         array $associations,
@@ -288,7 +288,7 @@ class AssociationCollection implements IteratorAggregate
             if ($relation->isOwningSide($table) !== $owningSide) {
                 continue;
             }
-            if (!$this->_save($relation, $entity, $nested, $options)) {
+            if (!$this->save($relation, $entity, $nested, $options)) {
                 return false;
             }
         }
@@ -305,7 +305,7 @@ class AssociationCollection implements IteratorAggregate
      * @param array<string, mixed> $options Original options
      * @return bool Success
      */
-    protected function _save(
+    protected function save(
         Association $association,
         EntityInterface $entity,
         array $nested,
@@ -371,7 +371,7 @@ class AssociationCollection implements IteratorAggregate
             return [];
         }
 
-        return $this->_normalizeAssociations($keys);
+        return $this->normalizeAssociations($keys);
     }
 
     /**

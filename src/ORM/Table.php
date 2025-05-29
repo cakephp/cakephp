@@ -1376,7 +1376,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         }
 
-        $options = $this->_setFieldMatchers(
+        $options = $this->setFieldMatchers(
             compact('keyField', 'valueField', 'groupField', 'valueSeparator'),
             ['keyField', 'valueField', 'groupField'],
         );
@@ -1418,7 +1418,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     ): SelectQuery {
         $keyField ??= $this->getPrimaryKey();
 
-        $options = $this->_setFieldMatchers(compact('keyField', 'parentField'), ['keyField', 'parentField']);
+        $options = $this->setFieldMatchers(compact('keyField', 'parentField'), ['keyField', 'parentField']);
 
         return $query->formatResults(fn(CollectionInterface $results) => $results->nest(
             $options['keyField'],
@@ -1440,7 +1440,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * the associated value
      * @return array<string, mixed>
      */
-    protected function _setFieldMatchers(array $options, array $keys): array
+    protected function setFieldMatchers(array $options, array $keys): array
     {
         foreach ($keys as $field) {
             if (!is_array($options[$field])) {
@@ -1552,7 +1552,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param bool $atomic Whether to execute the worker inside a database transaction.
      * @return mixed
      */
-    protected function _executeTransaction(callable $worker, bool $atomic = true): mixed
+    protected function executeTransaction(callable $worker, bool $atomic = true): mixed
     {
         if ($atomic) {
             return $this->getConnection()->transactional(fn() => $worker());
@@ -1568,7 +1568,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param bool $primary True if a primary was used.
      * @return bool Returns true if a transaction was committed.
      */
-    protected function _transactionCommitted(bool $atomic, bool $primary): bool
+    protected function transactionCommitted(bool $atomic, bool $primary): bool
     {
         return !$this->getConnection()->inTransaction() && ($atomic || $primary);
     }
@@ -1617,12 +1617,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'defaults' => true,
         ]);
 
-        $entity = $this->_executeTransaction(
-            fn() => $this->_processFindOrCreate($search, $callback, $options->getArrayCopy()),
+        $entity = $this->executeTransaction(
+            fn() => $this->processFindOrCreate($search, $callback, $options->getArrayCopy()),
             $options['atomic'],
         );
 
-        if ($entity && $this->_transactionCommitted($options['atomic'], true)) {
+        if ($entity && $this->transactionCommitted($options['atomic'], true)) {
             $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
         }
 
@@ -1642,12 +1642,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Cake\ORM\Exception\PersistenceFailedException When the entity couldn't be saved
      * @throws \InvalidArgumentException
      */
-    protected function _processFindOrCreate(
+    protected function processFindOrCreate(
         SelectQuery|callable|array $search,
         callable|array|null $callback = null,
         array $options = [],
     ): EntityInterface|array {
-        $query = $this->_getFindOrCreateQuery($search);
+        $query = $this->getFindOrCreateQuery($search);
 
         $row = $query->first();
         if ($row !== null) {
@@ -1685,7 +1685,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find existing records by.
      * @return \Cake\ORM\Query\SelectQuery
      */
-    protected function _getFindOrCreateQuery(SelectQuery|callable|array $search): SelectQuery
+    protected function getFindOrCreateQuery(SelectQuery|callable|array $search): SelectQuery
     {
         if (is_callable($search)) {
             $query = $this->find();
@@ -1929,13 +1929,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return $entity;
         }
 
-        $success = $this->_executeTransaction(
-            fn() => $this->_processSave($entity, $options),
+        $success = $this->executeTransaction(
+            fn() => $this->processSave($entity, $options),
             $options['atomic'],
         );
 
         if ($success) {
-            if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+            if ($this->transactionCommitted($options['atomic'], $options['_primary'])) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
             }
             if ($options['atomic'] || $options['_primary']) {
@@ -1980,7 +1980,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
      *   is aborted in the afterSave event.
      */
-    protected function _processSave(EntityInterface $entity, ArrayObject $options): EntityInterface|false
+    protected function processSave(EntityInterface $entity, ArrayObject $options): EntityInterface|false
     {
         $primaryColumns = (array)$this->getPrimaryKey();
 
@@ -2036,13 +2036,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $isNew = $entity->isNew();
 
         if ($isNew) {
-            $success = $this->_insert($entity, $data);
+            $success = $this->insert($entity, $data);
         } else {
-            $success = $this->_update($entity, $data);
+            $success = $this->update($entity, $data);
         }
 
         if ($success) {
-            $success = $this->_onSaveSuccess($entity, $options);
+            $success = $this->onSaveSuccess($entity, $options);
         }
 
         if (!$success && $isNew) {
@@ -2063,7 +2063,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction
      *   is aborted in the afterSave event.
      */
-    protected function _onSaveSuccess(EntityInterface $entity, ArrayObject $options): bool
+    protected function onSaveSuccess(EntityInterface $entity, ArrayObject $options): bool
     {
         $success = $this->_associations->saveChildren(
             $this,
@@ -2100,7 +2100,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Cake\Database\Exception\DatabaseException if not all the primary keys where supplied or could
      * be generated when the table has composite primary keys. Or when the table has no primary key.
      */
-    protected function _insert(EntityInterface $entity, array $data): EntityInterface|false
+    protected function insert(EntityInterface $entity, array $data): EntityInterface|false
     {
         $primary = (array)$this->getPrimaryKey();
         if (!$primary) {
@@ -2111,7 +2111,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new DatabaseException($msg);
         }
         $keys = array_fill(0, count($primary), null);
-        $id = (array)$this->_newId($primary) + $keys;
+        $id = (array)$this->newId($primary) + $keys;
 
         // Generate primary keys preferring values in $data.
         $primary = array_combine($primary, $id);
@@ -2178,7 +2178,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string> $primary The primary key columns to get a new ID for.
      * @return string|null Either null or the primary key value or a list of primary key values.
      */
-    protected function _newId(array $primary): ?string
+    protected function newId(array $primary): ?string
     {
         if (!$primary || count($primary) > 1) {
             return null;
@@ -2198,7 +2198,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @return \Cake\Datasource\EntityInterface|false
      * @throws \InvalidArgumentException When primary key data is missing.
      */
-    protected function _update(EntityInterface $entity, array $data): EntityInterface|false
+    protected function update(EntityInterface $entity, array $data): EntityInterface|false
     {
         $primaryColumns = (array)$this->getPrimaryKey();
         $primaryKey = $entity->extract($primaryColumns);
@@ -2347,7 +2347,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
         };
 
-        if ($this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+        if ($this->transactionCommitted($options['atomic'], $options['_primary'])) {
             foreach ($entities as $entity) {
                 $this->dispatchEvent('Model.afterSaveCommit', compact('entity', 'options'));
                 if ($options['atomic'] || $options['_primary']) {
@@ -2397,12 +2397,12 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             '_primary' => true,
         ]);
 
-        $success = $this->_executeTransaction(
-            fn() => $this->_processDelete($entity, $options),
+        $success = $this->executeTransaction(
+            fn() => $this->processDelete($entity, $options),
             $options['atomic'],
         );
 
-        if ($success && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+        if ($success && $this->transactionCommitted($options['atomic'], $options['_primary'])) {
             $this->dispatchEvent('Model.afterDeleteCommit', [
                 'entity' => $entity,
                 'options' => $options,
@@ -2473,9 +2473,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 '_primary' => true,
             ]);
 
-        $failed = $this->_executeTransaction(function () use ($entities, $options) {
+        $failed = $this->executeTransaction(function () use ($entities, $options) {
             foreach ($entities as $entity) {
-                if (!$this->_processDelete($entity, $options)) {
+                if (!$this->processDelete($entity, $options)) {
                     return $entity;
                 }
             }
@@ -2483,7 +2483,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return null;
         }, $options['atomic']);
 
-        if ($failed === null && $this->_transactionCommitted($options['atomic'], $options['_primary'])) {
+        if ($failed === null && $this->transactionCommitted($options['atomic'], $options['_primary'])) {
             foreach ($entities as $entity) {
                 $this->dispatchEvent('Model.afterDeleteCommit', [
                     'entity' => $entity,
@@ -2527,7 +2527,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * passed entity
      * @return bool success
      */
-    protected function _processDelete(EntityInterface $entity, ArrayObject $options): bool
+    protected function processDelete(EntityInterface $entity, ArrayObject $options): bool
     {
         if ($entity->isNew()) {
             return false;
@@ -2670,7 +2670,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \BadMethodCallException when there are missing arguments, or when
      *  and & or are combined.
      */
-    protected function _dynamicFinder(string $method, array $args): SelectQuery
+    protected function dynamicFinder(string $method, array $args): SelectQuery
     {
         $method = Inflector::underscore($method);
         preg_match('/^find_([\w]+)_by_/', $method, $matches);
@@ -2736,7 +2736,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     public function __call(string $method, array $args): mixed
     {
         if (preg_match('/^find(?:\w+)?By/', $method) > 0) {
-            return $this->_dynamicFinder($method, $args);
+            return $this->dynamicFinder($method, $args);
         }
 
         throw new BadMethodCallException(

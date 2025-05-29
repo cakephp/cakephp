@@ -235,7 +235,7 @@ abstract class Association
         [, $name] = pluginSplit($alias);
         $this->_name = $name;
 
-        $this->_options($options);
+        $this->options($options);
 
         if (!empty($options['strategy'])) {
             $this->setStrategy($options['strategy']);
@@ -566,7 +566,7 @@ abstract class Association
     public function getProperty(): string
     {
         if (!isset($this->_propertyName)) {
-            $this->_propertyName = $this->_propertyName();
+            $this->_propertyName = $this->propertyName();
             if (in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns(), true)) {
                 $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
                     ' You should explicitly specify the `propertyName` option.';
@@ -585,7 +585,7 @@ abstract class Association
      *
      * @return string
      */
-    protected function _propertyName(): string
+    protected function propertyName(): string
     {
         [, $name] = pluginSplit($this->_name);
 
@@ -657,7 +657,7 @@ abstract class Association
      * @param array<string, mixed> $options List of options used for initialization
      * @return void
      */
-    protected function _options(array $options): void
+    protected function options(array $options): void
     {
     }
 
@@ -709,13 +709,13 @@ abstract class Association
         }
 
         if ($options['foreignKey']) {
-            $joinCondition = $this->_joinCondition($options);
+            $joinCondition = $this->joinCondition($options);
             if ($joinCondition) {
                 $options['conditions'][] = $joinCondition;
             }
         }
 
-        [$finder, $opts] = $this->_extractFinder($options['finder']);
+        [$finder, $opts] = $this->extractFinder($options['finder']);
         $dummy = $this
             ->find($finder, ...$opts)
             ->eagerLoaded(true);
@@ -742,7 +742,7 @@ abstract class Association
         }
 
         $dummy->where($options['conditions']);
-        $this->_dispatchBeforeFind($dummy);
+        $this->dispatchBeforeFind($dummy);
 
         $query->join([$this->_name => [
             'table' => $options['table'],
@@ -750,10 +750,10 @@ abstract class Association
             'type' => $options['joinType'],
         ]]);
 
-        $this->_appendFields($query, $dummy, $options);
-        $this->_formatAssociationResults($query, $dummy, $options);
-        $this->_bindNewAssociations($query, $dummy, $options);
-        $this->_appendNotMatching($query, $options);
+        $this->appendFields($query, $dummy, $options);
+        $this->formatAssociationResults($query, $dummy, $options);
+        $this->bindNewAssociations($query, $dummy, $options);
+        $this->appendNotMatching($query, $options);
     }
 
     /**
@@ -764,7 +764,7 @@ abstract class Association
      * @param array<string, mixed> $options Options array containing the `negateMatch` key.
      * @return void
      */
-    protected function _appendNotMatching(SelectQuery $query, array $options): void
+    protected function appendNotMatching(SelectQuery $query, array $options): void
     {
         $target = $this->getTarget();
         if (!empty($options['negateMatch'])) {
@@ -839,7 +839,7 @@ abstract class Association
     public function find(array|string|null $type = null, mixed ...$args): SelectQuery
     {
         $type = $type ?: $this->getFinder();
-        [$type, $opts] = $this->_extractFinder($type);
+        [$type, $opts] = $this->extractFinder($type);
 
         $args += $opts;
 
@@ -923,7 +923,7 @@ abstract class Association
      * @param \Cake\ORM\Query\SelectQuery $query the query this association is attaching itself to
      * @return void
      */
-    protected function _dispatchBeforeFind(SelectQuery $query): void
+    protected function dispatchBeforeFind(SelectQuery $query): void
     {
         $query->triggerBeforeFind();
     }
@@ -937,7 +937,7 @@ abstract class Association
      * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
      */
-    protected function _appendFields(SelectQuery $query, SelectQuery $surrogate, array $options): void
+    protected function appendFields(SelectQuery $query, SelectQuery $surrogate, array $options): void
     {
         if ($query->getEagerLoader()->isAutoFieldsEnabled() === false) {
             return;
@@ -969,7 +969,7 @@ abstract class Association
      * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
      */
-    protected function _formatAssociationResults(SelectQuery $query, SelectQuery $surrogate, array $options): void
+    protected function formatAssociationResults(SelectQuery $query, SelectQuery $surrogate, array $options): void
     {
         $formatters = $surrogate->getResultFormatters();
 
@@ -1029,7 +1029,7 @@ abstract class Association
      * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
      */
-    protected function _bindNewAssociations(SelectQuery $query, SelectQuery $surrogate, array $options): void
+    protected function bindNewAssociations(SelectQuery $query, SelectQuery $surrogate, array $options): void
     {
         $loader = $surrogate->getEagerLoader();
         $contain = $loader->getContain();
@@ -1067,7 +1067,7 @@ abstract class Association
      * @throws \Cake\Database\Exception\DatabaseException if the number of columns in the foreignKey do not
      * match the number of columns in the source table primaryKey
      */
-    protected function _joinCondition(array $options): array
+    protected function joinCondition(array $options): array
     {
         $conditions = [];
         $tAlias = $this->_name;
@@ -1119,7 +1119,7 @@ abstract class Association
      * and options as value.
      * @return array
      */
-    protected function _extractFinder(array|string $finderData): array
+    protected function extractFinder(array|string $finderData): array
     {
         $finderData = (array)$finderData;
 
