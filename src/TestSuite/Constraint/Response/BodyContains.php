@@ -55,7 +55,7 @@ class BodyContains extends ResponseBase
             $method = 'mb_stripos';
         }
 
-        return $method($this->_getBodyAsString(), $other) !== false;
+        return $method($this->getBodyAsString(), $other) !== false;
     }
 
     /**

@@ -97,7 +97,7 @@ trait LogTestTrait
         ?string $scope = null,
         string $failMsg = '',
     ): void {
-        $this->_expectLogMessage($level, $expectedMessage, $scope, $failMsg);
+        $this->expectLogMessage($level, $expectedMessage, $scope, $failMsg);
     }
 
     /**
@@ -114,7 +114,7 @@ trait LogTestTrait
         ?string $scope = null,
         string $failMsg = '',
     ): void {
-        $this->_expectLogMessage($level, $expectedMessage, $scope, $failMsg, true);
+        $this->expectLogMessage($level, $expectedMessage, $scope, $failMsg, true);
     }
 
     /**
@@ -126,7 +126,7 @@ trait LogTestTrait
      * @param bool $contains Flag to decide if the expectedMessage can only be part of the logged message
      * @return void
      */
-    protected function _expectLogMessage(
+    protected function expectLogMessage(
         string $level,
         string $expectedMessage,
         ?string $scope,

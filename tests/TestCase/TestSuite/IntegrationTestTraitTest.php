@@ -139,7 +139,7 @@ class IntegrationTestTraitTest extends TestCase
             ],
             'upload' => new UploadedFile(__FILE__, 42, 0),
         ];
-        $request = $this->_buildRequest('/posts/add', 'POST', $data);
+        $request = $this->buildRequest('/posts/add', 'POST', $data);
         $this->assertIsString($request['post']['status']);
         $this->assertIsString($request['post']['published']);
         $this->assertSame('0', $request['post']['not_published']);
@@ -172,7 +172,7 @@ class IntegrationTestTraitTest extends TestCase
         ]);
         $this->cookie('split_token', 'def345');
         $this->session(['User' => ['id' => '1', 'username' => 'mark']]);
-        $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+        $request = $this->buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
 
         $this->assertSame('abc123', $request['environment']['HTTP_X_CSRF_TOKEN']);
         $this->assertSame('application/json', $request['environment']['CONTENT_TYPE']);
@@ -198,7 +198,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestBuildingCsrfTokens(): void
     {
         $this->enableCsrfToken();
-        $request = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+        $request = $this->buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
 
         $this->assertArrayHasKey('csrfToken', $request['cookies']);
         $this->assertArrayHasKey('_csrfToken', $request['post']);
@@ -206,7 +206,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertSame($request['session']->read('csrfToken'), $request['post']['_csrfToken']);
 
         $this->cookie('csrfToken', '');
-        $request = $this->_buildRequest('/tasks/add', 'POST', [
+        $request = $this->buildRequest('/tasks/add', 'POST', [
             '_csrfToken' => 'fale',
             'title' => 'First post',
         ]);
@@ -221,8 +221,8 @@ class IntegrationTestTraitTest extends TestCase
     public function testEnableCsrfMultipleRequests(): void
     {
         $this->enableCsrfToken();
-        $first = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
-        $second = $this->_buildRequest('/tasks/add', 'POST', ['title' => 'Second post']);
+        $first = $this->buildRequest('/tasks/add', 'POST', ['title' => 'First post']);
+        $second = $this->buildRequest('/tasks/add', 'POST', ['title' => 'Second post']);
         $this->assertSame(
             $first['cookies']['csrfToken'],
             $second['post']['_csrfToken'],
@@ -247,7 +247,7 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->enableCsrfToken();
         $this->enableSecurityToken();
-        $requestWithoutTokens = $this->_buildRequest('tasks/view', 'GET');
+        $requestWithoutTokens = $this->buildRequest('tasks/view', 'GET');
 
         $this->assertArrayNotHasKey('_Token', $requestWithoutTokens['post']);
         $this->assertArrayNotHasKey('_csrfToken', $requestWithoutTokens['post']);
@@ -255,7 +255,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->enableCsrfToken();
         $this->enableSecurityToken();
-        $requestWithTokens = $this->_buildRequest('tasks/view', 'GET', ['lorem' => 'ipsum']);
+        $requestWithTokens = $this->buildRequest('tasks/view', 'GET', ['lorem' => 'ipsum']);
 
         $this->assertArrayHasKey('_Token', $requestWithTokens['post']);
         $this->assertArrayHasKey('csrfToken', $requestWithTokens['cookies']);
@@ -267,7 +267,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testRequestBuildingQueryParameters(): void
     {
-        $request = $this->_buildRequest('/tasks/view?archived=yes', 'GET', []);
+        $request = $this->buildRequest('/tasks/view?archived=yes', 'GET', []);
 
         $this->assertSame('/tasks/view', $request['url']);
         $this->assertSame('archived=yes', $request['environment']['QUERY_STRING']);
@@ -283,7 +283,7 @@ class IntegrationTestTraitTest extends TestCase
     {
         Security::setSalt($this->key);
         $this->cookieEncrypted('KeyOfCookie', 'Encrypted with aes by default');
-        $request = $this->_buildRequest('/tasks/view', 'GET', []);
+        $request = $this->buildRequest('/tasks/view', 'GET', []);
         $this->assertStringStartsWith('Q2FrZQ==.', $request['cookies']['KeyOfCookie']);
     }
 
@@ -314,7 +314,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->get('/some_alias');
         $this->assertResponseOk();
-        $this->assertSame('5', $this->_getBodyAsString());
+        $this->assertSame('5', $this->getBodyAsString());
     }
 
     public function testExceptionsInMiddlewareJsonView(): void

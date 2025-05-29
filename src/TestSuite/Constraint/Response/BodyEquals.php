@@ -30,7 +30,7 @@ class BodyEquals extends ResponseBase
      */
     public function matches(mixed $other): bool
     {
-        return $this->_getBodyAsString() === $other;
+        return $this->getBodyAsString() === $other;
     }
 
     /**

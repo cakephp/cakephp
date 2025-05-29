@@ -395,7 +395,7 @@ trait IntegrationTestTrait
      */
     public function get(array|string $url): void
     {
-        $this->_sendRequest($url, 'GET');
+        $this->sendRequest($url, 'GET');
     }
 
     /**
@@ -411,7 +411,7 @@ trait IntegrationTestTrait
      */
     public function post(array|string $url, array|string $data = []): void
     {
-        $this->_sendRequest($url, 'POST', $data);
+        $this->sendRequest($url, 'POST', $data);
     }
 
     /**
@@ -427,7 +427,7 @@ trait IntegrationTestTrait
      */
     public function patch(array|string $url, array|string $data = []): void
     {
-        $this->_sendRequest($url, 'PATCH', $data);
+        $this->sendRequest($url, 'PATCH', $data);
     }
 
     /**
@@ -443,7 +443,7 @@ trait IntegrationTestTrait
      */
     public function put(array|string $url, array|string $data = []): void
     {
-        $this->_sendRequest($url, 'PUT', $data);
+        $this->sendRequest($url, 'PUT', $data);
     }
 
     /**
@@ -458,7 +458,7 @@ trait IntegrationTestTrait
      */
     public function delete(array|string $url): void
     {
-        $this->_sendRequest($url, 'DELETE');
+        $this->sendRequest($url, 'DELETE');
     }
 
     /**
@@ -473,7 +473,7 @@ trait IntegrationTestTrait
      */
     public function head(array|string $url): void
     {
-        $this->_sendRequest($url, 'HEAD');
+        $this->sendRequest($url, 'HEAD');
     }
 
     /**
@@ -488,7 +488,7 @@ trait IntegrationTestTrait
      */
     public function options(array|string $url): void
     {
-        $this->_sendRequest($url, 'OPTIONS');
+        $this->sendRequest($url, 'OPTIONS');
     }
 
     /**
@@ -502,13 +502,13 @@ trait IntegrationTestTrait
      * @return void
      * @throws \PHPUnit\Exception|\Throwable
      */
-    protected function _sendRequest(array|string $url, string $method, array|string $data = []): void
+    protected function sendRequest(array|string $url, string $method, array|string $data = []): void
     {
         $url = $this->resolveUrl($url);
-        $dispatcher = $this->_makeDispatcher();
+        $dispatcher = $this->makeDispatcher();
 
         try {
-            $request = $this->_buildRequest($url, $method, $data);
+            $request = $this->buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
             $this->_requestSession = $request['session'];
             if ($this->_retainFlashMessages && $this->_flashMessages) {
@@ -520,7 +520,7 @@ trait IntegrationTestTrait
         } catch (Throwable $e) {
             $this->_exception = $e;
             // Simulate the global exception handler being invoked.
-            $this->_handleError($e);
+            $this->handleError($e);
         }
     }
 
@@ -578,7 +578,7 @@ trait IntegrationTestTrait
      *
      * @return \Cake\TestSuite\MiddlewareDispatcher A dispatcher instance
      */
-    protected function _makeDispatcher(): MiddlewareDispatcher
+    protected function makeDispatcher(): MiddlewareDispatcher
     {
         EventManager::instance()->on('Controller.initialize', $this->controllerSpy(...));
         $app = $this->createApp();
@@ -633,7 +633,7 @@ trait IntegrationTestTrait
      * @param \Throwable $exception Exception to handle.
      * @return void
      */
-    protected function _handleError(Throwable $exception): void
+    protected function handleError(Throwable $exception): void
     {
         $class = Configure::read('Error.exceptionRenderer');
         if (!$class || !class_exists($class)) {
@@ -652,13 +652,13 @@ trait IntegrationTestTrait
      * @param array|string $data The request data.
      * @return array The request context
      */
-    protected function _buildRequest(string $url, string $method, array|string $data = []): array
+    protected function buildRequest(string $url, string $method, array|string $data = []): array
     {
         $sessionConfig = (array)Configure::read('Session') + [
             'defaults' => 'php',
         ];
         $session = Session::create($sessionConfig);
-        [$url, $query, $hostInfo] = $this->_url($url);
+        [$url, $query, $hostInfo] = $this->url($url);
         $tokenUrl = $url;
 
         if ($query) {
@@ -706,9 +706,9 @@ trait IntegrationTestTrait
             $props['input'] = http_build_query($data);
         } else {
             if ($method !== 'GET' || $data !== []) {
-                $data = $this->_addTokens($tokenUrl, $data, $method);
+                $data = $this->addTokens($tokenUrl, $data, $method);
             }
-            $props['post'] = $this->_castToString($data);
+            $props['post'] = $this->castToString($data);
         }
 
         $props['cookies'] = $this->_cookie;
@@ -725,7 +725,7 @@ trait IntegrationTestTrait
      * @param string $method The request method.
      * @return array The request body with tokens added.
      */
-    protected function _addTokens(string $url, array $data, string $method): array
+    protected function addTokens(string $url, array $data, string $method): array
     {
         if ($this->_securityToken === true) {
             $fields = array_diff_key($data, array_flip($this->_unlockedFields));
@@ -775,7 +775,7 @@ trait IntegrationTestTrait
      * @param array $data POST data
      * @return array
      */
-    protected function _castToString(array $data): array
+    protected function castToString(array $data): array
     {
         foreach ($data as $key => $value) {
             if (is_scalar($value)) {
@@ -790,7 +790,7 @@ trait IntegrationTestTrait
                     continue;
                 }
 
-                $data[$key] = $this->_castToString($value);
+                $data[$key] = $this->castToString($value);
             }
         }
 
@@ -803,7 +803,7 @@ trait IntegrationTestTrait
      * @param string $url The URL
      * @return array Qualified URL, the query parameters, and host data
      */
-    protected function _url(string $url): array
+    protected function url(string $url): array
     {
         $uri = new Uri($url);
         $path = $uri->getPath();
@@ -825,7 +825,7 @@ trait IntegrationTestTrait
      *
      * @return string The response body.
      */
-    protected function _getBodyAsString(): string
+    protected function getBodyAsString(): string
     {
         if (!$this->_response) {
             $this->fail('No response set, cannot assert content.');

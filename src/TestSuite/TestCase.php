@@ -801,7 +801,7 @@ abstract class TestCase extends BaseTestCase
                  * @var array<string, mixed> $assertion
                  * @var string $string
                  */
-                $string = $this->_assertAttributes($assertion, $string, $fullDebug, $regex);
+                $string = $this->assertAttributes($assertion, $string, $fullDebug, $regex);
                 if ($fullDebug && $string === false) {
                     debug($string, true);
                     debug($regex, true);
@@ -852,7 +852,7 @@ abstract class TestCase extends BaseTestCase
      * @param array|string $regex Full regexp from `assertHtml`
      * @return string|false
      */
-    protected function _assertAttributes(
+    protected function assertAttributes(
         array $assertions,
         string $string,
         bool $fullDebug = false,
@@ -891,7 +891,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $path Path separated by "/" slash.
      * @return string Normalized path separated by DIRECTORY_SEPARATOR.
      */
-    protected function _normalizePath(string $path): string
+    protected function normalizePath(string $path): string
     {
         return str_replace('/', DIRECTORY_SEPARATOR, $path);
     }
@@ -974,7 +974,7 @@ abstract class TestCase extends BaseTestCase
      */
     public function getMockForModel(string $alias, array $methods = [], array $options = []): Table&MockObject
     {
-        $className = $this->_getTableClassName($alias, $options);
+        $className = $this->getTableClassName($alias, $options);
         $connectionName = $className::defaultConnectionName();
         $connection = ConnectionManager::get($connectionName);
 
@@ -1018,7 +1018,7 @@ abstract class TestCase extends BaseTestCase
      * @return class-string<\Cake\ORM\Table>
      * @throws \Cake\ORM\Exception\MissingTableClassException
      */
-    protected function _getTableClassName(string $alias, array $options): string
+    protected function getTableClassName(string $alias, array $options): string
     {
         if (empty($options['className'])) {
             $class = Inflector::camelize($alias);
