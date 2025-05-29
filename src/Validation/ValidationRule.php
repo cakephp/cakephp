@@ -62,7 +62,7 @@ class ValidationRule
     {
         $context += ['data' => [], 'newRecord' => true];
 
-        if ($this->_skip($context)) {
+        if ($this->skip($context)) {
             return true;
         }
 
@@ -98,7 +98,7 @@ class ValidationRule
      *   be passed as the last argument for the validation method
      * @return bool True if the ValidationRule should be skipped
      */
-    protected function _skip(array $context): bool
+    protected function skip(array $context): bool
     {
         if (is_string($this->on)) {
             $newRecord = $context['newRecord'];
