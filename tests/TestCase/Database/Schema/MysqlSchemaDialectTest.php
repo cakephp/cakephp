@@ -521,6 +521,13 @@ SQL;
         if ($driver->isMariaDb()) {
             $expected['created_with_precision']['default'] = 'current_timestamp(3)';
             $expected['created_with_precision']['comment'] = '';
+
+            // MariaDb aliases JSON to LONGTEXT
+            // https://mariadb.com/kb/en/json/
+            $expected['config']['type'] = 'text';
+            $expected['config']['length'] = 4294967295;
+            $expected['comment'] = '';
+            $expected['config']['collate'] = 'utf8mb4_bin';
         }
         if ($driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=')) {
             $expected['title']['collate'] = 'utf8mb3_general_ci';
