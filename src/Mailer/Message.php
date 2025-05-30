@@ -1125,13 +1125,7 @@ class Message implements JsonSerializable
      *
      * Attachments can be defined in a few forms depending on how much control you need:
      *
-     * Attach a single file:
-     *
-     * ```
-     * $this->setAttachments('path/to/file');
-     * ```
-     *
-     * Attach a file with a different filename:
+     * Attach a file:
      *
      * ```
      * $this->setAttachments(['custom_name.txt' => 'path/to/file.txt']);
