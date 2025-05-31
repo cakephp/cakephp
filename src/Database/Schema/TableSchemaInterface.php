@@ -215,6 +215,27 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_POLYGON = 'polygon';
 
     /**
+     * INET type. Only implemented in postgres.
+     *
+     * @var string
+     */
+    public const TYPE_INET = 'inet';
+
+    /**
+     * CIDR type. Only implemented in postgres.
+     *
+     * @var string
+     */
+    public const TYPE_CIDR = 'cidr';
+
+    /**
+     * Macaddr type. Only implemented in postgres.
+     *
+     * @var string
+     */
+    public const TYPE_MACADDR = 'macaddr';
+
+    /**
      * Geospatial column types
      *
      * @var array

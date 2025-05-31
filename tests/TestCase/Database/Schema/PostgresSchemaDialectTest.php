@@ -109,7 +109,6 @@ SQL;
     {
         return [
             // Timestamp
-            //
             [
                 ['type' => 'TIMESTAMP', 'datetime_precision' => 6],
                 ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
