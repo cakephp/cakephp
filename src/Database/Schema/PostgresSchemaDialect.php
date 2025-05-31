@@ -708,10 +708,7 @@ class PostgresSchemaDialect extends SchemaDialect
             $out .= ' BYTEA';
         }
 
-        if (
-            $column['type'] === TableSchemaInterface::TYPE_CHAR ||
-            $column['type'] === TableSchemaInterface::TYPE_CITEXT
-        ) {
+        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
             $out .= '(' . $column['length'] . ')';
         }
 

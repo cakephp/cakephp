@@ -940,8 +940,8 @@ SQL;
             ],
             [
                 'slug',
-                ['type' => 'citext', 'length' => 36],
-                '"slug" CITEXT(36)',
+                ['type' => 'citext', 'length' => null],
+                '"slug" CITEXT',
             ],
             // Text
             [
