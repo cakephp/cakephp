@@ -2005,13 +2005,15 @@ class TableTest extends TestCase
      */
     public function testRemoveBehaviorMethodMapCleared(): void
     {
-        $table = new Table(['table' => 'articles']);
-        $table->addBehavior('Sluggable');
-        $this->assertTrue($table->behaviors()->hasMethod('slugify'), 'slugify should be mapped');
-        $this->assertSame('foo-bar', $table->slugify('foo bar'));
+        $this->deprecated(function (): void {
+            $table = new Table(['table' => 'articles']);
+            $table->addBehavior('Sluggable');
+            $this->assertTrue($table->behaviors()->hasMethod('slugify'), 'slugify should be mapped');
+            $this->assertSame('foo-bar', $table->slugify('foo bar'));
 
-        $table->removeBehavior('Sluggable');
-        $this->assertFalse($table->behaviors()->hasMethod('slugify'), 'slugify should not be callable');
+            $table->removeBehavior('Sluggable');
+            $this->assertFalse($table->behaviors()->hasMethod('slugify'), 'slugify should not be callable');
+        });
     }
 
     /**
@@ -2091,9 +2093,11 @@ class TableTest extends TestCase
      */
     public function testCallBehaviorMethod(): void
     {
-        $table = $this->getTableLocator()->get('article');
-        $table->addBehavior('Sluggable');
-        $this->assertSame('some-value', $table->slugify('some value'));
+        $this->deprecated(function (): void {
+            $table = $this->getTableLocator()->get('article');
+            $table->addBehavior('Sluggable');
+            $this->assertSame('some-value', $table->slugify('some value'));
+        });
     }
 
     /**
@@ -2101,9 +2105,11 @@ class TableTest extends TestCase
      */
     public function testCallBehaviorAliasedMethod(): void
     {
-        $table = $this->getTableLocator()->get('article');
-        $table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
-        $this->assertSame('some-value', $table->wednesday('some value'));
+        $this->deprecated(function (): void {
+            $table = $this->getTableLocator()->get('article');
+            $table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
+            $this->assertSame('some-value', $table->wednesday('some value'));
+        });
     }
 
     /**
@@ -2310,7 +2316,7 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity) {
+        $listener = function (EventInterface $event, $entity): void {
             $event->stopPropagation();
             $event->setResult($entity);
         };
@@ -2351,7 +2357,7 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity) {
+        $listener = function (EventInterface $event, $entity): void {
             $event->stopPropagation();
             $event->setResult(1);
         };
@@ -3494,12 +3500,14 @@ class TableTest extends TestCase
      */
     public function testValidatorBehavior(): void
     {
-        $table = new Table();
-        $table->addBehavior('Validation');
+        $this->deprecated(function (): void {
+            $table = new Table();
+            $table->addBehavior('Validation');
 
-        $validator = $table->getValidator('Behavior');
-        $set = $validator->field('name');
-        $this->assertArrayHasKey('behaviorRule', $set);
+            $validator = $table->getValidator('Behavior');
+            $set = $validator->field('name');
+            $this->assertArrayHasKey('behaviorRule', $set);
+        });
     }
 
     /**

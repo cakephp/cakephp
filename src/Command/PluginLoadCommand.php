@@ -31,6 +31,16 @@ use Cake\Utility\Hash;
 class PluginLoadCommand extends Command
 {
     /**
+     * @var array<string>
+     */
+    protected static array $devTags = ['dev', 'testing', 'static analysis'];
+
+    /**
+     * @var array<string>
+     */
+    protected static array $cliTags = ['cli', 'command line', 'shell'];
+
+    /**
      * Config file
      *
      * @var string
@@ -80,8 +90,9 @@ class PluginLoadCommand extends Command
             }
         }
 
+        $path = null;
         try {
-            Plugin::getCollection()->findPath($plugin);
+            $path = Plugin::getCollection()->findPath($plugin);
         } catch (MissingPluginException $e) {
             if (empty($options['optional'])) {
                 $io->err($e->getMessage());
@@ -89,6 +100,23 @@ class PluginLoadCommand extends Command
 
                 return static::CODE_ERROR;
             }
+        }
+
+        $recommendations = $path ? $this->recommendations($path) : [];
+        foreach ($recommendations as $name => $v) {
+            if (isset($options[$name]) && $options[$name] === $v) {
+                continue;
+            }
+
+            $option = $name . ': ' . ($v ? 'true' : 'false');
+            $question = 'Based on the plugin composer keywords, this seems to be `' . $option . '`. ';
+            $question .= 'Do you want to change this?';
+            $in = $io->askChoice($question, ['y', 'n'], 'y');
+            if ($in !== 'y') {
+                continue;
+            }
+
+            $options[$name] = $v;
         }
 
         $result = $this->modifyConfigFile($plugin, $options);
@@ -125,13 +153,50 @@ class PluginLoadCommand extends Command
         } else {
             $array = var_export($config, true);
         }
-        $contents = '<?php' . "\n\n" . 'return ' . $array . ';' . "\n";
 
+        $contents = '<?php' . "\n\n" . 'return ' . $array . ';' . "\n";
         if (file_put_contents($this->configFile, $contents)) {
             return static::CODE_SUCCESS;
         }
 
         return static::CODE_ERROR;
+    }
+
+    /**
+     * @param string $path
+     * @return array<string, bool>
+     */
+    protected function recommendations(string $path): array
+    {
+        $file = $path . 'composer.json';
+        if (!file_exists($file)) {
+            return [];
+        }
+
+        $content = file_get_contents($file);
+        $array = $content ? json_decode($content, true) : [];
+        $keywords = $array['keywords'] ?? [];
+        if (!$keywords) {
+            return [];
+        }
+
+        $recommendations = [];
+        foreach (static::$devTags as $tag) {
+            if (in_array($tag, $keywords, true)) {
+                $recommendations['onlyDebug'] = true;
+            }
+        }
+        foreach (static::$cliTags as $tag) {
+            if (in_array($tag, $keywords, true)) {
+                $recommendations['onlyCli'] = true;
+            }
+        }
+
+        if (!empty($recommendations['onlyDebug'])) {
+            $recommendations['optional'] = true;
+        }
+
+        return $recommendations;
     }
 
     /**

@@ -1215,6 +1215,112 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Test the location header assertion.
      */
+    public function testAssertRedirectBack(): void
+    {
+        $this->_response = new Response();
+        $this->_request = [
+            'url' => '/get/tasks/index',
+        ];
+        $this->_response = $this->_response
+            ->withStatus(302)
+            ->withHeader('Location', 'http://localhost/get/tasks/index');
+
+        $this->assertRedirectBack();
+    }
+
+    /**
+     * Test the location header assertion.
+     */
+    public function testAssertRedirectBackSpecificCode(): void
+    {
+        $this->_response = new Response();
+        $this->_request = [
+            'url' => '/get/tasks/index',
+        ];
+        $this->_response = $this->_response
+            ->withStatus(301)
+            ->withHeader('Location', 'http://localhost/get/tasks/index');
+
+        $this->assertRedirectBack(301);
+    }
+
+    /**
+     * Test the location header assertion.
+     */
+    public function testAssertRedirectBackInvalid(): void
+    {
+        $this->_response = new Response();
+        $this->_request = [
+            'url' => '/get/tasks/edit',
+        ];
+        $this->_response = $this->_response
+            ->withStatus(302)
+            ->withHeader('Location', 'http://localhost/get/tasks/index');
+
+        $this->expectException(AssertionFailedError::class);
+
+        $this->assertRedirectBack();
+    }
+
+    /**
+     * Test the location header assertion.
+     */
+    public function testAssertRedirectBackToReferer(): void
+    {
+        $this->_response = new Response();
+        $this->_request = [
+            'environment' => [
+                'HTTP_REFERER' => 'http://localhost/get/tasks/index',
+            ],
+        ];
+        $this->_response = $this->_response
+            ->withStatus(302)
+            ->withHeader('Location', 'http://localhost/get/tasks/index');
+
+        $this->assertRedirectBackToReferer();
+    }
+
+    /**
+     * Test the location header assertion.
+     */
+    public function testAssertRedirectBackToRefererSpecificCode(): void
+    {
+        $this->_response = new Response();
+        $this->_request = [
+            'environment' => [
+                'HTTP_REFERER' => 'http://localhost/get/tasks/index',
+            ],
+        ];
+        $this->_response = $this->_response
+            ->withStatus(301)
+            ->withHeader('Location', 'http://localhost/get/tasks/index');
+
+        $this->assertRedirectBackToReferer(301);
+    }
+
+    /**
+     * Test the location header assertion.
+     */
+    public function testAssertRedirectBackToRefererInvalid(): void
+    {
+        $this->_response = new Response();
+        $this->_request = [
+            'environment' => [
+                'HTTP_REFERER' => 'http://localhost/get/tasks/index',
+            ],
+        ];
+        $this->_response = $this->_response
+            ->withStatus(302)
+            ->withHeader('Location', 'http://localhost/get/tasks/view/1');
+
+        $this->expectException(AssertionFailedError::class);
+
+        $this->assertRedirectBackToReferer();
+    }
+
+    /**
+     * Test the location header assertion.
+     */
     public function testAssertRedirectEquals(): void
     {
         $this->_response = new Response();

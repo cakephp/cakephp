@@ -66,6 +66,15 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_TIME = 'time';
 
     /**
+     * Year column type
+     *
+     * Currently only implemented in MySQL
+     *
+     * @var string
+     */
+    public const TYPE_YEAR = 'year';
+
+    /**
      * Timestamp column type
      *
      * @var string

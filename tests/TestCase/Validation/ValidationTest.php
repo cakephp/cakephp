@@ -2123,6 +2123,22 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * Tests ipOrRange().
+     */
+    public function testIpOrRange(): void
+    {
+        $this->assertTrue(Validation::ipOrRange('192.168.1.0'));
+        $this->assertTrue(Validation::ipOrRange('192.168.1.0/24'));
+        $this->assertTrue(Validation::ipOrRange('2001:db8::'));
+        $this->assertTrue(Validation::ipOrRange('2001:db8::/64'));
+
+        $this->assertFalse(Validation::ipOrRange('192.168.1'));
+        $this->assertFalse(Validation::ipOrRange('192.168.1.0/33'));
+        $this->assertFalse(Validation::ipOrRange('2001:db8'));
+        $this->assertFalse(Validation::ipOrRange('2001:db8::/1111'));
+    }
+
+    /**
      * testMaxLength method
      */
     public function testMaxLength(): void

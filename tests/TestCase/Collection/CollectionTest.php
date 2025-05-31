@@ -2025,6 +2025,7 @@ class CollectionTest extends TestCase
         $result = $collection->__debugInfo();
         $expected = [
             'count' => 3,
+            'items' => [1, 2, 3],
         ];
         $this->assertSame($expected, $result);
 
@@ -2032,6 +2033,7 @@ class CollectionTest extends TestCase
         $result = $collection->__debugInfo();
         $expected = [
             'count' => 3,
+            'items' => [1, 2, 3],
         ];
         $this->assertSame($expected, $result);
 
@@ -2040,17 +2042,11 @@ class CollectionTest extends TestCase
         $collection = new Collection($iterator);
 
         $result = $collection->__debugInfo();
-        $expected = [
-            'count' => 3,
-        ];
-        $this->assertSame($expected, $result);
+        $this->assertStringContainsString('NoRewindIterator', $result['innerIterator']::class);
 
         // Calling it again will in this case not rewind
         $result = $collection->__debugInfo();
-        $expected = [
-            'count' => 0,
-        ];
-        $this->assertSame($expected, $result);
+        $this->assertStringContainsString('NoRewindIterator', $result['innerIterator']::class);
 
         $filter = function ($value): void {
             throw new Exception('filter exception');
@@ -2059,10 +2055,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($iterator);
 
         $result = $collection->__debugInfo();
-        $expected = [
-            'count' => 'An exception occurred while getting count',
-        ];
-        $this->assertSame($expected, $result);
+        $this->assertStringContainsString('CallbackFilterIterator', $result['innerIterator']::class);
     }
 
     /**

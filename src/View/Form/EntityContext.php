@@ -645,10 +645,9 @@ class EntityContext implements ContextInterface
                 $table = $assoc->junction();
                 $assoc = null;
                 continue;
-            } else {
-                $associationCollection = $table->associations();
-                $assoc = $associationCollection->getByProperty($part);
             }
+            $associationCollection = $table->associations();
+            $assoc = $associationCollection->getByProperty($part);
 
             if ($assoc === null) {
                 if ($fallback) {

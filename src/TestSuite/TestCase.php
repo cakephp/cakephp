@@ -495,6 +495,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $string The string to search in.
      * @param string $message The message to use for failure.
      * @return void
+     * @phpstan-param non-empty-string $prefix
      */
     public function assertTextStartsWith(string $prefix, string $string, string $message = ''): void
     {
@@ -512,6 +513,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
      * @return void
+     * @phpstan-param non-empty-string $prefix
      */
     public function assertTextStartsNotWith(string $prefix, string $string, string $message = ''): void
     {
@@ -529,6 +531,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
      * @return void
+     * @phpstan-param non-empty-string $suffix
      */
     public function assertTextEndsWith(string $suffix, string $string, string $message = ''): void
     {
@@ -546,6 +549,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
      * @return void
+     * @phpstan-param non-empty-string $suffix
      */
     public function assertTextEndsNotWith(string $suffix, string $string, string $message = ''): void
     {

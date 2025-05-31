@@ -11,16 +11,6 @@ use Cake\Mailer\Message;
 class TestMessage extends Message
 {
     /**
-     * Wrap to protected method
-     *
-     * @return array
-     */
-    public function fmtAddress(array $address): array
-    {
-        return parent::formatAddress($address);
-    }
-
-    /**
      * Get the boundary attribute
      */
     public function getBoundary(): ?string

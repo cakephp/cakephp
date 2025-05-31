@@ -153,7 +153,10 @@ class ErrorLogger implements ErrorLoggerInterface
         }
 
         if ($includeTrace) {
-            $trace = Debugger::formatTrace($exception, ['format' => 'shortPoints']);
+            $trace = Debugger::formatTrace(
+                $exception,
+                ['format' => Configure::read('Error.traceFormat', 'shortPoints')],
+            );
             assert(is_array($trace));
             $message .= "\nStack Trace:\n";
             foreach ($trace as $line) {

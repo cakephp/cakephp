@@ -422,7 +422,7 @@ class Debugger
                 $back[] = sprintf('%s - %s, line %d', $reference, $path, $frame['line']);
             } else {
                 throw new InvalidArgumentException(
-                    "Invalid trace format of `$format` chosen. Must be one of `array`, `points` or `text`.",
+                    "Invalid trace format of `{$format}` chosen. Must be one of `array`, `points` or `text`.",
                 );
             }
         }

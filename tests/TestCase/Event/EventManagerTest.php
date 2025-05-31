@@ -924,7 +924,7 @@ class EventManagerTest extends TestCase
             return 'example event called';
         });
         $result = '';
-        $this->deprecated(function () use (&$eventManager, &$result) {
+        $this->deprecated(function () use (&$eventManager, &$result): void {
             $result = $eventManager->dispatch(new Event('example'));
         });
         $this->assertEquals('example event called', $result->getResult());

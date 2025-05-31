@@ -199,6 +199,19 @@ abstract class Query implements ExpressionInterface, Stringable
     }
 
     /**
+     * Returns driver for current connection role by default.
+     *
+     * See `Query::getConnectionRole()` for role options.
+     *
+     * @param string|null $role Connection role
+     * @return \Cake\Database\Driver
+     */
+    public function getDriver(?string $role = null): Driver
+    {
+        return $this->_connection->getDriver($role ?? $this->connectionRole);
+    }
+
+    /**
      * Compiles the SQL representation of this query and executes it using the
      * configured connection object. Returns the resulting statement object.
      *

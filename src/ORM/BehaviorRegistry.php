@@ -24,6 +24,7 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Query\SelectQuery;
 use LogicException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * BehaviorRegistry is used as a registry for loaded behaviors and handles loading
@@ -262,6 +263,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      *
      * @param string $method The method to check for.
      * @return bool
+     * @deprecated 5.3.0 Calling behavior methods on the table instance is deprecated.
      */
     public function hasMethod(string $method): bool
     {
@@ -293,9 +295,19 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param array $args The arguments you want to invoke the method with.
      * @return mixed The return value depends on the underlying behavior method.
      * @throws \BadMethodCallException When the method is unknown.
+     * @deprecated 5.3.0 Calling behavior methods on the table instance is deprecated.
      */
     public function call(string $method, array $args = []): mixed
     {
+        deprecationWarning(
+            '5.3.0',
+            sprintf(
+                'Calling behavior methods on the table instance is deprecated.'
+                . '  Use `$table->getBehavior(\'YourBehavior\')->%s()` instead.',
+                $method,
+            ),
+        );
+
         $method = strtolower($method);
         if ($this->hasMethod($method) && $this->has($this->_methodMap[$method][0])) {
             [$behavior, $callMethod] = $this->_methodMap[$method];

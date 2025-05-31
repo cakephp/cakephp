@@ -242,12 +242,10 @@ class Marshaller
                     $entity->set($field, $properties[$field], ['asOriginal' => true]);
                 }
             }
+        } elseif (method_exists($entity, 'patch')) {
+            $entity->patch($properties, ['asOriginal' => true]);
         } else {
-            if (method_exists($entity, 'patch')) {
-                $entity->patch($properties, ['asOriginal' => true]);
-            } else {
-                $entity->set($properties, ['asOriginal' => true]);
-            }
+            $entity->set($properties, ['asOriginal' => true]);
         }
 
         // Don't flag clean association entities as

@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use Cake\ORM\Table;
+use Cake\ORM\TableEventsTrait;
 use Cake\TestSuite\TestCase;
 
 class TableImplementedEventsTest extends TestCase
@@ -38,6 +39,27 @@ class TableImplementedEventsTest extends TestCase
         ];
         $this->assertEquals($expected, $result, 'Events do not match.');
     }
+
+    public function testImplementedEventsWithTableEventsTrait(): void
+    {
+        $table = new ImplementedAllEventsTable();
+        $result = $table->implementedEvents();
+        $expected = [
+            'Model.beforeMarshal' => 'beforeMarshal',
+            'Model.afterMarshal' => 'afterMarshal',
+            'Model.buildValidator' => 'buildValidator',
+            'Model.beforeFind' => 'beforeFind',
+            'Model.beforeSave' => 'beforeSave',
+            'Model.afterSave' => 'afterSave',
+            'Model.afterSaveCommit' => 'afterSaveCommit',
+            'Model.beforeDelete' => 'beforeDelete',
+            'Model.afterDelete' => 'afterDelete',
+            'Model.afterDeleteCommit' => 'afterDeleteCommit',
+            'Model.beforeRules' => 'beforeRules',
+            'Model.afterRules' => 'afterRules',
+        ];
+        $this->assertEquals($expected, $result, 'Events do not match.');
+    }
 }
 
 // phpcs:disable
@@ -51,5 +73,10 @@ class ImplementedEventsTable extends Table
     public function beforeDelete(): void {}
     public function afterDelete(): void {}
     public function afterRules(): void {}
+}
+
+class ImplementedAllEventsTable extends Table
+{
+    use TableEventsTrait;
 }
 // phpcs:enable

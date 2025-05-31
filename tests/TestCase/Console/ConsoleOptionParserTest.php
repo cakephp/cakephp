@@ -25,7 +25,6 @@ use Cake\Console\TestSuite\StubConsoleInput;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use LogicException;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 
 /**
  * ConsoleOptionParserTest
@@ -99,7 +98,6 @@ class ConsoleOptionParserTest extends TestCase
     /**
      * test removing an option clears also shortOption.
      */
-    #[WithoutErrorHandler]
     public function testRemoveOptionAlsoClearsShort(): void
     {
         $parser = new ConsoleOptionParser('test', false);
@@ -231,7 +229,7 @@ class ConsoleOptionParserTest extends TestCase
             'short' => 't',
         ]);
 
-        $this->deprecated(function () use ($parser) {
+        $this->deprecated(function () use ($parser): void {
             $parser->addOption('other', [
                 'short' => 't',
             ]);

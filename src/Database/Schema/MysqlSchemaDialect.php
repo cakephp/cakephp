@@ -323,7 +323,7 @@ class MysqlSchemaDialect extends SchemaDialect
             return $type;
         }
 
-        if (in_array($col, ['date', 'time'])) {
+        if (in_array($col, ['date', 'time', 'year'])) {
             return ['type' => $col, 'length' => null];
         }
         if (in_array($col, ['datetime', 'timestamp'])) {

@@ -144,10 +144,14 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => $col, 'length' => null];
         }
 
-        if (Configure::read('ORM.mapJsonTypeForSqlite') === true) {
-            if (str_contains($col, TableSchemaInterface::TYPE_JSON) && !str_contains($col, 'jsonb')) {
-                return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
-            }
+        if (
+            Configure::read('ORM.mapJsonTypeForSqlite') === true &&
+            (
+                str_contains($col, TableSchemaInterface::TYPE_JSON) &&
+                !str_contains($col, 'jsonb')
+            )
+        ) {
+            return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
         }
 
         if (in_array($col, TableSchemaInterface::GEOSPATIAL_TYPES)) {
@@ -756,7 +760,7 @@ class SqliteSchemaDialect extends SchemaDialect
             in_array($column['type'], $hasUnsigned, true) &&
             isset($column['unsigned']) &&
             $column['unsigned'] === true &&
-            ($column['type'] !== TableSchemaInterface::TYPE_INTEGER && $autoIncrement !== true)
+            ($column['type'] !== TableSchemaInterface::TYPE_INTEGER && !$autoIncrement)
         ) {
             $out .= ' UNSIGNED';
         }
@@ -802,7 +806,7 @@ class SqliteSchemaDialect extends SchemaDialect
         ];
         if (
             in_array($column['type'], $integerTypes, true) &&
-            isset($column['length']) && $autoIncrement !== true
+            isset($column['length']) && !$autoIncrement
         ) {
             $out .= '(' . (int)$column['length'] . ')';
         }

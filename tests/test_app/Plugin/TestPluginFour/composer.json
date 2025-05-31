@@ -1,0 +1,11 @@
+{
+    "name": "cakephp/test-plugin",
+    "description": "CakePHP Test Plugin",
+    "type": "cakephp-plugin",
+    "keywords": [
+        "cakephp",
+        "test",
+        "cli",
+        "dev"
+    ]
+}

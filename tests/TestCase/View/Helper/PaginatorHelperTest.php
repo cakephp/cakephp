@@ -130,7 +130,20 @@ class PaginatorHelperTest extends TestCase
         $this->assertArrayHasKey('test', $result);
         $this->assertSame('val', $result['test']);
 
-        $this->assertSame('val', $this->Paginator->getTemplates('test'));
+        $this->assertSame('val', $this->Paginator->getTemplate('test'));
+    }
+
+    /**
+     * Test the getTemplate() method.
+     */
+    public function testGetTemplate(): void
+    {
+        $this->Paginator->setTemplates([
+            'test' => 'val',
+        ]);
+
+        $result = $this->Paginator->getTemplate('test');
+        $this->assertSame('val', $result);
     }
 
     /**

@@ -74,6 +74,10 @@ class MysqlSchemaDialectTest extends TestCase
                 ['type' => 'time', 'length' => null],
             ],
             [
+                'YEAR',
+                ['type' => 'year', 'length' => null],
+            ],
+            [
                 'TIMESTAMP',
                 ['type' => 'timestamp', 'length' => null],
             ],
@@ -332,6 +336,8 @@ SQL;
                 published BOOLEAN DEFAULT 0,
                 allow_comments TINYINT(1) DEFAULT 0,
                 location POINT,
+                year_type YEAR,
+                config JSON,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
                 updated DATETIME ON UPDATE CURRENT_TIMESTAMP,
@@ -466,6 +472,22 @@ SQL;
                 'comment' => null,
                 'srid' => null,
             ],
+            'year_type' => [
+                'type' => 'year',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'config' => [
+                'type' => 'json',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
             'created' => [
                 'type' => 'datetime',
                 'null' => true,
@@ -499,6 +521,13 @@ SQL;
         if ($driver->isMariaDb()) {
             $expected['created_with_precision']['default'] = 'current_timestamp(3)';
             $expected['created_with_precision']['comment'] = '';
+
+            // MariaDb aliases JSON to LONGTEXT
+            // https://mariadb.com/kb/en/json/
+            $expected['config']['type'] = 'text';
+            $expected['config']['length'] = 4294967295;
+            $expected['comment'] = '';
+            $expected['config']['collate'] = 'utf8mb4_bin';
         }
         if ($driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=')) {
             $expected['title']['collate'] = 'utf8mb3_general_ci';
@@ -903,7 +932,7 @@ SQL;
             [
                 'body',
                 ['type' => 'text', 'null' => false, 'default' => 'abc'],
-                '`body` TEXT NOT NULL DEFAULT (\'abc\')',
+                "`body` TEXT NOT NULL DEFAULT ('abc')",
             ],
             [
                 'body',
