@@ -109,6 +109,7 @@ SQL;
     {
         return [
             // Timestamp
+            //
             [
                 ['type' => 'TIMESTAMP', 'datetime_precision' => 6],
                 ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
@@ -218,10 +219,6 @@ SQL;
                 ['type' => 'UUID'],
                 ['type' => 'uuid', 'length' => null],
             ],
-            [
-                ['type' => 'INET'],
-                ['type' => 'string', 'length' => 39],
-            ],
             // Text
             [
                 ['type' => 'TEXT'],
@@ -266,6 +263,19 @@ SQL;
             [
                 ['type' => 'GEOGRAPHY(POLYGON, 4326)'],
                 ['type' => 'polygon', 'length' => null, 'srid' => 4326],
+            ],
+            // network addresses
+            [
+                ['type' => 'CIDR'],
+                ['type' => 'cidr', 'length' => null],
+            ],
+            [
+                ['type' => 'inet'],
+                ['type' => 'inet', 'length' => null],
+            ],
+            [
+                ['type' => 'macaddr'],
+                ['type' => 'macaddr', 'length' => null],
             ],
         ];
     }
