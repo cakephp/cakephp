@@ -542,6 +542,41 @@ SQL;
     }
 
     /**
+     * Test describing a table with citext columns
+     */
+    public function testDescribeTableCiText(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+
+        $sql = 'CREATE EXTENSION IF NOT EXISTS citext';
+        $connection->execute($sql);
+
+        $sql = <<<SQL
+CREATE TABLE schema_citext (
+    "id" SERIAL,
+    "slug" CITEXT NOT NULL,
+    "name" VARCHAR(255),
+    PRIMARY KEY("id")
+);
+SQL;
+        $connection->execute($sql);
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_citext');
+        $connection->execute('DROP TABLE schema_citext');
+
+        $expected = [
+            'type' => 'citext',
+            'null' => false,
+            'default' => null,
+            'comment' => null,
+            'length' => null,
+            'precision' => null,
+        ];
+        $this->assertEquals($expected, $result->getColumn('slug'));
+    }
+
+    /**
      * Test describing a table containing defaults with Postgres
      */
     public function testDescribeTableWithDefaults(): void
@@ -889,6 +924,11 @@ SQL;
                 'title',
                 ['type' => 'string', 'length' => 255, 'null' => false, 'collate' => 'C'],
                 '"title" VARCHAR(255) COLLATE "C" NOT NULL',
+            ],
+            [
+                'slug',
+                ['type' => 'citext', 'length' => 36],
+                '"slug" CITEXT(36)',
             ],
             // Text
             [

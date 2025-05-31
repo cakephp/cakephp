@@ -117,6 +117,15 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_CHAR = 'char';
 
     /**
+     * Case-insensitive text column type.
+     *
+     * Only implemented in postgres
+     *
+     * @var string
+     */
+    public const TYPE_CITEXT = 'citext';
+
+    /**
      * Text column type
      *
      * @var string

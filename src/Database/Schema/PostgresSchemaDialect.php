@@ -139,7 +139,7 @@ class PostgresSchemaDialect extends SchemaDialect
             return $type;
         }
 
-        if (in_array($col, ['date', 'time', 'boolean', 'inet', 'cidr', 'macaddr'], true)) {
+        if (in_array($col, ['date', 'time', 'boolean', 'inet', 'cidr', 'macaddr', 'citext'], true)) {
             return ['type' => $col, 'length' => null];
         }
         if (in_array($col, ['timestamptz', 'timestamp with time zone'], true)) {
@@ -282,7 +282,11 @@ class PostgresSchemaDialect extends SchemaDialect
         $statement = $this->_driver->execute($sql, [$name, $schema, $config['database']]);
         $columns = [];
         foreach ($statement->fetchAll('assoc') as $row) {
-            $field = $this->_convertColumn($row['type']);
+            $type = $row['type'];
+            if ($type === 'USER-DEFINED') {
+                $type = $row['udt_name'];
+            }
+            $field = $this->_convertColumn($type);
             if ($field['type'] === TableSchemaInterface::TYPE_BOOLEAN) {
                 if ($row['default'] === 'true') {
                     $row['default'] = 1;
@@ -667,6 +671,7 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_UUID => ' UUID',
             TableSchemaInterface::TYPE_NATIVE_UUID => ' UUID',
             TableSchemaInterface::TYPE_CHAR => ' CHAR',
+            TableSchemaInterface::TYPE_CITEXT => ' CITEXT',
             TableSchemaInterface::TYPE_JSON => ' JSONB',
             TableSchemaInterface::TYPE_GEOMETRY => ' GEOGRAPHY(GEOMETRY, %s)',
             TableSchemaInterface::TYPE_POINT => ' GEOGRAPHY(POINT, %s)',
@@ -703,7 +708,10 @@ class PostgresSchemaDialect extends SchemaDialect
             $out .= ' BYTEA';
         }
 
-        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
+        if (
+            $column['type'] === TableSchemaInterface::TYPE_CHAR ||
+            $column['type'] === TableSchemaInterface::TYPE_CITEXT
+        ) {
             $out .= '(' . $column['length'] . ')';
         }
 
