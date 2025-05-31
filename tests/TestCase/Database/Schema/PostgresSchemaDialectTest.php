@@ -1116,6 +1116,22 @@ SQL;
                 ['type' => 'polygon', 'null' => false, 'srid' => 4326],
                 '"p" GEOGRAPHY(POLYGON, 4326) NOT NULL',
             ],
+            // Network address types
+            [
+                'network',
+                ['type' => 'cidr', 'null' => false],
+                '"network" CIDR NOT NULL',
+            ],
+            [
+                'network',
+                ['type' => 'inet', 'null' => false],
+                '"network" INET NOT NULL',
+            ],
+            [
+                'network',
+                ['type' => 'macaddr', 'null' => false],
+                '"network" MACADDR NOT NULL',
+            ],
         ];
     }
 

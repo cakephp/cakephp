@@ -672,6 +672,9 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_POINT => ' GEOGRAPHY(POINT, %s)',
             TableSchemaInterface::TYPE_LINESTRING => ' GEOGRAPHY(LINESTRING, %s)',
             TableSchemaInterface::TYPE_POLYGON => ' GEOGRAPHY(POLYGON, %s)',
+            TableSchemaInterface::TYPE_CIDR => ' CIDR',
+            TableSchemaInterface::TYPE_INET => ' INET',
+            TableSchemaInterface::TYPE_MACADDR => ' MACADDR',
         ];
 
         $autoIncrementTypes = [
