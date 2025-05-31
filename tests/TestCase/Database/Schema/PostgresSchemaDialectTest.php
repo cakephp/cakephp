@@ -78,6 +78,7 @@ published BOOLEAN DEFAULT false,
 views SMALLINT DEFAULT 0,
 readingtime TIME,
 data JSONB,
+valid_period INTERVAL,
 average_note DECIMAL(4,2),
 average_income NUMERIC(10,2),
 created TIMESTAMP,
@@ -141,6 +142,10 @@ SQL;
             [
                 ['type' => 'TIME WITHOUT TIME ZONE'],
                 ['type' => 'time', 'length' => null],
+            ],
+            [
+                ['type' => 'INTERVAL'],
+                ['type' => 'interval', 'length' => null],
             ],
             // Integer
             [
@@ -436,6 +441,14 @@ SQL;
             ],
             'data' => [
                 'type' => 'json',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'valid_period' => [
+                'type' => 'interval',
                 'null' => true,
                 'default' => null,
                 'length' => null,

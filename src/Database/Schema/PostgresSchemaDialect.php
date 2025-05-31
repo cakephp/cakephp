@@ -139,7 +139,7 @@ class PostgresSchemaDialect extends SchemaDialect
             return $type;
         }
 
-        if (in_array($col, ['date', 'time', 'boolean', 'inet', 'cidr', 'macaddr', 'citext'], true)) {
+        if (in_array($col, ['date', 'time', 'boolean', 'inet', 'cidr', 'macaddr', 'citext', 'interval'], true)) {
             return ['type' => $col, 'length' => null];
         }
         if (in_array($col, ['timestamptz', 'timestamp with time zone'], true)) {
