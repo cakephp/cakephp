@@ -143,7 +143,7 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
             $format = [IntlDateFormatter::NONE, $format];
         }
 
-        return static::_parseDateTime($time, $format);
+        return static::processDateTime($time, $format);
     }
 
     /**

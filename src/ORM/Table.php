@@ -2246,7 +2246,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         array $options = [],
     ): iterable|false {
         try {
-            return $this->_saveMany($entities, $options);
+            return $this->doSaveMany($entities, $options);
         } catch (PersistenceFailedException) {
             return false;
         }
@@ -2267,7 +2267,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function saveManyOrFail(iterable $entities, array $options = []): iterable
     {
-        return $this->_saveMany($entities, $options);
+        return $this->doSaveMany($entities, $options);
     }
 
     /**
@@ -2277,7 +2277,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @throws \Exception If an entity couldn't be saved.
      * @return iterable<\Cake\Datasource\EntityInterface> Entities list.
      */
-    protected function _saveMany(
+    protected function doSaveMany(
         iterable $entities,
         array $options = [],
     ): iterable {
@@ -2427,7 +2427,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function deleteMany(iterable $entities, array $options = []): iterable|false
     {
-        $failed = $this->_deleteMany($entities, $options);
+        $failed = $this->doDeleteMany($entities, $options);
 
         if ($failed !== null) {
             return false;
@@ -2451,7 +2451,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function deleteManyOrFail(iterable $entities, array $options = []): iterable
     {
-        $failed = $this->_deleteMany($entities, $options);
+        $failed = $this->doDeleteMany($entities, $options);
 
         if ($failed !== null) {
             throw new PersistenceFailedException($failed, ['deleteMany']);
@@ -2465,7 +2465,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param array<string, mixed> $options Options used.
      * @return \Cake\Datasource\EntityInterface|null
      */
-    protected function _deleteMany(iterable $entities, array $options = []): ?EntityInterface
+    protected function doDeleteMany(iterable $entities, array $options = []): ?EntityInterface
     {
         $options = new ArrayObject($options + [
                 'atomic' => true,

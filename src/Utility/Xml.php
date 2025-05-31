@@ -294,7 +294,7 @@ class Xml
         if ($options['pretty']) {
             $dom->formatOutput = true;
         }
-        self::_fromArray($dom, $dom, $input, $options['format']);
+        self::doFromArray($dom, $dom, $input, $options['format']);
 
         $options['return'] = strtolower($options['return']);
         if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
@@ -314,7 +314,7 @@ class Xml
      * @return void
      * @throws \Cake\Utility\Exception\XmlException
      */
-    protected static function _fromArray(
+    protected static function doFromArray(
         DOMDocument $dom,
         DOMDocument|DOMElement $node,
         mixed $data,
@@ -432,7 +432,7 @@ class Xml
             $child->setAttribute('xmlns', $childNS);
         }
 
-        static::_fromArray($dom, $child, $value, $format);
+        static::doFromArray($dom, $child, $value, $format);
         $node->appendChild($child);
     }
 
@@ -455,7 +455,7 @@ class Xml
 
         $result = [];
         $namespaces = array_merge(['' => ''], $obj->getNamespaces(true));
-        static::_toArray($obj, $result, '', array_keys($namespaces));
+        static::doToArray($obj, $result, '', array_keys($namespaces));
 
         return $result;
     }
@@ -469,7 +469,7 @@ class Xml
      * @param array<string> $namespaces List of namespaces in XML
      * @return void
      */
-    protected static function _toArray(SimpleXMLElement $xml, array &$parentData, string $ns, array $namespaces): void
+    protected static function doToArray(SimpleXMLElement $xml, array &$parentData, string $ns, array $namespaces): void
     {
         $data = [];
 
@@ -483,7 +483,7 @@ class Xml
             }
 
             foreach ($xml->children($namespace, true) as $child) {
-                static::_toArray($child, $data, $namespace, $namespaces);
+                static::doToArray($child, $data, $namespace, $namespaces);
             }
         }
 

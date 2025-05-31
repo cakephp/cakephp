@@ -79,7 +79,7 @@ class Stream implements AdapterInterface
 
         $this->buildContext($request, $options);
 
-        return $this->_send($request);
+        return $this->processRequest($request);
     }
 
     /**
@@ -238,7 +238,7 @@ class Stream implements AdapterInterface
      * @return array Array of populated Response objects
      * @throws \Psr\Http\Client\NetworkExceptionInterface
      */
-    protected function _send(RequestInterface $request): array
+    protected function processRequest(RequestInterface $request): array
     {
         $deadline = false;
         if (isset($this->_contextOptions['timeout']) && $this->_contextOptions['timeout'] > 0) {

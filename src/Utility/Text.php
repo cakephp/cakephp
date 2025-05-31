@@ -409,7 +409,7 @@ class Text
     {
         $paragraphs = explode($break, $text);
         foreach ($paragraphs as &$paragraph) {
-            $paragraph = static::_wordWrap($paragraph, $width, $break, $cut);
+            $paragraph = static::doWordWrap($paragraph, $width, $break, $cut);
         }
 
         return implode($break, $paragraphs);
@@ -424,7 +424,7 @@ class Text
      * @param bool $cut If the cut is set to true, the string is always wrapped at the specified width.
      * @return string Formatted text.
      */
-    protected static function _wordWrap(string $text, int $width = 72, string $break = "\n", bool $cut = false): string
+    protected static function doWordWrap(string $text, int $width = 72, string $break = "\n", bool $cut = false): string
     {
         $parts = [];
         if ($cut) {

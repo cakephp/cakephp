@@ -130,7 +130,7 @@ trait DateFormatTrait
      * @param \DateTimeZone|string|null $tz The timezone for the instance
      * @return static|null
      */
-    protected static function _parseDateTime(
+    protected static function processDateTime(
         string $time,
         array|string $format,
         DateTimeZone|string|null $tz = null,

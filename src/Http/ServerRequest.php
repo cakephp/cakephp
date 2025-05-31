@@ -511,10 +511,10 @@ class ServerRequest implements ServerRequestInterface
             throw new InvalidArgumentException(sprintf('No detector set for type `%s`.', $type));
         }
         if ($args) {
-            return $this->_is($type, $args);
+            return $this->isType($type, $args);
         }
 
-        return $this->_detectorCache[$type] ??= $this->_is($type, $args);
+        return $this->_detectorCache[$type] ??= $this->isType($type, $args);
     }
 
     /**
@@ -534,7 +534,7 @@ class ServerRequest implements ServerRequestInterface
      * @param array $args Array of custom detector arguments.
      * @return bool Whether the request is the type you are checking.
      */
-    protected function _is(string $type, array $args): bool
+    protected function isType(string $type, array $args): bool
     {
         $detect = static::$_detectors[$type];
         if ($detect instanceof Closure) {

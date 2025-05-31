@@ -371,7 +371,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     {
         if ($this->_results !== null) {
             if (!($this->_results instanceof ResultSetInterface)) {
-                $this->_results = $this->_decorateResults($this->_results);
+                $this->_results = $this->ormDecorateResults($this->_results);
             }
 
             return $this->_results;
@@ -379,7 +379,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
         $results = $this->_cache?->fetch($this);
         if ($results === null) {
-            $results = $this->_decorateResults($this->_execute());
+            $results = $this->ormDecorateResults($this->ormExecute());
             $this->_cache?->store($this, $results);
         }
         $this->_results = $results;
@@ -727,7 +727,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param iterable $result Original results
      * @return \Cake\Datasource\ResultSetInterface<\Cake\Datasource\EntityInterface|mixed>
      */
-    protected function _decorateResults(iterable $result): ResultSetInterface
+    protected function ormDecorateResults(iterable $result): ResultSetInterface
     {
         $resultSetClass = $this->resultSetFactory()->getResultSetClass();
 
@@ -1559,7 +1559,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return iterable
      */
-    protected function _execute(): iterable
+    protected function ormExecute(): iterable
     {
         $this->triggerBeforeFind();
         if ($this->_results !== null) {

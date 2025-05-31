@@ -221,7 +221,7 @@ class ConsoleOutput
             $message = implode(static::LF, $message);
         }
 
-        return $this->_write($this->styleText($message . str_repeat(static::LF, $newlines)));
+        return $this->writeStream($this->styleText($message . str_repeat(static::LF, $newlines)));
     }
 
     /**
@@ -291,7 +291,7 @@ class ConsoleOutput
      * @param string $message Message to write.
      * @return int The number of bytes returned from writing to output.
      */
-    protected function _write(string $message): int
+    protected function writeStream(string $message): int
     {
         if (!isset($this->_output)) {
             return 0;

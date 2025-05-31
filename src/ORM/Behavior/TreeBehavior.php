@@ -540,7 +540,7 @@ class TreeBehavior extends Behavior
         return $this->_table->getConnection()->transactional(function () use ($node) {
             $this->ensureFields($node);
 
-            return $this->_removeFromTree($node);
+            return $this->doRemoveFromTree($node);
         });
     }
 
@@ -551,7 +551,7 @@ class TreeBehavior extends Behavior
      * @return \Cake\Datasource\EntityInterface|false the node after being removed from the tree or
      * false on error
      */
-    protected function _removeFromTree(EntityInterface $node): EntityInterface|false
+    protected function doRemoveFromTree(EntityInterface $node): EntityInterface|false
     {
         $config = $this->getConfig();
         $left = $node->get($config['left']);
@@ -605,7 +605,7 @@ class TreeBehavior extends Behavior
         return $this->_table->getConnection()->transactional(function () use ($node, $number) {
             $this->ensureFields($node);
 
-            return $this->_moveUp($node, $number);
+            return $this->doMoveUp($node, $number);
         });
     }
 
@@ -617,7 +617,7 @@ class TreeBehavior extends Behavior
      * @return \Cake\Datasource\EntityInterface $node The node after being moved
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      */
-    protected function _moveUp(EntityInterface $node, int|bool $number): EntityInterface
+    protected function doMoveUp(EntityInterface $node, int|bool $number): EntityInterface
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
@@ -693,7 +693,7 @@ class TreeBehavior extends Behavior
         return $this->_table->getConnection()->transactional(function () use ($node, $number) {
             $this->ensureFields($node);
 
-            return $this->_moveDown($node, $number);
+            return $this->doMoveDown($node, $number);
         });
     }
 
@@ -705,7 +705,7 @@ class TreeBehavior extends Behavior
      * @return \Cake\Datasource\EntityInterface $node The node after being moved
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      */
-    protected function _moveDown(EntityInterface $node, int|bool $number): EntityInterface
+    protected function doMoveDown(EntityInterface $node, int|bool $number): EntityInterface
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];

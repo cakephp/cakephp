@@ -782,7 +782,7 @@ class View implements EventDispatcherInterface
         $templateFileName = $this->getTemplateFileName($template);
         $this->_currentType = static::TYPE_TEMPLATE;
         $this->dispatchEvent('View.beforeRender', [$templateFileName]);
-        $this->Blocks->set('content', $this->_render($templateFileName));
+        $this->Blocks->set('content', $this->doRender($templateFileName));
         $this->dispatchEvent('View.afterRender', [$templateFileName]);
 
         if ($this->autoLayout) {
@@ -834,7 +834,7 @@ class View implements EventDispatcherInterface
         }
 
         $this->_currentType = static::TYPE_LAYOUT;
-        $this->Blocks->set('content', $this->_render($layoutFileName));
+        $this->Blocks->set('content', $this->doRender($layoutFileName));
 
         $this->dispatchEvent('View.afterLayout', [$layoutFileName]);
 
@@ -1131,7 +1131,7 @@ class View implements EventDispatcherInterface
      * @triggers View.beforeRenderFile $this, [$templateFile]
      * @triggers View.afterRenderFile $this, [$templateFile, $content]
      */
-    protected function _render(string $templateFile, array $data = []): string
+    protected function doRender(string $templateFile, array $data = []): string
     {
         if (!$data) {
             $data = $this->viewVars;
@@ -1152,7 +1152,7 @@ class View implements EventDispatcherInterface
             $this->_stack[] = $this->fetch('content');
             $this->assign('content', $content);
 
-            $content = $this->_render($this->_parents[$templateFile]);
+            $content = $this->doRender($this->_parents[$templateFile]);
             $this->assign('content', array_pop($this->_stack));
         }
 
@@ -1686,7 +1686,7 @@ class View implements EventDispatcherInterface
             $this->dispatchEvent('View.beforeRender', [$file]);
         }
 
-        $element = $this->_render($file, array_merge($this->viewVars, $data));
+        $element = $this->doRender($file, array_merge($this->viewVars, $data));
 
         if ($options['callbacks']) {
             $this->dispatchEvent('View.afterRender', [$file, $element]);

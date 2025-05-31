@@ -667,7 +667,7 @@ class Hash
             }
         }
 
-        return array_filter($data, $callback ?? static::_filter(...));
+        return array_filter($data, $callback ?? static::doFilter(...));
     }
 
     /**
@@ -676,7 +676,7 @@ class Hash
      * @param mixed $var Array to filter.
      * @return bool
      */
-    protected static function _filter(mixed $var): bool
+    protected static function doFilter(mixed $var): bool
     {
         return $var === 0 || $var === 0.0 || $var === '0' || !empty($var);
     }
@@ -786,7 +786,7 @@ class Hash
             $stack[] = [(array)$curArg, &$return];
         }
         unset($curArg);
-        static::_merge($stack, $return);
+        static::doMerge($stack, $return);
 
         return $return;
     }
@@ -798,7 +798,7 @@ class Hash
      * @param array $return The return value to operate on.
      * @return void
      */
-    protected static function _merge(array $stack, array &$return): void
+    protected static function doMerge(array $stack, array &$return): void
     {
         while ($stack !== []) {
             foreach ($stack as $curKey => &$curMerge) {

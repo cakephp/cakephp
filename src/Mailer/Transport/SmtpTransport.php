@@ -122,7 +122,7 @@ class SmtpTransport extends AbstractTransport
     public function connect(): void
     {
         if (!$this->connected()) {
-            $this->_connect();
+            $this->connectSmtp();
             $this->auth();
         }
     }
@@ -151,7 +151,7 @@ class SmtpTransport extends AbstractTransport
             return;
         }
 
-        $this->_disconnect();
+        $this->disconnectSmtp();
     }
 
     /**
@@ -196,7 +196,7 @@ class SmtpTransport extends AbstractTransport
         $this->checkRecipient($message);
 
         if (!$this->connected()) {
-            $this->_connect();
+            $this->connectSmtp();
             $this->auth();
         } else {
             $this->smtpSend('RSET');
@@ -206,7 +206,7 @@ class SmtpTransport extends AbstractTransport
         $this->sendData($message);
 
         if (!$this->_config['keepAlive']) {
-            $this->_disconnect();
+            $this->disconnectSmtp();
         }
 
         /** @var array{headers: string, message: string} */
@@ -286,7 +286,7 @@ class SmtpTransport extends AbstractTransport
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _connect(): void
+    protected function connectSmtp(): void
     {
         $this->generateSocket();
         if (!$this->_socket->connect()) {
@@ -565,7 +565,7 @@ class SmtpTransport extends AbstractTransport
      * @return void
      * @throws \Cake\Network\Exception\SocketException
      */
-    protected function _disconnect(): void
+    protected function disconnectSmtp(): void
     {
         $this->smtpSend('QUIT', false);
         $this->_socket->disconnect();

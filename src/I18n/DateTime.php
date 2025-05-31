@@ -284,7 +284,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
         $format ??= static::$_toStringFormat;
         $format = is_int($format) ? [$format, $format] : $format;
 
-        return static::_parseDateTime($time, $format, $tz);
+        return static::processDateTime($time, $format, $tz);
     }
 
     /**

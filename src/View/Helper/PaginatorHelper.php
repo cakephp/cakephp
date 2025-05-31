@@ -709,7 +709,7 @@ class PaginatorHelper extends Helper
         if ($options['modulus'] !== false && $params['pageCount'] > $options['modulus']) {
             $out = $this->modulusNumbers($templater, $params, $options);
         } else {
-            $out = $this->_numbers($templater, $params, $options);
+            $out = $this->doNumbers($templater, $params, $options);
         }
 
         if (isset($options['templates'])) {
@@ -887,7 +887,7 @@ class PaginatorHelper extends Helper
      * @param array<string, mixed> $options Options from the numbers() method.
      * @return string Markup output.
      */
-    protected function _numbers(StringTemplate $templater, array $params, array $options): string
+    protected function doNumbers(StringTemplate $templater, array $params, array $options): string
     {
         $out = '';
         $out .= $options['before'];

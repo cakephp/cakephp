@@ -500,7 +500,7 @@ class Client implements EventDispatcherInterface, ClientInterface
             $requestSent = false;
             if ($response === null) {
                 $requestSent = true;
-                $response = $this->_sendRequest($request, $event->getAdapterOptions());
+                $response = $this->processRequest($request, $event->getAdapterOptions());
             }
 
             /** @var \Cake\Http\Client\ClientEvent $event */
@@ -582,7 +582,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * @param array<string, mixed> $options Additional options to use.
      * @return \Cake\Http\Client\Response
      */
-    protected function _sendRequest(RequestInterface $request, array $options): Response
+    protected function processRequest(RequestInterface $request, array $options): Response
     {
         $responses = [];
         if (static::$_mockAdapter) {

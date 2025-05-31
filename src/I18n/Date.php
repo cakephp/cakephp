@@ -169,7 +169,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
             $format = [$format, IntlDateFormatter::NONE];
         }
 
-        return static::_parseDateTime($date, $format);
+        return static::processDateTime($date, $format);
     }
 
     /**

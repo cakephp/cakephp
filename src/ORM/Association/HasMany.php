@@ -392,7 +392,7 @@ class HasMany extends Association
                 ->toList(),
         ];
 
-        $this->_unlink($foreignKey, $target, $conditions, $options);
+        $this->doUnlink($foreignKey, $target, $conditions, $options);
 
         $result = $sourceEntity->get($property);
         if ($options['cleanProperty'] && $result !== null) {
@@ -516,7 +516,7 @@ class HasMany extends Association
             ];
         }
 
-        return $this->_unlink(array_keys($foreignKeyReference), $target, $conditions, $options);
+        return $this->doUnlink(array_keys($foreignKeyReference), $target, $conditions, $options);
     }
 
     /**
@@ -531,7 +531,7 @@ class HasMany extends Association
      * @param array<string, mixed> $options list of options accepted by `Table::delete()`
      * @return bool success
      */
-    protected function _unlink(array $foreignKey, Table $target, array $conditions = [], array $options = []): bool
+    protected function doUnlink(array $foreignKey, Table $target, array $conditions = [], array $options = []): bool
     {
         $mustBeDependent = (!$this->foreignKeyAcceptsNull($target, $foreignKey) || $this->getDependent());
 

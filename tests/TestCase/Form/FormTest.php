@@ -167,7 +167,7 @@ class FormTest extends TestCase
     {
         $form = new class extends Form {
             // phpcs:ignore CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore
-            public function _execute(array $data): bool
+            public function process(array $data): bool
             {
                 throw new Exception('Should not be called');
             }
