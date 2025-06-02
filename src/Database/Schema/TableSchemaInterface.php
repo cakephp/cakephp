@@ -96,7 +96,7 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_TIMESTAMP_TIMEZONE = 'timestamptimezone';
 
     /**
-     * Datetime interval. Only implemted in postgres.
+     * Datetime interval. Only implemented in postgres.
      *
      * @var string
      */

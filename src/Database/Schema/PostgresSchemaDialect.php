@@ -673,6 +673,7 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_CHAR => ' CHAR',
             TableSchemaInterface::TYPE_CITEXT => ' CITEXT',
             TableSchemaInterface::TYPE_JSON => ' JSONB',
+            TableSchemaInterface::TYPE_INTERVAL => ' INTERVAL',
             TableSchemaInterface::TYPE_GEOMETRY => ' GEOGRAPHY(GEOMETRY, %s)',
             TableSchemaInterface::TYPE_POINT => ' GEOGRAPHY(POINT, %s)',
             TableSchemaInterface::TYPE_LINESTRING => ' GEOGRAPHY(LINESTRING, %s)',
