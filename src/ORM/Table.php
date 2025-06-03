@@ -2722,7 +2722,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         if ($args) {
             $query->applyOptions($args);
             // Fetch custom args without the query options.
-            $args = $query->getOptions();
+            $args = array_intersect_key($args, $query->getOptions());
 
             unset($params[0]);
             $lastParam = end($params);

@@ -1314,6 +1314,30 @@ class TableTest extends TestCase
         $this->assertSame(2, $author->id);
     }
 
+    /**
+     * https://github.com/cakephp/cakephp/issues/18716
+     */
+    public function testChangedFindWithOverlappingArgs(): void
+    {
+        $query = $this->getTableLocator()->get('Authors')
+            ->find('withIdArgument', 2)
+            ->find('custom', id: [1, 2], second: false);
+
+        $this->assertSame([2, 'id' => [1, 2], 'second' => false], $query->getOptions());
+
+        $query = $this->getTableLocator()->get('Authors')
+            ->find('withIdArgument', id: 2)
+            ->find('custom', second: true);
+
+        $this->assertSame(['id' => 2, 'second' => true], $query->getOptions());
+
+        $query = $this->getTableLocator()->get('Authors')
+            ->find('withIdArgument', id: 2)
+            ->find('custom2', id: [2, 3], second: true);
+
+        $this->assertSame(['id' => [2, 3], 'second' => true], $query->getOptions());
+    }
+
     public function testFindTypedParameterCompatibility(): void
     {
         $articles = $this->fetchTable('Articles');
