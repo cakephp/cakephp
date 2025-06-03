@@ -31,6 +31,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Laminas\Diactoros\UploadedFile;
 use LogicException;
@@ -732,6 +733,9 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->assertFlashElement('flash/error');
         $this->assertSession(true, 'test');
+
+        $result = $this->_requestSession->read('Flash.flash');
+        $this->assertSame(['flash/error'], Hash::extract($result, '{n}.element'));
     }
 
     /**
