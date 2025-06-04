@@ -304,7 +304,12 @@ class Response extends Message implements ResponseInterface
      */
     public function getCookies(): array
     {
-        return $this->_getCookies();
+        $out = [];
+        foreach ($this->buildCookieCollection() as $cookie) {
+            $out[$cookie->getName()] = $cookie->toArray();
+        }
+
+        return $out;
     }
 
     /**
@@ -367,28 +372,15 @@ class Response extends Message implements ResponseInterface
     }
 
     /**
-     * Property accessor for `$this->cookies`
-     *
-     * @return array Array of Cookie data.
-     */
-    protected function _getCookies(): array
-    {
-        $out = [];
-        foreach ($this->buildCookieCollection() as $cookie) {
-            $out[$cookie->getName()] = $cookie->toArray();
-        }
-
-        return $out;
-    }
-
-    /**
      * Get the response body as string.
      *
      * @return string
      */
     public function getStringBody(): string
     {
-        return $this->_getBody();
+        $this->stream->rewind();
+
+        return $this->stream->getContents();
     }
 
     /**
@@ -398,21 +390,11 @@ class Response extends Message implements ResponseInterface
      */
     public function getJson(): mixed
     {
-        return $this->_getJson();
-    }
-
-    /**
-     * Get the response body as JSON decoded data.
-     *
-     * @return mixed
-     */
-    protected function _getJson(): mixed
-    {
         if ($this->_json) {
             return $this->_json;
         }
 
-        return $this->_json = json_decode($this->_getBody(), true);
+        return $this->_json = json_decode($this->getStringBody(), true);
     }
 
     /**
@@ -422,21 +404,11 @@ class Response extends Message implements ResponseInterface
      */
     public function getXml(): ?SimpleXMLElement
     {
-        return $this->_getXml();
-    }
-
-    /**
-     * Get the response body as XML decoded data.
-     *
-     * @return \SimpleXMLElement|null
-     */
-    protected function _getXml(): ?SimpleXMLElement
-    {
         if ($this->_xml !== null) {
             return $this->_xml;
         }
         libxml_use_internal_errors();
-        $data = simplexml_load_string($this->_getBody());
+        $data = simplexml_load_string($this->getStringBody());
         if (!$data) {
             return null;
         }
@@ -444,32 +416,5 @@ class Response extends Message implements ResponseInterface
         $this->_xml = $data;
 
         return $this->_xml;
-    }
-
-    /**
-     * Provides magic __get() support.
-     *
-     * @return array<string>
-     */
-    protected function _getHeaders(): array
-    {
-        $out = [];
-        foreach ($this->headers as $key => $values) {
-            $out[$key] = implode(',', $values);
-        }
-
-        return $out;
-    }
-
-    /**
-     * Provides magic __get() support.
-     *
-     * @return string
-     */
-    protected function _getBody(): string
-    {
-        $this->stream->rewind();
-
-        return $this->stream->getContents();
     }
 }
