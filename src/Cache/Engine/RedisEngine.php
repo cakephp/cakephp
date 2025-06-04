@@ -355,8 +355,6 @@ class RedisEngine extends CacheEngine
     /**
      * Delete all keys from the cache by a blocking operation
      *
-     * Faster than clear() using unlink method.
-     *
      * @return bool True if the cache was successfully cleared, false otherwise
      */
     public function clearBlocking(): bool
