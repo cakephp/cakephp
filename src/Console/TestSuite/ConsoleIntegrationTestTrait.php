@@ -116,7 +116,6 @@ trait ConsoleIntegrationTestTrait
      * Cleans state to get ready for the next test
      *
      * @return void
-     * @psalm-suppress PossiblyNullPropertyAssignmentValue
      */
     #[After]
     public function cleanupConsoleTrait(): void
@@ -139,7 +138,7 @@ trait ConsoleIntegrationTestTrait
         $this->assertThat(
             $expected,
             new ExitCode($this->_exitCode, $this->_out->messages(), $this->_err->messages()),
-            $message
+            $message,
         );
     }
 
@@ -154,7 +153,7 @@ trait ConsoleIntegrationTestTrait
         $this->assertThat(
             CommandInterface::CODE_SUCCESS,
             new ExitCode($this->_exitCode, $this->_out->messages(), $this->_err->messages()),
-            $message
+            $message,
         );
     }
 
@@ -169,7 +168,7 @@ trait ConsoleIntegrationTestTrait
         $this->assertThat(
             CommandInterface::CODE_ERROR,
             new ExitCode($this->_exitCode, $this->_out->messages(), $this->_err->messages()),
-            $message
+            $message,
         );
     }
 

@@ -168,7 +168,7 @@ class Response extends Message implements ResponseInterface
     /**
      * Parses headers if necessary.
      *
-     * - Decodes the status code and reasonphrase.
+     * - Decodes the status code and reason phrase.
      * - Parses and normalizes header names + values.
      *
      * @param array<string> $headers Headers to parse.
@@ -179,11 +179,8 @@ class Response extends Message implements ResponseInterface
         foreach ($headers as $value) {
             if (str_starts_with($value, 'HTTP/')) {
                 preg_match('/HTTP\/([\d.]+) ([0-9]+)(.*)/i', $value, $matches);
-                /** @phpstan-ignore-next-line */
                 $this->protocol = $matches[1];
-                /** @phpstan-ignore-next-line */
                 $this->code = (int)$matches[2];
-                /** @phpstan-ignore-next-line */
                 $this->reasonPhrase = trim($matches[3]);
                 continue;
             }

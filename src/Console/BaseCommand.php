@@ -117,7 +117,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     public static function defaultName(): string
     {
         $pos = strrpos(static::class, '\\');
-        /** @psalm-suppress PossiblyFalseOperand */
         $name = substr(static::class, $pos + 1, -7);
 
         return Inflector::underscore($name);

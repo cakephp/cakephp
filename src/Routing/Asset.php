@@ -356,7 +356,7 @@ class Asset
      *
      * @param string $name The name you want to plugin split.
      * @return array Array with 2 indexes. 0 => plugin name, 1 => filename.
-     * @psalm-return array{string|null, string}
+     * @phpstan-return array{string|null, string}
      */
     protected static function pluginSplit(string $name): array
     {

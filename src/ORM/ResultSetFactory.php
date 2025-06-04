@@ -39,7 +39,7 @@ class ResultSetFactory
     protected string $resultSetClass = ResultSet::class;
 
     /**
-     * Create a resultset instance.
+     * Create a result set instance.
      *
      * @param iterable $results Results.
      * @param \Cake\ORM\Query\SelectQuery<T>|null $query Query from where results came.
@@ -99,7 +99,7 @@ class ResultSetFactory
 
         $fields = [];
         foreach ($query->clause('select') as $key => $field) {
-            $key = trim($key, '"`[]');
+            $key = trim((string)$key, '"`[]');
 
             if (strpos($key, '__') <= 0) {
                 $fields[$data['primaryAlias']][$key] = $key;

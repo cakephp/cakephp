@@ -50,7 +50,7 @@ class DriverTest extends TestCase
     /**
      * Setup.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -64,7 +64,7 @@ class DriverTest extends TestCase
             ->getMock();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::drop('queries');

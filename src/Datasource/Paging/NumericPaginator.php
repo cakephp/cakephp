@@ -238,7 +238,7 @@ class NumericPaginator implements PaginatorInterface
     }
 
     /**
-     * Build paginated resultset.
+     * Build paginated result set.
      *
      * @param \Cake\Datasource\ResultSetInterface $items
      * @param array $pagingParams

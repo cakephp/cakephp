@@ -87,7 +87,7 @@ class ConnectionTest extends TestCase
      */
     protected $defaultLogger;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -95,7 +95,7 @@ class ConnectionTest extends TestCase
         static::setAppNamespace();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->disableSavePoints();
@@ -112,7 +112,7 @@ class ConnectionTest extends TestCase
      *
      * @return \Cake\Database\Driver
      */
-    public function getDriver(): Driver
+    protected function getDriver(): Driver
     {
         return new class extends Driver {
             use BaseDriverTrait;
@@ -1038,6 +1038,9 @@ class ConnectionTest extends TestCase
         $schema = $connection->getSchemaCollection();
         $this->assertInstanceOf(CachedCollection::class, $schema);
         $this->assertSame('foo_key', $schema->cacheKey('key'));
+
+        // Ensure that the connection was not initialized
+        $this->assertFalse($connection->getDriver()->__debugInfo()['connected']);
     }
 
     /**

@@ -23,18 +23,18 @@
         "source": "https://github.com/cakephp/orm"
     },
     "require": {
-        "php": ">=8.1",
-        "cakephp/collection": "^5.2",
-        "cakephp/core": "^5.2",
-        "cakephp/datasource": "^5.2",
-        "cakephp/database": "^5.2",
-        "cakephp/event": "^5.2",
-        "cakephp/utility": "^5.2",
-        "cakephp/validation": "^5.2"
+        "php": ">=8.2",
+        "cakephp/collection": "5.3.*@dev",
+        "cakephp/core": "5.3.*@dev",
+        "cakephp/datasource": "5.3.*@dev",
+        "cakephp/database": "5.3.*@dev",
+        "cakephp/event": "5.3.*@dev",
+        "cakephp/utility": "5.3.*@dev",
+        "cakephp/validation": "5.3.*@dev"
     },
     "require-dev": {
-        "cakephp/cache": "^5.2",
-        "cakephp/i18n": "^5.2"
+        "cakephp/cache": "5.3.*@dev",
+        "cakephp/i18n": "5.3.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -49,5 +49,10 @@
         "cakephp/i18n": "If you are using Translate/TimestampBehavior or Chronos types."
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.3.x-dev"
+        }
+    }
 }

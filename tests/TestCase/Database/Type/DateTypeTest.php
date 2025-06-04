@@ -49,7 +49,7 @@ class DateTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new DateType();
@@ -61,7 +61,7 @@ class DateTypeTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         date_default_timezone_set($this->originalTimeZone);

@@ -60,9 +60,9 @@ use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 use Exception;
 use InvalidArgumentException;
+use Mockery;
 use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use RuntimeException;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Entity\ArticlesTag;
@@ -120,7 +120,7 @@ class TableTest extends TestCase
      */
     protected $articlesTypeMap;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -205,7 +205,7 @@ class TableTest extends TestCase
     /**
      * teardown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -625,7 +625,6 @@ class TableTest extends TestCase
      * @return void
      * @deprecated
      */
-    #[WithoutErrorHandler]
     public function testFindAllOldStyleOptionsArray(): void
     {
         $this->deprecated(function (): void {
@@ -1169,6 +1168,24 @@ class TableTest extends TestCase
         $this->assertEquals($expected, $result);
     }
 
+    public function testUpdateExpression(): void
+    {
+        $table = new Table([
+            'table' => 'counter_cache_users',
+            'connection' => $this->connection,
+        ]);
+        $entity = new Entity([
+            'name' => 'test',
+            'post_count' => 0,
+            'comment_count' => 0,
+            'posts_published' => 0,
+        ]);
+        $table->save($entity);
+        $expression = new QueryExpression(['post_count = post_count + 1']);
+        $result = $table->updateAll([$expression], ['id' => 1]);
+        $this->assertNotEmpty($result);
+    }
+
     /**
      * Test that exceptions from the Query bubble up.
      */
@@ -1297,7 +1314,30 @@ class TableTest extends TestCase
         $this->assertSame(2, $author->id);
     }
 
-    #[WithoutErrorHandler]
+    /**
+     * https://github.com/cakephp/cakephp/issues/18716
+     */
+    public function testChangedFindWithOverlappingArgs(): void
+    {
+        $query = $this->getTableLocator()->get('Authors')
+            ->find('withIdArgument', 2)
+            ->find('custom', id: [1, 2], second: false);
+
+        $this->assertSame(['id' => [1, 2], 'second' => false], $query->getOptions());
+
+        $query = $this->getTableLocator()->get('Authors')
+            ->find('withIdArgument', id: 2)
+            ->find('custom', second: true);
+
+        $this->assertSame(['id' => 2, 'second' => true], $query->getOptions());
+
+        $query = $this->getTableLocator()->get('Authors')
+            ->find('withIdArgument', id: 2)
+            ->find('custom2', id: [2, 3], second: true);
+
+        $this->assertSame(['id' => [2, 3], 'second' => true], $query->getOptions());
+    }
+
     public function testFindTypedParameterCompatibility(): void
     {
         $articles = $this->fetchTable('Articles');
@@ -1607,7 +1647,6 @@ class TableTest extends TestCase
     /**
      * Tests find(list) with backwards compatibile options
      */
-    #[WithoutErrorHandler]
     public function testFindListArrayOptions(): void
     {
         $table = new Table([
@@ -1688,7 +1727,6 @@ class TableTest extends TestCase
      * @return void
      * @deprecated
      */
-    #[WithoutErrorHandler]
     public function testFindListWithArray(): void
     {
         $this->deprecated(function (): void {
@@ -1991,13 +2029,15 @@ class TableTest extends TestCase
      */
     public function testRemoveBehaviorMethodMapCleared(): void
     {
-        $table = new Table(['table' => 'articles']);
-        $table->addBehavior('Sluggable');
-        $this->assertTrue($table->behaviors()->hasMethod('slugify'), 'slugify should be mapped');
-        $this->assertSame('foo-bar', $table->slugify('foo bar'));
+        $this->deprecated(function (): void {
+            $table = new Table(['table' => 'articles']);
+            $table->addBehavior('Sluggable');
+            $this->assertTrue($table->behaviors()->hasMethod('slugify'), 'slugify should be mapped');
+            $this->assertSame('foo-bar', $table->slugify('foo bar'));
 
-        $table->removeBehavior('Sluggable');
-        $this->assertFalse($table->behaviors()->hasMethod('slugify'), 'slugify should not be callable');
+            $table->removeBehavior('Sluggable');
+            $this->assertFalse($table->behaviors()->hasMethod('slugify'), 'slugify should not be callable');
+        });
     }
 
     /**
@@ -2077,9 +2117,11 @@ class TableTest extends TestCase
      */
     public function testCallBehaviorMethod(): void
     {
-        $table = $this->getTableLocator()->get('article');
-        $table->addBehavior('Sluggable');
-        $this->assertSame('some-value', $table->slugify('some value'));
+        $this->deprecated(function (): void {
+            $table = $this->getTableLocator()->get('article');
+            $table->addBehavior('Sluggable');
+            $this->assertSame('some-value', $table->slugify('some value'));
+        });
     }
 
     /**
@@ -2087,9 +2129,11 @@ class TableTest extends TestCase
      */
     public function testCallBehaviorAliasedMethod(): void
     {
-        $table = $this->getTableLocator()->get('article');
-        $table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
-        $this->assertSame('some-value', $table->wednesday('some value'));
+        $this->deprecated(function (): void {
+            $table = $this->getTableLocator()->get('article');
+            $table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
+            $this->assertSame('some-value', $table->wednesday('some value'));
+        });
     }
 
     /**
@@ -2296,10 +2340,9 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity) {
+        $listener = function (EventInterface $event, $entity): void {
             $event->stopPropagation();
-
-            return $entity;
+            $event->setResult($entity);
         };
         $table->getEventManager()->on('Model.beforeSave', $listener);
         $this->assertSame($data, $table->save($data));
@@ -2330,7 +2373,7 @@ class TableTest extends TestCase
     public function testBeforeSaveException(): void
     {
         $this->expectException(AssertionError::class);
-        $this->expectExceptionMessage('The beforeSave callback must return `false` or `EntityInterface` instance. Got `int` instead.');
+        $this->expectExceptionMessage('The result for the `Model.beforeSave` event must be `false` or `EntityInterface` instance. Got `int` instead.');
 
         $table = $this->getTableLocator()->get('users');
         $data = new Entity([
@@ -2338,10 +2381,9 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity) {
+        $listener = function (EventInterface $event, $entity): void {
             $event->stopPropagation();
-
-            return 1;
+            $event->setResult(1);
         };
         $table->getEventManager()->on('Model.beforeSave', $listener);
         $table->save($data);
@@ -2849,7 +2891,7 @@ class TableTest extends TestCase
         $entity = $table->get(1);
 
         $entity->setAccess('*', true);
-        $entity->set($entity->toArray());
+        $entity->patch($entity->toArray());
         $this->assertSame($entity, $table->save($entity));
     }
 
@@ -3262,32 +3304,40 @@ class TableTest extends TestCase
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
         $options = new ArrayObject(['atomic' => true, 'checkRules' => false, '_primary' => true]);
 
-        $mock = $this->getMockBuilder(EventManager::class)->getMock();
+        $mock = Mockery::mock(EventManager::class);
 
-        $mock->expects($this->once())
-            ->method('on');
+        $mock->shouldReceive('on');
 
-        $mock->expects($this->exactly(4))
-            ->method('dispatch')
-            ->with(
-                ...self::withConsecutive(
-                    [$this->anything()],
-                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
-                        return $event->getName() === 'Model.beforeDelete' &&
-                        $event->getData() == ['entity' => $entity, 'options' => $options];
-                    })],
-                    [
-                    $this->callback(function (EventInterface $event) use ($entity, $options) {
-                        return $event->getName() === 'Model.afterDelete' &&
-                            $event->getData() == ['entity' => $entity, 'options' => $options];
-                    }),
-                    ],
-                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
-                        return $event->getName() === 'Model.afterDeleteCommit' &&
-                        $event->getData() == ['entity' => $entity, 'options' => $options];
-                    })],
-                ),
-            );
+        $mock->shouldReceive('dispatch')
+            ->withAnyArgs()
+            ->once();
+
+        $mock->shouldReceive('dispatch')
+            ->withArgs(function (EventInterface $event) use ($entity, $options) {
+                $this->assertSame('Model.beforeDelete', $event->getName());
+                $this->assertEquals(['entity' => $entity, 'options' => $options], $event->getData());
+
+                return true;
+            })
+            ->once();
+
+        $mock->shouldReceive('dispatch')
+            ->withArgs(function (EventInterface $event) use ($entity, $options) {
+                $this->assertSame('Model.afterDelete', $event->getName());
+                $this->assertEquals(['entity' => $entity, 'options' => $options], $event->getData());
+
+                return true;
+            })
+            ->once();
+
+        $mock->shouldReceive('dispatch')
+            ->withArgs(function (EventInterface $event) use ($entity, $options) {
+                $this->assertSame('Model.afterDeleteCommit', $event->getName());
+                $this->assertEquals(['entity' => $entity, 'options' => $options], $event->getData());
+
+                return true;
+            })
+            ->once();
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
         $entity->setNew(false);
@@ -3474,12 +3524,42 @@ class TableTest extends TestCase
      */
     public function testValidatorBehavior(): void
     {
+        $this->deprecated(function (): void {
+            $table = new Table();
+            $table->addBehavior('Validation');
+
+            $validator = $table->getValidator('Behavior');
+            $set = $validator->field('name');
+            $this->assertArrayHasKey('behaviorRule', $set);
+        });
+    }
+
+    /**
+     * https://github.com/cakephp/cakephp/issues/18273
+     */
+    public function testValidatorWithMethodInBehavior(): void
+    {
         $table = new Table();
         $table->addBehavior('Validation');
 
-        $validator = $table->getValidator('Behavior');
-        $set = $validator->field('name');
-        $this->assertArrayHasKey('behaviorRule', $set);
+        $table->getValidator('default')->add(
+            'name',
+            'customValidationRule',
+            ['rule' => 'customValidationRule', 'provider' => 'table'],
+        );
+
+        $result = $table->getValidator('default')->validate([
+            'name' => 'test',
+        ], true);
+
+        $this->assertSame(
+            [
+                'name' => [
+                    'customValidationRule' => 'The provided value is invalid',
+                ],
+            ],
+            $result,
+        );
     }
 
     /**
@@ -4281,7 +4361,7 @@ class TableTest extends TestCase
 
         $article = $table->find('all')->where(['id' => 1])->contain(['Tags'])->first();
         $this->assertEquals($article->tags[2]->id, $tags[0]->id);
-        $this->assertEqualsCanonicalizing($article->tags[3], $tags[1]);
+        $this->assertEqualsCanonicalizing($article->tags[3]->toArray(), $tags[1]->toArray());
     }
 
     /**
@@ -5399,7 +5479,6 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    #[WithoutErrorHandler]
     public function testGetBackwardsCompatibility(): void
     {
         $this->deprecated(function (): void {
@@ -5631,7 +5710,7 @@ class TableTest extends TestCase
             ['author_id' => 2, 'title' => 'First Article'],
             function ($article) use (&$callbackExecuted): void {
                 $this->assertInstanceOf(EntityInterface::class, $article);
-                $article->set(['published' => 'N', 'body' => 'New body']);
+                $article->patch(['published' => 'N', 'body' => 'New body']);
                 $callbackExecuted = true;
             },
         );
@@ -5806,6 +5885,27 @@ class TableTest extends TestCase
         );
 
         $articles->findOrCreate(['body' => 'test']);
+    }
+
+    /**
+     * Test that findOrCreate with array data.
+     */
+    public function testFindOrCreateArrayData(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $firstArticle = $articles->findOrCreate(['title' => 'Some title'], ['body' => 'Some body']);
+        $this->assertFalse($firstArticle->isNew());
+        $this->assertNotNull($firstArticle->id);
+        $this->assertSame('Some title', $firstArticle->title);
+        $this->assertSame('Some body', $firstArticle->body);
+
+        $secondArticle = $articles->findOrCreate(['title' => 'Some title'], ['body' => 'Different body']);
+        $this->assertFalse($secondArticle->isNew());
+        $this->assertNotNull($secondArticle->id);
+        $this->assertSame('Some title', $secondArticle->title);
+        $this->assertEquals($firstArticle->id, $secondArticle->id);
+        $this->assertSame('Some body', $secondArticle->body);
     }
 
     /**

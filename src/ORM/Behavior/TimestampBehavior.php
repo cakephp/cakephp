@@ -220,6 +220,7 @@ class TimestampBehavior extends Behavior
             sprintf('TimestampBehavior only supports columns of type `%s`.', DateTimeType::class),
         );
 
+        /** @var class-string<\Cake\I18n\DateTime> $class */
         $class = $type->getDateTimeClassName();
 
         $entity->set($field, new $class($ts));

@@ -36,7 +36,7 @@ class Text
     /**
      * Default transliterator id string.
      *
-     * @var string $_defaultTransliteratorId Transliterator identifier string.
+     * @var string Transliterator identifier string.
      */
     protected static string $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 
@@ -49,6 +49,13 @@ class Text
         'style',
         'script',
     ];
+
+    /**
+     * Whether to use I18n functions for translating default error messages
+     *
+     * @var bool
+     */
+    protected static bool $useI18n;
 
     /**
      * Generate a random UUID version 4
@@ -208,7 +215,7 @@ class Text
 
         $dataKeys = array_keys($data);
         $hashKeys = array_map(
-            fn ($str) => hash('xxh128', $str),
+            fn($str) => hash('xxh128', $str),
             $dataKeys,
         );
         /** @var array<string, string> $tempData */
@@ -891,7 +898,9 @@ class Text
      */
     public static function toList(array $list, ?string $and = null, string $separator = ', '): string
     {
-        $and ??= __d('cake', 'and');
+        static::$useI18n ??= function_exists('Cake\I18n\__d');
+        $and ??= static::$useI18n ? __d('cake', 'and') : 'and';
+
         if (count($list) > 1) {
             return implode($separator, array_slice($list, 0, -1)) . ' ' . $and . ' ' . array_pop($list);
         }

@@ -16,10 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Route;
 
+use BackedEnum;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Exception\BadRequestException;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
+use UnitEnum;
 
 /**
  * A single Route used by the Router to connect requests to
@@ -103,7 +105,7 @@ class Route
     public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
     /**
-     * Regex for matching braced placholders in route template.
+     * Regex for matching braced placeholders in route template.
      *
      * @var string
      */
@@ -501,7 +503,6 @@ class Route
         }
 
         if (isset($route['_args_'])) {
-            /** @psalm-suppress PossiblyInvalidArgument */
             $pass = $this->_parseArgs($route['_args_'], $route);
             $route['pass'] = array_merge($route['pass'], $pass);
             unset($route['_args_']);
@@ -525,7 +526,6 @@ class Route
         if (isset($this->options['pass'])) {
             $j = count($this->options['pass']);
             while ($j--) {
-                /** @psalm-suppress PossiblyInvalidArgument */
                 if (isset($route[$this->options['pass'][$j]])) {
                     array_unshift($route['pass'], $route[$this->options['pass'][$j]]);
                 }
@@ -819,6 +819,12 @@ class Route
                 ));
             }
             $string = $params[$key];
+            if ($string instanceof BackedEnum) {
+                $string = $string->value;
+            } elseif ($string instanceof UnitEnum) {
+                $string = $string->name;
+            }
+
             $search[] = "{{$key}}";
             $replace[] = $string;
         }

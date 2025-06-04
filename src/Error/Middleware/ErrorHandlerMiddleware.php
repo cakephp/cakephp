@@ -140,20 +140,18 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
             $trap,
         );
 
-        $exception = $event->getData('exception');
-        assert($exception instanceof Throwable);
-        $renderer = $trap->renderer($exception, $request);
-
         $response = $event->getResult();
+        if ($response === null) {
+            $renderer = $trap->renderer($event->getData('exception'), $request);
+        }
+
         try {
             $response ??= $renderer->render();
             if (is_string($response)) {
                 return new Response(['body' => $response, 'status' => 500]);
             }
 
-            return $response instanceof ResponseInterface
-                ? $response
-                : new Response(['body' => $response, 'status' => 500]);
+            return $response;
         } catch (Throwable $internalException) {
             $trap->logException($internalException, $request);
 

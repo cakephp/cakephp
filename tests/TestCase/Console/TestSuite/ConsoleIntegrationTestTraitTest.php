@@ -30,7 +30,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -274,7 +274,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $line = __LINE__ - 5;
 
         $expected = <<<TEXT
-$file on $line
+{$file} on {$line}
 ########## debugOutput() ##########
 Exit Code
 0

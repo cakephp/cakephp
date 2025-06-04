@@ -53,7 +53,7 @@ class BehaviorRegistryTest extends TestCase
     /**
      * setup method.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->Table = new Table(['table' => 'articles']);
@@ -65,7 +65,7 @@ class BehaviorRegistryTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->clearPlugins();
         unset($this->Table, $this->EventManager, $this->Behaviors);
@@ -221,6 +221,14 @@ class BehaviorRegistryTest extends TestCase
         $this->assertTrue($this->Behaviors->hasFinder('renamed'));
     }
 
+    public function testSet(): void
+    {
+        $this->Behaviors->set('Sluggable', new SluggableBehavior($this->Table, ['replacement' => '_']));
+
+        $this->assertEquals(['replacement' => '_'], $this->Behaviors->get('Sluggable')->getConfig());
+        $this->assertTrue($this->Behaviors->hasMethod('slugify'));
+    }
+
     /**
      * test hasMethod()
      */
@@ -269,9 +277,11 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testCall(): void
     {
-        $this->Behaviors->load('Sluggable');
-        $return = $this->Behaviors->call('slugify', ['some value']);
-        $this->assertSame('some-value', $return);
+        $this->deprecated(function (): void {
+            $this->Behaviors->load('Sluggable');
+            $return = $this->Behaviors->call('slugify', ['some value']);
+            $this->assertSame('some-value', $return);
+        });
     }
 
     /**
@@ -282,7 +292,10 @@ class BehaviorRegistryTest extends TestCase
         $this->expectException(BadMethodCallException::class);
         $this->expectExceptionMessage('Cannot call `nope`, it does not belong to any attached behavior.');
         $this->Behaviors->load('Sluggable');
-        $this->Behaviors->call('nope');
+
+        $this->deprecated(function (): void {
+            $this->Behaviors->call('nope');
+        });
     }
 
     /**
@@ -294,9 +307,8 @@ class BehaviorRegistryTest extends TestCase
     public function testCallFinder(): void
     {
         $this->Behaviors->load('Sluggable');
-        $mockedBehavior = Mockery::mock(Behavior::class)
-            ->shouldAllowMockingMethod('findNoSlug')
-            ->makePartial();
+        $mockedBehavior = Mockery::mock(Behavior::class)->makePartial();
+        $mockedBehavior->shouldReceive(['implementedFinders' => ['noslug' => 'findNoSlug']]);
         $this->Behaviors->set('Sluggable', $mockedBehavior);
 
         $query = new SelectQuery($this->Table);
@@ -324,15 +336,17 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testUnloadBehaviorThenCall(): void
     {
-        $this->expectException(BadMethodCallException::class);
-        $this->expectExceptionMessage('Cannot call `slugify`, it does not belong to any attached behavior.');
-        $this->Behaviors->load('Sluggable');
+        $this->deprecated(function (): void {
+            $this->expectException(BadMethodCallException::class);
+            $this->expectExceptionMessage('Cannot call `slugify`, it does not belong to any attached behavior.');
+            $this->Behaviors->load('Sluggable');
 
-        $this->assertTrue($this->Behaviors->hasMethod('slugify'));
-        $this->Behaviors->unload('Sluggable');
+            $this->assertTrue($this->Behaviors->hasMethod('slugify'));
+            $this->Behaviors->unload('Sluggable');
 
-        $this->assertFalse($this->Behaviors->hasMethod('slugify'), 'should not have method anymore');
-        $this->Behaviors->call('slugify');
+            $this->assertFalse($this->Behaviors->hasMethod('slugify'), 'should not have method anymore');
+            $this->Behaviors->call('slugify');
+        });
     }
 
     /**
@@ -371,10 +385,20 @@ class BehaviorRegistryTest extends TestCase
     public function testUnload(): void
     {
         $this->Behaviors->load('Sluggable');
+        $this->assertTrue($this->Behaviors->hasFinder('noSlug'));
+
+        $this->Behaviors->load('Validation');
+        $this->assertTrue($this->Behaviors->hasMethod('customValidationRule'));
+
+        $this->Behaviors->unload('Validation');
         $this->Behaviors->unload('Sluggable');
 
         $this->assertEmpty($this->Behaviors->loaded());
         $this->assertCount(0, $this->EventManager->listeners('Model.beforeFind'));
+        $this->assertFalse($this->Behaviors->hasFinder('noSlug'));
+        $this->assertFalse($this->Behaviors->hasFinder('noslug'));
+        $this->assertFalse($this->Behaviors->hasMethod('customValidationRule'));
+        $this->assertFalse($this->Behaviors->hasMethod('customvalidationrule'));
     }
 
     /**

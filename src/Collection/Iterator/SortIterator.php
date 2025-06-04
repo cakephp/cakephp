@@ -102,6 +102,7 @@ class SortIterator extends Collection
      */
     public function unwrap(): Iterator
     {
+        /** @var \Iterator */
         return $this->getInnerIterator();
     }
 }

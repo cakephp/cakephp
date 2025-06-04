@@ -27,7 +27,6 @@ use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingTemplateException;
 use DateTime;
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use TestApp\Mailer\TestMailer;
 use function Cake\Core\env;
 
@@ -46,7 +45,7 @@ class MailerTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -67,7 +66,7 @@ class MailerTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -110,7 +109,6 @@ class MailerTest extends TestCase
      *
      * @deprecated
      */
-    #[WithoutErrorHandler]
     public function testSetMessage(): void
     {
         $message = $this->mailer->getMessage();

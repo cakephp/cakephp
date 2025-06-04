@@ -22,7 +22,6 @@ use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use TestApp\Log\Engine\TestAppLog;
 use TestPlugin\Log\Engine\TestPluginLog;
 
@@ -31,14 +30,14 @@ use TestPlugin\Log\Engine\TestPluginLog;
  */
 class LogTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Log::reset();
         $this->clearPlugins();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::reset();
@@ -404,7 +403,6 @@ class LogTest extends TestCase
     /**
      * Test scoped logging backwards compat
      */
-    #[WithoutErrorHandler]
     public function testScopedLoggingBackwardsCompat(): void
     {
         $this->_deleteLogs();

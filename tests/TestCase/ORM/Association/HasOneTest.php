@@ -59,7 +59,7 @@ class HasOneTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->user = $this->getTableLocator()->get('Users');
@@ -229,14 +229,11 @@ class HasOneTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock(Table::class)
-            ->shouldAllowMockingMethod('saveAssociated')
-            ->makePartial();
+        $spy = Mockery::spy(Table::class);
         $config = [
             'sourceTable' => $this->user,
-            'targetTable' => $mock,
+            'targetTable' => $spy,
         ];
-        $mock->shouldNotReceive('saveAssociated');
 
         $entity = new Entity([
             'username' => 'Mark',
@@ -248,6 +245,7 @@ class HasOneTest extends TestCase
         $result = $association->saveAssociated($entity);
 
         $this->assertSame($result, $entity);
+        $spy->shouldNotHaveReceived('saveAssociated');
     }
 
     /**

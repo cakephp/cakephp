@@ -139,7 +139,7 @@ class ErrorTrap
         $renderer = $this->renderer();
 
         try {
-            // Log first incase rendering or event listeners fail
+            // Log first in case rendering or event listeners fail
             $this->logError($error);
             $event = $this->dispatchEvent('Error.beforeRender', ['error' => $error]);
             if ($event->isStopped()) {

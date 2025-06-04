@@ -76,9 +76,7 @@ class HtmlHelper extends Helper
             'ol' => '<ol{{attrs}}>{{content}}</ol>',
             'li' => '<li{{attrs}}>{{content}}</li>',
             'javascriptblock' => '<script{{attrs}}>{{content}}</script>',
-            'javascriptstart' => '<script>',
             'javascriptlink' => '<script src="{{url}}"{{attrs}}></script>',
-            'javascriptend' => '</script>',
             'confirmJs' => '{{confirm}}',
         ],
     ];
@@ -189,13 +187,6 @@ class HtmlHelper extends Helper
             } else {
                 $options['link'] = $this->Url->assetUrl($options['link']);
             }
-            if (isset($options['rel']) && $options['rel'] === 'icon') {
-                $out = $this->formatTemplate('metalink', [
-                    'url' => $options['link'],
-                    'attrs' => $this->templater()->formatAttributes($options, ['block', 'link']),
-                ]);
-                $options['rel'] = 'shortcut icon';
-            }
             $out .= $this->formatTemplate('metalink', [
                 'url' => $options['link'],
                 'attrs' => $this->templater()->formatAttributes($options, ['block', 'link']),
@@ -283,7 +274,6 @@ class HtmlHelper extends Helper
         if ($escapeTitle === true) {
             $title = h($title);
         } elseif (is_string($escapeTitle)) {
-            /** @psalm-suppress PossiblyInvalidArgument */
             $title = htmlentities($title, ENT_QUOTES, $escapeTitle);
         }
 
@@ -527,6 +517,67 @@ class HtmlHelper extends Helper
         $this->_View->append($options['block'], $out);
 
         return null;
+    }
+
+    /**
+     * Generate the "importmap" script tag.
+     *
+     * @param array $map Map array.
+     * @param array<string, mixed> $options Same options as `UrlHelper::script()`.
+     * @return string
+     * @since 5.2.0
+     * @phpstan-param array{imports?: array<string, string>, scopes?: array<string, array<string, array<string, string>>>, integrity?: array<string, string>} $map
+     */
+    public function importmap(array $map, array $options = []): string
+    {
+        $options += ['pathPrefix' => Configure::read('App.jsBaseUrl')];
+
+        if (!isset($map['imports'])) {
+            $map = ['imports' => $map];
+        }
+
+        $map['imports'] = $this->getImportPaths($map['imports'], $options);
+
+        if (isset($map['scopes'])) {
+            foreach ($map['scopes'] as $path => $submap) {
+                $map['scopes'][$path] = $this->getImportPaths($submap, $options);
+            }
+        }
+
+        if (isset($map['integrity'])) {
+            $integrity = [];
+            foreach ($map['integrity'] as $path => $hash) {
+                $integrity[$this->Url->script($path, $options)] = $hash;
+            }
+            $map['integrity'] = $integrity;
+        }
+
+        $jsonOpts = JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES;
+        if (Configure::read('debug')) {
+            $jsonOpts |= JSON_PRETTY_PRINT;
+        }
+
+        return (string)$this->scriptBlock(json_encode($map, $jsonOpts), ['type' => 'importmap']);
+    }
+
+    /**
+     * Get import paths for the importmap.
+     *
+     * @param array $map Import map.
+     * @param array<string, mixed> $options Options.
+     * @return array
+     */
+    protected function getImportPaths(array $map, array $options): array
+    {
+        foreach ($map as $key => $path) {
+            if (str_ends_with($key, '/')) {
+                $map[$key] = $this->Url->assetUrl($path, $options);
+            } else {
+                $map[$key] = $this->Url->script($path, $options);
+            }
+        }
+
+        return $map;
     }
 
     /**
@@ -1038,7 +1089,6 @@ class HtmlHelper extends Helper
             if (!$path && !empty($options['src'])) {
                 $path = $options['src'];
             }
-            /** @psalm-suppress PossiblyNullArgument */
             $options['src'] = $this->Url->assetUrl($path, $options);
         }
 

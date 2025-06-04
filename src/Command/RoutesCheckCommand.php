@@ -57,22 +57,15 @@ class RoutesCheckCommand extends Command
     {
         $url = $args->getArgument('url');
         try {
-            $request = new ServerRequest(['url' => $url]);
-            $route = Router::parseRequest($request);
-            $name = null;
-            foreach (Router::routes() as $r) {
-                if ($r->match($route)) {
-                    $name = $r->options['_name'] ?? $r->getName();
-                    break;
-                }
-            }
+            $parsed = Router::parseRequest(new ServerRequest(['url' => $url]));
+            $name = $parsed['_name'] ?? $parsed['_route']->getName();
 
-            unset($route['_route'], $route['_matchedRoute']);
-            ksort($route);
+            unset($parsed['_route'], $parsed['_matchedRoute']);
+            ksort($parsed);
 
             $output = [
                 ['Route name', 'URI template', 'Defaults'],
-                [$name, $url, json_encode($route, JSON_THROW_ON_ERROR)],
+                [$name, $url, json_encode($parsed, JSON_THROW_ON_ERROR)],
             ];
             $io->helper('table')->output($output);
             $io->out();

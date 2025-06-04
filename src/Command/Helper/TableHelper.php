@@ -46,7 +46,6 @@ class TableHelper extends Helper
         $widths = [];
         foreach ($rows as $line) {
             foreach (array_values($line) as $k => $v) {
-                /** @psalm-suppress InvalidCast */
                 $columnLength = $this->_cellWidth((string)$v);
                 if ($columnLength >= ($widths[$k] ?? 0)) {
                     $widths[$k] = $columnLength;

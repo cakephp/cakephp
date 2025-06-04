@@ -40,7 +40,7 @@ class CacheTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::enable();
@@ -49,7 +49,7 @@ class CacheTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('tests');
@@ -103,16 +103,19 @@ class CacheTest extends TestCase
      */
     public function testCachePoolFallbackDisabled(): void
     {
-        $filename = tempnam(CACHE, 'tmp_');
+        $engine = new class extends TestAppCacheEngine {
+            public function init(array $config = []): bool
+            {
+                return false;
+            }
+        };
 
         Cache::setConfig('tests', [
-            'engine' => 'File',
-            'path' => $filename,
-            'prefix' => 'test_',
+            'engine' => $engine,
             'fallback' => false,
         ]);
 
-        $this->expectErrorMessageMatches('/^Cache engine `.*FileEngine` is not properly configured/', function (): void {
+        $this->expectErrorMessageMatches('/^Cache engine `.*TestAppCacheEngine.*` is not properly configured/', function (): void {
             Cache::pool('tests');
         });
     }

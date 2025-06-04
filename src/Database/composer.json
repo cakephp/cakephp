@@ -24,15 +24,15 @@
         "source": "https://github.com/cakephp/database"
     },
     "require": {
-        "php": ">=8.1",
-        "cakephp/core": "^5.2",
+        "php": ">=8.2",
+        "cakephp/core": "5.3.*@dev",
         "cakephp/chronos": "^3.1",
-        "cakephp/datasource": "^5.2",
+        "cakephp/datasource": "5.3.*@dev",
         "psr/log": "^3.0"
     },
     "require-dev": {
-        "cakephp/i18n": "^5.2",
-        "cakephp/log": "^5.2"
+        "cakephp/i18n": "5.3.*@dev",
+        "cakephp/log": "5.3.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -44,5 +44,10 @@
         "cakephp/log": "If you want to use query logging without providing a logger yourself."
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.3.x-dev"
+        }
+    }
 }

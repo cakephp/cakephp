@@ -28,7 +28,7 @@ use Stringable;
  *
  * Adds handy methods and locale-aware formatting helpers.
  *
- * @psalm-immutable
+ * @phpstan-immutable
  */
 class Time extends ChronosTime implements JsonSerializable, Stringable
 {
@@ -120,7 +120,7 @@ class Time extends ChronosTime implements JsonSerializable, Stringable
     /**
      * Returns a new Time object after parsing the provided $time string based on
      * the passed or configured date time format. This method is locale dependent,
-     * Any string that is passed to this function will be interpreted as a locale
+     * Any string passed to this function will be interpreted as a locale
      * dependent string.
      *
      * When no $format is provided, the IntlDateFormatter::SHORT format will be used.

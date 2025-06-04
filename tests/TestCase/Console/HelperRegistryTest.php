@@ -38,7 +38,7 @@ class HelperRegistryTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -54,7 +54,7 @@ class HelperRegistryTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         unset($this->helpers);
         parent::tearDown();

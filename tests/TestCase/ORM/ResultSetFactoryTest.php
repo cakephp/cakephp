@@ -59,7 +59,7 @@ class ResultSetFactoryTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -92,6 +92,7 @@ class ResultSetFactoryTest extends TestCase
         $query = $this->table->find('all');
         $results = $query->all();
         $expected = [
+            'count' => 3,
             'items' => $results->toArray(),
         ];
         $this->assertSame($expected, $results->__debugInfo());

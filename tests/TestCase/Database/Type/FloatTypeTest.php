@@ -46,7 +46,7 @@ class FloatTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new FloatType();
@@ -57,7 +57,7 @@ class FloatTypeTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());

@@ -136,7 +136,7 @@ class Session
     }
 
     /**
-     * Get one of the prebaked default session configurations.
+     * Get one of the pre-baked default session configurations.
      *
      * @param string $name Config name.
      * @return array
@@ -155,8 +155,8 @@ class Session
                     'session.use_trans_sid' => 0,
                     'session.serialize_handler' => 'php',
                     'session.use_cookies' => 1,
-                    'session.save_path' => defined('TMP') ? TMP : sys_get_temp_dir()
-                        . DIRECTORY_SEPARATOR . 'sessions',
+                    'session.save_path' => (defined('TMP') ? TMP : sys_get_temp_dir() . DIRECTORY_SEPARATOR)
+                         . 'sessions',
                     'session.save_handler' => 'files',
                 ],
             ],
@@ -223,9 +223,11 @@ class Session
             'handler' => [],
         ];
 
+        $lifetime = (int)ini_get('session.gc_maxlifetime');
         if ($config['timeout'] !== null) {
-            $this->configureSessionLifetime((int)$config['timeout'] * 60);
+            $lifetime = (int)$config['timeout'] * 60;
         }
+        $this->configureSessionLifetime($lifetime);
 
         if ($config['cookie']) {
             $config['ini']['session.name'] = $config['cookie'];
@@ -490,7 +492,6 @@ class Session
         }
         $value = $this->read($name);
         if ($value !== null) {
-            /** @psalm-suppress InvalidScalarArgument */
             $this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
         }
 
@@ -564,7 +565,6 @@ class Session
     public function delete(string $name): void
     {
         if ($this->check($name)) {
-            /** @psalm-suppress InvalidScalarArgument */
             $this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
         }
     }
@@ -650,14 +650,12 @@ class Session
 
         $this->start();
         $params = session_get_cookie_params();
+        unset($params['lifetime']);
+        $params['expires'] = time() - 42000;
         setcookie(
             (string)session_name(),
             '',
-            time() - 42000,
-            $params['path'],
-            $params['domain'],
-            $params['secure'],
-            $params['httponly'],
+            $params,
         );
 
         if (session_id() !== '') {

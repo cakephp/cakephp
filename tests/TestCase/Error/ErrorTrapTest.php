@@ -32,7 +32,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 
 class ErrorTrapTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -88,15 +88,17 @@ class ErrorTrapTest extends TestCase
     {
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
-        try {
-            trigger_error('Oh no it was bad', E_USER_ERROR);
-            $this->fail('Should raise a fatal error');
-        } catch (FatalErrorException $e) {
-            $this->assertEquals('Oh no it was bad', $e->getMessage());
-            $this->assertEquals(E_USER_ERROR, $e->getCode());
-        } finally {
-            restore_error_handler();
-        }
+        $this->deprecated(function (): void {
+            try {
+                trigger_error('Oh no it was bad', E_USER_ERROR);
+                $this->fail('Should raise a fatal error');
+            } catch (FatalErrorException $e) {
+                $this->assertEquals('Oh no it was bad', $e->getMessage());
+                $this->assertEquals(E_USER_ERROR, $e->getCode());
+            } finally {
+                restore_error_handler();
+            }
+        }, E_DEPRECATED, '8.4');
     }
 
     public static function logLevelProvider(): array
@@ -291,8 +293,8 @@ class ErrorTrapTest extends TestCase
     {
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
-        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error) {
-            return "This ain't so bad";
+        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error): void {
+            $event->setResult("This ain't so bad");
         });
 
         ob_start();

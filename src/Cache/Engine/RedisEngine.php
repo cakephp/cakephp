@@ -57,7 +57,7 @@ class RedisEngine extends CacheEngine
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
      * - `readTimeout` Read timeout in seconds (float).
-     * - `nodes` When using redis-cluster, the URL or IP addresses of the 
+     * - `nodes` When using redis-cluster, the URL or IP addresses of the
      *   Redis cluster nodes.
      *   Format: an array of strings in the form `<ip>:<port>`, like:
      *   [
@@ -65,6 +65,9 @@ class RedisEngine extends CacheEngine
      *       '<ip>:<port>',
      *       '<ip>:<port>',
      *   ]
+     * - `clearUsesFlushDb` Enable clear() and clearBlocking() to use FLUSHDB. This will be
+     *   faster than standard clear()/clearBlocking() but will ignore prefixes and will
+     *   cause dataloss if other applications are sharing a redis database.
      *
      * @var array<string, mixed>
      */
@@ -85,6 +88,7 @@ class RedisEngine extends CacheEngine
         'scanCount' => 10,
         'readTimeout' => 0,
         'nodes' => [],
+        'clearUsesFlushDb' => false,
     ];
 
     /**
@@ -381,6 +385,14 @@ class RedisEngine extends CacheEngine
      */
     public function clear(): bool
     {
+        if ($this->getConfig('clearUsesFlushDb')) {
+            $this->_Redis->flushDB(false);
+
+            return true;
+        }
+
+        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+
         $isAllDeleted = true;
         $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
@@ -437,6 +449,14 @@ class RedisEngine extends CacheEngine
      */
     public function clearBlocking(): bool
     {
+        if ($this->getConfig('clearUsesFlushDb')) {
+            $this->_Redis->flushDB(true);
+
+            return true;
+        }
+
+        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+
         $isAllDeleted = true;
         $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
@@ -544,7 +564,7 @@ class RedisEngine extends CacheEngine
      * Serialize value for saving to Redis.
      *
      * This is needed instead of using Redis' in built serialization feature
-     * as it creates problems incrementing/decrementing intially set integer value.
+     * as it creates problems incrementing/decrementing initially set integer value.
      *
      * @param mixed $value Value to serialize.
      * @return string

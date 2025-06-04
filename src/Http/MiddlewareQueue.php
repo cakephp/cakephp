@@ -179,7 +179,6 @@ class MiddlewareQueue implements Countable, SeekableIterator
         $found = false;
         $i = 0;
         foreach ($this->queue as $i => $object) {
-            /** @psalm-suppress ArgumentTypeCoercion */
             if (
                 (
                     is_string($object)
@@ -213,7 +212,6 @@ class MiddlewareQueue implements Countable, SeekableIterator
         $found = false;
         $i = 0;
         foreach ($this->queue as $i => $object) {
-            /** @psalm-suppress ArgumentTypeCoercion */
             if (
                 (
                     is_string($object)

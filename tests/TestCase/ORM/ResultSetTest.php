@@ -49,7 +49,7 @@ class ResultSetTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -135,7 +135,7 @@ class ResultSetTest extends TestCase
     }
 
     /**
-     * Test converting resultsets into JSON
+     * Test converting result sets into JSON
      */
     public function testJsonSerialize(): void
     {
@@ -232,6 +232,7 @@ class ResultSetTest extends TestCase
         $query = $this->table->find('all');
         $results = $query->all();
         $expected = [
+            'count' => 3,
             'items' => $results->toArray(),
         ];
         $this->assertSame($expected, $results->__debugInfo());

@@ -24,6 +24,7 @@ use Cake\Event\EventDispatcherTrait;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\ORM\Query\SelectQuery;
 use LogicException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * BehaviorRegistry is used as a registry for loaded behaviors and handles loading
@@ -91,7 +92,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      *
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct classname or null.
-     * @psalm-return class-string|null
+     * @phpstan-return class-string|null
      */
     public static function className(string $class): ?string
     {
@@ -212,6 +213,24 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     }
 
     /**
+     * Set an object directly into the registry by name.
+     *
+     * @param string $name The name of the object to set in the registry.
+     * @param \Cake\ORM\Behavior $object instance to store in the registry
+     * @return $this
+     */
+    public function set(string $name, object $object)
+    {
+        parent::set($name, $object);
+
+        $methods = $this->_getMethods($object, $object::class, $name);
+        $this->_methodMap += $methods['methods'];
+        $this->_finderMap += $methods['finders'];
+
+        return $this;
+    }
+
+    /**
      * Remove an object from the registry.
      *
      * If this registry has an event manager, the object will be detached from any events as well.
@@ -224,11 +243,11 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         $instance = $this->get($name);
         $result = parent::unload($name);
 
-        $methods = $instance->implementedMethods();
+        $methods = array_map('strtolower', array_keys($instance->implementedMethods()));
         foreach ($methods as $method) {
             unset($this->_methodMap[$method]);
         }
-        $finders = $instance->implementedFinders();
+        $finders = array_map('strtolower', array_keys($instance->implementedFinders()));
         foreach ($finders as $finder) {
             unset($this->_finderMap[$finder]);
         }
@@ -244,6 +263,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      *
      * @param string $method The method to check for.
      * @return bool
+     * @deprecated 5.3.0 Calling behavior methods on the table instance is deprecated.
      */
     public function hasMethod(string $method): bool
     {
@@ -275,9 +295,19 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      * @param array $args The arguments you want to invoke the method with.
      * @return mixed The return value depends on the underlying behavior method.
      * @throws \BadMethodCallException When the method is unknown.
+     * @deprecated 5.3.0 Calling behavior methods on the table instance is deprecated.
      */
     public function call(string $method, array $args = []): mixed
     {
+        deprecationWarning(
+            '5.3.0',
+            sprintf(
+                'Calling behavior methods on the table instance is deprecated.'
+                . '  Use `$table->getBehavior(\'YourBehavior\')->%s()` instead.',
+                $method,
+            ),
+        );
+
         $method = strtolower($method);
         if ($this->hasMethod($method) && $this->has($this->_methodMap[$method][0])) {
             [$behavior, $callMethod] = $this->_methodMap[$method];
@@ -305,7 +335,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     {
         $type = strtolower($type);
 
-        if ($this->hasFinder($type) && $this->has($this->_finderMap[$type][0])) {
+        if ($this->hasFinder($type)) {
             [$behavior, $callMethod] = $this->_finderMap[$type];
             $callable = $this->_loaded[$behavior]->$callMethod(...);
 

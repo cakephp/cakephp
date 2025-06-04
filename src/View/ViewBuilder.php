@@ -98,7 +98,7 @@ class ViewBuilder implements JsonSerializable
      * or a fully namespaced classname.
      *
      * @var string|null
-     * @psalm-var class-string<\Cake\View\View>|string|null
+     * @phpstan-var class-string<\Cake\View\View>|string|null
      */
     protected ?string $_className = null;
 
@@ -601,7 +601,7 @@ class ViewBuilder implements JsonSerializable
      *
      * There are  limitations for viewVars that are good to know:
      *
-     * - ORM\Query executed and stored as resultset
+     * - ORM\Query executed and stored as result set
      * - SimpleXMLElements stored as associative array
      * - Exceptions stored as strings
      * - Resources, \Closure and \PDO are not supported.
@@ -621,6 +621,7 @@ class ViewBuilder implements JsonSerializable
             $array[$property] = $this->{$property};
         }
 
+        /** @phpstan-ignore-next-line argument.type */
         array_walk_recursive($array['_vars'], $this->_checkViewVars(...));
 
         return array_filter($array, function ($i) {

@@ -137,12 +137,12 @@ class RouteCollection
     {
         $uri = $request->getUri();
         $urlPath = $uri->getPath();
-        if (strpos($urlPath, '%') !== false) {
+        if (str_contains($urlPath, '%')) {
             // decode urlencoded segments, but don't decode %2f aka /
             $parts = explode('/', $urlPath);
             $parts = array_map(
-                fn (string $part) => str_replace('/', '%2f', urldecode($part)),
-                $parts
+                fn(string $part) => str_replace('/', '%2f', urldecode($part)),
+                $parts,
             );
             $urlPath = implode('/', $parts);
         }
@@ -157,7 +157,7 @@ class RouteCollection
                 }
                 if ($uri->getQuery()) {
                     parse_str($uri->getQuery(), $queryParameters);
-                    $r['?'] = $queryParameters;
+                    $r['?'] = array_merge($r['?'] ?? [], $queryParameters);
                 }
 
                 return $r;

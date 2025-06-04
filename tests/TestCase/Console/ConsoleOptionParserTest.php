@@ -36,7 +36,7 @@ class ConsoleOptionParserTest extends TestCase
      */
     private $io;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->io = new ConsoleIo(new StubConsoleOutput(), new StubConsoleOutput(), new StubConsoleInput([]));
@@ -93,6 +93,19 @@ class ConsoleOptionParserTest extends TestCase
             ->removeOption('help');
         $this->assertSame($parser, $result, 'Did not return $this from removeOption');
         $this->assertEquals([], $result->options());
+    }
+
+    /**
+     * test removing an option clears also shortOption.
+     */
+    public function testRemoveOptionAlsoClearsShort(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addOption('test', ['short' => 't'])
+            ->removeOption('test')
+            ->removeOption('help')
+            ->addOption('test', ['short' => 't']);
+        $this->assertSame($parser, $result, 'Did not return $this from removeOption');
     }
 
     /**
@@ -171,6 +184,29 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test adding an option with a non-string default.
+     */
+    public function testAddOptionNonStringDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser
+            ->addOption('test_int', [
+                'default' => 1,
+            ])
+            ->addOption('test_float', [
+                'default' => 1.5,
+            ])
+            ->addOption('no-default', []);
+
+        $result = $parser->parse([], $this->io);
+        $this->assertEquals(
+            ['test_int' => '1', 'test_float' => '1.5', 'help' => false],
+            $result[0],
+            'Default value did not parse out',
+        );
+    }
+
+    /**
      * test adding an option and using the short value for parsing.
      */
     public function testAddOptionShort(): void
@@ -181,6 +217,23 @@ class ConsoleOptionParserTest extends TestCase
         ]);
         $result = $parser->parse(['-t', 'value'], $this->io);
         $this->assertEquals(['test' => 'value', 'help' => false], $result[0], 'Short parameter did not parse out');
+    }
+
+    /**
+     * test adding an option and using the short value for parsing throws deprecation if conflicting.
+     */
+    public function testAddOptionShortConflict(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('test', [
+            'short' => 't',
+        ]);
+
+        $this->deprecated(function () use ($parser): void {
+            $parser->addOption('other', [
+                'short' => 't',
+            ]);
+        });
     }
 
     /**

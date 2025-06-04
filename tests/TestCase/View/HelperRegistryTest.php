@@ -50,7 +50,7 @@ class HelperRegistryTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -61,7 +61,7 @@ class HelperRegistryTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->clearPlugins();
         unset($this->Helpers, $this->View);
@@ -249,8 +249,8 @@ class HelperRegistryTest extends TestCase
      */
     public function testUnloadUnknown(): void
     {
-        $this->expectException(MissingHelperException::class);
-        $this->expectExceptionMessage('Helper class `FooHelper` could not be found.');
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Object named `Foo` is not loaded.');
         $this->Helpers->unload('Foo');
     }
 

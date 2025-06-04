@@ -21,6 +21,7 @@ use Cake\Collection\Collection;
 use Cake\Core\Exception\CakeException;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
+use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
@@ -253,7 +254,7 @@ class EntityContext implements ContextInterface
                 }
             }
 
-            $val = $entity->get($part);
+            $val = $entity->has($part) ? $entity->get($part) : null;
             if ($val !== null) {
                 return $val;
             }
@@ -640,17 +641,13 @@ class EntityContext implements ContextInterface
         $table = $this->_tables[$this->_rootName];
         $assoc = null;
         foreach ($normalized as $part) {
-            if ($part === '_joinData') {
-                if ($assoc !== null) {
-                    /** @var \Cake\ORM\Association\BelongsToMany $assoc */
-                    $table = $assoc->junction();
-                    $assoc = null;
-                    continue;
-                }
-            } else {
-                $associationCollection = $table->associations();
-                $assoc = $associationCollection->getByProperty($part);
+            if ($assoc instanceof BelongsToMany && $part === $assoc->getJunctionProperty()) {
+                $table = $assoc->junction();
+                $assoc = null;
+                continue;
             }
+            $associationCollection = $table->associations();
+            $assoc = $associationCollection->getByProperty($part);
 
             if ($assoc === null) {
                 if ($fallback) {

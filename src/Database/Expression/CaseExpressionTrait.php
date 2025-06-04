@@ -41,7 +41,6 @@ trait CaseExpressionTrait
     {
         $type = null;
 
-        /** @psalm-suppress RedundantCondition */
         if (is_string($value)) {
             $type = 'string';
         } elseif (is_int($value)) {

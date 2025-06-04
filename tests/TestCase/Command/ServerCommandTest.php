@@ -32,7 +32,7 @@ class ServerCommandTest extends TestCase
     /**
      * setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->command = new ServerCommand();
@@ -49,5 +49,6 @@ class ServerCommandTest extends TestCase
         $this->assertArrayHasKey('port', $options);
         $this->assertArrayHasKey('ini_path', $options);
         $this->assertArrayHasKey('document_root', $options);
+        $this->assertArrayHasKey('frankenphp', $options);
     }
 }

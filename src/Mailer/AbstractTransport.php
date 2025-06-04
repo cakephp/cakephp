@@ -38,7 +38,7 @@ abstract class AbstractTransport
      *
      * @param \Cake\Mailer\Message $message Email message.
      * @return array
-     * @psalm-return array{headers: string, message: string}
+     * @phpstan-return array{headers: string, message: string}
      */
     abstract public function send(Message $message): array;
 

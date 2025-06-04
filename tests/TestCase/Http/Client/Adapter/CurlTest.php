@@ -37,7 +37,7 @@ class CurlTest extends TestCase
      */
     protected $caFile;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!function_exists('curl_init'), 'Skipping as ext/curl is not installed.');
@@ -149,7 +149,7 @@ class CurlTest extends TestCase
             ],
             CURLOPT_HTTPGET => true,
             CURLOPT_POSTFIELDS => '{"some":"body"}',
-            CURLOPT_CUSTOMREQUEST => 'get',
+            CURLOPT_CUSTOMREQUEST => 'GET',
             CURLOPT_TIMEOUT => 5,
             CURLOPT_CAINFO => $this->caFile,
         ];

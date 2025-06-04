@@ -50,7 +50,7 @@ class PaginatorHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('Config.language', 'eng');
@@ -85,7 +85,7 @@ class PaginatorHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->View, $this->Paginator);
@@ -130,7 +130,20 @@ class PaginatorHelperTest extends TestCase
         $this->assertArrayHasKey('test', $result);
         $this->assertSame('val', $result['test']);
 
-        $this->assertSame('val', $this->Paginator->getTemplates('test'));
+        $this->assertSame('val', $this->Paginator->getTemplate('test'));
+    }
+
+    /**
+     * Test the getTemplate() method.
+     */
+    public function testGetTemplate(): void
+    {
+        $this->Paginator->setTemplates([
+            'test' => 'val',
+        ]);
+
+        $result = $this->Paginator->getTemplate('test');
+        $this->assertSame('val', $result);
     }
 
     /**
@@ -2718,7 +2731,7 @@ class PaginatorHelperTest extends TestCase
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
-            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
             ['option' => ['value' => '1']],
             '1',
             '/option',
@@ -2735,7 +2748,7 @@ class PaginatorHelperTest extends TestCase
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
-            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()', 'class' => 'form-control']],
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()', 'class' => 'form-control']],
             ['option' => ['value' => '1']],
             '1',
             '/option',
@@ -2755,7 +2768,7 @@ class PaginatorHelperTest extends TestCase
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
-            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()', 'class' => 'form-control']],
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()', 'class' => 'form-control']],
             ['option' => ['value' => '20']],
             '20',
             '/option',
@@ -2778,7 +2791,7 @@ class PaginatorHelperTest extends TestCase
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
-            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
             ['option' => ['value' => '20']],
             '20',
             '/option',
@@ -2822,7 +2835,7 @@ class PaginatorHelperTest extends TestCase
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
-            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
             ['option' => ['value' => '1']],
             '1',
             '/option',
@@ -2845,7 +2858,7 @@ class PaginatorHelperTest extends TestCase
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
-            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
             ['option' => ['value' => '20']],
             '20',
             '/option',
@@ -2869,7 +2882,7 @@ class PaginatorHelperTest extends TestCase
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
-            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.submit()']],
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
             ['option' => ['value' => '20']],
             '20',
             '/option',
@@ -2921,7 +2934,7 @@ class PaginatorHelperTest extends TestCase
             ['label' => ['for' => 'article-limit']],
             'View',
             '/label',
-            ['select' => ['name' => 'article[limit]', 'id' => 'article-limit', 'onChange' => 'this.form.submit()']],
+            ['select' => ['name' => 'article[limit]', 'id' => 'article-limit', 'onChange' => 'this.form.requestSubmit()']],
             ['option' => ['value' => '25', 'selected' => 'selected']],
             '25',
             '/option',

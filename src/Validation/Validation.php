@@ -451,7 +451,10 @@ class Validation
      */
     public static function date(mixed $check, array|string $format = 'ymd', ?string $regex = null): bool
     {
-        if ($check instanceof ChronosDate || $check instanceof DateTimeInterface) {
+        if (
+            (class_exists(ChronosDate::class) && $check instanceof ChronosDate)
+            || $check instanceof DateTimeInterface
+        ) {
             return true;
         }
         if (is_object($check)) {
@@ -616,7 +619,10 @@ class Validation
      */
     public static function time(mixed $check): bool
     {
-        if ($check instanceof ChronosTime || $check instanceof DateTimeInterface) {
+        if (
+            (class_exists(ChronosTime::class) && $check instanceof ChronosTime)
+            || $check instanceof DateTimeInterface
+        ) {
             return true;
         }
         if (is_array($check)) {
@@ -648,7 +654,16 @@ class Validation
      */
     public static function localizedTime(mixed $check, string $type = 'datetime', string|int|null $format = null): bool
     {
-        if ($check instanceof ChronosTime || $check instanceof DateTimeInterface) {
+        if (!class_exists(DateTime::class)) {
+            throw new CakeException(
+                'The Cake\I18n\DateTime class is not available. Install the cakephp/i18n package.',
+            );
+        }
+
+        if (
+            (class_exists(ChronosTime::class) && $check instanceof ChronosTime)
+            || $check instanceof DateTimeInterface
+        ) {
             return true;
         }
         if (!is_string($check)) {
@@ -990,7 +1005,7 @@ class Validation
      */
     public static function extension(mixed $check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
     {
-        if ($check instanceof UploadedFileInterface) {
+        if (interface_exists(UploadedFileInterface::class) && $check instanceof UploadedFileInterface) {
             $check = $check->getClientFilename();
         } elseif (is_array($check) && isset($check['name'])) {
             $check = $check['name'];
@@ -1035,6 +1050,35 @@ class Validation
         }
 
         return (bool)filter_var($check, FILTER_VALIDATE_IP, ['flags' => $flags]);
+    }
+
+    /**
+     * Validation of an IP address or range (subnet).
+     *
+     * @param mixed $check The string to test.
+     * @param string $type The IP Protocol version to validate against
+     * @return bool Success
+     */
+    public static function ipOrRange(mixed $check, string $type = 'both'): bool
+    {
+        if (!is_string($check)) {
+            return false;
+        }
+
+        if (!str_contains($check, '/')) {
+            return static::ip($check, $type);
+        }
+
+        [$ip, $mask] = explode('/', $check, 2);
+
+        if (in_array($type, ['both', 'ipv4', true]) && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            return is_numeric($mask) && $mask >= 0 && $mask <= 32;
+        }
+        if (in_array($type, ['both', 'ipv6', true]) && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            return is_numeric($mask) && $mask >= 0 && $mask <= 128;
+        }
+
+        return false;
     }
 
     /**

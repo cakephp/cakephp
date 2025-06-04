@@ -143,7 +143,7 @@ if (!function_exists('Cake\Core\pluginSplit')) {
      * @param string|null $plugin Optional default plugin to use if no plugin is found. Defaults to null.
      * @return array Array with 2 indexes. 0 => plugin name, 1 => class name.
      * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#pluginSplit
-     * @psalm-return array{string|null, string}
+     * @phpstan-return array{string|null, string}
      */
     function pluginSplit(string $name, bool $dotAppend = false, ?string $plugin = null): array
     {
@@ -153,7 +153,7 @@ if (!function_exists('Cake\Core\pluginSplit')) {
                 $parts[0] .= '.';
             }
 
-            /** @psalm-var array{string, string} */
+            /** @phpstan-var array{string, string} */
             return $parts;
         }
 
@@ -308,17 +308,6 @@ if (!function_exists('Cake\Core\triggerWarning')) {
      */
     function triggerWarning(string $message): void
     {
-        $trace = debug_backtrace();
-        if (isset($trace[1])) {
-            $frame = $trace[1];
-            $frame += ['file' => '[internal]', 'line' => '??'];
-            $message = sprintf(
-                '%s - %s, line: %s',
-                $message,
-                $frame['file'],
-                $frame['line'],
-            );
-        }
         trigger_error($message, E_USER_WARNING);
     }
 }

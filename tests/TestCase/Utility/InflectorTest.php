@@ -79,7 +79,7 @@ class InflectorTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Inflector::reset();

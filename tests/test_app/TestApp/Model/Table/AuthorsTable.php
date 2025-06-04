@@ -74,4 +74,14 @@ class AuthorsTable extends Table
     {
         return $query->where(['id' => $id]);
     }
+
+    public function findCustom(SelectQuery $query, array $id = [], bool $second = true): SelectQuery
+    {
+        return $query;
+    }
+
+    public function findCustom2(SelectQuery $query, array $id, bool $second): SelectQuery
+    {
+        return $query;
+    }
 }

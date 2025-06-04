@@ -153,7 +153,12 @@ class BelongsTo extends Association
             $foreignKeys,
             $targetEntity->extract((array)$this->getBindingKey()),
         );
-        $entity->set($properties, ['guard' => false]);
+
+        if (method_exists($entity, 'patch')) {
+            $entity = $entity->patch($properties, ['guard' => false]);
+        } else {
+            $entity->set($properties, ['guard' => false]);
+        }
 
         return $entity;
     }

@@ -395,7 +395,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
             deprecationWarning(
                 '5.2.0',
                 'Exceptions returning a HTTP error code should implement HttpErrorCodeInterface,'
-                . ' instead of using the WebExceptionRenderer::$exceptionHttpCodes property.'
+                . ' instead of using the WebExceptionRenderer::$exceptionHttpCodes property.',
             );
 
             return $this->exceptionHttpCodes[$exception::class];

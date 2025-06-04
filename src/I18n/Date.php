@@ -29,7 +29,7 @@ use Stringable;
  *
  * Adds handy methods and locale-aware formatting helpers.
  *
- * @psalm-immutable
+ * @phpstan-immutable
  */
 class Date extends ChronosDate implements JsonSerializable, Stringable
 {

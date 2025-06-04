@@ -22,6 +22,7 @@ use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Query\UpdateQuery;
@@ -56,14 +57,14 @@ class UpdateQueryTest extends TestCase
      */
     protected $autoQuote;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -85,6 +86,29 @@ class UpdateQueryTest extends TestCase
         $result = $query->execute();
         $this->assertSame(1, $result->rowCount());
         $result->closeCursor();
+    }
+
+    /**
+     * Test query construction with fields containing spaces.
+     */
+    public function testUpdateSpaceColumnNames(): void
+    {
+        $data = [
+            'Column with spaces' => '1',
+            'Column_without_spaces' => '1',
+        ];
+
+        $query = new UpdateQuery($this->connection);
+        $query->update('example')
+            ->set($data)
+            ->where(['id' => 1]);
+
+        $result = $query->sql();
+        $this->assertQuotedQuery(
+            'UPDATE <example> SET <Column with spaces> = :c0 , <Column_without_spaces> = :c1',
+            $result,
+            !$this->autoQuote,
+        );
     }
 
     /**
@@ -248,6 +272,23 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
         $result = $query->execute();
         $this->assertSame(1, $result->rowCount());
+    }
+
+    /**
+     * Ensure that queries build when they contain expressions.
+     */
+    public function testUpdateExpression(): void
+    {
+        $expression = new QueryExpression(['post_count = post_count + 10']);
+        $query = new UpdateQuery($this->connection);
+        $query
+            ->update('counter_cache_users')
+            ->set($expression)
+            ->where(['id' => 1]);
+        $this->assertStringContainsString(
+            'SET post_count = post_count + 10',
+            $query->sql(),
+        );
     }
 
     /**

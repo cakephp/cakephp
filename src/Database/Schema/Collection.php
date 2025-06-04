@@ -38,9 +38,9 @@ class Collection implements CollectionInterface
     /**
      * Schema dialect instance.
      *
-     * @var \Cake\Database\Schema\SchemaDialect
+     * @var \Cake\Database\Schema\SchemaDialect|null
      */
-    protected SchemaDialect $_dialect;
+    protected ?SchemaDialect $_dialect = null;
 
     /**
      * Constructor.
@@ -50,7 +50,6 @@ class Collection implements CollectionInterface
     public function __construct(Connection $connection)
     {
         $this->_connection = $connection;
-        $this->_dialect = $connection->getDriver()->schemaDialect();
     }
 
     /**
@@ -60,7 +59,7 @@ class Collection implements CollectionInterface
      */
     public function listTablesWithoutViews(): array
     {
-        return $this->_dialect->listTablesWithoutViews();
+        return $this->getDialect()->listTablesWithoutViews();
     }
 
     /**
@@ -70,7 +69,7 @@ class Collection implements CollectionInterface
      */
     public function listTables(): array
     {
-        return $this->_dialect->listTables();
+        return $this->getDialect()->listTables();
     }
 
     /**
@@ -85,6 +84,16 @@ class Collection implements CollectionInterface
      */
     public function describe(string $name, array $options = []): TableSchemaInterface
     {
-        return $this->_dialect->describe($name);
+        return $this->getDialect()->describe($name);
+    }
+
+    /**
+     * Setups the schema dialect to be used for this collection.
+     *
+     * @return \Cake\Database\Schema\SchemaDialect
+     */
+    protected function getDialect(): SchemaDialect
+    {
+        return $this->_dialect ??= $this->_connection->getWriteDriver()->schemaDialect();
     }
 }

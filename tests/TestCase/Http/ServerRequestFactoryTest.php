@@ -236,17 +236,19 @@ class ServerRequestFactoryTest extends TestCase
      * Test base, webroot, URL and here parsing when there is URL rewriting but
      * CakePHP gets called with index.php in URL nonetheless.
      *
+     * The request instance generated should not have index.php stripped from its Uri.
+     *
      * Tests uri with
      *
      * - index.php/
-     * - index.php/
      * - index.php/apples/
+     * - index.php?%3C%3E?
      * - index.php/bananas/eat/tasty_banana
      */
     public function testBaseUrlWithModRewriteAndIndexPhp(): void
     {
         $request = ServerRequestFactory::fromGlobals([
-            'DOCUMENT_ROOT' => '/cakephp/webroot/index.php',
+            'DOCUMENT_ROOT' => '/cakephp/webroot',
             'PHP_SELF' => '/cakephp/webroot/index.php',
         ]);
 
@@ -255,44 +257,46 @@ class ServerRequestFactoryTest extends TestCase
         $this->assertSame('/', $request->getRequestTarget());
 
         $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/cakephp/webroot/index.php/',
+            'REQUEST_URI' => '/cakephp/index.php/',
             'PHP_SELF' => '/cakephp/webroot/index.php/',
             'PATH_INFO' => '/',
         ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/', $request->getRequestTarget());
+        $this->assertSame('/index.php/', $request->getRequestTarget());
 
         $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/cakephp/webroot/index.php/apples',
+            'REQUEST_URI' => '/cakephp/index.php/apples',
             'PHP_SELF' => '/cakephp/webroot/index.php/apples',
             'PATH_INFO' => '/apples',
         ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/apples', $request->getRequestTarget());
+        $this->assertSame('/index.php/apples', $request->getRequestTarget());
 
         $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/cakephp/webroot/index.php/melons/share/',
-            'PHP_SELF' => '/cakephp/webroot/index.php/melons/share/',
-            'PATH_INFO' => '/melons/share/',
+            'QUERY_STRING' => '%3C%3E?',
+            'REQUEST_URI' => '/cakephp/index.php?%3C%3E?',
+            'PHP_SELF' => '/cakephp/webroot/index.php',
+            'SCRIPT_NAME' => '/filepath/cakephp/webroot/index.php',
         ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/melons/share/', $request->getRequestTarget());
+        $this->assertSame('/index.php?%3C%3E?', $request->getRequestTarget());
+        $this->assertSame('%3C%3E?', $request->getUri()->getQuery());
 
         $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/cakephp/webroot/index.php/bananas/eat/tasty_banana',
+            'REQUEST_URI' => '/cakephp/index.php/bananas/eat/tasty_banana',
             'PHP_SELF' => '/cakephp/webroot/index.php/bananas/eat/tasty_banana',
             'PATH_INFO' => '/bananas/eat/tasty_banana',
         ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/bananas/eat/tasty_banana', $request->getRequestTarget());
+        $this->assertSame('/index.php/bananas/eat/tasty_banana', $request->getRequestTarget());
     }
 
     /**

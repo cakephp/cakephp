@@ -46,7 +46,7 @@ class ValidationTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
@@ -2120,6 +2120,22 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::ip('::ffff:2.3.4', 'IPv6'));
         $this->assertFalse(Validation::ip('::ffff:257.1.2.3', 'IPv6'));
         $this->assertFalse(Validation::ip('255.255.255.255', 'ipv6'), 'IPv4 is not valid IPv6');
+    }
+
+    /**
+     * Tests ipOrRange().
+     */
+    public function testIpOrRange(): void
+    {
+        $this->assertTrue(Validation::ipOrRange('192.168.1.0'));
+        $this->assertTrue(Validation::ipOrRange('192.168.1.0/24'));
+        $this->assertTrue(Validation::ipOrRange('2001:db8::'));
+        $this->assertTrue(Validation::ipOrRange('2001:db8::/64'));
+
+        $this->assertFalse(Validation::ipOrRange('192.168.1'));
+        $this->assertFalse(Validation::ipOrRange('192.168.1.0/33'));
+        $this->assertFalse(Validation::ipOrRange('2001:db8'));
+        $this->assertFalse(Validation::ipOrRange('2001:db8::/1111'));
     }
 
     /**

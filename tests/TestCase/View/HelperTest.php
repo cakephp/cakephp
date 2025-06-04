@@ -43,7 +43,7 @@ class HelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -54,7 +54,7 @@ class HelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Configure::delete('Asset');
@@ -99,7 +99,7 @@ class HelperTest extends TestCase
     {
         $eventsManager = new class extends EventManager
         {
-            public function on(string|EventListenerInterface $eventKey, callable|array $options = [], ?callable $callable = null)
+            public function on(string|EventListenerInterface $eventKey, callable|array $options = [], ?callable $callable = null): never
             {
                 throw new Exception('Should not be called');
             }

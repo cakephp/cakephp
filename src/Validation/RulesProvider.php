@@ -48,7 +48,7 @@ class RulesProvider
      *
      * @param object|string $class the default class to proxy
      * @throws \ReflectionException
-     * @psalm-param object|class-string $class
+     * @phpstan-param object|class-string $class
      */
     public function __construct(object|string $class = Validation::class)
     {

@@ -161,15 +161,16 @@ class AssociationProxyTest extends TestCase
     public function testAssociationMethodProxy(): void
     {
         $articles = $this->getTableLocator()->get('articles');
-        $mock = Mockery::mock(Table::class)
-            ->shouldAllowMockingMethod('crazy');
+        $spy = Mockery::spy(Table::class);
         $articles->belongsTo('authors', [
-            'targetTable' => $mock,
+            'targetTable' => $spy,
         ]);
 
-        $mock->shouldReceive('crazy')
+        $articles->authors->crazy('a', 'b');
+
+        $spy
+            ->shouldHaveReceived('crazy')
             ->with('a', 'b')
-            ->andReturn('thing');
-        $this->assertSame('thing', $articles->authors->crazy('a', 'b'));
+            ->once();
     }
 }

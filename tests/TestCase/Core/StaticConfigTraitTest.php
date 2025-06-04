@@ -37,7 +37,7 @@ class StaticConfigTraitTest extends TestCase
     /**
      * setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->subject = new class {
@@ -48,7 +48,7 @@ class StaticConfigTraitTest extends TestCase
     /**
      * teardown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         unset($this->subject);
         parent::tearDown();
@@ -175,6 +175,36 @@ class StaticConfigTraitTest extends TestCase
             'password' => 'secret',
             'port' => 25,
             'scheme' => 'mail',
+            'timeout' => '30',
+            'tls' => null,
+            'username' => 'user',
+            'fragment' => 'fragment',
+        ];
+        $this->assertEquals($expected, TestEmailStaticConfig::parseDsn($dsn));
+
+        $dsn = 'mail://user:secret@192.168.0.1:25?timeout=30&client=null&tls=null#fragment';
+        $expected = [
+            'className' => MailTransport::class,
+            'client' => null,
+            'host' => '192.168.0.1',
+            'password' => 'secret',
+            'port' => 25,
+            'scheme' => 'mail',
+            'timeout' => '30',
+            'tls' => null,
+            'username' => 'user',
+            'fragment' => 'fragment',
+        ];
+        $this->assertEquals($expected, TestEmailStaticConfig::parseDsn($dsn));
+
+        $dsn = 'mysql://user:secret@[2a00:1450:4002:416::200e]:3306?timeout=30&client=null&tls=null#fragment';
+        $expected = [
+            'className' => 'mysql',
+            'client' => null,
+            'host' => '[2a00:1450:4002:416::200e]',
+            'password' => 'secret',
+            'port' => 3306,
+            'scheme' => 'mysql',
             'timeout' => '30',
             'tls' => null,
             'username' => 'user',

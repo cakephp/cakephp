@@ -184,16 +184,16 @@ class ValidationRuleTest extends TestCase
     public function testAddDuplicateName(): void
     {
         $rules = new ValidationSet();
-        $rules->add('myUniqueName', ['rule' => fn () => false]);
+        $rules->add('myUniqueName', ['rule' => fn() => false]);
 
         $this->expectException(CakeException::class);
-        $rules->add('myUniqueName', ['rule' => fn () => true]);
+        $rules->add('myUniqueName', ['rule' => fn() => true]);
     }
 
     public function testHasName(): void
     {
         $rules = new ValidationSet();
-        $rules->add('myUniqueName', ['rule' => fn () => false]);
+        $rules->add('myUniqueName', ['rule' => fn() => false]);
 
         $this->assertTrue($rules->has('myUniqueName'));
         $this->assertFalse($rules->has('myMadeUpName'));

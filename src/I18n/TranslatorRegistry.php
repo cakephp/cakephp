@@ -232,6 +232,11 @@ class TranslatorRegistry
             $package = $this->_loaders[static::FALLBACK_LOADER]($name, $locale);
         }
 
+        // Support __invoke() wrapper classes
+        if (!$package instanceof Package && is_callable($package)) {
+            $package = $package();
+        }
+
         $package = $this->setFallbackPackage($name, $package);
         $this->packages->set($name, $locale, $package);
 

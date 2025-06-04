@@ -41,7 +41,7 @@ class TypeFactoryTest extends TestCase
     /**
      * Backup original Type class state
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->_originalMap = TypeFactory::getMap();
         parent::setUp();
@@ -50,7 +50,7 @@ class TypeFactoryTest extends TestCase
     /**
      * Restores Type class state
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 

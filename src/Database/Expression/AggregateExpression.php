@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
+use function Cake\Core\deprecationWarning;
 
 /**
  * This represents an SQL aggregate function expression in an SQL statement.
@@ -92,6 +93,11 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
      */
     public function order(ExpressionInterface|Closure|array|string $fields)
     {
+        deprecationWarning(
+            '5.0.0',
+            'AggregateExpression::order() is deprecated. Use AggregateExpression::orderBy() instead.',
+        );
+
         return $this->orderBy($fields);
     }
 

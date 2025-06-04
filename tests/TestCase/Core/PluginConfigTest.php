@@ -31,7 +31,7 @@ class PluginConfigTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->clearPlugins();
@@ -48,7 +48,7 @@ class PluginConfigTest extends TestCase
     /**
      * Reverts the changes done to the environment while testing
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -64,8 +64,8 @@ class PluginConfigTest extends TestCase
 <?php
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path',
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/',
     ]
 ];
 PHP;
@@ -116,8 +116,8 @@ PHP;
 <?php
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path',
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/',
     ]
 ];
 PHP;
@@ -157,8 +157,8 @@ PHP;
 <?php
 return [
     'plugins' => [
-        'OtherPlugin' => '/config/path',
-        'AnotherPlugin' => '/config/path'
+        'OtherPlugin' => '/config/path/',
+        'AnotherPlugin' => '/config/path/'
     ]
 ];
 PHP;
@@ -208,8 +208,8 @@ PHP;
 <?php
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path',
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/',
     ]
 ];
 PHP;
@@ -243,8 +243,8 @@ PHP;
 <?php
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path',
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/',
     ]
 ];
 PHP;

@@ -310,10 +310,10 @@ class CollectionTest extends TestCase
         $result = $collection->unique();
         $this->assertEquals(['a' => 1, 'b' => 2, 'f' => 3], iterator_to_array($result));
 
-        $result = $collection->unique(fn ($v) => (string)$v);
+        $result = $collection->unique(fn($v) => (string)$v);
         $this->assertEquals(['a' => 1, 'b' => 2, 'f' => 3], iterator_to_array($result));
 
-        $result = $collection->unique(fn ($v, $k) => $k);
+        $result = $collection->unique(fn($v, $k) => $k);
         $this->assertEquals(['a' => 1, 'b' => 2, 'c' => 1, 'd' => 2, 'e' => 1, 'f' => 3], iterator_to_array($result));
     }
 
@@ -2025,6 +2025,7 @@ class CollectionTest extends TestCase
         $result = $collection->__debugInfo();
         $expected = [
             'count' => 3,
+            'items' => [1, 2, 3],
         ];
         $this->assertSame($expected, $result);
 
@@ -2032,6 +2033,7 @@ class CollectionTest extends TestCase
         $result = $collection->__debugInfo();
         $expected = [
             'count' => 3,
+            'items' => [1, 2, 3],
         ];
         $this->assertSame($expected, $result);
 
@@ -2040,17 +2042,11 @@ class CollectionTest extends TestCase
         $collection = new Collection($iterator);
 
         $result = $collection->__debugInfo();
-        $expected = [
-            'count' => 3,
-        ];
-        $this->assertSame($expected, $result);
+        $this->assertStringContainsString('NoRewindIterator', $result['innerIterator']::class);
 
         // Calling it again will in this case not rewind
         $result = $collection->__debugInfo();
-        $expected = [
-            'count' => 0,
-        ];
-        $this->assertSame($expected, $result);
+        $this->assertStringContainsString('NoRewindIterator', $result['innerIterator']::class);
 
         $filter = function ($value): void {
             throw new Exception('filter exception');
@@ -2059,10 +2055,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($iterator);
 
         $result = $collection->__debugInfo();
-        $expected = [
-            'count' => 'An exception occurred while getting count',
-        ];
-        $this->assertSame($expected, $result);
+        $this->assertStringContainsString('CallbackFilterIterator', $result['innerIterator']::class);
     }
 
     /**

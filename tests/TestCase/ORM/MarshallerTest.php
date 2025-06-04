@@ -73,7 +73,7 @@ class MarshallerTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->articles = $this->getTableLocator()->get('Articles');
@@ -101,7 +101,7 @@ class MarshallerTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->articles, $this->comments, $this->users, $this->tags);
@@ -628,6 +628,38 @@ class MarshallerTest extends TestCase
             'joinData should contain a user entity.',
         );
         $this->assertSame('Mark', $result->tags[1]->_joinData->user->username);
+
+        $data = [
+            'title' => 'My title',
+            'body' => 'My content',
+            'author_id' => 1,
+            'tags' => [
+                [
+                    'tag' => 'news',
+                    'junction' => [
+                        'active' => 1,
+                        'user' => ['username' => 'Bill'],
+                    ],
+                ],
+                [
+                    'tag' => 'cakephp',
+                    'junction' => [
+                        'active' => 0,
+                        'user' => ['username' => 'Mark'],
+                    ],
+                ],
+            ],
+        ];
+
+        $this->articles->Tags->setJunctionProperty('junction');
+
+        $marshall = new Marshaller($this->articles);
+        $result = $marshall->one($data, ['associated' => ['Tags.junction.Users']]);
+        $this->assertInstanceOf(
+            Entity::class,
+            $result->tags[0]->junction->user,
+            'junction should contain a user entity.',
+        );
     }
 
     /**
@@ -871,6 +903,22 @@ class MarshallerTest extends TestCase
         $this->assertTrue($result->isDirty('tags'), 'Modified prop should be dirty');
         $this->assertSame(0, $result->tags[0]->_joinData->active);
         $this->assertSame(1, $result->tags[1]->_joinData->active);
+
+        $entity = new Entity();
+        $entity->requireFieldPresence(true);
+        // MissingPropertyException should not be thrown for `tags` field
+        $marshall->merge($entity, $data, ['associated' => ['Tags._joinData']]);
+
+        $inner = new Entity(['id' => 1]);
+        $inner->requireFieldPresence(true);
+        $entity = new Entity([
+            'tags' => [
+                $inner,
+            ],
+        ]);
+        $entity->requireFieldPresence(true);
+        // MissingPropertyException should not be thrown for `_joinData` field
+        $marshall->merge($entity, $data, ['associated' => ['Tags._joinData']]);
     }
 
     /**
@@ -1304,6 +1352,11 @@ class MarshallerTest extends TestCase
         $this->assertEquals($data + ['body' => 'My Content'], $result->toArray());
         $this->assertTrue($result->isDirty(), 'Should be a dirty entity.');
         $this->assertFalse($result->isNew(), 'Should not change the entity state');
+
+        $entity = new Entity();
+        $entity->requireFieldPresence(true);
+        // MissingPropertyException should not be thrown
+        $marshall->merge($entity, $data, []);
     }
 
     /**
@@ -1526,6 +1579,25 @@ class MarshallerTest extends TestCase
         $this->assertFalse($entity->isDirty('title'));
         $this->assertFalse($entity->isDirty('author_id'));
         $this->assertTrue($entity->isDirty('crazy'));
+
+        // https://github.com/cakephp/cakephp/issues/18346
+        $entity = new class ([
+            'title' => 'Foo',
+            'author_id' => 1,
+        ], ['useSetters' => false]) extends Entity {
+            protected function _setTitle(string $name): string
+            {
+                return 'The ' . $name;
+            }
+        };
+        $entity->clean();
+
+        $this->assertSame('Foo', $entity->title);
+        $marshall->merge($entity, ['title' => 'Foo', 'author_id' => 2]);
+        $this->assertSame('Foo', $entity->title, 'Setter should not be called as the value is unchanged');
+        $this->assertFalse($entity->isDirty('title'));
+        $this->assertTrue($entity->isDirty('author_id'));
+        $this->assertSame(2, $entity->author_id);
     }
 
     /**
@@ -1748,7 +1820,7 @@ class MarshallerTest extends TestCase
         $this->assertCount(1, $result->comments);
         $this->assertTrue($result->isDirty('comments'), 'Updated prop should be dirty');
         $this->assertInstanceOf(Entity::class, $result->comments[0]);
-        $this->assertNotEquals('Nope', $result->comments[0]);
+        $this->assertNotEquals('Nope', $result->comments[0]->comment);
     }
 
     /**
@@ -1863,10 +1935,10 @@ class MarshallerTest extends TestCase
         ]);
 
         $this->articles->Tags->getEventManager()
-            ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$called) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$called): void {
                 $called = true;
 
-                return $query->where(['Tags.id >=' => 1]);
+                $query->where(['Tags.id >=' => 1]);
             });
 
         $entity = new Entity([
@@ -2218,7 +2290,7 @@ class MarshallerTest extends TestCase
      */
     public function testMergeBelongsToManyJoinData(): void
     {
-        $data = [
+        $initData = [
             'title' => 'My title',
             'body' => 'My content',
             'author_id' => 1,
@@ -2242,7 +2314,7 @@ class MarshallerTest extends TestCase
 
         $options = ['associated' => ['Tags._joinData']];
         $marshall = new Marshaller($this->articles);
-        $entity = $marshall->one($data, $options);
+        $entity = $marshall->one($initData, $options);
         $entity->setAccess('*', true);
 
         $data = [
@@ -2253,6 +2325,7 @@ class MarshallerTest extends TestCase
             ],
         ];
         $tag1 = $entity->tags[0];
+
         $result = $marshall->merge($entity, $data, $options);
 
         $this->assertSame($data['title'], $result->title);
@@ -2271,6 +2344,45 @@ class MarshallerTest extends TestCase
         $this->assertSame('new tag', $entity->tags[1]->tag);
         $this->assertTrue($entity->tags[0]->isDirty('_joinData'));
         $this->assertTrue($entity->tags[1]->isDirty('_joinData'));
+
+        // With custom junction property
+        $this->articles->Tags->setJunctionProperty('_junction');
+        $initData['tags'][0]['_junction'] = $initData['tags'][0]['_joinData'];
+        $initData['tags'][1]['_junction'] = $initData['tags'][1]['_joinData'];
+        unset($initData['tags'][0]['_joinData'], $initData['tags'][1]['_joinData']);
+
+        $options = ['associated' => ['Tags._junction']];
+        $marshall = new Marshaller($this->articles);
+        $entity = $marshall->one($initData, $options);
+        $entity->setAccess('*', true);
+
+        $data = [
+            'title' => 'Haz data 2',
+            'tags' => [
+                ['id' => 1, 'tag' => 'Cake 2', '_junction' => ['foo' => 'bar 2']],
+                ['tag' => 'new tag 2', '_junction' => ['active' => 1, 'foo' => 'baz 2']],
+            ],
+        ];
+        $tag1 = $entity->tags[0];
+
+        $result = $marshall->merge($entity, $data, $options);
+
+        $this->assertSame($data['title'], $result->title);
+        $this->assertSame('My content', $result->body);
+        $this->assertTrue($result->isDirty('tags'));
+        $this->assertSame($tag1, $entity->tags[0]);
+        $this->assertSame($tag1->_junction, $entity->tags[0]->_junction);
+        $this->assertSame(
+            ['active' => 0, 'foo' => 'bar 2'],
+            $entity->tags[0]->_junction->toArray(),
+        );
+        $this->assertSame(
+            ['active' => 1, 'foo' => 'baz 2'],
+            $entity->tags[1]->_junction->toArray(),
+        );
+        $this->assertSame('new tag 2', $entity->tags[1]->tag);
+        $this->assertTrue($entity->tags[0]->isDirty('_junction'));
+        $this->assertTrue($entity->tags[1]->isDirty('_junction'));
     }
 
     /**
@@ -2495,8 +2607,8 @@ class MarshallerTest extends TestCase
             ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
             ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
         ];
-        $this->comments->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
-            return $query->contain(['Articles']);
+        $this->comments->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query): void {
+            $query->contain(['Articles']);
         });
         $marshall = new Marshaller($this->comments);
         $result = $marshall->mergeMany($entities, $data);

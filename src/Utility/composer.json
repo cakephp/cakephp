@@ -25,8 +25,8 @@
         "source": "https://github.com/cakephp/utility"
     },
     "require": {
-        "php": ">=8.1",
-        "cakephp/core": "^5.2"
+        "php": ">=8.2",
+        "cakephp/core": "5.3.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -41,5 +41,10 @@
         "lib-ICU": "To use Text::transliterate() or Text::slug()"
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.3.x-dev"
+        }
+    }
 }

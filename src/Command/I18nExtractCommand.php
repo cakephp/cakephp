@@ -140,7 +140,6 @@ class I18nExtractCommand extends Command
      */
     protected function _getPaths(ConsoleIo $io): void
     {
-        /** @psalm-suppress UndefinedConstant */
         $defaultPaths = array_merge(
             [APP],
             array_values(App::path('templates')),
@@ -232,7 +231,9 @@ class I18nExtractCommand extends Command
             $message = "What is the path you would like to output?\n[Q]uit";
             $localePaths = array_values(App::path('locales'));
             if (!$localePaths) {
-                $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales';
+                $localePaths[] = ROOT . DIRECTORY_SEPARATOR
+                    . 'resources' . DIRECTORY_SEPARATOR
+                    . 'locales' . DIRECTORY_SEPARATOR;
             }
             while (true) {
                 $response = $io->ask(
@@ -538,7 +539,6 @@ class I18nExtractCommand extends Command
     protected function _buildFiles(Arguments $args): void
     {
         $paths = $this->_paths;
-        /** @psalm-suppress UndefinedConstant */
         $paths[] = realpath(APP) . DIRECTORY_SEPARATOR;
 
         usort($paths, function (string $a, string $b) {
@@ -868,7 +868,6 @@ class I18nExtractCommand extends Command
      */
     protected function _isExtractingApp(): bool
     {
-        /** @psalm-suppress UndefinedConstant */
         return $this->_paths === [APP];
     }
 

@@ -29,7 +29,7 @@ class TypeFactory
      * representing the class that will do actual type conversions.
      *
      * @var array<string, string>
-     * @psalm-var array<string, class-string<\Cake\Database\TypeInterface>>
+     * @phpstan-var array<string, class-string<\Cake\Database\TypeInterface>>
      */
     protected static array $_types = [
         'tinyinteger' => Type\IntegerType::class,
@@ -118,7 +118,7 @@ class TypeFactory
      * @param string $type Name of type to map.
      * @param string $className The classname to register.
      * @return void
-     * @psalm-param class-string<\Cake\Database\TypeInterface> $className
+     * @phpstan-param class-string<\Cake\Database\TypeInterface> $className
      */
     public static function map(string $type, string $className): void
     {
@@ -131,7 +131,7 @@ class TypeFactory
      *
      * @param array<string, string> $map List of types to be mapped.
      * @return void
-     * @psalm-param array<string, class-string<\Cake\Database\TypeInterface>> $map
+     * @phpstan-param array<string, class-string<\Cake\Database\TypeInterface>> $map
      */
     public static function setMap(array $map): void
     {

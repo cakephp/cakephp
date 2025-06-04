@@ -1225,6 +1225,21 @@ class ServerRequestTest extends TestCase
         $this->assertSame($expected, $request->getParam($toRead));
     }
 
+    public function testGetParamQueryParamsDeprecation(): void
+    {
+        $this->deprecated(function (): void {
+            $request = new ServerRequest([
+                'url' => '/',
+                'params' => [
+                    'action' => 'index',
+                    '?' => ['foo' => 'bar'],
+                ],
+            ]);
+
+            $this->assertSame(['foo' => 'bar'], $request->getParam('?'));
+        });
+    }
+
     /**
      * Test getParam returning a default value.
      */

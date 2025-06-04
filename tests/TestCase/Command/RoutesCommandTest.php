@@ -33,7 +33,7 @@ class RoutesCommandTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->setAppNamespace();
@@ -42,7 +42,7 @@ class RoutesCommandTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Router::reload();
@@ -297,6 +297,20 @@ class RoutesCommandTest extends TestCase
         $this->exec('routes generate controller:Articles action:index _https:true _host:example.com');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('> https://example.com/app/articles');
+    }
+
+    public function testGenerateNameWithColon(): void
+    {
+        Configure::write('TestApp.routes', function ($routes): void {
+            $routes->connect(
+                '/example/update',
+                ['controller' => 'Example', 'action' => 'update'],
+                ['_name' => 'example:update'],
+            );
+        });
+        $this->exec('routes generate _name:example:update');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('> /example/update');
     }
 
     /**

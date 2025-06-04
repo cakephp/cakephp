@@ -66,6 +66,15 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_TIME = 'time';
 
     /**
+     * Year column type
+     *
+     * Currently only implemented in MySQL
+     *
+     * @var string
+     */
+    public const TYPE_YEAR = 'year';
+
+    /**
      * Timestamp column type
      *
      * @var string
@@ -87,6 +96,13 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_TIMESTAMP_TIMEZONE = 'timestamptimezone';
 
     /**
+     * Datetime interval. Only implemented in postgres.
+     *
+     * @var string
+     */
+    public const TYPE_INTERVAL = 'interval';
+
+    /**
      * JSON column type
      *
      * @var string
@@ -106,6 +122,15 @@ interface TableSchemaInterface extends SchemaInterface
      * @var string
      */
     public const TYPE_CHAR = 'char';
+
+    /**
+     * Case-insensitive text column type.
+     *
+     * Only implemented in postgres
+     *
+     * @var string
+     */
+    public const TYPE_CITEXT = 'citext';
 
     /**
      * Text column type
@@ -204,6 +229,27 @@ interface TableSchemaInterface extends SchemaInterface
      * @var string
      */
     public const TYPE_POLYGON = 'polygon';
+
+    /**
+     * INET type. Only implemented in postgres.
+     *
+     * @var string
+     */
+    public const TYPE_INET = 'inet';
+
+    /**
+     * CIDR type. Only implemented in postgres.
+     *
+     * @var string
+     */
+    public const TYPE_CIDR = 'cidr';
+
+    /**
+     * Macaddr type. Only implemented in postgres.
+     *
+     * @var string
+     */
+    public const TYPE_MACADDR = 'macaddr';
 
     /**
      * Geospatial column types

@@ -528,7 +528,7 @@ class Response implements ResponseInterface, Stringable
     public function mapType(array|string $ctype): array|string|null
     {
         if (is_array($ctype)) {
-            return array_map('\Cake\Http\MimeType::getExtension', $ctype);
+            return array_map($this->mapType(...), $ctype);
         }
 
         return MimeType::getExtension($ctype);
@@ -834,7 +834,6 @@ class Response implements ResponseInterface, Stringable
         }
 
         /**
-         * @psalm-suppress UndefinedInterfaceMethod
          * @phpstan-ignore-next-line
          */
         return $result->setTimezone(new DateTimeZone('UTC'));

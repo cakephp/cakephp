@@ -355,7 +355,7 @@ class MemcachedEngine extends CacheEngine
      * @param iterable<string> $keys An array of identifiers for the data
      * @param mixed $default Default value to return for keys that do not exist.
      * @return iterable<string, mixed> An array containing, for each of the given $keys, the cached data or
-     *   false if cached data could not be retrieved.
+     *   `$default` if cached data could not be retrieved.
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
@@ -365,9 +365,13 @@ class MemcachedEngine extends CacheEngine
         }
 
         $values = $this->_Memcached->getMulti($cacheKeys);
+        if ($values === false) {
+            return array_fill_keys(array_keys($cacheKeys), $default);
+        }
+
         $return = [];
         foreach ($cacheKeys as $original => $prefixed) {
-            $return[$original] = $values[$prefixed] ?? $default;
+            $return[$original] = array_key_exists($prefixed, $values) ? $values[$prefixed] : $default;
         }
 
         return $return;

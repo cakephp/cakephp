@@ -252,12 +252,14 @@ class ArgumentsTest extends TestCase
 
     public function testGetMultipleOption(): void
     {
-        $options = [
-            'types' => ['one', 'two', 'three'],
-        ];
-        $args = new Arguments([], $options, []);
-        $this->assertSame(['one', 'two', 'three'], $args->getMultipleOption('types'));
-        $this->assertNull($args->getMultipleOption('missing'));
+        $this->deprecated(function (): void {
+            $options = [
+                'types' => ['one', 'two', 'three'],
+            ];
+            $args = new Arguments([], $options, []);
+            $this->assertSame(['one', 'two', 'three'], $args->getMultipleOption('types'));
+            $this->assertNull($args->getMultipleOption('missing'));
+        });
     }
 
     /**

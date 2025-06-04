@@ -30,6 +30,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
+use function Cake\Core\deprecationWarning;
 use function Cake\Core\env;
 
 /**
@@ -1514,6 +1515,13 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getParam(string $name, mixed $default = null): mixed
     {
+        if ($name === '?') {
+            deprecationWarning(
+                '5.3.0',
+                'Using `$request->getParam("?")` is deprecated. Use `$request->getQueryParams()` instead.',
+            );
+        }
+
         return Hash::get($this->params, $name, $default);
     }
 

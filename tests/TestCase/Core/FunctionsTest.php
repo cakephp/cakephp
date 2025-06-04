@@ -18,11 +18,10 @@ namespace Cake\Test\TestCase\Core;
 
 use Cake\Core\Configure;
 use Cake\Http\Response;
-use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use stdClass;
+use Stringable;
 use function Cake\Core\deprecationWarning;
 use function Cake\Core\env;
 use function Cake\Core\h;
@@ -378,23 +377,11 @@ class FunctionsTest extends TestCase
      */
     public function testTriggerWarningEnabled(): void
     {
-        $this->expectWarningMessageMatches('/This will be gone one day - (.*?)[\/\\\]TestCase.php, line\: \d+/', function (): void {
+        $this->expectWarningMessageMatches('/This will be gone one day/', function (): void {
             $this->withErrorReporting(E_ALL, function (): void {
                 triggerWarning('This will be gone one day');
                 $this->assertTrue(true);
             });
-        });
-    }
-
-    /**
-     * Test no error when warning level is off.
-     */
-    #[WithoutErrorHandler]
-    public function testTriggerWarningLevelDisabled(): void
-    {
-        $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function (): void {
-            triggerWarning('This was a mistake.');
-            $this->assertTrue(true);
         });
     }
 
@@ -409,6 +396,13 @@ class FunctionsTest extends TestCase
      */
     public static function toStringProvider(): array
     {
+        $stringable = new class implements Stringable {
+            public function __toString(): string
+            {
+                return 'stringable';
+            }
+        };
+
         return [
             // input like string
             '(string) empty' => ['', ''],
@@ -449,7 +443,7 @@ class FunctionsTest extends TestCase
             '(other) int-array' => [[5], null],
             '(other) string-array' => [['5'], null],
             '(other) simple object' => [new stdClass(), null],
-            '(other) Stringable object' => [new Entity(), '[]'],
+            '(other) Stringable object' => [$stringable, 'stringable'],
         ];
     }
 

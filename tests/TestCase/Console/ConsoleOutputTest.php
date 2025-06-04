@@ -35,7 +35,7 @@ class ConsoleOutputTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->output = $this->getMockBuilder(ConsoleOutput::class)
@@ -47,7 +47,7 @@ class ConsoleOutputTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->output);

@@ -32,7 +32,7 @@ class StringTemplateTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->template = new StringTemplate();

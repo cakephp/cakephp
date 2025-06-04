@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
+use function Cake\Core\deprecationWarning;
 
 /**
  * This represents a SQL window expression used by aggregate and window functions.
@@ -117,6 +118,11 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function order(ExpressionInterface|Closure|array|string $fields)
     {
+        deprecationWarning(
+            '5.0.0',
+            'WindowExpression::order() is deprecated. Use WindowExpression::orderBy() instead.',
+        );
+
         return $this->orderBy($fields);
     }
 

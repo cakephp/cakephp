@@ -34,10 +34,12 @@ class AuthSecurityExceptionTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->authSecurityException = new AuthSecurityException();
+        $this->deprecated(function (): void {
+            $this->authSecurityException = new AuthSecurityException();
+        });
     }
 
     /**

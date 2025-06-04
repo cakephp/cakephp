@@ -38,6 +38,7 @@ use Cake\Database\Statement\Statement;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Stringable;
@@ -46,7 +47,7 @@ use Stringable;
  * Represents a database driver containing all specificities for
  * a database engine including its SQL dialect.
  */
-abstract class Driver
+abstract class Driver implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -187,7 +188,7 @@ abstract class Driver
      */
     protected function createPdo(string $dsn, array $config): PDO
     {
-        $action = fn (): PDO => new PDO(
+        $action = fn(): PDO => new PDO(
             $dsn,
             $config['username'] ?: null,
             $config['password'] ?: null,
@@ -667,8 +668,8 @@ abstract class Driver
      * @throws \Cake\Database\Exception\DatabaseException In case the processed query contains any joins, as removing
      *  aliases from the conditions can break references to the joined tables.
      * @template T of \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery
-     * @psalm-param T $query
-     * @psalm-return T
+     * @phpstan-param T $query
+     * @phpstan-return T
      */
     protected function _removeAliasesFromConditions(UpdateQuery|DeleteQuery $query): UpdateQuery|DeleteQuery
     {
@@ -750,6 +751,25 @@ abstract class Driver
     }
 
     /**
+     * Quotes a database value.
+     *
+     * This makes values safe for concatenation in SQL queries.
+     *
+     * Using this method **is not** recommended. You should use `execute()`
+     * instead, as it uses prepared statements which are safer than
+     * string concatenation.
+     *
+     * This method should only be used for queries that do not support placeholders.
+     *
+     * @param string $value The value to quote.
+     * @return string
+     */
+    public function quote(string $value): string
+    {
+        return $this->getPdo()->quote($value);
+    }
+
+    /**
      * Get identifier quoter instance.
      *
      * @return \Cake\Database\IdentifierQuoter
@@ -779,7 +799,6 @@ abstract class Driver
         if (is_float($value)) {
             return str_replace(',', '.', (string)$value);
         }
-        /** @psalm-suppress InvalidArgument */
         if (
             (
                 is_int($value) ||
@@ -959,7 +978,7 @@ abstract class Driver
         $className = App::className($className, 'Cake/Log', 'Log');
         if ($className === null) {
             throw new CakeException(
-                'For logging you must either set the `log` config to a FQCN which implemnts Psr\Log\LoggerInterface' .
+                'For logging you must either set the `log` config to a FQCN which implements Psr\Log\LoggerInterface' .
                 ' or require the cakephp/log package in your composer config.',
             );
         }

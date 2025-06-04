@@ -375,7 +375,8 @@ class Router
     public static function url(UriInterface|array|string|null $url = null, bool $full = false): string
     {
         $context = static::$_requestContext;
-        $context['_base'] ??= '';
+        // For CLI request context would be empty
+        $context['_base'] ??= Configure::read('App.base', '');
 
         if (!$url) {
             $here = static::getRequest()?->getRequestTarget() ?? '/';

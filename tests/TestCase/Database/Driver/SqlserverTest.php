@@ -26,6 +26,7 @@ use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
 use PDO;
 use PDOStatement;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -43,7 +44,7 @@ class SqlserverTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->missingExtension = !defined('PDO::SQLSRV_ENCODING_UTF8');
@@ -91,6 +92,18 @@ class SqlserverTest extends TestCase
                     'port' => 9001,
                 ],
                 'sqlsrv:Server=localhost\SQLEXPRESS,9001;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp',
+            ],
+            [
+                [
+                    'accessToken' => 'test-token',
+                ],
+                'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false;AccessToken=test-token',
+            ],
+            [
+                [
+                    'authentication' => 'ActiveDirectoryPassword',
+                ],
+                'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false;Authentication=ActiveDirectoryPassword',
             ],
         ];
     }
@@ -156,25 +169,18 @@ class SqlserverTest extends TestCase
         $expected['log'] = false;
         $expected['encrypt'] = null;
         $expected['trustServerCertificate'] = null;
+        $expected['accessToken'] = null;
+        $expected['authentication'] = null;
 
-        $connection = $this->getMockBuilder('PDO')
-            ->disableOriginalConstructor()
-            ->onlyMethods(['exec', 'quote'])
-            ->getMock();
-        $connection->expects($this->any())
-            ->method('quote')
-            ->willReturnArgument(0);
+        $connection = Mockery::mock(PDO::class);
 
-        $connection->expects($this->exactly(4))
-            ->method('exec')
-            ->with(
-                ...self::withConsecutive(
-                    ['Execute this'],
-                    ['this too'],
-                    ['SET config1 value1'],
-                    ['SET config2 value2'],
-                ),
-            );
+        $connection->shouldReceive('quote')
+            ->andReturnArg(0);
+
+        $connection->shouldReceive('exec')->with('Execute this')->once();
+        $connection->shouldReceive('exec')->with('this too')->once();
+        $connection->shouldReceive('exec')->with('SET config1 value1')->once();
+        $connection->shouldReceive('exec')->with('SET config2 value2')->once();
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
@@ -242,9 +248,7 @@ class SqlserverTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $pdo = $this->getMockBuilder(PDO::class)
-            ->disableOriginalConstructor()
-            ->getMock();
+        $pdo = Mockery::mock(PDO::class);
 
         $statement = $this->getMockBuilder(PDOStatement::class)
             ->getMock();
@@ -256,18 +260,18 @@ class SqlserverTest extends TestCase
         $driver->method('getPdo')
             ->willReturn($pdo);
 
-        $pdo->expects($this->exactly(2))
-            ->method('prepare')
-            ->with(
-                ...self::withConsecutive(
-                    ['', [
-                        PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
-                        PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
-                    ]],
-                    ['', []],
-                ),
-            )
-            ->willReturn($statement);
+        $pdo->shouldReceive('prepare')
+            ->with('', [
+                PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
+                PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
+            ])
+            ->andReturn($statement)
+            ->once();
+
+        $pdo->shouldReceive('prepare')
+            ->with('', [])
+            ->andReturn($statement)
+            ->once();
 
         $query = new SelectQuery($connection);
         $driver->prepare($query);

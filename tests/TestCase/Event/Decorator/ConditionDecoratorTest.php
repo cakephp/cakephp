@@ -73,10 +73,9 @@ class ConditionDecoratorTest extends TestCase
             },
         ]);
 
-        $listener2 = function (EventInterface $event) {
+        $listener2 = function (EventInterface $event): void {
             $event->setData('counter', $event->getData('counter') + 1);
-
-            return $event;
+            $event->setResult(false);
         };
 
         EventManager::instance()->on('decorator.test2', $listener1);

@@ -80,7 +80,7 @@ class HasManyTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->setAppNamespace('TestApp');
@@ -122,7 +122,7 @@ class HasManyTest extends TestCase
         $this->autoQuote = $connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         ConnectionManager::drop('test_read_write');
@@ -636,12 +636,10 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock(Table::class)
-            ->shouldAllowMockingMethod('saveAssociated')
-            ->makePartial();
+        $spy = Mockery::spy(Table::class);
         $config = [
             'sourceTable' => $this->author,
-            'targetTable' => $mock,
+            'targetTable' => $spy,
         ];
 
         $entity = new Entity([
@@ -653,11 +651,11 @@ class HasManyTest extends TestCase
             ],
         ]);
 
-        $mock->shouldNotReceive('saveAssociated');
-
         $association = new HasMany('Articles', $config);
         $result = $association->saveAssociated($entity);
         $this->assertSame($result, $entity);
+
+        $spy->shouldNotHaveReceived('saveAssociated');
     }
 
     /**

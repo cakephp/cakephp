@@ -154,7 +154,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $query->contain([$config['hasOneAlias']]);
 
         $query->formatResults(
-            fn (CollectionInterface $results) => $this->rowMapper($results, $locale),
+            fn(CollectionInterface $results) => $this->rowMapper($results, $locale),
             $query::PREPEND,
         );
     }
@@ -356,7 +356,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
-        $locale = $entity->get('_locale') ?: $this->getLocale();
+        $locale = $entity->has('_locale') ? $entity->get('_locale') : $this->getLocale();
         $newOptions = [$this->translationTable->getAlias() => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
@@ -368,8 +368,8 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         }
 
         $this->bundleTranslatedFields($entity);
-        $bundled = $entity->get('_i18n') ?: [];
-        $noBundled = count($bundled) === 0;
+        $bundled = $entity->has('_i18n') ? (array)$entity->get('_i18n') : [];
+        $noBundled = $bundled === [];
 
         // No additional translation records need to be saved,
         // as the entity is in the default locale.
@@ -388,8 +388,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             return;
         }
 
-        $primaryKey = (array)$this->table->getPrimaryKey();
-        $id = $entity->get((string)current($primaryKey));
+        /** @var string $primaryKey */
+        $primaryKey = current((array)$this->table->getPrimaryKey());
+        $id = $entity->has($primaryKey) ? $entity->get($primaryKey) : null;
 
         // When we have no key and bundled translations, we
         // need to mark the entity dirty so the root
@@ -419,9 +420,13 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         }
 
         if ($translation) {
-            $translation->set($values);
+            if (method_exists($translation, 'patch')) {
+                $translation->patch($values);
+            } else {
+                $translation->set($values);
+            }
         } else {
-            $translation = $this->translationTable->newEntity(
+            $translation = new ($this->translationTable->getEntityClass())(
                 $where + $values,
                 [
                     'useSetters' => false,
@@ -552,11 +557,20 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     public function groupTranslations(CollectionInterface $results): CollectionInterface
     {
         return $results->map(function ($row) {
-            if (!($row instanceof EntityInterface)) {
+            if (!$row instanceof EntityInterface) {
                 return $row;
             }
-            $translations = (array)$row->get('_i18n');
-            if (!$translations && $row->get('_translations')) {
+
+            $translations = $row->has('_i18n') ? $row->get('_i18n') : [];
+            if ($translations === []) {
+                if ($row->has('_translations')) {
+                    return $row;
+                }
+
+                $row->set('_translations', [])
+                    ->setDirty('_translations', false);
+                unset($row['_i18n']);
+
                 return $row;
             }
 
@@ -566,9 +580,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 $result[$translation['locale']] = $translation;
             }
 
-            $row['_translations'] = $result;
+            $row->set('_translations', $result)
+                ->setDirty('_translations', false);
             unset($row['_i18n']);
-            $row->setDirty('_translations', false);
 
             return $row;
         });
@@ -585,22 +599,32 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {
         /** @var array<string, \Cake\ORM\Entity> $translations */
-        $translations = (array)$entity->get('_translations');
+        $translations = $entity->has('_translations') ? (array)$entity->get('_translations') : [];
 
         if (!$translations && !$entity->isDirty('_translations')) {
             return;
         }
 
-        $primaryKey = (array)$this->table->getPrimaryKey();
-        $key = $entity->get((string)current($primaryKey));
+        if ($entity->isNew()) {
+            $key = null;
+        } else {
+            $primaryKey = (array)$this->table->getPrimaryKey();
+            $key = $entity->get((string)current($primaryKey));
+        }
 
         foreach ($translations as $lang => $translation) {
-            if (!$translation->id) {
+            if ($translation->isNew()) {
                 $update = [
-                    'id' => $key,
                     'locale' => $lang,
                 ];
-                $translation->set($update, ['guard' => false]);
+                if ($key !== null) {
+                    $update['id'] = $key;
+                }
+                if (method_exists($translation, 'patch')) {
+                    $translation->patch($update, ['guard' => false]);
+                } else {
+                    $translation->set($update, ['guard' => false]);
+                }
             }
         }
 

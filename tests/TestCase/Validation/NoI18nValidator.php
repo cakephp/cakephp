@@ -11,11 +11,9 @@ use Cake\Validation\Validator;
 class NoI18nValidator extends Validator
 {
     /**
-     * Disable the usage of I18n functions
+     * Whether to use I18n functions for translating default error messages
+     *
+     * @var bool
      */
-    public function __construct()
-    {
-        $this->_useI18n = false;
-        $this->_providers = self::$_defaultProviders;
-    }
+    protected bool $_useI18n = false;
 }

@@ -45,7 +45,7 @@ class UriFactory implements UriFactoryInterface
      * @param array|null $server Array of server data to build the Uri from.
      *   $_SERVER will be used if $server parameter is null.
      * @return array
-     * @psalm-return array{uri: \Psr\Http\Message\UriInterface, base: string, webroot: string}
+     * @phpstan-return array{uri: \Psr\Http\Message\UriInterface, base: string, webroot: string}
      */
     public static function marshalUriAndBaseFromSapi(?array $server = null): array
     {
@@ -77,16 +77,26 @@ class UriFactory implements UriFactoryInterface
         if ($base !== '' && str_starts_with($path, $base)) {
             $path = substr($path, strlen($base));
         }
+
+        // App.baseUrl is meant to be set only when URL rewriting is not used.
+        if (!Configure::read('App.baseUrl')) {
+            if ($path === '' || $path === '//') {
+                $path = '/';
+            }
+
+            return $uri->withPath($path);
+        }
+
         if ($path === '/index.php' && $uri->getQuery()) {
             $path = $uri->getQuery();
         }
-        if (!$path || $path === '/' || $path === '//' || $path === '/index.php') {
+        if ($path === '' || $path === '//' || $path === '/index.php') {
             $path = '/';
         }
 
         // Check for $webroot/index.php at the start and end of the path.
         $search = '';
-        if ($path[0] === '/') {
+        if (str_starts_with($path, '/')) {
             $search .= '/';
         }
         $search .= (Configure::read('App.webroot') ?: 'webroot') . '/index.php';
@@ -108,7 +118,7 @@ class UriFactory implements UriFactoryInterface
      * @param \Psr\Http\Message\UriInterface $uri The Uri instance.
      * @param array $server The SERVER data to use.
      * @return array An array containing the base and webroot paths.
-     * @psalm-return array{base: string, webroot: string}
+     * @phpstan-return array{base: string, webroot: string}
      */
     protected static function getBase(UriInterface $uri, array $server): array
     {
@@ -159,9 +169,9 @@ class UriFactory implements UriFactoryInterface
         }
         $webrootDir = $base . '/';
 
-        $docRoot = $server['DOCUMENT_ROOT'] ?? null;
+        $docRoot = $server['DOCUMENT_ROOT'] ?? '';
         if (
-            (!empty($base) || !str_contains($docRoot, $webroot))
+            ($base || !str_contains($docRoot, $webroot))
             && !str_contains($webrootDir, '/' . $webroot . '/')
         ) {
             $webrootDir .= $webroot . '/';

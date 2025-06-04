@@ -41,7 +41,7 @@ class PluginLoadCommandTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -54,7 +54,7 @@ class PluginLoadCommandTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -100,6 +100,24 @@ class PluginLoadCommandTest extends TestCase
             ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false],
             $config['TestPluginTwo'],
         );
+    }
+
+    /**
+     * Test recommendations for keywords in composer.json
+     */
+    public function testLoadRecommendations(): void
+    {
+        $this->exec('plugin load TestPluginFour', ['y', 'y', 'y']);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        Plugin::getCollection()->remove('TestPluginFour');
+
+        $config = include $this->configFile;
+        $expected = [
+            'onlyDebug' => true,
+            'onlyCli' => true,
+            'optional' => true,
+        ];
+        $this->assertEquals($expected, $config['TestPluginFour']);
     }
 
     /**

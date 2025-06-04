@@ -228,7 +228,7 @@ class ConsoleInputArgument
             $values = [$value];
         }
 
-        $unwanted = array_filter($values, fn ($value) => !in_array($value, $this->_choices, true));
+        $unwanted = array_filter($values, fn($value) => !in_array($value, $this->_choices, true));
         if ($unwanted) {
             throw new ConsoleException(
                 sprintf(

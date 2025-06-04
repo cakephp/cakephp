@@ -22,7 +22,7 @@ use Traversable;
 use function Cake\Core\deprecationWarning;
 
 /**
- * Paginated resultset.
+ * Paginated result set.
  *
  * @template T of mixed
  * @template-implements \IteratorAggregate<mixed>

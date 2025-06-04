@@ -48,14 +48,14 @@ class InsertQueryTest extends TestCase
      */
     protected $autoQuote;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);

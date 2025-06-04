@@ -37,7 +37,7 @@ class FlashMessageTest extends TestCase
      */
     protected $Session;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -46,7 +46,7 @@ class FlashMessageTest extends TestCase
         $this->Flash = new FlashMessage($this->Session);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 

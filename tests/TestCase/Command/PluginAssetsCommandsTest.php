@@ -48,7 +48,7 @@ class PluginAssetsCommandsTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -66,7 +66,7 @@ class PluginAssetsCommandsTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -89,6 +89,30 @@ class PluginAssetsCommandsTest extends TestCase
         $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
         $this->assertTrue(is_link($path));
+    }
+
+    /**
+     * testRelativeSymlink method
+     */
+    public function testRelativeSymlink(): void
+    {
+        $this->skipIf(DS === '\\', 'Cant perform operations with symlinks windows.');
+        $this->loadPlugins(['TestPlugin' => ['routes' => false], 'Company/TestPluginThree']);
+
+        $this->exec('plugin assets symlink --relative');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $path = $this->wwwRoot . 'test_plugin';
+        $this->assertFileExists($path . DS . 'root.js');
+        $this->assertTrue(is_link($path));
+
+        $path = $this->wwwRoot . 'company' . DS . 'test_plugin_three';
+        $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
+        $this->assertTrue(is_link($path));
+
+        // Verify that the symlink is relative
+        $target = readlink($path);
+        $this->assertStringStartsWith('../', $target);
     }
 
     public function testSymlinkWhenVendorDirectoryExists(): void

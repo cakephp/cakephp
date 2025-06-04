@@ -268,7 +268,6 @@ class Stream implements AdapterInterface
         }
 
         $meta = stream_get_meta_data($this->_stream);
-        /** @psalm-suppress InvalidPropertyAssignmentValue */
         fclose($this->_stream);
 
         if ($timedOut) {

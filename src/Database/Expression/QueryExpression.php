@@ -413,7 +413,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * Adds a new condition to the expression object in the form
      * "field BETWEEN from AND to".
      *
-     * @param \Cake\Database\ExpressionInterface|string $field The field name to compare for values inbetween the range.
+     * @param \Cake\Database\ExpressionInterface|string $field The field name to compare for values in between the range.
      * @param mixed $from The initial value of the range.
      * @param mixed $to The ending value in the comparison range.
      * @param string|null $type the type name for $value as configured using the Type map.
@@ -715,7 +715,6 @@ class QueryExpression implements ExpressionInterface, Countable
             $typeMultiple = true;
         }
 
-        /** @psalm-suppress RedundantCondition */
         if ($typeMultiple) {
             $value = $value instanceof ExpressionInterface ? $value : (array)$value;
         }

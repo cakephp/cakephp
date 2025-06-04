@@ -428,6 +428,7 @@ class EntityContextTest extends TestCase
         $result = $context->val('body');
         $this->assertEquals($row->body, $result);
 
+        $row->requireFieldPresence(true);
         $result = $context->val('nope');
         $this->assertNull($result);
     }

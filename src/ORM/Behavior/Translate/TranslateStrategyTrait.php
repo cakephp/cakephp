@@ -106,8 +106,12 @@ trait TranslateStrategyTrait
      */
     protected function unsetEmptyFields(EntityInterface $entity): void
     {
-        /** @var array<\Cake\ORM\Entity> $translations */
-        $translations = (array)$entity->get('_translations');
+        if (!$entity->has('_translations')) {
+            return;
+        }
+
+        /** @var array<\Cake\Datasource\EntityInterface> $translations */
+        $translations = $entity->get('_translations');
         foreach ($translations as $locale => $translation) {
             $fields = $translation->extract($this->_config['fields'], false);
             foreach ($fields as $field => $value) {
@@ -120,28 +124,29 @@ trait TranslateStrategyTrait
 
             // If now, the current locale property is empty,
             // unset it completely.
-            if (empty(array_filter($translation))) {
-                unset($entity->get('_translations')[$locale]);
+            if (array_filter($translation) === []) {
+                unset($translations[$locale]);
             }
         }
 
-        // If now, the whole _translations property is empty,
-        // unset it completely and return
-        if (empty($entity->get('_translations'))) {
+        // If now, the whole $translations is empty, unset _translations property completely
+        if ($translations === []) {
             $entity->unset('_translations');
+        } else {
+            $entity->set('_translations', $translations);
         }
     }
 
     /**
-     * Build a set of properties that should be included in the marshalling process.
+     * Build a set of properties that should be included in the marshaling process.
 
-     * Add in `_translations` marshalling handlers. You can disable marshalling
+     * Add in `_translations` marshaling handlers. You can disable marshaling
      * of translations by setting `'translations' => false` in the options
      * provided to `Table::newEntity()` or `Table::patchEntity()`.
      *
-     * @param \Cake\ORM\Marshaller $marshaller The marshaller of the table the behavior is attached to.
+     * @param \Cake\ORM\Marshaller $marshaller The marshaler of the table the behavior is attached to.
      * @param array $map The property map being built.
-     * @param array<string, mixed> $options The options array used in the marshalling call.
+     * @param array<string, mixed> $options The options array used in the marshaling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
      */
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
@@ -157,7 +162,7 @@ trait TranslateStrategyTrait
                 }
 
                 /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
-                $translations = $entity->get('_translations') ?? [];
+                $translations = $entity->has('_translations') ? (array)$entity->get('_translations') : [];
 
                 $options['validate'] = $this->_config['validator'];
                 $errors = [];

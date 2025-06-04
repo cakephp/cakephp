@@ -24,14 +24,14 @@
         "source": "https://github.com/cakephp/datasource"
     },
     "require": {
-        "php": ">=8.1",
-        "cakephp/core": "^5.2",
+        "php": ">=8.2",
+        "cakephp/core": "5.3.*@dev",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
     "require-dev": {
-        "cakephp/cache": "^5.2",
-        "cakephp/collection": "^5.2",
-        "cakephp/utility": "^5.2"
+        "cakephp/cache": "5.3.*@dev",
+        "cakephp/collection": "5.3.*@dev",
+        "cakephp/utility": "5.3.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -44,5 +44,10 @@
         "cakephp/cache": "If you decide to use Query caching."
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.3.x-dev"
+        }
+    }
 }

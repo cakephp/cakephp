@@ -255,6 +255,7 @@ class Mysql extends Driver
             DriverFeatureEnum::INTERSECT => $versionCompare(),
             DriverFeatureEnum::INTERSECT_ALL => $versionCompare(),
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => true,
+            DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => true,
         };
     }
 
@@ -283,7 +284,6 @@ class Mysql extends Driver
             if (str_contains($this->_version, 'MariaDB')) {
                 $this->serverType = static::SERVER_TYPE_MARIADB;
                 preg_match('/^(?:5\.5\.5-)?(\d+\.\d+\.\d+.*-MariaDB[^:]*)/', $this->_version, $matches);
-                /** @phpstan-ignore-next-line */
                 $this->_version = $matches[1];
             }
         }

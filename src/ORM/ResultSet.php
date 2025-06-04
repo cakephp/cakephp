@@ -30,16 +30,4 @@ use Cake\Datasource\ResultSetInterface;
  */
 class ResultSet extends Collection implements ResultSetInterface
 {
-    /**
-     * Returns an array that can be used to describe the internal state of this
-     * object.
-     *
-     * @return array<string, mixed>
-     */
-    public function __debugInfo(): array
-    {
-        return [
-            'items' => $this->toArray(),
-        ];
-    }
 }

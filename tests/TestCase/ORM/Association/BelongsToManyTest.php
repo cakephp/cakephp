@@ -78,7 +78,7 @@ class BelongsToManyTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->tag = $this->getMockBuilder(Table::class)
@@ -105,7 +105,7 @@ class BelongsToManyTest extends TestCase
         ]);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         ConnectionManager::drop('test_read_write');
@@ -217,6 +217,18 @@ class BelongsToManyTest extends TestCase
         $this->expectExceptionMessage('Invalid strategy `join` was provided');
         $assoc = new BelongsToMany('Test');
         $assoc->setStrategy(BelongsToMany::STRATEGY_JOIN);
+    }
+
+    public function testJunctionProperty(): void
+    {
+        $assoc = new BelongsToMany('Test');
+        $this->assertSame('_joinData', $assoc->getJunctionProperty());
+
+        $assoc = new BelongsToMany('Test', ['junctionProperty' => 'junction']);
+        $this->assertSame('junction', $assoc->getJunctionProperty());
+
+        $assoc->setJunctionProperty('_pivot');
+        $this->assertSame('_pivot', $assoc->getJunctionProperty());
     }
 
     /**

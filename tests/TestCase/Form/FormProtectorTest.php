@@ -36,7 +36,7 @@ class FormProtectorTest extends TestCase
      */
     protected $sessionId = 'cli';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -51,7 +51,7 @@ class FormProtectorTest extends TestCase
      * @param array $data
      * @param string|null $errorMessage
      */
-    public function validate($data, $errorMessage = null): void
+    protected function validate(array $data, ?string $errorMessage = null): void
     {
         $protector = new FormProtector();
         $result = $protector->validate($data, $this->url, $this->sessionId);

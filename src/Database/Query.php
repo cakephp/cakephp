@@ -26,6 +26,7 @@ use Closure;
 use InvalidArgumentException;
 use Stringable;
 use Throwable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * This class represents a Relational database SQL Query. A query can be of
@@ -106,6 +107,7 @@ abstract class Query implements ExpressionInterface, Stringable
         'insert' => [],
         'values' => [],
         'with' => [],
+        'optimizerHint' => [],
         'select' => [],
         'distinct' => false,
         'modifier' => [],
@@ -198,6 +200,19 @@ abstract class Query implements ExpressionInterface, Stringable
     }
 
     /**
+     * Returns driver for current connection role by default.
+     *
+     * See `Query::getConnectionRole()` for role options.
+     *
+     * @param string|null $role Connection role
+     * @return \Cake\Database\Driver
+     */
+    public function getDriver(?string $role = null): Driver
+    {
+        return $this->_connection->getDriver($role ?? $this->connectionRole);
+    }
+
+    /**
      * Compiles the SQL representation of this query and executes it using the
      * configured connection object. Returns the resulting statement object.
      *
@@ -282,7 +297,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $binder->resetCount();
         }
 
-        return $this->getConnection()->getDriver()->compileQuery($this, $binder);
+        return $this->getDriver()->compileQuery($this, $binder);
     }
 
     /**
@@ -386,27 +401,45 @@ abstract class Query implements ExpressionInterface, Stringable
      * });
      * ```
      *
-     * @param \Cake\Database\Expression\CommonTableExpression|\Closure $cte The CTE to add.
+     * @param \Cake\Database\Expression\CommonTableExpression|\Closure|array<\Cake\Database\Expression\CommonTableExpression|\Closure> $cte The CTE to add.
      * @param bool $overwrite Whether to reset the list of CTEs.
      * @return $this
      */
-    public function with(CommonTableExpression|Closure $cte, bool $overwrite = false)
+    public function with(CommonTableExpression|Closure|array $cte, bool $overwrite = false)
     {
+        $this->_dirty();
         if ($overwrite) {
             $this->_parts['with'] = [];
         }
 
-        if ($cte instanceof Closure) {
-            $query = $this->getConnection()->selectQuery();
-            $cte = $cte(new CommonTableExpression(), $query);
-            if (!($cte instanceof CommonTableExpression)) {
-                throw new CakeException(
-                    'You must return a `CommonTableExpression` from a Closure passed to `with()`.',
-                );
+        $ctes = is_array($cte) ? $cte : [$cte];
+        foreach ($ctes as $cte) {
+            if ($cte instanceof Closure) {
+                $query = $this->getConnection()->selectQuery();
+                $cte = $cte(new CommonTableExpression(), $query);
+                if (!($cte instanceof CommonTableExpression)) {
+                    throw new CakeException(
+                        'You must return a `CommonTableExpression` from a Closure passed to `with()`.',
+                    );
+                }
             }
+            $this->_parts['with'][] = $cte;
         }
 
-        $this->_parts['with'][] = $cte;
+        return $this;
+    }
+
+    /**
+     * Add engine-specific optimizer hint.
+     *
+     * @param array<string>|string $hint Optimizer hint
+     * @param bool $overwrite Whether to replace existing hints
+     * @return $this
+     */
+    public function optimizerHint(array|string $hint, bool $overwrite = false)
+    {
+        $hints = array_values((array)$hint);
+        $this->_parts['optimizerHint'] = $overwrite ? $hints : array_merge($this->_parts['optimizerHint'], $hints);
         $this->_dirty();
 
         return $this;
@@ -660,7 +693,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * See `join()` for further details on conditions and types.
      *
-     * @param array<string, mixed>|string $table The table to join with
+     * @param array<string, string|\Cake\Database\Query\SelectQuery>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -685,7 +718,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that methods description for further details.
      *
-     * @param array<string, mixed>|string $table The table to join with
+     * @param array<string, string|\Cake\Database\Query\SelectQuery>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -710,7 +743,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that method's description for further details.
      *
-     * @param array<string, mixed>|string $table The table to join with
+     * @param array<string, string|\Cake\Database\Query\SelectQuery>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param array<string, string> $types a list of types associated to the conditions used for converting
@@ -730,27 +763,25 @@ abstract class Query implements ExpressionInterface, Stringable
     /**
      * Returns an array that can be passed to the join method describing a single join clause
      *
-     * @param array<string, mixed>|string $table The table to join with
+     * @param array<string, string|\Cake\Database\Query\SelectQuery>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param string $type the join type to use
-     * @return array
+     * @return array<string, array{table: string|\Cake\Database\Query\SelectQuery, conditions: \Cake\Database\ExpressionInterface|\Closure|array|string, type: string}>
      */
     protected function _makeJoin(
         array|string $table,
         ExpressionInterface|Closure|array|string $conditions,
         string $type,
     ): array {
-        $alias = $table;
-
-        if (is_array($table)) {
+        if (is_string($table)) {
+            $alias = $table;
+        } else {
+            /** @var string $alias */
             $alias = key($table);
-            $table = current($table);
+            $table = $table[$alias];
         }
 
-        /**
-         * @var string $alias
-         */
         return [
             $alias => [
                 'table' => $table,
@@ -1169,6 +1200,8 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function order(ExpressionInterface|Closure|array|string $fields, bool $overwrite = false)
     {
+        deprecationWarning('5.0.0', 'Query::order() is deprecated. Use Query::orderBy() instead.');
+
         return $this->orderBy($fields, $overwrite);
     }
 
@@ -1265,6 +1298,8 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function orderAsc(ExpressionInterface|Closure|string $field, bool $overwrite = false)
     {
+        deprecationWarning('5.0.0', 'Query::orderAsc() is deprecated. Use Query::orderByAsc() instead.');
+
         return $this->orderByAsc($field, $overwrite);
     }
 
@@ -1319,6 +1354,8 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function orderDesc(ExpressionInterface|Closure|string $field, bool $overwrite = false)
     {
+        deprecationWarning('5.0.0', 'Query::orderDesc() is deprecated. Use Query::orderByDesc() instead.');
+
         return $this->orderByDesc($field, $overwrite);
     }
 
@@ -1460,7 +1497,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *  ->epilog('RETURNING id');
      * ```
      *
-     * Epliog content is raw SQL and not suitable for use with user supplied data.
+     * Epilog content is raw SQL and not suitable for use with user supplied data.
      *
      * @param \Cake\Database\ExpressionInterface|string|null $expression The expression to be appended
      * @return $this
@@ -1609,7 +1646,7 @@ abstract class Query implements ExpressionInterface, Stringable
     {
         if (!array_key_exists($name, $this->_parts)) {
             $clauses = array_keys($this->_parts);
-            array_walk($clauses, fn (&$x) => $x = "`{$x}`");
+            array_walk($clauses, fn(&$x) => $x = "`{$x}`");
             $clauses = implode(', ', $clauses);
             throw new InvalidArgumentException(sprintf(
                 'The `%s` clause is not defined. Valid clauses are: %s.',
@@ -1662,7 +1699,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         if ($expression instanceof ExpressionInterface) {
-            $expression->traverse(fn ($exp) => $this->_expressionsVisitor($exp, $callback));
+            $expression->traverse(fn($exp) => $this->_expressionsVisitor($exp, $callback));
 
             if (!$expression instanceof self) {
                 $callback($expression);
@@ -1797,7 +1834,6 @@ abstract class Query implements ExpressionInterface, Stringable
                     if (is_array($piece)) {
                         foreach ($piece as $j => $value) {
                             if ($value instanceof ExpressionInterface) {
-                                /** @psalm-suppress PossiblyUndefinedMethod */
                                 $this->_parts[$name][$i][$j] = clone $value;
                             }
                         }

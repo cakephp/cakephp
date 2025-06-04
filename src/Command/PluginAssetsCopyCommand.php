@@ -22,8 +22,6 @@ use Cake\Console\ConsoleOptionParser;
 
 /**
  * Command for copying plugin assets to app's webroot.
- *
- * @psalm-suppress PropertyNotSetInConstructor
  */
 class PluginAssetsCopyCommand extends Command
 {

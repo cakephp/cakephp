@@ -998,9 +998,9 @@ class Message implements JsonSerializable
      * in address header fields.
      *
      * @param array $address Addresses to format.
-     * @return array
+     * @return array<string>
      */
-    protected function formatAddress(array $address): array
+    public function formatAddress(array $address): array
     {
         $return = [];
         foreach ($address as $email => $alias) {
@@ -1125,13 +1125,7 @@ class Message implements JsonSerializable
      *
      * Attachments can be defined in a few forms depending on how much control you need:
      *
-     * Attach a single file:
-     *
-     * ```
-     * $this->setAttachments('path/to/file');
-     * ```
-     *
-     * Attach a file with a different filename:
+     * Attach a file:
      *
      * ```
      * $this->setAttachments(['custom_name.txt' => 'path/to/file.txt']);
@@ -1231,6 +1225,35 @@ class Message implements JsonSerializable
     public function getAttachments(): array
     {
         return $this->attachments;
+    }
+
+    /**
+     * Add attachment.
+     *
+     * @param \Psr\Http\Message\UploadedFileInterface|string $path Path to the file or UploadedFileInterface instance.
+     * @param string|null $name Overrides the attachment name.
+     * @param string|null $mimetype Mimetype of the file.
+     * @param string|null $contentId Content ID for inline attachments.
+     * @param bool|null $contentDisposition Allows you to disable the `Content-Disposition` header
+     * @return $this
+     */
+    public function addAttachment(
+        UploadedFileInterface|string $path,
+        ?string $name = null,
+        ?string $mimetype = null,
+        ?string $contentId = null,
+        ?bool $contentDisposition = null,
+    ) {
+        $name ??= 0;
+
+        $this->addAttachments([$name => [
+            'file' => $path,
+            'mimetype' => $mimetype,
+            'contentId' => $contentId,
+            'contentDisposition' => $contentDisposition,
+        ]]);
+
+        return $this;
     }
 
     /**

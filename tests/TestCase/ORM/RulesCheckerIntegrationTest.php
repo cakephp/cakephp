@@ -658,7 +658,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.beforeRules',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $operation): void {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -673,7 +673,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 $this->assertSame('create', $operation);
                 $event->stopPropagation();
 
-                return true;
+                $event->setResult(true);
             },
         );
 
@@ -696,7 +696,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table->getEventManager()->on(
             'Model.afterRules',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation) {
+            function (EventInterface $event, EntityInterface $entity, ArrayObject $options, $result, $operation): void {
                 $this->assertEquals(
                     [
                         'atomic' => true,
@@ -712,7 +712,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 $this->assertFalse($result);
                 $event->stopPropagation();
 
-                return true;
+                $event->setResult(true);
             },
         );
 

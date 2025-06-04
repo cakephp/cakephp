@@ -52,7 +52,7 @@ class FileEngine extends CacheEngine
      * - `lock` Used by FileCache. Should files be locked before writing to them?
      * - `mask` The mask used for created files
      * - `dirMask` The mask used for created folders
-     * - `path` Path to where cachefiles should be saved. Defaults to system's temp dir.
+     * - `path` Path to where cache files should be saved. Defaults to system's temp dir.
      * - `prefix` Prepended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
      *    cache::gc from ever being called automatically.
@@ -182,7 +182,6 @@ class FileEngine extends CacheEngine
         $data = '';
         $this->_File->next();
         while ($this->_File->valid()) {
-            /** @psalm-suppress PossiblyInvalidOperand */
             $data .= $this->_File->current();
             $this->_File->next();
         }
@@ -374,7 +373,6 @@ class FileEngine extends CacheEngine
         if (!$createKey && !$path->isFile()) {
             return false;
         }
-        /** @psalm-suppress TypeDoesNotContainType */
         if (
             !isset($this->_File) ||
             $this->_File->getBasename() !== $key ||

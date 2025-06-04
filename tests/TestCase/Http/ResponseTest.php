@@ -50,7 +50,7 @@ class ResponseTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->server = $_SERVER;
@@ -59,7 +59,7 @@ class ResponseTest extends TestCase
     /**
      * teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $_SERVER = $this->server;
@@ -355,8 +355,36 @@ class ResponseTest extends TestCase
         $this->assertSame('xml', $response->mapType('text/xml'));
         $this->assertSame('html', $response->mapType('*/*'));
         $this->assertSame('csv', $response->mapType('application/vnd.ms-excel'));
+
         $expected = ['json', 'xhtml', 'css'];
         $result = $response->mapType(['application/json', 'application/xhtml+xml', 'text/css']);
+        $this->assertEquals($expected, $result);
+
+        $array = [
+            '1.0' => [
+                'text/csv',
+                'text/xml',
+            ],
+            '0.8' => [
+                'application/json',
+            ],
+            '0.7' => [
+                'application/xml',
+            ],
+        ];
+        $expected = [
+            '1.0' => [
+                'csv',
+                'xml',
+            ],
+            '0.8' => [
+                'json',
+            ],
+            '0.7' => [
+                'xml',
+            ],
+        ];
+        $result = $response->mapType($array);
         $this->assertEquals($expected, $result);
     }
 

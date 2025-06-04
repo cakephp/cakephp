@@ -74,7 +74,7 @@ class SchemaLoader
 
             // Use the underlying PDO connection so we can avoid prepared statements
             // which don't support multiple queries in postgres.
-            $driver = $connection->getDriver();
+            $driver = $connection->getWriteDriver();
             $driver->exec($sql);
         }
 

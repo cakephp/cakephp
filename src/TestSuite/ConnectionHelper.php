@@ -71,10 +71,10 @@ class ConnectionHelper
             $message = '--Starting test run ' . date('Y-m-d H:i:s');
             if (
                 $connection instanceof Connection &&
-                $connection->getDriver()->log($message) === false
+                $connection->getWriteDriver()->log($message) === false
             ) {
-                $connection->getDriver()->setLogger(new QueryLogger());
-                $connection->getDriver()->log($message);
+                $connection->getWriteDriver()->setLogger(new QueryLogger());
+                $connection->getWriteDriver()->log($message);
             }
         }
     }
@@ -100,9 +100,9 @@ class ConnectionHelper
 
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
-        $schemas = array_map(fn ($table) => $collection->describe($table), $tables);
+        $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
-        $dialect = $connection->getDriver()->schemaDialect();
+        $dialect = $connection->getWriteDriver()->schemaDialect();
         foreach ($schemas as $schema) {
             foreach ($dialect->dropConstraintSql($schema) as $statement) {
                 $connection->execute($statement);
@@ -131,10 +131,10 @@ class ConnectionHelper
         $allTables = $collection->listTablesWithoutViews();
         $tables = $tables !== null ? array_intersect($tables, $allTables) : $allTables;
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
-        $schemas = array_map(fn ($table) => $collection->describe($table), $tables);
+        $schemas = array_map(fn($table) => $collection->describe($table), $tables);
 
         self::runWithoutConstraints($connection, function (Connection $connection) use ($schemas): void {
-            $dialect = $connection->getDriver()->schemaDialect();
+            $dialect = $connection->getWriteDriver()->schemaDialect();
             foreach ($schemas as $schema) {
                 foreach ($dialect->truncateTableSql($schema) as $statement) {
                     $connection->execute($statement);
@@ -152,11 +152,11 @@ class ConnectionHelper
      */
     public static function runWithoutConstraints(Connection $connection, Closure $callback): void
     {
-        if ($connection->getDriver()->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
-            $connection->disableConstraints(fn (Connection $connection) => $callback($connection));
+        if ($connection->getWriteDriver()->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
+            $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
         } else {
             $connection->transactional(function (Connection $connection) use ($callback): void {
-                $connection->disableConstraints(fn (Connection $connection) => $callback($connection));
+                $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
             });
         }
     }
