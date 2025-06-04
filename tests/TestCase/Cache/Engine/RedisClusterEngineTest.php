@@ -36,10 +36,10 @@ class RedisClusterEngineTest extends TestCase
             $socket = fsockopen($node['host'], $node['port'], $errno, $errstr, 1);
 
             if (!$socket) {
-                echo "Connection to Redis node {$node['host']}:{$node['port']} failed: $errstr ($errno) \n";
+                echo "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno}) \n";
             }
 
-            $this->skipIf(!$socket, "Connection to Redis node {$node['host']}:{$node['port']} failed: $errstr ($errno)");
+            $this->skipIf(!$socket, "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno})");
             fclose($socket);
         }
 
