@@ -98,7 +98,7 @@ class RedisClusterEngine extends CacheEngine
      */
     public function connect(): RedisCluster
     {
-       return new RedisCluster(
+        return new RedisCluster(
             $this->_config['cluster'],
             $this->_config['seeds'],
             $this->_config['timeout'],
