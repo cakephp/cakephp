@@ -92,6 +92,25 @@ class RedisClusterEngine extends CacheEngine
     }
 
     /**
+     * Creates a connection to the cluster
+     * This is public for mocking in tests and it should be considered
+     * internal otherwise.
+     */
+    public function connect(): RedisCluster
+    {
+       return new RedisCluster(
+            $this->_config['cluster'],
+            $this->_config['seeds'],
+            $this->_config['timeout'],
+            $this->_config['read_timeout'],
+            $this->_config['persistent'],
+            $this->_config['auth'],
+            // See: https://github.com/phpredis/phpredis/commit/8144db374338006a316beb11549f37926bd40c5d
+            $this->_config['tls'] === true ? [] : null,
+        );
+    }
+
+    /**
      * Connects to a Redis server
      *
      * @return bool True if Redis server was connected
@@ -99,16 +118,7 @@ class RedisClusterEngine extends CacheEngine
     protected function _connect(): bool
     {
         try {
-            $this->_Redis = new RedisCluster(
-                $this->_config['cluster'],
-                $this->_config['seeds'],
-                $this->_config['timeout'],
-                $this->_config['read_timeout'],
-                $this->_config['persistent'],
-                $this->_config['auth'],
-                // See: https://github.com/phpredis/phpredis/commit/8144db374338006a316beb11549f37926bd40c5d
-                $this->_config['tls'] === true ? [] : null,
-            );
+            $this->_Redis = $this->connect();
         } catch (RedisClusterException $e) {
             if (class_exists(Log::class)) {
                 Log::error('RedisEngine could not connect. Got error: ' . $e->getMessage());
