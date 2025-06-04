@@ -151,9 +151,11 @@ class RedisEngine extends CacheEngine
         } catch (RedisClusterException $e) {
             $connected = false;
 
+            // @codeCoverageIgnoreStart
             if (class_exists(Log::class)) {
                 Log::error('RedisClusterEngine could not connect. Got error: ' . $e->getMessage());
             }
+            // @codeCoverageIgnoreEnd
         }
 
         return $connected;
