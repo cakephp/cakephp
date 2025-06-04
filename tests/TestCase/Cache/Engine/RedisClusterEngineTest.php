@@ -23,7 +23,7 @@ class RedisClusterEngineTest extends TestCase
 
         $this->skipIf(
             !class_exists('RedisCluster'),
-            'Redis extension is not installed or configured properly.'
+            'Redis extension is not installed or configured properly.',
         );
 
         $nodes = array_map(function ($node) {
