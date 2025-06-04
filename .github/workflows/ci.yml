@@ -45,6 +45,16 @@ jobs:
         image: memcached
         ports:
           - 11211/tcp
+      redis-cluster:
+        image: grokzen/redis-cluster:6.2.1
+        ports:
+          - 7000:7000
+          - 7001:7001
+        options: >-
+          --health-cmd "redis-cli -p 7000 ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     - name: Setup MySQL 8.0
@@ -98,6 +108,7 @@ jobs:
       env:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
         MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
+        REDIS_CLUSTER_NODES: "127.0.0.1:7000,127.0.0.1:7001"
       run: |
         if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_URL='sqlite:///:memory:'; fi
         if [[ ${{ matrix.db-type }} == 'mysql' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi

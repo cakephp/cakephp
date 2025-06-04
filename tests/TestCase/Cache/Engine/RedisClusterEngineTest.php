@@ -84,13 +84,14 @@ class RedisClusterEngineTest extends TestCase
      */
     protected function redisClusterNodes(): array
     {
+        $env = getenv('REDIS_CLUSTER_NODES');
+        if ($env !== false) {
+            return explode(',', $env);
+        }
+
         return [
-            '172.18.0.7:6379',
-            '172.18.0.2:6379',
-            '172.18.0.3:6379',
-            '172.18.0.5:6379',
-            '172.18.0.4:6379',
-            '172.18.0.6:6379',
+            '127.0.0.1:6379',
+            '127.0.0.1:6380',
         ];
     }
 
