@@ -344,7 +344,7 @@ class RedisEngine extends CacheEngine
             }
 
             foreach ($keys as $key) {
-                $isDeleted = ((int)$this->_Redis->del($key) > 0);
+                $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
                 $isAllDeleted = $isAllDeleted && $isDeleted;
             }
         }
@@ -381,7 +381,7 @@ class RedisEngine extends CacheEngine
             }
 
             foreach ($keys as $key) {
-                $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
+                $isDeleted = ((int)$this->_Redis->delete($key) > 0);
                 $isAllDeleted = $isAllDeleted && $isDeleted;
             }
         }
