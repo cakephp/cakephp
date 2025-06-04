@@ -408,6 +408,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => true,
+                'generated' => null,
             ],
             'title' => [
                 'type' => 'string',
