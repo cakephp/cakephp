@@ -53,7 +53,7 @@ class RedisClusterEngineTest extends TestCase
         $class = new ReflectionClass(RedisCluster::class);
 
         /* Old version of the extension without return types */
-        if ($class->getMethod('flushdb')?->getReturnType() === null) {
+        if ($class->getMethod('flushdb')->getReturnType() === null) {
             return $this->mockClusterOld($data);
         }
 
@@ -101,7 +101,7 @@ class RedisClusterEngineTest extends TestCase
                         'count' => 0,
                     ];
                 } else {
-                    $iterator['count'] = $iterator['count'] + 1;
+                    $iterator['count'] += 1;
                 }
 
                 $index = $iterator['count'];
@@ -186,7 +186,7 @@ class RedisClusterEngineTest extends TestCase
                         'count' => 0,
                     ];
                 } else {
-                    $iterator['count'] = $iterator['count'] + 1;
+                    $iterator['count'] += 1;
                 }
 
                 $index = $iterator['count'];
