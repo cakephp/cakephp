@@ -137,6 +137,24 @@ class RedisEngine extends CacheEngine
     {
         $connected = false;
 
+        $ssl = [];
+        if ($this->_config['tls']) {
+            $map = [
+                'ssl_ca' => 'cafile',
+                'ssl_key' => 'local_pk',
+                'ssl_cert' => 'local_cert',
+                'verify_peer' => 'verify_peer',
+                'verify_peer_name' => 'verify_peer_name',
+                'allow_self_signed' => 'allow_self_signed',
+            ];
+
+            foreach ($map as $configKey => $sslOption) {
+                if (array_key_exists($configKey, $this->_config)) {
+                    $ssl[$sslOption] = $this->_config[$configKey];
+                }
+            }
+        }
+
         try {
             $this->_Redis = new RedisCluster(
                 $this->_config['clusterName'],
@@ -145,6 +163,7 @@ class RedisEngine extends CacheEngine
                 (float)$this->_config['readTimeout'],
                 $this->_config['persistent'],
                 $this->_config['password'],
+                $this->_config['tls'] ? ['ssl' => $ssl] : null,
             );
 
             $connected = true;
@@ -388,9 +407,11 @@ class RedisEngine extends CacheEngine
     public function clear(): bool
     {
         if ($this->getConfig('clearUsesFlushDb')) {
-            $this->_Redis->flushDB(false);
+            if ($this->_Redis instanceof Redis) {
+                $this->_Redis->flushDB(false);
 
-            return true;
+                return true;
+            }
         }
 
         $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
@@ -452,9 +473,11 @@ class RedisEngine extends CacheEngine
     public function clearBlocking(): bool
     {
         if ($this->getConfig('clearUsesFlushDb')) {
-            $this->_Redis->flushDB(true);
+            if ($this->_Redis instanceof Redis) {
+                $this->_Redis->flushDB(false);
 
-            return true;
+                return true;
+            }
         }
 
         $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
