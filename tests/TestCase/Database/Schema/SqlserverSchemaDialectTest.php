@@ -400,8 +400,9 @@ SQL;
                 'length' => 19,
                 'precision' => null,
                 'unsigned' => null,
-                'autoIncrement' => null,
                 'comment' => null,
+                'autoIncrement' => null,
+                'generated' => null,
             ],
             'title' => [
                 'type' => 'string',
@@ -428,8 +429,9 @@ SQL;
                 'length' => 10,
                 'precision' => null,
                 'unsigned' => null,
-                'autoIncrement' => null,
                 'comment' => null,
+                'autoIncrement' => null,
+                'generated' => null,
             ],
             'unique_id' => [
                 'type' => 'integer',
@@ -440,6 +442,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'published' => [
                 'type' => 'boolean',
