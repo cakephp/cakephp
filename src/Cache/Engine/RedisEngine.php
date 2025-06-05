@@ -137,6 +137,7 @@ class RedisEngine extends CacheEngine
     {
         $connected = false;
 
+        // @codeCoverageIgnoreStart
         $ssl = [];
         if ($this->_config['tls']) {
             $map = [
@@ -154,6 +155,7 @@ class RedisEngine extends CacheEngine
                 }
             }
         }
+        // @codeCoverageIgnoreEnd
 
         try {
             $this->_Redis = new RedisCluster(
@@ -163,7 +165,7 @@ class RedisEngine extends CacheEngine
                 (float)$this->_config['readTimeout'],
                 $this->_config['persistent'],
                 $this->_config['password'],
-                $this->_config['tls'] ? ['ssl' => $ssl] : null,
+                $this->_config['tls'] ? ['ssl' => $ssl] : null, // @codeCoverageIgnore
             );
 
             $connected = true;
