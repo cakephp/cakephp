@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Cache\Engine;
 use Cake\Cache\Engine\RedisClusterEngine;
 use Cake\TestSuite\TestCase;
 use RedisCluster;
+use ReflectionClass;
 
 /**
  * RedisClusterEngineTest class
@@ -48,6 +49,98 @@ class RedisClusterEngineTest extends TestCase
     }
 
     protected function mockCluster(array $data): RedisCluster
+    {
+        $class = new ReflectionClass(RedisCluster::class);
+
+        /* Old version of the extension without return types */
+        if ($class->getMethod('flushdb')?->getReturnType() === null) {
+            return $this->mockClusterOld($data);
+        }
+
+        return new class ($data) extends RedisCluster {
+            public function __construct(private array $data)
+            {
+            }
+
+            /**
+             * @phpcs:disable CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore
+             */
+            public function _masters(): array
+            {
+                // @phpcs:enable CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore
+
+                return array_keys($this->data);
+            }
+
+            public function get(string $key): mixed
+            {
+                foreach ($this->data as $nodeData) {
+                    if (array_key_exists($key, $nodeData)) {
+                        return serialize($nodeData[$key]);
+                    }
+                }
+
+                return false;
+            }
+
+            /**
+             * Emulates scan and returns one key at a time, to ensure we properly handle
+             * the iteration.
+             */
+            public function scan(&$iterator, $str_node, $pattern = null, $count = 0): bool|array
+            {
+                if (!isset($this->data[$str_node])) {
+                    return false;
+                }
+
+                $keys = array_keys($this->data[$str_node]);
+
+                if ($iterator === null || $iterator['node'] !== $str_node) {
+                    $iterator = [
+                        'node' => $str_node,
+                        'count' => 0,
+                    ];
+                } else {
+                    $iterator['count'] = $iterator['count'] + 1;
+                }
+
+                $index = $iterator['count'];
+
+                if (!isset($keys[$index])) {
+                    return false;
+                }
+
+                return [ $keys[$index] ];
+            }
+
+            public function unlink(array|string $key, string ...$other_keys): RedisCluster|int|false
+            {
+                $count = 0;
+                foreach ($this->data as &$nodeData) {
+                    if (array_key_exists($key, $nodeData)) {
+                        $count++;
+                        unset($nodeData[$key]);
+                    }
+                }
+
+                return $count;
+            }
+
+            public function del(array|string $key, string ...$other_keys): RedisCluster|int|false
+            {
+                return $this->unlink($key, ...$other_keys);
+            }
+
+            public function flushdb(array|string $key_or_address, bool $async = false): RedisCluster|bool
+            {
+                $this->data = [];
+
+                return true;
+            }
+        };
+    }
+
+    protected function mockClusterOld(array $data): RedisCluster
     {
         return new class ($data) extends RedisCluster {
             public function __construct(private array $data)
