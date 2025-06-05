@@ -453,7 +453,7 @@ class RedisEngine extends CacheEngine
             }
 
             foreach ($keys as $key) {
-                $isDeleted = ($this->_Redis->del($key) > 0);
+                $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
                 $isAllDeleted = $isAllDeleted && $isDeleted;
             }
         }
@@ -463,8 +463,6 @@ class RedisEngine extends CacheEngine
 
     /**
      * Delete all keys from the cache by a blocking operation
-     *
-     * Faster than clear() using unlink method.
      *
      * @return bool True if the cache was successfully cleared, false otherwise
      */
@@ -517,7 +515,7 @@ class RedisEngine extends CacheEngine
             }
 
             foreach ($keys as $key) {
-                $isDeleted = ($this->_Redis->unlink($key) > 0);
+                $isDeleted = ((int)$this->_Redis->del($key) > 0);
                 $isAllDeleted = $isAllDeleted && $isDeleted;
             }
         }
