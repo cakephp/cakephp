@@ -406,12 +406,10 @@ class RedisEngine extends CacheEngine
      */
     public function clear(): bool
     {
-        if ($this->getConfig('clearUsesFlushDb')) {
-            if ($this->_Redis instanceof Redis) {
-                $this->_Redis->flushDB(false);
+        if ($this->getConfig('clearUsesFlushDb') && $this->_Redis instanceof Redis) {
+            $this->_Redis->flushDB(false);
 
-                return true;
-            }
+            return true;
         }
 
         $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
@@ -472,12 +470,10 @@ class RedisEngine extends CacheEngine
      */
     public function clearBlocking(): bool
     {
-        if ($this->getConfig('clearUsesFlushDb')) {
-            if ($this->_Redis instanceof Redis) {
-                $this->_Redis->flushDB(false);
+        if ($this->getConfig('clearUsesFlushDb') && $this->_Redis instanceof Redis) {
+            $this->_Redis->flushDB(false);
 
-                return true;
-            }
+            return true;
         }
 
         $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);

@@ -196,7 +196,36 @@ class RedisClusterEngineTest extends TestCase
     }
 
     /**
-     * test write numbers method
+     * testConnectRedisClusterWithTlsConfig method
+     *
+     * @return void
+     */
+    public function testConnectRedisClusterWithTlsConfig(): void
+    {
+        $mock = $this->getMockBuilder(RedisEngine::class)
+            ->onlyMethods(['connectRedisCluster'])
+            ->getMock();
+
+        $mock->expects($this->once())
+            ->method('connectRedisCluster')
+            ->willReturn(true);
+
+        $config = [
+            'nodes' => $this->redisClusterNodes(),
+            'tls' => true,
+            'ssl_ca' => '/tmp/fake-cert.pem',
+            'ssl_key' => '/tmp/fake-key.pem',
+            'ssl_cert' => '/tmp/fake-cert.pem',
+            'timeout' => 1,
+            'readTimeout' => 1,
+            'persistent' => true,
+        ];
+
+        $this->assertTrue($mock->init($config));
+    }
+
+    /**
+     * testWriteNumbers method
      *
      * @return void
      */
