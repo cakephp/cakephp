@@ -408,6 +408,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => true,
+                'generated' => null,
             ],
             'title' => [
                 'type' => 'string',
@@ -436,6 +437,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'unique_id' => [
                 'type' => 'integer',
@@ -446,6 +448,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'published' => [
                 'type' => 'boolean',
@@ -608,6 +611,7 @@ SQL;
                 'unsigned' => false,
                 'comment' => '',
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'geo_line' => [
                 'type' => 'linestring',
