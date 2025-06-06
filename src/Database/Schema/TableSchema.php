@@ -156,10 +156,12 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         'integer' => [
             'unsigned' => null,
             'autoIncrement' => null,
+            'generated' => null,
         ],
         'biginteger' => [
             'unsigned' => null,
             'autoIncrement' => null,
+            'generated' => null,
         ],
         'decimal' => [
             'unsigned' => null,

@@ -690,10 +690,14 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_BIGINTEGER,
         ];
         $autoIncrement = (bool)($column['autoIncrement'] ?? false);
-        if (
+        $isAutoincrement = (
             in_array($column['type'], $autoIncrementTypes, true) &&
             $autoIncrement
-        ) {
+        );
+        $version = $this->_driver->version();
+        $identityVersion = version_compare($version, '10.0', '>=');
+
+        if ($isAutoincrement && !$identityVersion) {
             $typeMap[$column['type']] = str_replace('INT', 'SERIAL', $typeMap[$column['type']]);
             unset($column['default']);
         }
@@ -762,6 +766,11 @@ class PostgresSchemaDialect extends SchemaDialect
 
         if (isset($column['null']) && $column['null'] === false) {
             $out .= ' NOT NULL';
+        }
+
+        if ($isAutoincrement && $identityVersion) {
+            $generated = $column['generated'] ?? 'BY DEFAULT';
+            $out .= ' GENERATED ' . $generated . ' AS IDENTITY';
         }
 
         $datetimeTypes = [

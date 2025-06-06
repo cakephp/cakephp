@@ -242,6 +242,7 @@ class TableSchemaTest extends TestCase
             'unsigned' => null,
             'comment' => null,
             'autoIncrement' => null,
+            'generated' => null,
         ];
         $this->assertEquals($expected, $result);
 
