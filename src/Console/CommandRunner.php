@@ -264,6 +264,14 @@ class CommandRunner implements EventDispatcherInterface
             if ($commands->has($name)) {
                 return [$name, array_slice($argv, $i)];
             }
+
+            $firstChar = $name[0] ?? '';
+            if ($firstChar == strtoupper($firstChar) && str_contains($name, '.')) {
+                $underName = Inflector::underscore($name);
+                if ($commands->has($underName)) {
+                    return [$underName, array_slice($argv, $i)];
+                }
+            }
         }
         $name = array_shift($argv);
 

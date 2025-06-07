@@ -311,6 +311,34 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * Test running a valid command with spaces in the name
+     */
+    public function testRunSubcommandNameInflection(): void
+    {
+        // Simulate typical plugin command registration.
+        $app = $this->makeAppWithCommands([
+            'my_plugin.tool demo' => DemoCommand::class,
+            'tool demo' => DemoCommand::class,
+        ]);
+        $runner = new CommandRunner($app, 'cake');
+
+        // With underscore inflection
+        $output = new StubConsoleOutput();
+        $result = $runner->run(['cake', 'my_plugin.tool', 'demo'], $this->getMockIo($output));
+        $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
+
+        // Unprefixed
+        $output = new StubConsoleOutput();
+        $result = $runner->run(['cake', 'tool', 'demo'], $this->getMockIo($output));
+        $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
+
+        // Inflected in typical plugin casing
+        $output = new StubConsoleOutput();
+        $result = $runner->run(['cake', 'MyPlugin.tool', 'demo'], $this->getMockIo($output));
+        $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
+    }
+
+    /**
      * Test using a custom factory
      */
     public function testRunWithCustomFactory(): void
