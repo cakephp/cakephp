@@ -206,7 +206,7 @@ class ClientTest extends TestCase
     }
 
     #[DataProvider('urlProvider')]
-    public function testBuildUrl(string $expected, string $url, array $query, ?array $opts): void
+    public function testBuildUrl(string $expected, string $url, array $query, ?array $opts, string $type): void
     {
         $http = new Client();
 
