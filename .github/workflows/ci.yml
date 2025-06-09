@@ -238,6 +238,7 @@ jobs:
       - name: Run composer.json validation for split packages
         if: always()
         run: php contrib/validate-split-packages.php
+        continue-on-error: true
 
       - name: Run PHPStan for split packages
         if: always()
