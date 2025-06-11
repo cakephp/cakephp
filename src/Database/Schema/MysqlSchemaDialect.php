@@ -36,7 +36,10 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function listTablesSql(array $config): array
     {
-        return ['SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database']), []];
+        return [
+            'SHOW FULL TABLES FROM ' . $this->_driver->quoteIdentifier($config['database'])
+            . " WHERE TABLE_TYPE IN ('BASE TABLE', 'VIEW')"
+            , []];
     }
 
     /**
