@@ -179,7 +179,7 @@ class I18nTest extends TestCase
             );
         });
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $translator = I18n::getTranslator('custom', 'fr_FR');
             $this->assertSame('Le moo', $translator->translate('Cow'));
         });
