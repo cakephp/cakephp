@@ -31,6 +31,11 @@ class PostgresSchemaDialect extends SchemaDialect
     public const DEFAULT_SRID = 4326;
 
     /**
+     * @const string
+     */
+    public const GENERATED_BY_DEFAULT = 'BY DEFAULT';
+
+    /**
      * Generate the SQL to list the tables and views.
      *
      * @param array<string, mixed> $config The connection configuration to use for
@@ -769,7 +774,7 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         if ($isAutoincrement && $identityVersion) {
-            $generated = $column['generated'] ?? 'BY DEFAULT';
+            $generated = $column['generated'] ?? static::GENERATED_BY_DEFAULT;
             $out .= ' GENERATED ' . $generated . ' AS IDENTITY';
         }
 
