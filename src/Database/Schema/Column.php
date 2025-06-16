@@ -36,7 +36,7 @@ class Column
     /**
      * @var string
      */
-    protected string $type;
+    protected string $type = TableSchemaInterface::TYPE_STRING;
 
     /**
      * @var int|null
@@ -71,11 +71,6 @@ class Column
     protected ?int $increment = null;
 
     /**
-     * @var int|null
-     */
-    protected ?int $scale = null;
-
-    /**
      * @var string|null
      */
     protected ?string $after = null;
@@ -96,11 +91,6 @@ class Column
     protected bool $signed = true;
 
     /**
-     * @var bool
-     */
-    protected bool $timezone = false;
-
-    /**
      * @var array
      */
     protected array $properties = [];
@@ -114,11 +104,6 @@ class Column
      * @var int|null
      */
     protected ?int $srid = null;
-
-    /**
-     * @var array|null
-     */
-    protected ?array $values = null;
 
     /**
      * Column constructor
@@ -153,6 +138,11 @@ class Column
 
     /**
      * Sets the column type.
+     *
+     * Type names are not validated, as drivers and dialects may implement
+     * platform specific types that are not known by cakephp.
+     *
+     * Drivers are expected to handle unknown types gracefully.
      *
      * @param string $type Column type
      * @return $this
@@ -544,7 +534,7 @@ class Column
     protected function getValidOptions(): array
     {
         return [
-            'limit',
+            'length',
             'default',
             'null',
             'identity',
@@ -552,9 +542,8 @@ class Column
             'update',
             'comment',
             'signed',
-            'timezone',
+            'type',
             'properties',
-            'values',
             'collation',
             'srid',
             'increment',

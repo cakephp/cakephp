@@ -5,6 +5,8 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Core\Configure;
 use Cake\Database\Schema\Column;
+use Cake\Database\Schema\PostgresSchemaDialect;
+use Cake\Database\Schema\TableSchemaInterface;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
 
@@ -13,7 +15,7 @@ class ColumnTest extends TestCase
     public function testSetName(): void
     {
         $column = new Column();
-        $this->assertNull($column->getName());
+        $this->assertEquals('', $column->getName());
 
         $column->setName('id');
         $this->assertSame('id', $column->getName());
@@ -22,20 +24,15 @@ class ColumnTest extends TestCase
     public function testSetType(): void
     {
         $column = new Column();
-        $this->assertNull($column->getType());
+        $this->assertEquals(TableSchemaInterface::TYPE_STRING, $column->getType());
 
         $column->setType('integer');
         $this->assertSame('integer', $column->getType());
-    }
 
-    public function testSetTypeInvalid(): void
-    {
-        $column = new Column();
-
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('"invalid" is not a valid column type.');
-
-        $column->setType('invalid');
+        // Types are not validated, so that we can preserve types we don't have specific handling
+        // for, as drivers and dialects can implement their own types.
+        $column->setType('imaginary');
+        $this->assertSame('imaginary', $column->getType());
     }
 
     public function testSetLength(): void
@@ -50,16 +47,16 @@ class ColumnTest extends TestCase
     public function testSetNull(): void
     {
         $column = new Column();
-        $this->assertTrue($column->isNull());
-        $this->assertNull($column->getNull());
-
-        $column->setNull(false);
         $this->assertFalse($column->isNull());
         $this->assertFalse($column->getNull());
 
         $column->setNull(true);
         $this->assertTrue($column->isNull());
         $this->assertTrue($column->getNull());
+
+        $column->setNull(false);
+        $this->assertFalse($column->isNull());
+        $this->assertFalse($column->getNull());
     }
 
     public function testSetDefault(): void
@@ -69,14 +66,12 @@ class ColumnTest extends TestCase
 
         $column->setDefault('default_value');
         $this->assertSame('default_value', $column->getDefault());
-
-        // TODO literal values?
     }
 
     public function testSetGenerated(): void
     {
         $column = new Column();
-        $this->assertNull($column->getGenerated());
+        $this->assertEquals(PostgresSchemaDialect::GENERATED_BY_DEFAULT, $column->getGenerated());
 
         $column->setGenerated('by default');
         $this->assertEquals('by default', $column->getGenerated());
@@ -136,19 +131,19 @@ class ColumnTest extends TestCase
     public function testSetSigned(): void
     {
         $column = new Column();
-        $this->assertNull($column->getSigned());
-
-        $column->setSigned(true);
         $this->assertTrue($column->getSigned());
 
         $column->setSigned(false);
         $this->assertFalse($column->getSigned());
+
+        $column->setSigned(true);
+        $this->assertTrue($column->getSigned());
     }
 
     public function testSetOptionsIdentity(): void
     {
         $column = new Column();
-        $this->assertTrue($column->isNull());
+        $this->assertFalse($column->isNull());
         $this->assertFalse($column->isIdentity());
 
         $column->setOptions(['identity' => true]);
@@ -177,11 +172,11 @@ class ColumnTest extends TestCase
     public function testColumnNullFeatureFlag(): void
     {
         $column = new Column();
-        $this->assertTrue($column->isNull());
-
-        Configure::write('Migrations.column_null_default', false);
-        $column = new Column();
         $this->assertFalse($column->isNull());
+
+        Configure::write('Migrations.column_null_default', true);
+        $column = new Column();
+        $this->assertTrue($column->isNull());
     }
 
     public function testSetOptions(): void
