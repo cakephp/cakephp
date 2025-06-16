@@ -228,6 +228,8 @@ class TableSchemaTest extends TestCase
             'collate' => null,
         ];
         $this->assertEquals($expected, $result);
+        $column = $table->column('title');
+        $this->assertSame($expected['type'], $column->getType());
 
         $table->addColumn('author_id', [
             'type' => 'integer',
@@ -245,21 +247,29 @@ class TableSchemaTest extends TestCase
             'generated' => null,
         ];
         $this->assertEquals($expected, $result);
+        $column = $table->column('author_id');
+        $this->assertSame($expected['type'], $column->getType());
 
         $table->addColumn('amount', [
             'type' => 'decimal',
+            'length' => 10,
+            'precision' => 3,
         ]);
         $result = $table->getColumn('amount');
         $expected = [
             'type' => 'decimal',
-            'length' => null,
-            'precision' => null,
+            'length' => 10,
+            'precision' => 3,
             'default' => null,
             'null' => null,
             'unsigned' => null,
             'comment' => null,
         ];
         $this->assertEquals($expected, $result);
+        $column = $table->column('amount');
+        $this->assertSame($expected['type'], $column->getType());
+        $this->assertSame($expected['length'], $column->getLength());
+        $this->assertSame($expected['precision'], $column->getPrecision());
     }
 
     /**

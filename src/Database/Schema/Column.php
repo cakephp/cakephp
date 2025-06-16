@@ -535,6 +535,7 @@ class Column
     {
         return [
             'length',
+            'precision',
             'default',
             'null',
             'identity',
