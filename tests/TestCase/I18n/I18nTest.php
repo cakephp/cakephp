@@ -183,38 +183,6 @@ class I18nTest extends TestCase
     }
 
     /**
-     * Tests that custom translation loaders can be created on the fly and used later on
-     *
-     * @deprecated
-     */
-    public function testCreateCustomTranslationInvokable(): void
-    {
-        $loader = new class {
-            public function __invoke(): Package
-            {
-                $package = new Package('default');
-                $package->setMessages([
-                    'Cow' => 'Le moo',
-                ]);
-
-                return $package;
-            }
-        };
-
-        I18n::config('custom', function ($domain, $locale) use ($loader) {
-            return new $loader(
-                $domain,
-                $locale,
-            );
-        });
-
-        $this->deprecated(function (): void {
-            $translator = I18n::getTranslator('custom', 'fr_FR');
-            $this->assertSame('Le moo', $translator->translate('Cow'));
-        });
-    }
-
-    /**
      * Tests that messages can also be loaded from plugins by using the
      * domain = plugin_name convention
      */
