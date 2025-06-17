@@ -249,7 +249,10 @@ function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?Da
         return $value;
     }
 
-    if ($value instanceof DateTimeInterface) {
+    if (
+        $value instanceof DateTimeInterface ||
+        $value instanceof Date
+    ) {
         return DateTime::parse($value);
     }
 

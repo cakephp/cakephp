@@ -106,7 +106,7 @@ class FormHelper extends Helper
             'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
             // Input group wrapper for checkboxes created via control().
             'checkboxFormGroup' => '{{label}}',
-            // Wrapper container for checkboxes.
+            // Wrapper container for checkboxes in a multicheckbox input
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
             // Error message wrapper elements.
             'error' => '<div class="error-message" id="{{id}}">{{content}}</div>',

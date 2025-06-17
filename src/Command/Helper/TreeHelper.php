@@ -33,7 +33,8 @@ class TreeHelper extends Helper
      * @inheritDoc
      */
     protected array $_defaultConfig = [
-        'initialIndent' => 0,
+        'baseIndent' => 0,
+        'elementIndent' => 0,
     ];
 
     /**
@@ -44,10 +45,8 @@ class TreeHelper extends Helper
      */
     public function output(array $args): void
     {
-        $initialIndent = str_repeat(' ', $this->_config['initialIndent']);
-        foreach ($args as $key => $value) {
-            $this->outputElement($key, $value, $initialIndent, '', '');
-        }
+        $prefix = str_repeat(' ', $this->_config['baseIndent']);
+        $this->outputArray($args, $prefix, topLevel: true);
     }
 
     /**
@@ -55,17 +54,19 @@ class TreeHelper extends Helper
      *
      * @param array $array
      * @param string $prefix
+     * @param bool $topLevel
      * @return void
      */
-    protected function outputArray(array $array, string $prefix): void
+    protected function outputArray(array $array, string $prefix, bool $topLevel): void
     {
         $i = 1;
         $numValues = count($array);
+        $elementPrefix = $topLevel ? '' : str_repeat(' ', $this->_config['elementIndent']);
         foreach ($array as $key => $value) {
             $isLast = $i++ === $numValues;
             $marker = $isLast ? '└── ' : '├── ';
             $indent = $isLast ? '    ' : '│   ';
-            $this->outputElement($key, $value, $prefix, $marker, $indent);
+            $this->outputElement($key, $value, $prefix . $elementPrefix, $marker, $indent);
         }
     }
 
@@ -88,7 +89,7 @@ class TreeHelper extends Helper
     ): void {
         if (is_array($value)) {
             $this->_io->out($prefix . $marker . $key);
-            $this->outputArray($value, $prefix . $indent);
+            $this->outputArray($value, $prefix . $indent, topLevel: false);
         } elseif (is_string($key)) {
             $this->_io->out($prefix . $marker . $key);
             $this->outputValue($value, $prefix . $indent . '└── ');

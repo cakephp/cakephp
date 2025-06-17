@@ -47,10 +47,10 @@ class StubConsoleInput extends ConsoleInput
      */
     public function __construct(array $replies)
     {
-        parent::__construct();
-
-        unset($this->_input);
+        // Don't call parent on purpose as it opens php://stdin which doesn't
+        // always exist in RunInSeparateProcess tests.
         $this->replies = $replies;
+        $this->_canReadline = false;
     }
 
     /**
