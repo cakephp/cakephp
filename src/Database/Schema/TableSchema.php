@@ -409,7 +409,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             throw new DatabaseException($message);
         }
 
-        $column = new Column($name, $this->_columns[$name]['type']);
+        $column = new Column();
         $attrs = [];
         foreach ($this->_columns[$name] as $key => $value) {
             if ($key === 'baseType' || $value === null) {

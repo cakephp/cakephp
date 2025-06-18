@@ -423,7 +423,7 @@ class Column
     /**
      * Sets whether field should be unsigned.
      *
-     * @param bool $signed Signed
+     * @param bool $unsinged Signed
      * @return $this
      */
     public function setUnsigned(bool $unsigned)
