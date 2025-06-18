@@ -544,6 +544,18 @@ SQL;
                 $result->getColumn($field),
                 'Field definition does not match for ' . $field,
             );
+            $col = $result->column($field);
+            $this->assertEquals($definition['type'], $col->getType());
+            $this->assertEquals($definition['null'], $col->getNull());
+            $this->assertEquals($definition['length'], $col->getLength());
+            $this->assertEquals($definition['precision'], $col->getPrecision());
+            $this->assertEquals($definition['comment'], $col->getComment());
+            if (isset($definition['onUpdate'])) {
+                $this->assertEquals($definition['onUpdate'], $col->getOnUpdate());
+            }
+            if (isset($definition['collate'])) {
+                $this->assertEquals($definition['collate'], $col->getCollate());
+            }
         }
 
         $columns = $dialect->describeColumns('schema_articles');

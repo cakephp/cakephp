@@ -415,6 +415,10 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             if ($key === 'baseType' || $value === null) {
                 continue;
             }
+            if ($key === 'autoIncrement') {
+                // TODO what to do with this?
+                continue;
+            }
             $attrs[$key] = $value;
         }
         $column->setOptions($attrs);
