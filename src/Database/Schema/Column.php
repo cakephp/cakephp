@@ -625,6 +625,7 @@ class Column
             'srid' => $this->getSrid(),
             'comment' => $this->getComment(),
             'autoIncrement' => $this->getIdentity(),
+            'identity' => $this->getIdentity(),
         ];
     }
 }
