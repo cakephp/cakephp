@@ -18,7 +18,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
-use Cake\Core\Configure;
 use RuntimeException;
 
 /**
@@ -109,14 +108,6 @@ class Column
      * @var int|null
      */
     protected ?int $srid = null;
-
-    /**
-     * Column constructor
-     */
-    public function __construct()
-    {
-        $this->null = (bool)Configure::read('Migrations.column_null_default');
-    }
 
     /**
      * Sets the column name.

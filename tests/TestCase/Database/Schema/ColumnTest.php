@@ -47,16 +47,16 @@ class ColumnTest extends TestCase
     public function testSetNull(): void
     {
         $column = new Column();
-        $this->assertFalse($column->isNull());
-        $this->assertFalse($column->getNull());
-
-        $column->setNull(true);
         $this->assertTrue($column->isNull());
         $this->assertTrue($column->getNull());
 
         $column->setNull(false);
         $this->assertFalse($column->isNull());
         $this->assertFalse($column->getNull());
+
+        $column->setNull(true);
+        $this->assertTrue($column->isNull());
+        $this->assertTrue($column->getNull());
     }
 
     public function testSetDefault(): void
@@ -145,7 +145,7 @@ class ColumnTest extends TestCase
     public function testSetOptionsIdentity(): void
     {
         $column = new Column();
-        $this->assertFalse($column->isNull());
+        $this->assertTrue($column->isNull());
         $this->assertFalse($column->isIdentity());
 
         $column->setOptions(['identity' => true]);
@@ -169,16 +169,6 @@ class ColumnTest extends TestCase
 
         $column->setSrid(4326);
         $this->assertSame(4326, $column->getSrid());
-    }
-
-    public function testColumnNullFeatureFlag(): void
-    {
-        $column = new Column();
-        $this->assertFalse($column->isNull());
-
-        Configure::write('Migrations.column_null_default', true);
-        $column = new Column();
-        $this->assertTrue($column->isNull());
     }
 
     public function testSetOptions(): void
