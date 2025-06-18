@@ -128,16 +128,18 @@ class ColumnTest extends TestCase
         $this->assertSame('This is a comment', $column->getComment());
     }
 
-    public function testSetSigned(): void
+    public function testSetUnsigned(): void
     {
         $column = new Column();
-        $this->assertTrue($column->getSigned());
+        $this->assertTrue($column->getUnsigned());
 
-        $column->setSigned(false);
-        $this->assertFalse($column->getSigned());
+        $column->setUnsigned(false);
+        $this->assertFalse($column->getUnsigned());
 
-        $column->setSigned(true);
-        $this->assertTrue($column->getSigned());
+        $column->setUnsigned(true);
+        $this->assertTrue($column->getUnsigned());
+        $this->assertTrue($column->isUnsigned());
+        $this->assertFalse($column->isSigned());
     }
 
     public function testSetOptionsIdentity(): void

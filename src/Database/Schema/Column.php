@@ -88,7 +88,7 @@ class Column
     /**
      * @var bool
      */
-    protected bool $signed = true;
+    protected bool $unsigned = true;
 
     /**
      * @var array
@@ -425,26 +425,26 @@ class Column
     }
 
     /**
-     * Sets whether field should be signed.
+     * Sets whether field should be unsigned.
      *
      * @param bool $signed Signed
      * @return $this
      */
-    public function setSigned(bool $signed)
+    public function setUnsigned(bool $unsigned)
     {
-        $this->signed = $signed;
+        $this->unsigned = $unsigned;
 
         return $this;
     }
 
     /**
-     * Gets whether field should be signed.
+     * Gets whether field should be unsigned.
      *
      * @return bool
      */
-    public function getSigned(): bool
+    public function getUnsigned(): bool
     {
-        return $this->signed;
+        return $this->unsigned;
     }
 
     /**
@@ -454,7 +454,17 @@ class Column
      */
     public function isSigned(): bool
     {
-        return $this->getSigned();
+        return !$this->getUnsigned();
+    }
+
+    /**
+     * Should the column be unsigned?
+     *
+     * @return bool
+     */
+    public function isUnsigned(): bool
+    {
+        return $this->getUnsigned();
     }
 
     /**
