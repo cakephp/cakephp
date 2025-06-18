@@ -4803,7 +4803,10 @@ class TableTest extends TestCase
 
         $this->assertTrue($authors->Articles->replace($author, $newArticles));
         $this->assertCount(count($newArticles), $author->articles);
-        $this->assertEquals((new Collection($newArticles))->extract('title'), (new Collection($author->articles))->extract('title'));
+        $this->assertEquals(
+            (new Collection($newArticles))->extract('title')->toArray(),
+            (new Collection($author->articles))->extract('title')->toArray(),
+        );
     }
 
     /**
