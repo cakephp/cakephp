@@ -544,17 +544,29 @@ SQL;
                 $result->getColumn($field),
                 'Field definition does not match for ' . $field,
             );
+
+            // Integration test for column() method.
             $col = $result->column($field);
             $this->assertEquals($definition['type'], $col->getType());
             $this->assertEquals($definition['null'], $col->getNull());
             $this->assertEquals($definition['length'], $col->getLength());
+            $this->assertEquals($definition['default'], $col->getDefault());
             $this->assertEquals($definition['precision'], $col->getPrecision());
             $this->assertEquals($definition['comment'], $col->getComment());
             if (isset($definition['onUpdate'])) {
                 $this->assertEquals($definition['onUpdate'], $col->getOnUpdate());
+            } else {
+                $this->assertNull($col->getOnUpdate());
             }
             if (isset($definition['collate'])) {
                 $this->assertEquals($definition['collate'], $col->getCollate());
+            } else {
+                $this->assertNull($col->getCollate());
+            }
+            if (isset($definition['autoIncrement'])) {
+                $this->assertEquals($definition['autoIncrement'], $col->getIdentity());
+            } else {
+                $this->assertFalse($col->getIdentity());
             }
         }
 
