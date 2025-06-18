@@ -68,6 +68,11 @@ class Column
     /**
      * @var int|null
      */
+    protected ?int $precision = null;
+
+    /**
+     * @var int|null
+     */
     protected ?int $increment = null;
 
     /**
@@ -78,7 +83,7 @@ class Column
     /**
      * @var string|null
      */
-    protected ?string $update = null;
+    protected ?string $onUpdate = null;
 
     /**
      * @var string|null
@@ -98,7 +103,7 @@ class Column
     /**
      * @var string|null
      */
-    protected ?string $collation = null;
+    protected ?string $collate = null;
 
     /**
      * @var int|null
@@ -334,7 +339,7 @@ class Column
      */
     public function setOnUpdate(string $update)
     {
-        $this->update = $update;
+        $this->onUpdate = $update;
 
         return $this;
     }
@@ -346,7 +351,7 @@ class Column
      */
     public function getOnUpdate(): ?string
     {
-        return $this->update;
+        return $this->onUpdate;
     }
 
     /**
@@ -496,9 +501,9 @@ class Column
      * @param string $collation Collation
      * @return $this
      */
-    public function setCollation(string $collation)
+    public function setCollate(string $collation)
     {
-        $this->collation = $collation;
+        $this->collate = $collation;
 
         return $this;
     }
@@ -508,9 +513,9 @@ class Column
      *
      * @return string|null
      */
-    public function getCollation(): ?string
+    public function getCollate(): ?string
     {
-        return $this->collation;
+        return $this->collate;
     }
 
     /**
@@ -550,12 +555,12 @@ class Column
             'null',
             'identity',
             'after',
-            'update',
+            'onUpdate',
             'comment',
-            'signed',
+            'unsigned',
             'type',
             'properties',
-            'collation',
+            'collate',
             'srid',
             'increment',
             'generated',
@@ -613,9 +618,9 @@ class Column
             'length' => $length,
             'null' => $this->getNull(),
             'default' => $this->getDefault(),
-            'unsigned' => !$this->getSigned(),
+            'unsigned' => !$this->getUnsigned(),
             'onUpdate' => $this->getOnUpdate(),
-            'collate' => $this->getCollation(),
+            'collate' => $this->getCollate(),
             'precision' => $precision,
             'srid' => $this->getSrid(),
             'comment' => $this->getComment(),

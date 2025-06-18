@@ -156,10 +156,10 @@ class ColumnTest extends TestCase
     public function testSetCollation(): void
     {
         $column = new Column();
-        $this->assertNull($column->getCollation());
+        $this->assertNull($column->getCollate());
 
-        $column->setCollation('utf8mb4_general_ci');
-        $this->assertSame('utf8mb4_general_ci', $column->getCollation());
+        $column->setCollate('utf8mb4_general_ci');
+        $this->assertSame('utf8mb4_general_ci', $column->getCollate());
     }
 
     public function testSetSrid(): void
@@ -189,13 +189,13 @@ class ColumnTest extends TestCase
             'length' => 255,
             'null' => false,
             'default' => 'default_value',
-            'collation' => 'utf8mb4_general_ci',
+            'collate' => 'utf8mb4_general_ci',
         ];
         $column->setOptions($options);
 
         $this->assertSame(255, $column->getLength());
         $this->assertFalse($column->isNull());
         $this->assertSame('default_value', $column->getDefault());
-        $this->assertSame('utf8mb4_general_ci', $column->getCollation());
+        $this->assertSame('utf8mb4_general_ci', $column->getCollate());
     }
 }
