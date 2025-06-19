@@ -886,7 +886,21 @@ SQL;
             $schemaAttrs = array_intersect_key($schemaField, $field);
             $expectedAttrs = array_intersect_key($field, $schemaAttrs);
             $this->assertEquals($expectedAttrs, $schemaAttrs);
+
+            // Integration test for column() method.
+            $col = $schema->column($field['name']);
+            $this->assertEquals($field['type'], $col->getType());
+            $this->assertEquals($field['null'], $col->getNull());
+            $this->assertEquals($field['length'], $col->getLength());
+            $this->assertEquals($field['default'], $col->getDefault());
+            $this->assertEquals($field['comment'], $col->getComment());
+            if (isset($field['autoIncrement'])) {
+                $this->assertEquals($field['autoIncrement'], $col->getIdentity());
+            } else {
+                $this->assertFalse($col->getIdentity());
+            }
         }
+
     }
 
     /**
