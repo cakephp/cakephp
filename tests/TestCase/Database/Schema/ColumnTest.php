@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 namespace Cake\Test\TestCase\Database\Schema;
 
-use Cake\Core\Configure;
 use Cake\Database\Schema\Column;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\TableSchemaInterface;

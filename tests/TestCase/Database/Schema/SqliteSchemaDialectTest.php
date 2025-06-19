@@ -900,7 +900,6 @@ SQL;
                 $this->assertFalse($col->getIdentity());
             }
         }
-
     }
 
     /**
