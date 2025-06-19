@@ -529,6 +529,33 @@ SQL;
             $expectedFields = array_intersect_key($expectedItem, $column);
             $resultFields = array_intersect_key($column, $expectedFields);
             $this->assertEquals($expectedFields, $resultFields, 'difference in ' . $column['name']);
+
+            // Integration test for column() method.
+            $col = $result->column($column['name']);
+            $this->assertEquals($column['type'], $col->getType());
+            $this->assertEquals($column['null'], $col->getNull());
+            $this->assertEquals($column['length'], $col->getLength());
+            $this->assertEquals($column['default'], $col->getDefault());
+            $this->assertEquals($column['comment'], $col->getComment());
+
+            if (isset($column['precision'])) {
+                $this->assertEquals($column['precision'], $col->getPrecision());
+            }
+            if (isset($column['onUpdate'])) {
+                $this->assertEquals($column['onUpdate'], $col->getOnUpdate());
+            } else {
+                $this->assertNull($col->getOnUpdate());
+            }
+            if (isset($column['collate'])) {
+                $this->assertEquals($column['collate'], $col->getCollate());
+            } else {
+                $this->assertNull($col->getCollate());
+            }
+            if (isset($column['autoIncrement'])) {
+                $this->assertEquals($column['autoIncrement'], $col->getIdentity());
+            } else {
+                $this->assertFalse($col->getIdentity());
+            }
         }
     }
 
