@@ -421,7 +421,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             }
             $attrs[$key] = $value;
         }
-        $column->setOptions($attrs);
+        $column->setAttributes($attrs);
 
         return $column;
     }

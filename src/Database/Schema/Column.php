@@ -559,25 +559,25 @@ class Column
     }
 
     /**
-     * Utility method that maps an array of column options to this object's methods.
+     * Utility method that maps an array of column attributes to this object's methods.
      *
-     * @param array<string, mixed> $options Options
+     * @param array<string, mixed> $attributes Attributes
      * @throws \RuntimeException
      * @return $this
      */
-    public function setOptions(array $options)
+    public function setAttributes(array $attributes)
     {
         $validOptions = $this->getValidOptions();
-        if (isset($options['identity']) && $options['identity'] && !isset($options['null'])) {
-            $options['null'] = false;
+        if (isset($attributes['identity']) && $attributes['identity'] && !isset($attributes['null'])) {
+            $attributes['null'] = false;
         }
 
-        foreach ($options as $option => $value) {
-            if (!in_array($option, $validOptions, true)) {
-                throw new RuntimeException(sprintf('"%s" is not a valid column option.', $option));
+        foreach ($attributes as $attribute => $value) {
+            if (!in_array($attribute, $validOptions, true)) {
+                throw new RuntimeException(sprintf('"%s" is not a valid column option.', $attribute));
             }
 
-            $method = 'set' . ucfirst($option);
+            $method = 'set' . ucfirst($attribute);
             $this->$method($value);
         }
 

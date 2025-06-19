@@ -100,14 +100,14 @@ class ColumnTest extends TestCase
         $this->assertSame('CURRENT_TIMESTAMP', $column->getOnUpdate());
     }
 
-    public function testSetOptionThrowsExceptionIfOptionIsNotString(): void
+    public function testSetAttributesThrowsExceptionIfOptionIsNotString(): void
     {
         $column = new Column();
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"0" is not a valid column option.');
 
-        $column->setOptions(['identity']);
+        $column->setAttributes(['identity']);
     }
 
     public function testSetAfter(): void
@@ -142,13 +142,13 @@ class ColumnTest extends TestCase
         $this->assertFalse($column->isSigned());
     }
 
-    public function testSetOptionsIdentity(): void
+    public function testSetAttributesIdentity(): void
     {
         $column = new Column();
         $this->assertTrue($column->isNull());
         $this->assertFalse($column->isIdentity());
 
-        $column->setOptions(['identity' => true]);
+        $column->setAttributes(['identity' => true]);
         $this->assertFalse($column->isNull());
         $this->assertTrue($column->isIdentity());
     }
@@ -171,7 +171,7 @@ class ColumnTest extends TestCase
         $this->assertSame(4326, $column->getSrid());
     }
 
-    public function testSetOptions(): void
+    public function testSetAttributes(): void
     {
         $column = new Column();
         $options = [
@@ -181,7 +181,7 @@ class ColumnTest extends TestCase
             'default' => 'default_value',
             'collate' => 'utf8mb4_general_ci',
         ];
-        $column->setOptions($options);
+        $column->setAttributes($options);
 
         $this->assertSame(255, $column->getLength());
         $this->assertFalse($column->isNull());
