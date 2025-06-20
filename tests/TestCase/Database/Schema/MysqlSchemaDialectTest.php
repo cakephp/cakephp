@@ -529,7 +529,7 @@ SQL;
             // https://mariadb.com/kb/en/json/
             $expected['config']['type'] = 'text';
             $expected['config']['length'] = 4294967295;
-            $expected['comment'] = '';
+            $expected['config']['comment'] = '';
             $expected['config']['collate'] = 'utf8mb4_bin';
         }
         if ($driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=')) {

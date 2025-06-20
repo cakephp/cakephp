@@ -402,9 +402,9 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     {
         if (!isset($this->_columns[$name])) {
             $message = sprintf(
-                'Column `%s` of table `%s` does not exist.',
-                $name,
+                'Table `%s` does not contain a column named `%s`.',
                 $this->_table,
+                $name,
             );
             throw new DatabaseException($message);
         }
