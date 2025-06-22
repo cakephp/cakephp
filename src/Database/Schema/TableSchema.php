@@ -591,6 +591,50 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
+     * Get a index object for a given index name.
+     *
+     * Will read from index data, and then from constraints data.
+     * This reflects the move to consolidate indexes and constraints into
+     * a structure that better matches SQL conventions.
+     *
+     * Will raise an exception if no index or constraint can be found.
+     *
+     * @param string $name The name of the index to get.
+     * @return \Cake\Database\Schema\Index
+     */
+    public function index(string $name): Index
+    {
+        $data = $this->getIndex($name);
+        if (!$data) {
+            $data = $this->getConstraint($name);
+            // You can't read foreign keys as indexes. Use `foreignKey()` instead.
+            if (!in_array($data['type'], [static::CONSTRAINT_UNIQUE, static::CONSTRAINT_PRIMARY])) {
+                $data = null;
+            }
+        }
+        if ($data === null) {
+            $message = sprintf(
+                'Table `%s` does not contain a index named `%s`.',
+                $this->_table,
+                $name,
+            );
+            throw new DatabaseException($message);
+        }
+
+        $index = new Index();
+        $attrs = [];
+        foreach ($data as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
+            $attrs[$key] = $value;
+        }
+        $index->setAttributes($attrs);
+
+        return $index;
+    }
+
+    /**
      * @inheritDoc
      */
     public function getPrimaryKey(): array

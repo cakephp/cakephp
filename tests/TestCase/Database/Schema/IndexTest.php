@@ -46,17 +46,17 @@ class IndexTest extends TestCase
         $this->assertSame('my_index', $index->getName());
     }
 
-    public function testSetLimit(): void
+    public function testSetLength(): void
     {
         $index = new Index();
-        $this->assertNull($index->getLimit());
+        $this->assertNull($index->getLength());
 
-        $index->setLimit(255);
-        $this->assertSame(255, $index->getLimit());
+        $index->setLength(255);
+        $this->assertSame(255, $index->getLength());
 
         // MySQL supports per-column limits for indexes.
-        $index->setLimit(['title' => 100, 'name' => 50]);
-        $this->assertSame(['title' => 100, 'name' => 50], $index->getLimit());
+        $index->setLength(['title' => 100, 'name' => 50]);
+        $this->assertSame(['title' => 100, 'name' => 50], $index->getLength());
     }
 
     public function testSetOrder(): void

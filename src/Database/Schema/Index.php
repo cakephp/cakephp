@@ -60,7 +60,7 @@ class Index
     /**
      * @var array|int|null
      */
-    protected int|array|null $limit = null;
+    protected int|array|null $length = null;
 
     /**
      * @var ?array<string>
@@ -152,7 +152,7 @@ class Index
     }
 
     /**
-     * Sets the index limit.
+     * Sets the index length.
      *
      * In MySQL indexes can have limit clauses to control the number of
      * characters indexed in text and char columns.
@@ -160,7 +160,7 @@ class Index
      * @param array<string, int>|int $limit limit value or array of limit value
      * @return $this
      */
-    public function setLimit(int|array $limit)
+    public function setLength(int|array $limit)
     {
         $this->limit = $limit;
 
@@ -168,11 +168,11 @@ class Index
     }
 
     /**
-     * Gets the index limit.
+     * Gets the index length.
      *
      * @return array<string, int>|int|null
      */
-    public function getLimit(): array|int|null
+    public function getLength(): array|int|null
     {
         return $this->limit;
     }
@@ -286,7 +286,7 @@ class Index
     public function setAttributes(array $attributes)
     {
         // Valid Options
-        $validOptions = ['columns', 'concurrently', 'type', 'unique', 'name', 'limit', 'order', 'include', 'where'];
+        $validOptions = ['columns', 'concurrently', 'type', 'unique', 'name', 'length', 'order', 'include', 'where'];
         foreach ($attributes as $attr => $value) {
             if (!in_array($attr, $validOptions, true)) {
                 throw new RuntimeException(sprintf('"%s" is not a valid index option.', $attr));

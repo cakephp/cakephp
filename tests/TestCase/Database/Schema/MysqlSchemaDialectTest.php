@@ -753,6 +753,12 @@ SQL;
 
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
+
+            // Compare with the index() method as well.
+            $indexObject = $result->index($index['name']);
+            foreach ($expectedFields as $key => $value) {
+                $this->assertEquals($value, $indexObject->{'get' . ucfirst($key)}());
+            }
         }
 
         // Compare describeForeignKeys()
