@@ -30,11 +30,6 @@ class Index
     /**
      * @var string
      */
-    public const UNIQUE = TableSchema::CONSTRAINT_UNIQUE;
-
-    /**
-     * @var string
-     */
     public const INDEX = TableSchema::INDEX_INDEX;
 
     /**
@@ -160,9 +155,9 @@ class Index
      * @param array<string, int>|int $limit limit value or array of limit value
      * @return $this
      */
-    public function setLength(int|array $limit)
+    public function setLength(int|array $length)
     {
-        $this->limit = $limit;
+        $this->length = $length;
 
         return $this;
     }
@@ -174,7 +169,7 @@ class Index
      */
     public function getLength(): array|int|null
     {
-        return $this->limit;
+        return $this->length;
     }
 
     /**
@@ -286,20 +281,11 @@ class Index
     public function setAttributes(array $attributes)
     {
         // Valid Options
-        $validOptions = ['columns', 'concurrently', 'type', 'unique', 'name', 'length', 'order', 'include', 'where'];
+        $validOptions = ['columns', 'concurrently', 'type', 'name', 'length', 'order', 'include', 'where'];
         foreach ($attributes as $attr => $value) {
             if (!in_array($attr, $validOptions, true)) {
                 throw new RuntimeException(sprintf('"%s" is not a valid index option.', $attr));
             }
-
-            // handle $attributes['unique'] = truthy
-            if ($attr == self::UNIQUE) {
-                if ((bool)$value) {
-                    $this->setType(self::UNIQUE);
-                }
-                continue;
-            }
-
             $method = 'set' . ucfirst($attr);
             $this->$method($value);
         }

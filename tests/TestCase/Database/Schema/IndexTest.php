@@ -15,14 +15,11 @@ class IndexTest extends TestCase
         $index = new Index();
         $this->assertSame(Index::INDEX, $index->getType());
 
-        $index->setType(Index::UNIQUE);
-        $this->assertSame(Index::UNIQUE, $index->getType());
+        $index->setType(Index::FULLTEXT);
+        $this->assertSame(Index::FULLTEXT, $index->getType());
 
         $index->setType(Index::INDEX);
         $this->assertSame(Index::INDEX, $index->getType());
-
-        $index->setType(Index::FULLTEXT);
-        $this->assertSame(Index::FULLTEXT, $index->getType());
     }
 
     public function testSetColumns(): void
@@ -122,30 +119,5 @@ class IndexTest extends TestCase
             $method = 'get' . ucfirst($key);
             $this->assertSame($value, $index->{$method}());
         }
-    }
-
-    public function testSetAttributesUnique(): void
-    {
-        $index = new Index();
-        $attrs = [
-            'name' => 'unique_index',
-            'columns' => ['title'],
-            'unique' => true,
-        ];
-        $index->setAttributes($attrs);
-        $this->assertSame(Index::UNIQUE, $index->getType());
-        $this->assertSame('unique_index', $index->getName());
-        $this->assertSame(['title'], $index->getColumns());
-
-        $index = new Index();
-        $attrs = [
-            'name' => 'unique_int',
-            'columns' => ['name'],
-            'unique' => 1,
-        ];
-        $index->setAttributes($attrs);
-        $this->assertSame(Index::UNIQUE, $index->getType());
-        $this->assertSame('unique_int', $index->getName());
-        $this->assertSame(['name'], $index->getColumns());
     }
 }
