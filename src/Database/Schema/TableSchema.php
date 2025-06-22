@@ -400,7 +400,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function column(string $name): Column
     {
-        if (!isset($this->_columns[$name])) {
+        $data = $this->_columns[$name] ?? null;
+        if ($data === null) {
             $message = sprintf(
                 'Table `%s` does not contain a column named `%s`.',
                 $this->_table,
@@ -410,8 +411,9 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
 
         $column = new Column();
+        $data['name'] = $name;
         $attrs = [];
-        foreach ($this->_columns[$name] as $key => $value) {
+        foreach ($data as $key => $value) {
             if ($key === 'baseType' || $value === null) {
                 continue;
             }

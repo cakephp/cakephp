@@ -540,6 +540,7 @@ class Column
     protected function getValidOptions(): array
     {
         return [
+            'name',
             'length',
             'precision',
             'default',

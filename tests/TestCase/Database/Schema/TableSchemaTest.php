@@ -89,6 +89,12 @@ class TableSchemaTest extends TestCase
         $result = $table->addColumn('body', 'text');
         $this->assertSame($table, $result);
         $this->assertEquals(['title', 'body'], $table->columns());
+
+        $col = $table->column('title');
+        $this->assertEquals('title', $col->getName());
+        $this->assertEquals('string', $col->getType());
+        $this->assertEquals(25, $col->getLength());
+        $this->assertFalse($col->getNull());
     }
 
     /**
@@ -405,6 +411,11 @@ class TableSchemaTest extends TestCase
         ]);
         $this->assertSame($result, $table);
         $this->assertEquals(['faster'], $table->indexes());
+
+        $index = $table->index('faster');
+        $this->assertEquals('faster', $index->getName());
+        $this->assertEquals(['title'], $index->getColumns());
+        $this->assertEquals(TableSchema::INDEX_INDEX, $index->getType());
     }
 
     /**
