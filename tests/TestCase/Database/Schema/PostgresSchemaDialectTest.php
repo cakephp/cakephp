@@ -830,6 +830,14 @@ SQL;
 
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
+
+            if ($index['type'] !== 'index') {
+                continue;
+            }
+            $indexObj = $result->index($name);
+            foreach ($expectedFields as $key => $value) {
+                $this->assertEquals($value, $indexObj->{'get' . ucfirst($key)}());
+            }
         }
     }
 

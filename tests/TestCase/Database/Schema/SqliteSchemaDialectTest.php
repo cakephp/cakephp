@@ -553,6 +553,17 @@ SQL;
         $indexes = $dialect->describeIndexes('schema_articles');
         $this->assertCount(4, $indexes);
 
+        // Compare with the index() API.
+        foreach ($indexes as $index) {
+            if ($index['type'] !== TableSchema::INDEX_INDEX) {
+                continue;
+            }
+            $indexObj = $result->index($index['name']);
+            foreach ($index as $key => $value) {
+                $this->assertEquals($value, $indexObj->{'get' . ucfirst($key)}());
+            }
+        }
+
         $foreignKeys = $dialect->describeForeignKeys('schema_articles');
         $this->assertCount(1, $foreignKeys);
 
@@ -693,9 +704,13 @@ SQL;
         $indexes = $dialect->describeIndexes('schema_unique_constraint_variations');
         $this->assertCount(7, $indexes);
         foreach ($indexes as $index) {
-            $expectedIndex = $expected[$index['name']];
-            $this->assertNotEmpty($expectedIndex, 'Could not find expected for ' . $index['name']);
-            unset($index['name']);
+            $name = $index['name'];
+            $expectedIndex = $expected[$name];
+
+            // Add the name to the expected data.
+            $expectedIndex['name'] = $name;
+
+            $this->assertNotEmpty($expectedIndex, 'Could not find expected for ' . $name);
             $this->assertEquals($expectedIndex, $index);
         }
 
