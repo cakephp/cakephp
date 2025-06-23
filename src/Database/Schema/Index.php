@@ -152,7 +152,7 @@ class Index
      * In MySQL indexes can have limit clauses to control the number of
      * characters indexed in text and char columns.
      *
-     * @param array<string, int>|int $limit limit value or array of limit value
+     * @param array<string, int>|int $length length value or array of length value
      * @return $this
      */
     public function setLength(int|array $length)
@@ -164,6 +164,8 @@ class Index
 
     /**
      * Gets the index length.
+     *
+     * Can be an array of column names and lengths under MySQL.
      *
      * @return array<string, int>|int|null
      */
@@ -274,7 +276,7 @@ class Index
     /**
      * Utility method that maps an array of index options to this object's methods.
      *
-     * @param array<string, mixed> $options Options
+     * @param array<string, mixed> $attributes Attributes to set.
      * @throws \RuntimeException
      * @return $this
      */
