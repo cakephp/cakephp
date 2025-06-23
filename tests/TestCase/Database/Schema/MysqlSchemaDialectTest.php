@@ -754,6 +754,12 @@ SQL;
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
 
+            // describeIndexes will return primary keys, and unique indexes which are
+            // available under `constraint() in the future.`
+            if (!in_array($index['type'], [TableSchema::INDEX_INDEX, TableSchema::INDEX_FULLTEXT], true)) {
+                // TODO implement alongside constraint()
+                continue;
+            }
             // Compare with the index() method as well.
             $indexObject = $result->index($index['name']);
             foreach ($expectedFields as $key => $value) {
