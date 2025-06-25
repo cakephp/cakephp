@@ -613,7 +613,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
         $data['name'] = $name;
 
-        $index = new Index();
         $attrs = [];
         foreach ($data as $key => $value) {
             if ($value === null) {
@@ -621,6 +620,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             }
             $attrs[$key] = $value;
         }
+        $index = new Index();
         $index->setAttributes($attrs);
 
         return $index;

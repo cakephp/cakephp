@@ -85,7 +85,7 @@ class Index
      */
     public function setColumns(string|array $columns)
     {
-        $this->columns = is_string($columns) ? [$columns] : $columns;
+        $this->columns = (array)$columns;
 
         return $this;
     }
