@@ -6370,12 +6370,12 @@ class TableTest extends TestCase
 
         $entity = $table->get(2);
         $result = $table->loadInto($entity, [
-            'Articles' => function(SelectQuery $q) {
+            'Articles' => function (SelectQuery $q) {
                 return $q->innerJoinWith('Authors', function ($q) {
                     return $q->where(['Authors.name' => 'mariano']);
                 });
             },
-            'Articles.Authors'
+            'Articles.Authors',
         ]);
         $this->assertSame($entity, $result);
 
