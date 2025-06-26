@@ -573,9 +573,9 @@ abstract class Query implements ExpressionInterface, Stringable
      * $query->join(['something' => 'different_table'], [], true); // resets joins list
      * ```
      *
-     * @param array<string, mixed>|string $tables list of tables to be joined in the query
-     * @param array<string, string> $types Associative array of type names used to bind values to query
-     * @param bool $overwrite whether to reset joins with passed list or not
+     * @param array<int|string, mixed>|string $tables List of tables to be joined in the query.
+     * @param array<string, string> $types Associative array of type names used to bind values to query.
+     * @param bool $overwrite Whether to reset joins with passed list or not.
      * @see \Cake\Database\TypeFactory
      * @return $this
      */
