@@ -6361,6 +6361,29 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests loadInto() with a belongsTo association with a join and contain on the same table
+     */
+    public function testLoadBelongsToDoubleJoin(): void
+    {
+        $table = $this->getTableLocator()->get('Comments');
+        $table->belongsTo('Articles');
+
+        $entity = $table->get(2);
+        $result = $table->loadInto($entity, [
+            'Articles' => function(SelectQuery $q) {
+                return $q->innerJoinWith('Authors', function ($q) {
+                    return $q->where(['Authors.name' => 'mariano']);
+                });
+            },
+            'Articles.Authors'
+        ]);
+        $this->assertSame($entity, $result);
+
+        $expected = $table->get(2, contain: ['Articles.Authors']);
+        $this->assertEquals($expected, $entity);
+    }
+
+    /**
      * Tests that it is possible to post-load associations for many entities at
      * the same time
      */
