@@ -3280,8 +3280,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'table' => $this->getTable(),
             'alias' => $this->getAlias(),
             'entityClass' => $this->getEntityClass(),
-            'associations' => $this->_associations->keys(),
-            'behaviors' => $this->_behaviors->loaded(),
+            /** @phpstan-ignore isset.initializedProperty */
+            'associations' => isset($this->_associations) ? $this->_associations->keys() : [],
+            /** @phpstan-ignore isset.initializedProperty */
+            'behaviors' => isset($this->_behaviors) ? $this->_behaviors->loaded() : [],
             'defaultConnection' => static::defaultConnectionName(),
             'connectionName' => $conn->configName(),
         ];
