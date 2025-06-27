@@ -3563,6 +3563,37 @@ class TableTest extends TestCase
     }
 
     /**
+     * Checks that entity is passed into context.
+     *
+     * @return void
+     */
+    public function testValidatorWithEntityInContext(): void
+    {
+        $table = new class (['alias' => 'Users', 'table' => 'users', 'connection' => $this->connection]) extends Table {
+            public function validateMe(string $text, array $context): bool
+            {
+                if (!isset($context['entity'])) {
+                    throw new InvalidArgumentException('Entity not found in context');
+                }
+
+                return true;
+            }
+        };
+
+        $table->getValidator('default')->add(
+            'name',
+            'validateMe',
+            ['rule' => 'validateMe', 'provider' => 'table'],
+        );
+
+        $entity = $table->newEmptyEntity();
+        $result = $table->patchEntity($entity, [
+            'name' => 'test',
+        ]);
+        $this->assertSame('test', $result->get('name'));
+    }
+
+    /**
      * Tests that a InvalidArgumentException is thrown if the custom validator method does not exist.
      */
     public function testValidatorWithMissingMethod(): void
