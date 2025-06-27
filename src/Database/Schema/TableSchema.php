@@ -410,7 +410,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             throw new DatabaseException($message);
         }
 
-        $column = new Column();
         $data['name'] = $name;
         $attrs = [];
         foreach ($data as $key => $value) {
@@ -423,7 +422,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             }
             $attrs[$key] = $value;
         }
-        $column->setAttributes($attrs);
+        $column = new Column(...$attrs);
 
         return $column;
     }
@@ -620,8 +619,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             }
             $attrs[$key] = $value;
         }
-        $index = new Index();
-        $index->setAttributes($attrs);
+        $index = new Index(...$attrs);
 
         return $index;
     }

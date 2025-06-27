@@ -28,86 +28,42 @@ use RuntimeException;
 class Column
 {
     /**
-     * @var string
-     */
-    protected string $name = '';
-
-    /**
-     * @var string
-     */
-    protected string $type = TableSchemaInterface::TYPE_STRING;
-
-    /**
-     * @var int|null
-     */
-    protected ?int $length = null;
-
-    /**
-     * @var bool
-     */
-    protected bool $null = true;
-
-    /**
-     * @var mixed
-     */
-    protected mixed $default = null;
-
-    /**
-     * @var bool
-     */
-    protected bool $identity = false;
-
-    /**
-     * Postgres-only column option for identity (always|default)
+     * Constructor.
      *
-     * @var ?string
+     * @param string $name Name of the column
+     * @param string $type Type of the column
+     * @param int|null $length Length of the column
+     * @param bool $null Whether the column allows null values
+     * @param mixed $default Default value for the column
+     * @param bool $identity Whether the column is an identity column
+     * @param string|null $generated Postgres identity option (always|default)
+     * @param int|null $precision Precision for decimal or float columns
+     * @param int|null $increment Increment for identity columns
+     * @param string|null $after Name of the column to add this column after
+     * @param string|null $onUpdate MySQL 'ON UPDATE' function
+     * @param string|null $comment Comment for the column
+     * @param bool $unsigned Whether the column is unsigned
+     * @param string|null $collate Collation for the column
+     * @param string|null $srid SRID for geometry fields
      */
-    protected ?string $generated = PostgresSchemaDialect::GENERATED_BY_DEFAULT;
-
-    /**
-     * @var int|null
-     */
-    protected ?int $precision = null;
-
-    /**
-     * @var int|null
-     */
-    protected ?int $increment = null;
-
-    /**
-     * @var string|null
-     */
-    protected ?string $after = null;
-
-    /**
-     * @var string|null
-     */
-    protected ?string $onUpdate = null;
-
-    /**
-     * @var string|null
-     */
-    protected ?string $comment = null;
-
-    /**
-     * @var bool
-     */
-    protected bool $unsigned = true;
-
-    /**
-     * @var array
-     */
-    protected array $properties = [];
-
-    /**
-     * @var string|null
-     */
-    protected ?string $collate = null;
-
-    /**
-     * @var int|null
-     */
-    protected ?int $srid = null;
+    public function __construct(
+        protected string $name = '',
+        protected string $type = TableSchemaInterface::TYPE_STRING,
+        protected ?int $length = null,
+        protected bool $null = true,
+        protected mixed $default = null,
+        protected bool $identity = false,
+        protected ?string $generated = PostgresSchemaDialect::GENERATED_BY_DEFAULT,
+        protected ?int $precision = null,
+        protected ?int $increment = null,
+        protected ?string $after = null,
+        protected ?string $onUpdate = null,
+        protected ?string $comment = null,
+        protected bool $unsigned = true,
+        protected ?string $collate = null,
+        protected ?int $srid = null,
+    ) {
+    }
 
     /**
      * Sets the column name.

@@ -38,44 +38,28 @@ class Index
     public const FULLTEXT = TableSchema::INDEX_FULLTEXT;
 
     /**
-     * @var ?array<string>
+     * Constructor
+     *
+     * @param array<string>|null $columns The columns to index.
+     * @param string $type The type of index, e.g. 'index', 'fulltext'.
+     * @param ?string $name The name of the index.
+     * @param array<string, int>|int|null $length The length of the index.
+     * @param array<string>|null $order The sort order of the index columns.
+     * @param array<string>|null $includedColumns The included columns for covering indexes.
+     * @param bool $concurrent Whether the index should be created concurrently.
+     * @param ?string $where The where clause for partial indexes.
      */
-    protected ?array $columns = null;
-
-    /**
-     * @var string
-     */
-    protected string $type = self::INDEX;
-
-    /**
-     * @var string|null
-     */
-    protected ?string $name = null;
-
-    /**
-     * @var array|int|null
-     */
-    protected int|array|null $length = null;
-
-    /**
-     * @var ?array<string>
-     */
-    protected ?array $order = null;
-
-    /**
-     * @var ?array<string>
-     */
-    protected ?array $includedColumns = null;
-
-    /**
-     * @var bool
-     */
-    protected bool $concurrent = false;
-
-    /**
-     * @var string|null The where clause for partial indexes.
-     */
-    protected ?string $where = null;
+    public function __construct(
+        protected ?array $columns = null,
+        protected string $type = self::INDEX,
+        protected ?string $name = null,
+        protected array|int|null $length = null,
+        protected ?array $order = null,
+        protected ?array $includedColumns = null,
+        protected bool $concurrent = false,
+        protected ?string $where = null,
+    ) {
+    }
 
     /**
      * Sets the index columns.
