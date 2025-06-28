@@ -44,7 +44,7 @@ class Column
      * @param string|null $comment Comment for the column
      * @param bool $unsigned Whether the column is unsigned
      * @param string|null $collate Collation for the column
-     * @param string|null $srid SRID for geometry fields
+     * @param int|null $srid SRID for geometry fields
      */
     public function __construct(
         protected string $name,
@@ -417,29 +417,6 @@ class Column
     public function isUnsigned(): bool
     {
         return $this->getUnsigned();
-    }
-
-    /**
-     * Sets field properties.
-     *
-     * @param array $properties Properties
-     * @return $this
-     */
-    public function setProperties(array $properties)
-    {
-        $this->properties = $properties;
-
-        return $this;
-    }
-
-    /**
-     * Gets field properties
-     *
-     * @return array
-     */
-    public function getProperties(): array
-    {
-        return $this->properties;
     }
 
     /**
