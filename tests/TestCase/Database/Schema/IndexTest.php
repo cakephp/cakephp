@@ -13,7 +13,7 @@ class IndexTest extends TestCase
 {
     public function testSetType(): void
     {
-        $index = new Index();
+        $index = new Index('title_idx', ['title']);
         $this->assertSame(Index::INDEX, $index->getType());
 
         $index->setType(Index::FULLTEXT);
@@ -25,8 +25,8 @@ class IndexTest extends TestCase
 
     public function testSetColumns(): void
     {
-        $index = new Index();
-        $this->assertNull($index->getColumns());
+        $index = new Index('title_idx', []);
+        $this->assertSame([], $index->getColumns());
 
         $index->setColumns(['title']);
         $this->assertSame(['title'], $index->getColumns());
@@ -37,8 +37,8 @@ class IndexTest extends TestCase
 
     public function testSetName(): void
     {
-        $index = new Index();
-        $this->assertNull($index->getName());
+        $index = new Index('title_idx', ['title']);
+        $this->assertSame('title_idx', $index->getName());
 
         $index->setName('my_index');
         $this->assertSame('my_index', $index->getName());
@@ -46,7 +46,7 @@ class IndexTest extends TestCase
 
     public function testSetLength(): void
     {
-        $index = new Index();
+        $index = new Index('title_idx', ['title']);
         $this->assertNull($index->getLength());
 
         $index->setLength(255);
@@ -59,7 +59,7 @@ class IndexTest extends TestCase
 
     public function testSetOrder(): void
     {
-        $index = new Index();
+        $index = new Index('title_idx', ['title']);
         $this->assertNull($index->getOrder());
 
         $index->setOrder(['title' => 'ASC']);
@@ -71,7 +71,7 @@ class IndexTest extends TestCase
 
     public function testSetInclude(): void
     {
-        $index = new Index();
+        $index = new Index('title_idx', ['title']);
         $this->assertNull($index->getInclude());
 
         $index->setInclude(['title']);
@@ -86,7 +86,7 @@ class IndexTest extends TestCase
 
     public function testSetConcurrently(): void
     {
-        $index = new Index();
+        $index = new Index('title_idx', ['title']);
         $this->assertFalse($index->getConcurrently());
 
         $index->setConcurrently(true);
@@ -98,7 +98,7 @@ class IndexTest extends TestCase
 
     public function testSetWhere(): void
     {
-        $index = new Index();
+        $index = new Index('title_idx', ['title']);
         $this->assertNull($index->getWhere());
 
         $index->setWhere('status = 1');
@@ -110,7 +110,7 @@ class IndexTest extends TestCase
 
     public function testSetAttributes(): void
     {
-        $index = new Index();
+        $index = new Index('title_idx', ['title']);
         $attrs = [
             'name' => 'index-name',
             'columns' => ['title', 'name'],
