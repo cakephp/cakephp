@@ -13,8 +13,8 @@ class ColumnTest extends TestCase
 {
     public function testSetName(): void
     {
-        $column = new Column();
-        $this->assertEquals('', $column->getName());
+        $column = new Column('body', 'string');
+        $this->assertEquals('body', $column->getName());
 
         $column->setName('id');
         $this->assertSame('id', $column->getName());
@@ -22,7 +22,7 @@ class ColumnTest extends TestCase
 
     public function testSetType(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertEquals(TableSchemaInterface::TYPE_STRING, $column->getType());
 
         $column->setType('integer');
@@ -36,7 +36,7 @@ class ColumnTest extends TestCase
 
     public function testSetLength(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertNull($column->getLength());
 
         $column->setLength(255);
@@ -45,7 +45,7 @@ class ColumnTest extends TestCase
 
     public function testSetNull(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertTrue($column->isNull());
         $this->assertTrue($column->getNull());
 
@@ -60,7 +60,7 @@ class ColumnTest extends TestCase
 
     public function testSetDefault(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertNull($column->getDefault());
 
         $column->setDefault('default_value');
@@ -69,7 +69,7 @@ class ColumnTest extends TestCase
 
     public function testSetGenerated(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertEquals(PostgresSchemaDialect::GENERATED_BY_DEFAULT, $column->getGenerated());
 
         $column->setGenerated('by default');
@@ -78,7 +78,7 @@ class ColumnTest extends TestCase
 
     public function testSetIdentity(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertFalse($column->isIdentity());
 
         $column->setIdentity(true);
@@ -92,7 +92,7 @@ class ColumnTest extends TestCase
 
     public function testSetOnUpdate(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertNull($column->getOnUpdate());
 
         $column->setOnUpdate('CURRENT_TIMESTAMP');
@@ -101,7 +101,7 @@ class ColumnTest extends TestCase
 
     public function testSetAttributesThrowsExceptionIfOptionIsNotString(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
 
         $this->expectException(RuntimeException::class);
         $this->expectExceptionMessage('"0" is not a valid column option.');
@@ -111,7 +111,7 @@ class ColumnTest extends TestCase
 
     public function testSetAfter(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertNull($column->getAfter());
 
         $column->setAfter('previous_column');
@@ -120,7 +120,7 @@ class ColumnTest extends TestCase
 
     public function testSetComment(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertNull($column->getComment());
 
         $column->setComment('This is a comment');
@@ -129,7 +129,7 @@ class ColumnTest extends TestCase
 
     public function testSetUnsigned(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertTrue($column->getUnsigned());
 
         $column->setUnsigned(false);
@@ -143,7 +143,7 @@ class ColumnTest extends TestCase
 
     public function testSetAttributesIdentity(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertTrue($column->isNull());
         $this->assertFalse($column->isIdentity());
 
@@ -154,7 +154,7 @@ class ColumnTest extends TestCase
 
     public function testSetCollation(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertNull($column->getCollate());
 
         $column->setCollate('utf8mb4_general_ci');
@@ -163,7 +163,7 @@ class ColumnTest extends TestCase
 
     public function testSetSrid(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $this->assertNull($column->getSrid());
 
         $column->setSrid(4326);
@@ -172,7 +172,7 @@ class ColumnTest extends TestCase
 
     public function testSetAttributes(): void
     {
-        $column = new Column();
+        $column = new Column('body', 'string');
         $options = [
             'type' => 'string',
             'length' => 255,

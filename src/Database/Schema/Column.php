@@ -32,9 +32,9 @@ class Column
      *
      * @param string $name Name of the column
      * @param string $type Type of the column
-     * @param int|null $length Length of the column
      * @param bool $null Whether the column allows null values
      * @param mixed $default Default value for the column
+     * @param int|null $length Length of the column
      * @param bool $identity Whether the column is an identity column
      * @param string|null $generated Postgres identity option (always|default)
      * @param int|null $precision Precision for decimal or float columns
@@ -47,11 +47,11 @@ class Column
      * @param string|null $srid SRID for geometry fields
      */
     public function __construct(
-        protected string $name = '',
-        protected string $type = TableSchemaInterface::TYPE_STRING,
-        protected ?int $length = null,
+        protected string $name,
+        protected string $type,
         protected bool $null = true,
         protected mixed $default = null,
+        protected ?int $length = null,
         protected bool $identity = false,
         protected ?string $generated = PostgresSchemaDialect::GENERATED_BY_DEFAULT,
         protected ?int $precision = null,
