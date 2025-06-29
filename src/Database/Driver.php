@@ -47,9 +47,17 @@ use Stringable;
  * Represents a database driver containing all specificities for
  * a database engine including its SQL dialect.
  */
-abstract class Driver implements LoggerAwareInterface
+abstract class Driver implements DriverInterface
 {
     use LoggerAwareTrait;
+
+    /**
+     * The name of the driver. This is typically the class name without the "Driver" suffix.
+     * e.g., Mysql, Postgres
+     *
+     * @var string|null
+     */
+    protected ?string $_driverName = null;
 
     /**
      * @var int|null Maximum alias length or null if no limit
@@ -1071,5 +1079,32 @@ abstract class Driver implements LoggerAwareInterface
             'connected' => $this->pdo !== null,
             'role' => $this->getRole(),
         ];
+    }
+
+    /**
+     * Returns the name of the driver (e.g. Mysql, Postgres, Sqlite, Sqlserver).
+     *
+     * This is usually inferred from the class name.
+     *
+     * @return string
+     */
+    public function name(): string
+    {
+        if ($this->_driverName === null) {
+            $parts = explode('\\', static::class);
+            $this->_driverName = str_replace('Driver', '', end($parts));
+        }
+
+        return $this->_driverName;
+    }
+
+    /**
+     * Get the configuration name for this driver.
+     *
+     * @return string
+     */
+    public function configName(): string
+    {
+        return $this->_config['name'] ?? 'unknown_connection';
     }
 }
