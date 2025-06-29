@@ -163,7 +163,7 @@ class Sqlite extends Driver
      *
      * @return \Cake\Database\SqliteCompiler
      */
-    public function newCompiler(): QueryCompiler
+    public function newCompiler(): \Cake\Database\QueryCompiler
     {
         return new \Cake\Database\SqliteCompiler($this);
     }

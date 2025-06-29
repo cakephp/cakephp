@@ -169,7 +169,7 @@ class Mysql extends Driver
      *
      * @return \Cake\Database\MysqlCompiler
      */
-    public function newCompiler(): QueryCompiler
+    public function newCompiler(): \Cake\Database\QueryCompiler
     {
         return new \Cake\Database\MysqlCompiler($this);
     }
