@@ -924,7 +924,7 @@ abstract class Driver implements LoggerAwareInterface
      */
     public function newCompiler(): QueryCompiler
     {
-        return new QueryCompiler();
+        return new QueryCompiler($this);
     }
 
     /**

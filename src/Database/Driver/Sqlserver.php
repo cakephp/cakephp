@@ -298,7 +298,7 @@ class Sqlserver extends Driver
      */
     public function newCompiler(): QueryCompiler
     {
-        return new SqlserverCompiler();
+        return new \Cake\Database\SqlserverCompiler($this);
     }
 
     /**

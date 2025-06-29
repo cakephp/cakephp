@@ -165,6 +165,16 @@ class Mysql extends Driver
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @return \Cake\Database\MysqlCompiler
+     */
+    public function newCompiler(): QueryCompiler
+    {
+        return new \Cake\Database\MysqlCompiler($this);
+    }
+
+    /**
      * @inheritDoc
      */
     public function run(Query $query): StatementInterface

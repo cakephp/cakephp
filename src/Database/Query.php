@@ -165,6 +165,200 @@ abstract class Query implements ExpressionInterface, Stringable
     }
 
     /**
+     * Adds a JSON_TABLE expression to the FROM clause of the query.
+     *
+     * This method allows you to treat data from a JSON column as a relational table.
+     * The actual SQL generated will depend on the database driver (e.g., JSON_TABLE for MySQL,
+     * json_to_recordset for PostgreSQL, OPENJSON for SQL Server).
+     *
+     * Example:
+     * ```
+     * $query->fromLsonTable(
+     *     'users.settings', // The JSON column (can be an expression)
+     *     '$.preferences',  // The root path in the JSON data
+     *     [                // Column definitions
+     *         'theme' => ['type' => 'VARCHAR(50)', 'path' => '$.themeName'],
+     *         'fontSize' => ['type' => 'INT', 'path' => '$.editor.fontSize', 'default' => 12],
+     *         'item_index' => ['ordinality' => true], // For ordinality column
+     *     ],
+     *     'user_prefs'     // Alias for the resulting table
+     * );
+     * ```
+     *
+     * Each column definition in the `$columns` array can have:
+     * - `type`: (string, required unless 'ordinality' is true) The SQL data type (e.g., 'VARCHAR(100)', 'INTEGER').
+     * - `path`: (string, required unless 'ordinality' is true) The JSON path to extract the value.
+     * - `name`: (string, optional, key of the array is used if not set) The alias for this column.
+     * - `ordinality`: (bool, optional) Set to true to create an ordinality column (row number).
+     * - `default`: (mixed, optional) A default value if the path is not found or results in NULL.
+     * - `onEmpty`: (string, optional) SQL clause for when the path results in an empty value (e.g., 'NULL ON EMPTY').
+     * - `onError`: (string, optional) SQL clause for when an error occurs during path evaluation.
+     * - `nested`: (array|JsonTableExpression, optional) For NESTED PATH functionality, defining another JsonTable.
+     *
+     * @param string|\Cake\Database\ExpressionInterface $source The JSON column (e.g., 'table.json_field') or an expression.
+     * @param string $rootPath The root JSON path (e.g., '$', '$.items[*]').
+     * @param array $columns An associative array defining the columns to extract.
+     * @param string $alias The alias for the JSON table.
+     * @return $this
+     */
+    public function fromJsonTable(
+        string|ExpressionInterface $source,
+        string $rootPath,
+        array $columns,
+        string $alias
+    ) {
+        $this->_dirty();
+        $jsonTableExpression = new \Cake\Database\Expression\JsonTableExpression($source, $rootPath, $columns, $alias);
+        $this->from([$alias => $jsonTableExpression]);
+
+        return $this;
+    }
+
+    /**
+     * Adds a JOIN clause with a JSON_TABLE expression.
+     *
+     * This allows joining a regular table with data extracted from a JSON column.
+     *
+     * Example:
+     * ```
+     * $query->joinJsonTable(
+     *     'LEFT',             // Join type (INNER, LEFT, RIGHT)
+     *     'orders.details',   // The JSON column
+     *     '$.items[*]',       // Root path for items in JSON
+     *     [                   // Columns to extract from JSON items
+     *         'item_id' => ['type' => 'VARCHAR(36)', 'path' => '$.id'],
+     *         'quantity' => ['type' => 'INT', 'path' => '$.qty']
+     *     ],
+     *     'order_items',      // Alias for the JSON-derived table
+     *     'order_items.item_id = products.id' // Join conditions
+     * );
+     * ```
+     *
+     * @param string $type The type of join (e.g., 'INNER', 'LEFT', 'RIGHT').
+     * @param string|\Cake\Database\ExpressionInterface $source The JSON column or expression.
+     * @param string $rootPath The root JSON path.
+     * @param array $columns Column definitions for the JSON table.
+     * @param string $alias Alias for the JSON table.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions Join conditions.
+     * @param array $types Types for binding values in conditions.
+     * @return $this
+     */
+    public function joinJsonTable(
+        string $type,
+        string|ExpressionInterface $source,
+        string $rootPath,
+        array $columns,
+        string $alias,
+        ExpressionInterface|Closure|array|string $conditions = [],
+        array $types = []
+    ) {
+        $this->_dirty();
+        $jsonTableExpression = new \Cake\Database\Expression\JsonTableExpression($source, $rootPath, $columns, $alias);
+
+        $joinDefinition = [
+            $alias => [
+                'table' => $jsonTableExpression,
+                'type' => strtoupper($type),
+                'conditions' => $conditions,
+            ],
+        ];
+
+        $this->join($joinDefinition, $types);
+
+        return $this;
+    }
+
+    /**
+     * Shortcut for `joinJsonTable` with 'LEFT' type.
+     *
+     * @param string|\Cake\Database\ExpressionInterface $source The JSON column or expression.
+     * @param string $rootPath The root JSON path.
+     * @param array $columns Column definitions for the JSON table.
+     * @param string $alias Alias for the JSON table.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions Join conditions.
+     * @param array $types Types for binding values in conditions.
+     * @return $this
+     */
+    public function leftJoinWithJsonTable(
+        string|ExpressionInterface $source,
+        string $rootPath,
+        array $columns,
+        string $alias,
+        ExpressionInterface|Closure|array|string $conditions = [],
+        array $types = []
+    ): static {
+        return $this->joinJsonTable(
+            static::JOIN_TYPE_LEFT,
+            $source,
+            $rootPath,
+            $columns,
+            $alias,
+            $conditions,
+            $types
+        );
+    }
+
+    /**
+     * Shortcut for `joinJsonTable` with 'INNER' type.
+     *
+     * @param string|\Cake\Database\ExpressionInterface $source The JSON column or expression.
+     * @param string $rootPath The root JSON path.
+     * @param array $columns Column definitions for the JSON table.
+     * @param string $alias Alias for the JSON table.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions Join conditions.
+     * @param array $types Types for binding values in conditions.
+     * @return $this
+     */
+    public function innerJoinWithJsonTable(
+        string|ExpressionInterface $source,
+        string $rootPath,
+        array $columns,
+        string $alias,
+        ExpressionInterface|Closure|array|string $conditions = [],
+        array $types = []
+    ): static {
+        return $this->joinJsonTable(
+            static::JOIN_TYPE_INNER,
+            $source,
+            $rootPath,
+            $columns,
+            $alias,
+            $conditions,
+            $types
+        );
+    }
+
+    /**
+     * Shortcut for `joinJsonTable` with 'RIGHT' type.
+     *
+     * @param string|\Cake\Database\ExpressionInterface $source The JSON column or expression.
+     * @param string $rootPath The root JSON path.
+     * @param array $columns Column definitions for the JSON table.
+     * @param string $alias Alias for the JSON table.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions Join conditions.
+     * @param array $types Types for binding values in conditions.
+     * @return $this
+     */
+    public function rightJoinWithJsonTable(
+        string|ExpressionInterface $source,
+        string $rootPath,
+        array $columns,
+        string $alias,
+        ExpressionInterface|Closure|array|string $conditions = [],
+        array $types = []
+    ): static {
+        return $this->joinJsonTable(
+            static::JOIN_TYPE_RIGHT,
+            $source,
+            $rootPath,
+            $columns,
+            $alias,
+            $conditions,
+            $types
+        );
+    }
+
+    /**
      * Sets the connection instance to be used for executing and transforming this query.
      *
      * @param \Cake\Database\Connection $connection Connection instance

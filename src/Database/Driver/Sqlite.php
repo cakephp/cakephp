@@ -159,6 +159,16 @@ class Sqlite extends Driver
     }
 
     /**
+     * {@inheritDoc}
+     *
+     * @return \Cake\Database\SqliteCompiler
+     */
+    public function newCompiler(): QueryCompiler
+    {
+        return new \Cake\Database\SqliteCompiler($this);
+    }
+
+    /**
      * Returns whether php is able to use this driver for connecting to database
      *
      * @return bool true if it is valid to use this driver

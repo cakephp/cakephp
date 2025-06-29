@@ -85,6 +85,21 @@ class QueryCompiler
     protected bool $_quotedSelectAliases = false;
 
     /**
+     * @var \Cake\Database\DriverInterface The driver instance, used for quoting.
+     */
+    protected DriverInterface $_driver;
+
+    /**
+     * Constructor.
+     *
+     * @param \Cake\Database\DriverInterface $driver The driver instance.
+     */
+    public function __construct(DriverInterface $driver)
+    {
+        $this->_driver = $driver;
+    }
+
+    /**
      * Returns the SQL representation of the provided query after generating
      * the placeholders for the bound values using the provided generator
      *
@@ -237,12 +252,24 @@ class QueryCompiler
     {
         $select = ' FROM %s';
         $normalized = [];
-        $parts = $this->_stringifyExpressions($parts, $binder);
-        foreach ($parts as $k => $p) {
-            if (!is_numeric($k)) {
-                $p = $p . ' ' . $k;
+        foreach ($parts as $alias => $table) {
+            if ($table instanceof \Cake\Database\Expression\JsonTableExpression) {
+                // JsonTableExpression is expected to be compiled with its alias by the specific compiler method
+                $normalized[] = $this->_compileJsonTableExpression($table, $query, $binder);
+            } elseif ($table instanceof ExpressionInterface) {
+                $partSql = '(' . $table->sql($binder) . ')';
+                if (is_string($alias) && !is_numeric($alias)) {
+                    $partSql .= ' ' . $this->_driver->quoteIdentifier($alias);
+                }
+                $normalized[] = $partSql;
+            } else {
+                // $table is a string table name, $alias might be an alias or numeric index
+                if (is_string($alias) && !is_numeric($alias)) {
+                    $normalized[] = $this->_driver->quoteIdentifier((string)$table) . ' ' . $this->_driver->quoteIdentifier($alias);
+                } else {
+                    $normalized[] = $this->_driver->quoteIdentifier((string)$table);
+                }
             }
-            $normalized[] = $p;
         }
 
         return sprintf($select, implode(', ', $normalized));
@@ -270,24 +297,81 @@ class QueryCompiler
                     $join['alias'],
                 ));
             }
-            if ($join['table'] instanceof ExpressionInterface) {
-                $join['table'] = '(' . $join['table']->sql($binder) . ')';
+
+            $tableSql = '';
+            $joinAlias = $this->_driver->quoteIdentifier($join['alias']);
+
+            if ($join['table'] instanceof \Cake\Database\Expression\JsonTableExpression) {
+                // The JsonTableExpression's own alias (from its constructor) is handled by its compiler.
+                // The $join['alias'] is for the entire "joined table source".
+                $tableSql = $this->_compileJsonTableExpression($join['table'], $query, $binder);
+                // Note: _compileJsonTableExpression should produce SQL like "JSON_TABLE(...) AS internal_alias"
+                // So the $joinAlias here refers to that internal_alias in the ON condition.
+                // If the compiled expression itself doesn't include AS, this might need adjustment or the
+                // _compileJsonTableExpression for each dialect ensures it outputs "compiled_sql AS join_alias_from_expression_object"
+            } elseif ($join['table'] instanceof ExpressionInterface) {
+                $tableSql = '(' . $join['table']->sql($binder) . ') ' . $joinAlias;
+            } else {
+                $tableSql = $this->_driver->quoteIdentifier((string)$join['table']) . ' ' . $joinAlias;
             }
 
-            $joins .= sprintf(' %s JOIN %s %s', $join['type'], $join['table'], $join['alias']);
+            $joins .= sprintf(' %s JOIN %s', $join['type'], $tableSql);
 
             $condition = '';
             if (isset($join['conditions']) && $join['conditions'] instanceof ExpressionInterface) {
                 $condition = $join['conditions']->sql($binder);
             }
             if ($condition === '') {
-                $joins .= ' ON 1 = 1';
+                // For some JSON table constructs (like CROSS APPLY OPENJSON), an ON clause might not be directly applicable
+                // or might be part of the JsonTableExpression's SQL itself.
+                // However, standard JOINs usually require an ON clause.
+                // We'll keep the default ON 1=1 for now, but specific compilers might adjust this.
+                if (!($join['table'] instanceof \Cake\Database\Expression\JsonTableExpression && $this->_jsonTableExpressionImplicitlyHandlesJoin($join['table'], $query))) {
+                     $joins .= ' ON 1 = 1';
+                }
             } else {
                 $joins .= " ON {$condition}";
             }
         }
 
         return $joins;
+    }
+
+    /**
+     * Helper function to determine if a JsonTableExpression implicitly handles its join
+     * (e.g. SQL Server's OPENJSON with CROSS APPLY).
+     *
+     * @param \Cake\Database\Expression\JsonTableExpression $expression The expression.
+     * @param \Cake\Database\Query $query The query.
+     * @return bool
+     */
+    protected function _jsonTableExpressionImplicitlyHandlesJoin(\Cake\Database\Expression\JsonTableExpression $expression, Query $query): bool
+    {
+        // Default to false. Specific compilers (like SQL Server) will override this.
+        return false;
+    }
+
+    /**
+     * Compiles a JsonTableExpression.
+     * This method is meant to be overridden by dialect-specific compilers.
+     *
+     * @param \Cake\Database\Expression\JsonTableExpression $expression The expression to compile.
+     * @param \Cake\Database\Query $query The query.
+     * @param \Cake\Database\ValueBinder $binder The value binder.
+     * @return string
+     * @throws \Cake\Database\Exception\DatabaseException If the dialect does not support JSON table expressions.
+     */
+    protected function _compileJsonTableExpression(
+        \Cake\Database\Expression\JsonTableExpression $expression,
+        Query $query,
+        ValueBinder $binder
+    ): string {
+        throw new DatabaseException(
+            sprintf(
+                'JSON table expressions are not supported by the %s dialect.',
+                $query->getConnection()->getDriver($query->getConnectionRole())->name()
+            )
+        );
     }
 
     /**

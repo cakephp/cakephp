@@ -356,6 +356,6 @@ class Postgres extends Driver
      */
     public function newCompiler(): QueryCompiler
     {
-        return new PostgresCompiler();
+        return new \Cake\Database\PostgresCompiler($this);
     }
 }
