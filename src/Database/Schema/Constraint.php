@@ -43,14 +43,16 @@ class Constraint
     /**
      * Constructor
      *
-     * @param string $name The name of the index.
-     * @param array<string> $columns The columns to index.
+     * @param string $name The name of the constraint.
+     * @param array<string> $columns The columns to constraint.
      * @param string $type The type of constraint, e.g. 'unique', 'primary'.
+     * @param array<string, int>|null $length The length of the columns, if applicable.
      */
     public function __construct(
         protected string $name,
         protected array $columns,
         protected string $type = self::UNIQUE,
+        protected ?array $length = null,
     ) {
     }
 
@@ -78,7 +80,7 @@ class Constraint
     }
 
     /**
-     * Sets the index type.
+     * Sets the constraint type.
      *
      * @param string $type Type
      * @return $this
@@ -91,7 +93,7 @@ class Constraint
     }
 
     /**
-     * Gets the index type.
+     * Gets the constraint type.
      *
      * @return string
      */
@@ -101,7 +103,7 @@ class Constraint
     }
 
     /**
-     * Sets the index name.
+     * Sets the constraint name.
      *
      * @param string $name Name
      * @return $this
@@ -114,12 +116,40 @@ class Constraint
     }
 
     /**
-     * Gets the index name.
+     * Gets the constraint name.
      *
      * @return ?string
      */
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    /**
+     * Sets the constraint length.
+     *
+     * In MySQL unique constraints can have limit clauses to control the number of
+     * characters indexed in text and char columns.
+     *
+     * @param array<string, int> $length array of length values
+     * @return $this
+     */
+    public function setLength(array $length)
+    {
+        $this->length = $length;
+
+        return $this;
+    }
+
+    /**
+     * Gets the constraint length.
+     *
+     * Can be an array of column names and lengths under MySQL.
+     *
+     * @return array<string, int>|null
+     */
+    public function getLength(): array|null
+    {
+        return $this->length;
     }
 }

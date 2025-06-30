@@ -729,13 +729,26 @@ SQL;
         ];
 
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $primary = $result->constraint('primary');
+        $this->assertEquals($expected['primary']['columns'], $primary->getColumns());
+        $this->assertEquals('primary', $primary->getName());
+
         $this->assertEquals($expected['length_idx'], $result->getConstraint('length_idx'));
+        $key = $result->constraint('length_idx');
+        $this->assertEquals('length_idx', $key->getName());
+        $this->assertEquals($expected['length_idx']['columns'], $key->getColumns());
+        $this->assertEquals(['title' => 4], $key->getLength());
+
         if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
             $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('author_idx'));
         } else {
             $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
         }
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
+        $key = $result->constraint('unique_id_idx');
+        $this->assertEquals('unique_id_idx', $key->getName());
+        $this->assertEquals($expected['unique_id_idx']['columns'], $key->getColumns());
+        $this->assertSame([], $key->getLength(), 'length should be an empty array as it has been set.');
 
         $this->assertCount(1, $result->indexes());
         $this->assertEquals($expected['author_idx'], $result->getIndex('author_idx'));
@@ -755,13 +768,13 @@ SQL;
             $this->assertEquals($expectedFields, $resultFields);
 
             // describeIndexes will return primary keys, and unique indexes which are
-            // available under `constraint() in the future.`
-            if (!in_array($index['type'], [TableSchema::INDEX_INDEX, TableSchema::INDEX_FULLTEXT], true)) {
-                // TODO implement alongside constraint()
-                continue;
+            if (in_array($index['type'], [TableSchema::INDEX_INDEX, TableSchema::INDEX_FULLTEXT], true)) {
+                // Compare with the index() method as well.
+                $indexObject = $result->index($index['name']);
+            } else {
+                // Compare with the constraint() method as well.
+                $indexObject = $result->constraint($index['name']);
             }
-            // Compare with the index() method as well.
-            $indexObject = $result->index($index['name']);
             foreach ($expectedFields as $key => $value) {
                 $this->assertEquals($value, $indexObject->{'get' . ucfirst($key)}());
             }

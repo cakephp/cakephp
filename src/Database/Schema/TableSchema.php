@@ -802,9 +802,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             }
             $attrs[$key] = $value;
         }
-        // Constraints don't have length, but the basic reflection layer
-        // includes length.
-        unset($attrs['length']);
 
         if ($attrs['type'] === static::CONSTRAINT_FOREIGN) {
             $adjusted = [
@@ -815,6 +812,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 'update' => $attrs['update'],
                 'delete' => $attrs['delete'],
             ];
+            // Foreign keys don't have a length, but this key is set by abstract array form of schema data.
+            unset($attrs['length']);
 
             return new ForeignKey(...$adjusted);
         }

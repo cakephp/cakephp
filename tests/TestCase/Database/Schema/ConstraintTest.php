@@ -41,4 +41,13 @@ class ConstraintTest extends TestCase
         $index->setName('my_index');
         $this->assertSame('my_index', $index->getName());
     }
+
+    public function testSetLength(): void
+    {
+        $index = new Constraint('title_idx', ['title']);
+        $this->assertNull($index->getLength());
+
+        $index->setLength(['title' => 10]);
+        $this->assertSame(['title' => 10], $index->getLength());
+    }
 }
