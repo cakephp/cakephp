@@ -61,28 +61,28 @@ class ForeignKeyTest extends TestCase
         $this->assertSame(['id', 'name'], $key->getReferencedColumns());
     }
 
-    public function testSetOnDelete(): void
+    public function testSetDelete(): void
     {
         $key = new ForeignKey('title_idx', ['title'], 'users', ['id']);
-        $this->assertSame(ForeignKey::NO_ACTION, $key->getOnDelete());
+        $this->assertSame(ForeignKey::NO_ACTION, $key->getDelete());
 
-        $key->setOnDelete(ForeignKey::CASCADE);
-        $this->assertSame(ForeignKey::CASCADE, $key->getOnDelete());
+        $key->setDelete(ForeignKey::CASCADE);
+        $this->assertSame(ForeignKey::CASCADE, $key->getDelete());
 
-        $key->setOnDelete(ForeignKey::RESTRICT);
-        $this->assertSame(ForeignKey::RESTRICT, $key->getOnDelete());
+        $key->setDelete(ForeignKey::RESTRICT);
+        $this->assertSame(ForeignKey::RESTRICT, $key->getDelete());
     }
 
-    public function testSetOnDeleteValidateConstructor(): void
+    public function testSetDeleteValidateConstructor(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        new ForeignKey('title_idx', ['title'], 'users', ['id'], onDelete: 'invalid');
+        new ForeignKey('title_idx', ['title'], 'users', ['id'], delete: 'invalid');
     }
 
-    public function testSetOnUpdateValidateConstructor(): void
+    public function testSetUpdateValidateConstructor(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        new ForeignKey('title_idx', ['title'], 'users', ['id'], onUpdate: 'invalid');
+        new ForeignKey('title_idx', ['title'], 'users', ['id'], update: 'invalid');
     }
 
     public function testSetOnUpdateValidateSetter(): void
@@ -90,7 +90,7 @@ class ForeignKeyTest extends TestCase
         $key = new ForeignKey('title_idx', ['title'], 'users', ['id']);
 
         $this->expectException(InvalidArgumentException::class);
-        $key->setOnUpdate('invalid');
+        $key->setUpdate('invalid');
     }
 
     public function testSetOnDeleteValidateSetter(): void
@@ -98,6 +98,6 @@ class ForeignKeyTest extends TestCase
         $key = new ForeignKey('title_idx', ['title'], 'users', ['id']);
 
         $this->expectException(InvalidArgumentException::class);
-        $key->setOnDelete('invalid');
+        $key->setDelete('invalid');
     }
 }

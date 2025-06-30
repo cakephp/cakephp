@@ -48,12 +48,12 @@ class ForeignKey extends Constraint
     /**
      * The action to take when the referenced row is deleted.
      */
-    protected ?string $onDelete = null;
+    protected ?string $delete = null;
 
     /**
      * The action to take when the referenced row is updated.
      */
-    protected ?string $onUpdate = null;
+    protected ?string $update = null;
 
     /**
      * Constructor
@@ -62,21 +62,21 @@ class ForeignKey extends Constraint
      * @param array<string> $columns The columns to index.
      * @param ?string $referencedTable The columns to index.
      * @param array<string> $referencedColumns The columns in $referencedTable that this key references.
-     * @param ?string $onDelete The action to take when the referenced row is deleted.
-     * @param ?string $onUpdate The action to take when the referenced row is updated.
+     * @param ?string $delete The action to take when the referenced row is deleted.
+     * @param ?string $update The action to take when the referenced row is updated.
      */
     public function __construct(
         protected string $name,
         protected array $columns,
         protected ?string $referencedTable = null,
         protected array $referencedColumns = [],
-        ?string $onDelete = null,
-        ?string $onUpdate = null,
+        ?string $delete = null,
+        ?string $update = null,
     ) {
         // TODO add deferrable
         $this->type = self::FOREIGN;
-        $this->onDelete = $this->normalizeAction($onDelete ?? self::NO_ACTION);
-        $this->onUpdate = $this->normalizeAction($onUpdate ?? self::NO_ACTION);
+        $this->delete = $this->normalizeAction($delete ?? self::NO_ACTION);
+        $this->update = $this->normalizeAction($update ?? self::NO_ACTION);
     }
 
     /**
@@ -129,12 +129,12 @@ class ForeignKey extends Constraint
     /**
      * Sets ON DELETE action for the foreign key.
      *
-     * @param string $onDelete On Delete
+     * @param string $delete On Delete
      * @return $this
      */
-    public function setOnDelete(string $onDelete)
+    public function setDelete(string $delete)
     {
-        $this->onDelete = $this->normalizeAction($onDelete);
+        $this->delete = $this->normalizeAction($delete);
 
         return $this;
     }
@@ -144,9 +144,9 @@ class ForeignKey extends Constraint
      *
      * @return string|null
      */
-    public function getOnDelete(): ?string
+    public function getDelete(): ?string
     {
-        return $this->onDelete;
+        return $this->delete;
     }
 
     /**
@@ -154,20 +154,20 @@ class ForeignKey extends Constraint
      *
      * @return string|null
      */
-    public function getOnUpdate(): ?string
+    public function getUpdate(): ?string
     {
-        return $this->onUpdate;
+        return $this->update;
     }
 
     /**
      * Sets ON UPDATE action for the foreign key.
      *
-     * @param string $onUpdate On Update
+     * @param string $update On Update
      * @return $this
      */
-    public function setOnUpdate(string $onUpdate)
+    public function setUpdate(string $update)
     {
-        $this->onUpdate = $this->normalizeAction($onUpdate);
+        $this->update = $this->normalizeAction($update);
 
         return $this;
     }
