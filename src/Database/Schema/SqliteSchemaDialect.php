@@ -757,7 +757,7 @@ class SqliteSchemaDialect extends SchemaDialect
 
         $autoIncrement = (bool)($column['autoIncrement'] ?? false);
         if (
-            $autoIncrement !== true &&
+            !$autoIncrement &&
             isset($column['unsigned']) && $column['unsigned'] === true &&
             in_array($column['type'], $hasUnsigned, true)
         ) {

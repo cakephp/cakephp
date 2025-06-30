@@ -614,6 +614,7 @@ SQL;
                 'type' => 'primary',
                 'columns' => ['id'],
                 'length' => [],
+                'constraint' => 'PK__schema_a__3213E83F2A6E1507',
             ],
             'content_idx' => [
                 'type' => 'unique',
