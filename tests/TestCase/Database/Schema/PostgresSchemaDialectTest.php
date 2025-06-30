@@ -20,6 +20,7 @@ use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
@@ -99,6 +100,21 @@ CREATE VIEW schema_articles_v AS
 SELECT * FROM schema_articles
 SQL;
         $connection->execute($table);
+    }
+
+    protected function assertConstraint(array $expected, string $name, TableSchema $table): void
+    {
+        $constraint = $table->constraint($name);
+        foreach ($expected as $key => $value) {
+            if ($key == 'references') {
+                assert($constraint instanceof ForeignKey);
+                $this->assertEquals($value[0], $constraint->getReferencedTable());
+                $this->assertEquals((array)$value[1], $constraint->getReferencedColumns());
+                continue;
+            }
+            $this->assertEquals($value, $constraint->{'get' . ucfirst($key)}(), "Mismatch in {$key} constraint for {$key}");
+        }
+
     }
 
     /**
@@ -791,10 +807,11 @@ SQL;
                 'length' => [],
             ],
         ];
-        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
-        $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
-        $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
-        $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
+        foreach ($expected as $name => $expectedItem) {
+            // Compare both the array API and the Schema\Constraint API.
+            $this->assertEquals($expectedItem, $result->getConstraint($name));
+            $this->assertConstraint($expectedItem, $name, $result);
+        }
 
         $this->assertCount(1, $result->indexes());
         $authorIdx = [
@@ -815,6 +832,7 @@ SQL;
 
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
+            $this->assertConstraint($expectedItem, $name, $result);
         }
         $expected['author_idx'] = $authorIdx;
         $expected['primary']['constraint'] = 'schema_articles_pkey';
