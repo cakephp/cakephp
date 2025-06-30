@@ -23,7 +23,7 @@ use RuntimeException;
 /**
  * Constraint base class object
  *
- * Models a database constraint like a unique key.
+ * Models a database constraint like a unique or primary key.
  */
 class Constraint
 {
@@ -47,7 +47,7 @@ class Constraint
      *
      * @param string $name The name of the index.
      * @param array<string> $columns The columns to index.
-     * @param string $type The type of constraint, e.g. 'unique', 'check'.
+     * @param string $type The type of constraint, e.g. 'unique', 'primary'.
      */
     public function __construct(
         protected string $name,
