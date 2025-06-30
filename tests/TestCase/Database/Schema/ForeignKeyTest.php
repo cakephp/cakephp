@@ -100,4 +100,12 @@ class ForeignKeyTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $key->setDelete('invalid');
     }
+
+    public function setDefaultLength(): void
+    {
+        // capture the current behavior.
+        // TODO: This method shouldn't exist. Separate UniqueKey from Constraint.
+        $key = new ForeignKey('title_idx', ['title'], 'users', ['id']);
+        $this->assertSame([], $key->getLength());
+    }
 }

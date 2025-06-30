@@ -21,6 +21,7 @@ use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
@@ -798,6 +799,18 @@ SQL;
 
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
+
+            // Compare with the constraint() method as well.
+            $indexObject = $result->constraint($name);
+            foreach ($expectedItem as $key => $value) {
+                $this->assertInstanceOf(ForeignKey::class, $indexObject);
+                if ($key == 'references') {
+                    $this->assertEquals($value[0], $indexObject->getReferencedTable());
+                    $this->assertEquals((array)$value[1], $indexObject->getReferencedColumns());
+                    continue;
+                }
+                $this->assertEquals($value, $indexObject->{'get' . ucfirst($key)}());
+            }
         }
     }
 
