@@ -774,6 +774,55 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
+     * Get a constraint object for a given constraint name.
+     *
+     * Constraints have a few subtypes such as foreign keys and primary keys.
+     * You can either use `instanceof` or getType() to check for subclass types.
+     *
+     * @param string $name The name of the constraint to get.
+     * @return \Cake\Database\Schema\Constraint A constraint object.
+     */
+    public function constraint(string $name): Constraint
+    {
+        $data = $this->getConstraint($name);
+        if ($data === null) {
+            $message = sprintf(
+                'Table `%s` does not contain a constraint named `%s`.',
+                $this->_table,
+                $name,
+            );
+            throw new DatabaseException($message);
+        }
+        $data['name'] = $name;
+
+        $attrs = [];
+        foreach ($data as $key => $value) {
+            if ($value === null) {
+                continue;
+            }
+            $attrs[$key] = $value;
+        }
+        // Constraints don't have length, but the basic reflection layer
+        // includes length.
+        unset($attrs['length']);
+
+        if ($attrs['type'] === static::CONSTRAINT_FOREIGN) {
+            $adjusted = [
+                'name' => $attrs['name'],
+                'columns' => $attrs['columns'],
+                'referencedTable' => $attrs['references'][0],
+                'referencedColumns' => (array)$attrs['references'][1],
+                'update' => $attrs['update'],
+                'delete' => $attrs['delete'],
+            ];
+
+            return new ForeignKey(...$adjusted);
+        }
+
+        return new Constraint(...$attrs);
+    }
+
+    /**
      * @inheritDoc
      */
     public function setOptions(array $options)

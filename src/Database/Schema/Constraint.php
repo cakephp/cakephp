@@ -30,6 +30,11 @@ class Constraint
     /**
      * @var string
      */
+    public const PRIMARY = TableSchema::CONSTRAINT_PRIMARY;
+
+    /**
+     * @var string
+     */
     public const UNIQUE = TableSchema::CONSTRAINT_UNIQUE;
 
     /**

@@ -20,6 +20,8 @@ use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\Constraint;
+use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
@@ -549,7 +551,7 @@ SQL;
         $dialect = $connection->getDriver()->schemaDialect();
         $result = $dialect->describe('schema_articles');
 
-        // Includes unique keys.
+        // Includes unique and primary keys.
         $indexes = $dialect->describeIndexes('schema_articles');
         $this->assertCount(4, $indexes);
 
@@ -597,27 +599,41 @@ SQL;
         ];
         $this->assertCount(4, $result->constraints());
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+
+        $primary = $result->constraint('primary');
+        $this->assertInstanceOf(Constraint::class, $primary);
+        $this->assertSame('primary', $primary->getName());
+        $this->assertSame($expected['primary']['columns'], $primary->getColumns());
+
         $this->assertEquals(
             $expected['author_fk'],
             $result->getConstraint('author_fk'),
         );
-
-        $authorIdFk = $foreignKeys[0];
         $expectedAuthorIdFk = $expected['author_fk'];
-        $this->assertEquals('author_fk', $authorIdFk['name']);
+        $expectedAuthorIdFk['name'] = 'author_fk';
+        $this->assertEquals($expectedAuthorIdFk, $foreignKeys[0]);
 
-        unset($authorIdFk['name']);
-        $this->assertEquals($expectedAuthorIdFk, $authorIdFk);
+        $foreignKey = $result->constraint('author_fk');
+        $this->assertInstanceOf(ForeignKey::class, $foreignKey);
+        $this->assertSame('author_fk', $foreignKey->getName());
+        $this->assertSame($foreignKeys[0]['columns'], $foreignKey->getColumns());
+        $this->assertSame($foreignKeys[0]['references'][0], $foreignKey->getReferencedTable());
+        $this->assertSame((array)$foreignKeys[0]['references'][1], $foreignKey->getReferencedColumns());
+        $this->assertSame($foreignKeys[0]['update'], $foreignKey->getUpdate());
+        $this->assertSame($foreignKeys[0]['delete'], $foreignKey->getDelete());
 
         $this->assertEquals(
             $expected['title_idx'],
             $result->getConstraint('title_idx'),
         );
-
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
-        // Compare with describeIndexes result
-        $uniqueIdIdx = $indexes[0];
-        $this->assertEquals($expected['unique_id_idx'] + ['name' => 'unique_id_idx'], $uniqueIdIdx);
+        // Compare with describeIndexes() & constraint() result
+        $this->assertEquals($expected['unique_id_idx'] + ['name' => 'unique_id_idx'], $indexes[0]);
+        $unique = $result->constraint('unique_id_idx');
+        $this->assertInstanceOf(Constraint::class, $unique);
+        $this->assertSame(Constraint::UNIQUE, $unique->getType());
+        $this->assertSame('unique_id_idx', $unique->getName());
+        $this->assertSame($expected['unique_id_idx']['columns'], $unique->getColumns());
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -628,9 +644,8 @@ SQL;
         $this->assertEquals($expected, $result->getIndex('created_idx'));
 
         // Compare with describeIndexes result
-        $createdIdx = $indexes[1];
         $expected['name'] = 'created_idx';
-        $this->assertEquals($expected, $createdIdx);
+        $this->assertEquals($expected, $indexes[1]);
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_no_rowid_pk');
@@ -698,6 +713,11 @@ SQL;
             ],
         ];
         $this->assertCount(7, $result->constraints());
+        foreach ($expected as $name => $attrs) {
+            $constraint = $result->constraint($name);
+            $this->assertSame($name, $constraint->getName());
+            $this->assertSame($attrs['columns'], $constraint->getColumns());
+        }
 
         // Because all our 'constraints' are unique indexes
         // they are treated as indexes by the basic reflection API
@@ -726,6 +746,7 @@ SQL;
 
         $connection->execute('create table if not exists t(a text primary key)');
         $indexes = $dialect->describeIndexes('t');
+        $table = $dialect->describe('t');
         $connection->execute('drop table t');
 
         $this->assertCount(1, $indexes);
@@ -733,6 +754,11 @@ SQL;
         $this->assertEquals('sqlite_autoindex_t_1', $primary['name']);
         $this->assertEquals(TableSchema::CONSTRAINT_PRIMARY, $primary['type']);
         $this->assertEquals(['a'], $primary['columns']);
+
+        $primary = $table->constraint('sqlite_autoindex_t_1');
+        $this->assertEquals('sqlite_autoindex_t_1', $primary->getName());
+        $this->assertEquals(TableSchema::CONSTRAINT_PRIMARY, $primary->getType());
+        $this->assertEquals(['a'], $primary->getColumns());
     }
 
     /**
@@ -793,8 +819,17 @@ SQL;
         $this->assertCount(2, $foreignKeys);
         foreach ($foreignKeys as $foreignKey) {
             $expectedForeignKey = $expected[$foreignKey['name']];
-            unset($foreignKey['name']);
+            $expectedForeignKey['name'] = $foreignKey['name'];
             $this->assertEquals($expectedForeignKey, $foreignKey);
+
+            $key = $result->constraint($foreignKey['name']);
+            assert($key instanceof ForeignKey);
+            $this->assertSame($expectedForeignKey['name'], $key->getName());
+            $this->assertSame($expectedForeignKey['columns'], $key->getColumns());
+            $this->assertSame($expectedForeignKey['references'][0], $key->getReferencedTable());
+            $this->assertSame((array)$expectedForeignKey['references'][1], $key->getReferencedColumns());
+            $this->assertSame($expectedForeignKey['update'], $key->getUpdate());
+            $this->assertSame($expectedForeignKey['delete'], $key->getDelete());
         }
     }
 

@@ -20,6 +20,10 @@ use Cake\Datasource\SchemaInterface;
 
 /**
  * An interface used by database TableSchema objects.
+ *
+ * @method \Cake\Database\Schema\Column column(string $name)
+ * @method \Cake\Database\Schema\Index index(string $name)
+ * @method \Cake\Database\Schema\Constraint constraint(string $name)
  */
 interface TableSchemaInterface extends SchemaInterface
 {
