@@ -148,10 +148,10 @@ class TranslateBehaviorEavTest extends TestCase
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
 
         I18n::setLocale('fr@currency=EUR');
-        $this->assertSame('fr', $table->getLocale());
+        $this->assertSame('fr', $table->getBehavior('Translate')->getLocale());
 
-        $table->setLocale('en_US');
-        $this->assertSame('en_US', $table->getLocale());
+        $table->getBehavior('Translate')->setLocale('en_US');
+        $this->assertSame('en_US', $table->getBehavior('Translate')->getLocale());
     }
 
     /**
