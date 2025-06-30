@@ -18,8 +18,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
-use RuntimeException;
-
 /**
  * Constraint base class object
  *

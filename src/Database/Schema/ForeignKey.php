@@ -19,7 +19,6 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 use InvalidArgumentException;
-use RuntimeException;
 
 /**
  * ForeignKey metadata object
@@ -105,7 +104,7 @@ class ForeignKey extends Constraint
     /**
      * Sets the foreign key referenced columns.
      *
-     * @param string|string[] $referencedColumns Referenced columns
+     * @param array<string>|string $referencedColumns Referenced columns
      * @return $this
      */
     public function setReferencedColumns(array|string $referencedColumns)
@@ -119,7 +118,7 @@ class ForeignKey extends Constraint
     /**
      * Gets the foreign key referenced columns.
      *
-     * @return string[]
+     * @return array<string>
      */
     public function getReferencedColumns(): array
     {
