@@ -148,7 +148,7 @@ class Constraint
      *
      * @return array<string, int>|null
      */
-    public function getLength(): array|null
+    public function getLength(): ?array
     {
         return $this->length;
     }
