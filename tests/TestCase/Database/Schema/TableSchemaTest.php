@@ -326,9 +326,14 @@ class TableSchemaTest extends TestCase
         $result = $table->addConstraint('primary', [
             'type' => 'primary',
             'columns' => ['id'],
+            'constraint' => 'postgres_name',
         ]);
         $this->assertSame($result, $table);
         $this->assertEquals(['primary'], $table->constraints());
+
+        // TODO make the constraint name work for postgres_name too.
+        $primary = $table->constraint('primary');
+        $this->assertEquals('postgres_name', $primary->getName(), 'constraint objects should preserve the name');
     }
 
     /**

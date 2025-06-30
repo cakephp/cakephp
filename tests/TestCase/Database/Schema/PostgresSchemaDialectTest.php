@@ -112,9 +112,11 @@ SQL;
                 $this->assertEquals((array)$value[1], $constraint->getReferencedColumns());
                 continue;
             }
-            $this->assertEquals($value, $constraint->{'get' . ucfirst($key)}(), "Mismatch in {$key} constraint for {$key}");
+            if ($key === 'constraint') {
+                continue;
+            }
+            $this->assertEquals($value, $constraint->{'get' . ucfirst($key)}(), "Mismatch in {$name} constraint for {$key}");
         }
-
     }
 
     /**
@@ -717,6 +719,7 @@ SQL;
                 'type' => 'primary',
                 'columns' => ['id'],
                 'length' => [],
+                'constraint' => 'schema_authors_pkey',
             ],
             'unique_position' => [
                 'type' => 'unique',
@@ -726,7 +729,10 @@ SQL;
         ];
         $this->assertCount(2, $result->constraints());
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertConstraint($expected['primary'], 'primary', $result);
+
         $this->assertEquals($expected['unique_position'], $result->getConstraint('unique_position'));
+        $this->assertConstraint($expected['unique_position'], 'unique_position', $result);
     }
 
     public function testDescribeTableConstraintsColumnOrdering(): void
@@ -761,10 +767,12 @@ SQL;
         $constraint = $result->getConstraint('test_constraint');
         $this->assertSame(['ref_table_id', 'field1'], $constraint['columns']);
         $this->assertSame(['ref_table', ['id', 'field1']], $constraint['references']);
+        $this->assertConstraint($constraint, 'test_constraint', $result);
 
         $constraint = $result->getConstraint('reverse_constraint');
         $this->assertSame(['field2', 'ref_table_id'], $constraint['columns']);
         $this->assertSame(['ref_table', ['field2', 'id']], $constraint['references']);
+        $this->assertConstraint($constraint, 'reverse_constraint', $result);
     }
 
     /**
@@ -785,6 +793,7 @@ SQL;
                 'type' => 'primary',
                 'columns' => ['id'],
                 'length' => [],
+                'constraint' => 'schema_articles_pkey',
             ],
             'content_idx' => [
                 'type' => 'unique',
@@ -848,12 +857,16 @@ SQL;
 
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
-
-            if ($index['type'] !== 'index') {
-                continue;
+            if ($index['type'] === 'index') {
+                $indexObj = $result->index($name);
+            } else {
+                $indexObj = $result->constraint($name);
             }
-            $indexObj = $result->index($name);
             foreach ($expectedFields as $key => $value) {
+                if ($key === 'constraint') {
+                    $this->assertEquals($value, $indexObj->getName());
+                    continue;
+                }
                 $this->assertEquals($value, $indexObj->{'get' . ucfirst($key)}());
             }
         }

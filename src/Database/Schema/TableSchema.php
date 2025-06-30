@@ -211,6 +211,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         'references' => [],
         'update' => 'restrict',
         'delete' => 'restrict',
+        'constraint' => null,
     ];
 
     /**
@@ -543,7 +544,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
         $attrs = array_intersect_key($attrs, static::$_indexKeys);
         $attrs += static::$_indexKeys;
-        unset($attrs['references'], $attrs['update'], $attrs['delete']);
+        unset($attrs['references'], $attrs['update'], $attrs['delete'], $attrs['constraint']);
 
         if (!in_array($attrs['type'], static::$_validIndexTypes, true)) {
             throw new DatabaseException(sprintf(
@@ -648,6 +649,10 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
         $attrs = array_intersect_key($attrs, static::$_indexKeys);
         $attrs += static::$_indexKeys;
+        if ($attrs['constraint'] === null) {
+            unset($attrs['constraint']);
+        }
+
         if (!in_array($attrs['type'], static::$_validConstraintTypes, true)) {
             throw new DatabaseException(sprintf(
                 'Invalid constraint type `%s` in table `%s`.',
@@ -793,7 +798,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             );
             throw new DatabaseException($message);
         }
-        $data['name'] = $name;
+        $data['name'] = $data['constraint'] ?? $name;
+        unset($data['constraint']);
 
         $attrs = [];
         foreach ($data as $key => $value) {
