@@ -637,7 +637,11 @@ SQL;
                 'length' => [],
             ],
         ];
-        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $primary = $result->getConstraint('primary');
+        $this->assertTrue(str_starts_with($primary['constraint'], 'PK__schema_a__'));
+        unset($primary['constraint']);
+        $this->assertEquals($expected['primary'], $primary);
+
         $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
         $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));

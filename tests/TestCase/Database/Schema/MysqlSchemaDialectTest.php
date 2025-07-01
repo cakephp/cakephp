@@ -791,6 +791,7 @@ SQL;
             $name = $foreignKey['name'];
             if ($name === 'author_idx' && $isMariaDb) {
                 $name = 'schema_articles_ibfk_1';
+                debug($result);
             }
             $this->assertArrayHasKey($name, $expected);
             $expectedItem = $expected[$name];
