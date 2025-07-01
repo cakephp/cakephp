@@ -791,7 +791,6 @@ SQL;
             $name = $foreignKey['name'];
             if ($name === 'author_idx' && $isMariaDb) {
                 $name = 'schema_articles_ibfk_1';
-                debug($result);
             }
             $this->assertArrayHasKey($name, $expected);
             $expectedItem = $expected[$name];
@@ -802,7 +801,7 @@ SQL;
             $this->assertEquals($expectedFields, $resultFields);
 
             // Compare with the constraint() method as well.
-            $indexObject = $result->constraint($name);
+            $indexObject = $result->constraint($foreignKey['name']);
             foreach ($expectedItem as $key => $value) {
                 $this->assertInstanceOf(ForeignKey::class, $indexObject);
                 if ($key == 'references') {
