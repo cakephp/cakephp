@@ -89,6 +89,9 @@ class ForeignKeyTest extends TestCase
     {
         $key = new ForeignKey('title_idx', ['title'], 'users', ['id']);
 
+        $key->setUpdate(ForeignKey::CASCADE);
+        $this->assertEquals(ForeignKey::CASCADE, $key->getUpdate());
+
         $this->expectException(InvalidArgumentException::class);
         $key->setUpdate('invalid');
     }
