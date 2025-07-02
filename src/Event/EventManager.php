@@ -335,6 +335,14 @@ class EventManager implements EventManagerInterface
             } catch (CakeException) {
                 $class = 'unknown subject';
             }
+            
+            $ref = new \ReflectionFunction($listener);
+            $closureClass = $ref->getClosureScopeClass();
+            $clousereMethod = $ref->getName();
+            if ($closureClass && $closureClass->name && $clousereMethod) {
+                $class = $closureClass->name . '::' . $clousereMethod;
+            }
+            
             deprecationWarning(
                 '5.2.0',
                 'Returning a value from event listeners is deprecated. ' .
