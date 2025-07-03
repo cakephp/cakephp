@@ -24,6 +24,7 @@ use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\UniqueKey;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
@@ -777,6 +778,10 @@ SQL;
                 $indexObject = $result->constraint($index['name']);
             }
             foreach ($expectedFields as $key => $value) {
+                if ($key == 'length' && !method_exists($indexObject, 'getLength')) {
+                    $this->assertEmpty($value, 'length should not be present in in this type');
+                    continue;
+                }
                 $this->assertEquals($value, $indexObject->{'get' . ucfirst($key)}());
             }
         }
