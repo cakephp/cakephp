@@ -19,39 +19,26 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 /**
- * Constraint base class object
+ * UniqueKey class
  *
- * Models a database constraint like a unique or primary key.
+ * Models a unique key constraint, and provides methods to set driver specific attributes.
  */
-class Constraint
+class UniqueKey extends Constraint
 {
-    /**
-     * @var string
-     */
-    public const PRIMARY = TableSchema::CONSTRAINT_PRIMARY;
-
-    /**
-     * @var string
-     */
-    public const UNIQUE = TableSchema::CONSTRAINT_UNIQUE;
-
-    /**
-     * @var string
-     */
-    public const FOREIGN = TableSchema::CONSTRAINT_FOREIGN;
-
     /**
      * Constructor
      *
      * @param string $name The name of the constraint.
      * @param array<string> $columns The columns to constraint.
      * @param string $type The type of constraint, e.g. 'unique', 'primary'.
+     * @param array<string, int>|null $length The length of the columns, if applicable.
      */
     public function __construct(
         protected string $name,
         protected array $columns,
-        protected string $type,
+        protected ?array $length = null,
     ) {
+        $this->type = self::UNIQUE;
     }
 
     /**
@@ -121,5 +108,33 @@ class Constraint
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    /**
+     * Sets the constraint length.
+     *
+     * In MySQL unique constraints can have limit clauses to control the number of
+     * characters indexed in text and char columns.
+     *
+     * @param array<string, int> $length array of length values
+     * @return $this
+     */
+    public function setLength(array $length)
+    {
+        $this->length = $length;
+
+        return $this;
+    }
+
+    /**
+     * Gets the constraint length.
+     *
+     * Can be an array of column names and lengths under MySQL.
+     *
+     * @return array<string, int>|null
+     */
+    public function getLength(): ?array
+    {
+        return $this->length;
     }
 }

@@ -809,8 +809,9 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             $attrs[$key] = $value;
         }
 
-        if ($attrs['type'] === static::CONSTRAINT_FOREIGN) {
-            $adjusted = [
+        $type = $attrs['type'] ?? null;
+        if ($type === static::CONSTRAINT_FOREIGN) {
+            $attrs = [
                 'name' => $attrs['name'],
                 'columns' => $attrs['columns'],
                 'referencedTable' => $attrs['references'][0],
@@ -818,13 +819,26 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 'update' => $attrs['update'],
                 'delete' => $attrs['delete'],
             ];
-            // Foreign keys don't have a length, but this key is set by abstract array form of schema data.
-            unset($attrs['length']);
-
-            return new ForeignKey(...$adjusted);
+        } elseif ($type === static::CONSTRAINT_PRIMARY) {
+            $attrs = [
+                'type' => $type,
+                'name' => $attrs['name'],
+                'columns' => $attrs['columns'],
+            ];
+        } elseif ($type === static::CONSTRAINT_UNIQUE) {
+            $attrs = [
+                'name' => $attrs['name'],
+                'columns' => $attrs['columns'],
+                'length' => $attrs['length'],
+            ];
         }
 
-        return new Constraint(...$attrs);
+        return match ($type) {
+            static::CONSTRAINT_UNIQUE => new UniqueKey(...$attrs),
+            static::CONSTRAINT_FOREIGN => new ForeignKey(...$attrs),
+            static::CONSTRAINT_PRIMARY => new Constraint(...$attrs),
+            default => new Constraint(...$attrs),
+        };
     }
 
     /**
