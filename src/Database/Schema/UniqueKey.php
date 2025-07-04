@@ -30,7 +30,6 @@ class UniqueKey extends Constraint
      *
      * @param string $name The name of the constraint.
      * @param array<string> $columns The columns to constraint.
-     * @param string $type The type of constraint, e.g. 'unique', 'primary'.
      * @param array<string, int>|null $length The length of the columns, if applicable.
      */
     public function __construct(
