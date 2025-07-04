@@ -6377,10 +6377,13 @@ class TableTest extends TestCase
             },
             'Articles.Authors',
         ]);
+
         $this->assertSame($entity, $result);
 
         $expected = $table->get(2, contain: ['Articles.Authors']);
         $this->assertEquals($expected, $entity);
+        $this->assertEquals($expected->article, $entity->article);
+        $this->assertEquals($expected->article->author, $entity->article->author);
     }
 
     /**
