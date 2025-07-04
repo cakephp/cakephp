@@ -23,6 +23,7 @@ use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\UniqueKey;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -112,7 +113,7 @@ SQL;
                 $this->assertEquals((array)$value[1], $constraint->getReferencedColumns());
                 continue;
             }
-            if ($key === 'constraint') {
+            if ($key === 'constraint' || ($key === 'length' && !($constraint instanceof UniqueKey))) {
                 continue;
             }
             $this->assertEquals($value, $constraint->{'get' . ucfirst($key)}(), "Mismatch in {$name} constraint for {$key}");
@@ -865,6 +866,10 @@ SQL;
             foreach ($expectedFields as $key => $value) {
                 if ($key === 'constraint') {
                     $this->assertEquals($value, $indexObj->getName());
+                    continue;
+                }
+                if ($key === 'length' && !($indexObj instanceof UniqueKey)) {
+                    $this->assertEquals([], $value);
                     continue;
                 }
                 $this->assertEquals($value, $indexObj->{'get' . ucfirst($key)}());

@@ -814,6 +814,10 @@ SQL;
                     $this->assertEquals((array)$value[1], $indexObject->getReferencedColumns());
                     continue;
                 }
+                if ($key === 'length' && !($indexObject instanceof UniqueKey)) {
+                    $this->assertEquals([], $value);
+                    continue;
+                }
                 $this->assertEquals($value, $indexObject->{'get' . ucfirst($key)}());
             }
         }
