@@ -64,6 +64,7 @@ class EagerLoader
         'joinType' => 1,
         'strategy' => 1,
         'negateMatch' => 1,
+        'includeFields' => 1,
     ];
 
     /**
