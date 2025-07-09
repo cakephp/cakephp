@@ -95,8 +95,8 @@ class PluginLoadCommand extends Command
             $path = Plugin::getCollection()->findPath($plugin);
         } catch (MissingPluginException $e) {
             if (empty($options['optional'])) {
-                $io->err($e->getMessage());
-                $io->err('Ensure you have the correct spelling and casing.');
+                $io->error($e->getMessage());
+                $io->error('Ensure you have the correct spelling and casing.');
 
                 return static::CODE_ERROR;
             }
@@ -121,7 +121,7 @@ class PluginLoadCommand extends Command
 
         $result = $this->modifyConfigFile($plugin, $options);
         if ($result === static::CODE_ERROR) {
-            $io->err('Failed to update `CONFIG/plugins.php`');
+            $io->error('Failed to update `CONFIG/plugins.php`');
         }
 
         $io->success('Plugin added successfully to `CONFIG/plugins.php`');

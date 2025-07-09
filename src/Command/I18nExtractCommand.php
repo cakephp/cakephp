@@ -154,7 +154,7 @@ class I18nExtractCommand extends Command
             );
             $response = $io->ask($message, $defaultPaths[$defaultPathIndex] ?? 'D');
             if (strtoupper($response) === 'Q') {
-                $io->err('Extract Aborted');
+                $io->error('Extract Aborted');
                 $this->abort();
             }
             if (strtoupper($response) === 'D' && count($this->_paths)) {
@@ -168,7 +168,7 @@ class I18nExtractCommand extends Command
                 $this->_paths[] = $response;
                 $defaultPathIndex++;
             } else {
-                $io->err('The directory path you supplied was not found. Please try again.');
+                $io->error('The directory path you supplied was not found. Please try again.');
             }
             $io->out();
         }
@@ -241,7 +241,7 @@ class I18nExtractCommand extends Command
                     $localePaths[0],
                 );
                 if (strtoupper($response) === 'Q') {
-                    $io->err('Extract Aborted');
+                    $io->error('Extract Aborted');
 
                     return static::CODE_ERROR;
                 }
@@ -251,9 +251,9 @@ class I18nExtractCommand extends Command
                 }
 
                 $io->err('');
-                $io->err(
-                    '<error>The directory path you supplied was ' .
-                    'not found. Please try again.</error>',
+                $io->error(
+                    'The directory path you supplied was ' .
+                    'not found. Please try again.',
                 );
                 $io->err('');
             }
@@ -279,7 +279,7 @@ class I18nExtractCommand extends Command
 
         $this->_output = rtrim($this->_output, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         if (!$this->_isPathUsable($this->_output)) {
-            $io->err(sprintf('The output directory `%s` was not found or writable.', $this->_output));
+            $io->error(sprintf('The output directory `%s` was not found or writable.', $this->_output));
 
             return static::CODE_ERROR;
         }
@@ -348,7 +348,7 @@ class I18nExtractCommand extends Command
         $this->_tokens = [];
         $io->out();
         if ($this->_countMarkerError) {
-            $io->err("{$this->_countMarkerError} marker error(s) detected.");
+            $io->error("{$this->_countMarkerError} marker error(s) detected.");
             $io->err(' => Use the --marker-error option to display errors.');
         }
 
@@ -799,7 +799,7 @@ class I18nExtractCommand extends Command
             return;
         }
 
-        $io->err(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
+        $io->error(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
         $count += 2;
         $tokenCount = count($this->_tokens);
         $parenthesis = 1;
