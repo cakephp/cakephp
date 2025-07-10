@@ -814,7 +814,7 @@ SQL;
             ],
         ];
         foreach ($expected as $name => $constraint) {
-            $this->assertSame($constraint, $result->getConstraint($name), "does not match $name constraint");
+            $this->assertSame($constraint, $result->getConstraint($name), "does not match {$name} constraint");
         }
         $this->assertCount(3, $result->constraints());
 
