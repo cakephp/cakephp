@@ -627,6 +627,7 @@ SQL;
                 'length' => [],
                 'update' => 'cascade',
                 'delete' => 'cascade',
+                'deferrable' => null,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',

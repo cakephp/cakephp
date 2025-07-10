@@ -715,6 +715,7 @@ SQL;
                 'length' => [],
                 'update' => 'cascade',
                 'delete' => 'restrict',
+                'deferrable' => null,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
