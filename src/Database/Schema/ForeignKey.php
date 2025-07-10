@@ -205,7 +205,7 @@ class ForeignKey extends Constraint
      */
     public function setDeferrable(string $deferrable)
     {
-        $this->deferrable= $this->normalizeDeferrable($deferrable);
+        $this->deferrable = $this->normalizeDeferrable($deferrable);
 
         return $this;
     }
