@@ -212,6 +212,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         'update' => 'restrict',
         'delete' => 'restrict',
         'constraint' => null,
+        'deferrable' => null,
     ];
 
     /**
@@ -544,7 +545,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
         $attrs = array_intersect_key($attrs, static::$_indexKeys);
         $attrs += static::$_indexKeys;
-        unset($attrs['references'], $attrs['update'], $attrs['delete'], $attrs['constraint']);
+        unset($attrs['references'], $attrs['update'], $attrs['delete'], $attrs['constraint'], $attrs['deferrable']);
 
         if (!in_array($attrs['type'], static::$_validIndexTypes, true)) {
             throw new DatabaseException(sprintf(
@@ -698,7 +699,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 return $this;
             }
         } else {
-            unset($attrs['references'], $attrs['update'], $attrs['delete']);
+            unset($attrs['references'], $attrs['update'], $attrs['delete'], $attrs['deferrable']);
         }
 
         $this->_constraints[$name] = $attrs;
@@ -818,6 +819,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 'referencedColumns' => (array)$attrs['references'][1],
                 'update' => $attrs['update'],
                 'delete' => $attrs['delete'],
+                'deferrable' => $attrs['deferrable'] ?? null,
             ];
         } elseif ($type === static::CONSTRAINT_PRIMARY) {
             $attrs = [

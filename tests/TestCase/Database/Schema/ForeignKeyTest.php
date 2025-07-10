@@ -107,7 +107,7 @@ class ForeignKeyTest extends TestCase
     public function testSetDeferrable(): void
     {
         $key = new ForeignKey('title_idx', ['title'], 'users', ['id']);
-        $this->assertEquals(ForeignKey::IMMEDIATE, $key->getDeferrable());
+        $this->assertNull($key->getDeferrable());
 
         $key->setDeferrable(ForeignKey::DEFERRED);
         $this->assertEquals(ForeignKey::DEFERRED, $key->getDeferrable());

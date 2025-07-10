@@ -563,6 +563,7 @@ class TableSchemaTest extends TestCase
             'update' => 'cascade',
             'delete' => 'cascade',
             'length' => [],
+            'deferrable' => null,
         ];
         $this->assertEquals($expected, $compositeConstraint);
 

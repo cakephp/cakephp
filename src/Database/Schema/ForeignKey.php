@@ -84,7 +84,9 @@ class ForeignKey extends Constraint
         $this->type = self::FOREIGN;
         $this->delete = $this->normalizeAction($delete ?? self::NO_ACTION);
         $this->update = $this->normalizeAction($update ?? self::NO_ACTION);
-        $this->deferrable = $this->normalizeDeferrable($deferrable ?? self::IMMEDIATE);
+        if ($deferrable) {
+            $this->deferrable = $this->normalizeDeferrable($deferrable);
+        }
     }
 
     /**

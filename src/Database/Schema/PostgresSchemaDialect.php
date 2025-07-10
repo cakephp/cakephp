@@ -898,12 +898,14 @@ class PostgresSchemaDialect extends SchemaDialect
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
-                ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERRABLE INITIALLY IMMEDIATE',
+                ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s %s',
                 implode(', ', $columns),
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
                 $this->_foreignOnClause($data['delete']),
+                // Historically CakePHP used 'DEFERRABLE INITIALLY IMEDIATE, and this maintains backwards compat.
+                $data['deferrable'] ?? ForeignKey::IMMEDIATE,
             );
         }
 

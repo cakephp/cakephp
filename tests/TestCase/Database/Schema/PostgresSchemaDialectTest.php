@@ -808,6 +808,7 @@ SQL;
                 'length' => [],
                 'update' => 'cascade',
                 'delete' => 'restrict',
+                'deferrable' => null,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
@@ -1361,6 +1362,18 @@ SQL;
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
                 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
+            ],
+            [
+                'author_id_idx',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'noAction',
+                    'deferrable' => ForeignKey::DEFERRED,
+                ],
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+                'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
             ],
         ];
     }
