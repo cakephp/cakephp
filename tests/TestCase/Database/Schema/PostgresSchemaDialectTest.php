@@ -88,7 +88,15 @@ created_without_precision TIMESTAMP(0),
 created_with_precision TIMESTAMP(3),
 created_with_timezone timestamp with time zone,
 CONSTRAINT "content_idx" UNIQUE ("title", "body"),
-CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+CONSTRAINT "author_idx" FOREIGN KEY ("author_id")
+    REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    DEFERRABLE INITIALLY DEFERRED,
+CONSTRAINT "author_idx_immediate" FOREIGN KEY ("author_id")
+    REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    DEFERRABLE INITIALLY IMMEDIATE,
+CONSTRAINT "author_idx_not" FOREIGN KEY ("author_id")
+    REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    NOT DEFERRABLE
 )
 SQL;
         $connection->execute($table);
@@ -788,7 +796,7 @@ SQL;
         $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
 
-        $this->assertCount(4, $result->constraints());
+        $this->assertCount(6, $result->constraints());
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -808,7 +816,25 @@ SQL;
                 'length' => [],
                 'update' => 'cascade',
                 'delete' => 'restrict',
-                'deferrable' => null,
+                'deferrable' => ForeignKey::DEFERRED,
+            ],
+            'author_idx_immediate' => [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['schema_authors', 'id'],
+                'length' => [],
+                'update' => 'cascade',
+                'delete' => 'restrict',
+                'deferrable' => ForeignKey::IMMEDIATE,
+            ],
+            'author_idx_not' => [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['schema_authors', 'id'],
+                'length' => [],
+                'update' => 'cascade',
+                'delete' => 'restrict',
+                'deferrable' => ForeignKey::NOT_DEFERRED,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
@@ -820,7 +846,7 @@ SQL;
         ];
         foreach ($expected as $name => $expectedItem) {
             // Compare both the array API and the Schema\Constraint API.
-            $this->assertEquals($expectedItem, $result->getConstraint($name));
+            $this->assertEquals($expectedItem, $result->getConstraint($name), "mismatch in {$name} constraint");
             $this->assertConstraint($expectedItem, $name, $result);
         }
 
