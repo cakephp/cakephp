@@ -128,6 +128,27 @@ class ForeignKey extends Constraint
     }
 
     /**
+     * Converts the foreign key to an array that is compatible
+     * with the constructor.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        $data = [
+            'name' => $this->name,
+            'type' => $this->type,
+            'columns' => $this->columns,
+            'referencedTable' => $this->referencedTable,
+            'referencedColumns' => $this->referencedColumns,
+            'delete' => $this->delete,
+            'update' => $this->update,
+        ];
+
+        return $data;
+    }
+
+    /**
      * Sets ON DELETE action for the foreign key.
      *
      * @param string $delete On Delete
