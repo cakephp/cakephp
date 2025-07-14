@@ -288,35 +288,35 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      *
      * @var string
      */
-    public const ACTION_CASCADE = 'cascade';
+    public const ACTION_CASCADE = ForeignKey::CASCADE;
 
     /**
      * Foreign key set null action
      *
      * @var string
      */
-    public const ACTION_SET_NULL = 'setNull';
+    public const ACTION_SET_NULL = ForeignKey::SET_NULL;
 
     /**
      * Foreign key no action
      *
      * @var string
      */
-    public const ACTION_NO_ACTION = 'noAction';
+    public const ACTION_NO_ACTION = ForeignKey::NO_ACTION;
 
     /**
      * Foreign key restrict action
      *
      * @var string
      */
-    public const ACTION_RESTRICT = 'restrict';
+    public const ACTION_RESTRICT = ForeignKey::RESTRICT;
 
     /**
      * Foreign key restrict default
      *
      * @var string
      */
-    public const ACTION_SET_DEFAULT = 'setDefault';
+    public const ACTION_SET_DEFAULT = ForeignKey::SET_DEFAULT;
 
     /**
      * Constructor.
@@ -345,6 +345,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function addColumn(string $name, $attrs)
     {
+        // TODO use index object here.
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
         }
@@ -539,6 +540,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function addIndex(string $name, $attrs)
     {
+        // TODO use index object here.
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
         }
@@ -589,6 +591,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             return null;
         }
 
+        // TODO use index object and convert to an array
         return $this->_indexes[$name];
     }
 
@@ -602,6 +605,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function index(string $name): Index
     {
+        // TODO use index object
         $data = $this->getIndex($name);
         if ($data === null) {
             $message = sprintf(

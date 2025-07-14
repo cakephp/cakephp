@@ -27,10 +27,11 @@ use InvalidArgumentException;
  */
 class ForeignKey extends Constraint
 {
-    public const CASCADE = TableSchema::ACTION_CASCADE;
-    public const RESTRICT = TableSchema::ACTION_RESTRICT;
-    public const SET_NULL = TableSchema::ACTION_SET_NULL;
-    public const NO_ACTION = TableSchema::ACTION_NO_ACTION;
+    public const CASCADE = 'cascade';
+    public const RESTRICT = 'restrict';
+    public const SET_NULL = 'setNull';
+    public const NO_ACTION = 'noAction';
+    public const SET_DEFAULT = 'setDefault';
 
     /**
      * An allow list of valid actions
@@ -42,6 +43,7 @@ class ForeignKey extends Constraint
         self::RESTRICT,
         self::SET_NULL,
         self::NO_ACTION,
+        self::SET_DEFAULT,
     ];
 
     /**
