@@ -122,4 +122,19 @@ class Constraint
     {
         return $this->name;
     }
+
+    /**
+     * Converts a constraint to an array that is compatible
+     * with the constructor.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'type' => $this->type,
+            'columns' => $this->columns,
+        ];
+    }
 }

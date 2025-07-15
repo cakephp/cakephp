@@ -683,31 +683,12 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             }
         }
 
-        /// start copy-paste
-        $data['name'] = $data['constraint'] ?? $name;
-        unset($data['constraint']);
-
-        $attrs = [];
-        foreach ($data as $key => $value) {
-            if ($value === null) {
-                continue;
-            }
-            $attrs[$key] = $value;
-        }
+        $attrs['name'] = $attrs['constraint'] ?? $name;
+        unset($attrs['constraint']);
 
         $type = $attrs['type'] ?? null;
         if ($type === static::CONSTRAINT_FOREIGN) {
             $attrs = $this->_checkForeignKey($attrs);
-            // Map the backwards compatible attributes in. Need to check for existing instance.
-            // TODO continue here, got tired.
-            $attrs = [
-                'name' => $attrs['name'],
-                'columns' => $attrs['columns'],
-                'referencedTable' => $attrs['references'][0],
-                'referencedColumns' => (array)$attrs['references'][1],
-                'update' => $attrs['update'],
-                'delete' => $attrs['delete'],
-            ];
         } elseif ($type === static::CONSTRAINT_PRIMARY) {
             $attrs = [
                 'type' => $type,
@@ -721,19 +702,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 'length' => $attrs['length'],
             ];
         }
-
-        return match ($type) {
-            static::CONSTRAINT_UNIQUE => new UniqueKey(...$attrs),
-            static::CONSTRAINT_FOREIGN => new ForeignKey(...$attrs),
-            static::CONSTRAINT_PRIMARY => new Constraint(...$attrs),
-            default => new Constraint(...$attrs),
-        };
-        // end copy paste
-
-        if ($attrs['type'] === static::CONSTRAINT_FOREIGN) {
-            $attrs = $this->_checkForeignKey($attrs);
-
-            if (isset($this->_constraints[$name])) {
+        if ($type === static::CONSTRAINT_FOREIGN) {
+            if (isset($this->_constraints[$name]) && $this->_constraints[$name] instanceof ForeignKey) {
                 $constraint = $this->_constraints[$name];
                 assert($constraint instanceof ForeignKey, "{$name} must be a ForeignKey instance.");
 
@@ -755,7 +725,12 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             unset($attrs['references'], $attrs['update'], $attrs['delete']);
         }
 
-        $this->_constraints[$name] = new ForeignKey(...$attrs);
+        $this->_constraints[$name] = match ($type) {
+            static::CONSTRAINT_UNIQUE => new UniqueKey(...$attrs),
+            static::CONSTRAINT_FOREIGN => new ForeignKey(...$attrs),
+            static::CONSTRAINT_PRIMARY => new Constraint(...$attrs),
+            default => new Constraint(...$attrs),
+        };
 
         return $this;
     }
@@ -813,6 +788,11 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             ));
         }
 
+        // Map the backwards compatible attributes in. Need to check for existing instance.
+        $attrs['referencedTable'] = $attrs['references'][0];
+        $attrs['referencedColumns'] = (array)$attrs['references'][1];
+        unset($attrs['type'], $attrs['references'], $attrs['length']);
+
         return $attrs;
     }
 
@@ -834,7 +814,16 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             return null;
         }
 
-        return $constraint->toArray();
+        $data = $constraint->toArray();
+        if ($constraint instanceof ForeignKey) {
+            $data['references'] = [
+                $constraint->getReferencedTable(),
+                $constraint->getReferencedColumns(),
+            ];
+            unset($data['referencedTable'], $data['referencedColumns']);
+        }
+
+        return $data;
     }
 
     /**
@@ -848,8 +837,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function constraint(string $name): Constraint
     {
-        $data = $this->getConstraint($name);
-        if ($data === null) {
+        if (!isset($this->_constraints[$name])) {
             $message = sprintf(
                 'Table `%s` does not contain a constraint named `%s`.',
                 $this->_table,
@@ -857,47 +845,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             );
             throw new DatabaseException($message);
         }
-        $data['name'] = $data['constraint'] ?? $name;
-        unset($data['constraint']);
 
-        $attrs = [];
-        foreach ($data as $key => $value) {
-            if ($value === null) {
-                continue;
-            }
-            $attrs[$key] = $value;
-        }
-
-        $type = $attrs['type'] ?? null;
-        if ($type === static::CONSTRAINT_FOREIGN) {
-            $attrs = [
-                'name' => $attrs['name'],
-                'columns' => $attrs['columns'],
-                'referencedTable' => $attrs['references'][0],
-                'referencedColumns' => (array)$attrs['references'][1],
-                'update' => $attrs['update'],
-                'delete' => $attrs['delete'],
-            ];
-        } elseif ($type === static::CONSTRAINT_PRIMARY) {
-            $attrs = [
-                'type' => $type,
-                'name' => $attrs['name'],
-                'columns' => $attrs['columns'],
-            ];
-        } elseif ($type === static::CONSTRAINT_UNIQUE) {
-            $attrs = [
-                'name' => $attrs['name'],
-                'columns' => $attrs['columns'],
-                'length' => $attrs['length'],
-            ];
-        }
-
-        return match ($type) {
-            static::CONSTRAINT_UNIQUE => new UniqueKey(...$attrs),
-            static::CONSTRAINT_FOREIGN => new ForeignKey(...$attrs),
-            static::CONSTRAINT_PRIMARY => new Constraint(...$attrs),
-            default => new Constraint(...$attrs),
-        };
+        return $this->_constraints[$name];
     }
 
     /**

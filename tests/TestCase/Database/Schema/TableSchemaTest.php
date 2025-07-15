@@ -557,12 +557,12 @@ class TableSchemaTest extends TestCase
         $name = 'tag_id_fk';
         $compositeConstraint = $table->getSchema()->getConstraint($name);
         $expected = [
+            'name' => 'tag_id_fk',
             'type' => 'foreign',
             'columns' => ['tag_id'],
-            'references' => ['tags', 'id'],
+            'references' => ['tags', ['id']],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'length' => [],
         ];
         $this->assertEquals($expected, $compositeConstraint);
 

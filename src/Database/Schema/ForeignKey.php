@@ -135,7 +135,7 @@ class ForeignKey extends Constraint
      */
     public function toArray(): array
     {
-        $data = [
+        return [
             'name' => $this->name,
             'type' => $this->type,
             'columns' => $this->columns,
@@ -144,8 +144,6 @@ class ForeignKey extends Constraint
             'delete' => $this->delete,
             'update' => $this->update,
         ];
-
-        return $data;
     }
 
     /**

@@ -136,4 +136,20 @@ class UniqueKey extends Constraint
     {
         return $this->length;
     }
+
+    /**
+     * Converts a constraint to an array that is compatible
+     * with the constructor.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'name' => $this->name,
+            'type' => $this->type,
+            'columns' => $this->columns,
+            'length' => $this->length,
+        ];
+    }
 }
