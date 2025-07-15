@@ -631,7 +631,6 @@ class SqliteSchemaDialect extends SchemaDialect
                     'references' => [$row['table'], []],
                     'update' => $this->_convertOnClause($row['on_update'] ?? ''),
                     'delete' => $this->_convertOnClause($row['on_delete'] ?? ''),
-                    'length' => [],
                 ];
             }
             $keys[$id]['columns'][$row['seq']] = $row['from'];

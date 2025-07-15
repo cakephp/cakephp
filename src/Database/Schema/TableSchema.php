@@ -828,7 +828,10 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             unset($data['referencedTable'], $data['referencedColumns']);
         }
         if ($constraint->getType() === static::CONSTRAINT_PRIMARY && $name === 'primary') {
-            $data['constraint'] = $constraint->getName();
+            $alias = $constraint->getName();
+            if ($alias !== 'primary') {
+                $data['constraint'] = $alias;
+            }
         }
         unset($data['name']);
 

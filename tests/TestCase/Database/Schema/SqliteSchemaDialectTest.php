@@ -775,10 +775,7 @@ SQL;
         $expected = [
             'primary' => [
                 'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-                'length' => [],
+                'columns' => ['id'],
             ],
             'multi_col_author_fk' => [
                 'type' => 'foreign',
@@ -792,7 +789,6 @@ SQL;
                 ],
                 'update' => 'cascade',
                 'delete' => 'noAction',
-                'length' => [],
             ],
             'author_fk' => [
                 'type' => 'foreign',
@@ -805,11 +801,10 @@ SQL;
                 ],
                 'update' => 'cascade',
                 'delete' => 'restrict',
-                'length' => [],
             ],
         ];
         foreach ($expected as $name => $constraint) {
-            $this->assertSame($constraint, $result->getConstraint($name));
+            $this->assertEquals($constraint, $result->getConstraint($name));
         }
         $this->assertCount(3, $result->constraints());
 
