@@ -719,11 +719,10 @@ SQL;
             'primary' => [
                 'type' => 'primary',
                 'columns' => ['id'],
-                'name' => 'schema_authors_pkey',
+                'constraint' => 'schema_authors_pkey',
             ],
             'unique_position' => [
                 'type' => 'unique',
-                'name' => 'unique_position',
                 'columns' => ['position'],
                 'length' => [],
             ],
@@ -792,26 +791,23 @@ SQL;
         $expected = [
             'primary' => [
                 'type' => 'primary',
-                'name' => 'schema_articles_pkey',
                 'columns' => ['id'],
+                'constraint' => 'schema_articles_pkey',
             ],
             'content_idx' => [
                 'type' => 'unique',
-                'name' => 'content_idx',
                 'columns' => ['title', 'body'],
                 'length' => [],
             ],
             'author_idx' => [
                 'type' => 'foreign',
-                'name' => 'author_idx',
                 'columns' => ['author_id'],
-                'references' => ['schema_authors', ['id']],
+                'references' => ['schema_authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'restrict',
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
-                'name' => 'unique_id_idx',
                 'columns' => [
                     'unique_id',
                 ],
@@ -831,10 +827,6 @@ SQL;
             'length' => [],
         ];
         $this->assertEquals($authorIdx, $result->getIndex('author_idx'));
-
-        // Basic schema API returns the column as a string if there is only one.
-        $expected['author_idx']['references'][1] = 'id';
-        $expected['primary']['name'] = 'primary';
 
         // Compare describeForeignKeys()
         $keys = $dialect->describeForeignKeys('schema_articles');
@@ -877,12 +869,7 @@ SQL;
                     $this->assertEquals([], $value);
                     continue;
                 }
-                // Primary key names are different in different layers :(
-                // We could align the names, but risk breaking compatibility.
-                if ($key === 'name' && $value === 'primary') {
-                    continue;
-                }
-                $this->assertEquals($value, $indexObj->{'get' . ucfirst($key)}(), "Mismatch in {$name} index for {$key}");
+                $this->assertEquals($value, $indexObj->{'get' . ucfirst($key)}());
             }
         }
     }

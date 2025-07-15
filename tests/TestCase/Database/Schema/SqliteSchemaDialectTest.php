@@ -574,7 +574,6 @@ SQL;
             'primary' => [
                 'type' => 'primary',
                 'columns' => ['id'],
-                'length' => [],
             ],
             'title_idx' => [
                 'type' => 'unique',
@@ -585,7 +584,6 @@ SQL;
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['schema_authors', 'id'],
-                'length' => [],
                 'update' => 'cascade',
                 'delete' => 'restrict',
             ],

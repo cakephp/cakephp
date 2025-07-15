@@ -820,8 +820,17 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 $constraint->getReferencedTable(),
                 $constraint->getReferencedColumns(),
             ];
+            // If there is only one referenced column, we return it as a string.
+            // TODO this should be deprecated, but I don't know how to warn about it.
+            if (count($data['references'][1]) === 1) {
+                $data['references'][1] = $data['references'][1][0];
+            }
             unset($data['referencedTable'], $data['referencedColumns']);
         }
+        if ($constraint->getType() === static::CONSTRAINT_PRIMARY && $name === 'primary') {
+            $data['constraint'] = $constraint->getName();
+        }
+        unset($data['name']);
 
         return $data;
     }

@@ -560,7 +560,7 @@ class TableSchemaTest extends TestCase
             'name' => 'tag_id_fk',
             'type' => 'foreign',
             'columns' => ['tag_id'],
-            'references' => ['tags', ['id']],
+            'references' => ['tags', 'id'],
             'update' => 'cascade',
             'delete' => 'cascade',
         ];
