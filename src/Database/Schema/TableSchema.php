@@ -636,7 +636,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     {
         foreach ($this->_constraints as $data) {
             if ($data->getType() === static::CONSTRAINT_PRIMARY) {
-                return $data->getColumns();
+                return (array)$data->getColumns();
             }
         }
 
@@ -703,12 +703,10 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             ];
         }
         if ($type === static::CONSTRAINT_FOREIGN) {
-            if (isset($this->_constraints[$name]) && $this->_constraints[$name] instanceof ForeignKey) {
-                $constraint = $this->_constraints[$name];
-                assert($constraint instanceof ForeignKey, "{$name} must be a ForeignKey instance.");
-
+            $constraint = $this->_constraints[$name] ?? null;
+            if ($constraint instanceof ForeignKey) {
                 $constraint->setColumns(array_unique(array_merge(
-                    $constraint->getColumns(),
+                    (array)$constraint->getColumns(),
                     $attrs['columns'],
                 )));
 
