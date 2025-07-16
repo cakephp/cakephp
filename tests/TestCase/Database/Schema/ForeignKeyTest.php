@@ -104,11 +104,25 @@ class ForeignKeyTest extends TestCase
         $key->setDelete('invalid');
     }
 
-    public function setDefaultLength(): void
+    public function testSetDeferrable(): void
     {
-        // capture the current behavior.
-        // TODO: This method shouldn't exist. Separate UniqueKey from Constraint.
         $key = new ForeignKey('title_idx', ['title'], 'users', ['id']);
-        $this->assertSame([], $key->getLength());
+        $this->assertNull($key->getDeferrable());
+
+        $key->setDeferrable(ForeignKey::DEFERRED);
+        $this->assertEquals(ForeignKey::DEFERRED, $key->getDeferrable());
+
+        $key->setDeferrable(ForeignKey::IMMEDIATE);
+        $this->assertEquals(ForeignKey::IMMEDIATE, $key->getDeferrable());
+
+        $key->setDeferrable(ForeignKey::NOT_DEFERRED);
+        $this->assertEquals(ForeignKey::NOT_DEFERRED, $key->getDeferrable());
+    }
+
+    public function testSetDeferrableInvalid(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $key = new ForeignKey('title_idx', ['title'], 'users', ['id']);
+        $key->setDeferrable('invalid');
     }
 }

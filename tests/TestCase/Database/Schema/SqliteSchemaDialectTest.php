@@ -586,6 +586,7 @@ SQL;
                 'references' => ['schema_authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'restrict',
+                'deferrable' => null,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
@@ -783,28 +784,30 @@ SQL;
                     'author_id',
                     'author_name',
                 ],
+                'delete' => 'noAction',
+                'update' => 'cascade',
+                'deferrable' => null,
                 'references' => [
                     'schema_authors',
                     ['id', 'name'],
                 ],
-                'update' => 'cascade',
-                'delete' => 'noAction',
             ],
             'author_fk' => [
                 'type' => 'foreign',
                 'columns' => [
                     'author_id',
                 ],
+                'delete' => 'restrict',
+                'update' => 'cascade',
+                'deferrable' => null,
                 'references' => [
                     'schema_authors',
                     'id',
                 ],
-                'update' => 'cascade',
-                'delete' => 'restrict',
             ],
         ];
         foreach ($expected as $name => $constraint) {
-            $this->assertEquals($constraint, $result->getConstraint($name));
+            $this->assertSame($constraint, $result->getConstraint($name), "does not match {$name} constraint");
         }
         $this->assertCount(3, $result->constraints());
 
@@ -1319,6 +1322,18 @@ SQL;
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
                 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT',
+            ],
+            [
+                'author_id_idx',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'noAction',
+                    'deferrable' => ForeignKey::DEFERRED,
+                ],
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+                'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
             ],
         ];
     }

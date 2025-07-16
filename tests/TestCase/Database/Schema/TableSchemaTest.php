@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
@@ -553,6 +554,7 @@ class TableSchemaTest extends TestCase
     public function testConstraintForeignKey(): void
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
+        $driver = $table->getConnection()->getDriver();
 
         $name = 'tag_id_fk';
         $compositeConstraint = $table->getSchema()->getConstraint($name);
@@ -562,7 +564,12 @@ class TableSchemaTest extends TestCase
             'references' => ['tags', 'id'],
             'update' => 'cascade',
             'delete' => 'cascade',
+            'deferrable' => null,
         ];
+        // Postgres reflection always includes deferrable state.
+        if ($driver instanceof Postgres) {
+            $expected['deferrable'] = ForeignKey::IMMEDIATE;
+        }
         $this->assertEquals($expected, $compositeConstraint);
 
         $expectedSubstring = "CONSTRAINT <{$name}> FOREIGN KEY \\(<tag_id>\\) REFERENCES <tags> \\(<id>\\)";
@@ -610,6 +617,7 @@ class TableSchemaTest extends TestCase
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
+            'deferrable' => null,
         ];
         $this->assertEquals($expected, $compositeConstraint);
 

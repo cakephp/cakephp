@@ -515,6 +515,7 @@ class PostgresSchemaDialect extends SchemaDialect
             'references' => [$row['references_table'], $row['references_field']],
             'update' => $this->_convertOnClause($row['on_update']),
             'delete' => $this->_convertOnClause($row['on_delete']),
+            'deferrable' => $this->convertDeferrable($row),
         ];
         $schema->addConstraint($row['name'], $data);
     }
@@ -538,6 +539,7 @@ class PostgresSchemaDialect extends SchemaDialect
                     'references' => [$row['references_table'], []],
                     'update' => $this->_convertOnClause($row['on_update']),
                     'delete' => $this->_convertOnClause($row['on_delete']),
+                    'deferrable' => $this->convertDeferrable($row),
                 ];
             }
             // column indexes start at 1
@@ -576,7 +578,9 @@ class PostgresSchemaDialect extends SchemaDialect
         c.confdeltype AS on_delete,
         c.confrelid::regclass AS references_table,
         ab.attname AS references_field,
-        array_position(c.confkey, ab.attnum) AS references_field_order
+        array_position(c.confkey, ab.attnum) AS references_field_order,
+        c.condeferrable AS deferrable,
+        c.condeferred AS initially_deferred
         FROM pg_catalog.pg_namespace n
         INNER JOIN pg_catalog.pg_class cl ON (n.oid = cl.relnamespace)
         INNER JOIN pg_catalog.pg_constraint c ON (n.oid = c.connamespace)
@@ -614,6 +618,27 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         return TableSchema::ACTION_SET_NULL;
+    }
+
+    /**
+     * Convert deferrable option from the postgres metadata into a string
+     *
+     * @param array $row The row to convert.
+     * @return string|null The deferrable value or null if not deferrable.
+     */
+    protected function convertDeferrable(array $row): ?string
+    {
+        if (!isset($row['deferrable'])) {
+            return null;
+        }
+        if (!$row['deferrable']) {
+            return ForeignKey::NOT_DEFERRED;
+        }
+        if (isset($row['initially_deferred']) && $row['initially_deferred']) {
+            return ForeignKey::DEFERRED;
+        }
+
+        return ForeignKey::IMMEDIATE;
     }
 
     /**
@@ -898,12 +923,14 @@ class PostgresSchemaDialect extends SchemaDialect
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
-                ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERRABLE INITIALLY IMMEDIATE',
+                ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s %s',
                 implode(', ', $columns),
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
                 $this->_foreignOnClause($data['delete']),
+                // Historically CakePHP used 'DEFERRABLE INITIALLY IMEDIATE, and this maintains backwards compat.
+                $data['deferrable'] ?? ForeignKey::IMMEDIATE,
             );
         }
 

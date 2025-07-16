@@ -32,6 +32,9 @@ class ForeignKey extends Constraint
     public const SET_NULL = 'setNull';
     public const NO_ACTION = 'noAction';
     public const SET_DEFAULT = 'setDefault';
+    public const DEFERRED = 'DEFERRABLE INITIALLY DEFERRED';
+    public const IMMEDIATE = 'DEFERRABLE INITIALLY IMMEDIATE';
+    public const NOT_DEFERRED = 'NOT DEFERRABLE';
 
     /**
      * An allow list of valid actions
@@ -57,6 +60,11 @@ class ForeignKey extends Constraint
     protected ?string $update = null;
 
     /**
+     * @var string|null
+     */
+    protected ?string $deferrable = null;
+
+    /**
      * Constructor
      *
      * @param string $name The name of the index.
@@ -73,11 +81,14 @@ class ForeignKey extends Constraint
         protected array $referencedColumns = [],
         ?string $delete = null,
         ?string $update = null,
+        ?string $deferrable = null,
     ) {
-        // TODO add deferrable
         $this->type = self::FOREIGN;
         $this->delete = $this->normalizeAction($delete ?? self::NO_ACTION);
         $this->update = $this->normalizeAction($update ?? self::NO_ACTION);
+        if ($deferrable) {
+            $this->deferrable = $this->normalizeDeferrable($deferrable);
+        }
     }
 
     /**
@@ -143,6 +154,7 @@ class ForeignKey extends Constraint
             'referencedColumns' => $this->referencedColumns,
             'delete' => $this->delete,
             'update' => $this->update,
+            'deferrable' => $this->deferrable,
         ];
     }
 
@@ -205,5 +217,51 @@ class ForeignKey extends Constraint
             return $action;
         }
         throw new InvalidArgumentException('Unknown action passed: ' . $action);
+    }
+
+    /**
+     * Sets deferrable mode for the foreign key.
+     *
+     * @param string $deferrable Constraint
+     * @return $this
+     */
+    public function setDeferrable(string $deferrable)
+    {
+        $this->deferrable = $this->normalizeDeferrable($deferrable);
+
+        return $this;
+    }
+
+    /**
+     * Gets deferrable mode for the foreign key.
+     */
+    public function getDeferrable(): ?string
+    {
+        return $this->deferrable;
+    }
+
+    /**
+     * From passed value checks if it's correct and fixes if needed
+     *
+     * @param string $deferrable Deferrable
+     * @throws \InvalidArgumentException
+     * @return string
+     */
+    protected function normalizeDeferrable(string $deferrable): string
+    {
+        $mapping = [
+            'DEFERRED' => ForeignKey::DEFERRED,
+            'IMMEDIATE' => ForeignKey::IMMEDIATE,
+            'NOT DEFERRED' => ForeignKey::NOT_DEFERRED,
+            ForeignKey::DEFERRED => ForeignKey::DEFERRED,
+            ForeignKey::IMMEDIATE => ForeignKey::IMMEDIATE,
+            ForeignKey::NOT_DEFERRED => ForeignKey::NOT_DEFERRED,
+        ];
+        $normalized = strtoupper(str_replace('_', ' ', $deferrable));
+        if (array_key_exists($normalized, $mapping)) {
+            return $mapping[$normalized];
+        }
+
+        throw new InvalidArgumentException('Unknown deferrable passed: ' . $deferrable);
     }
 }

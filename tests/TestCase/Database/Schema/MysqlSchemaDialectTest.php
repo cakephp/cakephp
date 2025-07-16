@@ -713,6 +713,7 @@ SQL;
                 'references' => ['schema_authors', 'id'],
                 'update' => 'cascade',
                 'delete' => 'restrict',
+                'deferrable' => null,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
