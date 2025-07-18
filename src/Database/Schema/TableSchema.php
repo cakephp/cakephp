@@ -275,14 +275,14 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      *
      * @var string
      */
-    public const INDEX_INDEX = 'index';
+    public const INDEX_INDEX = Index ::INDEX;
 
     /**
      * Fulltext index type
      *
      * @var string
      */
-    public const INDEX_FULLTEXT = 'fulltext';
+    public const INDEX_FULLTEXT = Index::FULLTEXT;
 
     /**
      * Foreign key cascade action

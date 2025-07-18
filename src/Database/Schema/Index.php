@@ -31,12 +31,12 @@ class Index
     /**
      * @var string
      */
-    public const INDEX = TableSchema::INDEX_INDEX;
+    public const INDEX = 'index';
 
     /**
      * @var string
      */
-    public const FULLTEXT = TableSchema::INDEX_FULLTEXT;
+    public const FULLTEXT = 'fulltext';
 
     /**
      * Constructor
@@ -268,7 +268,7 @@ class Index
     public function setAttributes(array $attributes)
     {
         // Valid Options
-        $validOptions = ['columns', 'concurrently', 'type', 'name', 'length', 'order', 'include', 'where'];
+        $validOptions = ['columns', 'concurrent', 'type', 'name', 'length', 'order', 'include', 'where'];
         foreach ($attributes as $attr => $value) {
             if (!in_array($attr, $validOptions, true)) {
                 throw new RuntimeException(sprintf('"%s" is not a valid index option.', $attr));
