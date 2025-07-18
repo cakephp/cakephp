@@ -57,7 +57,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * Indexes in the table.
      *
-     * @var array<string, array>
+     * @var array<string, \Cake\Database\Schema\Index>
      */
     protected array $_indexes = [];
 
@@ -541,10 +541,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function addIndex(string $name, $attrs)
     {
-        // TODO use index object here.
-        if (is_string($attrs)) {
-            $attrs = ['type' => $attrs];
-        }
         $attrs = array_intersect_key($attrs, static::$_indexKeys);
         $attrs += static::$_indexKeys;
         unset($attrs['references'], $attrs['update'], $attrs['delete'], $attrs['constraint'], $attrs['deferrable']);
@@ -570,7 +566,9 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 throw new DatabaseException($msg);
             }
         }
-        $this->_indexes[$name] = $attrs;
+        $attrs['name'] = $name;
+
+        $this->_indexes[$name] = new Index(...$attrs);
 
         return $this;
     }
@@ -591,9 +589,18 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         if (!isset($this->_indexes[$name])) {
             return null;
         }
+        $index = $this->_indexes[$name];
+        $attrs = $index->toArray();
 
-        // TODO use index object and convert to an array
-        return $this->_indexes[$name];
+        $optional = ['order', 'include', 'concurrent', 'where'];
+        foreach ($optional as $key) {
+            if ($attrs[$key] === null) {
+                unset($attrs[$key]);
+            }
+        }
+        unset($attrs['name']);
+
+        return $attrs;
     }
 
     /**
@@ -606,9 +613,8 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function index(string $name): Index
     {
-        // TODO use index object
-        $data = $this->getIndex($name);
-        if ($data === null) {
+        $index = $this->_indexes[$name] ?? null;
+        if ($index === null) {
             $message = sprintf(
                 'Table `%s` does not contain a index named `%s`.',
                 $this->_table,
@@ -616,16 +622,6 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             );
             throw new DatabaseException($message);
         }
-        $data['name'] = $name;
-
-        $attrs = [];
-        foreach ($data as $key => $value) {
-            if ($value === null) {
-                continue;
-            }
-            $attrs[$key] = $value;
-        }
-        $index = new Index(...$attrs);
 
         return $index;
     }

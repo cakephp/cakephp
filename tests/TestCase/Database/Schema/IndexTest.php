@@ -84,16 +84,16 @@ class IndexTest extends TestCase
         $this->assertSame(['title', 'name'], $index->getInclude());
     }
 
-    public function testSetConcurrently(): void
+    public function testSetConcurrent(): void
     {
         $index = new Index('title_idx', ['title']);
-        $this->assertFalse($index->getConcurrently());
+        $this->assertFalse($index->getConcurrent());
 
-        $index->setConcurrently(true);
-        $this->assertTrue($index->getConcurrently());
+        $index->setConcurrent(true);
+        $this->assertTrue($index->getConcurrent());
 
-        $index->setConcurrently(false);
-        $this->assertFalse($index->getConcurrently());
+        $index->setConcurrent(false);
+        $this->assertFalse($index->getConcurrent());
     }
 
     public function testSetWhere(): void
