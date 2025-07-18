@@ -267,7 +267,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         // If there are no fields and no bundled translations, or both fields
         // in the default locale and bundled translations we can
-        // skip the remaining logic as its not necessary.
+        // skip the remaining logic as it is not necessary.
         if ($noFields && $noBundled || ($fields && $bundled)) {
             return;
         }

@@ -79,14 +79,14 @@ class MysqlSchemaDialect extends SchemaDialect
     }
 
     /**
-     * Split a tablename into a tuple of database, table
+     * Split a table name into a tuple of database, table
      * If the table does not have a database name included, the connection
      * database will be used.
      *
      * @param string $tableName The table name to split
-     * @return array A tuple of [database, tablename]
+     * @return array<string> A tuple of [database, tablename]
      */
-    private function splitTablename(string $tableName): array
+    private function splitTableName(string $tableName): array
     {
         $config = $this->_driver->config();
         $db = $config['database'];
@@ -278,7 +278,7 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function describeOptions(string $tableName): array
     {
-        [, $name] = $this->splitTablename($tableName);
+        [, $name] = $this->splitTableName($tableName);
         $sql = 'SHOW TABLE STATUS WHERE Name = ?';
         $statement = $this->_driver->execute($sql, [$name]);
         $row = $statement->fetch('assoc');
@@ -531,7 +531,7 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function describeForeignKeys(string $tableName): array
     {
-        [$database, $name] = $this->splitTablename($tableName);
+        [$database, $name] = $this->splitTableName($tableName);
         $sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
             INNER JOIN information_schema.referential_constraints AS rc
             ON (

@@ -76,7 +76,7 @@ trait CommonQueryTrait
 
     /**
      * Returns the default repository object that will be used by this query,
-     * that is, the table that will appear in the from clause.
+     * that is, the table that will appear in the "from" clause.
      *
      * @return \Cake\ORM\Table
      */

@@ -11,7 +11,7 @@ interfaces provided by this package.
 
 A repository is a class capable of interfacing with a data source using operations such as
 `find`, `save` and  `delete` by using intermediate query objects for expressing commands to
-the data store and returning Entities as the single result unit of such system.
+the data store and returning Entities as the single result unit of such a system.
 
 In the case of a Relational database, a Repository would be a `Table`, which can be return single
 or multiple `Entity` objects by using a `Query`.

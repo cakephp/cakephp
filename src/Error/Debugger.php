@@ -165,7 +165,7 @@ class Debugger
      *
      * ### Example
      *
-     * Debugger::setOutputMask(['password' => '[*************]');
+     * Debugger::setOutputMask(['password' => '[*************]']);
      *
      * @param array<string, string> $value An array where keys are replaced by their values in output.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.

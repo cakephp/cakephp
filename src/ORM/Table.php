@@ -447,7 +447,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Alias a field with the table's current alias.
      *
-     * If field is already aliased it will result in no-op.
+     * If field is already aliased, it will result in no-op.
      *
      * @param string $field The field to alias.
      * @return string The field prefixed with the table alias.
@@ -1486,7 +1486,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Get an article and some relationships:
      *
      * ```
-     * $article = $articles->get(1, contain: ['Users', 'Comments']]);
+     * $article = $articles->get(1, contain: ['Users', 'Comments']);
      * ```
      *
      * @param mixed $primaryKey primary key value to find

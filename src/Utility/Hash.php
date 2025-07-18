@@ -683,8 +683,7 @@ class Hash
 
     /**
      * Collapses a multi-dimensional array into a single dimension, using a delimited array path for
-     * each array element's key, i.e. [['Foo' => ['Bar' => 'Far']]] becomes
-     * ['0.Foo.Bar' => 'Far'].)
+     * each array element's key, i.e. `[['Foo' => ['Bar' => 'Far']]]` becomes `['0.Foo.Bar' => 'Far']`.
      *
      * @param array $data Array to flatten
      * @param string $separator String used to separate array key elements in a path, defaults to '.'

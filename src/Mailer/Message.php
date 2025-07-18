@@ -295,7 +295,7 @@ class Message implements JsonSerializable
      * Regex for email validation
      *
      * If null, filter_var() will be used. Use the emailPattern() method
-     * to set a custom pattern.'
+     * to set a custom pattern.
      *
      * @var string|null
      */

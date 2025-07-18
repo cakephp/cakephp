@@ -315,7 +315,7 @@ class QueryCompiler
     /**
      * Helper function to generate SQL for SET expressions.
      *
-     * @param array $parts List of keys & values to set.
+     * @param array $parts List of keys and values to set.
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string

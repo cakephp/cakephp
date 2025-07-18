@@ -127,7 +127,7 @@ class SchemaLoader
      *
      * This schema format can be useful for plugins that want to include
      * tables to test against but don't need to include production
-     * ready schema via migrations. Applications should favour using migrations
+     * ready schema via migrations. Applications should favor using migrations
      * or SQL dump files over this format for ease of maintenance.
      *
      * A more complete example can be found in `tests/schema.php`.

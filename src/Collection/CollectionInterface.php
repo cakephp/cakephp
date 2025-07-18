@@ -219,8 +219,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * ```
      * $items = [
-     *  ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
-     *  ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
+     *     ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']]],
+     *     ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]],
      * ];
      * $extracted = (new Collection($items))->extract('comment.user.name');
      *
@@ -233,7 +233,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ```
      *  $items = [
      *      ['comment' => ['votes' => [['value' => 1], ['value' => 2], ['value' => 3]]],
-     *      ['comment' => ['votes' => [['value' => 4]]
+     *      ['comment' => ['votes' => [['value' => 4]],
      * ];
      * $extracted = (new Collection($items))->extract('comment.votes.{*}.value');
      *
@@ -614,15 +614,15 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * ```
      * $items = [
-     *  ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
-     *  ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']],
+     *     ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']]],
+     *     ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]],
      * ];
      *
      * $extracted = (new Collection($items))->match(['user.name' => 'Renan']);
      *
      * // Result will look like this when converted to array
      * [
-     *  ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]]
+     *     ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]],
      * ]
      * ```
      *
@@ -774,16 +774,16 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * ```
      * $items = [
-     *  ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
-     *  ['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan']]
+     *     ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']]],
+     *     ['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan']]],
      * ];
      * $ages = [25, 28];
      * $inserted = (new Collection($items))->insert('comment.user.age', $ages);
      *
      * // Result will look like this when converted to array
      * [
-     *  ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark', 'age' => 25]],
-     *  ['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan', 'age' => 28]]
+     *     ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark', 'age' => 25]]],
+     *     ['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan', 'age' => 28]]]
      * ];
      * ```
      *
