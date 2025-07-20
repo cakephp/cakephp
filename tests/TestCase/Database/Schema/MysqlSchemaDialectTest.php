@@ -726,6 +726,7 @@ SQL;
                 'type' => 'index',
                 'columns' => ['author_id'],
                 'length' => [],
+                'concurrent' => false,
             ],
         ];
 
