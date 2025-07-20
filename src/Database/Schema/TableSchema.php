@@ -541,6 +541,9 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function addIndex(string $name, $attrs)
     {
+        if (is_string($attrs)) {
+            $attrs = ['type' => $attrs];
+        }
         $attrs = array_intersect_key($attrs, static::$_indexKeys);
         $attrs += static::$_indexKeys;
         unset($attrs['references'], $attrs['update'], $attrs['delete'], $attrs['constraint'], $attrs['deferrable']);

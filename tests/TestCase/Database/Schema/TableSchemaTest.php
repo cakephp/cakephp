@@ -428,14 +428,17 @@ class TableSchemaTest extends TestCase
         $result = $table->addIndex('faster', [
             'type' => 'index',
             'columns' => ['title'],
-        ]);
+        ])->addIndex('no_columns', 'index');
         $this->assertSame($result, $table);
-        $this->assertEquals(['faster'], $table->indexes());
+        $this->assertEquals(['faster', 'no_columns'], $table->indexes());
 
         $index = $table->index('faster');
         $this->assertEquals('faster', $index->getName());
         $this->assertEquals(['title'], $index->getColumns());
         $this->assertEquals(TableSchema::INDEX_INDEX, $index->getType());
+
+        $noCols = $table->index('no_columns');
+        $this->assertEquals([], $noCols->getColumns());
     }
 
     /**
