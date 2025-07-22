@@ -403,10 +403,24 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             return null;
         }
         $column = $this->_columns[$name];
-        $data = $column->toArray();
-        unset($data['baseType'], $data['name'], $data['identity']);
+        $attrs = $column->toArray();
 
-        return $data;
+        $expected = static::$_columnKeys;
+        if (isset(static::$_columnExtras[$attrs['type']])) {
+            $expected += static::$_columnExtras[$attrs['type']];
+        }
+        // Remove any attributes that weren't in the allow list.
+        // This is to provide backwards compatible keys
+        $remove = array_diff(array_keys($attrs), array_keys($expected));
+        foreach ($remove as $key) {
+            unset($attrs[$key]);
+        }
+
+        if (isset($attrs['baseType']) && $attrs['baseType'] === $attrs['type']) {
+            unset($attrs['baseType']);
+        }
+
+        return $attrs;
     }
 
     /**
@@ -744,6 +758,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public function hasAutoincrement(): bool
     {
         foreach ($this->_columns as $column) {
+            // TODO y u no have tests?
             if (isset($column['autoIncrement']) && $column['autoIncrement']) {
                 return true;
             }

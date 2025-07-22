@@ -247,10 +247,6 @@ class TableSchemaTest extends TestCase
             'null' => null,
             'comment' => null,
             'collate' => null,
-            'unsigned' => false,
-            'onUpdate' => null,
-            'srid' => null,
-            'autoIncrement' => false,
         ];
         $this->assertEquals($expected, $result);
         $column = $table->column('title');
@@ -266,13 +262,10 @@ class TableSchemaTest extends TestCase
             'precision' => null,
             'default' => null,
             'null' => null,
-            'unsigned' => null,
-            'collate' => null,
             'comment' => null,
-            'unsigned' => false,
-            'onUpdate' => null,
-            'srid' => null,
             'autoIncrement' => false,
+            'generated' => null,
+            'unsigned' => null,
         ];
         $this->assertEquals($expected, $result);
         $column = $table->column('author_id');
@@ -290,12 +283,8 @@ class TableSchemaTest extends TestCase
             'precision' => 3,
             'default' => null,
             'null' => null,
-            'collate' => null,
             'comment' => null,
-            'unsigned' => false,
-            'onUpdate' => null,
-            'srid' => null,
-            'autoIncrement' => false,
+            'unsigned' => null,
         ];
         $this->assertEquals($expected, $result);
         $column = $table->column('amount');

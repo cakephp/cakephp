@@ -491,7 +491,7 @@ SQL;
         $this->assertInstanceOf(TableSchema::class, $result);
         $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->getColumn($field));
+            $this->assertEquals($definition, $result->getColumn($field), "{$field} does not match");
         }
     }
 
@@ -511,9 +511,9 @@ SQL;
                 'length' => null,
                 'null' => true,
                 'default' => null,
-                'comment' => null,
-                'precision' => null,
                 'collate' => null,
+                'precision' => null,
+                'comment' => null,
             ],
         ];
         $this->assertInstanceOf(TableSchema::class, $result);
@@ -536,8 +536,8 @@ SQL;
         $result = $schema->describe('schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->getPrimaryKey());
-        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
-        $this->assertNull($result->getColumn('id')['autoIncrement'], 'id should not be autoincrement');
+        $this->assertFalse($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertFalse($result->getColumn('id')['autoIncrement'], 'id should not be autoincrement');
     }
 
     /**
