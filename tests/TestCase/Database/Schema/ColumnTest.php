@@ -8,6 +8,7 @@ use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use TestApp\Database\Type\IntType;
 
@@ -211,5 +212,27 @@ class ColumnTest extends TestCase
         $this->assertFalse($column->isNull());
         $this->assertSame('default_value', $column->getDefault());
         $this->assertSame('utf8mb4_general_ci', $column->getCollate());
+    }
+
+    public static function toArrayDataProvider(): array
+    {
+        return [
+            'datetime null' => ['datetime', null, 'datetime'],
+            'datetime' => ['datetime', 0, 'datetime'],
+            'datetimefractional' => ['datetime', 6, 'datetimefractional'],
+            'timestamp null' => ['timestamp', null, 'timestamp'],
+            'timestamp' => ['timestamp', 0, 'timestamp'],
+            'timestampfractional' => ['timestamp', 6, 'timestampfractional'],
+        ];
+    }
+
+    #[DataProvider('toArrayDataProvider')]
+    public function testToArrayDatetimeToDatetimeFractional(string $inType, $precision, $outType): void
+    {
+        $column = new Column('created', $inType, precision: $precision);
+        $result = $column->toArray();
+
+        $this->assertSame($outType, $result['type']);
+        $this->assertSame($precision, $result['precision']);
     }
 }

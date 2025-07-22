@@ -570,7 +570,7 @@ class Column
         $type = $this->getType();
         $length = $this->getLength();
         $precision = $this->getPrecision();
-        if ($precision !== null) {
+        if ($precision !== null && $precision > 0) {
             if ($type === TableSchemaInterface::TYPE_TIMESTAMP) {
                 $type = 'timestampfractional';
             } elseif ($type === TableSchemaInterface::TYPE_DATETIME) {
