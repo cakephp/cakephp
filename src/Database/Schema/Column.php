@@ -43,7 +43,7 @@ class Column
      * @param string|null $after Name of the column to add this column after
      * @param string|null $onUpdate MySQL 'ON UPDATE' function
      * @param string|null $comment Comment for the column
-     * @param bool $unsigned Whether the column is unsigned
+     * @param bool|null $unsigned Whether the column is unsigned
      * @param string|null $collate Collation for the column
      * @param int|null $srid SRID for geometry fields
      * @param string|null $baseType The basic schema type if the column type is a complex/custom type.
@@ -55,13 +55,13 @@ class Column
         protected mixed $default = null,
         protected ?int $length = null,
         protected bool $identity = false,
-        protected ?string $generated = PostgresSchemaDialect::GENERATED_BY_DEFAULT,
+        protected ?string $generated = null,
         protected ?int $precision = null,
         protected ?int $increment = null,
         protected ?string $after = null,
         protected ?string $onUpdate = null,
         protected ?string $comment = null,
-        protected bool $unsigned = true,
+        protected ?bool $unsigned = null,
         protected ?string $collate = null,
         protected ?int $srid = null,
         protected ?string $baseType = null,
@@ -434,9 +434,9 @@ class Column
     /**
      * Gets whether field should be unsigned.
      *
-     * @return bool
+     * @return bool|null
      */
-    public function getUnsigned(): bool
+    public function getUnsigned(): ?bool
     {
         return $this->unsigned;
     }
@@ -458,7 +458,7 @@ class Column
      */
     public function isUnsigned(): bool
     {
-        return $this->getUnsigned();
+        return $this->getUnsigned() === true;
     }
 
     /**
@@ -561,8 +561,7 @@ class Column
     }
 
     /**
-     * Convert the column into the array shape
-     * used by cakephp/database.
+     * Convert an index into an array that is compatible with the Column constructor.
      *
      * @return array
      */
@@ -586,7 +585,8 @@ class Column
             'length' => $length,
             'null' => $this->getNull(),
             'default' => $this->getDefault(),
-            'unsigned' => !$this->getUnsigned(),
+            'generated' => $this->getGenerated(),
+            'unsigned' => $this->getUnsigned(),
             'onUpdate' => $this->getOnUpdate(),
             'collate' => $this->getCollate(),
             'precision' => $precision,

@@ -91,11 +91,14 @@ class ColumnTest extends TestCase
 
     public function testSetGenerated(): void
     {
-        $column = new Column('body', 'string');
-        $this->assertEquals(PostgresSchemaDialect::GENERATED_BY_DEFAULT, $column->getGenerated());
+        $column = new Column('body', 'integer');
+        $this->assertNull($column->getGenerated());
 
         $column->setGenerated('by default');
         $this->assertEquals('by default', $column->getGenerated());
+
+        $column->setGenerated(PostgresSchemaDialect::GENERATED_BY_DEFAULT);
+        $this->assertEquals(PostgresSchemaDialect::GENERATED_BY_DEFAULT, $column->getGenerated());
     }
 
     public function testSetIdentity(): void
@@ -151,8 +154,8 @@ class ColumnTest extends TestCase
 
     public function testSetUnsigned(): void
     {
-        $column = new Column('body', 'string');
-        $this->assertTrue($column->getUnsigned());
+        $column = new Column('body', 'integer');
+        $this->assertNull($column->getUnsigned());
 
         $column->setUnsigned(false);
         $this->assertFalse($column->getUnsigned());
