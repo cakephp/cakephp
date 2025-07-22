@@ -6,8 +6,10 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Database\Schema\Column;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\TableSchemaInterface;
+use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use RuntimeException;
+use TestApp\Database\Type\IntType;
 
 class ColumnTest extends TestCase
 {
@@ -32,6 +34,26 @@ class ColumnTest extends TestCase
         // for, as drivers and dialects can implement their own types.
         $column->setType('imaginary');
         $this->assertSame('imaginary', $column->getType());
+    }
+
+    public function testSetBaseTypeExplicit(): void
+    {
+        $column = new Column('body', 'string');
+        $this->assertEquals(TableSchemaInterface::TYPE_STRING, $column->getBaseType());
+
+        $column
+            ->setType('fancy-int')
+            ->setBaseType('integer');
+        $this->assertSame('fancy-int', $column->getType());
+        $this->assertSame('integer', $column->getBaseType());
+    }
+
+    public function testGetBaseTypeInferredFromTypeFactory(): void
+    {
+        TypeFactory::map('int', IntType::class);
+        $column = new Column('int_val', 'int');
+        $this->assertEquals(TableSchemaInterface::TYPE_INTEGER, $column->getBaseType());
+        $this->assertEquals('int', $column->getType());
     }
 
     public function testSetLength(): void

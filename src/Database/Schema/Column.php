@@ -18,6 +18,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\TypeFactory;
 use RuntimeException;
 
 /**
@@ -45,6 +46,7 @@ class Column
      * @param bool $unsigned Whether the column is unsigned
      * @param string|null $collate Collation for the column
      * @param int|null $srid SRID for geometry fields
+     * @param string|null $baseType The basic schema type if the column type is a complex/custom type.
      */
     public function __construct(
         protected string $name,
@@ -62,6 +64,7 @@ class Column
         protected bool $unsigned = true,
         protected ?string $collate = null,
         protected ?int $srid = null,
+        protected ?string $baseType = null,
     ) {
     }
 
@@ -86,6 +89,45 @@ class Column
     public function getName(): ?string
     {
         return $this->name;
+    }
+
+    /**
+     * Get the base type if defined. Will fallback to `type` if not set.
+     *
+     * Used to get the base type of a column when the column type is a complex/custom type.
+     *
+     * @return string|null
+     */
+    public function getBaseType(): ?string
+    {
+        if (isset($this->baseType)) {
+            return $this->baseType;
+        }
+        $type = $this->type;
+        if ($type === null) {
+            return null;
+        }
+
+        if (TypeFactory::getMap($type)) {
+            $this->baseType = TypeFactory::build($type)->getBaseType();
+        }
+
+        return $this->baseType;
+    }
+
+    /**
+     * Sets the base type of the column.
+     *
+     * Used to set the base type of a column when the column type is a complex/custom type.
+     *
+     * @param string|null $baseType Base type
+     * @return $this
+     */
+    public function setBaseType(?string $baseType)
+    {
+        $this->baseType = $baseType;
+
+        return $this;
     }
 
     /**
@@ -539,6 +581,7 @@ class Column
 
         return [
             'name' => $this->getName(),
+            'baseType' => $this->getBaseType(),
             'type' => $type,
             'length' => $length,
             'null' => $this->getNull(),
