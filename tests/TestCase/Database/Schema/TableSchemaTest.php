@@ -186,16 +186,16 @@ class TableSchemaTest extends TestCase
     {
         $table = new TableSchema('articles');
         $table->addColumn('title', [
-            'type' => 'string',
+            'type' => 'integer',
             'length' => 25,
             'null' => false,
         ]);
-        $this->assertSame('string', $table->getColumnType('title'));
-        $this->assertSame('string', $table->baseColumnType('title'));
+        $this->assertSame('integer', $table->getColumnType('title'));
+        $this->assertSame('integer', $table->baseColumnType('title'));
 
         $table->setColumnType('title', 'json');
         $this->assertSame('json', $table->getColumnType('title'));
-        $this->assertSame('string', $table->baseColumnType('title'));
+        $this->assertSame('json', $table->baseColumnType('title'));
     }
 
     /**

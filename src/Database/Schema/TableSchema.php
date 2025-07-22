@@ -475,7 +475,9 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             throw new DatabaseException($message);
         }
 
-        $this->_columns[$name]->setType($type);
+        $this->_columns[$name]
+            ->setType($type)
+            ->setBaseType(null);
         $this->_typeMap[$name] = $type;
 
         return $this;
