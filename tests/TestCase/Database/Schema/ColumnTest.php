@@ -68,8 +68,8 @@ class ColumnTest extends TestCase
     public function testSetNull(): void
     {
         $column = new Column('body', 'string');
-        $this->assertTrue($column->isNull());
-        $this->assertTrue($column->getNull());
+        $this->assertFalse($column->isNull());
+        $this->assertNull($column->getNull());
 
         $column->setNull(false);
         $this->assertFalse($column->isNull());
@@ -166,7 +166,7 @@ class ColumnTest extends TestCase
     public function testSetAttributesIdentity(): void
     {
         $column = new Column('body', 'string');
-        $this->assertTrue($column->isNull());
+        $this->assertFalse($column->isNull());
         $this->assertFalse($column->isIdentity());
 
         $column->setAttributes(['identity' => true]);

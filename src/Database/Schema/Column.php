@@ -51,7 +51,7 @@ class Column
     public function __construct(
         protected string $name,
         protected string $type,
-        protected bool $null = true,
+        protected ?bool $null = null,
         protected mixed $default = null,
         protected ?int $length = null,
         protected bool $identity = false,
@@ -197,9 +197,9 @@ class Column
     /**
      * Gets whether the column allows nulls.
      *
-     * @return bool
+     * @return bool|null
      */
-    public function getNull(): bool
+    public function getNull(): ?bool
     {
         return $this->null;
     }
@@ -211,7 +211,7 @@ class Column
      */
     public function isNull(): bool
     {
-        return $this->getNull();
+        return $this->getNull() === true;
     }
 
     /**
