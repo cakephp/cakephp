@@ -195,7 +195,7 @@ class TableSchemaTest extends TestCase
 
         $table->setColumnType('title', 'json');
         $this->assertSame('json', $table->getColumnType('title'));
-        $this->assertSame('json', $table->baseColumnType('title'));
+        $this->assertSame('string', $table->baseColumnType('title'));
     }
 
     /**
@@ -244,9 +244,13 @@ class TableSchemaTest extends TestCase
             'length' => null,
             'precision' => null,
             'default' => null,
-            'null' => null,
+            'null' => true,
             'comment' => null,
             'collate' => null,
+            'unsigned' => false,
+            'onUpdate' => null,
+            'srid' => null,
+            'autoIncrement' => false,
         ];
         $this->assertEquals($expected, $result);
         $column = $table->column('title');
@@ -261,11 +265,14 @@ class TableSchemaTest extends TestCase
             'length' => null,
             'precision' => null,
             'default' => null,
-            'null' => null,
+            'null' => true,
             'unsigned' => null,
+            'collate' => null,
             'comment' => null,
-            'autoIncrement' => null,
-            'generated' => null,
+            'unsigned' => false,
+            'onUpdate' => null,
+            'srid' => null,
+            'autoIncrement' => false,
         ];
         $this->assertEquals($expected, $result);
         $column = $table->column('author_id');
@@ -282,9 +289,13 @@ class TableSchemaTest extends TestCase
             'length' => 10,
             'precision' => 3,
             'default' => null,
-            'null' => null,
-            'unsigned' => null,
+            'null' => true,
+            'collate' => null,
             'comment' => null,
+            'unsigned' => false,
+            'onUpdate' => null,
+            'srid' => null,
+            'autoIncrement' => false,
         ];
         $this->assertEquals($expected, $result);
         $column = $table->column('amount');
