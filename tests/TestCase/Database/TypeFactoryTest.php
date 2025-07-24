@@ -130,6 +130,18 @@ class TypeFactoryTest extends TestCase
     }
 
     /**
+     * Tests new types set with set() are returned by getMap()
+     */
+    public function testSetAndGetMap(): void
+    {
+        $types = TypeFactory::buildAll();
+        $this->assertFalse(isset($types['foo']));
+
+        TypeFactory::set('foo', new FooType());
+        $this->assertEquals(FooType::class, TypeFactory::getMap('foo'));
+    }
+
+    /**
      * Tests new types set with set() are returned by buildAll()
      */
     public function testSetAndBuild(): void
