@@ -362,7 +362,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 continue;
             }
             if ($key === 'autoIncrement') {
-                $attrs['identity'] = true;
+                $attrs['identity'] = $value;
                 unset($attrs[$key]);
                 continue;
             }
