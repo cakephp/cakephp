@@ -73,6 +73,24 @@ class TableSchemaTest extends TestCase
         $this->assertEquals(['id', 'title'], $table->columns());
     }
 
+
+    /**
+     * Test hasAutoincrement() method.
+     */
+    public function testHasAutoincrement(): void
+    {
+        $schema = new TableSchema('articles', [
+            'title' => 'string',
+        ]);
+        $this->assertFalse($schema->hasAutoincrement());
+
+        $schema->addColumn('id', [
+            'type' => 'integer',
+            'autoIncrement' => true,
+        ]);
+        $this->assertTrue($schema->hasAutoincrement());
+    }
+
     /**
      * Test adding columns.
      */

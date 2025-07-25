@@ -104,15 +104,11 @@ class Column
             return $this->baseType;
         }
         $type = $this->type;
-        if ($type === null) {
-            return null;
-        }
-
         if (TypeFactory::getMap($type)) {
-            $this->baseType = TypeFactory::build($type)->getBaseType();
+            $type = TypeFactory::build($type)->getBaseType();
         }
 
-        return $this->baseType;
+        return $this->baseType = $type;
     }
 
     /**

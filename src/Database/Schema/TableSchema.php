@@ -520,7 +520,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             return true;
         }
 
-        return $this->_columns[$name]->getNull();
+        return $this->_columns[$name]->getNull() === true;
     }
 
     /**
@@ -760,8 +760,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public function hasAutoincrement(): bool
     {
         foreach ($this->_columns as $column) {
-            // TODO y u no have tests?
-            if (isset($column['autoIncrement']) && $column['autoIncrement']) {
+            if ($column->getIdentity()) {
                 return true;
             }
         }

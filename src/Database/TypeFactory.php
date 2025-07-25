@@ -110,7 +110,6 @@ class TypeFactory
     public static function set(string $name, TypeInterface $instance): void
     {
         static::$_builtTypes[$name] = $instance;
-        static::$_types[$name] = get_class($instance);
     }
 
     /**
