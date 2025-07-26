@@ -73,7 +73,6 @@ class TableSchemaTest extends TestCase
         $this->assertEquals(['id', 'title'], $table->columns());
     }
 
-
     /**
      * Test hasAutoincrement() method.
      */
