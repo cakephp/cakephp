@@ -608,7 +608,7 @@ SQL;
 
         $this->assertEquals(['id', 'site_id'], $result->getPrimaryKey());
         $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
-        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertFalse($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
     }
 
     /**
