@@ -17,15 +17,14 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 use Cake\Database\Connection;
-use Cake\Database\Exception\DatabaseException;
-use PDO;
-use PDOException;
 
 /**
  * Represents a database schema collection
  *
- * Used to access information about the tables,
- * and other data in a database.
+ * Gives a simple high-level schema reflection API that can be
+ * decorated or extended with additional behavior like caching.
+ *
+ * @see \Cake\Database\Schema\SchemaDialect For lower level schema reflection API
  */
 class Collection implements CollectionInterface
 {
@@ -56,35 +55,21 @@ class Collection implements CollectionInterface
     /**
      * Get the list of tables, excluding any views, available in the current connection.
      *
-     * @return list<string> The list of tables in the connected database/schema.
+     * @return array<string> The list of tables in the connected database/schema.
      */
     public function listTablesWithoutViews(): array
     {
-        [$sql, $params] = $this->getDialect()->listTablesWithoutViewsSql($this->_connection->getDriver()->config());
-        $result = [];
-        $statement = $this->_connection->execute($sql, $params);
-        while ($row = $statement->fetch()) {
-            $result[] = $row[0];
-        }
-
-        return $result;
+        return $this->getDialect()->listTablesWithoutViews();
     }
 
     /**
      * Get the list of tables and views available in the current connection.
      *
-     * @return list<string> The list of tables and views in the connected database/schema.
+     * @return array<string> The list of tables and views in the connected database/schema.
      */
     public function listTables(): array
     {
-        [$sql, $params] = $this->getDialect()->listTablesSql($this->_connection->getDriver()->config());
-        $result = [];
-        $statement = $this->_connection->execute($sql, $params);
-        while ($row = $statement->fetch()) {
-            $result[] = $row[0];
-        }
-
-        return $result;
+        return $this->getDialect()->listTables();
     }
 
     /**
@@ -92,74 +77,14 @@ class Collection implements CollectionInterface
      *
      * The name can include a database schema name in the form 'schema.table'.
      *
-     * Caching will be applied if `cacheMetadata` key is present in the Connection
-     * configuration options. Defaults to _cake_model_ when true.
-     *
-     * ### Options
-     *
-     * - `forceRefresh` - Set to true to force rebuilding the cached metadata.
-     *   Defaults to false.
-     *
      * @param string $name The name of the table to describe.
-     * @param array<string, mixed> $options The options to use, see above.
+     * @param array<string, mixed> $options Unused
      * @return \Cake\Database\Schema\TableSchemaInterface Object with column metadata.
      * @throws \Cake\Database\Exception\DatabaseException when table cannot be described.
      */
     public function describe(string $name, array $options = []): TableSchemaInterface
     {
-        $config = $this->_connection->config();
-        if (str_contains($name, '.')) {
-            [$config['schema'], $name] = explode('.', $name);
-        }
-        $table = $this->_connection->getDriver()->newTableSchema($name);
-
-        $this->_reflect('Column', $name, $config, $table);
-        if ($table->columns() === []) {
-            throw new DatabaseException(sprintf('Cannot describe %s. It has 0 columns.', $name));
-        }
-
-        $this->_reflect('Index', $name, $config, $table);
-        $this->_reflect('ForeignKey', $name, $config, $table);
-        $this->_reflect('Options', $name, $config, $table);
-
-        return $table;
-    }
-
-    /**
-     * Helper method for running each step of the reflection process.
-     *
-     * @param string $stage The stage name.
-     * @param string $name The table name.
-     * @param array<string, mixed> $config The config data.
-     * @param \Cake\Database\Schema\TableSchemaInterface $schema The table schema instance.
-     * @return void
-     * @throws \Cake\Database\Exception\DatabaseException on query failure.
-     * @uses \Cake\Database\Schema\SchemaDialect::describeColumnSql
-     * @uses \Cake\Database\Schema\SchemaDialect::describeIndexSql
-     * @uses \Cake\Database\Schema\SchemaDialect::describeForeignKeySql
-     * @uses \Cake\Database\Schema\SchemaDialect::describeOptionsSql
-     * @uses \Cake\Database\Schema\SchemaDialect::convertColumnDescription
-     * @uses \Cake\Database\Schema\SchemaDialect::convertIndexDescription
-     * @uses \Cake\Database\Schema\SchemaDialect::convertForeignKeyDescription
-     * @uses \Cake\Database\Schema\SchemaDialect::convertOptionsDescription
-     */
-    protected function _reflect(string $stage, string $name, array $config, TableSchemaInterface $schema): void
-    {
-        $describeMethod = "describe{$stage}Sql";
-        $convertMethod = "convert{$stage}Description";
-
-        [$sql, $params] = $this->getDialect()->{$describeMethod}($name, $config);
-        if (!$sql) {
-            return;
-        }
-        try {
-            $statement = $this->_connection->execute($sql, $params);
-        } catch (PDOException $e) {
-            throw new DatabaseException($e->getMessage(), 500, $e);
-        }
-        foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $row) {
-            $this->getDialect()->{$convertMethod}($schema, $row);
-        }
+        return $this->getDialect()->describe($name);
     }
 
     /**

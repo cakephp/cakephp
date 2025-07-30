@@ -63,13 +63,14 @@ class StringTypeTest extends TestCase
      */
     public function testToDatabase(): void
     {
-        $obj = Mockery::mock('StdClass')->shouldAllowMockingMethod('__toString');
-        $obj->shouldReceive('__toString')->andReturn('toString called');
+        $obj = Mockery::spy('StdClass');
 
         $this->assertNull($this->type->toDatabase(null, $this->driver));
         $this->assertSame('word', $this->type->toDatabase('word', $this->driver));
         $this->assertSame('2.123', $this->type->toDatabase(2.123, $this->driver));
-        $this->assertSame('toString called', $this->type->toDatabase($obj, $this->driver));
+        $this->assertSame((string)$obj, $this->type->toDatabase($obj, $this->driver));
+
+        $obj->shouldHaveReceived('__toString');
     }
 
     /**

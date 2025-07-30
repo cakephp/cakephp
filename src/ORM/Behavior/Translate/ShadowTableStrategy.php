@@ -154,7 +154,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $query->contain([$config['hasOneAlias']]);
 
         $query->formatResults(
-            fn (CollectionInterface $results) => $this->rowMapper($results, $locale),
+            fn(CollectionInterface $results) => $this->rowMapper($results, $locale),
             $query::PREPEND,
         );
     }
@@ -368,7 +368,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         }
 
         $this->bundleTranslatedFields($entity);
-        $bundled = $entity->has('_i18n') ? $entity->get('_i18n') : [];
+        $bundled = $entity->has('_i18n') ? (array)$entity->get('_i18n') : [];
         $noBundled = count($bundled) === 0;
 
         // No additional translation records need to be saved,
@@ -383,7 +383,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         // If there are no fields and no bundled translations, or both fields
         // in the default locale and bundled translations we can
-        // skip the remaining logic as its not necessary.
+        // skip the remaining logic as it is not necessary.
         if ($noFields && $noBundled || ($fields && $bundled)) {
             return;
         }
@@ -420,7 +420,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         }
 
         if ($translation) {
-            $translation->set($values);
+            if (method_exists($translation, 'patch')) {
+                $translation->patch($values);
+            } else {
+                $translation->set($values);
+            }
         } else {
             $translation = new ($this->translationTable->getEntityClass())(
                 $where + $values,
@@ -487,7 +491,6 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $allowEmpty = $this->_config['allowEmptyTranslations'];
 
         return $results->map(function ($row) use ($allowEmpty, $locale) {
-            /** @var \Cake\Datasource\EntityInterface|array|null $row */
             if ($row === null) {
                 return $row;
             }
@@ -506,14 +509,14 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 return $row;
             }
 
-            /** @var \Cake\Datasource\EntityInterface|array $translation */
             $translation = $row['translation'];
+            assert($translation instanceof EntityInterface || is_array($translation));
 
             if ($hydrated) {
                 /** @var \Cake\Datasource\EntityInterface $translation */
                 $keys = $translation->getVisible();
             } else {
-                /** @var array $translation */
+                /** @var non-empty-array $translation */
                 $keys = array_keys($translation);
             }
 
@@ -596,7 +599,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {
         /** @var array<string, \Cake\ORM\Entity> $translations */
-        $translations = $entity->has('_translations') ? $entity->get('_translations') : [];
+        $translations = $entity->has('_translations') ? (array)$entity->get('_translations') : [];
 
         if (!$translations && !$entity->isDirty('_translations')) {
             return;
@@ -617,7 +620,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
                 if ($key !== null) {
                     $update['id'] = $key;
                 }
-                $translation->set($update, ['guard' => false]);
+                if (method_exists($translation, 'patch')) {
+                    $translation->patch($update, ['guard' => false]);
+                } else {
+                    $translation->set($update, ['guard' => false]);
+                }
             }
         }
 
@@ -627,11 +634,11 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the main table fields.
      *
-     * @return list<string>
+     * @return array<string>
      */
     protected function mainFields(): array
     {
-        /** @var list<string> $fields */
+        /** @var array<string> $fields */
         $fields = $this->getConfig('mainTableFields');
 
         if ($fields) {
@@ -648,7 +655,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     /**
      * Lazy define and return the translation table fields.
      *
-     * @return list<string>
+     * @return array<string>
      */
     protected function translatedFields(): array
     {

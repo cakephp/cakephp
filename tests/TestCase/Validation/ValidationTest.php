@@ -46,7 +46,7 @@ class ValidationTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
@@ -965,6 +965,18 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::time($cakeDateTime));
         $this->assertTrue(Validation::dateTime($cakeDateTime));
         $this->assertTrue(Validation::localizedTime($cakeDateTime));
+    }
+
+    /**
+     * testDateTimeObject
+     */
+    public function testDateTimeBoolean(): void
+    {
+        $dateTime = true;
+        $this->assertFalse(Validation::date($dateTime));
+        $this->assertFalse(Validation::time($dateTime));
+        $this->assertFalse(Validation::dateTime($dateTime));
+        $this->assertFalse(Validation::localizedTime($dateTime));
     }
 
     /**

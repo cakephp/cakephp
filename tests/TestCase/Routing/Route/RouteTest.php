@@ -1039,11 +1039,7 @@ class RouteTest extends TestCase
      */
     public function testParseRequestDelegates(): void
     {
-        $route = Mockery::mock(Route::class)->makePartial();
-        $route->shouldReceive('parse')
-            ->once()
-            ->with('/forward', 'GET')
-            ->andReturn(['works!']);
+        $route = Mockery::spy(Route::class)->makePartial();
 
         $request = new ServerRequest([
             'environment' => [
@@ -1051,8 +1047,11 @@ class RouteTest extends TestCase
                 'REQUEST_URI' => '/forward',
             ],
         ]);
-        $result = $route->parseRequest($request);
-        $this->assertNotEmpty($result);
+        $route->parseRequest($request);
+
+        $route->shouldHaveReceived('parse')
+            ->with('/forward', 'GET')
+            ->once();
     }
 
     /**

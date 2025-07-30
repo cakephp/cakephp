@@ -30,6 +30,7 @@ use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\ContentTypeNegotiation;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Http\MimeType;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Log\LogTrait;
@@ -175,14 +176,14 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Middlewares list.
      *
      * @var array
-     * @psalm-var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array{only?: array|string, except?: array|string}}>
+     * @phpstan-var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array{only?: array|string, except?: array|string}}>
      */
     protected array $middlewares = [];
 
     /**
      * View classes for content negotiation.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $viewClasses = [];
 
@@ -307,7 +308,6 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
             return $this->components()->get($name);
         }
 
-        /** @var array<int, array<string, mixed>> $trace */
         $trace = debug_backtrace();
         $parts = explode('\\', static::class);
         trigger_error(
@@ -315,8 +315,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
                 'Undefined property `%s::$%s` in `%s` on line %s',
                 array_pop($parts),
                 $name,
-                $trace[0]['file'],
-                $trace[0]['line'],
+                $trace[0]['file'] ?? 'unknown',
+                $trace[0]['line'] ?? 'unknown',
             ),
             E_USER_NOTICE,
         );
@@ -485,8 +485,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         if (!$this->isAction($action)) {
             throw new MissingActionException([
-                $controller,
-                $action,
+                'controller' => $controller,
+                'action' => $action,
             ]);
         }
 
@@ -529,7 +529,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
      * @return void
      * @since 4.3.0
-     * @psalm-param array{only?: array|string, except?: array|string} $options
+     * @phpstan-param array{only?: array|string, except?: array|string} $options
      */
     public function middleware(MiddlewareInterface|Closure|string $middleware, array $options = []): void
     {
@@ -722,7 +722,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * to participate in negotiation.
      *
      * @see \Cake\Http\ContentTypeNegotiation
-     * @return list<string>
+     * @return array<string>
      */
     public function viewClasses(): array
     {
@@ -778,7 +778,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         // Prefer the _ext route parameter if it is defined.
         $ext = $request->getParam('_ext');
         if ($ext) {
-            $extTypes = (array)($this->response->getMimeType($ext) ?: []);
+            $extTypes = MimeType::getMimeTypes($ext) ?? [];
             foreach ($extTypes as $extType) {
                 if (isset($typeMap[$extType])) {
                     return $typeMap[$extType];
@@ -924,7 +924,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * or perform logic that needs to happen before each controller action.
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
-     * @return \Cake\Http\Response|null|void
+     * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
@@ -937,7 +937,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * to perform logic or set view variables that are required on every request.
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
-     * @return \Cake\Http\Response|null|void
+     * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
@@ -958,7 +958,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Psr\Http\Message\UriInterface|array|string $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param \Cake\Http\Response $response The response object.
-     * @return \Cake\Http\Response|null|void
+     * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
@@ -970,7 +970,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Called after the controller action is run and rendered.
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
-     * @return \Cake\Http\Response|null|void
+     * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */

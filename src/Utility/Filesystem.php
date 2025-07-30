@@ -58,7 +58,6 @@ class Filesystem
         $flags ??= FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
-        /** @psalm-suppress ArgumentTypeCoercion */
         $directory = new FilesystemIterator($path, $flags);
 
         if ($filter === null) {
@@ -83,10 +82,8 @@ class Filesystem
         $flags ??= FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
-        /** @psalm-suppress ArgumentTypeCoercion */
         $directory = new RecursiveDirectoryIterator($path, $flags);
 
-        /** @psalm-suppress InvalidArgument */
         $dirFilter = new RecursiveCallbackFilterIterator(
             $directory,
             function (SplFileInfo $current) {
@@ -201,13 +198,13 @@ class Filesystem
             throw new CakeException(sprintf('`%s` is not a directory', $path));
         }
 
-        /** @var \RecursiveDirectoryIterator<\SplFileInfo> $iterator Replace type for psalm */
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST,
         );
 
         $result = true;
+        /** @var \SplFileInfo $fileInfo */
         foreach ($iterator as $fileInfo) {
             $isWindowsLink = DIRECTORY_SEPARATOR === '\\' && $fileInfo->getType() === 'link';
             if ($fileInfo->getType() === self::TYPE_DIR || $isWindowsLink) {

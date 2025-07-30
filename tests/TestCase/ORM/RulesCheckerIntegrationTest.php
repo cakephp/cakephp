@@ -38,7 +38,7 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Fixtures to be loaded
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.Articles', 'core.Tags', 'core.ArticlesTags', 'core.Authors', 'core.Comments',
@@ -673,7 +673,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 $this->assertSame('create', $operation);
                 $event->stopPropagation();
 
-                return true;
+                $event->setResult(true);
             },
         );
 
@@ -712,7 +712,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 $this->assertFalse($result);
                 $event->stopPropagation();
 
-                return true;
+                $event->setResult(true);
             },
         );
 

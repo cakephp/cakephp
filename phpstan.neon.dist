@@ -1,13 +1,11 @@
 includes:
 	- phpstan-baseline.neon
 
-rules:
-	- Symplify\PHPStanRules\Rules\Explicit\NoMixedPropertyFetcherRule
-	- Symplify\PHPStanRules\Rules\Explicit\NoMixedMethodCallerRule
-
 parameters:
 	level: 8
 	treatPhpDocTypesAsCertain: false
+	featureToggles:
+		internalTag: true
 	bootstrapFiles:
 		- tests/bootstrap.php
 	paths:
@@ -17,6 +15,10 @@ parameters:
 			identifier: missingType.iterableValue
 		-
 			identifier: missingType.generics
+		-
+			identifier: include.fileNotFound
+		-
+			identifier: method.internalClass
 
 services:
 	-

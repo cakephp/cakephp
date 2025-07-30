@@ -24,6 +24,7 @@ use Cake\ORM\EagerLoader;
 use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
 
 /**
  * Tests EagerLoader
@@ -189,83 +190,67 @@ class EagerLoaderTest extends TestCase
             ],
         ];
 
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['join'])
-            ->setConstructorArgs([$this->table])
-            ->getMock();
-
+        $query = Mockery::mock(SelectQuery::class . '[join]', [$this->table]);
         $query->setTypeMap($this->clientsTypeMap);
 
-        $query->expects($this->exactly(7))
-            ->method('join')
-            ->with(
-                ...self::withConsecutive(
-                    [
-                    ['clients' => [
-                        'table' => 'clients',
-                        'type' => 'LEFT',
-                        'conditions' => new QueryExpression([
-                            ['clients.id' => new IdentifierExpression('foo.client_id')],
-                        ], new TypeMap($this->clientsTypeMap->getDefaults())),
-                    ]],
-                    ],
-                    [
-                    ['orders' => [
-                        'table' => 'orders',
-                        'type' => 'LEFT',
-                        'conditions' => new QueryExpression([
-                            ['clients.id' => new IdentifierExpression('orders.client_id')],
-                        ], $this->ordersTypeMap),
-                    ]],
-                    ],
-                    [
-                    ['orderTypes' => [
-                        'table' => 'order_types',
-                        'type' => 'LEFT',
-                        'conditions' => new QueryExpression([
-                            ['orderTypes.id' => new IdentifierExpression('orders.order_type_id')],
-                        ], $this->orderTypesTypeMap),
-                    ]],
-                    ],
-                    [
-                    ['stuff' => [
-                        'table' => 'things',
-                        'type' => 'LEFT',
-                        'conditions' => new QueryExpression([
-                            ['orders.id' => new IdentifierExpression('stuff.order_id')],
-                        ], $this->stuffTypeMap),
-                    ]],
-                    ],
-                    [
-                    ['stuffTypes' => [
-                        'table' => 'stuff_types',
-                        'type' => 'LEFT',
-                        'conditions' => new QueryExpression([
-                            ['stuffTypes.id' => new IdentifierExpression('stuff.stuff_type_id')],
-                        ], $this->stuffTypesTypeMap),
-                    ]],
-                    ],
-                    [
-                    ['companies' => [
-                        'table' => 'organizations',
-                        'type' => 'LEFT',
-                        'conditions' => new QueryExpression([
-                            ['companies.id' => new IdentifierExpression('clients.organization_id')],
-                        ], $this->companiesTypeMap),
-                    ]],
-                    ],
-                    [
-                    ['categories' => [
-                        'table' => 'categories',
-                        'type' => 'LEFT',
-                        'conditions' => new QueryExpression([
-                            ['categories.id' => new IdentifierExpression('companies.category_id')],
-                        ], $this->categoriesTypeMap),
-                    ]],
-                    ],
-                ),
-            )
-            ->willReturn($query);
+        $expectedTables = [
+            ['clients' => [
+                'table' => 'clients',
+                'type' => 'LEFT',
+                'conditions' => new QueryExpression([
+                    ['clients.id' => new IdentifierExpression('foo.client_id')],
+                ], new TypeMap($this->clientsTypeMap->getDefaults())),
+            ]],
+            ['orders' => [
+                'table' => 'orders',
+                'type' => 'LEFT',
+                'conditions' => new QueryExpression([
+                    ['clients.id' => new IdentifierExpression('orders.client_id')],
+                ], $this->ordersTypeMap),
+            ]],
+            ['orderTypes' => [
+                'table' => 'order_types',
+                'type' => 'LEFT',
+                'conditions' => new QueryExpression([
+                    ['orderTypes.id' => new IdentifierExpression('orders.order_type_id')],
+                ], $this->orderTypesTypeMap),
+            ]],
+            ['stuff' => [
+                'table' => 'things',
+                'type' => 'LEFT',
+                'conditions' => new QueryExpression([
+                    ['orders.id' => new IdentifierExpression('stuff.order_id')],
+                ], $this->stuffTypeMap),
+            ]],
+            ['stuffTypes' => [
+                'table' => 'stuff_types',
+                'type' => 'LEFT',
+                'conditions' => new QueryExpression([
+                    ['stuffTypes.id' => new IdentifierExpression('stuff.stuff_type_id')],
+                ], $this->stuffTypesTypeMap),
+            ]],
+            ['companies' => [
+                'table' => 'organizations',
+                'type' => 'LEFT',
+                'conditions' => new QueryExpression([
+                    ['companies.id' => new IdentifierExpression('clients.organization_id')],
+                ], $this->companiesTypeMap),
+            ]],
+            ['categories' => [
+                'table' => 'categories',
+                'type' => 'LEFT',
+                'conditions' => new QueryExpression([
+                    ['categories.id' => new IdentifierExpression('companies.category_id')],
+                ], $this->categoriesTypeMap),
+            ]],
+        ];
+
+        foreach ($expectedTables as $table) {
+            $query->shouldReceive('join')
+                ->with($table)
+                ->andReturn($query)
+                ->once();
+        }
 
         $loader = new EagerLoader();
         $loader->contain($contains);

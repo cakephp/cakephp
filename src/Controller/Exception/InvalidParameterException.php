@@ -15,13 +15,19 @@ declare(strict_types=1);
 namespace Cake\Controller\Exception;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Core\Exception\HttpErrorCodeInterface;
 use Throwable;
 
 /**
  * Used when a passed parameter or action parameter type declaration is missing or invalid.
  */
-class InvalidParameterException extends CakeException
+class InvalidParameterException extends CakeException implements HttpErrorCodeInterface
 {
+    /**
+     * @inheritDoc
+     */
+    protected int $_defaultCode = 404;
+
     /**
      * @var array<string, string>
      */

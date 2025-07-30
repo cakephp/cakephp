@@ -222,9 +222,10 @@ class NumericPaginator implements PaginatorInterface
         $data = $this->extractData($target, $params, $settings);
         $query = $this->getQuery($target, $query, $data);
 
-        $items = $this->getItems(clone $query, $data);
+        $countQuery = clone $query;
+        $items = $this->getItems($query, $data);
         $this->pagingParams['count'] = count($items);
-        $this->pagingParams['totalCount'] = $this->getCount($query, $data);
+        $this->pagingParams['totalCount'] = $this->getCount($countQuery, $data);
 
         $pagingParams = $this->buildParams($data);
         if ($pagingParams['requestedPage'] > $pagingParams['currentPage']) {
@@ -238,7 +239,7 @@ class NumericPaginator implements PaginatorInterface
     }
 
     /**
-     * Build paginated resultset.
+     * Build paginated result set.
      *
      * @param \Cake\Datasource\ResultSetInterface $items
      * @param array $pagingParams
@@ -265,21 +266,17 @@ class NumericPaginator implements PaginatorInterface
             ['order' => null, 'page' => null, 'limit' => null],
         );
 
-        if ($query === null) {
-            $args = [];
-            $type = !empty($options['finder']) ? $options['finder'] : 'all';
-            if (is_array($type)) {
-                $args = (array)current($type);
-                $type = key($type);
-            }
+        $args = [];
+        $type = $options['finder'] ?? null;
+        if (is_array($type)) {
+            $args = (array)current($type);
+            $type = key($type);
+        }
 
-            $query = $object->find($type, ...$args);
-        } elseif ($options['finder'] !== 'all') {
-            triggerWarning(sprintf(
-                'Finder option (`%s`) from pagination config is not applied'
-                        . ' when a `SelectQuery` instance is passed to `paginate()`',
-                $options['finder'],
-            ));
+        if ($query === null) {
+            $query = $object->find($type ?? 'all', ...$args);
+        } elseif ($type !== null) {
+            $query->find($type, ...$args);
         }
 
         $query->applyOptions($queryOptions);

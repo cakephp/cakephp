@@ -84,7 +84,7 @@ class Route
     /**
      * List of connected extensions for this route.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_extensions = [];
 
@@ -98,12 +98,12 @@ class Route
     /**
      * Valid HTTP methods.
      *
-     * @var list<string>
+     * @var array<string>
      */
     public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
     /**
-     * Regex for matching braced placholders in route template.
+     * Regex for matching braced placeholders in route template.
      *
      * @var string
      */
@@ -175,7 +175,7 @@ class Route
     /**
      * Get the supported extensions for this route.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getExtensions(): array
     {
@@ -200,7 +200,7 @@ class Route
      * Normalize method names to upper case and validate that they are valid HTTP methods.
      *
      * @param array<string>|string $methods Methods.
-     * @return list<string>|string
+     * @return array<string>|string
      * @throws \InvalidArgumentException When methods are not in `VALID_METHODS` list.
      */
     protected function normalizeAndValidateMethods(array|string $methods): array|string
@@ -274,7 +274,7 @@ class Route
      *
      * ```
      * // remove a persistent 'date' parameter
-     * Router::url(['date' => false', ...]);
+     * Router::url(['date' => false, ...]);
      * ```
      *
      * @param array $names The names of the parameters that should be passed.
@@ -501,7 +501,6 @@ class Route
         }
 
         if (isset($route['_args_'])) {
-            /** @psalm-suppress PossiblyInvalidArgument */
             $pass = $this->_parseArgs($route['_args_'], $route);
             $route['pass'] = array_merge($route['pass'], $pass);
             unset($route['_args_']);
@@ -525,7 +524,6 @@ class Route
         if (isset($this->options['pass'])) {
             $j = count($this->options['pass']);
             while ($j--) {
-                /** @psalm-suppress PossiblyInvalidArgument */
                 if (isset($route[$this->options['pass'][$j]])) {
                     array_unshift($route['pass'], $route[$this->options['pass'][$j]]);
                 }
@@ -583,7 +581,7 @@ class Route
      *
      * @param string $args A string with the passed params. eg. /1/foo
      * @param array $context The current route context, which should contain controller/action keys.
-     * @return list<string> Array of passed args.
+     * @return array<string> Array of passed args.
      */
     protected function _parseArgs(string $args, array $context): array
     {
@@ -689,7 +687,7 @@ class Route
         $query = !empty($url['?']) ? (array)$url['?'] : [];
         unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base'], $url['?']);
 
-        // Move extension into the hostOptions so its not part of
+        // Move extension into the hostOptions so it is not part of
         // reverse matches.
         if (isset($url['_ext'])) {
             $hostOptions['_ext'] = $url['_ext'];
@@ -848,7 +846,7 @@ class Route
         ) {
             $host = $params['_host'];
 
-            // append the port & scheme if they exists.
+            // append the port and scheme if they exist.
             if (isset($params['_port'])) {
                 $host .= ':' . $params['_port'];
             }

@@ -693,7 +693,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      * @param string $type short type alias or full mimetype.
      * @return array<string, string> Headers to set on the request.
      * @throws \Cake\Core\Exception\CakeException When an unknown type alias is used.
-     * @psalm-return array<non-empty-string, non-empty-string>
+     * @phpstan-return array<non-empty-string, non-empty-string>
      */
     protected function _typeHeaders(string $type): array
     {

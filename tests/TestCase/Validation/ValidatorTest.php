@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Validation;
 
 use Cake\TestSuite\TestCase;
-use Cake\Validation\RulesProvider;
 use Cake\Validation\Validation;
 use Cake\Validation\ValidationRule;
 use Cake\Validation\ValidationSet;
@@ -357,7 +356,7 @@ class ValidatorTest extends TestCase
         $require = true;
         $validator->requirePresence('title', function ($context) use (&$require) {
             $this->assertEquals([], $context['data']);
-            $this->assertEquals([], $context['providers']);
+            $this->assertEquals(['default' => Validation::class], $context['providers']);
             $this->assertSame('title', $context['field']);
             $this->assertTrue($context['newRecord']);
 
@@ -1330,7 +1329,7 @@ class ValidatorTest extends TestCase
         $allow = true;
         $validator->allowEmptyString('title', null, function ($context) use (&$allow) {
             $this->assertEquals([], $context['data']);
-            $this->assertEquals([], $context['providers']);
+            $this->assertEquals(['default' => Validation::class], $context['providers']);
             $this->assertTrue($context['newRecord']);
 
             return $allow;
@@ -1351,7 +1350,7 @@ class ValidatorTest extends TestCase
         $prevent = true;
         $validator->notEmptyString('title', 'error message', function ($context) use (&$prevent) {
             $this->assertEquals([], $context['data']);
-            $this->assertEquals([], $context['providers']);
+            $this->assertEquals(['default' => Validation::class], $context['providers']);
             $this->assertFalse($context['newRecord']);
 
             return $prevent;
@@ -1480,7 +1479,7 @@ class ValidatorTest extends TestCase
         $this->assertSame($validator, $validator->setProvider('bar', $another));
         $this->assertSame($another, $validator->getProvider('bar'));
 
-        $this->assertEquals(new RulesProvider(), $validator->getProvider('default'));
+        $this->assertEquals(Validation::class, $validator->getProvider('default'));
     }
 
     /**
@@ -1523,27 +1522,16 @@ class ValidatorTest extends TestCase
             ->add('email', 'alpha', ['rule' => 'alphanumeric'])
             ->add('title', 'cool', ['rule' => 'isCool', 'provider' => 'thing']);
 
-        $thing = $this->getMockBuilder(stdMock::class)->getMock();
-        $thing->expects($this->once())->method('isCool')
-            ->willReturnCallback(function ($data, $context) use ($thing) {
-                $this->assertSame('bar', $data);
-                $expected = [
-                    'default' => new RulesProvider(),
-                    'thing' => $thing,
-                ];
-                $expected = [
-                    'newRecord' => true,
-                    'providers' => $expected,
-                    'data' => [
-                        'email' => '!',
-                        'title' => 'bar',
-                    ],
-                    'field' => 'title',
-                ];
-                $this->assertEquals($expected, $context);
+        $thing = new class {
+            public $args = [];
+
+            public function isCool($data, $context)
+            {
+                $this->args = [$data, $context];
 
                 return "That ain't cool, yo";
-            });
+            }
+        };
 
         $validator->setProvider('thing', $thing);
         $errors = $validator->validate(['email' => '!', 'title' => 'bar']);
@@ -1552,6 +1540,26 @@ class ValidatorTest extends TestCase
             'title' => ['cool' => "That ain't cool, yo"],
         ];
         $this->assertEquals($expected, $errors);
+
+        $this->assertSame('bar', $thing->args[0]);
+
+        $context = $thing->args[1];
+        $provider = $context['providers']['thing'];
+        $this->assertSame($thing, $provider);
+
+        unset($context['providers']['thing']);
+        $expected = [
+            'newRecord' => true,
+            'providers' => [
+                'default' => 'Cake\Validation\Validation',
+            ],
+            'data' => [
+                'email' => '!',
+                'title' => 'bar',
+            ],
+            'field' => 'title',
+        ];
+        $this->assertEquals($expected, $context);
     }
 
     /**
@@ -1565,35 +1573,45 @@ class ValidatorTest extends TestCase
             'rule' => ['isCool', 'and', 'awesome'],
             'provider' => 'thing',
         ]);
-        $thing = $this->getMockBuilder(stdMock::class)->getMock();
-        $thing->expects($this->once())->method('isCool')
-            ->willReturnCallback(function ($data, $a, $b, $context) use ($thing) {
-                $this->assertSame('bar', $data);
-                $this->assertSame('and', $a);
-                $this->assertSame('awesome', $b);
-                $expected = [
-                    'default' => new RulesProvider(),
-                    'thing' => $thing,
-                ];
-                $expected = [
-                    'newRecord' => true,
-                    'providers' => $expected,
-                    'data' => [
-                        'email' => '!',
-                        'title' => 'bar',
-                    ],
-                    'field' => 'title',
-                ];
-                $this->assertEquals($expected, $context);
+        $thing = new class {
+            public $args = [];
+
+            public function isCool($data, $a, $b, $context)
+            {
+                $this->args = [$data, $a, $b, $context];
 
                 return "That ain't cool, yo";
-            });
+            }
+        };
+
         $validator->setProvider('thing', $thing);
         $errors = $validator->validate(['email' => '!', 'title' => 'bar']);
         $expected = [
             'title' => ['cool' => "That ain't cool, yo"],
         ];
         $this->assertEquals($expected, $errors);
+
+        $this->assertSame('bar', $thing->args[0]);
+        $this->assertSame('and', $thing->args[1]);
+        $this->assertSame('awesome', $thing->args[2]);
+
+        $context = $thing->args[3];
+        $provider = $context['providers']['thing'];
+        $this->assertSame($thing, $provider);
+
+        unset($context['providers']['thing']);
+        $expected = [
+            'newRecord' => true,
+            'providers' => [
+                'default' => 'Cake\Validation\Validation',
+            ],
+            'data' => [
+                'email' => '!',
+                'title' => 'bar',
+            ],
+            'field' => 'title',
+        ];
+        $this->assertEquals($expected, $context);
     }
 
     /**
@@ -1603,7 +1621,7 @@ class ValidatorTest extends TestCase
     {
         $validator = new Validator();
         $validator->add('name', 'myRule', [
-            'rule' => function ($data, $provider) {
+            'rule' => function ($data) {
                 $this->assertSame('foo', $data);
 
                 return 'You fail';
@@ -1753,6 +1771,31 @@ class ValidatorTest extends TestCase
         $validator->add('title', [
             'notBlank' => [
                 'rule' => 'notBlank',
+                'message' => 'Title cannot be blank',
+                'last' => true,
+            ],
+            'length' => [
+                'rule' => ['minLength', 10],
+                'message' => 'Titles need to be at least 10 characters long',
+                'last' => true,
+            ],
+        ]);
+        $set = $validator->field('title');
+        $this->assertInstanceOf(ValidationSet::class, $set);
+        $this->assertCount(2, $set);
+
+        $errors = $validator->validate(['title' => ' ']);
+        $expected = [
+            'title' => [
+                'notBlank' => 'Title cannot be blank',
+            ],
+        ];
+        $this->assertEquals($expected, $errors);
+
+        $validator = new Validator();
+        $validator->add('title', [
+            'notBlank' => [
+                'rule' => ['notBlank'],
             ],
             'length' => [
                 'rule' => ['minLength', 10],
@@ -1762,6 +1805,15 @@ class ValidatorTest extends TestCase
         $set = $validator->field('title');
         $this->assertInstanceOf(ValidationSet::class, $set);
         $this->assertCount(2, $set);
+
+        $errors = $validator->validate(['title' => ' ']);
+        $expected = [
+            'title' => [
+                'notBlank' => 'The provided value is invalid',
+                'length' => 'Titles need to be at least 10 characters long',
+            ],
+        ];
+        $this->assertEquals($expected, $errors);
     }
 
     /**
@@ -1815,7 +1867,7 @@ class ValidatorTest extends TestCase
 
         $result = $validator->__debugInfo();
         $expected = [
-            '_providers' => ['test'],
+            '_providers' => ['default', 'test'],
             '_fields' => [
                 'title' => [
                     'isPresenceRequired' => false,
@@ -2934,6 +2986,7 @@ class ValidatorTest extends TestCase
      */
     protected function assertProxyMethod($validator, $method, $extra = null, $pass = [], $name = null): void
     {
+        $validator->remove('username', $method);
         $name = $name ?: $method;
         if ($extra !== null) {
             $this->assertSame($validator, $validator->{$method}('username', $extra));
@@ -2949,6 +3002,7 @@ class ValidatorTest extends TestCase
         $this->assertEquals($pass, $rule->get('pass'), 'Passed options are different');
         $this->assertSame('default', $rule->get('provider'), 'Provider does not match');
 
+        $validator->remove('username', $method);
         if ($extra !== null) {
             $validator->{$method}('username', $extra, 'the message', 'create');
         } else {
@@ -2966,11 +3020,16 @@ class ValidatorTest extends TestCase
     public function testAddingDefaultProvider(): void
     {
         $validator = new Validator();
-        $this->assertEmpty($validator->providers(), 'Providers should be empty');
+        $this->assertSame(['default'], $validator->providers(), '`default` validator provider is missing');
+        $this->assertSame(Validation::class, $validator->getProvider('default'));
 
         Validator::addDefaultProvider('test-provider', 'MyNameSpace\Validation\MyProvider');
         $validator = new Validator();
-        $this->assertEquals($validator->providers(), ['test-provider'], 'Default provider `test-provider` is missing');
+        $this->assertEquals(
+            ['test-provider', 'default'],
+            $validator->providers(),
+            'Default provider `test-provider` is missing',
+        );
     }
 
     /**
@@ -2985,6 +3044,21 @@ class ValidatorTest extends TestCase
 
         Validator::addDefaultProvider('test-provider2', 'MyNameSpace\Validation\MySecondProvider');
         $this->assertEquals(Validator::getDefaultProviders(), ['test-provider', 'test-provider2'], 'Default providers incorrect');
+    }
+
+    /**
+     * Test ensuring that context array doesn't get passed for an optional validation method argument.
+     * Validation::decimal() has 2 arguments and only 1 is being passed here.
+     *
+     * @return void
+     */
+    public function testWithoutPassingAllArguments(): void
+    {
+        $validator = new Validator();
+        $validator->setProvider('default', Validation::class);
+
+        $validator->decimal('field', 2);
+        $this->assertEmpty($validator->validate(['field' => 1.23]));
     }
 
     /**

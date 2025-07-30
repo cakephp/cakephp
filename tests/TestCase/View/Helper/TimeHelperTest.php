@@ -555,7 +555,7 @@ class TimeHelperTest extends TestCase
      * @param string $expected
      * @param string $result
      */
-    public function assertTimeFormat($expected, $result): void
+    protected function assertTimeFormat($expected, $result): void
     {
         $this->assertSame(
             str_replace([',', '(', ')', ' at', ' à'], '', $expected),

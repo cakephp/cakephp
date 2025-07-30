@@ -31,7 +31,7 @@ class QueryLoggerTest extends TestCase
     /**
      * Tear down
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::drop('queryLoggerTest');

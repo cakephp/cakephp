@@ -174,6 +174,7 @@ components-next:
 		exit 0; \
 	fi;
 	make CURRENT_BRANCH=$(NEXT_BRANCH) components
+	make clean-components-branches
 .PHONY: components-next
 
 component-%:
@@ -190,6 +191,13 @@ tag-component-%: component-% guard-VERSION guard-GITHUB_TOKEN
 	git checkout $*
 	curl $(AUTH) -XPOST $(API_HOST)/repos/$(OWNER)/$*/git/refs -d '{"ref": "refs\/tags\/$(VERSION)", "sha": "$(shell git rev-parse $*)"}'
 	git checkout $(CURRENT_BRANCH) > /dev/null
+	make clean-component-branch-$*
+
+# Task for cleaning up branches and remotes after updating split packages
+clean-components-branches: $(foreach component, $(COMPONENTS), clean-component-branch-$(component))
+.PHONY: clean-component-branches
+
+clean-component-branch-%:
 	git branch -D $*
 	git remote rm $*
 
@@ -199,6 +207,7 @@ clean-component-%:
 	- (git remote add $* git@github.com:$(OWNER)/$*.git -f 2> /dev/null)
 	- (git branch -D $* 2> /dev/null)
 	- git push -f $* :$(CURRENT_BRANCH)
+.PHONY: components-clean
 
 # Top level alias for doing a release.
 release: guard-VERSION tag-release components-tag package publish components-next

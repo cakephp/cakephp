@@ -20,6 +20,8 @@ use Cake\Datasource\ConnectionInterface;
 
 /**
  * Defines the interface for a fixture that needs to manage constraints.
+ *
+ * @deprecated 5.2.5 This interface is no longer used.
  */
 interface ConstraintsInterface
 {

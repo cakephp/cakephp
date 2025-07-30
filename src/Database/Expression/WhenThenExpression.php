@@ -37,7 +37,7 @@ class WhenThenExpression implements ExpressionInterface
      * The names of the clauses that are valid for use with the
      * `clause()` method.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $validClauseNames = [
         'when',
@@ -182,7 +182,6 @@ class WhenThenExpression implements ExpressionInterface
      */
     public function then(mixed $result, ?string $type = null)
     {
-        /** @psalm-suppress DocblockTypeContradiction */
         if (
             $result !== null &&
             !is_scalar($result) &&

@@ -25,7 +25,6 @@ use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use TestApp\Model\Table\PaginatorPostsTable;
 
 trait PaginatorTestTrait
@@ -1150,29 +1149,6 @@ trait PaginatorTestTrait
         $pagingParams = $result->pagingParams();
         $this->assertEquals(10, $pagingParams['limit']);
         $this->assertEquals(10, $pagingParams['perPage']);
-    }
-
-    /**
-     * test the `finder` is unused if paginate() is called with a query instance.
-     */
-    #[WithoutErrorHandler]
-    public function testPaginateQueryUnusedFinder(): void
-    {
-        $settings = [
-            'finder' => 'published',
-            'limit' => 2,
-        ];
-        $table = $this->_getMockPosts(['find']);
-        $query = $this->_getMockFindQuery();
-        $query->setRepository($table);
-
-        $table->expects($this->never())
-            ->method('find');
-
-        $regex = '/Finder option \(.+?\) from pagination config is not applied when a `SelectQuery` instance is passed to `paginate\(\)`/';
-        $this->expectWarningMessageMatches($regex, function () use ($query, $settings) {
-            $this->Paginator->paginate($query, [], $settings);
-        });
     }
 
     /**

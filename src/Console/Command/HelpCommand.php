@@ -26,6 +26,7 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Utility\Inflector;
 use SimpleXMLElement;
 
 /**
@@ -101,11 +102,11 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                 continue;
             }
             $namespace = str_replace('\\', '/', $matches[1]);
-            $prefix = 'App';
+            $prefix = 'app';
             if ($namespace === 'Cake') {
-                $prefix = 'CakePHP';
+                $prefix = 'cakephp';
             } elseif (in_array($namespace, $plugins, true)) {
-                $prefix = $namespace;
+                $prefix = Inflector::underscore($namespace);
             }
             $shortestName = $this->getShortestName($names);
             if (str_contains($shortestName, '.')) {
@@ -182,7 +183,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     /**
      * @param array<string> $names Names
      * @return string
-     * @psalm-param non-empty-list<string> $names
+     * @phpstan-param non-empty-array<string> $names
      */
     protected function getShortestName(array $names): string
     {

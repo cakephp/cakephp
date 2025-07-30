@@ -39,7 +39,7 @@ trait ContainerStubTrait
     /**
      * The customized application class name.
      *
-     * @psalm-var class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface>|null
+     * @phpstan-var class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface>|null
      * @var string|null
      */
     protected ?string $_appClass = null;
@@ -54,7 +54,7 @@ trait ContainerStubTrait
     /**
      * The collection of container services.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private array $containerServices = [];
 
@@ -64,7 +64,7 @@ trait ContainerStubTrait
      * @param string $class The application class name.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      * @return void
-     * @psalm-param class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface> $class
+     * @phpstan-param class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface> $class
      */
     public function configApplication(string $class, ?array $constructorArgs): void
     {

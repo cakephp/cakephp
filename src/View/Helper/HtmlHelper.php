@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\View\Helper;
 
 use Cake\Core\Configure;
+use Cake\Http\MimeType;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use function Cake\Core\h;
@@ -46,6 +47,9 @@ class HtmlHelper extends Helper
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
+        'defaultScriptBlock' => null,
+        'defaultCssBlock' => null,
+        'defaultMetaBlock' => null,
         'templates' => [
             'meta' => '<meta{{attrs}}>',
             'metalink' => '<link href="{{url}}"{{attrs}}>',
@@ -176,7 +180,7 @@ class HtmlHelper extends Helper
             }
         }
 
-        $options += $type + ['block' => null];
+        $options += $type + ['block' => $this->getConfig('defaultMetaBlock')];
         $out = '';
 
         if (isset($options['link'])) {
@@ -245,7 +249,7 @@ class HtmlHelper extends Helper
      *
      * - `escape` Set to false to disable escaping of title and attributes.
      * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
-     *   over value of `escape`)
+     *   over value of `escape`.
      * - `confirm` JavaScript confirmation message.
      *
      * @param array|string $title The content to be wrapped by `<a>` tags.
@@ -279,7 +283,6 @@ class HtmlHelper extends Helper
         if ($escapeTitle === true) {
             $title = h($title);
         } elseif (is_string($escapeTitle)) {
-            /** @psalm-suppress PossiblyInvalidArgument */
             $title = htmlentities($title, ENT_QUOTES, $escapeTitle);
         }
 
@@ -312,7 +315,7 @@ class HtmlHelper extends Helper
      *
      * - `escape` Set to false to disable escaping of title and attributes.
      * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
-     *   over value of `escape`)
+     *   over value of `escape`.
      * - `confirm` JavaScript confirmation message.
      *
      * @param string $title The content to be wrapped by `<a>` tags.
@@ -384,7 +387,7 @@ class HtmlHelper extends Helper
     {
         $options += [
             'once' => true,
-            'block' => null,
+            'block' => $this->getConfig('defaultCssBlock'),
             'rel' => 'stylesheet',
             'nonce' => $this->_View->getRequest()->getAttribute('cspStyleNonce'),
         ];
@@ -483,7 +486,7 @@ class HtmlHelper extends Helper
     public function script(array|string $url, array $options = []): ?string
     {
         $defaults = [
-            'block' => null,
+            'block' => $this->getConfig('defaultScriptBlock'),
             'once' => true,
             'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
         ];
@@ -526,6 +529,67 @@ class HtmlHelper extends Helper
     }
 
     /**
+     * Generate the "importmap" script tag.
+     *
+     * @param array $map Map array.
+     * @param array<string, mixed> $options Same options as `UrlHelper::script()`.
+     * @return string
+     * @since 5.2.0
+     * @phpstan-param array{imports?: array<string, string>, scopes?: array<string, array<string, array<string, string>>>, integrity?: array<string, string>} $map
+     */
+    public function importmap(array $map, array $options = []): string
+    {
+        $options += ['pathPrefix' => Configure::read('App.jsBaseUrl')];
+
+        if (!isset($map['imports'])) {
+            $map = ['imports' => $map];
+        }
+
+        $map['imports'] = $this->getImportPaths($map['imports'], $options);
+
+        if (isset($map['scopes'])) {
+            foreach ($map['scopes'] as $path => $submap) {
+                $map['scopes'][$path] = $this->getImportPaths($submap, $options);
+            }
+        }
+
+        if (isset($map['integrity'])) {
+            $integrity = [];
+            foreach ($map['integrity'] as $path => $hash) {
+                $integrity[$this->Url->script($path, $options)] = $hash;
+            }
+            $map['integrity'] = $integrity;
+        }
+
+        $jsonOpts = JSON_THROW_ON_ERROR | JSON_UNESCAPED_SLASHES;
+        if (Configure::read('debug')) {
+            $jsonOpts |= JSON_PRETTY_PRINT;
+        }
+
+        return (string)$this->scriptBlock(json_encode($map, $jsonOpts), ['type' => 'importmap']);
+    }
+
+    /**
+     * Get import paths for the importmap.
+     *
+     * @param array $map Import map.
+     * @param array<string, mixed> $options Options.
+     * @return array
+     */
+    protected function getImportPaths(array $map, array $options): array
+    {
+        foreach ($map as $key => $path) {
+            if (str_ends_with($key, '/')) {
+                $map[$key] = $this->Url->assetUrl($path, $options);
+            } else {
+                $map[$key] = $this->Url->script($path, $options);
+            }
+        }
+
+        return $map;
+    }
+
+    /**
      * Wrap $script in a script tag.
      *
      * ### Options
@@ -541,7 +605,10 @@ class HtmlHelper extends Helper
      */
     public function scriptBlock(string $script, array $options = []): ?string
     {
-        $options += ['block' => null, 'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce')];
+        $options += [
+            'block' => $this->getConfig('defaultScriptBlock'),
+            'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
+        ];
 
         $out = $this->formatTemplate('javascriptblock', [
             'attrs' => $this->templater()->formatAttributes($options, ['block']),
@@ -789,7 +856,7 @@ class HtmlHelper extends Helper
      *
      * @param array $line Line data to render.
      * @param bool $useCount Renders the count into the row. Default is false.
-     * @return list<string>
+     * @return array<string>
      */
     protected function _renderCells(array $line, bool $useCount = false): array
     {
@@ -1016,8 +1083,7 @@ class HtmlHelper extends Helper
                     ];
                 }
                 if (!isset($source['type'])) {
-                    $ext = pathinfo($source['src'], PATHINFO_EXTENSION);
-                    $source['type'] = $this->_View->getResponse()->getMimeType($ext);
+                    $source['type'] = MimeType::getMimeTypeForFile($source['src']);
                 }
                 $source['src'] = $this->Url->assetUrl($source['src'], $options);
                 $sourceTags .= $this->formatTemplate('tagselfclosing', [
@@ -1032,7 +1098,6 @@ class HtmlHelper extends Helper
             if (!$path && !empty($options['src'])) {
                 $path = $options['src'];
             }
-            /** @psalm-suppress PossiblyNullArgument */
             $options['src'] = $this->Url->assetUrl($path, $options);
         }
 
@@ -1040,8 +1105,7 @@ class HtmlHelper extends Helper
             if (is_array($path)) {
                 $mimeType = $path[0]['type'];
             } else {
-                $mimeType = $this->_View->getResponse()->getMimeType(pathinfo($path, PATHINFO_EXTENSION));
-                assert(is_string($mimeType));
+                $mimeType = MimeType::getMimeTypeForFile($path);
             }
             if (str_starts_with($mimeType, 'video/')) {
                 $tag = 'video';

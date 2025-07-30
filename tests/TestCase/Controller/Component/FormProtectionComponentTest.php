@@ -18,8 +18,8 @@ namespace Cake\Test\TestCase\Controller\Component;
 
 use Cake\Controller\Component\FormProtectionComponent;
 use Cake\Controller\Controller;
+use Cake\Controller\Exception\FormProtectionException;
 use Cake\Event\Event;
-use Cake\Http\Exception\BadRequestException;
 use Cake\Http\Exception\NotFoundException;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
@@ -147,7 +147,7 @@ class FormProtectionComponentTest extends TestCase
 
         $event = new Event('Controller.startup', $this->Controller);
 
-        $this->expectException(BadRequestException::class);
+        $this->expectException(FormProtectionException::class);
         $this->FormProtection->startup($event);
     }
 
@@ -169,7 +169,7 @@ class FormProtectionComponentTest extends TestCase
 
         $event = new Event('Controller.startup', $this->Controller);
 
-        $this->expectException(BadRequestException::class);
+        $this->expectException(FormProtectionException::class);
         $this->expectExceptionMessage('Unexpected field `Model.password` in POST data, Unexpected field `Model.username` in POST data');
         $this->FormProtection->startup($event);
     }
@@ -182,7 +182,7 @@ class FormProtectionComponentTest extends TestCase
 
         $event = new Event('Controller.startup', $this->Controller);
 
-        $this->expectException(BadRequestException::class);
+        $this->expectException(FormProtectionException::class);
         $this->expectExceptionMessage('`_Token` was not found in request data.');
         $this->FormProtection->startup($event);
     }
@@ -207,7 +207,7 @@ class FormProtectionComponentTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
 
-        $this->expectException(BadRequestException::class);
+        $this->expectException(FormProtectionException::class);
         $this->expectExceptionMessage('Tampered field `Model.hidden` in POST data (expected value `value` but found `tampered`)');
 
         $event = new Event('Controller.startup', $this->Controller);
@@ -232,7 +232,7 @@ class FormProtectionComponentTest extends TestCase
             '_Token' => compact('fields', 'unlocked', 'debug'),
         ]));
 
-        $this->expectException(BadRequestException::class);
+        $this->expectException(FormProtectionException::class);
         $this->expectExceptionMessage('Missing unlocked field');
 
         $event = new Event('Controller.startup', $this->Controller);
@@ -265,7 +265,7 @@ class FormProtectionComponentTest extends TestCase
 
     public function testCallbackReturnResponse(): void
     {
-        $this->FormProtection->setConfig('validationFailureCallback', function (BadRequestException $exception) {
+        $this->FormProtection->setConfig('validationFailureCallback', function (FormProtectionException $exception) {
             return new Response(['body' => 'from callback']);
         });
 
@@ -276,8 +276,9 @@ class FormProtectionComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
 
         $result = $this->FormProtection->startup($event);
-        $this->assertInstanceOf(Response::class, $result);
-        $this->assertSame('from callback', (string)$result->getBody());
+        $this->assertNull($result);
+        $this->assertInstanceOf(Response::class, $event->getResult());
+        $this->assertSame('from callback', (string)$event->getResult()->getBody());
     }
 
     public function testUnlockedActions(): void
@@ -297,7 +298,7 @@ class FormProtectionComponentTest extends TestCase
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('error description');
 
-        $this->FormProtection->setConfig('validationFailureCallback', function (BadRequestException $exception): void {
+        $this->FormProtection->setConfig('validationFailureCallback', function (FormProtectionException $exception): void {
             throw new NotFoundException('error description');
         });
 

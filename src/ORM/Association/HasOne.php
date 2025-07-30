@@ -38,7 +38,7 @@ class HasOne extends Association
     /**
      * Valid strategies for this type of association
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_validStrategies = [
         self::STRATEGY_JOIN,
@@ -125,13 +125,17 @@ class HasOne extends Association
             return $entity;
         }
 
-        /** @var list<string> $foreignKeys */
+        /** @var array<string> $foreignKeys */
         $foreignKeys = (array)$this->getForeignKey();
         $properties = array_combine(
             $foreignKeys,
             $entity->extract((array)$this->getBindingKey()),
         );
-        $targetEntity->set($properties, ['guard' => false]);
+        if (method_exists($targetEntity, 'patch')) {
+            $targetEntity = $targetEntity->patch($properties, ['guard' => false]);
+        } else {
+            $targetEntity->set($properties, ['guard' => false]);
+        }
 
         if (!$this->getTarget()->save($targetEntity, $options)) {
             $targetEntity->unset(array_keys($properties));

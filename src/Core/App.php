@@ -222,7 +222,7 @@ class App
      *
      * @param string $type Package type.
      * @param string|null $plugin Plugin name.
-     * @return list<string>
+     * @return array<string>
      */
     public static function classPath(string $type, ?string $plugin = null): array
     {
@@ -247,7 +247,7 @@ class App
      * Will return the full path to the cache engines package.
      *
      * @param string $type Package type.
-     * @return list<string> Full path to package
+     * @return array<string> Full path to package
      */
     public static function core(string $type): array
     {

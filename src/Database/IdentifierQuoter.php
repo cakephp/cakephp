@@ -164,6 +164,12 @@ class IdentifierQuoter
 
             $result = $this->_basicQuoter($contents);
             if ($result) {
+                $part = match ($part) {
+                    'group' => 'groupBy',
+                    'order' => 'orderBy',
+                    default => $part,
+                };
+
                 $query->{$part}($result, true);
             }
         }

@@ -62,7 +62,6 @@ interface LocatorInterface extends BaseLocatorInterface
      * @param string $alias The alias to set.
      * @param \Cake\ORM\Table $repository The table to set.
      * @return \Cake\ORM\Table
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function set(string $alias, RepositoryInterface $repository): Table;
 }

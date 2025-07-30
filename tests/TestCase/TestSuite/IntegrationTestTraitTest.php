@@ -31,6 +31,7 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Laminas\Diactoros\UploadedFile;
 use LogicException;
@@ -719,6 +720,22 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertResponseCode(200);
 
         $this->assertSession('An error message', 'Flash.flash.0.message');
+    }
+
+    /**
+     * Test asserting session and flash messages.
+     */
+    public function testFlashAssertionsWithSession(): void
+    {
+        $this->enableRetainFlashMessages();
+        $this->get('/posts/flashWithSession');
+        $this->assertRedirect();
+
+        $this->assertFlashElement('flash/error');
+        $this->assertSession(true, 'test');
+
+        $result = $this->_requestSession->read('Flash.flash');
+        $this->assertSame(['flash/error'], Hash::extract($result, '{n}.element'));
     }
 
     /**

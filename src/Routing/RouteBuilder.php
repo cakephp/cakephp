@@ -69,7 +69,7 @@ class RouteBuilder
     /**
      * The extensions that should be set into the routes connected.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_extensions = [];
 
@@ -105,7 +105,7 @@ class RouteBuilder
      * The list of middleware that routes in this builder get
      * added during construction.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $middleware = [];
 
@@ -185,7 +185,7 @@ class RouteBuilder
     /**
      * Get the extensions in this route builder's scope.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getExtensions(): array
     {
@@ -991,7 +991,7 @@ class RouteBuilder
      */
     public function applyMiddleware(string ...$names)
     {
-        /** @var list<string> $names */
+        /** @var array<string> $names */
         foreach ($names as $name) {
             if (!$this->_collection->middlewareExists($name)) {
                 $message = "Cannot apply `{$name}` middleware or middleware group. " .
@@ -1007,7 +1007,7 @@ class RouteBuilder
     /**
      * Get the middleware that this builder will apply to routes.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getMiddleware(): array
     {

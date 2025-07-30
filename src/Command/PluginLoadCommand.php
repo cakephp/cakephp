@@ -27,8 +27,6 @@ use Cake\Utility\Hash;
 
 /**
  * Command for loading plugins.
- *
- * @psalm-suppress PropertyNotSetInConstructor
  */
 class PluginLoadCommand extends Command
 {

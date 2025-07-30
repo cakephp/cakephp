@@ -15,6 +15,7 @@ declare(strict_types=1);
 namespace Cake\Http\Exception;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Core\Exception\HttpErrorCodeInterface;
 
 /**
  * Parent class for all the HTTP related exceptions in CakePHP.
@@ -24,7 +25,7 @@ use Cake\Core\Exception\CakeException;
  * You may also use this as a meaningful bridge to {@link \Cake\Core\Exception\CakeException}, e.g.:
  * throw new \Cake\Network\Exception\HttpException('HTTP Version Not Supported', 505);
  */
-class HttpException extends CakeException
+class HttpException extends CakeException implements HttpErrorCodeInterface
 {
     /**
      * @inheritDoc

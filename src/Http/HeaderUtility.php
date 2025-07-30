@@ -71,7 +71,7 @@ class HeaderUtility
      * Parse the Accept header value into weight => value mapping.
      *
      * @param string $header The header value to parse
-     * @return array<string, list<string>>
+     * @return array<string, array<string>>
      */
     public static function parseAccept(string $header): array
     {

@@ -350,7 +350,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         EventManager::instance()->on(
             'Exception.beforeRender',
             function (EventInterface $event, Throwable $e, ServerRequestInterface $req) {
-                return 'Response string from event';
+                $event->setResult('Response string from event');
             },
         );
 

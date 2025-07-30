@@ -236,7 +236,7 @@ class TreeBehavior extends Behavior
             if ($this->getConfig('cascadeCallbacks')) {
                 $query = $this->_scope($this->_table->query())
                     ->where(
-                        fn (QueryExpression $exp) => $exp
+                        fn(QueryExpression $exp) => $exp
                             ->gte($config['leftField'], $left + 1)
                             ->lte($config['leftField'], $right - 1),
                     );
@@ -248,7 +248,7 @@ class TreeBehavior extends Behavior
             } else {
                 $this->_scope($this->_table->deleteQuery())
                     ->where(
-                        fn (QueryExpression $exp) => $exp
+                        fn(QueryExpression $exp) => $exp
                             ->gte($config['leftField'], $left + 1)
                             ->lte($config['leftField'], $right - 1),
                     )
@@ -375,7 +375,7 @@ class TreeBehavior extends Behavior
                     ->eq($config['leftField'], $leftInverse->add($config['leftField']))
                     ->eq($config['rightField'], $rightInverse->add($config['rightField']));
             },
-            fn (QueryExpression $exp) => $exp->lt($config['leftField'], 0),
+            fn(QueryExpression $exp) => $exp->lt($config['leftField'], 0),
         );
     }
 
@@ -638,7 +638,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["{$parent} IS" => $nodeParent])
-                ->where(fn (QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
+                ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByDesc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -649,7 +649,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["{$parent} IS" => $nodeParent])
-                ->where(fn (QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
+                ->where(fn(QueryExpression $exp) => $exp->lt($config['rightField'], $nodeLeft))
                 ->orderByAsc($config['leftField'])
                 ->limit(1)
                 ->first();
@@ -727,7 +727,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["{$parent} IS" => $nodeParent])
-                ->where(fn (QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
+                ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByAsc($config['leftField'])
                 ->offset($number - 1)
                 ->limit(1)
@@ -738,7 +738,7 @@ class TreeBehavior extends Behavior
             $targetNode = $this->_scope($this->_table->find())
                 ->select([$left, $right])
                 ->where(["{$parent} IS" => $nodeParent])
-                ->where(fn (QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
+                ->where(fn(QueryExpression $exp) => $exp->gt($config['leftField'], $nodeRight))
                 ->orderByDesc($config['leftField'])
                 ->limit(1)
                 ->first();
@@ -918,8 +918,8 @@ class TreeBehavior extends Behavior
      * @param \Cake\ORM\Query\SelectQuery|\Cake\ORM\Query\UpdateQuery|\Cake\ORM\Query\DeleteQuery $query the Query to modify
      * @return \Cake\ORM\Query\SelectQuery|\Cake\ORM\Query\UpdateQuery|\Cake\ORM\Query\DeleteQuery
      * @template T of \Cake\ORM\Query\SelectQuery|\Cake\ORM\Query\UpdateQuery|\Cake\ORM\Query\DeleteQuery
-     * @psalm-param T $query
-     * @psalm-return T
+     * @phpstan-param T $query
+     * @phpstan-return T
      */
     protected function _scope(SelectQuery|UpdateQuery|DeleteQuery $query): SelectQuery|UpdateQuery|DeleteQuery
     {
@@ -949,7 +949,11 @@ class TreeBehavior extends Behavior
         }
 
         $fresh = $this->_table->get($entity->get($this->_getPrimaryKey()));
-        $entity->set($fresh->extract($fields), ['guard' => false]);
+        if (method_exists($entity, 'patch')) {
+            $entity->patch($fresh->extract($fields), ['guard' => false]);
+        } else {
+            $entity->set($fresh->extract($fields), ['guard' => false]);
+        }
 
         foreach ($fields as $field) {
             $entity->setDirty($field, false);

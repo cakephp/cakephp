@@ -98,7 +98,7 @@ class ArrayContext implements ContextInterface
     /**
      * Get the fields used in the context as a primary key.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getPrimaryKey(): array
     {
@@ -260,7 +260,7 @@ class ArrayContext implements ContextInterface
         $schema = $this->_context['schema'];
         unset($schema['_constraints'], $schema['_indexes']);
 
-        /** @var list<string> */
+        /** @var array<string> */
         return array_keys($schema);
     }
 

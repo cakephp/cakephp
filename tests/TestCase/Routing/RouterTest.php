@@ -93,8 +93,6 @@ class RouterTest extends TestCase
     {
         Configure::write('App.base', '/cakephp');
         Router::fullBaseUrl('http://example.com');
-        Router::setRequest(ServerRequestFactory::fromGlobals());
-
         $this->assertSame('http://example.com/cakephp/tasks', Router::url('/tasks', true));
     }
 
@@ -106,8 +104,6 @@ class RouterTest extends TestCase
     {
         Configure::write('App.base', '/cakephp');
         Router::fullBaseUrl('http://example.com');
-        Router::setRequest(ServerRequestFactory::fromGlobals());
-
         Router::createRouteBuilder('/')
             ->scope('/', function (RouteBuilder $routes): void {
                 $routes->get('/{controller}', ['action' => 'index']);

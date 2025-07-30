@@ -41,7 +41,7 @@ class QueryRegressionTest extends TestCase
     /**
      * Fixture to be used
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.Articles',
@@ -1520,7 +1520,7 @@ class QueryRegressionTest extends TestCase
         $tags = $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
         $tags->getTarget()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
-            return $query->formatResults(function ($results) {
+            $query->formatResults(function ($results) {
                 return $results->map(function (Entity $tag) {
                     $tag->name .= ' - visited';
 

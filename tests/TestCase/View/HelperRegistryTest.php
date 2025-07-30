@@ -249,8 +249,8 @@ class HelperRegistryTest extends TestCase
      */
     public function testUnloadUnknown(): void
     {
-        $this->expectException(MissingHelperException::class);
-        $this->expectExceptionMessage('Helper class `FooHelper` could not be found.');
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Object named `Foo` is not loaded.');
         $this->Helpers->unload('Foo');
     }
 

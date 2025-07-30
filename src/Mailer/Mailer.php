@@ -118,7 +118,7 @@ use function Cake\Core\deprecationWarning;
  * @method $this setHeaders(array $headers) Sets headers for the message. {@see \Cake\Mailer\Message::setHeaders()}
  * @method $this addHeaders(array $headers) Add header for the message. {@see \Cake\Mailer\Message::addHeaders()}
  * @method $this getHeaders(array $include = []) Get list of headers. {@see \Cake\Mailer\Message::getHeaders()}
- * @method $this setEmailFormat($format) Sets email format. {@see \Cake\Mailer\Message::getHeaders()}
+ * @method $this setEmailFormat($format) Sets email format. {@see \Cake\Mailer\Message::setEmailFormat()}
  * @method string getEmailFormat() Gets email format. {@see \Cake\Mailer\Message::getEmailFormat()}
  * @method $this setMessageId($message) Sets message ID. {@see \Cake\Mailer\Message::setMessageId()}
  * @method string|bool getMessageId() Gets message ID. {@see \Cake\Mailer\Message::getMessageId()}
@@ -153,7 +153,7 @@ class Mailer implements EventListenerInterface
      * Message class name.
      *
      * @var string
-     * @psalm-var class-string<\Cake\Mailer\Message>
+     * @phpstan-var class-string<\Cake\Mailer\Message>
      */
     protected string $messageClass = Message::class;
 
@@ -187,7 +187,7 @@ class Mailer implements EventListenerInterface
      * Mailer driver class map.
      *
      * @var array<string, string>
-     * @psalm-var array<string, class-string>
+     * @phpstan-var array<string, class-string>
      */
     protected static array $_dsnClassMap = [];
 
@@ -317,7 +317,7 @@ class Mailer implements EventListenerInterface
      * @return array
      * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
-     * @psalm-return array{headers: string, message: string}
+     * @phpstan-return array{headers: string, message: string}
      */
     public function send(?string $action = null, array $args = [], array $headers = []): array
     {
@@ -373,7 +373,7 @@ class Mailer implements EventListenerInterface
      *
      * @param string $content Content.
      * @return array
-     * @psalm-return array{headers: string, message: string}
+     * @phpstan-return array{headers: string, message: string}
      */
     public function deliver(string $content = ''): array
     {
@@ -553,7 +553,7 @@ class Mailer implements EventListenerInterface
      *
      * @param array $contents The content with 'headers' and 'message' keys.
      * @return void
-     * @psalm-param array{headers: string, message: string} $contents
+     * @phpstan-param array{headers: string, message: string} $contents
      */
     protected function logDelivery(array $contents): void
     {

@@ -150,7 +150,7 @@ class MessagesFileLoader
      * Returns the folders where the file should be looked for according to the locale
      * and package name.
      *
-     * @return list<string> The list of folders where the translation file should be looked for
+     * @return array<string> The list of folders where the translation file should be looked for
      */
     public function translationsFolders(): array
     {
@@ -172,7 +172,9 @@ class MessagesFileLoader
 
         $localePaths = App::path('locales');
         if (!$localePaths && defined('ROOT')) {
-            $localePaths[] = ROOT . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR;
+            $localePaths[] = ROOT . DIRECTORY_SEPARATOR
+                . 'resources' . DIRECTORY_SEPARATOR
+                . 'locales' . DIRECTORY_SEPARATOR;
         }
         if ($this->_plugin && Plugin::isLoaded($this->_plugin)) {
             $localePaths[] = App::path('locales', $this->_plugin)[0];

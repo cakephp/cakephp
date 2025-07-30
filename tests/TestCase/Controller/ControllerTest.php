@@ -25,7 +25,6 @@ use Cake\Controller\Exception\MissingActionException;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Datasource\Paging\PaginatedInterface;
-use Cake\Event\Event;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManager;
 use Cake\Http\Exception\NotFoundException;
@@ -65,7 +64,7 @@ class ControllerTest extends TestCase
     /**
      * fixtures property
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.Comments',
@@ -448,7 +447,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(new ServerRequest());
 
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
-            return false;
+            $event->stopPropagation();
         });
 
         $result = $Controller->render('index');
@@ -542,7 +541,7 @@ class ControllerTest extends TestCase
 
         $newResponse = new Response();
         $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse) {
-            return $newResponse;
+            $event->setResult($newResponse);
         });
 
         $result = $Controller->redirect('http://cakephp.org');
@@ -614,24 +613,21 @@ class ControllerTest extends TestCase
      */
     public function testStartupProcess(): void
     {
-        $eventManager = Mockery::mock(EventManager::class)->makePartial();
-        $eventManager->shouldReceive('dispatch')
+        $eventManager = Mockery::spy(EventManager::class);
+        $controller = new Controller(new ServerRequest(), null, $eventManager);
+        $controller->startupProcess();
+
+        $eventManager
+            ->shouldHaveReceived('dispatch')
             ->withArgs(function ($event) {
                 return $event->getName() === 'Controller.initialize';
-            })
-            ->once()
-            ->andReturn(new Event('stub'));
+            });
 
-        $eventManager->shouldReceive('dispatch')
+        $eventManager
+            ->shouldHaveReceived('dispatch')
             ->withArgs(function ($event) {
                 return $event->getName() === 'Controller.startup';
-            })
-            ->once()
-            ->andReturn(new Event('stub'));
-
-        $controller = new Controller(new ServerRequest(), null, $eventManager);
-
-        $this->assertNull($controller->startupProcess());
+            });
     }
 
     /**
@@ -639,16 +635,15 @@ class ControllerTest extends TestCase
      */
     public function testShutdownProcess(): void
     {
-        $eventManager = Mockery::mock(EventManager::class)->makePartial();
-        $eventManager->shouldReceive('dispatch')
+        $eventManager = Mockery::spy(EventManager::class);
+        $controller = new Controller(new ServerRequest(), null, $eventManager);
+        $controller->shutdownProcess();
+
+        $eventManager->shouldHaveReceived('dispatch')
+            ->once()
             ->withArgs(function ($event) {
                 return $event->getName() === 'Controller.shutdown';
-            })
-            ->once()
-            ->andReturn(new Event('stub'));
-        $controller = new Controller(new ServerRequest(), null, $eventManager);
-
-        $this->assertNull($controller->shutdownProcess());
+            });
     }
 
     /**
@@ -736,15 +731,24 @@ class ControllerTest extends TestCase
      */
     public function testGetActionMissingAction(): void
     {
-        $this->expectException(MissingActionException::class);
-        $this->expectExceptionMessage('Action `TestController::missing()` could not be found, or is not accessible.');
         $url = new ServerRequest([
             'url' => 'test/missing',
             'params' => ['controller' => 'Test', 'action' => 'missing'],
         ]);
 
         $Controller = new TestController($url);
-        $Controller->getAction();
+        try {
+            $Controller->getAction();
+        } catch (MissingActionException $e) {
+            $this->assertEquals(
+                'Action `TestController::missing()` could not be found, or is not accessible.',
+                $e->getMessage(),
+            );
+            $this->assertEquals(
+                ['controller' => 'TestController', 'action' => 'missing'],
+                $e->getAttributes(),
+            );
+        }
     }
 
     /**
@@ -908,7 +912,7 @@ class ControllerTest extends TestCase
         ]);
         $Controller = new AdminPostsController($request);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
+            $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
@@ -916,7 +920,7 @@ class ControllerTest extends TestCase
         $request = $request->withParam('prefix', 'admin/super');
         $Controller = new AdminPostsController($request);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
+            $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();
         $this->assertSame('Admin' . DS . 'Super' . DS . 'Posts', $Controller->viewBuilder()->getTemplatePath());
@@ -929,7 +933,7 @@ class ControllerTest extends TestCase
         ]);
         $Controller = new PagesController($request);
         $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
-            return $e->getSubject()->getResponse();
+            $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();
         $this->assertSame('Pages', $Controller->viewBuilder()->getTemplatePath());

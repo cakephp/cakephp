@@ -26,6 +26,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
 use Cake\View\Helper\HtmlHelper;
 use Cake\View\View;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\Core\h;
 
@@ -58,7 +59,7 @@ class HtmlHelperTest extends TestCase
     /**
      * Mocked view
      *
-     * @var \Cake\View\View|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\View\View|\Mockery\MockInterface
      */
     protected $View;
 
@@ -76,10 +77,7 @@ class HtmlHelperTest extends TestCase
         Router::reload();
         Router::setRequest($request);
 
-        $this->View = $this->getMockBuilder(View::class)
-            ->onlyMethods(['append'])
-            ->setConstructorArgs([$request])
-            ->getMock();
+        $this->View = Mockery::mock(View::class . '[append]', [$request]);
         $this->Html = new HtmlHelper($this->View);
 
         $this->loadPlugins(['TestTheme']);
@@ -638,21 +636,6 @@ class HtmlHelperTest extends TestCase
         $this->assertHtml($expected, $result[1]);
         $this->assertCount(2, $result);
 
-        $this->View->expects($this->exactly(2))
-            ->method('append')
-            ->with(
-                ...self::withConsecutive(
-                    ['css', $this->matchesRegularExpression('/css_in_head.css/')],
-                    ['css', $this->matchesRegularExpression('/more_css_in_head.css/')],
-                ),
-            );
-
-        $result = $this->Html->css('css_in_head', ['block' => true]);
-        $this->assertNull($result);
-
-        $result = $this->Html->css('more_css_in_head', ['block' => true]);
-        $this->assertNull($result);
-
         $result = $this->Html->css('import-screen', ['rel' => 'import']);
         $expected = [
             '<style',
@@ -660,6 +643,34 @@ class HtmlHelperTest extends TestCase
             '/style',
         ];
         $this->assertHtml($expected, $result);
+
+        $expectedPatterns = [
+            '/css_in_head.css/',
+            '/more_css_in_head.css/',
+            '/css_in_head_2.css/',
+            '/more_css_in_head_2.css/',
+        ];
+        foreach ($expectedPatterns as $pattern) {
+            $this->View->shouldReceive('append')
+                ->with('css', Mockery::pattern($pattern))
+                ->once();
+        }
+
+        $result = $this->Html->css('css_in_head', ['block' => true]);
+        $this->assertNull($result);
+
+        $result = $this->Html->css('more_css_in_head', ['block' => true]);
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultCssBlock', true);
+        $result = $this->Html->css('css_in_head_2');
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultCssBlock', 'css');
+        $result = $this->Html->css('more_css_in_head_2');
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultCssBlock', null);
     }
 
     /**
@@ -847,14 +858,13 @@ class HtmlHelperTest extends TestCase
      */
     public function testBufferedCssAndScriptWithIdenticalResourceName(): void
     {
-        $this->View->expects($this->exactly(2))
-            ->method('append')
-            ->with(
-                ...self::withConsecutive(
-                    ['css', $this->stringContains('test.min.css')],
-                    ['script', $this->stringContains('test.min.js')],
-                ),
-            );
+        $this->View->shouldReceive('append')
+            ->with('css', Mockery::pattern('/test\.min\.css/'))
+            ->once();
+        $this->View->shouldReceive('append')
+            ->with('script', Mockery::pattern('/test\.min\.js/'))
+            ->once();
+
         $this->Html->css('test.min', ['block' => true]);
         $this->Html->script('test.min', ['block' => true]);
     }
@@ -1118,20 +1128,34 @@ class HtmlHelperTest extends TestCase
      */
     public function testScriptWithBlocks(): void
     {
-        $this->View->expects($this->exactly(2))
-            ->method('append')
-            ->with(
-                ...self::withConsecutive(
-                    ['script', $this->matchesRegularExpression('/script_in_head.js/')],
-                    ['headScripts', $this->matchesRegularExpression('/second_script.js/')],
-                ),
-            );
+        $this->View->shouldReceive('append')
+            ->with('script', Mockery::pattern('/script_in_head.js/'))
+            ->once();
+        $this->View->shouldReceive('append')
+            ->with('headScripts', Mockery::pattern('/second_script.js/'))
+            ->once();
+        $this->View->shouldReceive('append')
+            ->with('script', Mockery::pattern('/script_in_head_2.js/'))
+            ->once();
+        $this->View->shouldReceive('append')
+            ->with('headScripts', Mockery::pattern('/second_script_2.js/'))
+            ->once();
 
         $result = $this->Html->script('script_in_head', ['block' => true]);
         $this->assertNull($result);
 
         $result = $this->Html->script('second_script', ['block' => 'headScripts']);
         $this->assertNull($result);
+
+        $this->Html->setConfig('defaultScriptBlock', true);
+        $result = $this->Html->script('script_in_head_2');
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultScriptBlock', 'headScripts');
+        $result = $this->Html->script('second_script_2');
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultScriptBlock', null);
     }
 
     /**
@@ -1210,21 +1234,6 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        $this->View->expects($this->exactly(2))
-            ->method('append')
-            ->with(
-                ...self::withConsecutive(
-                    ['script', $this->matchesRegularExpression('/window\.foo\s\=\s2;/')],
-                    ['scriptTop', $this->stringContains('alert(')],
-                ),
-            );
-
-        $result = $this->Html->scriptBlock('window.foo = 2;', ['block' => true]);
-        $this->assertNull($result);
-
-        $result = $this->Html->scriptBlock('alert("hi")', ['block' => 'scriptTop']);
-        $this->assertNull($result);
-
         $result = $this->Html->scriptBlock('window.foo = 2;', ['encoding' => 'utf-8']);
         $expected = [
             'script' => ['encoding' => 'utf-8'],
@@ -1232,6 +1241,33 @@ class HtmlHelperTest extends TestCase
             '/script',
         ];
         $this->assertHtml($expected, $result);
+
+        $this->View->shouldReceive('append')
+            ->with('script', Mockery::pattern('/window\.foo\s\=\s2;/'))
+            ->once();
+        $this->View->shouldReceive('append')
+            ->with('scriptTop', Mockery::pattern('/alert\("hi"\)/'))
+            ->once();
+        $this->View->shouldReceive('append')
+            ->with('script', Mockery::pattern('/window\.foo\s\=\s3;/'))
+            ->once();
+        $this->View->shouldReceive('append')
+            ->with('scriptTop', Mockery::pattern('/alert\("his"\)/'))
+            ->once();
+
+        $result = $this->Html->scriptBlock('window.foo = 2;', ['block' => true]);
+        $this->assertNull($result);
+
+        $result = $this->Html->scriptBlock('alert("hi")', ['block' => 'scriptTop']);
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultScriptBlock', true);
+        $result = $this->Html->scriptBlock('window.foo = 3;');
+        $this->assertNull($result);
+
+        $this->Html->setConfig('defaultScriptBlock', 'scriptTop');
+        $result = $this->Html->scriptBlock('alert("his")');
+        $this->assertNull($result);
     }
 
     /**
@@ -1583,6 +1619,15 @@ class HtmlHelperTest extends TestCase
             'meta' => ['name' => 'csrf-token', 'content' => 'test'],
         ];
         $this->assertHtml($expected, $result);
+
+        $this->View->shouldReceive('append')
+            ->with('myMeta', Mockery::pattern('/csrf-token/'))
+            ->once();
+
+        $this->Html->setConfig('defaultMetaBlock', 'myMeta');
+        $this->assertNull($this->Html->meta('csrf-token'));
+        $this->assertHtml($expected, $result);
+        $this->Html->setConfig('defaultMetaBlock', null);
     }
 
     /**
@@ -1715,14 +1760,13 @@ class HtmlHelperTest extends TestCase
      */
     public function testMetaWithBlocks(): void
     {
-        $this->View->expects($this->exactly(2))
-            ->method('append')
-            ->with(
-                ...self::withConsecutive(
-                    ['meta', $this->stringContains('robots')],
-                    ['metaTags', $this->stringContains('favicon.ico')],
-                ),
-            );
+        $this->View
+            ->shouldReceive('append')
+            ->with('meta', Mockery::pattern('/robots/'))
+            ->once();
+        $this->View->shouldReceive('append')
+            ->with('metaTags', Mockery::pattern('/favicon\.ico/'))
+            ->once();
 
         $result = $this->Html->meta('robots', 'ALL', ['block' => true]);
         $this->assertNull($result);
@@ -1736,14 +1780,13 @@ class HtmlHelperTest extends TestCase
      */
     public function testMetaCustomWithBlock(): void
     {
-        $this->View->expects($this->exactly(2))
-            ->method('append')
-            ->with(
-                ...self::withConsecutive(
-                    ['meta', $this->stringContains('og:site_name')],
-                    ['meta', $this->stringContains('og:description')],
-                ),
-            );
+        $this->View->shouldReceive('append')
+            ->with('meta', Mockery::pattern('/og:site_name/'))
+            ->once();
+        $this->View->shouldReceive('append')
+            ->with('meta', Mockery::pattern('/og:description/'))
+            ->once();
+
         $result = $this->Html->meta(['property' => 'og:site_name', 'content' => 'CakePHP', 'block' => true]);
         $this->assertNull($result, 'compact style should work');
 
@@ -2051,5 +2094,92 @@ class HtmlHelperTest extends TestCase
             'script' => ['src' => 'js/foo.js'],
         ];
         $this->assertHtml($expected, $result);
+    }
+
+    public function testImportmap(): void
+    {
+        $request = $this->View->getRequest()
+            ->withAttribute('base', '')
+            ->withAttribute('webroot', '/');
+        $this->View->setRequest($request);
+        Router::setRequest($request);
+
+        $imports = [
+            'foo' => 'foo',
+            'bar' => 'bar.js',
+            'baz' => './bar.js',
+            'relative' => '../relative.js',
+            'full' => '/full.js',
+            'path/' => '/some/path/',
+            'otherpath/' => 'other/path/',
+        ];
+        $result = $this->Html->importmap($imports);
+
+        $expected = $this->getImportmapScript([
+            'imports' => [
+                'foo' => '/js/foo.js',
+                'bar' => '/js/bar.js',
+                'baz' => '/js/./bar.js',
+                'relative' => '/js/../relative.js',
+                'full' => '/full.js',
+                'path/' => '/some/path/',
+                'otherpath/' => '/js/other/path/',
+            ],
+        ]);
+        $this->assertSame($expected, $result);
+
+        $map = [
+            'imports' => $imports,
+            'scopes' => [
+                'scoped/' => [
+                    'foo' => 'scope/foo',
+                ],
+            ],
+            'integrity' => [
+                'foo' => 'sha256-hash',
+            ],
+        ];
+        $result = $this->Html->importmap($map);
+
+        $expected = $this->getImportmapScript([
+            'imports' => [
+                'foo' => '/js/foo.js',
+                'bar' => '/js/bar.js',
+                'baz' => '/js/./bar.js',
+                'relative' => '/js/../relative.js',
+                'full' => '/full.js',
+                'path/' => '/some/path/',
+                'otherpath/' => '/js/other/path/',
+            ],
+            'scopes' => [
+                'scoped/' => [
+                    'foo' => '/js/scope/foo.js',
+                ],
+            ],
+            'integrity' => [
+                '/js/foo.js' => 'sha256-hash',
+            ],
+        ]);
+        $this->assertSame($expected, $result);
+
+        Configure::write('App.fullBaseUrl', 'http://localhost');
+        $imports = [
+            'foo' => 'foo',
+        ];
+        $result = $this->Html->importmap($imports, ['fullBase' => true]);
+
+        $expected = $this->getImportmapScript([
+            'imports' => [
+                'foo' => Router::fullBaseUrl() . '/js/foo.js',
+            ],
+        ]);
+        $this->assertSame($expected, $result);
+    }
+
+    protected function getImportmapScript(array $expected): string
+    {
+        return '<script type="importmap">'
+            . json_encode($expected, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT)
+            . '</script>';
     }
 }

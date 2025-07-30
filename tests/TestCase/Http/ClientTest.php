@@ -27,6 +27,7 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\Request as LaminasRequest;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -34,7 +35,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
  */
 class ClientTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -205,7 +206,7 @@ class ClientTest extends TestCase
     }
 
     #[DataProvider('urlProvider')]
-    public function testBuildUrl(string $expected, string $url, array $query, ?array $opts): void
+    public function testBuildUrl(string $expected, string $url, array $query, ?array $opts, string $type): void
     {
         $http = new Client();
 
@@ -573,7 +574,7 @@ class ClientTest extends TestCase
                 'headers' => [
                     'Content-Type' => 'application/octet-stream',
                 ],
-            ]
+            ],
         );
     }
 
@@ -608,7 +609,7 @@ class ClientTest extends TestCase
                 'headers' => [
                     'Content-Type' => 'application/octet-stream',
                 ],
-            ]
+            ],
         );
     }
 
@@ -789,9 +790,7 @@ class ClientTest extends TestCase
     {
         $url = 'http://cakephp.org';
 
-        $adapter = $this->getMockBuilder(Client\Adapter\Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
+        $adapter = Mockery::mock(Client\Adapter\Stream::class);
 
         $redirect = new Response([
             'HTTP/1.0 301',
@@ -809,48 +808,35 @@ class ClientTest extends TestCase
             'HTTP/1.0 200',
         ]);
 
-        $adapter->expects($this->exactly(3))
-            ->method('send')
-            ->with(
-                ...self::withConsecutive(
-                    [
-                    $this->callback(function (Request $request) use ($url) {
-                        $this->assertInstanceOf(Request::class, $request);
-                        $this->assertSame($url, (string)$request->getUri());
+        $adapter->shouldReceive('send')
+            ->withArgs(function (Request $request, $options) use ($url) {
+                $this->assertSame($url, (string)$request->getUri());
+                $this->assertArrayNotHasKey('redirect', $options);
 
-                        return true;
-                    }),
-                    $this->callback(function ($options) {
-                        $this->assertArrayNotHasKey('redirect', $options);
+                return true;
+            })
+            ->andReturn([$redirect])
+            ->once();
 
-                        return true;
-                    }),
-                    ],
-                    [
-                    $this->callback(function (Request $request) use ($url) {
-                        $this->assertInstanceOf(Request::class, $request);
-                        $this->assertSame($url . '/redirect1?foo=bar', (string)$request->getUri());
+        $adapter->shouldReceive('send')
+            ->withArgs(function (Request $request, $options) use ($url) {
+                $this->assertSame($url . '/redirect1?foo=bar', (string)$request->getUri());
+                $this->assertArrayNotHasKey('redirect', $options);
 
-                        return true;
-                    }),
-                    $this->callback(function ($options) {
-                        $this->assertArrayNotHasKey('redirect', $options);
+                return true;
+            })
+            ->andReturn([$redirect2])
+            ->once();
 
-                        return true;
-                    }),
-                    ],
-                    [
-                    $this->callback(function (Request $request) use ($url) {
-                        $this->assertInstanceOf(Request::class, $request);
-                        $this->assertSame($url . '/redirect2#foo', (string)$request->getUri());
+        $adapter->shouldReceive('send')
+            ->withArgs(function (Request $request, $options) use ($url) {
+                $this->assertSame($url . '/redirect2#foo', (string)$request->getUri());
+                $this->assertSame([], $options);
 
-                        return true;
-                    }),
-                    [],
-                    ],
-                ),
-            )
-            ->willReturn([$redirect], [$redirect2], [$response]);
+                return true;
+            })
+            ->andReturn([$response])
+            ->once();
 
         $client = new Client([
             'adapter' => $adapter,
@@ -961,7 +947,7 @@ class ClientTest extends TestCase
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
             function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
-                return new Response(body: 'short circuit');
+                $event->setResult(new Response(body: 'short circuit'));
             },
         );
 
@@ -983,7 +969,7 @@ class ClientTest extends TestCase
         $client->getEventManager()->on(
             'HttpClient.afterSend',
             function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
-                return new Response(body: 'modified response');
+                $event->setResult(new Response(body: 'modified response'));
             },
         );
 
@@ -998,9 +984,7 @@ class ClientTest extends TestCase
      */
     public function testRedirectDifferentSubDomains(): void
     {
-        $adapter = $this->getMockBuilder(Client\Adapter\Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
+        $adapter = Mockery::mock(Client\Adapter\Stream::class);
 
         $url = 'http://auth.example.org';
 
@@ -1011,22 +995,20 @@ class ClientTest extends TestCase
         $response = new Response([
             'HTTP/1.0 200',
         ]);
-        $adapter->expects($this->exactly(2))
-            ->method('send')
-            ->with(
-                ...self::withConsecutive(
-                    [$this->anything()],
-                    [
-                    $this->callback(function ($request) {
-                        $this->assertSame('http://backstage.example.org', (string)$request->getUri());
-                        $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
 
-                        return true;
-                    }),
-                    ],
-                ),
-            )
-            ->willReturn([$redirect], [$response]);
+        $adapter->shouldReceive('send')
+            ->andReturn([$redirect])
+            ->once();
+
+        $adapter->shouldReceive('send')
+            ->withArgs(function ($request) {
+                $this->assertSame('http://backstage.example.org', (string)$request->getUri());
+                $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
+
+                return true;
+            })
+            ->andReturn([$response])
+            ->once();
 
         $client = new Client([
             'adapter' => $adapter,

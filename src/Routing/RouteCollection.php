@@ -79,7 +79,7 @@ class RouteCollection
     /**
      * Route extensions
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_extensions = [];
 
@@ -141,8 +141,8 @@ class RouteCollection
             // decode urlencoded segments, but don't decode %2f aka /
             $parts = explode('/', $urlPath);
             $parts = array_map(
-                fn (string $part) => str_replace('/', '%2f', urldecode($part)),
-                $parts
+                fn(string $part) => str_replace('/', '%2f', urldecode($part)),
+                $parts,
             );
             $urlPath = implode('/', $parts);
         }
@@ -157,7 +157,7 @@ class RouteCollection
                 }
                 if ($uri->getQuery()) {
                     parse_str($uri->getQuery(), $queryParameters);
-                    $r['?'] = $queryParameters;
+                    $r['?'] = array_merge($r['?'] ?? [], $queryParameters);
                 }
 
                 return $r;
@@ -193,7 +193,7 @@ class RouteCollection
      * and newer style urls containing '_name'
      *
      * @param array $url The url to match.
-     * @return list<string> The set of names of the url
+     * @return array<string> The set of names of the url
      */
     protected function _getNames(array $url): array
     {
@@ -348,7 +348,7 @@ class RouteCollection
     /**
      * Get the extensions that can be handled.
      *
-     * @return list<string> The valid extensions.
+     * @return array<string> The valid extensions.
      */
     public function getExtensions(): array
     {
@@ -385,7 +385,6 @@ class RouteCollection
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to register.
      * @return $this
-     * @throws \RuntimeException
      */
     public function registerMiddleware(string $name, MiddlewareInterface|Closure|string $middleware)
     {

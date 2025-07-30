@@ -217,7 +217,7 @@ class View implements EventDispatcherInterface
     /**
      * List of variables to collect from the associated controller.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
@@ -234,14 +234,14 @@ class View implements EventDispatcherInterface
     /**
      * Holds an array of paths.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_paths = [];
 
     /**
      * Holds an array of plugin paths.
      *
-     * @var array<string, list<string>>
+     * @var array<string, array<string>>
      */
     protected array $_pathsForPlugin = [];
 
@@ -270,7 +270,7 @@ class View implements EventDispatcherInterface
     /**
      * Content stack, used for nested templates that all use View::extend();
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_stack = [];
 
@@ -278,7 +278,7 @@ class View implements EventDispatcherInterface
      * ViewBlock class.
      *
      * @var string
-     * @psalm-var class-string<\Cake\View\ViewBlock>
+     * @phpstan-var class-string<\Cake\View\ViewBlock>
      */
     protected string $_viewBlockClass = ViewBlock::class;
 
@@ -652,7 +652,7 @@ class View implements EventDispatcherInterface
      * @return string Rendered Element
      * @throws \Cake\View\Exception\MissingElementException When an element is missing and `ignoreMissing`
      *   is false.
-     * @psalm-param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options
+     * @phpstan-param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options
      */
     public function element(string $name, array $data = [], array $options = []): string
     {
@@ -844,7 +844,7 @@ class View implements EventDispatcherInterface
     /**
      * Returns a list of variables available in the current View context
      *
-     * @return list<string> Array of the set view variable names.
+     * @return array<string> Array of the set view variable names.
      */
     public function getVars(): array
     {
@@ -876,7 +876,6 @@ class View implements EventDispatcherInterface
     {
         if (is_array($name)) {
             if (is_array($value)) {
-                /** @var array|false $data Coerce phpstan to accept failure case */
                 $data = array_combine($name, $value);
                 if ($data === false) {
                     throw new CakeException(
@@ -897,7 +896,7 @@ class View implements EventDispatcherInterface
     /**
      * Get the names of all the existing blocks.
      *
-     * @return list<string> An array containing the blocks.
+     * @return array<string> An array containing the blocks.
      * @see \Cake\View\ViewBlock::keys()
      */
     public function blocks(): array
@@ -1423,7 +1422,7 @@ class View implements EventDispatcherInterface
      * @param string $name The name you want to plugin split.
      * @param bool $fallback If true uses the plugin set in the current Request when parsed plugin is not loaded
      * @return array Array with 2 indexes. 0 => plugin name, 1 => filename.
-     * @psalm-return array{string|null, string}
+     * @phpstan-return array{string|null, string}
      */
     public function pluginSplit(string $name, bool $fallback = true): array
     {
@@ -1524,8 +1523,8 @@ class View implements EventDispatcherInterface
     {
         $elementPaths = $this->_getSubPaths(static::TYPE_ELEMENT);
         foreach ($this->_paths($plugin) as $path) {
-            foreach ($elementPaths as $subdir) {
-                yield $path . $subdir . DIRECTORY_SEPARATOR;
+            foreach ($elementPaths as $subDir) {
+                yield $path . $subDir . DIRECTORY_SEPARATOR;
             }
         }
     }
@@ -1539,7 +1538,7 @@ class View implements EventDispatcherInterface
      * and layouts.
      *
      * @param string $basePath Base path on which to get the prefixed one.
-     * @return list<string> Array with all the templates paths.
+     * @return array<string> Array with all the templates paths.
      */
     protected function _getSubPaths(string $basePath): array
     {
@@ -1565,7 +1564,7 @@ class View implements EventDispatcherInterface
      *
      * @param string|null $plugin Optional plugin name to scan for view files.
      * @param bool $cached Set to false to force a refresh of view paths. Default true.
-     * @return list<string> paths
+     * @return array<string> paths
      */
     protected function _paths(?string $plugin = null, bool $cached = true): array
     {
@@ -1626,12 +1625,12 @@ class View implements EventDispatcherInterface
      * @param array $data Data
      * @param array<string, mixed> $options Element options
      * @return array<string, mixed> Element Cache configuration.
-     * @psalm-return array{key:string, config:string}
+     * @phpstan-return array{key:string, config:string}
      */
     protected function _elementCache(string $name, array $data, array $options): array
     {
         if (isset($options['cache']['key'], $options['cache']['config'])) {
-            /** @psalm-var array{key:string, config:string} $cache */
+            /** @phpstan-var array{key:string, config:string} $cache */
             $cache = $options['cache'];
             $cache['key'] = 'element_' . $cache['key'];
 

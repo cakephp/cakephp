@@ -50,7 +50,7 @@ class BelongsToManyTest extends TestCase
     /**
      * Fixtures
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.Articles',
@@ -217,6 +217,18 @@ class BelongsToManyTest extends TestCase
         $this->expectExceptionMessage('Invalid strategy `join` was provided');
         $assoc = new BelongsToMany('Test');
         $assoc->setStrategy(BelongsToMany::STRATEGY_JOIN);
+    }
+
+    public function testJunctionProperty()
+    {
+        $assoc = new BelongsToMany('Test');
+        $this->assertSame('_joinData', $assoc->getJunctionProperty());
+
+        $assoc = new BelongsToMany('Test', ['junctionProperty' => 'junction']);
+        $this->assertSame('junction', $assoc->getJunctionProperty());
+
+        $assoc->setJunctionProperty('_pivot');
+        $this->assertSame('_pivot', $assoc->getJunctionProperty());
     }
 
     /**

@@ -26,7 +26,7 @@ use Cake\View\Exception\SerializationFailureException;
  *
  * By setting the 'serialize' option in view builder of your controller, you can specify
  * a view variable that should be serialized to XML and used as the response for the request.
- * This allows you to omit views + layouts, if your just need to emit a single view
+ * This allows you to omit views and layouts, if you just need to emit a single view
  * variable as the XML response.
  *
  * In your controller, you could do the following:
@@ -82,7 +82,7 @@ class XmlView extends SerializedView
      *
      * - `serialize`: Option to convert a set of view variables into a serialized response.
      *   Its value can be a string for single variable name or array for multiple
-     *   names. If true all view variables will be serialized. If null or false
+     *   names. If true, all view variables will be serialized. If null or false,
      *   normal view template will be rendered.
      * - `xmlOptions`: Option to allow setting an array of custom options for Xml::fromArray().
      *   For e.g. 'format' as 'attributes' instead of 'tags'.

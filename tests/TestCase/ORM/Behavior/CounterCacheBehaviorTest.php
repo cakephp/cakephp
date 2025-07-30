@@ -23,6 +23,7 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Exception;
 use TestApp\Model\Table\PublishedPostsTable;
 
 /**
@@ -63,7 +64,7 @@ class CounterCacheBehaviorTest extends TestCase
     /**
      * Fixture
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.CounterCacheCategories',
@@ -618,6 +619,40 @@ class CounterCacheBehaviorTest extends TestCase
         $this->assertSame(10, $user->get('post_count'));
         $this->assertSame(2, $user->get('comment_count'));
         $this->assertSame(1, $user->get('posts_published'));
+    }
+
+    public function testUpdateCounterCache(): void
+    {
+        $this->post->belongsTo('Users');
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'post_count',
+                'dummy' => function () {
+                    throw new Exception('Closures are never called by "updateCounterCache()"');
+                },
+            ],
+        ]);
+
+        $this->user->updateAll(['post_count' => 0], []);
+
+        $user = $this->_getUser(1);
+        $this->assertSame(0, $user->get('post_count'));
+
+        $this->post->updateCounterCache('Users');
+
+        $user = $this->_getUser(1);
+        $this->assertSame(2, $user->get('post_count'));
+        $user = $this->_getUser(2);
+        $this->assertSame(1, $user->get('post_count'));
+
+        $this->user->updateAll(['post_count' => 0], []);
+
+        $this->post->updateCounterCache(limit: 1, page: 2);
+
+        $user = $this->_getUser(1);
+        $this->assertSame(0, $user->get('post_count'));
+        $user = $this->_getUser(2);
+        $this->assertSame(1, $user->get('post_count'));
     }
 
     /**

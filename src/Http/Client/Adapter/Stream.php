@@ -103,9 +103,7 @@ class Stream implements AdapterInterface
         }
         $last = count($indexes) - 1;
         foreach ($indexes as $i => $start) {
-            /** @psalm-suppress InvalidOperand */
             $end = isset($indexes[$i + 1]) ? $indexes[$i + 1] - $start : null;
-            /** @psalm-suppress PossiblyInvalidArgument */
             $headerSlice = array_slice($headers, $start, $end);
             $body = $i === $last ? $content : '';
             $responses[] = $this->_buildResponse($headerSlice, $body);
@@ -270,7 +268,6 @@ class Stream implements AdapterInterface
         }
 
         $meta = stream_get_meta_data($this->_stream);
-        /** @psalm-suppress InvalidPropertyAssignmentValue */
         fclose($this->_stream);
 
         if ($timedOut) {
@@ -288,7 +285,7 @@ class Stream implements AdapterInterface
     /**
      * Build a response object
      *
-     * @param array $headers Unparsed headers.
+     * @param array<string> $headers Unparsed headers.
      * @param string $body The response body.
      * @return \Cake\Http\Client\Response
      */

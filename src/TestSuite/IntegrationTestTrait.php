@@ -186,7 +186,7 @@ trait IntegrationTestTrait
     /**
      * List of fields that are excluded from field validation.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_unlockedFields = [];
 
@@ -201,7 +201,6 @@ trait IntegrationTestTrait
      * Clears the state used for requests.
      *
      * @return void
-     * @psalm-suppress PossiblyNullPropertyAssignmentValue
      */
     #[After]
     public function cleanup(): void
@@ -513,7 +512,8 @@ trait IntegrationTestTrait
             $response = $dispatcher->execute($request);
             $this->_requestSession = $request['session'];
             if ($this->_retainFlashMessages && $this->_flashMessages) {
-                $this->_requestSession->write('Flash', $this->_flashMessages);
+                $_SESSION['Flash'] = $this->_flashMessages;
+                $this->_requestSession->write($_SESSION);
             }
             $this->_response = $response;
         } catch (PHPUnitException | DatabaseException $e) {
@@ -1511,7 +1511,6 @@ trait IntegrationTestTrait
      */
     protected function getSession(): TestSession
     {
-        /** @psalm-suppress InvalidScalarArgument */
         return new TestSession($_SESSION);
     }
 

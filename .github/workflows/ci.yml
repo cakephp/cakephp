@@ -35,6 +35,7 @@ jobs:
             db-type: 'mysql'
           - php-version: '8.4'
             db-type: 'mysql'
+            dependencies: highest
 
     services:
       redis:
@@ -47,8 +48,12 @@ jobs:
           - 11211/tcp
 
     steps:
+    - name: Setup MySQL 8.4
+      if: matrix.db-type == 'mysql' && matrix.dependencies == 'highest'
+      run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:8.4
+
     - name: Setup MySQL 8.0
-      if: matrix.db-type == 'mysql' && matrix.dependencies != 'lowest'
+      if: matrix.db-type == 'mysql' && matrix.dependencies == ''
       run: |
         sudo service mysql start
         mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE cakephp;'
@@ -218,17 +223,13 @@ jobs:
         if: always()
         run: vendor/bin/phpcs --report=checkstyle | cs2pr
 
-      - name: Run psalm
-        if: always()
-        run: tools/psalm --output-format=github
-
       - name: Run phpstan
         if: always()
-        run: vendor/bin/phpstan analyse --error-format=github
+        run: tools/phpstan analyse --error-format=github
 
       - name: Run phpstan for tests
         if: env.PHPSTAN_TESTS
-        run: vendor/bin/phpstan analyse -c tests/phpstan.neon --error-format=github
+        run: tools/phpstan analyse -c tests/phpstan.neon --error-format=github
 
       - name: Run class deprecation aliasing validation script
         if: always()

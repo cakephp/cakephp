@@ -115,7 +115,7 @@ class Hash
      * @return \ArrayAccess|array An array of the extracted values. Returns an empty array
      *   if there are no matches.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::extract
-     * @psalm-return ($path is non-empty-string ? array : \ArrayAccess|array)
+     * @phpstan-return ($path is non-empty-string ? array : \ArrayAccess|array)
      */
     public static function extract(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
@@ -294,7 +294,7 @@ class Hash
      * @param string $path The path to insert at.
      * @param mixed $values The values to insert.
      * @return \ArrayAccess|array The data with $values inserted.
-     * @psalm-return (T is array ? array : \ArrayAccess)
+     * @phpstan-return (T is array ? array : \ArrayAccess)
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::insert
      */
     public static function insert(ArrayAccess|array $data, string $path, mixed $values = null): ArrayAccess|array
@@ -398,7 +398,7 @@ class Hash
      * @param T $data The data to operate on
      * @param string $path A path expression to use to remove.
      * @return \ArrayAccess|array The modified array.
-     * @psalm-return (T is array ? array : \ArrayAccess)
+     * @phpstan-return (T is array ? array : \ArrayAccess)
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::remove
      */
     public static function remove(ArrayAccess|array $data, string $path): ArrayAccess|array
@@ -551,11 +551,11 @@ class Hash
      * @param array $data Source array from which to extract the data
      * @param array<string> $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
-     * @return list<string>|null An array of strings extracted from `$path` and formatted with `$format`
+     * @return array<string>|null An array of strings extracted from `$path` and formatted with `$format`
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
-     * @psalm-return ($paths is non-empty-array ? array : null)
+     * @phpstan-return ($paths is non-empty-array ? array : null)
      */
     public static function format(array $data, array $paths, string $format): ?array
     {
@@ -683,8 +683,7 @@ class Hash
 
     /**
      * Collapses a multi-dimensional array into a single dimension, using a delimited array path for
-     * each array element's key, i.e. [['Foo' => ['Bar' => 'Far']]] becomes
-     * ['0.Foo.Bar' => 'Far'].)
+     * each array element's key, i.e. `[['Foo' => ['Bar' => 'Far']]]` becomes `['0.Foo.Bar' => 'Far']`.
      *
      * @param array $data Array to flatten
      * @param string $separator String used to separate array key elements in a path, defaults to '.'
@@ -1203,7 +1202,7 @@ class Hash
      *
      * ### Options:
      *
-     * - `children` The key name to use in the resultset for children.
+     * - `children` The key name to use in the result set for children.
      * - `idPath` The path to a key that identifies each entry. Should be
      *   compatible with Hash::extract(). Defaults to `{n}.$alias.id`
      * - `parentPath` The path to a key that identifies the parent of each entry.
@@ -1212,11 +1211,11 @@ class Hash
      *
      * @param array $data The data to nest.
      * @param array<string, string|null> $options Options.
-     * @return list<array> of results, nested
+     * @return array<array> of results, nested
      * @see \Cake\Utility\Hash::extract()
      * @throws \InvalidArgumentException When providing invalid data.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::nest
-     * @psalm-param array{idPath?: string, parentPath?: string, children?: string, root?: string|null} $options
+     * @phpstan-param array{idPath?: string, parentPath?: string, children?: string, root?: string|null} $options
      */
     public static function nest(array $data, array $options = []): array
     {
@@ -1278,7 +1277,7 @@ class Hash
             }
         }
 
-        /** @var list<array> */
+        /** @var array<array> */
         return array_values($return);
     }
 }

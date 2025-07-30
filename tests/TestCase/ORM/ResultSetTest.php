@@ -27,7 +27,7 @@ use Cake\TestSuite\TestCase;
 class ResultSetTest extends TestCase
 {
     /**
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.Comments'];
 
@@ -135,7 +135,7 @@ class ResultSetTest extends TestCase
     }
 
     /**
-     * Test converting resultsets into JSON
+     * Test converting result sets into JSON
      */
     public function testJsonSerialize(): void
     {

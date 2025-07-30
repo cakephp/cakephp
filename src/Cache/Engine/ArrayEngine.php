@@ -153,7 +153,7 @@ class ArrayEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function groups(): array
     {

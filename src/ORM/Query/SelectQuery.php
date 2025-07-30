@@ -142,7 +142,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     protected ?int $_resultsCount = null;
 
     /**
-     * Resultset factory
+     * Result set factory
      *
      * @var \Cake\ORM\ResultSetFactory<\Cake\Datasource\EntityInterface|array>
      */
@@ -205,7 +205,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Set the result set for a query.
      *
-     * Setting the resultset of a query will make execute() a no-op. Instead
+     * Setting the result set of a query will make execute() a no-op. Instead
      * of executing the SQL query and fetching results, the ResultSet provided to this
      * method will be returned.
      *
@@ -384,7 +384,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
         $this->_results = $results;
 
-        return $this->_results;
+        return $results;
     }
 
     /**
@@ -1577,7 +1577,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     }
 
     /**
-     * Get resultset factory.
+     * Get result set factory.
      *
      * @return \Cake\ORM\ResultSetFactory
      */
@@ -1672,13 +1672,11 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param string $finder The finder method to use.
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return static<TSubject> Returns a modified query.
-     * @psalm-suppress MoreSpecificReturnType
      */
     public function find(string $finder, mixed ...$args): static
     {
         $table = $this->getRepository();
 
-        /** @psalm-suppress LessSpecificReturnStatement */
         return $table->callFinder($finder, $this, ...$args);
     }
 

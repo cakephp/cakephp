@@ -54,7 +54,7 @@ class MemcachedEngine extends CacheEngine
      * - `prefix` Prepended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
      * - `serialize` The serializer engine used to serialize data. Available engines are 'php',
-     *    'igbinary' and 'json'. Beside 'php', the memcached extension must be compiled with the
+     *    'igbinary' and 'json'. Besides 'php', the memcached extension must be compiled with the
      *    appropriate serializer support.
      * - `servers` String or array of memcached servers. If an array MemcacheEngine will use
      *    them as a pool.
@@ -88,7 +88,7 @@ class MemcachedEngine extends CacheEngine
     protected array $_serializers = [];
 
     /**
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_compiledGroupNames = [];
 
@@ -355,7 +355,7 @@ class MemcachedEngine extends CacheEngine
      * @param iterable<string> $keys An array of identifiers for the data
      * @param mixed $default Default value to return for keys that do not exist.
      * @return iterable<string, mixed> An array containing, for each of the given $keys, the cached data or
-     *   false if cached data could not be retrieved.
+     *   `$default` if cached data could not be retrieved.
      */
     public function getMultiple(iterable $keys, mixed $default = null): iterable
     {
@@ -365,9 +365,13 @@ class MemcachedEngine extends CacheEngine
         }
 
         $values = $this->_Memcached->getMulti($cacheKeys);
+        if ($values === false) {
+            return array_fill_keys(array_keys($cacheKeys), $default);
+        }
+
         $return = [];
         foreach ($cacheKeys as $original => $prefixed) {
-            $return[$original] = $values[$prefixed] ?? $default;
+            $return[$original] = array_key_exists($prefixed, $values) ? $values[$prefixed] : $default;
         }
 
         return $return;
@@ -467,7 +471,7 @@ class MemcachedEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function groups(): array
     {

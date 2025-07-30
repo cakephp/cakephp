@@ -83,7 +83,7 @@ class ValuesExpression implements ExpressionInterface
      * @param \Cake\Database\Query|array $values Array of data to append into the insert, or
      *   a query for doing INSERT INTO .. SELECT style commands
      * @return void
-     * @throws \Cake\Database\Exception\DatabaseException When mixing array + Query data types.
+     * @throws \Cake\Database\Exception\DatabaseException When mixing array and Query data types.
      */
     public function add(Query|array $values): void
     {

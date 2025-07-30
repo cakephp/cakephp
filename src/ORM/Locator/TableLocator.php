@@ -36,7 +36,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Contains a list of locations where table classes should be looked for.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $locations = [];
 
@@ -51,7 +51,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * Instances that belong to the registry.
      *
      * @var array<string, \Cake\ORM\Table>
-     * @psalm-suppress NonInvariantDocblockPropertyType
      */
     protected array $instances = [];
 
@@ -67,7 +66,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * Fallback class to use
      *
      * @var string
-     * @psalm-var class-string<\Cake\ORM\Table>
+     * @phpstan-var class-string<\Cake\ORM\Table>
      */
     protected string $fallbackClassName = Table::class;
 
@@ -126,7 +125,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      *
      * @param string $className Fallback class name
      * @return $this
-     * @psalm-param class-string<\Cake\ORM\Table> $className
+     * @phpstan-param class-string<\Cake\ORM\Table> $className
      */
     public function setFallbackClassName(string $className)
     {
@@ -254,7 +253,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
             if (!empty($options['connectionName'])) {
                 $connectionName = $options['connectionName'];
             } else {
-                /** @var \Cake\ORM\Table $className */
+                /** @var class-string<\Cake\ORM\Table> $className */
                 $className = $options['className'];
                 $connectionName = $className::defaultConnectionName();
             }
@@ -325,7 +324,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * @param string $alias The alias to set.
      * @param \Cake\ORM\Table $repository The Table to set.
      * @return \Cake\ORM\Table
-     * @psalm-suppress MoreSpecificImplementedParamType
      */
     public function set(string $alias, RepositoryInterface $repository): Table
     {

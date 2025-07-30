@@ -12,6 +12,8 @@ parameters:
 		- vendor/
 	ignoreErrors:
 		-
+			identifier: trait.unused
+		-
 			identifier: missingType.iterableValue
 		-
 			identifier: missingType.generics

@@ -75,7 +75,8 @@ class Entity implements EntityInterface, InvalidPropertyInterface
                 return;
             }
 
-            $this->set($properties, [
+            $this->patch($properties, [
+                'asOriginal' => true,
                 'setter' => $options['useSetters'],
                 'guard' => $options['guard'],
             ]);

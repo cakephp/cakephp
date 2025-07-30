@@ -29,7 +29,6 @@ class BufferedIterator extends Collection
      * The in-memory cache containing results from previous iterators
      *
      * @var \SplDoublyLinkedList<mixed>
-     * @psalm-suppress MissingTemplateParam
      */
     protected SplDoublyLinkedList $_buffer;
 
@@ -168,7 +167,7 @@ class BufferedIterator extends Collection
     }
 
     /**
-     * Returns the number or items in this collection
+     * Returns the number of items in this collection.
      *
      * @return int
      */

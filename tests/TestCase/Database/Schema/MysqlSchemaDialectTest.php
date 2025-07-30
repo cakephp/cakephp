@@ -32,7 +32,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 /**
  * Test case for MySQL Schema Dialect.
  */
-class MysqlSchemaTest extends TestCase
+class MysqlSchemaDialectTest extends TestCase
 {
     protected PDO $pdo;
 
@@ -142,6 +142,10 @@ class MysqlSchemaTest extends TestCase
                 ['type' => 'uuid', 'length' => null],
             ],
             [
+                'UUID',
+                ['type' => 'nativeuuid', 'length' => null],
+            ],
+            [
                 'BINARY(16)',
                 ['type' => 'binaryuuid', 'length' => null],
             ],
@@ -184,6 +188,10 @@ class MysqlSchemaTest extends TestCase
             [
                 'FLOAT',
                 ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
+            ],
+            [
+                'FLOAT(24)',
+                ['type' => 'float', 'length' => 24, 'precision' => 0, 'unsigned' => false],
             ],
             [
                 'DOUBLE',
@@ -271,6 +279,26 @@ class MysqlSchemaTest extends TestCase
         $this->assertSame($expected, $actual);
     }
 
+    public function testConvertColumnBlobDefault(): void
+    {
+        $field = [
+            'Field' => 'field',
+            'Type' => 'binary',
+            'Null' => 'YES',
+            'Default' => "_utf8mb4\\'abc\\'",
+            'Collation' => 'utf8_general_ci',
+            'Comment' => 'Comment section',
+        ];
+        $driver = $this->getMockBuilder(Mysql::class)->getMock();
+        $dialect = new MysqlSchemaDialect($driver);
+
+        $table = new TableSchema('table');
+        $dialect->convertColumnDescription($table, $field);
+
+        $actual = $table->getColumn('field');
+        $this->assertSame('abc', $actual['default']);
+    }
+
     /**
      * Helper method for testing methods.
      *
@@ -306,6 +334,7 @@ SQL;
                 location POINT,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+                updated DATETIME ON UPDATE CURRENT_TIMESTAMP,
                 KEY `author_idx` (`author_id`),
                 CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
                 FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
@@ -360,8 +389,8 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
         $expected = [
             'id' => [
@@ -393,6 +422,16 @@ SQL;
                 'collate' => 'utf8_general_ci',
             ],
             'author_id' => [
+                'type' => 'integer',
+                'null' => false,
+                'unsigned' => false,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'autoIncrement' => null,
+            ],
+            'unique_id' => [
                 'type' => 'integer',
                 'null' => false,
                 'unsigned' => false,
@@ -434,6 +473,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created_with_precision' => [
                 'type' => 'datetimefractional',
@@ -442,6 +482,16 @@ SQL;
                 'length' => null,
                 'precision' => 3,
                 'comment' => null,
+                'onUpdate' => null,
+            ],
+            'updated' => [
+                'type' => 'datetime',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'onUpdate' => 'CURRENT_TIMESTAMP',
             ],
         ];
 
@@ -463,6 +513,30 @@ SQL;
                 'Field definition does not match for ' . $field,
             );
         }
+
+        $columns = $dialect->describeColumns('schema_articles');
+        foreach ($columns as $column) {
+            $this->assertArrayHasKey($column['name'], $expected);
+            $expectedItem = $expected[$column['name']];
+            $expectedFields = array_intersect_key($expectedItem, $column);
+            $resultFields = array_intersect_key($column, $expectedFields);
+            $this->assertEquals($expectedFields, $resultFields);
+        }
+    }
+
+    /**
+     * Test describing a table with MySQL
+     */
+    public function testDescribeTableDatabasePrefix(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $config = $connection->getDriver()->config();
+        $dialect = $connection->getDriver()->schemaDialect();
+
+        $result = $dialect->describe($config['database'] . '.schema_articles');
+        $this->assertInstanceOf(TableSchema::class, $result);
     }
 
     /**
@@ -486,7 +560,7 @@ CREATE TABLE schema_geometry (
     id INTEGER,
     geo_line LINESTRING,
     geo_geometry GEOMETRY,
-    geo_point POINT,
+    geo_point POINT DEFAULT (ST_GeometryFromText('POINT(10 10)')),
     geo_polygon POLYGON
 )
 SQL;
@@ -527,7 +601,7 @@ SQL;
             'geo_point' => [
                 'type' => 'point',
                 'null' => true,
-                'default' => null,
+                'default' => "st_geometryfromtext('POINT(10 10)')",
                 'precision' => null,
                 'length' => null,
                 'comment' => '',
@@ -536,7 +610,7 @@ SQL;
             'geo_polygon' => [
                 'type' => 'polygon',
                 'null' => true,
-                'default' => null,
+                'default' => '',
                 'precision' => null,
                 'length' => null,
                 'comment' => '',
@@ -556,8 +630,9 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
+        $database = $connection->getDriver()->config()['database'];
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
 
         $this->assertCount(4, $result->constraints());
@@ -589,6 +664,11 @@ SQL;
                 ],
                 'length' => [],
             ],
+            'author_idx' => [
+                'type' => 'index',
+                'columns' => ['author_id'],
+                'length' => [],
+            ],
         ];
 
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
@@ -601,12 +681,42 @@ SQL;
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
         $this->assertCount(1, $result->indexes());
-        $expected = [
-            'type' => 'index',
-            'columns' => ['author_id'],
-            'length' => [],
-        ];
-        $this->assertEquals($expected, $result->getIndex('author_idx'));
+        $this->assertEquals($expected['author_idx'], $result->getIndex('author_idx'));
+
+        // Compare with describeIndexes() which includes indexes + uniques
+        $indexes = $dialect->describeIndexes('schema_articles');
+        $prefixed = $dialect->describeIndexes("{$database}.schema_articles");
+        $this->assertEquals($indexes, $prefixed, 'prefixed tables should work');
+
+        foreach ($indexes as $index) {
+            $this->assertArrayHasKey($index['name'], $expected);
+            $expectedItem = $expected[$index['name']];
+            $expectedFields = array_intersect_key($expectedItem, $index);
+            $resultFields = array_intersect_key($index, $expectedFields);
+
+            $this->assertNotEmpty($resultFields);
+            $this->assertEquals($expectedFields, $resultFields);
+        }
+
+        // Compare describeForeignKeys()
+        $keys = $dialect->describeForeignKeys('schema_articles');
+        $prefixed = $dialect->describeForeignKeys("{$database}.schema_articles");
+        $this->assertEquals($keys, $prefixed, 'prefixed tables should work');
+
+        $isMariaDb = ConnectionManager::get('test')->getDriver()->isMariaDb();
+        foreach ($keys as $foreignKey) {
+            $name = $foreignKey['name'];
+            if ($name === 'author_idx' && $isMariaDb) {
+                $name = 'schema_articles_ibfk_1';
+            }
+            $this->assertArrayHasKey($name, $expected);
+            $expectedItem = $expected[$name];
+            $expectedFields = array_intersect_key($expectedItem, $foreignKey);
+            $resultFields = array_intersect_key($foreignKey, $expectedFields);
+
+            $this->assertNotEmpty($resultFields);
+            $this->assertEquals($expectedFields, $resultFields);
+        }
     }
 
     /**
@@ -687,10 +797,10 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
-        $this->assertArrayHasKey('engine', $result->getOptions());
-        $this->assertArrayHasKey('collation', $result->getOptions());
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describeOptions('schema_articles');
+        $this->assertArrayHasKey('engine', $result);
+        $this->assertArrayHasKey('collation', $result);
     }
 
     public function testDescribeNonPrimaryAutoIncrement(): void
@@ -766,6 +876,11 @@ SQL;
             ],
             [
                 'id',
+                ['type' => 'nativeuuid'],
+                '`id` UUID',
+            ],
+            [
+                'id',
                 ['type' => 'char', 'length' => 36],
                 '`id` CHAR(36)',
             ],
@@ -787,6 +902,11 @@ SQL;
             ],
             [
                 'body',
+                ['type' => 'text', 'null' => false, 'default' => 'abc'],
+                '`body` TEXT NOT NULL DEFAULT (\'abc\')',
+            ],
+            [
+                'body',
                 ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'null' => false],
                 '`body` TINYTEXT NOT NULL',
             ],
@@ -805,11 +925,27 @@ SQL;
                 ['type' => 'text', 'null' => false, 'collate' => 'utf8_unicode_ci'],
                 '`body` TEXT COLLATE utf8_unicode_ci NOT NULL',
             ],
+            // JSON
+            [
+                'config',
+                ['type' => 'json', 'null' => false],
+                '`config` JSON NOT NULL',
+            ],
+            [
+                'config',
+                ['type' => 'json', 'null' => false, 'default' => '{"key":"val"}'],
+                '`config` JSON NOT NULL DEFAULT (\'{"key":"val"}\')',
+            ],
             // Blob / binary
             [
                 'body',
                 ['type' => 'binary', 'null' => false],
                 '`body` BLOB NOT NULL',
+            ],
+            [
+                'body',
+                ['type' => 'binary', 'null' => false, 'default' => 'abc'],
+                "`body` BLOB NOT NULL DEFAULT ('abc')",
             ],
             [
                 'body',
@@ -1008,6 +1144,16 @@ SQL;
                 ['type' => 'timestampfractional', 'precision' => 3, 'null' => false, 'default' => 'current_timestamp'],
                 '`created_with_precision` TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3)',
             ],
+            [
+                'updated',
+                [
+                    'type' => 'timestamp',
+                    'null' => false,
+                    'default' => 'CURRENT_TIMESTAMP',
+                    'onUpdate' => 'CURRENT_TIMESTAMP',
+                ],
+                '`updated` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP',
+            ],
             // Geospatial types
             [
                 'g',
@@ -1046,6 +1192,11 @@ SQL;
             ],
             [
                 'p',
+                ['type' => 'polygon', 'default' => 'POLYGON((30 10,40 40,20 40,10 20,30 10))'],
+                "`p` POLYGON DEFAULT ('POLYGON((30 10,40 40,20 40,10 20,30 10))')",
+            ],
+            [
+                'p',
                 ['type' => 'polygon', 'null' => false, 'srid' => 4326],
                 '`p` POLYGON NOT NULL SRID 4326',
             ],
@@ -1059,10 +1210,13 @@ SQL;
     public function testColumnSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
-        $schema = new MysqlSchemaDialect($driver);
+        $dialect = new MysqlSchemaDialect($driver);
 
         $table = (new TableSchema('articles'))->addColumn($name, $data);
-        $this->assertEquals($expected, $schema->columnSql($table, $name));
+        $this->assertEquals($expected, $dialect->columnSql($table, $name));
+
+        $data['name'] = $name;
+        $this->assertEquals($expected, $dialect->columnDefinitionSql($data));
     }
 
     /**
@@ -1320,17 +1474,12 @@ SQL;
      */
     public function testCreateSql(): void
     {
-        $driver = $this->_getMockedDriver();
+        $driver = $this->_getMockedDriver('5.6.0');
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
             ->willReturn($driver);
-
-        $this->pdo
-            ->expects($this->any())
-            ->method('getAttribute')
-            ->willReturn('5.6.0');
 
         $table = (new TableSchema('posts'))->addColumn('id', [
                 'type' => 'integer',
@@ -1591,7 +1740,7 @@ SQL;
     /**
      * Get a schema instance with a mocked driver/pdo instances
      */
-    protected function _getMockedDriver(): Driver
+    protected function _getMockedDriver($version = '8.0.7'): Driver
     {
         $this->_needsConnection();
 
@@ -1599,19 +1748,23 @@ SQL;
             ->onlyMethods(['quote', 'getAttribute', 'quoteIdentifier'])
             ->disableOriginalConstructor()
             ->getMock();
-            $this->pdo->expects($this->any())
+        $this->pdo->expects($this->any())
             ->method('quote')
             ->willReturnCallback(function ($value) {
                 return "'{$value}'";
             });
 
         $driver = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['createPdo'])
+            ->onlyMethods(['createPdo', 'version'])
             ->getMock();
 
         $driver->expects($this->any())
             ->method('createPdo')
             ->willReturn($this->pdo);
+
+        $driver->expects($this->any())
+            ->method('version')
+            ->willReturn($version);
 
         $driver->connect();
 

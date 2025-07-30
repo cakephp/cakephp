@@ -141,7 +141,7 @@ class FixtureHelper
                 } else {
                     ConnectionHelper::runWithoutConstraints(
                         $connection,
-                        fn (Connection $connection) => $this->insertConnection($connection, $groupFixtures),
+                        fn(Connection $connection) => $this->insertConnection($connection, $groupFixtures),
                     );
                 }
             } else {
@@ -196,7 +196,7 @@ class FixtureHelper
                     $helper = new ConnectionHelper();
                     $helper->runWithoutConstraints(
                         $connection,
-                        fn (Connection $connection) => $this->truncateConnection($connection, $groupFixtures),
+                        fn(Connection $connection) => $this->truncateConnection($connection, $groupFixtures),
                     );
                 }
             } else {
@@ -220,7 +220,7 @@ class FixtureHelper
             } catch (PDOException $exception) {
                 $message = sprintf(
                     'Unable to truncate table `%s`.'
-                        . " Fixture records might have invalid data or unknown contraints.\n%s",
+                        . " Fixture records might have invalid data or unknown constraints.\n%s",
                     $fixture->sourceName(),
                     $exception->getMessage(),
                 );
@@ -249,7 +249,7 @@ class FixtureHelper
             }
         }
 
-        // Check if any fixtures reference another fixture with constrants
+        // Check if any fixtures reference another fixture with constraints
         // If they do, then there might be cross-dependencies which we don't support sorting
         foreach ($constrained as ['references' => $references]) {
             foreach ($references as $reference) {
@@ -267,7 +267,7 @@ class FixtureHelper
      *
      * @param \Cake\Database\Connection $connection Database connection
      * @param \Cake\Datasource\FixtureInterface $fixture Database fixture
-     * @return list<string>
+     * @return array<string>
      */
     protected function getForeignReferences(Connection $connection, FixtureInterface $fixture): array
     {

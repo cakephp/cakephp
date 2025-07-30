@@ -49,7 +49,7 @@ class QueryCompilerTest extends TestCase
         $this->binder = new ValueBinder();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->compiler);

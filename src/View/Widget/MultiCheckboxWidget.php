@@ -134,7 +134,7 @@ class MultiCheckboxWidget extends BasicWidget
      *
      * @param array<string, mixed> $data The data array defining the checkboxes.
      * @param \Cake\View\Form\ContextInterface $context The current form context.
-     * @return list<string> An array of rendered inputs.
+     * @return array<string> An array of rendered inputs.
      */
     protected function _renderInputs(array $data, ContextInterface $context): array
     {

@@ -82,7 +82,7 @@ trait CollectionTrait
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v) => (bool)$v;
+        $callback ??= fn($v) => (bool)$v;
 
         return new FilterIterator($this->unwrap(), $callback);
     }
@@ -92,9 +92,9 @@ trait CollectionTrait
      */
     public function reject(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v) => (bool)$v;
+        $callback ??= fn($v) => (bool)$v;
 
-        return new FilterIterator($this->unwrap(), fn ($value, $key, $items) => !$callback($value, $key, $items));
+        return new FilterIterator($this->unwrap(), fn($value, $key, $items) => !$callback($value, $key, $items));
     }
 
     /**
@@ -102,7 +102,7 @@ trait CollectionTrait
      */
     public function unique(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v) => $v;
+        $callback ??= fn($v) => $v;
 
         return new UniqueIterator($this->unwrap(), $callback);
     }
@@ -373,8 +373,8 @@ trait CollectionTrait
     {
         $callback = $this->_propertyExtractor($path);
 
-        $mapper = fn ($value, $key, MapReduce $mr) => $mr->emitIntermediate($value, $callback($value));
-        $reducer = fn ($values, $key, MapReduce $mr) => $mr->emit(count($values), $key);
+        $mapper = fn($value, $key, MapReduce $mr) => $mr->emitIntermediate($value, $callback($value));
+        $reducer = fn($values, $key, MapReduce $mr) => $mr->emit(count($values), $key);
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer));
     }
@@ -734,7 +734,6 @@ trait CollectionTrait
             }
             if (!$key || !isset($parents[$key])) {
                 foreach ($values as $id) {
-                    /** @psalm-suppress PossiblyInvalidArgument */
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
                     $mapReduce->emit($parents[$id]);
                 }
@@ -854,6 +853,12 @@ trait CollectionTrait
             $order = $modes[$order];
         }
 
+        assert(
+            $order === RecursiveIteratorIterator::LEAVES_ONLY ||
+            $order === RecursiveIteratorIterator::SELF_FIRST ||
+            $order === RecursiveIteratorIterator::CHILD_FIRST,
+        );
+
         return new TreeIterator(
             new NestIterator($this, $nestingKey),
             $order,
@@ -877,7 +882,7 @@ trait CollectionTrait
      */
     public function unfold(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn ($v) => $v;
+        $callback ??= fn($v) => $v;
 
         return $this->newCollection(
             new RecursiveIteratorIterator(
@@ -1037,7 +1042,6 @@ trait CollectionTrait
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
             $currentCombination = array_map(function ($value, $keys, $index) {
-                /** @psalm-suppress InvalidArrayOffset */
                 return $value[$keys[$index]];
             }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
 
@@ -1047,7 +1051,6 @@ trait CollectionTrait
 
             $currentIndexes[$lastIndex]++;
 
-            /** @psalm-suppress InvalidArrayOffset */
             for (
                 $changeIndex = $lastIndex;
                 $currentIndexes[$changeIndex] === $collectionArraysCounts[$changeIndex] && $changeIndex > 0;

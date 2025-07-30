@@ -36,7 +36,7 @@ interface WidgetInterface
      * Returns a list of fields that need to be secured for this widget.
      *
      * @param array<string, mixed> $data The data to render.
-     * @return list<string> Array of fields to secure.
+     * @return array<string> Array of fields to secure.
      */
     public function secureFields(array $data): array;
 }

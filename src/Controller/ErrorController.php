@@ -30,7 +30,7 @@ class ErrorController extends Controller
      * Get alternate view classes that can be used in
      * content-type negotiation.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function viewClasses(): array
     {

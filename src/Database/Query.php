@@ -26,6 +26,7 @@ use Closure;
 use InvalidArgumentException;
 use Stringable;
 use Throwable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * This class represents a Relational database SQL Query. A query can be of
@@ -572,9 +573,9 @@ abstract class Query implements ExpressionInterface, Stringable
      * $query->join(['something' => 'different_table'], [], true); // resets joins list
      * ```
      *
-     * @param array<string, mixed>|string $tables list of tables to be joined in the query
-     * @param array<string, string> $types Associative array of type names used to bind values to query
-     * @param bool $overwrite whether to reset joins with passed list or not
+     * @param array<int|string, mixed>|string $tables List of tables to be joined in the query.
+     * @param array<string, string> $types Associative array of type names used to bind values to query.
+     * @param bool $overwrite Whether to reset joins with passed list or not.
      * @see \Cake\Database\TypeFactory
      * @return $this
      */
@@ -1167,6 +1168,8 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function order(ExpressionInterface|Closure|array|string $fields, bool $overwrite = false)
     {
+        deprecationWarning('5.0.0', 'Query::order() is deprecated. Use Query::orderBy() instead.');
+
         return $this->orderBy($fields, $overwrite);
     }
 
@@ -1263,6 +1266,8 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function orderAsc(ExpressionInterface|Closure|string $field, bool $overwrite = false)
     {
+        deprecationWarning('5.0.0', 'Query::orderAsc() is deprecated. Use Query::orderByAsc() instead.');
+
         return $this->orderByAsc($field, $overwrite);
     }
 
@@ -1317,6 +1322,8 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function orderDesc(ExpressionInterface|Closure|string $field, bool $overwrite = false)
     {
+        deprecationWarning('5.0.0', 'Query::orderDesc() is deprecated. Use Query::orderByDesc() instead.');
+
         return $this->orderByDesc($field, $overwrite);
     }
 
@@ -1368,7 +1375,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * @param int|null $limit The number of rows you want in the page. If null
      *  the current limit clause will be used.
      * @return $this
-     * @throws \InvalidArgumentException If page number < 1.
+     * @throws \Cake\Core\Exception\CakeException If page number < 1.
      */
     public function page(int $num, ?int $limit = null)
     {
@@ -1458,7 +1465,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *  ->epilog('RETURNING id');
      * ```
      *
-     * Epliog content is raw SQL and not suitable for use with user supplied data.
+     * Epilog content is raw SQL and not suitable for use with user supplied data.
      *
      * @param \Cake\Database\ExpressionInterface|string|null $expression The expression to be appended
      * @return $this
@@ -1607,7 +1614,7 @@ abstract class Query implements ExpressionInterface, Stringable
     {
         if (!array_key_exists($name, $this->_parts)) {
             $clauses = array_keys($this->_parts);
-            array_walk($clauses, fn (&$x) => $x = "`{$x}`");
+            array_walk($clauses, fn(&$x) => $x = "`{$x}`");
             $clauses = implode(', ', $clauses);
             throw new InvalidArgumentException(sprintf(
                 'The `%s` clause is not defined. Valid clauses are: %s.',
@@ -1660,7 +1667,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         if ($expression instanceof ExpressionInterface) {
-            $expression->traverse(fn ($exp) => $this->_expressionsVisitor($exp, $callback));
+            $expression->traverse(fn($exp) => $this->_expressionsVisitor($exp, $callback));
 
             if (!$expression instanceof self) {
                 $callback($expression);
@@ -1795,7 +1802,6 @@ abstract class Query implements ExpressionInterface, Stringable
                     if (is_array($piece)) {
                         foreach ($piece as $j => $value) {
                             if ($value instanceof ExpressionInterface) {
-                                /** @psalm-suppress PossiblyUndefinedMethod */
                                 $this->_parts[$name][$i][$j] = clone $value;
                             }
                         }

@@ -146,7 +146,7 @@ class CommandCollection implements IteratorAggregate, Countable
      * Implementation of IteratorAggregate.
      *
      * @return \Traversable
-     * @psalm-return \Traversable<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>>
+     * @phpstan-return \Traversable<string, \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface>>
      */
     public function getIterator(): Traversable
     {
@@ -242,7 +242,7 @@ class CommandCollection implements IteratorAggregate, Countable
     /**
      * Get the list of available command names.
      *
-     * @return list<string> Command names
+     * @return array<string> Command names
      */
     public function keys(): array
     {

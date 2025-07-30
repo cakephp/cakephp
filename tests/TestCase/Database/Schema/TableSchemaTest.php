@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Postgres;
-use Cake\Database\Driver\Sqlite;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
@@ -515,10 +514,6 @@ class TableSchemaTest extends TestCase
         $table = $this->getTableLocator()->get('ArticlesTags');
 
         $name = 'tag_id_fk';
-        if ($table->getConnection()->getDriver() instanceof Sqlite) {
-            $name = 'tag_id_0_fk';
-        }
-
         $compositeConstraint = $table->getSchema()->getConstraint($name);
         $expected = [
             'type' => 'foreign',
@@ -548,10 +543,6 @@ class TableSchemaTest extends TestCase
         );
 
         $name = 'product_category_fk';
-        if ($table->getConnection()->getDriver() instanceof Sqlite) {
-            $name = 'product_category_product_id_0_fk';
-        }
-
         $compositeConstraint = $table->getSchema()->getConstraint($name);
         $expected = [
             'type' => 'foreign',

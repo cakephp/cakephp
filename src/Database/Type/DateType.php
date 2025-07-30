@@ -35,7 +35,7 @@ class DateType extends BaseType implements BatchCastingInterface
     protected string $_format = 'Y-m-d';
 
     /**
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_marshalFormats = [
         'Y-m-d',
@@ -161,7 +161,6 @@ class DateType extends BaseType implements BatchCastingInterface
             return $value;
         }
 
-        /** @phpstan-ignore-next-line */
         if ($value instanceof DateTimeInterface || $value instanceof ChronosDate) {
             return new $this->_className($value->format($this->_format));
         }

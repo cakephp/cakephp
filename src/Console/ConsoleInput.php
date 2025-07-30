@@ -65,7 +65,6 @@ class ConsoleInput
      */
     public function __destruct()
     {
-        /** @psalm-suppress RedundantCondition */
         if (isset($this->_input) && is_resource($this->_input)) {
             fclose($this->_input);
         }

@@ -34,6 +34,7 @@ use Cake\View\View;
 use Cake\View\Widget\WidgetInterface;
 use Cake\View\Widget\WidgetLocator;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 use function Cake\Core\h;
 use function Cake\I18n\__;
 use function Cake\I18n\__d;
@@ -75,7 +76,9 @@ class FormHelper extends Helper
      */
     protected array $_defaultConfig = [
         'idPrefix' => null,
-        'errorClass' => 'form-error',
+        // Deprecated option, use templates.errorClass intead.
+        'errorClass' => null,
+        'defaultPostLinkBlock' => null,
         'typeMap' => [
             'string' => 'text',
             'text' => 'textarea',
@@ -103,7 +106,7 @@ class FormHelper extends Helper
             'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
             // Input group wrapper for checkboxes created via control().
             'checkboxFormGroup' => '{{label}}',
-            // Wrapper container for checkboxes.
+            // Wrapper container for checkboxes in a multicheckbox input
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
             // Error message wrapper elements.
             'error' => '<div class="error-message" id="{{id}}">{{content}}</div>',
@@ -128,9 +131,10 @@ class FormHelper extends Helper
             // Submit input element.
             'inputSubmit' => '<input type="{{type}}"{{attrs}}>',
             // Container element used by control().
-            'inputContainer' => '<div class="input {{type}}{{required}}">{{content}}</div>',
+            'inputContainer' => '<div class="{{containerClass}} {{type}}{{required}}">{{content}}</div>',
             // Container element used by control() when a field has an error.
-            'inputContainerError' => '<div class="input {{type}}{{required}} error">{{content}}{{error}}</div>',
+            // phpcs:ignore
+            'inputContainerError' => '<div class="{{containerClass}} {{type}}{{required}} error">{{content}}{{error}}</div>',
             // Label element when inputs are not nested inside the label.
             'label' => '<label{{attrs}}>{{text}}</label>',
             // Label element used for radio and multi-checkbox inputs.
@@ -166,8 +170,12 @@ class FormHelper extends Helper
             'selectedClass' => 'selected',
             // required class
             'requiredClass' => 'required',
+            // CSS class added to the input when the field has validation errors
+            'errorClass' => 'form-error',
             // Class to use instead of "display:none" style attribute for hidden elements
             'hiddenClass' => '',
+            // CSS class added to the input containers
+            'containerClass' => 'input',
         ],
         // set HTML5 validation message to custom required/empty messages
         'autoSetCustomValidity' => true,
@@ -176,7 +184,7 @@ class FormHelper extends Helper
     /**
      * Default widgets
      *
-     * @var array<string, list<string>>
+     * @var array<string, array<string>>
      */
     protected array $_defaultWidgets = [
         'button' => ['Button'],
@@ -244,7 +252,7 @@ class FormHelper extends Helper
      * `data` - Corresponds to request data (POST/PUT).
      * `query` - Corresponds to request's query string.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $supportedValueSources = ['context', 'data', 'query'];
 
@@ -252,14 +260,14 @@ class FormHelper extends Helper
      * The default sources.
      *
      * @see FormHelper::$supportedValueSources for valid values.
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_valueSources = ['data', 'context'];
 
     /**
      * Grouped input types.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_groupedInputTypes = ['radio', 'multicheckbox'];
 
@@ -370,7 +378,7 @@ class FormHelper extends Helper
      * - `templateVars` Provide template variables for the formStart template.
      *
      * @param mixed $context The context for which the form is being defined.
-     *   Can be a ContextInterface instance, ORM entity, ORM resultset, or an
+     *   Can be a ContextInterface instance, ORM entity, ORM result set, or an
      *   array of meta data. You can use `null` to make a context-less form.
      * @param array<string, mixed> $options An array of html attributes and options.
      * @return string An formatted opening FORM tag.
@@ -815,9 +823,8 @@ class FormHelper extends Helper
      *
      * ### Options
      *
-     * - `for` - Set the for attribute, if its not defined the for attribute
-     *   will be generated from the $fieldName parameter using
-     *   FormHelper::_domId().
+     * - `for` - Set the for attribute. If it is not defined, the for attribute
+     *   will be generated from the $fieldName parameter using FormHelper::_domId().
      * - `escape` - Set to `false` to turn off escaping of label text.
      *   Defaults to `true`.
      *
@@ -1227,6 +1234,7 @@ class FormHelper extends Helper
             'label' => $options['label'] ?? '',
             'required' => $options['options']['required'] ? ' ' . $this->templater()->get('requiredClass') : '',
             'type' => $options['options']['type'],
+            'containerClass' => $this->templater()->get('containerClass'),
             'templateVars' => $options['options']['templateVars'] ?? [],
         ]);
     }
@@ -1386,11 +1394,18 @@ class FormHelper extends Helper
     {
         assert(is_subclass_of($enumClass, BackedEnum::class));
 
-        $hasLabel = is_a($enumClass, EnumLabelInterface::class, true) || method_exists($enumClass, 'label');
+        if (is_a($enumClass, EnumLabelInterface::class, true)) {
+            $hasLabel = true;
+        } elseif (method_exists($enumClass, 'label')) {
+            $hasLabel = true;
+            deprecationWarning('5.2.0', 'Enums with the `label()` method must implement the `EnumLabelInterface`.');
+        } else {
+            $hasLabel = false;
+        }
+
         $values = [];
         foreach ($enumClass::cases() as $enumClass) {
             /**
-             * @psalm-suppress UndefinedInterfaceMethod
              * @phpstan-ignore-next-line
              */
             $values[$enumClass->value] = $hasLabel ? $enumClass->label()
@@ -1779,7 +1794,7 @@ class FormHelper extends Helper
      *
      * @param string $title The button's caption. Not automatically HTML encoded
      * @param array<string, mixed> $options Array of options and HTML attributes.
-     * @return string A HTML button tag.
+     * @return string An HTML button tag.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-button-elements
      */
     public function button(string $title, array $options = []): string
@@ -1825,7 +1840,7 @@ class FormHelper extends Helper
      * @param string $title The button's caption. Not automatically HTML encoded
      * @param array|string $url URL as string or array
      * @param array<string, mixed> $options Array of options and HTML attributes.
-     * @return string A HTML button tag.
+     * @return string An HTML button tag.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
     public function postButton(string $title, array|string $url, array $options = []): string
@@ -1878,12 +1893,12 @@ class FormHelper extends Helper
      * @param array|string|null $url Cake-relative URL or array of URL parameters, or
      *   external URL (starts with http://)
      * @param array<string, mixed> $options Array of HTML attributes.
-     * @return string An `<a>` element.
+     * @return string A form based `<a>` element.
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
      */
     public function postLink(string $title, array|string|null $url = null, array $options = []): string
     {
-        $options += ['block' => null, 'confirm' => null];
+        $options += ['block' => $this->getConfig('defaultPostLinkBlock'), 'confirm' => null];
 
         $requestMethod = 'POST';
         if (!empty($options['method'])) {
@@ -1991,6 +2006,26 @@ class FormHelper extends Helper
     }
 
     /**
+     * Creates an HTML link, that submits a form to the given URL using the DELETE method.
+     *  Requires javascript to be enabled in browser.
+     *
+     * @param string $title The content to be wrapped by <a> tags.
+     * @param array|string|null $url Cake-relative URL or array of URL parameters, or
+     *    external URL (starts with http://)
+     * @param array<string, mixed> $options Array of HTML attributes.
+     * @return string A form based `<a>` element.
+     * @see \Cake\View\Helper\FormHelper::postLink() for options and details.
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-standalone-buttons-and-post-links
+     * @since 5.2.0
+     */
+    public function deleteLink(string $title, array|string|null $url = null, array $options = []): string
+    {
+        $options['method'] = 'delete';
+
+        return $this->postLink($title, $url, $options);
+    }
+
+    /**
      * Creates a submit button element. This method will generate `<input>` elements that
      * can be used to submit, and reset forms by using $options. image submits can be created by supplying an
      * image path for $caption.
@@ -2006,7 +2041,7 @@ class FormHelper extends Helper
      *  exists, AND the first character is /, image is relative to webroot,
      *  OR if the first character is not /, image is relative to webroot/img.
      * @param array<string, mixed> $options Array of options. See above.
-     * @return string A HTML submit button
+     * @return string An HTML submit button
      * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-buttons-and-submit-elements
      */
     public function submit(?string $caption = null, array $options = []): string
@@ -2095,17 +2130,17 @@ class FormHelper extends Helper
      *
      * ```
      * $options = [1 => 'one', 2 => 'two'];
-     * $this->Form->select('Model.field', $options));
+     * $this->Form->select('Model.field', $options);
      * ```
      *
      * While a nested options array will create optgroups with options inside them.
      * ```
      * $options = [
-     *  1 => 'bill',
+     *     1 => 'bill',
      *     'fred' => [
      *         2 => 'fred',
-     *         3 => 'fred jr.'
-     *     ]
+     *         3 => 'fred jr.',
+     *     ],
      * ];
      * $this->Form->select('Model.field', $options);
      * ```
@@ -2435,7 +2470,17 @@ class FormHelper extends Helper
         }
 
         if ($context->hasError($field)) {
-            $options = $this->addClass($options, $this->_config['errorClass']);
+            $errorClass = $this->getConfig('errorClass');
+            if ($errorClass !== null) {
+                deprecationWarning(
+                    '5.2.0',
+                    'The `errorClass` config is deprecated. Use the `templates.errorClass` template variable instead.',
+                );
+            } else {
+                $errorClass = $this->templater()->get('errorClass');
+            }
+
+            $options = $this->addClass($options, $errorClass);
         }
         $isDisabled = $this->_isDisabled($options);
         if ($isDisabled) {
@@ -2472,7 +2517,7 @@ class FormHelper extends Helper
             if (is_array($first)) {
                 $disabled = array_filter(
                     $options['options'],
-                    fn ($i) => in_array($i['value'], $options['disabled'], true),
+                    fn($i) => in_array($i['value'], $options['disabled'], true),
                 );
 
                 return $disabled !== [];
@@ -2617,7 +2662,7 @@ class FormHelper extends Helper
      *
      * Returns a list, but at least one item, of valid sources, such as: `'context'`, `'data'` and `'query'`.
      *
-     * @return list<string> List of value sources.
+     * @return array<string> List of value sources.
      */
     public function getValueSources(): array
     {
@@ -2636,8 +2681,8 @@ class FormHelper extends Helper
         $diff = array_diff($sources, $this->supportedValueSources);
 
         if ($diff) {
-            array_walk($diff, fn (&$x) => $x = "`{$x}`");
-            array_walk($this->supportedValueSources, fn (&$x) => $x = "`{$x}`");
+            array_walk($diff, fn(&$x) => $x = "`{$x}`");
+            array_walk($this->supportedValueSources, fn(&$x) => $x = "`{$x}`");
             throw new InvalidArgumentException(sprintf(
                 'Invalid value source(s): %s. Valid values are: %s.',
                 implode(', ', $diff),

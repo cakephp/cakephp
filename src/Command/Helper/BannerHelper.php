@@ -28,12 +28,12 @@ use InvalidArgumentException;
 class BannerHelper extends Helper
 {
     /**
-     * @var int $padding The horizontal padding that is added to the longest line.
+     * @var int The horizontal padding that is added to the longest line.
      */
     private int $padding = 2;
 
     /**
-     * @var string $style The console output style to use on the banner.
+     * @var string The console output style to use on the banner.
      */
     private string $style = 'success.bg';
 
@@ -74,7 +74,11 @@ class BannerHelper extends Helper
      */
     public function output(array $args): void
     {
-        $lengths = array_map(fn ($i) => mb_strlen($i), $args);
+        if ($args === []) {
+            throw new InvalidArgumentException('At least one argument is required');
+        }
+
+        $lengths = array_map(fn($i) => mb_strlen($i), $args);
         $maxLength = max($lengths);
         $bannerLength = $maxLength + $this->padding * 2;
         $start = "<{$this->style}>";

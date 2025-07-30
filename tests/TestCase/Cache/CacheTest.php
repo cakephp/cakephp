@@ -103,16 +103,19 @@ class CacheTest extends TestCase
      */
     public function testCachePoolFallbackDisabled(): void
     {
-        $filename = tempnam(CACHE, 'tmp_');
+        $engine = new class extends TestAppCacheEngine {
+            public function init(array $config = []): bool
+            {
+                return false;
+            }
+        };
 
         Cache::setConfig('tests', [
-            'engine' => 'File',
-            'path' => $filename,
-            'prefix' => 'test_',
+            'engine' => $engine,
             'fallback' => false,
         ]);
 
-        $this->expectErrorMessageMatches('/^Cache engine `.*FileEngine` is not properly configured/', function (): void {
+        $this->expectErrorMessageMatches('/^Cache engine `.*TestAppCacheEngine.*` is not properly configured/', function (): void {
             Cache::pool('tests');
         });
     }

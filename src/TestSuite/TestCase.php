@@ -39,7 +39,6 @@ use Closure;
 use Exception;
 use LogicException;
 use Mockery;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
@@ -57,7 +56,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Fixtures used by this test case.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [];
 
@@ -161,20 +160,37 @@ abstract class TestCase extends BaseTestCase
     /**
      * Helper method for check deprecation methods
      *
-     * @param \Closure $callable callable function that will receive asserts
+     * @param \Closure $callable callable function that will receive asserts.
+     * @param int $type Error level to expect, E_DEPRECATED or E_USER_DEPRECATED.
+     * @param string|null $phpVersion If set, only applies to this version forward, e.g. `8.4`.
      * @return void
      */
-    #[WithoutErrorHandler]
-    public function deprecated(Closure $callable): void
+    public function deprecated(Closure $callable, int $type = E_USER_DEPRECATED, ?string $phpVersion = null): void
     {
+        if ($phpVersion !== null && version_compare(PHP_VERSION, $phpVersion, '<')) {
+            $callable();
+
+            return;
+        }
+
         $duplicate = Configure::read('Error.allowDuplicateDeprecations');
         Configure::write('Error.allowDuplicateDeprecations', true);
         /** @var bool $deprecation Expand type for psalm */
         $deprecation = false;
 
         $previousHandler = set_error_handler(
-            function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation): bool {
-                if ($code == E_USER_DEPRECATED) {
+            function (
+                $code,
+                $message,
+                $file,
+                $line,
+                $context = null,
+            ) use (
+                &$previousHandler,
+                &$deprecation,
+                $type,
+            ): bool {
+                if ($code == $type) {
                     $deprecation = true;
 
                     return true;
@@ -198,6 +214,23 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * This method is called between test and tearDown().
+     *
+     * Gets the count of expectations on the mocks produced through Mockery.
+     *
+     * @return void
+     */
+    protected function assertPostConditions(): void
+    {
+        parent::assertPostConditions();
+
+        if (class_exists(Mockery::class)) {
+            // @phpstan-ignore method.internal
+            $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
+        }
+    }
+
+    /**
      * Setup the test case, backup the static object values so they can be restored.
      * Specifically backs up the contents of Configure and paths in App if they have
      * not already been backed up.
@@ -217,6 +250,12 @@ abstract class TestCase extends BaseTestCase
         }
 
         EventManager::instance(new EventManager());
+
+        /** @var int|false $errorLevelOverwrite */
+        $errorLevelOverwrite = Configure::read('TestSuite.errorLevel', E_ALL);
+        if ($errorLevelOverwrite !== false) {
+            error_reporting($errorLevelOverwrite);
+        }
     }
 
     /**
@@ -274,7 +313,10 @@ abstract class TestCase extends BaseTestCase
      */
     protected function getFixtureStrategy(): FixtureStrategyInterface
     {
-        return new TruncateStrategy();
+        /** @var class-string<\Cake\TestSuite\Fixture\FixtureStrategyInterface> $className */
+        $className = Configure::read('TestSuite.fixtureStrategy') ?: TruncateStrategy::class;
+
+        return new $className();
     }
 
     /**
@@ -318,9 +360,6 @@ abstract class TestCase extends BaseTestCase
     {
         $this->appPluginsToLoad = $plugins;
 
-        /**
-         * @psalm-suppress MissingTemplateParam
-         */
         $app = new class ('') extends BaseApplication
         {
             /**
@@ -946,6 +985,7 @@ abstract class TestCase extends BaseTestCase
         }, $reflection->getMethods());
 
         $existingMethods = array_intersect($classMethods, $methods);
+        /** @var list<non-empty-string> $nonExistingMethods */
         $nonExistingMethods = array_diff($methods, $existingMethods);
 
         $builder = $this->getMockBuilder($className)
@@ -968,8 +1008,8 @@ abstract class TestCase extends BaseTestCase
             $builder->addMethods($nonExistingMethods);
         }
 
-        /** @var \Cake\ORM\Table $mock */
         $mock = $builder->getMock();
+        assert($mock instanceof Table);
 
         if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
             $parts = explode('\\', $className);
@@ -1051,7 +1091,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * Get the fixtures this test should use.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getFixtures(): array
     {

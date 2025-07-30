@@ -27,7 +27,7 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
         parent::setUp();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 

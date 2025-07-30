@@ -62,6 +62,7 @@ class EagerLoader
         'joinType' => 1,
         'strategy' => 1,
         'negateMatch' => 1,
+        'includeFields' => 1,
     ];
 
     /**
@@ -371,11 +372,10 @@ class EagerLoader
             if (isset($options['queryBuilder'], $pointer[$table]['queryBuilder'])) {
                 $first = $pointer[$table]['queryBuilder'];
                 $second = $options['queryBuilder'];
-                $options['queryBuilder'] = fn ($query) => $second($first($query));
+                $options['queryBuilder'] = fn($query) => $second($first($query));
             }
 
             if (!is_array($options)) {
-                /** @psalm-suppress InvalidArrayOffset */
                 $options = [$options => []];
             }
 

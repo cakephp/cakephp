@@ -35,4 +35,9 @@ class ValidationBehavior extends Behavior
     {
         return $validator->add('name', 'behaviorRule');
     }
+
+    public function customValidationRule(mixed $value, array $context): bool
+    {
+        return false;
+    }
 }

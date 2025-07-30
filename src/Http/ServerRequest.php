@@ -107,7 +107,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Trusted proxies list
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $trustedProxies = [];
 
@@ -183,7 +183,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * A list of properties that emulated by the PSR7 attribute methods.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $emulatedAttributes = ['session', 'flash', 'webroot', 'base', 'params', 'here'];
 
@@ -419,7 +419,7 @@ class ServerRequest implements ServerRequestInterface
     /**
      * Get trusted proxies
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getTrustedProxies(): array
     {
@@ -721,7 +721,7 @@ class ServerRequest implements ServerRequestInterface
      * Allows for one or more headers to be compared.
      *
      * ```
-     * addDetector('fancy', ['header' => ['X-Fancy' => 1]);
+     * addDetector('fancy', ['header' => ['X-Fancy' => 1]]);
      * ```
      *
      * The `param`, `env` and comparison types allow the following
@@ -796,7 +796,7 @@ class ServerRequest implements ServerRequestInterface
      * While header names are not case-sensitive, getHeaders() will normalize
      * the headers.
      *
-     * @return array<list<string>> An associative array of headers and their values.
+     * @return array<string, array<string>> An associative array of headers and their values.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getHeaders(): array
@@ -838,7 +838,7 @@ class ServerRequest implements ServerRequestInterface
      * Get a single header from the request.
      *
      * Return the header value as an array. If the header
-     * is not present an empty array will be returned.
+     * is not present, an empty array will be returned.
      *
      * @param string $name The header you want to get (case-insensitive)
      * @return array<string, string> An associative array of headers and their values.
@@ -938,7 +938,7 @@ class ServerRequest implements ServerRequestInterface
      * - You can submit an input with the name `_method`
      *
      * Any of these 3 approaches can be used to set the HTTP method used
-     * by CakePHP internally, and will effect the result of this method.
+     * by CakePHP internally, and will affect the result of this method.
      *
      * @return string The name of the HTTP method used.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
@@ -1080,7 +1080,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @param int $tldLength Number of segments your tld contains. For example: `example.com` contains 1 tld.
      *   While `example.co.uk` contains 2.
-     * @return list<string> An array of subdomains.
+     * @return array<string> An array of subdomains.
      */
     public function subdomains(int $tldLength = 1): array
     {
@@ -1114,7 +1114,7 @@ class ServerRequest implements ServerRequestInterface
      * by the client.
      *
      * @param string|null $type The content type to check for. Leave null to get all types a client accepts.
-     * @return list<string>|bool Either an array of all the types the client accepts or a boolean if they accept the
+     * @return array<string>|bool Either an array of all the types the client accepts or a boolean if they accept the
      *   provided type.
      */
     public function accepts(?string $type = null): array|bool
@@ -1450,7 +1450,7 @@ class ServerRequest implements ServerRequestInterface
      * Returns an updated request object. This method returns
      * a *new* request object and does not mutate the request in-place.
      *
-     * Use `withParsedBody()` if you need to replace the all request data.
+     * Use `withParsedBody()` if you need to replace all the request data.
      *
      * @param string $name The dot separated path to insert $value at.
      * @param mixed $value The value to insert into the request data.

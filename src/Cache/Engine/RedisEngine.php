@@ -53,6 +53,9 @@ class RedisEngine extends CacheEngine
      * - `server` URL or IP to the Redis server host.
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
+     * - `clearUsesFlushDb` Enable clear() and clearBlocking() to use FLUSHDB. This will be
+     *   faster than standard clear()/clearBlocking() but will ignore prefixes and will
+     *   cause dataloss if other applications are sharing a redis database.
      *
      * @var array<string, mixed>
      */
@@ -70,6 +73,7 @@ class RedisEngine extends CacheEngine
         'timeout' => 0,
         'unix_socket' => false,
         'scanCount' => 10,
+        'clearUsesFlushDb' => false,
     ];
 
     /**
@@ -320,37 +324,12 @@ class RedisEngine extends CacheEngine
      */
     public function clear(): bool
     {
-        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+        if ($this->getConfig('clearUsesFlushDb')) {
+            $this->_Redis->flushDB(false);
 
-        $isAllDeleted = true;
-        $iterator = null;
-        $pattern = $this->_config['prefix'] . '*';
-
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
-
-            if ($keys === false) {
-                break;
-            }
-
-            foreach ($keys as $key) {
-                $isDeleted = ((int)$this->_Redis->del($key) > 0);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
-            }
+            return true;
         }
 
-        return $isAllDeleted;
-    }
-
-    /**
-     * Delete all keys from the cache by a blocking operation
-     *
-     * Faster than clear() using unlink method.
-     *
-     * @return bool True if the cache was successfully cleared, false otherwise
-     */
-    public function clearBlocking(): bool
-    {
         $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
 
         $isAllDeleted = true;
@@ -366,6 +345,41 @@ class RedisEngine extends CacheEngine
 
             foreach ($keys as $key) {
                 $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
+                $isAllDeleted = $isAllDeleted && $isDeleted;
+            }
+        }
+
+        return $isAllDeleted;
+    }
+
+    /**
+     * Delete all keys from the cache by a blocking operation
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public function clearBlocking(): bool
+    {
+        if ($this->getConfig('clearUsesFlushDb')) {
+            $this->_Redis->flushDB(true);
+
+            return true;
+        }
+
+        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+
+        $isAllDeleted = true;
+        $iterator = null;
+        $pattern = $this->_config['prefix'] . '*';
+
+        while (true) {
+            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
+
+            if ($keys === false) {
+                break;
+            }
+
+            foreach ($keys as $key) {
+                $isDeleted = ((int)$this->_Redis->del($key) > 0);
                 $isAllDeleted = $isAllDeleted && $isDeleted;
             }
         }
@@ -400,7 +414,7 @@ class RedisEngine extends CacheEngine
      * If the group initial value was not found, then it initializes
      * the group accordingly.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function groups(): array
     {
@@ -433,7 +447,7 @@ class RedisEngine extends CacheEngine
      * Serialize value for saving to Redis.
      *
      * This is needed instead of using Redis' in built serialization feature
-     * as it creates problems incrementing/decrementing intially set integer value.
+     * as it creates problems incrementing/decrementing initially set integer value.
      *
      * @param mixed $value Value to serialize.
      * @return string

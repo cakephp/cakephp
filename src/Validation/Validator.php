@@ -140,7 +140,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * used for validation
      *
      * @var array<string, object|string>
-     * @psalm-var array<string, object|class-string>
+     * @phpstan-var array<string, object|class-string>
      */
     protected array $_providers = [];
 
@@ -148,7 +148,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * An associative array of objects or classes used as a default provider list
      *
      * @var array<string, object|string>
-     * @psalm-var array<string, object|class-string>
+     * @phpstan-var array<string, object|class-string>
      */
     protected static array $_defaultProviders = [];
 
@@ -165,7 +165,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var bool
      */
-    protected bool $_useI18n = false;
+    protected bool $_useI18n;
 
     /**
      * Contains the validation messages associated with checking the emptiness
@@ -194,15 +194,16 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function __construct()
     {
-        $this->_useI18n = function_exists('\Cake\I18n\__d');
+        $this->_useI18n ??= function_exists('\Cake\I18n\__d');
         $this->_providers = self::$_defaultProviders;
+        $this->_providers['default'] ??= Validation::class;
     }
 
     /**
      * Whether to stop validation rule evaluation on the first failed rule.
      *
-     * When enabled the first failing rule per field will cause validation to stop.
-     * When disabled all rules will be run even if there are failures.
+     * When enabled, the first failing rule per field will cause validation to stop.
+     * When disabled, all rules will be run even if there are failures.
      *
      * @param bool $stopOnFailure If to apply last flag.
      * @return $this
@@ -286,7 +287,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * passed a ValidationSet as second argument, it will replace any other rule set defined
      * before
      *
-     * @param string $name [optional] The fieldname to fetch.
+     * @param string $name [optional] The field name to fetch.
      * @param \Cake\Validation\ValidationSet|null $set The set of rules for field
      * @return \Cake\Validation\ValidationSet
      */
@@ -319,7 +320,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name under which the provider should be set.
      * @param object|string $object Provider object or class name.
-     * @psalm-param object|class-string $object
+     * @phpstan-param object|class-string $object
      * @return $this
      */
     public function setProvider(string $name, object|string $object)
@@ -337,16 +338,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function getProvider(string $name): object|string|null
     {
-        if (isset($this->_providers[$name])) {
-            return $this->_providers[$name];
-        }
-        if ($name !== 'default') {
-            return null;
-        }
-
-        $this->_providers[$name] = new RulesProvider();
-
-        return $this->_providers[$name];
+        return $this->_providers[$name] ?? null;
     }
 
     /**
@@ -365,7 +357,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param string $name The name under which the provider should be set.
      * @param object|string $object Provider object or class name.
-     * @psalm-param object|class-string $object
+     * @phpstan-param object|class-string $object
      * @return void
      */
     public static function addDefaultProvider(string $name, object|string $object): void
@@ -376,7 +368,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of default providers.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public static function getDefaultProviders(): array
     {
@@ -386,7 +378,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Get the list of providers in this validator.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function providers(): array
     {
@@ -1068,7 +1060,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             return $when === static::WHEN_CREATE ? static::WHEN_UPDATE : static::WHEN_CREATE;
         }
         if ($when instanceof Closure) {
-            return fn ($context) => !$when($context);
+            return fn($context) => !$when($context);
         }
 
         return $when;
@@ -2104,7 +2096,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if ($message === null) {
-            $cases = array_map(fn ($case) => $case->value, $enumClassName::cases());
+            $cases = array_map(fn($case) => $case->value, $enumClassName::cases());
             $caseOptions = implode('`, `', $cases);
             if (!$this->_useI18n) {
                 $message = sprintf('The provided value must be one of `%s`', $caseOptions);
@@ -3195,8 +3187,6 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     protected function _processRules(string $field, ValidationSet $rules, mixed $value, array $context): array
     {
         $errors = [];
-        // Loading default provider in case there is none
-        $this->getProvider('default');
 
         if (!$this->_useI18n) {
             $message = 'The provided value is invalid';

@@ -80,6 +80,7 @@ class Debugger
         'sublime' => 'subl://open?url=file://{file}&line={line}',
         'textmate' => 'txmt://open?url=file://{file}&line={line}',
         'vscode' => 'vscode://file/{file}:{line}',
+        'vscodium' => 'vscodium://file/{file}:{line}',
     ];
 
     /**
@@ -164,7 +165,7 @@ class Debugger
      *
      * ### Example
      *
-     * Debugger::setOutputMask(['password' => '[*************]');
+     * Debugger::setOutputMask(['password' => '[*************]']);
      *
      * @param array<string, string> $value An array where keys are replaced by their values in output.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
@@ -430,7 +431,6 @@ class Debugger
         }
 
         /**
-         * @psalm-suppress InvalidArgument
          * @phpstan-ignore-next-line
          */
         return implode("\n", $back);
@@ -475,7 +475,7 @@ class Debugger
      * @param string $file Absolute path to a PHP file.
      * @param int $line Line number to highlight.
      * @param int $context Number of lines of context to extract above and below $line.
-     * @return list<string> Set of lines highlighted
+     * @return array<string> Set of lines highlighted
      * @see https://secure.php.net/highlight_string
      * @link https://book.cakephp.org/5/en/development/debugging.html#getting-an-excerpt-from-a-file
      */

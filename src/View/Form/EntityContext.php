@@ -21,6 +21,7 @@ use Cake\Collection\Collection;
 use Cake\Core\Exception\CakeException;
 use Cake\Datasource\EntityInterface;
 use Cake\Datasource\InvalidPropertyInterface;
+use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Table;
@@ -163,7 +164,7 @@ class EntityContext implements ContextInterface
      *
      * Gets the primary key columns from the root entity's schema.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getPrimaryKey(): array
     {
@@ -552,7 +553,7 @@ class EntityContext implements ContextInterface
      *
      * If the context is for an array of entities, the 0th index will be used.
      *
-     * @return list<string> Array of field names in the table/entity.
+     * @return array<string> Array of field names in the table/entity.
      */
     public function fieldNames(): array
     {
@@ -568,7 +569,7 @@ class EntityContext implements ContextInterface
      * Get the validator associated to an entity based on naming
      * conventions.
      *
-     * @param array $parts Each one of the parts in a path for a field name
+     * @param array<string> $parts Each one of the parts in a path for a field name
      * @return \Cake\Validation\Validator
      * @throws \Cake\Core\Exception\CakeException If validator cannot be retrieved based on the parts.
      */
@@ -640,13 +641,10 @@ class EntityContext implements ContextInterface
         $table = $this->_tables[$this->_rootName];
         $assoc = null;
         foreach ($normalized as $part) {
-            if ($part === '_joinData') {
-                if ($assoc !== null) {
-                    /** @var \Cake\ORM\Association\BelongsToMany $assoc */
-                    $table = $assoc->junction();
-                    $assoc = null;
-                    continue;
-                }
+            if ($assoc instanceof BelongsToMany && $part === $assoc->getJunctionProperty()) {
+                $table = $assoc->junction();
+                $assoc = null;
+                continue;
             } else {
                 $associationCollection = $table->associations();
                 $assoc = $associationCollection->getByProperty($part);
@@ -724,7 +722,7 @@ class EntityContext implements ContextInterface
         try {
             /**
              * @var \Cake\Datasource\EntityInterface|null $entity
-             * @var list<string> $remainingParts
+             * @var array<string> $remainingParts
              */
             [$entity, $remainingParts] = $this->leafEntity($parts);
         } catch (CakeException) {

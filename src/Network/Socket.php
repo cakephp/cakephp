@@ -96,7 +96,7 @@ class Socket
      * Used to capture connection warnings which can happen when there are
      * SSL errors for example.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_connectionErrors = [];
 
@@ -144,7 +144,6 @@ class Socket
         }
 
         /**
-         * @psalm-suppress InvalidArgument
          * @phpstan-ignore-next-line
          */
         set_error_handler($this->_connectionErrorHandler(...));
@@ -203,7 +202,7 @@ class Socket
      * @param int $errNum error number
      * @param string $errStr error string
      * @param int $timeout timeout
-     * @param int $connectAs flags
+     * @param int<0, 7> $connectAs flags
      * @param resource $context context
      * @return resource|null
      */
@@ -324,7 +323,7 @@ class Socket
     /**
      * Get all IP addresses associated with the current connection.
      *
-     * @return list<string> IP addresses
+     * @return array<string> IP addresses
      */
     public function addresses(): array
     {
@@ -432,7 +431,6 @@ class Socket
 
             return true;
         }
-        /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->connected = !fclose($this->connection);
 
         if (!$this->connected) {

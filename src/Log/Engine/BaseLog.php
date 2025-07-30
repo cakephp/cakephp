@@ -93,7 +93,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the levels this logger is interested in.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function levels(): array
     {
@@ -103,7 +103,7 @@ abstract class BaseLog extends AbstractLogger
     /**
      * Get the scopes this logger is interested in.
      *
-     * @return list<string>|null
+     * @return array<string>|null
      */
     public function scopes(): ?array
     {
@@ -191,7 +191,6 @@ abstract class BaseLog extends AbstractLogger
             $replacements['{' . $key . '}'] = sprintf('[unhandled value of type %s]', get_debug_type($value));
         }
 
-        /** @psalm-suppress InvalidArgument */
         return str_replace(array_keys($replacements), $replacements, $message);
     }
 }

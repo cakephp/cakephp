@@ -1762,29 +1762,31 @@ class SelectQueryTest extends TestCase
 
     public function testSelectOrderDeprecated(): void
     {
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->order(['id' => 'desc'])
-            ->execute();
-        $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
+        $this->deprecated(function (): void {
+            $query = new SelectQuery($this->connection);
+            $result = $query
+                ->select(['id'])
+                ->from('comments')
+                ->order(['id' => 'desc'])
+                ->execute();
+            $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->orderDesc('id')
-            ->execute();
-        $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
+            $query = new SelectQuery($this->connection);
+            $result = $query
+                ->select(['id'])
+                ->from('comments')
+                ->orderDesc('id')
+                ->execute();
+            $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['user_id'])
-            ->from('comments')
-            ->orderAsc('user_id')
-            ->execute();
-        $this->assertEquals([1, 1, 1, 2, 2, 4], array_column($result->fetchAll('assoc'), 'user_id'));
+            $query = new SelectQuery($this->connection);
+            $result = $query
+                ->select(['user_id'])
+                ->from('comments')
+                ->orderAsc('user_id')
+                ->execute();
+            $this->assertEquals([1, 1, 1, 2, 2, 4], array_column($result->fetchAll('assoc'), 'user_id'));
+        });
     }
 
     /**
@@ -2045,16 +2047,18 @@ class SelectQueryTest extends TestCase
 
     public function testSelectGroupDeprecated(): void
     {
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['total' => 'count(author_id)', 'author_id'])
-            ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
-            ->group('author_id')
-            ->orderBy(['total' => 'desc'])
-            ->execute();
-        $expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->deprecated(function (): void {
+            $query = new SelectQuery($this->connection);
+            $result = $query
+                ->select(['total' => 'count(author_id)', 'author_id'])
+                ->from('articles')
+                ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+                ->group('author_id')
+                ->orderBy(['total' => 'desc'])
+                ->execute();
+            $expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
+            $this->assertEquals($expected, $result->fetchAll('assoc'));
+        });
     }
 
     /**
@@ -3482,7 +3486,7 @@ class SelectQueryTest extends TestCase
     public function testIsNullInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expression `name` is missing operator (IS, IS NOT) with `null` value.');
+        $this->expectExceptionMessage('Expression `name` has invalid `null` value. If `null` is a valid value, operator (IS, IS NOT) is missing.');
 
         (new SelectQuery($this->connection))
             ->select(['name'])

@@ -109,6 +109,19 @@ class PostsController extends AppController
     }
 
     /**
+     * Sets a session variable and flash message
+     *
+     * @return \Cake\Http\Response
+     */
+    public function flashWithSession()
+    {
+        $this->getRequest()->getSession()->write('test', true);
+        $this->Flash->error('An error message');
+
+        return $this->redirect(['action' => 'index']);
+    }
+
+    /**
      * Stub get method
      *
      * @return void

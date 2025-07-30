@@ -30,7 +30,7 @@ use InvalidArgumentException;
  * $this->helper('Progress')->output(['callback' => function ($progress) {
  *     // Do work
  *     $progress->increment();
- * });
+ * }]);
  * ```
  */
 class ProgressHelper extends Helper

@@ -149,7 +149,7 @@ class SelectBoxWidget extends BasicWidget
      * Render the contents of the select element.
      *
      * @param array<string, mixed> $data The context for rendering a select.
-     * @return list<string>
+     * @return array<string>
      */
     protected function _renderContent(array $data): array
     {
@@ -199,7 +199,7 @@ class SelectBoxWidget extends BasicWidget
      *
      * @param string $label The optgroup label text
      * @param \ArrayAccess<string, mixed>|array<string, mixed> $optgroup The optgroup data.
-     * @param array|null $disabled The options to disable.
+     * @param array<string>|null $disabled The options to disable.
      * @param mixed $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping
@@ -240,7 +240,7 @@ class SelectBoxWidget extends BasicWidget
      * @param mixed $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping.
-     * @return list<string> Option elements.
+     * @return array<string> Option elements.
      */
     protected function _renderOptions(
         iterable $options,

@@ -36,21 +36,18 @@ class StubConsoleOutput extends ConsoleOutput
     /**
      * Buffered messages.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_out = [];
 
     /**
      * Constructor
-     *
-     * Closes and unsets the file handle created in the parent constructor to
-     * prevent 'too many open files' errors.
      */
     public function __construct()
     {
-        parent::__construct();
-        fclose($this->_output);
-        unset($this->_output);
+        // Don't call parent on purpose as it opens php://stdin which doesn't
+        // always exist in RunInSeparateProcess tests.
+        $this->_outputAs = self::PLAIN;
     }
 
     /**
@@ -78,7 +75,7 @@ class StubConsoleOutput extends ConsoleOutput
     /**
      * Get the buffered output.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function messages(): array
     {

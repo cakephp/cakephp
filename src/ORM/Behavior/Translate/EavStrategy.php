@@ -224,7 +224,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         $query->contain($contain);
         $query->formatResults(
-            fn (CollectionInterface $results) => $this->rowMapper($results, $locale),
+            fn(CollectionInterface $results) => $this->rowMapper($results, $locale),
             $query::PREPEND,
         );
     }
@@ -267,7 +267,7 @@ class EavStrategy implements TranslateStrategyInterface
 
         // If there are no fields and no bundled translations, or both fields
         // in the default locale and bundled translations we can
-        // skip the remaining logic as its not necessary.
+        // skip the remaining logic as it is not necessary.
         if ($noFields && $noBundled || ($fields && $bundled)) {
             return;
         }
@@ -465,7 +465,7 @@ class EavStrategy implements TranslateStrategyInterface
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {
         /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
-        $translations = $entity->has('_translations') ? $entity->get('_translations') : [];
+        $translations = $entity->has('_translations') ? (array)$entity->get('_translations') : [];
 
         if (!$translations && !$entity->isDirty('_translations')) {
             return;
@@ -507,7 +507,11 @@ class EavStrategy implements TranslateStrategyInterface
             } else {
                 $translation['model'] = $this->_config['referenceName'];
                 unset($translation['foreign_key IS']);
-                $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
+                if (method_exists($contents[$i], 'patch')) {
+                    $contents[$i]->patch($translation, ['setter' => false, 'guard' => false]);
+                } else {
+                    $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
+                }
                 $contents[$i]->setNew(true);
             }
         }

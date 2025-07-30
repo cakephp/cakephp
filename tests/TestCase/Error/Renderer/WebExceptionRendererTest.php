@@ -43,6 +43,7 @@ use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Exception\XmlException;
 use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
@@ -51,6 +52,7 @@ use Mockery;
 use OutOfBoundsException;
 use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionMethod;
 use RuntimeException;
 use TestApp\Controller\Admin\ErrorController as PrefixErrorController;
 use TestApp\Error\Exception\MissingWidgetThing;
@@ -679,17 +681,19 @@ class WebExceptionRendererTest extends TestCase
      */
     public function testExceptionNameMangling(): void
     {
-        $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
+        $this->deprecated(function (): void {
+            $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
 
-        $result = (string)$exceptionRenderer->render()->getBody();
-        $this->assertStringContainsString('widget thing is missing', $result);
+            $result = (string)$exceptionRenderer->render()->getBody();
+            $this->assertStringContainsString('widget thing is missing', $result);
 
-        // Custom method should be called even when debug is off.
-        Configure::write('debug', false);
-        $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
+            // Custom method should be called even when debug is off.
+            Configure::write('debug', false);
+            $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
 
-        $result = (string)$exceptionRenderer->render()->getBody();
-        $this->assertStringContainsString('widget thing is missing', $result);
+            $result = (string)$exceptionRenderer->render()->getBody();
+            $this->assertStringContainsString('widget thing is missing', $result);
+        });
     }
 
     /**
@@ -968,5 +972,38 @@ class WebExceptionRendererTest extends TestCase
         $this->assertStringContainsString('Database Error', $result);
         $this->assertStringContainsString('SQL Query', $result);
         $this->assertStringContainsString(h('SELECT * from poo_query < 5 and 7'), $result);
+    }
+
+    /**
+     * Tests for customzing responses using methods of ErrorController.
+     *
+     * @return void
+     */
+    public function testExceptionWithMatchingControllerMethod(): void
+    {
+        $exception = new MissingWidgetThingException();
+        $exceptionRenderer = new TestAppsExceptionRenderer($exception);
+
+        $result = (string)$exceptionRenderer->render()->getBody();
+        $this->assertStringContainsString('template for TestApp\Error\Exception\MissingWidgetThingException was rendered', $result);
+
+        $exception = new XmlException();
+        $exceptionRenderer = new TestAppsExceptionRenderer($exception);
+
+        $result = (string)$exceptionRenderer->render()->getBody();
+        $this->assertStringContainsString('<xml>rendered xml exception</xml>', $result);
+    }
+
+    public function testDeprecatedHttpErrorCodeMapping(): void
+    {
+        $this->deprecated(function (): void {
+            $exception = new MissingWidgetThing();
+            $exceptionRenderer = new MyCustomExceptionRenderer($exception);
+
+            $reflectedMethod = new ReflectionMethod($exceptionRenderer, 'getHttpCode');
+            $reflectedMethod->setAccessible(true);
+
+            $this->assertSame(404, $reflectedMethod->invoke($exceptionRenderer, $exception));
+        });
     }
 }

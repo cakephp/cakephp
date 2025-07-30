@@ -38,7 +38,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
      * The names of the clauses that are valid for use with the
      * `clause()` method.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $validClauseNames = [
         'value',

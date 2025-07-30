@@ -58,7 +58,6 @@ class RoutesCheckCommand extends Command
         $url = $args->getArgument('url');
         try {
             $parsed = Router::parseRequest(new ServerRequest(['url' => $url]));
-            /** @phpstan-ignore-next-line */
             $name = $parsed['_name'] ?? $parsed['_route']->getName();
 
             unset($parsed['_route'], $parsed['_matchedRoute']);

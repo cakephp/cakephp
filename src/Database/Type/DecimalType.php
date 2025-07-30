@@ -33,13 +33,13 @@ class DecimalType extends BaseType implements BatchCastingInterface
     /**
      * The class to use for representing number objects
      *
-     * @var string
+     * @var class-string<\Cake\I18n\Number>|string
      */
     public static string $numberClass = Number::class;
 
     /**
      * Whether numbers should be parsed using a locale aware parser
-     * when marshalling string inputs.
+     * when marshaling string inputs.
      *
      * @var bool
      */
@@ -179,7 +179,6 @@ class DecimalType extends BaseType implements BatchCastingInterface
      */
     protected function _parseValue(string $value): string
     {
-        /** @var \Cake\I18n\Number $class */
         $class = static::$numberClass;
 
         return (string)$class::parseFloat($value);

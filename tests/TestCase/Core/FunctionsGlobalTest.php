@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use stdClass;
 
 require_once CAKE . 'Core/functions_global.php';
@@ -327,13 +326,12 @@ class FunctionsGlobalTest extends TestCase
             triggerWarning('This will be gone one day');
             $this->assertTrue(true);
         });
-        $this->assertMatchesRegularExpression('/This will be gone one day - (.*?)[\/\\\]FunctionsGlobalTest.php, line\: \d+/', $error->getMessage());
+        $this->assertMatchesRegularExpression('/This will be gone one day/', $error->getMessage());
     }
 
     /**
      * Test no error when warning level is off.
      */
-    #[WithoutErrorHandler]
     public function testTriggerWarningLevelDisabled(): void
     {
         $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function (): void {

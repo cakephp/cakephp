@@ -15,12 +15,18 @@ declare(strict_types=1);
 namespace Cake\Datasource\Paging\Exception;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Core\Exception\HttpErrorCodeInterface;
 
 /**
  * Exception raised when requested page number does not exist.
  */
-class PageOutOfBoundsException extends CakeException
+class PageOutOfBoundsException extends CakeException implements HttpErrorCodeInterface
 {
+    /**
+     * @inheritDoc
+     */
+    protected int $_defaultCode = 404;
+
     /**
      * @inheritDoc
      */

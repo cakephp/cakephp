@@ -49,7 +49,7 @@ class QueryCompiler
     /**
      * The list of query clauses to traverse for generating a SELECT statement
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_selectParts = [
         'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
@@ -59,21 +59,21 @@ class QueryCompiler
     /**
      * The list of query clauses to traverse for generating an UPDATE statement
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_updateParts = ['comment', 'with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_deleteParts = ['comment', 'with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_insertParts = ['comment', 'with', 'insert', 'values', 'epilog'];
 
@@ -315,7 +315,7 @@ class QueryCompiler
     /**
      * Helper function to generate SQL for SET expressions.
      *
-     * @param array $parts List of keys & values to set.
+     * @param array $parts List of keys and values to set.
      * @param \Cake\Database\Query $query The query that is being compiled
      * @param \Cake\Database\ValueBinder $binder Value binder used to generate parameter placeholder
      * @return string

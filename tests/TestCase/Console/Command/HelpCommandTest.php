@@ -72,7 +72,7 @@ class HelpCommandTest extends TestCase
      */
     protected function assertCommandList(): void
     {
-        $this->assertOutputContains('<info>TestPlugin</info>', 'plugin header should appear');
+        $this->assertOutputContains('<info>test_plugin</info>', 'plugin header should appear');
         $this->assertOutputContains('- sample', 'plugin command should appear');
         $this->assertOutputNotContains(
             '- test_plugin.sample',
@@ -82,9 +82,9 @@ class HelpCommandTest extends TestCase
             ' - abstract',
             'Abstract command classes should not appear.',
         );
-        $this->assertOutputContains('<info>App</info>', 'app header should appear');
+        $this->assertOutputContains('<info>app</info>', 'app header should appear');
         $this->assertOutputContains('- sample', 'app shell');
-        $this->assertOutputContains('<info>CakePHP</info>', 'cakephp header should appear');
+        $this->assertOutputContains('<info>cakephp</info>', 'cakephp header should appear');
         $this->assertOutputContains('- routes', 'core shell');
         $this->assertOutputContains('- sample', 'short plugin name');
         $this->assertOutputContains('- abort', 'command object');

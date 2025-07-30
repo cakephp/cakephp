@@ -26,7 +26,7 @@ abstract class AbstractDecorator
      *
      * @var callable
      */
-    protected $_callable;
+    protected mixed $_callable;
 
     /**
      * Decorator options

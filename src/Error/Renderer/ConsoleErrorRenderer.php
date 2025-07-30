@@ -43,7 +43,7 @@ class ConsoleErrorRenderer implements ErrorRendererInterface
      * ### Options
      *
      * - `stderr` - The ConsoleOutput instance to use. Defaults to `php://stderr`
-     * - `trace` - Whether or not stacktraces should be output.
+     * - `trace` - Whether stacktraces should be output.
      *
      * @param array $config Error handling configuration.
      */

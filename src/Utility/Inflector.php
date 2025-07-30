@@ -153,7 +153,7 @@ class Inflector
     /**
      * Words that should not be inflected
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected static array $_uninflected = [
         '.*[nrlm]ese', '.*data', '.*deer', '.*fish', '.*measles', '.*ois',

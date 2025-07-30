@@ -37,7 +37,7 @@ trait TupleComparisonTranslatorTrait
      * It transforms expressions looking like '(a, b) IN ((c, d), (e, f))' into an
      * equivalent expression of the form '((a = c) AND (b = d)) OR ((a = e) AND (b = f))'.
      *
-     * It can also transform transform expressions where the right hand side is a query
+     * It can also transform expressions where the right hand side is a query
      * selecting the same amount of columns as the elements in the left hand side of
      * the expression:
      *
@@ -71,7 +71,7 @@ trait TupleComparisonTranslatorTrait
         $true = new QueryExpression('1');
 
         if ($value instanceof SelectQuery) {
-            /** @var list<string> $selected */
+            /** @var array<string> $selected */
             $selected = array_values($value->clause('select'));
             foreach ($fields as $i => $field) {
                 $value->andWhere([$field => new IdentifierExpression($selected[$i])]);

@@ -30,7 +30,7 @@ class ExistsIn
     /**
      * The list of fields to check
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $_fields;
 
@@ -138,7 +138,7 @@ class ExistsIn
         }
 
         $primary = array_map(
-            fn ($key) => $target->aliasField($key) . ' IS',
+            fn($key) => $target->aliasField($key) . ' IS',
             $bindingKey,
         );
         $conditions = array_combine(

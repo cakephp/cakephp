@@ -43,7 +43,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * The HTTP methods to parse data on.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $methods = ['PUT', 'POST', 'PATCH', 'DELETE'];
 
@@ -95,7 +95,7 @@ class BodyParserMiddleware implements MiddlewareInterface
     /**
      * Get the HTTP methods to parse request bodies on.
      *
-     * @return list<string>
+     * @return array<string>
      */
     public function getMethods(): array
     {

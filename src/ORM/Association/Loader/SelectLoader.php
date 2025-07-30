@@ -373,7 +373,7 @@ class SelectLoader
      * which the filter should be applied
      *
      * @param array<string, mixed> $options The options for getting the link field.
-     * @return list<string>|string
+     * @return array<string>|string
      * @throws \Cake\Database\Exception\DatabaseException
      */
     protected function _linkField(array $options): array|string

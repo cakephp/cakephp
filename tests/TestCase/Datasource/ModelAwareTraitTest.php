@@ -31,7 +31,7 @@ use UnexpectedValueException;
  */
 class ModelAwareTraitTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 

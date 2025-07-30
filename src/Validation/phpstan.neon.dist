@@ -6,7 +6,10 @@ parameters:
 	paths:
 		- ./
 	excludePaths:
-	    - vendor/
+		- vendor/
 	ignoreErrors:
 		-
+			identifier: trait.unused
+		-
 			identifier: missingType.iterableValue
+		- "#^Parameter \\#1 \\$objectOrClass of class ReflectionEnum constructor expects class\\-string\\<UnitEnum\\>\\|UnitEnum, class\\-string given\\.$#"

@@ -37,7 +37,7 @@ class HasOneTest extends TestCase
     /**
      * Fixtures to load
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.NullableAuthors', 'core.Users', 'core.Profiles'];
 
@@ -229,14 +229,11 @@ class HasOneTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock(Table::class)
-            ->shouldAllowMockingMethod('saveAssociated')
-            ->makePartial();
+        $spy = Mockery::spy(Table::class);
         $config = [
             'sourceTable' => $this->user,
-            'targetTable' => $mock,
+            'targetTable' => $spy,
         ];
-        $mock->shouldNotReceive('saveAssociated');
 
         $entity = new Entity([
             'username' => 'Mark',
@@ -248,6 +245,7 @@ class HasOneTest extends TestCase
         $result = $association->saveAssociated($entity);
 
         $this->assertSame($result, $entity);
+        $spy->shouldNotHaveReceived('saveAssociated');
     }
 
     /**

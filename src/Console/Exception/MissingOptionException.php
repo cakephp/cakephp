@@ -32,7 +32,7 @@ class MissingOptionException extends ConsoleException
     /**
      * The valid suggestions.
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $suggestions = [];
 

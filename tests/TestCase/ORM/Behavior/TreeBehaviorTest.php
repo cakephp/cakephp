@@ -29,7 +29,7 @@ class TreeBehaviorTest extends TestCase
     /**
      * fixtures
      *
-     * @var list<string>
+     * @var array<string>
      */
     protected array $fixtures = [
         'core.MenuLinkTrees',

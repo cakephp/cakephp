@@ -22,6 +22,7 @@ use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
+use stdClass;
 
 /**
  * Test for the String type.
@@ -136,5 +137,22 @@ class JsonTypeTest extends TestCase
 
         $result = $instance->toDatabase(['é', 'https://cakephp.org/'], $this->driver);
         $this->assertSame('["é","https://cakephp.org/"]', $result);
+    }
+
+    /**
+     * Test decoding options
+     *
+     * @return void
+     */
+    public function testDecodingOptions(): void
+    {
+        // New instance to prevent others tests breaking
+        $instance = new JsonType();
+        $instance->setDecodingOptions(0);
+
+        $result = $instance->toPHP('{"foo":"bar"}', $this->driver);
+        $expected = new stdClass();
+        $expected->foo = 'bar';
+        $this->assertEquals($expected, $result);
     }
 }

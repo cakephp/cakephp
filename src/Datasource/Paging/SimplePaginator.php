@@ -20,7 +20,7 @@ use Cake\Datasource\QueryInterface;
 use Cake\Datasource\ResultSetInterface;
 
 /**
- * Simplified paginator which avoids potentially expensives queries
+ * Simplified paginator which avoids potentially expensive queries
  * to get the total count of records.
  *
  * When using a simple paginator you will not be able to generate page numbers.
@@ -61,7 +61,7 @@ class SimplePaginator extends NumericPaginator
     }
 
     /**
-     * Build paginated resultset.
+     * Build paginated result set.
      *
      * Since the query fetches an extra record, drop the last record if records
      * fetched exceeds the limit/per page.
