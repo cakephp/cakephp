@@ -563,9 +563,6 @@ class SqliteSchemaDialect extends SchemaDialect
                 'columns' => $columns,
                 'length' => [],
             ];
-            if ($indexType === TableSchema::INDEX_INDEX) {
-                $indexes[$indexName]['concurrent'] = false;
-            }
         }
         // Primary keys aren't always available from the index_info pragma
         // instead we have to read the columns again.

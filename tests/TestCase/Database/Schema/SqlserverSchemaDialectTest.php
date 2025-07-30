@@ -663,7 +663,6 @@ SQL;
             'type' => 'index',
             'columns' => ['author_id'],
             'length' => [],
-            'concurrent' => false,
         ];
         $this->assertEquals($authorIdx, $result->getIndex('author_idx'));
 
