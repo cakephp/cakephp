@@ -599,7 +599,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         $index = $this->_indexes[$name];
         $attrs = $index->toArray();
 
-        $optional = ['order', 'include', 'concurrent', 'where'];
+        $optional = ['order', 'include', 'where'];
         foreach ($optional as $key) {
             if ($attrs[$key] === null) {
                 unset($attrs[$key]);

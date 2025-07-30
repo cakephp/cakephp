@@ -850,7 +850,6 @@ SQL;
             'type' => 'index',
             'columns' => ['author_id'],
             'length' => [],
-            'concurrent' => false,
         ];
         $this->assertEquals($authorIdx, $result->getIndex('author_idx'));
 
@@ -937,7 +936,6 @@ SQL;
             'type' => 'index',
             'columns' => ['group_id', 'grade'],
             'length' => [],
-            'concurrent' => false,
         ];
         $this->assertEquals($expected, $result->getIndex('schema_index_nulls'));
         $connection->execute('DROP TABLE schema_index');

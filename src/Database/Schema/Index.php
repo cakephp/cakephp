@@ -47,7 +47,6 @@ class Index
      * @param array<string, int>|int|null $length The length of the index.
      * @param array<string>|null $order The sort order of the index columns.
      * @param array<string>|null $includedColumns The included columns for covering indexes.
-     * @param bool $concurrent Whether the index should be created concurrently.
      * @param ?string $where The where clause for partial indexes.
      */
     public function __construct(
@@ -57,7 +56,6 @@ class Index
         protected array|int|null $length = null,
         protected ?array $order = null,
         protected ?array $includedColumns = null,
-        protected bool $concurrent = false,
         protected ?string $where = null,
     ) {
     }
@@ -211,31 +209,6 @@ class Index
     }
 
     /**
-     * Set the concurrent mode for an index
-     *
-     * In postgres, concurrent indexes don't take locks, but cannot be run within transactions.
-     *
-     * @param bool $value The concurrent mode for an index.
-     * @return $this
-     */
-    public function setConcurrent(bool $value)
-    {
-        $this->concurrent = $value;
-
-        return $this;
-    }
-
-    /**
-     * Get the concurrent value for an index.
-     *
-     * @return bool
-     */
-    public function getConcurrent(): bool
-    {
-        return $this->concurrent;
-    }
-
-    /**
      * Set the where clause for partial indexes.
      *
      * @param ?string $where The where clause for partial indexes.
@@ -268,7 +241,7 @@ class Index
     public function setAttributes(array $attributes)
     {
         // Valid Options
-        $validOptions = ['columns', 'concurrent', 'type', 'name', 'length', 'order', 'include', 'where'];
+        $validOptions = ['columns', 'type', 'name', 'length', 'order', 'include', 'where'];
         foreach ($attributes as $attr => $value) {
             if (!in_array($attr, $validOptions, true)) {
                 throw new RuntimeException(sprintf('"%s" is not a valid index option.', $attr));
@@ -294,7 +267,6 @@ class Index
             'length' => $this->getLength(),
             'order' => $this->getOrder(),
             'include' => $this->getInclude(),
-            'concurrent' => $this->getConcurrent(),
             'where' => $this->getWhere(),
         ];
     }
