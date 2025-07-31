@@ -639,7 +639,6 @@ SQL;
             'type' => 'index',
             'columns' => ['created'],
             'length' => [],
-            'concurrent' => false,
         ];
         $this->assertEquals($expected, $result->getIndex('created_idx'));
 
