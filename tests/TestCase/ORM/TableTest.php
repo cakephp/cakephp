@@ -3110,7 +3110,12 @@ class TableTest extends TestCase
         $this->assertFalse($result);
 
         // There should be errors here, due to comment not being savable.
-        debug($article->getErrors());
+        $errors = $article->getErrors();
+        $this->assertNotEmpty($errors);
+        $this->assertArrayHasKey('comments', $errors);
+        $this->assertArrayHasKey(0, $errors['comments']);
+        $this->assertArrayHasKey('_rule', $errors['comments'][0]);
+        $this->assertSame(['Xyz'], $errors['comments'][0]['_rule']);
     }
 
     /**

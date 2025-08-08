@@ -117,8 +117,20 @@ class RuleInvoker
     {
         $rule = $this->rule;
         $pass = $rule($entity, $this->options + $scope);
-        if ($pass === true || empty($this->options['errorField'])) {
-            return $pass === true;
+        if ($pass === true) {
+            return true;
+        }
+
+        if (empty($this->options['errorField'])) {
+            // If no errorField is specified but the rule didn't return true,
+            // we should still set a general error on the entity
+            if ($pass !== false && is_string($pass)) {
+                $entity->setError('_rule', [$pass]);
+            } elseif ($pass !== false) {
+                $entity->setError('_rule', ['Application rule failed']);
+            }
+
+            return false;
         }
 
         $message = $this->options['message'] ?? 'invalid';
