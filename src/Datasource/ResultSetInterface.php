@@ -23,7 +23,7 @@ use Cake\Collection\CollectionInterface;
  *
  * @template TKey
  * @template-covariant TValue
- * @template-extends \Traversable<TKey, TValue>
+ * @template-extends CollectionInterface<TKey, TValue>
  */
 interface ResultSetInterface extends CollectionInterface
 {
