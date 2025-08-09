@@ -26,8 +26,7 @@ use IteratorIterator;
  *
  * @template TKey
  * @template-covariant TValue
- * @template-extends \Traversable<TKey, TValue>
- * @template-extends \IteratorIterator<mixed, mixed, \Traversable<mixed>>
+ * @template-implemements \Cake\Collection\CollectionInterface<TKey, TValue>
  */
 class Collection extends IteratorIterator implements CollectionInterface
 {

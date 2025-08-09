@@ -25,8 +25,10 @@ use Cake\Datasource\ResultSetInterface;
  * the query, casting each field to the correct type and executing the extra
  * queries required for eager loading external associations.
  *
- * @template T
- * @implements \Cake\Datasource\ResultSetInterface<T>
+ * @template TKey
+ * @template-covariant TValue
+ * @template-implemements \Cake\Datasource\ResultSetInterface<TKey, TValue>
+ * @template-extends \Cake\Collection\Collection<TKey, TValue>
  */
 class ResultSet extends Collection implements ResultSetInterface
 {

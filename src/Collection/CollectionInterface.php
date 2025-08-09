@@ -28,7 +28,7 @@ use const SORT_NUMERIC;
  *
  * @template TKey
  * @template-covariant TValue
- * @template-extends \Traversable<TKey, TValue>
+ * @template-extends \Iterator<TKey, TValue>
  */
 interface CollectionInterface extends Iterator, JsonSerializable, Countable
 {
