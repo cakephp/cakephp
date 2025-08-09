@@ -17,14 +17,16 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
+use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 
 /**
  * Generic ResultSet decorator. This will make any traversable object appear to
  * be a database result
  *
- * @template T
- * @implements \Cake\Datasource\ResultSetInterface<T>
+ * @template TKey
+ * @template-covariant TValue
+ * @template-extends \Cake\Datasource\ResultSetInterface<TKey, TValue>
  */
 class ResultSetDecorator extends Collection implements ResultSetInterface
 {
