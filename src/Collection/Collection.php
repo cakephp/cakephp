@@ -25,7 +25,7 @@ use SplFixedArray;
  * iterate, group, transform and extract information from it.
  *
  * @template T
- * @template-extends \IteratorIterator<array-key, T, \Traversable<array-key, T>>
+ * @template-extends \IteratorIterator<mixed, T, \Traversable<mixed, T>>
  * @implements \Cake\Collection\CollectionInterface<T>
  */
 class Collection extends IteratorIterator implements CollectionInterface

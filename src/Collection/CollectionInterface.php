@@ -27,7 +27,7 @@ use const SORT_NUMERIC;
  * generating other collections.
  *
  * @template T
- * @template-extends \Iterator<array-key, T>
+ * @template-extends \Iterator<mixed, T>
  * @method T current()
  * @method T|false first()
  * @method T|false last()
