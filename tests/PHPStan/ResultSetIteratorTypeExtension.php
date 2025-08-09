@@ -38,7 +38,7 @@ class ResultSetIteratorTypeExtension implements DynamicMethodReturnTypeExtension
         }
 
         $genericTypes = $calledOnType->getTypes();
-        if (count($genericTypes) > 0) {
+        if ($genericTypes !== []) {
             // Return the generic type parameter (the entity type)
             return $genericTypes[0];
         }
