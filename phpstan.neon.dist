@@ -26,3 +26,7 @@ services:
 		tags:
 			- phpstan.broker.methodsClassReflectionExtension
 			- phpstan.broker.propertiesClassReflectionExtension
+	-
+		class: Cake\PHPStan\ResultSetIteratorTypeExtension
+		tags:
+			- phpstan.dynamicMethodReturnTypeExtension

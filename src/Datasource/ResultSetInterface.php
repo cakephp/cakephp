@@ -22,6 +22,7 @@ use Cake\Collection\CollectionInterface;
  * Describes how a collection of datasource results should look like
  *
  * @template T
+ * @extends \Cake\Collection\CollectionInterface<T>
  */
 interface ResultSetInterface extends CollectionInterface
 {

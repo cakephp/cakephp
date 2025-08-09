@@ -26,7 +26,8 @@ use const SORT_NUMERIC;
  * list of elements exposing a number of traversing and extracting method for
  * generating other collections.
  *
- * @template-extends \Iterator<mixed>
+ * @template T
+ * @template-extends \Iterator<array-key, T>
  */
 interface CollectionInterface extends Iterator, JsonSerializable, Countable
 {
