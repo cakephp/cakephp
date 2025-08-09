@@ -28,6 +28,9 @@ use const SORT_NUMERIC;
  *
  * @template T
  * @template-extends \Iterator<array-key, T>
+ * @method T current()
+ * @method T|false first()
+ * @method T|false last()
  */
 interface CollectionInterface extends Iterator, JsonSerializable, Countable
 {
