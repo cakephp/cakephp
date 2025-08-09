@@ -650,7 +650,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     /**
      * Returns the first result in this collection
      *
-     * @return mixed The first value in the collection will be returned.
+     * @return TValue|null The first value in the collection will be returned.
      */
     public function first(): mixed;
 
