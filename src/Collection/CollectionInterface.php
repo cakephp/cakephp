@@ -26,7 +26,9 @@ use const SORT_NUMERIC;
  * list of elements exposing a number of traversing and extracting method for
  * generating other collections.
  *
- * @template-extends \Iterator<mixed>
+ * @template TKey
+ * @template-covariant TValue
+ * @template-extends \Traversable<TKey, TValue>
  */
 interface CollectionInterface extends Iterator, JsonSerializable, Countable
 {

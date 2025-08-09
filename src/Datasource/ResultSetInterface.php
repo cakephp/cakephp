@@ -21,7 +21,9 @@ use Cake\Collection\CollectionInterface;
 /**
  * Describes how a collection of datasource results should look like
  *
- * @template T
+ * @template TKey
+ * @template-covariant TValue
+ * @template-extends \Traversable<TKey, TValue>
  */
 interface ResultSetInterface extends CollectionInterface
 {
