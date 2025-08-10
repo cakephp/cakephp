@@ -52,7 +52,7 @@ class RedisEngine extends CacheEngine
      * - `scanCount` Number of keys to ask for each scan (default: 10)
      * - `server` URL or IP to the Redis server host.
      * - `timeout` timeout in seconds (float).
-     * - `unix_socket` Path to the unix socket file (default: false)
+     * - `unixSocket` Path to the unix socket file (default: false)
      * - `clearUsesFlushDb` Enable clear() and clearBlocking() to use FLUSHDB. This will be
      *   faster than standard clear()/clearBlocking() but will ignore prefixes and will
      *   cause dataloss if other applications are sharing a redis database.
@@ -71,7 +71,7 @@ class RedisEngine extends CacheEngine
         'host' => null,
         'server' => '127.0.0.1',
         'timeout' => 0,
-        'unix_socket' => false,
+        'unixSocket' => false,
         'scanCount' => 10,
         'clearUsesFlushDb' => false,
     ];
@@ -109,9 +109,9 @@ class RedisEngine extends CacheEngine
         $tls = $this->_config['tls'] === true ? 'tls://' : '';
 
         $map = [
-            'ssl_ca' => 'cafile',
-            'ssl_key' => 'local_pk',
-            'ssl_cert' => 'local_cert',
+            'sslCa' => 'cafile',
+            'sslKey' => 'local_pk',
+            'sslCert' => 'local_cert',
         ];
 
         $ssl = [];
@@ -123,8 +123,8 @@ class RedisEngine extends CacheEngine
 
         try {
             $this->_Redis = $this->createRedisInstance();
-            if (!empty($this->_config['unix_socket'])) {
-                $return = $this->_Redis->connect($this->_config['unix_socket']);
+            if (!empty($this->_config['unixSocket'])) {
+                $return = $this->_Redis->connect($this->_config['unixSocket']);
             } elseif (empty($this->_config['persistent'])) {
                 $return = $this->connectTransient($tls . $this->_config['server'], $ssl);
             } else {

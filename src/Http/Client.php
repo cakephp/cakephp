@@ -127,10 +127,10 @@ class Client implements EventDispatcherInterface, ClientInterface
         'scheme' => 'http',
         'basePath' => '',
         'timeout' => 30,
-        'ssl_verify_peer' => true,
-        'ssl_verify_peer_name' => true,
-        'ssl_verify_depth' => 5,
-        'ssl_verify_host' => true,
+        'sslVerifyPeer' => true,
+        'sslVerifyPeerName' => true,
+        'sslVerifyDepth' => 5,
+        'sslVerifyHost' => true,
         'redirect' => false,
         'protocolVersion' => '1.1',
     ];
@@ -171,14 +171,20 @@ class Client implements EventDispatcherInterface, ClientInterface
      * - scheme - The default scheme/protocol to use. Defaults to http.
      * - basePath - A path to append to the domain to use. (/api/v1/)
      * - timeout - The timeout in seconds. Defaults to 30
-     * - ssl_verify_peer - Whether SSL certificates should be validated.
+     * - sslVerifyPeer - Whether SSL certificates should be validated.
      *   Defaults to true.
-     * - ssl_verify_peer_name - Whether peer names should be validated.
+     * - sslVerifyPeerName - Whether peer names should be validated.
      *   Defaults to true.
-     * - ssl_verify_depth - The maximum certificate chain depth to traverse.
+     * - sslVerifyDepth - The maximum certificate chain depth to traverse.
      *   Defaults to 5.
-     * - ssl_verify_host - Verify that the certificate and hostname match.
+     * - sslVerifyHost - Verify that the certificate and hostname match.
      *   Defaults to true.
+     * - ssl* - Any other SSL options can be passed using the ssl prefix in camelCase.
+     *   For example, `sslCipherList`, `sslCaptureSessionMeta` etc. The Stream adapter
+     *   will automatically convert these to the appropriate stream context options.
+     * - sslContext - (Stream adapter only) An array of custom SSL context options
+     *   to be merged with the automatically converted options. This provides an
+     *   escape hatch for any edge cases.
      * - redirect - Number of redirects to follow. Defaults to false.
      * - adapter - The adapter class name or instance. Defaults to
      *   \Cake\Http\Client\Adapter\Curl if `curl` extension is loaded else
@@ -554,7 +560,24 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * ### Matching Requests
      *
-     * TODO finish this.
+     * Requests are matched based on the method and URL. The URL can be:
+     *
+     * - An exact URL: `http://example.com/path`
+     * - A URL with wildcards: `http://example.com/path/*` will match any URL
+     *   starting with `http://example.com/path/`
+     *
+     * You can also use the `match` option to provide a custom matching function:
+     *
+     * ```
+     * Client::addMockResponse('GET', 'http://example.com', $response, [
+     *     'match' => function (RequestInterface $request) {
+     *         return $request->getHeaderLine('X-Auth') === 'secret';
+     *     }
+     * ]);
+     * ```
+     *
+     * When multiple responses match a request, they are returned in the order
+     * they were added (FIFO - first in, first out).
      *
      * ### Options
      *

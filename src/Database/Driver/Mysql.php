@@ -139,18 +139,18 @@ class Mysql extends Driver
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        if (!empty($config['ssl_key']) && !empty($config['ssl_cert'])) {
-            $config['flags'][PDO::MYSQL_ATTR_SSL_KEY] = $config['ssl_key'];
-            $config['flags'][PDO::MYSQL_ATTR_SSL_CERT] = $config['ssl_cert'];
+        if (!empty($config['sslKey']) && !empty($config['sslCert'])) {
+            $config['flags'][PDO::MYSQL_ATTR_SSL_KEY] = $config['sslKey'];
+            $config['flags'][PDO::MYSQL_ATTR_SSL_CERT] = $config['sslCert'];
         }
-        if (!empty($config['ssl_ca'])) {
-            $config['flags'][PDO::MYSQL_ATTR_SSL_CA] = $config['ssl_ca'];
+        if (!empty($config['sslCa'])) {
+            $config['flags'][PDO::MYSQL_ATTR_SSL_CA] = $config['sslCa'];
         }
 
-        if (empty($config['unix_socket'])) {
+        if (empty($config['unixSocket'])) {
             $dsn = "mysql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
         } else {
-            $dsn = "mysql:unix_socket={$config['unix_socket']};dbname={$config['database']}";
+            $dsn = "mysql:unix_socket={$config['unixSocket']};dbname={$config['database']}";
         }
 
         if (!empty($config['encoding'])) {

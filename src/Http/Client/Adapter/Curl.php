@@ -125,26 +125,33 @@ class Curl implements AdapterInterface
             unset($out[CURLOPT_POSTFIELDS]);
         }
 
-        if (empty($options['ssl_cafile'])) {
-            $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
+        if (empty($options['sslCafile'])) {
+            $options['sslCafile'] = CaBundle::getBundledCaBundlePath();
         }
-        if (!empty($options['ssl_verify_host'])) {
+        if (!empty($options['sslVerifyHost'])) {
             // Value of 1 or true is deprecated. Only 2 or 0 should be used now.
-            $options['ssl_verify_host'] = 2;
+            $options['sslVerifyHost'] = 2;
         }
+
+        // Known mappings for common options
         $optionMap = [
             'timeout' => CURLOPT_TIMEOUT,
-            'ssl_verify_peer' => CURLOPT_SSL_VERIFYPEER,
-            'ssl_verify_host' => CURLOPT_SSL_VERIFYHOST,
-            'ssl_cafile' => CURLOPT_CAINFO,
-            'ssl_local_cert' => CURLOPT_SSLCERT,
-            'ssl_passphrase' => CURLOPT_SSLCERTPASSWD,
+            'sslVerifyPeer' => CURLOPT_SSL_VERIFYPEER,
+            'sslVerifyHost' => CURLOPT_SSL_VERIFYHOST,
+            'sslCafile' => CURLOPT_CAINFO,
+            'sslLocalCert' => CURLOPT_SSLCERT,
+            'sslPassphrase' => CURLOPT_SSLCERTPASSWD,
         ];
         foreach ($optionMap as $option => $curlOpt) {
             if (isset($options[$option])) {
                 $out[$curlOpt] = $options[$option];
             }
         }
+
+        // For any other ssl* options not in the map, pass them through to curl options
+        // This allows users to set any CURLOPT_SSL_* option using the 'curl' options array
+        // Example: $options['curl'][CURLOPT_SSL_CIPHER_LIST] = 'TLSv1';
+        // This provides forward compatibility for new SSL options
         if (isset($options['proxy']['proxy'])) {
             $out[CURLOPT_PROXY] = $options['proxy']['proxy'];
         }

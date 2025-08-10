@@ -253,12 +253,12 @@ class CurlTest extends TestCase
     public function testBuildOptionsSsl(): void
     {
         $options = [
-            'ssl_verify_host' => true,
-            'ssl_verify_peer' => true,
-            'ssl_verify_peer_name' => true,
+            'sslVerifyHost' => true,
+            'sslVerifyPeer' => true,
+            'sslVerifyPeerName' => true,
             // These options do nothing in curl.
-            'ssl_verify_depth' => 9000,
-            'ssl_allow_self_signed' => false,
+            'sslVerifyDepth' => 9000,
+            'sslAllowSelfSigned' => false,
         ];
         $request = new Request('http://localhost/things', 'GET');
         $result = $this->curl->buildOptions($request, $options);

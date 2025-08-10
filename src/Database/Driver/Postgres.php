@@ -54,11 +54,11 @@ class Postgres extends Driver
         'timezone' => null,
         'flags' => [],
         'init' => [],
-        'ssl_key' => null,
-        'ssl_cert' => null,
-        'ssl_ca' => null,
+        'sslKey' => null,
+        'sslCert' => null,
+        'sslCa' => null,
         'ssl' => false,
-        'ssl_mode' => null,
+        'sslMode' => null,
     ];
 
     /**
@@ -103,20 +103,20 @@ class Postgres extends Driver
         }
 
         if ($this->_config['ssl']) {
-            if ($this->_config['ssl_mode']) {
-                $dsn .= ';sslmode=' . $this->_config['ssl_mode'];
+            if ($this->_config['sslMode']) {
+                $dsn .= ';sslmode=' . $this->_config['sslMode'];
             } else {
                 $dsn .= ';sslmode=allow';
             }
 
-            if ($this->_config['ssl_key']) {
-                $dsn .= ';sslkey=' . $this->_config['ssl_key'];
+            if ($this->_config['sslKey']) {
+                $dsn .= ';sslkey=' . $this->_config['sslKey'];
             }
-            if ($this->_config['ssl_cert']) {
-                $dsn .= ';sslcert=' . $this->_config['ssl_cert'];
+            if ($this->_config['sslCert']) {
+                $dsn .= ';sslcert=' . $this->_config['sslCert'];
             }
-            if ($this->_config['ssl_ca']) {
-                $dsn .= ';sslrootcert=' . $this->_config['ssl_ca'];
+            if ($this->_config['sslCa']) {
+                $dsn .= ';sslrootcert=' . $this->_config['sslCa'];
             }
         }
 

@@ -218,10 +218,10 @@ class StreamTest extends TestCase
     {
         $request = new Request('https://localhost.com/test.html');
         $options = [
-            'ssl_verify_host' => true,
-            'ssl_verify_peer' => true,
-            'ssl_verify_peer_name' => true,
-            'ssl_verify_depth' => 9000,
+            'sslVerifyHost' => true,
+            'sslVerifyPeer' => true,
+            'sslVerifyPeerName' => true,
+            'sslVerifyDepth' => 9000,
             'ssl_allow_self_signed' => false,
             'proxy' => [
                 'proxy' => '127.0.0.1:8080',
@@ -253,8 +253,8 @@ class StreamTest extends TestCase
         $options = [
             'ssl_verify_host' => true,
             'ssl_verify_peer' => true,
-            'ssl_verify_peer_name' => false,
-            'ssl_verify_depth' => 9000,
+            'sslVerifyPeerName' => false,
+            'sslVerifyDepth' => 9000,
             'ssl_allow_self_signed' => false,
             'proxy' => [
                 'proxy' => '127.0.0.1:8080',

@@ -205,29 +205,32 @@ class Stream implements AdapterInterface
      */
     protected function buildSslContext(RequestInterface $request, array $options): void
     {
-        $sslOptions = [
-            'ssl_verify_peer',
-            'ssl_verify_peer_name',
-            'ssl_verify_depth',
-            'ssl_allow_self_signed',
-            'ssl_cafile',
-            'ssl_local_cert',
-            'ssl_local_pk',
-            'ssl_passphrase',
-        ];
-        if (empty($options['ssl_cafile'])) {
-            $options['ssl_cafile'] = CaBundle::getBundledCaBundlePath();
+        // Set default CA bundle if not provided
+        if (empty($options['sslCafile'])) {
+            $options['sslCafile'] = CaBundle::getBundledCaBundlePath();
         }
-        if (!empty($options['ssl_verify_host'])) {
+
+        // Handle verify host separately as it maps to peer_name
+        if (!empty($options['sslVerifyHost'])) {
             $url = $request->getUri();
             $host = parse_url((string)$url, PHP_URL_HOST);
             $this->_sslContextOptions['peer_name'] = $host;
         }
-        foreach ($sslOptions as $key) {
-            if (isset($options[$key])) {
-                $name = substr($key, 4);
-                $this->_sslContextOptions[$name] = $options[$key];
+
+        // Process all ssl* options dynamically
+        foreach ($options as $key => $value) {
+            if (strpos($key, 'ssl') === 0 && $key !== 'sslVerifyHost') {
+                // Convert sslCamelCase to snake_case
+                // e.g., sslVerifyPeer -> verify_peer, sslCafile -> cafile
+                $contextKey = strtolower(preg_replace('/^ssl([A-Z])/', '$1', $key));
+                $contextKey = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $contextKey));
+                $this->_sslContextOptions[$contextKey] = $value;
             }
+        }
+
+        // Also support direct ssl context options for advanced users
+        if (isset($options['sslContext']) && is_array($options['sslContext'])) {
+            $this->_sslContextOptions = array_merge($this->_sslContextOptions, $options['sslContext']);
         }
     }
 

@@ -100,7 +100,7 @@ class RedisEngineTest extends TestCase
             'persistent' => true,
             'password' => false,
             'database' => 0,
-            'unix_socket' => false,
+            'unixSocket' => false,
             'host' => null,
             'scanCount' => 10,
             'clearUsesFlushDb' => false,
@@ -129,7 +129,7 @@ class RedisEngineTest extends TestCase
             'persistent' => true,
             'password' => false,
             'database' => '1',
-            'unix_socket' => false,
+            'unixSocket' => false,
             'host' => 'localhost',
             'scheme' => 'redis',
             'scanCount' => 10,
@@ -147,9 +147,9 @@ class RedisEngineTest extends TestCase
     {
         $url = 'redis://localhost:' . $this->port;
 
-        $url .= '?ssl_ca=/tmp/cert.crt';
-        $url .= '&ssl_key=/tmp/local.key';
-        $url .= '&ssl_cert=/tmp/local.crt';
+        $url .= '?sslCa=/tmp/cert.crt';
+        $url .= '&sslKey=/tmp/local.key';
+        $url .= '&sslCert=/tmp/local.crt';
 
         Cache::setConfig('redis_dsn', compact('url'));
 
@@ -165,13 +165,13 @@ class RedisEngineTest extends TestCase
             'persistent' => true,
             'password' => false,
             'database' => 0,
-            'unix_socket' => false,
+            'unixSocket' => false,
             'host' => 'localhost',
             'scheme' => 'redis',
             'scanCount' => 10,
-            'ssl_ca' => '/tmp/cert.crt',
-            'ssl_key' => '/tmp/local.key',
-            'ssl_cert' => '/tmp/local.crt',
+            'sslCa' => '/tmp/cert.crt',
+            'sslKey' => '/tmp/local.key',
+            'sslCert' => '/tmp/local.crt',
             'clearUsesFlushDb' => false,
         ];
         $this->assertEquals($expecting, $config);
@@ -290,7 +290,7 @@ class RedisEngineTest extends TestCase
         $config = [
             'port' => $this->port,
             'persistent' => false,
-            'ssl_ca' => $cafile,
+            'sslCa' => $cafile,
         ];
 
         $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
@@ -402,7 +402,7 @@ class RedisEngineTest extends TestCase
         $config = [
             'port' => $this->port,
             'persistent' => true,
-            'ssl_ca' => $cafile,
+            'sslCa' => $cafile,
         ];
         $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
     }
