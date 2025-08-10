@@ -215,15 +215,26 @@ class TimeHelper extends Helper
      * Returns the quarter
      *
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param bool $range if true returns a range in Y-m-d format
-     * @return array<string>|int 1, 2, 3, or 4 quarter of year or array if $range true
+     * @return int 1, 2, 3, or 4 quarter of year
      * @see \Cake\I18n\Time::toQuarter()
      */
     public function toQuarter(
         ChronosDate|DateTimeInterface|string|int $dateString,
-        bool $range = false,
-    ): array|int {
-        return (new DateTime($dateString))->toQuarter($range);
+    ): int {
+        return (new DateTime($dateString))->toQuarter();
+    }
+
+    /**
+     * Returns the quarter range
+     *
+     * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @return array<string> Array with start and end date of quarter in Y-m-d format
+     * @see \Cake\I18n\Time::toQuarterRange()
+     */
+    public function toQuarterRange(
+        ChronosDate|DateTimeInterface|string|int $dateString,
+    ): array {
+        return (new DateTime($dateString))->toQuarterRange();
     }
 
     /**

@@ -146,7 +146,20 @@ class TimeHelperTest extends TestCase
     public function testToQuarter(): void
     {
         $this->assertSame(4, $this->Time->toQuarter('2007-12-25'));
-        $this->assertEquals(['2007-10-01', '2007-12-31'], $this->Time->toQuarter('2007-12-25', true));
+        $this->assertSame(1, $this->Time->toQuarter('2007-03-25'));
+        $this->assertSame(2, $this->Time->toQuarter('2007-05-25'));
+        $this->assertSame(3, $this->Time->toQuarter('2007-08-25'));
+    }
+
+    /**
+     * testToQuarterRange method
+     */
+    public function testToQuarterRange(): void
+    {
+        $this->assertEquals(['2007-10-01', '2007-12-31'], $this->Time->toQuarterRange('2007-12-25'));
+        $this->assertEquals(['2007-01-01', '2007-03-31'], $this->Time->toQuarterRange('2007-03-25'));
+        $this->assertEquals(['2007-04-01', '2007-06-30'], $this->Time->toQuarterRange('2007-05-25'));
+        $this->assertEquals(['2007-07-01', '2007-09-30'], $this->Time->toQuarterRange('2007-08-25'));
     }
 
     /**
