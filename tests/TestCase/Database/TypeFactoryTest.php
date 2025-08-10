@@ -34,7 +34,7 @@ class TypeFactoryTest extends TestCase
     /**
      * Original type map
      *
-     * @var array
+     * @var array<string, class-string<\Cake\Database\TypeInterface>>
      */
     protected $_originalMap = [];
 
