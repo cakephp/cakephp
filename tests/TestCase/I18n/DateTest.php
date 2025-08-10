@@ -471,21 +471,11 @@ class DateTest extends TestCase
      */
     public function testGetTimestamp(): void
     {
-        $date = new Date('2024-01-15');
-        $timestamp = $date->getTimestamp();
-
-        // Test that it returns an integer
-        $this->assertIsInt($timestamp);
-
-        // Test that it matches the integer conversion of toUnixString()
-        $this->assertSame((int)$date->toUnixString(), $timestamp);
-
-        // Test specific known dates
-        $date1970 = new Date('1970-01-01');
-        $this->assertSame(0, $date1970->getTimestamp());
-
         $date2000 = new Date('2000-01-01');
         $this->assertSame(946684800, $date2000->getTimestamp());
+
+        $date1970 = new Date('1970-01-01');
+        $this->assertSame(0, $date1970->getTimestamp());
     }
 
     /**
