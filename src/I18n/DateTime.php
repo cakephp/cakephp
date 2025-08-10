@@ -598,6 +598,50 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
     }
 
     /**
+     * Returns the quarter
+     *
+     * Deprecated 5.3.0 Argument $range. Use toQuarterRange() to get quarter date ranges instead of passing $range = true
+     *
+     * @param bool $range Range. Deprecated, use toQuarterRange() instead.
+     * @return array|int 1, 2, 3, or 4 quarter of year or array if $range true
+     */
+    public function toQuarter(bool $range = false): int|array
+    {
+        if ($range) {
+            trigger_error(
+                'Passing $range = true to toQuarter() is deprecated. Use toQuarterRange() instead.',
+                E_USER_DEPRECATED,
+            );
+
+            return $this->toQuarterRange();
+        }
+
+        return (int)ceil((int)$this->format('m') / 3);
+    }
+
+    /**
+     * Returns the date range for the quarter this date falls in.
+     *
+     * @return array{0: string, 1: string} Array with start and end dates in 'Y-m-d' format
+     */
+    public function toQuarterRange(): array
+    {
+        $quarter = $this->toQuarter();
+        $year = $this->format('Y');
+
+        switch ($quarter) {
+            case 1:
+                return [$year . '-01-01', $year . '-03-31'];
+            case 2:
+                return [$year . '-04-01', $year . '-06-30'];
+            case 3:
+                return [$year . '-07-01', $year . '-09-30'];
+            default:
+                return [$year . '-10-01', $year . '-12-31'];
+        }
+    }
+
+    /**
      * @inheritDoc
      */
     public function __toString(): string
