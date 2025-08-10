@@ -465,4 +465,43 @@ class DateTest extends TestCase
         $result = Date::parseDate('12/03/2015');
         $this->assertSame('2015-03-12', $result->format($expected));
     }
+
+    /**
+     * Test getTimestamp() method
+     */
+    public function testGetTimestamp(): void
+    {
+        $date = new Date('2024-01-15');
+        $timestamp = $date->getTimestamp();
+
+        // Test that it returns an integer
+        $this->assertIsInt($timestamp);
+
+        // Test that it matches the integer conversion of toUnixString()
+        $this->assertSame((int)$date->toUnixString(), $timestamp);
+
+        // Test specific known dates
+        $date1970 = new Date('1970-01-01');
+        $this->assertSame(0, $date1970->getTimestamp());
+
+        $date2000 = new Date('2000-01-01');
+        $this->assertSame(946684800, $date2000->getTimestamp());
+    }
+
+    /**
+     * Test getTimestamp() consistency with DateTime
+     */
+    public function testGetTimestampConsistencyWithDateTime(): void
+    {
+        $dateStr = '2024-01-15';
+        $date = new Date($dateStr);
+        $dateTime = new DateTime($dateStr . ' 00:00:00');
+
+        // Both should return integers
+        $this->assertIsInt($date->getTimestamp());
+        $this->assertIsInt($dateTime->getTimestamp());
+
+        // For the same date at midnight, timestamps should match
+        $this->assertSame($dateTime->getTimestamp(), $date->getTimestamp());
+    }
 }
