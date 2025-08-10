@@ -118,12 +118,12 @@ class TypeFactoryTest extends TestCase
         TypeFactory::map('foo', $fooType);
         $map = TypeFactory::getMap();
         $this->assertSame($fooType, $map['foo']);
-        $this->assertSame($fooType, TypeFactory::getMap('foo'));
+        $this->assertSame($fooType, TypeFactory::getMapped('foo'));
 
         TypeFactory::map('foo2', $fooType);
         $map = TypeFactory::getMap();
         $this->assertSame($fooType, $map['foo2']);
-        $this->assertSame($fooType, TypeFactory::getMap('foo2'));
+        $this->assertSame($fooType, TypeFactory::getMapped('foo2'));
 
         $type = TypeFactory::build('foo2');
         $this->assertInstanceOf($fooType, $type);

@@ -140,17 +140,24 @@ class TypeFactory
     }
 
     /**
-     * Get mapped class name for given type or map array.
+     * Get the type mapping array.
      *
-     * @param string|null $type Type name to get mapped class for or null to get map array.
-     * @return array<string, class-string<\Cake\Database\TypeInterface>>|string|null Configured class name for given $type or map array.
+     * @return array<string, class-string<\Cake\Database\TypeInterface>> The complete type mapping array.
      */
-    public static function getMap(?string $type = null): array|string|null
+    public static function getMap(): array
     {
-        if ($type === null) {
-            return static::$_types;
-        }
+        return static::$_types;
+    }
 
+    /**
+     * Get mapped class name for a specific type.
+     *
+     * @param string $type Type name to get mapped class for.
+     * @return string|null Configured class name for given $type or null if not found.
+     * @phpstan-return class-string<\Cake\Database\TypeInterface>|null
+     */
+    public static function getMapped(string $type): ?string
+    {
         return static::$_types[$type] ?? null;
     }
 
