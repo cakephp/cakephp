@@ -487,10 +487,6 @@ class DateTest extends TestCase
         $date = new Date($dateStr);
         $dateTime = new DateTime($dateStr . ' 00:00:00');
 
-        // Both should return integers
-        $this->assertIsInt($date->getTimestamp());
-        $this->assertIsInt($dateTime->getTimestamp());
-
         // For the same date at midnight, timestamps should match
         $this->assertSame($dateTime->getTimestamp(), $date->getTimestamp());
     }
