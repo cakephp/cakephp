@@ -417,7 +417,6 @@ class RedisEngine extends CacheEngine
         $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
 
         $isAllDeleted = true;
-        $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
         $scanCount = (int)$this->_config['scanCount'];
 
@@ -426,37 +425,17 @@ class RedisEngine extends CacheEngine
             $this->_Redis->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
         }
 
-        if ($this->_Redis instanceof RedisCluster) {
-            foreach ($this->_Redis->_masters() as $masterNode) {
-                $iterator = null;
+        $nodes = $this->_Redis instanceof RedisCluster
+            ? $this->_Redis->_masters()
+            : [null];
 
-                while (true) {
-                    $keys = $this->_Redis->scan($iterator, $masterNode, $pattern, $scanCount);
-
-                    if ($keys === false) {
-                        break;
-                    }
-
-                    foreach ($keys as $key) {
-                        $isDeleted = ($this->_Redis->del($key) > 0);
-                        $isAllDeleted = $isAllDeleted && $isDeleted;
-                    }
+        foreach ($nodes as $node) {
+            $it = null;
+            while (($keys = $this->scanKeys($it, $pattern, $scanCount, $node)) !== false) {
+                foreach ($keys as $key) {
+                    $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
+                    $isAllDeleted = $isAllDeleted && $isDeleted;
                 }
-            }
-
-            return $isAllDeleted;
-        }
-
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, $scanCount);
-
-            if ($keys === false) {
-                break;
-            }
-
-            foreach ($keys as $key) {
-                $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
             }
         }
 
@@ -479,7 +458,6 @@ class RedisEngine extends CacheEngine
         $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
 
         $isAllDeleted = true;
-        $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
         $scanCount = (int)$this->_config['scanCount'];
 
@@ -488,37 +466,18 @@ class RedisEngine extends CacheEngine
             $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
         }
 
-        if ($this->_Redis instanceof RedisCluster) {
-            foreach ($this->_Redis->_masters() as $masterNode) {
-                $iterator = null;
+        $nodes = $this->_Redis instanceof RedisCluster
+            ? $this->_Redis->_masters()
+            : [null];
 
-                while (true) {
-                    $keys = $this->_Redis->scan($iterator, $masterNode, $pattern, $scanCount);
-
-                    if ($keys === false) {
-                        break;
-                    }
-
-                    foreach ($keys as $key) {
-                        $isDeleted = ($this->_Redis->unlink($key) > 0);
-                        $isAllDeleted = $isAllDeleted && $isDeleted;
-                    }
+        foreach ($nodes as $node) {
+            $it = null;
+            while (($keys = $this->scanKeys($it, $pattern, $scanCount, $node)) !== false) {
+                foreach ($keys as $key) {
+                    // Blocking delete
+                    $isDeleted = ((int)$this->_Redis->del($key) > 0);
+                    $isAllDeleted = $isAllDeleted && $isDeleted;
                 }
-            }
-
-            return $isAllDeleted;
-        }
-
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, $scanCount);
-
-            if ($keys === false) {
-                break;
-            }
-
-            foreach ($keys as $key) {
-                $isDeleted = ((int)$this->_Redis->del($key) > 0);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
             }
         }
 
@@ -623,6 +582,24 @@ class RedisEngine extends CacheEngine
     protected function _createRedisInstance(): Redis
     {
         return new Redis();
+    }
+
+    /**
+     * Unifies Redis and RedisCluster scan() calls.
+     *
+     * @param int|null $it Passed by reference cursor
+     * @param string   $pattern
+     * @param int      $count
+     * @param array|string|null $node Master address for cluster, or null for single node
+     * @return array|false
+     */
+    private function scanKeys(?int &$it, string $pattern, int $count, string|array|null $node = null): array|false
+    {
+        if ($this->_Redis instanceof RedisCluster) {
+            return $this->_Redis->scan($it, $node, $pattern, $count);
+        }
+
+        return $this->_Redis->scan($it, $pattern, $count);
     }
 
     /**
