@@ -118,15 +118,27 @@ class TypeFactoryTest extends TestCase
         TypeFactory::map('foo', $fooType);
         $map = TypeFactory::getMap();
         $this->assertSame($fooType, $map['foo']);
-        $this->assertSame($fooType, TypeFactory::getMap('foo'));
+        $this->assertSame($fooType, TypeFactory::getMapped('foo'));
 
         TypeFactory::map('foo2', $fooType);
         $map = TypeFactory::getMap();
         $this->assertSame($fooType, $map['foo2']);
-        $this->assertSame($fooType, TypeFactory::getMap('foo2'));
+        $this->assertSame($fooType, TypeFactory::getMapped('foo2'));
 
         $type = TypeFactory::build('foo2');
         $this->assertInstanceOf($fooType, $type);
+    }
+
+    /**
+     * Test that getMap() with argument triggers deprecation
+     */
+    public function testGetMapDeprecation(): void
+    {
+        $this->deprecated(function () {
+            TypeFactory::map('test', FooType::class);
+            $result = TypeFactory::getMap('test');
+            $this->assertSame(FooType::class, $result);
+        });
     }
 
     /**
@@ -139,7 +151,7 @@ class TypeFactoryTest extends TestCase
         $this->assertFalse(isset($types['foo']));
 
         TypeFactory::set('foo', new FooType());
-        $this->assertNull(TypeFactory::getMap('foo'));
+        $this->assertNull(TypeFactory::getMapped('foo'));
 
         $result = TypeFactory::build('foo');
         $this->assertInstanceOf(FooType::class, $result);

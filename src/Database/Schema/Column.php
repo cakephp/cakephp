@@ -104,7 +104,7 @@ class Column
             return $this->baseType;
         }
         $type = $this->type;
-        if (TypeFactory::getMap($type)) {
+        if (TypeFactory::getMapped($type)) {
             $type = TypeFactory::build($type)->getBaseType();
         }
 
