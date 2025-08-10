@@ -169,7 +169,7 @@ class Response extends Message implements ResponseInterface
      * Parses headers if necessary.
      *
      * - Decodes the status code and reason phrase.
-     * - Parses and normalizes header names + values.
+     * - Parses and normalizes header names and values.
      *
      * @param array<string> $headers Headers to parse.
      * @return void

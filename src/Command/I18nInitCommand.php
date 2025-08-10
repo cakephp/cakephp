@@ -60,7 +60,7 @@ class I18nInitCommand extends Command
             $language = $io->ask('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');
         }
         if (strlen($language) < 2) {
-            $io->err('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
+            $io->error('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
 
             return static::CODE_ERROR;
         }

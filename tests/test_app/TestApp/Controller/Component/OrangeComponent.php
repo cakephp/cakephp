@@ -54,6 +54,7 @@ class OrangeComponent extends Component
     /**
      * startup method
      *
+     * @param \Cake\Event\EventInterface $event
      * @return void
      */
     public function startup(EventInterface $event): void

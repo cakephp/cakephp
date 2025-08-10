@@ -31,7 +31,7 @@
         "php": ">=8.2",
         "ext-intl": "*",
         "cakephp/core": "5.3.*@dev",
-        "cakephp/chronos": "^3.1"
+        "cakephp/chronos": "^3.2"
     },
     "autoload": {
         "psr-4": {

@@ -167,7 +167,7 @@ class BufferedIterator extends Collection
     }
 
     /**
-     * Returns the number or items in this collection
+     * Returns the number of items in this collection.
      *
      * @return int
      */

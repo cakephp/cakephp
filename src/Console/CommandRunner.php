@@ -295,7 +295,7 @@ class CommandRunner implements EventDispatcherInterface
     protected function resolveName(CommandCollection $commands, ConsoleIo $io, ?string $name): string
     {
         if (!$name) {
-            $io->err('<error>No command provided. Choose one of the available commands.</error>', 2);
+            $io->error('No command provided. Choose one of the available commands.', 2);
             $name = 'help';
         }
         $name = $this->aliases[$name] ?? $name;

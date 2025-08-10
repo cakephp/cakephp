@@ -276,7 +276,7 @@ class Route
      *
      * ```
      * // remove a persistent 'date' parameter
-     * Router::url(['date' => false', ...]);
+     * Router::url(['date' => false, ...]);
      * ```
      *
      * @param array $names The names of the parameters that should be passed.
@@ -689,7 +689,7 @@ class Route
         $query = !empty($url['?']) ? (array)$url['?'] : [];
         unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base'], $url['?']);
 
-        // Move extension into the hostOptions so its not part of
+        // Move extension into the hostOptions so it is not part of
         // reverse matches.
         if (isset($url['_ext'])) {
             $hostOptions['_ext'] = $url['_ext'];
@@ -854,7 +854,7 @@ class Route
         ) {
             $host = $params['_host'];
 
-            // append the port & scheme if they exists.
+            // append the port and scheme if they exist.
             if (isset($params['_port'])) {
                 $host .= ':' . $params['_port'];
             }

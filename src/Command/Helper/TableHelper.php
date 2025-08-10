@@ -20,7 +20,7 @@ use UnexpectedValueException;
 
 /**
  * Create a visually pleasing ASCII art table
- * from 2 dimensional array data.
+ * from 2-dimensional array data.
  */
 class TableHelper extends Helper
 {
@@ -38,7 +38,7 @@ class TableHelper extends Helper
     /**
      * Calculate the column widths
      *
-     * @param array $rows The rows on which the columns width will be calculated on.
+     * @param array $rows The rows on which the column's width will be calculated on.
      * @return array<int>
      */
     protected function _calculateWidths(array $rows): array

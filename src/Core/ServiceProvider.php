@@ -105,7 +105,7 @@ abstract class ServiceProvider extends AbstractServiceProvider implements Bootab
      * The provides method is a way to let the container know that a service
      * is provided by this service provider.
      *
-     * Every service that is registered via this service provider must have an
+     * Every service registered via this service provider must have an
      * alias added to this array or it will be ignored.
      *
      * @param string $id Identifier.

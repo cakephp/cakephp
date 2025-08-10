@@ -26,7 +26,7 @@
     "require": {
         "php": ">=8.2",
         "cakephp/core": "5.3.*@dev",
-        "cakephp/chronos": "^3.1",
+        "cakephp/chronos": "^3.2",
         "cakephp/datasource": "5.3.*@dev",
         "psr/log": "^3.0"
     },

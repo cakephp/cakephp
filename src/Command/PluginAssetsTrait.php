@@ -195,7 +195,7 @@ trait PluginAssetsTrait
 
                 return true;
             }
-            $this->io->err('Failed to unlink  ' . $dest);
+            $this->io->error('Failed to unlink  ' . $dest);
 
             return false;
         }
@@ -206,7 +206,7 @@ trait PluginAssetsTrait
 
             return true;
         }
-        $this->io->err('Failed to delete ' . $dest);
+        $this->io->error('Failed to delete ' . $dest);
 
         return false;
     }
@@ -231,7 +231,7 @@ trait PluginAssetsTrait
             return true;
         }
 
-        $this->io->err('Failed creating directory ' . $dir);
+        $this->io->error('Failed creating directory ' . $dir);
 
         return false;
     }
@@ -313,7 +313,7 @@ trait PluginAssetsTrait
             return true;
         }
 
-        $this->io->err('Error copying assets to directory ' . $destination);
+        $this->io->error('Error copying assets to directory ' . $destination);
 
         return false;
     }

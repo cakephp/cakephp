@@ -445,7 +445,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Alias a field with the table's current alias.
      *
-     * If field is already aliased it will result in no-op.
+     * If field is already aliased, it will result in no-op.
      *
      * @param string $field The field to alias.
      * @return string The field prefixed with the table alias.
@@ -1484,7 +1484,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Get an article and some relationships:
      *
      * ```
-     * $article = $articles->get(1, contain: ['Users', 'Comments']]);
+     * $article = $articles->get(1, contain: ['Users', 'Comments']);
      * ```
      *
      * @param mixed $primaryKey primary key value to find
@@ -3288,8 +3288,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'table' => $this->getTable(),
             'alias' => $this->getAlias(),
             'entityClass' => $this->getEntityClass(),
-            'associations' => $this->_associations->keys(),
-            'behaviors' => $this->_behaviors->loaded(),
+            /** @phpstan-ignore isset.initializedProperty */
+            'associations' => isset($this->_associations) ? $this->_associations->keys() : [],
+            /** @phpstan-ignore isset.initializedProperty */
+            'behaviors' => isset($this->_behaviors) ? $this->_behaviors->loaded() : [],
             'defaultConnection' => static::defaultConnectionName(),
             'connectionName' => $conn->configName(),
         ];

@@ -20,6 +20,8 @@ use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\Constraint;
+use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
@@ -290,7 +292,7 @@ id INTEGER PRIMARY KEY AUTOINCREMENT,
 title VARCHAR(20) DEFAULT 'Let ''em eat cake',
 body TEXT,
 author_id INT(11) NOT NULL,
-unique_id INT(11) NOT NULL,
+unique_id UNSIGNED INTEGER NOT NULL,
 published BOOLEAN DEFAULT 0,
 created DATETIME,
 field1 VARCHAR(10) DEFAULT NULL,
@@ -489,7 +491,7 @@ SQL;
         $this->assertInstanceOf(TableSchema::class, $result);
         $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->getColumn($field));
+            $this->assertEquals($definition, $result->getColumn($field), "{$field} does not match");
         }
     }
 
@@ -509,9 +511,9 @@ SQL;
                 'length' => null,
                 'null' => true,
                 'default' => null,
-                'comment' => null,
-                'precision' => null,
                 'collate' => null,
+                'precision' => null,
+                'comment' => null,
             ],
         ];
         $this->assertInstanceOf(TableSchema::class, $result);
@@ -534,8 +536,8 @@ SQL;
         $result = $schema->describe('schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->getPrimaryKey());
-        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
-        $this->assertNull($result->getColumn('id')['autoIncrement'], 'id should not be autoincrement');
+        $this->assertFalse($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertFalse($result->getColumn('id')['autoIncrement'], 'id should not be autoincrement');
     }
 
     /**
@@ -549,9 +551,20 @@ SQL;
         $dialect = $connection->getDriver()->schemaDialect();
         $result = $dialect->describe('schema_articles');
 
-        // Includes unique keys.
+        // Includes unique and primary keys.
         $indexes = $dialect->describeIndexes('schema_articles');
         $this->assertCount(4, $indexes);
+
+        // Compare with the index() API.
+        foreach ($indexes as $index) {
+            if ($index['type'] !== TableSchema::INDEX_INDEX) {
+                continue;
+            }
+            $indexObj = $result->index($index['name']);
+            foreach ($index as $key => $value) {
+                $this->assertEquals($value, $indexObj->{'get' . ucfirst($key)}());
+            }
+        }
 
         $foreignKeys = $dialect->describeForeignKeys('schema_articles');
         $this->assertCount(1, $foreignKeys);
@@ -561,7 +574,6 @@ SQL;
             'primary' => [
                 'type' => 'primary',
                 'columns' => ['id'],
-                'length' => [],
             ],
             'title_idx' => [
                 'type' => 'unique',
@@ -572,9 +584,9 @@ SQL;
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['schema_authors', 'id'],
-                'length' => [],
                 'update' => 'cascade',
                 'delete' => 'restrict',
+                'deferrable' => null,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
@@ -586,27 +598,41 @@ SQL;
         ];
         $this->assertCount(4, $result->constraints());
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+
+        $primary = $result->constraint('primary');
+        $this->assertInstanceOf(Constraint::class, $primary);
+        $this->assertSame('primary', $primary->getName());
+        $this->assertSame($expected['primary']['columns'], $primary->getColumns());
+
         $this->assertEquals(
             $expected['author_fk'],
             $result->getConstraint('author_fk'),
         );
-
-        $authorIdFk = $foreignKeys[0];
         $expectedAuthorIdFk = $expected['author_fk'];
-        $this->assertEquals('author_fk', $authorIdFk['name']);
+        $expectedAuthorIdFk['name'] = 'author_fk';
+        $this->assertEquals($expectedAuthorIdFk, $foreignKeys[0]);
 
-        unset($authorIdFk['name']);
-        $this->assertEquals($expectedAuthorIdFk, $authorIdFk);
+        $foreignKey = $result->constraint('author_fk');
+        $this->assertInstanceOf(ForeignKey::class, $foreignKey);
+        $this->assertSame('author_fk', $foreignKey->getName());
+        $this->assertSame($foreignKeys[0]['columns'], $foreignKey->getColumns());
+        $this->assertSame($foreignKeys[0]['references'][0], $foreignKey->getReferencedTable());
+        $this->assertSame((array)$foreignKeys[0]['references'][1], $foreignKey->getReferencedColumns());
+        $this->assertSame($foreignKeys[0]['update'], $foreignKey->getUpdate());
+        $this->assertSame($foreignKeys[0]['delete'], $foreignKey->getDelete());
 
         $this->assertEquals(
             $expected['title_idx'],
             $result->getConstraint('title_idx'),
         );
-
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
-        // Compare with describeIndexes result
-        $uniqueIdIdx = $indexes[0];
-        $this->assertEquals($expected['unique_id_idx'] + ['name' => 'unique_id_idx'], $uniqueIdIdx);
+        // Compare with describeIndexes() & constraint() result
+        $this->assertEquals($expected['unique_id_idx'] + ['name' => 'unique_id_idx'], $indexes[0]);
+        $unique = $result->constraint('unique_id_idx');
+        $this->assertInstanceOf(Constraint::class, $unique);
+        $this->assertSame(Constraint::UNIQUE, $unique->getType());
+        $this->assertSame('unique_id_idx', $unique->getName());
+        $this->assertSame($expected['unique_id_idx']['columns'], $unique->getColumns());
 
         $this->assertCount(1, $result->indexes());
         $expected = [
@@ -617,9 +643,8 @@ SQL;
         $this->assertEquals($expected, $result->getIndex('created_idx'));
 
         // Compare with describeIndexes result
-        $createdIdx = $indexes[1];
         $expected['name'] = 'created_idx';
-        $this->assertEquals($expected, $createdIdx);
+        $this->assertEquals($expected, $indexes[1]);
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('schema_no_rowid_pk');
@@ -687,15 +712,24 @@ SQL;
             ],
         ];
         $this->assertCount(7, $result->constraints());
+        foreach ($expected as $name => $attrs) {
+            $constraint = $result->constraint($name);
+            $this->assertSame($name, $constraint->getName());
+            $this->assertSame($attrs['columns'], $constraint->getColumns());
+        }
 
         // Because all our 'constraints' are unique indexes
         // they are treated as indexes by the basic reflection API
         $indexes = $dialect->describeIndexes('schema_unique_constraint_variations');
         $this->assertCount(7, $indexes);
         foreach ($indexes as $index) {
-            $expectedIndex = $expected[$index['name']];
-            $this->assertNotEmpty($expectedIndex, 'Could not find expected for ' . $index['name']);
-            unset($index['name']);
+            $name = $index['name'];
+            $expectedIndex = $expected[$name];
+
+            // Add the name to the expected data.
+            $expectedIndex['name'] = $name;
+
+            $this->assertNotEmpty($expectedIndex, 'Could not find expected for ' . $name);
             $this->assertEquals($expectedIndex, $index);
         }
 
@@ -711,6 +745,7 @@ SQL;
 
         $connection->execute('create table if not exists t(a text primary key)');
         $indexes = $dialect->describeIndexes('t');
+        $table = $dialect->describe('t');
         $connection->execute('drop table t');
 
         $this->assertCount(1, $indexes);
@@ -718,6 +753,11 @@ SQL;
         $this->assertEquals('sqlite_autoindex_t_1', $primary['name']);
         $this->assertEquals(TableSchema::CONSTRAINT_PRIMARY, $primary['type']);
         $this->assertEquals(['a'], $primary['columns']);
+
+        $primary = $table->constraint('sqlite_autoindex_t_1');
+        $this->assertEquals('sqlite_autoindex_t_1', $primary->getName());
+        $this->assertEquals(TableSchema::CONSTRAINT_PRIMARY, $primary->getType());
+        $this->assertEquals(['a'], $primary->getColumns());
     }
 
     /**
@@ -736,10 +776,7 @@ SQL;
         $expected = [
             'primary' => [
                 'type' => 'primary',
-                'columns' => [
-                    'id',
-                ],
-                'length' => [],
+                'columns' => ['id'],
             ],
             'multi_col_author_fk' => [
                 'type' => 'foreign',
@@ -747,30 +784,30 @@ SQL;
                     'author_id',
                     'author_name',
                 ],
+                'delete' => 'noAction',
+                'update' => 'cascade',
+                'deferrable' => null,
                 'references' => [
                     'schema_authors',
                     ['id', 'name'],
                 ],
-                'update' => 'cascade',
-                'delete' => 'noAction',
-                'length' => [],
             ],
             'author_fk' => [
                 'type' => 'foreign',
                 'columns' => [
                     'author_id',
                 ],
+                'delete' => 'restrict',
+                'update' => 'cascade',
+                'deferrable' => null,
                 'references' => [
                     'schema_authors',
                     'id',
                 ],
-                'update' => 'cascade',
-                'delete' => 'restrict',
-                'length' => [],
             ],
         ];
         foreach ($expected as $name => $constraint) {
-            $this->assertSame($constraint, $result->getConstraint($name));
+            $this->assertSame($constraint, $result->getConstraint($name), "does not match {$name} constraint");
         }
         $this->assertCount(3, $result->constraints());
 
@@ -778,8 +815,17 @@ SQL;
         $this->assertCount(2, $foreignKeys);
         foreach ($foreignKeys as $foreignKey) {
             $expectedForeignKey = $expected[$foreignKey['name']];
-            unset($foreignKey['name']);
+            $expectedForeignKey['name'] = $foreignKey['name'];
             $this->assertEquals($expectedForeignKey, $foreignKey);
+
+            $key = $result->constraint($foreignKey['name']);
+            assert($key instanceof ForeignKey);
+            $this->assertSame($expectedForeignKey['name'], $key->getName());
+            $this->assertSame($expectedForeignKey['columns'], $key->getColumns());
+            $this->assertSame($expectedForeignKey['references'][0], $key->getReferencedTable());
+            $this->assertSame((array)$expectedForeignKey['references'][1], $key->getReferencedColumns());
+            $this->assertSame($expectedForeignKey['update'], $key->getUpdate());
+            $this->assertSame($expectedForeignKey['delete'], $key->getDelete());
         }
     }
 
@@ -832,8 +878,8 @@ SQL;
                 'type' => 'integer',
                 'null' => false,
                 'default' => null,
-                'length' => 11,
-                'unsigned' => false,
+                'length' => null,
+                'unsigned' => true,
                 'comment' => null,
             ],
             [
@@ -886,6 +932,19 @@ SQL;
             $schemaAttrs = array_intersect_key($schemaField, $field);
             $expectedAttrs = array_intersect_key($field, $schemaAttrs);
             $this->assertEquals($expectedAttrs, $schemaAttrs);
+
+            // Integration test for column() method.
+            $col = $schema->column($field['name']);
+            $this->assertEquals($field['type'], $col->getType());
+            $this->assertEquals($field['null'], $col->getNull());
+            $this->assertEquals($field['length'], $col->getLength());
+            $this->assertEquals($field['default'], $col->getDefault());
+            $this->assertEquals($field['comment'], $col->getComment());
+            if (isset($field['autoIncrement'])) {
+                $this->assertEquals($field['autoIncrement'], $col->getIdentity());
+            } else {
+                $this->assertFalse($col->getIdentity());
+            }
         }
     }
 
@@ -979,6 +1038,11 @@ SQL;
                 'post_id',
                 ['type' => 'integer', 'length' => 11, 'unsigned' => false],
                 '"post_id" INTEGER(11)',
+            ],
+            [
+                'post_id',
+                ['type' => 'integer', 'length' => 11, 'unsigned' => true],
+                '"post_id" UNSIGNED INTEGER(11)',
             ],
             [
                 'post_id',
@@ -1258,6 +1322,18 @@ SQL;
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
                 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT',
+            ],
+            [
+                'author_id_idx',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'noAction',
+                    'deferrable' => ForeignKey::DEFERRED,
+                ],
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+                'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
             ],
         ];
     }

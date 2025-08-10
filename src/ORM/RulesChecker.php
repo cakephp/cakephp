@@ -26,7 +26,7 @@ use Cake\Utility\Inflector;
 use function Cake\I18n\__d;
 
 /**
- * ORM flavoured rules checker.
+ * ORM flavored rules checker.
  *
  * Adds ORM related features to the RulesChecker class.
  *

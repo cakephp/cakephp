@@ -141,7 +141,7 @@ class OauthTest extends TestCase
      * Ensure that post data is sorted and encoded.
      *
      * Keys with array values have to be serialized using
-     * a more standard HTTP approach. PHP flavoured HTTP
+     * a more standard HTTP approach. PHP flavored HTTP
      * is not part of the Oauth spec.
      *
      * See Normalize Request Parameters (section 9.1.1)
@@ -196,7 +196,7 @@ class OauthTest extends TestCase
      * Ensure that post data is sorted and encoded.
      *
      * Keys with array values have to be serialized using
-     * a more standard HTTP approach. PHP flavoured HTTP
+     * a more standard HTTP approach. PHP flavored HTTP
      * is not part of the Oauth spec.
      *
      * See Normalize Request Parameters (section 9.1.1)
@@ -251,7 +251,7 @@ class OauthTest extends TestCase
      * Ensure that non-urlencoded post data is not included.
      *
      * Keys with array values have to be serialized using
-     * a more standard HTTP approach. PHP flavoured HTTP
+     * a more standard HTTP approach. PHP flavored HTTP
      * is not part of the Oauth spec.
      *
      * See Normalize Request Parameters (section 9.1.1)

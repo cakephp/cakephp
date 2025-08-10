@@ -569,6 +569,9 @@ class Validation
             $check = static::_getDateString($check);
             $dateFormat = 'ymd';
         }
+        if (!is_string($check)) {
+            return false;
+        }
         $parts = preg_split('/[\sT]+/', $check);
         if ($parts && count($parts) > 1) {
             $date = rtrim(array_shift($parts), ',');

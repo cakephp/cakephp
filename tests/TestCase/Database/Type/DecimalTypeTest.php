@@ -167,7 +167,7 @@ class DecimalTypeTest extends TestCase
         $result = $this->type->marshal('2.51');
         $this->assertSame('2.51', $result);
 
-        // allow custom decimal format (@see https://github.com/cakephp/cakephp/issues/12800)
+        // allow custom decimal format (https://github.com/cakephp/cakephp/issues/12800)
         $result = $this->type->marshal('1 230,73');
         $this->assertSame('1 230,73', $result);
 

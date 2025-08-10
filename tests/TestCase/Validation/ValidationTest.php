@@ -968,6 +968,18 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * testDateTimeObject
+     */
+    public function testDateTimeBoolean(): void
+    {
+        $dateTime = true;
+        $this->assertFalse(Validation::date($dateTime));
+        $this->assertFalse(Validation::time($dateTime));
+        $this->assertFalse(Validation::dateTime($dateTime));
+        $this->assertFalse(Validation::localizedTime($dateTime));
+    }
+
+    /**
      * testDateDdmmyyyy method
      */
     public function testDateDdmmyyyy(): void

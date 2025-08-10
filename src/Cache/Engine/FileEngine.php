@@ -55,7 +55,6 @@ class FileEngine extends CacheEngine
      * - `path` Path to where cache files should be saved. Defaults to system's temp dir.
      * - `prefix` Prepended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
-     *    cache::gc from ever being called automatically.
      * - `serialize` Should cache objects be serialized first.
      *
      * @var array<string, mixed>

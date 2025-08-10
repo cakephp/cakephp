@@ -34,9 +34,9 @@ class ErrorTrap
      * - `errorLevel` - int - The level of errors you are interested in capturing.
      * - `errorRenderer` - string - The class name of render errors with. Defaults
      *   to choosing between Html and Console based on the SAPI.
-     * - `log` - boolean - Whether or not you want errors logged.
+     * - `log` - boolean - Whether you want errors logged.
      * - `logger` - string - The class name of the error logger to use.
-     * - `trace` - boolean - Whether or not backtraces should be included in
+     * - `trace` - boolean - Whether backtraces should be included in
      *   logged errors.
      *
      * @var array<string, mixed>

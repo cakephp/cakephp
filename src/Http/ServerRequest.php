@@ -722,7 +722,7 @@ class ServerRequest implements ServerRequestInterface
      * Allows for one or more headers to be compared.
      *
      * ```
-     * addDetector('fancy', ['header' => ['X-Fancy' => 1]);
+     * addDetector('fancy', ['header' => ['X-Fancy' => 1]]);
      * ```
      *
      * The `param`, `env` and comparison types allow the following
@@ -839,7 +839,7 @@ class ServerRequest implements ServerRequestInterface
      * Get a single header from the request.
      *
      * Return the header value as an array. If the header
-     * is not present an empty array will be returned.
+     * is not present, an empty array will be returned.
      *
      * @param string $name The header you want to get (case-insensitive)
      * @return array<string, string> An associative array of headers and their values.
@@ -939,7 +939,7 @@ class ServerRequest implements ServerRequestInterface
      * - You can submit an input with the name `_method`
      *
      * Any of these 3 approaches can be used to set the HTTP method used
-     * by CakePHP internally, and will effect the result of this method.
+     * by CakePHP internally, and will affect the result of this method.
      *
      * @return string The name of the HTTP method used.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
@@ -1451,7 +1451,7 @@ class ServerRequest implements ServerRequestInterface
      * Returns an updated request object. This method returns
      * a *new* request object and does not mutate the request in-place.
      *
-     * Use `withParsedBody()` if you need to replace the all request data.
+     * Use `withParsedBody()` if you need to replace all the request data.
      *
      * @param string $name The dot separated path to insert $value at.
      * @param mixed $value The value to insert into the request data.

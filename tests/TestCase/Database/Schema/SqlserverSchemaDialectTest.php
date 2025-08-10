@@ -578,7 +578,7 @@ SQL;
         $connection->execute('DROP TABLE schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->getPrimaryKey());
-        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertFalse($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
         $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
     }
 
@@ -613,7 +613,6 @@ SQL;
             'primary' => [
                 'type' => 'primary',
                 'columns' => ['id'],
-                'length' => [],
             ],
             'content_idx' => [
                 'type' => 'unique',
@@ -624,9 +623,9 @@ SQL;
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['schema_authors', 'id'],
-                'length' => [],
                 'update' => 'cascade',
                 'delete' => 'cascade',
+                'deferrable' => null,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
@@ -636,7 +635,11 @@ SQL;
                 'length' => [],
             ],
         ];
-        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $primary = $result->getConstraint('primary');
+        $this->assertTrue(str_starts_with($primary['constraint'], 'PK__schema_a__'));
+        unset($primary['constraint']);
+        $this->assertEquals($expected['primary'], $primary);
+
         $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
         $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));

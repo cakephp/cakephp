@@ -107,7 +107,9 @@ class FormProtectionComponent extends Component
             $isValid = $formProtector->validate($data, $url, $sessionId);
 
             if (!$isValid) {
-                return $this->validationFailure($formProtector);
+                $event->setResult($this->validationFailure($formProtector));
+
+                return null;
             }
         }
 

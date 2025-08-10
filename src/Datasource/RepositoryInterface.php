@@ -43,7 +43,7 @@ interface RepositoryInterface
     /**
      * Alias a field with the repository's current alias.
      *
-     * If field is already aliased it will result in no-op.
+     * If field is already aliased, it will result in no-op.
      *
      * @param string $field The field to alias.
      * @return string The field prefixed with the repository alias.
@@ -93,7 +93,7 @@ interface RepositoryInterface
      * $id = 10;
      * $article = $articles->get($id);
      *
-     * $article = $articles->get($id, ['contain' => ['Comments]]);
+     * $article = $articles->get($id, ['contain' => ['Comments']]);
      * ```
      *
      * @param mixed $primaryKey primary key value to find
@@ -126,7 +126,7 @@ interface RepositoryInterface
      * Update all matching records.
      *
      * Sets the $fields to the provided values based on $conditions.
-     * This method will *not* trigger beforeSave/afterSave events. If you need those
+     * This method will *not* trigger beforeSave/afterSave events. If you need those,
      * first load a collection of records and update them.
      *
      * @param \Closure|array|string $fields A hash of field => new value.
@@ -140,7 +140,7 @@ interface RepositoryInterface
      * Deletes all records matching the provided conditions.
      *
      * This method will *not* trigger beforeDelete/afterDelete events. If you
-     * need those first load a collection of records and delete them.
+     * need those, first load a collection of records and delete them.
      *
      * This method will *not* execute on associations' `cascade` attribute. You should
      * use database foreign keys + ON CASCADE rules if you need cascading deletes combined

@@ -240,7 +240,7 @@ class HtmlHelper extends Helper
      *
      * - `escape` Set to false to disable escaping of title and attributes.
      * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
-     *   over value of `escape`)
+     *   over value of `escape`.
      * - `confirm` JavaScript confirmation message.
      *
      * @param array|string $title The content to be wrapped by `<a>` tags.
@@ -306,7 +306,7 @@ class HtmlHelper extends Helper
      *
      * - `escape` Set to false to disable escaping of title and attributes.
      * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
-     *   over value of `escape`)
+     *   over value of `escape`.
      * - `confirm` JavaScript confirmation message.
      *
      * @param string $title The content to be wrapped by `<a>` tags.

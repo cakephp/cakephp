@@ -3486,7 +3486,7 @@ class SelectQueryTest extends TestCase
     public function testIsNullInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expression `name` is missing operator (IS, IS NOT) with `null` value.');
+        $this->expectExceptionMessage('Expression `name` has invalid `null` value. If `null` is a valid value, operator (IS, IS NOT) is missing.');
 
         (new SelectQuery($this->connection))
             ->select(['name'])

@@ -88,7 +88,7 @@ class ErrorLogger implements ErrorLoggerInterface
      * Generate the message for the error
      *
      * @param \Cake\Error\PhpError $error The exception to log a message for.
-     * @param bool $includeTrace Whether or not to include a stack trace.
+     * @param bool $includeTrace Whether to include a stack trace.
      * @return string Error message
      */
     protected function getErrorMessage(PhpError $error, bool $includeTrace = false): string
@@ -130,7 +130,7 @@ class ErrorLogger implements ErrorLoggerInterface
      *
      * @param \Throwable $exception The exception to log a message for.
      * @param bool $isPrevious False for original exception, true for previous
-     * @param bool $includeTrace Whether or not to include a stack trace.
+     * @param bool $includeTrace Whether to include a stack trace.
      * @return string Error message
      */
     protected function getMessage(Throwable $exception, bool $isPrevious = false, bool $includeTrace = false): string

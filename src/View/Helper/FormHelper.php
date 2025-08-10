@@ -823,9 +823,8 @@ class FormHelper extends Helper
      *
      * ### Options
      *
-     * - `for` - Set the for attribute, if its not defined the for attribute
-     *   will be generated from the $fieldName parameter using
-     *   FormHelper::_domId().
+     * - `for` - Set the for attribute. If it is not defined, the for attribute
+     *   will be generated from the $fieldName parameter using FormHelper::_domId().
      * - `escape` - Set to `false` to turn off escaping of label text.
      *   Defaults to `true`.
      *
@@ -2131,17 +2130,17 @@ class FormHelper extends Helper
      *
      * ```
      * $options = [1 => 'one', 2 => 'two'];
-     * $this->Form->select('Model.field', $options));
+     * $this->Form->select('Model.field', $options);
      * ```
      *
      * While a nested options array will create optgroups with options inside them.
      * ```
      * $options = [
-     *  1 => 'bill',
+     *     1 => 'bill',
      *     'fred' => [
      *         2 => 'fred',
-     *         3 => 'fred jr.'
-     *     ]
+     *         3 => 'fred jr.',
+     *     ],
      * ];
      * $this->Form->select('Model.field', $options);
      * ```

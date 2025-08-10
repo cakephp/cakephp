@@ -142,6 +142,18 @@ class TranslateBehaviorEavTest extends TestCase
         $this->assertSame('select', $i18n->getStrategy());
     }
 
+    public function testComplexLocales(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
+
+        I18n::setLocale('fr@currency=EUR');
+        $this->assertSame('fr', $table->getBehavior('Translate')->getLocale());
+
+        $table->getBehavior('Translate')->setLocale('en_US');
+        $this->assertSame('en_US', $table->getBehavior('Translate')->getLocale());
+    }
+
     /**
      * Tests that fields from a translated model are overridden
      */
