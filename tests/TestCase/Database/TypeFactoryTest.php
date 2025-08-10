@@ -134,7 +134,7 @@ class TypeFactoryTest extends TestCase
      */
     public function testGetMapDeprecation(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             TypeFactory::map('test', FooType::class);
             $result = TypeFactory::getMap('test');
             $this->assertSame(FooType::class, $result);
