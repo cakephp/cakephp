@@ -121,18 +121,6 @@ class RuleInvoker
             return true;
         }
 
-        if (empty($this->options['errorField'])) {
-            // If no errorField is specified but the rule didn't return true,
-            // we should still set a general error on the entity
-            if ($pass !== false && is_string($pass)) {
-                $entity->setError('_rule', [$pass]);
-            } elseif ($pass !== false) {
-                $entity->setError('_rule', ['Application rule failed']);
-            }
-
-            return false;
-        }
-
         $message = $this->options['message'] ?? 'invalid';
         if (is_string($pass)) {
             $message = $pass;
@@ -145,7 +133,8 @@ class RuleInvoker
         } else {
             $message = [$message];
         }
-        $errorField = $this->options['errorField'];
+
+        $errorField = $this->options['errorField'] ?? ($this->name ?? '_rule');
         $entity->setError($errorField, $message);
 
         if ($entity instanceof InvalidPropertyInterface && isset($entity->{$errorField})) {
