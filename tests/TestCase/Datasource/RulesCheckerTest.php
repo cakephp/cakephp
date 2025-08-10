@@ -186,7 +186,8 @@ class RulesCheckerTest extends TestCase
         });
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEmpty($entity->getErrors());
+        // When no errorField is specified, errors are set on '_rule' field
+        $this->assertEquals(['_rule' => ['invalid']], $entity->getErrors());
     }
 
     public function testRemove(): void
