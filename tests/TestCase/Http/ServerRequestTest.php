@@ -1128,6 +1128,38 @@ class ServerRequestTest extends TestCase
     }
 
     /**
+     * Test getFilteredQueryParams()
+     */
+    public function testGetFilteredQueryParams(): void
+    {
+        $get = [
+            'test' => ['foo', 'bar'],
+            'key' => 'value',
+        ];
+
+        $only = [
+            'test' => ['foo', 'bar'],
+        ];
+
+        $exclude = [
+            'key' => 'value',
+        ];
+
+        $request = new ServerRequest([
+            'query' => $get,
+        ]);
+
+        $this->assertSame($only, $request->getFilteredQueryParams(['test']));
+        $this->assertSame($only, $request->getFilteredQueryParams(only: ['test']));
+        $this->assertSame($exclude, $request->getFilteredQueryParams(exclude: ['test']));
+
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Specify either `$only` or `$exclude`, not both.');
+
+        $request->getFilteredQueryParams(only: ['test'], exclude: ['test']);
+    }
+
+    /**
      * Test using param()
      */
     public function testReadingParams(): void

@@ -998,6 +998,32 @@ class ServerRequest implements ServerRequestInterface
     }
 
     /**
+     * Returns query parameters filtered to include only the specified keys or exclude specified keys.
+     *
+     * If the `$only` parameter is provided, only those keys will be returned.
+     * If the `$exclude` parameter is provided, all keys except those will be returned.
+     * Both parameters cannot be provided at the same time.
+     *
+     * @param array $only    List of query parameter keys to include. Defaults to an empty array.
+     * @param array $exclude List of query parameter keys to exclude. Defaults to an empty array.
+     * @return array Filtered query parameters.
+     * @throws \InvalidArgumentException When both `$only` and `$exclude` are provided.
+     */
+    public function getFilteredQueryParams(array $only = [], array $exclude = []): array
+    {
+        if (!empty($only) && !empty($exclude)) {
+            throw new InvalidArgumentException('Specify either `$only` or `$exclude`, not both.');
+        }
+        $params = $this->getQueryParams();
+
+        if (!empty($only)) {
+            return array_intersect_key($params, array_flip($only));
+        }
+
+        return array_diff_key($params, array_flip($exclude));
+    }
+
+    /**
      * Update the query string data and get a new instance.
      *
      * @param array $query The query string data to use
