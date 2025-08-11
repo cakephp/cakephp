@@ -43,7 +43,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable $callback Callback to run for each element in collection.
+     * @param callable(TValue, TKey): void $callback Callback to run for each element in collection.
      * @return $this
      */
     public function each(callable $callback);
@@ -68,7 +68,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable|null $callback the method that will receive each of the elements and
+     * @param callable(TValue, TKey): bool |null $callback the method that will receive each of the elements and
      *   returns true whether they should be in the resulting collection.
      *   If left null, a callback that filters out falsey values will be used.
      * @return self
@@ -94,7 +94,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable|null $callback the method that will receive each of the elements and
+     * @param callable(TValue, TKey): bool |null $callback the method that will receive each of the elements and
      *   returns true whether they should be out of the resulting collection.
      *   If left null, a callback that filters out truthy values will be used.
      * @return self
@@ -108,7 +108,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * The callback is passed the value as the first argument and the key as the
      * second argument.
      *
-     * @param callable|null $callback the method that will receive each of the elements and
+     * @param callable(TValue, TKey): mixed |null $callback the method that will receive each of the elements and
      * returns the value used to determine uniqueness.
      * @return self
      */
@@ -643,7 +643,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * a property path as accepted by `Collection::extract`, and the value the
      * condition against with each element will be matched
      * @see \Cake\Collection\CollectionInterface::match()
-     * @return mixed
+     * @return TValue|null
      */
     public function firstMatch(array $conditions): mixed;
 
@@ -657,7 +657,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     /**
      * Returns the last result in this collection
      *
-     * @return mixed The last value in the collection will be returned.
+     * @return TValue|null The last value in the collection will be returned.
      */
     public function last(): mixed;
 
@@ -804,7 +804,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * collection as the array keys. Keep in mind that it is valid for iterators
      * to return the same key for different elements, setting this value to false
      * can help getting all items if keys are not important in the result.
-     * @return array
+     * @return ($keepKeys is true ? array<TKey, TValue> : list<TValue>)
      */
     public function toArray(bool $keepKeys = true): array;
 
@@ -812,7 +812,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * Returns an numerically-indexed array representation of the results.
      * This is equivalent to calling `toArray(false)`
      *
-     * @return array
+     * @return list<TValue>
      */
     public function toList(): array;
 
