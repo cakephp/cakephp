@@ -1011,12 +1011,12 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getFilteredQueryParams(array $only = [], array $exclude = []): array
     {
-        if (!empty($only) && !empty($exclude)) {
+        if ($only !== [] && $exclude !== []) {
             throw new InvalidArgumentException('Specify either `$only` or `$exclude`, not both.');
         }
         $params = $this->getQueryParams();
 
-        if (!empty($only)) {
+        if ($only !== []) {
             return array_intersect_key($params, array_flip($only));
         }
 
