@@ -1896,6 +1896,36 @@ class ServerRequestTest extends TestCase
     }
 
     /**
+     * Test getEnv() handles array values correctly
+     */
+    public function testGetEnvWithArrayValues(): void
+    {
+        // Test single value added via withAddedHeader
+        $request = new ServerRequest();
+        $request = $request->withAddedHeader('X-Forwarded-For', '1.1.1.1');
+        $this->assertSame('1.1.1.1', $request->getEnv('HTTP_X_FORWARDED_FOR'));
+
+        // Test multiple values
+        $request = $request->withAddedHeader('X-Forwarded-For', '2.2.2.2');
+        $this->assertSame('1.1.1.1, 2.2.2.2', $request->getEnv('HTTP_X_FORWARDED_FOR'));
+
+        // Test array values in environment
+        $request = new ServerRequest(['environment' => [
+            'HTTP_X_CUSTOM' => ['value1', 'value2', 'value3'],
+        ]]);
+        $this->assertSame('value1, value2, value3', $request->getEnv('HTTP_X_CUSTOM'));
+
+        // Test that clientIp() works correctly with array header values
+        $request = new ServerRequest(['environment' => [
+            'REMOTE_ADDR' => '127.0.0.1',
+        ]]);
+        $request->trustProxy = true;
+        $request = $request->withAddedHeader('X-Forwarded-For', '192.168.1.1');
+        $request = $request->withAddedHeader('X-Forwarded-For', '10.0.1.1');
+        $this->assertSame('10.0.1.1', $request->clientIp());
+    }
+
+    /**
      * Data provider for emulated property tests.
      *
      * @return array
