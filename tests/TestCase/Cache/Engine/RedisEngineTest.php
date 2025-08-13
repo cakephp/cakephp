@@ -51,7 +51,10 @@ class RedisEngineTest extends TestCase
             // phpcs:enable
 
             $this->skipTest = $socket === false;
-            fclose($socket);
+
+            if ($socket !== false) {
+                fclose($socket);
+            }
         }
 
         $this->skipIf($this->skipTest, 'Redis is not running.');

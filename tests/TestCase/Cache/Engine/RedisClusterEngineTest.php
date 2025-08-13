@@ -16,6 +16,8 @@ use ReflectionClass;
  */
 class RedisClusterEngineTest extends TestCase
 {
+    private ?bool $skipTest = null;
+
     /**
      * setUp method
      *
@@ -30,22 +32,29 @@ class RedisClusterEngineTest extends TestCase
             'Redis extension is not installed or configured properly.',
         );
 
-        $nodes = array_map(function (string $node) {
-            [$host, $port] = explode(':', $node);
+        if ($this->skipTest === null) {
+            $this->skipTest = false;
+            $nodes = array_map(function (strin $node) {
+                [$host, $port] = explode(':', $node);
 
-            return ['host' => $host, 'port' => (int)$port];
-        }, $this->redisClusterNodes());
+                return ['host' => $host, 'port' => (int)$port];
+            }, $this->redisClusterNodes());
 
-        foreach ($nodes as $node) {
-            $socket = fsockopen($node['host'], $node['port'], $errno, $errstr, 1);
+            foreach ($nodes as $node) {
+                $socket = fsockopen($node['host'], $node['port'], $errno, $errstr, 1);
 
-            if (!$socket) {
-                echo "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno}) \n";
+                if (!$socket) {
+                    echo "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno}) \n";
+                }
+
+                if ($socket === false) {
+                    $this->skipTest = true;
+                } else {
+                    fclose($socket);
+                }
             }
-
-            $this->skipIf(!$socket, "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno})");
-            fclose($socket);
         }
+        $this->skipIf($this->skipTest, "Connection to one more Redis cluster nodes failed");
 
         Cache::enable();
         $this->configCache();
