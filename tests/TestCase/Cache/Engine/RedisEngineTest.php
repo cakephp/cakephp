@@ -62,6 +62,7 @@ class RedisEngineTest extends TestCase
         Cache::drop('redis');
         Cache::drop('redis2');
         Cache::drop('redis_clear_blocking');
+        Cache::drop('redis_dsn');
         Cache::drop('redis_groups');
         Cache::drop('redis_helper');
     }
@@ -107,6 +108,7 @@ class RedisEngineTest extends TestCase
             'clusterName' => null,
             'nodes' => [],
             'clearUsesFlushDb' => false,
+            'failover' => null,
         ];
         $this->assertEquals($expecting, $config);
     }
@@ -140,10 +142,9 @@ class RedisEngineTest extends TestCase
             'clusterName' => null,
             'nodes' => [],
             'clearUsesFlushDb' => false,
+            'failover' => null,
         ];
         $this->assertEquals($expecting, $config);
-
-        Cache::drop('redis_dsn');
     }
 
     /**
@@ -182,10 +183,9 @@ class RedisEngineTest extends TestCase
             'clusterName' => null,
             'nodes' => [],
             'clearUsesFlushDb' => false,
+            'failover' => null,
         ];
         $this->assertEquals($expecting, $config);
-
-        Cache::drop('redis_dsn');
     }
 
     /**
