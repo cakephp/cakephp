@@ -16,26 +16,6 @@ parameters:
 			path: src/Cache/Engine/RedisEngine.php
 
 		-
-			message: "#^Method RedisCluster\\:\\:scan\\(\\) invoked with 4 parameters, 1\\-3 required\\.$#"
-			count: 1
-			path: src/Cache/Engine/RedisEngine.php
-
-		-
-			message: "#^Parameter \\#3 \\$pattern of method RedisCluster\\:\\:scan\\(\\) expects int, string given\\.$#"
-			count: 1
-			path: src/Cache/Engine/RedisEngine.php
-
-		-
-			message: '#^Cannot cast int\|Redis\|false to int\.$#'
-			identifier: cast.int
-			count: 1
-			path: src/Cache/Engine/RedisEngine.php
-
-		-
-			message: "#^Parameter \\#2 \\$node of method RedisCluster\\:\\:scan\\(\\) expects string, array\\|string\\|null given\\.$#"
-			path: src/Cache/Engine/RedisEngine.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Memcached and ''setSaslAuthData'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
