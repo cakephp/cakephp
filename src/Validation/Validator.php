@@ -230,10 +230,16 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Run all main and nested validation rules and returns an array of failed fields and their error messages.
      *
+     * This method processes all validation rules and passes parent context information to nested validators.
+     * The parent context allows nested validators to access parent data during validation, enabling
+     * cross-field validation between parent and child data structures.
+     *
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
-     * @param array|null $parentContext parent validator context used in nested rules
-     * @param int|null $nestedManyIndex index of the current validation data element used in nested many rules
+     * @param array|null $parentContext parent validator context used in nested rules. Contains the parent's
+     *   data, newRecord flag, and other context information that nested validators can access.
+     * @param int|null $nestedManyIndex index of the current validation data element used in nested many rules.
+     *   This allows nested validators to know which item they are validating in a collection.
      * @return array<array> Array of failed fields
      */
     protected function runValidate(array $data, bool $newRecord = true, ?array $parentContext = null, ?int $nestedManyIndex = null): array
@@ -273,7 +279,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 continue;
             }
 
-            $result = $this->_processRules($name, $field, $data[$field], $context);
+            $result = $this->_processRules($name, $field, $data[$name], $context);
             if ($result) {
                 $errors[$name] = $result;
             }
@@ -523,6 +529,28 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * errors are checked. This ensures that any validation rule providers connected
      * in the parent will have the same values in the nested validator when rules are evaluated.
      *
+     * ### Parent Context Access
+     *
+     * Nested validators have access to parent data through the `$context['parentContext']` parameter
+     * in validation rules. This allows nested validators to perform validations that depend on
+     * parent field values.
+     *
+     * Example:
+     * ```php
+     * $inner = new Validator();
+     * $inner->add('price', 'price-limit', [
+     *     'rule' => function ($value, $context) {
+     *         // Access parent data via $context['parentContext']
+     *         $maxPrice = $context['parentContext']['data']['max_price'];
+     *         return $value <= $maxPrice;
+     *     },
+     *     'message' => 'Price exceeds maximum allowed',
+     * ]);
+     *
+     * $validator = new Validator();
+     * $validator->addNested('product', $inner);
+     * ```
+     *
      * @param string $field The root field for the nested validator.
      * @param \Cake\Validation\Validator $validator The nested validator.
      * @param string|null $message The error message when the rule fails.
@@ -570,6 +598,30 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * The providers of the parent validator will be synced into the nested validator, when
      * errors are checked. This ensures that any validation rule providers connected
      * in the parent will have the same values in the nested validator when rules are evaluated.
+     *
+     * ### Parent Context Access
+     *
+     * Nested validators have access to parent data through the `$context['parentContext']` parameter
+     * in validation rules. Additionally, when validating items in a nested many relationship,
+     * the current item index is available via `$context['nestedManyIndex']`.
+     *
+     * Example:
+     * ```php
+     * $inner = new Validator();
+     * $inner->add('quantity', 'quantity-limit', [
+     *     'rule' => function ($value, $context) {
+     *         // Access parent data via $context['parentContext']
+     *         $maxQty = $context['parentContext']['data']['max_quantity'];
+     *         // Current item index is available in $context['nestedManyIndex']
+     *         $index = $context['nestedManyIndex'];
+     *         return $value <= $maxQty;
+     *     },
+     *     'message' => 'Quantity exceeds maximum allowed',
+     * ]);
+     *
+     * $validator = new Validator();
+     * $validator->addNestedMany('items', $inner);
+     * ```
      *
      * @param string $field The root field for the nested validator.
      * @param \Cake\Validation\Validator $validator The nested validator.

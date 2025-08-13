@@ -3100,6 +3100,212 @@ class ValidatorTest extends TestCase
             $noI18nValidator->field($fieldName)->rule($rule)->get('message'),
         );
     }
+
+    /**
+     * Test that nested validators receive parent context
+     */
+    public function testAddNestedWithParentContext(): void
+    {
+        $parentData = [
+            'max_price' => 100,
+            'product' => [
+                'name' => 'Widget',
+                'price' => 150,
+            ],
+        ];
+
+        $inner = new Validator();
+        $inner->add('price', 'price-limit', [
+            'rule' => function ($value, $context) {
+                // Verify parent context is available
+                $this->assertArrayHasKey('parentContext', $context);
+                $this->assertArrayHasKey('data', $context['parentContext']);
+                $this->assertArrayHasKey('max_price', $context['parentContext']['data']);
+                
+                // Use parent data for validation
+                $maxPrice = $context['parentContext']['data']['max_price'];
+                return $value <= $maxPrice;
+            },
+            'message' => 'Price exceeds maximum allowed',
+        ]);
+
+        $validator = new Validator();
+        $validator->addNested('product', $inner);
+
+        $errors = $validator->validate($parentData);
+        $this->assertArrayHasKey('product', $errors);
+        $this->assertArrayHasKey('price', $errors['product']);
+        $this->assertArrayHasKey('price-limit', $errors['product']['price']);
+    }
+
+    /**
+     * Test that nested validators can access parent context with valid data
+     */
+    public function testAddNestedWithParentContextValid(): void
+    {
+        $parentData = [
+            'max_price' => 100,
+            'product' => [
+                'name' => 'Widget',
+                'price' => 50,
+            ],
+        ];
+
+        $inner = new Validator();
+        $inner->add('price', 'price-limit', [
+            'rule' => function ($value, $context) {
+                $maxPrice = $context['parentContext']['data']['max_price'];
+                return $value <= $maxPrice;
+            },
+        ]);
+
+        $validator = new Validator();
+        $validator->addNested('product', $inner);
+
+        $errors = $validator->validate($parentData);
+        $this->assertEmpty($errors);
+    }
+
+    /**
+     * Test that nestedMany validators receive parent context and index
+     */
+    public function testAddNestedManyWithParentContext(): void
+    {
+        $parentData = [
+            'max_items' => 2,
+            'items' => [
+                ['name' => 'Item 1', 'quantity' => 1],
+                ['name' => 'Item 2', 'quantity' => 3],
+                ['name' => 'Item 3', 'quantity' => 5],
+            ],
+        ];
+
+        $inner = new Validator();
+        $inner->add('quantity', 'quantity-limit', [
+            'rule' => function ($value, $context) {
+                // Verify parent context and nested index are available
+                $this->assertArrayHasKey('parentContext', $context);
+                $this->assertArrayHasKey('nestedManyIndex', $context);
+                $this->assertIsInt($context['nestedManyIndex']);
+                
+                // Use parent data for validation
+                $maxItems = $context['parentContext']['data']['max_items'];
+                return $value <= $maxItems;
+            },
+            'message' => 'Quantity exceeds maximum allowed',
+        ]);
+
+        $validator = new Validator();
+        $validator->addNestedMany('items', $inner);
+
+        $errors = $validator->validate($parentData);
+        $this->assertArrayHasKey('items', $errors);
+        $this->assertArrayHasKey(1, $errors['items']);
+        $this->assertArrayHasKey('quantity', $errors['items'][1]);
+        $this->assertArrayNotHasKey(0, $errors['items']);
+        $this->assertArrayHasKey(2, $errors['items']);
+    }
+
+    /**
+     * Test nested validation with multiple levels of nesting
+     */
+    public function testNestedValidationMultipleLevels(): void
+    {
+        $data = [
+            'company_max_salary' => 100000,
+            'department' => [
+                'name' => 'Engineering',
+                'max_salary' => 80000,
+                'employee' => [
+                    'name' => 'John',
+                    'salary' => 90000,
+                ],
+            ],
+        ];
+
+        // Employee validator - checks against department max
+        $employeeValidator = new Validator();
+        $employeeValidator->add('salary', 'department-limit', [
+            'rule' => function ($value, $context) {
+                // Access immediate parent (department) context
+                $this->assertArrayHasKey('parentContext', $context);
+                $deptMax = $context['parentContext']['data']['max_salary'];
+                return $value <= $deptMax;
+            },
+            'message' => 'Salary exceeds department maximum',
+        ]);
+
+        // Department validator - includes nested employee
+        $deptValidator = new Validator();
+        $deptValidator->addNested('employee', $employeeValidator);
+        $deptValidator->add('max_salary', 'company-limit', [
+            'rule' => function ($value, $context) {
+                // Access parent (company) context
+                $this->assertArrayHasKey('parentContext', $context);
+                $companyMax = $context['parentContext']['data']['company_max_salary'];
+                return $value <= $companyMax;
+            },
+            'message' => 'Department max exceeds company maximum',
+        ]);
+
+        // Main validator
+        $validator = new Validator();
+        $validator->addNested('department', $deptValidator);
+
+        $errors = $validator->validate($data);
+        $this->assertArrayHasKey('department', $errors);
+        $this->assertArrayHasKey('employee', $errors['department']);
+        $this->assertArrayHasKey('salary', $errors['department']['employee']);
+    }
+
+    /**
+     * Test that parent context is null at root level
+     */
+    public function testRootLevelParentContextIsNull(): void
+    {
+        $validator = new Validator();
+        $validator->add('field', 'check-context', [
+            'rule' => function ($value, $context) {
+                $this->assertArrayHasKey('parentContext', $context);
+                $this->assertNull($context['parentContext']);
+                $this->assertArrayHasKey('nestedManyIndex', $context);
+                $this->assertNull($context['nestedManyIndex']);
+                return true;
+            },
+        ]);
+
+        $errors = $validator->validate(['field' => 'value']);
+        $this->assertEmpty($errors);
+    }
+
+    /**
+     * Test nestedMany with index tracking
+     */
+    public function testNestedManyIndexTracking(): void
+    {
+        $data = [
+            'items' => [
+                ['position' => 0],
+                ['position' => 1],
+                ['position' => 2],
+            ],
+        ];
+
+        $inner = new Validator();
+        $inner->add('position', 'check-index', [
+            'rule' => function ($value, $context) {
+                // Verify index matches expected position
+                $this->assertSame($value, $context['nestedManyIndex']);
+                return true;
+            },
+        ]);
+
+        $validator = new Validator();
+        $validator->addNestedMany('items', $inner);
+
+        $errors = $validator->validate($data);
+        $this->assertEmpty($errors);
+    }
 }
 
 // phpcs:disable
