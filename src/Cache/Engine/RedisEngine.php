@@ -66,6 +66,7 @@ class RedisEngine extends CacheEngine
      *       '<ip>:<port>',
      *       '<ip>:<port>',
      *   ]
+     * - `failover` Failover mode (distribute,distribute_slaves,error,none). Cluster mode only.
      * - `clearUsesFlushDb` Enable clear() and clearBlocking() to use FLUSHDB. This will be
      *   faster than standard clear()/clearBlocking() but will ignore prefixes and will
      *   cause dataloss if other applications are sharing a redis database.
@@ -89,6 +90,7 @@ class RedisEngine extends CacheEngine
         'scanCount' => 10,
         'readTimeout' => 0,
         'nodes' => [],
+        'failover' => null,
         'clearUsesFlushDb' => false,
     ];
 
@@ -178,6 +180,18 @@ class RedisEngine extends CacheEngine
                 Log::error('RedisEngine could not connect to the redis cluster. Got error: ' . $e->getMessage());
             }
             // @codeCoverageIgnoreEnd
+        }
+
+        $failover = match ($this->_config['failover']) {
+            'distribute' => RedisCluster::FAILOVER_DISTRIBUTE,
+            'distribute_slaves' => RedisCluster::FAILOVER_DISTRIBUTE_SLAVES,
+            'error' => RedisCluster::FAILOVER_ERROR,
+            'none' => RedisCluster::FAILOVER_NONE,
+            default => null,
+        };
+
+        if ($failover !== null) {
+            $this->_Redis->setOption(RedisCluster::OPT_SLAVE_FAILOVER, $failover);
         }
 
         return $connected;
