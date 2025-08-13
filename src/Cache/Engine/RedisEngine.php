@@ -122,7 +122,7 @@ class RedisEngine extends CacheEngine
      */
     protected function _connect(): bool
     {
-        if (!empty($this->_config['nodes'])) {
+        if (!empty($this->_config['nodes']) || !empty($this->_config['clusterName'])) {
             return $this->connectRedisCluster();
         }
 
