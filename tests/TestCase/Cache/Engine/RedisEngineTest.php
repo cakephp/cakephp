@@ -33,6 +33,8 @@ class RedisEngineTest extends TestCase
      */
     protected $port = '6379';
 
+    private ?bool $skipTest = null;
+
     /**
      * setUp method
      */
@@ -43,11 +45,16 @@ class RedisEngineTest extends TestCase
 
         $this->port = env('REDIS_PORT', $this->port);
 
-        // phpcs:disable
-        $socket = @fsockopen('127.0.0.1', (int)$this->port, $errno, $errstr, 1);
-        // phpcs:enable
-        $this->skipIf(!$socket, 'Redis is not running.');
-        fclose($socket);
+        if ($this->skipTest === null) {
+            // phpcs:disable
+            $socket = @fsockopen('127.0.0.1', (int)$this->port, $errno, $errstr, 1);
+            // phpcs:enable
+
+            $this->skipTest = $socket === false;
+            fclose($socket);
+        }
+
+        $this->skipIf($this->skipTest, 'Redis is not running.');
 
         Cache::enable();
         $this->_configCache();

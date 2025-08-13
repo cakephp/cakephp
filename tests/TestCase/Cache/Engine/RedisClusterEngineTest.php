@@ -126,6 +126,7 @@ class RedisClusterEngineTest extends TestCase
             'server' => '127.0.0.1',
             'unix_socket' => false,
             'clearUsesFlushDb' => false,
+            'failover' => null,
         ];
         $this->assertEquals($expecting, $config);
     }
