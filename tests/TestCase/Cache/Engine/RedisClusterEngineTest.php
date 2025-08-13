@@ -54,7 +54,7 @@ class RedisClusterEngineTest extends TestCase
                 }
             }
         }
-        $this->skipIf($this->skipTest, "Connection to one more Redis cluster nodes failed");
+        $this->skipIf($this->skipTest, 'Connection to one more Redis cluster nodes failed');
 
         Cache::enable();
         $this->configCache();
