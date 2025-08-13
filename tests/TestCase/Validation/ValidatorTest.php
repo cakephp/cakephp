@@ -1558,6 +1558,8 @@ class ValidatorTest extends TestCase
                 'title' => 'bar',
             ],
             'field' => 'title',
+            'parentContext' => null,
+            'nestedManyIndex' => null,
         ];
         $this->assertEquals($expected, $context);
     }
@@ -1610,6 +1612,8 @@ class ValidatorTest extends TestCase
                 'title' => 'bar',
             ],
             'field' => 'title',
+            'parentContext' => null,
+            'nestedManyIndex' => null,
         ];
         $this->assertEquals($expected, $context);
     }

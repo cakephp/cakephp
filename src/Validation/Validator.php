@@ -242,8 +242,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   This allows nested validators to know which item they are validating in a collection.
      * @return array<array> Array of failed fields
      */
-    protected function runValidate(array $data, bool $newRecord = true, ?array $parentContext = null, ?int $nestedManyIndex = null): array
-    {
+    protected function runValidate(
+        array $data,
+        bool $newRecord = true,
+        ?array $parentContext = null,
+        ?int $nestedManyIndex = null,
+    ): array {
         $errors = [];
 
         foreach ($this->_fields as $name => $field) {
@@ -251,7 +255,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $keyPresent = array_key_exists($name, $data);
 
             $providers = $this->_providers;
-            $context = compact('data', 'newRecord', 'field', 'providers', 'parentContext', 'nestedManyIndex');
+            $context = [
+                'data' => $data,
+                'newRecord' => $newRecord,
+                'field' => $name,
+                'providers' => $providers,
+                'parentContext' => $parentContext,
+                'nestedManyIndex' => $nestedManyIndex,
+            ];
 
             if (!$keyPresent && !$this->_checkPresence($field, $context)) {
                 $errors[$name]['_required'] = $this->getRequiredMessage($name);
