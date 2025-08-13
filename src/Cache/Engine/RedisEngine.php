@@ -580,7 +580,7 @@ class RedisEngine extends CacheEngine
                 $iterator = null;
                 while (true) {
                     // @phpstan-ignore arguments.count, argument.type
-                    $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
+                    $keys = $this->_Redis->scan($iterator, $node, $pattern, (int)$this->_config['scanCount']);
                     if ($keys === false) {
                         break;
                     }
