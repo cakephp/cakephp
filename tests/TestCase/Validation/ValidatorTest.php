@@ -3121,9 +3121,10 @@ class ValidatorTest extends TestCase
                 $this->assertArrayHasKey('parentContext', $context);
                 $this->assertArrayHasKey('data', $context['parentContext']);
                 $this->assertArrayHasKey('max_price', $context['parentContext']['data']);
-                
+
                 // Use parent data for validation
                 $maxPrice = $context['parentContext']['data']['max_price'];
+
                 return $value <= $maxPrice;
             },
             'message' => 'Price exceeds maximum allowed',
@@ -3155,6 +3156,7 @@ class ValidatorTest extends TestCase
         $inner->add('price', 'price-limit', [
             'rule' => function ($value, $context) {
                 $maxPrice = $context['parentContext']['data']['max_price'];
+
                 return $value <= $maxPrice;
             },
         ]);
@@ -3187,9 +3189,10 @@ class ValidatorTest extends TestCase
                 $this->assertArrayHasKey('parentContext', $context);
                 $this->assertArrayHasKey('nestedManyIndex', $context);
                 $this->assertIsInt($context['nestedManyIndex']);
-                
+
                 // Use parent data for validation
                 $maxItems = $context['parentContext']['data']['max_items'];
+
                 return $value <= $maxItems;
             },
             'message' => 'Quantity exceeds maximum allowed',
@@ -3230,6 +3233,7 @@ class ValidatorTest extends TestCase
                 // Access immediate parent (department) context
                 $this->assertArrayHasKey('parentContext', $context);
                 $deptMax = $context['parentContext']['data']['max_salary'];
+
                 return $value <= $deptMax;
             },
             'message' => 'Salary exceeds department maximum',
@@ -3243,6 +3247,7 @@ class ValidatorTest extends TestCase
                 // Access parent (company) context
                 $this->assertArrayHasKey('parentContext', $context);
                 $companyMax = $context['parentContext']['data']['company_max_salary'];
+
                 return $value <= $companyMax;
             },
             'message' => 'Department max exceeds company maximum',
@@ -3270,6 +3275,7 @@ class ValidatorTest extends TestCase
                 $this->assertNull($context['parentContext']);
                 $this->assertArrayHasKey('nestedManyIndex', $context);
                 $this->assertNull($context['nestedManyIndex']);
+
                 return true;
             },
         ]);
@@ -3296,6 +3302,7 @@ class ValidatorTest extends TestCase
             'rule' => function ($value, $context) {
                 // Verify index matches expected position
                 $this->assertSame($value, $context['nestedManyIndex']);
+
                 return true;
             },
         ]);
