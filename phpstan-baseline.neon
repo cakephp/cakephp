@@ -449,3 +449,9 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/View/Widget/DateTimeWidget.php
+
+		-
+			identifier: generics.interfaceConflict
+			paths:
+				- src/Datasource/ResultSetDecorator.php
+				- src/ORM/ResultSet.php
