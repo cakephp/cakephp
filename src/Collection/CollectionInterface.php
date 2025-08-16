@@ -812,7 +812,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * Returns an numerically-indexed array representation of the results.
      * This is equivalent to calling `toArray(false)`
      *
-     * @return list<TValue>|array
+     * @return list<TValue>
      */
     public function toList(): array;
 
