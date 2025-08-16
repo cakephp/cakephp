@@ -26,7 +26,7 @@ use Cake\Datasource\ResultSetInterface;
  * queries required for eager loading external associations.
  *
  * @template TKey
- * @template-covariant TValue
+ * @template TValue
  * @template-implemements \Cake\Datasource\ResultSetInterface<TKey, TValue>
  * @template-extends \Cake\Collection\Collection<TKey, TValue>
  */

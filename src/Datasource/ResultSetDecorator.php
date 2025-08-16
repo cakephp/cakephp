@@ -25,7 +25,7 @@ use Cake\Core\Configure;
  * be a database result
  *
  * @template TKey
- * @template-covariant TValue
+ * @template TValue
  * @template-extends \Cake\Collection\Collection<TKey, TValue>
  */
 class ResultSetDecorator extends Collection implements ResultSetInterface
