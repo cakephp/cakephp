@@ -25,7 +25,7 @@ use IteratorIterator;
  * iterate, group, transform and extract information from it.
  *
  * @template TKey
- * @template-covariant TValue
+ * @template TValue
  * @extends \IteratorIterator<TKey, TValue, \Traversable<TKey, TValue>>
  * @implements \Cake\Collection\CollectionInterface<TKey, TValue>
  */
