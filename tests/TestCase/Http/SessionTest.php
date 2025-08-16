@@ -93,7 +93,6 @@ class SessionTest extends TestCase
         $session = new Session($config);
 
         $prop = new ReflectionProperty($session, '_lifetime');
-        $prop->setAccessible(true);
         $this->assertSame(1440, $prop->getValue($session));
     }
 

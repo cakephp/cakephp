@@ -974,11 +974,11 @@ class BelongsToMany extends Association
         /** @var \SplObjectStorage<\Cake\Datasource\EntityInterface, null> $storage */
         $storage = new SplObjectStorage();
         foreach ($targetEntities as $e) {
-            $storage->attach($e);
+            $storage->offsetSet($e);
         }
 
         foreach ($existing as $k => $e) {
-            if ($storage->contains($e)) {
+            if ($storage->offsetExists($e)) {
                 unset($existing[$k]);
             }
         }
