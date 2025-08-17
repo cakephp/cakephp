@@ -228,7 +228,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $errors = [];
 
         foreach ($this->_fields as $name => $field) {
-            if ($fields && !in_array($name, $fields, true)) {
+            if (!empty($context['fields']) && !in_array($name, $context['fields'], true)) {
                 continue;
             }
 
