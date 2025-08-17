@@ -918,8 +918,8 @@ class TreeBehavior extends Behavior
      * @param \Cake\ORM\Query\SelectQuery|\Cake\ORM\Query\UpdateQuery|\Cake\ORM\Query\DeleteQuery $query the Query to modify
      * @return \Cake\ORM\Query\SelectQuery|\Cake\ORM\Query\UpdateQuery|\Cake\ORM\Query\DeleteQuery
      * @template T of \Cake\ORM\Query\SelectQuery|\Cake\ORM\Query\UpdateQuery|\Cake\ORM\Query\DeleteQuery
-     * @psalm-param T $query
-     * @psalm-return T
+     * @phpstan-param T $query
+     * @phpstan-return T
      */
     protected function _scope(SelectQuery|UpdateQuery|DeleteQuery $query): SelectQuery|UpdateQuery|DeleteQuery
     {

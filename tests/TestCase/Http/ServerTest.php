@@ -131,14 +131,8 @@ class ServerTest extends TestCase
         $request = $request->withHeader('X-pass', 'request header');
 
         /** @var \TestApp\Http\MiddlewareApplication|\Mockery\MockInterface $app */
-        $app = Mockery::mock(MiddlewareApplication::class, [$this->config])
-            ->shouldAllowMockingMethod('pluginEvents')
+        $app = Mockery::spy(MiddlewareApplication::class, [$this->config])
             ->makePartial();
-        $app->shouldReceive('pluginBootstrap', 'pluginMiddleware')
-            ->with(Mockery::type(MiddlewareQueue::class))
-            ->andReturnUsing(function ($middleware) {
-                return $middleware;
-            });
 
         $server = new Server($app);
         $res = $server->run($request);
@@ -152,6 +146,12 @@ class ServerTest extends TestCase
             $res->getHeaderLine('X-pass'),
             'Request is used in middleware',
         );
+
+        $app->shouldHaveReceived('pluginBootstrap')
+            ->once();
+        $app->shouldHaveReceived('pluginMiddleware')
+            ->with(Mockery::type(MiddlewareQueue::class))
+            ->once();
     }
 
     /**

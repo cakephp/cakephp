@@ -26,7 +26,7 @@ use InvalidArgumentException;
 /**
  * Time type converter.
  *
- * Use to convert time instances to strings & back.
+ * Use to convert time instances to strings and back.
  */
 class TimeType extends BaseType implements BatchCastingInterface
 {

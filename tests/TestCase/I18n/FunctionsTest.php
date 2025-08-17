@@ -58,6 +58,9 @@ class FunctionsTest extends TestCase
             '(datetime) DateTime object' => [new DateTime($now), DateTimeInterface::ATOM, $date],
             '(datetime) DateTimeImmutable object' => [new DateTimeImmutable($now), DateTimeInterface::ATOM, DateTime::createFromFormat(DateTimeInterface::ATOM, $now)],
 
+            // Date input types
+            '(date) Date object' => [new Date($now), DateTimeInterface::ATOM, $date->setTime(0, 0, 0)],
+
             // string input types
             '(string) valid datetime string' => [$now, DateTimeInterface::ATOM, $date],
             '(string) valid datetime string with custom format' => ['01-07-2024 14:30:00', 'd-m-Y H:i:s', DateTime::createFromFormat('d-m-Y H:i:s', '01-07-2024 14:30:00')],

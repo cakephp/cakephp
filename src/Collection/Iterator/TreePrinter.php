@@ -70,7 +70,7 @@ class TreePrinter extends RecursiveIteratorIterator implements CollectionInterfa
      * @param string $spacer The string to use for prefixing the values according to
      * their depth in the tree.
      * @param int $mode Iterator mode.
-     * @psalm-param \RecursiveIteratorIterator::LEAVES_ONLY|\RecursiveIteratorIterator::SELF_FIRST|\RecursiveIteratorIterator::CHILD_FIRST $mode
+     * @phpstan-param \RecursiveIteratorIterator::LEAVES_ONLY|\RecursiveIteratorIterator::SELF_FIRST|\RecursiveIteratorIterator::CHILD_FIRST $mode
      */
     public function __construct(
         RecursiveIterator $items,

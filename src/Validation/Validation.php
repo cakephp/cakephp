@@ -569,6 +569,9 @@ class Validation
             $check = static::_getDateString($check);
             $dateFormat = 'ymd';
         }
+        if (!is_string($check)) {
+            return false;
+        }
         $parts = preg_split('/[\sT]+/', $check);
         if ($parts && count($parts) > 1) {
             $date = rtrim(array_shift($parts), ',');
@@ -1050,6 +1053,35 @@ class Validation
         }
 
         return (bool)filter_var($check, FILTER_VALIDATE_IP, ['flags' => $flags]);
+    }
+
+    /**
+     * Validation of an IP address or range (subnet).
+     *
+     * @param mixed $check The string to test.
+     * @param string $type The IP Protocol version to validate against
+     * @return bool Success
+     */
+    public static function ipOrRange(mixed $check, string $type = 'both'): bool
+    {
+        if (!is_string($check)) {
+            return false;
+        }
+
+        if (!str_contains($check, '/')) {
+            return static::ip($check, $type);
+        }
+
+        [$ip, $mask] = explode('/', $check, 2);
+
+        if (in_array($type, ['both', 'ipv4', true]) && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4)) {
+            return is_numeric($mask) && $mask >= 0 && $mask <= 32;
+        }
+        if (in_array($type, ['both', 'ipv6', true]) && filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6)) {
+            return is_numeric($mask) && $mask >= 0 && $mask <= 128;
+        }
+
+        return false;
     }
 
     /**

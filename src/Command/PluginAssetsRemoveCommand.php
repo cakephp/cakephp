@@ -22,8 +22,6 @@ use Cake\Console\ConsoleOptionParser;
 
 /**
  * Command for removing plugin assets from app's webroot.
- *
- * @psalm-suppress PropertyNotSetInConstructor
  */
 class PluginAssetsRemoveCommand extends Command
 {

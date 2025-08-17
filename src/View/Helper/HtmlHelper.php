@@ -76,9 +76,7 @@ class HtmlHelper extends Helper
             'ol' => '<ol{{attrs}}>{{content}}</ol>',
             'li' => '<li{{attrs}}>{{content}}</li>',
             'javascriptblock' => '<script{{attrs}}>{{content}}</script>',
-            'javascriptstart' => '<script>',
             'javascriptlink' => '<script src="{{url}}"{{attrs}}></script>',
-            'javascriptend' => '</script>',
             'confirmJs' => '{{confirm}}',
         ],
     ];
@@ -189,13 +187,6 @@ class HtmlHelper extends Helper
             } else {
                 $options['link'] = $this->Url->assetUrl($options['link']);
             }
-            if (isset($options['rel']) && $options['rel'] === 'icon') {
-                $out = $this->formatTemplate('metalink', [
-                    'url' => $options['link'],
-                    'attrs' => $this->templater()->formatAttributes($options, ['block', 'link']),
-                ]);
-                $options['rel'] = 'shortcut icon';
-            }
             $out .= $this->formatTemplate('metalink', [
                 'url' => $options['link'],
                 'attrs' => $this->templater()->formatAttributes($options, ['block', 'link']),
@@ -249,7 +240,7 @@ class HtmlHelper extends Helper
      *
      * - `escape` Set to false to disable escaping of title and attributes.
      * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
-     *   over value of `escape`)
+     *   over value of `escape`.
      * - `confirm` JavaScript confirmation message.
      *
      * @param array|string $title The content to be wrapped by `<a>` tags.
@@ -283,7 +274,6 @@ class HtmlHelper extends Helper
         if ($escapeTitle === true) {
             $title = h($title);
         } elseif (is_string($escapeTitle)) {
-            /** @psalm-suppress PossiblyInvalidArgument */
             $title = htmlentities($title, ENT_QUOTES, $escapeTitle);
         }
 
@@ -316,7 +306,7 @@ class HtmlHelper extends Helper
      *
      * - `escape` Set to false to disable escaping of title and attributes.
      * - `escapeTitle` Set to false to disable escaping of title. Takes precedence
-     *   over value of `escape`)
+     *   over value of `escape`.
      * - `confirm` JavaScript confirmation message.
      *
      * @param string $title The content to be wrapped by `<a>` tags.
@@ -533,10 +523,10 @@ class HtmlHelper extends Helper
      * Generate the "importmap" script tag.
      *
      * @param array $map Map array.
-     * @param array $options Same options as `UrlHelper::script()`.
+     * @param array<string, mixed> $options Same options as `UrlHelper::script()`.
      * @return string
      * @since 5.2.0
-     * @psalm-param array{imports?: array<string, string>, scopes?: array<string, array<string, array<string, string>>>, integrity?: array<string, string>} $map
+     * @phpstan-param array{imports?: array<string, string>, scopes?: array<string, array<string, array<string, string>>>, integrity?: array<string, string>} $map
      */
     public function importmap(array $map, array $options = []): string
     {
@@ -574,7 +564,7 @@ class HtmlHelper extends Helper
      * Get import paths for the importmap.
      *
      * @param array $map Import map.
-     * @param array $options Options.
+     * @param array<string, mixed> $options Options.
      * @return array
      */
     protected function getImportPaths(array $map, array $options): array
@@ -1099,7 +1089,6 @@ class HtmlHelper extends Helper
             if (!$path && !empty($options['src'])) {
                 $path = $options['src'];
             }
-            /** @psalm-suppress PossiblyNullArgument */
             $options['src'] = $this->Url->assetUrl($path, $options);
         }
 

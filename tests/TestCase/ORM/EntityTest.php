@@ -21,7 +21,7 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Exception;
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
+use Mockery;
 use stdClass;
 use TestApp\Model\Entity\Extending;
 use TestApp\Model\Entity\NonExtending;
@@ -54,10 +54,9 @@ class EntityTest extends TestCase
         $this->assertSame('bar', $entity->getOriginal('foo'));
     }
 
-    #[WithoutErrorHandler]
     public function testEntitySetDeprecated(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $entity = new Entity();
             $entity->set(['foo' => 'bar']);
         });
@@ -264,20 +263,16 @@ class EntityTest extends TestCase
      */
     public function testConstructor(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['patch'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->exactly(2))
-            ->method('patch')
-            ->with(
-                ...self::withConsecutive(
-                    [
-                    ['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false],
-                    ],
-                    [['foo' => 'bar'], ['setter' => false, 'guard' => false]],
-                ),
-            );
+        $entity = Mockery::mock(Entity::class)->makePartial();
+
+        $entity
+            ->shouldReceive('patch')
+            ->with(['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false, 'asOriginal' => true])
+            ->once();
+
+        $entity->shouldReceive('patch')
+            ->with(['foo' => 'bar'], ['setter' => false, 'guard' => false, 'asOriginal' => true])
+            ->once();
 
         $entity->__construct(['a' => 'b', 'c' => 'd']);
         $entity->__construct(['foo' => 'bar'], ['useSetters' => false]);
@@ -295,7 +290,7 @@ class EntityTest extends TestCase
             ->getMock();
         $entity->expects($this->once())
             ->method('patch')
-            ->with(['foo' => 'bar'], ['setter' => true, 'guard' => true]);
+            ->with(['foo' => 'bar'], ['setter' => true, 'guard' => true, 'asOriginal' => true]);
         $entity->__construct(['foo' => 'bar'], ['guard' => true]);
     }
 
@@ -488,7 +483,9 @@ class EntityTest extends TestCase
      */
     public function testHas(): void
     {
-        $entity = new Entity(['id' => 1, 'name' => 'Juan', 'foo' => null]);
+        $entity = new Entity(['id' => 1]);
+        $entity->name = 'Juan';
+        $entity->foo = null;
         $this->assertTrue($entity->has('id'));
         $this->assertTrue($entity->has('name'));
         $this->assertTrue($entity->has('foo'));
@@ -587,18 +584,18 @@ class EntityTest extends TestCase
      */
     public function testGetArrayAccess(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['get'])
-            ->getMock();
-        $entity->expects($this->exactly(2))
-            ->method('get')
-            ->with(
-                ...self::withConsecutive(['foo'], ['bar']),
-            )
-            ->willReturn('worked', 'worked too');
+        $entity = Mockery::spy(Entity::class)->makePartial();
 
-        $this->assertSame('worked', $entity['foo']);
-        $this->assertSame('worked too', $entity['bar']);
+        $entity['foo'];
+        $entity['bar'];
+
+        $entity->shouldHaveReceived('get')
+            ->with('foo')
+            ->once();
+
+        $entity->shouldHaveReceived('get')
+            ->with('bar')
+            ->once();
     }
 
     /**
@@ -606,20 +603,19 @@ class EntityTest extends TestCase
      */
     public function testSetArrayAccess(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['set'])
-            ->getMock();
+        $entity = Mockery::spy(Entity::class)->makePartial();
         $entity->setAccess('*', true);
-
-        $entity->expects($this->exactly(2))
-            ->method('set')
-            ->with(
-                ...self::withConsecutive(['foo', 1], ['bar', 2]),
-            )
-            ->willReturnSelf();
 
         $entity['foo'] = 1;
         $entity['bar'] = 2;
+
+        $entity->shouldHaveReceived('set')
+            ->with('foo', 1)
+            ->once();
+
+        $entity->shouldHaveReceived('set')
+            ->with('bar', 2)
+            ->once();
     }
 
     /**
@@ -1459,10 +1455,9 @@ class EntityTest extends TestCase
      *
      * @deprecated
      */
-    #[WithoutErrorHandler]
     public function testToString(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $entity = new Entity(['foo' => 1, 'bar' => 2]);
             $this->assertEquals(json_encode($entity, JSON_PRETTY_PRINT), (string)$entity);
         });
@@ -1618,31 +1613,33 @@ class EntityTest extends TestCase
      */
     public function testIsEmpty(): void
     {
-        $entity = new Entity([
-            'array' => ['foo' => 'bar'],
-            'emptyArray' => [],
-            'object' => new stdClass(),
-            'string' => 'string',
-            'stringZero' => '0',
-            'emptyString' => '',
-            'intZero' => 0,
-            'intNotZero' => 1,
-            'floatZero' => 0.0,
-            'floatNonZero' => 1.5,
-            'null' => null,
-        ]);
+        $this->deprecated(function (): void {
+            $entity = new Entity([
+                'array' => ['foo' => 'bar'],
+                'emptyArray' => [],
+                'object' => new stdClass(),
+                'string' => 'string',
+                'stringZero' => '0',
+                'emptyString' => '',
+                'intZero' => 0,
+                'intNotZero' => 1,
+                'floatZero' => 0.0,
+                'floatNonZero' => 1.5,
+                'null' => null,
+            ]);
 
-        $this->assertFalse($entity->isEmpty('array'));
-        $this->assertTrue($entity->isEmpty('emptyArray'));
-        $this->assertFalse($entity->isEmpty('object'));
-        $this->assertFalse($entity->isEmpty('string'));
-        $this->assertFalse($entity->isEmpty('stringZero'));
-        $this->assertTrue($entity->isEmpty('emptyString'));
-        $this->assertFalse($entity->isEmpty('intZero'));
-        $this->assertFalse($entity->isEmpty('intNotZero'));
-        $this->assertFalse($entity->isEmpty('floatZero'));
-        $this->assertFalse($entity->isEmpty('floatNonZero'));
-        $this->assertTrue($entity->isEmpty('null'));
+            $this->assertFalse($entity->isEmpty('array'));
+            $this->assertTrue($entity->isEmpty('emptyArray'));
+            $this->assertFalse($entity->isEmpty('object'));
+            $this->assertFalse($entity->isEmpty('string'));
+            $this->assertFalse($entity->isEmpty('stringZero'));
+            $this->assertTrue($entity->isEmpty('emptyString'));
+            $this->assertFalse($entity->isEmpty('intZero'));
+            $this->assertFalse($entity->isEmpty('intNotZero'));
+            $this->assertFalse($entity->isEmpty('floatZero'));
+            $this->assertFalse($entity->isEmpty('floatNonZero'));
+            $this->assertTrue($entity->isEmpty('null'));
+        });
     }
 
     /**

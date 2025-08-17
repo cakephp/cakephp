@@ -346,7 +346,7 @@ class StringTemplate
     /**
      * Adds a class and returns a unique list either in array or space separated
      *
-     * @param mixed $input The array or string to add the class to
+     * @param array<string, mixed>|string|null $input The array or string to add the class to
      * @param array<string>|string|false|null $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
      * @return array<string, string>|string|null
@@ -368,7 +368,7 @@ class StringTemplate
             $input = [];
         }
 
-        // Convert and sanitise the inputs
+        // Convert and sanitize the inputs
         if (!is_array($class)) {
             if (is_string($class) && !empty($class)) {
                 $class = explode(' ', $class);

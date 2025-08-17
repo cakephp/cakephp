@@ -106,7 +106,7 @@ class FormHelper extends Helper
             'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
             // Input group wrapper for checkboxes created via control().
             'checkboxFormGroup' => '{{label}}',
-            // Wrapper container for checkboxes.
+            // Wrapper container for checkboxes in a multicheckbox input
             'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
             // Error message wrapper elements.
             'error' => '<div class="error-message" id="{{id}}">{{content}}</div>',
@@ -823,9 +823,8 @@ class FormHelper extends Helper
      *
      * ### Options
      *
-     * - `for` - Set the for attribute, if its not defined the for attribute
-     *   will be generated from the $fieldName parameter using
-     *   FormHelper::_domId().
+     * - `for` - Set the for attribute. If it is not defined, the for attribute
+     *   will be generated from the $fieldName parameter using FormHelper::_domId().
      * - `escape` - Set to `false` to turn off escaping of label text.
      *   Defaults to `true`.
      *
@@ -1407,7 +1406,6 @@ class FormHelper extends Helper
         $values = [];
         foreach ($enumClass::cases() as $enumClass) {
             /**
-             * @psalm-suppress UndefinedInterfaceMethod
              * @phpstan-ignore-next-line
              */
             $values[$enumClass->value] = $hasLabel ? $enumClass->label()
@@ -2132,17 +2130,17 @@ class FormHelper extends Helper
      *
      * ```
      * $options = [1 => 'one', 2 => 'two'];
-     * $this->Form->select('Model.field', $options));
+     * $this->Form->select('Model.field', $options);
      * ```
      *
      * While a nested options array will create optgroups with options inside them.
      * ```
      * $options = [
-     *  1 => 'bill',
+     *     1 => 'bill',
      *     'fred' => [
      *         2 => 'fred',
-     *         3 => 'fred jr.'
-     *     ]
+     *         3 => 'fred jr.',
+     *     ],
      * ];
      * $this->Form->select('Model.field', $options);
      * ```

@@ -368,8 +368,8 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         }
 
         $this->bundleTranslatedFields($entity);
-        $bundled = $entity->has('_i18n') ? $entity->get('_i18n') : [];
-        $noBundled = count($bundled) === 0;
+        $bundled = $entity->has('_i18n') ? (array)$entity->get('_i18n') : [];
+        $noBundled = $bundled === [];
 
         // No additional translation records need to be saved,
         // as the entity is in the default locale.
@@ -383,7 +383,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         // If there are no fields and no bundled translations, or both fields
         // in the default locale and bundled translations we can
-        // skip the remaining logic as its not necessary.
+        // skip the remaining logic as it is not necessary.
         if ($noFields && $noBundled || ($fields && $bundled)) {
             return;
         }
@@ -599,7 +599,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {
         /** @var array<string, \Cake\ORM\Entity> $translations */
-        $translations = $entity->has('_translations') ? $entity->get('_translations') : [];
+        $translations = $entity->has('_translations') ? (array)$entity->get('_translations') : [];
 
         if (!$translations && !$entity->isDirty('_translations')) {
             return;

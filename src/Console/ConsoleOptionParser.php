@@ -20,6 +20,7 @@ use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\MissingOptionException;
 use Cake\Utility\Inflector;
 use LogicException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Handles parsing the ARGV in the command line and provides support
@@ -248,6 +249,13 @@ class ConsoleOptionParser
             $this->addArguments($spec['arguments']);
         }
         if (!empty($spec['options'])) {
+            foreach ($spec['options'] as $name => $params) {
+                if ($params instanceof ConsoleInputOption) {
+                    $name = $params->name();
+                }
+                $this->removeOption($name);
+            }
+
             $this->addOptions($spec['options']);
         }
         if (!empty($spec['description'])) {
@@ -379,7 +387,13 @@ class ConsoleOptionParser
                 'required' => false,
                 'prompt' => null,
             ];
+
             $options += $defaults;
+
+            if ($options['default'] && (is_int($options['default']) || is_float($options['default']))) {
+                $options['default'] = (string)$options['default'];
+            }
+
             $option = new ConsoleInputOption(
                 $name,
                 $options['short'],
@@ -396,6 +410,10 @@ class ConsoleOptionParser
         $this->_options[$name] = $option;
         asort($this->_options);
         if ($option->short()) {
+            if (isset($this->_shortOptions[$option->short()])) {
+                deprecationWarning('5.2.0', 'You cannot redefine short options. This will throw an error in 5.3.0+.');
+            }
+
             $this->_shortOptions[$option->short()] = $name;
             asort($this->_shortOptions);
         }
@@ -412,6 +430,11 @@ class ConsoleOptionParser
     public function removeOption(string $name)
     {
         unset($this->_options[$name]);
+
+        $key = array_search($name, $this->_shortOptions, true);
+        if ($key !== false) {
+            unset($this->_shortOptions[$key]);
+        }
 
         return $this;
     }

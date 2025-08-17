@@ -1525,7 +1525,7 @@ class ValidatorTest extends TestCase
         $thing = new class {
             public $args = [];
 
-            public function isCool($data, $context)
+            public function isCool($data, $context): string
             {
                 $this->args = [$data, $context];
 
@@ -1576,7 +1576,7 @@ class ValidatorTest extends TestCase
         $thing = new class {
             public $args = [];
 
-            public function isCool($data, $a, $b, $context)
+            public function isCool($data, $a, $b, $context): string
             {
                 $this->args = [$data, $a, $b, $context];
 
@@ -1771,6 +1771,31 @@ class ValidatorTest extends TestCase
         $validator->add('title', [
             'notBlank' => [
                 'rule' => 'notBlank',
+                'message' => 'Title cannot be blank',
+                'last' => true,
+            ],
+            'length' => [
+                'rule' => ['minLength', 10],
+                'message' => 'Titles need to be at least 10 characters long',
+                'last' => true,
+            ],
+        ]);
+        $set = $validator->field('title');
+        $this->assertInstanceOf(ValidationSet::class, $set);
+        $this->assertCount(2, $set);
+
+        $errors = $validator->validate(['title' => ' ']);
+        $expected = [
+            'title' => [
+                'notBlank' => 'Title cannot be blank',
+            ],
+        ];
+        $this->assertEquals($expected, $errors);
+
+        $validator = new Validator();
+        $validator->add('title', [
+            'notBlank' => [
+                'rule' => ['notBlank'],
             ],
             'length' => [
                 'rule' => ['minLength', 10],
@@ -1780,6 +1805,15 @@ class ValidatorTest extends TestCase
         $set = $validator->field('title');
         $this->assertInstanceOf(ValidationSet::class, $set);
         $this->assertCount(2, $set);
+
+        $errors = $validator->validate(['title' => ' ']);
+        $expected = [
+            'title' => [
+                'notBlank' => 'The provided value is invalid',
+                'length' => 'Titles need to be at least 10 characters long',
+            ],
+        ];
+        $this->assertEquals($expected, $errors);
     }
 
     /**

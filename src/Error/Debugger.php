@@ -165,7 +165,7 @@ class Debugger
      *
      * ### Example
      *
-     * Debugger::setOutputMask(['password' => '[*************]');
+     * Debugger::setOutputMask(['password' => '[*************]']);
      *
      * @param array<string, string> $value An array where keys are replaced by their values in output.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
@@ -422,7 +422,7 @@ class Debugger
                 $back[] = sprintf('%s - %s, line %d', $reference, $path, $frame['line']);
             } else {
                 throw new InvalidArgumentException(
-                    "Invalid trace format of `$format` chosen. Must be one of `array`, `points` or `text`.",
+                    "Invalid trace format of `{$format}` chosen. Must be one of `array`, `points` or `text`.",
                 );
             }
         }
@@ -431,7 +431,6 @@ class Debugger
         }
 
         /**
-         * @psalm-suppress InvalidArgument
          * @phpstan-ignore-next-line
          */
         return implode("\n", $back);

@@ -264,6 +264,14 @@ class CommandRunner implements EventDispatcherInterface
             if ($commands->has($name)) {
                 return [$name, array_slice($argv, $i)];
             }
+
+            $firstChar = $name[0] ?? '';
+            if ($firstChar == strtoupper($firstChar) && str_contains($name, '.')) {
+                $underName = Inflector::underscore($name);
+                if ($commands->has($underName)) {
+                    return [$underName, array_slice($argv, $i)];
+                }
+            }
         }
         $name = array_shift($argv);
 
@@ -287,7 +295,7 @@ class CommandRunner implements EventDispatcherInterface
     protected function resolveName(CommandCollection $commands, ConsoleIo $io, ?string $name): string
     {
         if (!$name) {
-            $io->err('<error>No command provided. Choose one of the available commands.</error>', 2);
+            $io->error('No command provided. Choose one of the available commands.', 2);
             $name = 'help';
         }
         $name = $this->aliases[$name] ?? $name;

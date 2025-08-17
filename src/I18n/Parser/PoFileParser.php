@@ -112,9 +112,6 @@ class PoFileParser
                     case 2:
                         assert(isset($stage[0]));
                         assert(isset($stage[1]));
-                        /**
-                         * @psalm-suppress InvalidArrayOffset
-                         */
                         $item[$stage[0]][$stage[1]] .= substr($line, 1, -1);
                         break;
 

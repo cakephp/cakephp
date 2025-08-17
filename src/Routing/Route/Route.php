@@ -16,10 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Route;
 
+use BackedEnum;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Exception\BadRequestException;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
+use UnitEnum;
 
 /**
  * A single Route used by the Router to connect requests to
@@ -103,7 +105,7 @@ class Route
     public const VALID_METHODS = ['GET', 'PUT', 'POST', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD'];
 
     /**
-     * Regex for matching braced placholders in route template.
+     * Regex for matching braced placeholders in route template.
      *
      * @var string
      */
@@ -274,7 +276,7 @@ class Route
      *
      * ```
      * // remove a persistent 'date' parameter
-     * Router::url(['date' => false', ...]);
+     * Router::url(['date' => false, ...]);
      * ```
      *
      * @param array $names The names of the parameters that should be passed.
@@ -501,7 +503,6 @@ class Route
         }
 
         if (isset($route['_args_'])) {
-            /** @psalm-suppress PossiblyInvalidArgument */
             $pass = $this->_parseArgs($route['_args_'], $route);
             $route['pass'] = array_merge($route['pass'], $pass);
             unset($route['_args_']);
@@ -525,7 +526,6 @@ class Route
         if (isset($this->options['pass'])) {
             $j = count($this->options['pass']);
             while ($j--) {
-                /** @psalm-suppress PossiblyInvalidArgument */
                 if (isset($route[$this->options['pass'][$j]])) {
                     array_unshift($route['pass'], $route[$this->options['pass'][$j]]);
                 }
@@ -689,7 +689,7 @@ class Route
         $query = !empty($url['?']) ? (array)$url['?'] : [];
         unset($url['_host'], $url['_scheme'], $url['_port'], $url['_base'], $url['?']);
 
-        // Move extension into the hostOptions so its not part of
+        // Move extension into the hostOptions so it is not part of
         // reverse matches.
         if (isset($url['_ext'])) {
             $hostOptions['_ext'] = $url['_ext'];
@@ -819,6 +819,12 @@ class Route
                 ));
             }
             $string = $params[$key];
+            if ($string instanceof BackedEnum) {
+                $string = $string->value;
+            } elseif ($string instanceof UnitEnum) {
+                $string = $string->name;
+            }
+
             $search[] = "{{$key}}";
             $replace[] = $string;
         }
@@ -848,7 +854,7 @@ class Route
         ) {
             $host = $params['_host'];
 
-            // append the port & scheme if they exists.
+            // append the port and scheme if they exist.
             if (isset($params['_port'])) {
                 $host .= ':' . $params['_port'];
             }

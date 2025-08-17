@@ -33,7 +33,7 @@ class ValueBinder
     protected array $_bindings = [];
 
     /**
-     * A counter of the number of parameters bound in this expression object
+     * A counter of parameters bound in this expression object
      *
      * @var int
      */

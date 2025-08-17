@@ -20,6 +20,7 @@ use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -108,15 +109,10 @@ class MysqlTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = $this->getMockBuilder('PDO')
-            ->disableOriginalConstructor()
-            ->onlyMethods(['exec'])
-            ->getMock();
-        $connection->expects($this->exactly(3))
-            ->method('exec')
-            ->with(
-                ...self::withConsecutive(['Execute this'], ['this too'], ["SET time_zone = 'Antarctica'"]),
-            );
+        $connection = Mockery::mock('PDO');
+        $connection->shouldReceive('exec')->with('Execute this')->once();
+        $connection->shouldReceive('exec')->with('this too')->once();
+        $connection->shouldReceive('exec')->with("SET time_zone = 'Antarctica'")->once();
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)

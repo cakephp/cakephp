@@ -155,6 +155,7 @@ use function Cake\Core\namespaceSplit;
  *
  * @see \Cake\Event\EventManager for reference on the events system.
  * @link https://book.cakephp.org/5/en/orm/table-objects.html#event-list
+ * @template TBehaviors of array<string, \Cake\ORM\Behavior> = array{}
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\ORM\Table>
  */
 class Table implements RepositoryInterface, EventListenerInterface, EventDispatcherInterface, ValidatorAwareInterface
@@ -262,7 +263,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * The name of the class that represent a single row for this table
      *
      * @var string|null
-     * @psalm-var class-string<\Cake\Datasource\EntityInterface>|null
+     * @phpstan-var class-string<\Cake\Datasource\EntityInterface>|null
      */
     protected ?string $_entityClass = null;
 
@@ -328,9 +329,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         $this->initialize($config);
 
-        assert($this->_eventManager !== null, 'EventManager not available');
-
-        $this->_eventManager->on($this);
+        $this->getEventManager()->on($this);
         $this->dispatchEvent('Model.initialize');
     }
 
@@ -446,7 +445,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Alias a field with the table's current alias.
      *
-     * If field is already aliased it will result in no-op.
+     * If field is already aliased, it will result in no-op.
      *
      * @param string $field The field to alias.
      * @return string The field prefixed with the table alias.
@@ -551,7 +550,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 unset($schema['_constraints']);
             }
 
-            $schema = $this->getConnection()->getDriver()->newTableSchema($this->getTable(), $schema);
+            $schema = $this->getConnection()->getWriteDriver()->newTableSchema($this->getTable(), $schema);
 
             foreach ($constraints as $name => $value) {
                 $schema->addConstraint($name, $value);
@@ -582,7 +581,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ));
         }
 
-        $maxLength = $this->getConnection()->getDriver()->getMaxAliasLength();
+        $maxLength = $this->getConnection()->getWriteDriver()->getMaxAliasLength();
         if ($maxLength === null) {
             return;
         }
@@ -844,6 +843,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $name The behavior alias to get from the registry.
      * @return \Cake\ORM\Behavior
+     * @template TName of key-of<TBehaviors>
+     * @phpstan-param TName $name The behavior alias to get from the registry.
+     * @phpstan-return TBehaviors[TName]
      * @throws \InvalidArgumentException If the behavior does not exist.
      */
     public function getBehavior(string $name): Behavior
@@ -1482,7 +1484,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Get an article and some relationships:
      *
      * ```
-     * $article = $articles->get(1, ['contain' => ['Users', 'Comments']]);
+     * $article = $articles->get(1, contain: ['Users', 'Comments']);
      * ```
      *
      * @param mixed $primaryKey primary key value to find
@@ -2181,7 +2183,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
 
             $schema = $this->getSchema();
-            $driver = $this->getConnection()->getDriver();
+            $driver = $this->getConnection()->getWriteDriver();
             foreach ($primary as $key => $v) {
                 if (!isset($data[$key])) {
                     $id = $statement->lastInsertId($this->getTable(), $key);
@@ -2716,9 +2718,19 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
 
         if ($args) {
-            $query->applyOptions($args);
+            $unNamedArgs = [];
+            $namedArgs = [];
+            foreach ($args as $key => $value) {
+                if (is_int($key)) {
+                    $unNamedArgs[$key] = $value;
+                } else {
+                    $namedArgs[$key] = $value;
+                }
+            }
+
+            $query->applyOptions($namedArgs);
             // Fetch custom args without the query options.
-            $args = $query->getOptions();
+            $args = $unNamedArgs + array_intersect_key($args, $query->getOptions());
 
             unset($params[0]);
             $lastParam = end($params);
@@ -2867,7 +2879,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * Get the object used to marshal/convert array data into objects.
      *
      * Override this method if you want a table object to use custom
-     * marshalling logic.
+     * marshaling logic.
      *
      * @return \Cake\ORM\Marshaller
      * @see \Cake\ORM\Marshaller
@@ -3057,7 +3069,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * Those entries in `$entities` that cannot be matched to any record in
      * `$data` will be discarded. Records in `$data` that could not be matched will
-     * be marshalled as a new entity.
+     * be marshaled as a new entity.
      *
      * When merging HasMany or BelongsToMany associations, all the entities in the
      * `$data` array will appear, those that can be matched by primary key will get
@@ -3276,8 +3288,10 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             'table' => $this->getTable(),
             'alias' => $this->getAlias(),
             'entityClass' => $this->getEntityClass(),
-            'associations' => $this->_associations->keys(),
-            'behaviors' => $this->_behaviors->loaded(),
+            /** @phpstan-ignore isset.initializedProperty */
+            'associations' => isset($this->_associations) ? $this->_associations->keys() : [],
+            /** @phpstan-ignore isset.initializedProperty */
+            'behaviors' => isset($this->_behaviors) ? $this->_behaviors->loaded() : [],
             'defaultConnection' => static::defaultConnectionName(),
             'connectionName' => $conn->configName(),
         ];

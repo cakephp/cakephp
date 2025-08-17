@@ -116,7 +116,6 @@ trait ConsoleIntegrationTestTrait
      * Cleans state to get ready for the next test
      *
      * @return void
-     * @psalm-suppress PossiblyNullPropertyAssignmentValue
      */
     #[After]
     public function cleanupConsoleTrait(): void

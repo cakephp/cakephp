@@ -319,4 +319,37 @@ class QueryTest extends TestCase
         $this->assertEmpty($this->query->clause('where'));
         $this->query->clause('nope');
     }
+
+    public function testOptimizerHintClause(): void
+    {
+        $this->query->optimizerHint('single_hint()');
+        $this->assertSame(['single_hint()'], $this->query->clause('optimizerHint'));
+
+        $this->query->optimizerHint(['array_hint()', 'array_hint()']);
+        $this->assertSame(['single_hint()', 'array_hint()', 'array_hint()'], $this->query->clause('optimizerHint'));
+
+        $this->query->optimizerHint('single_hint()', true);
+        $this->assertSame(['single_hint()'], $this->query->clause('optimizerHint'));
+
+        $this->query->optimizerHint(['array_hint()', 'array_hint()'], true);
+        $this->assertSame(['array_hint()', 'array_hint()'], $this->query->clause('optimizerHint'));
+    }
+
+    public function testWithClause(): void
+    {
+        $cte1 = new CommonTableExpression();
+        $cte2 = new CommonTableExpression();
+
+        $this->query->with($cte1);
+        $this->assertSame([$cte1], $this->query->clause('with'));
+
+        $this->query->with([$cte2, fn($query) => $cte1]);
+        $this->assertSame([$cte1, $cte2, $cte1], $this->query->clause('with'));
+
+        $this->query->with($cte1, true);
+        $this->assertSame([$cte1], $this->query->clause('with'));
+
+        $this->query->with([$cte2, fn($query) => $cte1], true);
+        $this->assertSame([$cte2, $cte1], $this->query->clause('with'));
+    }
 }

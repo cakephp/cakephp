@@ -665,7 +665,7 @@ abstract class Association
      * Alters a Query object to include the associated target table data in the final
      * result
      *
-     * The options array accept the following keys:
+     * The options array accepts the following keys:
      *
      * - includeFields: Whether to include target model fields in the result or not
      * - foreignKey: The name of the field to use as foreign key, if false none
@@ -683,7 +683,7 @@ abstract class Association
      *   with this association.
      *
      * @param \Cake\ORM\Query\SelectQuery $query the query to be altered to include the target table data
-     * @param array<string, mixed> $options Any extra options or overrides to be taken in account
+     * @param array<string, mixed> $options Any extra options or overrides to be taken into account
      * @return void
      * @throws \RuntimeException Unable to build the query or associations.
      */
@@ -830,7 +830,7 @@ abstract class Association
      * and modifies the query accordingly based of this association
      * configuration
      *
-     * @param array<string, mixed>|string|null $type the type of query to perform, if an array is passed,
+     * @param array<string, mixed>|string|null $type the type of query to perform if an array is passed,
      *   it will be interpreted as the `$args` parameter
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @see \Cake\ORM\Table::find()
@@ -917,7 +917,7 @@ abstract class Association
     }
 
     /**
-     * Triggers beforeFind on the target table for the query this association is
+     * Triggers `beforeFind` on the target table for the query this association is
      * attaching to
      *
      * @param \Cake\ORM\Query\SelectQuery $query the query this association is attaching itself to
@@ -958,10 +958,10 @@ abstract class Association
 
     /**
      * Adds a formatter function to the passed `$query` if the `$surrogate` query
-     * declares any other formatter. Since the `$surrogate` query correspond to
+     * declares any other formatter. Since the `$surrogate` query corresponds to
      * the associated target table, the resulting formatter will be the result of
      * applying the surrogate formatters to only the property corresponding to
-     * such table.
+     * such a table.
      *
      * @param \Cake\ORM\Query\SelectQuery $query the query that will get the formatter applied to
      * @param \Cake\ORM\Query\SelectQuery $surrogate the query having formatters for the associated
@@ -1021,7 +1021,7 @@ abstract class Association
      * in the `$surrogate` query.
      *
      * Copies all contained associations from the `$surrogate` query into the
-     * passed `$query`. Containments are altered so that they respect the associations
+     * passed `$query`. Containments are altered so that they respect the association
      * chain from which they originated.
      *
      * @param \Cake\ORM\Query\SelectQuery $query the query that will get the associations attached to
@@ -1136,7 +1136,7 @@ abstract class Association
      *
      * @param string $property the property name
      * @return self
-     * @throws \RuntimeException if no association with such name exists
+     * @throws \RuntimeException if no association with such a name exists
      */
     public function __get(string $property): Association
     {

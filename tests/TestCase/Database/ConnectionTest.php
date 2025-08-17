@@ -1249,4 +1249,40 @@ class ConnectionTest extends TestCase
             $this->assertEquals(['field' => 1], $row);
         }
     }
+
+    /**
+     * Tests that role-specific configs correctly inherit from the shared config.
+     *
+     * @return void
+     */
+    public function testRoleConfigInheritance(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+
+        $config = [
+            'driver' => 'Cake\Database\Driver\Sqlite',
+            'database' => ':memory:',
+            'username' => 'default-user',
+            'password' => 'default-pass',
+            'read' => [
+                'username' => 'read-user',
+            ],
+            'write' => [
+                'database' => 'write.db',
+            ],
+        ];
+
+        $connection = new Connection($config);
+
+        // read test
+        $readDriver = $connection->getDriver('read');
+        $this->assertSame('read-user', $readDriver->config()['username'], 'Read username should be overridden.');
+        $this->assertSame(':memory:', $readDriver->config()['database'], 'Read database should be inherited.');
+        $this->assertSame('default-pass', $readDriver->config()['password'], 'Read password should be inherited.');
+
+        // write test
+        $writeDriver = $connection->getDriver('write');
+        $this->assertSame('write.db', $writeDriver->config()['database'], 'Write database should be overridden.');
+        $this->assertSame('default-user', $writeDriver->config()['username'], 'Write username should be inherited.');
+    }
 }

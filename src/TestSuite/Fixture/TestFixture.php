@@ -60,7 +60,6 @@ class TestFixture implements FixtureInterface
      * The schema for this fixture.
      *
      * @var \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface
-     * @psalm-suppress PropertyNotSetInConstructor
      */
     protected TableSchemaInterface&SqlGeneratorInterface $_schema;
 

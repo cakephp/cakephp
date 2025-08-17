@@ -18,7 +18,9 @@ namespace Cake\Test\TestCase\Log;
 use Cake\Log\Log;
 use Cake\Log\LogTrait;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use Psr\Log\LoggerInterface;
+use Psr\Log\LogLevel;
 
 /**
  * Test case for LogTrait
@@ -36,15 +38,15 @@ class LogTraitTest extends TestCase
      */
     public function testLog(): void
     {
-        $mock = $this->getMockBuilder(LoggerInterface::class)->getMock();
-        $mock->expects($this->exactly(2))
-            ->method('log')
-            ->with(
-                ...self::withConsecutive(
-                    ['error', 'Testing'],
-                    ['debug', 'message'],
-                ),
-            );
+        $mock = Mockery::mock(LoggerInterface::class);
+
+        $mock->shouldReceive('log')
+            ->withSomeOfArgs(LogLevel::ERROR, 'Testing')
+            ->once();
+
+        $mock->shouldReceive('log')
+            ->withSomeOfArgs(LogLevel::DEBUG, 'message')
+            ->once();
 
         Log::setConfig('trait_test', ['engine' => $mock]);
         $subject = new class {

@@ -1,6 +1,41 @@
 parameters:
 	ignoreErrors:
 		-
+			message: "#^Call to an undefined method Redis\\|RedisCluster\\:\\:connect\\(\\)\\.$#"
+			count: 2
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Call to an undefined method Redis\\|RedisCluster\\:\\:pconnect\\(\\)\\.$#"
+			count: 2
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Call to an undefined method Redis\\|RedisCluster\\:\\:unlink\\(\\)\\.$#"
+			count: 2
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Method RedisCluster\\:\\:scan\\(\\) invoked with 4 parameters, 1\\-3 required\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Parameter \\#3 \\$pattern of method RedisCluster\\:\\:scan\\(\\) expects int, string given\\.$#"
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: '#^Cannot cast int\|Redis\|false to int\.$#'
+			identifier: cast.int
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: "#^Parameter \\#2 \\$node of method RedisCluster\\:\\:scan\\(\\) expects string, array\\|string\\|null given\\.$#"
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
 			message: '#^Call to function method_exists\(\) with Memcached and ''setSaslAuthData'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -113,12 +148,6 @@ parameters:
 			identifier: method.templateTypeNotInParameter
 			count: 1
 			path: src/Datasource/QueryInterface.php
-
-		-
-			message: '#^Method Cake\\Error\\ErrorLogger\:\:log\(\) has parameter \$level with no type specified\.$#'
-			identifier: missingType.parameter
-			count: 1
-			path: src/Error/ErrorLogger.php
 
 		-
 			message: '#^Constructor of class Cake\\Error\\Renderer\\ConsoleExceptionRenderer has an unused parameter \$request\.$#'
@@ -265,12 +294,6 @@ parameters:
 			path: src/ORM/Query/SelectQuery.php
 
 		-
-			message: '#^PHPDoc tag @return with type Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\> is not subtype of native type static\(Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\)\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: src/ORM/Query/SelectQuery.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -293,6 +316,36 @@ parameters:
 			identifier: new.static
 			count: 1
 			path: src/Routing/RouteBuilder.php
+
+		-
+			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
+			identifier: new.internalClass
+			count: 1
+			path: src/TestSuite/Constraint/EventFired.php
+
+		-
+			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
+			identifier: new.internalClass
+			count: 2
+			path: src/TestSuite/Constraint/EventFiredWith.php
+
+		-
+			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
+			identifier: new.internalClass
+			count: 1
+			path: src/TestSuite/Constraint/Response/ResponseBase.php
+
+		-
+			message: '#^Call to method toString\(\) of internal interface PHPUnit\\Framework\\SelfDescribing from outside its root namespace PHPUnit\.$#'
+			identifier: method.internalInterface
+			count: 1
+			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
+
+		-
+			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
+			identifier: new.internalClass
+			count: 1
+			path: src/TestSuite/Constraint/Session/FlashParamEquals.php
 
 		-
 			message: '#^Trait Cake\\TestSuite\\EmailTrait is used zero times and is not analysed\.$#'
@@ -431,9 +484,3 @@ parameters:
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/View/Widget/DateTimeWidget.php
-
-		-
-			message: '#^PHPDoc tag @var with type array\<mixed\>\|bool\|int\|string\|null is not subtype of native type mixed\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: src/View/XmlView.php

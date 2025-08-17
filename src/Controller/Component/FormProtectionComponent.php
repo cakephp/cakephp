@@ -33,7 +33,7 @@ use Closure;
  * - Existing fields have not been removed from the form.
  * - Values of hidden inputs have not been changed.
  *
- * @psalm-property array{validate:bool, unlockedFields:array, unlockedActions:array, validationFailureCallback:?\Closure} $_config
+ * @phpstan-property array{validate:bool, unlockedFields:array, unlockedActions:array, validationFailureCallback:?\Closure} $_config
  */
 class FormProtectionComponent extends Component
 {
@@ -107,7 +107,9 @@ class FormProtectionComponent extends Component
             $isValid = $formProtector->validate($data, $url, $sessionId);
 
             if (!$isValid) {
-                return $this->validationFailure($formProtector);
+                $event->setResult($this->validationFailure($formProtector));
+
+                return null;
             }
         }
 

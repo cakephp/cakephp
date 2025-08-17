@@ -37,7 +37,9 @@ class SecurityExceptionTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->securityException = new SecurityException();
+        $this->deprecated(function (): void {
+            $this->securityException = new SecurityException();
+        });
     }
 
     /**
@@ -45,9 +47,10 @@ class SecurityExceptionTest extends TestCase
      */
     public function testGetType(): void
     {
+        $type = $this->securityException->getType();
         $this->assertSame(
             'secure',
-            $this->securityException->getType(),
+            $type,
             '::getType should always return the type of `secure`.',
         );
     }

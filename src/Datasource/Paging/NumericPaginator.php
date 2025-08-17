@@ -222,9 +222,10 @@ class NumericPaginator implements PaginatorInterface
         $data = $this->extractData($target, $params, $settings);
         $query = $this->getQuery($target, $query, $data);
 
-        $items = $this->getItems(clone $query, $data);
+        $countQuery = clone $query;
+        $items = $this->getItems($query, $data);
         $this->pagingParams['count'] = count($items);
-        $this->pagingParams['totalCount'] = $this->getCount($query, $data);
+        $this->pagingParams['totalCount'] = $this->getCount($countQuery, $data);
 
         $pagingParams = $this->buildParams($data);
         if ($pagingParams['requestedPage'] > $pagingParams['currentPage']) {

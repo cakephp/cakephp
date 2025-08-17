@@ -165,20 +165,21 @@ class FormTest extends TestCase
      */
     public function testExecuteInvalid(): void
     {
-        $form = new class extends Form {
-            // phpcs:ignore CakePHP.NamingConventions.ValidFunctionName.PublicWithUnderscore
-            public function _execute(array $data): bool
-            {
-                throw new Exception('Should not be called');
-            }
-        };
-        $form->getValidator()
-            ->add('email', 'format', ['rule' => 'email']);
-        $data = [
-            'email' => 'rong',
-        ];
+        $this->deprecated(function (): void {
+            $form = new class extends Form {
+                protected function _execute(array $data): bool
+                {
+                    throw new Exception('Should not be called');
+                }
+            };
+            $form->getValidator()
+                ->add('email', 'format', ['rule' => 'email']);
+            $data = [
+                'email' => 'rong',
+            ];
 
-        $this->assertFalse($form->execute($data));
+            $this->assertFalse($form->execute($data));
+        });
     }
 
     /**
@@ -194,6 +195,38 @@ class FormTest extends TestCase
         ];
 
         $this->assertTrue($form->execute($data));
+    }
+
+    /**
+     * test execute() when data is valid.
+     */
+    public function testExecuteWithProcess(): void
+    {
+        $form = new class extends Form {
+            public function process(array $data): bool
+            {
+                return false;
+            }
+        };
+
+        $this->assertFalse($form->execute([]));
+    }
+
+    /**
+     * test execute()
+     */
+    public function testExecuteWithExecuteAndNoValidate(): void
+    {
+        $this->deprecated(function (): void {
+            $form = new class extends Form {
+                protected function _execute(array $data): bool
+                {
+                    return false;
+                }
+            };
+
+            $this->assertFalse($form->execute([], ['validate' => false]));
+        });
     }
 
     /**

@@ -144,10 +144,14 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => $col, 'length' => null];
         }
 
-        if (Configure::read('ORM.mapJsonTypeForSqlite') === true) {
-            if (str_contains($col, TableSchemaInterface::TYPE_JSON) && !str_contains($col, 'jsonb')) {
-                return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
-            }
+        if (
+            Configure::read('ORM.mapJsonTypeForSqlite') === true &&
+            (
+                str_contains($col, TableSchemaInterface::TYPE_JSON) &&
+                !str_contains($col, 'jsonb')
+            )
+        ) {
+            return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
         }
 
         if (in_array($col, TableSchemaInterface::GEOSPATIAL_TYPES)) {
@@ -225,7 +229,6 @@ class SqliteSchemaDialect extends SchemaDialect
         // SQLite does not support autoincrement on composite keys.
         if ($row['pk'] && !empty($primary)) {
             $existingColumn = $primary['columns'][0];
-            /** @psalm-suppress PossiblyNullOperand */
             $schema->addColumn($existingColumn, ['autoIncrement' => null] + $schema->getColumn($existingColumn));
         }
 
@@ -467,6 +470,37 @@ class SqliteSchemaDialect extends SchemaDialect
     }
 
     /**
+     * Try to extract the deferrable clause from the table SQL.
+     *
+     * @param string $tableSql The create table statement
+     * @param array $columns The columns in the index.
+     * @return string|null The name of the unique index if it could be inferred.
+     */
+    private function extractDeferrable(string $tableSql, array $columns): ?string
+    {
+        $columnsPattern = implode(
+            '\s*,\s*',
+            array_map(
+                fn($column) => '(?:' . $this->possiblyQuotedIdentifierRegex($column) . ')',
+                $columns,
+            ),
+        );
+        $regex = "/CONSTRAINT\s*(?<name>.+?)\s*FOREIGN\s+KEY\s*\(\s*{$columnsPattern}\s*\).*?' .
+            '(?<deferable>((?:NOT\s+)?DEFERRABLE)?(?:\s+INITIALLY\s+(DEFERRED|IMMEDIATE)))?/i";
+
+        if (preg_match($regex, $tableSql, $matches)) {
+            return match ($matches['deferable']) {
+                'NOT DEFERRABLE' => ForeignKey::NOT_DEFERRED,
+                'DEFERRABLE INITIALLY DEFERRED' => ForeignKey::DEFERRED,
+                'DEFERRABLE INITIALLY IMMEDIATE' => ForeignKey::IMMEDIATE,
+                default => null,
+            };
+        }
+
+        return null;
+    }
+
+    /**
      * Get the normalized SQL query used to create a table.
      *
      * @param string $tableName The tablename
@@ -495,10 +529,8 @@ class SqliteSchemaDialect extends SchemaDialect
         $indexes = [];
         $createTableSql = $this->getCreateTableSql($tableName);
 
+        $foundPrimary = false;
         foreach ($statement->fetchAll('assoc') as $row) {
-            if ($row['origin'] == 'pk') {
-                continue;
-            }
             $indexName = $row['name'];
             $indexSql = sprintf(
                 'PRAGMA index_info(%s)',
@@ -514,6 +546,10 @@ class SqliteSchemaDialect extends SchemaDialect
             if ($row['unique']) {
                 $indexType = TableSchema::CONSTRAINT_UNIQUE;
             }
+            if ($row['origin'] === 'pk') {
+                $indexType = TableSchema::CONSTRAINT_PRIMARY;
+                $foundPrimary = true;
+            }
             if ($indexType == TableSchema::CONSTRAINT_UNIQUE) {
                 $name = $this->extractIndexName($createTableSql, 'UNIQUE', $columns);
                 if ($name !== null) {
@@ -528,23 +564,25 @@ class SqliteSchemaDialect extends SchemaDialect
                 'length' => [],
             ];
         }
-        // Primary keys aren't available from the index_info pragma
+        // Primary keys aren't always available from the index_info pragma
         // instead we have to read the columns again.
-        $sql = $this->describeColumnQuery($tableName);
-        $statement = $this->_driver->execute($sql);
-        foreach ($statement->fetchAll('assoc') as $row) {
-            if (!$row['pk']) {
-                continue;
+        if (!$foundPrimary) {
+            $sql = $this->describeColumnQuery($tableName);
+            $statement = $this->_driver->execute($sql);
+            foreach ($statement->fetchAll('assoc') as $row) {
+                if (!$row['pk']) {
+                    continue;
+                }
+                if (!isset($indexes['primary'])) {
+                    $indexes['primary'] = [
+                        'name' => 'primary',
+                        'type' => TableSchema::CONSTRAINT_PRIMARY,
+                        'columns' => [],
+                        'length' => [],
+                    ];
+                }
+                $indexes['primary']['columns'][] = $row['name'];
             }
-            if (!isset($indexes['primary'])) {
-                $indexes['primary'] = [
-                    'name' => 'primary',
-                    'type' => TableSchema::CONSTRAINT_PRIMARY,
-                    'columns' => [],
-                    'length' => [],
-                ];
-            }
-            $indexes['primary']['columns'][] = $row['name'];
         }
 
         return array_values($indexes);
@@ -611,11 +649,8 @@ class SqliteSchemaDialect extends SchemaDialect
             [$config['schema'], $tableName] = explode('.', $tableName);
         }
 
-        $sql = sprintf(
-            'SELECT * FROM pragma_foreign_key_list(%s) ORDER BY id, seq',
-            $this->_driver->quoteIdentifier($tableName),
-        );
         $keys = [];
+        $sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($tableName));
         $statement = $this->_driver->execute($sql);
         foreach ($statement->fetchAll('assoc') as $row) {
             $id = $row['id'];
@@ -627,7 +662,7 @@ class SqliteSchemaDialect extends SchemaDialect
                     'references' => [$row['table'], []],
                     'update' => $this->_convertOnClause($row['on_update'] ?? ''),
                     'delete' => $this->_convertOnClause($row['on_delete'] ?? ''),
-                    'length' => [],
+                    'deferrable' => null,
                 ];
             }
             $keys[$id]['columns'][$row['seq']] = $row['from'];
@@ -638,7 +673,7 @@ class SqliteSchemaDialect extends SchemaDialect
         foreach ($keys as $id => $data) {
             // sqlite doesn't provide a simple way to get foreign key names, but we
             // can extract them from the normalized create table sql.
-            $name = $this->extractIndexName($createTableSql, 'FOREIGN KEY', $data['columns']);
+            $name = $this->extractIndexName($createTableSql, 'FOREIGN\s*KEY', $data['columns']);
             if ($name === null) {
                 $name = implode('_', $data['columns']) . '_' . $id . '_fk';
             }
@@ -649,6 +684,10 @@ class SqliteSchemaDialect extends SchemaDialect
             if (count($data['references'][1]) === 1) {
                 $keys[$id]['references'][1] = $data['references'][1][0];
             }
+
+            // sqlite doesn't provide a simple way to get foreign key names, but we
+            // can extract them from the normalized create table sql.
+            $keys[$id]['deferrable'] = $this->extractDeferrable($createTableSql, $data['columns']);
         }
 
         return array_values($keys);
@@ -753,10 +792,9 @@ class SqliteSchemaDialect extends SchemaDialect
 
         $autoIncrement = (bool)($column['autoIncrement'] ?? false);
         if (
-            in_array($column['type'], $hasUnsigned, true) &&
-            isset($column['unsigned']) &&
-            $column['unsigned'] === true &&
-            ($column['type'] !== TableSchemaInterface::TYPE_INTEGER && $autoIncrement !== true)
+            !$autoIncrement &&
+            isset($column['unsigned']) && $column['unsigned'] === true &&
+            in_array($column['type'], $hasUnsigned, true)
         ) {
             $out .= ' UNSIGNED';
         }
@@ -802,7 +840,7 @@ class SqliteSchemaDialect extends SchemaDialect
         ];
         if (
             in_array($column['type'], $integerTypes, true) &&
-            isset($column['length']) && $autoIncrement !== true
+            isset($column['length']) && !$autoIncrement
         ) {
             $out .= '(' . (int)$column['length'] . ')';
         }
@@ -883,13 +921,14 @@ class SqliteSchemaDialect extends SchemaDialect
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             $type = 'FOREIGN KEY';
 
-            $clause = sprintf(
-                ' REFERENCES %s (%s) ON UPDATE %s ON DELETE %s',
+            $clause = rtrim(sprintf(
+                ' REFERENCES %s (%s) ON UPDATE %s ON DELETE %s %s',
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
                 $this->_foreignOnClause($data['delete']),
-            );
+                $data['deferrable'] ?? null,
+            ));
         }
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),

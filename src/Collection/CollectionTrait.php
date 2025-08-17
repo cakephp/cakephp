@@ -734,7 +734,6 @@ trait CollectionTrait
             }
             if (!$key || !isset($parents[$key])) {
                 foreach ($values as $id) {
-                    /** @psalm-suppress PossiblyInvalidArgument */
                     $parents[$id] = $isObject ? $parents[$id] : new ArrayIterator($parents[$id], 1);
                     $mapReduce->emit($parents[$id]);
                 }
@@ -1043,7 +1042,6 @@ trait CollectionTrait
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
             $currentCombination = array_map(function ($value, $keys, $index) {
-                /** @psalm-suppress InvalidArrayOffset */
                 return $value[$keys[$index]];
             }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
 
@@ -1053,7 +1051,6 @@ trait CollectionTrait
 
             $currentIndexes[$lastIndex]++;
 
-            /** @psalm-suppress InvalidArrayOffset */
             for (
                 $changeIndex = $lastIndex;
                 $currentIndexes[$changeIndex] === $collectionArraysCounts[$changeIndex] && $changeIndex > 0;

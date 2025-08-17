@@ -27,7 +27,7 @@ class SyslogLog extends BaseLog
     /**
      * Default config for this class
      *
-     * By default messages are formatted as:
+     * By default, messages are formatted as:
      * level: message
      *
      * To override the log format (e.g. to add your own info) define the format key when configuring
@@ -42,10 +42,10 @@ class SyslogLog extends BaseLog
      * ### Example:
      *
      * ```
-     *  Log::config('error', ]
+     *  Log::config('error', [
      *      'engine' => 'Syslog',
      *      'levels' => ['emergency', 'alert', 'critical', 'error'],
-     *      'prefix' => 'Web Server 01'
+     *      'prefix' => 'Web Server 01',
      *  ]);
      * ```
      *
@@ -134,7 +134,7 @@ class SyslogLog extends BaseLog
 
     /**
      * Extracts the call to syslog() in order to run unit tests on it. This function
-     * will perform the actual write in the system logger
+     * will perform the actual write operation in the system logger
      *
      * @param int $priority Message priority.
      * @param string $message Message to log.

@@ -912,4 +912,21 @@ class EventManagerTest extends TestCase
         $returnValue = $eventManager->unsetEventList();
         $this->assertSame($eventManager, $returnValue);
     }
+
+    /**
+     * Test that an event without a subject can be dispatched and
+     * displays a deprecation warning if the listener returns a value.
+     */
+    public function testEventWithoutSubjectWorksWithReturningListener(): void
+    {
+        $eventManager = new EventManager();
+        $eventManager->on('example', function (): string {
+            return 'example event called';
+        });
+        $result = '';
+        $this->deprecated(function () use (&$eventManager, &$result): void {
+            $result = $eventManager->dispatch(new Event('example'));
+        });
+        $this->assertEquals('example event called', $result->getResult());
+    }
 }

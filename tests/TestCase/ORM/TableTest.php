@@ -60,9 +60,9 @@ use Cake\Utility\Hash;
 use Cake\Validation\Validator;
 use Exception;
 use InvalidArgumentException;
+use Mockery;
 use PDOException;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use RuntimeException;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Entity\ArticlesTag;
@@ -625,7 +625,6 @@ class TableTest extends TestCase
      * @return void
      * @deprecated
      */
-    #[WithoutErrorHandler]
     public function testFindAllOldStyleOptionsArray(): void
     {
         $this->deprecated(function (): void {
@@ -1315,7 +1314,30 @@ class TableTest extends TestCase
         $this->assertSame(2, $author->id);
     }
 
-    #[WithoutErrorHandler]
+    /**
+     * https://github.com/cakephp/cakephp/issues/18716
+     */
+    public function testChangedFindWithOverlappingArgs(): void
+    {
+        $query = $this->getTableLocator()->get('Authors')
+            ->find('withIdArgument', 2)
+            ->find('custom', id: [1, 2], second: false);
+
+        $this->assertSame(['id' => [1, 2], 'second' => false], $query->getOptions());
+
+        $query = $this->getTableLocator()->get('Authors')
+            ->find('withIdArgument', id: 2)
+            ->find('custom', second: true);
+
+        $this->assertSame(['id' => 2, 'second' => true], $query->getOptions());
+
+        $query = $this->getTableLocator()->get('Authors')
+            ->find('withIdArgument', id: 2)
+            ->find('custom2', id: [2, 3], second: true);
+
+        $this->assertSame(['id' => [2, 3], 'second' => true], $query->getOptions());
+    }
+
     public function testFindTypedParameterCompatibility(): void
     {
         $articles = $this->fetchTable('Articles');
@@ -1625,7 +1647,6 @@ class TableTest extends TestCase
     /**
      * Tests find(list) with backwards compatibile options
      */
-    #[WithoutErrorHandler]
     public function testFindListArrayOptions(): void
     {
         $table = new Table([
@@ -1706,7 +1727,6 @@ class TableTest extends TestCase
      * @return void
      * @deprecated
      */
-    #[WithoutErrorHandler]
     public function testFindListWithArray(): void
     {
         $this->deprecated(function (): void {
@@ -2009,13 +2029,15 @@ class TableTest extends TestCase
      */
     public function testRemoveBehaviorMethodMapCleared(): void
     {
-        $table = new Table(['table' => 'articles']);
-        $table->addBehavior('Sluggable');
-        $this->assertTrue($table->behaviors()->hasMethod('slugify'), 'slugify should be mapped');
-        $this->assertSame('foo-bar', $table->slugify('foo bar'));
+        $this->deprecated(function (): void {
+            $table = new Table(['table' => 'articles']);
+            $table->addBehavior('Sluggable');
+            $this->assertTrue($table->behaviors()->hasMethod('slugify'), 'slugify should be mapped');
+            $this->assertSame('foo-bar', $table->slugify('foo bar'));
 
-        $table->removeBehavior('Sluggable');
-        $this->assertFalse($table->behaviors()->hasMethod('slugify'), 'slugify should not be callable');
+            $table->removeBehavior('Sluggable');
+            $this->assertFalse($table->behaviors()->hasMethod('slugify'), 'slugify should not be callable');
+        });
     }
 
     /**
@@ -2095,9 +2117,11 @@ class TableTest extends TestCase
      */
     public function testCallBehaviorMethod(): void
     {
-        $table = $this->getTableLocator()->get('article');
-        $table->addBehavior('Sluggable');
-        $this->assertSame('some-value', $table->slugify('some value'));
+        $this->deprecated(function (): void {
+            $table = $this->getTableLocator()->get('article');
+            $table->addBehavior('Sluggable');
+            $this->assertSame('some-value', $table->slugify('some value'));
+        });
     }
 
     /**
@@ -2105,9 +2129,11 @@ class TableTest extends TestCase
      */
     public function testCallBehaviorAliasedMethod(): void
     {
-        $table = $this->getTableLocator()->get('article');
-        $table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
-        $this->assertSame('some-value', $table->wednesday('some value'));
+        $this->deprecated(function (): void {
+            $table = $this->getTableLocator()->get('article');
+            $table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
+            $this->assertSame('some-value', $table->wednesday('some value'));
+        });
     }
 
     /**
@@ -2314,7 +2340,7 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity) {
+        $listener = function (EventInterface $event, $entity): void {
             $event->stopPropagation();
             $event->setResult($entity);
         };
@@ -2355,7 +2381,7 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity) {
+        $listener = function (EventInterface $event, $entity): void {
             $event->stopPropagation();
             $event->setResult(1);
         };
@@ -3278,32 +3304,40 @@ class TableTest extends TestCase
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
         $options = new ArrayObject(['atomic' => true, 'checkRules' => false, '_primary' => true]);
 
-        $mock = $this->getMockBuilder(EventManager::class)->getMock();
+        $mock = Mockery::mock(EventManager::class);
 
-        $mock->expects($this->once())
-            ->method('on');
+        $mock->shouldReceive('on');
 
-        $mock->expects($this->exactly(4))
-            ->method('dispatch')
-            ->with(
-                ...self::withConsecutive(
-                    [$this->anything()],
-                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
-                        return $event->getName() === 'Model.beforeDelete' &&
-                        $event->getData() == ['entity' => $entity, 'options' => $options];
-                    })],
-                    [
-                    $this->callback(function (EventInterface $event) use ($entity, $options) {
-                        return $event->getName() === 'Model.afterDelete' &&
-                            $event->getData() == ['entity' => $entity, 'options' => $options];
-                    }),
-                    ],
-                    [$this->callback(function (EventInterface $event) use ($entity, $options) {
-                        return $event->getName() === 'Model.afterDeleteCommit' &&
-                        $event->getData() == ['entity' => $entity, 'options' => $options];
-                    })],
-                ),
-            );
+        $mock->shouldReceive('dispatch')
+            ->withAnyArgs()
+            ->once();
+
+        $mock->shouldReceive('dispatch')
+            ->withArgs(function (EventInterface $event) use ($entity, $options) {
+                $this->assertSame('Model.beforeDelete', $event->getName());
+                $this->assertEquals(['entity' => $entity, 'options' => $options], $event->getData());
+
+                return true;
+            })
+            ->once();
+
+        $mock->shouldReceive('dispatch')
+            ->withArgs(function (EventInterface $event) use ($entity, $options) {
+                $this->assertSame('Model.afterDelete', $event->getName());
+                $this->assertEquals(['entity' => $entity, 'options' => $options], $event->getData());
+
+                return true;
+            })
+            ->once();
+
+        $mock->shouldReceive('dispatch')
+            ->withArgs(function (EventInterface $event) use ($entity, $options) {
+                $this->assertSame('Model.afterDeleteCommit', $event->getName());
+                $this->assertEquals(['entity' => $entity, 'options' => $options], $event->getData());
+
+                return true;
+            })
+            ->once();
 
         $table = $this->getTableLocator()->get('users', ['eventManager' => $mock]);
         $entity->setNew(false);
@@ -3490,12 +3524,14 @@ class TableTest extends TestCase
      */
     public function testValidatorBehavior(): void
     {
-        $table = new Table();
-        $table->addBehavior('Validation');
+        $this->deprecated(function (): void {
+            $table = new Table();
+            $table->addBehavior('Validation');
 
-        $validator = $table->getValidator('Behavior');
-        $set = $validator->field('name');
-        $this->assertArrayHasKey('behaviorRule', $set);
+            $validator = $table->getValidator('Behavior');
+            $set = $validator->field('name');
+            $this->assertArrayHasKey('behaviorRule', $set);
+        });
     }
 
     /**
@@ -3524,6 +3560,37 @@ class TableTest extends TestCase
             ],
             $result,
         );
+    }
+
+    /**
+     * Checks that entity is passed into context.
+     *
+     * @return void
+     */
+    public function testValidatorWithEntityInContext(): void
+    {
+        $table = new class (['alias' => 'Users', 'table' => 'users', 'connection' => $this->connection]) extends Table {
+            public function validateMe(string $text, array $context): bool
+            {
+                if (!isset($context['entity'])) {
+                    throw new InvalidArgumentException('Entity not found in context');
+                }
+
+                return true;
+            }
+        };
+
+        $table->getValidator('default')->add(
+            'name',
+            'validateMe',
+            ['rule' => 'validateMe', 'provider' => 'table'],
+        );
+
+        $entity = $table->newEmptyEntity();
+        $result = $table->patchEntity($entity, [
+            'name' => 'test',
+        ]);
+        $this->assertSame('test', $result->get('name'));
     }
 
     /**
@@ -4775,7 +4842,7 @@ class TableTest extends TestCase
 
         $this->assertTrue($authors->Articles->replace($author, $newArticles));
         $this->assertCount(count($newArticles), $author->articles);
-        $this->assertEquals((new Collection($newArticles))->extract('title'), (new Collection($author->articles))->extract('title'));
+        $this->assertEquals((new Collection($newArticles))->extract('title')->toArray(), (new Collection($author->articles))->extract('title')->toArray());
     }
 
     /**
@@ -5443,7 +5510,6 @@ class TableTest extends TestCase
      *
      * @return void
      */
-    #[WithoutErrorHandler]
     public function testGetBackwardsCompatibility(): void
     {
         $this->deprecated(function (): void {
@@ -6331,6 +6397,32 @@ class TableTest extends TestCase
 
         $expected = $table->get(2, contain: ['Authors']);
         $this->assertEquals($expected, $entity);
+    }
+
+    /**
+     * Tests loadInto() with a belongsTo association with a join and contain on the same table
+     */
+    public function testLoadBelongsToDoubleJoin(): void
+    {
+        $table = $this->getTableLocator()->get('Comments');
+        $table->belongsTo('Articles');
+
+        $entity = $table->get(2);
+        $result = $table->loadInto($entity, [
+            'Articles' => function (SelectQuery $q) {
+                return $q->innerJoinWith('Authors', function ($q) {
+                    return $q->where(['Authors.name' => 'mariano']);
+                });
+            },
+            'Articles.Authors',
+        ]);
+
+        $this->assertSame($entity, $result);
+
+        $expected = $table->get(2, contain: ['Articles.Authors']);
+        $this->assertEquals($expected, $entity);
+        $this->assertEquals($expected->article, $entity->article);
+        $this->assertEquals($expected->article->author, $entity->article->author);
     }
 
     /**

@@ -314,7 +314,7 @@ REGEXP;
      *
      * @param array<string, string> $map Additions/edits to the class map to apply.
      * @return void
-     * @psalm-param array<string, class-string> $map
+     * @phpstan-param array<string, class-string> $map
      */
     public static function setDsnClassMap(array $map): void
     {

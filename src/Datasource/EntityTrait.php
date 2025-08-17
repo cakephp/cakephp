@@ -302,13 +302,18 @@ trait EntityTrait
         }
 
         foreach ($values as $name => $value) {
-            /** @psalm-suppress RedundantCastGivenDocblockType */
             $name = (string)$name;
             if ($name === '') {
                 throw new InvalidArgumentException('Cannot set an empty field');
             }
 
             if ($options['guard'] === true && !$this->isAccessible($name)) {
+                continue;
+            }
+
+            if ($options['asOriginal'] || $this->isModified($name, $value)) {
+                $this->setDirty($name, true);
+            } else {
                 continue;
             }
 
@@ -328,14 +333,6 @@ trait EntityTrait
                 $this->_original[$name] = $this->_fields[$name];
             }
 
-            // Don't dirty scalar values and objects that didn't
-            // change. Arrays will always be marked as dirty because
-            // the original/updated list could contain references to the
-            // same objects, even though those objects may have changed internally.
-            if ($this->isModified($name, $value)) {
-                $this->setDirty($name, true);
-            }
-
             $this->_fields[$name] = $value;
         }
 
@@ -345,11 +342,21 @@ trait EntityTrait
     /**
      * Check if the provided value is same as existing value for a field.
      *
+     * This check is used to determine if a field should be set as dirty or not.
+     * It will return `false` for scalar values and objects which haven't changed.
+     * For arrays `true` will be returned always because the original/updated list
+     * could contain references to the same objects, even though those objects
+     * may have changed internally.
+     *
      * @param string $field The field to check.
      * @return bool
      */
     protected function isModified(string $field, mixed $value): bool
     {
+        if (!array_key_exists($field, $this->_fields)) {
+            return true;
+        }
+
         $existing = $this->_fields[$field] ?? null;
 
         if (($value === null || is_scalar($value)) && $existing === $value) {
@@ -524,21 +531,13 @@ trait EntityTrait
      *
      * @param string $field The field to check.
      * @return bool
+     * @deprecated 5.3.0 Use hasValue() instead.
      */
     public function isEmpty(string $field): bool
     {
-        $value = $this->get($field);
-        if (
-            $value === null ||
-            (
-                $value === [] ||
-                $value === ''
-            )
-        ) {
-            return true;
-        }
+        deprecationWarning('5.3.0', 'isEmpty() is deprecated. Use hasValue() instead.');
 
-        return false;
+        return !$this->hasValue($field);
     }
 
     /**
@@ -559,7 +558,18 @@ trait EntityTrait
      */
     public function hasValue(string $field): bool
     {
-        return !$this->isEmpty($field);
+        $value = $this->get($field);
+        if (
+            $value === null ||
+            (
+                $value === [] ||
+                $value === ''
+            )
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -874,7 +884,7 @@ trait EntityTrait
      */
     public function isOriginalField(string $name): bool
     {
-        return in_array($name, $this->_originalFields);
+        return in_array($name, $this->_originalFields, true);
     }
 
     /**

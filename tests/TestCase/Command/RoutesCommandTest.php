@@ -299,6 +299,20 @@ class RoutesCommandTest extends TestCase
         $this->assertOutputContains('> https://example.com/app/articles');
     }
 
+    public function testGenerateNameWithColon(): void
+    {
+        Configure::write('TestApp.routes', function ($routes): void {
+            $routes->connect(
+                '/example/update',
+                ['controller' => 'Example', 'action' => 'update'],
+                ['_name' => 'example:update'],
+            );
+        });
+        $this->exec('routes generate _name:example:update');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('> /example/update');
+    }
+
     /**
      * Test generating URLs
      */

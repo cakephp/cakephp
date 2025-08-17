@@ -715,7 +715,6 @@ class QueryExpression implements ExpressionInterface, Countable
             $typeMultiple = true;
         }
 
-        /** @psalm-suppress RedundantCondition */
         if ($typeMultiple) {
             $value = $value instanceof ExpressionInterface ? $value : (array)$value;
         }
@@ -746,7 +745,11 @@ class QueryExpression implements ExpressionInterface, Countable
 
         if ($value === null && $this->_conjunction !== ',') {
             throw new InvalidArgumentException(
-                sprintf('Expression `%s` is missing operator (IS, IS NOT) with `null` value.', $expression),
+                sprintf(
+                    'Expression `%s` has invalid `null` value.'
+                    . ' If `null` is a valid value, operator (IS, IS NOT) is missing.',
+                    $expression,
+                ),
             );
         }
 

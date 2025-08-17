@@ -41,7 +41,7 @@ class UrlHelper extends Helper
      * Asset URL engine class name
      *
      * @var string
-     * @psalm-var class-string<\Cake\Routing\Asset>
+     * @phpstan-var class-string<\Cake\Routing\Asset>
      */
     protected string $_assetUrlClassName;
 

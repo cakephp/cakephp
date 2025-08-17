@@ -210,6 +210,7 @@ class Postgres extends Driver
             DriverFeatureEnum::INTERSECT_ALL => true,
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => true,
             DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
+            DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => true,
         };
     }
 

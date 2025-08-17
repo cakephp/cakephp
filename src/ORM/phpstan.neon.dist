@@ -15,7 +15,6 @@ parameters:
 		-
 			identifier: missingType.generics
 		- '#Unsafe usage of new static\(\).#'
-		- "#^PHPDoc tag @return with type Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\> is not subtype of native type static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\)\\.$#"
 		- "#^Method Cake\\\\ORM\\\\Query\\\\SelectQuery\\:\\:find\\(\\) should return static\\(Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\) but returns Cake\\\\ORM\\\\Query\\\\SelectQuery\\<TSubject of array\\|Cake\\\\Datasource\\\\EntityInterface\\>\\.$#"
 		- '#^PHPDoc tag @var with type callable\(\): mixed is not subtype of native type Closure\(string\): string\.$#'
 		-

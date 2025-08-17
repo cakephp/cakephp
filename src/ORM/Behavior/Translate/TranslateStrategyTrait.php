@@ -85,7 +85,7 @@ trait TranslateStrategyTrait
      * Returns the current locale.
      *
      * If no locale has been explicitly set via `setLocale()`, this method will return
-     * the currently configured global locale.
+     * the currently configured global locale excluding any options set after @.
      *
      * @return string
      * @see \Cake\I18n\I18n::getLocale()
@@ -93,7 +93,7 @@ trait TranslateStrategyTrait
      */
     public function getLocale(): string
     {
-        return $this->locale ?: I18n::getLocale();
+        return $this->locale ?: explode('@', I18n::getLocale())[0];
     }
 
     /**
@@ -138,15 +138,15 @@ trait TranslateStrategyTrait
     }
 
     /**
-     * Build a set of properties that should be included in the marshalling process.
+     * Build a set of properties that should be included in the marshaling process.
 
-     * Add in `_translations` marshalling handlers. You can disable marshalling
+     * Add in `_translations` marshaling handlers. You can disable marshaling
      * of translations by setting `'translations' => false` in the options
      * provided to `Table::newEntity()` or `Table::patchEntity()`.
      *
-     * @param \Cake\ORM\Marshaller $marshaller The marshaller of the table the behavior is attached to.
+     * @param \Cake\ORM\Marshaller $marshaller The marshaler of the table the behavior is attached to.
      * @param array $map The property map being built.
-     * @param array<string, mixed> $options The options array used in the marshalling call.
+     * @param array<string, mixed> $options The options array used in the marshaling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
      */
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
@@ -162,7 +162,7 @@ trait TranslateStrategyTrait
                 }
 
                 /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
-                $translations = $entity->has('_translations') ? $entity->get('_translations') : [];
+                $translations = $entity->has('_translations') ? (array)$entity->get('_translations') : [];
 
                 $options['validate'] = $this->_config['validator'];
                 $errors = [];

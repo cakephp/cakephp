@@ -180,6 +180,24 @@ class LoggedQueryTest extends TestCase
         $this->assertSame($expected, $query->getContext());
     }
 
+    public function testSetContext(): void
+    {
+        $query = new LoggedQuery();
+        $query->setContext([
+            'query' => 'SELECT a FROM b where a = :p1',
+            'lol' => 'nope',
+            'connection' => $this->driver,
+        ]);
+
+        $expected = [
+            'query' => 'SELECT a FROM b where a = :p1',
+            'numRows' => 0,
+            'took' => 0.0,
+            'role' => '',
+        ];
+        $this->assertSame($expected, $query->getContext());
+    }
+
     public function testJsonSerialize(): void
     {
         $error = new Exception('You fail!');

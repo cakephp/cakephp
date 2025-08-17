@@ -126,6 +126,7 @@ use function Cake\Core\deprecationWarning;
  * @method string getDomain() Gets domain. {@see \Cake\Mailer\Message::getDomain()}
  * @method $this setAttachments($attachments) Add attachments to the email message. {@see \Cake\Mailer\Message::setAttachments()}
  * @method array getAttachments() Gets attachments to the email message. {@see \Cake\Mailer\Message::getAttachments()}
+ * @method $this addAttachment(\Psr\Http\Message\UploadedFileInterface|string $path, ?string $name, ?string $mimetype, ?string $contentId, ?bool $contentDisposition) Add an attachment. {@see \Cake\Mailer\Message::addAttachment()}
  * @method $this addAttachments($attachments) Add attachments. {@see \Cake\Mailer\Message::addAttachments()}
  * @method array|string getBody(?string $type = null) Get generated message body as array.
  *   {@see \Cake\Mailer\Message::getBody()}
@@ -153,7 +154,7 @@ class Mailer implements EventListenerInterface
      * Message class name.
      *
      * @var string
-     * @psalm-var class-string<\Cake\Mailer\Message>
+     * @phpstan-var class-string<\Cake\Mailer\Message>
      */
     protected string $messageClass = Message::class;
 
@@ -187,7 +188,7 @@ class Mailer implements EventListenerInterface
      * Mailer driver class map.
      *
      * @var array<string, string>
-     * @psalm-var array<string, class-string>
+     * @phpstan-var array<string, class-string>
      */
     protected static array $_dsnClassMap = [];
 
@@ -317,7 +318,7 @@ class Mailer implements EventListenerInterface
      * @return array
      * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
-     * @psalm-return array{headers: string, message: string}
+     * @phpstan-return array{headers: string, message: string}
      */
     public function send(?string $action = null, array $args = [], array $headers = []): array
     {
@@ -373,7 +374,7 @@ class Mailer implements EventListenerInterface
      *
      * @param string $content Content.
      * @return array
-     * @psalm-return array{headers: string, message: string}
+     * @phpstan-return array{headers: string, message: string}
      */
     public function deliver(string $content = ''): array
     {
@@ -553,7 +554,7 @@ class Mailer implements EventListenerInterface
      *
      * @param array $contents The content with 'headers' and 'message' keys.
      * @return void
-     * @psalm-param array{headers: string, message: string} $contents
+     * @phpstan-param array{headers: string, message: string} $contents
      */
     protected function logDelivery(array $contents): void
     {

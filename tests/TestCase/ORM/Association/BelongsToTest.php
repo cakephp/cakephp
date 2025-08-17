@@ -316,14 +316,11 @@ class BelongsToTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock(Table::class)
-            ->shouldAllowMockingMethod('saveAssociated')
-            ->makePartial();
+        $spy = Mockery::spy(Table::class);
         $config = [
             'sourceTable' => $this->client,
-            'targetTable' => $mock,
+            'targetTable' => $spy,
         ];
-        $mock->shouldNotReceive('saveAssociated');
 
         $entity = new Entity([
             'title' => 'A Title',
@@ -335,6 +332,8 @@ class BelongsToTest extends TestCase
         $result = $association->saveAssociated($entity);
         $this->assertSame($result, $entity);
         $this->assertNull($entity->author_id);
+
+        $spy->shouldNotHaveReceived('saveAssociated');
     }
 
     /**

@@ -135,6 +135,35 @@ class I18nTest extends TestCase
         $this->assertSame('7 months everything else', $result);
     }
 
+    public function testPluralSelectionFrench(): void
+    {
+        $translator = I18n::getTranslator('default', 'fr');
+
+        $result = $translator->translate('{0} apples', ['_count' => 1, 1]);
+        $this->assertSame('1 pomme', $result);
+
+        $result = $translator->translate('{0} apples', ['_count' => 2, 2]);
+        $this->assertSame('2 pommes', $result);
+
+        $result = $translator->translate('{0} apples', ['_count' => 1000000, 1000000]);
+        $this->assertSame('1000000 de pommes', $result);
+
+        $result = $translator->translate('{0} apples', ['_count' => 1000001, 1000001]);
+        $this->assertSame('1000001 pommes', $result);
+
+        $result = $translator->translate('{0} bananas', ['_count' => 1, 1]);
+        $this->assertSame('1 banana fr', $result);
+
+        $result = $translator->translate('{0} bananas', ['_count' => 2, 2]);
+        $this->assertSame('2 bananas fr', $result);
+
+        $result = $translator->translate('{0} bananas', ['_count' => 1000000, 1000000]);
+        $this->assertSame('1000000 bananas fr', $result);
+
+        $result = $translator->translate('{0} bananas', ['_count' => 1000001, 1000001]);
+        $this->assertSame('1000001 bananas fr', $result);
+    }
+
     /**
      * Tests that custom translation packages can be created on the fly and used later on
      */
@@ -151,6 +180,38 @@ class I18nTest extends TestCase
 
         $translator = I18n::getTranslator('custom', 'fr_FR');
         $this->assertSame('Le moo', $translator->translate('Cow'));
+    }
+
+    /**
+     * Tests that custom translation loaders can be created on the fly and used later on
+     *
+     * @deprecated
+     */
+    public function testCreateCustomTranslationInvokable(): void
+    {
+        $loader = new class {
+            public function __invoke(): Package
+            {
+                $package = new Package('default');
+                $package->setMessages([
+                    'Cow' => 'Le moo',
+                ]);
+
+                return $package;
+            }
+        };
+
+        I18n::config('custom', function ($domain, $locale) use ($loader) {
+            return new $loader(
+                $domain,
+                $locale,
+            );
+        });
+
+        $this->deprecated(function (): void {
+            $translator = I18n::getTranslator('custom', 'fr_FR');
+            $this->assertSame('Le moo', $translator->translate('Cow'));
+        });
     }
 
     /**

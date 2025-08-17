@@ -72,8 +72,8 @@ class CounterCacheCommand extends Command
             $methodArgs['page'] = (int)$args->getOption('page');
         }
 
-        /** @phpstan-ignore-next-line */
-        $table->updateCounterCache(...$methodArgs);
+        /** @var \Cake\ORM\Table<array{CounterCache: \Cake\ORM\Behavior\CounterCacheBehavior}> $table */
+        $table->getBehavior('CounterCache')->updateCounterCache(...$methodArgs);
 
         $io->success('Counter cache updated successfully.');
 

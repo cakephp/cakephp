@@ -54,7 +54,7 @@ class MemcachedEngine extends CacheEngine
      * - `prefix` Prepended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
      * - `serialize` The serializer engine used to serialize data. Available engines are 'php',
-     *    'igbinary' and 'json'. Beside 'php', the memcached extension must be compiled with the
+     *    'igbinary' and 'json'. Besides 'php', the memcached extension must be compiled with the
      *    appropriate serializer support.
      * - `servers` String or array of memcached servers. If an array MemcacheEngine will use
      *    them as a pool.

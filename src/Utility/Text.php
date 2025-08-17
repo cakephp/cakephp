@@ -36,7 +36,7 @@ class Text
     /**
      * Default transliterator id string.
      *
-     * @var string $_defaultTransliteratorId Transliterator identifier string.
+     * @var string Transliterator identifier string.
      */
     protected static string $_defaultTransliteratorId = 'Any-Latin; Latin-ASCII; [\u0080-\u7fff] remove';
 

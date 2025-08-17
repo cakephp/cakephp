@@ -29,7 +29,7 @@ use Stringable;
  *
  * Adds handy methods and locale-aware formatting helpers.
  *
- * @psalm-immutable
+ * @phpstan-immutable
  */
 class Date extends ChronosDate implements JsonSerializable, Stringable
 {
@@ -315,6 +315,16 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
         }
 
         return $this->i18nFormat(static::$_jsonEncodeFormat);
+    }
+
+    /**
+     * Returns a UNIX timestamp as an integer.
+     *
+     * @return int UNIX timestamp
+     */
+    public function getTimestamp(): int
+    {
+        return (int)$this->toUnixString();
     }
 
     /**

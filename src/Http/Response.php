@@ -834,7 +834,6 @@ class Response implements ResponseInterface, Stringable
         }
 
         /**
-         * @psalm-suppress UndefinedInterfaceMethod
          * @phpstan-ignore-next-line
          */
         return $result->setTimezone(new DateTimeZone('UTC'));

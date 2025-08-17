@@ -4,6 +4,8 @@ includes:
 parameters:
 	level: 8
 	treatPhpDocTypesAsCertain: false
+	featureToggles:
+		internalTag: true
 	bootstrapFiles:
 		- tests/bootstrap.php
 	paths:
@@ -15,6 +17,8 @@ parameters:
 			identifier: missingType.generics
 		-
 			identifier: include.fileNotFound
+		-
+			identifier: method.internalClass
 
 services:
 	-

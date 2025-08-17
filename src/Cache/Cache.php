@@ -74,7 +74,7 @@ class Cache
      * class names.
      *
      * @var array<string, string>
-     * @psalm-var array<string, class-string>
+     * @phpstan-var array<string, class-string>
      */
     protected static array $_dsnClassMap = [
         'array' => Engine\ArrayEngine::class,

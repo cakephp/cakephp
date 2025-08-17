@@ -144,7 +144,6 @@ class Socket
         }
 
         /**
-         * @psalm-suppress InvalidArgument
          * @phpstan-ignore-next-line
          */
         set_error_handler($this->_connectionErrorHandler(...));
@@ -432,7 +431,6 @@ class Socket
 
             return true;
         }
-        /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->connected = !fclose($this->connection);
 
         if (!$this->connected) {

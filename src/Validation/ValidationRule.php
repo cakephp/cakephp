@@ -152,8 +152,8 @@ class ValidationRule
         }
 
         $params = (new ReflectionFunction($callable))->getParameters();
-        $lastParm = array_pop($params);
-        if ($lastParm && $lastParm->getName() === 'context') {
+        $lastParam = array_pop($params);
+        if ($lastParam && $lastParam->getName() === 'context') {
             $args['context'] = $context;
         }
 

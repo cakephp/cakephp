@@ -247,7 +247,6 @@ class Cookie implements CookieInterface
 
         if ($expires instanceof DateTimeInterface) {
             /**
-             * @psalm-suppress UndefinedInterfaceMethod
              * @phpstan-ignore-next-line
              */
             return $expires->setTimezone(new DateTimeZone('GMT'));

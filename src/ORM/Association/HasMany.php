@@ -390,7 +390,6 @@ class HasMany extends Association
         $conditions = [
             'OR' => (new Collection($targetEntities))
                 ->map(function (EntityInterface $entity) use ($targetPrimaryKey) {
-                    /** @psalm-suppress InvalidArgument,UnusedPsalmSuppress */
                     /** @var array<string> $targetPrimaryKey */
                     return $entity->extract($targetPrimaryKey);
                 })

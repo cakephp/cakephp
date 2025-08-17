@@ -147,7 +147,9 @@ class LoggedQuery implements JsonSerializable, Stringable
     public function setContext(array $context): void
     {
         foreach ($context as $key => $val) {
-            $this->{$key} = $val;
+            if (property_exists($this, $key)) {
+                $this->{$key} = $val;
+            }
         }
     }
 

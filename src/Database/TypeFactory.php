@@ -29,7 +29,7 @@ class TypeFactory
      * representing the class that will do actual type conversions.
      *
      * @var array<string, string>
-     * @psalm-var array<string, class-string<\Cake\Database\TypeInterface>>
+     * @phpstan-var array<string, class-string<\Cake\Database\TypeInterface>>
      */
     protected static array $_types = [
         'tinyinteger' => Type\IntegerType::class,
@@ -118,7 +118,7 @@ class TypeFactory
      * @param string $type Name of type to map.
      * @param string $className The classname to register.
      * @return void
-     * @psalm-param class-string<\Cake\Database\TypeInterface> $className
+     * @phpstan-param class-string<\Cake\Database\TypeInterface> $className
      */
     public static function map(string $type, string $className): void
     {
@@ -131,7 +131,7 @@ class TypeFactory
      *
      * @param array<string, string> $map List of types to be mapped.
      * @return void
-     * @psalm-param array<string, class-string<\Cake\Database\TypeInterface>> $map
+     * @phpstan-param array<string, class-string<\Cake\Database\TypeInterface>> $map
      */
     public static function setMap(array $map): void
     {
@@ -140,7 +140,10 @@ class TypeFactory
     }
 
     /**
-     * Get mapped class name for given type or map array.
+     * Get the type mapping array.
+     *
+     * Deprecated 5.3.0: Argument $type has been deprecated.
+     * Use getMap() without arguments to get the full map, or getMapped($type) to get a specific type mapping.
      *
      * @param string|null $type Type name to get mapped class for or null to get map array.
      * @return array<string, class-string<\Cake\Database\TypeInterface>>|string|null Configured class name for given $type or map array.
@@ -151,6 +154,23 @@ class TypeFactory
             return static::$_types;
         }
 
+        trigger_error(
+            'Calling getMap() with a type argument is deprecated. Use getMapped() instead.',
+            E_USER_DEPRECATED,
+        );
+
+        return static::$_types[$type] ?? null;
+    }
+
+    /**
+     * Get mapped class name for a specific type.
+     *
+     * @param string $type Type name to get mapped class for.
+     * @return string|null Configured class name for given $type or null if not found.
+     * @phpstan-return class-string<\Cake\Database\TypeInterface>|null
+     */
+    public static function getMapped(string $type): ?string
+    {
         return static::$_types[$type] ?? null;
     }
 

@@ -176,7 +176,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Middlewares list.
      *
      * @var array
-     * @psalm-var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array{only?: array|string, except?: array|string}}>
+     * @phpstan-var array<int, array{middleware:\Psr\Http\Server\MiddlewareInterface|\Closure|string, options:array{only?: array|string, except?: array|string}}>
      */
     protected array $middlewares = [];
 
@@ -485,8 +485,8 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
 
         if (!$this->isAction($action)) {
             throw new MissingActionException([
-                $controller,
-                $action,
+                'controller' => $controller,
+                'action' => $action,
             ]);
         }
 
@@ -529,7 +529,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *  - `except`: (array|string) Run the middleware for all actions except the specified ones.
      * @return void
      * @since 4.3.0
-     * @psalm-param array{only?: array|string, except?: array|string} $options
+     * @phpstan-param array{only?: array|string, except?: array|string} $options
      */
     public function middleware(MiddlewareInterface|Closure|string $middleware, array $options = []): void
     {
@@ -924,7 +924,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * or perform logic that needs to happen before each controller action.
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
-     * @return \Cake\Http\Response|null|void
+     * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
@@ -937,7 +937,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * to perform logic or set view variables that are required on every request.
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
-     * @return \Cake\Http\Response|null|void
+     * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
@@ -958,7 +958,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Psr\Http\Message\UriInterface|array|string $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param \Cake\Http\Response $response The response object.
-     * @return \Cake\Http\Response|null|void
+     * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
@@ -970,7 +970,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * Called after the controller action is run and rendered.
      *
      * @param \Cake\Event\EventInterface<\Cake\Controller\Controller> $event An Event instance
-     * @return \Cake\Http\Response|null|void
+     * @return void
      * @link https://book.cakephp.org/5/en/controllers.html#request-life-cycle-callbacks
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */

@@ -668,8 +668,8 @@ abstract class Driver implements LoggerAwareInterface
      * @throws \Cake\Database\Exception\DatabaseException In case the processed query contains any joins, as removing
      *  aliases from the conditions can break references to the joined tables.
      * @template T of \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery
-     * @psalm-param T $query
-     * @psalm-return T
+     * @phpstan-param T $query
+     * @phpstan-return T
      */
     protected function _removeAliasesFromConditions(UpdateQuery|DeleteQuery $query): UpdateQuery|DeleteQuery
     {
@@ -799,7 +799,6 @@ abstract class Driver implements LoggerAwareInterface
         if (is_float($value)) {
             return str_replace(',', '.', (string)$value);
         }
-        /** @psalm-suppress InvalidArgument */
         if (
             (
                 is_int($value) ||
@@ -979,7 +978,7 @@ abstract class Driver implements LoggerAwareInterface
         $className = App::className($className, 'Cake/Log', 'Log');
         if ($className === null) {
             throw new CakeException(
-                'For logging you must either set the `log` config to a FQCN which implemnts Psr\Log\LoggerInterface' .
+                'For logging you must either set the `log` config to a FQCN which implements Psr\Log\LoggerInterface' .
                 ' or require the cakephp/log package in your composer config.',
             );
         }

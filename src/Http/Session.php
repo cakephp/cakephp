@@ -223,9 +223,11 @@ class Session
             'handler' => [],
         ];
 
+        $lifetime = (int)ini_get('session.gc_maxlifetime');
         if ($config['timeout'] !== null) {
-            $this->configureSessionLifetime((int)$config['timeout'] * 60);
+            $lifetime = (int)$config['timeout'] * 60;
         }
+        $this->configureSessionLifetime($lifetime);
 
         if ($config['cookie']) {
             $config['ini']['session.name'] = $config['cookie'];
@@ -490,7 +492,6 @@ class Session
         }
         $value = $this->read($name);
         if ($value !== null) {
-            /** @psalm-suppress InvalidScalarArgument */
             $this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
         }
 
@@ -564,7 +565,6 @@ class Session
     public function delete(string $name): void
     {
         if ($this->check($name)) {
-            /** @psalm-suppress InvalidScalarArgument */
             $this->_overwrite($_SESSION, Hash::remove($_SESSION, $name));
         }
     }

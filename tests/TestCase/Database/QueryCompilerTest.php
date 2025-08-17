@@ -16,6 +16,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\StatementInterface;
@@ -107,6 +108,25 @@ class QueryCompilerTest extends TestCase
         $this->assertCount(3, $result);
     }
 
+    public function testSelectWithHint(): void
+    {
+        /** @var \Cake\Database\Query\SelectQuery $query */
+        $query = $this->newQuery(Query::TYPE_SELECT);
+        $query = $query->select('*')
+            ->from('articles')
+            ->optimizerHint(['TEST_HINT1(param)', 'TEST_HINT2(param)']);
+        $result = $this->compiler->compile($query, $this->binder);
+
+        if ($query->getDriver()->supports(DriverFeatureEnum::OPTIMIZER_HINT_COMMENT)) {
+            $this->assertSame('SELECT /*+ TEST_HINT1(param) TEST_HINT2(param) */ * FROM articles', $result);
+        } else {
+            $this->assertSame('SELECT * FROM articles', $result);
+        }
+
+        $result = $query->all();
+        $this->assertCount(3, $result);
+    }
+
     public function testInsert(): void
     {
         /** @var \Cake\Database\Query\InsertQuery $query */
@@ -148,6 +168,29 @@ class QueryCompilerTest extends TestCase
         $result->closeCursor();
     }
 
+    public function testInsertWithHint(): void
+    {
+        /** @var \Cake\Database\Query\InsertQuery $query */
+        $query = $this->newQuery(Query::TYPE_INSERT);
+        $query = $query->insert(['title'])
+            ->into('articles')
+            ->values(['title' => 'A new article'])
+            ->optimizerHint(['TEST_HINT1(param)', 'TEST_HINT2(param)']);
+        $result = $this->compiler->compile($query, $this->binder);
+
+        if ($query->getDriver()->supports(DriverFeatureEnum::OPTIMIZER_HINT_COMMENT)) {
+            $this->assertSame('INSERT /*+ TEST_HINT1(param) TEST_HINT2(param) */ INTO articles (title) VALUES (:c0)', $result);
+        } elseif ($query->getDriver() instanceof Sqlserver) {
+            $this->assertSame('INSERT INTO articles (title) OUTPUT INSERTED.* VALUES (:c0)', $result);
+        } else {
+            $this->assertSame('INSERT INTO articles (title) VALUES (:c0)', $result);
+        }
+
+        $result = $query->execute();
+        $this->assertInstanceOf(StatementInterface::class, $result);
+        $result->closeCursor();
+    }
+
     public function testUpdate(): void
     {
         /** @var \Cake\Database\Query\UpdateQuery $query */
@@ -163,7 +206,7 @@ class QueryCompilerTest extends TestCase
         $result->closeCursor();
     }
 
-    public function testUpdateWithComment(): void
+    public function testUpdateWithOptimizer(): void
     {
         /** @var \Cake\Database\Query\UpdateQuery $query */
         $query = $this->newQuery(Query::TYPE_UPDATE);
@@ -173,6 +216,27 @@ class QueryCompilerTest extends TestCase
             ->comment('This is a test');
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('/* This is a test */ UPDATE articles SET title = :c0 WHERE id = :c1', $result);
+
+        $result = $query->execute();
+        $this->assertInstanceOf(StatementInterface::class, $result);
+        $result->closeCursor();
+    }
+
+    public function testUpdateWitOptimizerhHint(): void
+    {
+        /** @var \Cake\Database\Query\UpdateQuery $query */
+        $query = $this->newQuery(Query::TYPE_UPDATE);
+        $query = $query->update('articles')
+            ->set('title', 'mark')
+            ->where(['id' => 1])
+            ->optimizerHint(['TEST_HINT1(param)', 'TEST_HINT2(param)']);
+        $result = $this->compiler->compile($query, $this->binder);
+
+        if ($query->getDriver()->supports(DriverFeatureEnum::OPTIMIZER_HINT_COMMENT)) {
+            $this->assertSame('UPDATE /*+ TEST_HINT1(param) TEST_HINT2(param) */ articles SET title = :c0 WHERE id = :c1', $result);
+        } else {
+            $this->assertSame('UPDATE articles SET title = :c0 WHERE id = :c1', $result);
+        }
 
         $result = $query->execute();
         $this->assertInstanceOf(StatementInterface::class, $result);
@@ -204,6 +268,27 @@ class QueryCompilerTest extends TestCase
             ->comment('This is a test');
         $result = $this->compiler->compile($query, $this->binder);
         $this->assertSame('/* This is a test */ DELETE FROM articles WHERE id != :c0', $result);
+
+        $result = $query->execute();
+        $this->assertInstanceOf(StatementInterface::class, $result);
+        $result->closeCursor();
+    }
+
+    public function testDeleteWithOptimizerHint(): void
+    {
+        /** @var \Cake\Database\Query\DeleteQuery $query */
+        $query = $this->newQuery(Query::TYPE_DELETE);
+        $query = $query->delete()
+            ->from('articles')
+            ->where(['id !=' => 1])
+            ->optimizerHint(['TEST_HINT1(param)', 'TEST_HINT2(param)']);
+        $result = $this->compiler->compile($query, $this->binder);
+
+        if ($query->getDriver()->supports(DriverFeatureEnum::OPTIMIZER_HINT_COMMENT)) {
+            $this->assertSame('DELETE /*+ TEST_HINT1(param) TEST_HINT2(param) */ FROM articles WHERE id != :c0', $result);
+        } else {
+            $this->assertSame('DELETE FROM articles WHERE id != :c0', $result);
+        }
 
         $result = $query->execute();
         $this->assertInstanceOf(StatementInterface::class, $result);

@@ -94,6 +94,6 @@ class Collection implements CollectionInterface
      */
     protected function getDialect(): SchemaDialect
     {
-        return $this->_dialect ??= $this->_connection->getDriver()->schemaDialect();
+        return $this->_dialect ??= $this->_connection->getWriteDriver()->schemaDialect();
     }
 }

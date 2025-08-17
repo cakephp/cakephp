@@ -30,6 +30,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
 use Psr\Http\Message\UriInterface;
+use function Cake\Core\deprecationWarning;
 use function Cake\Core\env;
 
 /**
@@ -721,7 +722,7 @@ class ServerRequest implements ServerRequestInterface
      * Allows for one or more headers to be compared.
      *
      * ```
-     * addDetector('fancy', ['header' => ['X-Fancy' => 1]);
+     * addDetector('fancy', ['header' => ['X-Fancy' => 1]]);
      * ```
      *
      * The `param`, `env` and comparison types allow the following
@@ -838,7 +839,7 @@ class ServerRequest implements ServerRequestInterface
      * Get a single header from the request.
      *
      * Return the header value as an array. If the header
-     * is not present an empty array will be returned.
+     * is not present, an empty array will be returned.
      *
      * @param string $name The header you want to get (case-insensitive)
      * @return array<string, string> An associative array of headers and their values.
@@ -938,7 +939,7 @@ class ServerRequest implements ServerRequestInterface
      * - You can submit an input with the name `_method`
      *
      * Any of these 3 approaches can be used to set the HTTP method used
-     * by CakePHP internally, and will effect the result of this method.
+     * by CakePHP internally, and will affect the result of this method.
      *
      * @return string The name of the HTTP method used.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
@@ -994,6 +995,32 @@ class ServerRequest implements ServerRequestInterface
     public function getQueryParams(): array
     {
         return $this->query;
+    }
+
+    /**
+     * Returns query parameters filtered to include only the specified keys or exclude specified keys.
+     *
+     * If the `$only` parameter is provided, only those keys will be returned.
+     * If the `$exclude` parameter is provided, all keys except those will be returned.
+     * Both parameters cannot be provided at the same time.
+     *
+     * @param array $only    List of query parameter keys to include. Defaults to an empty array.
+     * @param array $exclude List of query parameter keys to exclude. Defaults to an empty array.
+     * @return array Filtered query parameters.
+     * @throws \InvalidArgumentException When both `$only` and `$exclude` are provided.
+     */
+    public function getFilteredQueryParams(array $only = [], array $exclude = []): array
+    {
+        if ($only !== [] && $exclude !== []) {
+            throw new InvalidArgumentException('Specify either `$only` or `$exclude`, not both.');
+        }
+        $params = $this->getQueryParams();
+
+        if ($only !== []) {
+            return array_intersect_key($params, array_flip($only));
+        }
+
+        return array_diff_key($params, array_flip($exclude));
     }
 
     /**
@@ -1450,7 +1477,7 @@ class ServerRequest implements ServerRequestInterface
      * Returns an updated request object. This method returns
      * a *new* request object and does not mutate the request in-place.
      *
-     * Use `withParsedBody()` if you need to replace the all request data.
+     * Use `withParsedBody()` if you need to replace all the request data.
      *
      * @param string $name The dot separated path to insert $value at.
      * @param mixed $value The value to insert into the request data.
@@ -1514,6 +1541,13 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getParam(string $name, mixed $default = null): mixed
     {
+        if ($name === '?') {
+            deprecationWarning(
+                '5.3.0',
+                'Using `$request->getParam("?")` is deprecated. Use `$request->getQueryParams()` instead.',
+            );
+        }
+
         return Hash::get($this->params, $name, $default);
     }
 

@@ -17,7 +17,9 @@ declare(strict_types=1);
 namespace Cake\Event;
 
 use Cake\Core\Exception\CakeException;
+use Closure;
 use InvalidArgumentException;
+use ReflectionFunction;
 use function Cake\Core\deprecationWarning;
 
 /**
@@ -330,10 +332,25 @@ class EventManager implements EventManagerInterface
         $result = $listener($event, ...array_values($event->getData()));
 
         if ($result !== null) {
+            try {
+                $class = get_class($event->getSubject());
+            } catch (CakeException) {
+                $class = 'unknown subject';
+            }
+
+            if ($listener instanceof Closure) {
+                $ref = new ReflectionFunction($listener);
+                $closureClass = $ref->getClosureScopeClass();
+                $closureMethod = $ref->getName();
+                if ($closureClass && $closureClass->name && $closureMethod) {
+                    $class = $closureClass->name . '::' . $closureMethod . '()';
+                }
+            }
+
             deprecationWarning(
                 '5.2.0',
                 'Returning a value from event listeners is deprecated. ' .
-                'Use `$event->setResult()` instead.',
+                'Use `$event->setResult()` instead in `' . $event->getName() . '` of `' . $class . '`',
             );
             $event->setResult($result);
         }

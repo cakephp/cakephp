@@ -46,7 +46,7 @@ class ExceptionTrap
      *   implement the `render()` method and return either a string or Http\Response.
      * - `log` Set to false to disable logging.
      * - `logger` - string - The class name of the error logger to use.
-     * - `trace` - boolean - Whether or not backtraces should be included in
+     * - `trace` - boolean - Whether backtraces should be included in
      *   logged exceptions.
      * - `skipLog` - array - List of exceptions to skip for logging. Exceptions that
      *   extend one of the listed exceptions will also not be logged. E.g.:

@@ -278,7 +278,7 @@ class View implements EventDispatcherInterface
      * ViewBlock class.
      *
      * @var string
-     * @psalm-var class-string<\Cake\View\ViewBlock>
+     * @phpstan-var class-string<\Cake\View\ViewBlock>
      */
     protected string $_viewBlockClass = ViewBlock::class;
 
@@ -652,7 +652,7 @@ class View implements EventDispatcherInterface
      * @return string Rendered Element
      * @throws \Cake\View\Exception\MissingElementException When an element is missing and `ignoreMissing`
      *   is false.
-     * @psalm-param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options
+     * @phpstan-param array{cache?:array|true, callbacks?:bool, plugin?:string|false, ignoreMissing?:bool} $options
      */
     public function element(string $name, array $data = [], array $options = []): string
     {
@@ -1422,7 +1422,7 @@ class View implements EventDispatcherInterface
      * @param string $name The name you want to plugin split.
      * @param bool $fallback If true uses the plugin set in the current Request when parsed plugin is not loaded
      * @return array Array with 2 indexes. 0 => plugin name, 1 => filename.
-     * @psalm-return array{string|null, string}
+     * @phpstan-return array{string|null, string}
      */
     public function pluginSplit(string $name, bool $fallback = true): array
     {
@@ -1625,12 +1625,12 @@ class View implements EventDispatcherInterface
      * @param array $data Data
      * @param array<string, mixed> $options Element options
      * @return array<string, mixed> Element Cache configuration.
-     * @psalm-return array{key:string, config:string}
+     * @phpstan-return array{key:string, config:string}
      */
     protected function _elementCache(string $name, array $data, array $options): array
     {
         if (isset($options['cache']['key'], $options['cache']['config'])) {
-            /** @psalm-var array{key:string, config:string} $cache */
+            /** @phpstan-var array{key:string, config:string} $cache */
             $cache = $options['cache'];
             $cache['key'] = 'element_' . $cache['key'];
 

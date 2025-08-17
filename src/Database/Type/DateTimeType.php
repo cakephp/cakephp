@@ -183,7 +183,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     /**
      * Set user timezone.
      *
-     * This is the time zone used when marshalling strings to DateTime instances.
+     * This is the time zone used when marshaling strings to DateTime instances.
      *
      * @param \DateTimeZone|string|null $timezone User timezone.
      * @return $this

@@ -182,7 +182,6 @@ class WhenThenExpression implements ExpressionInterface
      */
     public function then(mixed $result, ?string $type = null)
     {
-        /** @psalm-suppress DocblockTypeContradiction */
         if (
             $result !== null &&
             !is_scalar($result) &&

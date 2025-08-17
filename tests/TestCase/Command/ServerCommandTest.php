@@ -49,5 +49,6 @@ class ServerCommandTest extends TestCase
         $this->assertArrayHasKey('port', $options);
         $this->assertArrayHasKey('ini_path', $options);
         $this->assertArrayHasKey('document_root', $options);
+        $this->assertArrayHasKey('frankenphp', $options);
     }
 }

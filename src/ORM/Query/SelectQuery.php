@@ -384,8 +384,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
         $this->_results = $results;
 
-        /** @phpstan-ignore-next-line */
-        return $this->_results;
+        return $results;
     }
 
     /**
@@ -1673,13 +1672,11 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param string $finder The finder method to use.
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return static<TSubject> Returns a modified query.
-     * @psalm-suppress MoreSpecificReturnType
      */
     public function find(string $finder, mixed ...$args): static
     {
         $table = $this->getRepository();
 
-        /** @psalm-suppress LessSpecificReturnStatement */
         return $table->callFinder($finder, $this, ...$args);
     }
 

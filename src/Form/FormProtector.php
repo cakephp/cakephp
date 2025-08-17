@@ -271,7 +271,7 @@ class FormProtector
      *
      * @param array<string, array> $formData Form data.
      * @return array<string, array>
-     * @psalm-return array{fields: array, unlockedFields: array<string>}
+     * @phpstan-return array{fields: array, unlockedFields: array<string>}
      */
     protected function extractHashParts(array $formData): array
     {
@@ -381,7 +381,7 @@ class FormProtector
      * @param string $url Form URL.
      * @param string $sessionId Session ID.
      * @return array<string, string> The token data.
-     * @psalm-return array{fields: string, unlocked: string, debug: string}
+     * @phpstan-return array{fields: string, unlocked: string, debug: string}
      */
     public function buildTokenData(string $url = '', string $sessionId = ''): array
     {

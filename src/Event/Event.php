@@ -37,7 +37,7 @@ class Event implements EventInterface
      * The object this event applies to (usually the same object that generates the event)
      *
      * @var object|null
-     * @psalm-var TSubject|null
+     * @phpstan-var TSubject|null
      */
     protected ?object $_subject = null;
 
@@ -79,7 +79,7 @@ class Event implements EventInterface
      *   (usually the object that is generating the event).
      * @param array $data any value you wish to be transported
      *   with this event to it can be read by listeners.
-     * @psalm-param TSubject|null $subject
+     * @phpstan-param TSubject|null $subject
      */
     public function __construct(string $name, ?object $subject = null, array $data = [])
     {
@@ -105,7 +105,7 @@ class Event implements EventInterface
      *
      * @return object
      * @throws \Cake\Core\Exception\CakeException
-     * @psalm-return TSubject
+     * @phpstan-return TSubject
      */
     public function getSubject(): object
     {

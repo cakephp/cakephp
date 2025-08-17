@@ -400,8 +400,9 @@ SQL;
                 'length' => 19,
                 'precision' => null,
                 'unsigned' => null,
-                'autoIncrement' => null,
                 'comment' => null,
+                'autoIncrement' => null,
+                'generated' => null,
             ],
             'title' => [
                 'type' => 'string',
@@ -428,8 +429,9 @@ SQL;
                 'length' => 10,
                 'precision' => null,
                 'unsigned' => null,
-                'autoIncrement' => null,
                 'comment' => null,
+                'autoIncrement' => null,
+                'generated' => null,
             ],
             'unique_id' => [
                 'type' => 'integer',
@@ -440,6 +442,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'published' => [
                 'type' => 'boolean',
@@ -575,7 +578,7 @@ SQL;
         $connection->execute('DROP TABLE schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->getPrimaryKey());
-        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertFalse($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
         $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
     }
 
@@ -610,7 +613,6 @@ SQL;
             'primary' => [
                 'type' => 'primary',
                 'columns' => ['id'],
-                'length' => [],
             ],
             'content_idx' => [
                 'type' => 'unique',
@@ -621,9 +623,9 @@ SQL;
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['schema_authors', 'id'],
-                'length' => [],
                 'update' => 'cascade',
                 'delete' => 'cascade',
+                'deferrable' => null,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
@@ -633,7 +635,11 @@ SQL;
                 'length' => [],
             ],
         ];
-        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $primary = $result->getConstraint('primary');
+        $this->assertTrue(str_starts_with($primary['constraint'], 'PK__schema_a__'));
+        unset($primary['constraint']);
+        $this->assertEquals($expected['primary'], $primary);
+
         $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
         $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
@@ -662,6 +668,7 @@ SQL;
 
         // Compare with describeIndexes() which includes indexes + uniques
         $expected['author_idx'] = $authorIdx;
+
         $indexes = $dialect->describeIndexes('schema_articles');
         $this->assertCount(4, $indexes);
         foreach ($indexes as $index) {
@@ -670,6 +677,10 @@ SQL;
             $expectedItem = $expected[$name];
             $expectedFields = array_intersect_key($expectedItem, $index);
             $resultFields = array_intersect_key($index, $expectedFields);
+
+            if (isset($index['constraint'])) {
+                $this->assertStringStartsWith('PK__schema', $index['constraint']);
+            }
 
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
@@ -969,6 +980,9 @@ SQL;
 
         $table = (new TableSchema('schema_articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
+
+        $data['name'] = $name;
+        $this->assertEquals($expected, $schema->columnDefinitionSql($data));
     }
 
     /**
@@ -1050,7 +1064,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1099,7 +1113,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1148,7 +1162,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
@@ -1222,7 +1236,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
@@ -1240,7 +1254,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');

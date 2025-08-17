@@ -192,7 +192,7 @@ class ConsoleOutput
                 DIRECTORY_SEPARATOR === '\\' &&
                 !str_contains(strtolower(php_uname('v')), 'windows 10') &&
                 !str_contains(strtolower((string)env('SHELL')), 'bash.exe') &&
-                !(bool)env('ANSICON') &&
+                !env('ANSICON') &&
                 env('ConEmuANSI') !== 'ON'
             ) ||
             (
@@ -382,7 +382,6 @@ class ConsoleOutput
      */
     public function __destruct()
     {
-        /** @psalm-suppress RedundantCondition */
         if (isset($this->_output) && is_resource($this->_output)) {
             fclose($this->_output);
         }

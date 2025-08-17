@@ -28,12 +28,12 @@ use InvalidArgumentException;
 class BannerHelper extends Helper
 {
     /**
-     * @var int $padding The horizontal padding that is added to the longest line.
+     * @var int The horizontal padding that is added to the longest line.
      */
     private int $padding = 2;
 
     /**
-     * @var string $style The console output style to use on the banner.
+     * @var string The console output style to use on the banner.
      */
     private string $style = 'success.bg';
 

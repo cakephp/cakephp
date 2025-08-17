@@ -98,7 +98,7 @@ class ViewBuilder implements JsonSerializable
      * or a fully namespaced classname.
      *
      * @var string|null
-     * @psalm-var class-string<\Cake\View\View>|string|null
+     * @phpstan-var class-string<\Cake\View\View>|string|null
      */
     protected ?string $_className = null;
 
@@ -621,6 +621,7 @@ class ViewBuilder implements JsonSerializable
             $array[$property] = $this->{$property};
         }
 
+        /** @phpstan-ignore-next-line argument.type */
         array_walk_recursive($array['_vars'], $this->_checkViewVars(...));
 
         return array_filter($array, function ($i) {

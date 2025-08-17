@@ -48,7 +48,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Map of loaded objects.
      *
      * @var array<string, object>
-     * @psalm-var array<string, TObject>
+     * @phpstan-var array<string, TObject>
      */
     protected array $_loaded = [];
 
@@ -75,7 +75,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name The name/class of the object to load.
      * @param array<string, mixed> $config Additional settings to use when loading the object.
      * @return object
-     * @psalm-return TObject
+     * @phpstan-return TObject
      * @throws \Exception If the class cannot be found.
      */
     public function load(string $name, array $config = []): object
@@ -174,7 +174,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $class The class to resolve.
      * @return class-string|null The resolved name or null for failure.
-     * @psalm-return class-string<TObject>|null
+     * @phpstan-return class-string<TObject>|null
      */
     abstract protected function _resolveClassName(string $class): ?string;
 
@@ -198,8 +198,8 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $alias The alias of the object.
      * @param array<string, mixed> $config The Configuration settings for construction
      * @return object
-     * @psalm-param TObject|class-string<TObject> $class
-     * @psalm-return TObject
+     * @phpstan-param TObject|class-string<TObject> $class
+     * @phpstan-return TObject
      */
     abstract protected function _create(object|string $class, string $alias, array $config): object;
 
@@ -230,7 +230,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name Name of object.
      * @return object Object instance.
      * @throws \Cake\Core\Exception\CakeException If not loaded or found.
-     * @psalm-return TObject
+     * @phpstan-return TObject
      */
     public function get(string $name): object
     {
@@ -246,7 +246,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $name Name of property to read
      * @return object|null
-     * @psalm-return TObject|null
+     * @phpstan-return TObject|null
      */
     public function __get(string $name): ?object
     {
@@ -269,7 +269,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      *
      * @param string $name Name of a property to set.
      * @param object $object Object to set.
-     * @psalm-param TObject $object
+     * @phpstan-param TObject $object
      * @return void
      */
     public function __set(string $name, object $object): void
@@ -340,7 +340,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * @param string $name The name of the object to set in the registry.
      * @param object $object instance to store in the registry
      * @return $this
-     * @psalm-param TObject $object
+     * @phpstan-param TObject $object
      */
     public function set(string $name, object $object)
     {
@@ -383,7 +383,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      * Returns an array iterator.
      *
      * @return \Traversable
-     * @psalm-return \Traversable<string, TObject>
+     * @phpstan-return \Traversable<string, TObject>
      */
     public function getIterator(): Traversable
     {

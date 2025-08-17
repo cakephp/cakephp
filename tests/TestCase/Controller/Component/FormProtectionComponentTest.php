@@ -276,8 +276,9 @@ class FormProtectionComponentTest extends TestCase
         $event = new Event('Controller.startup', $this->Controller);
 
         $result = $this->FormProtection->startup($event);
-        $this->assertInstanceOf(Response::class, $result);
-        $this->assertSame('from callback', (string)$result->getBody());
+        $this->assertNull($result);
+        $this->assertInstanceOf(Response::class, $event->getResult());
+        $this->assertSame('from callback', (string)$event->getResult()->getBody());
     }
 
     public function testUnlockedActions(): void

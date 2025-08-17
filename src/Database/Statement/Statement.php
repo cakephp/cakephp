@@ -75,10 +75,8 @@ class Statement implements StatementInterface
         foreach ($params as $index => $value) {
             $type = $types[$index] ?? null;
             if ($anonymousParams) {
-                /** @psalm-suppress InvalidOperand */
                 $index += $offset;
             }
-            /** @psalm-suppress PossiblyInvalidArgument */
             $this->bindValue($index, $value, $type);
         }
     }
@@ -104,7 +102,7 @@ class Statement implements StatementInterface
      * @param mixed $value The value to cast.
      * @param \Cake\Database\TypeInterface|string|int $type The type name or type instance to use.
      * @return array List containing converted value and internal type.
-     * @psalm-return array{0:mixed, 1:int}
+     * @phpstan-return array{0:mixed, 1:int}
      */
     protected function cast(mixed $value, TypeInterface|string|int $type = 'string'): array
     {

@@ -37,7 +37,7 @@ class FloatType extends BaseType implements BatchCastingInterface
 
     /**
      * Whether numbers should be parsed using a locale aware parser
-     * when marshalling string inputs.
+     * when marshaling string inputs.
      *
      * @var bool
      */

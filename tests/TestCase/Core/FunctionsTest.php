@@ -20,7 +20,6 @@ use Cake\Core\Configure;
 use Cake\Http\Response;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use stdClass;
 use Stringable;
 use function Cake\Core\deprecationWarning;
@@ -378,23 +377,11 @@ class FunctionsTest extends TestCase
      */
     public function testTriggerWarningEnabled(): void
     {
-        $this->expectWarningMessageMatches('/This will be gone one day - (.*?)[\/\\\]TestCase.php, line\: \d+/', function (): void {
+        $this->expectWarningMessageMatches('/This will be gone one day/', function (): void {
             $this->withErrorReporting(E_ALL, function (): void {
                 triggerWarning('This will be gone one day');
                 $this->assertTrue(true);
             });
-        });
-    }
-
-    /**
-     * Test no error when warning level is off.
-     */
-    #[WithoutErrorHandler]
-    public function testTriggerWarningLevelDisabled(): void
-    {
-        $this->withErrorReporting(E_ALL ^ E_USER_WARNING, function (): void {
-            triggerWarning('This was a mistake.');
-            $this->assertTrue(true);
         });
     }
 

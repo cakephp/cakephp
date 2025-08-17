@@ -147,29 +147,29 @@ class TreeBehaviorTest extends TestCase
     {
         // direct children for the root node
         $table = $this->table;
-        $countDirect = $this->table->childCount($table->get(1), true);
+        $countDirect = $this->table->getBehavior('Tree')->childCount($table->get(1), true);
         $this->assertSame(2, $countDirect);
 
         // counts all the children of root
-        $count = $this->table->childCount($table->get(1), false);
+        $count = $this->table->getBehavior('Tree')->childCount($table->get(1), false);
         $this->assertSame(9, $count);
 
         // counts direct children
-        $count = $this->table->childCount($table->get(2), false);
+        $count = $this->table->getBehavior('Tree')->childCount($table->get(2), false);
         $this->assertSame(3, $count);
 
         // count children for a middle-node
-        $count = $this->table->childCount($table->get(6), false);
+        $count = $this->table->getBehavior('Tree')->childCount($table->get(6), false);
         $this->assertSame(4, $count);
 
         // count leaf children
-        $count = $this->table->childCount($table->get(10), false);
+        $count = $this->table->getBehavior('Tree')->childCount($table->get(10), false);
         $this->assertSame(0, $count);
 
         // test scoping
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-        $count = $table->childCount($table->get(3), false);
+        $count = $table->getBehavior('Tree')->childCount($table->get(3), false);
         $this->assertSame(2, $count);
     }
 
@@ -182,7 +182,7 @@ class TreeBehaviorTest extends TestCase
         $node = $table->get(6);
         $node->unset('lft');
         $node->unset('rght');
-        $count = $this->table->childCount($node, false);
+        $count = $this->table->getBehavior('Tree')->childCount($node, false);
         $this->assertSame(4, $count);
     }
 
@@ -197,7 +197,7 @@ class TreeBehaviorTest extends TestCase
                 return $query->where(['menu' => 'main-menu']);
             },
         ]);
-        $count = $table->childCount($table->get(1), false);
+        $count = $table->getBehavior('Tree')->childCount($table->get(1), false);
         $this->assertSame(4, $count);
     }
 
@@ -284,7 +284,7 @@ class TreeBehaviorTest extends TestCase
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
 
         // moveUp
-        $table->moveUp($table->get(3), 1);
+        $table->getBehavior('Tree')->moveUp($table->get(3), 1);
         $expected = [
             ' 1:10 -  1:Link 1',
             '_ 2: 7 -  3:Link 3',
@@ -298,7 +298,7 @@ class TreeBehaviorTest extends TestCase
         $this->assertMpttValues($expected, $table);
 
         // moveDown
-        $table->moveDown($table->get(6), 1);
+        $table->getBehavior('Tree')->moveDown($table->get(6), 1);
         $expected = [
             ' 1:10 -  1:Link 1',
             '_ 2: 7 -  3:Link 3',
@@ -348,7 +348,7 @@ class TreeBehaviorTest extends TestCase
             ->where(['menu' => 'main-menu']);
 
         $options = ['keyPath' => 'url', 'valuePath' => 'id', 'spacer' => ' '];
-        $result = $table->formatTreeList($query, ...$options)->toArray();
+        $result = $table->getBehavior('Tree')->formatTreeList($query, ...$options)->toArray();
 
         $expected = [
             '/link1.html' => '1',
@@ -372,7 +372,7 @@ class TreeBehaviorTest extends TestCase
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
 
         // top level, won't move
-        $node = $this->table->moveUp($table->get(1), 10);
+        $node = $this->table->getBehavior('Tree')->moveUp($table->get(1), 10);
         $this->assertEquals(['lft' => 1, 'rght' => 10], $node->extract(['lft', 'rght']));
         $expected = [
             ' 1:10 -  1:Link 1',
@@ -387,8 +387,8 @@ class TreeBehaviorTest extends TestCase
         $this->assertMpttValues($expected, $table);
 
         // edge cases
-        $this->assertFalse($this->table->moveUp($table->get(1), 0));
-        $this->assertFalse($this->table->moveUp($table->get(1), -10));
+        $this->assertFalse($this->table->getBehavior('Tree')->moveUp($table->get(1), 0));
+        $this->assertFalse($this->table->getBehavior('Tree')->moveUp($table->get(1), -10));
         $expected = [
             ' 1:10 -  1:Link 1',
             '_ 2: 3 -  2:Link 2',
@@ -402,7 +402,7 @@ class TreeBehaviorTest extends TestCase
         $this->assertMpttValues($expected, $table);
 
         // move inner node
-        $node = $table->moveUp($table->get(3), 1);
+        $node = $table->getBehavior('Tree')->moveUp($table->get(3), 1);
         $this->assertEquals(['lft' => 2, 'rght' => 7], $node->extract(['lft', 'rght']));
         $expected = [
             ' 1:10 -  1:Link 1',
@@ -424,7 +424,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-        $node = $table->moveUp($table->get(5), 1);
+        $node = $table->getBehavior('Tree')->moveUp($table->get(5), 1);
         $this->assertEquals(['lft' => 6, 'rght' => 7], $node->extract(['lft', 'rght']));
         $expected = [
             ' 1:10 -  1:Link 1',
@@ -446,7 +446,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-        $table->moveUp($table->get(8), true);
+        $table->getBehavior('Tree')->moveUp($table->get(8), true);
         $expected = [
             ' 1: 2 -  8:Link 8',
             ' 3:12 -  1:Link 1',
@@ -470,7 +470,7 @@ class TreeBehaviorTest extends TestCase
         $node = $table->get(8);
         $node->unset('lft');
         $node->unset('rght');
-        $node = $table->moveUp($node, true);
+        $node = $table->getBehavior('Tree')->moveUp($node, true);
         $this->assertEquals(['lft' => 1, 'rght' => 2], $node->extract(['lft', 'rght']));
         $expected = [
             ' 1: 2 -  8:Link 8',
@@ -493,7 +493,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         // latest node, won't move
-        $node = $table->moveDown($table->get(8), 10);
+        $node = $table->getBehavior('Tree')->moveDown($table->get(8), 10);
         $this->assertEquals(['lft' => 15, 'rght' => 16], $node->extract(['lft', 'rght']));
         $expected = [
             ' 1:10 -  1:Link 1',
@@ -508,8 +508,8 @@ class TreeBehaviorTest extends TestCase
         $this->assertMpttValues($expected, $table);
 
         // edge cases
-        $this->assertFalse($this->table->moveDown($table->get(8), 0));
-        $this->assertFalse($this->table->moveDown($table->get(8), -10));
+        $this->assertFalse($this->table->getBehavior('Tree')->moveDown($table->get(8), 0));
+        $this->assertFalse($this->table->getBehavior('Tree')->moveDown($table->get(8), -10));
         $expected = [
             ' 1:10 -  1:Link 1',
             '_ 2: 3 -  2:Link 2',
@@ -523,7 +523,7 @@ class TreeBehaviorTest extends TestCase
         $this->assertMpttValues($expected, $table);
 
         // move inner node
-        $node = $table->moveDown($table->get(2), 1);
+        $node = $table->getBehavior('Tree')->moveDown($table->get(2), 1);
         $this->assertEquals(['lft' => 8, 'rght' => 9], $node->extract(['lft', 'rght']));
         $expected = [
             ' 1:10 -  1:Link 1',
@@ -545,7 +545,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-        $node = $table->moveDown($table->get(5), 1);
+        $node = $table->getBehavior('Tree')->moveDown($table->get(5), 1);
         $this->assertEquals(['lft' => 6, 'rght' => 7], $node->extract(['lft', 'rght']));
         $expected = [
             ' 1:10 -  1:Link 1',
@@ -567,7 +567,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
-        $node = $table->moveDown($table->get(1), true);
+        $node = $table->getBehavior('Tree')->moveDown($table->get(1), true);
         $this->assertEquals(['lft' => 7, 'rght' => 16], $node->extract(['lft', 'rght']));
         $expected = [
             ' 1: 4 -  6:Link 6',
@@ -592,7 +592,7 @@ class TreeBehaviorTest extends TestCase
         $node = $table->get(1);
         $node->unset('lft');
         $node->unset('rght');
-        $node = $table->moveDown($node, true);
+        $node = $table->getBehavior('Tree')->moveDown($node, true);
         $this->assertEquals(['lft' => 7, 'rght' => 16], $node->extract(['lft', 'rght']));
         $expected = [
             ' 1: 4 -  6:Link 6',
@@ -609,7 +609,7 @@ class TreeBehaviorTest extends TestCase
 
     public function testMoveDownMultiplePositions(): void
     {
-        $node = $this->table->moveDown($this->table->get(3), 2);
+        $node = $this->table->getBehavior('Tree')->moveDown($this->table->get(3), 2);
         $this->assertEquals(['lft' => 7, 'rght' => 8], $node->extract(['lft', 'rght']));
         $expected = [
             ' 1:20 -  1:electronics',
@@ -640,7 +640,7 @@ class TreeBehaviorTest extends TestCase
             ->toArray();
         $table->updateAll(['lft' => null, 'rght' => null, 'depth' => null], []);
         $table->behaviors()->Tree->setConfig('level', 'depth');
-        $table->recover();
+        $table->getBehavior('Tree')->recover();
 
         $expected = [
             ' 1:20 -  1:electronics',
@@ -672,7 +672,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu']]);
         $table->updateAll(['lft' => null, 'rght' => null], ['menu' => 'main-menu']);
-        $table->recover();
+        $table->getBehavior('Tree')->recover();
 
         $expected = [
             ' 1:10 -  1:Link 1',
@@ -711,7 +711,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', ['scope' => ['menu' => 'main-menu'], 'recoverOrder' => ['MenuLinkTrees.title' => 'desc']]);
         $table->updateAll(['lft' => null, 'rght' => null], ['menu' => 'main-menu']);
-        $table->recover();
+        $table->getBehavior('Tree')->recover();
 
         $expected = [
             ' 1: 2 -  8:Link 8',
@@ -1256,7 +1256,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
         $entity = $table->get(10);
-        $this->assertSame($entity, $table->removeFromTree($entity));
+        $this->assertSame($entity, $table->getBehavior('Tree')->removeFromTree($entity));
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
@@ -1284,7 +1284,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
         $entity = $table->get(6);
-        $this->assertSame($entity, $table->removeFromTree($entity));
+        $this->assertSame($entity, $table->getBehavior('Tree')->removeFromTree($entity));
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
@@ -1311,7 +1311,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->table;
         $entity = $table->get(1);
-        $this->assertSame($entity, $table->removeFromTree($entity));
+        $this->assertSame($entity, $table->getBehavior('Tree')->removeFromTree($entity));
         $this->assertSame(21, $entity->lft);
         $this->assertSame(22, $entity->rght);
         $this->assertNull($entity->parent_id);
@@ -1358,16 +1358,16 @@ class TreeBehaviorTest extends TestCase
     public function testGetLevel(): void
     {
         $entity = $this->table->get(8);
-        $result = $this->table->getLevel($entity);
+        $result = $this->table->getBehavior('Tree')->getLevel($entity);
         $this->assertSame(3, $result);
 
-        $result = $this->table->getLevel($entity->id);
+        $result = $this->table->getBehavior('Tree')->getLevel($entity->id);
         $this->assertSame(3, $result);
 
-        $result = $this->table->getLevel(5);
+        $result = $this->table->getBehavior('Tree')->getLevel(5);
         $this->assertSame(2, $result);
 
-        $result = $this->table->getLevel(99999);
+        $result = $this->table->getBehavior('Tree')->getLevel(99999);
         $this->assertFalse($result);
     }
 

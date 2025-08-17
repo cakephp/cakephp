@@ -48,7 +48,6 @@ use DOMXPath;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
@@ -222,15 +221,15 @@ class FormHelperTest extends TestCase
      */
     public function testAddWidgetAndRenderWidget(): void
     {
-        $data = ['val' => 1];
-        $widget = Mockery::mock(WidgetInterface::class);
-        $widget->shouldReceive('render')
-            ->withSomeOfArgs($data)
-            ->once()
-            ->andReturn('HTML');
+        $widget = Mockery::spy(WidgetInterface::class)->makePartial();
         $this->Form->addWidget('test', $widget);
-        $result = $this->Form->widget('test', $data);
-        $this->assertSame('HTML', $result);
+        $this->Form->widget('test', ['val' => 1]);
+
+        $widget->shouldHaveReceived('render')
+            ->withArgs(function (array $data) {
+                return $data === ['val' => 1];
+            })
+            ->once();
     }
 
     /**
@@ -243,20 +242,20 @@ class FormHelperTest extends TestCase
             'unlockedFields' => [],
         ]));
 
-        $data = ['val' => 1, 'name' => 'test'];
-        $widget = Mockery::mock(WidgetInterface::class);
-        $widget->shouldReceive('render')
-            ->withSomeOfArgs($data)
-            ->once()
-            ->andReturn('HTML');
-        $widget->shouldReceive('secureFields')
-            ->with($data)
-            ->once()
-            ->andReturn(['test']);
+        $widget = Mockery::spy(WidgetInterface::class);
+
         $this->Form->addWidget('test', $widget);
         $this->Form->create();
-        $result = $this->Form->widget('test', ['val' => 1, 'name' => 'test', 'secure' => true]);
-        $this->assertSame('HTML', $result);
+        $this->Form->widget('test', ['val' => 1, 'name' => 'test', 'secure' => true]);
+
+        $widget->shouldHaveReceived('render')
+            ->withArgs(function (array $data) {
+                return $data === ['val' => 1, 'name' => 'test'];
+            })
+            ->once();
+        $widget->shouldHaveReceived('secureFields')
+            ->with(['val' => 1, 'name' => 'test'])
+            ->once();
     }
 
     /**
@@ -2618,7 +2617,6 @@ class FormHelperTest extends TestCase
     /**
      * @deprecated
      */
-    #[WithoutErrorHandler]
     public function testWarningForDeprecatedErrorClassConfig(): void
     {
         $this->Form->setConfig('errorClass', 'danger');
@@ -3913,10 +3911,9 @@ class FormHelperTest extends TestCase
     /**
      * @deprecated
      */
-    #[WithoutErrorHandler]
     public function testEnumOptionsDeprecationMessage(): void
     {
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             $articlesTable = $this->getTableLocator()->get('Articles');
             $articlesTable->getSchema()->setColumnType(
                 'published',
@@ -7210,7 +7207,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
-    public function testPostLinkWithCspScriptNonce()
+    public function testPostLinkWithCspScriptNonce(): void
     {
         $request = $this->Form->getView()->getRequest()->withAttribute('cspScriptNonce', 'i-am-nonce');
         $this->Form->getView()->setRequest($request);

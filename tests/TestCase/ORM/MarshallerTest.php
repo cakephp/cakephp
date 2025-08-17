@@ -1579,6 +1579,25 @@ class MarshallerTest extends TestCase
         $this->assertFalse($entity->isDirty('title'));
         $this->assertFalse($entity->isDirty('author_id'));
         $this->assertTrue($entity->isDirty('crazy'));
+
+        // https://github.com/cakephp/cakephp/issues/18346
+        $entity = new class ([
+            'title' => 'Foo',
+            'author_id' => 1,
+        ], ['useSetters' => false]) extends Entity {
+            protected function _setTitle(string $name): string
+            {
+                return 'The ' . $name;
+            }
+        };
+        $entity->clean();
+
+        $this->assertSame('Foo', $entity->title);
+        $marshall->merge($entity, ['title' => 'Foo', 'author_id' => 2]);
+        $this->assertSame('Foo', $entity->title, 'Setter should not be called as the value is unchanged');
+        $this->assertFalse($entity->isDirty('title'));
+        $this->assertTrue($entity->isDirty('author_id'));
+        $this->assertSame(2, $entity->author_id);
     }
 
     /**
@@ -1916,7 +1935,7 @@ class MarshallerTest extends TestCase
         ]);
 
         $this->articles->Tags->getEventManager()
-            ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$called) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$called): void {
                 $called = true;
 
                 $query->where(['Tags.id >=' => 1]);
@@ -2588,7 +2607,7 @@ class MarshallerTest extends TestCase
             ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
             ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
         ];
-        $this->comments->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
+        $this->comments->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query): void {
             $query->contain(['Articles']);
         });
         $marshall = new Marshaller($this->comments);

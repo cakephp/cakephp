@@ -116,7 +116,7 @@ class Log
      * An array mapping url schemes to fully qualified Log engine class names
      *
      * @var array<string, string>
-     * @psalm-var array<string, class-string>
+     * @phpstan-var array<string, class-string>
      */
     protected static array $_dsnClassMap = [
         'console' => Engine\ConsoleLog::class,
@@ -351,7 +351,6 @@ class Log
         }
 
         if (!in_array($level, static::$_levels, true)) {
-            /** @psalm-suppress PossiblyFalseArgument */
             throw new InvalidArgumentException(sprintf('Invalid log level `%s`', $level));
         }
 

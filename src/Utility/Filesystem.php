@@ -58,7 +58,6 @@ class Filesystem
         $flags ??= FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
-        /** @psalm-suppress ArgumentTypeCoercion */
         $directory = new FilesystemIterator($path, $flags);
 
         if ($filter === null) {
@@ -83,10 +82,8 @@ class Filesystem
         $flags ??= FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
-        /** @psalm-suppress ArgumentTypeCoercion */
         $directory = new RecursiveDirectoryIterator($path, $flags);
 
-        /** @psalm-suppress InvalidArgument */
         $dirFilter = new RecursiveCallbackFilterIterator(
             $directory,
             function (SplFileInfo $current) {
