@@ -171,7 +171,7 @@ class AssociationCollection implements IteratorAggregate
     {
         $class = array_map('strtolower', (array)$class);
 
-        $out = array_filter($this->_items, function ($assoc) use ($class) {
+        $out = array_filter($this->_items, function (Association $assoc) use ($class) {
             [, $name] = namespaceSplit($assoc::class);
 
             return in_array(strtolower($name), $class, true);

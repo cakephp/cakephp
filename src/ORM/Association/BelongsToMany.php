@@ -1447,11 +1447,11 @@ class BelongsToMany extends Association
         $hasMany = $source->getAssociation($junction->getAlias());
         /** @var array<string> $foreignKey */
         $foreignKey = (array)$this->getForeignKey();
-        $foreignKey = array_map(function ($key) {
+        $foreignKey = array_map(function (string $key) {
             return $key . ' IS';
         }, $foreignKey);
         $assocForeignKey = (array)$belongsTo->getForeignKey();
-        $assocForeignKey = array_map(function ($key) {
+        $assocForeignKey = array_map(function (string|false $key) {
             return $key . ' IS';
         }, $assocForeignKey);
         $sourceKey = $sourceEntity->extract((array)$source->getPrimaryKey());

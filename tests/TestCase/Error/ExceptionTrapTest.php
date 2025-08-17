@@ -38,10 +38,7 @@ use Throwable;
 
 class ExceptionTrapTest extends TestCase
 {
-    /**
-     * @var string
-     */
-    private $memoryLimit;
+    private string $memoryLimit;
 
     private $triggered = false;
 
