@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Utility;
 
+use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
+use Closure;
 use InvalidArgumentException;
 use Transliterator;
 use function Cake\I18n\__d;
@@ -66,12 +68,28 @@ class Text
      * It should also not be used to create identifiers that have security implications, such as
      * 'unguessable' URL identifiers. Instead, you should use {@link \Cake\Utility\Security::randomBytes()}` for that.
      *
+     * ### Custom UUID generation
+     *
+     * You can configure a custom UUID generator by setting a Closure via Configure:
+     *
+     * ```
+     * Configure::write('Text.uuidGenerator', function () {
+     *     // Return your custom UUID string
+     *     return MyUuidLibrary::generate();
+     * });
+     * ```
+     *
      * @see https://www.ietf.org/rfc/rfc4122.txt
      * @return string RFC 4122 UUID
      * @copyright Matt Farina MIT License https://github.com/lootils/uuid/blob/master/LICENSE
      */
     public static function uuid(): string
     {
+        $generator = Configure::read('Text.uuidGenerator');
+        if ($generator instanceof Closure) {
+            return $generator();
+        }
+
         return sprintf(
             '%04x%04x-%04x-%04x-%04x-%04x%04x%04x',
             // 32 bits for "time_low"
