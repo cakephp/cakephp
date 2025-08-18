@@ -43,6 +43,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 use function Cake\Core\pluginSplit;
 
 /**
@@ -984,7 +985,7 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
         $reflection = new ReflectionClass($className);
-        $classMethods = array_map(function ($method) {
+        $classMethods = array_map(function (ReflectionMethod $method) {
             return $method->name;
         }, $reflection->getMethods());
 

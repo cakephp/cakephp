@@ -203,7 +203,10 @@ class TestFixture implements FixtureInterface
         foreach ($this->records as $index => $record) {
             $recordFields = array_keys($record);
             if ($this->strictFields) {
-                $invalidFields = array_values(array_filter($recordFields, fn($f) => !in_array($f, $columns, true)));
+                $invalidFields = array_values(array_filter(
+                    $recordFields,
+                    fn(int|string $f) => !in_array($f, $columns, true),
+                ));
                 if ($invalidFields !== []) {
                     throw new CakeException(
                         "Record #{$index} in fixture has additional fields that do not exist in the schema. " .

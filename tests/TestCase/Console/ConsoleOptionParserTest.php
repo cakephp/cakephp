@@ -31,10 +31,7 @@ use LogicException;
  */
 class ConsoleOptionParserTest extends TestCase
 {
-    /**
-     * @var \Cake\Console\ConsoleIo
-     */
-    private $io;
+    private ConsoleIo $io;
 
     protected function setUp(): void
     {

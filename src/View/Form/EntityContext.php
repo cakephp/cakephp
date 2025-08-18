@@ -575,7 +575,7 @@ class EntityContext implements ContextInterface
      */
     protected function _getValidator(array $parts): Validator
     {
-        $keyParts = array_filter(array_slice($parts, 0, -1), function ($part) {
+        $keyParts = array_filter(array_slice($parts, 0, -1), function (string $part) {
             return !is_numeric($part);
         });
         $key = implode('.', $keyParts);
@@ -625,7 +625,7 @@ class EntityContext implements ContextInterface
             return $this->_tables[$this->_rootName];
         }
 
-        $normalized = array_slice(array_filter($parts, function ($part) {
+        $normalized = array_slice(array_filter($parts, function (string $part) {
             return !is_numeric($part);
         }), 0, -1);
 
