@@ -183,10 +183,10 @@ class RedisEngine extends CacheEngine
         }
 
         $failover = match ($this->_config['failover']) {
-            'distribute' => RedisCluster::FAILOVER_DISTRIBUTE,
-            'distribute_slaves' => RedisCluster::FAILOVER_DISTRIBUTE_SLAVES,
-            'error' => RedisCluster::FAILOVER_ERROR,
-            'none' => RedisCluster::FAILOVER_NONE,
+            RedisCluster::FAILOVER_DISTRIBUTE, 'distribute' => RedisCluster::FAILOVER_DISTRIBUTE,
+            RedisCluster::FAILOVER_DISTRIBUTE_SLAVES, 'distribute_slaves' => RedisCluster::FAILOVER_DISTRIBUTE_SLAVES,
+            RedisCluster::FAILOVER_ERROR, 'error' => RedisCluster::FAILOVER_ERROR,
+            RedisCluster::FAILOVER_NONE, 'none' => RedisCluster::FAILOVER_NONE,
             default => null,
         };
 
