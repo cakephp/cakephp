@@ -355,7 +355,7 @@ class RedisEngine extends CacheEngine
     {
         $res = $this->_Redis->exists($this->_key($key));
 
-        return $res > 0 || $res === true;
+        return is_int($res) ? $res > 0 : $res === true;
     }
 
     /**

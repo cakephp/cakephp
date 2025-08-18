@@ -41,7 +41,9 @@ class RedisClusterEngineTest extends TestCase
             }, $this->redisClusterNodes());
 
             foreach ($nodes as $node) {
+                // phpcs:disable
                 $socket = @fsockopen($node['host'], $node['port'], $errno, $errstr, 1);
+                // phpcs:enable
 
                 if ($socket === false) {
                     $this->skipTest = ($this->skipTest === null ? '' : "\n") .
