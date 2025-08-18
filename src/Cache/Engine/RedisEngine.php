@@ -424,7 +424,7 @@ class RedisEngine extends CacheEngine
     public function clear(): bool
     {
         if ($this->getConfig('clearUsesFlushDb')) {
-            $this->flushDB(false);
+            $this->flushDB(true);
 
             return true;
         }
@@ -611,7 +611,7 @@ class RedisEngine extends CacheEngine
      * @param bool $async Whether to use asynchronous mode
      * @return void
      */
-    private function flushDB(bool $async = true): void
+    private function flushDB(bool $async): void
     {
         if ($this->_Redis instanceof RedisCluster) {
             foreach ($this->_Redis->_masters() as $node) {
