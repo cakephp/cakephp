@@ -16,7 +16,7 @@ use ReflectionClass;
  */
 class RedisClusterEngineTest extends TestCase
 {
-    private bool|string|null $skipTest = null;
+    private false|string|null $skipTest = null;
 
     /**
      * setUp method
@@ -53,7 +53,7 @@ class RedisClusterEngineTest extends TestCase
                 }
             }
         }
-        $this->skipIf($this->skipTest === false, $this->skipTest);
+        $this->skipIf($this->skipTest !== false, $this->skipTest === false ? 'Not skipping' : $this->skipTest);
 
         Cache::enable();
         $this->configCache();
