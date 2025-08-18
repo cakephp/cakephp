@@ -349,6 +349,16 @@ class RedisEngine extends CacheEngine
     }
 
     /**
+     * @inheritDoc
+     */
+    public function has(string $key): bool
+    {
+        $res = $this->_Redis->exists($this->_key($key));
+
+        return $res > 0 || $res === true;
+    }
+
+    /**
      * Increments the value of an integer cached key & update the expiry time
      *
      * @param string $key Identifier for the data

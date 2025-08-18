@@ -539,6 +539,18 @@ class RedisEngineTest extends TestCase
     }
 
     /**
+     * Test has
+     */
+    public function testHas(): void
+    {
+        $redis = Cache::pool('redis');
+        $this->assertFalse($redis->has('nope'));
+
+        $redis->set('yep', 0);
+        $this->assertTrue($redis->has('yep'));
+    }
+
+    /**
      * testExpiry method
      */
     public function testExpiry(): void

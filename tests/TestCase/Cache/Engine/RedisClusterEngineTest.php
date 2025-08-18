@@ -592,4 +592,16 @@ class RedisClusterEngineTest extends TestCase
         $result = Cache::add('test_add_key', 'test data 2', 'redis');
         $this->assertFalse($result);
     }
+
+    /**
+     * Test has
+     */
+    public function testHas(): void
+    {
+        $redis = Cache::pool('redis');
+        $this->assertFalse($redis->has('nope'));
+
+        $redis->set('yep', 0);
+        $this->assertTrue($redis->has('yep'));
+    }
 }
