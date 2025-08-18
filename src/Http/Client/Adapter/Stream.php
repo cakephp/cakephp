@@ -227,9 +227,15 @@ class Stream implements AdapterInterface
                 } else {
                     // Convert sslCamelCase to snake_case
                     // e.g., sslVerifyPeer -> verify_peer, sslCafile -> cafile
-                    $contextKey = preg_replace('/^ssl([A-Z])/', '$1', $key) ?? $key;
-                    $contextKey = strtolower($contextKey);
-                    $contextKey = preg_replace('/([a-z])([A-Z])/', '$1_$2', $contextKey) ?? $contextKey;
+                    // First, convert from camelCase to snake_case while keeping 'ssl' prefix
+                    $contextKey = preg_replace('/([a-z])([A-Z])/', '$1_$2', $key) ?? $key;
+                    // Then remove 'ssl' prefix and convert to lowercase
+                    if (stripos($contextKey, 'ssl') === 0) {
+                        $contextKey = substr($contextKey, 3);
+                        if ($contextKey[0] === '_') {
+                            $contextKey = substr($contextKey, 1);
+                        }
+                    }
                     $contextKey = strtolower($contextKey);
                 }
                 $this->_sslContextOptions[$contextKey] = $value;
