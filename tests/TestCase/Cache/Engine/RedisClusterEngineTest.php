@@ -16,7 +16,7 @@ use ReflectionClass;
  */
 class RedisClusterEngineTest extends TestCase
 {
-    private ?bool $skipTest = null;
+    private bool|string|null $skipTest = null;
 
     /**
      * setUp method
@@ -41,20 +41,17 @@ class RedisClusterEngineTest extends TestCase
             }, $this->redisClusterNodes());
 
             foreach ($nodes as $node) {
-                $socket = fsockopen($node['host'], $node['port'], $errno, $errstr, 1);
-
-                if (!$socket) {
-                    echo "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno}) \n";
-                }
+                $socket = @fsockopen($node['host'], $node['port'], $errno, $errstr, 1);
 
                 if ($socket === false) {
-                    $this->skipTest = true;
+                    $this->skipTest = ($this->skipTest === null ? '' : "\n") .
+                        "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno})";
                 } else {
                     fclose($socket);
                 }
             }
         }
-        $this->skipIf($this->skipTest, 'Connection to one more Redis cluster nodes failed');
+        $this->skipIf($this->skipTest === false, $this->skipTest);
 
         Cache::enable();
         $this->configCache();
