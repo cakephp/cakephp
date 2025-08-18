@@ -446,7 +446,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event): void {
             $event->stopPropagation();
         });
 
@@ -540,7 +540,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(new ServerRequest());
 
         $newResponse = new Response();
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse) {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse): void {
             $event->setResult($newResponse);
         });
 
@@ -911,7 +911,7 @@ class ControllerTest extends TestCase
             'params' => ['prefix' => 'Admin'],
         ]);
         $Controller = new AdminPostsController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e): void {
             $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();
@@ -919,7 +919,7 @@ class ControllerTest extends TestCase
 
         $request = $request->withParam('prefix', 'admin/super');
         $Controller = new AdminPostsController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e): void {
             $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();
@@ -932,7 +932,7 @@ class ControllerTest extends TestCase
             ],
         ]);
         $Controller = new PagesController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e) {
+        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e): void {
             $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();

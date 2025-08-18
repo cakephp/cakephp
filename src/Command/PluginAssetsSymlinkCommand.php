@@ -61,7 +61,8 @@ class PluginAssetsSymlinkCommand extends Command
 
         $name = $args->getArgument('name');
         $overwrite = (bool)$args->getOption('overwrite');
-        $this->_process($this->_list($name), false, $overwrite);
+        $relative = (bool)$args->getOption('relative');
+        $this->_process($this->_list($name), false, $overwrite, $relative);
 
         return static::CODE_SUCCESS;
     }
@@ -81,6 +82,10 @@ class PluginAssetsSymlinkCommand extends Command
             'required' => false,
         ])->addOption('overwrite', [
             'help' => 'Overwrite existing symlink / folder / files.',
+            'default' => false,
+            'boolean' => true,
+        ])->addOption('relative', [
+            'help' => 'If symlink should be relative.',
             'default' => false,
             'boolean' => true,
         ]);

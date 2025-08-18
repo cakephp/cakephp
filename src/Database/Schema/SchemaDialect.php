@@ -140,7 +140,7 @@ abstract class SchemaDialect
         TableSchemaInterface $schema,
         string $column,
     ): ?string {
-        if (!TypeFactory::getMap($columnType)) {
+        if (!TypeFactory::getMapped($columnType)) {
             return null;
         }
 
@@ -163,7 +163,7 @@ abstract class SchemaDialect
      */
     protected function _applyTypeSpecificColumnConversion(string $columnType, array $definition): ?array
     {
-        if (!TypeFactory::getMap($columnType)) {
+        if (!TypeFactory::getMapped($columnType)) {
             return null;
         }
 

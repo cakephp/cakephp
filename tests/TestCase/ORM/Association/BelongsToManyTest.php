@@ -219,7 +219,7 @@ class BelongsToManyTest extends TestCase
         $assoc->setStrategy(BelongsToMany::STRATEGY_JOIN);
     }
 
-    public function testJunctionProperty()
+    public function testJunctionProperty(): void
     {
         $assoc = new BelongsToMany('Test');
         $this->assertSame('_joinData', $assoc->getJunctionProperty());

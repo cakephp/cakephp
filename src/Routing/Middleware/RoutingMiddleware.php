@@ -40,6 +40,7 @@ class RoutingMiddleware implements MiddlewareInterface
      * Key used to store the route collection in the cache engine
      *
      * @var string
+     * @deprecated 5.3.0 This constant is no longer used.
      */
     public const ROUTE_COLLECTION_CACHE_KEY = 'routeCollection';
 

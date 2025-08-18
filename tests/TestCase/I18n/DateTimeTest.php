@@ -829,6 +829,54 @@ class DateTimeTest extends TestCase
     }
 
     /**
+     * Test toQuarter method
+     */
+    public function testToQuarter(): void
+    {
+        $date = new DateTime('2007-12-25');
+        $this->assertSame(4, $date->toQuarter());
+
+        $date = new DateTime('2007-01-01');
+        $this->assertSame(1, $date->toQuarter());
+
+        $date = new DateTime('2007-05-15');
+        $this->assertSame(2, $date->toQuarter());
+
+        $date = new DateTime('2007-08-20');
+        $this->assertSame(3, $date->toQuarter());
+    }
+
+    /**
+     * Test toQuarter with deprecated range parameter
+     */
+    public function testToQuarterWithRange(): void
+    {
+        $this->deprecated(function (): void {
+            $date = new DateTime('2007-12-25');
+            $result = $date->toQuarter(true);
+            $this->assertEquals(['2007-10-01', '2007-12-31'], $result);
+        });
+    }
+
+    /**
+     * Test toQuarterRange method
+     */
+    public function testToQuarterRange(): void
+    {
+        $date = new DateTime('2007-12-25');
+        $this->assertEquals(['2007-10-01', '2007-12-31'], $date->toQuarterRange());
+
+        $date = new DateTime('2007-01-01');
+        $this->assertEquals(['2007-01-01', '2007-03-31'], $date->toQuarterRange());
+
+        $date = new DateTime('2007-05-15');
+        $this->assertEquals(['2007-04-01', '2007-06-30'], $date->toQuarterRange());
+
+        $date = new DateTime('2007-08-20');
+        $this->assertEquals(['2007-07-01', '2007-09-30'], $date->toQuarterRange());
+    }
+
+    /**
      * Custom assert to allow for variation in the version of the intl library, where
      * some translations contain a few extra commas.
      */

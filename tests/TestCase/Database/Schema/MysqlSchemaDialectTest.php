@@ -21,8 +21,10 @@ use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\UniqueKey;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
@@ -72,6 +74,10 @@ class MysqlSchemaDialectTest extends TestCase
             [
                 'TIME',
                 ['type' => 'time', 'length' => null],
+            ],
+            [
+                'YEAR',
+                ['type' => 'year', 'length' => null],
             ],
             [
                 'TIMESTAMP',
@@ -332,6 +338,8 @@ SQL;
                 published BOOLEAN DEFAULT 0,
                 allow_comments TINYINT(1) DEFAULT 0,
                 location POINT,
+                year_type YEAR,
+                config JSON,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
                 updated DATETIME ON UPDATE CURRENT_TIMESTAMP,
@@ -402,6 +410,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => true,
+                'generated' => null,
             ],
             'title' => [
                 'type' => 'string',
@@ -430,6 +439,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'unique_id' => [
                 'type' => 'integer',
@@ -440,6 +450,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'published' => [
                 'type' => 'boolean',
@@ -465,6 +476,22 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'srid' => null,
+            ],
+            'year_type' => [
+                'type' => 'year',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'config' => [
+                'type' => 'json',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
             ],
             'created' => [
                 'type' => 'datetime',
@@ -499,6 +526,13 @@ SQL;
         if ($driver->isMariaDb()) {
             $expected['created_with_precision']['default'] = 'current_timestamp(3)';
             $expected['created_with_precision']['comment'] = '';
+
+            // MariaDb aliases JSON to LONGTEXT
+            // https://mariadb.com/kb/en/json/
+            $expected['config']['type'] = 'text';
+            $expected['config']['length'] = 4294967295;
+            $expected['config']['comment'] = '';
+            $expected['config']['collate'] = 'utf8mb4_bin';
         }
         if ($driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=')) {
             $expected['title']['collate'] = 'utf8mb3_general_ci';
@@ -512,6 +546,30 @@ SQL;
                 $result->getColumn($field),
                 'Field definition does not match for ' . $field,
             );
+
+            // Integration test for column() method.
+            $col = $result->column($field);
+            $this->assertEquals($definition['type'], $col->getType());
+            $this->assertEquals($definition['null'], $col->getNull());
+            $this->assertEquals($definition['length'], $col->getLength());
+            $this->assertEquals($definition['default'], $col->getDefault());
+            $this->assertEquals($definition['precision'], $col->getPrecision());
+            $this->assertEquals($definition['comment'], $col->getComment());
+            if (isset($definition['onUpdate'])) {
+                $this->assertEquals($definition['onUpdate'], $col->getOnUpdate());
+            } else {
+                $this->assertNull($col->getOnUpdate());
+            }
+            if (isset($definition['collate'])) {
+                $this->assertEquals($definition['collate'], $col->getCollate());
+            } else {
+                $this->assertNull($col->getCollate());
+            }
+            if (isset($definition['autoIncrement'])) {
+                $this->assertEquals($definition['autoIncrement'], $col->getIdentity());
+            } else {
+                $this->assertFalse($col->getIdentity());
+            }
         }
 
         $columns = $dialect->describeColumns('schema_articles');
@@ -579,6 +637,7 @@ SQL;
                 'unsigned' => false,
                 'comment' => '',
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'geo_line' => [
                 'type' => 'linestring',
@@ -640,7 +699,6 @@ SQL;
             'primary' => [
                 'type' => 'primary',
                 'columns' => ['id'],
-                'length' => [],
             ],
             'length_idx' => [
                 'type' => 'unique',
@@ -653,9 +711,9 @@ SQL;
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['schema_authors', 'id'],
-                'length' => [],
                 'update' => 'cascade',
                 'delete' => 'restrict',
+                'deferrable' => null,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
@@ -672,13 +730,26 @@ SQL;
         ];
 
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $primary = $result->constraint('primary');
+        $this->assertEquals($expected['primary']['columns'], $primary->getColumns());
+        $this->assertEquals('primary', $primary->getName());
+
         $this->assertEquals($expected['length_idx'], $result->getConstraint('length_idx'));
+        $key = $result->constraint('length_idx');
+        $this->assertEquals('length_idx', $key->getName());
+        $this->assertEquals($expected['length_idx']['columns'], $key->getColumns());
+        $this->assertEquals(['title' => 4], $key->getLength());
+
         if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
             $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('author_idx'));
         } else {
             $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('schema_articles_ibfk_1'));
         }
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
+        $key = $result->constraint('unique_id_idx');
+        $this->assertEquals('unique_id_idx', $key->getName());
+        $this->assertEquals($expected['unique_id_idx']['columns'], $key->getColumns());
+        $this->assertSame([], $key->getLength(), 'length should be an empty array as it has been set.');
 
         $this->assertCount(1, $result->indexes());
         $this->assertEquals($expected['author_idx'], $result->getIndex('author_idx'));
@@ -696,6 +767,22 @@ SQL;
 
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
+
+            // describeIndexes will return primary keys, and unique indexes which are
+            if (in_array($index['type'], [TableSchema::INDEX_INDEX, TableSchema::INDEX_FULLTEXT], true)) {
+                // Compare with the index() method as well.
+                $indexObject = $result->index($index['name']);
+            } else {
+                // Compare with the constraint() method as well.
+                $indexObject = $result->constraint($index['name']);
+            }
+            foreach ($expectedFields as $key => $value) {
+                if ($key == 'length' && !method_exists($indexObject, 'getLength')) {
+                    $this->assertEmpty($value, 'length should not be present in in this type');
+                    continue;
+                }
+                $this->assertEquals($value, $indexObject->{'get' . ucfirst($key)}());
+            }
         }
 
         // Compare describeForeignKeys()
@@ -716,6 +803,22 @@ SQL;
 
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
+
+            // Compare with the constraint() method as well.
+            $indexObject = $result->constraint($foreignKey['name']);
+            foreach ($expectedItem as $key => $value) {
+                $this->assertInstanceOf(ForeignKey::class, $indexObject);
+                if ($key == 'references') {
+                    $this->assertEquals($value[0], $indexObject->getReferencedTable());
+                    $this->assertEquals((array)$value[1], $indexObject->getReferencedColumns());
+                    continue;
+                }
+                if ($key === 'length' && !($indexObject instanceof UniqueKey)) {
+                    $this->assertEquals([], $value);
+                    continue;
+                }
+                $this->assertEquals($value, $indexObject->{'get' . ucfirst($key)}());
+            }
         }
     }
 
@@ -903,7 +1006,7 @@ SQL;
             [
                 'body',
                 ['type' => 'text', 'null' => false, 'default' => 'abc'],
-                '`body` TEXT NOT NULL DEFAULT (\'abc\')',
+                "`body` TEXT NOT NULL DEFAULT ('abc')",
             ],
             [
                 'body',
@@ -1347,7 +1450,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1396,7 +1499,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1478,7 +1581,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))->addColumn('id', [
@@ -1541,7 +1644,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())
-            ->method('getDriver')
+            ->method('getWriteDriver')
             ->willReturn($driver);
 
         $this->pdo
@@ -1587,7 +1690,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
@@ -1607,7 +1710,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('articles_tags'))
@@ -1671,7 +1774,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('articles');
@@ -1689,7 +1792,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('articles');

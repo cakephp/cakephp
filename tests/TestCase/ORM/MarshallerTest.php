@@ -1935,7 +1935,7 @@ class MarshallerTest extends TestCase
         ]);
 
         $this->articles->Tags->getEventManager()
-            ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$called) {
+            ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$called): void {
                 $called = true;
 
                 $query->where(['Tags.id >=' => 1]);
@@ -2607,7 +2607,7 @@ class MarshallerTest extends TestCase
             ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
             ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
         ];
-        $this->comments->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query) {
+        $this->comments->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query): void {
             $query->contain(['Articles']);
         });
         $marshall = new Marshaller($this->comments);

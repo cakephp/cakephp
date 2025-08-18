@@ -93,6 +93,18 @@ class SqlserverTest extends TestCase
                 ],
                 'sqlsrv:Server=localhost\SQLEXPRESS,9001;Database=cake;MultipleActiveResultSets=false;APP=CakePHP-Testapp',
             ],
+            [
+                [
+                    'accessToken' => 'test-token',
+                ],
+                'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false;AccessToken=test-token',
+            ],
+            [
+                [
+                    'authentication' => 'ActiveDirectoryPassword',
+                ],
+                'sqlsrv:Server=localhost\SQLEXPRESS;Database=cake;MultipleActiveResultSets=false;Authentication=ActiveDirectoryPassword',
+            ],
         ];
     }
 
@@ -105,6 +117,7 @@ class SqlserverTest extends TestCase
     #[DataProvider('dnsStringDataProvider')]
     public function testDnsString($constructorArgs, $dnsString): void
     {
+        $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
         $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$constructorArgs])
@@ -157,6 +170,8 @@ class SqlserverTest extends TestCase
         $expected['log'] = false;
         $expected['encrypt'] = null;
         $expected['trustServerCertificate'] = null;
+        $expected['accessToken'] = null;
+        $expected['authentication'] = null;
 
         $connection = Mockery::mock(PDO::class);
 

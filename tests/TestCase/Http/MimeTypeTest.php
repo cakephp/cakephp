@@ -28,6 +28,12 @@ class MimeTypeTest extends TestCase
         $this->assertNull(MimeType::getMimeTypes('unknown'));
     }
 
+    public function testGetMimeTypesAll(): void
+    {
+        $list = MimeType::getMimeTypes();
+        $this->assertNotEmpty($list);
+    }
+
     public function testGetMimeType(): void
     {
         $this->assertSame('text/html', MimeType::getMimeType('html'));

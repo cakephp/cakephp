@@ -13,7 +13,5 @@ class AbortCommand extends Command
     {
         $io->error('Command aborted');
         $this->abort(127);
-
-        return null;
     }
 }

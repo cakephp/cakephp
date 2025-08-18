@@ -1525,7 +1525,7 @@ class ValidatorTest extends TestCase
         $thing = new class {
             public $args = [];
 
-            public function isCool($data, $context)
+            public function isCool($data, $context): string
             {
                 $this->args = [$data, $context];
 
@@ -1558,7 +1558,6 @@ class ValidatorTest extends TestCase
                 'title' => 'bar',
             ],
             'field' => 'title',
-            'parentContext' => null,
             'nestedManyIndex' => null,
         ];
         $this->assertEquals($expected, $context);
@@ -1578,7 +1577,7 @@ class ValidatorTest extends TestCase
         $thing = new class {
             public $args = [];
 
-            public function isCool($data, $a, $b, $context)
+            public function isCool($data, $a, $b, $context): string
             {
                 $this->args = [$data, $a, $b, $context];
 
@@ -1612,7 +1611,6 @@ class ValidatorTest extends TestCase
                 'title' => 'bar',
             ],
             'field' => 'title',
-            'parentContext' => null,
             'nestedManyIndex' => null,
         ];
         $this->assertEquals($expected, $context);
@@ -3275,8 +3273,8 @@ class ValidatorTest extends TestCase
         $validator = new Validator();
         $validator->add('field', 'check-context', [
             'rule' => function ($value, $context) {
-                $this->assertArrayHasKey('parentContext', $context);
-                $this->assertNull($context['parentContext']);
+                // At root level, parentContext should not be set
+                $this->assertArrayNotHasKey('parentContext', $context);
                 $this->assertArrayHasKey('nestedManyIndex', $context);
                 $this->assertNull($context['nestedManyIndex']);
 

@@ -504,7 +504,7 @@ class RoutingMiddlewareTest extends TestCase
     protected function app(?callable $handleCallback = null): Application
     {
         $app = new class (CONFIG) extends Application {
-            public ?Closure $handleCallback;
+            public ?Closure $handleCallback = null;
 
             public function routes(RouteBuilder $routes): void
             {

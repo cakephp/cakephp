@@ -47,9 +47,8 @@ class HeaderSet extends ResponseBase
      *
      * @param mixed $other Expected content
      * @return bool
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         return $this->response->hasHeader($this->headerName);
     }

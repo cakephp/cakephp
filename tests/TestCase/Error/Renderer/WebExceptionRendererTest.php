@@ -1001,7 +1001,6 @@ class WebExceptionRendererTest extends TestCase
             $exceptionRenderer = new MyCustomExceptionRenderer($exception);
 
             $reflectedMethod = new ReflectionMethod($exceptionRenderer, 'getHttpCode');
-            $reflectedMethod->setAccessible(true);
 
             $this->assertSame(404, $reflectedMethod->invoke($exceptionRenderer, $exception));
         });

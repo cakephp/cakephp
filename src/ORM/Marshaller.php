@@ -242,12 +242,10 @@ class Marshaller
                     $entity->set($field, $properties[$field], ['asOriginal' => true]);
                 }
             }
+        } elseif (method_exists($entity, 'patch')) {
+            $entity->patch($properties, ['asOriginal' => true]);
         } else {
-            if (method_exists($entity, 'patch')) {
-                $entity->patch($properties, ['asOriginal' => true]);
-            } else {
-                $entity->set($properties, ['asOriginal' => true]);
-            }
+            $entity->set($properties, ['asOriginal' => true]);
         }
 
         // Don't flag clean association entities as
@@ -270,10 +268,11 @@ class Marshaller
      * @param array $data The data to validate.
      * @param string|bool $validator Validator name or `true` for default validator.
      * @param bool $isNew Whether it is a new entity or one to be updated.
+     * @param array<string, mixed> $context Additional validation context.
      * @return array The list of validation errors.
      * @throws \RuntimeException If no validator can be created.
      */
-    protected function _validate(array $data, string|bool $validator, bool $isNew): array
+    protected function _validate(array $data, string|bool $validator, bool $isNew, array $context = []): array
     {
         if (!$validator) {
             return [];
@@ -283,7 +282,7 @@ class Marshaller
             $validator = null;
         }
 
-        return $this->_table->getValidator($validator)->validate($data, $isNew);
+        return $this->_table->getValidator($validator)->validate($data, $isNew, $context);
     }
 
     /**
@@ -584,7 +583,7 @@ class Marshaller
             }
         }
 
-        $errors = $this->_validate($data + $keys, $options['validate'], $isNew);
+        $errors = $this->_validate($data + $keys, $options['validate'], $isNew, ['entity' => $entity]);
         $options['isMerge'] = true;
         $propertyMap = $this->_buildPropertyMap($data, $options);
         $properties = [];

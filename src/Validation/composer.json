@@ -22,13 +22,13 @@
         "source": "https://github.com/cakephp/validation"
     },
     "require": {
-        "php": ">=8.1",
-        "cakephp/core": "5.2.*@dev",
-        "cakephp/utility": "5.2.*@dev",
+        "php": ">=8.2",
+        "cakephp/core": "5.3.*@dev",
+        "cakephp/utility": "5.3.*@dev",
         "psr/http-message": "^1.1 || ^2.0"
     },
     "require-dev": {
-        "cakephp/i18n": "5.2.*@dev"
+        "cakephp/i18n": "5.3.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -38,10 +38,11 @@
     "suggest": {
         "cakephp/i18n": "If you want to use Validation::localizedTime()"
     },
+    "minimum-stability": "dev",
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-5.x": "5.2.x-dev"
+            "dev-5.next": "5.3.x-dev"
         }
     }
 }

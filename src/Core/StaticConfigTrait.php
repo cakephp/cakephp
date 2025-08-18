@@ -175,7 +175,7 @@ trait StaticConfigTrait
     {
         $configurations = array_keys(static::$_config);
 
-        return array_map(function ($key) {
+        return array_map(function (int|string $key) {
             return (string)$key;
         }, $configurations);
     }

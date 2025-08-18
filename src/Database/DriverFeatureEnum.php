@@ -62,4 +62,9 @@ enum DriverFeatureEnum: string
      * Support for order by in set operations (union, intersect)
      */
     case SET_OPERATIONS_ORDER_BY = 'set-operations-order-by';
+
+    /**
+     * Support for optimizer hints in comment form after statement keyword (SELECT <hint>, etc)
+     */
+    case OPTIMIZER_HINT_COMMENT = 'optimizer-hint-comment';
 }

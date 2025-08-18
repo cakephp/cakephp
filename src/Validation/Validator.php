@@ -220,11 +220,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
+     * @param array<string, mixed> $context Additional validation context.
      * @return array<array> Array of failed fields
      */
-    public function validate(array $data, bool $newRecord = true): array
+    public function validate(array $data, bool $newRecord = true, array $context = []): array
     {
-        return $this->runValidate($data, $newRecord);
+        return $this->runValidate($data, $newRecord, $context);
     }
 
     /**
@@ -236,8 +237,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
-     * @param array|null $parentContext parent validator context used in nested rules. Contains the parent's
-     *   data, newRecord flag, and other context information that nested validators can access.
+     * @param array<string, mixed> $context Additional validation context.
      * @param int|null $nestedManyIndex index of the current validation data element used in nested many rules.
      *   This allows nested validators to know which item they are validating in a collection.
      * @return array<array> Array of failed fields
@@ -245,7 +245,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     protected function runValidate(
         array $data,
         bool $newRecord = true,
-        ?array $parentContext = null,
+        array $context = [],
         ?int $nestedManyIndex = null,
     ): array {
         $errors = [];
@@ -255,16 +255,15 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $keyPresent = array_key_exists($name, $data);
 
             $providers = $this->_providers;
-            $context = [
+            $fieldContext = [
                 'data' => $data,
                 'newRecord' => $newRecord,
                 'field' => $name,
                 'providers' => $providers,
-                'parentContext' => $parentContext,
                 'nestedManyIndex' => $nestedManyIndex,
-            ];
+            ] + $context;
 
-            if (!$keyPresent && !$this->_checkPresence($field, $context)) {
+            if (!$keyPresent && !$this->_checkPresence($field, $fieldContext)) {
                 $errors[$name]['_required'] = $this->getRequiredMessage($name);
                 continue;
             }
@@ -272,7 +271,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 continue;
             }
 
-            $canBeEmpty = $this->_canBeEmpty($field, $context);
+            $canBeEmpty = $this->_canBeEmpty($field, $fieldContext);
 
             $flags = static::EMPTY_NULL;
             if (isset($this->_allowEmptyFlags[$name])) {
@@ -290,7 +289,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 continue;
             }
 
-            $result = $this->_processRules($name, $field, $data[$name], $context);
+            $result = $this->_processRules($name, $field, $data[$name], $fieldContext);
             if ($result) {
                 $errors[$name] = $result;
             }
@@ -587,7 +586,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $provider = $this->getProvider($name);
                 $validator->setProvider($name, $provider);
             }
-            $errors = $validator->runValidate($value, $context['newRecord'], $context);
+            $errors = $validator->runValidate($value, $context['newRecord'], ['parentContext' => $context]);
 
             $message = $message ? [static::NESTED => $message] : [];
 
@@ -664,7 +663,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 if (!is_array($row)) {
                     return false;
                 }
-                $check = $validator->runValidate($row, $context['newRecord'], $context, $i);
+                $check = $validator->runValidate($row, $context['newRecord'], ['parentContext' => $context], $i);
                 if ($check) {
                     $errors[$i] = $check;
                 }
@@ -2159,7 +2158,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if ($message === null) {
-            $cases = array_map(fn($case) => $case->value, $enumClassName::cases());
+            $cases = array_map(fn(BackedEnum $case) => $case->value, $enumClassName::cases());
             $caseOptions = implode('`, `', $cases);
             if (!$this->_useI18n) {
                 $message = sprintf('The provided value must be one of `%s`', $caseOptions);

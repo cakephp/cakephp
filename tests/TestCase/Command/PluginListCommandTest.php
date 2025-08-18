@@ -82,8 +82,8 @@ class PluginListCommandTest extends TestCase
 declare(strict_types=1);
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path'
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/'
     ]
 ];
 PHP;
@@ -122,8 +122,8 @@ PHP;
 declare(strict_types=1);
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path'
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/'
     ]
 ];
 PHP;
@@ -155,8 +155,8 @@ PHP;
 declare(strict_types=1);
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path'
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/'
     ]
 ];
 PHP;

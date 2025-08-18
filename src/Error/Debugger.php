@@ -422,7 +422,7 @@ class Debugger
                 $back[] = sprintf('%s - %s, line %d', $reference, $path, $frame['line']);
             } else {
                 throw new InvalidArgumentException(
-                    "Invalid trace format of `$format` chosen. Must be one of `array`, `points` or `text`.",
+                    "Invalid trace format of `{$format}` chosen. Must be one of `array`, `points` or `text`.",
                 );
             }
         }
@@ -751,8 +751,6 @@ class Debugger
             foreach ($filters as $filter => $visibility) {
                 $reflectionProperties = $ref->getProperties($filter);
                 foreach ($reflectionProperties as $reflectionProperty) {
-                    $reflectionProperty->setAccessible(true);
-
                     if (
                         method_exists($reflectionProperty, 'isInitialized') &&
                         !$reflectionProperty->isInitialized($var)

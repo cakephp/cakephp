@@ -186,7 +186,7 @@ class FixtureHelper
         $this->runPerConnection(function (ConnectionInterface $connection, array $groupFixtures): void {
             if ($connection instanceof Connection) {
                 $sortedFixtures = null;
-                if ($connection->getDriver()->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS)) {
+                if ($connection->getWriteDriver()->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS)) {
                     $sortedFixtures = $this->sortByConstraint($connection, $groupFixtures);
                 }
 
