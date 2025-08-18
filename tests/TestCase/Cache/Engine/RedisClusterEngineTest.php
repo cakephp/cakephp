@@ -46,7 +46,7 @@ class RedisClusterEngineTest extends TestCase
                 // phpcs:enable
 
                 if ($socket === false) {
-                    $this->skipTest = ($this->skipTest === null ? '' : "\n") .
+                    $this->skipTest = ($this->skipTest === false ? '' : "\n") .
                         "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno})";
                 } else {
                     fclose($socket);
