@@ -206,12 +206,12 @@ class Stream implements AdapterInterface
     protected function buildSslContext(RequestInterface $request, array $options): void
     {
         // Set default CA bundle if not provided
-        if (empty($options['sslCafile'])) {
+        if (empty($options['sslCafile']) && empty($options['ssl_cafile'])) {
             $options['sslCafile'] = CaBundle::getBundledCaBundlePath();
         }
 
         // Handle verify host separately as it maps to peer_name
-        if (!empty($options['sslVerifyHost'])) {
+        if (!empty($options['sslVerifyHost']) || !empty($options['ssl_verify_host'])) {
             $url = $request->getUri();
             $host = parse_url((string)$url, PHP_URL_HOST);
             $this->_sslContextOptions['peer_name'] = $host;
@@ -219,11 +219,19 @@ class Stream implements AdapterInterface
 
         // Process all ssl* options dynamically
         foreach ($options as $key => $value) {
-            if (strpos($key, 'ssl') === 0 && $key !== 'sslVerifyHost') {
-                // Convert sslCamelCase to snake_case
-                // e.g., sslVerifyPeer -> verify_peer, sslCafile -> cafile
-                $contextKey = strtolower(preg_replace('/^ssl([A-Z])/', '$1', $key));
-                $contextKey = strtolower(preg_replace('/([a-z])([A-Z])/', '$1_$2', $contextKey));
+            if (strpos($key, 'ssl') === 0 && $key !== 'sslVerifyHost' && $key !== 'ssl_verify_host') {
+                // Handle both sslCamelCase and ssl_snake_case formats
+                if (strpos($key, 'ssl_') === 0) {
+                    // Already in ssl_snake_case format, just remove 'ssl_' prefix
+                    $contextKey = substr($key, 4);
+                } else {
+                    // Convert sslCamelCase to snake_case
+                    // e.g., sslVerifyPeer -> verify_peer, sslCafile -> cafile
+                    $contextKey = preg_replace('/^ssl([A-Z])/', '$1', $key) ?? $key;
+                    $contextKey = strtolower($contextKey);
+                    $contextKey = preg_replace('/([a-z])([A-Z])/', '$1_$2', $contextKey) ?? $contextKey;
+                    $contextKey = strtolower($contextKey);
+                }
                 $this->_sslContextOptions[$contextKey] = $value;
             }
         }
