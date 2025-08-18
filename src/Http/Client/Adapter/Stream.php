@@ -219,9 +219,9 @@ class Stream implements AdapterInterface
 
         // Process all ssl* options dynamically
         foreach ($options as $key => $value) {
-            if (strpos($key, 'ssl') === 0 && $key !== 'sslVerifyHost' && $key !== 'ssl_verify_host') {
+            if (str_starts_with($key, 'ssl') && $key !== 'sslVerifyHost' && $key !== 'ssl_verify_host') {
                 // Handle both sslCamelCase and ssl_snake_case formats
-                if (strpos($key, 'ssl_') === 0) {
+                if (str_starts_with($key, 'ssl_')) {
                     // Already in ssl_snake_case format, just remove 'ssl_' prefix
                     $contextKey = substr($key, 4);
                 } else {
