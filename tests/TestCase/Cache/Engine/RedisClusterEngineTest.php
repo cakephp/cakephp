@@ -30,7 +30,7 @@ class RedisClusterEngineTest extends TestCase
             'Redis extension is not installed or configured properly.',
         );
 
-        $nodes = array_map(function ($node) {
+        $nodes = array_map(function (string $node) {
             [$host, $port] = explode(':', $node);
 
             return ['host' => $host, 'port' => (int)$port];
@@ -168,7 +168,6 @@ class RedisClusterEngineTest extends TestCase
         // Set $_Redis manually using Reflection
         $reflection = new ReflectionClass($mock);
         $property = $reflection->getProperty('_Redis');
-        $property->setAccessible(true);
         $property->setValue($mock, $redisMock);
 
         // Mock logger

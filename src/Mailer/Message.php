@@ -1891,7 +1891,7 @@ class Message implements JsonSerializable
             $array[$property] = $this->{$property};
         }
 
-        array_walk($array['attachments'], function (&$item, $key): void {
+        array_walk($array['attachments'], function (array &$item, $key): void {
             if (!empty($item['file'])) {
                 $item['data'] = $this->readFile($item['file']);
                 unset($item['file']);

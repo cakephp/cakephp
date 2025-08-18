@@ -1340,7 +1340,6 @@ HTML;
         $message = new Message();
         $reflection = new ReflectionClass($message);
         $property = $reflection->getProperty('serializableProperties');
-        $property->setAccessible(true);
         $serializableProperties = $property->getValue($message);
 
         $message
