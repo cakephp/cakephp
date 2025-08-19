@@ -567,7 +567,7 @@ class Response implements ResponseInterface, Stringable
     public function withDisabledCache(): static
     {
         return $this->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
-            ->withHeader('Last-Modified', gmdate(DATE_RFC7231))
+            ->withHeader('Last-Modified', gmdate(CAKE_DATE_RFC7231))
             ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
@@ -589,7 +589,7 @@ class Response implements ResponseInterface, Stringable
             }
         }
 
-        return $this->withHeader('Date', gmdate(DATE_RFC7231, time()))
+        return $this->withHeader('Date', gmdate(CAKE_DATE_RFC7231, time()))
             ->withModified($since)
             ->withExpires($time)
             ->withSharable(true)
@@ -717,7 +717,7 @@ class Response implements ResponseInterface, Stringable
     {
         $date = $this->_getUTCDate($time);
 
-        return $this->withHeader('Expires', $date->format(DATE_RFC7231));
+        return $this->withHeader('Expires', $date->format(CAKE_DATE_RFC7231));
     }
 
     /**
@@ -740,7 +740,7 @@ class Response implements ResponseInterface, Stringable
     {
         $date = $this->_getUTCDate($time);
 
-        return $this->withHeader('Last-Modified', $date->format(DATE_RFC7231));
+        return $this->withHeader('Last-Modified', $date->format(CAKE_DATE_RFC7231));
     }
 
     /**
