@@ -18,6 +18,7 @@ permissions:
 jobs:
   testsuite:
     runs-on: ubuntu-24.04
+    continue-on-error: ${{ matrix.php-version == '8.5' }}
     strategy:
       fail-fast: false
       matrix:
