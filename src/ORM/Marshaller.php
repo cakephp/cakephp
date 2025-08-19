@@ -209,7 +209,13 @@ class Marshaller
                 $entity->setAccess($key, $value);
             }
         }
-        $errors = $this->_validate($data, $options['validate'], true);
+
+        $fieldsToValidate = $options['strictFields'] ? (array)$options['fields'] : [];
+        $context = [
+            'entity' => $entity,
+            'fields' => $fieldsToValidate,
+        ];
+        $errors = $this->_validate($data, $options['validate'], true, $context);
 
         $options['isMerge'] = false;
         $propertyMap = $this->_buildPropertyMap($data, $options);
