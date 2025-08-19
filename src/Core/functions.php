@@ -27,7 +27,6 @@ if (!defined('DS')) {
 }
 
 if (!defined('CAKE_DATE_RFC7231')) {
-
     define('CAKE_DATE_RFC7231', 'D, d M Y H:i:s \G\M\T');
 }
 
