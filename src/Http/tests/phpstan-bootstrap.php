@@ -45,7 +45,7 @@ define('WWW_ROOT', TEST_APP . 'webroot' . DS);
 define('CONFIG', TEST_APP . 'config' . DS);
 
 require_once ROOT . DS . 'vendor/cakephp/core/functions.php';
-require_once ROOT . DS . 'src/Core/functions.php';
+require_once ROOT . DS . '../../src/Core/functions.php';
 
 date_default_timezone_set('UTC');
 mb_internal_encoding('UTF-8');
