@@ -16,6 +16,9 @@
 use Cake\Routing\Router;
 
 define('TIME_START', microtime(true));
+if (!defined('DATE_RFC7231')) {
+    define('DATE_RFC7231', 'D, d M Y H:i:s \G\M\T');
+}
 
 // Sets the initial router state so future reloads work.
 Router::reload();
