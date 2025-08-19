@@ -54,7 +54,6 @@ class Curl implements AdapterInterface
         if ($body === false) {
             $errorCode = curl_errno($ch);
             $error = curl_error($ch);
-            curl_close($ch);
 
             $message = "cURL Error ({$errorCode}) {$error}";
             $errorNumbers = [
@@ -69,7 +68,6 @@ class Curl implements AdapterInterface
         }
 
         $responses = $this->createResponse($ch, $body);
-        curl_close($ch);
 
         return $responses;
     }
