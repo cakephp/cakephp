@@ -308,16 +308,17 @@ class Xml
 
                 foreach ($errors as $error) {
                     $messages[] = trim(sprintf(
-                        "File: %s, Line %d, Column %d: %s",
+                        'File: %s, Line %d, Column %d: %s',
                         $error->file ?: '[string input]',
                         $error->line,
                         $error->column,
-                        $error->message
+                        $error->message,
                     ));
                 }
                 libxml_clear_errors();
                 throw new XmlException("Invalid XML string:\n" . implode("\n", $messages));
             }
+
             return new SimpleXMLElement($xmlString);
         }
 
