@@ -2702,14 +2702,14 @@ class MarshallerTest extends TestCase
             'author_id' => 'invalid',
         ];
         $marshall = new Marshaller($this->articles);
-        
+
         // Without strictFields, all fields are validated
         $result = $marshall->one($data, ['fields' => ['body']]);
         $this->assertInstanceOf(Entity::class, $result);
         $this->assertEquals(['body' => 'My content'], $result->toArray());
         // We have validation errors for title even though it wasn't in fields
         $this->assertNotEmpty($result->getErrors());
-        
+
         // With strictFields, only the specified fields are validated
         $result = $marshall->one($data, ['fields' => ['body'], 'strictFields' => true]);
         $this->assertInstanceOf(Entity::class, $result);
