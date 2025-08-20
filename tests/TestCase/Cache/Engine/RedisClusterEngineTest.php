@@ -157,10 +157,6 @@ class RedisClusterEngineTest extends TestCase
      */
     public function testConnectNamedCluster(): void
     {
-        Cache::setConfig('named_redis_cluster', [
-            'clusterName' => 'mycluster',
-        ]);
-
         $seeds = '';
         foreach ($this->redisClusterNodes() as $node) {
             $seeds .= ($seeds === '' ? '' : '&') . 'mycluster[]=' . $node;
@@ -168,9 +164,12 @@ class RedisClusterEngineTest extends TestCase
 
         ini_set('redis.clusters.seeds', $seeds);
 
+        Cache::setConfig('named_redis_cluster', [
+            'className' => 'Redis',
+            'clusterName' => 'mycluster',
+        ]);
+
         try {
-            $Redis = new RedisEngine();
-            $this->assertTrue($Redis->init(Cache::pool('named_redis_cluster')->getConfig()));
             $this->assertTrue(Cache::write('test', 'testValue', 'named_redis_cluster'));
             $this->assertSame('testValue', Cache::read('test', 'named_redis_cluster'));
         } finally {
