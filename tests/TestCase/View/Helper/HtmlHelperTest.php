@@ -1318,6 +1318,96 @@ class HtmlHelperTest extends TestCase
     }
 
     /**
+     * Test scriptBlock with wrapScript option
+     */
+    public function testScriptBlockWithWrapScriptOption(): void
+    {
+        // Test with wrapScript = false
+        $result = $this->Html->scriptBlock('window.foo = 2;', ['wrapScript' => false]);
+        $this->assertEquals('window.foo = 2;', $result);
+
+        // Test with wrapScript = true (default behavior)
+        $result = $this->Html->scriptBlock('window.foo = 2;', ['wrapScript' => true]);
+        $expected = [
+            '<script',
+            'window.foo = 2;',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Test without wrapScript option (should default to true)
+        $result = $this->Html->scriptBlock('window.foo = 2;');
+        $expected = [
+            '<script',
+            'window.foo = 2;',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test scriptStart and scriptEnd with wrapScript option
+     */
+    public function testScriptStartAndEndWithWrapScriptOption(): void
+    {
+        // Test with wrapScript = false
+        $this->Html->scriptStart(['wrapScript' => false]);
+        echo 'var test = "no wrapper";';
+        $result = $this->Html->scriptEnd();
+        $this->assertEquals('var test = "no wrapper";', $result);
+
+        // Test with wrapScript = true
+        $this->Html->scriptStart(['wrapScript' => true]);
+        echo 'var test = "with wrapper";';
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            '<script',
+            'var test = "with wrapper";',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Test with wrapScript = false and block option
+        $this->View->shouldReceive('append')
+            ->with('script', 'var blockTest = "no wrapper in block";')
+            ->once();
+
+        $this->Html->scriptStart(['wrapScript' => false, 'block' => true]);
+        echo 'var blockTest = "no wrapper in block";';
+        $result = $this->Html->scriptEnd();
+        $this->assertNull($result);
+
+        // Test with wrapScript = true and block option
+        $this->View->shouldReceive('append')
+            ->with('script', Mockery::pattern('/<script.*var blockTest = "with wrapper in block";.*<\/script>/s'))
+            ->once();
+
+        $this->Html->scriptStart(['wrapScript' => true, 'block' => true]);
+        echo 'var blockTest = "with wrapper in block";';
+        $result = $this->Html->scriptEnd();
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test getCspScriptNonce method
+     */
+    public function testGetCspScriptNonce(): void
+    {
+        // Test without nonce
+        $result = $this->Html->getCspScriptNonce();
+        $this->assertNull($result);
+
+        // Test with nonce
+        $nonce = 'test-nonce-value';
+        $request = $this->View->getRequest()
+            ->withAttribute('cspScriptNonce', $nonce);
+        $this->View->setRequest($request);
+
+        $result = $this->Html->getCspScriptNonce();
+        $this->assertEquals($nonce, $result);
+    }
+
+    /**
      * testCharsetTag method
      */
     public function testCharsetTag(): void

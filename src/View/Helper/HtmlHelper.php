@@ -587,6 +587,9 @@ class HtmlHelper extends Helper
      *
      * - `block` Set to true to append output to view block "script" or provide
      *   custom block name.
+     * - `wrapScript` Set to false to disable automatic script tag wrapping (default: true).
+     *   Note: When using CSP with nonces and wrapScript is false, you must manually add
+     *   the nonce attribute. You can get the nonce value using `$this->Html->getCspScriptNonce()`
      *
      * @param string $script The script to wrap
      * @param array<string, mixed> $options The options to use. Options not listed above will be
@@ -599,12 +602,18 @@ class HtmlHelper extends Helper
         $options += [
             'block' => $this->getConfig('defaultScriptBlock'),
             'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
+            'wrapScript' => true,
         ];
 
-        $out = $this->formatTemplate('javascriptblock', [
-            'attrs' => $this->templater()->formatAttributes($options, ['block']),
-            'content' => $script,
-        ]);
+        // If wrapScript is false, output the script content directly without wrapping tags
+        if ($options['wrapScript'] === false) {
+            $out = $script;
+        } else {
+            $out = $this->formatTemplate('javascriptblock', [
+                'attrs' => $this->templater()->formatAttributes($options, ['block', 'wrapScript']),
+                'content' => $script,
+            ]);
+        }
 
         if (empty($options['block'])) {
             return $out;
@@ -626,6 +635,9 @@ class HtmlHelper extends Helper
      *
      * - `block` Set to true to append output to view block "script" or provide
      *   custom block name.
+     * - `wrapScript` Set to false to disable automatic script tag wrapping (default: true).
+     *   Note: When using CSP with nonces and wrapScript is false, you must manually add
+     *   the nonce attribute. You can get the nonce value using `$this->Html->getCspScriptNonce()`
      *
      * @param array<string, mixed> $options Options for the code block.
      * @return void
@@ -635,6 +647,17 @@ class HtmlHelper extends Helper
     {
         $this->_scriptBlockOptions = $options;
         ob_start();
+    }
+
+    /**
+     * Get the CSP script nonce value if available.
+     * Useful when manually writing script tags with wrapScript disabled.
+     *
+     * @return string|null The CSP nonce value or null if not set
+     */
+    public function getCspScriptNonce(): ?string
+    {
+        return $this->_View->getRequest()->getAttribute('cspScriptNonce');
     }
 
     /**
