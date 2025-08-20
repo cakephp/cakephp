@@ -89,7 +89,7 @@ class RedisEngine extends CacheEngine
         'unix_socket' => false,
         'scanCount' => 10,
         'readTimeout' => 0,
-        'nodes' => null,
+        'nodes' => [],
         'failover' => null,
         'clearUsesFlushDb' => false,
     ];
