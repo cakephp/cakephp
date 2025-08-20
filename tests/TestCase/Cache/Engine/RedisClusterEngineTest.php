@@ -16,6 +16,8 @@ use ReflectionClass;
  */
 class RedisClusterEngineTest extends TestCase
 {
+    private false|string|null $skipTest = null;
+
     /**
      * setUp method
      *
@@ -30,22 +32,28 @@ class RedisClusterEngineTest extends TestCase
             'Redis extension is not installed or configured properly.',
         );
 
-        $nodes = array_map(function (string $node) {
-            [$host, $port] = explode(':', $node);
+        if ($this->skipTest === null) {
+            $this->skipTest = false;
+            $nodes = array_map(function (string $node) {
+                [$host, $port] = explode(':', $node);
 
-            return ['host' => $host, 'port' => (int)$port];
-        }, $this->redisClusterNodes());
+                return ['host' => $host, 'port' => (int)$port];
+            }, $this->redisClusterNodes());
 
-        foreach ($nodes as $node) {
-            $socket = fsockopen($node['host'], $node['port'], $errno, $errstr, 1);
+            foreach ($nodes as $node) {
+                // phpcs:disable
+                $socket = @fsockopen($node['host'], $node['port'], $errno, $errstr, 1);
+                // phpcs:enable
 
-            if (!$socket) {
-                echo "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno}) \n";
+                if ($socket === false) {
+                    $this->skipTest = ($this->skipTest === false ? '' : "\n") .
+                        "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno})";
+                } else {
+                    fclose($socket);
+                }
             }
-
-            $this->skipIf(!$socket, "Connection to Redis node {$node['host']}:{$node['port']} failed: {$errstr} ({$errno})");
-            fclose($socket);
         }
+        $this->skipIf($this->skipTest !== false, $this->skipTest === false ? 'Not skipping' : $this->skipTest);
 
         Cache::enable();
         $this->configCache();
@@ -126,6 +134,7 @@ class RedisClusterEngineTest extends TestCase
             'server' => '127.0.0.1',
             'unix_socket' => false,
             'clearUsesFlushDb' => false,
+            'failover' => null,
         ];
         $this->assertEquals($expecting, $config);
     }
@@ -139,6 +148,35 @@ class RedisClusterEngineTest extends TestCase
     {
         $Redis = new RedisEngine();
         $this->assertTrue($Redis->init(Cache::pool('redis')->getConfig()));
+    }
+
+    /**
+     * testConnect method
+     *
+     * @return void
+     */
+    public function testConnectNamedClusterWithoutNodes(): void
+    {
+        // Mock logger
+        $logger = $this->getMockBuilder(ArrayLog::class)
+            ->onlyMethods(['log'])
+            ->getMock();
+
+        $logger->expects($this->once())
+            ->method('log')
+            ->with(
+                $this->equalTo('error'),
+                $this->stringContains('RedisEngine requires one or more nodes in cluster mode'),
+                $this->anything(),
+            );
+
+        Log::reset();
+        Log::setConfig('default', ['className' => $logger]);
+
+        $this->assertFalse((new RedisEngine())->init([
+            'className' => 'Redis',
+            'clusterName' => 'mycluster',
+        ]));
     }
 
     /**
@@ -581,5 +619,17 @@ class RedisClusterEngineTest extends TestCase
 
         $result = Cache::add('test_add_key', 'test data 2', 'redis');
         $this->assertFalse($result);
+    }
+
+    /**
+     * Test has
+     */
+    public function testHas(): void
+    {
+        $redis = Cache::pool('redis');
+        $this->assertFalse($redis->has('nope'));
+
+        $redis->set('yep', 0);
+        $this->assertTrue($redis->has('yep'));
     }
 }

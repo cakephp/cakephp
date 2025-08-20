@@ -21,6 +21,7 @@ use Cake\Cache\CacheEngine;
 use Cake\Core\Exception\CakeException;
 use Cake\Log\Log;
 use DateInterval;
+use Generator;
 use Redis;
 use RedisCluster;
 use RedisClusterException;
@@ -65,6 +66,7 @@ class RedisEngine extends CacheEngine
      *       '<ip>:<port>',
      *       '<ip>:<port>',
      *   ]
+     * - `failover` Failover mode (distribute,distribute_slaves,error,none). Cluster mode only.
      * - `clearUsesFlushDb` Enable clear() and clearBlocking() to use FLUSHDB. This will be
      *   faster than standard clear()/clearBlocking() but will ignore prefixes and will
      *   cause dataloss if other applications are sharing a redis database.
@@ -88,6 +90,7 @@ class RedisEngine extends CacheEngine
         'scanCount' => 10,
         'readTimeout' => 0,
         'nodes' => [],
+        'failover' => null,
         'clearUsesFlushDb' => false,
     ];
 
@@ -121,7 +124,7 @@ class RedisEngine extends CacheEngine
      */
     protected function _connect(): bool
     {
-        if (!empty($this->_config['nodes'])) {
+        if (!empty($this->_config['nodes']) || !empty($this->_config['clusterName'])) {
             return $this->connectRedisCluster();
         }
 
@@ -136,6 +139,16 @@ class RedisEngine extends CacheEngine
     protected function connectRedisCluster(): bool
     {
         $connected = false;
+
+        if (empty($this->_config['nodes'])) {
+            // @codeCoverageIgnoreStart
+            if (class_exists(Log::class)) {
+                Log::error('RedisEngine requires one or more nodes in cluster mode');
+            }
+            // @codeCoverageIgnoreEnd
+
+            return false;
+        }
 
         // @codeCoverageIgnoreStart
         $ssl = [];
@@ -177,6 +190,18 @@ class RedisEngine extends CacheEngine
                 Log::error('RedisEngine could not connect to the redis cluster. Got error: ' . $e->getMessage());
             }
             // @codeCoverageIgnoreEnd
+        }
+
+        $failover = match ($this->_config['failover']) {
+            RedisCluster::FAILOVER_DISTRIBUTE, 'distribute' => RedisCluster::FAILOVER_DISTRIBUTE,
+            RedisCluster::FAILOVER_DISTRIBUTE_SLAVES, 'distribute_slaves' => RedisCluster::FAILOVER_DISTRIBUTE_SLAVES,
+            RedisCluster::FAILOVER_ERROR, 'error' => RedisCluster::FAILOVER_ERROR,
+            RedisCluster::FAILOVER_NONE, 'none' => RedisCluster::FAILOVER_NONE,
+            default => null,
+        };
+
+        if ($failover !== null) {
+            $this->_Redis->setOption(RedisCluster::OPT_SLAVE_FAILOVER, $failover);
         }
 
         return $connected;
@@ -334,6 +359,16 @@ class RedisEngine extends CacheEngine
     }
 
     /**
+     * @inheritDoc
+     */
+    public function has(string $key): bool
+    {
+        $res = $this->_Redis->exists($this->_key($key));
+
+        return is_int($res) ? $res > 0 : $res === true;
+    }
+
+    /**
      * Increments the value of an integer cached key & update the expiry time
      *
      * @param string $key Identifier for the data
@@ -408,35 +443,18 @@ class RedisEngine extends CacheEngine
      */
     public function clear(): bool
     {
-        if ($this->getConfig('clearUsesFlushDb') && $this->_Redis instanceof Redis) {
-            $this->_Redis->flushDB(false);
+        if ($this->getConfig('clearUsesFlushDb')) {
+            $this->flushDB(true);
 
             return true;
         }
 
-        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
-
         $isAllDeleted = true;
         $pattern = $this->_config['prefix'] . '*';
-        $scanCount = (int)$this->_config['scanCount'];
 
-        // Set scan option only if using a Redis instance (not RedisCluster)
-        if ($this->_Redis instanceof Redis) {
-            $this->_Redis->setOption(Redis::OPT_SCAN, Redis::SCAN_RETRY);
-        }
-
-        $nodes = $this->_Redis instanceof RedisCluster
-            ? $this->_Redis->_masters()
-            : [null];
-
-        foreach ($nodes as $node) {
-            $it = null;
-            while (($keys = $this->scanKeys($it, $pattern, $scanCount, $node)) !== false) {
-                foreach ($keys as $key) {
-                    $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
-                    $isAllDeleted = $isAllDeleted && $isDeleted;
-                }
-            }
+        foreach ($this->scanKeys($pattern) as $key) {
+            $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
+            $isAllDeleted = $isAllDeleted && $isDeleted;
         }
 
         return $isAllDeleted;
@@ -449,36 +467,19 @@ class RedisEngine extends CacheEngine
      */
     public function clearBlocking(): bool
     {
-        if ($this->getConfig('clearUsesFlushDb') && $this->_Redis instanceof Redis) {
-            $this->_Redis->flushDB(false);
+        if ($this->getConfig('clearUsesFlushDb')) {
+            $this->flushDB(false);
 
             return true;
         }
 
-        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
-
         $isAllDeleted = true;
         $pattern = $this->_config['prefix'] . '*';
-        $scanCount = (int)$this->_config['scanCount'];
 
-        // Set scan option for Redis instance (not supported in RedisCluster)
-        if ($this->_Redis instanceof Redis) {
-            $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
-        }
-
-        $nodes = $this->_Redis instanceof RedisCluster
-            ? $this->_Redis->_masters()
-            : [null];
-
-        foreach ($nodes as $node) {
-            $it = null;
-            while (($keys = $this->scanKeys($it, $pattern, $scanCount, $node)) !== false) {
-                foreach ($keys as $key) {
-                    // Blocking delete
-                    $isDeleted = ((int)$this->_Redis->del($key) > 0);
-                    $isAllDeleted = $isAllDeleted && $isDeleted;
-                }
-            }
+        foreach ($this->scanKeys($pattern) as $key) {
+            // Blocking delete
+            $isDeleted = ((int)$this->_Redis->del($key) > 0);
+            $isAllDeleted = $isAllDeleted && $isDeleted;
         }
 
         return $isAllDeleted;
@@ -585,21 +586,61 @@ class RedisEngine extends CacheEngine
     }
 
     /**
-     * Unifies Redis and RedisCluster scan() calls.
+     * Unifies Redis and RedisCluster scan() calls and simplifies its use.
      *
-     * @param int|null $it Passed by reference cursor
-     * @param string   $pattern
-     * @param int      $count
-     * @param array|string|null $node Master address for cluster, or null for single node
-     * @return array|false
+     * @param string $pattern Pattern to scan
+     * @return \Generator<string>
      */
-    private function scanKeys(?int &$it, string $pattern, int $count, string|array|null $node = null): array|false
+    private function scanKeys(string $pattern): Generator
+    {
+        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+
+        if ($this->_Redis instanceof RedisCluster) {
+            foreach ($this->_Redis->_masters() as $node) {
+                $iterator = null;
+                while (true) {
+                    // @phpstan-ignore arguments.count, argument.type
+                    $keys = $this->_Redis->scan($iterator, $node, $pattern, (int)$this->_config['scanCount']);
+                    if ($keys === false) {
+                        break;
+                    }
+
+                    foreach ($keys as $key) {
+                        yield $key;
+                    }
+                }
+            }
+        } else {
+            $iterator = null;
+            while (true) {
+                $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
+                if ($keys === false) {
+                    break;
+                }
+
+                foreach ($keys as $key) {
+                    yield $key;
+                }
+            }
+        }
+    }
+
+    /**
+     * Flushes DB
+     *
+     * @param bool $async Whether to use asynchronous mode
+     * @return void
+     */
+    private function flushDB(bool $async): void
     {
         if ($this->_Redis instanceof RedisCluster) {
-            return $this->_Redis->scan($it, $node, $pattern, $count);
+            foreach ($this->_Redis->_masters() as $node) {
+                // @phpstan-ignore arguments.count
+                $this->_Redis->flushDB($node, $async);
+            }
+        } else {
+            $this->_Redis->flushDB($async);
         }
-
-        return $this->_Redis->scan($it, $pattern, $count);
     }
 
     /**
