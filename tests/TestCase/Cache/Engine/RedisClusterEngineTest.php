@@ -155,27 +155,28 @@ class RedisClusterEngineTest extends TestCase
      *
      * @return void
      */
-    public function testConnectNamedCluster(): void
+    public function testConnectNamedClusterWithoutNodes(): void
     {
-        $seeds = '';
-        foreach ($this->redisClusterNodes() as $node) {
-            $seeds .= ($seeds === '' ? '' : '&') . 'mycluster[]=' . $node;
-        }
+        // Mock logger
+        $logger = $this->getMockBuilder(ArrayLog::class)
+            ->onlyMethods(['log'])
+            ->getMock();
 
-        ini_set('redis.clusters.seeds', $seeds);
+        $logger->expects($this->once())
+            ->method('log')
+            ->with(
+                $this->equalTo('error'),
+                $this->stringContains('RedisEngine requires one or more nodes in cluster mode'),
+                $this->anything(),
+            );
 
-        Cache::setConfig('named_redis_cluster', [
+        Log::reset();
+        Log::setConfig('default', ['className' => $logger]);
+
+        $this->assertFalse((new RedisEngine())->init([
             'className' => 'Redis',
             'clusterName' => 'mycluster',
-        ]);
-
-        try {
-            $this->assertTrue(Cache::write('test', 'testValue', 'named_redis_cluster'));
-            $this->assertSame('testValue', Cache::read('test', 'named_redis_cluster'));
-        } finally {
-            Cache::drop('redis.cluster_seeds');
-            ini_restore('redis.cluster_seeds');
-        }
+        ]));
     }
 
     /**

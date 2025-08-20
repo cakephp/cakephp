@@ -140,6 +140,16 @@ class RedisEngine extends CacheEngine
     {
         $connected = false;
 
+        if (empty($this->_config['nodes'])) {
+            // @codeCoverageIgnoreStart
+            if (class_exists(Log::class)) {
+                Log::error('RedisEngine requires one or more nodes in cluster mode');
+            }
+            // @codeCoverageIgnoreEnd
+
+            return false;
+        }
+
         // @codeCoverageIgnoreStart
         $ssl = [];
         if ($this->_config['tls']) {
