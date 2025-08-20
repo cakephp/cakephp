@@ -965,6 +965,50 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     }
 
     /**
+     * Custom unserialization that handles compatibility
+     * with older CakePHP versions.
+     *
+     * Previously the `_columns`, `_indexes`, and `_constraints`
+     * attributes contained array data. As of 5.3, those attributes
+     * contain arrays of objects.
+     *
+     * @param array<string, mixed> $data The serialized data.
+     * @return void
+     */
+    public function __unserialize(array $data): void
+    {
+        $this->_table = $data["\0*\0_table"] ?? '';
+
+        $columns = $data["\0*\0_columns"] ?? [];
+        foreach ($columns as $name => $column) {
+            if (is_array($column)) {
+                $this->addColumn($name, $column);
+            } else {
+                $this->_columns[$name] = $column;
+            }
+        }
+        $indexes = $data["\0*\0_indexes"] ?? [];
+        foreach ($indexes as $name => $index) {
+            if (is_array($index)) {
+                $this->addIndex($name, $index);
+            } else {
+                $this->_indexes[$name] = $index;
+            }
+        }
+        $constraints = $data["\0*\0_constraints"] ?? [];
+        foreach ($constraints as $name => $constraint) {
+            if (is_array($constraint)) {
+                $this->addConstraint($name, $constraint);
+            } else {
+                $this->_constraints[$name] = $constraint;
+            }
+        }
+        $this->_options = $data["\0*\0_options"] ?? [];
+        $this->_typeMap = $data["\0*\0_typeMap"] ?? [];
+        $this->_temporary = $data["\0*\0_temporary"] ?? false;
+    }
+
+    /**
      * Returns an array of the table schema.
      *
      * @return array<string, mixed>

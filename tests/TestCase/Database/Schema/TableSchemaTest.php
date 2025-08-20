@@ -703,6 +703,37 @@ class TableSchemaTest extends TestCase
     }
 
     /**
+     * Test that unserialization handles data from previous versions of CakePHP.
+     *
+     * @return void
+     */
+    public function testUnserializeCompat(): void
+    {
+        // Serialized state from <5.3 where _columns, _indexes, and _constraints contained array data.
+        $state = <<<'STATE'
+        O:32:"Cake\Database\Schema\TableSchema":7:{s:9:" * _table";s:8:"articles";s:11:" * _columns";a:6:{s:2:"id";a:9:{s:4:"type";s:7:"integer";s:6:"length";i:10;s:13:"autoIncrement";b:1;s:7:"default";N;s:4:"null";b:0;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:8:"unsigned";N;}s:5:"title";a:9:{s:4:"type";s:6:"string";s:6:"length";i:255;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:5:"fixed";N;}s:7:"excerpt";a:8:{s:4:"type";s:4:"text";s:6:"length";N;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;}s:6:"rating";a:9:{s:4:"type";s:7:"integer";s:6:"length";i:10;s:7:"default";N;s:4:"null";b:0;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:8:"unsigned";N;s:13:"autoIncrement";N;}s:7:"content";a:8:{s:4:"type";s:4:"text";s:6:"length";N;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;}s:4:"name";a:9:{s:4:"type";s:6:"string";s:6:"length";i:255;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:5:"fixed";N;}}s:11:" * _typeMap";a:6:{s:2:"id";s:7:"integer";s:5:"title";s:6:"string";s:7:"excerpt";s:4:"text";s:6:"rating";s:7:"integer";s:7:"content";s:4:"text";s:4:"name";s:6:"string";}s:11:" * _indexes";a:2:{s:12:"rating_index";a:3:{s:4:"type";s:5:"index";s:7:"columns";a:1:{i:0;s:6:"rating";}s:6:"length";a:0:{}}s:7:"by_name";a:3:{s:4:"type";s:5:"index";s:7:"columns";a:1:{i:0;s:4:"name";}s:6:"length";a:0:{}}}s:15:" * _constraints";a:1:{s:7:"primary";a:3:{s:4:"type";s:7:"primary";s:7:"columns";a:1:{i:0;s:2:"id";}s:6:"length";a:0:{}}}s:11:" * _options";a:0:{}s:13:" * _temporary";b:0;}
+        STATE;
+        $schema = unserialize(trim($state));
+
+        $this->assertInstanceOf(TableSchema::class, $schema);
+        $this->assertEquals('articles', $schema->name());
+        $this->assertCount(6, $schema->columns());
+        $this->assertCount(2, $schema->indexes());
+        $this->assertCount(1, $schema->constraints());
+        $this->assertEquals('string', $schema->column('title')->getType());
+        $this->assertEquals('string', $schema->getColumn('title')['type']);
+        $this->assertEquals(['id'], $schema->constraint('primary')->getColumns());
+        $this->assertEquals(['id'], $schema->getConstraint('primary')['columns']);
+        $this->assertEquals(['id'], $schema->getPrimaryKey());
+        $this->assertEquals(['name'], $schema->index('by_name')->getColumns());
+
+        // Serialize and unserialize to ensure current objects also work.
+        $serialized = serialize($schema);
+        $restored = unserialize($serialized);
+        $this->assertEquals($schema, $restored);
+    }
+
+    /**
      * Assertion for comparing a regex pattern against a query having its identifiers
      * quoted. It accepts queries quoted with the characters `<` and `>`. If the third
      * parameter is set to true, it will alter the pattern to both accept quoted and
