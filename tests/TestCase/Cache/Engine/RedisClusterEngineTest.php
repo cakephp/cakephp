@@ -151,6 +151,35 @@ class RedisClusterEngineTest extends TestCase
     }
 
     /**
+     * testConnect method
+     *
+     * @return void
+     */
+    public function testConnectNamedCluster(): void
+    {
+        Cache::setConfig('named_redis_cluster', [
+            'clusterName' => 'mycluster',
+        ]);
+
+        $seeds = '';
+        foreach ($this->redisClusterNodes() as $node) {
+            $seeds .= ($seeds === '' ? '' : '&') . 'mycluster[]=' . $node;
+        }
+
+        ini_set('redis.clusters.seeds', $seeds);
+
+        try {
+            $Redis = new RedisEngine();
+            $this->assertTrue($Redis->init(Cache::pool('named_redis_cluster')->getConfig()));
+            $this->assertTrue(Cache::write('test', 'testValue', 'named_redis_cluster'));
+            $this->assertSame('testValue', Cache::read('test', 'named_redis_cluster'));
+        } finally {
+            Cache::drop('redis.cluster_seeds');
+            ini_restore('redis.cluster_seeds');
+        }
+    }
+
+    /**
      * Test that a Redis cluster connection failure logs an error
      * and returns false from the `init()` method.
      *
