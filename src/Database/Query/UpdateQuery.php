@@ -43,6 +43,7 @@ class UpdateQuery extends Query
         'comment' => null,
         'with' => [],
         'update' => [],
+        'optimizerHint' => [],
         'modifier' => [],
         'join' => [],
         'set' => [],

@@ -16,10 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Route;
 
+use BackedEnum;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Exception\BadRequestException;
 use InvalidArgumentException;
 use Psr\Http\Message\ServerRequestInterface;
+use UnitEnum;
 
 /**
  * A single Route used by the Router to connect requests to
@@ -817,6 +819,12 @@ class Route
                 ));
             }
             $string = $params[$key];
+            if ($string instanceof BackedEnum) {
+                $string = $string->value;
+            } elseif ($string instanceof UnitEnum) {
+                $string = $string->name;
+            }
+
             $search[] = "{{$key}}";
             $replace[] = $string;
         }

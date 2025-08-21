@@ -731,7 +731,7 @@ trait IntegrationTestTrait
         if ($this->_securityToken === true) {
             $fields = array_diff_key($data, array_flip($this->_unlockedFields));
 
-            $keys = array_map(function ($field) {
+            $keys = array_map(function (int|string $field) {
                 return preg_replace('/(\.\d+)+$/', '', (string)$field);
             }, array_keys(Hash::flatten($fields)));
 
@@ -931,6 +931,72 @@ trait IntegrationTestTrait
                 $verboseMessage,
             );
         }
+    }
+
+    /**
+     * Assert whether the response is redirecting back to the previous location.
+     *
+     * @param int|null $code Specific status code to validate against, defaults to success (2xx-3xx) range.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertRedirectBack(?int $code = null, string $message = ''): void
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
+        if ($code !== null) {
+            $this->assertThat($code, new StatusCode($this->_response), $message);
+        } else {
+            $this->assertThat(null, new StatusSuccess($this->_response), $verboseMessage);
+        }
+
+        $url = $this->_request['url'] ?? null;
+        if (!$url) {
+            $this->fail('No `url` set in request, cannot assert header.');
+        }
+
+        $this->assertThat(
+            Router::url($url, true),
+            new HeaderEquals($this->_response, 'Location'),
+            $verboseMessage,
+        );
+    }
+
+    /**
+     * Assert whether the response is redirecting back to the referer.
+     *
+     * @param int|null $code Specific status code to validate against, defaults to success (2xx-3xx) range.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertRedirectBackToReferer(?int $code = null, string $message = ''): void
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
+        if ($code !== null) {
+            $this->assertThat($code, new StatusCode($this->_response), $message);
+        } else {
+            $this->assertThat(null, new StatusSuccess($this->_response), $verboseMessage);
+        }
+
+        $referer = $this->_request['environment']['HTTP_REFERER'] ?? null;
+        if (!$referer) {
+            $this->fail('No `HTTP_REFERER` set in request environment, cannot assert header.');
+        }
+
+        $this->assertThat(
+            Router::url($referer, true),
+            new HeaderEquals($this->_response, 'Location'),
+            $verboseMessage,
+        );
     }
 
     /**

@@ -192,7 +192,7 @@ class ConsoleOutput
                 DIRECTORY_SEPARATOR === '\\' &&
                 !str_contains(strtolower(php_uname('v')), 'windows 10') &&
                 !str_contains(strtolower((string)env('SHELL')), 'bash.exe') &&
-                !(bool)env('ANSICON') &&
+                !env('ANSICON') &&
                 env('ConEmuANSI') !== 'ON'
             ) ||
             (

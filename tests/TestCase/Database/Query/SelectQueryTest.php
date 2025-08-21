@@ -3066,7 +3066,7 @@ class SelectQueryTest extends TestCase
                 'ye' => '2007',
             ] + $expected;
         } elseif ($driver instanceof Postgres || $driver instanceof Sqlserver) {
-            $expected = array_map(function ($value) {
+            $expected = array_map(function (int|string $value) {
                 return (string)$value;
             }, $expected);
         }

@@ -184,6 +184,8 @@ class I18nTest extends TestCase
 
     /**
      * Tests that custom translation loaders can be created on the fly and used later on
+     *
+     * @deprecated
      */
     public function testCreateCustomTranslationInvokable(): void
     {
@@ -206,8 +208,10 @@ class I18nTest extends TestCase
             );
         });
 
-        $translator = I18n::getTranslator('custom', 'fr_FR');
-        $this->assertSame('Le moo', $translator->translate('Cow'));
+        $this->deprecated(function (): void {
+            $translator = I18n::getTranslator('custom', 'fr_FR');
+            $this->assertSame('Le moo', $translator->translate('Cow'));
+        });
     }
 
     /**

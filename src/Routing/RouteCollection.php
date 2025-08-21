@@ -137,7 +137,7 @@ class RouteCollection
     {
         $uri = $request->getUri();
         $urlPath = $uri->getPath();
-        if (strpos($urlPath, '%') !== false) {
+        if (str_contains($urlPath, '%')) {
             // decode urlencoded segments, but don't decode %2f aka /
             $parts = explode('/', $urlPath);
             $parts = array_map(

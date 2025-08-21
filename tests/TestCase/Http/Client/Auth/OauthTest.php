@@ -25,15 +25,9 @@ use Cake\TestSuite\TestCase;
  */
 class OauthTest extends TestCase
 {
-    /**
-     * @var string
-     */
-    private $privateKeyString;
+    private string $privateKeyString;
 
-    /**
-     * @var string
-     */
-    private $privateKeyStringEnc;
+    private string $privateKeyStringEnc;
 
     /**
      * Setup

@@ -261,7 +261,7 @@ class PluginCollectionTest extends TestCase
 declare(strict_types=1);
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path'
+        'TestPlugin' => '/config/path/'
     ]
 ];
 PHP;
@@ -272,7 +272,7 @@ PHP;
         $path = $plugins->findPath('TestPlugin');
         unlink($configPath);
 
-        $this->assertSame('/config/path', $path);
+        $this->assertSame('/config/path/', $path);
     }
 
     public function testFindPathConfigureData(): void

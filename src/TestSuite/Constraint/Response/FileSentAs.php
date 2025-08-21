@@ -34,9 +34,8 @@ class FileSentAs extends ResponseBase
      *
      * @param mixed $other Expected type
      * @return bool
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         $file = $this->response->getFile();
         if (!$file) {

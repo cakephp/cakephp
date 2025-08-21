@@ -43,6 +43,7 @@ use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase as BaseTestCase;
 use ReflectionClass;
 use ReflectionException;
+use ReflectionMethod;
 use function Cake\Core\pluginSplit;
 
 /**
@@ -495,6 +496,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $string The string to search in.
      * @param string $message The message to use for failure.
      * @return void
+     * @phpstan-param non-empty-string $prefix
      */
     public function assertTextStartsWith(string $prefix, string $string, string $message = ''): void
     {
@@ -512,6 +514,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
      * @return void
+     * @phpstan-param non-empty-string $prefix
      */
     public function assertTextStartsNotWith(string $prefix, string $string, string $message = ''): void
     {
@@ -529,6 +532,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
      * @return void
+     * @phpstan-param non-empty-string $suffix
      */
     public function assertTextEndsWith(string $suffix, string $string, string $message = ''): void
     {
@@ -546,6 +550,7 @@ abstract class TestCase extends BaseTestCase
      * @param string $string The string to search.
      * @param string $message The message to use for failure.
      * @return void
+     * @phpstan-param non-empty-string $suffix
      */
     public function assertTextEndsNotWith(string $suffix, string $string, string $message = ''): void
     {
@@ -980,7 +985,7 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
         $reflection = new ReflectionClass($className);
-        $classMethods = array_map(function ($method) {
+        $classMethods = array_map(function (ReflectionMethod $method) {
             return $method->name;
         }, $reflection->getMethods());
 

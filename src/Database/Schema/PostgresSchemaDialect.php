@@ -31,6 +31,11 @@ class PostgresSchemaDialect extends SchemaDialect
     public const DEFAULT_SRID = 4326;
 
     /**
+     * @const string
+     */
+    public const GENERATED_BY_DEFAULT = 'BY DEFAULT';
+
+    /**
      * Generate the SQL to list the tables and views.
      *
      * @param array<string, mixed> $config The connection configuration to use for
@@ -139,7 +144,7 @@ class PostgresSchemaDialect extends SchemaDialect
             return $type;
         }
 
-        if (in_array($col, ['date', 'time', 'boolean'], true)) {
+        if (in_array($col, ['date', 'time', 'boolean', 'inet', 'cidr', 'macaddr', 'citext', 'interval'], true)) {
             return ['type' => $col, 'length' => null];
         }
         if (in_array($col, ['timestamptz', 'timestamp with time zone'], true)) {
@@ -282,7 +287,11 @@ class PostgresSchemaDialect extends SchemaDialect
         $statement = $this->_driver->execute($sql, [$name, $schema, $config['database']]);
         $columns = [];
         foreach ($statement->fetchAll('assoc') as $row) {
-            $field = $this->_convertColumn($row['type']);
+            $type = $row['type'];
+            if ($type === 'USER-DEFINED') {
+                $type = $row['udt_name'];
+            }
+            $field = $this->_convertColumn($type);
             if ($field['type'] === TableSchemaInterface::TYPE_BOOLEAN) {
                 if ($row['default'] === 'true') {
                     $row['default'] = 1;
@@ -506,6 +515,7 @@ class PostgresSchemaDialect extends SchemaDialect
             'references' => [$row['references_table'], $row['references_field']],
             'update' => $this->_convertOnClause($row['on_update']),
             'delete' => $this->_convertOnClause($row['on_delete']),
+            'deferrable' => $this->convertDeferrable($row),
         ];
         $schema->addConstraint($row['name'], $data);
     }
@@ -529,6 +539,7 @@ class PostgresSchemaDialect extends SchemaDialect
                     'references' => [$row['references_table'], []],
                     'update' => $this->_convertOnClause($row['on_update']),
                     'delete' => $this->_convertOnClause($row['on_delete']),
+                    'deferrable' => $this->convertDeferrable($row),
                 ];
             }
             // column indexes start at 1
@@ -567,7 +578,9 @@ class PostgresSchemaDialect extends SchemaDialect
         c.confdeltype AS on_delete,
         c.confrelid::regclass AS references_table,
         ab.attname AS references_field,
-        array_position(c.confkey, ab.attnum) AS references_field_order
+        array_position(c.confkey, ab.attnum) AS references_field_order,
+        c.condeferrable AS deferrable,
+        c.condeferred AS initially_deferred
         FROM pg_catalog.pg_namespace n
         INNER JOIN pg_catalog.pg_class cl ON (n.oid = cl.relnamespace)
         INNER JOIN pg_catalog.pg_constraint c ON (n.oid = c.connamespace)
@@ -605,6 +618,27 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         return TableSchema::ACTION_SET_NULL;
+    }
+
+    /**
+     * Convert deferrable option from the postgres metadata into a string
+     *
+     * @param array $row The row to convert.
+     * @return string|null The deferrable value or null if not deferrable.
+     */
+    protected function convertDeferrable(array $row): ?string
+    {
+        if (!isset($row['deferrable'])) {
+            return null;
+        }
+        if (!$row['deferrable']) {
+            return ForeignKey::NOT_DEFERRED;
+        }
+        if (isset($row['initially_deferred']) && $row['initially_deferred']) {
+            return ForeignKey::DEFERRED;
+        }
+
+        return ForeignKey::IMMEDIATE;
     }
 
     /**
@@ -667,11 +701,16 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_UUID => ' UUID',
             TableSchemaInterface::TYPE_NATIVE_UUID => ' UUID',
             TableSchemaInterface::TYPE_CHAR => ' CHAR',
+            TableSchemaInterface::TYPE_CITEXT => ' CITEXT',
             TableSchemaInterface::TYPE_JSON => ' JSONB',
+            TableSchemaInterface::TYPE_INTERVAL => ' INTERVAL',
             TableSchemaInterface::TYPE_GEOMETRY => ' GEOGRAPHY(GEOMETRY, %s)',
             TableSchemaInterface::TYPE_POINT => ' GEOGRAPHY(POINT, %s)',
             TableSchemaInterface::TYPE_LINESTRING => ' GEOGRAPHY(LINESTRING, %s)',
             TableSchemaInterface::TYPE_POLYGON => ' GEOGRAPHY(POLYGON, %s)',
+            TableSchemaInterface::TYPE_CIDR => ' CIDR',
+            TableSchemaInterface::TYPE_INET => ' INET',
+            TableSchemaInterface::TYPE_MACADDR => ' MACADDR',
         ];
 
         $autoIncrementTypes = [
@@ -681,10 +720,14 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_BIGINTEGER,
         ];
         $autoIncrement = (bool)($column['autoIncrement'] ?? false);
-        if (
+        $isAutoincrement = (
             in_array($column['type'], $autoIncrementTypes, true) &&
             $autoIncrement
-        ) {
+        );
+        $version = $this->_driver->version();
+        $identityVersion = version_compare($version, '10.0', '>=');
+
+        if ($isAutoincrement && !$identityVersion) {
             $typeMap[$column['type']] = str_replace('INT', 'SERIAL', $typeMap[$column['type']]);
             unset($column['default']);
         }
@@ -753,6 +796,11 @@ class PostgresSchemaDialect extends SchemaDialect
 
         if (isset($column['null']) && $column['null'] === false) {
             $out .= ' NOT NULL';
+        }
+
+        if ($isAutoincrement && $identityVersion) {
+            $generated = $column['generated'] ?? static::GENERATED_BY_DEFAULT;
+            $out .= ' GENERATED ' . $generated . ' AS IDENTITY';
         }
 
         $datetimeTypes = [
@@ -875,12 +923,14 @@ class PostgresSchemaDialect extends SchemaDialect
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
-                ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERRABLE INITIALLY IMMEDIATE',
+                ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s %s',
                 implode(', ', $columns),
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
                 $this->_foreignOnClause($data['delete']),
+                // Historically CakePHP used 'DEFERRABLE INITIALLY IMEDIATE, and this maintains backwards compat.
+                $data['deferrable'] ?? ForeignKey::IMMEDIATE,
             );
         }
 

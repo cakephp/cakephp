@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\View;
 
+use function Cake\Core\deprecationWarning;
+
 /**
  * Adds string template functionality to any class by providing methods to
  * load and parse string templates.
@@ -49,10 +51,30 @@ trait StringTemplateTrait
     /**
      * Gets templates to use or a specific template.
      *
+     * Deprecated: Getting a specific template is deprecated. Use getTemplate() instead.
+     *
      * @param string|null $template String for reading a specific template, null for all.
      * @return array|string
      */
     public function getTemplates(?string $template = null): array|string
+    {
+        if ($template !== null) {
+            deprecationWarning(
+                '5.3.0',
+                'Returning a concrete template from getTemplates() is deprecated. Use getTemplate() instead.',
+            );
+        }
+
+        return $this->templater()->get($template);
+    }
+
+    /**
+     * Gets templates to use or a specific template.
+     *
+     * @param string $template String for reading a specific template.
+     * @return string
+     */
+    public function getTemplate(string $template): string
     {
         return $this->templater()->get($template);
     }

@@ -34,7 +34,7 @@ class UriFactoryTest extends TestCase
         $this->assertInstanceOf(Uri::class, $uri);
     }
 
-    public function testMarshalUriAndBaseFromSapi()
+    public function testMarshalUriAndBaseFromSapi(): void
     {
         Configure::write('App.baseUrl', '/index.php');
         $result = UriFactory::marshalUriAndBaseFromSapi([]);

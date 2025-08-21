@@ -32,7 +32,7 @@ class Entity implements EntityInterface, InvalidPropertyInterface
      * Initializes the internal properties of this entity out of the
      * keys in an array. The following list of options can be used:
      *
-     * - useSetters: whether use internal setters for properties or not
+     * - useSetters: whether to use internal setters for properties or not
      * - markClean: whether to mark all properties as clean after setting them
      * - markNew: whether this instance has not yet been persisted
      * - guard: whether to prevent inaccessible properties from being set (default: false)

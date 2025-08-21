@@ -2517,7 +2517,7 @@ class FormHelper extends Helper
             if (is_array($first)) {
                 $disabled = array_filter(
                     $options['options'],
-                    fn($i) => in_array($i['value'], $options['disabled'], true),
+                    fn(array $i) => in_array($i['value'], $options['disabled'], true),
                 );
 
                 return $disabled !== [];
@@ -2681,8 +2681,8 @@ class FormHelper extends Helper
         $diff = array_diff($sources, $this->supportedValueSources);
 
         if ($diff) {
-            array_walk($diff, fn(&$x) => $x = "`{$x}`");
-            array_walk($this->supportedValueSources, fn(&$x) => $x = "`{$x}`");
+            array_walk($diff, fn(string &$x) => $x = "`{$x}`");
+            array_walk($this->supportedValueSources, fn(string &$x) => $x = "`{$x}`");
             throw new InvalidArgumentException(sprintf(
                 'Invalid value source(s): %s. Valid values are: %s.',
                 implode(', ', $diff),

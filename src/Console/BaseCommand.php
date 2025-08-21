@@ -180,7 +180,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
                 $parser->argumentNames(),
             );
         } catch (ConsoleException $e) {
-            $io->err('Error: ' . $e->getMessage());
+            $io->error('Error: ' . $e->getMessage());
 
             return static::CODE_ERROR;
         }

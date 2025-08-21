@@ -103,6 +103,24 @@ class PluginLoadCommandTest extends TestCase
     }
 
     /**
+     * Test recommendations for keywords in composer.json
+     */
+    public function testLoadRecommendations(): void
+    {
+        $this->exec('plugin load TestPluginFour', ['y', 'y', 'y']);
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        Plugin::getCollection()->remove('TestPluginFour');
+
+        $config = include $this->configFile;
+        $expected = [
+            'onlyDebug' => true,
+            'onlyCli' => true,
+            'optional' => true,
+        ];
+        $this->assertEquals($expected, $config['TestPluginFour']);
+    }
+
+    /**
      * Test loading an unknown plugin
      */
     public function testLoadUnknownPlugin(): void
