@@ -107,6 +107,7 @@ abstract class Query implements ExpressionInterface, Stringable
         'insert' => [],
         'values' => [],
         'with' => [],
+        'optimizerHint' => [],
         'select' => [],
         'distinct' => false,
         'modifier' => [],
@@ -199,6 +200,19 @@ abstract class Query implements ExpressionInterface, Stringable
     }
 
     /**
+     * Returns driver for current connection role by default.
+     *
+     * See `Query::getConnectionRole()` for role options.
+     *
+     * @param string|null $role Connection role
+     * @return \Cake\Database\Driver
+     */
+    public function getDriver(?string $role = null): Driver
+    {
+        return $this->_connection->getDriver($role ?? $this->connectionRole);
+    }
+
+    /**
      * Compiles the SQL representation of this query and executes it using the
      * configured connection object. Returns the resulting statement object.
      *
@@ -283,7 +297,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $binder->resetCount();
         }
 
-        return $this->getConnection()->getDriver()->compileQuery($this, $binder);
+        return $this->getDriver()->compileQuery($this, $binder);
     }
 
     /**
@@ -387,27 +401,45 @@ abstract class Query implements ExpressionInterface, Stringable
      * });
      * ```
      *
-     * @param \Cake\Database\Expression\CommonTableExpression|\Closure $cte The CTE to add.
+     * @param \Cake\Database\Expression\CommonTableExpression|\Closure|array<\Cake\Database\Expression\CommonTableExpression|\Closure> $cte The CTE to add.
      * @param bool $overwrite Whether to reset the list of CTEs.
      * @return $this
      */
-    public function with(CommonTableExpression|Closure $cte, bool $overwrite = false)
+    public function with(CommonTableExpression|Closure|array $cte, bool $overwrite = false)
     {
+        $this->_dirty();
         if ($overwrite) {
             $this->_parts['with'] = [];
         }
 
-        if ($cte instanceof Closure) {
-            $query = $this->getConnection()->selectQuery();
-            $cte = $cte(new CommonTableExpression(), $query);
-            if (!($cte instanceof CommonTableExpression)) {
-                throw new CakeException(
-                    'You must return a `CommonTableExpression` from a Closure passed to `with()`.',
-                );
+        $ctes = is_array($cte) ? $cte : [$cte];
+        foreach ($ctes as $cte) {
+            if ($cte instanceof Closure) {
+                $query = $this->getConnection()->selectQuery();
+                $cte = $cte(new CommonTableExpression(), $query);
+                if (!($cte instanceof CommonTableExpression)) {
+                    throw new CakeException(
+                        'You must return a `CommonTableExpression` from a Closure passed to `with()`.',
+                    );
+                }
             }
+            $this->_parts['with'][] = $cte;
         }
 
-        $this->_parts['with'][] = $cte;
+        return $this;
+    }
+
+    /**
+     * Add engine-specific optimizer hint.
+     *
+     * @param array<string>|string $hint Optimizer hint
+     * @param bool $overwrite Whether to replace existing hints
+     * @return $this
+     */
+    public function optimizerHint(array|string $hint, bool $overwrite = false)
+    {
+        $hints = array_values((array)$hint);
+        $this->_parts['optimizerHint'] = $overwrite ? $hints : array_merge($this->_parts['optimizerHint'], $hints);
         $this->_dirty();
 
         return $this;
@@ -1614,7 +1646,7 @@ abstract class Query implements ExpressionInterface, Stringable
     {
         if (!array_key_exists($name, $this->_parts)) {
             $clauses = array_keys($this->_parts);
-            array_walk($clauses, fn(&$x) => $x = "`{$x}`");
+            array_walk($clauses, fn(string &$x) => $x = "`{$x}`");
             $clauses = implode(', ', $clauses);
             throw new InvalidArgumentException(sprintf(
                 'The `%s` clause is not defined. Valid clauses are: %s.',

@@ -293,7 +293,7 @@ class ErrorTrapTest extends TestCase
     {
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
-        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error) {
+        $trap->getEventManager()->on('Error.beforeRender', function ($event, PhpError $error): void {
             $event->setResult("This ain't so bad");
         });
 

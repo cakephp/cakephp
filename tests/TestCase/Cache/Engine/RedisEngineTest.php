@@ -33,6 +33,8 @@ class RedisEngineTest extends TestCase
      */
     protected $port = '6379';
 
+    private ?bool $skipTest = null;
+
     /**
      * setUp method
      */
@@ -43,11 +45,19 @@ class RedisEngineTest extends TestCase
 
         $this->port = env('REDIS_PORT', $this->port);
 
-        // phpcs:disable
-        $socket = @fsockopen('127.0.0.1', (int)$this->port, $errno, $errstr, 1);
-        // phpcs:enable
-        $this->skipIf(!$socket, 'Redis is not running.');
-        fclose($socket);
+        if ($this->skipTest === null) {
+            // phpcs:disable
+            $socket = @fsockopen('127.0.0.1', (int)$this->port, $errno, $errstr, 1);
+            // phpcs:enable
+
+            $this->skipTest = $socket === false;
+
+            if ($socket !== false) {
+                fclose($socket);
+            }
+        }
+
+        $this->skipIf($this->skipTest, 'Redis is not running.');
 
         Cache::enable();
         $this->_configCache();
@@ -62,6 +72,7 @@ class RedisEngineTest extends TestCase
         Cache::drop('redis');
         Cache::drop('redis2');
         Cache::drop('redis_clear_blocking');
+        Cache::drop('redis_dsn');
         Cache::drop('redis_groups');
         Cache::drop('redis_helper');
     }
@@ -103,7 +114,11 @@ class RedisEngineTest extends TestCase
             'unix_socket' => false,
             'host' => null,
             'scanCount' => 10,
+            'readTimeout' => 0,
+            'clusterName' => null,
+            'nodes' => [],
             'clearUsesFlushDb' => false,
+            'failover' => null,
         ];
         $this->assertEquals($expecting, $config);
     }
@@ -133,11 +148,13 @@ class RedisEngineTest extends TestCase
             'host' => 'localhost',
             'scheme' => 'redis',
             'scanCount' => 10,
+            'readTimeout' => 0,
+            'clusterName' => null,
+            'nodes' => [],
             'clearUsesFlushDb' => false,
+            'failover' => null,
         ];
         $this->assertEquals($expecting, $config);
-
-        Cache::drop('redis_dsn');
     }
 
     /**
@@ -172,11 +189,13 @@ class RedisEngineTest extends TestCase
             'ssl_ca' => '/tmp/cert.crt',
             'ssl_key' => '/tmp/local.key',
             'ssl_cert' => '/tmp/local.crt',
+            'readTimeout' => 0,
+            'clusterName' => null,
+            'nodes' => [],
             'clearUsesFlushDb' => false,
+            'failover' => null,
         ];
         $this->assertEquals($expecting, $config);
-
-        Cache::drop('redis_dsn');
     }
 
     /**
@@ -517,6 +536,18 @@ class RedisEngineTest extends TestCase
 
         $redis->set('yep', 0);
         $this->assertSame(0, $redis->get('yep', false));
+    }
+
+    /**
+     * Test has
+     */
+    public function testHas(): void
+    {
+        $redis = Cache::pool('redis');
+        $this->assertFalse($redis->has('nope'));
+
+        $redis->set('yep', 0);
+        $this->assertTrue($redis->has('yep'));
     }
 
     /**

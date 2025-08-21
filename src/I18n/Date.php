@@ -318,6 +318,16 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
     }
 
     /**
+     * Returns a UNIX timestamp as an integer.
+     *
+     * @return int UNIX timestamp
+     */
+    public function getTimestamp(): int
+    {
+        return (int)$this->toUnixString();
+    }
+
+    /**
      * @inheritDoc
      */
     public function __toString(): string

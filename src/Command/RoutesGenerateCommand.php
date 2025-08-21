@@ -58,7 +58,7 @@ class RoutesGenerateCommand extends Command
             $io->out("> {$url}");
             $io->out();
         } catch (MissingRouteException) {
-            $io->err('<warning>The provided parameters do not match any routes.</warning>');
+            $io->warning('The provided parameters do not match any routes.');
             $io->out();
 
             return static::CODE_ERROR;

@@ -21,7 +21,10 @@ use Cake\Cache\CacheEngine;
 use Cake\Core\Exception\CakeException;
 use Cake\Log\Log;
 use DateInterval;
+use Generator;
 use Redis;
+use RedisCluster;
+use RedisClusterException;
 use RedisException;
 
 /**
@@ -34,11 +37,12 @@ class RedisEngine extends CacheEngine
      *
      * @var \Redis
      */
-    protected Redis $_Redis;
+    protected Redis|RedisCluster $_Redis;
 
     /**
      * The default config used unless overridden by runtime configuration
      *
+     * - `clusterName` Redis cluster name
      * - `database` database number to use for connection.
      * - `duration` Specify how long items in this cache configuration last.
      * - `groups` List of groups or 'tags' associated to every key stored in this config.
@@ -53,6 +57,16 @@ class RedisEngine extends CacheEngine
      * - `server` URL or IP to the Redis server host.
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
+     * - `readTimeout` Read timeout in seconds (float).
+     * - `nodes` When using redis-cluster, the URL or IP addresses of the
+     *   Redis cluster nodes.
+     *   Format: an array of strings in the form `<ip>:<port>`, like:
+     *   [
+     *       '<ip>:<port>',
+     *       '<ip>:<port>',
+     *       '<ip>:<port>',
+     *   ]
+     * - `failover` Failover mode (distribute,distribute_slaves,error,none). Cluster mode only.
      * - `clearUsesFlushDb` Enable clear() and clearBlocking() to use FLUSHDB. This will be
      *   faster than standard clear()/clearBlocking() but will ignore prefixes and will
      *   cause dataloss if other applications are sharing a redis database.
@@ -60,6 +74,7 @@ class RedisEngine extends CacheEngine
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
+        'clusterName' => null,
         'database' => 0,
         'duration' => 3600,
         'groups' => [],
@@ -73,6 +88,9 @@ class RedisEngine extends CacheEngine
         'timeout' => 0,
         'unix_socket' => false,
         'scanCount' => 10,
+        'readTimeout' => 0,
+        'nodes' => [],
+        'failover' => null,
         'clearUsesFlushDb' => false,
     ];
 
@@ -106,6 +124,96 @@ class RedisEngine extends CacheEngine
      */
     protected function _connect(): bool
     {
+        if (!empty($this->_config['nodes']) || !empty($this->_config['clusterName'])) {
+            return $this->connectRedisCluster();
+        }
+
+        return $this->connectRedis();
+    }
+
+    /**
+     * Connects to a Redis cluster server
+     *
+     * @return bool True if Redis server was connected
+     */
+    protected function connectRedisCluster(): bool
+    {
+        $connected = false;
+
+        if (empty($this->_config['nodes'])) {
+            // @codeCoverageIgnoreStart
+            if (class_exists(Log::class)) {
+                Log::error('RedisEngine requires one or more nodes in cluster mode');
+            }
+            // @codeCoverageIgnoreEnd
+
+            return false;
+        }
+
+        // @codeCoverageIgnoreStart
+        $ssl = [];
+        if ($this->_config['tls']) {
+            $map = [
+                'ssl_ca' => 'cafile',
+                'ssl_key' => 'local_pk',
+                'ssl_cert' => 'local_cert',
+                'verify_peer' => 'verify_peer',
+                'verify_peer_name' => 'verify_peer_name',
+                'allow_self_signed' => 'allow_self_signed',
+            ];
+
+            foreach ($map as $configKey => $sslOption) {
+                if (array_key_exists($configKey, $this->_config)) {
+                    $ssl[$sslOption] = $this->_config[$configKey];
+                }
+            }
+        }
+        // @codeCoverageIgnoreEnd
+
+        try {
+            $this->_Redis = new RedisCluster(
+                $this->_config['clusterName'],
+                $this->_config['nodes'],
+                (float)$this->_config['timeout'],
+                (float)$this->_config['readTimeout'],
+                $this->_config['persistent'],
+                $this->_config['password'],
+                $this->_config['tls'] ? ['ssl' => $ssl] : null, // @codeCoverageIgnore
+            );
+
+            $connected = true;
+        } catch (RedisClusterException $e) {
+            $connected = false;
+
+            // @codeCoverageIgnoreStart
+            if (class_exists(Log::class)) {
+                Log::error('RedisEngine could not connect to the redis cluster. Got error: ' . $e->getMessage());
+            }
+            // @codeCoverageIgnoreEnd
+        }
+
+        $failover = match ($this->_config['failover']) {
+            RedisCluster::FAILOVER_DISTRIBUTE, 'distribute' => RedisCluster::FAILOVER_DISTRIBUTE,
+            RedisCluster::FAILOVER_DISTRIBUTE_SLAVES, 'distribute_slaves' => RedisCluster::FAILOVER_DISTRIBUTE_SLAVES,
+            RedisCluster::FAILOVER_ERROR, 'error' => RedisCluster::FAILOVER_ERROR,
+            RedisCluster::FAILOVER_NONE, 'none' => RedisCluster::FAILOVER_NONE,
+            default => null,
+        };
+
+        if ($failover !== null) {
+            $this->_Redis->setOption(RedisCluster::OPT_SLAVE_FAILOVER, $failover);
+        }
+
+        return $connected;
+    }
+
+    /**
+     * Connects to a Redis server
+     *
+     * @return bool True if Redis server was connected
+     */
+    protected function connectRedis(): bool
+    {
         $tls = $this->_config['tls'] === true ? 'tls://' : '';
 
         $map = [
@@ -137,6 +245,7 @@ class RedisEngine extends CacheEngine
 
             return false;
         }
+
         if ($return && $this->_config['password']) {
             $return = $this->_Redis->auth($this->_config['password']);
         }
@@ -250,6 +359,16 @@ class RedisEngine extends CacheEngine
     }
 
     /**
+     * @inheritDoc
+     */
+    public function has(string $key): bool
+    {
+        $res = $this->_Redis->exists($this->_key($key));
+
+        return is_int($res) ? $res > 0 : $res === true;
+    }
+
+    /**
      * Increments the value of an integer cached key & update the expiry time
      *
      * @param string $key Identifier for the data
@@ -325,28 +444,17 @@ class RedisEngine extends CacheEngine
     public function clear(): bool
     {
         if ($this->getConfig('clearUsesFlushDb')) {
-            $this->_Redis->flushDB(false);
+            $this->flushDB(true);
 
             return true;
         }
 
-        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
-
         $isAllDeleted = true;
-        $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
 
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
-
-            if ($keys === false) {
-                break;
-            }
-
-            foreach ($keys as $key) {
-                $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
-            }
+        foreach ($this->scanKeys($pattern) as $key) {
+            $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
+            $isAllDeleted = $isAllDeleted && $isDeleted;
         }
 
         return $isAllDeleted;
@@ -360,28 +468,18 @@ class RedisEngine extends CacheEngine
     public function clearBlocking(): bool
     {
         if ($this->getConfig('clearUsesFlushDb')) {
-            $this->_Redis->flushDB(true);
+            $this->flushDB(false);
 
             return true;
         }
 
-        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
-
         $isAllDeleted = true;
-        $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
 
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
-
-            if ($keys === false) {
-                break;
-            }
-
-            foreach ($keys as $key) {
-                $isDeleted = ((int)$this->_Redis->del($key) > 0);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
-            }
+        foreach ($this->scanKeys($pattern) as $key) {
+            // Blocking delete
+            $isDeleted = ((int)$this->_Redis->del($key) > 0);
+            $isAllDeleted = $isAllDeleted && $isDeleted;
         }
 
         return $isAllDeleted;
@@ -485,6 +583,64 @@ class RedisEngine extends CacheEngine
     protected function _createRedisInstance(): Redis
     {
         return new Redis();
+    }
+
+    /**
+     * Unifies Redis and RedisCluster scan() calls and simplifies its use.
+     *
+     * @param string $pattern Pattern to scan
+     * @return \Generator<string>
+     */
+    private function scanKeys(string $pattern): Generator
+    {
+        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+
+        if ($this->_Redis instanceof RedisCluster) {
+            foreach ($this->_Redis->_masters() as $node) {
+                $iterator = null;
+                while (true) {
+                    // @phpstan-ignore arguments.count, argument.type
+                    $keys = $this->_Redis->scan($iterator, $node, $pattern, (int)$this->_config['scanCount']);
+                    if ($keys === false) {
+                        break;
+                    }
+
+                    foreach ($keys as $key) {
+                        yield $key;
+                    }
+                }
+            }
+        } else {
+            $iterator = null;
+            while (true) {
+                $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
+                if ($keys === false) {
+                    break;
+                }
+
+                foreach ($keys as $key) {
+                    yield $key;
+                }
+            }
+        }
+    }
+
+    /**
+     * Flushes DB
+     *
+     * @param bool $async Whether to use asynchronous mode
+     * @return void
+     */
+    private function flushDB(bool $async): void
+    {
+        if ($this->_Redis instanceof RedisCluster) {
+            foreach ($this->_Redis->_masters() as $node) {
+                // @phpstan-ignore arguments.count
+                $this->_Redis->flushDB($node, $async);
+            }
+        } else {
+            $this->_Redis->flushDB($async);
+        }
     }
 
     /**

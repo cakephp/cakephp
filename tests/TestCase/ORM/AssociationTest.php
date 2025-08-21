@@ -481,7 +481,7 @@ class AssociationTest extends TestCase
     {
         $this->association->setFinder('publishedWithArgOnly');
         $this->assertEquals(
-            ['custom', 'this' => 'custom'],
+            ['this' => 'custom'],
             $this->association->find(null, 'custom')->getOptions(),
         );
         $this->assertEquals(

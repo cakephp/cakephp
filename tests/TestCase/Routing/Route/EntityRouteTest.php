@@ -20,6 +20,9 @@ use Cake\Core\Exception\CakeException;
 use Cake\Routing\Route\EntityRoute;
 use Cake\TestSuite\TestCase;
 use TestApp\Model\Entity\Article;
+use TestApp\Model\Enum\ArticleStatus;
+use TestApp\Model\Enum\NonBacked;
+use TestApp\Model\Enum\Priority;
 
 /**
  * Test case for EntityRoute
@@ -75,6 +78,81 @@ class EntityRouteTest extends TestCase
         ]);
 
         $this->assertSame('/articles/2/article-slug', $result);
+    }
+
+    /**
+     * test that routes match their pattern.
+     */
+    public function testMatchBackedEnum(): void
+    {
+        $entity = new Article([
+            'category_id' => 2,
+            'published' => ArticleStatus::Published,
+        ]);
+
+        $route = new EntityRoute(
+            '/articles/{category_id}/{published}',
+            [
+                '_name' => 'articlesView',
+            ],
+        );
+
+        $result = $route->match([
+            '_entity' => $entity,
+            '_name' => 'articlesView',
+        ]);
+
+        $this->assertSame('/articles/2/Y', $result);
+    }
+
+    /**
+     * test that routes match their pattern.
+     */
+    public function testMatchBackedIntEnum(): void
+    {
+        $entity = new Article([
+            'category_id' => 2,
+            'prio' => Priority::High,
+        ]);
+
+        $route = new EntityRoute(
+            '/articles/{category_id}/{prio}',
+            [
+                '_name' => 'articlesView',
+            ],
+        );
+
+        $result = $route->match([
+            '_entity' => $entity,
+            '_name' => 'articlesView',
+        ]);
+
+        $this->assertSame('/articles/2/3', $result);
+    }
+
+    /**
+     * test that routes match their pattern.
+     */
+    public function testMatchNonBackedEnum(): void
+    {
+        $entity = new Article([
+            'category_id' => 2,
+            'level' => NonBacked::Advanced,
+        ]);
+
+        $route = new EntityRoute(
+            '/articles/{category_id}/{level}',
+            [
+                '_name' => 'articlesView',
+            ],
+        );
+
+        $result = $route->match([
+            '_entity' => $entity,
+            '_name' => 'articlesView',
+        ]);
+
+        $this->assertSame('/articles/2/Advanced', $result);
     }
 
     /**

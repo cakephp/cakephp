@@ -1187,10 +1187,8 @@ class ConnectionTest extends TestCase
 
             $newDriver = $this->getMockBuilder(Driver::class)->getMock();
             $prop = new ReflectionProperty($conn, 'readDriver');
-            $prop->setAccessible(true);
             $prop->setValue($conn, $newDriver);
             $prop = new ReflectionProperty($conn, 'writeDriver');
-            $prop->setAccessible(true);
             $prop->setValue($conn, $newDriver);
 
         $newDriver->expects($this->exactly(2))
@@ -1219,10 +1217,8 @@ class ConnectionTest extends TestCase
 
             $newDriver = $this->getMockBuilder(Driver::class)->getMock();
             $prop = new ReflectionProperty($conn, 'readDriver');
-            $prop->setAccessible(true);
             $prop->setValue($conn, $newDriver);
             $prop = new ReflectionProperty($conn, 'writeDriver');
-            $prop->setAccessible(true);
             $oldDriver = $prop->getValue($conn);
             $prop->setValue($conn, $newDriver);
 

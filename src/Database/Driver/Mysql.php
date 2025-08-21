@@ -255,6 +255,7 @@ class Mysql extends Driver
             DriverFeatureEnum::INTERSECT => $versionCompare(),
             DriverFeatureEnum::INTERSECT_ALL => $versionCompare(),
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => true,
+            DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => true,
         };
     }
 

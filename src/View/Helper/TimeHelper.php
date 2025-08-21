@@ -214,16 +214,41 @@ class TimeHelper extends Helper
     /**
      * Returns the quarter
      *
+     * Deprecated 5.3.0 Argument $range. Use toQuarterRange() to get quarter date ranges instead of passing $range = true
+     *
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @param bool $range if true returns a range in Y-m-d format
+     * @param bool $range if true returns a range in Y-m-d format. Deprecated, use toQuarterRange() instead.
      * @return array<string>|int 1, 2, 3, or 4 quarter of year or array if $range true
-     * @see \Cake\I18n\Time::toQuarter()
+     * @see \Cake\I18n\DateTime::toQuarter()
      */
     public function toQuarter(
         ChronosDate|DateTimeInterface|string|int $dateString,
         bool $range = false,
     ): array|int {
-        return (new DateTime($dateString))->toQuarter($range);
+        if ($range) {
+            trigger_error(
+                'Passing $range = true to TimeHelper::toQuarter() is deprecated. ' .
+                'Use TimeHelper::toQuarterRange() instead.',
+                E_USER_DEPRECATED,
+            );
+
+            return $this->toQuarterRange($dateString);
+        }
+
+        return (new DateTime($dateString))->toQuarter();
+    }
+
+    /**
+     * Returns the date range for the quarter the given date falls in.
+     *
+     * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
+     * @return array{0: string, 1: string} Array with start and end dates in 'Y-m-d' format
+     * @see \Cake\I18n\DateTime::toQuarterRange()
+     */
+    public function toQuarterRange(
+        ChronosDate|DateTimeInterface|string|int $dateString,
+    ): array {
+        return (new DateTime($dateString))->toQuarterRange();
     }
 
     /**

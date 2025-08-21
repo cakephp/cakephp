@@ -126,6 +126,7 @@ use function Cake\Core\deprecationWarning;
  * @method string getDomain() Gets domain. {@see \Cake\Mailer\Message::getDomain()}
  * @method $this setAttachments($attachments) Add attachments to the email message. {@see \Cake\Mailer\Message::setAttachments()}
  * @method array getAttachments() Gets attachments to the email message. {@see \Cake\Mailer\Message::getAttachments()}
+ * @method $this addAttachment(\Psr\Http\Message\UploadedFileInterface|string $path, ?string $name, ?string $mimetype, ?string $contentId, ?bool $contentDisposition) Add an attachment. {@see \Cake\Mailer\Message::addAttachment()}
  * @method $this addAttachments($attachments) Add attachments. {@see \Cake\Mailer\Message::addAttachments()}
  * @method array|string getBody(?string $type = null) Get generated message body as array.
  *   {@see \Cake\Mailer\Message::getBody()}

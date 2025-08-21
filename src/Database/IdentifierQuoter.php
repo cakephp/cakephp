@@ -185,7 +185,7 @@ class IdentifierQuoter
     {
         $result = [];
         foreach ($part as $alias => $value) {
-            $value = !is_string($value) ? $value : $this->quoteIdentifier($value);
+            $value = is_string($value) ? $this->quoteIdentifier($value) : $value;
             $alias = is_numeric($alias) ? $alias : $this->quoteIdentifier($alias);
             $result[$alias] = $value;
         }

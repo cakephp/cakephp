@@ -16,7 +16,7 @@ class TestAppsErrorController extends ErrorController
         $this->viewBuilder()->setLayout('default');
     }
 
-    protected function xml()
+    protected function xml(): Response
     {
         return new Response(['body' => '<xml>rendered xml exception</xml>']);
     }

@@ -7207,7 +7207,7 @@ class FormHelperTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
-    public function testPostLinkWithCspScriptNonce()
+    public function testPostLinkWithCspScriptNonce(): void
     {
         $request = $this->Form->getView()->getRequest()->withAttribute('cspScriptNonce', 'i-am-nonce');
         $this->Form->getView()->setRequest($request);
