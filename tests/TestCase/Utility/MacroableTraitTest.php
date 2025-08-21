@@ -23,7 +23,7 @@ class MacroableTraitTest extends TestCase
     /**
      * @var object an anonymous class instance using the MacroableTrait trait
      */
-    private $MacroableTraitClass;
+    private object $MacroableTraitClass;
 
     /**
      * Set up the test environment by creating a new class
@@ -38,7 +38,7 @@ class MacroableTraitTest extends TestCase
 
             private $privateVariable = 'privateValue';
 
-            private static function getPrivateStatic()
+            private static function getPrivateStatic(): string
             {
                 return 'privateStaticValue';
             }
@@ -49,7 +49,7 @@ class MacroableTraitTest extends TestCase
      * Test that a new macro can be registered and called
      * on an instance of the class.
      */
-    public function testCanRegisterAndCallMacro()
+    public function testCanRegisterAndCallMacro(): void
     {
         $this->MacroableTraitClass::macro('newMethod', function () {
             return 'newValue';
@@ -62,7 +62,7 @@ class MacroableTraitTest extends TestCase
      * Test that a new macro can be registered and called
      * statically on the class.
      */
-    public function testCanRegisterAndCallMacroStatically()
+    public function testCanRegisterAndCallMacroStatically(): void
     {
         $this->MacroableTraitClass::macro('newMethod', function () {
             return 'newValue';
@@ -75,11 +75,11 @@ class MacroableTraitTest extends TestCase
      * Test that an invokable class can be registered as a macro
      * and called dynamically and statically.
      */
-    public function testCanRegisterInvokableClassAsMacro()
+    public function testCanRegisterInvokableClassAsMacro(): void
     {
         $this->MacroableTraitClass::macro('newMethod', new class ()
         {
-            public function __invoke()
+            public function __invoke(): string
             {
                 return 'newValue';
             }
@@ -92,7 +92,7 @@ class MacroableTraitTest extends TestCase
     /**
      * Test that parameters are passed correctly into macros.
      */
-    public function testParametersArePassedCorrectly()
+    public function testParametersArePassedCorrectly(): void
     {
         $this->MacroableTraitClass::macro('concatenate', function (...$strings) {
             return implode('-', $strings);
@@ -105,7 +105,7 @@ class MacroableTraitTest extends TestCase
      * Test that registered macros are bound to the class context
      * and can access private properties.
      */
-    public function testRegisteredMethodsAreBoundToTheClass()
+    public function testRegisteredMethodsAreBoundToTheClass(): void
     {
         $this->MacroableTraitClass::macro('newMethod', function () {
             /** @var object{privateVariable:string} $this */
@@ -119,7 +119,7 @@ class MacroableTraitTest extends TestCase
      * Test that macros can call private static methods
      * when defined inside the class.
      */
-    public function testCanWorkOnStaticMethods()
+    public function testCanWorkOnStaticMethods(): void
     {
         $this->MacroableTraitClass::macro('testStatic', function () {
             /** @var class-string $this */
@@ -133,7 +133,7 @@ class MacroableTraitTest extends TestCase
      * Test that calling an undefined macro on an instance
      * throws a BadMethodCallException.
      */
-    public function testThrowsExceptionIfMethodDoesNotExist()
+    public function testThrowsExceptionIfMethodDoesNotExist(): void
     {
         $this->expectException(BadMethodCallException::class);
 
@@ -144,7 +144,7 @@ class MacroableTraitTest extends TestCase
      * Test that calling an undefined static macro
      * throws a BadMethodCallException.
      */
-    public function testThrowsExceptionIfStaticMethodDoesNotExist()
+    public function testThrowsExceptionIfStaticMethodDoesNotExist(): void
     {
         $this->expectException(BadMethodCallException::class);
 
