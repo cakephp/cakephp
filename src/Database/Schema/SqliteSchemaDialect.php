@@ -836,6 +836,16 @@ class SqliteSchemaDialect extends SchemaDialect
         if (isset($column['null']) && $column['null'] === true && in_array($column['type'], $timestampTypes, true)) {
             $out .= ' DEFAULT NULL';
         }
+        if (
+            isset($column['default']) && is_string($column['default']) &&
+            (
+                str_contains(strtolower($column['default']), 'current_timestamp') ||
+                str_contains(strtolower($column['default']), 'now')
+            )
+        ) {
+            $out .= ' DEFAULT current_timestamp';
+            unset($column['default']);
+        }
         if (isset($column['default'])) {
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($column['default']);
         }

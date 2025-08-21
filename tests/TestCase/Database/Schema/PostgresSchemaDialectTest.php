@@ -1066,6 +1066,11 @@ SQL;
                 ['type' => 'timestampfractional', 'null' => false, 'default' => 'CURRENT_TIMESTAMP'],
                 '"current_timestamp_fractional" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
             ],
+            [
+                'my_now_col',
+                ['type' => 'timestamp', 'null' => false, 'default' => 'now()'],
+                '"my_now_col" TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP',
+            ],
             // Geospatial
             [
                 'g',

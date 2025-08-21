@@ -1048,6 +1048,16 @@ SQL;
                 '"created" DATETIME',
             ],
             [
+                'created',
+                ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
+                '"created" DATETIME NOT NULL DEFAULT current_timestamp',
+            ],
+            [
+                'created_now',
+                ['type' => 'datetime', 'null' => false, 'default' => 'now()'],
+                '"created_now" DATETIME NOT NULL DEFAULT current_timestamp',
+            ],
+            [
                 'open_date',
                 ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
                 '"open_date" DATETIME NOT NULL DEFAULT "2016-12-07 23:04:00"',
