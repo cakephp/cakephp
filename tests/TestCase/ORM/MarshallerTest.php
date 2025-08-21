@@ -2687,6 +2687,38 @@ class MarshallerTest extends TestCase
     }
 
     /**
+     * Test one() with strictFields option
+     */
+    public function testOneWithStrictFields(): void
+    {
+        // Add validation rules
+        $this->articles->getValidator()
+            ->requirePresence('title')
+            ->notEmptyString('title');
+
+        $data = [
+            'title' => '',
+            'body' => 'My content',
+            'author_id' => 'invalid',
+        ];
+        $marshall = new Marshaller($this->articles);
+
+        // Without strictFields, all fields are validated
+        $result = $marshall->one($data, ['fields' => ['body']]);
+        $this->assertInstanceOf(Entity::class, $result);
+        $this->assertEquals(['body' => 'My content'], $result->toArray());
+        // We have validation errors for title even though it wasn't in fields
+        $this->assertNotEmpty($result->getErrors());
+
+        // With strictFields, only the specified fields are validated
+        $result = $marshall->one($data, ['fields' => ['body'], 'strictFields' => true]);
+        $this->assertInstanceOf(Entity::class, $result);
+        $this->assertEquals(['body' => 'My content'], $result->toArray());
+        // No validation errors as we only validate the fields list
+        $this->assertEmpty($result->getErrors());
+    }
+
+    /**
      * Test one() with translations
      */
     public function testOneWithTranslations(): void
@@ -2757,6 +2789,63 @@ class MarshallerTest extends TestCase
         $this->assertSame($entity, $result);
         $this->assertEquals($expected, $result->toArray());
         $this->assertFalse($entity->isAccessible('*'));
+    }
+
+    /**
+     * Tests that it is possible to pass a strict fields option to the merge method
+     */
+    public function testMergeWithFieldsStrict(): void
+    {
+        $this->articles->getValidator()
+            ->requirePresence('title')
+            ->notEmptyString('title');
+
+        $data = [
+            'title' => null,
+            'body' => 'My body',
+            'author_id' => 1,
+        ];
+        $marshall = new Marshaller($this->articles);
+
+        $entity = new Entity([
+            'title' => 'Foo',
+            'body' => 'My content',
+            'author_id' => 2,
+        ]);
+
+        $entity->setAccess('*', false);
+        $entity->setNew(false);
+        $entity->clean();
+        $result = $marshall->merge($entity, $data, ['fields' => ['body']]);
+
+        $expected = [
+            'title' => 'Foo',
+            'body' => 'My body',
+            'author_id' => 2,
+        ];
+
+        $this->assertSame($entity, $result);
+        $this->assertEquals($expected, $result->toArray());
+        $this->assertFalse($entity->isAccessible('*'));
+        // We have validation errors though
+        $this->assertNotEmpty($entity->getErrors());
+
+        $entity = new Entity([
+            'title' => 'Foo',
+            'body' => 'My content',
+            'author_id' => 2,
+        ]);
+
+        $entity->setAccess('*', false);
+        $entity->setNew(false);
+        $entity->clean();
+        $result = $marshall->merge($entity, $data, ['fields' => ['body'], 'strictFields' => true]);
+
+        $this->assertSame($entity, $result);
+        $this->assertEquals($expected, $result->toArray());
+        $this->assertFalse($entity->isAccessible('*'));
+        // We only validate fields list now
+        $this->assertEmpty($entity->getErrors());
     }
 
     /**

@@ -228,6 +228,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $errors = [];
 
         foreach ($this->_fields as $name => $field) {
+            if (!empty($context['fields']) && !in_array($name, $context['fields'], true)) {
+                continue;
+            }
+
             $name = (string)$name;
             $keyPresent = array_key_exists($name, $data);
 

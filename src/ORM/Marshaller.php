@@ -209,7 +209,13 @@ class Marshaller
                 $entity->setAccess($key, $value);
             }
         }
-        $errors = $this->_validate($data, $options['validate'], true);
+
+        $fieldsToValidate = $options['strictFields'] ? (array)$options['fields'] : [];
+        $context = [
+            'entity' => $entity,
+            'fields' => $fieldsToValidate,
+        ];
+        $errors = $this->_validate($data, $options['validate'], true, $context);
 
         $options['isMerge'] = false;
         $propertyMap = $this->_buildPropertyMap($data, $options);
@@ -294,7 +300,7 @@ class Marshaller
      */
     protected function _prepareDataAndOptions(array $data, array $options): array
     {
-        $options += ['validate' => true];
+        $options += ['validate' => true, 'fields' => null, 'strictFields' => false];
 
         $tableName = $this->_table->getAlias();
         if (isset($data[$tableName]) && is_array($data[$tableName])) {
@@ -583,7 +589,12 @@ class Marshaller
             }
         }
 
-        $errors = $this->_validate($data + $keys, $options['validate'], $isNew, ['entity' => $entity]);
+        $fieldsToValidate = $options['strictFields'] ? (array)$options['fields'] : [];
+        $context = [
+            'entity' => $entity,
+            'fields' => $fieldsToValidate,
+        ];
+        $errors = $this->_validate($data + $keys, $options['validate'], $isNew, $context);
         $options['isMerge'] = true;
         $propertyMap = $this->_buildPropertyMap($data, $options);
         $properties = [];
