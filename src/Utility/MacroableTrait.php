@@ -19,7 +19,7 @@ namespace Cake\Utility;
 use BadMethodCallException;
 use Closure;
 
-trait Macroable
+trait MacroableTrait
 {
     /**
      * The registered string macros.

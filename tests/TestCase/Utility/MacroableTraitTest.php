@@ -1,13 +1,10 @@
 <?php
 declare(strict_types=1);
 
-use Cake\Utility\Macroable;
-use PHPUnit\Framework\TestCase;
-
 /**
- * Class MacroableTest
+ * Class MacroableTraitTest
  *
- * This test suite verifies the behavior of the CakePHP Macroable trait.
+ * This test suite verifies the behavior of the CakePHP MacroableTrait trait.
  * It ensures macros can be registered, invoked dynamically and statically,
  * can work with closures, invokable classes, parameters, and can access
  * private properties/methods through binding.
@@ -15,25 +12,31 @@ use PHPUnit\Framework\TestCase;
  * It also ensures exceptions are thrown when attempting to call
  * undefined macros.
  */
-class MacroableTest extends TestCase
+namespace Cake\Test\TestCase\Utility;
+
+use BadMethodCallException;
+use Cake\Utility\MacroableTrait;
+use PHPUnit\Framework\TestCase;
+
+class MacroableTraitTest extends TestCase
 {
     /**
-     * @var object an anonymous class instance using the Macroable trait
+     * @var object an anonymous class instance using the MacroableTrait trait
      */
-    private $macroableClass;
+    private $MacroableTraitClass;
 
     /**
      * Set up the test environment by creating a new class
-     * that uses the Macroable trait and contains private
+     * that uses the MacroableTrait trait and contains private
      * properties and methods to test binding.
      */
     protected function setUp(): void
     {
-        $this->macroableClass = new class ()
+        $this->MacroableTraitClass = new class ()
         {
-            private $privateVariable = 'privateValue';
+            use MacroableTrait;
 
-            use Macroable;
+            private $privateVariable = 'privateValue';
 
             private static function getPrivateStatic()
             {
@@ -48,11 +51,11 @@ class MacroableTest extends TestCase
      */
     public function testCanRegisterAndCallMacro()
     {
-        $this->macroableClass::macro('newMethod', function () {
+        $this->MacroableTraitClass::macro('newMethod', function () {
             return 'newValue';
         });
 
-        $this->assertSame('newValue', $this->macroableClass->newMethod());
+        $this->assertSame('newValue', $this->MacroableTraitClass->newMethod());
     }
 
     /**
@@ -61,11 +64,11 @@ class MacroableTest extends TestCase
      */
     public function testCanRegisterAndCallMacroStatically()
     {
-        $this->macroableClass::macro('newMethod', function () {
+        $this->MacroableTraitClass::macro('newMethod', function () {
             return 'newValue';
         });
 
-        $this->assertSame('newValue', $this->macroableClass::newMethod());
+        $this->assertSame('newValue', $this->MacroableTraitClass::newMethod());
     }
 
     /**
@@ -74,7 +77,7 @@ class MacroableTest extends TestCase
      */
     public function testCanRegisterInvokableClassAsMacro()
     {
-        $this->macroableClass::macro('newMethod', new class ()
+        $this->MacroableTraitClass::macro('newMethod', new class ()
         {
             public function __invoke()
             {
@@ -82,8 +85,8 @@ class MacroableTest extends TestCase
             }
         });
 
-        $this->assertSame('newValue', $this->macroableClass->newMethod());
-        $this->assertSame('newValue', $this->macroableClass::newMethod());
+        $this->assertSame('newValue', $this->MacroableTraitClass->newMethod());
+        $this->assertSame('newValue', $this->MacroableTraitClass::newMethod());
     }
 
     /**
@@ -91,11 +94,11 @@ class MacroableTest extends TestCase
      */
     public function testParametersArePassedCorrectly()
     {
-        $this->macroableClass::macro('concatenate', function (...$strings) {
+        $this->MacroableTraitClass::macro('concatenate', function (...$strings) {
             return implode('-', $strings);
         });
 
-        $this->assertSame('one-two-three', $this->macroableClass->concatenate('one', 'two', 'three'));
+        $this->assertSame('one-two-three', $this->MacroableTraitClass->concatenate('one', 'two', 'three'));
     }
 
     /**
@@ -104,12 +107,12 @@ class MacroableTest extends TestCase
      */
     public function testRegisteredMethodsAreBoundToTheClass()
     {
-        $this->macroableClass::macro('newMethod', function () {
+        $this->MacroableTraitClass::macro('newMethod', function () {
             /** @var object{privateVariable:string} $this */
             return $this->privateVariable;
         });
 
-        $this->assertSame('privateValue', $this->macroableClass->newMethod());
+        $this->assertSame('privateValue', $this->MacroableTraitClass->newMethod());
     }
 
     /**
@@ -118,12 +121,12 @@ class MacroableTest extends TestCase
      */
     public function testCanWorkOnStaticMethods()
     {
-        $this->macroableClass::macro('testStatic', function () {
+        $this->MacroableTraitClass::macro('testStatic', function () {
             /** @var class-string $this */
             return $this::getPrivateStatic();
         });
 
-        $this->assertSame('privateStaticValue', $this->macroableClass->testStatic());
+        $this->assertSame('privateStaticValue', $this->MacroableTraitClass->testStatic());
     }
 
     /**
@@ -134,7 +137,7 @@ class MacroableTest extends TestCase
     {
         $this->expectException(BadMethodCallException::class);
 
-        $this->macroableClass->nonExistingMethod();
+        $this->MacroableTraitClass->nonExistingMethod();
     }
 
     /**
@@ -145,6 +148,6 @@ class MacroableTest extends TestCase
     {
         $this->expectException(BadMethodCallException::class);
 
-        $this->macroableClass::nonExistingMethod();
+        $this->MacroableTraitClass::nonExistingMethod();
     }
 }
