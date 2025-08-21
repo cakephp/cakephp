@@ -804,7 +804,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * collection as the array keys. Keep in mind that it is valid for iterators
      * to return the same key for different elements, setting this value to false
      * can help getting all items if keys are not important in the result.
-     * @return ($keepKeys is true ? array<TKey, TValue> : list<TValue>)
+     * @return ($keepKeys is true ? array<TKey, TValue> : array<int, TValue>)
      */
     public function toArray(bool $keepKeys = true): array;
 
@@ -812,7 +812,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * Returns an numerically-indexed array representation of the results.
      * This is equivalent to calling `toArray(false)`
      *
-     * @return list<TValue>
+     * @return array<int, TValue>
      */
     public function toList(): array;
 
