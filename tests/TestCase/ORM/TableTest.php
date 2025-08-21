@@ -4638,7 +4638,7 @@ class TableTest extends TestCase
         $this->assertCount(count($newArticles), $author->articles);
         $this->assertEquals(
             (new Collection($newArticles))->extract('title')->toList(),
-            (new Collection($author->articles))->extract('title')->toList()
+            (new Collection($author->articles))->extract('title')->toList(),
         );
     }
 
