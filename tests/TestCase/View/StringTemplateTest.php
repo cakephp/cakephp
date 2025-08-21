@@ -20,7 +20,6 @@ use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use InvalidArgumentException;
-use stdClass;
 
 class StringTemplateTest extends TestCase
 {
@@ -304,126 +303,6 @@ class StringTemplateTest extends TestCase
     }
 
     /**
-     * Test addClass method newClass parameter
-     *
-     * Tests null, string, array and false for `input`
-     */
-    public function testAddClassMethodNewClass(): void
-    {
-        $result = $this->template->addClass([], 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
-
-        $result = $this->template->addClass([], ['new_class']);
-        $this->assertEquals($result, ['class' => ['new_class']]);
-
-        $result = $this->template->addClass([], false);
-        $this->assertEquals($result, []);
-
-        $result = $this->template->addClass([], null);
-        $this->assertEquals($result, []);
-
-        $result = $this->template->addClass(null, null);
-        $this->assertNull($result);
-    }
-
-    /**
-     * Test addClass method input (currentClass) parameter
-     *
-     * Tests null, string, array, false and object
-     */
-    public function testAddClassMethodCurrentClass(): void
-    {
-        $result = $this->template->addClass(['class' => ['current']], 'new_class');
-        $this->assertEquals($result, ['class' => ['current', 'new_class']]);
-
-        $result = $this->template->addClass('', 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
-
-        $result = $this->template->addClass(null, 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
-
-        $result = $this->template->addClass(false, 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
-
-        $result = $this->template->addClass(new stdClass(), 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
-    }
-
-    /**
-     * Test addClass method string parameter, it should fallback to string
-     */
-    public function testAddClassMethodFallbackToString(): void
-    {
-        $result = $this->template->addClass('current', 'new_class');
-        $this->assertEquals($result, ['class' => ['current', 'new_class']]);
-    }
-
-    /**
-     * Test addClass method to make sure the returned array is unique
-     */
-    public function testAddClassMethodUnique(): void
-    {
-        $result = $this->template->addClass(['class' => ['new_class']], 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
-    }
-
-    /**
-     * Test addClass method useIndex param
-     *
-     * Tests for useIndex being the default, 'my_class' and false
-     */
-    public function testAddClassMethodUseIndex(): void
-    {
-        $result = $this->template->addClass(
-            [
-                'class' => 'current_class',
-                'other_index1' => false,
-                'type' => 'text',
-            ],
-            'new_class',
-            'class',
-        );
-        $this->assertEquals($result, [
-            'class' => ['current_class', 'new_class'],
-            'other_index1' => false,
-            'type' => 'text',
-        ]);
-
-        $result = $this->template->addClass(
-            [
-                'my_class' => 'current_class',
-                'other_index1' => false,
-                'type' => 'text',
-            ],
-            'new_class',
-            'my_class',
-        );
-        $this->assertEquals($result, [
-            'other_index1' => false,
-            'type' => 'text',
-            'my_class' => ['current_class', 'new_class'],
-        ]);
-
-        $result = $this->template->addClass(
-            [
-                'class' => [
-                    'current_class',
-                    'text',
-                ],
-            ],
-            'new_class',
-            'nonexistent',
-        );
-        $this->assertEquals($result, [
-            'class' => [
-                'current_class',
-                'text',
-            ],
-            'nonexistent' => ['new_class'],
-        ]);
-    }
-
-    /**
      * Test addClassToArray method with various inputs
      */
     public function testAddClassToArray(): void
@@ -439,7 +318,7 @@ class StringTemplateTest extends TestCase
         // Test adding classes to existing array with classes
         $result = $this->template->addClassToArray(
             ['class' => ['existing']],
-            'new-class'
+            'new-class',
         );
         $this->assertEquals(['class' => ['existing', 'new-class']], $result);
 
@@ -447,7 +326,7 @@ class StringTemplateTest extends TestCase
         $result = $this->template->addClassToArray(
             ['id' => 'test'],
             'custom-class',
-            'data-class'
+            'data-class',
         );
         $this->assertEquals([
             'id' => 'test',
@@ -458,7 +337,7 @@ class StringTemplateTest extends TestCase
         $result = $this->template->addClassToArray(
             ['data-class' => ['existing'], 'id' => 'test'],
             'new-class',
-            'data-class'
+            'data-class',
         );
         $this->assertEquals([
             'data-class' => ['existing', 'new-class'],
@@ -468,21 +347,21 @@ class StringTemplateTest extends TestCase
         // Test uniqueness
         $result = $this->template->addClassToArray(
             ['class' => ['duplicate']],
-            ['duplicate', 'new']
+            ['duplicate', 'new'],
         );
         $this->assertEquals(['class' => ['duplicate', 'new']], $result);
 
         // Test with string existing classes (should be converted to array)
         $result = $this->template->addClassToArray(
             ['class' => 'existing-string'],
-            'new-class'
+            'new-class',
         );
         $this->assertEquals(['class' => ['existing-string', 'new-class']], $result);
 
         // Test with space-separated string
         $result = $this->template->addClassToArray(
             ['class' => 'class1 class2'],
-            'class3 class4'
+            'class3 class4',
         );
         $this->assertEquals(['class' => ['class1', 'class2', 'class3', 'class4']], $result);
     }
@@ -515,7 +394,7 @@ class StringTemplateTest extends TestCase
         // Test uniqueness
         $result = $this->template->mergeClasses(
             ['class1', 'class2', 'class1'],
-            ['class2', 'class3']
+            ['class2', 'class3'],
         );
         $this->assertEquals(['class1', 'class2', 'class3'], $result);
 
@@ -542,7 +421,7 @@ class StringTemplateTest extends TestCase
         // Test preserving numeric indices (array_values ensures clean numeric keys)
         $result = $this->template->mergeClasses(
             ['a', 'b', 'c'],
-            ['b', 'd']
+            ['b', 'd'],
         );
         $this->assertEquals(['a', 'b', 'c', 'd'], $result);
         $this->assertSame([0, 1, 2, 3], array_keys($result));
