@@ -220,7 +220,7 @@ class MultiCheckboxWidget extends BasicWidget
 
             if ($checkbox['checked']) {
                 $selectedClass = $this->_templates->format('selectedClass', []);
-                $labelAttrs = (array)$this->_templates->addClass($labelAttrs, $selectedClass);
+                $labelAttrs = $this->_templates->addClassToArray((array)$labelAttrs, $selectedClass);
             }
 
             $label = $this->_label->render($labelAttrs, $context);

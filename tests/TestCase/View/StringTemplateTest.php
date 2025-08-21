@@ -422,4 +422,129 @@ class StringTemplateTest extends TestCase
             'nonexistent' => ['new_class'],
         ]);
     }
+
+    /**
+     * Test addClassToArray method with various inputs
+     */
+    public function testAddClassToArray(): void
+    {
+        // Test adding a single class to an empty array
+        $result = $this->template->addClassToArray([], 'new-class');
+        $this->assertEquals(['class' => ['new-class']], $result);
+
+        // Test adding multiple classes as array
+        $result = $this->template->addClassToArray([], ['class1', 'class2']);
+        $this->assertEquals(['class' => ['class1', 'class2']], $result);
+
+        // Test adding classes to existing array with classes
+        $result = $this->template->addClassToArray(
+            ['class' => ['existing']],
+            'new-class'
+        );
+        $this->assertEquals(['class' => ['existing', 'new-class']], $result);
+
+        // Test with custom key
+        $result = $this->template->addClassToArray(
+            ['id' => 'test'],
+            'custom-class',
+            'data-class'
+        );
+        $this->assertEquals([
+            'id' => 'test',
+            'data-class' => ['custom-class'],
+        ], $result);
+
+        // Test merging with existing custom key
+        $result = $this->template->addClassToArray(
+            ['data-class' => ['existing'], 'id' => 'test'],
+            'new-class',
+            'data-class'
+        );
+        $this->assertEquals([
+            'data-class' => ['existing', 'new-class'],
+            'id' => 'test',
+        ], $result);
+
+        // Test uniqueness
+        $result = $this->template->addClassToArray(
+            ['class' => ['duplicate']],
+            ['duplicate', 'new']
+        );
+        $this->assertEquals(['class' => ['duplicate', 'new']], $result);
+
+        // Test with string existing classes (should be converted to array)
+        $result = $this->template->addClassToArray(
+            ['class' => 'existing-string'],
+            'new-class'
+        );
+        $this->assertEquals(['class' => ['existing-string', 'new-class']], $result);
+
+        // Test with space-separated string
+        $result = $this->template->addClassToArray(
+            ['class' => 'class1 class2'],
+            'class3 class4'
+        );
+        $this->assertEquals(['class' => ['class1', 'class2', 'class3', 'class4']], $result);
+    }
+
+    /**
+     * Test mergeClasses method with various inputs
+     */
+    public function testMergeClasses(): void
+    {
+        // Test merging two arrays
+        $result = $this->template->mergeClasses(['class1'], ['class2']);
+        $this->assertEquals(['class1', 'class2'], $result);
+
+        // Test merging strings
+        $result = $this->template->mergeClasses('class1', 'class2');
+        $this->assertEquals(['class1', 'class2'], $result);
+
+        // Test merging space-separated strings
+        $result = $this->template->mergeClasses('class1 class2', 'class3 class4');
+        $this->assertEquals(['class1', 'class2', 'class3', 'class4'], $result);
+
+        // Test merging array with string
+        $result = $this->template->mergeClasses(['class1'], 'class2 class3');
+        $this->assertEquals(['class1', 'class2', 'class3'], $result);
+
+        // Test merging string with array
+        $result = $this->template->mergeClasses('class1 class2', ['class3']);
+        $this->assertEquals(['class1', 'class2', 'class3'], $result);
+
+        // Test uniqueness
+        $result = $this->template->mergeClasses(
+            ['class1', 'class2', 'class1'],
+            ['class2', 'class3']
+        );
+        $this->assertEquals(['class1', 'class2', 'class3'], $result);
+
+        // Test with empty strings
+        $result = $this->template->mergeClasses('', 'class1');
+        $this->assertEquals(['class1'], $result);
+
+        $result = $this->template->mergeClasses('class1', '');
+        $this->assertEquals(['class1'], $result);
+
+        $result = $this->template->mergeClasses('', '');
+        $this->assertEquals([], $result);
+
+        // Test with empty arrays
+        $result = $this->template->mergeClasses([], ['class1']);
+        $this->assertEquals(['class1'], $result);
+
+        $result = $this->template->mergeClasses(['class1'], []);
+        $this->assertEquals(['class1'], $result);
+
+        $result = $this->template->mergeClasses([], []);
+        $this->assertEquals([], $result);
+
+        // Test preserving numeric indices (array_values ensures clean numeric keys)
+        $result = $this->template->mergeClasses(
+            ['a', 'b', 'c'],
+            ['b', 'd']
+        );
+        $this->assertEquals(['a', 'b', 'c', 'd'], $result);
+        $this->assertSame([0, 1, 2, 3], array_keys($result));
+    }
 }

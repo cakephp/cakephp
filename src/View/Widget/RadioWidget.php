@@ -191,7 +191,7 @@ class RadioWidget extends BasicWidget
 
         if (!is_bool($data['label']) && isset($radio['checked']) && $radio['checked']) {
             $selectedClass = $this->_templates->format('selectedClass', []);
-            $data['label'] = $this->_templates->addClass($data['label'], $selectedClass);
+            $data['label'] = $this->_templates->addClassToArray((array)$data['label'], $selectedClass);
         }
 
         $radio['disabled'] = $this->isDisabled($radio, $data['disabled']);

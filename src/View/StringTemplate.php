@@ -345,45 +345,82 @@ class StringTemplate
     }
 
     /**
+     * Adds CSS classes to an attributes array
+     *
+     * @param array<string, mixed> $attributes The attributes array to add classes to
+     * @param array<string>|string $newClasses The new class or classes to add
+     * @param string $key The array key to use for the class list (default: 'class')
+     * @return array<string, mixed> The attributes array with added classes
+     */
+    public function addClassToArray(
+        array $attributes,
+        array|string $newClasses,
+        string $key = 'class'
+    ): array {
+        $existingClasses = Hash::get($attributes, $key, []);
+        $mergedClasses = $this->mergeClasses($existingClasses, $newClasses);
+
+        return Hash::insert($attributes, $key, $mergedClasses);
+    }
+
+    /**
+     * Merges CSS classes from various formats into a unique array
+     *
+     * @param array<string>|string $existing Existing classes (array or space-separated string)
+     * @param array<string>|string $new New classes to add (array or space-separated string)
+     * @return array<string> Unique array of class names
+     */
+    public function mergeClasses(array|string $existing, array|string $new): array
+    {
+        // Convert existing classes to array
+        if (!is_array($existing)) {
+            $existing = $existing !== '' ? explode(' ', (string)$existing) : [];
+        }
+
+        // Convert new classes to array
+        if (!is_array($new)) {
+            $new = $new !== '' ? explode(' ', (string)$new) : [];
+        }
+
+        return array_values(array_unique(array_merge($existing, $new)));
+    }
+
+    /**
      * Adds a class and returns a unique list either in array or space separated
      *
-     * @param array<string, mixed>|string|null $input The array or string to add the class to
+     * @deprecated 5.3.0 Use addClassToArray() for arrays or mergeClasses() for class merging
+     * @param array<string, mixed>|string|null|false|object $input The array or string to add the class to
      * @param array<string>|string|false|null $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return array<string, string>|string|null
+     * @return array<string, mixed>|null
      */
     public function addClass(
         mixed $input,
         array|string|false|null $newClass,
         string $useIndex = 'class',
-    ): array|string|null {
-        // NOOP
+    ): ?array {
+        // NOOP - return early for falsy newClass
         if (!$newClass) {
-            return $input;
+            return is_array($input) ? $input : (is_null($input) ? null : []);
         }
 
+        // Handle array input (most common case)
         if (is_array($input)) {
-            $class = Hash::get($input, $useIndex, []);
-        } else {
-            $class = $input;
-            $input = [];
+            return $this->addClassToArray($input, $newClass, $useIndex);
         }
 
-        // Convert and sanitize the inputs
-        if (!is_array($class)) {
-            if (is_string($class) && !empty($class)) {
-                $class = explode(' ', $class);
-            } else {
-                $class = [];
-            }
+        // Handle null input
+        if ($input === null) {
+            return $this->addClassToArray([], $newClass, $useIndex);
         }
 
-        if (is_string($newClass)) {
-            $newClass = explode(' ', $newClass);
+        // Handle string input - treat as existing classes
+        if (is_string($input)) {
+            $merged = $this->mergeClasses($input, $newClass);
+            return [$useIndex => $merged];
         }
 
-        $class = array_unique(array_merge($class, $newClass));
-
-        return Hash::insert($input, $useIndex, $class);
+        // Handle other types (false, object, etc.) - ignore and just add new classes
+        return $this->addClassToArray([], $newClass, $useIndex);
     }
 }
