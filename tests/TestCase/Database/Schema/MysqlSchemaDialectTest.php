@@ -1092,6 +1092,17 @@ SQL;
                 ['type' => 'datetime', 'comment' => 'Created timestamp'],
                 "`created` DATETIME COMMENT 'Created timestamp'",
             ],
+            // numeric comment test - regression test for migrations#889
+            [
+                'status_code',
+                ['type' => 'integer', 'comment' => '404'],
+                "`status_code` INTEGER COMMENT '404'",
+            ],
+            [
+                'version',
+                ['type' => 'string', 'length' => 10, 'comment' => '1.0'],
+                "`version` VARCHAR(10) COMMENT '1.0'",
+            ],
             [
                 'created',
                 ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],

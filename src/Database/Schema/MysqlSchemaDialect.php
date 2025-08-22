@@ -18,6 +18,7 @@ namespace Cake\Database\Schema;
 
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
+use PDO;
 use PDOException;
 
 /**
@@ -802,7 +803,9 @@ class MysqlSchemaDialect extends SchemaDialect
             unset($column['default']);
         }
         if (isset($column['comment']) && $column['comment'] !== '') {
-            $out .= ' COMMENT ' . $this->_driver->schemaValue($column['comment']);
+            // Always quote comments as strings to prevent SQL syntax errors with numeric comments
+            // See: https://github.com/cakephp/migrations/issues/889
+            $out .= ' COMMENT ' . $this->_driver->getPdo()->quote((string)$column['comment'], PDO::PARAM_STR);
         }
         if (isset($column['onUpdate']) && $column['onUpdate'] !== '') {
             $out .= ' ON UPDATE ' . $column['onUpdate'];
