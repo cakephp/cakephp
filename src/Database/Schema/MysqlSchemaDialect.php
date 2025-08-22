@@ -805,7 +805,7 @@ class MysqlSchemaDialect extends SchemaDialect
         if (isset($column['comment']) && $column['comment'] !== '') {
             // Always quote comments as strings to prevent SQL syntax errors with numeric comments
             // See: https://github.com/cakephp/migrations/issues/889
-            $out .= ' COMMENT ' . $this->_driver->getPdo()->quote((string)$column['comment'], PDO::PARAM_STR);
+            $out .= ' COMMENT ' . $this->_driver->quote((string)$column['comment']);
         }
         if (isset($column['onUpdate']) && $column['onUpdate'] !== '') {
             $out .= ' ON UPDATE ' . $column['onUpdate'];
