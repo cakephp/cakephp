@@ -18,7 +18,6 @@ namespace Cake\Database\Schema;
 
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
-use PDO;
 use PDOException;
 
 /**
