@@ -106,6 +106,8 @@ class BaseApplicationTest extends TestCase
     /**
      * Ensure that plugins with no plugin class can be loaded.
      * This makes adopting the new API easier
+     *
+     * @deprecated
      */
     public function testAddPluginUnknownClass(): void
     {
@@ -210,7 +212,10 @@ class BaseApplicationTest extends TestCase
     {
         $app = $this->app;
         $app->addPlugin('Named');
-        $app->pluginBootstrap();
+        // Remove the deprecated() wrapping once plugin class is added to TestPluginTwo
+        $this->deprecated(function () use ($app): void {
+            $app->pluginBootstrap();
+        });
         $this->assertTrue(
             Configure::check('Named.bootstrap'),
             'Plugin bootstrap should be run',

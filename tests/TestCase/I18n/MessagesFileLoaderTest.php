@@ -81,9 +81,10 @@ class MessagesFileLoaderTest extends TestCase
      */
     public function testTranslationFoldersSequence(): void
     {
-        $this->loadPlugins([
-            'TestPluginTwo' => [],
-        ]);
+        // Removed the deprecated() wrapping when plugin class is added to TestPluginTwo
+        $this->deprecated(function () {
+            $this->loadPlugins(['TestPluginTwo']);
+        });
         $loader = new MessagesFileLoader('test_plugin_two', 'en');
 
         $expected = [
@@ -122,10 +123,10 @@ class MessagesFileLoaderTest extends TestCase
      */
     public function testAppOverridesPlugin(): void
     {
-        $this->loadPlugins([
-            'TestPlugin' => [],
-            'TestPluginTwo' => [],
-        ]);
+        // Removed the deprecated() wrapping when plugin class is added to TestPluginTwo
+        $this->deprecated(function () {
+            $this->loadPlugins(['TestPlugin', 'TestPluginTwo']);
+        });
 
         $loader = new MessagesFileLoader('test_plugin', 'en');
         $package = $loader();

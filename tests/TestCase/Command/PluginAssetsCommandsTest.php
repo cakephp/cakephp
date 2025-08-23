@@ -159,9 +159,11 @@ class PluginAssetsCommandsTest extends TestCase
      */
     public function testForPluginWithoutWebroot(): void
     {
-        $this->loadPlugins(['TestPluginTwo']);
-
-        $this->exec('plugin assets symlink');
+        // Removed the deprecated() wrapping when plugin class is added to TestPluginTwo
+        $this->deprecated(function () {
+            $this->loadPlugins(['TestPluginTwo']);
+            $this->exec('plugin assets symlink');
+        });
         $this->assertFileDoesNotExist($this->wwwRoot . 'test_plugin_two');
     }
 

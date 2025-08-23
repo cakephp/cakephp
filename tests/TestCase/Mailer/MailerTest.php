@@ -995,7 +995,10 @@ class MailerTest extends TestCase
      */
     public function testSendRenderPlugin(): void
     {
-        $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'TestTheme']);
+        // Removed the deprecated() wrapping when plugin class is added to TestPluginTwo
+        $this->deprecated(function () {
+            $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'TestTheme']);
+        });
 
         $this->mailer->setTransport('debug');
         $this->mailer->setFrom('cake@cakephp.org');

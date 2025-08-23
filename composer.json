@@ -112,7 +112,9 @@
             "TestPluginTwo\\": "tests/test_app/Plugin/TestPluginTwo/src/",
             "Company\\TestPluginThree\\": "tests/test_app/Plugin/Company/TestPluginThree/src/",
             "Company\\TestPluginThree\\Test\\": "tests/test_app/Plugin/Company/TestPluginThree/tests/",
-            "Named\\": "tests/test_app/Plugin/Named/src/"
+            "Named\\": "tests/test_app/Plugin/Named/src/",
+            "TestTheme\\": "tests/test_app/Plugin/TestTheme/src/",
+            "PluginJs\\": "tests/test_app/Plugin/PluginJs/src/"
         }
     },
     "scripts": {

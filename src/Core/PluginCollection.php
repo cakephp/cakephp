@@ -276,17 +276,26 @@ class PluginCollection implements Iterator, Countable
         if (!class_exists($className)) {
             $pos = strpos($name, '/');
             if ($pos === false) {
-                $className = $namespace . '\\' . $name . 'Plugin';
+                $namePart = $name;
             } else {
-                $className = $namespace . '\\' . substr($name, $pos + 1) . 'Plugin';
+                $namePart = substr($name, $pos + 1);
             }
 
             // Check for [Vendor/]Foo/FooPlugin
+            $className = $namespace . '\\' . $namePart . 'Plugin';
+
             if (!class_exists($className)) {
                 $className = BasePlugin::class;
                 if (empty($config['path'])) {
                     $config['path'] = $this->findPath($name);
                 }
+
+                deprecationWarning(
+                    '5.3.0',
+                    'Loading plugins without a plugin class is deprecated.'
+                    . " Create a class named `{$namePart}Plugin` which extends `Cake\Core\BasePlugin`"
+                    . ' as shown here https://book.cakephp.org/5/en/plugins.html#plugin-classes',
+                );
             }
         }
 

@@ -56,12 +56,16 @@ class PluginTest extends TestCase
 
     /**
      * Tests loading a plugin without a class
+     *
+     * @deprecated
      */
     public function testLoadDynamicClass(): void
     {
-        $this->loadPlugins(['TestPluginTwo']);
-        $instance = Plugin::getCollection()->get('TestPluginTwo');
-        $this->assertSame(BasePlugin::class, $instance::class);
+        $this->deprecated(function () {
+            $this->loadPlugins(['TestPluginTwo']);
+            $instance = Plugin::getCollection()->get('TestPluginTwo');
+            $this->assertSame(BasePlugin::class, $instance::class);
+        });
     }
 
     /**
@@ -69,15 +73,18 @@ class PluginTest extends TestCase
      */
     public function testPath(): void
     {
-        $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
         $this->assertPathEquals(Plugin::path('TestPlugin'), $expected);
 
-        $expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS;
-        $this->assertPathEquals(Plugin::path('TestPluginTwo'), $expected);
-
         $expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS;
         $this->assertPathEquals(Plugin::path('Company/TestPluginThree'), $expected);
+
+        $this->deprecated(function () {
+            $this->loadPlugins(['TestPluginTwo']);
+            $expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS;
+            $this->assertPathEquals(Plugin::path('TestPluginTwo'), $expected);
+        });
     }
 
     /**
@@ -94,15 +101,18 @@ class PluginTest extends TestCase
      */
     public function testClassPath(): void
     {
-        $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'src' . DS;
         $this->assertPathEquals(Plugin::classPath('TestPlugin'), $expected);
 
-        $expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'src' . DS;
-        $this->assertPathEquals(Plugin::classPath('TestPluginTwo'), $expected);
-
         $expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'src' . DS;
         $this->assertPathEquals(Plugin::classPath('Company/TestPluginThree'), $expected);
+
+        $this->deprecated(function () {
+            $this->loadPlugins(['TestPluginTwo']);
+            $expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'src' . DS;
+            $this->assertPathEquals(Plugin::classPath('TestPluginTwo'), $expected);
+        });
     }
 
     /**
@@ -110,15 +120,18 @@ class PluginTest extends TestCase
      */
     public function testTemplatePath(): void
     {
-        $this->loadPlugins(['TestPlugin', 'TestPluginTwo', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
         $expected = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS . 'templates' . DS;
         $this->assertPathEquals(Plugin::templatePath('TestPlugin'), $expected);
 
-        $expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'templates' . DS;
-        $this->assertPathEquals(Plugin::templatePath('TestPluginTwo'), $expected);
-
         $expected = TEST_APP . 'Plugin' . DS . 'Company' . DS . 'TestPluginThree' . DS . 'templates' . DS;
         $this->assertPathEquals(Plugin::templatePath('Company/TestPluginThree'), $expected);
+
+        $this->deprecated(function () {
+            $this->loadPlugins(['TestPluginTwo']);
+            $expected = TEST_APP . 'Plugin' . DS . 'TestPluginTwo' . DS . 'templates' . DS;
+            $this->assertPathEquals(Plugin::templatePath('TestPluginTwo'), $expected);
+        });
     }
 
     /**

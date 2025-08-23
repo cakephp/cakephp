@@ -71,6 +71,7 @@ class PluginUnloadCommandTest extends TestCase
     {
         parent::tearDown();
 
+        Plugin::getCollection()->clear();
         file_put_contents($this->configFile, $this->originalContent);
     }
 
@@ -80,7 +81,10 @@ class PluginUnloadCommandTest extends TestCase
     #[DataProvider('pluginNameProvider')]
     public function testUnload($plugin): void
     {
-        $this->exec('plugin unload ' . $plugin);
+        // Removed the deprecated() wrapping when plugin class is added to TestPluginTwo
+        $this->deprecated(function () use ($plugin) {
+            $this->exec('plugin unload ' . $plugin);
+        });
 
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $contents = file_get_contents($this->configFile);
@@ -108,7 +112,10 @@ class PluginUnloadCommandTest extends TestCase
 
     public function testUnloadUnknownPlugin(): void
     {
-        $this->exec('plugin unload NopeNotThere');
+        // Removed the deprecated() wrapping when plugin class is added to TestPluginTwo
+        $this->deprecated(function () {
+            $this->exec('plugin unload NopeNotThere');
+        });
         $this->assertExitCode(CommandInterface::CODE_ERROR);
         $this->assertErrorContains('Plugin `NopeNotThere` could not be found');
     }
