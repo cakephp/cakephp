@@ -424,8 +424,7 @@ abstract class TestCase extends BaseTestCase
             // Load from specified path
             $pluginsFile = rtrim($configPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'plugins.php';
             if (file_exists($pluginsFile)) {
-                // phpcs:ignore
-                $plugins = @include $pluginsFile;
+                $plugins = require $pluginsFile;
             }
         } else {
             // Try configured plugins first
