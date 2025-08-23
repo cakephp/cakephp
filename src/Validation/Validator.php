@@ -227,6 +227,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         $parentContext = $context['parentContext'] ?? null;
         $nestedManyIndex = $context['nestedManyIndex'] ?? null;
+
         return $this->runValidate($data, $newRecord, $parentContext, $nestedManyIndex, $context);
     }
 
@@ -239,7 +240,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @param array $data The data to be checked for errors
      * @param bool $newRecord whether the data to be validated is new or to be updated.
-     * @param array|null $parentContext parent validator context used in nested rules. Contains the parent's
+     * @param array<string, mixed>|null $parentContext parent validator context used in nested rules. Contains the parent's
      *   data, newRecord flag, and other context information that nested validators can access.
      * @param int|null $nestedManyIndex index of the current validation data element used in nested many rules.
      *   This allows nested validators to know which item they are validating in a collection.
@@ -251,7 +252,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         bool $newRecord = true,
         ?array $parentContext = null,
         ?int $nestedManyIndex = null,
-        array $context = []
+        array $context = [],
     ): array {
         $errors = [];
 
