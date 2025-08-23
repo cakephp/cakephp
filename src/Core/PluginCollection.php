@@ -206,6 +206,7 @@ class PluginCollection implements Iterator, Countable
         $this->names = [];
         $this->positions = [];
         $this->loopDepth = -1;
+        Configure::delete('plugins');
 
         return $this;
     }
