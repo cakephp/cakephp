@@ -434,6 +434,7 @@ abstract class TestCase extends BaseTestCase
             if ($plugins === null && defined('CONFIG')) {
                 $pluginsFile = CONFIG . 'plugins.php';
                 if (file_exists($pluginsFile)) {
+                    /** @phpstan-ignore-next-line */
                     $plugins = require $pluginsFile;
                 }
             }
