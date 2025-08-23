@@ -246,7 +246,7 @@ abstract class Driver implements LoggerAwareInterface
      *
      * @return \PDO
      */
-    public function getPdo(): PDO
+    protected function getPdo(): PDO
     {
         if ($this->pdo === null) {
             $this->connect();
