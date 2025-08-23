@@ -840,7 +840,7 @@ class SqliteSchemaDialect extends SchemaDialect
             isset($column['default']) && is_string($column['default']) &&
             (
                 str_contains(strtolower($column['default']), 'current_timestamp') ||
-                str_contains(strtolower($column['default']), 'now')
+                strtolower($column['default']) === 'now()'
             )
         ) {
             $out .= ' DEFAULT current_timestamp';
