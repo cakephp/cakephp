@@ -388,6 +388,76 @@ abstract class TestCase extends BaseTestCase
     }
 
     /**
+     * Load all plugins from the application's plugins.php config file.
+     *
+     * This method allows tests to load all plugins that would normally be loaded
+     * in the application, ensuring consistent behavior between test and production
+     * environments.
+     *
+     * Use this method in your test's setUp() or in individual test methods when
+     * you need to test functionality that depends on plugins being loaded.
+     *
+     * Example:
+     * ```
+     * public function setUp(): void
+     * {
+     *     parent::setUp();
+     *     $this->loadAllPlugins();
+     * }
+     * ```
+     *
+     * Or load from a specific config directory:
+     * ```
+     * $this->loadAllPlugins('/path/to/config/');
+     * ```
+     *
+     * @param string|null $configPath The path to the config directory.
+     *   If not provided, uses Configure::read('Test.plugins') or defaults to CONFIG.
+     * @return $this For method chaining
+     * @since 5.3.0
+     */
+    public function loadAllPlugins(?string $configPath = null)
+    {
+        $plugins = [];
+
+        if ($configPath !== null) {
+            // Load from specified path
+            $pluginsFile = rtrim($configPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'plugins.php';
+            if (file_exists($pluginsFile)) {
+                // phpcs:ignore
+                $plugins = @include $pluginsFile;
+            }
+        } else {
+            // Try configured plugins first
+            $plugins = Configure::read('Test.plugins');
+
+            // Fall back to default CONFIG path
+            if ($plugins === null && defined('CONFIG')) {
+                $pluginsFile = CONFIG . 'plugins.php';
+                if (file_exists($pluginsFile)) {
+                    $plugins = require $pluginsFile;
+                }
+            }
+        }
+
+        // Ensure we have an array
+        if (!is_array($plugins)) {
+            $plugins = [];
+        }
+
+        // If using IntegrationTestTrait, set the plugins to be loaded
+        /** @phpstan-ignore-next-line */
+        if (property_exists($this, 'appPluginsToLoad')) {
+            $this->appPluginsToLoad = $plugins;
+        } else {
+            // Otherwise, use the existing loadPlugins method
+            $this->loadPlugins($plugins);
+        }
+
+        return $this;
+    }
+
+    /**
      * Remove plugins from the global plugin collection.
      *
      * Useful in test case teardown methods.
