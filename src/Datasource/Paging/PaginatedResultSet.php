@@ -25,8 +25,9 @@ use function Cake\Core\deprecationWarning;
  * Paginated result set.
  *
  * @template TKey
- * @template-covariant TValue
- * @template-implements \IteratorAggregate<TKey, TValue>
+ * @template TValue
+ * @implements \IteratorAggregate<TKey, TValue>
+ * @implements \Cake\Datasource\Paging\PaginatedInterface<TKey, TValue>
  */
 class PaginatedResultSet implements IteratorAggregate, JsonSerializable, PaginatedInterface
 {
