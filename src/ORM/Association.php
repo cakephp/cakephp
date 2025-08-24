@@ -220,7 +220,6 @@ abstract class Association
             'foreignKey',
             'joinType',
             'tableLocator',
-            'propertyName',
             'sourceTable',
             'targetTable',
         ];
@@ -228,6 +227,10 @@ abstract class Association
             if (isset($options[$property])) {
                 $this->{'_' . $property} = $options[$property];
             }
+        }
+
+        if (isset($options['propertyName'])) {
+            $this->setProperty($options['propertyName']);
         }
 
         $this->_className ??= $alias;
@@ -554,6 +557,19 @@ abstract class Association
     {
         $this->_propertyName = $name;
 
+        try {
+            if (in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns(), true)) {
+                $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
+                    ' You should specify an alterate name using the `propertyName` option or `setProperty()` method.';
+                trigger_error(
+                    sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
+                    E_USER_WARNING,
+                );
+            }
+        } catch (DatabaseException $e) {
+            // Schema is not yet loaded, can't check for clashes
+        }
+
         return $this;
     }
 
@@ -566,15 +582,7 @@ abstract class Association
     public function getProperty(): string
     {
         if (!isset($this->_propertyName)) {
-            $this->_propertyName = $this->_propertyName();
-            if (in_array($this->_propertyName, $this->_sourceTable->getSchema()->columns(), true)) {
-                $msg = 'Association property name `%s` clashes with field of same name of table `%s`.' .
-                    ' You should explicitly specify the `propertyName` option.';
-                trigger_error(
-                    sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
-                    E_USER_WARNING,
-                );
-            }
+            $this->setProperty($this->_propertyName());
         }
 
         return $this->_propertyName;

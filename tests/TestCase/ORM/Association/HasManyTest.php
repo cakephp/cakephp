@@ -663,7 +663,7 @@ class HasManyTest extends TestCase
      */
     public function testPropertyOption(): void
     {
-        $config = ['propertyName' => 'thing_placeholder'];
+        $config = ['propertyName' => 'thing_placeholder', 'sourceTable' => $this->author];
         $association = new HasMany('Thing', $config);
         $this->assertSame('thing_placeholder', $association->getProperty());
     }
