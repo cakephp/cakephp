@@ -293,8 +293,7 @@ class PluginCollection implements Iterator, Countable
                 deprecationWarning(
                     '5.3.0',
                     'Loading plugins without a plugin class is deprecated.'
-                    . " Create a class named `{$namePart}Plugin` which extends `Cake\Core\BasePlugin`"
-                    . ' as shown here https://book.cakephp.org/5/en/plugins.html#plugin-classes',
+                    . " You can create the missing class using `bin/cake bake plugin {$name} --class-only`.",
                 );
             }
         }
