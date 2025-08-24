@@ -754,6 +754,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         if (
             isset($column['default']) &&
             in_array($column['type'], $dateTimeTypes, true) &&
+            is_string($column['default']) &&
             in_array(strtolower($column['default']), $dateTimeDefaults, true)
         ) {
             $out .= ' DEFAULT ' . strtoupper($column['default']);
