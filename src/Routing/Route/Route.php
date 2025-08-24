@@ -701,7 +701,10 @@ class Route
         unset($url['_method'], $url['[method]'], $defaults['_method']);
 
         // Defaults with different values are a fail.
-        if (array_intersect_key($url, $defaults) != $defaults) {
+        // Filter out null values from defaults for comparison as null values
+        // should be treated as "not set" for matching purposes
+        $filteredDefaults = array_filter($defaults, fn($v) => $v !== null);
+        if (array_intersect_key($url, $filteredDefaults) != $filteredDefaults) {
             return null;
         }
 
