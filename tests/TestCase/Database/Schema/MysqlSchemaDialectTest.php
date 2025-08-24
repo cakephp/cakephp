@@ -20,6 +20,7 @@ use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\MysqlSchemaDialect;
 use Cake\Database\Schema\TableSchema;
@@ -860,6 +861,11 @@ SQL;
                 "`role` VARCHAR(10) NOT NULL DEFAULT 'admin'",
             ],
             [
+                'role',
+                ['type' => 'string', 'length' => 10, 'null' => false, 'default' => new QueryExpression("'admin'")],
+                "`role` VARCHAR(10) NOT NULL DEFAULT 'admin'",
+            ],
+            [
                 'id',
                 ['type' => 'char', 'length' => 32, 'fixed' => true, 'null' => false],
                 '`id` CHAR(32) NOT NULL',
@@ -935,6 +941,11 @@ SQL;
                 'config',
                 ['type' => 'json', 'null' => false, 'default' => '{"key":"val"}'],
                 '`config` JSON NOT NULL DEFAULT (\'{"key":"val"}\')',
+            ],
+            [
+                'config',
+                ['type' => 'json', 'default' => new QueryExpression('\'{"key":"v"}\'')],
+                '`config` JSON DEFAULT (\'{"key":"v"}\')',
             ],
             // Blob / binary
             [
@@ -1107,6 +1118,11 @@ SQL;
                 'created',
                 ['type' => 'datetime', 'null' => false, 'default' => 'current_timestamp'],
                 '`created` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP',
+            ],
+            [
+                'created',
+                ['type' => 'datetime', 'null' => false, 'default' => new QueryExpression('now()')],
+                '`created` DATETIME NOT NULL DEFAULT now()',
             ],
             [
                 'open_date',

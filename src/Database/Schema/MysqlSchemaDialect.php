@@ -789,6 +789,7 @@ class MysqlSchemaDialect extends SchemaDialect
         if (
             isset($column['default']) &&
             in_array($column['type'], $dateTimeTypes) &&
+            is_string($column['default']) &&
             str_contains(strtolower($column['default']), 'current_timestamp')
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
