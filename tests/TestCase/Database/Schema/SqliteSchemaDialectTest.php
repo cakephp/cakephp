@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqliteSchemaDialect;
 use Cake\Database\Schema\TableSchema;
@@ -1051,6 +1052,16 @@ SQL;
                 'open_date',
                 ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
                 '"open_date" DATETIME NOT NULL DEFAULT "2016-12-07 23:04:00"',
+            ],
+            [
+                'created',
+                ['type' => 'datetime', 'default' => new QueryExpression('CURRENT_TIMESTAMP')],
+                '"created" DATETIME DEFAULT CURRENT_TIMESTAMP',
+            ],
+            [
+                'created',
+                ['type' => 'datetime', 'default' => new QueryExpression('now()')],
+                '"created" DATETIME DEFAULT now()',
             ],
             // Date & Time
             [
