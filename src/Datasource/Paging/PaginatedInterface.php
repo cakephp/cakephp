@@ -22,7 +22,9 @@ use Traversable;
 /**
  * This interface describes the methods for pagination instance.
  *
- * @template-extends \Traversable<mixed>
+ * @template TKey
+ * @template-covariant TValue
+ * @template-extends Traversable<TKey, TValue>
  * @method array<mixed> toArray() Get the paginated items as an array
  */
 interface PaginatedInterface extends Countable, Traversable
@@ -72,7 +74,7 @@ interface PaginatedInterface extends Countable, Traversable
     /**
      * Get paginated items.
      *
-     * @return iterable
+     * @return iterable<TKey, TValue>
      */
     public function items(): iterable;
 
