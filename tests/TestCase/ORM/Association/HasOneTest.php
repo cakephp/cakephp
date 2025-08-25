@@ -72,9 +72,7 @@ class HasOneTest extends TestCase
      */
     public function testSetForeignKey(): void
     {
-        $assoc = new HasOne('Profiles', [
-            'sourceTable' => $this->user,
-        ]);
+        $assoc = new HasOne('Profiles', $this->user);
         $this->assertSame('user_id', $assoc->getForeignKey());
         $this->assertEquals($assoc, $assoc->setForeignKey('another_key'));
         $this->assertSame('another_key', $assoc->getForeignKey());
@@ -108,7 +106,7 @@ class HasOneTest extends TestCase
      */
     public function testCanBeJoined(): void
     {
-        $assoc = new HasOne('Test');
+        $assoc = new HasOne('Test', $this->user);
         $this->assertTrue($assoc->canBeJoined());
     }
 
@@ -119,13 +117,12 @@ class HasOneTest extends TestCase
     public function testAttachTo(): void
     {
         $config = [
-            'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'property' => 'profile',
             'joinType' => 'INNER',
             'conditions' => ['Profiles.is_active' => true],
         ];
-        $association = new HasOne('Profiles', $config);
+        $association = new HasOne('Profiles', $this->user, $config);
         $query = $this->user->find();
         $association->attachTo($query);
 
@@ -140,11 +137,10 @@ class HasOneTest extends TestCase
     public function testAttachToNoFields(): void
     {
         $config = [
-            'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],
         ];
-        $association = new HasOne('Profiles', $config);
+        $association = new HasOne('Profiles', $this->user, $config);
         $query = $this->user->find();
         $association->attachTo($query, ['includeFields' => false]);
         $this->assertEmpty($query->clause('select'));
@@ -174,14 +170,13 @@ class HasOneTest extends TestCase
             'is_active' => 'boolean',
         ]);
         $config = [
-            'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],
             'foreignKey' => ['user_id', 'user_site_id'],
         ];
 
         $this->user->setPrimaryKey(['id', 'site_id']);
-        $association = new HasOne('Profiles', $config);
+        $association = new HasOne('Profiles', $this->user, $config);
 
         $query = $this->getMockBuilder(SelectQuery::class)
             ->onlyMethods(['join'])
@@ -215,12 +210,11 @@ class HasOneTest extends TestCase
             ->setConstructorArgs([$this->user])
             ->getMock();
         $config = [
-            'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],
         ];
         $this->user->setPrimaryKey(['id', 'site_id']);
-        $association = new HasOne('Profiles', $config);
+        $association = new HasOne('Profiles', $this->user, $config);
         $association->attachTo($query, ['includeFields' => false]);
     }
 
@@ -231,7 +225,6 @@ class HasOneTest extends TestCase
     {
         $spy = Mockery::spy(Table::class);
         $config = [
-            'sourceTable' => $this->user,
             'targetTable' => $spy,
         ];
 
@@ -241,7 +234,7 @@ class HasOneTest extends TestCase
             'profile' => ['twitter' => '@cakephp'],
         ]);
 
-        $association = new HasOne('Profiles', $config);
+        $association = new HasOne('Profiles', $this->user, $config);
         $result = $association->saveAssociated($entity);
 
         $this->assertSame($result, $entity);
@@ -254,7 +247,7 @@ class HasOneTest extends TestCase
     public function testPropertyOption(): void
     {
         $config = ['propertyName' => 'thing_placeholder'];
-        $association = new HasOne('Thing', $config);
+        $association = new HasOne('Thing', $this->user, $config);
         $this->assertSame('thing_placeholder', $association->getProperty());
     }
 
@@ -264,10 +257,9 @@ class HasOneTest extends TestCase
     public function testPropertyNoPlugin(): void
     {
         $config = [
-            'sourceTable' => $this->user,
             'targetTable' => $this->profile,
         ];
-        $association = new HasOne('Contacts.Profiles', $config);
+        $association = new HasOne('Contacts.Profiles', $this->user, $config);
         $this->assertSame('profile', $association->getProperty());
     }
 
@@ -278,7 +270,6 @@ class HasOneTest extends TestCase
     public function testAttachToBeforeFind(): void
     {
         $config = [
-            'sourceTable' => $this->user,
             'targetTable' => $this->profile,
         ];
         $query = $this->user->find();
@@ -291,7 +282,7 @@ class HasOneTest extends TestCase
             $this->assertInstanceOf('ArrayObject', $options);
             $this->assertFalse($primary);
         });
-        $association = new HasOne('Profiles', $config);
+        $association = new HasOne('Profiles', $this->user, $config);
         $association->attachTo($query);
         $this->assertTrue($this->listenerCalled, 'beforeFind event not fired.');
     }
@@ -303,7 +294,6 @@ class HasOneTest extends TestCase
     public function testAttachToBeforeFindExtraOptions(): void
     {
         $config = [
-            'sourceTable' => $this->user,
             'targetTable' => $this->profile,
         ];
         $this->listenerCalled = false;
@@ -318,7 +308,7 @@ class HasOneTest extends TestCase
                 $this->assertFalse($primary);
             },
         );
-        $association = new HasOne('Profiles', $config);
+        $association = new HasOne('Profiles', $this->user, $config);
         $query = $this->user->find();
         $association->attachTo($query, ['queryBuilder' => function ($q) {
             return $q->applyOptions(['something' => 'more']);
@@ -333,12 +323,11 @@ class HasOneTest extends TestCase
     {
         $config = [
             'dependent' => true,
-            'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],
             'cascadeCallbacks' => false,
         ];
-        $association = new HasOne('Profiles', $config);
+        $association = new HasOne('Profiles', $this->user, $config);
 
         $this->profile->getEventManager()->on('Model.beforeDelete', function (): void {
             $this->fail('Callbacks should not be triggered when callbacks do not cascade.');
@@ -369,7 +358,6 @@ class HasOneTest extends TestCase
 
         $config = [
             'dependent' => true,
-            'sourceTable' => $Authors,
             'targetTable' => $Articles,
             'bindingKey' => 'author_id',
             'foreignKey' => 'author_id',
@@ -397,12 +385,11 @@ class HasOneTest extends TestCase
     {
         $config = [
             'dependent' => true,
-            'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],
             'cascadeCallbacks' => true,
         ];
-        $association = new HasOne('Profiles', $config);
+        $association = new HasOne('Profiles', $this->user, $config);
 
         $user = new Entity(['id' => 1]);
         $this->assertTrue($association->cascadeDelete($user));
@@ -426,11 +413,10 @@ class HasOneTest extends TestCase
     {
         $config = [
             'dependent' => true,
-            'sourceTable' => $this->user,
             'targetTable' => $this->profile,
             'cascadeCallbacks' => true,
         ];
-        $association = new HasOne('Profiles', $config);
+        $association = new HasOne('Profiles', $this->user, $config);
         $profiles = $association->getTarget();
         $profiles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
             $rules->addDelete(function () {

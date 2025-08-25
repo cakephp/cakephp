@@ -117,8 +117,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSetForeignKey(): void
     {
-        $assoc = new BelongsToMany('Test', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('Test', $this->article, [
             'targetTable' => $this->tag,
         ]);
         $this->assertSame('article_id', $assoc->getForeignKey());
@@ -131,7 +130,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testCanBeJoined(): void
     {
-        $assoc = new BelongsToMany('Test');
+        $assoc = new BelongsToMany('Test', $this->article);
         $this->assertFalse($assoc->canBeJoined());
     }
 
@@ -140,7 +139,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSetSort(): void
     {
-        $assoc = new BelongsToMany('Test');
+        $assoc = new BelongsToMany('Test', $this->article);
         $this->assertNull($assoc->getSort());
 
         $assoc->setSort('id ASC');
@@ -198,7 +197,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testRequiresKeys(): void
     {
-        $assoc = new BelongsToMany('Test');
+        $assoc = new BelongsToMany('Test', $this->article);
         $this->assertTrue($assoc->requiresKeys());
 
         $assoc->setStrategy(BelongsToMany::STRATEGY_SUBQUERY);
@@ -215,16 +214,16 @@ class BelongsToManyTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid strategy `join` was provided');
-        $assoc = new BelongsToMany('Test');
+        $assoc = new BelongsToMany('Test', $this->article);
         $assoc->setStrategy(BelongsToMany::STRATEGY_JOIN);
     }
 
     public function testJunctionProperty(): void
     {
-        $assoc = new BelongsToMany('Test');
+        $assoc = new BelongsToMany('Test', $this->article);
         $this->assertSame('_joinData', $assoc->getJunctionProperty());
 
-        $assoc = new BelongsToMany('Test', ['junctionProperty' => 'junction']);
+        $assoc = new BelongsToMany('Test', $this->article, ['junctionProperty' => 'junction']);
         $this->assertSame('junction', $assoc->getJunctionProperty());
 
         $assoc->setJunctionProperty('_pivot');
@@ -236,8 +235,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testJunction(): void
     {
-        $assoc = new BelongsToMany('Test', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('Test', $this->article, [
             'targetTable' => $this->tag,
             'strategy' => 'subquery',
         ]);
@@ -289,8 +287,7 @@ class BelongsToManyTest extends TestCase
         ConnectionManager::setConfig('other_source', $mock);
         $this->article->setConnection(ConnectionManager::get('other_source'));
 
-        $assoc = new BelongsToMany('Test', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('Test', $this->article, [
             'targetTable' => $this->tag,
         ]);
         $junction = $assoc->junction();
@@ -329,8 +326,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testJunctionWithDefaultTableName(): void
     {
-        $assoc = new BelongsToMany('Test', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('Test', $this->article, [
             'targetTable' => $this->tag,
             'joinTable' => 'tags_articles',
         ]);
@@ -344,15 +340,13 @@ class BelongsToManyTest extends TestCase
      */
     public function testMultipleAssociationsSameJunction(): void
     {
-        $assoc = new BelongsToMany('This', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('This', $this->article, [
             'targetTable' => $this->tag,
             'targetForeignKey' => 'this_id',
         ]);
         $assoc->junction();
 
-        $assoc = new BelongsToMany('That', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('That', $this->article, [
             'targetTable' => $this->tag,
             'targetForeignKey' => 'that_id',
         ]);
@@ -366,8 +360,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSameSourceTargetJunction(): void
     {
-        $assoc = new BelongsToMany('This', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('This', $this->article, [
             'targetTable' => $this->article,
         ]);
 
@@ -381,7 +374,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSetSaveStrategy(): void
     {
-        $assoc = new BelongsToMany('Test');
+        $assoc = new BelongsToMany('Test', $this->article);
         $this->assertSame(BelongsToMany::SAVE_REPLACE, $assoc->getSaveStrategy());
 
         $assoc->setSaveStrategy(BelongsToMany::SAVE_APPEND);
@@ -396,7 +389,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveStrategyInOptions(): void
     {
-        $assoc = new BelongsToMany('Test', ['saveStrategy' => BelongsToMany::SAVE_APPEND]);
+        $assoc = new BelongsToMany('Test', $this->article, ['saveStrategy' => BelongsToMany::SAVE_APPEND]);
         $this->assertSame(BelongsToMany::SAVE_APPEND, $assoc->getSaveStrategy());
     }
 
@@ -407,7 +400,7 @@ class BelongsToManyTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid save strategy `depsert`');
-        new BelongsToMany('Test', ['saveStrategy' => 'depsert']);
+        new BelongsToMany('Test', $this->article, ['saveStrategy' => 'depsert']);
     }
 
     /**
@@ -437,11 +430,9 @@ class BelongsToManyTest extends TestCase
             ->onlyMethods(['deleteAll'])
             ->getMock();
         $config = [
-            'sourceTable' => $this->article,
-            'targetTable' => $this->tag,
             'sort' => ['id' => 'ASC'],
         ];
-        $association = new BelongsToMany('Tags', $config);
+        $association = new BelongsToMany('Tags', $this->article, $config);
         $association->junction($articleTag);
         $this->article
             ->getAssociation($articleTag->getAlias())
@@ -467,12 +458,11 @@ class BelongsToManyTest extends TestCase
             ->onlyMethods(['delete', 'deleteAll'])
             ->getMock();
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'dependent' => false,
             'sort' => ['id' => 'ASC'],
         ];
-        $association = new BelongsToMany('Tags', $config);
+        $association = new BelongsToMany('Tags', $this->article, $config);
         $association->junction($articleTag);
         $this->article
             ->getAssociation($articleTag->getAlias())
@@ -494,11 +484,10 @@ class BelongsToManyTest extends TestCase
     {
         $articleTag = $this->getTableLocator()->get('ArticlesTags');
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'cascadeCallbacks' => true,
         ];
-        $association = new BelongsToMany('Tag', $config);
+        $association = new BelongsToMany('Tag', $this->article, $config);
         $association->junction($articleTag);
         $this->article->getAssociation($articleTag->getAlias());
 
@@ -522,11 +511,10 @@ class BelongsToManyTest extends TestCase
     {
         $articleTag = $this->getTableLocator()->get('ArticlesTags');
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'cascadeCallbacks' => true,
         ];
-        $association = new BelongsToMany('Tag', $config);
+        $association = new BelongsToMany('Tag', $this->article, $config);
         $association->junction($articleTag);
         $this->article->getAssociation($articleTag->getAlias());
 
@@ -552,11 +540,10 @@ class BelongsToManyTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Source entity needs to be persisted before links can be created or removed');
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'joinTable' => 'tags_articles',
         ];
-        $assoc = new BelongsToMany('Test', $config);
+        $assoc = new BelongsToMany('Test', $this->article, $config);
         $entity = new Entity(['id' => 1]);
         $tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
         $assoc->link($entity, $tags);
@@ -570,11 +557,10 @@ class BelongsToManyTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot link entities that have not been persisted yet');
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'joinTable' => 'tags_articles',
         ];
-        $assoc = new BelongsToMany('Test', $config);
+        $assoc = new BelongsToMany('Test', $this->article, $config);
         $entity = new Entity(['id' => 1], ['markNew' => false]);
         $tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
         $assoc->link($entity, $tags);
@@ -589,7 +575,6 @@ class BelongsToManyTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
 
         $config = [
-            'sourceTable' => $articles,
             'targetTable' => $tags,
             'saveStrategy' => BelongsToMany::SAVE_APPEND,
         ];
@@ -623,7 +608,6 @@ class BelongsToManyTest extends TestCase
         $articlesTags->deleteAll('1=1');
 
         $config = [
-            'sourceTable' => $articles,
             'targetTable' => $tags,
             'saveStrategy' => BelongsToMany::SAVE_APPEND,
         ];
@@ -659,13 +643,12 @@ class BelongsToManyTest extends TestCase
             ->getMock();
 
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'through' => $joint,
             'joinTable' => 'tags_articles',
         ];
 
-        $assoc = new BelongsToMany('Test', $config);
+        $assoc = new BelongsToMany('Test', $this->article, $config);
         $opts = ['markNew' => false];
         $entity = new Entity(['id' => 1], $opts);
         $tags = [new Entity(['id' => 2], $opts), new Entity(['id' => 3], $opts)];
@@ -696,12 +679,11 @@ class BelongsToManyTest extends TestCase
         $joint->setRegistryAlias('Plugin.ArticlesTags');
 
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'through' => $joint,
         ];
 
-        $assoc = new BelongsToMany('Tags', $config);
+        $assoc = new BelongsToMany('Tags', $this->article, $config);
         $opts = ['markNew' => false];
         $entity = new Entity(['id' => 1], $opts);
         $tags = [new Entity(['id' => 2], $opts)];
@@ -730,11 +712,10 @@ class BelongsToManyTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Source entity needs to be persisted before links can be created or removed');
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'joinTable' => 'tags_articles',
         ];
-        $assoc = new BelongsToMany('Test', $config);
+        $assoc = new BelongsToMany('Test', $this->article, $config);
         $entity = new Entity(['id' => 1]);
         $tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
         $assoc->unlink($entity, $tags);
@@ -748,11 +729,10 @@ class BelongsToManyTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot link entities that have not been persisted');
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'joinTable' => 'tags_articles',
         ];
-        $assoc = new BelongsToMany('Test', $config);
+        $assoc = new BelongsToMany('Test', $this->article, $config);
         $entity = new Entity(['id' => 1], ['markNew' => false]);
         $tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
         $assoc->unlink($entity, $tags);
@@ -768,7 +748,6 @@ class BelongsToManyTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
 
         $assoc = $articles->belongsToMany('Tags', [
-            'sourceTable' => $articles,
             'targetTable' => $tags,
             'through' => $joint,
             'joinTable' => 'special_tags',
@@ -796,7 +775,6 @@ class BelongsToManyTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
 
         $assoc = $articles->belongsToMany('Tags', [
-            'sourceTable' => $articles,
             'targetTable' => $tags,
             'through' => $joint,
             'joinTable' => 'special_tags',
@@ -823,11 +801,10 @@ class BelongsToManyTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Could not find primary key value for source entity');
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $this->tag,
             'joinTable' => 'tags_articles',
         ];
-        $assoc = new BelongsToMany('Test', $config);
+        $assoc = new BelongsToMany('Test', $this->article, $config);
         $entity = new Entity(['foo' => 1], ['markNew' => false]);
         $tags = [new Entity(['id' => 2]), new Entity(['id' => 3])];
         $assoc->replaceLinks($entity, $tags);
@@ -843,7 +820,6 @@ class BelongsToManyTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
 
         $assoc = $articles->belongsToMany('Tags', [
-            'sourceTable' => $articles,
             'targetTable' => $tags,
             'through' => $joint,
             'joinTable' => 'articles_tags',
@@ -872,7 +848,6 @@ class BelongsToManyTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
 
         $assoc = $articles->belongsToMany('Tags', [
-            'sourceTable' => $articles,
             'targetTable' => $tags,
             'through' => $joint,
         ]);
@@ -910,7 +885,6 @@ class BelongsToManyTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
 
         $assoc = $articles->belongsToMany('Tags', [
-            'sourceTable' => $articles,
             'targetTable' => $tags,
             'through' => $joint,
             'joinTable' => 'special_tags',
@@ -973,7 +947,6 @@ class BelongsToManyTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
 
         $assoc = $articles->belongsToMany('Tags', [
-            'sourceTable' => $articles,
             'targetTable' => $tags,
             'through' => $joint,
         ]);
@@ -1055,7 +1028,6 @@ class BelongsToManyTest extends TestCase
         });
 
         $assoc = $articles->belongsToMany('Tags', [
-            'sourceTable' => $articles,
             'targetTable' => $tags,
             'through' => $this->getTableLocator()->get('ArticlesTags'),
         ]);
@@ -1085,7 +1057,6 @@ class BelongsToManyTest extends TestCase
         $tags = $this->getTableLocator()->get('BinaryUuidTags');
 
         $items->belongsToMany('BinaryUuidTags', [
-            'sourceTable' => $items,
             'targetTable' => $tags,
         ]);
         $itemName = 'Item 1';
@@ -1212,7 +1183,7 @@ class BelongsToManyTest extends TestCase
         /** @var \Cake\ORM\Association\BelongsToMany|\PHPUnit\Framework\MockObject\MockObject $assoc */
         $assoc = $this->getMockBuilder(BelongsToMany::class)
             ->onlyMethods(['saveTarget', 'replaceLinks'])
-            ->setConstructorArgs(['tags', ['sourceTable' => $table]])
+            ->setConstructorArgs(['tags', $table])
             ->getMock();
         $entity = new Entity([
             'id' => 1,
@@ -1242,7 +1213,7 @@ class BelongsToManyTest extends TestCase
         /** @var \Cake\ORM\Association\BelongsToMany|\PHPUnit\Framework\MockObject\MockObject $assoc */
         $assoc = $this->getMockBuilder(BelongsToMany::class)
             ->onlyMethods(['saveTarget', 'replaceLinks'])
-            ->setConstructorArgs(['tags', ['sourceTable' => $table]])
+            ->setConstructorArgs(['tags', $table])
             ->getMock();
         $entity = new Entity([
             'id' => 1,
@@ -1272,7 +1243,7 @@ class BelongsToManyTest extends TestCase
         $table->setSchema([]);
         $assoc = $this->getMockBuilder(BelongsToMany::class)
             ->onlyMethods(['replaceLinks'])
-            ->setConstructorArgs(['tags', ['sourceTable' => $table]])
+            ->setConstructorArgs(['tags', $table])
             ->getMock();
         $entity = new Entity([
             'id' => 1,
@@ -1300,7 +1271,7 @@ class BelongsToManyTest extends TestCase
         $table->setSchema([]);
         $assoc = $this->getMockBuilder(BelongsToMany::class)
             ->onlyMethods(['replaceLinks'])
-            ->setConstructorArgs(['tags', ['sourceTable' => $table]])
+            ->setConstructorArgs(['tags', $table])
             ->getMock();
         $entity = new Entity([
             'id' => 1,
@@ -1322,16 +1293,14 @@ class BelongsToManyTest extends TestCase
      */
     public function testSetTargetForeignKey(): void
     {
-        $assoc = new BelongsToMany('Test', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('Test', $this->article, [
             'targetTable' => $this->tag,
         ]);
         $this->assertSame('tag_id', $assoc->getTargetForeignKey());
         $assoc->setTargetForeignKey('another_key');
         $this->assertSame('another_key', $assoc->getTargetForeignKey());
 
-        $assoc = new BelongsToMany('Test', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('Test', $this->article, [
             'targetTable' => $this->tag,
             'targetForeignKey' => 'foo',
         ]);
@@ -1344,8 +1313,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testJunctionWithCustomForeignKeys(): void
     {
-        $assoc = new BelongsToMany('Test', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('Test', $this->article, [
             'targetTable' => $this->tag,
             'foreignKey' => 'Art',
             'targetForeignKey' => 'Tag',
@@ -1365,8 +1333,7 @@ class BelongsToManyTest extends TestCase
      */
     public function testFallbackClassForJunction(): void
     {
-        $assoc = new BelongsToMany('Test', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('Test', $this->article, [
             'targetTable' => $this->tag,
         ]);
         $assoc->setTableLocator((new TableLocator())->allowFallbackClass(false));
@@ -1383,8 +1350,7 @@ class BelongsToManyTest extends TestCase
         $this->expectException(MissingTableClassException::class);
         $this->expectExceptionMessage('Table class for alias `ArticlesTags` could not be found.');
 
-        $assoc = new BelongsToMany('Test', [
-            'sourceTable' => $this->article,
+        $assoc = new BelongsToMany('Test', $this->article, [
             'targetTable' => $this->tag,
             'through' => 'ArticlesTags',
         ]);
@@ -1400,7 +1366,7 @@ class BelongsToManyTest extends TestCase
     public function testPropertyOption(): void
     {
         $config = ['propertyName' => 'thing_placeholder'];
-        $association = new BelongsToMany('Thing', $config);
+        $association = new BelongsToMany('Thing', new Table(), $config);
         $this->assertSame('thing_placeholder', $association->getProperty());
     }
 
@@ -1413,10 +1379,9 @@ class BelongsToManyTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $mock,
         ];
-        $association = new BelongsToMany('Contacts.Tags', $config);
+        $association = new BelongsToMany('Contacts.Tags', $this->article, $config);
         $this->assertSame('tags', $association->getProperty());
     }
 
@@ -1429,7 +1394,6 @@ class BelongsToManyTest extends TestCase
         $tags = $this->getTableLocator()->get('Tags');
         $conditions = ['SpecialTags.highlighted' => true];
         $assoc = $articles->belongsToMany('Tags', [
-            'sourceTable' => $articles,
             'targetTable' => $tags,
             'foreignKey' => 'foreign_key',
             'targetForeignKey' => 'target_foreign_key',

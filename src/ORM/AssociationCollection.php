@@ -92,6 +92,7 @@ class AssociationCollection implements IteratorAggregate
      *
      * @param string $className The name of association class.
      * @param string $associated The alias for the target table.
+     * @param \Cake\ORM\Table $sourceTable The table instance for the source side of the association.
      * @param array<string, mixed> $options List of options to configure the association definition.
      * @return \Cake\ORM\Association
      * @throws \InvalidArgumentException
@@ -99,13 +100,9 @@ class AssociationCollection implements IteratorAggregate
      * @phpstan-param class-string<T> $className
      * @phpstan-return T
      */
-    public function load(string $className, string $associated, array $options = []): Association
+    public function load(string $className, string $associated, Table $sourceTable, array $options = []): Association
     {
-        $options += [
-            'tableLocator' => $this->getTableLocator(),
-        ];
-
-        $association = new $className($associated, $options);
+        $association = new $className($associated, $sourceTable, $options);
 
         return $this->add($association->getName(), $association);
     }

@@ -206,10 +206,13 @@ abstract class Association
      * list of passed options if expecting any other special key
      *
      * @param string $alias The name given to the association
+     * @param \Cake\ORM\Table $sourceTable The table instance for the source side of the association.
      * @param array<string, mixed> $options A list of properties to be set on this object
      */
-    public function __construct(string $alias, array $options = [])
+    public function __construct(string $alias, Table $sourceTable, array $options = [])
     {
+        $this->_sourceTable = $sourceTable;
+
         $defaults = [
             'cascadeCallbacks',
             'className',
@@ -221,7 +224,6 @@ abstract class Association
             'joinType',
             'tableLocator',
             'propertyName',
-            'sourceTable',
             'targetTable',
         ];
         foreach ($defaults as $property) {
@@ -382,7 +384,7 @@ abstract class Association
 
                     throw new DatabaseException(sprintf(
                         $msg,
-                        isset($this->_sourceTable) ? $this->_sourceTable::class : 'null',
+                        $this->_sourceTable::class,
                         $this->getName(),
                         $this->type(),
                         $this->_targetTable::class,

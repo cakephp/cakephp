@@ -1029,10 +1029,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function belongsTo(string $associated, array $options = []): BelongsTo
     {
-        $options += ['sourceTable' => $this];
-
         /** @var \Cake\ORM\Association\BelongsTo */
-        return $this->_associations->load(BelongsTo::class, $associated, $options);
+        return $this->_associations->load(BelongsTo::class, $associated, $this, $options);
     }
 
     /**
@@ -1073,10 +1071,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function hasOne(string $associated, array $options = []): HasOne
     {
-        $options += ['sourceTable' => $this];
-
         /** @var \Cake\ORM\Association\HasOne */
-        return $this->_associations->load(HasOne::class, $associated, $options);
+        return $this->_associations->load(HasOne::class, $associated, $this, $options);
     }
 
     /**
@@ -1123,10 +1119,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function hasMany(string $associated, array $options = []): HasMany
     {
-        $options += ['sourceTable' => $this];
-
         /** @var \Cake\ORM\Association\HasMany */
-        return $this->_associations->load(HasMany::class, $associated, $options);
+        return $this->_associations->load(HasMany::class, $associated, $this, $options);
     }
 
     /**
@@ -1175,10 +1169,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function belongsToMany(string $associated, array $options = []): BelongsToMany
     {
-        $options += ['sourceTable' => $this];
-
         /** @var \Cake\ORM\Association\BelongsToMany */
-        return $this->_associations->load(BelongsToMany::class, $associated, $options);
+        return $this->_associations->load(BelongsToMany::class, $associated, $this, $options);
     }
 
     /**

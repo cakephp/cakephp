@@ -79,7 +79,6 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
         $table->setPrimaryKey('id');
 
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $table,
             'saveStrategy' => BelongsToMany::SAVE_APPEND,
         ];
@@ -96,7 +95,7 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
         $table->expects($this->never())
             ->method('saveAssociated');
 
-        $association = new BelongsToMany('Tags', $config);
+        $association = new BelongsToMany('Tags', $this->article, $config);
         $association->saveAssociated($entity);
     }
 }

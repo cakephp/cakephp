@@ -54,7 +54,6 @@ class AssociationTest extends TestCase
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
-            'sourceTable' => $this->source,
             'joinType' => 'INNER',
         ];
         $this->association = $this->getMockBuilder(Association::class)
@@ -62,7 +61,7 @@ class AssociationTest extends TestCase
                 'options', 'attachTo', 'joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
-            ->setConstructorArgs(['Foo', $config])
+            ->setConstructorArgs(['Foo', $this->source, $config])
             ->getMock();
     }
 
@@ -74,7 +73,7 @@ class AssociationTest extends TestCase
     {
         $options = ['foo' => 'bar'];
         $this->association->expects($this->once())->method('options')->with($options);
-        $this->association->__construct('Name', $options);
+        $this->association->__construct('Name', $this->source, $options);
     }
 
     /**
@@ -85,7 +84,7 @@ class AssociationTest extends TestCase
     {
         $association = $this->getMockBuilder(Association::class)
             ->onlyMethods(['type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated'])
-            ->setConstructorArgs(['Foo'])
+            ->setConstructorArgs(['Foo', $this->source])
             ->getMock();
 
         $this->assertSame('Foo', $association->getClassName());
@@ -160,7 +159,7 @@ class AssociationTest extends TestCase
                 'options', 'attachTo', 'joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
-            ->setConstructorArgs(['Foo', $config])
+            ->setConstructorArgs(['Foo', $this->source, $config])
             ->getMock();
 
         $this->assertSame('Test', $this->association->getClassName());
@@ -182,7 +181,7 @@ class AssociationTest extends TestCase
                 'options', 'attachTo', 'joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
-            ->setConstructorArgs(['Test', $config])
+            ->setConstructorArgs(['Test', $this->source, $config])
             ->getMock();
         $this->association->setSource($this->getTableLocator()->get('Test'));
 
@@ -207,7 +206,7 @@ class AssociationTest extends TestCase
                 'options', 'attachTo', 'joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
-            ->setConstructorArgs(['Test', $config])
+            ->setConstructorArgs(['Test', $this->source, $config])
             ->getMock();
 
         $target = $this->association->getTarget();
@@ -318,7 +317,6 @@ class AssociationTest extends TestCase
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
-            'sourceTable' => $this->source,
             'joinType' => 'INNER',
         ];
 
@@ -327,7 +325,7 @@ class AssociationTest extends TestCase
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
                 'requiresKeys',
             ])
-            ->setConstructorArgs(['ThisAssociationName', $config])
+            ->setConstructorArgs(['ThisAssociationName', $this->source, $config])
             ->getMock();
 
         $table = $this->association->getTarget();
@@ -405,7 +403,6 @@ class AssociationTest extends TestCase
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
-            'sourceTable' => $this->source,
             'joinType' => 'INNER',
             'propertyName' => 'foo',
         ];
@@ -414,7 +411,7 @@ class AssociationTest extends TestCase
                 'options', 'attachTo', 'joinCondition', 'cascadeDelete', 'isOwningSide',
                 'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
             ])
-            ->setConstructorArgs(['Foo', $config])
+            ->setConstructorArgs(['Foo', $this->source, $config])
             ->getMock();
 
         $this->assertSame('foo', $association->getProperty());
@@ -463,7 +460,6 @@ class AssociationTest extends TestCase
             'foreignKey' => 'a_key',
             'conditions' => ['field' => 'value'],
             'dependent' => true,
-            'sourceTable' => $this->source,
             'joinType' => 'INNER',
             'finder' => 'published',
         ];
@@ -472,7 +468,7 @@ class AssociationTest extends TestCase
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
                 'requiresKeys',
             ])
-            ->setConstructorArgs(['Foo', $config])
+            ->setConstructorArgs(['Foo', $this->source, $config])
             ->getMock();
         $this->assertSame('published', $assoc->getFinder());
     }
@@ -509,7 +505,7 @@ class AssociationTest extends TestCase
                 'type', 'eagerLoader', 'cascadeDelete', 'isOwningSide', 'saveAssociated',
                 'requiresKeys',
             ])
-            ->setConstructorArgs(['Foo', $config])
+            ->setConstructorArgs(['Foo', $this->source, $config])
             ->getMock();
         $this->assertEquals($locator, $assoc->getTableLocator());
     }

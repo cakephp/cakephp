@@ -97,8 +97,7 @@ class BelongsToTest extends TestCase
      */
     public function testSetForeignKey(): void
     {
-        $assoc = new BelongsTo('Companies', [
-            'sourceTable' => $this->client,
+        $assoc = new BelongsTo('Companies', $this->client, [
             'targetTable' => $this->company,
         ]);
         $this->assertSame('company_id', $assoc->getForeignKey());
@@ -136,8 +135,7 @@ class BelongsToTest extends TestCase
     {
         $this->company->setTable('schema.companies');
         $this->client->setTable('schema.clients');
-        $assoc = new BelongsTo('Companies', [
-            'sourceTable' => $this->client,
+        $assoc = new BelongsTo('Companies', $this->client, [
             'targetTable' => $this->company,
         ]);
         $this->assertSame('company_id', $assoc->getForeignKey());
@@ -148,7 +146,7 @@ class BelongsToTest extends TestCase
      */
     public function testCanBeJoined(): void
     {
-        $assoc = new BelongsTo('Test');
+        $assoc = new BelongsTo('Test', new Table());
         $this->assertTrue($assoc->canBeJoined());
     }
 
@@ -180,11 +178,10 @@ class BelongsToTest extends TestCase
     {
         $config = [
             'foreignKey' => 'company_id',
-            'sourceTable' => $this->client,
             'targetTable' => $this->company,
             'conditions' => ['Companies.is_active' => true],
         ];
-        $association = new BelongsTo('Companies', $config);
+        $association = new BelongsTo('Companies', $this->client, $config);
         $query = $this->client->selectQuery();
         $association->attachTo($query);
 
@@ -219,12 +216,11 @@ class BelongsToTest extends TestCase
     public function testAttachToNoFields(): void
     {
         $config = [
-            'sourceTable' => $this->client,
             'targetTable' => $this->company,
             'conditions' => ['Companies.is_active' => true],
         ];
         $query = $this->client->selectQuery();
-        $association = new BelongsTo('Companies', $config);
+        $association = new BelongsTo('Companies', $this->client, $config);
 
         $association->attachTo($query, ['includeFields' => false]);
         $this->assertEmpty($query->clause('select'), 'no fields should be added.');
@@ -239,11 +235,10 @@ class BelongsToTest extends TestCase
         $this->company->setPrimaryKey(['id', 'tenant_id']);
         $config = [
             'foreignKey' => ['company_id', 'company_tenant_id'],
-            'sourceTable' => $this->client,
             'targetTable' => $this->company,
             'conditions' => ['Companies.is_active' => true],
         ];
-        $association = new BelongsTo('Companies', $config);
+        $association = new BelongsTo('Companies', $this->client, $config);
         $query = $this->client->selectQuery();
         $association->attachTo($query);
 
@@ -281,11 +276,10 @@ class BelongsToTest extends TestCase
         $query = $this->client->selectQuery();
         $config = [
             'foreignKey' => 'company_id',
-            'sourceTable' => $this->client,
             'targetTable' => $this->company,
             'conditions' => ['Companies.is_active' => true],
         ];
-        $association = new BelongsTo('Companies', $config);
+        $association = new BelongsTo('Companies', $this->client, $config);
         $association->attachTo($query);
     }
 
@@ -298,7 +292,6 @@ class BelongsToTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
-            'sourceTable' => $this->client,
             'targetTable' => $mock,
         ];
         $mock->expects($this->never())
@@ -306,7 +299,7 @@ class BelongsToTest extends TestCase
         $mock->expects($this->never())
             ->method('delete');
 
-        $association = new BelongsTo('Companies', $config);
+        $association = new BelongsTo('Companies', $this->client, $config);
         $entity = new Entity(['company_name' => 'CakePHP', 'id' => 1]);
         $this->assertTrue($association->cascadeDelete($entity));
     }
@@ -318,7 +311,6 @@ class BelongsToTest extends TestCase
     {
         $spy = Mockery::spy(Table::class);
         $config = [
-            'sourceTable' => $this->client,
             'targetTable' => $spy,
         ];
 
@@ -328,7 +320,7 @@ class BelongsToTest extends TestCase
             'author' => ['name' => 'Jose'],
         ]);
 
-        $association = new BelongsTo('Authors', $config);
+        $association = new BelongsTo('Authors', $this->client, $config);
         $result = $association->saveAssociated($entity);
         $this->assertSame($result, $entity);
         $this->assertNull($entity->author_id);
@@ -342,7 +334,7 @@ class BelongsToTest extends TestCase
     public function testPropertyOption(): void
     {
         $config = ['propertyName' => 'thing_placeholder'];
-        $association = new BelongsTo('Thing', $config);
+        $association = new BelongsTo('Thing', $this->client, $config);
         $this->assertSame('thing_placeholder', $association->getProperty());
     }
 
@@ -355,10 +347,9 @@ class BelongsToTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
-            'sourceTable' => $this->client,
             'targetTable' => $mock,
         ];
-        $association = new BelongsTo('Contacts.Companies', $config);
+        $association = new BelongsTo('Contacts.Companies', $this->client, $config);
         $this->assertSame('company', $association->getProperty());
     }
 
@@ -369,7 +360,6 @@ class BelongsToTest extends TestCase
     public function testAttachToBeforeFind(): void
     {
         $config = [
-            'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ];
         $called = false;
@@ -379,7 +369,7 @@ class BelongsToTest extends TestCase
             $this->assertInstanceOf(ArrayObject::class, $options);
             $called = true;
         });
-        $association = new BelongsTo('Companies', $config);
+        $association = new BelongsTo('Companies', $this->client, $config);
         $association->attachTo($this->client->selectQuery());
         $this->assertTrue($called, 'Listener should be called.');
     }
@@ -391,7 +381,6 @@ class BelongsToTest extends TestCase
     public function testAttachToBeforeFindExtraOptions(): void
     {
         $config = [
-            'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ];
         $called = false;
@@ -399,7 +388,7 @@ class BelongsToTest extends TestCase
             $this->assertSame('more', $options['something']);
             $called = true;
         });
-        $association = new BelongsTo('Companies', $config);
+        $association = new BelongsTo('Companies', $this->client, $config);
         $query = $this->client->selectQuery();
         $association->attachTo($query, ['queryBuilder' => function ($q) {
             return $q->applyOptions(['something' => 'more']);

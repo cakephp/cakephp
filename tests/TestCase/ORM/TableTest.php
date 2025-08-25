@@ -4491,6 +4491,7 @@ class TableTest extends TestCase
             ->onlyMethods(['getTarget'])
             ->setConstructorArgs([
                 'articles',
+                new Table(),
                 [
                     'target' => $articles,
                     'foreignKey' => 'author_id',

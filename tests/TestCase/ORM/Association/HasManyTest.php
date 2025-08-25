@@ -134,9 +134,7 @@ class HasManyTest extends TestCase
      */
     public function testSetForeignKey(): void
     {
-        $assoc = new HasMany('Articles', [
-            'sourceTable' => $this->author,
-        ]);
+        $assoc = new HasMany('Articles', $this->author);
         $this->assertSame('author_id', $assoc->getForeignKey());
         $this->assertSame($assoc, $assoc->setForeignKey('another_key'));
         $this->assertSame('another_key', $assoc->getForeignKey());
@@ -148,9 +146,7 @@ class HasManyTest extends TestCase
     public function testForeignKeyIgnoreDatabaseName(): void
     {
         $this->author->setTable('schema.authors');
-        $assoc = new HasMany('Articles', [
-            'sourceTable' => $this->author,
-        ]);
+        $assoc = new HasMany('Articles', $this->author);
         $this->assertSame('author_id', $assoc->getForeignKey());
     }
 
@@ -159,7 +155,7 @@ class HasManyTest extends TestCase
      */
     public function testCanBeJoined(): void
     {
-        $assoc = new HasMany('Test');
+        $assoc = new HasMany('Test', $this->author);
         $this->assertFalse($assoc->canBeJoined());
     }
 
@@ -168,7 +164,7 @@ class HasManyTest extends TestCase
      */
     public function testSetSort(): void
     {
-        $assoc = new HasMany('Test');
+        $assoc = new HasMany('Test', $this->author);
         $this->assertNull($assoc->getSort());
 
         $assoc->setSort('id ASC');
@@ -226,7 +222,7 @@ class HasManyTest extends TestCase
      */
     public function testRequiresKeys(): void
     {
-        $assoc = new HasMany('Test');
+        $assoc = new HasMany('Test', $this->author);
         $this->assertTrue($assoc->requiresKeys());
 
         $assoc->setStrategy(HasMany::STRATEGY_SUBQUERY);
@@ -243,7 +239,7 @@ class HasManyTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Invalid strategy `join` was provided');
-        $assoc = new HasMany('Test');
+        $assoc = new HasMany('Test', $this->author);
         $assoc->setStrategy(HasMany::STRATEGY_JOIN);
     }
 
@@ -253,11 +249,10 @@ class HasManyTest extends TestCase
     public function testEagerLoader(): void
     {
         $config = [
-            'sourceTable' => $this->author,
             'targetTable' => $this->article,
             'strategy' => 'select',
         ];
-        $association = new HasMany('Articles', $config);
+        $association = new HasMany('Articles', $this->author, $config);
         $query = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
@@ -292,13 +287,12 @@ class HasManyTest extends TestCase
     public function testEagerLoaderWithDefaults(): void
     {
         $config = [
-            'sourceTable' => $this->author,
             'targetTable' => $this->article,
             'conditions' => ['Articles.published' => 'Y'],
             'sort' => ['id' => 'ASC'],
             'strategy' => 'select',
         ];
-        $association = new HasMany('Articles', $config);
+        $association = new HasMany('Articles', $this->author, $config);
         $keys = [1, 2, 3, 4];
 
         $query = $this->article->selectQuery();
@@ -324,7 +318,6 @@ class HasManyTest extends TestCase
     public function testEagerLoaderWithOverrides(): void
     {
         $config = [
-            'sourceTable' => $this->author,
             'targetTable' => $this->article,
             'conditions' => ['Articles.published' => 'Y'],
             'sort' => ['id' => 'ASC'],
@@ -332,7 +325,7 @@ class HasManyTest extends TestCase
         ];
         $this->article->hasMany('Comments');
 
-        $association = new HasMany('Articles', $config);
+        $association = new HasMany('Articles', $this->author, $config);
         $keys = [1, 2, 3, 4];
 
         /** @var \Cake\ORM\Query\SelectQuery $query */
@@ -382,11 +375,10 @@ class HasManyTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('You are required to select the "Articles.author_id"');
         $config = [
-            'sourceTable' => $this->author,
             'targetTable' => $this->article,
             'strategy' => 'select',
         ];
-        $association = new HasMany('Articles', $config);
+        $association = new HasMany('Articles', $this->author, $config);
         $keys = [1, 2, 3, 4];
         $query = $this->article->selectQuery();
         $this->article->method('find')
@@ -406,11 +398,10 @@ class HasManyTest extends TestCase
     public function testEagerLoaderWithQueryBuilder(): void
     {
         $config = [
-            'sourceTable' => $this->author,
             'targetTable' => $this->article,
             'strategy' => 'select',
         ];
-        $association = new HasMany('Articles', $config);
+        $association = new HasMany('Articles', $this->author, $config);
         $keys = [1, 2, 3, 4];
 
         /** @var \Cake\ORM\Query\SelectQuery $query */
@@ -455,14 +446,13 @@ class HasManyTest extends TestCase
     public function testEagerLoaderMultipleKeys(): void
     {
         $config = [
-            'sourceTable' => $this->author,
             'targetTable' => $this->article,
             'strategy' => 'select',
             'foreignKey' => ['author_id', 'site_id'],
         ];
 
         $this->author->setPrimaryKey(['id', 'site_id']);
-        $association = new HasMany('Articles', $config);
+        $association = new HasMany('Articles', $this->author, $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
         $query = $this->getMockBuilder(SelectQuery::class)
             ->onlyMethods(['all', 'andWhere', 'getRepository'])
@@ -531,11 +521,10 @@ class HasManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $config = [
             'dependent' => true,
-            'sourceTable' => $this->author,
             'targetTable' => $articles,
             'conditions' => ['Articles.published' => 'Y'],
         ];
-        $association = new HasMany('Articles', $config);
+        $association = new HasMany('Articles', $this->author, $config);
 
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
         $this->assertTrue($association->cascadeDelete($entity));
@@ -557,7 +546,6 @@ class HasManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $config = [
             'dependent' => true,
-            'sourceTable' => $this->author,
             'targetTable' => $articles,
             'finder' => 'published',
         ];
@@ -566,7 +554,7 @@ class HasManyTest extends TestCase
             ['published' => 'N'],
             ['author_id' => 1, 'title' => 'First Article'],
         );
-        $association = new HasMany('Articles', $config);
+        $association = new HasMany('Articles', $this->author, $config);
 
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
         $this->assertTrue($association->cascadeDelete($entity));
@@ -586,12 +574,11 @@ class HasManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $config = [
             'dependent' => true,
-            'sourceTable' => $this->author,
             'targetTable' => $articles,
             'conditions' => ['Articles.published' => 'Y'],
             'cascadeCallbacks' => true,
         ];
-        $association = new HasMany('Articles', $config);
+        $association = new HasMany('Articles', $this->author, $config);
 
         $author = new Entity(['id' => 1, 'name' => 'mark']);
         $this->assertTrue($association->cascadeDelete($author));
@@ -611,11 +598,10 @@ class HasManyTest extends TestCase
         $articles = $this->getTableLocator()->get('Articles');
         $config = [
             'dependent' => true,
-            'sourceTable' => $this->author,
             'targetTable' => $articles,
             'cascadeCallbacks' => true,
         ];
-        $association = new HasMany('Articles', $config);
+        $association = new HasMany('Articles', $this->author, $config);
         $articles = $association->getTarget();
         $articles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
             $rules->addDelete(function () {
@@ -638,7 +624,6 @@ class HasManyTest extends TestCase
     {
         $spy = Mockery::spy(Table::class);
         $config = [
-            'sourceTable' => $this->author,
             'targetTable' => $spy,
         ];
 
@@ -651,7 +636,7 @@ class HasManyTest extends TestCase
             ],
         ]);
 
-        $association = new HasMany('Articles', $config);
+        $association = new HasMany('Articles', $this->author, $config);
         $result = $association->saveAssociated($entity);
         $this->assertSame($result, $entity);
 
@@ -664,7 +649,7 @@ class HasManyTest extends TestCase
     public function testPropertyOption(): void
     {
         $config = ['propertyName' => 'thing_placeholder'];
-        $association = new HasMany('Thing', $config);
+        $association = new HasMany('Thing', new Table(), $config);
         $this->assertSame('thing_placeholder', $association->getProperty());
     }
 
@@ -696,10 +681,9 @@ class HasManyTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
-            'sourceTable' => $this->author,
             'targetTable' => $mock,
         ];
-        $association = new HasMany('Contacts.Addresses', $config);
+        $association = new HasMany('Contacts.Addresses', $this->author, $config);
         $this->assertSame('addresses', $association->getProperty());
     }
 
