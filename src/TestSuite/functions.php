@@ -38,7 +38,7 @@ use RuntimeException;
  */
 function enablePluginLoadingForTests(?string $configPath = null): void
 {
-    $configPath = $configPath ?? CONFIG;
+    $configPath ??= CONFIG;
     $pluginsFile = rtrim($configPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'plugins.php';
 
     if (!file_exists($pluginsFile)) {
