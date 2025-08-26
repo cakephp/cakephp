@@ -155,36 +155,9 @@ if (env('FIXTURE_SCHEMA_METADATA')) {
 
 FactoryLocator::add('Table', new TableLocator());
 
-/**
- * Enable automatic loading of plugins from plugins.php for all tests.
- *
- * Call this function in your application's tests/bootstrap.php to
- * automatically load all plugins defined in config/plugins.php before
- * each test.
- *
- * @param string|null $configPath The path to the config directory. Defaults to CONFIG.
- * @return void
- * @since 5.3.0
- */
-function enablePluginLoadingForTests(?string $configPath = null): void
-{
-    $configPath = $configPath ?? CONFIG;
-    $pluginsFile = rtrim($configPath, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR . 'plugins.php';
-
-    if (!file_exists($pluginsFile)) {
-        return;
-    }
-
-    // phpcs:ignore
-    $plugins = require $pluginsFile;
-    if (!is_array($plugins)) {
-        return;
-    }
-
-    // Store the plugins configuration globally
-    Configure::write('Test.plugins', $plugins);
-}
+// Load test suite functions
+require_once CORE_PATH . 'src' . DS . 'TestSuite' . DS . 'functions.php';
 
 // Uncomment the following line to automatically load all plugins from plugins.php
 // for all tests in this application:
-// enablePluginLoadingForTests();
+// \Cake\TestSuite\enablePluginLoadingForTests();

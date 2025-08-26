@@ -20,9 +20,11 @@ use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use RuntimeException;
+use function Cake\TestSuite\enablePluginLoadingForTests;
 
 /**
- * Tests for the global plugin loading function in tests/bootstrap.php
+ * Tests for the global plugin loading function in src/TestSuite/functions.php
  */
 class PluginBootstrapTest extends TestCase
 {
@@ -108,6 +110,39 @@ class PluginBootstrapTest extends TestCase
 
         // Should not throw exception and configuration should remain null
         $this->assertNull(Configure::read('Test.plugins'));
+    }
+
+    /**
+     * Test that enablePluginLoadingForTests raises error for invalid plugins.php return value
+     *
+     * @return void
+     */
+    public function testEnablePluginLoadingForTestsWithInvalidReturn(): void
+    {
+        // Create a test plugins.php file that returns non-array
+        $testConfigDir = TMP . 'test_invalid_config' . DS;
+        if (!is_dir($testConfigDir)) {
+            mkdir($testConfigDir, 0777, true);
+        }
+
+        file_put_contents(
+            $testConfigDir . 'plugins.php',
+            '<?php return "not an array";',
+        );
+
+        // Clear any existing configuration
+        Configure::delete('Test.plugins');
+
+        // Expect exception when plugins.php returns non-array
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('The plugins configuration file');
+        $this->expectExceptionMessage('must return an array');
+
+        enablePluginLoadingForTests($testConfigDir);
+
+        // Clean up (won't reach here due to exception)
+        unlink($testConfigDir . 'plugins.php');
+        rmdir($testConfigDir);
     }
 
     /**
