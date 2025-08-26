@@ -96,7 +96,7 @@ class PluginBootstrapTest extends TestCase
     }
 
     /**
-     * Test that enablePluginLoadingForTests handles missing file gracefully
+     * Test that enablePluginLoadingForTests throws exception for missing file
      *
      * @return void
      */
@@ -105,11 +105,12 @@ class PluginBootstrapTest extends TestCase
         // Clear any existing configuration
         Configure::delete('Test.plugins');
 
+        // Expect exception when plugins.php file doesn't exist
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('Unable to load plugins list');
+
         // Try to enable with non-existent path
         enablePluginLoadingForTests('/non/existent/path/');
-
-        // Should not throw exception and configuration should remain null
-        $this->assertNull(Configure::read('Test.plugins'));
     }
 
     /**
