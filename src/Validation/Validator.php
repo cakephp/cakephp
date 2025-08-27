@@ -195,7 +195,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function __construct()
     {
         $this->useI18n ??= function_exists('\Cake\I18n\__d');
-        $this->providers = self::$_defaultProviders;
+        $this->providers = self::$defaultProviders;
         $this->providers['default'] ??= Validation::class;
     }
 
@@ -339,7 +339,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public static function getDefaultProvider(string $name): object|string|null
     {
-        return self::$_defaultProviders[$name] ?? null;
+        return self::$defaultProviders[$name] ?? null;
     }
 
     /**
@@ -352,7 +352,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public static function addDefaultProvider(string $name, object|string $object): void
     {
-        self::$_defaultProviders[$name] = $object;
+        self::$defaultProviders[$name] = $object;
     }
 
     /**
@@ -362,7 +362,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public static function getDefaultProviders(): array
     {
-        return array_keys(self::$_defaultProviders);
+        return array_keys(self::$defaultProviders);
     }
 
     /**
