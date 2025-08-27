@@ -1419,10 +1419,14 @@ class RouteTest extends TestCase
         $result = $route->match(['controller' => 'Users', 'action' => 'login']);
         $this->assertSame('/login', $result);
 
-        // Test that null prefix in defaults should match when URL doesn't have prefix key
+        // Test that null prefix in defaults should match when URL has a prefix key
         $route = new Route('/logout', ['controller' => 'Users', 'action' => 'logout', 'prefix' => null]);
-        $result = $route->match(['controller' => 'Users', 'action' => 'logout']);
+        $result = $route->match(['controller' => 'Users', 'action' => 'logout', 'prefix' => null]);
         $this->assertSame('/logout', $result);
+
+        $route = new Route('/logout', ['controller' => 'Users', 'action' => 'logout', 'prefix' => null]);
+        $result = $route->match(['controller' => 'Users', 'action' => 'logout', 'prefix' => 'admin']);
+        $this->assertNull($result);
     }
 
     /**

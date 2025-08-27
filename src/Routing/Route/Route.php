@@ -705,7 +705,7 @@ class Route
         // values as they should be treated as "not set" for matching purposes
         foreach ($defaults as $key => $val) {
             // Skip null plugin/prefix values - they shouldn't affect matching
-            if (($key === 'plugin' || $key === 'prefix') && $val === null) {
+            if (($key === 'plugin' || $key === 'prefix') && $val === null && !isset($url[$key])) {
                 continue;
             }
             if (isset($url[$key]) && $url[$key] != $val) {
