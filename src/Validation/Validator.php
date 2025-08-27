@@ -133,7 +133,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var array<string, \Cake\Validation\ValidationSet>
      */
-    protected array $_fields = [];
+    protected array $fields = [];
 
     /**
      * An associative array of objects or classes containing methods
@@ -142,7 +142,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @var array<string, object|string>
      * @phpstan-var array<string, object|class-string>
      */
-    protected array $_providers = [];
+    protected array $providers = [];
 
     /**
      * An associative array of objects or classes used as a default provider list
@@ -150,7 +150,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @var array<string, object|string>
      * @phpstan-var array<string, object|class-string>
      */
-    protected static array $_defaultProviders = [];
+    protected static array $defaultProviders = [];
 
     /**
      * Contains the validation messages associated with checking the presence
@@ -158,14 +158,14 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var array<string, string>
      */
-    protected array $_presenceMessages = [];
+    protected array $presenceMessages = [];
 
     /**
      * Whether to use I18n functions for translating default error messages
      *
      * @var bool
      */
-    protected bool $_useI18n;
+    protected bool $useI18n;
 
     /**
      * Contains the validation messages associated with checking the emptiness
@@ -173,30 +173,30 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *
      * @var array<string, string>
      */
-    protected array $_allowEmptyMessages = [];
+    protected array $allowEmptyMessages = [];
 
     /**
      * Contains the flags which specify what is empty for each corresponding field.
      *
      * @var array<string, int>
      */
-    protected array $_allowEmptyFlags = [];
+    protected array $allowEmptyFlags = [];
 
     /**
      * Whether to apply last flag to generated rule(s).
      *
      * @var bool
      */
-    protected bool $_stopOnFailure = false;
+    protected bool $stopOnFailure = false;
 
     /**
      * Constructor
      */
     public function __construct()
     {
-        $this->_useI18n ??= function_exists('\Cake\I18n\__d');
-        $this->_providers = self::$_defaultProviders;
-        $this->_providers['default'] ??= Validation::class;
+        $this->useI18n ??= function_exists('\Cake\I18n\__d');
+        $this->providers = self::$_defaultProviders;
+        $this->providers['default'] ??= Validation::class;
     }
 
     /**
@@ -210,7 +210,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function setStopOnFailure(bool $stopOnFailure = true): static
     {
-        $this->_stopOnFailure = $stopOnFailure;
+        $this->stopOnFailure = $stopOnFailure;
 
         return $this;
     }
@@ -227,7 +227,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         $errors = [];
 
-        foreach ($this->_fields as $name => $field) {
+        foreach ($this->fields as $name => $field) {
             if (!empty($context['fields']) && !in_array($name, $context['fields'], true)) {
                 continue;
             }
@@ -248,8 +248,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             $canBeEmpty = $this->canBeEmpty($field, $context);
 
             $flags = static::EMPTY_NULL;
-            if (isset($this->_allowEmptyFlags[$name])) {
-                $flags = $this->_allowEmptyFlags[$name];
+            if (isset($this->allowEmptyFlags[$name])) {
+                $flags = $this->allowEmptyFlags[$name];
             }
 
             $isEmpty = $this->isEmpty($data[$name], $flags);
@@ -283,12 +283,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function field(string $name, ?ValidationSet $set = null): ValidationSet
     {
-        if (empty($this->_fields[$name])) {
+        if (empty($this->fields[$name])) {
             $set = $set ?: new ValidationSet();
-            $this->_fields[$name] = $set;
+            $this->fields[$name] = $set;
         }
 
-        return $this->_fields[$name];
+        return $this->fields[$name];
     }
 
     /**
@@ -299,7 +299,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function hasField(string $name): bool
     {
-        return isset($this->_fields[$name]);
+        return isset($this->fields[$name]);
     }
 
     /**
@@ -315,7 +315,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function setProvider(string $name, object|string $object): static
     {
-        $this->_providers[$name] = $object;
+        $this->providers[$name] = $object;
 
         return $this;
     }
@@ -328,7 +328,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function getProvider(string $name): object|string|null
     {
-        return $this->_providers[$name] ?? null;
+        return $this->providers[$name] ?? null;
     }
 
     /**
@@ -372,7 +372,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function providers(): array
     {
-        return array_keys($this->_providers);
+        return array_keys($this->providers);
     }
 
     /**
@@ -383,7 +383,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function offsetExists(mixed $field): bool
     {
-        return isset($this->_fields[$field]);
+        return isset($this->fields[$field]);
     }
 
     /**
@@ -417,7 +417,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             }
             $value = $set;
         }
-        $this->_fields[$offset] = $value;
+        $this->fields[$offset] = $value;
     }
 
     /**
@@ -428,7 +428,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function offsetUnset(mixed $field): void
     {
-        unset($this->_fields[$field]);
+        unset($this->fields[$field]);
     }
 
     /**
@@ -438,7 +438,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function getIterator(): Traversable
     {
-        return new ArrayIterator($this->_fields);
+        return new ArrayIterator($this->fields);
     }
 
     /**
@@ -448,7 +448,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function count(): int
     {
-        return count($this->_fields);
+        return count($this->fields);
     }
 
     /**
@@ -513,12 +513,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         $rule += [
             'rule' => $name,
-            'last' => $this->_stopOnFailure,
+            'last' => $this->stopOnFailure,
             'provider' => 'default',
             'pass' => [],
         ];
 
-        $provider = $this->_providers[$rule['provider']];
+        $provider = $this->providers[$rule['provider']];
         $method = $rule['rule'];
         if (is_string($method)) {
             $callable = [$provider, $method];
@@ -662,7 +662,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function remove(string $field, ?string $rule = null): static
     {
         if ($rule === null) {
-            unset($this->_fields[$field]);
+            unset($this->fields[$field]);
         } else {
             $this->field($field)->remove($rule);
         }
@@ -709,7 +709,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
 
             $this->field((string)$fieldName)->requirePresence($settings[$fieldName]['mode']);
             if ($settings[$fieldName]['message']) {
-                $this->_presenceMessages[$fieldName] = $settings[$fieldName]['message'];
+                $this->presenceMessages[$fieldName] = $settings[$fieldName]['message'];
             }
         }
 
@@ -793,10 +793,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     ): static {
         $this->field($field)->allowEmpty($when);
         if ($message) {
-            $this->_allowEmptyMessages[$field] = $message;
+            $this->allowEmptyMessages[$field] = $message;
         }
         if ($flags !== null) {
-            $this->_allowEmptyFlags[$field] = $flags;
+            $this->allowEmptyFlags[$field] = $flags;
         }
 
         return $this;
@@ -1111,7 +1111,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function notBlank(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'This field cannot be left empty';
             } else {
                 $message = __d('cake', 'This field cannot be left empty');
@@ -1138,7 +1138,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function alphaNumeric(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be alphanumeric';
             } else {
                 $message = __d('cake', 'The provided value must be alphanumeric');
@@ -1165,7 +1165,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function notAlphaNumeric(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must not be alphanumeric';
             } else {
                 $message = __d('cake', 'The provided value must not be alphanumeric');
@@ -1192,7 +1192,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function asciiAlphaNumeric(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be ASCII-alphanumeric';
             } else {
                 $message = __d('cake', 'The provided value must be ASCII-alphanumeric');
@@ -1222,7 +1222,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must not be ASCII-alphanumeric';
             } else {
                 $message = __d('cake', 'The provided value must not be ASCII-alphanumeric');
@@ -1261,7 +1261,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $upperBound = array_shift($range);
 
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf(
                     'The length of the provided value must be between `%s` and `%s`, inclusively',
                     $lowerBound,
@@ -1309,7 +1309,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 if ($type === 'all') {
                     $message = 'The provided value must be a valid credit card number of any type';
                 } else {
@@ -1357,7 +1357,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be greater than `%s`', $value);
             } else {
                 $message = __d('cake', 'The provided value must be greater than `{0}`', $value);
@@ -1389,7 +1389,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be greater than or equal to `%s`', $value);
             } else {
                 $message = __d('cake', 'The provided value must be greater than or equal to `{0}`', $value);
@@ -1421,7 +1421,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be less than `%s`', $value);
             } else {
                 $message = __d('cake', 'The provided value must be less than `{0}`', $value);
@@ -1453,7 +1453,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be less than or equal to `%s`', $value);
             } else {
                 $message = __d('cake', 'The provided value must be less than or equal to `{0}`', $value);
@@ -1485,7 +1485,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be equal to `%s`', $value);
             } else {
                 $message = __d('cake', 'The provided value must be equal to `{0}`', $value);
@@ -1517,7 +1517,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must not be equal to `%s`', $value);
             } else {
                 $message = __d('cake', 'The provided value must not be equal to `{0}`', $value);
@@ -1551,7 +1551,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be same as `%s`', $secondField);
             } else {
                 $message = __d('cake', 'The provided value must be same as `{0}`', $secondField);
@@ -1584,7 +1584,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must not be same as `%s`', $secondField);
             } else {
                 $message = __d('cake', 'The provided value must not be same as `{0}`', $secondField);
@@ -1617,7 +1617,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be equal to the one of field `%s`', $secondField);
             } else {
                 $message = __d(
@@ -1654,7 +1654,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must not be equal to the one of field `%s`', $secondField);
             } else {
                 $message = __d(
@@ -1691,7 +1691,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be greater than the one of field `%s`', $secondField);
             } else {
                 $message = __d(
@@ -1728,7 +1728,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf(
                     'The provided value must be greater than or equal to the one of field `%s`',
                     $secondField,
@@ -1768,7 +1768,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be less than the one of field `%s`', $secondField);
             } else {
                 $message = __d(
@@ -1805,7 +1805,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf(
                     'The provided value must be less than or equal to the one of field `%s`',
                     $secondField,
@@ -1860,7 +1860,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $formatEnumeration = implode(', ', $formats);
 
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf(
                     'The provided value must be a date of one of these formats: `%s`',
                     $formatEnumeration,
@@ -1922,7 +1922,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $formatEnumeration = implode(', ', $formats);
 
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf(
                     'The provided value must be a date and time of one of these formats: `%s`',
                     $formatEnumeration,
@@ -1956,7 +1956,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function time(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be a time';
             } else {
                 $message = __d('cake', 'The provided value must be a time');
@@ -1988,7 +1988,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be a localized time, date or date and time';
             } else {
                 $message = __d('cake', 'The provided value must be a localized time, date or date and time');
@@ -2015,7 +2015,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function boolean(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be a boolean';
             } else {
                 $message = __d('cake', 'The provided value must be a boolean');
@@ -2087,7 +2087,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     protected function defaultMessageForDecimal(?int $places = null): string
     {
-        if (!$this->_useI18n) {
+        if (!$this->useI18n) {
             if ($places === null) {
                 return 'The provided value must be decimal with any number of decimal places, including none';
             }
@@ -2127,7 +2127,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be an e-mail address';
             } else {
                 $message = __d('cake', 'The provided value must be an e-mail address');
@@ -2168,7 +2168,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         if ($message === null) {
             $cases = array_map(fn(BackedEnum $case) => $case->value, $enumClassName::cases());
             $caseOptions = implode('`, `', $cases);
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be one of `%s`', $caseOptions);
             } else {
                 $message = __d('cake', 'The provided value must be one of `{0}`', $caseOptions);
@@ -2197,7 +2197,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function ip(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be an IP address';
             } else {
                 $message = __d('cake', 'The provided value must be an IP address');
@@ -2224,7 +2224,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function ipv4(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be an IPv4 address';
             } else {
                 $message = __d('cake', 'The provided value must be an IPv4 address');
@@ -2251,7 +2251,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function ipv6(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be an IPv6 address';
             } else {
                 $message = __d('cake', 'The provided value must be an IPv6 address');
@@ -2283,7 +2283,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be at least `%s` characters long', $min);
             } else {
                 $message = __d('cake', 'The provided value must be at least `{0}` characters long', $min);
@@ -2315,7 +2315,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be at least `%s` bytes long', $min);
             } else {
                 $message = __d('cake', 'The provided value must be at least `{0}` bytes long', $min);
@@ -2347,7 +2347,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be at most `%s` characters long', $max);
             } else {
                 $message = __d('cake', 'The provided value must be at most `{0}` characters long', $max);
@@ -2379,7 +2379,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be at most `%s` bytes long', $max);
             } else {
                 $message = __d('cake', 'The provided value must be at most `{0}` bytes long', $max);
@@ -2406,7 +2406,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function numeric(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be numeric';
             } else {
                 $message = __d('cake', 'The provided value must be numeric');
@@ -2433,7 +2433,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function naturalNumber(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be a natural number';
             } else {
                 $message = __d('cake', 'The provided value must be a natural number');
@@ -2460,7 +2460,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function nonNegativeInteger(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be a non-negative integer';
             } else {
                 $message = __d('cake', 'The provided value must be a non-negative integer');
@@ -2499,7 +2499,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $upperBound = array_shift($range);
 
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf(
                     'The provided value must be between `%s` and `%s`, inclusively',
                     $lowerBound,
@@ -2537,7 +2537,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function url(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be a URL';
             } else {
                 $message = __d('cake', 'The provided value must be a URL');
@@ -2566,7 +2566,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function urlWithProtocol(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be a URL with protocol';
             } else {
                 $message = __d('cake', 'The provided value must be a URL with protocol');
@@ -2600,7 +2600,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $listEnumeration = implode(', ', $list);
 
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must be one of: `%s`', $listEnumeration);
             } else {
                 $message = __d(
@@ -2631,7 +2631,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function uuid(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be a UUID';
             } else {
                 $message = __d('cake', 'The provided value must be a UUID');
@@ -2663,7 +2663,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be an uploaded file';
             } else {
                 $message = __d('cake', 'The provided value must be an uploaded file');
@@ -2692,7 +2692,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function latLong(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be a latitude/longitude coordinate';
             } else {
                 $message = __d('cake', 'The provided value must be a latitude/longitude coordinate');
@@ -2719,7 +2719,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function latitude(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be a latitude';
             } else {
                 $message = __d('cake', 'The provided value must be a latitude');
@@ -2746,7 +2746,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function longitude(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be a longitude';
             } else {
                 $message = __d('cake', 'The provided value must be a longitude');
@@ -2773,7 +2773,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function ascii(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be ASCII bytes only';
             } else {
                 $message = __d('cake', 'The provided value must be ASCII bytes only');
@@ -2800,7 +2800,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function utf8(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be UTF-8 bytes only';
             } else {
                 $message = __d('cake', 'The provided value must be UTF-8 bytes only');
@@ -2829,7 +2829,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function utf8Extended(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be 3 and 4 byte UTF-8 sequences only';
             } else {
                 $message = __d('cake', 'The provided value must be 3 and 4 byte UTF-8 sequences only');
@@ -2856,7 +2856,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function integer(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be an integer';
             } else {
                 $message = __d('cake', 'The provided value must be an integer');
@@ -2883,7 +2883,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function array(string $field, ?string $message = null, Closure|string|null $when = null): static
     {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = 'The provided value must be an array';
             } else {
                 $message = __d('cake', 'The provided value must be an array');
@@ -2911,7 +2911,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         if ($message === null) {
             $message = 'The provided value must be scalar';
-            if ($this->_useI18n) {
+            if ($this->useI18n) {
                 $message = __d('cake', 'The provided value must be scalar');
             }
         }
@@ -2937,7 +2937,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     {
         if ($message === null) {
             $message = 'The provided value must be a hex color';
-            if ($this->_useI18n) {
+            if ($this->useI18n) {
                 $message = __d('cake', 'The provided value must be a hex color');
             }
         }
@@ -2969,7 +2969,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     ): static {
         if ($message === null) {
             $message = 'The provided value must be a set of multiple options';
-            if ($this->_useI18n) {
+            if ($this->useI18n) {
                 $message = __d('cake', 'The provided value must be a set of multiple options');
             }
         }
@@ -3002,7 +3002,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must have at least `%s` elements', $count);
             } else {
                 $message = __d('cake', 'The provided value must have at least `{0}` elements', $count);
@@ -3041,7 +3041,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must have at most `%s` elements', $count);
             } else {
                 $message = __d('cake', 'The provided value must have at most `{0}` elements', $count);
@@ -3071,7 +3071,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function isEmptyAllowed(string $field, bool $newRecord): bool
     {
-        $providers = $this->_providers;
+        $providers = $this->providers;
         $data = [];
         $context = compact('data', 'newRecord', 'field', 'providers');
 
@@ -3088,7 +3088,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function isPresenceRequired(string $field, bool $newRecord): bool
     {
-        $providers = $this->_providers;
+        $providers = $this->providers;
         $data = [];
         $context = compact('data', 'newRecord', 'field', 'providers');
 
@@ -3112,7 +3112,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         Closure|string|null $when = null,
     ): static {
         if ($message === null) {
-            if (!$this->_useI18n) {
+            if (!$this->useI18n) {
                 $message = sprintf('The provided value must match against the pattern `%s`', $regex);
             } else {
                 $message = __d('cake', 'The provided value must match against the pattern `{0}`', $regex);
@@ -3134,15 +3134,15 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function getRequiredMessage(string $field): ?string
     {
-        if (!isset($this->_fields[$field])) {
+        if (!isset($this->fields[$field])) {
             return null;
         }
 
-        if (isset($this->_presenceMessages[$field])) {
-            return $this->_presenceMessages[$field];
+        if (isset($this->presenceMessages[$field])) {
+            return $this->presenceMessages[$field];
         }
 
-        if (!$this->_useI18n) {
+        if (!$this->useI18n) {
             return 'This field is required';
         }
 
@@ -3157,21 +3157,21 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function getNotEmptyMessage(string $field): ?string
     {
-        if (!isset($this->_fields[$field])) {
+        if (!isset($this->fields[$field])) {
             return null;
         }
 
-        foreach ($this->_fields[$field] as $rule) {
+        foreach ($this->fields[$field] as $rule) {
             if ($rule->name === 'notBlank' && $rule->message) {
                 return $rule->message;
             }
         }
 
-        if (isset($this->_allowEmptyMessages[$field])) {
-            return $this->_allowEmptyMessages[$field];
+        if (isset($this->allowEmptyMessages[$field])) {
+            return $this->allowEmptyMessages[$field];
         }
 
-        if (!$this->_useI18n) {
+        if (!$this->useI18n) {
             return 'This field cannot be left empty';
         }
 
@@ -3301,7 +3301,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         $errors = [];
         $context = compact('newRecord', 'data', 'field') + $context;
 
-        if (!$this->_useI18n) {
+        if (!$this->useI18n) {
             $message = 'The provided value is invalid';
         } else {
             $message = __d('cake', 'The provided value is invalid');
@@ -3337,7 +3337,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     public function __debugInfo(): array
     {
         $fields = [];
-        foreach ($this->_fields as $name => $fieldSet) {
+        foreach ($this->fields as $name => $fieldSet) {
             $fields[$name] = [
                 'isPresenceRequired' => $fieldSet->isPresenceRequired(),
                 'isEmptyAllowed' => $fieldSet->isEmptyAllowed(),
@@ -3346,12 +3346,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         return [
-            '_presenceMessages' => $this->_presenceMessages,
-            '_allowEmptyMessages' => $this->_allowEmptyMessages,
-            '_allowEmptyFlags' => $this->_allowEmptyFlags,
-            '_useI18n' => $this->_useI18n,
-            '_stopOnFailure' => $this->_stopOnFailure,
-            '_providers' => array_keys($this->_providers),
+            '_presenceMessages' => $this->presenceMessages,
+            '_allowEmptyMessages' => $this->allowEmptyMessages,
+            '_allowEmptyFlags' => $this->allowEmptyFlags,
+            '_useI18n' => $this->useI18n,
+            '_stopOnFailure' => $this->stopOnFailure,
+            '_providers' => array_keys($this->providers),
             '_fields' => $fields,
         ];
     }

@@ -15,5 +15,5 @@ class NoI18nValidator extends Validator
      *
      * @var bool
      */
-    protected bool $_useI18n = false;
+    protected bool $useI18n = false;
 }

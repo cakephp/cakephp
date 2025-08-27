@@ -124,7 +124,7 @@ class Validation
      *
      * @var array<string, string>
      */
-    protected static array $_pattern = [
+    protected static array $pattern = [
         'hostname' => '(?:[_\p{L}0-9][-_\p{L}0-9]*\.)*(?:[\p{L}0-9][-\p{L}0-9]{0,62})\.(?:(?:[a-z]{2}\.)?[a-z]{2,})',
         'latitude' => '[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?)',
         'longitude' => '[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)',
