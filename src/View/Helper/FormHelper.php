@@ -105,9 +105,9 @@ class FormHelper extends Helper
             // Used for checkboxes in checkbox() and multiCheckbox().
             'checkbox' => '<input type="checkbox" name="{{name}}" value="{{value}}"{{attrs}}>',
             // Input group wrapper for checkboxes created via control().
-            'checkboxFormGroup' => '{{label}}',
+            'checkboxFormGroup' => '{{input}}{{label}}',
             // Wrapper container for checkboxes in a multicheckbox input
-            'checkboxWrapper' => '<div class="checkbox">{{label}}</div>',
+            'checkboxWrapper' => '<div class="checkbox">{{input}}{{label}}</div>',
             // Error message wrapper elements.
             'error' => '<div class="error-message" id="{{id}}">{{content}}</div>',
             // Container for error items.
@@ -156,7 +156,7 @@ class FormHelper extends Helper
             // Radio input element,
             'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
             // Wrapping container for radio input/label,
-            'radioWrapper' => '{{label}}',
+            'radioWrapper' => '<div class="radio">{{input}}{{label}}</div>',
             // Textarea input element,
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
             // Container for submit buttons.
@@ -179,6 +179,8 @@ class FormHelper extends Helper
         ],
         // set HTML5 validation message to custom required/empty messages
         'autoSetCustomValidity' => true,
+        // Whether checkboxes and radios should be wrapped in a label element
+        'nestedCheckboxAndRadio' => true,
     ];
 
     /**
@@ -1149,7 +1151,7 @@ class FormHelper extends Helper
 
         $nestedInput = false;
         if ($options['type'] === 'checkbox') {
-            $nestedInput = true;
+            $nestedInput = $this->getConfig('nestedCheckboxAndRadio');
         }
         $nestedInput = $options['nestedInput'] ?? $nestedInput;
         unset($options['nestedInput']);
@@ -1648,6 +1650,7 @@ class FormHelper extends Helper
     {
         $attributes['options'] = $options;
         $attributes['idPrefix'] = $this->_idPrefix;
+        $attributes['nestedInput'] ??= $this->getConfig('nestedCheckboxAndRadio');
 
         $generatedHiddenId = false;
         if (!isset($attributes['id'])) {
@@ -2181,6 +2184,7 @@ class FormHelper extends Helper
 
         if ($attributes['multiple'] === 'checkbox') {
             unset($attributes['multiple'], $attributes['empty']);
+            $attributes['nestedInput'] = $this->getConfig('nestedCheckboxAndRadio');
 
             return $this->multiCheckbox($fieldName, $options, $attributes);
         }

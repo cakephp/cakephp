@@ -47,6 +47,7 @@ class RadioWidget extends BasicWidget
         'empty' => false,
         'idPrefix' => null,
         'templateVars' => [],
+        'nestedInput' => true,
     ];
 
     /**
@@ -74,6 +75,7 @@ class RadioWidget extends BasicWidget
     {
         parent::__construct($templates);
 
+        $this->defaults['nestedInput'] = $label instanceof NestingLabelWidget;
         $this->_label = $label;
     }
 
@@ -202,6 +204,9 @@ class RadioWidget extends BasicWidget
             $radio['form'] = $data['form'];
         }
 
+        $nestedInput = $data['nestedInput'];
+        unset($data['nestedInput']);
+
         $input = $this->_templates->format('radio', [
             'name' => $radio['name'],
             'value' => $escape ? h($radio['value']) : $radio['value'],
@@ -212,19 +217,27 @@ class RadioWidget extends BasicWidget
             ),
         ]);
 
-        $label = $this->_renderLabel(
-            $radio,
-            $data['label'],
-            $input,
-            $context,
-            $escape,
-        );
-
         if (
-            $label === false &&
-            !str_contains($this->_templates->get('radioWrapper'), '{{input}}')
+            $data['label'] === false &&
+            ($nestedInput || !str_contains($this->_templates->get('radioWrapper'), '{{input}}'))
         ) {
             $label = $input;
+            $input = '';
+        } else {
+            $labelInput = $input;
+            if ($nestedInput && (!isset($data['label']['input']) || $data['label']['input'] !== false)) {
+                $input = '';
+            } else {
+                $labelInput = '';
+            }
+
+            $label = $this->_renderLabel(
+                $radio,
+                $data['label'],
+                $labelInput,
+                $context,
+                $escape,
+            );
         }
 
         return $this->_templates->format('radioWrapper', [
