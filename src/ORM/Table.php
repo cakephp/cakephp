@@ -290,18 +290,23 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      */
     public function __construct(array $config = [])
     {
-        $methodConfigs = [
-            'registryAlias',
-            'table',
-            'alias',
-            'connection',
-            'schema',
-            'entityClass',
-        ];
-        foreach ($methodConfigs as $cfg) {
-            if (isset($config[$cfg])) {
-                $this->{'set' . $cfg}($config[$cfg]);
-            }
+        if (isset($config['registryAlias'])) {
+            $this->setRegistryAlias($config['registryAlias']);
+        }
+        if (isset($config['table'])) {
+            $this->setTable($config['table']);
+        }
+        if (isset($config['alias'])) {
+            $this->setAlias($config['alias']);
+        }
+        if (isset($config['connection'])) {
+            $this->setConnection($config['connection']);
+        }
+        if (isset($config['schema'])) {
+            $this->setSchema($config['schema']);
+        }
+        if (isset($config['entityClass'])) {
+            $this->setEntityClass($config['entityClass']);
         }
         if (isset($config['validator'])) {
             if (is_array($config['validator'])) {

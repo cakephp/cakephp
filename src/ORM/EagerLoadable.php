@@ -133,14 +133,29 @@ class EagerLoadable
     public function __construct(string $name, array $config = [])
     {
         $this->name = $name;
-        $allowed = [
-            'associations', 'instance', 'config', 'canBeJoined',
-            'aliasPath', 'propertyPath', 'forMatching', 'targetProperty',
-        ];
-        foreach ($allowed as $property) {
-            if (isset($config[$property])) {
-                $this->{$property} = $config[$property];
-            }
+        if (isset($config['associations'])) {
+            $this->associations = $config['associations'];
+        }
+        if (isset($config['instance'])) {
+            $this->instance = $config['instance'];
+        }
+        if (isset($config['config'])) {
+            $this->config = $config['config'];
+        }
+        if (isset($config['canBeJoined'])) {
+            $this->canBeJoined = $config['canBeJoined'];
+        }
+        if (isset($config['aliasPath'])) {
+            $this->aliasPath = $config['aliasPath'];
+        }
+        if (isset($config['propertyPath'])) {
+            $this->propertyPath = $config['propertyPath'];
+        }
+        if (isset($config['forMatching'])) {
+            $this->forMatching = $config['forMatching'];
+        }
+        if (isset($config['targetProperty'])) {
+            $this->targetProperty = $config['targetProperty'];
         }
     }
 
