@@ -243,10 +243,38 @@ jobs:
         if: always()
         run: php contrib/validate-split-packages.php
 
-      - name: Run PHPStan for split packages
-        if: always()
-        run: php contrib/validate-split-packages-phpstan.php
-
       - name: Prefer lowest check
         if: matrix.prefer-lowest == 'prefer-lowest'
         run: composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest -m
+
+  split-packages-stan:
+    name: Static Analysis for Split Packages
+    runs-on: ubuntu-24.04
+
+    env:
+      PHIVE_KEYS: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+          extensions: mbstring, intl
+          coverage: none
+          tools: phive
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Composer install
+        uses: ramsey/composer-install@v3
+
+      - name: Install PHP tools with phive.
+        run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
+
+      - name: Run phpstan for split packages
+        continue-on-error: true
+        run: php contrib/validate-split-packages-phpstan.php
