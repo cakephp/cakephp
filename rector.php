@@ -14,10 +14,9 @@ return RectorConfig::configure()
         __DIR__ . '/tests',
     ])
 
-    ->withPhpVersion(\Rector\ValueObject\PhpVersion::PHP_82)
+    ->withPhpSets()
 
     ->withSets([
-        LevelSetList::UP_TO_PHP_82,
         SetList::CODE_QUALITY,
         SetList::CODING_STYLE,
         SetList::DEAD_CODE,
