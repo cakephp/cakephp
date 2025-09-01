@@ -298,7 +298,28 @@ class Xml
 
         $options['return'] = strtolower($options['return']);
         if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
-            return new SimpleXMLElement((string)$dom->saveXML());
+            $xmlString = (string)$dom->saveXML();
+            $check = new DOMDocument();
+            libxml_use_internal_errors(true);
+
+            if (!$check->loadXML($xmlString, LIBXML_NOWARNING | LIBXML_NOERROR)) {
+                $errors = libxml_get_errors();
+                $messages = [];
+
+                foreach ($errors as $error) {
+                    $messages[] = trim(sprintf(
+                        'File: %s, Line %d, Column %d: %s',
+                        $error->file ?: '[string input]',
+                        $error->line,
+                        $error->column,
+                        $error->message,
+                    ));
+                }
+                libxml_clear_errors();
+                throw new XmlException("Invalid XML string:\n" . implode("\n", $messages));
+            }
+
+            return new SimpleXMLElement($xmlString);
         }
 
         return $dom;

@@ -926,9 +926,7 @@ class Message implements JsonSerializable
         }
 
         $headers += $this->headers;
-        if (!isset($headers['Date'])) {
-            $headers['Date'] = date(DATE_RFC2822);
-        }
+        $headers['Date'] ??= date(DATE_RFC2822);
         if ($this->messageId !== false) {
             if ($this->messageId === true) {
                 $this->messageId = '<' . str_replace('-', '', Text::uuid()) . '@' . $this->domain . '>';
@@ -1208,9 +1206,8 @@ class Message implements JsonSerializable
             ) {
                 $fileInfo['mimetype'] = mime_content_type($fileInfo['file']);
             }
-            if (!isset($fileInfo['mimetype'])) {
-                $fileInfo['mimetype'] = 'application/octet-stream';
-            }
+            $fileInfo['mimetype'] ??= 'application/octet-stream';
+
             $attach[$name] = $fileInfo;
         }
         $this->attachments = $attach;

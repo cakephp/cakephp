@@ -117,8 +117,8 @@ class RuleInvoker
     {
         $rule = $this->rule;
         $pass = $rule($entity, $this->options + $scope);
-        if ($pass === true || empty($this->options['errorField'])) {
-            return $pass === true;
+        if ($pass === true) {
+            return true;
         }
 
         $message = $this->options['message'] ?? 'invalid';
@@ -133,7 +133,8 @@ class RuleInvoker
         } else {
             $message = [$message];
         }
-        $errorField = $this->options['errorField'];
+
+        $errorField = $this->options['errorField'] ?? ($this->name ?? '_rule');
         $entity->setError($errorField, $message);
 
         if ($entity instanceof InvalidPropertyInterface && isset($entity->{$errorField})) {

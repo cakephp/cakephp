@@ -37,8 +37,8 @@ abstract class AbstractTransport
      * Send mail
      *
      * @param \Cake\Mailer\Message $message Email message.
-     * @return array
-     * @phpstan-return array{headers: string, message: string}
+     * @return array<string, mixed> Contains 'headers' and 'message' keys. Additional keys allowed.
+     * @phpstan-return array{headers: string, message: string, ...}
      */
     abstract public function send(Message $message): array;
 

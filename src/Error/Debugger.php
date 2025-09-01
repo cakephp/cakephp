@@ -751,8 +751,6 @@ class Debugger
             foreach ($filters as $filter => $visibility) {
                 $reflectionProperties = $ref->getProperties($filter);
                 foreach ($reflectionProperties as $reflectionProperty) {
-                    $reflectionProperty->setAccessible(true);
-
                     if (
                         method_exists($reflectionProperty, 'isInitialized') &&
                         !$reflectionProperty->isInitialized($var)

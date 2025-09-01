@@ -1391,7 +1391,15 @@ class ServerRequest implements ServerRequestInterface
             $this->_environment[$key] = env($key);
         }
 
-        return $this->_environment[$key] !== null ? (string)$this->_environment[$key] : $default;
+        if ($this->_environment[$key] === null) {
+            return $default;
+        }
+
+        if (is_array($this->_environment[$key])) {
+            return implode(', ', $this->_environment[$key]);
+        }
+
+        return (string)$this->_environment[$key];
     }
 
     /**

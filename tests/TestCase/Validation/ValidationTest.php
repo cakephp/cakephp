@@ -2272,10 +2272,17 @@ class ValidationTest extends TestCase
 
     public function testUuid(): void
     {
+        // v0
         $this->assertTrue(Validation::uuid('00000000-0000-0000-0000-000000000000'));
+        // v1
         $this->assertTrue(Validation::uuid('550e8400-e29b-11d4-a716-446655440000'));
-        $this->assertFalse(Validation::uuid('BRAP-e29b-11d4-a716-446655440000'));
         $this->assertTrue(Validation::uuid('550E8400-e29b-11D4-A716-446655440000'));
+        // v4
+        $this->assertTrue(Validation::uuid('5b79da75-e0d7-4059-a759-ad6c20684376'));
+        // v7
+        $this->assertTrue(Validation::uuid('01989013-1fe3-702f-9c63-d4e051daa3d9'));
+
+        $this->assertFalse(Validation::uuid('BRAP-e29b-11d4-a716-446655440000'));
         $this->assertFalse(Validation::uuid('550e8400-e29b11d4-a716-446655440000'));
         $this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a716-4466440000'));
         $this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a71-446655440000'));

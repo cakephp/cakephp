@@ -158,12 +158,8 @@ class MultiCheckboxWidget extends BasicWidget
             if (is_array($val) && isset($val['text'], $val['value'])) {
                 $checkbox = $val;
             }
-            if (!isset($checkbox['templateVars'])) {
-                $checkbox['templateVars'] = $data['templateVars'];
-            }
-            if (!isset($checkbox['label'])) {
-                $checkbox['label'] = $data['label'];
-            }
+            $checkbox['templateVars'] ??= $data['templateVars'];
+            $checkbox['label'] ??= $data['label'];
             if (!empty($data['templateVars'])) {
                 $checkbox['templateVars'] = array_merge($data['templateVars'], $checkbox['templateVars']);
             }

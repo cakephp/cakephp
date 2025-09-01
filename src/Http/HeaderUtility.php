@@ -97,9 +97,7 @@ class HeaderUtility
                 }
             }
 
-            if (!isset($accept[$prefValue])) {
-                $accept[$prefValue] = [];
-            }
+            $accept[$prefValue] ??= [];
             if ($prefValue) {
                 $accept[$prefValue][] = $value;
             }

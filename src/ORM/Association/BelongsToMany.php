@@ -203,11 +203,7 @@ class BelongsToMany extends Association
      */
     public function getForeignKey(): array|string|false
     {
-        if (!isset($this->_foreignKey)) {
-            $this->_foreignKey = $this->_modelKey($this->getSource()->getTable());
-        }
-
-        return $this->_foreignKey;
+        return $this->_foreignKey ??= $this->_modelKey($this->getSource()->getTable());
     }
 
     /**
@@ -974,11 +970,11 @@ class BelongsToMany extends Association
         /** @var \SplObjectStorage<\Cake\Datasource\EntityInterface, null> $storage */
         $storage = new SplObjectStorage();
         foreach ($targetEntities as $e) {
-            $storage->attach($e);
+            $storage->offsetSet($e);
         }
 
         foreach ($existing as $k => $e) {
-            if ($storage->contains($e)) {
+            if ($storage->offsetExists($e)) {
                 unset($existing[$k]);
             }
         }

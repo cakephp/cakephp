@@ -362,11 +362,7 @@ class RulesChecker
      */
     public function checkDelete(EntityInterface $entity, array $options = []): bool
     {
-        return $this->_checkRules(
-            $entity,
-            $options,
-            array_merge(array_values($this->_rules), array_values($this->_deleteRules)),
-        );
+        return $this->_checkRules($entity, $options, $this->_deleteRules);
     }
 
     /**

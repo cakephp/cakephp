@@ -167,9 +167,7 @@ trait TranslateStrategyTrait
                 $options['validate'] = $this->_config['validator'];
                 $errors = [];
                 foreach ($value as $language => $fields) {
-                    if (!isset($translations[$language])) {
-                        $translations[$language] = $this->table->newEmptyEntity();
-                    }
+                    $translations[$language] ??= $this->table->newEmptyEntity();
                     $marshaller->merge($translations[$language], $fields, $options);
 
                     $translationErrors = $translations[$language]->getErrors();

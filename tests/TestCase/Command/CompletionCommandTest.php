@@ -47,6 +47,7 @@ class CompletionCommandTest extends TestCase
         parent::tearDown();
         Router::reload();
         $this->clearPlugins();
+        Configure::delete('Plugins.autoload');
     }
 
     /**

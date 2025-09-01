@@ -7,12 +7,6 @@ parameters:
 			path: src/Cache/Engine/MemcachedEngine.php
 
 		-
-			message: '#^Parameter \#1 \$value of function count expects array\|Countable, TValue\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Collection/Collection.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 1
@@ -449,15 +443,3 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: src/View/Widget/DateTimeWidget.php
-
-		-
-			message: '#^Call to function is_numeric\(\) with int\|\(non\-empty\-string&numeric\-string\) will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/View/Widget/DateTimeWidget.php
-
-		-
-			identifier: generics.interfaceConflict
-			paths:
-				- src/Datasource/ResultSetDecorator.php
-				- src/ORM/ResultSet.php

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Console;
 
 use Cake\Console\Exception\ConsoleException;
+use Cake\Core\Exception\CakeException;
 use SimpleXMLElement;
 
 /**
@@ -86,12 +87,15 @@ class ConsoleInputArgument
         ?string $default = null,
         ?string $separator = null,
     ) {
-        if (is_array($name) && isset($name['name'])) {
+        if (is_array($name)) {
+            if (!isset($name['name'])) {
+                throw new CakeException('You must provide a `name` for the argument.');
+            }
+
             foreach ($name as $key => $value) {
                 $this->{'_' . $key} = $value;
             }
         } else {
-            /** @var string $name */
             $this->_name = $name;
             $this->_help = $help;
             $this->_required = $required;

@@ -213,9 +213,7 @@ class Behavior implements EventListenerInterface
         $indexed = array_flip($defaults[$key]);
         $indexedCustom = array_flip($config[$key]);
         foreach ($indexed as $method => $alias) {
-            if (!isset($indexedCustom[$method])) {
-                $indexedCustom[$method] = $alias;
-            }
+            $indexedCustom[$method] ??= $alias;
         }
         $this->setConfig($key, array_flip($indexedCustom), false);
         unset($config[$key]);

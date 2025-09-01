@@ -84,7 +84,7 @@ class PluginLoadCommandTest extends TestCase
         Router::reload();
         $this->exec('plugin load TestPluginTwo --no-bootstrap --no-console --no-middleware --no-routes --no-services');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        Plugin::getCollection()->remove('TestPlugin');
+        Plugin::getCollection()->remove('TestPluginTwo');
 
         // Needed to not have duplicate named routes
         Router::reload();

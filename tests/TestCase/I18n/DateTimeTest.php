@@ -425,7 +425,7 @@ class DateTimeTest extends TestCase
     public function testI18nFormatUsingSystemLocale(): void
     {
         $time = new DateTime(1556864870);
-        I18n::setLocale('ar');
+        I18n::setLocale('ar-u-nu-arab');
         $this->assertSame('٢٠١٩-٠٥-٠٣', $time->i18nFormat('yyyy-MM-dd'));
 
         I18n::setLocale('en');

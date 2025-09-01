@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchemaDialect;
 use Cake\Database\Schema\TableSchema;
@@ -891,6 +892,11 @@ SQL;
                 'open_date',
                 ['type' => 'datetime', 'null' => false, 'default' => 'sysdatetimeoffset()'],
                 '[open_date] DATETIME2 NOT NULL DEFAULT SYSDATETIMEOFFSET()',
+            ],
+            [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => new QueryExpression('getutcdate()')],
+                '[open_date] DATETIME2 NOT NULL DEFAULT getutcdate()',
             ],
             [
                 'null_date',

@@ -1157,7 +1157,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Test adding rules with no errorField do not accept strings
+     * Test adding rules with no errorField now sets errors under _rule key
      */
     public function testCustomErrorMessageFromRuleNoErrorField(): void
     {
@@ -1172,7 +1172,8 @@ class RulesCheckerIntegrationTest extends TestCase
         });
 
         $this->assertFalse($table->save($entity));
-        $this->assertEmpty($entity->getErrors());
+        $this->assertNotEmpty($entity->getErrors());
+        $this->assertEquals(['So much nope'], $entity->getError('_rule'));
     }
 
     /**

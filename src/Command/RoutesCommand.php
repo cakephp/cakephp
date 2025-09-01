@@ -80,10 +80,7 @@ class RoutesCommand extends Command
             $output[] = $item;
 
             foreach ($methods as $method) {
-                if (!isset($duplicateRoutesCounter[$route->template][$method])) {
-                    $duplicateRoutesCounter[$route->template][$method] = 0;
-                }
-
+                $duplicateRoutesCounter[$route->template][$method] ??= 0;
                 $duplicateRoutesCounter[$route->template][$method]++;
             }
         }

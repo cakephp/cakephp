@@ -88,9 +88,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             if (is_object($class)) {
                 $class = $class::class;
             }
-            if (!isset($invert[$class])) {
-                $invert[$class] = [];
-            }
+            $invert[$class] ??= [];
             $invert[$class][] = $name;
         }
         $grouped = [];

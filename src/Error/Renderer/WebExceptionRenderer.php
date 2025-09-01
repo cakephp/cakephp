@@ -151,6 +151,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
 
         $class = '';
         try {
+            /** @var array $params */
             $params = $request->getAttribute('params');
             $params['controller'] = 'Error';
 
@@ -235,7 +236,7 @@ class WebExceptionRenderer implements ExceptionRendererInterface
 
         $exceptions = [$exception];
         $previous = $exception->getPrevious();
-        while ($previous != null) {
+        while ($previous !== null) {
             $exceptions[] = $previous;
             $previous = $previous->getPrevious();
         }

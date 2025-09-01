@@ -27,6 +27,36 @@ use Cake\TestSuite\TestCase;
 class RulesCheckerTest extends TestCase
 {
     /**
+     * Test adding rule for create and update
+     */
+    public function testAddingRule(): void
+    {
+        $entity = new Entity([
+            'name' => 'larry',
+        ]);
+
+        $rules = new RulesChecker();
+        $rules->add(
+            function () {
+                return false;
+            },
+            'ruleName',
+            ['errorField' => 'name'],
+        );
+
+        // Rules added with `add()` do not apply to delete operations
+        $this->assertTrue($rules->check($entity, RulesChecker::DELETE));
+        $this->assertEmpty($entity->getErrors());
+
+        $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
+
+        $entity->clean();
+        $this->assertFalse($rules->check($entity, RulesChecker::UPDATE));
+        $this->assertEquals(['ruleName' => 'invalid'], $entity->getError('name'));
+    }
+
+    /**
      * Test adding rule for update mode
      */
     public function testAddingRuleDeleteMode(): void
@@ -186,7 +216,8 @@ class RulesCheckerTest extends TestCase
         });
 
         $this->assertFalse($rules->check($entity, RulesChecker::CREATE));
-        $this->assertEmpty($entity->getErrors());
+        // When no errorField is specified, errors are set on '_rule' field
+        $this->assertEquals(['_rule' => ['invalid']], $entity->getErrors());
     }
 
     public function testRemove(): void

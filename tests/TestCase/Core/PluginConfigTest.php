@@ -34,6 +34,7 @@ class PluginConfigTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
+        Configure::delete('plugins');
         $this->clearPlugins();
         $this->pluginsListPath = ROOT . DS . 'cakephp-plugins.php';
         if (file_exists($this->pluginsListPath)) {
@@ -51,6 +52,7 @@ class PluginConfigTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        Configure::delete('plugins');
         $this->clearPlugins();
         if (file_exists($this->pluginsListPath)) {
             unlink($this->pluginsListPath);

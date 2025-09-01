@@ -2087,6 +2087,38 @@ class RouterTest extends TestCase
         }
     }
 
+    /**
+     * Test that null prefix in route defaults works correctly
+     * This is a regression test for https://github.com/cakephp/cakephp/issues/18860
+     */
+    public function testNullPrefixInDefaults(): void
+    {
+        Router::reload();
+        $routes = Router::createRouteBuilder('/');
+
+        // Test the exact issue from the GitHub report
+        $routes->connect('/login', ['controller' => 'Users', 'action' => 'login', 'prefix' => null]);
+        $routes->connect('/logout', ['controller' => 'Users', 'action' => 'logout', 'prefix' => null]);
+
+        // Test that URL generation works with null prefix
+        $url = Router::url(['controller' => 'Users', 'action' => 'login']);
+        $this->assertSame('/login', $url, 'Should generate /login not /users/login');
+
+        $url = Router::url(['controller' => 'Users', 'action' => 'logout']);
+        $this->assertSame('/logout', $url, 'Should generate /logout not /users/logout');
+
+        // Test that parsing works correctly
+        $result = Router::parseRequest(new ServerRequest(['url' => '/login']));
+        $this->assertSame('Users', $result['controller']);
+        $this->assertSame('login', $result['action']);
+        $this->assertNull($result['prefix']);
+
+        $result = Router::parseRequest(new ServerRequest(['url' => '/logout']));
+        $this->assertSame('Users', $result['controller']);
+        $this->assertSame('logout', $result['action']);
+        $this->assertNull($result['prefix']);
+    }
+
     public function testRouteInvalidDefaults(): void
     {
         $this->expectException(CakeException::class);

@@ -880,7 +880,7 @@ class I18nExtractCommand extends Command
     protected function _isPathUsable(string $path): bool
     {
         if (!is_dir($path)) {
-            mkdir($path, 0770, true);
+            mkdir($path, 0755, true);
         }
 
         return is_dir($path) && is_writable($path);

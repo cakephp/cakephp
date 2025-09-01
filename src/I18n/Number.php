@@ -347,9 +347,7 @@ class Number
             }
         }
 
-        if (!isset(static::$_formatters[$locale][$type])) {
-            static::$_formatters[$locale][$type] = new NumberFormatter($locale, $type);
-        }
+        static::$_formatters[$locale][$type] ??= new NumberFormatter($locale, $type);
 
         /** @var \NumberFormatter $formatter */
         $formatter = static::$_formatters[$locale][$type];

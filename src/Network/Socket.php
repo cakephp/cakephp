@@ -248,9 +248,8 @@ class Socket
             }
             unset($this->_config[$key]);
         }
-        if (!isset($this->_config['context']['ssl']['SNI_enabled'])) {
-            $this->_config['context']['ssl']['SNI_enabled'] = true;
-        }
+        $this->_config['context']['ssl']['SNI_enabled'] ??= true;
+
         if (empty($this->_config['context']['ssl']['peer_name'])) {
             $this->_config['context']['ssl']['peer_name'] = $host;
         }

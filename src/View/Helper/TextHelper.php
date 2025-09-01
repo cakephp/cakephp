@@ -181,7 +181,7 @@ class TextHelper extends Helper
      * Prepares the link label.
      *
      * @param string $name Link label.
-     * @param array $options<string, mixed> $htmlOptions The options for the generated link label.
+     * @param array<string, mixed> $options The options for the generated link label.
      * @return string Modified link label.
      */
     protected function _prepareLinkLabel(string $name, array $options): string

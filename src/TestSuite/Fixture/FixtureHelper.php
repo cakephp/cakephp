@@ -90,10 +90,7 @@ class FixtureHelper
                 throw new UnexpectedValueException(sprintf('Could not find fixture `%s`.', $fixtureName));
             }
 
-            if (!isset($cachedFixtures[$className])) {
-                $cachedFixtures[$className] = new $className();
-            }
-
+            $cachedFixtures[$className] ??= new $className();
             $fixtures[$className] = $cachedFixtures[$className];
         }
 
