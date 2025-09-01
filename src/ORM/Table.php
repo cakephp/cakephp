@@ -2059,7 +2059,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             return false;
         }
 
-        $data = $entity->extract($this->getSchema()->columns(), true);
+        $data = $entity->extract($this->getSchema()->columns(), true, true);
         $isNew = $entity->isNew();
 
         if ($isNew) {

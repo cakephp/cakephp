@@ -1776,4 +1776,208 @@ class EntityTest extends TestCase
 
         $this->assertFalse($entity->hasErrors());
     }
+
+    /**
+     * Test accessor with forPersistence parameter for encryption use case
+     */
+    public function testAccessorWithForPersistenceParameter(): void
+    {
+        $entity = new class extends Entity {
+            protected function _getEncryptedField(?string $value, bool $forPersistence = false): ?string
+            {
+                if ($value === null) {
+                    return null;
+                }
+
+                // For persistence, return the raw encrypted value
+                if ($forPersistence) {
+                    return $value;
+                }
+
+                // For display, decrypt the value
+                return base64_decode($value);
+            }
+
+            protected function _setEncryptedField(?string $value): ?string
+            {
+                if ($value === null) {
+                    return null;
+                }
+
+                // Encrypt the value when setting
+                return base64_encode($value);
+            }
+        };
+
+        // Set a plain text value
+        $plainText = 'sensitive data';
+        $entity->set('encrypted_field', $plainText);
+
+        // Getting for display should decrypt
+        $this->assertEquals($plainText, $entity->get('encrypted_field', false));
+
+        // Getting for persistence should return encrypted
+        $this->assertEquals(base64_encode($plainText), $entity->get('encrypted_field', true));
+    }
+
+    /**
+     * Test backward compatibility with legacy accessors without forPersistence
+     */
+    public function testLegacyAccessorBackwardCompatibility(): void
+    {
+        $entity = new class extends Entity {
+            protected function _getLegacyField(?string $value): ?string
+            {
+                if ($value === null) {
+                    return null;
+                }
+
+                return strtoupper($value);
+            }
+        };
+
+        $entity->set('legacy_field', 'test');
+
+        // Both calls should work and return the same transformed value
+        $this->assertEquals('TEST', $entity->get('legacy_field', false));
+        $this->assertEquals('TEST', $entity->get('legacy_field', true));
+    }
+
+    /**
+     * Test extract method with forPersistence parameter
+     */
+    public function testExtractWithForPersistence(): void
+    {
+        $entity = new class extends Entity {
+            protected function _getPassword(?string $value, bool $forPersistence = false): ?string
+            {
+                if ($value === null) {
+                    return null;
+                }
+
+                // For persistence, return the hash
+                if ($forPersistence) {
+                    return $value;
+                }
+
+                // For display, return masked
+                return '********';
+            }
+
+            protected function _setPassword(?string $value): ?string
+            {
+                if ($value === null) {
+                    return null;
+                }
+
+                // Simple hash for testing
+                return '$hash$' . base64_encode($value);
+            }
+        };
+
+        $entity->set('password', 'secret');
+        $entity->set('username', 'john');
+
+        // Extract for display
+        $displayData = $entity->extract(['username', 'password'], false, false);
+        $this->assertEquals('john', $displayData['username']);
+        $this->assertEquals('********', $displayData['password']);
+
+        // Extract for persistence
+        $saveData = $entity->extract(['username', 'password'], false, true);
+        $this->assertEquals('john', $saveData['username']);
+        $this->assertEquals('$hash$' . base64_encode('secret'), $saveData['password']);
+    }
+
+    /**
+     * Test toArray uses display values (forPersistence=false)
+     */
+    public function testToArrayUsesDisplayValues(): void
+    {
+        $entity = new class extends Entity {
+            protected function _getSensitiveData(?string $value, bool $forPersistence = false): ?string
+            {
+                if ($value === null) {
+                    return null;
+                }
+
+                if ($forPersistence) {
+                    return $value;
+                }
+
+                // Mask for display
+                return 'REDACTED';
+            }
+
+            protected function _setSensitiveData(?string $value): ?string
+            {
+                return 'encrypted:' . $value;
+            }
+        };
+
+        $entity->set('sensitive_data', 'secret');
+        $entity->set('public_data', 'visible');
+
+        $array = $entity->toArray();
+
+        // toArray should use display value (masked)
+        $this->assertEquals('REDACTED', $array['sensitive_data']);
+        $this->assertEquals('visible', $array['public_data']);
+    }
+
+    /**
+     * Test real-world scenario: fixing the double-transformation issue
+     */
+    public function testFixesDoubleTransformationIssue(): void
+    {
+        // Simulate encrypted field that was problematic in issue #17921
+        $entity = new class extends Entity {
+            protected function _getEncrypted(?string $value, bool $forPersistence = false): ?string
+            {
+                if ($value === null) {
+                    return null;
+                }
+
+                // This is the fix: return raw value for persistence
+                if ($forPersistence) {
+                    return $value;
+                }
+
+                // Decrypt for display (simplified)
+                if (strpos($value, 'enc:') === 0) {
+                    return substr($value, 4);
+                }
+
+                return $value;
+            }
+
+            protected function _setEncrypted(?string $value): ?string
+            {
+                if ($value === null) {
+                    return null;
+                }
+
+                // Encrypt on set
+                return 'enc:' . $value;
+            }
+        };
+
+        // Set a value
+        $entity->set('encrypted', 'mydata');
+
+        // Display should show decrypted
+        $this->assertEquals('mydata', $entity->get('encrypted'));
+
+        // Persistence should save encrypted
+        $this->assertEquals('enc:mydata', $entity->get('encrypted', true));
+
+        // Simulate loading from database
+        $loadedEntity = new (get_class($entity))(['encrypted' => 'enc:mydata'], ['useSetters' => false]);
+
+        // Should decrypt correctly for display
+        $this->assertEquals('mydata', $loadedEntity->get('encrypted'));
+
+        // Should save the same encrypted value back
+        $this->assertEquals('enc:mydata', $loadedEntity->get('encrypted', true));
+    }
 }

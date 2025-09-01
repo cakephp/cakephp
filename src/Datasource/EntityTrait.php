@@ -22,6 +22,7 @@ use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
+use ReflectionMethod;
 use function Cake\Core\deprecationWarning;
 
 /**
@@ -378,10 +379,11 @@ trait EntityTrait
      * Returns the value of a field by name
      *
      * @param string $field the name of the field to retrieve
+     * @param bool $forPersistence Whether the value is being retrieved for persistence (save operations)
      * @return mixed
      * @throws \InvalidArgumentException if an empty field name is passed
      */
-    public function &get(string $field): mixed
+    public function &get(string $field, bool $forPersistence = false): mixed
     {
         if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');
@@ -396,8 +398,18 @@ trait EntityTrait
 
         $method = static::_accessor($field, 'get');
         if ($method) {
+            // Check if the accessor method accepts the forPersistence parameter
+            $reflection = new ReflectionMethod($this, $method);
+            $params = $reflection->getParameters();
+
             // Must be variable before returning: Only variable references should be returned by reference.
-            $result = $this->{$method}($value);
+            if (count($params) >= 2) {
+                // New style accessor with forPersistence parameter
+                $result = $this->{$method}($value, $forPersistence);
+            } else {
+                // Legacy accessor without forPersistence parameter
+                $result = $this->{$method}($value);
+            }
 
             return $result;
         }
@@ -687,7 +699,7 @@ trait EntityTrait
     {
         $result = [];
         foreach ($this->getVisible() as $field) {
-            $value = $this->get($field);
+            $value = $this->get($field, false);
             if (is_array($value)) {
                 $result[$field] = [];
                 foreach ($value as $k => $entity) {
@@ -812,14 +824,15 @@ trait EntityTrait
      *
      * @param array<string> $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
+     * @param bool $forPersistence Whether the values are being extracted for persistence (save operations)
      * @return array<string, mixed>
      */
-    public function extract(array $fields, bool $onlyDirty = false): array
+    public function extract(array $fields, bool $onlyDirty = false, bool $forPersistence = false): array
     {
         $result = [];
         foreach ($fields as $field) {
             if (!$onlyDirty || $this->isDirty($field)) {
-                $result[$field] = $this->has($field) ? $this->get($field) : null;
+                $result[$field] = $this->has($field) ? $this->get($field, $forPersistence) : null;
             }
         }
 
