@@ -24,7 +24,6 @@ use Cake\Database\ValueBinder;
 use Cake\ORM\Association;
 use Cake\ORM\Query\SelectQuery;
 use Closure;
-use InvalidArgumentException;
 
 /**
  * Implements the logic for loading an association using a SELECT query
@@ -240,7 +239,8 @@ class SelectLoader
     /**
      * Checks that the fetching query either has auto fields on or
      * has the foreignKey fields selected.
-     * If the required fields are missing, throws an exception.
+     * If the required fields are missing, automatically adds them to ensure
+     * entities can be properly identified and loaded.
      *
      * @param \Cake\ORM\Query\SelectQuery $fetchQuery The association fetching query
      * @param array<string> $key The foreign key fields to check
@@ -257,30 +257,21 @@ class SelectLoader
         if (!$select) {
             return;
         }
-        $missingKey = function ($fieldList, $key): bool {
-            foreach ($key as $keyField) {
-                if (!in_array($keyField, $fieldList, true)) {
-                    return true;
+
+        $missingFields = [];
+        foreach ($key as $keyField) {
+            if (!in_array($keyField, $select, true)) {
+                $driver = $fetchQuery->getDriver();
+                $quoted = $driver->quoteIdentifier($keyField);
+                if (!in_array($quoted, $select, true)) {
+                    $missingFields[] = $keyField;
                 }
             }
-
-            return false;
-        };
-
-        $missingFields = $missingKey($select, $key);
-        if ($missingFields) {
-            $driver = $fetchQuery->getDriver();
-            $quoted = array_map($driver->quoteIdentifier(...), $key);
-            $missingFields = $missingKey($select, $quoted);
         }
 
+        // Automatically add missing primary key fields to the query
         if ($missingFields) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    'You are required to select the "%s" field(s)',
-                    implode(', ', $key),
-                ),
-            );
+            $fetchQuery->select($missingFields);
         }
     }
 

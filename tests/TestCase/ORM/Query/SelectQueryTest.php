@@ -2553,6 +2553,38 @@ class SelectQueryTest extends TestCase
     }
 
     /**
+     * Tests that when selecting only specific fields from a contained association,
+     * the primary key is automatically added to ensure proper entity loading.
+     */
+    public function testContainWithOnlyNullableFields(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsTo('Authors');
+
+        // First, let's test with a regular field to ensure our fix works
+        $query = $table->find()
+            ->contain(['Authors' => function ($q) {
+                // Select only the name field (not the primary key)
+                return $q->select(['Authors.name']);
+            }])
+            ->where(['Articles.id' => 1]);
+
+        $result = $query->first();
+
+        // The author entity should be loaded
+        $this->assertNotNull($result->author);
+        $this->assertInstanceOf('Cake\ORM\Entity', $result->author);
+
+        // The primary key should have been automatically added even though we didn't select it
+        $this->assertTrue($result->author->has('id'));
+        $this->assertEquals(1, $result->author->id);
+
+        // The name field we selected should also be present
+        $this->assertTrue($result->author->has('name'));
+        $this->assertEquals('mariano', $result->author->name);
+    }
+
+    /**
      * Tests that it is possible to attach more association when using a query
      * builder for other associations
      */

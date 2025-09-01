@@ -958,6 +958,34 @@ abstract class Association
             $surrogate->isAutoFieldsEnabled()
         ) {
             $fields = array_merge($fields, $this->getTarget()->getSchema()->columns());
+        } elseif ($fields !== []) {
+            // Ensure primary key fields are always included when specific fields are selected
+            // This prevents issues with entity hydration when only nullable columns are selected
+            $primaryKey = $this->getTarget()->getPrimaryKey();
+            $primaryKeyFields = is_array($primaryKey) ? $primaryKey : [$primaryKey];
+
+            $fieldsToAdd = [];
+            foreach ($primaryKeyFields as $pkField) {
+                $found = false;
+                foreach ($fields as $field) {
+                    if (
+                        is_string($field) && (
+                        $field === $pkField ||
+                        str_ends_with($field, '.' . $pkField)
+                        )
+                    ) {
+                        $found = true;
+                        break;
+                    }
+                }
+                if (!$found) {
+                    $fieldsToAdd[] = $pkField;
+                }
+            }
+
+            if ($fieldsToAdd) {
+                $fields = array_merge($fields, $fieldsToAdd);
+            }
         }
 
         $query->select($query->aliasFields($fields, $this->_name));

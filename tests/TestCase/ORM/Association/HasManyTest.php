@@ -379,8 +379,8 @@ class HasManyTest extends TestCase
      */
     public function testEagerLoaderFieldsException(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('You are required to select the "Articles.author_id"');
+        // This test now verifies that missing foreign keys are automatically added
+        // instead of throwing an exception
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $this->article,
@@ -393,11 +393,18 @@ class HasManyTest extends TestCase
             ->with('all')
             ->willReturn($query);
 
-        $association->eagerLoader([
+        $loader = $association->eagerLoader([
             'fields' => ['id', 'title'],
             'keys' => $keys,
             'query' => $query,
         ]);
+
+        // Verify that the loader was created successfully
+        $this->assertIsCallable($loader);
+
+        // Verify that the query now includes the foreign key field
+        $select = $query->clause('select');
+        $this->assertContains('Articles.author_id', $select);
     }
 
     /**
