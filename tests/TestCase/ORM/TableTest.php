@@ -6464,9 +6464,6 @@ class TableTest extends TestCase
     public function testLoadIntoNestedAssociations(): void
     {
         $table = $this->getTableLocator()->get('Authors');
-        // Authors already has Articles association defined in AuthorsTable::initialize()
-        $articlesTable = $this->getTableLocator()->get('Articles');
-        // Articles already has Tags association via belongsToMany
 
         $entity = $table->get(1);
         // This should work without throwing an error about 'includeFields' not being an association
