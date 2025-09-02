@@ -419,11 +419,19 @@ class SelectLoader
         $filterQuery->contain([], true);
         $filterQuery->setValueBinder(new ValueBinder());
 
-        // Ignore limit if there is no order since we need all rows to find matches
-        if (!$filterQuery->clause('limit') || !$filterQuery->clause('order')) {
+        // Only remove limit and order when BOTH are missing or when order exists without limit
+        // When limit exists with order, preserve both for proper subquery results
+        $hasLimit = $filterQuery->clause('limit') !== null;
+        $hasOrder = $filterQuery->clause('order') !== null;
+
+        // Remove order if there's no limit to avoid SQL grouping errors
+        // But preserve both when they exist together
+        if (!$hasLimit) {
             $filterQuery->limit(null);
-            $filterQuery->orderBy([], true);
             $filterQuery->offset(null);
+            if ($hasOrder) {
+                $filterQuery->orderBy([], true);
+            }
         }
 
         $fields = $this->_subqueryFields($query);
