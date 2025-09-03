@@ -1126,6 +1126,27 @@ class ViewTest extends TestCase
         $this->assertPathEquals($expected, $result);
     }
 
+    /**
+     * Test fix for issue #16895 - nested template paths should work correctly
+     * with plugins even when templatePath equals name property
+     */
+    public function testGetTemplateFileNameNestedPathWithPluginWhenTemplatePathEqualsName(): void
+    {
+        $this->PostsController->setPlugin('TestPlugin');
+        // Create a view where name equals templatePath (both 'Pages')
+        // This was the condition that triggered the bug in issue #16895
+        /** @var \TestApp\View\TestView $View */
+        $View = $this->PostsController->createView(TestView::class, null, null, ['name' => 'Pages']);
+        $View->setTemplatePath('Pages');
+
+        $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
+        $result = $View->getTemplateFileName('subfolder/example');
+        // The bug would have resulted in looking for 'templates/subfolder/example.php'
+        // instead of 'templates/Pages/subfolder/example.php'
+        $expected = $pluginPath . 'templates' . DS . 'Pages' . DS . 'subfolder' . DS . 'example.php';
+        $this->assertPathEquals($expected, $result);
+    }
+
     public function testGetTemplateException(): void
     {
         $this->expectException(CakeException::class);
