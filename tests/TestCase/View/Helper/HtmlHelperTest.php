@@ -727,6 +727,33 @@ class HtmlHelperTest extends TestCase
     }
 
     /**
+     * Test CSS link with preload and as attributes
+     */
+    public function testCssWithPreloadAndAs(): void
+    {
+        // Test with rel='preload' and as='style'
+        $result = $this->Html->css('screen', ['rel' => 'preload', 'as' => 'style']);
+        $expected = [
+            'link' => ['rel' => 'preload', 'href' => 'css/screen.css', 'as' => 'style'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Test with just as='style' (should keep default rel='stylesheet')
+        $result = $this->Html->css('screen', ['as' => 'style', 'once' => false]);
+        $expected = [
+            'link' => ['rel' => 'stylesheet', 'href' => 'css/screen.css', 'as' => 'style'],
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Test with other custom attributes alongside rel
+        $result = $this->Html->css('screen', ['rel' => 'preload', 'as' => 'style', 'crossorigin' => 'anonymous', 'once' => false]);
+        $expected = [
+            'link' => ['rel' => 'preload', 'href' => 'css/screen.css', 'as' => 'style', 'crossorigin' => 'anonymous'],
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testPluginCssLink method
      */
     public function testPluginCssLink(): void
