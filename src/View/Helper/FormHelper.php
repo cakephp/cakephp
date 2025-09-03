@@ -156,7 +156,7 @@ class FormHelper extends Helper
             // Radio input element,
             'radio' => '<input type="radio" name="{{name}}" value="{{value}}"{{attrs}}>',
             // Wrapping container for radio input/label,
-            'radioWrapper' => '<div class="radio">{{input}}{{label}}</div>',
+            'radioWrapper' => '{{input}}{{label}}',
             // Textarea input element,
             'textarea' => '<textarea name="{{name}}"{{attrs}}>{{value}}</textarea>',
             // Container for submit buttons.
