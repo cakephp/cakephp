@@ -648,6 +648,10 @@ class HtmlHelper extends Helper
     public function scriptEnd(): ?string
     {
         $buffer = (string)ob_get_clean();
+        preg_match('/\s*<script>(.*?)<\/script>\s*/', $buffer, $matches);
+        if ($matches) {
+            $buffer = $matches[1];
+        }
         $options = $this->_scriptBlockOptions;
         $this->_scriptBlockOptions = [];
 

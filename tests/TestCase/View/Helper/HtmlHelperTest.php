@@ -1318,6 +1318,62 @@ class HtmlHelperTest extends TestCase
     }
 
     /**
+     * script start and end should remove simple script tags.
+     */
+    public function testScriptStartAndScriptEndRemoveSimpleTag(): void
+    {
+        $this->Html->scriptStart();
+        echo '<script>this is some javascript</script>';
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            '<script',
+            'this is some javascript',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Only <script>...</script> is removed.
+        $this->Html->scriptStart();
+        echo '<script type="text/javascript">this is some javascript</script>';
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            '<script',
+            'script' => ['type' => 'text/javascript'],
+            'this is some javascript',
+            '/script',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Leading whitespace on tag is ignored.
+        $this->Html->scriptStart();
+        echo '  <script>  this is some javascript </script>';
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            '<script',
+            ' this is some javascript ',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // CSP nonce should be applied to the generated script tag.
+        $nonce = 'r@ndomV4lue';
+        $request = $this->View->getRequest()
+            ->withAttribute('cspScriptNonce', $nonce);
+        $this->View->setRequest($request);
+
+        $this->Html->scriptStart();
+        echo '<script>alert("hello");</script>';
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            'script' => ['nonce' => $nonce],
+            'alert("hello");',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * testCharsetTag method
      */
     public function testCharsetTag(): void
