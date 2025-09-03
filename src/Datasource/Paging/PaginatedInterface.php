@@ -24,7 +24,7 @@ use Traversable;
  *
  * @template TKey
  * @template-covariant TValue
- * @template-extends Traversable<TKey, TValue>
+ * @template-extends \Traversable<TKey, TValue>
  * @method array<mixed> toArray() Get the paginated items as an array
  */
 interface PaginatedInterface extends Countable, Traversable
