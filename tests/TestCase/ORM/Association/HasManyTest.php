@@ -388,22 +388,28 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
-        $query = $this->article->selectQuery();
+
+        // Create a fresh query that will be returned by the mock
+        $fetchQuery = $this->article->selectQuery();
         $this->article->method('find')
             ->with('all')
-            ->willReturn($query);
+            ->willReturn($fetchQuery);
+
+        // The query passed to eagerLoader is a different query
+        $sourceQuery = $this->article->selectQuery();
 
         $loader = $association->eagerLoader([
             'fields' => ['id', 'title'],
             'keys' => $keys,
-            'query' => $query,
+            'query' => $sourceQuery,
         ]);
 
         // Verify that the loader was created successfully
         $this->assertIsCallable($loader);
 
-        // Verify that the query now includes the foreign key field
-        $select = $query->clause('select');
+        // The foreign key should be added to the fetch query (the one returned by find())
+        // not the source query that was passed in options
+        $select = $fetchQuery->clause('select');
         $this->assertContains('Articles.author_id', $select);
     }
 
