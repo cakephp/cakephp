@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
-use Cake\Collection\CollectionInterface;
 use Cake\Core\Configure;
 
 /**
