@@ -1374,6 +1374,158 @@ class HtmlHelperTest extends TestCase
     }
 
     /**
+     * Test that script tags with attributes are NOT stripped
+     */
+    public function testScriptStartAndScriptEndDoesNotStripTagsWithAttributes(): void
+    {
+        // Script tag with type attribute should NOT be stripped
+        $this->Html->scriptStart();
+        echo '<script type="module">import {foo} from "./module.js";</script>';
+        $result = $this->Html->scriptEnd();
+        // When script tag with attributes is not stripped, we get double nesting
+        $this->assertEquals(
+            '<script><script type="module">import {foo} from "./module.js";</script></script>',
+            $result,
+        );
+
+        // Script tag with src attribute should NOT be stripped
+        $this->Html->scriptStart();
+        echo '<script src="external.js">console.log("test");</script>';
+        $result = $this->Html->scriptEnd();
+        $this->assertEquals(
+            '<script><script src="external.js">console.log("test");</script></script>',
+            $result,
+        );
+
+        // Script tag with multiple attributes should NOT be stripped
+        $this->Html->scriptStart();
+        echo '<script async defer>console.log("async");</script>';
+        $result = $this->Html->scriptEnd();
+        $this->assertEquals(
+            '<script><script async defer>console.log("async");</script></script>',
+            $result,
+        );
+    }
+
+    /**
+     * Test multiline script content stripping
+     */
+    public function testScriptStartAndScriptEndMultilineContent(): void
+    {
+        // Test multiline content - the inner script tags should be stripped
+        $this->Html->scriptStart();
+        echo "<script>\n";
+        echo "function test() {\n";
+        echo "    console.log('multiline');\n";
+        echo "}\n";
+        echo '</script>';
+        $result = $this->Html->scriptEnd();
+
+        // The content between the script tags should be extracted and rewrapped
+        $expected = "<script>\nfunction test() {\n    console.log('multiline');\n}\n</script>";
+        $this->assertEquals($expected, $result);
+
+        // Test with different whitespace patterns
+        $this->Html->scriptStart();
+        echo "\n\t<script>\n\tvar x = 1;\n\t</script>\n";
+        $result = $this->Html->scriptEnd();
+
+        // Leading/trailing whitespace outside script tags is preserved
+        $expected = "<script>\n\tvar x = 1;\n\t</script>";
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test empty script tags
+     */
+    public function testScriptStartAndScriptEndEmptyTags(): void
+    {
+        // Empty script tag
+        $this->Html->scriptStart();
+        echo '<script></script>';
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            '<script',
+            '',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Script tag with only whitespace
+        $this->Html->scriptStart();
+        echo '<script>   </script>';
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            '<script',
+            '   ',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test nested script strings in content
+     */
+    public function testScriptStartAndScriptEndNestedScriptStrings(): void
+    {
+        // JavaScript containing script tag as string - regex stops at first </script>
+        // This is a limitation of the simple regex approach
+        $this->Html->scriptStart();
+        echo '<script>var html = "<script>alert(1)</script>";</script>';
+        $result = $this->Html->scriptEnd();
+        // The regex will match up to the first </script> it finds
+        $expected = [
+            '<script',
+            'var html = "<script>alert(1)',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Test with escaped script tags - properly escaped content works correctly
+        $this->Html->scriptStart();
+        echo '<script>var template = "<\/script>";</script>';
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            '<script',
+            'var template = "<\/script>";',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test script block option compatibility with stripping
+     */
+    public function testScriptStartAndScriptEndWithBlockOption(): void
+    {
+        // Test that stripped content works with block option
+        $this->View->shouldReceive('append')
+            ->with('script', Mockery::pattern('/<script[^>]*>.*var blockContent = "test";.*<\/script>/s'))
+            ->once();
+
+        $this->Html->scriptStart(['block' => true]);
+        echo '<script>var blockContent = "test";</script>';
+        $result = $this->Html->scriptEnd();
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test script block option with custom block name and stripping
+     */
+    public function testScriptStartAndScriptEndWithCustomBlockOption(): void
+    {
+        // Test with custom block name
+        $this->View->shouldReceive('append')
+            ->with('customBlock', Mockery::pattern('/<script[^>]*>.*console\.log\("custom"\);.*<\/script>/s'))
+            ->once();
+
+        $this->Html->scriptStart(['block' => 'customBlock']);
+        echo '<script>console.log("custom");</script>';
+        $result = $this->Html->scriptEnd();
+        $this->assertNull($result);
+    }
+
+    /**
      * testCharsetTag method
      */
     public function testCharsetTag(): void
