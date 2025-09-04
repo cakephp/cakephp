@@ -1116,7 +1116,6 @@ class ViewTest extends TestCase
     {
         $this->PostsController->setPlugin('TestPlugin');
         $this->PostsController->setName('Posts');
-        /** @var \TestApp\View\TestView $View */
         $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath('element');
 
@@ -1135,8 +1134,7 @@ class ViewTest extends TestCase
         $this->PostsController->setPlugin('TestPlugin');
         // Create a view where name equals templatePath (both 'Pages')
         // This was the condition that triggered the bug in issue #16895
-        /** @var \TestApp\View\TestView $View */
-        $View = $this->PostsController->createView(TestView::class, null, null, ['name' => 'Pages']);
+        $View = $this->PostsController->createView(TestView::class);
         $View->setTemplatePath('Pages');
 
         $pluginPath = TEST_APP . 'Plugin' . DS . 'TestPlugin' . DS;
