@@ -400,7 +400,6 @@ class HasManyTest extends TestCase
             ->method('find')
             ->with('all')
             ->willReturnCallback(function () use (&$queriesReturned) {
-                $connection = $this->article->getConnection();
                 // Preserve the current auto-quoting state (might be affected by other tests)
                 $query = $this->article->selectQuery();
                 $query->enableAutoFields(false);

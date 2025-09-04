@@ -429,7 +429,7 @@ class EagerLoaderTest extends TestCase
             'clients__company_id' => 'clients.company_id',
             'clients__telephone' => 'clients.telephone',
             'orders__total' => 'orders.total', 'orders__placed' => 'orders.placed',
-            // Primary keys are now auto-added to ensure proper entity hydration
+            // Primary keys are added to ensure proper entity hydration
             'clients__id' => 'clients.id',
             'orders__id' => 'orders.id',
         ];
