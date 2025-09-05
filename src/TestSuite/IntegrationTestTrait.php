@@ -907,7 +907,11 @@ trait IntegrationTestTrait
     }
 
     /**
-     * Asserts that the Location header is correct. Comparison is made against a full URL.
+     * Asserts that the Location header is correct.
+     *
+     * This method normalizes both the expected URL and Location header value to absolute URLs
+     * for comparison. This accommodates differences between authentication plugins and core
+     * framework behavior, where some parts return relative URLs and others return absolute URLs.
      *
      * @param array|string|null $url The URL you expected the client to go to. This
      *   can either be a string URL or an array compatible with Router::url(). Use null to
@@ -925,16 +929,24 @@ trait IntegrationTestTrait
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
 
         if ($url) {
+            // Create a new response with normalized location for comparison
+            $normalizedLocation = $this->normalizeRedirectUrl($this->_response->getHeaderLine('Location'));
+            $tempResponse = $this->_response->withHeader('Location', $normalizedLocation);
+
             $this->assertThat(
                 Router::url($url, true),
-                new HeaderEquals($this->_response, 'Location'),
+                new HeaderEquals($tempResponse, 'Location'),
                 $verboseMessage,
             );
         }
     }
 
     /**
-     * Asserts that the Location header is correct. Comparison is made against exactly the URL provided.
+     * Asserts that the Location header is correct.
+     *
+     * This method normalizes both the expected URL and Location header value to absolute URLs
+     * for comparison. This accommodates differences between authentication plugins and core
+     * framework behavior, where some parts return relative URLs and others return absolute URLs.
      *
      * @param array|string|null $url The URL you expected the client to go to. This
      *   can either be a string URL or an array compatible with Router::url(). Use null to
@@ -952,7 +964,15 @@ trait IntegrationTestTrait
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
 
         if ($url) {
-            $this->assertThat(Router::url($url), new HeaderEquals($this->_response, 'Location'), $verboseMessage);
+            // Create a new response with normalized location for comparison
+            $normalizedLocation = $this->normalizeRedirectUrl($this->_response->getHeaderLine('Location'));
+            $tempResponse = $this->_response->withHeader('Location', $normalizedLocation);
+
+            $this->assertThat(
+                Router::url($url, true),
+                new HeaderEquals($tempResponse, 'Location'),
+                $verboseMessage,
+            );
         }
     }
 
@@ -1504,6 +1524,24 @@ trait IntegrationTestTrait
         }
 
         return $message;
+    }
+
+    /**
+     * Normalizes a redirect URL to be absolute.
+     *
+     * If the URL is already absolute, it is returned as-is.
+     * If the URL is relative, it is converted to an absolute URL using Router::url().
+     *
+     * @param string $url The URL to normalize
+     * @return string The normalized absolute URL
+     */
+    protected function normalizeRedirectUrl(string $url): string
+    {
+        if (preg_match('#^https?://#', $url)) {
+            return $url;
+        }
+
+        return Router::url($url, true);
     }
 
     /**
