@@ -174,8 +174,7 @@ class PoFileParser
             ksort($plurals);
 
             // Make sure every index is filled.
-            end($plurals);
-            $count = (int)key($plurals);
+            $count = (int)array_key_last($plurals);
 
             // Fill missing spots with an empty string.
             $empties = array_fill(0, $count + 1, '');
