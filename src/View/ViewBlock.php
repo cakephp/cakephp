@@ -211,7 +211,6 @@ class ViewBlock
      */
     public function active(): ?string
     {
-
         /** @var string|null */
         return array_key_last($this->_active);
     }
