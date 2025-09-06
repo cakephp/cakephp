@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Collection;
 
 use ArrayIterator;
+use Cake\Utility\MacroableInstanceTrait;
 use IteratorIterator;
 use SplFixedArray;
 
@@ -29,6 +30,7 @@ use SplFixedArray;
 class Collection extends IteratorIterator implements CollectionInterface
 {
     use CollectionTrait;
+    use MacroableInstanceTrait;
 
     /**
      * Whether or not the items in this collection are an array.
