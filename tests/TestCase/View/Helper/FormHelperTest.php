@@ -4947,7 +4947,6 @@ class FormHelperTest extends TestCase
             'type' => 'radio',
             'options' => ['A', 'B'],
             'value' => '0',
-            'templates' => ['radioWrapper' => '{{input}}{{label}}'],
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
@@ -4971,7 +4970,6 @@ class FormHelperTest extends TestCase
             'type' => 'radio',
             'options' => ['A', 'B'],
             'label' => false,
-            'templates' => ['radioWrapper' => '{{input}}{{label}}'],
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
@@ -4995,7 +4993,6 @@ class FormHelperTest extends TestCase
                 -1 => 'negative',
             ],
             'label' => false,
-            'templates' => ['radioWrapper' => '{{input}}{{label}}'],
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
@@ -5031,7 +5028,6 @@ class FormHelperTest extends TestCase
         $result = $this->Form->control('published', [
             'type' => 'radio',
             'label' => false,
-            'templates' => ['radioWrapper' => '{{input}}{{label}}'],
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
@@ -8443,7 +8439,6 @@ class FormHelperTest extends TestCase
         $result = $this->Form->control('confirm', [
             'type' => 'radio',
             'options' => ['Y' => 'Yes', 'N' => 'No'],
-            'templates' => ['radioWrapper' => '{{input}}{{label}}'],
         ]);
         $expected = [
             'div' => ['class' => 'input radio'],
@@ -9028,7 +9023,6 @@ class FormHelperTest extends TestCase
             'type' => 'radio',
             'options' => ['A', 'B'],
             'labelOptions' => ['class' => 'custom-class'],
-            'templates' => ['radioWrapper' => '{{label}}{{input}}'],
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
@@ -9053,7 +9047,6 @@ class FormHelperTest extends TestCase
             'options' => ['A', 'B'],
             'value' => 1,
             'labelOptions' => ['class' => 'custom-class'],
-            'templates' => ['radioWrapper' => '{{label}}{{input}}'],
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
@@ -9078,7 +9071,6 @@ class FormHelperTest extends TestCase
             'options' => ['A', 'B'],
             'value' => 1,
             'labelOptions' => ['class' => ['custom-class', 'custom-class-array']],
-            'templates' => ['radioWrapper' => '{{label}}{{input}}'],
         ]);
         $expected = [
             ['div' => ['class' => 'input radio']],
