@@ -6474,9 +6474,7 @@ class TableTest extends TestCase
 
         $expected = $table->get(1, contain: ['Articles.Tags']);
         $this->assertEquals($expected->articles, $result->articles);
-        if (!empty($expected->articles)) {
-            $this->assertEquals($expected->articles[0]->tags, $result->articles[0]->tags);
-        }
+        $this->assertEquals($expected->articles[0]->tags, $result->articles[0]->tags);
     }
 
     /**
