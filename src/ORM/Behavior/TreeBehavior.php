@@ -605,7 +605,7 @@ class TreeBehavior extends Behavior
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|false $node The node after being moved or false if `$number` is < 1
      */
-    public function moveUp(EntityInterface $node, int|bool $number = 1): EntityInterface|false
+    public function moveUp(EntityInterface $node, int|true $number = 1): EntityInterface|false
     {
         if ($number < 1) {
             return false;
@@ -626,7 +626,7 @@ class TreeBehavior extends Behavior
      * @return \Cake\Datasource\EntityInterface $node The node after being moved
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      */
-    protected function _moveUp(EntityInterface $node, int|bool $number): EntityInterface
+    protected function _moveUp(EntityInterface $node, int|true $number): EntityInterface
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
@@ -693,7 +693,7 @@ class TreeBehavior extends Behavior
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|false the entity after being moved or false if `$number` is < 1
      */
-    public function moveDown(EntityInterface $node, int|bool $number = 1): EntityInterface|false
+    public function moveDown(EntityInterface $node, int|true $number = 1): EntityInterface|false
     {
         if ($number < 1) {
             return false;
@@ -714,7 +714,7 @@ class TreeBehavior extends Behavior
      * @return \Cake\Datasource\EntityInterface $node The node after being moved
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      */
-    protected function _moveDown(EntityInterface $node, int|bool $number): EntityInterface
+    protected function _moveDown(EntityInterface $node, int|true $number): EntityInterface
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
