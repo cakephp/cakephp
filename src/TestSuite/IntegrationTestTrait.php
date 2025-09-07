@@ -929,12 +929,15 @@ trait IntegrationTestTrait
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
 
         if ($url) {
-            // Create a new response with normalized location for comparison
-            $normalizedLocation = $this->normalizeRedirectUrl($this->_response->getHeaderLine('Location'));
-            $tempResponse = $this->_response->withHeader('Location', $normalizedLocation);
+            // Normalize both URLs to absolute for comparison
+            $expectedUrl = Router::url($url, true);
+            $actualUrl = Router::url($this->_response->getHeaderLine('Location'), true);
+
+            // Create a response with the normalized URL for proper error messages
+            $tempResponse = $this->_response->withHeader('Location', $actualUrl);
 
             $this->assertThat(
-                Router::url($url, true),
+                $expectedUrl,
                 new HeaderEquals($tempResponse, 'Location'),
                 $verboseMessage,
             );
@@ -964,12 +967,15 @@ trait IntegrationTestTrait
         $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
 
         if ($url) {
-            // Create a new response with normalized location for comparison
-            $normalizedLocation = $this->normalizeRedirectUrl($this->_response->getHeaderLine('Location'));
-            $tempResponse = $this->_response->withHeader('Location', $normalizedLocation);
+            // Normalize both URLs to absolute for comparison
+            $expectedUrl = Router::url($url, true);
+            $actualUrl = Router::url($this->_response->getHeaderLine('Location'), true);
+
+            // Create a response with the normalized URL for proper error messages
+            $tempResponse = $this->_response->withHeader('Location', $actualUrl);
 
             $this->assertThat(
-                Router::url($url, true),
+                $expectedUrl,
                 new HeaderEquals($tempResponse, 'Location'),
                 $verboseMessage,
             );
@@ -1524,24 +1530,6 @@ trait IntegrationTestTrait
         }
 
         return $message;
-    }
-
-    /**
-     * Normalizes a redirect URL to be absolute.
-     *
-     * If the URL is already absolute, it is returned as-is.
-     * If the URL is relative, it is converted to an absolute URL using Router::url().
-     *
-     * @param string $url The URL to normalize
-     * @return string The normalized absolute URL
-     */
-    protected function normalizeRedirectUrl(string $url): string
-    {
-        if (preg_match('#^https?://#', $url)) {
-            return $url;
-        }
-
-        return Router::url($url, true);
     }
 
     /**
