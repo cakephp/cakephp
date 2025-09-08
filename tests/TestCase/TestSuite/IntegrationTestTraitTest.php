@@ -1655,6 +1655,47 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Tests assertFlashMessageContains assertions.
+     *
+     * @throws \PHPUnit\Exception
+     */
+    public function testAssertFlashMessageContains(): void
+    {
+        $this->get('/posts/stacked_flash');
+
+        // Test contains assertions for exact messages
+        $this->assertFlashMessageContains('Error');
+        $this->assertFlashMessageContains('Error 1');
+        $this->assertFlashMessageContains('Error 2');
+        $this->assertFlashMessageContains('rror 1'); // partial match
+
+        // Test contains with specific key
+        $this->assertFlashMessageContains('Success', 'custom');
+        $this->assertFlashMessageContains('Success 1', 'custom');
+        $this->assertFlashMessageContains('Success 2', 'custom');
+        $this->assertFlashMessageContains('uccess 1', 'custom'); // partial match
+
+        // Test contains at specific index
+        $this->assertFlashMessageContainsAt(0, 'Error 1');
+        $this->assertFlashMessageContainsAt(0, 'rror 1'); // partial match
+        $this->assertFlashMessageContainsAt(1, 'Error 2');
+        $this->assertFlashMessageContainsAt(1, 'rror 2'); // partial match
+
+        // Test contains at specific index with custom key
+        $this->assertFlashMessageContainsAt(0, 'Success 1', 'custom');
+        $this->assertFlashMessageContainsAt(0, 'uccess 1', 'custom'); // partial match
+        $this->assertFlashMessageContainsAt(1, 'Success 2', 'custom');
+        $this->assertFlashMessageContainsAt(1, 'uccess 2', 'custom'); // partial match
+
+        // Test case-insensitive matching
+        $this->assertFlashMessageContains('error 1', 'flash', '', true);
+        $this->assertFlashMessageContains('ERROR 1', 'flash', '', true);
+        $this->assertFlashMessageContainsAt(0, 'ERROR 1', 'flash', '', true);
+        $this->assertFlashMessageContains('success 1', 'custom', '', true);
+        $this->assertFlashMessageContainsAt(0, 'SUCCESS 1', 'custom', '', true);
+    }
+
+    /**
      * Tests asserting flash messages without first sending a request
      */
     public function testAssertFlashMessageWithoutSendingRequest(): void
@@ -1665,6 +1706,19 @@ class IntegrationTestTraitTest extends TestCase
         $this->expectExceptionMessage($message);
 
         $this->assertFlashMessage('Will not work');
+    }
+
+    /**
+     * Tests asserting flash message contains without first sending a request
+     */
+    public function testAssertFlashMessageContainsWithoutSendingRequest(): void
+    {
+        $this->expectException(AssertionFailedError::class);
+        $message = 'There is no stored session data. Perhaps you need to run a request?';
+        $message .= ' Additionally, ensure `$this->enableRetainFlashMessages()` has been enabled for the test.';
+        $this->expectExceptionMessage($message);
+
+        $this->assertFlashMessageContains('Will not work');
     }
 
     /**

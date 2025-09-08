@@ -54,6 +54,7 @@ use Cake\TestSuite\Constraint\Response\StatusError;
 use Cake\TestSuite\Constraint\Response\StatusFailure;
 use Cake\TestSuite\Constraint\Response\StatusOk;
 use Cake\TestSuite\Constraint\Response\StatusSuccess;
+use Cake\TestSuite\Constraint\Session\FlashParamContains;
 use Cake\TestSuite\Constraint\Session\FlashParamEquals;
 use Cake\TestSuite\Constraint\Session\SessionEquals;
 use Cake\TestSuite\Constraint\Session\SessionHasKey;
@@ -1369,6 +1370,41 @@ trait IntegrationTestTrait
         $this->assertThat(
             $expected,
             new FlashParamEquals($this->_requestSession, $key, 'message', $at),
+            $verboseMessage,
+        );
+    }
+
+    /**
+     * Asserts a flash message contains a substring
+     *
+     * @param string $expected Expected substring in message
+     * @param string $key Flash key
+     * @param string $message Assertion failure message
+     * @param bool $ignoreCase Whether to ignore case
+     * @return void
+     */
+    public function assertFlashMessageContains(string $expected, string $key = 'flash', string $message = '', bool $ignoreCase = false): void
+    {
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat($expected, new FlashParamContains($this->_requestSession, $key, 'message', null, $ignoreCase), $verboseMessage);
+    }
+
+    /**
+     * Asserts a flash message contains a substring at a certain index
+     *
+     * @param int $at Flash index
+     * @param string $expected Expected substring in message
+     * @param string $key Flash key
+     * @param string $message Assertion failure message
+     * @param bool $ignoreCase Whether to ignore case
+     * @return void
+     */
+    public function assertFlashMessageContainsAt(int $at, string $expected, string $key = 'flash', string $message = '', bool $ignoreCase = false): void
+    {
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat(
+            $expected,
+            new FlashParamContains($this->_requestSession, $key, 'message', $at, $ignoreCase),
             $verboseMessage,
         );
     }
