@@ -544,34 +544,10 @@ parameters:
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
-			identifier: new.internalClass
-			count: 1
-			path: src/TestSuite/Constraint/EventFired.php
-
-		-
-			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
-			identifier: new.internalClass
-			count: 2
-			path: src/TestSuite/Constraint/EventFiredWith.php
-
-		-
-			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
-			identifier: new.internalClass
-			count: 1
-			path: src/TestSuite/Constraint/Response/ResponseBase.php
-
-		-
 			message: '#^Call to method toString\(\) of internal interface PHPUnit\\Framework\\SelfDescribing from outside its root namespace PHPUnit\.$#'
 			identifier: method.internalInterface
 			count: 1
 			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
-
-		-
-			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
-			identifier: new.internalClass
-			count: 1
-			path: src/TestSuite/Constraint/Session/FlashParamEquals.php
 
 		-
 			message: '#^Trait Cake\\TestSuite\\EmailTrait is used zero times and is not analysed\.$#'

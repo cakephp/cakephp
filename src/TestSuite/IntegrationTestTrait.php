@@ -1383,10 +1383,18 @@ trait IntegrationTestTrait
      * @param bool $ignoreCase Whether to ignore case
      * @return void
      */
-    public function assertFlashMessageContains(string $expected, string $key = 'flash', string $message = '', bool $ignoreCase = false): void
-    {
+    public function assertFlashMessageContains(
+        string $expected,
+        string $key = 'flash',
+        string $message = '',
+        bool $ignoreCase = false,
+    ): void {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($expected, new FlashParamContains($this->_requestSession, $key, 'message', null, $ignoreCase), $verboseMessage);
+        $this->assertThat(
+            $expected,
+            new FlashParamContains($this->_requestSession, $key, 'message', null, $ignoreCase),
+            $verboseMessage,
+        );
     }
 
     /**
@@ -1399,8 +1407,13 @@ trait IntegrationTestTrait
      * @param bool $ignoreCase Whether to ignore case
      * @return void
      */
-    public function assertFlashMessageContainsAt(int $at, string $expected, string $key = 'flash', string $message = '', bool $ignoreCase = false): void
-    {
+    public function assertFlashMessageContainsAt(
+        int $at,
+        string $expected,
+        string $key = 'flash',
+        string $message = '',
+        bool $ignoreCase = false,
+    ): void {
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,

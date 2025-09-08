@@ -19,6 +19,8 @@ parameters:
 			identifier: include.fileNotFound
 		-
 			identifier: method.internalClass
+		-
+			identifier: new.internalClass
 
 services:
 	-
