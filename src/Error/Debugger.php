@@ -65,6 +65,7 @@ class Debugger
         'outputMask' => [],
         'exportFormatter' => null,
         'editor' => 'phpstorm',
+        'editorBase' => null,
     ];
 
     /**
@@ -229,6 +230,11 @@ class Debugger
                 'Cannot format editor URL `%s` is not a known editor.',
                 $editor,
             ));
+        }
+
+        $editorBase = $instance->getConfig('editorBase');
+        if ($editorBase !== null && is_string($editorBase)) {
+            $file = str_replace(ROOT, $editorBase, $file);
         }
 
         $template = $instance->editors[$editor];
