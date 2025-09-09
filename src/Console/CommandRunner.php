@@ -336,6 +336,7 @@ class CommandRunner implements EventDispatcherInterface
             }
 
             $command->dispatchEvent('Command.initialize', ['args' => $argv, 'io' => $io]);
+
             return $command->run($argv, $io);
         } catch (StopException $e) {
             return $e->getCode();

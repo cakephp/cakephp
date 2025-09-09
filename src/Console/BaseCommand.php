@@ -181,7 +181,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
         ];
     }
 
-
     /**
      * Called before the command argument parsing logic. You can use this method to configure and customize the command
      * or perform logic that needs to happen before the command parses arguments.

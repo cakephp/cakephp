@@ -343,7 +343,7 @@ class CommandTest extends TestCase
         $this->assertEquals([
             'beforeFilter run',
             'beforeExecute run',
-            'afterExecute run'
+            'afterExecute run',
         ], $output->messages());
     }
 
