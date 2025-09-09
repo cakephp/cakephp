@@ -188,7 +188,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * @param \Cake\Event\EventInterface<\Cake\Command\Command> $event An Event instance
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public function beforeExecute(EventInterface $event)
     {
@@ -201,7 +200,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * @param \Cake\Event\EventInterface<\Cake\Command\Command> $event An Event instance
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public function afterExecute(EventInterface $event)
     {
