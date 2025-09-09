@@ -341,7 +341,6 @@ class CommandTest extends TestCase
         $command = new Command();
         $command->executeCommand(EventsCommand::class, [], $this->getMockIo($output));
         $this->assertEquals([
-            'beforeFilter run',
             'beforeExecute run',
             'afterExecute run',
         ], $output->messages());
