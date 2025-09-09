@@ -49,6 +49,22 @@ class NumericPaginator implements PaginatorInterface
      *   sorting on either associated columns or calculated fields then you will
      *   have to explicitly specify them (along with other fields). Using an empty
      *   array will disable sorting alltogether.
+     * - `sortMap` - A map of sort keys to their corresponding database fields. Allows
+     *   creating friendly sort keys that map to one or more actual fields. When defined,
+     *   only the mapped keys will be sortable. Supports simple mapping, multi-column
+     *   sorting, and fixed direction sorting. You can also use numeric arrays for 1:1
+     *   mappings where the field name is the same as the sort key. Example:
+     *   ```
+     *   'sortMap' => [
+     *       'name' => 'Users.name',                      // Simple mapping
+     *       'title',                                      // Shorthand for 'title' => 'title'
+     *       'modified' => ['modified', 'name'],          // Multi-column
+     *       'popularity' => [                            // Fixed direction
+     *           'score',
+     *           'created' => 'desc'
+     *       ]
+     *   ]
+     *   ```
      * - `finder` - The table finder to use. Defaults to `all`.
      * - `scope` - If specified this scope will be used to get the paging options
      *   from the query params passed to paginate(). Scopes allow namespacing the
@@ -63,6 +79,7 @@ class NumericPaginator implements PaginatorInterface
         'maxLimit' => 100,
         'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         'sortableFields' => null,
+        'sortMap' => null,
         'finder' => 'all',
         'scope' => null,
     ];
@@ -548,12 +565,30 @@ class NumericPaginator implements PaginatorInterface
                 $direction = 'asc';
             }
 
-            $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
-            if ($order && $options['sort'] && !str_contains($options['sort'], '.')) {
-                $order = $this->_removeAliases($order, $object->getAlias());
-            }
+            // Check sortMap first for mapped sorting
+            if (isset($options['sortMap'])) {
+                $mappedOrder = $this->resolveSortMapping($options['sort'], $options['sortMap'], $direction);
+                if ($mappedOrder !== null) {
+                    // Use mapped order and merge with existing order
+                    $existingOrder = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
+                    $options['order'] = $mappedOrder + $existingOrder;
+                } else {
+                    // Sort key not in sortMap, clear sort
+                    $options['order'] = [];
+                    $options['sort'] = null;
+                    unset($options['direction']);
 
-            $options['order'] = [$options['sort'] => $direction] + $order;
+                    return $options;
+                }
+            } else {
+                // No sortMap, use traditional sorting
+                $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
+                if ($order && $options['sort'] && !str_contains($options['sort'], '.')) {
+                    $order = $this->_removeAliases($order, $object->getAlias());
+                }
+
+                $options['order'] = [$options['sort'] => $direction] + $order;
+            }
         } else {
             $options['sort'] = null;
         }
@@ -567,7 +602,12 @@ class NumericPaginator implements PaginatorInterface
         }
 
         $sortAllowed = false;
-        if (isset($options['sortableFields'])) {
+
+        // Skip sortableFields check if sortMap is being used
+        if (isset($options['sortMap'])) {
+            // When sortMap is used, we've already validated the sort key
+            $sortAllowed = true;
+        } elseif (isset($options['sortableFields'])) {
             $field = key($options['order']);
             $sortAllowed = in_array($field, $options['sortableFields'], true);
             if (!$sortAllowed) {
@@ -666,6 +706,74 @@ class NumericPaginator implements PaginatorInterface
         }
 
         return $tableOrder;
+    }
+
+    /**
+     * Resolves sort mapping for a given sort key.
+     *
+     * Takes a sort key and resolves it using the sortMap configuration.
+     * Supports simple mapping, multi-column sorting, and fixed direction sorting.
+     *
+     * @param string $sortKey The sort key to resolve
+     * @param array|null $sortMap The sort mapping configuration
+     * @param string $direction The requested sort direction
+     * @return array<string, mixed>|null Returns resolved order array or null if key not found
+     */
+    protected function resolveSortMapping(string $sortKey, ?array $sortMap, string $direction): ?array
+    {
+        if ($sortMap === null) {
+            return null;
+        }
+
+        // Check for direct mapping first
+        if (isset($sortMap[$sortKey])) {
+            $mapping = $sortMap[$sortKey];
+        } else {
+            // Check for shorthand numeric array syntax: ['name'] means 'name' => 'name'
+            // We check if the sortKey exists as a value in numeric indices
+            $found = false;
+            foreach ($sortMap as $key => $value) {
+                if (is_int($key) && is_string($value) && $value === $sortKey) {
+                    $found = true;
+                    break;
+                }
+            }
+            if ($found) {
+                $order = [$sortKey => $direction];
+
+                return $order;
+            }
+
+            return null;
+        }
+
+        $order = [];
+
+        // Simple string mapping: 'name' => 'Users.name'
+        if (is_string($mapping)) {
+            $order[$mapping] = $direction;
+
+            return $order;
+        }
+
+        // Array mapping (multi-column or fixed direction)
+        if (is_array($mapping)) {
+            foreach ($mapping as $key => $value) {
+                if (is_int($key)) {
+                    // Indexed array: field uses querystring direction
+                    // e.g., ['modified', 'name']
+                    $order[$value] = $direction;
+                } else {
+                    // Associative array: field has fixed direction
+                    // e.g., ['created' => 'desc']
+                    $order[$key] = $value;
+                }
+            }
+
+            return $order;
+        }
+
+        return null;
     }
 
     /**
