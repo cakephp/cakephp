@@ -189,7 +189,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
      */
-    public function beforeExecute(EventInterface $event)
+    public function beforeExecute(EventInterface $event): void
     {
     }
 
@@ -201,7 +201,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
      */
-    public function afterExecute(EventInterface $event)
+    public function afterExecute(EventInterface $event): void
     {
     }
 
