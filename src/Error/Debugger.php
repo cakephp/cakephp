@@ -65,7 +65,7 @@ class Debugger
         'outputMask' => [],
         'exportFormatter' => null,
         'editor' => 'phpstorm',
-        'editorBase' => null,
+        'editorBasePath' => null,
     ];
 
     /**
@@ -232,9 +232,9 @@ class Debugger
             ));
         }
 
-        $editorBase = $instance->getConfig('editorBase');
-        if ($editorBase !== null && is_string($editorBase)) {
-            $file = str_replace(ROOT, $editorBase, $file);
+        $editorBasePath = $instance->getConfig('editorBasePath');
+        if ($editorBasePath !== null && is_string($editorBasePath)) {
+            $file = str_replace(ROOT, $editorBasePath, $file);
         }
 
         $template = $instance->editors[$editor];

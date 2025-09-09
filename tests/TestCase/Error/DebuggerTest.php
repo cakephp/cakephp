@@ -849,12 +849,12 @@ EXPECTED;
     }
 
     /**
-     * Test editorBase configuration for path remapping
+     * Test editorBasePath configuration for path remapping
      */
     public function testEditorUrlWithBasePath(): void
     {
         // Set up editor base path replacement
-        Configure::write('Debugger.editorBase', '/home/user/projects/myapp');
+        Configure::write('Debugger.editorBasePath', '/home/user/projects/myapp');
         Debugger::getInstance(TestDebugger::class);
         Debugger::getInstance(Debugger::class);
 
