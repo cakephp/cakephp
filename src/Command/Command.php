@@ -45,43 +45,4 @@ class Command extends BaseCommand
     public function execute(Arguments $args, ConsoleIo $io)
     {
     }
-
-    /**
-     * Called before the command argument parsing logic. You can use this method to configure and customize the command
-     * or perform logic that needs to happen before the command parses arguments.
-     *
-     * @param \Cake\Event\EventInterface<\Cake\Command\Command> $event An Event instance
-     * @return void
-     * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
-     */
-    public function beforeFilter(EventInterface $event)
-    {
-    }
-
-    /**
-     * Called immediately prior to the command's run method. You can use this method to configure and customize the
-     * command or perform logic that needs to happen before the command runs.
-     *
-     * @param \Cake\Event\EventInterface<\Cake\Command\Command> $event An Event instance
-     * @return void
-     * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
-     */
-    public function beforeExecute(EventInterface $event)
-    {
-    }
-
-    /**
-     * Called immediately after the command's run method, unless an exception occurs. You can use this method to
-     * perform logic that needs to happen after the command runs.
-     *
-     * @param \Cake\Event\EventInterface<\Cake\Command\Command> $event An Event instance
-     * @return void
-     * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
-     */
-    public function afterExecute(EventInterface $event)
-    {
-    }
 }
