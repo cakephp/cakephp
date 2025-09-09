@@ -20,14 +20,6 @@ class EventsCommand extends Command
         return null;
     }
 
-    public function beforeFilter(EventInterface $event)
-    {
-        /** @var ConsoleIo $io */
-        $io = $event->getData('io');
-
-        $io->out('beforeFilter run');
-    }
-
     public function beforeExecute(EventInterface $event)
     {
         /** @var ConsoleIo $io */

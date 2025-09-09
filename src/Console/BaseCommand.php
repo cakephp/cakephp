@@ -176,23 +176,9 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     public function implementedEvents(): array
     {
         return [
-            'Command.initialize' => 'beforeFilter',
             'Command.beforeExecute' => 'beforeExecute',
             'Command.afterExecute' => 'afterExecute',
         ];
-    }
-
-    /**
-     * Called before the command argument parsing logic. You can use this method to configure and customize the command
-     * or perform logic that needs to happen before the command parses arguments.
-     *
-     * @param \Cake\Event\EventInterface<\Cake\Command\Command> $event An Event instance
-     * @return void
-     * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
-     */
-    public function beforeFilter(EventInterface $event)
-    {
     }
 
     /**
@@ -226,7 +212,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      */
     public function run(array $argv, ConsoleIo $io): ?int
     {
-        $this->dispatchEvent('Command.beforeFilter', ['argv' => $argv, 'io' => $io]);
         $this->initialize();
 
         $parser = $this->getOptionParser();
