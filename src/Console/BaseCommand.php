@@ -20,6 +20,7 @@ use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\StopException;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use Cake\Event\EventListenerInterface;
 use Cake\Utility\Inflector;
 
 /**
@@ -33,7 +34,7 @@ use Cake\Utility\Inflector;
  *
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\Command\Command>
  */
-abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
+abstract class BaseCommand implements CommandInterface, EventDispatcherInterface, EventListenerInterface
 {
     /**
      * @use \Cake\Event\EventDispatcherTrait<\Cake\Command\Command>
@@ -162,6 +163,21 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      */
     public function initialize(): void
     {
+    }
+
+    /**
+     * Returns a list of all events that will fire in the command during its lifecycle.
+     * You can override this function to add your own listener callbacks
+     *
+     * @return array<string, mixed>
+     */
+    public function implementedEvents(): array
+    {
+        return [
+            'Command.initialize' => 'beforeFilter',
+            'Command.beforeExecute' => 'beforeExecute',
+            'Command.afterExecute' => 'afterExecute',
+        ];
     }
 
     /**
