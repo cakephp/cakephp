@@ -185,7 +185,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Called immediately prior to the command's run method. You can use this method to configure and customize the
      * command or perform logic that needs to happen before the command runs.
      *
-     * @param \Cake\Event\EventInterface<\Cake\Command\Command> $event An Event instance
+     * @param \Cake\Event\EventInterface<\Cake\Console\BaseCommand> $event An Event instance
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
      */
@@ -197,7 +197,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Called immediately after the command's run method, unless an exception occurs. You can use this method to
      * perform logic that needs to happen after the command runs.
      *
-     * @param \Cake\Event\EventInterface<\Cake\Command\Command> $event An Event instance
+     * @param \Cake\Event\EventInterface<\Cake\Console\BaseCommand> $event An Event instance
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
      */
