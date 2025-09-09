@@ -41,6 +41,6 @@ class EventsCommand extends Command
         /** @var ConsoleIo $io */
         $io = $event->getData('io');
 
-        $io->out('afterExecute');
+        $io->out('afterExecute run');
     }
 }
