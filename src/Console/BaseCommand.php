@@ -59,6 +59,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     public function __construct(?CommandFactoryInterface $factory = null)
     {
         $this->factory = $factory;
+        $this->getEventManager()->on($this);
     }
 
     /**
