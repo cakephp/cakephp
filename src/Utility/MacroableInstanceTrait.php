@@ -56,7 +56,7 @@ trait MacroableInstanceTrait
      *
      * @return void
      */
-    public static function flushMacros(): void
+    public static function clearMacros(): void
     {
         static::$macros = [];
     }

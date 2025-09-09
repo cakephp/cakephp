@@ -43,6 +43,12 @@ class MacroableStaticTraitTest extends TestCase
         };
     }
 
+    protected function tearDown(): void
+    {
+        // Ensure macros are cleared between tests
+        $this->macroableTraitClass::clearMacros();
+    }
+
     /**
      * Test that a new static macro can be registered and called.
      */
@@ -96,5 +102,17 @@ class MacroableStaticTraitTest extends TestCase
     {
         $this->expectException(BadMethodCallException::class);
         $this->macroableTraitClass::nonExistingMethod();
+    }
+
+    /**
+     * Test that all macros can be cleared.
+     */
+    public function testClearMacros(): void
+    {
+        $this->macroableTraitClass::macro('foo', fn() => 'bar');
+        $this->assertTrue($this->macroableTraitClass::hasMacro('foo'));
+
+        $this->macroableTraitClass::clearMacros();
+        $this->assertFalse($this->macroableTraitClass::hasMacro('foo'));
     }
 }
