@@ -36,7 +36,6 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
-use function Cake\Collection\collection;
 use function Cake\I18n\__;
 
 /**
@@ -770,7 +769,6 @@ class HasManyTest extends TestCase
         $this->assertCount(0, $result[0]->articles);
         $this->assertCount(1, $result[1]->articles);
     }
-
 
     /**
      * Assertion method for order by clause contents.
