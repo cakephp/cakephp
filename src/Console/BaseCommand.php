@@ -225,6 +225,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      */
     public function run(array $argv, ConsoleIo $io): ?int
     {
+        $this->dispatchEvent('Command.beforeFilter', ['argv' => $argv, 'io' => $io]);
         $this->initialize();
 
         $parser = $this->getOptionParser();
