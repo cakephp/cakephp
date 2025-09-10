@@ -378,6 +378,94 @@ class NumericPaginatorTest extends TestCase
     }
 
     /**
+     * Test combined sort-direction parameter format (e.g., 'title-asc')
+     */
+    public function testCombinedSortDirectionFormat(): void
+    {
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+
+        // Test ascending with combined format
+        $params = ['sort' => 'title-asc'];
+        $result = $this->Paginator->paginate($table, $params);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('title', $pagingParams['sort']);
+        $this->assertEquals('asc', $pagingParams['direction']);
+        $this->assertEquals(['PaginatorPosts.title' => 'asc'], $pagingParams['completeSort']);
+
+        // Test descending with combined format
+        $params = ['sort' => 'body-desc'];
+        $result = $this->Paginator->paginate($table, $params);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('body', $pagingParams['sort']);
+        $this->assertEquals('desc', $pagingParams['direction']);
+        $this->assertEquals(['PaginatorPosts.body' => 'desc'], $pagingParams['completeSort']);
+
+        // Test that traditional format still works
+        $params = ['sort' => 'title', 'direction' => 'desc'];
+        $result = $this->Paginator->paginate($table, $params);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('title', $pagingParams['sort']);
+        $this->assertEquals('desc', $pagingParams['direction']);
+        $this->assertEquals(['PaginatorPosts.title' => 'desc'], $pagingParams['completeSort']);
+
+        // Test combined format with hyphenated field names
+        $params = ['sort' => 'author_id-desc'];
+        $result = $this->Paginator->paginate($table, $params);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('author_id', $pagingParams['sort']);
+        $this->assertEquals('desc', $pagingParams['direction']);
+        $this->assertEquals(['PaginatorPosts.author_id' => 'desc'], $pagingParams['completeSort']);
+    }
+
+    /**
+     * Test combined sort format with sortMap
+     */
+    public function testCombinedSortFormatWithSortMap(): void
+    {
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+        $settings = [
+            'sortMap' => [
+                'name' => 'PaginatorPosts.title',
+                'content' => 'PaginatorPosts.body',
+                'newest' => ['PaginatorPosts.id' => 'desc', 'PaginatorPosts.title'],
+            ],
+        ];
+
+        // Test simple mapping with combined format
+        $params = ['sort' => 'name-desc'];
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('name', $pagingParams['sort']);
+        $this->assertEquals('desc', $pagingParams['direction']);
+        $this->assertEquals(['PaginatorPosts.title' => 'desc'], $pagingParams['completeSort']);
+
+        // Test that unmapped fields with combined format are still rejected
+        $params = ['sort' => 'unmapped-asc'];
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertNull($pagingParams['sort']);
+        $this->assertNull($pagingParams['direction']);
+        $this->assertEquals([], $pagingParams['completeSort']);
+
+        // Test multi-field mapping with combined format
+        $params = ['sort' => 'newest-asc']; // Direction should apply to non-fixed fields
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('newest', $pagingParams['sort']);
+        $this->assertEquals([
+            'PaginatorPosts.id' => 'desc', // Fixed direction
+            'PaginatorPosts.title' => 'asc', // Uses combined format direction
+        ], $pagingParams['completeSort']);
+    }
+
+    /**
      * Test sortMap with association sorting
      */
     public function testSortMapWithAssociations(): void

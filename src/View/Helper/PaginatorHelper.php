@@ -64,6 +64,8 @@ class PaginatorHelper extends Helper
      * - `routePlaceholders` An array specifying which paging params should be
      *   passed as route placeholders instead of query string parameters. The array
      *   can have values `'sort'`, `'direction'`, `'page'`.
+     * - `sortFormat` Format for sort parameters. Can be 'separate' (default) for
+     *   `?sort=field&direction=asc` or 'combined' for `?sort=field-asc`.
      *
      * Templates: the templates used by this class
      *
@@ -71,7 +73,9 @@ class PaginatorHelper extends Helper
      */
     protected array $_defaultConfig = [
         'params' => [],
-        'options' => [],
+        'options' => [
+            'sortFormat' => 'separate',
+        ],
         'templates' => [
             'nextActive' => '<li class="next"><a rel="next" href="{{url}}">{{text}}</a></li>',
             'nextDisabled' => '<li class="next disabled"><a>{{text}}</a></li>',
@@ -433,7 +437,15 @@ class PaginatorHelper extends Helper
             $title = $title[$dir];
         }
 
-        $paging = ['sort' => $key, 'direction' => $dir, 'page' => 1];
+        // Check if we should use combined format
+        $sortFormat = $this->getConfig('options.sortFormat', 'separate');
+        if ($sortFormat === 'combined') {
+            // Use combined format: field-asc or field-desc
+            $paging = ['sort' => $key . '-' . $dir, 'page' => 1];
+        } else {
+            // Use traditional separate format
+            $paging = ['sort' => $key, 'direction' => $dir, 'page' => 1];
+        }
 
         $vars = [
             'text' => $options['escape'] ? h($title) : $title,
@@ -501,17 +513,33 @@ class PaginatorHelper extends Helper
             $paging['sortDefault'] = $this->_removeAlias($paging['sortDefault'], $this->param('alias'));
         }
 
-        $options += array_intersect_key(
-            $paging,
-            ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null],
-        );
+        // Check if we're using combined format in the options
+        $sortFormat = $this->getConfig('options.sortFormat', 'separate');
+        $hasCombinedSort = isset($options['sort']) && preg_match('/-(asc|desc)$/i', $options['sort']);
+
+        if ($sortFormat === 'combined' || $hasCombinedSort) {
+            // Don't include separate direction parameter when using combined format
+            $options += array_intersect_key(
+                $paging,
+                ['page' => null, 'limit' => null, 'sort' => null],
+            );
+            // Remove any separate direction parameter
+            unset($options['direction']);
+        } else {
+            $options += array_intersect_key(
+                $paging,
+                ['page' => null, 'limit' => null, 'sort' => null, 'direction' => null],
+            );
+        }
 
         if (!empty($options['page']) && $options['page'] === 1) {
             $options['page'] = null;
         }
 
         if (
-            isset($paging['sortDefault'], $paging['directionDefault'], $options['sort'], $options['direction'])
+            isset($paging['sortDefault'], $paging['directionDefault'], $options['sort'])
+            && !$hasCombinedSort
+            && isset($options['direction'])
             && $options['sort'] === $paging['sortDefault']
             && strtolower($options['direction']) === strtolower($paging['directionDefault'])
         ) {

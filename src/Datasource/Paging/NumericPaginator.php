@@ -535,6 +535,13 @@ class NumericPaginator implements PaginatorInterface
      * also be sanitized. Lastly sort + direction keys will be converted into
      * the model friendly order key.
      *
+     * Supports two formats for sort parameters:
+     * - Traditional: `?sort=title&direction=asc`
+     * - Combined: `?sort=title-asc` or `?sort=title-desc`
+     *
+     * The combined format merges the field and direction into a single parameter,
+     * making URLs cleaner and more RESTful. Both formats work with sortMap.
+     *
      * You can use the allowedParameters option to control which columns/fields are
      * available for sorting via URL parameters. This helps prevent users from ordering large
      * result sets on un-indexed values.
@@ -558,9 +565,17 @@ class NumericPaginator implements PaginatorInterface
     {
         if (isset($options['sort'])) {
             $direction = null;
-            if (isset($options['direction'])) {
+            $sortField = $options['sort'];
+
+            // Check for combined sort-direction format (e.g., 'title-asc' or 'title-desc')
+            if (preg_match('/^(.+)-(asc|desc)$/i', $sortField, $matches)) {
+                $sortField = $matches[1];
+                $direction = strtolower($matches[2]);
+                $options['sort'] = $sortField;
+            } elseif (isset($options['direction'])) {
                 $direction = strtolower($options['direction']);
             }
+
             if (!in_array($direction, ['asc', 'desc'], true)) {
                 $direction = 'asc';
             }
