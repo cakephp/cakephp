@@ -70,7 +70,7 @@ class SortIterator extends Collection
         int $type = SORT_NUMERIC,
     ) {
         if (!is_array($items)) {
-            $items = iterator_to_array((new Collection($items))->unwrap(), false);
+            $items = iterator_to_array(new Collection($items)->unwrap(), false);
         }
 
         $callback = $this->propertyExtractor($callback);

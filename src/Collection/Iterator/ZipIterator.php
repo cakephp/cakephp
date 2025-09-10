@@ -82,7 +82,7 @@ class ZipIterator implements CollectionInterface
         $this->_callback = $callable;
 
         foreach ($sets as $set) {
-            $iterator = (new Collection($set))->unwrap();
+            $iterator = new Collection($set)->unwrap();
             $this->_iterators[] = $iterator;
             $this->multipleIterator->attachIterator($iterator);
         }

@@ -85,7 +85,7 @@ trait ExtractTrait
             if ($collectionTransform) {
                 $rest = implode('.', array_slice($parts, $i));
 
-                return (new Collection($data))->extract($rest);
+                return new Collection($data)->extract($rest);
             }
 
             if (!isset($data[$column])) {

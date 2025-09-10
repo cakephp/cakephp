@@ -199,7 +199,7 @@ trait CollectionTrait
      */
     public function max(callable|string $path, int $sort = SORT_NUMERIC): mixed
     {
-        return (new SortIterator($this->unwrap(), $path, SORT_DESC, $sort))->first();
+        return new SortIterator($this->unwrap(), $path, SORT_DESC, $sort)->first();
     }
 
     /**
@@ -207,7 +207,7 @@ trait CollectionTrait
      */
     public function min(callable|string $path, int $sort = SORT_NUMERIC): mixed
     {
-        return (new SortIterator($this->unwrap(), $path, SORT_ASC, $sort))->first();
+        return new SortIterator($this->unwrap(), $path, SORT_ASC, $sort)->first();
     }
 
     /**
