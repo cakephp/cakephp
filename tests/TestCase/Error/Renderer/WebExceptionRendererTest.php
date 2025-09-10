@@ -147,7 +147,7 @@ class WebExceptionRendererTest extends TestCase
      */
     public function testTemplatePath(): void
     {
-        $request = (new ServerRequest())
+        $request = new ServerRequest()
             ->withParam('controller', 'Foo')
             ->withParam('action', 'bar');
         $exception = new NotFoundException();

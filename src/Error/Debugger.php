@@ -613,7 +613,7 @@ class Debugger
      */
     public static function exportVarAsPlainText(mixed $var, int $maxDepth = 3): string
     {
-        return (new TextFormatter())->dump(
+        return new TextFormatter()->dump(
             static::export($var, new DebugContext($maxDepth)),
         );
     }
