@@ -20,7 +20,7 @@ class EventsCommand extends Command
         return null;
     }
 
-    public function beforeExecute(EventInterface $event)
+    public function beforeExecute(EventInterface $event): void
     {
         /** @var ConsoleIo $io */
         $io = $event->getData('io');
@@ -28,7 +28,7 @@ class EventsCommand extends Command
         $io->out('beforeExecute run');
     }
 
-    public function afterExecute(EventInterface $event)
+    public function afterExecute(EventInterface $event): void
     {
         /** @var ConsoleIo $io */
         $io = $event->getData('io');
