@@ -96,7 +96,7 @@ class TimeHelper extends Helper
     ): string {
         $timezone = $this->getTimezone($timezone);
 
-        return (new DateTime($dateString))->nice($timezone, $locale);
+        return new DateTime($dateString)->nice($timezone, $locale);
     }
 
     /**
@@ -110,7 +110,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): bool {
-        return (new DateTime($dateString, $timezone))->isToday();
+        return new DateTime($dateString, $timezone)->isToday();
     }
 
     /**
@@ -124,7 +124,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): bool {
-        return (new DateTime($dateString, $timezone))->isFuture();
+        return new DateTime($dateString, $timezone)->isFuture();
     }
 
     /**
@@ -138,7 +138,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): bool {
-        return (new DateTime($dateString, $timezone))->isPast();
+        return new DateTime($dateString, $timezone)->isPast();
     }
 
     /**
@@ -152,7 +152,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): bool {
-        return (new DateTime($dateString, $timezone))->isThisWeek();
+        return new DateTime($dateString, $timezone)->isThisWeek();
     }
 
     /**
@@ -166,7 +166,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): bool {
-        return (new DateTime($dateString, $timezone))->isThisMonth();
+        return new DateTime($dateString, $timezone)->isThisMonth();
     }
 
     /**
@@ -180,7 +180,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): bool {
-        return (new DateTime($dateString, $timezone))->isThisYear();
+        return new DateTime($dateString, $timezone)->isThisYear();
     }
 
     /**
@@ -194,7 +194,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): bool {
-        return (new DateTime($dateString, $timezone))->isYesterday();
+        return new DateTime($dateString, $timezone)->isYesterday();
     }
 
     /**
@@ -208,7 +208,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): bool {
-        return (new DateTime($dateString, $timezone))->isTomorrow();
+        return new DateTime($dateString, $timezone)->isTomorrow();
     }
 
     /**
@@ -220,7 +220,7 @@ class TimeHelper extends Helper
      */
     public function toQuarter(ChronosDate|DateTimeInterface|string|int $dateString): array|int
     {
-        return (new DateTime($dateString))->toQuarter();
+        return new DateTime($dateString)->toQuarter();
     }
 
     /**
@@ -233,7 +233,7 @@ class TimeHelper extends Helper
     public function toQuarterRange(
         ChronosDate|DateTimeInterface|string|int $dateString,
     ): array {
-        return (new DateTime($dateString))->toQuarterRange();
+        return new DateTime($dateString)->toQuarterRange();
     }
 
     /**
@@ -248,7 +248,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): string {
-        return (new DateTime($dateString, $timezone))->toUnixString();
+        return new DateTime($dateString, $timezone)->toUnixString();
     }
 
     /**
@@ -265,7 +265,7 @@ class TimeHelper extends Helper
     ): string {
         $timezone = $this->getTimezone($timezone) ?: date_default_timezone_get();
 
-        return (new DateTime($dateString))->setTimezone($timezone)->toAtomString();
+        return new DateTime($dateString)->setTimezone($timezone)->toAtomString();
     }
 
     /**
@@ -281,7 +281,7 @@ class TimeHelper extends Helper
     ): string {
         $timezone = $this->getTimezone($timezone) ?: date_default_timezone_get();
 
-        return (new DateTime($dateString))->setTimezone($timezone)->toRssString();
+        return new DateTime($dateString)->setTimezone($timezone)->toRssString();
     }
 
     /**
@@ -334,7 +334,7 @@ class TimeHelper extends Helper
             }
             unset($options['element']);
         }
-        $relativeDate = (new DateTime($dateTime))->timeAgoInWords($options);
+        $relativeDate = new DateTime($dateTime)->timeAgoInWords($options);
 
         if ($element) {
             return sprintf(
@@ -364,7 +364,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): bool {
-        return (new DateTime($dateString, $timezone))->wasWithinLast($timeInterval);
+        return new DateTime($dateString, $timezone)->wasWithinLast($timeInterval);
     }
 
     /**
@@ -382,7 +382,7 @@ class TimeHelper extends Helper
         ChronosDate|DateTimeInterface|string|int $dateString,
         DateTimeZone|string|null $timezone = null,
     ): bool {
-        return (new DateTime($dateString, $timezone))->isWithinNext($timeInterval);
+        return new DateTime($dateString, $timezone)->isWithinNext($timeInterval);
     }
 
     /**
@@ -394,7 +394,7 @@ class TimeHelper extends Helper
      */
     public function gmt(ChronosDate|DateTimeInterface|string|int|null $string = null): string
     {
-        return (new DateTime($string))->toUnixString();
+        return new DateTime($string)->toUnixString();
     }
 
     /**
@@ -449,7 +449,7 @@ class TimeHelper extends Helper
                 return $date->i18nFormat($format, $timezone);
             }
 
-            return (new DateTime($date))->i18nFormat($format, $timezone);
+            return new DateTime($date)->i18nFormat($format, $timezone);
         } catch (Exception $e) {
             if ($invalid === false) {
                 throw $e;

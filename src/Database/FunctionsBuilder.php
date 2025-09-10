@@ -262,7 +262,7 @@ class FunctionsBuilder
      */
     public function rowNumber(): AggregateExpression
     {
-        return (new AggregateExpression('ROW_NUMBER', [], [], 'integer'))->over();
+        return new AggregateExpression('ROW_NUMBER', [], [], 'integer')->over();
     }
 
     /**
@@ -290,7 +290,7 @@ class FunctionsBuilder
             $types = [$type, 'integer', $type];
         }
 
-        return (new AggregateExpression('LAG', $params, $types, $type ?? 'float'))->over();
+        return new AggregateExpression('LAG', $params, $types, $type ?? 'float')->over();
     }
 
     /**
@@ -318,7 +318,7 @@ class FunctionsBuilder
             $types = [$type, 'integer', $type];
         }
 
-        return (new AggregateExpression('LEAD', $params, $types, $type ?? 'float'))->over();
+        return new AggregateExpression('LEAD', $params, $types, $type ?? 'float')->over();
     }
 
     /**

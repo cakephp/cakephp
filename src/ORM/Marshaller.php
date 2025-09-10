@@ -734,7 +734,7 @@ class Marshaller
             }
         }
 
-        foreach ((new Collection($indexed))->append($new) as $value) {
+        foreach (new Collection($indexed)->append($new) as $value) {
             if (!is_array($value)) {
                 continue;
             }

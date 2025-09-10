@@ -237,7 +237,7 @@ class Filesystem
      */
     public function copyDir(string $source, string $destination): bool
     {
-        $destination = (new SplFileInfo($destination))->getPathname();
+        $destination = new SplFileInfo($destination)->getPathname();
 
         if (!is_dir($destination)) {
             $this->mkdir($destination);

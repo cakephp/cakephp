@@ -174,7 +174,7 @@ class ServerRequestFactory implements ServerRequestFactoryInterface
         $options = ['environment' => $serverParams];
 
         if (is_string($uri)) {
-            $uri = (new UriFactory())->createUri($uri);
+            $uri = new UriFactory()->createUri($uri);
         }
         $options['uri'] = $uri;
 

@@ -72,7 +72,7 @@ class ValidationRule
             $args = array_merge([$value], array_values($this->pass));
         }
 
-        $params = (new ReflectionFunction($this->callable))->getParameters();
+        $params = new ReflectionFunction($this->callable)->getParameters();
         $lastParam = array_pop($params);
         if ($lastParam && $lastParam->getName() === 'context') {
             $args['context'] = $context;

@@ -154,7 +154,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             return $class;
         }
         if ($this->container?->has($class)) {
-            $constructor = (new ReflectionClass($class))->getConstructor();
+            $constructor = new ReflectionClass($class)->getConstructor();
 
             if ($constructor !== null) {
                 $args = $this->reflectArguments($constructor, ['config' => $config]);
