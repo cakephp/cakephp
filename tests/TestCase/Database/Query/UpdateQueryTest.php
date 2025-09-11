@@ -212,7 +212,7 @@ class UpdateQueryTest extends TestCase
         $this->assertSame(6, $result->rowCount());
         $result->closeCursor();
 
-        $result = (new SelectQuery($this->connection))->select(['created', 'updated'])->from('comments')->execute();
+        $result = new SelectQuery($this->connection)->select(['created', 'updated'])->from('comments')->execute();
         foreach ($result->fetchAll('assoc') as $row) {
             $this->assertSame($row['created'], $row['updated']);
         }
@@ -312,7 +312,7 @@ class UpdateQueryTest extends TestCase
                         'OR' => [
                             $query->newExpr()->eq(new IdentifierExpression('c.name'), 'zap'),
                             'd.name' => 'baz',
-                            (new SelectQuery($this->connection))->select(['e.name'])->where(['e.name' => 'oof']),
+                            new SelectQuery($this->connection)->select(['e.name'])->where(['e.name' => 'oof']),
                         ],
                     ],
                 ],

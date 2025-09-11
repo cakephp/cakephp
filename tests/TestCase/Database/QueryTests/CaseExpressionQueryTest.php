@@ -244,7 +244,7 @@ class CaseExpressionQueryTest extends TestCase
 
         $this->assertSame(1, (int)$query->execute()->fetch()[0]);
 
-        $query = (new UpdateQuery($this->connection))
+        $query = new UpdateQuery($this->connection)
             ->update('comments')
             ->set([
                 'published' =>
@@ -257,7 +257,7 @@ class CaseExpressionQueryTest extends TestCase
             ->where(['1 = 1'])
             ->execute();
 
-        $query = (new SelectQuery($this->connection))
+        $query = new SelectQuery($this->connection)
             ->select(['count' => $this->query->func()->count('*')])
             ->from('comments')
             ->where(['comments.published' => 'Y']);

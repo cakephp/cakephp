@@ -53,7 +53,7 @@ class FixtureHelperTest extends TestCase
     {
         $this->setAppNamespace('TestApp');
         $this->loadPlugins(['TestPlugin']);
-        $fixtures = (new FixtureHelper())->loadFixtures([
+        $fixtures = new FixtureHelper()->loadFixtures([
             'core.Articles',
             'plugin.TestPlugin.Articles',
             'plugin.TestPlugin.Blog/Comments',
@@ -74,7 +74,7 @@ class FixtureHelperTest extends TestCase
      */
     public function testLoadFixturesDoesNotPolluteTheTableLocator(): void
     {
-        (new FixtureHelper())->loadFixtures([
+        new FixtureHelper()->loadFixtures([
             'core.Articles',
             'plugin.TestPlugin.Blog/Comments',
         ]);
@@ -90,7 +90,7 @@ class FixtureHelperTest extends TestCase
     {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Could not find fixture `core.ThisIsMissing`');
-        (new FixtureHelper())->loadFixtures(['core.ThisIsMissing']);
+        new FixtureHelper()->loadFixtures(['core.ThisIsMissing']);
     }
 
     /**
@@ -100,7 +100,7 @@ class FixtureHelperTest extends TestCase
     {
         $this->expectException(UnexpectedValueException::class);
         $this->expectExceptionMessage('Found duplicate fixture `core.Articles`');
-        (new FixtureHelper())->loadFixtures(['core.Articles','core.Articles']);
+        new FixtureHelper()->loadFixtures(['core.Articles','core.Articles']);
     }
 
     /**
@@ -133,7 +133,7 @@ class FixtureHelperTest extends TestCase
         ConnectionManager::alias('test', 'test2');
 
         $numCalls = 0;
-        (new FixtureHelper())->runPerConnection(function () use (&$numCalls): void {
+        new FixtureHelper()->runPerConnection(function () use (&$numCalls): void {
             ++$numCalls;
         }, [$fixture1, $fixture2]);
         $this->assertSame(2, $numCalls);

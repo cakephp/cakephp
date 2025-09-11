@@ -65,7 +65,7 @@ class ConnectionHelperTest extends TestCase
         $connection = new Connection(['driver' => TestDriver::class]);
         ConnectionManager::setConfig('something', $connection);
 
-        (new ConnectionHelper())->addTestAliases();
+        new ConnectionHelper()->addTestAliases();
 
         // Should raise as no test connection was defined.
         $this->expectException(MissingDatasourceConfigException::class);
@@ -79,7 +79,7 @@ class ConnectionHelperTest extends TestCase
         ConnectionManager::setConfig('something', $connection);
         ConnectionManager::setConfig('test_something', $testConnection);
 
-        (new ConnectionHelper())->addTestAliases();
+        new ConnectionHelper()->addTestAliases();
 
         // Development connections that have test_ prefix connections defined
         // should have an alias defined for the test_ prefixed name. This allows

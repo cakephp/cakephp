@@ -74,7 +74,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
             $this->assertSame('decoded', $req->getCookie('secret'));
             $this->assertSame('always plain', $req->getCookie('plain'));
 
-            return (new Response())->withHeader('called', 'yes');
+            return new Response()->withHeader('called', 'yes');
         });
         $response = $this->middleware->process($request, $handler);
         $this->assertSame('yes', $response->getHeaderLine('called'), 'Inner middleware not invoked');
@@ -126,7 +126,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $handler = new TestRequestHandler(function ($req) {
-            return (new Response())->withAddedHeader('Set-Cookie', 'secret=be%20quiet')
+            return new Response()->withAddedHeader('Set-Cookie', 'secret=be%20quiet')
                 ->withAddedHeader('Set-Cookie', 'plain=in%20clear')
                 ->withAddedHeader('Set-Cookie', 'ninja=shuriken');
         });
@@ -149,7 +149,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
         $handler = new TestRequestHandler(function ($req) {
-            return (new Response())->withCookie(new Cookie('secret', 'be quiet'))
+            return new Response()->withCookie(new Cookie('secret', 'be quiet'))
                 ->withCookie(new Cookie('plain', 'in clear'))
                 ->withCookie(new Cookie('ninja', 'shuriken'));
         });

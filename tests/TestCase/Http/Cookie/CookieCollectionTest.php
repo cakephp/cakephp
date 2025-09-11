@@ -210,7 +210,7 @@ class CookieCollectionTest extends TestCase
         $request = new ServerRequest([
             'url' => '/app',
         ]);
-        $response = (new Response())
+        $response = new Response()
             ->withAddedHeader('Set-Cookie', 'test=value')
             ->withAddedHeader('Set-Cookie', 'expiring=soon; Expires=Mon, 09-Jun-2031 10:18:14 GMT; Path=/; HttpOnly; Secure;')
             ->withAddedHeader('Set-Cookie', 'session=123abc; Domain=www.example.com')
@@ -241,7 +241,7 @@ class CookieCollectionTest extends TestCase
 
         $maxage = $new->get('maxage');
         $this->assertLessThanOrEqual(
-            (new DateTime('60 seconds'))->format('Y-m-d H:i:s'),
+            new DateTime()->format('Y-m-d H:i:s'),
             $maxage->getExpiry()->format('Y-m-d H:i:s'),
             'Has max age',
         );
@@ -256,7 +256,7 @@ class CookieCollectionTest extends TestCase
         $request = new ServerRequest([
             'url' => '/app',
         ]);
-        $response = (new Response())
+        $response = new Response()
             ->withAddedHeader('Set-Cookie', 'test=val%3Bue; Path=/example; Secure;');
         $new = $collection->addFromResponse($response, $request);
         $this->assertTrue($new->has('test'));
@@ -275,7 +275,7 @@ class CookieCollectionTest extends TestCase
         $request = new ServerRequest([
             'url' => '/app',
         ]);
-        $response = (new Response())
+        $response = new Response()
             ->withAddedHeader('Set-Cookie', '');
         $new = $collection->addFromResponse($response, $request);
         $this->assertCount(0, $new, 'no cookies parsed');
@@ -290,7 +290,7 @@ class CookieCollectionTest extends TestCase
         $request = new ServerRequest([
             'url' => '/app',
         ]);
-        $response = (new Response())
+        $response = new Response()
             ->withAddedHeader('Set-Cookie', 'test=value')
             ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
         $new = $collection->addFromResponse($response, $request);
@@ -312,7 +312,7 @@ class CookieCollectionTest extends TestCase
                 'HTTP_HOST' => 'example.com',
             ],
         ]);
-        $response = (new Response())
+        $response = new Response()
             ->withAddedHeader('Set-Cookie', 'test=value')
             ->withAddedHeader('Set-Cookie', 'expired=soon; Expires=Wed, 09-Jun-2012 10:18:14 GMT; Path=/;');
         $new = $collection->addFromResponse($response, $request);
@@ -328,7 +328,7 @@ class CookieCollectionTest extends TestCase
         $request = new ServerRequest([
             'url' => '/app',
         ]);
-        $response = (new Response())
+        $response = new Response()
             ->withAddedHeader('Set-Cookie', 'test=value')
             ->withAddedHeader('Set-Cookie', 'expired=no; Expires=1w; Path=/; HttpOnly; Secure;');
         $new = $collection->addFromResponse($response, $request);
@@ -352,7 +352,7 @@ class CookieCollectionTest extends TestCase
                 'HTTP_HOST' => 'example.com',
             ],
         ]);
-        $response = (new Response())->withAddedHeader('Set-Cookie', 'key=new value');
+        $response = new Response()->withAddedHeader('Set-Cookie', 'key=new value');
         $new = $collection->addFromResponse($response, $request);
         $this->assertTrue($new->has('key'));
         $this->assertSame('new value', $new->get('key')->getValue());

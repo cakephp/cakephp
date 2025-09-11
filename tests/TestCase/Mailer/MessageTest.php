@@ -192,7 +192,7 @@ HTML;
         $this->message->setSubject('Wordwrap Test');
         $this->message->setBodyText($message);
 
-        $result = (new DebugTransport())->send($this->message);
+        $result = new DebugTransport()->send($this->message);
 
         $message = str_replace("\r\n", "\n", substr($message, 0, -9));
         $message = str_replace("\n", "\r\n", $message);
@@ -215,7 +215,7 @@ HTML;
         $this->message->setSubject('Wordwrap Test');
         $this->message->setBodyText($message);
 
-        $result = (new DebugTransport())->send($this->message);
+        $result = new DebugTransport()->send($this->message);
         $message = substr($message, 0, -1);
         $expected = "{$message}\r\nx\r\n\r\n";
         $this->assertSame($expected, $result['message']);
@@ -238,7 +238,7 @@ HTML;
         $this->message->setHeaderCharset('iso-2022-jp');
         $this->message->setBodyText($message);
 
-        $result = (new DebugTransport())->send($this->message);
+        $result = new DebugTransport()->send($this->message);
         $expected = "{$message}\r\n\r\n";
         $this->assertSame($expected, $result['message']);
     }

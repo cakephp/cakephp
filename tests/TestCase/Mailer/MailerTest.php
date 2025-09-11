@@ -324,12 +324,12 @@ class MailerTest extends TestCase
 
     public function testProxies(): void
     {
-        $result = (new Mailer())->setHeaders(['X-Something' => 'nice']);
+        $result = new Mailer()->setHeaders(['X-Something' => 'nice']);
         $this->assertInstanceOf(Mailer::class, $result);
         $header = $result->getMessage()->getHeaders();
         $this->assertSame('nice', $header['X-Something']);
 
-        $result = (new Mailer())->setAttachments([
+        $result = new Mailer()->setAttachments([
             ['file' => APP . 'ApplicationWithDefaultRoutes.php', 'mimetype' => 'text/plain'],
         ]);
         $this->assertInstanceOf(Mailer::class, $result);
@@ -356,7 +356,7 @@ class MailerTest extends TestCase
 
     public function testSet(): void
     {
-        $result = (new Mailer())->setViewVars('key', 'value');
+        $result = new Mailer()->setViewVars('key', 'value');
         $this->assertInstanceOf(Mailer::class, $result);
         $this->assertSame(['key' => 'value'], $result->getRenderer()->viewBuilder()->getVars());
     }
@@ -1279,7 +1279,7 @@ class MailerTest extends TestCase
     {
         $this->expectException(MissingActionException::class);
         $this->expectExceptionMessage('Mail Cake\Mailer\Mailer::test() could not be found, or is not accessible.');
-        (new Mailer())->send('test');
+        new Mailer()->send('test');
     }
 
     public function testDeliver(): void

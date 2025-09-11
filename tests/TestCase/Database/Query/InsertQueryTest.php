@@ -267,7 +267,7 @@ class InsertQueryTest extends TestCase
      */
     public function testInsertFromSelect(): void
     {
-        $select = (new SelectQuery($this->connection))->select(['name', "'some text'", 99])
+        $select = new SelectQuery($this->connection)->select(['name', "'some text'", 99])
             ->from('authors')
             ->where(['id' => 1]);
 
@@ -298,7 +298,7 @@ class InsertQueryTest extends TestCase
             $this->assertSame(1, $result->rowCount());
         }
 
-        $result = (new SelectQuery($this->connection))->select('*')
+        $result = new SelectQuery($this->connection)->select('*')
             ->from('articles')
             ->where(['author_id' => 99])
             ->execute();
@@ -358,7 +358,7 @@ class InsertQueryTest extends TestCase
             $this->assertSame(1, $result->rowCount());
         }
 
-        $result = (new SelectQuery($this->connection))->select('*')
+        $result = new SelectQuery($this->connection)->select('*')
             ->from('articles')
             ->where(['author_id' => 99])
             ->execute();
@@ -389,7 +389,7 @@ class InsertQueryTest extends TestCase
         }
         $result->closeCursor();
 
-        $result = (new SelectQuery($this->connection))->select('*')
+        $result = new SelectQuery($this->connection)->select('*')
             ->from('articles')
             ->where(['author_id' => 100])
             ->execute();

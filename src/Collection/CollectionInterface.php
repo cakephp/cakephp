@@ -38,7 +38,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ### Example:
      *
      * ```
-     * $collection = (new Collection($items))->each(function ($value, $key) {
+     * $collection = new Collection()->each(function ($value, $key) {
      *  echo "Element $key: $value";
      * });
      * ```
@@ -63,7 +63,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * be present in the resulting collection:
      *
      * ```
-     * $collection = (new Collection([1, 2, 3]))->filter(function ($value, $key) {
+     * $collection = new Collection()->filter(function ($value, $key) {
      *  return $value % 2 === 0;
      * });
      * ```
@@ -89,7 +89,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * be present in the resulting collection:
      *
      * ```
-     * $collection = (new Collection([1, 2, 3]))->reject(function ($value, $key) {
+     * $collection = new Collection()->reject(function ($value, $key) {
      *  return $value % 2 === 0;
      * });
      * ```
@@ -124,7 +124,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ### Example:
      *
      * ```
-     * $overTwentyOne = (new Collection([24, 45, 60, 15]))->every(function ($value, $key) {
+     * $overTwentyOne = new Collection()->every(function ($value, $key) {
      *  return $value > 21;
      * });
      * ```
@@ -147,7 +147,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ### Example:
      *
      * ```
-     * $hasYoungPeople = (new Collection([24, 45, 15]))->some(function ($value, $key) {
+     * $hasYoungPeople = new Collection()->some(function ($value, $key) {
      *  return $value < 21;
      * });
      * ```
@@ -180,7 +180,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * Getting a collection of booleans where true indicates if a person is female:
      *
      * ```
-     * $collection = (new Collection($people))->map(function ($person, $key) {
+     * $collection = new Collection()->map(function ($person, $key) {
      *  return $person->gender === 'female';
      * });
      * ```
@@ -224,7 +224,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *     ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']]],
      *     ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]],
      * ];
-     * $extracted = (new Collection($items))->extract('comment.user.name');
+     * $extracted = new Collection()->extract('comment.user.name');
      *
      * // Result will look like this when converted to array
      * ['Mark', 'Renan']
@@ -237,7 +237,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *      ['comment' => ['votes' => [['value' => 1], ['value' => 2], ['value' => 3]]],
      *      ['comment' => ['votes' => [['value' => 4]],
      * ];
-     * $extracted = (new Collection($items))->extract('comment.votes.{*}.value');
+     * $extracted = new Collection()->extract('comment.votes.{*}.value');
      *
      * // Result will contain
      * [1, 2, 3, 4]
@@ -312,11 +312,11 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *  ['invoice' => ['total' => 200]]
      * ];
      *
-     * $total = (new Collection($items))->avg('invoice.total');
+     * $total = new Collection()->avg('invoice.total');
      *
      * // Total: 150
      *
-     * $total = (new Collection([1, 2, 3]))->avg();
+     * $total = new Collection()->avg();
      * // Total: 2
      * ```
      *
@@ -345,11 +345,11 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *  ['invoice' => ['total' => 200]]
      * ];
      *
-     * $total = (new Collection($items))->median('invoice.total');
+     * $total = new Collection()->median('invoice.total');
      *
      * // Total: 333
      *
-     * $total = (new Collection([1, 2, 3, 4]))->median();
+     * $total = new Collection()->median();
      * // Total: 2.5
      * ```
      *
@@ -421,10 +421,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *  ['id' => 3, 'name' => 'baz', 'parent_id' => 10],
      * ];
      *
-     * $group = (new Collection($items))->groupBy('parent_id');
+     * $group = new Collection()->groupBy('parent_id');
      *
      * // Or
-     * $group = (new Collection($items))->groupBy(function ($e) {
+     * $group = new Collection()->groupBy(function ($e) {
      *  return $e['parent_id'];
      * });
      *
@@ -464,10 +464,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *  ['id' => 3, 'name' => 'baz'],
      * ];
      *
-     * $indexed = (new Collection($items))->indexBy('id');
+     * $indexed = new Collection()->indexBy('id');
      *
      * // Or
-     * $indexed = (new Collection($items))->indexBy(function ($e) {
+     * $indexed = new Collection()->indexBy(function ($e) {
      *  return $e['id'];
      * });
      *
@@ -503,10 +503,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *  ['id' => 3, 'name' => 'baz', 'parent_id' => 10],
      * ];
      *
-     * $group = (new Collection($items))->countBy('parent_id');
+     * $group = new Collection()->countBy('parent_id');
      *
      * // Or
-     * $group = (new Collection($items))->countBy(function ($e) {
+     * $group = new Collection()->countBy(function ($e) {
      *  return $e['parent_id'];
      * });
      *
@@ -535,11 +535,11 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *  ['invoice' => ['total' => 200]],
      * ];
      *
-     * $total = (new Collection($items))->sumOf('invoice.total');
+     * $total = new Collection()->sumOf('invoice.total');
      *
      * // Total: 300
      *
-     * $total = (new Collection([1, 2, 3]))->sumOf();
+     * $total = new Collection()->sumOf();
      * // Total: 6
      * ```
      *
@@ -588,7 +588,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ```
      * $items = [1, 2, 3, 4, 5];
      *
-     * $last = (new Collection($items))->takeLast(3);
+     * $last = new Collection()->takeLast(3);
      *
      * // Result will look like this when converted to array
      * [3, 4, 5];
@@ -620,7 +620,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *     ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]],
      * ];
      *
-     * $extracted = (new Collection($items))->match(['user.name' => 'Renan']);
+     * $extracted = new Collection()->match(['user.name' => 'Renan']);
      *
      * // Result will look like this when converted to array
      * [
@@ -710,7 +710,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *  ['id' => 3, 'name' => 'baz', 'parent' => 'a'],
      * ];
      *
-     * $combined = (new Collection($items))->combine('id', 'name');
+     * $combined = new Collection()->combine('id', 'name');
      *
      * // Result will look like this when converted to array
      * [
@@ -719,7 +719,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *  3 => 'baz',
      * ];
      *
-     * $combined = (new Collection($items))->combine('id', 'name', 'parent');
+     * $combined = new Collection()->combine('id', 'name', 'parent');
      *
      * // Result will look like this when converted to array
      * [
@@ -780,7 +780,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *     ['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan']]],
      * ];
      * $ages = [25, 28];
-     * $inserted = (new Collection($items))->insert('comment.user.age', $ages);
+     * $inserted = new Collection()->insert('comment.user.age', $ages);
      *
      * // Result will look like this when converted to array
      * [
@@ -940,8 +940,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * Get an array of lines in a CSV file until the timestamp column is less than a date
      *
      * ```
-     * $lines = (new Collection($fileLines))->stopWhen(function ($value, $key) {
-     *  return (new DateTime($value))->format('Y') < 2012;
+     * $lines = new Collection()->stopWhen(function ($value, $key) {
+     *  return new DateTime()->format('Y') < 2012;
      * })
      * ->toArray();
      * ```
@@ -949,7 +949,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * Get elements until the first unapproved message is found:
      *
      * ```
-     * $comments = (new Collection($comments))->stopWhen(['is_approved' => false]);
+     * $comments = new Collection()->stopWhen(['is_approved' => false]);
      * ```
      *
      * @param callable|array $condition the method that will receive each of the elements and
@@ -978,14 +978,14 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * ```
      * $items [[1, 2, 3], [4, 5]];
-     * $unfold = (new Collection($items))->unfold(); // Returns [1, 2, 3, 4, 5]
+     * $unfold = new Collection()->unfold(); // Returns [1, 2, 3, 4, 5]
      * ```
      *
      * Using a transformer
      *
      * ```
      * $items [1, 2, 3];
-     * $allItems = (new Collection($items))->unfold(function ($page) {
+     * $allItems = new Collection()->unfold(function ($page) {
      *  return $service->fetchPage($page)->toArray();
      * });
      * ```
@@ -1004,7 +1004,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * ```
      * $items = [1, 2, 3];
-     * $decorated = (new Collection($items))->through(function ($collection) {
+     * $decorated = new Collection()->through(function ($collection) {
      *      return new MyCustomCollection($collection);
      * });
      * ```
@@ -1062,7 +1062,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * ```
      * $items [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
-     * $chunked = (new Collection($items))->chunk(3)->toList();
+     * $chunked = new Collection()->chunk(3)->toList();
      * // Returns [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10, 11]]
      * ```
      *
@@ -1078,7 +1078,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * ```
      * $items ['a' => 1, 'b' => 2, 'c' => 3, 'd' => 4, 'e' => 5, 'f' => 6];
-     * $chunked = (new Collection($items))->chunkWithKeys(3)->toList();
+     * $chunked = new Collection()->chunkWithKeys(3)->toList();
      * // Returns [['a' => 1, 'b' => 2, 'c' => 3], ['d' => 4, 'e' => 5, 'f' => 6]]
      * ```
      *
@@ -1095,11 +1095,11 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * ```
      * $items [1, 2, 3];
-     * (new Collection($items))->isEmpty(); // false
+     * new Collection()->isEmpty(); // false
      * ```
      *
      * ```
-     * (new Collection([]))->isEmpty(); // true
+     * new Collection()->isEmpty(); // true
      * ```
      *
      * @return bool
@@ -1128,7 +1128,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *       ['Product C', '400', '300', '200'],
      * ]
      *
-     * $transpose = (new Collection($items))->transpose()->toList();
+     * $transpose = new Collection()->transpose()->toList();
      *
      * // Returns
      * // [

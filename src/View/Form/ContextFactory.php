@@ -67,7 +67,7 @@ class ContextFactory
                         return new EntityContext($data);
                     }
                     if (is_iterable($data['entity'])) {
-                        $pass = (new Collection($data['entity']))->first() !== null;
+                        $pass = new Collection()->first() !== null;
                         if ($pass) {
                             return new EntityContext($data);
                         }

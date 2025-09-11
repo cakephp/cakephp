@@ -285,10 +285,10 @@ trait CollectionTrait
      *  ['id' => 3, 'name' => 'baz', 'parent_id' => 10],
      * ];
      *
-     * $group = (new Collection($items))->groupBy('parent_id');
+     * $group = new Collection()->groupBy('parent_id');
      *
      * // Or
-     * $group = (new Collection($items))->groupBy(function ($e) {
+     * $group = new Collection()->groupBy(function ($e) {
      *  return $e['parent_id'];
      * });
      *

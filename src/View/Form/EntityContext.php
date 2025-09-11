@@ -314,7 +314,7 @@ class EntityContext implements ContextInterface
         $table = $this->getTable($path, false);
         $primary = $table ? (array)$table->getPrimaryKey() : ['id'];
 
-        return (new Collection($values))->extract($primary[0])->toArray();
+        return new Collection()->extract($primary[0])->toArray();
     }
 
     /**

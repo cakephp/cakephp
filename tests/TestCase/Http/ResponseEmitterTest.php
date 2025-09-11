@@ -76,7 +76,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseSimple(): void
     {
-        $response = (new Response())
+        $response = new Response()
             ->withStatus(201)
             ->withHeader('Content-Type', 'text/html')
             ->withHeader('Location', 'http://example.com/cake/1');
@@ -100,7 +100,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitNoContentResponse(): void
     {
-        $response = (new Response())
+        $response = new Response()
             ->withHeader('X-testing', 'value')
             ->withStatus(204);
         $response->getBody()->write('It worked');
@@ -122,7 +122,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseArrayCookies(): void
     {
-        $response = (new Response())
+        $response = new Response()
             ->withCookie(new Cookie('simple', 'val', null, '/', '', true))
             ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly')
             ->withHeader('Content-Type', 'text/plain');
@@ -166,7 +166,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseCookies(): void
     {
-        $response = (new Response())
+        $response = new Response()
             ->withAddedHeader('Set-Cookie', "simple=val;\tSecure")
             ->withAddedHeader('Set-Cookie', 'people=jim,jack,jonny";";Path=/accounts')
             ->withAddedHeader('Set-Cookie', 'google=not=nice;Path=/accounts; HttpOnly; samesite=Strict')
@@ -246,7 +246,7 @@ class ResponseEmitterTest extends TestCase
         $stream = new CallbackStream(function (): void {
             echo 'It worked';
         });
-        $response = (new Response())
+        $response = new Response()
             ->withStatus(201)
             ->withBody($stream)
             ->withHeader('Content-Type', 'text/plain');
@@ -268,7 +268,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseBodyRange(): void
     {
-        $response = (new Response())
+        $response = new Response()
             ->withHeader('Content-Type', 'text/plain')
             ->withHeader('Content-Range', 'bytes 1-4/9');
         $response->getBody()->write('It worked');
@@ -291,7 +291,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseBodyRangeComplete(): void
     {
-        $response = (new Response())
+        $response = new Response()
             ->withHeader('Content-Type', 'text/plain')
             ->withHeader('Content-Range', 'bytes 0-20/9');
         $response->getBody()->write('It worked');
@@ -308,7 +308,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseBodyRangeOverflow(): void
     {
-        $response = (new Response())
+        $response = new Response()
             ->withHeader('Content-Type', 'text/plain')
             ->withHeader('Content-Range', 'bytes 5-20/9');
         $response->getBody()->write('It worked');
@@ -325,7 +325,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseBodyRangeMalformed(): void
     {
-        $response = (new Response())
+        $response = new Response()
             ->withHeader('Content-Type', 'text/plain')
             ->withHeader('Content-Range', 'bytes 9-ba/a');
         $response->getBody()->write('It worked');
@@ -345,7 +345,7 @@ class ResponseEmitterTest extends TestCase
         $stream = new CallbackStream(function () {
             return 'It worked';
         });
-        $response = (new Response())
+        $response = new Response()
             ->withStatus(201)
             ->withBody($stream)
             ->withHeader('Content-Range', 'bytes 1-4/9')

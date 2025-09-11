@@ -2285,7 +2285,7 @@ class ValidatorTest extends TestCase
         $this->assertProxyMethod($validator, 'dateTime', ['ymd'], [['ymd']], 'datetime');
         $this->assertNotEmpty($validator->validate(['username' => 'not a date']));
 
-        $validator = (new Validator())->dateTime('thedate', ['iso8601']);
+        $validator = new Validator()->dateTime('thedate', ['iso8601']);
         $this->assertEmpty($validator->validate(['thedate' => '2020-05-01T12:34:56Z']));
 
         $fieldName = 'field_name';

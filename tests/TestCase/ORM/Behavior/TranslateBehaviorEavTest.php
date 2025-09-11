@@ -87,7 +87,7 @@ class TranslateBehaviorEavTest extends TestCase
      */
     protected function _extractTranslations($data): CollectionInterface
     {
-        return (new Collection($data))->map(function (EntityInterface $row) {
+        return new Collection()->map(function (EntityInterface $row) {
             $translations = $row->get('_translations');
             if (!$translations) {
                 return [];
@@ -1807,7 +1807,7 @@ class TranslateBehaviorEavTest extends TestCase
             'fields' => ['title', 'body'],
             'validator' => 'custom',
         ]);
-        $validator = (new Validator())->notEmptyString('title');
+        $validator = new Validator()->notEmptyString('title');
         $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 
@@ -1886,7 +1886,7 @@ class TranslateBehaviorEavTest extends TestCase
             'fields' => ['title', 'body'],
             'validator' => 'custom',
         ]);
-        $validator = (new Validator())->notEmptyString('title');
+        $validator = new Validator()->notEmptyString('title');
         $table->setValidator('custom', $validator);
         $translate = $table->behaviors()->get('Translate');
 

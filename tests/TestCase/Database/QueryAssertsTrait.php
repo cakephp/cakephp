@@ -50,7 +50,7 @@ trait QueryAssertsTrait
      */
     public function assertTable($table, $count, $rows, $conditions = []): void
     {
-        $result = (new SelectQuery($this->connection))->select('*')
+        $result = new SelectQuery($this->connection)->select('*')
             ->from($table)
             ->where($conditions)
             ->execute();
