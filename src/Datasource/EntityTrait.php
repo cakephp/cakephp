@@ -151,7 +151,7 @@ trait EntityTrait
      */
     public function &__get(string $field): mixed
     {
-        return $this->getEx($field, $this->requireFieldPresence);
+        return $this->getRequiredOrFail($field, $this->requireFieldPresence);
     }
 
     /**
@@ -383,7 +383,7 @@ trait EntityTrait
      */
     public function &get(string $field): mixed
     {
-        return $this->getEx($field, false);
+        return $this->getRequiredOrFail($field, false);
     }
 
     /**
@@ -399,9 +399,9 @@ trait EntityTrait
      * @throws \InvalidArgumentException if an empty field name is passed
      * @throws \Cake\Datasource\Exception\MissingPropertyException If property does not exist
      */
-    public function &getExistingOrFail(string $field): mixed
+    public function &getOrFail(string $field): mixed
     {
-        return $this->getEx($field, true);
+        return $this->getRequiredOrFail($field, true);
     }
 
     /**
@@ -413,7 +413,7 @@ trait EntityTrait
      * @throws \InvalidArgumentException if an empty field name is passed
      * @throws \Cake\Datasource\Exception\MissingPropertyException If property does not exist and $requireFieldPresence
      */
-    protected function &getEx(string $field, bool $requireFieldPresence): mixed
+    protected function &getRequiredOrFail(string $field, bool $requireFieldPresence): mixed
     {
         if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');

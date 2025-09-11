@@ -320,7 +320,7 @@ class EntityTest extends TestCase
         $this->expectExceptionMessage('Property `not_present` does not exist for the entity `Cake\ORM\Entity`');
 
         $entity = new Entity();
-        $entity->getExistingOrFail('not_present');
+        $entity->getOrFail('not_present');
     }
 
     /**
