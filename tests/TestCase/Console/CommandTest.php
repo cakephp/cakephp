@@ -342,6 +342,7 @@ class CommandTest extends TestCase
         $command->executeCommand(EventsCommand::class, [], $this->getMockIo($output));
         $this->assertEquals([
             'beforeExecute run',
+            'execute run',
             'afterExecute run',
         ], $output->messages());
     }

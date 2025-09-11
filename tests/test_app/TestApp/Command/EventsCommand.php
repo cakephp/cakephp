@@ -17,6 +17,8 @@ class EventsCommand extends Command
 
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
+        $io->out('execute run');
+    
         return null;
     }
 
