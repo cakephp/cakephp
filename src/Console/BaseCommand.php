@@ -33,6 +33,18 @@ use Cake\Utility\Inflector;
  * - `buildOptionParser` Build/Configure the option parser for your command.
  * - `execute` Execute your command with parsed Arguments and ConsoleIo
  *
+ * ### Life cycle callbacks
+ *
+ * CakePHP fires a number of life cycle callbacks during each command execution.
+ * By implementing a method you can receive the related events. The available
+ * callbacks are:
+ *
+ * - `beforeExecute(EventInterface $event)`
+ *   Called immediately prior to the command's run method. This is a good place to do
+ *   general logic that applies to command setup.
+ * - `afterExecute(EventInterface $event)`
+ *   Called immediately after the command's run method, unless an exception occurs.
+ *
  * @implements \Cake\Event\EventDispatcherInterface<\Cake\Command\Command>
  */
 abstract class BaseCommand implements CommandInterface, EventDispatcherInterface, EventListenerInterface
