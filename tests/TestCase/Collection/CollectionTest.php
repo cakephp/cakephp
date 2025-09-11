@@ -1361,7 +1361,7 @@ class CollectionTest extends TestCase
         $collection = new Collection()->combine('id', 'crazy');
         $this->assertEquals([1 => null, 2 => null, 3 => null], $collection->toArray());
 
-        $collection = (new Collection([
+        $collection = new Collection([
             ['amount' => 10, 'article_status' => ArticleStatus::from('Y')],
             ['amount' => 2, 'article_status' => ArticleStatus::from('N')],
         ]))->combine('article_status', 'amount');

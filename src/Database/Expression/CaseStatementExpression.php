@@ -379,7 +379,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
             throw new LogicException('Cannot call `then()` before `when()`.');
         }
 
-        $whenThen = (new WhenThenExpression($this->getTypeMap()))
+        $whenThen = new WhenThenExpression($this->getTypeMap()))
             ->when($this->whenBuffer['when'], $this->whenBuffer['type'])
             ->then($result, $type);
 

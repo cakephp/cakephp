@@ -828,7 +828,7 @@ class ControllerTest extends TestCase
         $controller = new TestController($request);
 
         $closure = $controller->getAction();
-        $args = (new ReflectionFunction($closure))->getParameters();
+        $args = new ReflectionFunction($closure))->getParameters();
 
         $this->assertSame('Parameter #0 [ <required> $passed ]', (string)$args[0]);
         $this->assertSame('Parameter #1 [ <required> Cake\ORM\Table $table ]', (string)$args[1]);

@@ -36,10 +36,10 @@ class AggregateExpressionTest extends FunctionExpressionTest
      */
     public function testEmptyWindow(): void
     {
-        $f = (new AggregateExpression('MyFunction'))->over();
+        $f = new AggregateExpression('MyFunction'))->over();
         $this->assertSame('MyFunction() OVER ()', $f->sql(new ValueBinder()));
 
-        $f = (new AggregateExpression('MyFunction'))->over('name');
+        $f = new AggregateExpression('MyFunction'))->over('name');
         $this->assertEqualsSql(
             'MyFunction() OVER name',
             $f->sql(new ValueBinder()),
@@ -51,7 +51,7 @@ class AggregateExpressionTest extends FunctionExpressionTest
      */
     public function testFilter(): void
     {
-        $f = (new AggregateExpression('MyFunction'))->filter(['this' => new IdentifierExpression('that')]);
+        $f = new AggregateExpression('MyFunction'))->filter(['this' => new IdentifierExpression('that')]);
         $this->assertEqualsSql(
             'MyFunction() FILTER (WHERE this = that)',
             $f->sql(new ValueBinder()),
@@ -77,55 +77,55 @@ class AggregateExpressionTest extends FunctionExpressionTest
      */
     public function testWindowInterface(): void
     {
-        $f = (new AggregateExpression('MyFunction'))->partition('test');
+        $f = new AggregateExpression('MyFunction'))->partition('test');
         $this->assertEqualsSql(
             'MyFunction() OVER (PARTITION BY test)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->orderBy('test');
+        $f = new AggregateExpression('MyFunction'))->orderBy('test');
         $this->assertEqualsSql(
             'MyFunction() OVER (ORDER BY test)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->range(null);
+        $f = new AggregateExpression('MyFunction'))->range(null);
         $this->assertEqualsSql(
             'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->range(null, null);
+        $f = new AggregateExpression('MyFunction'))->range(null, null);
         $this->assertEqualsSql(
             'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->rows(null);
+        $f = new AggregateExpression('MyFunction'))->rows(null);
         $this->assertEqualsSql(
             'MyFunction() OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->rows(null, null);
+        $f = new AggregateExpression('MyFunction'))->rows(null, null);
         $this->assertEqualsSql(
             'MyFunction() OVER (ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->groups(null);
+        $f = new AggregateExpression('MyFunction'))->groups(null);
         $this->assertEqualsSql(
             'MyFunction() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->groups(null, null);
+        $f = new AggregateExpression('MyFunction'))->groups(null, null);
         $this->assertEqualsSql(
             'MyFunction() OVER (GROUPS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->frame(
+        $f = new AggregateExpression('MyFunction'))->frame(
             AggregateExpression::RANGE,
             2,
             AggregateExpression::PRECEDING,
@@ -137,25 +137,25 @@ class AggregateExpressionTest extends FunctionExpressionTest
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->excludeCurrent();
+        $f = new AggregateExpression('MyFunction'))->excludeCurrent();
         $this->assertEqualsSql(
             'MyFunction() OVER ()',
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->range(null)->excludeCurrent();
+        $f = new AggregateExpression('MyFunction'))->range(null)->excludeCurrent();
         $this->assertEqualsSql(
             'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE CURRENT ROW)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->range(null)->excludeGroup();
+        $f = new AggregateExpression('MyFunction'))->range(null)->excludeGroup();
         $this->assertEqualsSql(
             'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE GROUP)',
             $f->sql(new ValueBinder()),
         );
 
-        $f = (new AggregateExpression('MyFunction'))->range(null)->excludeTies();
+        $f = new AggregateExpression('MyFunction'))->range(null)->excludeTies();
         $this->assertEqualsSql(
             'MyFunction() OVER (RANGE BETWEEN UNBOUNDED PRECEDING AND CURRENT ROW EXCLUDE TIES)',
             $f->sql(new ValueBinder()),
@@ -167,7 +167,7 @@ class AggregateExpressionTest extends FunctionExpressionTest
      */
     public function testTraverse(): void
     {
-        $w = (new AggregateExpression('MyFunction'))
+        $w = new AggregateExpression('MyFunction'))
             ->filter(['this' => true])
             ->over();
 
@@ -185,7 +185,7 @@ class AggregateExpressionTest extends FunctionExpressionTest
      */
     public function testCloning(): void
     {
-        $a1 = (new AggregateExpression('MyFunction'))->partition('test');
+        $a1 = new AggregateExpression('MyFunction'))->partition('test');
         $a2 = (clone $a1)->partition('new');
         $this->assertNotSame($a1->sql(new ValueBinder()), $a2->sql(new ValueBinder()));
     }

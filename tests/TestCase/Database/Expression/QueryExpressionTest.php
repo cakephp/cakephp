@@ -255,7 +255,7 @@ class QueryExpressionTest extends TestCase
 
     public function testCaseWithoutValue(): void
     {
-        $expression = (new QueryExpression())
+        $expression = new QueryExpression())
             ->case()
             ->when(1)
             ->then(2);
@@ -268,7 +268,7 @@ class QueryExpressionTest extends TestCase
 
     public function testCaseWithNullValue(): void
     {
-        $expression = (new QueryExpression())
+        $expression = new QueryExpression())
             ->case(null)
             ->when(1)
             ->then('Yes');
@@ -281,7 +281,7 @@ class QueryExpressionTest extends TestCase
 
     public function testCaseWithValueAndType(): void
     {
-        $expression = (new QueryExpression())
+        $expression = new QueryExpression())
             ->case('1', 'integer')
             ->when(1)
             ->then('Yes');

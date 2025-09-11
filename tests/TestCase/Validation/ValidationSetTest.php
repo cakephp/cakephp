@@ -63,7 +63,7 @@ class ValidationSetTest extends TestCase
      */
     public function testArrayAccessGet(): void
     {
-        $set = (new ValidationSet())
+        $set = new ValidationSet())
             ->add('notBlank', ['callable' => Closure::fromCallable(Validation::class . '::' . 'notBlank')])
             ->add('numeric', ['callable' => Closure::fromCallable(Validation::class . '::' . 'numeric')])
             ->add('other', ['callable' => Closure::fromCallable(Validation::class . '::' . 'email')]);
@@ -95,7 +95,7 @@ class ValidationSetTest extends TestCase
      */
     public function testArrayAccessExists(): void
     {
-        $set = (new ValidationSet())
+        $set = new ValidationSet())
             ->add('notBlank', ['callable' => Closure::fromCallable(Validation::class . '::' . 'notBlank')])
             ->add('numeric', ['callable' => Closure::fromCallable(Validation::class . '::' . 'numeric')])
             ->add('other', ['callable' => Closure::fromCallable(Validation::class . '::' . 'email')]);
@@ -111,7 +111,7 @@ class ValidationSetTest extends TestCase
      */
     public function testArrayAccessSet(): void
     {
-        $set = (new ValidationSet())
+        $set = new ValidationSet())
             ->add('notBlank', ['callable' => Closure::fromCallable(Validation::class . '::' . 'notBlank')]);
 
         $this->assertArrayNotHasKey('other', $set);
@@ -129,7 +129,7 @@ class ValidationSetTest extends TestCase
      */
     public function testArrayAccessUnset(): void
     {
-        $set = (new ValidationSet())
+        $set = new ValidationSet())
             ->add('notBlank', ['callable' => Closure::fromCallable(Validation::class . '::' . 'notBlank')])
             ->add('numeric', ['callable' => Closure::fromCallable(Validation::class . '::' . 'numeric')])
             ->add('other', ['callable' => Closure::fromCallable(Validation::class . '::' . 'email')]);
@@ -149,7 +149,7 @@ class ValidationSetTest extends TestCase
      */
     public function testIterator(): void
     {
-        $set = (new ValidationSet())
+        $set = new ValidationSet())
             ->add('notBlank', ['callable' => Closure::fromCallable(Validation::class . '::' . 'notBlank')])
             ->add('numeric', ['callable' => Closure::fromCallable(Validation::class . '::' . 'numeric')])
             ->add('other', ['callable' => Closure::fromCallable(Validation::class . '::' . 'email')]);
@@ -176,7 +176,7 @@ class ValidationSetTest extends TestCase
      */
     public function testCount(): void
     {
-        $set = (new ValidationSet())
+        $set = new ValidationSet())
             ->add('notBlank', ['callable' => Closure::fromCallable(Validation::class . '::' . 'notBlank')])
             ->add('numeric', ['callable' => Closure::fromCallable(Validation::class . '::' . 'numeric')])
             ->add('other', ['callable' => Closure::fromCallable(Validation::class . '::' . 'email')]);
@@ -191,7 +191,7 @@ class ValidationSetTest extends TestCase
      */
     public function testRemoveRule(): void
     {
-        $set = (new ValidationSet())
+        $set = new ValidationSet())
             ->add('notBlank', ['callable' => Closure::fromCallable(Validation::class . '::' . 'notBlank')])
             ->add('numeric', ['callable' => Closure::fromCallable(Validation::class . '::' . 'numeric')])
             ->add('other', ['callable' => Closure::fromCallable(Validation::class . '::' . 'email')]);

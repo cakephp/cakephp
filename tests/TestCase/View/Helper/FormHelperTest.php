@@ -8105,7 +8105,7 @@ class FormHelperTest extends TestCase
     {
         $this->Form->setConfig('autoSetCustomValidity', true);
 
-        $validator = (new Validator())
+        $validator = new Validator())
             ->notEmptyString('email', 'Custom error message')
             ->requirePresence('password')
             ->alphaNumeric('password')
@@ -8204,7 +8204,7 @@ class FormHelperTest extends TestCase
      */
     public function testHtml5ErrorMessageInTemplateVars(): void
     {
-        $validator = (new Validator())
+        $validator = new Validator())
             ->notEmptyString('email', 'Custom error "message" & entities')
             ->requirePresence('password')
             ->alphaNumeric('password')

@@ -289,7 +289,7 @@ class HasMany extends Association
             $currentEntities = $targetEntities;
         } else {
             $pkFields = (array)$this->getTarget()->getPrimaryKey();
-            $targetEntities = (new Collection($targetEntities))
+            $targetEntities = new Collection($targetEntities))
                 ->reject(
                     function (EntityInterface $entity) use ($currentEntities, $pkFields) {
                         if ($entity->isNew()) {

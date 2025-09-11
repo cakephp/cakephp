@@ -939,7 +939,7 @@ class ResponseTest extends TestCase
     public function testGetCookiesArrayValue(): void
     {
         $response = new Response();
-        $cookie = (new Cookie('urmc'))
+        $cookie = new Cookie('urmc'))
             ->withValue(['user_id' => 1, 'token' => 'abc123'])
             ->withHttpOnly(true);
 

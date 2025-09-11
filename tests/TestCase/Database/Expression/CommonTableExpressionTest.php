@@ -49,7 +49,7 @@ class CommonTableExpressionTest extends TestCase
         $cte = new CommonTableExpression('test', $this->connection->selectQuery());
         $this->assertEqualsSql('test AS ()', $cte->sql(new ValueBinder()));
 
-        $cte = (new CommonTableExpression())
+        $cte = new CommonTableExpression())
             ->name('test')
             ->query($this->connection->selectQuery());
         $this->assertEqualsSql('test AS ()', $cte->sql(new ValueBinder()));
@@ -60,7 +60,7 @@ class CommonTableExpressionTest extends TestCase
      */
     public function testFields(): void
     {
-        $cte = (new CommonTableExpression('test', $this->connection->selectQuery()))
+        $cte = new CommonTableExpression('test', $this->connection->selectQuery()))
             ->field('col1')
             ->field([new IdentifierExpression('col2')]);
         $this->assertEqualsSql('test(col1, col2) AS ()', $cte->sql(new ValueBinder()));
@@ -71,7 +71,7 @@ class CommonTableExpressionTest extends TestCase
      */
     public function testMaterialized(): void
     {
-        $cte = (new CommonTableExpression('test', $this->connection->selectQuery()))
+        $cte = new CommonTableExpression('test', $this->connection->selectQuery()))
             ->materialized();
         $this->assertEqualsSql('test AS MATERIALIZED ()', $cte->sql(new ValueBinder()));
 
@@ -84,7 +84,7 @@ class CommonTableExpressionTest extends TestCase
      */
     public function testRecursive(): void
     {
-        $cte = (new CommonTableExpression('test', $this->connection->selectQuery()))
+        $cte = new CommonTableExpression('test', $this->connection->selectQuery()))
             ->recursive();
         $this->assertTrue($cte->isRecursive());
     }
@@ -111,7 +111,7 @@ class CommonTableExpressionTest extends TestCase
     public function testTraverse(): void
     {
         $query = $this->connection->selectQuery('1');
-        $cte = (new CommonTableExpression('test', $query))->field('field');
+        $cte = new CommonTableExpression('test', $query))->field('field');
 
         $expressions = [];
         $cte->traverse(function ($expression) use (&$expressions): void {

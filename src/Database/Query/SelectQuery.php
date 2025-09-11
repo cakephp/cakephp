@@ -668,7 +668,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * ### Examples
      *
      * ```
-     * $union = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $union = new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
      * $query->select(['id', 'name'])->from(['d' => 'things'])->union($union);
      * ```
      *
@@ -703,7 +703,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * Unlike UNION, UNION ALL will not remove duplicate rows.
      *
      * ```
-     * $union = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $union = new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
      * $query->select(['id', 'name'])->from(['d' => 'things'])->unionAll($union);
      * ```
      *
@@ -741,7 +741,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * ### Examples
      *
      * ```
-     * $intersect = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $intersect = new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
      * $query->select(['id', 'name'])->from(['d' => 'things'])->intersect($intersect);
      * ```
      *
@@ -776,7 +776,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * Unlike INTERSECT, INTERSECT ALL will not remove duplicate rows.
      *
      * ```
-     * $intersect = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $intersect = new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
      * $query->select(['id', 'name'])->from(['d' => 'things'])->intersectAll($intersect);
      * ```
      *

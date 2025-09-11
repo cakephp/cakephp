@@ -124,7 +124,7 @@ class QueryFactory
      */
     public function delete(?string $table = null, array $conditions = [], array $types = []): DeleteQuery
     {
-        $query = (new DeleteQuery($this->connection))
+        $query = new DeleteQuery($this->connection))
             ->delete($table);
 
         if ($conditions) {

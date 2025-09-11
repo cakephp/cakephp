@@ -173,7 +173,7 @@ class RedisClusterEngineTest extends TestCase
         Log::reset();
         Log::setConfig('default', ['className' => $logger]);
 
-        $this->assertFalse((new RedisEngine())->init([
+        $this->assertFalse(new RedisEngine()->init([
             'className' => 'Redis',
             'clusterName' => 'mycluster',
         ]));

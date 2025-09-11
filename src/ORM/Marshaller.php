@@ -677,7 +677,7 @@ class Marshaller
     {
         $primary = (array)$this->_table->getPrimaryKey();
 
-        $indexed = (new Collection($data))
+        $indexed = new Collection($data))
             ->groupBy(function ($el) use ($primary) {
                 $keys = [];
                 foreach ($primary as $key) {
@@ -709,7 +709,7 @@ class Marshaller
             unset($indexed[$key]);
         }
 
-        $conditions = (new Collection($indexed))
+        $conditions = new Collection($indexed))
             ->map(function ($data, $key) {
                 return explode(';', (string)$key);
             })

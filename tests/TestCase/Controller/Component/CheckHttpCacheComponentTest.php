@@ -44,7 +44,7 @@ class CheckHttpCacheComponentTest extends TestCase
     {
         parent::setUp();
         static::setAppNamespace();
-        $request = (new ServerRequest())
+        $request = new ServerRequest())
             ->withHeader('If-Modified-Since', '2012-01-01 00:00:00')
             ->withHeader('If-None-Match', '*');
         $this->Controller = new Controller($request);

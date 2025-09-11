@@ -57,7 +57,7 @@ class ResultSetFactory
 
                 $results = SplFixedArray::fromArray($results);
             } else {
-                $results = (new Collection($results))
+                $results = new Collection($results))
                     ->map(function ($row) use ($data) {
                         return $this->groupResult($row, $data);
                     });

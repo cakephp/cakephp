@@ -1324,7 +1324,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new PostgresSchemaDialect($driver);
 
-        $table = (new TableSchema('schema_articles'))->addColumn($name, $data);
+        $table = new TableSchema('schema_articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
 
         $data['name'] = $name;
@@ -1425,7 +1425,7 @@ SQL;
         $driver = $this->_getMockedDriver();
         $schema = new PostgresSchemaDialect($driver);
 
-        $table = (new TableSchema('schema_articles'))->addColumn('title', [
+        $table = new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255,
         ])->addColumn('author_id', [
@@ -1447,7 +1447,7 @@ SQL;
         $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
-        $table = (new TableSchema('posts'))
+        $table = new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false,
@@ -1496,7 +1496,7 @@ SQL;
         $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
-        $table = (new TableSchema('posts'))
+        $table = new TableSchema('posts'))
             ->addColumn('author_id', [
                 'type' => 'integer',
                 'null' => false,
@@ -1545,7 +1545,7 @@ SQL;
         $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
-        $table = (new TableSchema('schema_articles'))->addColumn('id', [
+        $table = new TableSchema('schema_articles'))->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,
             ])
@@ -1616,7 +1616,7 @@ SQL;
             ->method('getWriteDriver')
             ->willReturn($driver);
 
-        $table = (new TableSchema('schema_articles'))->addColumn('title', [
+        $table = new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',
             'length' => 255,
         ]);
@@ -1635,7 +1635,7 @@ SQL;
             ->getMock();
         $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
-        $table = (new TableSchema('schema_articles'))->addColumn('id', [
+        $table = new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
             'null' => false,
         ]);
@@ -1656,7 +1656,7 @@ SQL;
         $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
-        $table = (new TableSchema('articles_tags'))
+        $table = new TableSchema('articles_tags'))
             ->addColumn('article_id', [
                 'type' => 'integer',
                 'null' => false,
@@ -1681,7 +1681,7 @@ SQL;
         $this->assertCount(1, $result);
         $this->assertTextEquals($expected, $result[0]);
 
-        $table = (new TableSchema('composite_key'))
+        $table = new TableSchema('composite_key'))
             ->addColumn('id', [
                 'type' => 'integer',
                 'null' => false,

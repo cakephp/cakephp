@@ -101,7 +101,7 @@ class WindowQueryTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('You must return a `WindowExpression`');
-        (new SelectQuery($this->connection))->window('name', function () {
+        new SelectQuery($this->connection)->window('name', function () {
             return new QueryExpression();
         });
     }
@@ -154,7 +154,7 @@ class WindowQueryTest extends TestCase
         $result = $query
             ->select(['num_rows' => $query->func()->count('*')->over('window1')])
             ->from('comments')
-            ->window('window1', (new WindowExpression())->partition('article_id'))
+            ->window('window1', new WindowExpression()->partition('article_id'))
             ->orderBy(['article_id'])
             ->execute()
             ->fetchAll('assoc');
@@ -177,7 +177,7 @@ class WindowQueryTest extends TestCase
         $result = $query
             ->select(['num_rows' => $query->func()->count('*')->over('window2')])
             ->from('comments')
-            ->window('window1', (new WindowExpression())->partition('article_id'))
+            ->window('window1', new WindowExpression()->partition('article_id'))
             ->window('window2', new WindowExpression('window1'))
             ->orderBy(['article_id'])
             ->execute()

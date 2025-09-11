@@ -80,7 +80,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
      * Using a closure:
      *
      * ```
-     *  $printer = (new Collection($treeStructure))
+     *  $printer = new Collection($treeStructure))
      *      ->listNested()
      *      ->printer(function ($item, $key, $iterator) {
      *          return $item->name;

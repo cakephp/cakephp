@@ -517,7 +517,7 @@ class EventManagerTest extends TestCase
             }
         };
 
-        $generalManager = (new EventManager())->trackEvents(true)->setEventList(new EventList());
+        $generalManager = new EventManager())->trackEvents(true)->setEventList(new EventList());
         $manager = new EventManager();
         $event = new Event('fake.event');
         EventManager::instance($generalManager);
