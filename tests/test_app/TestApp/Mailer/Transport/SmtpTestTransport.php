@@ -31,9 +31,9 @@ class SmtpTestTransport extends SmtpTransport
      *
      * @return array<string>
      */
-    public function __sleep()
+    public function __serialize(): array
     {
-        return array_diff(array_keys(get_object_vars($this)), ['_socket']);
+        return array_diff_key(get_object_vars($this), ['_socket' => null]);
     }
 
     /**
