@@ -214,11 +214,11 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * @param \Cake\Event\EventInterface<\Cake\Console\BaseCommand> $event An Event instance
      * @param \Cake\Console\Arguments $args
      * @param \Cake\Console\ConsoleIo $io
-     * @param int|null|void $result
+     * @param int|null $result
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
      */
-    public function afterExecute(EventInterface $event, Arguments $args, ConsoleIo $io, mixed $result): void
+    public function afterExecute(EventInterface $event, Arguments $args, ConsoleIo $io, ?int $result): void
     {
     }
 
