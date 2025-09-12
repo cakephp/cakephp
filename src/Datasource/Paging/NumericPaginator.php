@@ -568,12 +568,15 @@ class NumericPaginator implements PaginatorInterface
             $sortField = $options['sort'];
 
             // Check for combined sort-direction format (e.g., 'title-asc' or 'title-desc')
+            $directionSpecified = false;
             if (preg_match('/^(.+)-(asc|desc)$/i', $sortField, $matches)) {
                 $sortField = $matches[1];
                 $direction = strtolower($matches[2]);
                 $options['sort'] = $sortField;
+                $directionSpecified = true;
             } elseif (isset($options['direction'])) {
                 $direction = strtolower($options['direction']);
+                $directionSpecified = true;
             }
 
             if (!in_array($direction, ['asc', 'desc'], true)) {
@@ -582,7 +585,7 @@ class NumericPaginator implements PaginatorInterface
 
             // Check sortMap first for mapped sorting
             if (isset($options['sortMap'])) {
-                $mappedOrder = $this->resolveSortMapping($options['sort'], $options['sortMap'], $direction);
+                $mappedOrder = $this->resolveSortMapping($options['sort'], $options['sortMap'], $direction, $directionSpecified);
                 if ($mappedOrder !== null) {
                     // Use mapped order and merge with existing order
                     $existingOrder = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
@@ -732,9 +735,10 @@ class NumericPaginator implements PaginatorInterface
      * @param string $sortKey The sort key to resolve
      * @param array|null $sortMap The sort mapping configuration
      * @param string $direction The requested sort direction
+     * @param bool $directionSpecified Whether direction was explicitly specified
      * @return array<string, mixed>|null Returns resolved order array or null if key not found
      */
-    protected function resolveSortMapping(string $sortKey, ?array $sortMap, string $direction): ?array
+    protected function resolveSortMapping(string $sortKey, ?array $sortMap, string $direction, bool $directionSpecified = true): ?array
     {
         if ($sortMap === null) {
             return null;
@@ -771,7 +775,7 @@ class NumericPaginator implements PaginatorInterface
             return $order;
         }
 
-        // Array mapping (multi-column or fixed direction)
+        // Array mapping (multi-column with default or locked directions)
         if (is_array($mapping)) {
             foreach ($mapping as $key => $value) {
                 if (is_int($key)) {
@@ -779,9 +783,21 @@ class NumericPaginator implements PaginatorInterface
                     // e.g., ['modified', 'name']
                     $order[$value] = $direction;
                 } else {
-                    // Associative array: field has fixed direction
-                    // e.g., ['created' => 'desc']
-                    $order[$key] = $value;
+                    // Associative array: check for locked (!) or default direction
+                    if (str_ends_with($value, '!')) {
+                        // Locked direction (ends with !): always use specified direction
+                        // e.g., ['created' => 'desc!'] always sorts desc
+                        $order[$key] = rtrim($value, '!');
+                    } else {
+                        // Default direction that can be toggled
+                        if (!$directionSpecified) {
+                            // No direction specified, use the default
+                            $order[$key] = $value;
+                        } else {
+                            // Direction specified, use it for all toggleable fields
+                            $order[$key] = $direction;
+                        }
+                    }
                 }
             }
 
