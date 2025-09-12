@@ -456,7 +456,7 @@ class CellTest extends TestCase
      */
     public function testCellRenderDispatchesEvents(): void
     {
-        $args = ['msg1' => 'dummy', 'msg2' => ' message'];
+        $args = ['dummy', ' message'];
         /** @var \TestApp\View\Cell\ArticlesCell $cell */
         $cell = $this->View->cell('Articles::doEcho', $args);
 
