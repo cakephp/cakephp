@@ -100,15 +100,29 @@ class SmtpTransport extends AbstractTransport
     }
 
     /**
+     * Returns only serializable properties
+     *
+     * @return array<string>
+     */
+    public function __serialize(): array
+    {
+        return array_diff_key(get_object_vars($this), ['_socket' => null]);
+    }
+
+    /**
      * Unserialize handler.
      *
      * Ensure that the socket property isn't reinitialized in a broken state.
      *
      * @return void
      */
-    public function __wakeup(): void
+    public function __unserialize(array $data): void
     {
-        unset($this->_socket);
+        unset($data['_socket']);
+
+        foreach ($data as $key => $val) {
+            $this->{$key} = $val;
+        }
     }
 
     /**

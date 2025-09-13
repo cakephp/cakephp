@@ -27,16 +27,6 @@ class SmtpTestTransport extends SmtpTransport
     }
 
     /**
-     * Returns only serializable properties
-     *
-     * @return array<string>
-     */
-    public function __serialize(): array
-    {
-        return array_diff_key(get_object_vars($this), ['_socket' => null]);
-    }
-
-    /**
      * Magic function to call protected methods
      *
      * @param string $method
