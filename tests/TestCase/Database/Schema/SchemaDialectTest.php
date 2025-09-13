@@ -185,7 +185,20 @@ class SchemaDialectTest extends TestCase
         $this->assertFalse($this->dialect->hasTable('nope'));
         $this->assertFalse($this->dialect->hasTable('USERS'));
         $this->assertFalse($this->dialect->hasTable('user'));
-        $this->assertTrue($this->dialect->hasTable('users'));
+        $this->assertTrue($this->dialect->hasTable('users'), 'Should exist in implicit default.');
+    }
+
+    public function testHasTableWithSchema(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $this->skipIf($driver instanceof Sqlite, 'sqlite does not support schemas');
+        $this->skipIf($driver instanceof MySql, 'mysql fails because db is missing.');
+
+        $schema = $connection->config()['schema'] ?? null;
+        $this->assertTrue($this->dialect->hasTable('users'), 'Should exist in implicit schema');
+        $this->assertTrue($this->dialect->hasTable('users', $schema), 'Should exist in default schema');
+        $this->assertFalse($this->dialect->hasTable('users', 'other'), 'Should not exist on other schema');
     }
 
     public function testHasIndex(): void

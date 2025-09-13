@@ -394,11 +394,18 @@ abstract class SchemaDialect
     /**
      * Get the list of tables and views available in the current connection.
      *
+     * @param string|null $schema The schema to get the tables for. If null the default schema is used.
      * @return array<string> The list of tables and views in the connected database/schema.
      */
-    public function listTables(): array
+    public function listTables(?string $schema = null): array
     {
-        [$sql, $params] = $this->listTablesSql($this->_driver->config());
+        $config = $this->_driver->config();
+        if ($schema !== null) {
+            $config['schema'] = $schema;
+            // Set database for MySQL
+            $config['database'] = $schema;
+        }
+        [$sql, $params] = $this->listTablesSql($config);
         $result = [];
         $statement = $this->_driver->execute($sql, $params);
         while ($row = $statement->fetch()) {
@@ -644,11 +651,12 @@ abstract class SchemaDialect
      * Check if a table exists
      *
      * @param string $tableName The name of the table
+     * @param string|null $schema The schema look for table in. If null the default schema is used.
      * @return bool
      */
-    public function hasTable(string $tableName): bool
+    public function hasTable(string $tableName, ?string $schema = null): bool
     {
-        $tables = $this->listTables();
+        $tables = $this->listTables($schema);
 
         return in_array($tableName, $tables, true);
     }
