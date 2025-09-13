@@ -308,6 +308,52 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * testSortLinksWithLockOption method
+     *
+     * @return void
+     */
+    public function testSortLinksWithLockOption(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Accounts',
+                'action' => 'index',
+                'pass' => [],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+
+        $params = [
+            'sort' => 'date',
+            'direction' => 'asc',
+        ];
+        $this->setPaginatedResult($params);
+        $this->Paginator->options(['url' => ['param']]);
+
+        $result = $this->Paginator->sort('distance', options: ['lock' => true]);
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=distance&amp;direction=asc'],
+            'Distance',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->setPaginatedResult(['sort' => 'distance'], true);
+
+        $result = $this->Paginator->sort('distance', options: ['lock' => true]);
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=distance&amp;direction=asc', 'class' => 'asc locked'],
+            'Distance',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * test sort() with escape option
      */
     public function testSortEscape(): void

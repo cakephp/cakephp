@@ -423,7 +423,7 @@ class PaginatorHelper extends Helper
         $dir = $defaultDir;
         if ($isSorted) {
             if ($locked) {
-                $template = $dir === 'asc' ? 'sortDescLocked' : 'sortAscLocked';
+                $template = $dir === 'asc' ? 'sortAscLocked' : 'sortDescLocked';
             } else {
                 $dir = $this->sortDir() === 'asc' ? 'desc' : 'asc';
                 $template = $dir === 'asc' ? 'sortDesc' : 'sortAsc';
