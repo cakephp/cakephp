@@ -29,7 +29,7 @@ class SortMapFactory
     protected array $map = [];
 
     /**
-     * @var array<\Cake\Datasource\Paging\SortField> The current fields being built
+     * @var array<\Cake\Datasource\Paging\SortField|string> The current fields being built
      */
     protected array $fields = [];
 
@@ -58,7 +58,7 @@ class SortMapFactory
     {
         // Save current fields to map if we have a current key
         if ($this->currentKey !== null) {
-            if (!empty($this->fields)) {
+            if ($this->fields !== []) {
                 $this->map[$this->currentKey] = $this->fields;
             } elseif (!isset($this->map[$this->currentKey])) {
                 // If no fields were added, use the key as the field name
@@ -161,7 +161,7 @@ class SortMapFactory
     {
         // Save any pending fields
         if ($this->currentKey !== null) {
-            if (!empty($this->fields)) {
+            if ($this->fields !== []) {
                 $this->map[$this->currentKey] = $this->fields;
             } elseif (!isset($this->map[$this->currentKey])) {
                 // If no fields were added, use the key as the field name
