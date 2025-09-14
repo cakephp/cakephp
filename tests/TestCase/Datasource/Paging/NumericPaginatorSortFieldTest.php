@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Datasource\Paging;
 use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\Paging\SortField;
 use Cake\Datasource\Paging\SortFieldFactory;
+use Cake\Datasource\Paging\SortMapFactory;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
@@ -421,11 +422,11 @@ class NumericPaginatorSortFieldTest extends TestCase
      */
     public function testPaginateWithFactoryBuildMap(): void
     {
-        $sortMap = SortFieldFactory::buildMap([
+        $sortMap = [
             'newest' => SortFieldFactory::create()->desc('published')->build(),
             'popular' => SortFieldFactory::create()->locked('published', SortField::DESC)->build(),
             'alphabetical' => SortFieldFactory::create()->asc('title')->build(),
-        ]);
+        ];
 
         $params = [
             'sort' => 'popular',
@@ -450,6 +451,53 @@ class NumericPaginatorSortFieldTest extends TestCase
     }
 
     /**
+     * Test paginator with SortMapFactory
+     *
+     * @return void
+     */
+    public function testSortMapFactory(): void
+    {
+        $settings = [
+            'sortMap' => SortMapFactory::create()
+                ->sortKey('newest')
+                    ->desc('published')
+                    ->asc('title')
+                ->sortKey('popular')
+                    ->locked('published', SortField::DESC)
+                    ->desc('author_id')
+                ->sortKey('alphabetical')
+                    ->asc('title')
+                ->build(),
+        ];
+
+        // Test newest sort
+        $params = ['sort' => 'newest'];
+        $result = $this->paginator->paginate($this->table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $expected = [
+            'Articles.published' => 'desc',
+            'Articles.title' => 'asc',
+        ];
+
+        $this->assertEquals('newest', $pagingParams['sort']);
+        $this->assertEquals($expected, $pagingParams['completeSort']);
+
+        // Test popular sort with locked field
+        $params = ['sort' => 'popular', 'direction' => 'asc'];
+        $result = $this->paginator->paginate($this->table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $expected = [
+            'Articles.published' => 'desc', // Locked
+            'Articles.author_id' => 'asc', // Toggleable
+        ];
+
+        $this->assertEquals('popular', $pagingParams['sort']);
+        $this->assertEquals($expected, $pagingParams['completeSort']);
+    }
+
+    /**
      * Test combined sort format with factory
      *
      * @return void
@@ -457,12 +505,12 @@ class NumericPaginatorSortFieldTest extends TestCase
     public function testCombinedSortFormatWithFactory(): void
     {
         $settings = [
-            'sortMap' => SortFieldFactory::buildMap([
+            'sortMap' => [
                 'custom' => SortFieldFactory::create()
                     ->desc('published')
                     ->asc('title')
                     ->build(),
-            ]),
+            ],
         ];
 
         // Test with combined format: custom-asc
@@ -478,6 +526,48 @@ class NumericPaginatorSortFieldTest extends TestCase
         ];
 
         $this->assertEquals('custom', $pagingParams['sort']);
+        $this->assertEquals('asc', $pagingParams['direction']);
+        $this->assertEquals($expected, $pagingParams['completeSort']);
+    }
+
+    /**
+     * Test SortMapFactory shorthand where key is used as field
+     *
+     * @return void
+     */
+    public function testSortMapFactoryShorthand(): void
+    {
+        $settings = [
+            'sortMap' => SortMapFactory::create()
+                ->sortKey('title') // Shorthand - uses 'title' as field
+                ->sortKey('published') // Shorthand - uses 'published' as field
+                ->sortKey('author_id') // Shorthand - uses 'author_id' as field
+                ->build(),
+        ];
+
+        // Test title sort
+        $params = ['sort' => 'title', 'direction' => 'desc'];
+        $result = $this->paginator->paginate($this->table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $expected = [
+            'Articles.title' => 'desc',
+        ];
+
+        $this->assertEquals('title', $pagingParams['sort']);
+        $this->assertEquals('desc', $pagingParams['direction']);
+        $this->assertEquals($expected, $pagingParams['completeSort']);
+
+        // Test published sort
+        $params = ['sort' => 'published', 'direction' => 'asc'];
+        $result = $this->paginator->paginate($this->table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $expected = [
+            'Articles.published' => 'asc',
+        ];
+
+        $this->assertEquals('published', $pagingParams['sort']);
         $this->assertEquals('asc', $pagingParams['direction']);
         $this->assertEquals($expected, $pagingParams['completeSort']);
     }

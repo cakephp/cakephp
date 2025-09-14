@@ -19,7 +19,7 @@ namespace Cake\Datasource\Paging;
 /**
  * Factory for creating SortField configurations.
  *
- * Provides fluent interface for building complex sort configurations.
+ * Provides fluent interface for building sort field collections.
  */
 class SortFieldFactory
 {
@@ -113,16 +113,5 @@ class SortFieldFactory
     public function build(): array
     {
         return $this->fields;
-    }
-
-    /**
-     * Build a complete sortMap configuration.
-     *
-     * @param array<string, array<\Cake\Datasource\Paging\SortField|string>> $mappings The sort mappings
-     * @return array<string, array<\Cake\Datasource\Paging\SortField|string>>
-     */
-    public static function buildMap(array $mappings): array
-    {
-        return $mappings;
     }
 }

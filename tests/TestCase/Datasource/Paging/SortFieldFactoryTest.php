@@ -98,45 +98,6 @@ class SortFieldFactoryTest extends TestCase
     }
 
     /**
-     * Test buildMap() helper
-     *
-     * @return void
-     */
-    public function testBuildMap(): void
-    {
-        $map = SortFieldFactory::buildMap([
-            'newest' => SortFieldFactory::create()
-                ->desc('created')
-                ->asc('title')
-                ->build(),
-            'oldest' => SortFieldFactory::create()
-                ->asc('created')
-                ->asc('title')
-                ->build(),
-            'custom' => SortFieldFactory::create()
-                ->desc('score')
-                ->asc('title')
-                ->build(),
-        ]);
-
-        $this->assertIsArray($map);
-        $this->assertArrayHasKey('newest', $map);
-        $this->assertArrayHasKey('oldest', $map);
-        $this->assertArrayHasKey('custom', $map);
-
-        // Check newest configuration
-        $this->assertCount(2, $map['newest']);
-        $this->assertInstanceOf(SortField::class, $map['newest'][0]);
-        $this->assertSame('created', $map['newest'][0]->getField());
-        $this->assertSame(SortField::DESC, $map['newest'][0]->getDirection(SortField::ASC, false));
-
-        // Check custom configuration
-        $this->assertCount(2, $map['custom']);
-        $this->assertInstanceOf(SortField::class, $map['custom'][0]);
-        $this->assertSame('score', $map['custom'][0]->getField());
-    }
-
-    /**
      * Test complex real-world usage example
      *
      * @return void
