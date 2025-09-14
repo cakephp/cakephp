@@ -801,22 +801,18 @@ class NumericPaginator implements PaginatorInterface
                     // Indexed array: field uses querystring direction
                     // e.g., ['modified', 'name']
                     $order[$value] = $direction;
-                } else {
+                } elseif (str_ends_with($value, '!')) {
                     // Associative array: check for locked (!) or default direction
-                    if (str_ends_with($value, '!')) {
-                        // Locked direction (ends with !): always use specified direction
-                        // e.g., ['created' => 'desc!'] always sorts desc
-                        $order[$key] = rtrim($value, '!');
-                    } else {
-                        // Default direction that can be toggled
-                        if (!$directionSpecified) {
-                            // No direction specified, use the default
-                            $order[$key] = $value;
-                        } else {
-                            // Direction specified, use it for all toggleable fields
-                            $order[$key] = $direction;
-                        }
-                    }
+                    // Locked direction (ends with !): always use specified direction
+                    // e.g., ['created' => 'desc!'] always sorts desc
+                    $order[$key] = rtrim($value, '!');
+                } elseif (!$directionSpecified) {
+                    // Default direction that can be toggled
+                    // No direction specified, use the default
+                    $order[$key] = $value;
+                } else {
+                    // Direction specified, use it for all toggleable fields
+                    $order[$key] = $direction;
                 }
             }
 
