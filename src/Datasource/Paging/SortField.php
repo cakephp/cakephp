@@ -1,0 +1,140 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         5.3.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Datasource\Paging;
+
+/**
+ * Represents a sort field configuration for pagination.
+ */
+class SortField
+{
+    /**
+     * Ascending sort direction
+     *
+     * @var string
+     */
+    public const ASC = 'asc';
+
+    /**
+     * Descending sort direction
+     *
+     * @var string
+     */
+    public const DESC = 'desc';
+
+    /**
+     * @var string The field name to sort by
+     */
+    protected string $field;
+
+    /**
+     * @var string|null The default sort direction
+     */
+    protected ?string $defaultDirection;
+
+    /**
+     * @var bool Whether the sort direction is locked
+     */
+    protected bool $locked;
+
+    /**
+     * Constructor.
+     *
+     * @param string $field The field name to sort by
+     * @param string|null $defaultDirection The default sort direction
+     * @param bool $locked Whether the sort direction is locked
+     */
+    public function __construct(string $field, ?string $defaultDirection = null, bool $locked = false)
+    {
+        $this->field = $field;
+        $this->defaultDirection = $defaultDirection;
+        $this->locked = $locked;
+    }
+
+    /**
+     * Create a sort field with ascending default direction.
+     *
+     * @param string $field The field name to sort by
+     * @return self
+     */
+    public static function asc(string $field): self
+    {
+        return new self($field, self::ASC, false);
+    }
+
+    /**
+     * Create a sort field with descending default direction.
+     *
+     * @param string $field The field name to sort by
+     * @return self
+     */
+    public static function desc(string $field): self
+    {
+        return new self($field, self::DESC, false);
+    }
+
+    /**
+     * Create a locked sort field with a fixed direction.
+     *
+     * @param string $field The field name to sort by
+     * @param string $direction The fixed sort direction
+     * @return self
+     */
+    public static function locked(string $field, string $direction): self
+    {
+        return new self($field, $direction, true);
+    }
+
+    /**
+     * Get the field name.
+     *
+     * @return string
+     */
+    public function getField(): string
+    {
+        return $this->field;
+    }
+
+    /**
+     * Get the sort direction to use.
+     *
+     * @param string $requestedDirection The direction requested by the user
+     * @param bool $directionSpecified Whether a direction was explicitly specified
+     * @return string
+     */
+    public function getDirection(string $requestedDirection, bool $directionSpecified): string
+    {
+        if ($this->locked) {
+            return $this->defaultDirection ?? static::ASC;
+        }
+
+        if (!$directionSpecified && $this->defaultDirection) {
+            return $this->defaultDirection;
+        }
+
+        return $requestedDirection;
+    }
+
+    /**
+     * Check if the sort direction is locked.
+     *
+     * @return bool
+     */
+    public function isLocked(): bool
+    {
+        return $this->locked;
+    }
+}

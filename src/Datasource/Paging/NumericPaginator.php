@@ -49,6 +49,8 @@ class NumericPaginator implements PaginatorInterface
      *   sorting on either associated columns or calculated fields then you will
      *   have to explicitly specify them (along with other fields). Using an empty
      *   array will disable sorting alltogether.
+     *
+     * @deprecated 5.3.0 Use `sortMap` with SortField objects instead for more flexible sorting configuration.
      * - `sortMap` - A map of sort keys to their corresponding database fields. Allows
      *   creating friendly sort keys that map to one or more actual fields. When defined,
      *   only the mapped keys will be sortable. Supports simple mapping, multi-column
@@ -70,7 +72,6 @@ class NumericPaginator implements PaginatorInterface
      *   from the query params passed to paginate(). Scopes allow namespacing the
      *   paging options and allows paginating multiple models in the same action.
      *   Default `null`.
-     *
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
@@ -585,7 +586,12 @@ class NumericPaginator implements PaginatorInterface
 
             // Check sortMap first for mapped sorting
             if (isset($options['sortMap'])) {
-                $mappedOrder = $this->resolveSortMapping($options['sort'], $options['sortMap'], $direction, $directionSpecified);
+                $mappedOrder = $this->resolveSortMapping(
+                    $options['sort'],
+                    $options['sortMap'],
+                    $direction,
+                    $directionSpecified,
+                );
                 if ($mappedOrder !== null) {
                     // Use mapped order and merge with existing order
                     $existingOrder = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
@@ -626,6 +632,10 @@ class NumericPaginator implements PaginatorInterface
             // When sortMap is used, we've already validated the sort key
             $sortAllowed = true;
         } elseif (isset($options['sortableFields'])) {
+            triggerWarning(
+                'The `sortableFields` configuration option is deprecated as of 5.3.0. ' .
+                'Use `sortMap` with SortField objects instead for more flexible sorting configuration.',
+            );
             $field = key($options['order']);
             $sortAllowed = in_array($field, $options['sortableFields'], true);
             if (!$sortAllowed) {
@@ -738,8 +748,12 @@ class NumericPaginator implements PaginatorInterface
      * @param bool $directionSpecified Whether direction was explicitly specified
      * @return array<string, mixed>|null Returns resolved order array or null if key not found
      */
-    protected function resolveSortMapping(string $sortKey, ?array $sortMap, string $direction, bool $directionSpecified = true): ?array
-    {
+    protected function resolveSortMapping(
+        string $sortKey,
+        ?array $sortMap,
+        string $direction,
+        bool $directionSpecified = true,
+    ): ?array {
         if ($sortMap === null) {
             return null;
         }
@@ -778,7 +792,12 @@ class NumericPaginator implements PaginatorInterface
         // Array mapping (multi-column with default or locked directions)
         if (is_array($mapping)) {
             foreach ($mapping as $key => $value) {
-                if (is_int($key)) {
+                // Handle SortField objects
+                if ($value instanceof SortField) {
+                    $field = $value->getField();
+                    $fieldDirection = $value->getDirection($direction, $directionSpecified);
+                    $order[$field] = $fieldDirection;
+                } elseif (is_int($key)) {
                     // Indexed array: field uses querystring direction
                     // e.g., ['modified', 'name']
                     $order[$value] = $direction;
