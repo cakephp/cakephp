@@ -213,7 +213,7 @@ class SchemaDialectTest extends TestCase
 
         $this->assertTrue($this->dialect->hasIndex('orders', ['product_category', 'product_id']));
         $this->assertTrue($this->dialect->hasIndex('orders', ['product_category', 'product_id'], 'product_category'));
-        $this->assertTrue($this->dialect->hasIndex('orders', [], 'orders_pkey'));
+        $this->assertTrue($this->dialect->hasIndex('orders', [], 'product_category'));
     }
 
     public function testHasForeignKey(): void
