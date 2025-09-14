@@ -1774,6 +1774,20 @@ SQL;
     }
 
     /**
+     * Test that hasIndex considers constraint keys.
+     * This test is for postgres out of convenience, as not all databases
+     * provide names for primary keys.
+     */
+    public function testHasIndexPrimaryKeyName(): void
+    {
+        $this->_needsConnection();
+
+        $connection = ConnectionManager::get('test');
+        $dialect = new PostgresSchemaDialect($connection->getDriver());
+        $this->assertTrue($dialect->hasIndex('schema_authors', [], 'schema_authors_pkey'));
+    }
+
+    /**
      * Get a schema instance with a mocked driver/pdo instances
      */
     protected function _getMockedDriver(array $config = []): Driver

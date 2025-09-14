@@ -684,13 +684,19 @@ abstract class SchemaDialect
                 $found = $index;
                 break;
             }
-            if ($columns === [] && $name !== null && $index['name'] === $name) {
-                $found = $index;
-                break;
+            if ($columns === [] && $name !== null) {
+                if ($index['name'] === $name) {
+                    $found = $index;
+                    break;
+                }
+                if (isset($index['constraint']) && $index['constraint'] === $name) {
+                    $found = $index;
+                    break;
+                }
             }
         }
         // Both columns and name provided, both must match;
-        if ($found !== null && $name !== null && $found['name'] !== $name) {
+        if ($columns && $found && $name !== null && $found['name'] !== $name) {
             return false;
         }
 
