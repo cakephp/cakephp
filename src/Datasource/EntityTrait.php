@@ -387,25 +387,9 @@ trait EntityTrait
     }
 
     /**
-     * Returns the value of an existing field by name.
-     *
-     * Unlike get() this function will throw a MissingPropertyException
-     * if the field does not exist in the entity.
+     * Get field with option for requireFieldPresence.
      *
      * Note: The returned value might be null if the field is set to null.
-     *
-     * @param string $field the name of the field to retrieve
-     * @return mixed
-     * @throws \InvalidArgumentException if an empty field name is passed
-     * @throws \Cake\Datasource\Exception\MissingPropertyException If property does not exist
-     */
-    public function &getOrFail(string $field): mixed
-    {
-        return $this->getRequiredOrFail($field, true);
-    }
-
-    /**
-     * Get field with option for requireFieldPresence
      *
      * @param string $field the name of the field to retrieve
      * @param bool $requireFieldPresence Whether to throw an exception if the field is not present
@@ -413,7 +397,7 @@ trait EntityTrait
      * @throws \InvalidArgumentException if an empty field name is passed
      * @throws \Cake\Datasource\Exception\MissingPropertyException If property does not exist and $requireFieldPresence
      */
-    protected function &getRequiredOrFail(string $field, bool $requireFieldPresence): mixed
+    public function &getRequiredOrFail(string $field, bool $requireFieldPresence = true): mixed
     {
         if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');
