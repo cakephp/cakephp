@@ -6498,6 +6498,51 @@ class TableTest extends TestCase
     }
 
     /**
+     * Tests loadInto() with deeply nested associations
+     */
+    public function testLoadIntoNestedAssociations(): void
+    {
+        $table = $this->getTableLocator()->get('Authors');
+
+        $entity = $table->get(1);
+        // This should work without throwing an error about 'includeFields' not being an association
+        $result = $table->loadInto($entity, ['Articles.Tags']);
+        $this->assertSame($entity, $result);
+        $this->assertNotEmpty($result->articles);
+        $this->assertNotEmpty($result->articles[0]->tags);
+
+        $expected = $table->get(1, contain: ['Articles.Tags']);
+        $this->assertEquals($expected->articles, $result->articles);
+        $this->assertEquals($expected->articles[0]->tags, $result->articles[0]->tags);
+    }
+
+    /**
+     * Tests loadInto() multiple times with nested associations - reproduces GitHub issue #16362
+     */
+    public function testLoadIntoMultipleTimesWithNestedAssociations(): void
+    {
+        $table = $this->getTableLocator()->get('Authors');
+
+        // First load some associations
+        $entity = $table->get(1);
+        $entity = $table->loadInto($entity, ['Articles']);
+        $this->assertNotEmpty($entity->articles);
+        $this->assertEmpty($entity->articles[0]->tags);
+
+        // Now load nested associations - this should not throw an error about 'includeFields'
+        $result = $table->loadInto($entity, ['Articles.Tags']);
+        $this->assertSame($entity, $result);
+
+        // Verify the nested associations were loaded correctly
+        $this->assertNotEmpty($result->articles);
+        $firstArticle = $result->articles[0];
+        $this->assertNotNull($firstArticle);
+
+        // Tags should be loaded now
+        $this->assertIsArray($firstArticle->tags);
+    }
+
+    /**
      * Tests that saveOrFail triggers an exception on not successful save
      */
     public function testSaveOrFail(): void

@@ -166,11 +166,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function getStrategy(): TranslateStrategyInterface
     {
-        if ($this->strategy !== null) {
-            return $this->strategy;
-        }
-
-        return $this->strategy = $this->createStrategy();
+        return $this->strategy ??= $this->createStrategy();
     }
 
     /**
@@ -370,7 +366,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function __call(string $method, array $args): mixed
     {
-        return $this->strategy->{$method}(...$args);
+        return $this->getStrategy()->{$method}(...$args);
     }
 
     /**
@@ -387,7 +383,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     protected function referenceName(Table $table): string
     {
         $name = namespaceSplit($table::class);
-        $name = substr((string)end($name), 0, -5);
+        $name = substr(end($name), 0, -5);
         if (!$name) {
             $name = $table->getTable() ?: $table->getAlias();
             $name = Inflector::camelize($name);

@@ -847,4 +847,24 @@ EXPECTED;
         Debugger::setEditor('open');
         $this->assertSame('test.php/123', Debugger::editorUrl('test.php', 123));
     }
+
+    /**
+     * Test editorBasePath configuration for path remapping
+     */
+    public function testEditorUrlWithBasePath(): void
+    {
+        // Set up editor base path replacement
+        Configure::write('Debugger.editorBasePath', '/home/user/projects/myapp');
+        Debugger::getInstance(TestDebugger::class);
+        Debugger::getInstance(Debugger::class);
+
+        Debugger::setEditor('phpstorm');
+
+        // Test that ROOT is replaced with the configured base path
+        $file = ROOT . '/src/Controller/UsersController.php';
+        $result = Debugger::editorUrl($file, 10);
+
+        $expected = 'phpstorm://open?file=/home/user/projects/myapp/src/Controller/UsersController.php&line=10';
+        $this->assertSame($expected, $result);
+    }
 }

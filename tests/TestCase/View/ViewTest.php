@@ -1082,8 +1082,7 @@ class ViewTest extends TestCase
      */
     public function testRenderUsingLayoutArgument(): void
     {
-        $pdoException = $this->getMockBuilder(PDOException::class)->getMock();
-        $error = new QueryException('this is sql string', $pdoException);
+        $error = new QueryException('this is sql string', new PDOException());
         $exceptions = [$error];
         $message = 'it works';
         $trace = $error->getTrace();

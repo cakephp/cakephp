@@ -35,6 +35,7 @@ use TestApp\Command\AbortCommand;
 use TestApp\Command\AutoLoadModelCommand;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\DependencyCommand;
+use TestApp\Command\EventsCommand;
 use TestApp\Command\NonInteractiveCommand;
 
 /**
@@ -332,6 +333,18 @@ class CommandTest extends TestCase
 
         $this->assertSame(Command::CODE_SUCCESS, $result);
         $this->assertEquals(['Dependency Command', 'constructor inject: {}'], $output->messages());
+    }
+
+    public function testExecuteCommandWithEventHooks(): void
+    {
+        $output = new StubConsoleOutput();
+        $command = new Command();
+        $command->executeCommand(EventsCommand::class, [], $this->getMockIo($output));
+        $this->assertEquals([
+            'beforeExecute run',
+            'execute run',
+            'afterExecute run',
+        ], $output->messages());
     }
 
     /**

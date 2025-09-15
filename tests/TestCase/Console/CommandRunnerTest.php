@@ -415,7 +415,7 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
-     * Test that run() fires off the Command.started and Command.finished events.
+     * Test that run() fires off the Command.beforeExecute and Command.afterExecute events.
      */
     public function testRunTriggersCommandEvents(): void
     {
@@ -423,14 +423,16 @@ class CommandRunnerTest extends TestCase
         $runner = $this->getRunner();
         $startedEventTriggered = false;
         $finishedEventTriggered = false;
-        $runner->getEventManager()->on('Command.beforeExecute', function ($event, $args) use (&$startedEventTriggered): void {
+        $runner->getEventManager()->on('Command.beforeExecute', function ($event, $args, $io) use (&$startedEventTriggered): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
+            $this->assertInstanceOf(ConsoleIo::class, $io);
             $startedEventTriggered = true;
         });
-        $runner->getEventManager()->on('Command.afterExecute', function ($event, $args, $result) use (&$finishedEventTriggered): void {
+        $runner->getEventManager()->on('Command.afterExecute', function ($event, $args, $io, $result) use (&$finishedEventTriggered): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
+            $this->assertInstanceOf(ConsoleIo::class, $io);
             $this->assertEquals(CommandInterface::CODE_SUCCESS, $result);
             $finishedEventTriggered = true;
         });

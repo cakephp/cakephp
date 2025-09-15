@@ -1716,4 +1716,101 @@ class QueryRegressionTest extends TestCase
         $result = $query->first()->get('value');
         $this->assertSame('mariano appended', $result);
     }
+
+    /**
+     * Test that eager loading with subquery strategy properly preserves limit and order clauses.
+     * This is a regression test for issue #11395 where limit and order clauses were not
+     * properly propagated in eager loaded associations.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/11395
+     * @return void
+     */
+    public function testEagerLoadingWithOrderAndLimitPreservation(): void
+    {
+        // Set up Authors table with Articles association
+        $authors = $this->getTableLocator()->get('Authors');
+        $articles = $this->getTableLocator()->get('Articles');
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id',
+            'strategy' => 'subquery',
+        ]);
+
+        // First, ensure we have an author with more than 2 articles to properly test the limit
+        // Create additional test articles for author_id 1 (mariano)
+        $testArticles = [
+            ['author_id' => 1, 'title' => 'Test Article X', 'body' => 'Body X', 'published' => 'Y'],
+            ['author_id' => 1, 'title' => 'Test Article Y', 'body' => 'Body Y', 'published' => 'Y'],
+            ['author_id' => 1, 'title' => 'Test Article Z', 'body' => 'Body Z', 'published' => 'Y'],
+        ];
+
+        foreach ($testArticles as $article) {
+            $entity = $articles->newEntity($article);
+            $articles->save($entity);
+        }
+
+        // Verify author 1 now has more than 2 articles
+        $totalArticles = $articles->find()
+            ->where(['author_id' => 1])
+            ->count();
+        $this->assertGreaterThan(2, $totalArticles, 'Test requires author to have more than 2 articles');
+
+        // Test with both order and limit - both should be preserved
+        $query = $authors->find()
+            ->contain(['Articles' => function ($q) {
+                return $q->orderBy(['Articles.id' => 'DESC'])
+                    ->limit(2);
+            }])
+            ->where(['Authors.id' => 1]);
+
+        $result = $query->first();
+        $this->assertNotNull($result);
+        $this->assertNotEmpty($result->articles, 'Author should have articles');
+
+        // Check that we got exactly 2 articles due to the limit (not less)
+        $this->assertCount(2, $result->articles, 'Should return exactly 2 articles when limit is applied');
+
+        // Verify that articles are ordered by id DESC
+        $ids = collection($result->articles)->extract('id')->toArray();
+        $sortedIds = $ids;
+        rsort($sortedIds);
+        $this->assertEquals($sortedIds, $ids, 'Articles should be ordered by id DESC');
+
+        // Verify we got the 2 articles with highest IDs
+        $allIds = $articles->find()
+            ->select(['id'])
+            ->where(['author_id' => 1])
+            ->orderBy(['id' => 'DESC'])
+            ->limit(2)
+            ->all()
+            ->extract('id')
+            ->toArray();
+        $this->assertEquals($allIds, $ids, 'Should return the 2 articles with highest IDs');
+
+        // Test with only order (no limit) - order should be preserved
+        $query = $authors->find()
+            ->contain(['Articles' => function ($q) {
+                return $q->orderBy(['Articles.title' => 'ASC']);
+            }])
+            ->where(['Authors.id' => 1]);
+
+        $result = $query->first();
+        $this->assertNotNull($result);
+        $this->assertGreaterThan(2, count($result->articles), 'Should have all articles when no limit');
+
+        $titles = collection($result->articles)->extract('title')->toArray();
+        $sortedTitles = $titles;
+        sort($sortedTitles);
+        $this->assertEquals($sortedTitles, $titles, 'Articles should be ordered by title ASC');
+
+        // Test with only limit (no order) - limit should be respected
+        $query = $authors->find()
+            ->contain(['Articles' => function ($q) {
+                return $q->limit(1);
+            }])
+            ->where(['Authors.id' => 1]);
+
+        $result = $query->first();
+        $this->assertNotNull($result);
+        $this->assertCount(1, $result->articles, 'Should return exactly 1 article when limit is 1');
+    }
 }

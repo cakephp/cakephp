@@ -220,7 +220,7 @@ trait CollectionTrait
             $result = $result->extract($path);
         }
         $result = $result
-            ->reduce(function ($acc, $current) {
+            ->reduce(function (array $acc, $current) {
                 [$count, $sum] = $acc;
 
                 return [$count + 1, $sum + $current];

@@ -961,8 +961,7 @@ class WebExceptionRendererTest extends TestCase
             'driver' => $this->getMockBuilder(Driver::class)->getMock(),
             'params' => ['seven' => 7],
         ]);
-        $pdoException = $this->getMockBuilder(PDOException::class)->getMock();
-        $exception = new QueryException($loggedQuery, $pdoException);
+        $exception = new QueryException($loggedQuery, new PDOException());
 
         $ExceptionRenderer = new WebExceptionRenderer($exception);
         $response = $ExceptionRenderer->render();
