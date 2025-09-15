@@ -258,8 +258,22 @@ jobs:
         if: matrix.prefer-lowest == 'prefer-lowest'
         run: composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest -m
 
+      - name: Setup rector cache
+        if: always()
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/rector
+          key: ${{ runner.os }}-rector-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-rector-
+
+      - name: Create rector cache dir
+        if: always()
+        run: mkdir -p ${{ runner.temp }}/rector
+
       - name: Run rector
         if: always()
+        env:
+          RECTOR_CACHE_DIR: ${{ runner.temp }}/rector
         run: composer rector-setup && composer rector-check
 
   split-packages-stan:
