@@ -19,8 +19,6 @@ namespace Cake\Core\Attribute;
 use Attribute;
 use Cake\Core\Configure as CakeConfigure;
 use League\Container\Attribute\AttributeInterface;
-use League\Container\ContainerAwareInterface;
-use League\Container\ContainerAwareTrait;
 
 /**
  * Configure attribute for dependency injection container delegate.
@@ -43,10 +41,8 @@ use League\Container\ContainerAwareTrait;
  * }
  */
 #[Attribute(Attribute::TARGET_PARAMETER)]
-class Configure implements AttributeInterface, ContainerAwareInterface
+class Configure implements AttributeInterface
 {
-    use ContainerAwareTrait;
-
     /**
      * @param string $name
      */
