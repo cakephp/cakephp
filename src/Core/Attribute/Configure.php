@@ -22,6 +22,26 @@ use League\Container\Attribute\AttributeInterface;
 use League\Container\ContainerAwareInterface;
 use League\Container\ContainerAwareTrait;
 
+/**
+ * Configure attribute for dependency injection container delegate.
+ *
+ * This provides autowiring config data into constructors when delegate is enabled.
+ *
+ * Example:
+ * ```
+ * <?php
+ * declare(strict_types=1);
+ *
+ * namespace App\Model\WebService;
+ * use Cake\Core\Attribute\Configure;
+ *
+ * class CustomClient
+ * {
+ *     public function __construct(
+ *         #[Configure('CustomService.apiKey')] protected string $apiKey,
+ *     ) { }
+ * }
+ */
 #[Attribute(Attribute::TARGET_PARAMETER)]
 class Configure implements AttributeInterface, ContainerAwareInterface
 {
