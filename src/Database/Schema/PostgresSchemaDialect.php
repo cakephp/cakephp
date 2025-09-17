@@ -379,7 +379,8 @@ class PostgresSchemaDialect extends SchemaDialect
         c2.relname,
         a.attname,
         i.indisprimary,
-        i.indisunique
+        i.indisunique,
+        i.indnkeyatts
         FROM pg_catalog.pg_namespace n
         INNER JOIN pg_catalog.pg_class c ON (n.oid = c.relnamespace)
         INNER JOIN pg_catalog.pg_index i ON (c.oid = i.indrelid)
@@ -446,6 +447,7 @@ class PostgresSchemaDialect extends SchemaDialect
             $type = TableSchema::INDEX_INDEX;
             $name = $row['relname'];
             $constraint = null;
+            $includeColumnIndex = $row['indnkeyatts'];
             if ($row['indisprimary']) {
                 $constraint = $name;
                 $name = TableSchema::CONSTRAINT_PRIMARY;
@@ -465,7 +467,11 @@ class PostgresSchemaDialect extends SchemaDialect
             if ($constraint) {
                 $indexes[$name]['constraint'] = $constraint;
             }
-            $indexes[$name]['columns'][] = $row['attname'];
+            if (count($indexes[$name]['columns']) < $includeColumnIndex) {
+                $indexes[$name]['columns'][] = $row['attname'];
+            } else {
+                $indexes[$name]['include'][] = $row['attname'];
+            }
         }
 
         return array_values($indexes);
@@ -876,18 +882,26 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
-        $data = $schema->getIndex($name);
-        assert($data !== null);
+        $index = $schema->index($name);
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns'],
+            $index->getColumns(),
         );
+        $include = '';
+        if ($index->getInclude()) {
+            $included = array_map(
+                $this->_driver->quoteIdentifier(...),
+                $index->getInclude(),
+            );
+            $include = sprintf(' INCLUDE (%s)', implode(', ', $included));
+        }
 
         return sprintf(
-            'CREATE INDEX %s ON %s (%s)',
+            'CREATE INDEX %s ON %s (%s)%s',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
             implode(', ', $columns),
+            $include,
         );
     }
 

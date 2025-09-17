@@ -46,7 +46,7 @@ class Index
      * @param string $type The type of index, e.g. 'index', 'fulltext'.
      * @param array<string, int>|int|null $length The length of the index.
      * @param array<string>|null $order The sort order of the index columns.
-     * @param array<string>|null $includedColumns The included columns for covering indexes.
+     * @param array<string>|null $include The included columns for covering indexes.
      * @param ?string $where The where clause for partial indexes.
      */
     public function __construct(
@@ -55,7 +55,7 @@ class Index
         protected string $type = self::INDEX,
         protected array|int|null $length = null,
         protected ?array $order = null,
-        protected ?array $includedColumns = null,
+        protected ?array $include = null,
         protected ?string $where = null,
     ) {
     }
@@ -193,7 +193,7 @@ class Index
      */
     public function setInclude(array $includedColumns)
     {
-        $this->includedColumns = $includedColumns;
+        $this->include = $includedColumns;
 
         return $this;
     }
@@ -205,7 +205,7 @@ class Index
      */
     public function getInclude(): ?array
     {
-        return $this->includedColumns;
+        return $this->include;
     }
 
     /**
