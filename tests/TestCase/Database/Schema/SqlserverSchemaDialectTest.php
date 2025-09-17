@@ -1194,6 +1194,47 @@ SQL;
     }
 
     /**
+     * Provide data for testing constraintSql
+     *
+     * @return array
+     */
+    public static function indexSqlProvider(): array
+    {
+        return [
+            [
+                'title_idx',
+                ['type' => 'index', 'columns' => ['title']],
+                'CREATE INDEX [title_idx] ON [schema_articles] ([title])',
+            ],
+            [
+                'author_idx',
+                ['type' => 'index', 'columns' => ['author_id'], 'include' => ['title']],
+                'CREATE INDEX [author_idx] ON [schema_articles] ([author_id]) INCLUDE ([title])',
+            ],
+        ];
+    }
+
+    /**
+     * Test the indexSql method.
+     */
+    #[DataProvider('indexSqlProvider')]
+    public function testIndexSql(string $name, array $data, string $expected): void
+    {
+        $driver = $this->_getMockedDriver();
+        $schema = new PostgresSchemaDialect($driver);
+
+        $table = (new TableSchema('schema_articles'))->addColumn('title', [
+            'type' => 'string',
+            'length' => 255,
+        ])->addColumn('author_id', [
+            'type' => 'integer',
+        ])->addIndex($name, $data);
+
+        $this->assertTextEquals($expected, $schema->indexSql($table, $name));
+    }
+
+
+    /**
      * Integration test for converting a Schema\Table into MySQL table creates.
      */
     public function testCreateSql(): void
