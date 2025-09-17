@@ -368,7 +368,8 @@ class SqlserverSchemaDialect extends SchemaDialect
                 IC.[index_column_id] AS [index_order],
                 AC.[name] AS [column_name],
                 I.[is_unique], I.[is_primary_key],
-                I.[is_unique_constraint]
+                I.[is_unique_constraint],
+                IC.[is_included_column]
             FROM sys.[tables] AS T
             INNER JOIN sys.[schemas] S ON S.[schema_id] = T.[schema_id]
             INNER JOIN sys.[indexes] I ON T.[object_id] = I.[object_id]
@@ -448,7 +449,11 @@ class SqlserverSchemaDialect extends SchemaDialect
                     'length' => [],
                 ];
             }
-            $indexes[$name]['columns'][] = $row['column_name'];
+            if ($row['is_included_column']) {
+                $indexes[$name]['include'][] = $row['column_name'];
+            } else {
+                $indexes[$name]['columns'][] = $row['column_name'];
+            }
             if ($constraint) {
                 $indexes[$name]['constraint'] = $constraint;
             }
@@ -816,18 +821,26 @@ class SqlserverSchemaDialect extends SchemaDialect
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
-        $data = $schema->getIndex($name);
-        assert($data !== null);
+        $index = $schema->index($name);
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns'],
+            $index->getColumns(),
         );
+        $include = '';
+        if ($index->getInclude()) {
+            $included = array_map(
+                $this->_driver->quoteIdentifier(...),
+                $index->getInclude(),
+            );
+            $include = sprintf(' INCLUDE (%s)', implode(', ', $included));
+        }
 
         return sprintf(
-            'CREATE INDEX %s ON %s (%s)',
+            'CREATE INDEX %s ON %s (%s)%s',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
             implode(', ', $columns),
+            $include,
         );
     }
 

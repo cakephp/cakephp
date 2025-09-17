@@ -689,6 +689,40 @@ SQL;
     }
 
     /**
+     * Ensure that included columns are included in reflection results
+     */
+    public function testDescribeIndexIncludedFields(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE schema_index_include (
+    "id" INTEGER NOT NULL,
+    "site_id" INTEGER NOT NULL,
+    "name" VARCHAR(255),
+    PRIMARY KEY("id")
+);
+SQL;
+        $connection->execute($sql);
+
+        $sql = 'CREATE INDEX [site_id_name] ON [schema_index_include] ([site_id]) INCLUDE ([name])';
+        $connection->execute($sql);
+
+        $dialect = new SqlserverSchemaDialect($connection->getDriver());
+        $indexExists = $dialect->hasIndex('schema_index_include', ['site_id']);
+        $indexExistsName = $dialect->hasIndex('schema_index_include', name: 'site_id_name');
+        $indexes = $dialect->describeIndexes('schema_index_include');
+        $connection->execute('DROP TABLE schema_index_include');
+
+        $this->assertTrue($indexExists);
+        $this->assertTrue($indexExistsName);
+        $this->assertCount(2, $indexes);
+        $this->assertEquals(['id'], $indexes[0]['columns']);
+        $this->assertEquals(['site_id'], $indexes[1]['columns']);
+        $this->assertEquals(['name'], $indexes[1]['include']);
+    }
+
+    /**
      * Column provider for creating column sql
      *
      * @return array
