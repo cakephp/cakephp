@@ -1221,7 +1221,7 @@ SQL;
     public function testIndexSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
-        $schema = new PostgresSchemaDialect($driver);
+        $schema = new SqlserverSchemaDialect($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',

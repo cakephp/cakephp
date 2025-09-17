@@ -885,7 +885,7 @@ class PostgresSchemaDialect extends SchemaDialect
         $index = $schema->index($name);
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $index->getColumns(),
+            (array)$index->getColumns(),
         );
         $include = '';
         if ($index->getInclude()) {
