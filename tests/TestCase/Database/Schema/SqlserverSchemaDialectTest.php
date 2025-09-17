@@ -1233,7 +1233,6 @@ SQL;
         $this->assertTextEquals($expected, $schema->indexSql($table, $name));
     }
 
-
     /**
      * Integration test for converting a Schema\Table into MySQL table creates.
      */
