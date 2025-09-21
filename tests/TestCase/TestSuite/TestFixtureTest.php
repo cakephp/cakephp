@@ -27,6 +27,7 @@ use Cake\Test\Fixture\ArticlesFixture;
 use Cake\Test\Fixture\PostsFixture;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use TestApp\Test\Fixture\AliasedArticlesFixture;
 use TestApp\Test\Fixture\FeaturedTagsFixture;
 use TestApp\Test\Fixture\LettersFixture;
 
@@ -76,6 +77,13 @@ class TestFixtureTest extends TestCase
 
         $schema = $Fixture->getTableSchema();
         $this->assertInstanceOf(TableSchema::class, $schema);
+    }
+
+    public function testCustomAlias(): void
+    {
+        $fixture = new AliasedArticlesFixture();
+        $this->assertSame('articles', $fixture->table);
+        $this->assertInstanceOf(TableSchema::class, $fixture->getTableSchema());
     }
 
     /**
@@ -155,7 +163,6 @@ class TestFixtureTest extends TestCase
         $fixture = new FeaturedTagsFixture();
 
         $posts = new PostsFixture();
-        $posts->init();
 
         $expected = ['tag_id', 'priority'];
         $this->assertSame($expected, $fixture->getTableSchema()->columns());

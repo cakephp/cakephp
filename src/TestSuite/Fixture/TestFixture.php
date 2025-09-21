@@ -43,7 +43,14 @@ class TestFixture implements FixtureInterface
     public string $connection = 'test';
 
     /**
-     * Full Table Name
+     * ORM table alias
+     *
+     * @var string
+     */
+    public string $alias = '';
+
+    /**
+     * Database table name
      *
      * @var string
      */
@@ -114,25 +121,29 @@ class TestFixture implements FixtureInterface
      */
     public function init(): void
     {
-        if (!$this->table) {
-            $this->table = $this->_tableFromClass();
+        if (!$this->alias) {
+            assert(!($this->alias && $this->table), 'Cannot specify both custom alias and table name');
+            if (!$this->table) {
+                $this->alias = $this->_aliasFromClass();
+            } else {
+                $this->alias = Inflector::camelize($this->table);
+            }
         }
 
         $this->_schemaFromReflection();
     }
 
     /**
-     * Returns the table name using the fixture class
+     * Returns the table alias using the fixture class
      *
      * @return string
      */
-    protected function _tableFromClass(): string
+    protected function _aliasFromClass(): string
     {
         [, $class] = namespaceSplit(static::class);
         preg_match('/^(.*)Fixture$/', $class, $matches);
-        $table = $matches[1] ?? $class;
 
-        return Inflector::tableize($table);
+        return $matches[1] ?? $class;
     }
 
     /**
@@ -146,17 +157,15 @@ class TestFixture implements FixtureInterface
         $db = ConnectionManager::get($this->connection());
         assert($db instanceof Connection);
         try {
-            $name = Inflector::camelize($this->table);
-            $ormTable = $this->fetchTable($name, ['connection' => $db]);
-
-            // Remove the fetched table from the locator to avoid conflicts
-            // with test cases that need to (re)configure the alias.
-            $this->getTableLocator()->remove($name);
+            $ormTable = $this->fetchTable($this->alias, ['connection' => $db]);
+            $this->table = $ormTable->getTable();
 
             $schema = $ormTable->getSchema();
             assert($schema instanceof TableSchema);
             $this->_schema = $schema;
 
+            // Remove the fetched table from the locator to avoid conflicts
+            // with test cases that need to (re)configure the alias.
             $this->getTableLocator()->clear();
         } catch (CakeException $e) {
             $message = sprintf(
