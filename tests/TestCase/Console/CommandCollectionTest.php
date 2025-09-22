@@ -202,6 +202,42 @@ class CommandCollectionTest extends TestCase
     }
 
     /**
+     * Test has
+     *
+     * @return void
+     */
+    public function testHas()
+    {
+        $collection = new CommandCollection();
+        $collection->add('routes', RoutesCommand::class);
+        $this->assertTrue($collection->has('routes'));
+    }
+
+    /**
+     * Test get
+     *
+     * @return void
+     */
+    public function testGet()
+    {
+        $collection = new CommandCollection();
+        $collection->add('routes', RoutesCommand::class);
+        $this->assertSame(RoutesCommand::class, $collection->get('routes'));
+    }
+
+    /**
+     * Test get invalid
+     *
+     * @return void
+     */
+    public function testGetInvalid()
+    {
+        $collection = new CommandCollection();
+        $this->expectExceptionMessage('The `invalid` is not a known command name.');
+        $collection->get('invalid');
+    }
+
+    /**
      * test getIterator
      */
     public function testGetIterator(): void
