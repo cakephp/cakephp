@@ -154,6 +154,54 @@ class CommandCollectionTest extends TestCase
     }
 
     /**
+     * Test replacing a command
+     *
+     * @return void
+     */
+    public function testReplace(): void
+    {
+        $oldName = 'routes';
+        $newName = 'routing';
+        $collection = new CommandCollection();
+        $collection->add($oldName, RoutesCommand::class);
+        $collection->replace($oldName, $newName, RoutesCommand::class);
+        $this->assertFalse($collection->has($oldName));
+        $this->assertTrue($collection->has($newName));
+        $this->assertSame(RoutesCommand::class, $collection->get($newName));
+    }
+
+    /**
+     * Test replacing with an instance of a command
+     *
+     * @return void
+     */
+    public function testReplaceInstance(): void
+    {
+        $oldName = 'routes';
+        $newName = 'routing';
+        $collection = new CommandCollection();
+        $command = new RoutesCommand();
+        $collection->add($oldName, $command);
+        $collection->replace($oldName, $newName, $command);
+        $this->assertFalse($collection->has($oldName));
+        $this->assertTrue($collection->has($newName));
+        $this->assertSame($command, $collection->get($newName));
+    }
+
+    /**
+     * Test replacing a command instance with an invalid name.
+     */
+    public function testReplaceCommandInvalidName(): void
+    {
+        $oldName = 'routes';
+        $newName = ' spaced';
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage("The command name `{$newName}` is invalid.");
+        $collection = new CommandCollection();
+        $collection->replace($oldName, $newName, RoutesCommand::class);
+    }
+
+    /**
      * test getIterator
      */
     public function testGetIterator(): void
