@@ -121,7 +121,7 @@ trait EmailTrait
     }
 
     /**
-     * Asserts an email at a specific index contains expected html contents
+     * Asserts an email at a specific index contains expected HTML contents
      *
      * @param int $at Email index
      * @param string $contents Contents
@@ -210,7 +210,7 @@ trait EmailTrait
     }
 
     /**
-     * Asserts an email contains expected html contents
+     * Asserts an email contains expected HTML contents
      *
      * @param string $contents Contents
      * @param string $message Message
@@ -259,7 +259,7 @@ trait EmailTrait
     }
 
     /**
-     * Asserts an email at a specific index contains expected html contents
+     * Asserts an email at a specific index contains expected HTML contents
      *
      * @param int $at Email index
      * @param string $contents Contents
