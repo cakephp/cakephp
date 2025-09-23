@@ -102,11 +102,13 @@ class QueryCompiler
         );
 
         // Propagate bound parameters from sub-queries if the
-        // placeholders can be found in the SQL statement.
+        // placeholders can be found in the SQL statement. Only
+        // add new placeholders, as sub-queries may have been executed already.
         if ($query->getValueBinder() !== $binder) {
+            $existing = $binder->bindings();
             foreach ($query->getValueBinder()->bindings() as $binding) {
                 $placeholder = ':' . $binding['placeholder'];
-                if (preg_match('/' . $placeholder . '(?:\W|$)/', $sql) > 0) {
+                if (!isset($existing[$placeholder]) && preg_match('/' . $placeholder . '(?:\W|$)/', $sql) > 0) {
                     $binder->bind($placeholder, $binding['value'], $binding['type']);
                 }
             }

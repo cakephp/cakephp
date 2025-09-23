@@ -1813,4 +1813,40 @@ class QueryRegressionTest extends TestCase
         $this->assertNotNull($result);
         $this->assertCount(1, $result->articles, 'Should return exactly 1 article when limit is 1');
     }
+
+    /**
+     * Test that executed queries, can still be used as subqueries
+     */
+    public function testExecutedSubqueryCanBeReused(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $users = $this->getTableLocator()->get('Users');
+        $articles->belongsTo('Users', [
+            'foreignKey' => 'author_id',
+        ]);
+
+        $subquery1 = $articles->find()
+            ->select(['id'])
+            ->where(['title LIKE' => '%First%', 'id >=' => 1]);
+
+        $subquery2 = $users->find()
+            ->select(['id'])
+            ->where(['username' => 'mariano']);
+
+        // Execute the query to force it to have a different value binder
+        $subquery1->all();
+
+        $query = $articles->find()
+            ->contain('Users')
+            ->where([
+                'Users.id IN' => $subquery2,
+                'Articles.id IN' => $subquery1,
+            ]);
+        $result = $query->all()->toArray();
+
+        // If these assertions fail, the query is likely malformed
+        $this->assertCount(1, $result);
+        $this->assertEquals('First Article', $result[0]->title);
+        $this->assertNotEmpty($result[0]->user);
+    }
 }
