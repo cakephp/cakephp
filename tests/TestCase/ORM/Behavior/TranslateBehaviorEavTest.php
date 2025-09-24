@@ -93,7 +93,7 @@ class TranslateBehaviorEavTest extends TestCase
                 return [];
             }
 
-            return array_map(function (EntityInterface $entity) {
+            return array_map(static function (EntityInterface $entity) {
                 return $entity->toArray();
             }, $translations);
         });
@@ -784,7 +784,7 @@ class TranslateBehaviorEavTest extends TestCase
                 '_locale' => 'eng',
             ],
         ];
-        $results = array_map(function (EntityInterface $r) {
+        $results = array_map(static function (EntityInterface $r) {
             return $r->toArray();
         }, $results->toArray());
         $this->assertEquals($expected, $results);

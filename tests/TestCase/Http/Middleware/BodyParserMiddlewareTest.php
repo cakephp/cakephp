@@ -150,7 +150,7 @@ class BodyParserMiddlewareTest extends TestCase
         $f1 = function (string $body) {
             return json_decode($body, true);
         };
-        $f2 = function (string $body) {
+        $f2 = static function (string $body) {
             return ['overridden'];
         };
         $parser->addParser(['application/json'], $f1);

@@ -102,7 +102,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
     ): TreePrinter {
         if (!$keyPath) {
             $counter = 0;
-            $keyPath = function () use (&$counter): int {
+            $keyPath = static function () use (&$counter): int {
                 return $counter++;
             };
         }

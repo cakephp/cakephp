@@ -233,7 +233,7 @@ class Text
 
         $dataKeys = array_keys($data);
         $hashKeys = array_map(
-            fn(int|string $str) => hash('xxh128', (string)$str),
+            static fn(int|string $str) => hash('xxh128', (string)$str),
             $dataKeys,
         );
         /** @var array<string, string> $tempData */
@@ -731,7 +731,7 @@ class Text
         $pattern = '/&[0-9a-z]{2,8};|&#[0-9]{1,7};|&#x[0-9a-f]{1,6};/i';
         $replace = (string)preg_replace_callback(
             $pattern,
-            function ($match) use ($strlen) {
+            static function ($match) use ($strlen) {
                 $utf8 = html_entity_decode($match[0], ENT_HTML5 | ENT_QUOTES, 'UTF-8');
 
                 return str_repeat(' ', $strlen($utf8, 'UTF-8'));

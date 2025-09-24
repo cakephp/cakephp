@@ -1691,7 +1691,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rulesChecker = $Comments->rulesChecker();
 
         Closure::bind(
-            function () use ($rulesChecker): void {
+            static function () use ($rulesChecker): void {
                 $rulesChecker->{'_useI18n'} = false;
             },
             null,
@@ -1736,7 +1736,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rulesChecker = $Comments->rulesChecker();
 
         Closure::bind(
-            function () use ($rulesChecker): void {
+            static function () use ($rulesChecker): void {
                 $rulesChecker->{'_useI18n'} = false;
             },
             null,

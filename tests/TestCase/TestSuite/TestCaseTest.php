@@ -243,7 +243,7 @@ class TestCaseTest extends TestCase
          * setting stackframe = 0 and having same method
          * to have same deprecation message and same line for all cases
          */
-        $fun = function (): void {
+        $fun = static function (): void {
             deprecationWarning('5.0.0', 'Test same deprecation message', 0);
         };
         $this->deprecated(function () use ($fun): void {

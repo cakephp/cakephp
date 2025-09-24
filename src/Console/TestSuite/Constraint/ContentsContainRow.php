@@ -32,7 +32,7 @@ class ContentsContainRow extends ContentsRegExp
      */
     public function matches(mixed $other): bool
     {
-        $row = array_map(function ($cell) {
+        $row = array_map(static function ($cell) {
             return preg_quote($cell, '/');
         }, (array)$other);
         $cells = implode('\s+\|\s+', $row);

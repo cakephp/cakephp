@@ -180,7 +180,7 @@ abstract class TestCase extends BaseTestCase
         $deprecation = false;
 
         $previousHandler = set_error_handler(
-            function (
+            static function (
                 $code,
                 $message,
                 $file,
@@ -1055,7 +1055,7 @@ abstract class TestCase extends BaseTestCase
         $options += ['alias' => $baseClass, 'connection' => $connection];
         $options += $locator->getConfig($alias);
         $reflection = new ReflectionClass($className);
-        $classMethods = array_map(function (ReflectionMethod $method) {
+        $classMethods = array_map(static function (ReflectionMethod $method) {
             return $method->name;
         }, $reflection->getMethods());
 

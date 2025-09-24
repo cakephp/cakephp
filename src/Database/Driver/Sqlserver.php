@@ -486,7 +486,7 @@ class Sqlserver extends Driver
                 break;
             case 'DATEDIFF':
                 $hasDay = false;
-                $visitor = function ($value) use (&$hasDay) {
+                $visitor = static function ($value) use (&$hasDay) {
                     if ($value === 'day') {
                         $hasDay = true;
                     }
@@ -515,7 +515,7 @@ class Sqlserver extends Driver
                 break;
             case 'DATE_ADD':
                 $params = [];
-                $visitor = function ($p, $key) use (&$params) {
+                $visitor = static function ($p, $key) use (&$params) {
                     if ($key === 0) {
                         $params[2] = $p;
                     } else {

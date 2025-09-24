@@ -582,7 +582,7 @@ class HasMany extends Association
         return !in_array(
             false,
             array_map(
-                function ($prop) use ($table) {
+                static function ($prop) use ($table) {
                     return $table->getSchema()->isNullable($prop);
                 },
                 $properties,

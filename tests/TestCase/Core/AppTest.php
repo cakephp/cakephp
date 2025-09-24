@@ -55,7 +55,7 @@ class AppTest extends TestCase
     {
         static::setAppNamespace();
         $i = 0;
-        TestApp::$existsInBaseCallback = function ($name, $namespace) use ($existsInBase, $class, $expected, &$i) {
+        TestApp::$existsInBaseCallback = static function ($name, $namespace) use ($existsInBase, $class, $expected, &$i) {
             if ($i++ === 0) {
                 return $existsInBase;
             }

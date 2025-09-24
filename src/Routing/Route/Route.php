@@ -134,7 +134,7 @@ class Route
      */
     public function __construct(string $template, array $defaults = [], array $options = [])
     {
-        $checker = function () use ($defaults): bool {
+        $checker = static function () use ($defaults): bool {
             foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
                 if (isset($defaults[$key]) && !is_string($defaults[$key])) {
                     throw new CakeException(
@@ -815,7 +815,7 @@ class Route
      */
     protected function _writeUrl(array $params, array $pass = [], array $query = []): string
     {
-        $pass = array_map(function ($value) {
+        $pass = array_map(static function ($value) {
             return rawurlencode((string)$value);
         }, $pass);
         $pass = implode('/', $pass);

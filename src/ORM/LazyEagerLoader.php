@@ -75,7 +75,7 @@ class LazyEagerLoader
         $primaryKey = $source->getPrimaryKey();
         $method = is_string($primaryKey) ? 'get' : 'extract';
 
-        $keys = Hash::map($entities, '{*}', fn(EntityInterface $entity) => $entity->{$method}($primaryKey));
+        $keys = Hash::map($entities, '{*}', static fn(EntityInterface $entity) => $entity->{$method}($primaryKey));
 
         $query = $source
             ->find()

@@ -841,7 +841,7 @@ EXPECTED;
      */
     public function testEditorUrlClosure(): void
     {
-        Debugger::addEditor('open', function (string $file, int $line) {
+        Debugger::addEditor('open', static function (string $file, int $line) {
             return "{$file}/{$line}";
         });
         Debugger::setEditor('open');

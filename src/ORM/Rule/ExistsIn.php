@@ -138,7 +138,7 @@ class ExistsIn
         }
 
         $primary = array_map(
-            fn(string $key) => $target->aliasField($key) . ' IS',
+            static fn(string $key) => $target->aliasField($key) . ' IS',
             $bindingKey,
         );
         $conditions = array_combine(

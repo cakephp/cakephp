@@ -463,7 +463,7 @@ class HasManyTest extends TestCase
             ->with('all')
             ->willReturn($query);
 
-        $queryBuilder = function ($query) {
+        $queryBuilder = static function ($query) {
             return $query->select(['author_id'])->join('comments')->where(['comments.id' => 1]);
         };
         $association->eagerLoader(compact('keys', 'query', 'queryBuilder'));

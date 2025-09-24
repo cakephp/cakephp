@@ -1649,7 +1649,7 @@ abstract class Query implements ExpressionInterface, Stringable
     {
         if (!array_key_exists($name, $this->_parts)) {
             $clauses = array_keys($this->_parts);
-            array_walk($clauses, fn(string &$x) => $x = "`{$x}`");
+            array_walk($clauses, static fn(string &$x) => $x = "`{$x}`");
             $clauses = implode(', ', $clauses);
             throw new InvalidArgumentException(sprintf(
                 'The `%s` clause is not defined. Valid clauses are: %s.',
@@ -1872,7 +1872,7 @@ abstract class Query implements ExpressionInterface, Stringable
         try {
             set_error_handler(
                 /** @return no-return */
-                function ($errno, $errstr): void {
+                static function ($errno, $errstr): void {
                     throw new CakeException($errstr, $errno);
                 },
                 E_ALL,

@@ -1128,7 +1128,7 @@ class BelongsToManyTest extends TestCase
         $tag1 = $tags->find()->where(['Tags.name' => 'tag1'])->firstOrFail();
         $tag2 = $tags->find()->where(['Tags.name' => 'tag2'])->firstOrFail();
 
-        $findArticle = function ($article) use ($articles) {
+        $findArticle = static function ($article) use ($articles) {
             return $articles->find()
                 ->where(['CompositeKeyArticles.author_id' => $article->author_id])
                 ->contain('Tags')

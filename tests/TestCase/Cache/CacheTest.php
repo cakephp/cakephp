@@ -831,7 +831,7 @@ class CacheTest extends TestCase
     {
         $this->_configCache();
         $counter = 0;
-        $cacher = function () use ($counter) {
+        $cacher = static function () use ($counter) {
             return 'This is some data ' . $counter;
         };
 

@@ -361,7 +361,7 @@ class QueryCompiler
             ->getDriver($query->getConnectionRole())
             ->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY);
 
-        $parts = array_map(function (array $p) use ($binder, $setOperationsOrderBy) {
+        $parts = array_map(static function (array $p) use ($binder, $setOperationsOrderBy) {
             /** @var \Cake\Database\Expression\IdentifierExpression $expr */
             $expr = $p['query'];
             $p['query'] = $expr->sql($binder);

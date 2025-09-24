@@ -2444,7 +2444,7 @@ class SelectQueryTest extends TestCase
         $table->belongsTo('Articles');
         $table->getAssociation('Articles')->getTarget()->belongsTo('Authors');
 
-        $builder = function ($q) {
+        $builder = static function ($q) {
             return $q
                 ->formatResults(function ($results) {
                     return $results->map(function ($result) {

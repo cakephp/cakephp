@@ -321,7 +321,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testExceptionsInMiddlewareJsonView(): void
     {
         Router::reload();
-        Configure::write('TestApp.routes', function (RouteBuilder $routes): void {
+        Configure::write('TestApp.routes', static function (RouteBuilder $routes): void {
             $routes->connect('/json_response/api_get_data', [
                 'controller' => 'JsonResponse',
                 'action' => 'apiGetData',
@@ -1057,7 +1057,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testPostSessionCsrfSuccessWithSetCookieName(): void
     {
-        Configure::write('TestApp.routes', function (RouteBuilder $routes): void {
+        Configure::write('TestApp.routes', static function (RouteBuilder $routes): void {
             $routes->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
                 $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                     [
@@ -1083,7 +1083,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testPostSessionCsrfFailureWithSetCookieName(): void
     {
-        Configure::write('TestApp.routes', function (RouteBuilder $routes): void {
+        Configure::write('TestApp.routes', static function (RouteBuilder $routes): void {
             $routes->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
                 $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                     [

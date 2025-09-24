@@ -1095,13 +1095,13 @@ class RouterTest extends TestCase
         Router::setRequest($request);
 
         $calledCount = 0;
-        Router::addUrlFilter(function ($url, $request) use (&$calledCount) {
+        Router::addUrlFilter(static function ($url, $request) use (&$calledCount) {
             $calledCount++;
             $url['lang'] = $request->getParam('lang');
 
             return $url;
         });
-        Router::addUrlFilter(function ($url, $request) use (&$calledCount) {
+        Router::addUrlFilter(static function ($url, $request) use (&$calledCount) {
             $calledCount++;
             $url[] = '1234';
 
@@ -1134,7 +1134,7 @@ class RouterTest extends TestCase
         ]);
         Router::setRequest($request);
 
-        Router::addUrlFilter(function ($url, $request): void {
+        Router::addUrlFilter(static function ($url, $request): void {
             throw new RuntimeException('nope');
         });
         Router::url(['controller' => 'Posts', 'action' => 'index', 'lang' => 'en']);
@@ -1162,7 +1162,7 @@ class RouterTest extends TestCase
         ]);
         Router::setRequest($request);
 
-        Router::addUrlFilter(function (): void {
+        Router::addUrlFilter(static function (): void {
             throw new Exception();
         });
         Router::url(['controller' => 'Posts', 'action' => 'index', 'lang' => 'en']);
@@ -3547,7 +3547,7 @@ class RouterTest extends TestCase
      */
     protected function _connectDefaultRoutes(): void
     {
-        Router::scope('/', function (RouteBuilder $routes): void {
+        Router::scope('/', static function (RouteBuilder $routes): void {
             $routes->fallbacks('InflectedRoute');
         });
     }

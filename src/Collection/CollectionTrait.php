@@ -82,7 +82,7 @@ trait CollectionTrait
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn($v) => (bool)$v;
+        $callback ??= static fn($v) => (bool)$v;
 
         return new FilterIterator($this->unwrap(), $callback);
     }
@@ -92,7 +92,7 @@ trait CollectionTrait
      */
     public function reject(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn($v) => (bool)$v;
+        $callback ??= static fn($v) => (bool)$v;
 
         return new FilterIterator($this->unwrap(), fn($value, $key, $items) => !$callback($value, $key, $items));
     }
@@ -102,7 +102,7 @@ trait CollectionTrait
      */
     public function unique(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn($v) => $v;
+        $callback ??= static fn($v) => $v;
 
         return new UniqueIterator($this->unwrap(), $callback);
     }
@@ -513,7 +513,7 @@ trait CollectionTrait
             return $this->newCollection($iterator);
         }
 
-        $generator = function ($iterator, $length): Generator {
+        $generator = static function ($iterator, $length): Generator {
             $result = [];
             $bucket = 0;
             $offset = 0;
@@ -882,7 +882,7 @@ trait CollectionTrait
      */
     public function unfold(?callable $callback = null): CollectionInterface
     {
-        $callback ??= fn($v) => $v;
+        $callback ??= static fn($v) => $v;
 
         return $this->newCollection(
             new RecursiveIteratorIterator(
@@ -1041,7 +1041,7 @@ trait CollectionTrait
         $changeIndex = $lastIndex;
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
-            $currentCombination = array_map(function ($value, $keys, $index) {
+            $currentCombination = array_map(static function ($value, $keys, $index) {
                 return $value[$keys[$index]];
             }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
 

@@ -34,7 +34,7 @@ class RedisClusterEngineTest extends TestCase
 
         if ($this->skipTest === null) {
             $this->skipTest = false;
-            $nodes = array_map(function (string $node) {
+            $nodes = array_map(static function (string $node) {
                 [$host, $port] = explode(':', $node);
 
                 return ['host' => $host, 'port' => (int)$port];

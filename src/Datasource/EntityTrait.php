@@ -1281,7 +1281,7 @@ trait EntityTrait
             return $object->getErrors();
         }
 
-        $array = array_map(function ($val) {
+        $array = array_map(static function ($val) {
             if ($val instanceof EntityInterface) {
                 return $val->getErrors();
             }
@@ -1376,7 +1376,7 @@ trait EntityTrait
     public function setAccess(array|string $field, bool $set)
     {
         if ($field === '*') {
-            $this->_accessible = array_map(fn($p) => $set, $this->_accessible);
+            $this->_accessible = array_map(static fn($p) => $set, $this->_accessible);
             $this->_accessible['*'] = $set;
 
             return $this;

@@ -732,7 +732,7 @@ trait IntegrationTestTrait
         if ($this->_securityToken === true) {
             $fields = array_diff_key($data, array_flip($this->_unlockedFields));
 
-            $keys = array_map(function (int|string $field) {
+            $keys = array_map(static function (int|string $field) {
                 return preg_replace('/(\.\d+)+$/', '', (string)$field);
             }, array_keys(Hash::flatten($fields)));
 

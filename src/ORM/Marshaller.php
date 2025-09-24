@@ -76,7 +76,7 @@ class Marshaller
             $prop = (string)$prop;
             $columnType = $schema->getColumnType($prop);
             if ($columnType) {
-                $map[$prop] = fn($value) => TypeFactory::build($columnType)->marshal($value);
+                $map[$prop] = static fn($value) => TypeFactory::build($columnType)->marshal($value);
             }
         }
 

@@ -1055,7 +1055,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             return $when === static::WHEN_CREATE ? static::WHEN_UPDATE : static::WHEN_CREATE;
         }
         if ($when instanceof Closure) {
-            return fn($context) => !$when($context);
+            return static fn($context) => !$when($context);
         }
 
         return $when;
@@ -2091,7 +2091,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if ($message === null) {
-            $cases = array_map(fn(BackedEnum $case) => $case->value, $enumClassName::cases());
+            $cases = array_map(static fn(BackedEnum $case) => $case->value, $enumClassName::cases());
             $caseOptions = implode('`, `', $cases);
             if (!$this->_useI18n) {
                 $message = sprintf('The provided value must be one of `%s`', $caseOptions);

@@ -537,7 +537,7 @@ class SelectLoader
 
         $sourceKey = $sourceKeys[0];
 
-        return function ($row) use ($resultMap, $sourceKey, $nestKey) {
+        return static function ($row) use ($resultMap, $sourceKey, $nestKey) {
             if (isset($row[$sourceKey], $resultMap[$row[$sourceKey]])) {
                 $row[$nestKey] = $resultMap[$row[$sourceKey]];
             }
@@ -558,7 +558,7 @@ class SelectLoader
      */
     protected function _multiKeysInjector(array $resultMap, array $sourceKeys, string $nestKey): Closure
     {
-        return function ($row) use ($resultMap, $sourceKeys, $nestKey) {
+        return static function ($row) use ($resultMap, $sourceKeys, $nestKey) {
             $values = [];
             foreach ($sourceKeys as $key) {
                 $values[] = $row[$key];

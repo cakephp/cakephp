@@ -1895,7 +1895,7 @@ class Message implements JsonSerializable
             }
         });
 
-        return array_filter($array, function ($i) {
+        return array_filter($array, static function ($i) {
             return $i !== null && !is_array($i) && !is_bool($i) && strlen($i) || !empty($i);
         });
     }
@@ -1923,7 +1923,7 @@ class Message implements JsonSerializable
     public function __serialize(): array
     {
         $array = $this->jsonSerialize();
-        array_walk_recursive($array, function (&$item, $key): void {
+        array_walk_recursive($array, static function (&$item, $key): void {
             if ($item instanceof SimpleXMLElement) {
                 $item = json_decode((string)json_encode((array)$item), true);
             }

@@ -205,7 +205,7 @@ class TestFixture implements FixtureInterface
             if ($this->strictFields) {
                 $invalidFields = array_values(array_filter(
                     $recordFields,
-                    fn(int|string $f) => !in_array($f, $columns, true),
+                    static fn(int|string $f) => !in_array($f, $columns, true),
                 ));
                 if ($invalidFields !== []) {
                     throw new CakeException(

@@ -366,7 +366,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function () {
+        $factory = static function () {
             return new class implements ExceptionRendererInterface
             {
                 public function render(): ResponseInterface|string

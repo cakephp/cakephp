@@ -141,7 +141,7 @@ class RouteCollection
             // decode urlencoded segments, but don't decode %2f aka /
             $parts = explode('/', $urlPath);
             $parts = array_map(
-                fn(string $part) => str_replace('/', '%2f', urldecode($part)),
+                static fn(string $part) => str_replace('/', '%2f', urldecode($part)),
                 $parts,
             );
             $urlPath = implode('/', $parts);

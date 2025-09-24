@@ -185,7 +185,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      */
     protected function getShortestName(array $names): string
     {
-        usort($names, function ($a, $b) {
+        usort($names, static function ($a, $b) {
             return strlen($a) - strlen($b);
         });
 

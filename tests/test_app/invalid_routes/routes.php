@@ -8,7 +8,7 @@ use Cake\Routing\RouteBuilder;
  * Application requests should have InvalidArgument error rendered.
  */
 
-return function (RouteBuilder $routes): void {
+return static function (RouteBuilder $routes): void {
     $routes->setRouteClass('DoesNotExist');
     $routes->get('/', ['controller' => 'Pages']);
 };

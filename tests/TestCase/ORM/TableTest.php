@@ -3428,13 +3428,13 @@ class TableTest extends TestCase
         $table->Articles->setDependent(true);
 
         $called = false;
-        $listener = function ($e, $entity, $options) use (&$called): void {
+        $listener = static function ($e, $entity, $options) use (&$called): void {
             $called = true;
         };
         $table->getEventManager()->on('Model.afterDeleteCommit', $listener);
 
         $called2 = false;
-        $listener = function ($e, $entity, $options) use (&$called2): void {
+        $listener = static function ($e, $entity, $options) use (&$called2): void {
             $called2 = true;
         };
         $table->Articles->getEventManager()->on('Model.afterDeleteCommit', $listener);
@@ -6194,7 +6194,7 @@ class TableTest extends TestCase
         );
         $eventManager->on(
             'Model.afterSave',
-            $afterSaveCallback = function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterSaveCount): void {
+            $afterSaveCallback = static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterSaveCount): void {
                 $afterSaveCount++;
             },
         );

@@ -499,7 +499,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function equalFields(string $leftField, string $rightField)
     {
-        $wrapIdentifier = function ($field): ExpressionInterface {
+        $wrapIdentifier = static function ($field): ExpressionInterface {
             if ($field instanceof ExpressionInterface) {
                 return $field;
             }
