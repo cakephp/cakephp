@@ -586,9 +586,9 @@ class NumericPaginator implements PaginatorInterface
 
             // Check sortMap first for mapped sorting
             if (isset($options['sortMap'])) {
-                $mappedOrder = $this->resolveSortMapping(
+                assert($options['sortMap'] instanceof SortMap);
+                $mappedOrder = $options['sortMap']->resolve(
                     $options['sort'],
-                    $options['sortMap'],
                     $direction,
                     $directionSpecified,
                 );
@@ -734,92 +734,6 @@ class NumericPaginator implements PaginatorInterface
         }
 
         return $tableOrder;
-    }
-
-    /**
-     * Resolves sort mapping for a given sort key.
-     *
-     * Takes a sort key and resolves it using the sortMap configuration.
-     * Supports simple mapping, multi-column sorting, and fixed direction sorting.
-     *
-     * @param string $sortKey The sort key to resolve
-     * @param array|null $sortMap The sort mapping configuration
-     * @param string $direction The requested sort direction
-     * @param bool $directionSpecified Whether direction was explicitly specified
-     * @return array<string, mixed>|null Returns resolved order array or null if key not found
-     */
-    protected function resolveSortMapping(
-        string $sortKey,
-        ?array $sortMap,
-        string $direction,
-        bool $directionSpecified = true,
-    ): ?array {
-        if ($sortMap === null) {
-            return null;
-        }
-
-        // Check for direct mapping first
-        if (isset($sortMap[$sortKey])) {
-            $mapping = $sortMap[$sortKey];
-        } else {
-            // Check for shorthand numeric array syntax: ['name'] means 'name' => 'name'
-            // We check if the sortKey exists as a value in numeric indices
-            $found = false;
-            foreach ($sortMap as $key => $value) {
-                if (is_int($key) && is_string($value) && $value === $sortKey) {
-                    $found = true;
-                    break;
-                }
-            }
-            if ($found) {
-                $order = [$sortKey => $direction];
-
-                return $order;
-            }
-
-            return null;
-        }
-
-        $order = [];
-
-        // Simple string mapping: 'name' => 'Users.name'
-        if (is_string($mapping)) {
-            $order[$mapping] = $direction;
-
-            return $order;
-        }
-
-        // Array mapping (multi-column with default or locked directions)
-        if (is_array($mapping)) {
-            foreach ($mapping as $key => $value) {
-                // Handle SortField objects
-                if ($value instanceof SortField) {
-                    $field = $value->getField();
-                    $fieldDirection = $value->getDirection($direction, $directionSpecified);
-                    $order[$field] = $fieldDirection;
-                } elseif (is_int($key)) {
-                    // Indexed array: field uses querystring direction
-                    // e.g., ['modified', 'name']
-                    $order[$value] = $direction;
-                } elseif (str_ends_with($value, '!')) {
-                    // Associative array: check for locked (!) or default direction
-                    // Locked direction (ends with !): always use specified direction
-                    // e.g., ['created' => 'desc!'] always sorts desc
-                    $order[$key] = rtrim($value, '!');
-                } elseif (!$directionSpecified) {
-                    // Default direction that can be toggled
-                    // No direction specified, use the default
-                    $order[$key] = $value;
-                } else {
-                    // Direction specified, use it for all toggleable fields
-                    $order[$key] = $direction;
-                }
-            }
-
-            return $order;
-        }
-
-        return null;
     }
 
     /**
