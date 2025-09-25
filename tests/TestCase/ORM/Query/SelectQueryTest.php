@@ -3998,4 +3998,77 @@ class SelectQueryTest extends TestCase
             preg_replace('/[`"\[\]]/', '', $function->sql($binder)),
         );
     }
+
+    /**
+     * Test that multiple associations to the same table through different paths
+     * generate unique join aliases to avoid conflicts.
+     *
+     * @return void
+     */
+    public function testNestedAssociationsToSameTableGenerateUniqueAliases(): void
+    {
+        // Create a simple test case that directly replicates the issue
+        // Articles -> Creator (Authors) -> Comments
+        // Articles -> Modifier (Authors) -> Comments
+        $articles = $this->getTableLocator()->get('Articles');
+
+        // Set up Creator and Modifier as BelongsTo associations pointing to Authors
+        $articles->belongsTo('Creator', [
+            'className' => 'Authors',
+            'foreignKey' => 'author_id',
+        ]);
+        $articles->belongsTo('Modifier', [
+            'className' => 'Authors',
+            'foreignKey' => 'author_id',
+        ]);
+
+        // Add hasMany Comments to both instances
+        // We'll use joinWith to force JOIN strategy
+        $articles->getAssociation('Creator')->getTarget()->hasMany('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+        $articles->getAssociation('Modifier')->getTarget()->hasMany('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+
+        // Use leftJoinWith to force JOINs instead of subqueries
+        $query = $articles->find()
+            ->leftJoinWith('Creator.Comments')
+            ->leftJoinWith('Modifier.Comments')
+            ->where(['Articles.id' => 1]);
+
+        // Get the SQL to check the joins
+        $sql = $query->sql();
+
+        // Remove quotes/brackets for easier assertion
+        $sql = preg_replace('/[`"\[\]]/', '', $sql);
+
+        // Check that we have unique aliases for the Comments table joins
+        // Creator.Comments should be aliased as Creator_Comments
+        $this->assertStringContainsString('Creator_Comments', $sql, 'Creator.Comments should use unique alias Creator_Comments');
+
+        // Modifier.Comments should be aliased as Modifier_Comments
+        $this->assertStringContainsString('Modifier_Comments', $sql, 'Modifier.Comments should use unique alias Modifier_Comments');
+
+        // Verify both Comments joins are present (not overwriting each other)
+        $creatorCommentsCount = substr_count($sql, 'Creator_Comments');
+        $modifierCommentsCount = substr_count($sql, 'Modifier_Comments');
+
+        $this->assertGreaterThan(0, $creatorCommentsCount, 'Creator_Comments join should be present');
+        $this->assertGreaterThan(0, $modifierCommentsCount, 'Modifier_Comments join should be present');
+
+        // The simple Comments table name should not appear as an alias when joined through nested paths
+        // Look for JOIN pattern with just Comments as alias (not part of Creator_Comments or Modifier_Comments)
+        // Note: We check that if Comments appears as an alias in a JOIN, it's part of the compound aliases
+        preg_match_all('/JOIN\s+comments\s+(\w+)\s+ON/i', $sql, $matches);
+        if (!empty($matches[1])) {
+            foreach ($matches[1] as $alias) {
+                $this->assertMatchesRegularExpression(
+                    '/^(Creator_Comments|Modifier_Comments|Comments)$/i',
+                    $alias,
+                    "Unexpected alias '$alias' for comments table in JOIN",
+                );
+            }
+        }
+    }
 }

@@ -422,6 +422,12 @@ class EagerLoader
                     'propertyPath' => $loadable->propertyPath(),
                     'includeFields' => $includeFields,
                 ];
+                // If the alias differs from the association's name (due to conflict resolution),
+                // pass the modified alias to attachTo
+                $assocName = $loadable->instance()->getName();
+                if ($alias !== $assocName) {
+                    $config['alias'] = $alias;
+                }
                 $loadable->instance()->attachTo($query, $config);
                 $processed[$alias] = true;
             }
@@ -588,15 +594,66 @@ class EagerLoader
     protected function _resolveJoins(array $associations, array $matching = []): array
     {
         $result = [];
+        $seen = [];
+
+        // Process matching associations
         foreach ($matching as $table => $loadable) {
             $result[$table] = $loadable;
-            $result += $this->_resolveJoins($loadable->associations(), []);
+            $nested = $this->_resolveJoins($loadable->associations(), []);
+
+            // Check for conflicts when merging nested associations
+            foreach ($nested as $nestedTable => $nestedLoadable) {
+                if (isset($result[$nestedTable])) {
+                    // Check if it's the same path or different
+                    $existingPath = $result[$nestedTable]->aliasPath();
+                    $currentPath = $nestedLoadable->aliasPath();
+                    if ($existingPath !== $currentPath) {
+                        // Conflict detected - both need to use full paths
+                        // Update the existing one if it's using simple name
+                        if (!isset($result[str_replace('.', '_', $existingPath)])) {
+                            $existingLoadable = $result[$nestedTable];
+                            unset($result[$nestedTable]);
+                            $result[str_replace('.', '_', $existingPath)] = $existingLoadable;
+                        }
+                        // Add the new one with full path
+                        $key = str_replace('.', '_', $currentPath);
+                        $result[$key] = $nestedLoadable;
+                        continue;
+                    }
+                }
+                $result[$nestedTable] = $nestedLoadable;
+            }
         }
+
+        // Process regular associations
         foreach ($associations as $table => $loadable) {
             $inMatching = isset($matching[$table]);
             if (!$inMatching && $loadable->canBeJoined()) {
                 $result[$table] = $loadable;
-                $result += $this->_resolveJoins($loadable->associations(), []);
+                $nested = $this->_resolveJoins($loadable->associations(), []);
+
+                // Check for conflicts when merging nested associations
+                foreach ($nested as $nestedTable => $nestedLoadable) {
+                    if (isset($result[$nestedTable])) {
+                        // Check if it's the same path or different
+                        $existingPath = $result[$nestedTable]->aliasPath();
+                        $currentPath = $nestedLoadable->aliasPath();
+                        if ($existingPath !== $currentPath) {
+                            // Conflict detected - both need to use full paths
+                            // Update the existing one if it's using simple name
+                            if (!isset($result[str_replace('.', '_', $existingPath)])) {
+                                $existingLoadable = $result[$nestedTable];
+                                unset($result[$nestedTable]);
+                                $result[str_replace('.', '_', $existingPath)] = $existingLoadable;
+                            }
+                            // Add the new one with full path
+                            $key = str_replace('.', '_', $currentPath);
+                            $result[$key] = $nestedLoadable;
+                            continue;
+                        }
+                    }
+                    $result[$nestedTable] = $nestedLoadable;
+                }
                 continue;
             }
 
@@ -729,12 +786,21 @@ class EagerLoader
             $instance = $meta->instance();
             $associations = $meta->associations();
             $forMatching = $meta->forMatching();
+            // Use the full aliasPath as nestKey for nested joined associations
+            // to ensure unique aliases when same table is joined multiple times
+            $nestKey = $assoc;
+            if ($canBeJoined && str_contains($meta->aliasPath(), '.')) {
+                $nestKey = str_replace('.', '_', $meta->aliasPath());
+            } elseif (!$canBeJoined) {
+                $nestKey = $meta->aliasPath();
+            }
+
             $map[] = [
                 'alias' => $assoc,
                 'instance' => $instance,
                 'canBeJoined' => $canBeJoined,
                 'entityClass' => $instance->getTarget()->getEntityClass(),
-                'nestKey' => $canBeJoined ? $assoc : $meta->aliasPath(),
+                'nestKey' => $nestKey,
                 'matching' => $forMatching ?? $matching,
                 'targetProperty' => $meta->targetProperty(),
             ];
