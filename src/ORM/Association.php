@@ -716,6 +716,9 @@ abstract class Association
             $options['includeFields'] = false;
         }
 
+        $alias = $options['alias'] ?? $this->_name;
+        $options['alias'] = $alias;
+
         if ($options['foreignKey']) {
             $joinCondition = $this->_joinCondition($options);
             if ($joinCondition) {
@@ -752,7 +755,7 @@ abstract class Association
         $dummy->where($options['conditions']);
         $this->_dispatchBeforeFind($dummy);
 
-        $query->join([$this->_name => [
+        $query->join([$alias => [
             'table' => $options['table'],
             'conditions' => $dummy->clause('where'),
             'type' => $options['joinType'],
@@ -776,7 +779,7 @@ abstract class Association
     {
         $target = $this->getTarget();
         if (!empty($options['negateMatch'])) {
-            $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->_name);
+            $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $options['alias']);
             $query->andWhere(function ($exp) use ($primaryKey) {
                 /** @var callable $callable */
                 $callable = [$exp, 'isNull'];
@@ -988,7 +991,7 @@ abstract class Association
             }
         }
 
-        $query->select($query->aliasFields($fields, $this->_name));
+        $query->select($query->aliasFields($fields, $options['alias']));
         $query->addDefaultTypes($this->getTarget());
     }
 
@@ -1106,7 +1109,7 @@ abstract class Association
     protected function _joinCondition(array $options): array
     {
         $conditions = [];
-        $tAlias = $this->_name;
+        $tAlias = $options['alias'] ?? $this->_name;
         $sAlias = $this->getSource()->getAlias();
         $foreignKey = (array)$options['foreignKey'];
         $bindingKey = (array)$this->getBindingKey();

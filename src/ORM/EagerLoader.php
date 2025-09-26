@@ -421,6 +421,7 @@ class EagerLoader
                     'aliasPath' => $loadable->aliasPath(),
                     'propertyPath' => $loadable->propertyPath(),
                     'includeFields' => $includeFields,
+                    'alias' => $alias,
                 ];
                 $loadable->instance()->attachTo($query, $config);
                 $processed[$alias] = true;
@@ -590,13 +591,13 @@ class EagerLoader
         $result = [];
         foreach ($matching as $table => $loadable) {
             $result[$table] = $loadable;
-            $result += $this->_resolveJoins($loadable->associations(), []);
+            $result = $this->_mergeNestedJoins($result, $this->_resolveJoins($loadable->associations(), []));
         }
         foreach ($associations as $table => $loadable) {
             $inMatching = isset($matching[$table]);
             if (!$inMatching && $loadable->canBeJoined()) {
                 $result[$table] = $loadable;
-                $result += $this->_resolveJoins($loadable->associations(), []);
+                $result = $this->_mergeNestedJoins($result, $this->_resolveJoins($loadable->associations(), []));
                 continue;
             }
 
@@ -606,6 +607,34 @@ class EagerLoader
 
             $loadable->setCanBeJoined(false);
             $this->_loadExternal[] = $loadable;
+        }
+
+        return $result;
+    }
+
+    protected function _mergeNestedJoins(array $result, array $nested): array
+    {
+        foreach ($nested as $nestedAlias => $nestedLoadable) {
+            if (isset($result[$nestedAlias])) {
+                // Check if it's the same path or different
+                $existingPath = $result[$nestedAlias]->aliasPath();
+                $currentPath = $nestedLoadable->aliasPath();
+                if ($existingPath !== $currentPath) {
+                    // Conflict detected - both need to use full paths
+                    // Update the existing one if it's using simple name
+                    if (!isset($result[str_replace('.', '_', $existingPath)])) {
+                        $result[str_replace('.', '_', $existingPath)] = $result[$nestedAlias];
+                        unset($result[$nestedAlias]);
+                    }
+
+                    // Add the new one with full path
+                    $key = str_replace('.', '_', $currentPath);
+                    $result[$key] = $nestedLoadable;
+                    continue;
+                }
+            }
+
+            $result[$nestedAlias] = $nestedLoadable;
         }
 
         return $result;
