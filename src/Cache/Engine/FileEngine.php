@@ -456,7 +456,7 @@ class FileEngine extends CacheEngine
         );
         $filtered = new CallbackFilterIterator(
             $contents,
-            function (SplFileInfo $current) use ($group, $prefix) {
+            static function (SplFileInfo $current) use ($group, $prefix) {
                 if (!$current->isFile()) {
                     return false;
                 }

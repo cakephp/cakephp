@@ -349,7 +349,7 @@ class MarshallerTest extends TestCase
         $users->hasOne('Articles', [
             'foreignKey' => 'author_id',
         ]);
-        $articles->getEventManager()->on('Model.beforeMarshal', function ($event, $data, $options): void {
+        $articles->getEventManager()->on('Model.beforeMarshal', static function ($event, $data, $options): void {
             // Blank the association, so it doesn't become dirty.
             unset($data['not_a_real_field']);
         });
@@ -1878,7 +1878,7 @@ class MarshallerTest extends TestCase
         $entity->clean();
 
         // Adding a forced join to have another table with the same column names
-        $this->articles->Tags->getEventManager()->on('Model.beforeFind', function ($e, $query): void {
+        $this->articles->Tags->getEventManager()->on('Model.beforeFind', static function ($e, $query): void {
             $left = new IdentifierExpression('Tags.id');
             $right = new IdentifierExpression('a.id');
             $query->leftJoin(['a' => 'tags'], $query->expr()->eq($left, $right));
@@ -1935,7 +1935,7 @@ class MarshallerTest extends TestCase
         ]);
 
         $this->articles->Tags->getEventManager()
-            ->on('Model.beforeFind', function (EventInterface $event, $query) use (&$called): void {
+            ->on('Model.beforeFind', static function (EventInterface $event, $query) use (&$called): void {
                 $called = true;
 
                 $query->where(['Tags.id >=' => 1]);
@@ -2607,7 +2607,7 @@ class MarshallerTest extends TestCase
             ['id' => 1, 'comment' => 'Changed 1', 'user_id' => 1],
             ['id' => 2, 'comment' => 'Changed 2', 'user_id' => 2],
         ];
-        $this->comments->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query): void {
+        $this->comments->getEventManager()->on('Model.beforeFind', static function (EventInterface $event, $query): void {
             $query->contain(['Articles']);
         });
         $marshall = new Marshaller($this->comments);
@@ -3391,28 +3391,28 @@ class MarshallerTest extends TestCase
 
         $this->articles->Users->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data, $options): void {
+            static function ($e, $data, $options): void {
                 $data['secret'] = 'h45h3d';
             },
         );
 
         $this->articles->Comments->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data): void {
+            static function ($e, $data): void {
                 $data['comment'] .= ' (modified)';
             },
         );
 
         $this->articles->Tags->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data): void {
+            static function ($e, $data): void {
                 $data['tag'] .= ' (modified)';
             },
         );
 
         $this->articles->Tags->junction()->getEventManager()->on(
             'Model.beforeMarshal',
-            function ($e, $data): void {
+            static function ($e, $data): void {
                 $data['modified_by'] = 1;
             },
         );

@@ -88,7 +88,7 @@ class TextTest extends TestCase
     public function testUuidGenerationWithClosure(): void
     {
         $customUuid = 'custom-uuid-12345678-1234-1234-1234-123456789012';
-        Configure::write('Text.uuidGenerator', function () use ($customUuid) {
+        Configure::write('Text.uuidGenerator', static function () use ($customUuid) {
             return $customUuid;
         });
 
@@ -1849,7 +1849,7 @@ HTML;
     public function testStrlen(): void
     {
         $method = new ReflectionMethod(Text::class, '_strlen');
-        $strlen = function () use ($method) {
+        $strlen = static function () use ($method) {
             return $method->invokeArgs(null, func_get_args());
         };
 
@@ -1872,7 +1872,7 @@ HTML;
     public function testSubstr(): void
     {
         $method = new ReflectionMethod(Text::class, '_substr');
-        $substr = function () use ($method) {
+        $substr = static function () use ($method) {
             return $method->invokeArgs(null, func_get_args());
         };
 

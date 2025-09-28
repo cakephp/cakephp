@@ -25,7 +25,7 @@ class TestRequestHandler implements RequestHandlerInterface
 
     public function __construct(?callable $callable = null)
     {
-        $this->callable = $callable ?: function ($request) {
+        $this->callable = $callable ?: static function ($request) {
             return new Response();
         };
     }

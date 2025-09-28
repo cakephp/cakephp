@@ -280,7 +280,7 @@ class Postgres extends Driver
                 $expression
                     ->setName('')
                     ->setConjunction('-')
-                    ->iterateParts(function ($p) {
+                    ->iterateParts(static function ($p) {
                         if (is_string($p)) {
                             $p = ['value' => [$p => 'literal'], 'type' => null];
                         } else {
@@ -308,7 +308,7 @@ class Postgres extends Driver
                 $expression
                     ->setName('')
                     ->setConjunction(' + INTERVAL')
-                    ->iterateParts(function ($p, $key) {
+                    ->iterateParts(static function ($p, $key) {
                         if ($key === 1) {
                             return sprintf("'%s'", $p);
                         }

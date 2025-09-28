@@ -86,7 +86,7 @@ class Filesystem
 
         $dirFilter = new RecursiveCallbackFilterIterator(
             $directory,
-            function (SplFileInfo $current) {
+            static function (SplFileInfo $current) {
                 if (str_starts_with($current->getFilename(), '.') && $current->isDir()) {
                     return false;
                 }

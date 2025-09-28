@@ -110,7 +110,7 @@ class ControllerTest extends TestCase
      */
     public function testUndefinedPropertyError(): void
     {
-        $this->expectNoticeMessageMatches('/Undefined property `Controller::\$Foo` in `.*` on line \d+/', function (): void {
+        $this->expectNoticeMessageMatches('/Undefined property `Controller::\$Foo` in `.*` on line \d+/', static function (): void {
             $controller = new Controller(new ServerRequest());
             $controller->Foo->baz();
         });
@@ -423,7 +423,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event): void {
+        $Controller->getEventManager()->on('Controller.beforeRender', static function (EventInterface $event): void {
             $controller = $event->getSubject();
             $controller->viewBuilder()->setClassName('Json');
         });
@@ -446,7 +446,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event): void {
+        $Controller->getEventManager()->on('Controller.beforeRender', static function (EventInterface $event): void {
             $event->stopPropagation();
         });
 
@@ -507,7 +507,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response): void {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', static function (EventInterface $event, $url, Response $response): void {
             $controller = $event->getSubject();
             $controller->setResponse($response->withLocation('https://book.cakephp.org'));
         });
@@ -524,7 +524,7 @@ class ControllerTest extends TestCase
     {
         $Controller = new Controller(new ServerRequest());
 
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response): void {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', static function (EventInterface $event, $url, Response $response): void {
             $controller = $event->getSubject();
             $controller->setResponse($response->withStatus(302));
         });
@@ -540,7 +540,7 @@ class ControllerTest extends TestCase
         $Controller = new Controller(new ServerRequest());
 
         $newResponse = new Response();
-        $Controller->getEventManager()->on('Controller.beforeRedirect', function (EventInterface $event, $url, Response $response) use ($newResponse): void {
+        $Controller->getEventManager()->on('Controller.beforeRedirect', static function (EventInterface $event, $url, Response $response) use ($newResponse): void {
             $event->setResult($newResponse);
         });
 
@@ -619,13 +619,13 @@ class ControllerTest extends TestCase
 
         $eventManager
             ->shouldHaveReceived('dispatch')
-            ->withArgs(function ($event) {
+            ->withArgs(static function ($event) {
                 return $event->getName() === 'Controller.initialize';
             });
 
         $eventManager
             ->shouldHaveReceived('dispatch')
-            ->withArgs(function ($event) {
+            ->withArgs(static function ($event) {
                 return $event->getName() === 'Controller.startup';
             });
     }
@@ -641,7 +641,7 @@ class ControllerTest extends TestCase
 
         $eventManager->shouldHaveReceived('dispatch')
             ->once()
-            ->withArgs(function ($event) {
+            ->withArgs(static function ($event) {
                 return $event->getName() === 'Controller.shutdown';
             });
     }
@@ -911,7 +911,7 @@ class ControllerTest extends TestCase
             'params' => ['prefix' => 'Admin'],
         ]);
         $Controller = new AdminPostsController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e): void {
+        $Controller->getEventManager()->on('Controller.beforeRender', static function (EventInterface $e): void {
             $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();
@@ -919,7 +919,7 @@ class ControllerTest extends TestCase
 
         $request = $request->withParam('prefix', 'admin/super');
         $Controller = new AdminPostsController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e): void {
+        $Controller->getEventManager()->on('Controller.beforeRender', static function (EventInterface $e): void {
             $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();
@@ -932,7 +932,7 @@ class ControllerTest extends TestCase
             ],
         ]);
         $Controller = new PagesController($request);
-        $Controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $e): void {
+        $Controller->getEventManager()->on('Controller.beforeRender', static function (EventInterface $e): void {
             $e->setResult($e->getSubject()->getResponse());
         });
         $Controller->render();
@@ -993,7 +993,7 @@ class ControllerTest extends TestCase
     public function testLoadComponentWithContainer(): void
     {
         $container = new Container();
-        $container->add(FlashComponent::class, function (ComponentRegistry $registry, array $config) {
+        $container->add(FlashComponent::class, static function (ComponentRegistry $registry, array $config) {
             return new FlashComponent($registry, $config);
         })
         ->addArgument(ComponentRegistry::class)
@@ -1030,7 +1030,7 @@ class ControllerTest extends TestCase
     {
         $controller = new AdminPostsController(new ServerRequest());
 
-        $controller->getEventManager()->on('Controller.beforeRender', function (EventInterface $event): void {
+        $controller->getEventManager()->on('Controller.beforeRender', static function (EventInterface $event): void {
             /** @var \Cake\Controller\Controller $controller */
             $controller = $event->getSubject();
 

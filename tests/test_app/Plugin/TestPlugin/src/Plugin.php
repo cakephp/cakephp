@@ -23,7 +23,7 @@ class Plugin extends BasePlugin
 {
     public function events(EventManagerInterface $event): EventManagerInterface
     {
-        $event->on('TestPlugin.load', function (): void {
+        $event->on('TestPlugin.load', static function (): void {
         });
 
         return $event;
@@ -31,7 +31,7 @@ class Plugin extends BasePlugin
 
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
-        $middlewareQueue->add(function ($request, $handler) {
+        $middlewareQueue->add(static function ($request, $handler) {
             return $handler->handle($request);
         });
 

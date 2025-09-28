@@ -59,7 +59,7 @@ class SessionTest extends TestCase
     {
         $_SESSION = null;
 
-        $this->deprecated(function (): void {
+        $this->deprecated(static function (): void {
             $config = [
                 'cookie' => 'test',
                 'checkAgent' => false,

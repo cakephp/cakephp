@@ -164,7 +164,7 @@ class QueryExpressionTest extends TestCase
         $this->assertEquals($dupe, $expr);
         $this->assertNotSame($dupe, $expr);
         $originalParts = [];
-        $expr->iterateParts(function ($part) use (&$originalParts): void {
+        $expr->iterateParts(static function ($part) use (&$originalParts): void {
             $originalParts[] = $part;
         });
         $dupe->iterateParts(function ($part, $i) use ($originalParts): void {

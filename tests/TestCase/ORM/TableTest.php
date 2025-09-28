@@ -757,7 +757,7 @@ class TableTest extends TestCase
         ]);
         $table->getEventManager()->on(
             'Model.beforeFind',
-            function (EventInterface $event, $query, $options): void {
+            static function (EventInterface $event, $query, $options): void {
                 $query->limit(1);
             },
         );
@@ -779,14 +779,14 @@ class TableTest extends TestCase
         $expected = ['One', 'Two', 'Three'];
         $table->getEventManager()->on(
             'Model.beforeFind',
-            function (EventInterface $event, $query, $options) use ($expected): void {
+            static function (EventInterface $event, $query, $options) use ($expected): void {
                 $query->setResult($expected);
                 $event->stopPropagation();
             },
         );
 
         $query = $table->find('all')
-            ->formatResults(function (ResultSet $results) {
+            ->formatResults(static function (ResultSet $results) {
                 return $results;
             });
         $query->limit(1);
@@ -1604,7 +1604,7 @@ class TableTest extends TestCase
         $expected = ['id', 'username'];
         $this->assertSame($expected, $query->clause('select'));
 
-        $query = $table->find('list', valueField: function ($row) {
+        $query = $table->find('list', valueField: static function ($row) {
             return $row->username;
         });
         $this->assertEmpty($query->clause('select'));
@@ -2314,7 +2314,7 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener1 = function ($event, $entity, $options): void {
+        $listener1 = static function ($event, $entity, $options): void {
             $options['crazy'] = true;
         };
         $listener2 = function ($event, $entity, $options): void {
@@ -2341,7 +2341,7 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity): void {
+        $listener = static function (EventInterface $event, $entity): void {
             $event->stopPropagation();
             $event->setResult($entity);
         };
@@ -2364,7 +2364,7 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity): void {
+        $listener = static function (EventInterface $event, $entity): void {
             $event->stopPropagation();
         };
         $table->getEventManager()->on('Model.beforeSave', $listener);
@@ -2382,7 +2382,7 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity): void {
+        $listener = static function (EventInterface $event, $entity): void {
             $event->stopPropagation();
             $event->setResult(1);
         };
@@ -2442,7 +2442,7 @@ class TableTest extends TestCase
         $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit): void {
+        $listenerAfterCommit = static function ($e, $entity, $options) use (&$calledAfterCommit): void {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
@@ -2466,7 +2466,7 @@ class TableTest extends TestCase
         ]);
 
         $called = false;
-        $listener = function ($e, $entity, $options) use (&$called): void {
+        $listener = static function ($e, $entity, $options) use (&$called): void {
             $called = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listener);
@@ -2490,7 +2490,7 @@ class TableTest extends TestCase
         ]);
 
         $called = false;
-        $listener = function ($e, $entity, $options) use (&$called): void {
+        $listener = static function ($e, $entity, $options) use (&$called): void {
             $called = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listener);
@@ -2532,13 +2532,13 @@ class TableTest extends TestCase
             ->willReturn(0);
 
         $called = false;
-        $listener = function ($e, $entity, $options) use (&$called): void {
+        $listener = static function ($e, $entity, $options) use (&$called): void {
             $called = true;
         };
         $table->getEventManager()->on('Model.afterSave', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit): void {
+        $listenerAfterCommit = static function ($e, $entity, $options) use (&$calledAfterCommit): void {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listenerAfterCommit);
@@ -2565,13 +2565,13 @@ class TableTest extends TestCase
         $table->belongsTo('authors');
 
         $calledForArticle = false;
-        $listenerForArticle = function ($e, $entity, $options) use (&$calledForArticle): void {
+        $listenerForArticle = static function ($e, $entity, $options) use (&$calledForArticle): void {
             $calledForArticle = true;
         };
         $table->getEventManager()->on('Model.afterSaveCommit', $listenerForArticle);
 
         $calledForAuthor = false;
-        $listenerForAuthor = function ($e, $entity, $options) use (&$calledForAuthor): void {
+        $listenerForAuthor = static function ($e, $entity, $options) use (&$calledForAuthor): void {
             $calledForAuthor = true;
         };
         $table->authors->getEventManager()->on('Model.afterSaveCommit', $listenerForAuthor);
@@ -2925,7 +2925,7 @@ class TableTest extends TestCase
         ];
 
         $timesCalled = 0;
-        $listener = function ($e, $entity, $options) use (&$timesCalled): void {
+        $listener = static function ($e, $entity, $options) use (&$timesCalled): void {
             $timesCalled++;
         };
         $table = $this->getTableLocator()
@@ -3022,7 +3022,7 @@ class TableTest extends TestCase
             new Entity(['name' => 'jose']),
         ];
 
-        $table->getEventManager()->on('Model.beforeSave', function (EventInterface $event, EntityInterface $entity): void {
+        $table->getEventManager()->on('Model.beforeSave', static function (EventInterface $event, EntityInterface $entity): void {
             if ($entity->name === 'jose') {
                 throw new Exception('Oh noes');
             }
@@ -3116,7 +3116,7 @@ class TableTest extends TestCase
 
             public function buildRules(RulesChecker $rules): RulesChecker
             {
-                return $rules->add(function () {
+                return $rules->add(static function () {
                     return 'Xyz';
                 });
             }
@@ -3192,8 +3192,8 @@ class TableTest extends TestCase
             ->setCascadeCallbacks(true);
 
         $articles = $table->getAssociation('Articles')->getTarget();
-        $articles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function ($entity) {
+        $articles->getEventManager()->on('Model.buildRules', static function ($event, $rules): void {
+            $rules->addDelete(static function ($entity) {
                 if ($entity->author_id === 3) {
                     return false;
                 }
@@ -3323,8 +3323,8 @@ class TableTest extends TestCase
     {
         $sections = $this->getTableLocator()->get('Sections');
         $sectionsMembers = $this->getTableLocator()->get('SectionsMembers');
-        $sectionsMembers->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function () {
+        $sectionsMembers->getEventManager()->on('Model.buildRules', static function ($event, $rules): void {
+            $rules->addDelete(static function () {
                 return false;
             });
         });
@@ -3409,7 +3409,7 @@ class TableTest extends TestCase
         $table->getEventManager()->on('Model.afterDelete', $listener);
 
         $calledAfterCommit = false;
-        $listenerAfterCommit = function ($e, $entity, $options) use (&$calledAfterCommit): void {
+        $listenerAfterCommit = static function ($e, $entity, $options) use (&$calledAfterCommit): void {
             $calledAfterCommit = true;
         };
         $table->getEventManager()->on('Model.afterDeleteCommit', $listenerAfterCommit);
@@ -3428,13 +3428,13 @@ class TableTest extends TestCase
         $table->Articles->setDependent(true);
 
         $called = false;
-        $listener = function ($e, $entity, $options) use (&$called): void {
+        $listener = static function ($e, $entity, $options) use (&$called): void {
             $called = true;
         };
         $table->getEventManager()->on('Model.afterDeleteCommit', $listener);
 
         $called2 = false;
-        $listener = function ($e, $entity, $options) use (&$called2): void {
+        $listener = static function ($e, $entity, $options) use (&$called2): void {
             $called2 = true;
         };
         $table->Articles->getEventManager()->on('Model.afterDeleteCommit', $listener);
@@ -3456,7 +3456,7 @@ class TableTest extends TestCase
         $mock = $this->getMockBuilder(EventManager::class)->getMock();
         $mock->expects($this->any())
             ->method('dispatch')
-            ->willReturnCallback(function (EventInterface $event) {
+            ->willReturnCallback(static function (EventInterface $event) {
                 $event->stopPropagation();
 
                 return $event;
@@ -3478,7 +3478,7 @@ class TableTest extends TestCase
         $mock = $this->getMockBuilder(EventManager::class)->getMock();
         $mock->expects($this->any())
             ->method('dispatch')
-            ->willReturnCallback(function (EventInterface $event) {
+            ->willReturnCallback(static function (EventInterface $event) {
                 $event->stopPropagation();
                 $event->setResult('got stopped');
 
@@ -5035,7 +5035,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             },
         );
@@ -5069,7 +5069,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             },
         );
@@ -5105,7 +5105,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             },
         );
@@ -5136,13 +5136,13 @@ class TableTest extends TestCase
         $actualDeleteOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions): void {
                 $actualSaveOptions = $options->getArrayCopy();
             },
         );
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions): void {
                 $actualDeleteOptions = $options->getArrayCopy();
             },
         );
@@ -5194,7 +5194,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             },
         );
@@ -5229,7 +5229,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             },
         );
@@ -5271,7 +5271,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             },
         );
@@ -5306,13 +5306,13 @@ class TableTest extends TestCase
         $actualDeleteOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeSave',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualSaveOptions): void {
                 $actualSaveOptions = $options->getArrayCopy();
             },
         );
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualDeleteOptions): void {
                 $actualDeleteOptions = $options->getArrayCopy();
             },
         );
@@ -5366,7 +5366,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $tags->junction()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             },
         );
@@ -5396,7 +5396,7 @@ class TableTest extends TestCase
         $actualOptions = null;
         $articles->getTarget()->getEventManager()->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$actualOptions): void {
                 $actualOptions = $options->getArrayCopy();
             },
         );
@@ -5869,7 +5869,7 @@ class TableTest extends TestCase
     public function testFindOrCreateTransactions(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $articles->getEventManager()->on('Model.afterSaveCommit', function (EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
+        $articles->getEventManager()->on('Model.afterSaveCommit', static function (EventInterface $event, EntityInterface $entity, ArrayObject $options): void {
             $entity->afterSaveCommit = true;
         });
 
@@ -5993,7 +5993,7 @@ class TableTest extends TestCase
     public function testInitializeEvent(): void
     {
         $count = 0;
-        $cb = function (EventInterface $event) use (&$count): void {
+        $cb = static function (EventInterface $event) use (&$count): void {
             $count++;
         };
         EventManager::instance()->on('Model.initialize', $cb);
@@ -6022,7 +6022,7 @@ class TableTest extends TestCase
     public function testBuildValidatorEvent(): void
     {
         $count = 0;
-        $cb = function (EventInterface $event) use (&$count): void {
+        $cb = static function (EventInterface $event) use (&$count): void {
             $count++;
         };
         EventManager::instance()->on('Model.buildValidator', $cb);
@@ -6167,7 +6167,7 @@ class TableTest extends TestCase
         $afterSaveCount = 0;
         $eventManager->on(
             'Model.buildRules',
-            function (EventInterface $event, RulesChecker $rules) use (&$buildRulesCount): void {
+            static function (EventInterface $event, RulesChecker $rules) use (&$buildRulesCount): void {
                 $buildRulesCount++;
             },
         );
@@ -6188,13 +6188,13 @@ class TableTest extends TestCase
         );
         $eventManager->on(
             'Model.beforeSave',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeSaveCount): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeSaveCount): void {
                 $beforeSaveCount++;
             },
         );
         $eventManager->on(
             'Model.afterSave',
-            $afterSaveCallback = function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterSaveCount): void {
+            $afterSaveCallback = static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterSaveCount): void {
                 $afterSaveCount++;
             },
         );
@@ -6209,13 +6209,13 @@ class TableTest extends TestCase
         $afterDeleteCount = 0;
         $eventManager->on(
             'Model.beforeDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeDeleteCount): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$beforeDeleteCount): void {
                 $beforeDeleteCount++;
             },
         );
         $eventManager->on(
             'Model.afterDelete',
-            function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterDeleteCount): void {
+            static function (EventInterface $event, EntityInterface $entity, ArrayObject $options) use (&$afterDeleteCount): void {
                 $afterDeleteCount++;
             },
         );
@@ -6300,7 +6300,7 @@ class TableTest extends TestCase
         $counter = 0;
         $userTable->Comments
             ->getEventManager()
-            ->on('Model.afterSave', function (EventInterface $event, $entity) use (&$counter): void {
+            ->on('Model.afterSave', static function (EventInterface $event, $entity) use (&$counter): void {
                 if ($entity->isDirty()) {
                     $counter++;
                 }
@@ -6334,7 +6334,7 @@ class TableTest extends TestCase
         $counter = 0;
         $table->Tags->junction()
             ->getEventManager()
-            ->on('Model.afterSave', function (EventInterface $event, $entity) use (&$counter): void {
+            ->on('Model.afterSave', static function (EventInterface $event, $entity) use (&$counter): void {
                 if ($entity->isDirty()) {
                     $counter++;
                 }
@@ -6419,7 +6419,7 @@ class TableTest extends TestCase
         $entity = $table->get(1);
         $options = [
             'SiteArticles' => ['fields' => ['title', 'author_id']],
-            'Articles.Tags' => function ($q) {
+            'Articles.Tags' => static function ($q) {
                 return $q->where(['Tags.name' => 'tag2']);
             },
         ];
@@ -6457,8 +6457,8 @@ class TableTest extends TestCase
 
         $entity = $table->get(2);
         $result = $table->loadInto($entity, [
-            'Articles' => function (SelectQuery $q) {
-                return $q->innerJoinWith('Authors', function ($q) {
+            'Articles' => static function (SelectQuery $q) {
+                return $q->innerJoinWith('Authors', static function ($q) {
                     return $q->where(['Authors.name' => 'mariano']);
                 });
             },

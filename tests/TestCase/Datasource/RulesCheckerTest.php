@@ -37,7 +37,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
+            static function () {
                 return false;
             },
             'ruleName',
@@ -67,7 +67,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addDelete(
-            function () {
+            static function () {
                 return false;
             },
             'ruleName',
@@ -94,7 +94,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addUpdate(
-            function () {
+            static function () {
                 return false;
             },
             'ruleName',
@@ -121,7 +121,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->addCreate(
-            function () {
+            static function () {
                 return false;
             },
             'ruleName',
@@ -148,7 +148,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
+            static function () {
                 return false;
             },
             'ruleName',
@@ -170,7 +170,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
+            static function () {
                 return 'worst thing ever';
             },
             ['errorField' => 'name'],
@@ -191,7 +191,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
+            static function () {
                 return false;
             },
             ['message' => 'this is bad', 'errorField' => 'name'],
@@ -211,7 +211,7 @@ class RulesCheckerTest extends TestCase
         ]);
 
         $rules = new RulesChecker();
-        $rules->add(function () {
+        $rules->add(static function () {
             return false;
         });
 
@@ -228,7 +228,7 @@ class RulesCheckerTest extends TestCase
 
         $rules = new RulesChecker();
         $rules->add(
-            function () {
+            static function () {
                 return false;
             },
             'ruleName',
@@ -244,7 +244,7 @@ class RulesCheckerTest extends TestCase
     {
         $rules = new RulesChecker();
         $rules->addCreate(
-            function () {
+            static function () {
                 return false;
             },
             'ruleName',
@@ -261,7 +261,7 @@ class RulesCheckerTest extends TestCase
     {
         $rules = new RulesChecker();
         $rules->addUpdate(
-            function () {
+            static function () {
                 return false;
             },
             'ruleName',
@@ -278,7 +278,7 @@ class RulesCheckerTest extends TestCase
     {
         $rules = new RulesChecker();
         $rules->addDelete(
-            function () {
+            static function () {
                 return false;
             },
             'ruleName',

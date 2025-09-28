@@ -1088,7 +1088,7 @@ trait EntityTrait
         $this->_hasBeenVisited = true;
         try {
             $errors = $this->_errors + (new Collection($diff))
-                ->filter(function ($value) {
+                ->filter(static function ($value) {
                     return is_array($value) || $value instanceof EntityInterface;
                 })
                 ->map(function ($value) {
@@ -1281,7 +1281,7 @@ trait EntityTrait
             return $object->getErrors();
         }
 
-        $array = array_map(function ($val) {
+        $array = array_map(static function ($val) {
             if ($val instanceof EntityInterface) {
                 return $val->getErrors();
             }

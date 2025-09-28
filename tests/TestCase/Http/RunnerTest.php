@@ -61,13 +61,13 @@ class RunnerTest extends TestCase
 
         $this->queue = new MiddlewareQueue();
 
-        $this->ok = function ($request, $handler) {
+        $this->ok = static function ($request, $handler) {
             return $handler->handle($request->withAttribute('ok', true));
         };
-        $this->pass = function ($request, $handler) {
+        $this->pass = static function ($request, $handler) {
             return $handler->handle($request->withAttribute('pass', true));
         };
-        $this->fail = function ($request, $handler): void {
+        $this->fail = static function ($request, $handler): void {
             throw new RuntimeException('A bad thing');
         };
     }
@@ -91,17 +91,17 @@ class RunnerTest extends TestCase
     public function testRunSequencing(): void
     {
         $log = [];
-        $one = function ($request, $handler) use (&$log) {
+        $one = static function ($request, $handler) use (&$log) {
             $log[] = 'one';
 
             return $handler->handle($request);
         };
-        $two = function ($request, $handler) use (&$log) {
+        $two = static function ($request, $handler) use (&$log) {
             $log[] = 'two';
 
             return $handler->handle($request);
         };
-        $three = function ($request, $handler) use (&$log) {
+        $three = static function ($request, $handler) use (&$log) {
             $log[] = 'three';
 
             return $handler->handle($request);
@@ -136,7 +136,7 @@ class RunnerTest extends TestCase
         $attributes = [];
 
         $this->queue
-            ->add(function ($request, $handler) use (&$attributes) {
+            ->add(static function ($request, $handler) use (&$attributes) {
                 try {
                     return $handler->handle($request);
                 } catch (Throwable) {

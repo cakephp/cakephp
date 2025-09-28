@@ -92,7 +92,7 @@ class StreamTest extends TestCase
         $stream = new Stream();
         $request = new Request('http://throw_exception/');
 
-        $currentHandler = set_error_handler(function (): void {
+        $currentHandler = set_error_handler(static function (): void {
         });
         restore_error_handler();
 
@@ -101,7 +101,7 @@ class StreamTest extends TestCase
         } catch (Exception) {
         }
 
-        $newHandler = set_error_handler(function (): void {
+        $newHandler = set_error_handler(static function (): void {
         });
         restore_error_handler();
 

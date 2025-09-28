@@ -176,7 +176,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
     public function testExecWithMockServiceDependencies(): void
     {
-        $this->mockService(stdClass::class, function () {
+        $this->mockService(stdClass::class, static function () {
             return json_decode('{"console-mock":true}');
         });
         $this->exec('dependency');

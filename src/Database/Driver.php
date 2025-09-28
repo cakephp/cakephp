@@ -684,7 +684,7 @@ abstract class Driver implements LoggerAwareInterface
         $conditions = $query->clause('where');
         assert($conditions === null || $conditions instanceof ExpressionInterface);
         if ($conditions) {
-            $conditions->traverse(function ($expression) {
+            $conditions->traverse(static function ($expression) {
                 if ($expression instanceof ComparisonExpression) {
                     $field = $expression->getField();
                     if (

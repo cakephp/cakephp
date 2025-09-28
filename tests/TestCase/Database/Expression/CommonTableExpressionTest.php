@@ -114,7 +114,7 @@ class CommonTableExpressionTest extends TestCase
         $cte = (new CommonTableExpression('test', $query))->field('field');
 
         $expressions = [];
-        $cte->traverse(function ($expression) use (&$expressions): void {
+        $cte->traverse(static function ($expression) use (&$expressions): void {
             $expressions[] = $expression;
         });
 

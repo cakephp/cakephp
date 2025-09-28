@@ -56,7 +56,7 @@ class EntityTest extends TestCase
 
     public function testEntitySetDeprecated(): void
     {
-        $this->deprecated(function (): void {
+        $this->deprecated(static function (): void {
             $entity = new Entity();
             $entity->set(['foo' => 'bar']);
         });

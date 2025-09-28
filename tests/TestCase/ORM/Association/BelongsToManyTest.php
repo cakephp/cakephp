@@ -149,7 +149,7 @@ class BelongsToManyTest extends TestCase
         $assoc->setSort(['id' => 'ASC']);
         $this->assertSame(['id' => 'ASC'], $assoc->getSort());
 
-        $closure = function () {
+        $closure = static function () {
             return ['id' => 'ASC'];
         };
         $assoc->setSort($closure);
@@ -182,7 +182,7 @@ class BelongsToManyTest extends TestCase
         $result = $articles->get(1, ...['contain' => 'Tags']);
         $this->assertSame([2, 1], array_column($result['tags'], 'id'));
 
-        $assoc->setSort(function () {
+        $assoc->setSort(static function () {
             return ['Tags.id' => 'DESC'];
         });
         $result = $articles->get(1, ...['contain' => 'Tags']);
@@ -503,7 +503,7 @@ class BelongsToManyTest extends TestCase
         $this->article->getAssociation($articleTag->getAlias());
 
         $counter = 0;
-        $articleTag->getEventManager()->on('Model.beforeDelete', function () use (&$counter): void {
+        $articleTag->getEventManager()->on('Model.beforeDelete', static function () use (&$counter): void {
             $counter++;
         });
 
@@ -530,8 +530,8 @@ class BelongsToManyTest extends TestCase
         $association->junction($articleTag);
         $this->article->getAssociation($articleTag->getAlias());
 
-        $articleTag->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function () {
+        $articleTag->getEventManager()->on('Model.buildRules', static function ($event, $rules): void {
+            $rules->addDelete(static function () {
                 return false;
             });
         });
@@ -1048,8 +1048,8 @@ class BelongsToManyTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $tags = $this->getTableLocator()->get('Tags');
-        $tags->getEventManager()->on('Model.buildRules', function (EventInterface $event, RulesChecker $rules): void {
-            $rules->add(function () {
+        $tags->getEventManager()->on('Model.buildRules', static function (EventInterface $event, RulesChecker $rules): void {
+            $rules->add(static function () {
                 return false;
             }, 'rule', ['errorField' => 'name', 'message' => 'Bad data']);
         });
@@ -1128,7 +1128,7 @@ class BelongsToManyTest extends TestCase
         $tag1 = $tags->find()->where(['Tags.name' => 'tag1'])->firstOrFail();
         $tag2 = $tags->find()->where(['Tags.name' => 'tag2'])->firstOrFail();
 
-        $findArticle = function ($article) use ($articles) {
+        $findArticle = static function ($article) use ($articles) {
             return $articles->find()
                 ->where(['CompositeKeyArticles.author_id' => $article->author_id])
                 ->contain('Tags')
@@ -1490,7 +1490,7 @@ class BelongsToManyTest extends TestCase
         $table->belongsToMany('Tags');
         $result = $table
             ->find()
-            ->contain(['Tags' => function (SelectQuery $q) {
+            ->contain(['Tags' => static function (SelectQuery $q) {
                 return $q->select(['id']);
             }])
             ->first();
@@ -1523,7 +1523,7 @@ class BelongsToManyTest extends TestCase
         $table->belongsToMany('Tags');
         $result = $table
             ->find()
-            ->contain(['Tags' => function (SelectQuery $q) {
+            ->contain(['Tags' => static function (SelectQuery $q) {
                 return $q->select(['two' => $q->expr('1 + 1')])->enableAutoFields();
             }])
             ->first();
@@ -1592,7 +1592,7 @@ class BelongsToManyTest extends TestCase
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
-        $query = $table->find()->matching('Tags', function (SelectQuery $q) {
+        $query = $table->find()->matching('Tags', static function (SelectQuery $q) {
             return $q->where(['Tags.name' => 'tag1']);
         });
         $results = $query->toArray();
@@ -1610,7 +1610,7 @@ class BelongsToManyTest extends TestCase
             'conditions' => [new QueryExpression("name LIKE 'tag%'")],
             'through' => 'SpecialTags',
         ]);
-        $query = $table->find()->matching('Tags', function (SelectQuery $q) {
+        $query = $table->find()->matching('Tags', static function (SelectQuery $q) {
             return $q->where(['Tags.name' => 'tag1']);
         });
         $results = $query->toArray();
@@ -1628,7 +1628,7 @@ class BelongsToManyTest extends TestCase
             'conditions' => ['SpecialTags.highlighted' => true],
             'through' => 'SpecialTags',
         ]);
-        $query = $table->Tags->find()->matching('Articles', function (SelectQuery $query) {
+        $query = $table->Tags->find()->matching('Articles', static function (SelectQuery $query) {
             return $query->where(['Articles.id' => 1]);
         });
         // The inner join on special_tags excludes the results.
@@ -1653,7 +1653,7 @@ class BelongsToManyTest extends TestCase
         ]);
 
         $results = $table->find()
-            ->contain('SpecialTags', function ($query) {
+            ->contain('SpecialTags', static function ($query) {
                 return $query->orderBy(['SpecialTags.tag_id']);
             })
             ->where(['id' => 2])
@@ -1716,7 +1716,7 @@ class BelongsToManyTest extends TestCase
             'bindingKey' => 'name',
         ]);
         $query = $table->find()
-            ->matching('Articles', function ($q) {
+            ->matching('Articles', static function ($q) {
                 return $q->where(['Articles.id >' => 0]);
             });
         $results = $query->all();

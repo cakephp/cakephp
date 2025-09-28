@@ -86,7 +86,7 @@ class RoutingMiddlewareTest extends TestCase
     {
         $this->builder->connect('/testpath', ['controller' => 'Articles', 'action' => 'index'], ['routeClass' => HeaderRedirectRoute::class]);
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(static function ($request) {
             return new Response();
         });
         $middleware = new RoutingMiddleware($this->app());
@@ -344,7 +344,7 @@ class RoutingMiddlewareTest extends TestCase
         $this->builder->applyMiddleware('first');
         $this->builder->connect('/', ['controller' => 'Home']);
 
-        $this->builder->scope('/api', function (RouteBuilder $routes): void {
+        $this->builder->scope('/api', static function (RouteBuilder $routes): void {
             $routes->applyMiddleware('second');
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
@@ -381,7 +381,7 @@ class RoutingMiddlewareTest extends TestCase
         $this->builder->applyMiddleware('first');
         $this->builder->connect('/', ['controller' => 'Home']);
 
-        $this->builder->scope('/api', function (RouteBuilder $routes): void {
+        $this->builder->scope('/api', static function (RouteBuilder $routes): void {
             $routes->applyMiddleware('second');
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
@@ -419,12 +419,12 @@ class RoutingMiddlewareTest extends TestCase
             return $handler->handle($request);
         });
 
-        $this->builder->scope('/api', function (RouteBuilder $routes): void {
+        $this->builder->scope('/api', static function (RouteBuilder $routes): void {
             $routes->applyMiddleware('first');
             $routes->connect('/ping', ['controller' => 'Pings']);
         });
 
-        $this->builder->scope('/api', function (RouteBuilder $routes): void {
+        $this->builder->scope('/api', static function (RouteBuilder $routes): void {
             $routes->applyMiddleware('second');
             $routes->connect('/version', ['controller' => 'Version']);
         });
@@ -466,11 +466,11 @@ class RoutingMiddlewareTest extends TestCase
             {
             }
         };
-        $this->builder->scope('/', function (RouteBuilder $routes): void {
+        $this->builder->scope('/', static function (RouteBuilder $routes): void {
             $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(static function ($request) {
             return new Response('php://memory', 200);
         });
         $middleware = new RoutingMiddleware($app);
@@ -484,11 +484,11 @@ class RoutingMiddlewareTest extends TestCase
     public function testAppWithContainerApplicationInterface(): void
     {
         $app = $this->app();
-        $this->builder->scope('/', function (RouteBuilder $routes): void {
+        $this->builder->scope('/', static function (RouteBuilder $routes): void {
             $routes->connect('/testpath', ['controller' => 'Articles', 'action' => 'index']);
         });
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/testpath']);
-        $handler = new TestRequestHandler(function ($request) {
+        $handler = new TestRequestHandler(static function ($request) {
             return new Response('php://memory', 200);
         });
         $middleware = new RoutingMiddleware($app);

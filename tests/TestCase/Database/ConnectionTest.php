@@ -1050,7 +1050,7 @@ class ConnectionTest extends TestCase
     public function testNestedTransactionRollbackExceptionNotThrown(): void
     {
         $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
+            $this->connection->transactional(static function () {
                 return true;
             });
 
@@ -1059,7 +1059,7 @@ class ConnectionTest extends TestCase
         $this->assertFalse($this->connection->inTransaction());
 
         $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
+            $this->connection->transactional(static function () {
                 return true;
             });
 
@@ -1068,7 +1068,7 @@ class ConnectionTest extends TestCase
         $this->assertFalse($this->connection->inTransaction());
 
         $this->connection->transactional(function () {
-            $this->connection->transactional(function () {
+            $this->connection->transactional(static function () {
                 return false;
             });
 
@@ -1088,7 +1088,7 @@ class ConnectionTest extends TestCase
         $e = null;
         try {
             $this->connection->transactional(function () {
-                $this->connection->transactional(function () {
+                $this->connection->transactional(static function () {
                     return false;
                 });
                 $this->rollbackSourceLine = __LINE__ - 1;
@@ -1122,14 +1122,14 @@ class ConnectionTest extends TestCase
             $this->connection->transactional(function () {
                 $this->pushNestedTransactionState();
 
-                $this->connection->transactional(function () {
+                $this->connection->transactional(static function () {
                     return true;
                 });
 
                 $this->connection->transactional(function () {
                     $this->pushNestedTransactionState();
 
-                    $this->connection->transactional(function () {
+                    $this->connection->transactional(static function () {
                         return false;
                     });
                     $this->rollbackSourceLine = __LINE__ - 1;
@@ -1142,7 +1142,7 @@ class ConnectionTest extends TestCase
                     return true;
                 });
 
-                $this->connection->transactional(function () {
+                $this->connection->transactional(static function () {
                     return false;
                 });
 

@@ -549,7 +549,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesPathOption(): void
     {
         $routes = new RouteBuilder($this->collection, '/api');
-        $routes->resources('Articles', ['path' => 'posts'], function (RouteBuilder $routes): void {
+        $routes->resources('Articles', ['path' => 'posts'], static function (RouteBuilder $routes): void {
             $routes->resources('Comments');
         });
         $all = $this->collection->routes();
@@ -620,7 +620,7 @@ class RouteBuilderTest extends TestCase
         $routes->resources(
             'NetworkObjects',
             ['inflect' => 'dasherize'],
-            function (RouteBuilder $routes): void {
+            static function (RouteBuilder $routes): void {
                 $routes->resources('Attributes');
             },
         );
@@ -701,7 +701,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesInScope(): void
     {
         $builder = Router::createRouteBuilder('/');
-        $builder->scope('/api', ['prefix' => 'Api'], function (RouteBuilder $routes): void {
+        $builder->scope('/api', ['prefix' => 'Api'], static function (RouteBuilder $routes): void {
             $routes->setExtensions(['json']);
             $routes->resources('Articles');
         });
@@ -911,7 +911,7 @@ class RouteBuilderTest extends TestCase
     public function testScopeWithAction(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->scope('/prices', ['controller' => 'Prices', 'action' => 'view'], function (RouteBuilder $routes): void {
+        $routes->scope('/prices', ['controller' => 'Prices', 'action' => 'view'], static function (RouteBuilder $routes): void {
             $routes->connect('/shared', ['shared' => true]);
             $routes->get('/exclusive', ['exclusive' => true]);
         });
@@ -978,7 +978,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testRegisterMiddleware(): void
     {
-        $func = function (): void {
+        $func = static function (): void {
         };
         $routes = new RouteBuilder($this->collection, '/api');
         $result = $routes->registerMiddleware('test', $func);
@@ -993,7 +993,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testMiddlewareGroup(): void
     {
-        $func = function (): void {
+        $func = static function (): void {
         };
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->registerMiddleware('test', $func);
@@ -1012,7 +1012,7 @@ class RouteBuilderTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage("Cannot add middleware group 'test'. A middleware by this name has already been registered.");
-        $func = function (): void {
+        $func = static function (): void {
         };
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->registerMiddleware('test', $func);
@@ -1035,7 +1035,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testApplyMiddleware(): void
     {
-        $func = function (): void {
+        $func = static function (): void {
         };
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->registerMiddleware('test', $func)
@@ -1050,7 +1050,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testApplyMiddlewareMerges(): void
     {
-        $func = function (): void {
+        $func = static function (): void {
         };
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->registerMiddleware('test', $func)
@@ -1066,7 +1066,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testApplyMiddlewareUnique(): void
     {
-        $func = function (): void {
+        $func = static function (): void {
         };
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->registerMiddleware('test', $func)
@@ -1083,7 +1083,7 @@ class RouteBuilderTest extends TestCase
      */
     public function testApplyMiddlewareAttachToRoutes(): void
     {
-        $func = function (): void {
+        $func = static function (): void {
         };
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->registerMiddleware('test', $func)
@@ -1160,7 +1160,7 @@ class RouteBuilderTest extends TestCase
     public function testHttpMethodIntegration(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->scope('/', function (RouteBuilder $routes): void {
+        $routes->scope('/', static function (RouteBuilder $routes): void {
             $routes->get('/faq/{page}', ['controller' => 'Pages', 'action' => 'faq'], 'faq')
                 ->setPatterns(['page' => '[a-z0-9_]+'])
                 ->setHost('docs.example.com');

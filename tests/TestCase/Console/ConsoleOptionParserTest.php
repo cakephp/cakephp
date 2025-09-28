@@ -226,7 +226,7 @@ class ConsoleOptionParserTest extends TestCase
             'short' => 't',
         ]);
 
-        $this->deprecated(function () use ($parser): void {
+        $this->deprecated(static function () use ($parser): void {
             $parser->addOption('other', [
                 'short' => 't',
             ]);

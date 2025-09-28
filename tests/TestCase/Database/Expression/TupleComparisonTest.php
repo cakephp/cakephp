@@ -97,7 +97,7 @@ class TupleComparisonTest extends TestCase
         $f = new TupleComparison(['field1', $field2], [$value1, 2], ['integer', 'integer'], '=');
         $expressions = [];
 
-        $collector = function ($e) use (&$expressions): void {
+        $collector = static function ($e) use (&$expressions): void {
             $expressions[] = $e;
         };
 

@@ -265,7 +265,7 @@ class FormProtectionComponentTest extends TestCase
 
     public function testCallbackReturnResponse(): void
     {
-        $this->FormProtection->setConfig('validationFailureCallback', function (FormProtectionException $exception) {
+        $this->FormProtection->setConfig('validationFailureCallback', static function (FormProtectionException $exception) {
             return new Response(['body' => 'from callback']);
         });
 
@@ -298,7 +298,7 @@ class FormProtectionComponentTest extends TestCase
         $this->expectException(NotFoundException::class);
         $this->expectExceptionMessage('error description');
 
-        $this->FormProtection->setConfig('validationFailureCallback', function (FormProtectionException $exception): void {
+        $this->FormProtection->setConfig('validationFailureCallback', static function (FormProtectionException $exception): void {
             throw new NotFoundException('error description');
         });
 

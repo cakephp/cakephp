@@ -53,7 +53,7 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame('the thing', $binder->bindings()[':param0']['value']);
 
         $found = false;
-        $comparison->traverse(function ($exp) use (&$found): void {
+        $comparison->traverse(static function ($exp) use (&$found): void {
             $found = $exp instanceof FunctionExpression;
         });
         $this->assertTrue($found, 'The expression is not included in the tree');
@@ -73,7 +73,7 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame('3', $binder->bindings()[':param2']['value']);
 
         $found = false;
-        $comparison->traverse(function ($exp) use (&$found): void {
+        $comparison->traverse(static function ($exp) use (&$found): void {
             $found = $exp instanceof FunctionExpression;
         });
         $this->assertTrue($found, 'The expression is not included in the tree');
@@ -92,7 +92,7 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame('to', $binder->bindings()[':param2']['value']);
 
         $expressions = [];
-        $between->traverse(function ($exp) use (&$expressions): void {
+        $between->traverse(static function ($exp) use (&$expressions): void {
             $expressions[] = $exp instanceof FunctionExpression ? 1 : 0;
         });
 
@@ -112,7 +112,7 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame('2016-01', $binder->bindings()[':param0']['value']);
 
         $expressions = [];
-        $function->traverse(function ($exp) use (&$expressions): void {
+        $function->traverse(static function ($exp) use (&$expressions): void {
             $expressions[] = $exp instanceof FunctionExpression ? 1 : 0;
         });
 
@@ -139,7 +139,7 @@ class ExpressionTypeCastingTest extends TestCase
         $this->assertSame('bar', $binder->bindings()[':param2']['value']);
 
         $expressions = [];
-        $values->traverse(function ($exp) use (&$expressions): void {
+        $values->traverse(static function ($exp) use (&$expressions): void {
             $expressions[] = $exp instanceof FunctionExpression ? 1 : 0;
         });
 

@@ -263,7 +263,7 @@ class ServerTest extends TestCase
     {
         $GLOBALS['mockedHeadersSent'] = false;
         $response = new LaminasResponse('php://memory', 200, ['x-testing' => 'source header']);
-        $response = $response->withBody(new CallbackStream(function (): void {
+        $response = $response->withBody(new CallbackStream(static function (): void {
             echo 'body content';
         }));
 
@@ -285,7 +285,7 @@ class ServerTest extends TestCase
         $called = false;
 
         $server->getEventManager()->on('Server.buildMiddleware', function (EventInterface $event, MiddlewareQueue $middlewareQueue) use (&$called): void {
-            $middlewareQueue->add(function ($request, $handler) use (&$called) {
+            $middlewareQueue->add(static function ($request, $handler) use (&$called) {
                 $called = true;
 
                 return $handler->handle($request);

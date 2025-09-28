@@ -91,7 +91,7 @@ class ProgressHelperTest extends TestCase
      */
     public function testOutputSuccess(): void
     {
-        $this->helper->output([function (ProgressHelper $progress): void {
+        $this->helper->output([static function (ProgressHelper $progress): void {
             $progress->increment(20);
         }]);
         $expected = [
@@ -119,7 +119,7 @@ class ProgressHelperTest extends TestCase
         $this->helper->output([
             'total' => 10,
             'width' => 20,
-            'callback' => function (ProgressHelper $progress): void {
+            'callback' => static function (ProgressHelper $progress): void {
                 $progress->increment(2);
             },
         ]);

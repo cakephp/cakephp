@@ -358,7 +358,7 @@ class Sqlserver extends Driver
             $select = $original->clause('select');
             $order = new OrderByExpression();
             $originalOrder
-                ->iterateParts(function ($direction, $orderBy) use ($select, $order) {
+                ->iterateParts(static function ($direction, $orderBy) use ($select, $order) {
                     $key = $orderBy;
                     if (
                         isset($select[$orderBy]) &&
@@ -397,7 +397,7 @@ class Sqlserver extends Driver
 
         // Decorate the original query as that is what the
         // end developer will be calling execute() on originally.
-        $original->decorateResults(function ($row) {
+        $original->decorateResults(static function ($row) {
             if (isset($row['_cake_page_rownum_'])) {
                 unset($row['_cake_page_rownum_']);
             }
@@ -425,7 +425,7 @@ class Sqlserver extends Driver
 
         $order = new OrderByExpression($distinct);
         $query
-            ->select(function (Query $q) use ($distinct, $order) {
+            ->select(static function (Query $q) use ($distinct, $order) {
                 $over = $q->expr('ROW_NUMBER() OVER')
                     ->add('(PARTITION BY')
                     ->add($q->expr()->add($distinct)->setConjunction(','))
@@ -448,7 +448,7 @@ class Sqlserver extends Driver
 
         // Decorate the original query as that is what the
         // end developer will be calling execute() on originally.
-        $original->decorateResults(function ($row) {
+        $original->decorateResults(static function ($row) {
             if (isset($row['_cake_distinct_pivot_'])) {
                 unset($row['_cake_distinct_pivot_']);
             }
@@ -486,7 +486,7 @@ class Sqlserver extends Driver
                 break;
             case 'DATEDIFF':
                 $hasDay = false;
-                $visitor = function ($value) use (&$hasDay) {
+                $visitor = static function ($value) use (&$hasDay) {
                     if ($value === 'day') {
                         $hasDay = true;
                     }
@@ -515,7 +515,7 @@ class Sqlserver extends Driver
                 break;
             case 'DATE_ADD':
                 $params = [];
-                $visitor = function ($p, $key) use (&$params) {
+                $visitor = static function ($p, $key) use (&$params) {
                     if ($key === 0) {
                         $params[2] = $p;
                     } else {
@@ -526,7 +526,7 @@ class Sqlserver extends Driver
 
                     return $p;
                 };
-                $manipulator = function ($p, $key) use (&$params) {
+                $manipulator = static function ($p, $key) use (&$params) {
                     return $params[$key];
                 };
 
@@ -548,7 +548,7 @@ class Sqlserver extends Driver
                 if (count($expression) < 4) {
                     $params = [];
                     $expression
-                        ->iterateParts(function ($p) use (&$params) {
+                        ->iterateParts(static function ($p) use (&$params) {
                             return $params[] = $p;
                         })
                         ->add([new FunctionExpression('LEN', [$params[0]]), ['string']]);

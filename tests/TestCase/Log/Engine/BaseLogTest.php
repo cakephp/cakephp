@@ -73,7 +73,7 @@ class BaseLogTest extends TestCase
             'array' => ['arr'],
             'array-obj' => new ArrayObject(['x' => 'y']),
             'debug-info' => ConnectionManager::get('test'),
-            'obj' => function (): void {
+            'obj' => static function (): void {
             },
             'to-string' => new Response(['body' => 'response body']),
             'to-array' => new TypeMap(['my-type']),

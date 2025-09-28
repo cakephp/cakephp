@@ -101,7 +101,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ->getTarget()
             ->rulesChecker()
             ->add(
-                function (EntityInterface $entity) {
+                static function (EntityInterface $entity) {
                     return false;
                 },
                 ['errorField' => 'title', 'message' => 'This is an error'],
@@ -191,7 +191,7 @@ class RulesCheckerIntegrationTest extends TestCase
             ->getTarget()
             ->rulesChecker()
             ->add(
-                function (Entity $article) {
+                static function (Entity $article) {
                     return is_numeric($article->title);
                 },
                 ['errorField' => 'title', 'message' => 'This is an error'],
@@ -229,7 +229,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->getAssociation('tags')
             ->junction()
             ->rulesChecker()
-            ->add(function (Entity $entity) {
+            ->add(static function (Entity $entity) {
                 return $entity->article_id > 4;
             });
 
@@ -266,7 +266,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table->getAssociation('tags')
             ->junction()
             ->rulesChecker()
-            ->add(function (Entity $entity) {
+            ->add(static function (Entity $entity) {
                 return $entity->tag_id > 4;
             });
 
@@ -293,7 +293,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
         $rules->add(
-            function () {
+            static function () {
                 return false;
             },
             'ruleName',
@@ -769,7 +769,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(['author_id']));
 
-        $table->Authors->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query): void {
+        $table->Authors->getEventManager()->on('Model.beforeFind', static function (EventInterface $event, $query): void {
             $query->leftJoin(['a2' => 'authors']);
         });
 
@@ -809,7 +809,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->existsIn('author_id', 'Authors'));
 
-        $table->Authors->getEventManager()->on('Model.beforeFind', function (EventInterface $event, $query): void {
+        $table->Authors->getEventManager()->on('Model.beforeFind', static function (EventInterface $event, $query): void {
             $query->leftJoin(['a2' => 'authors']);
         });
 
@@ -1090,7 +1090,7 @@ class RulesCheckerIntegrationTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $rules = $table->rulesChecker();
-        $rules->addDelete(function ($entity) {
+        $rules->addDelete(static function ($entity) {
             return false;
         });
 
@@ -1148,7 +1148,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
-        $rules->add(function () {
+        $rules->add(static function () {
             return 'So much nope';
         }, ['errorField' => 'name']);
 
@@ -1167,7 +1167,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $table = $this->getTableLocator()->get('Authors');
         $rules = $table->rulesChecker();
-        $rules->add(function () {
+        $rules->add(static function () {
             return 'So much nope';
         });
 
@@ -1691,7 +1691,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rulesChecker = $Comments->rulesChecker();
 
         Closure::bind(
-            function () use ($rulesChecker): void {
+            static function () use ($rulesChecker): void {
                 $rulesChecker->{'_useI18n'} = false;
             },
             null,
@@ -1736,7 +1736,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rulesChecker = $Comments->rulesChecker();
 
         Closure::bind(
-            function () use ($rulesChecker): void {
+            static function () use ($rulesChecker): void {
                 $rulesChecker->{'_useI18n'} = false;
             },
             null,

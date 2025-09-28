@@ -72,7 +72,7 @@ class ExceptionTrapTest extends TestCase
 
     public function testConfigExceptionRendererFactory(): void
     {
-        $trap = new ExceptionTrap(['exceptionRenderer' => function ($err, $req) {
+        $trap = new ExceptionTrap(['exceptionRenderer' => static function ($err, $req) {
             return new WebExceptionRenderer($err, $req);
         }]);
         $error = new InvalidArgumentException('nope');
@@ -299,7 +299,7 @@ class ExceptionTrapTest extends TestCase
     public function testBeforeRenderEventExceptionChanged(): void
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
-        $trap->getEventManager()->on('Exception.beforeRender', function ($event, Throwable $error, ?ServerRequest $req): void {
+        $trap->getEventManager()->on('Exception.beforeRender', static function ($event, Throwable $error, ?ServerRequest $req): void {
             $event->setData('exception', new NotFoundException());
         });
         $error = new InvalidArgumentException('nope', 100);
@@ -314,7 +314,7 @@ class ExceptionTrapTest extends TestCase
     public function testBeforeRenderEventReturnResponse(): void
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
-        $trap->getEventManager()->on('Exception.beforeRender', function (EventInterface $event, Throwable $error, ?ServerRequest $req): void {
+        $trap->getEventManager()->on('Exception.beforeRender', static function (EventInterface $event, Throwable $error, ?ServerRequest $req): void {
             $event->setResult('Here B Erroz');
         });
 

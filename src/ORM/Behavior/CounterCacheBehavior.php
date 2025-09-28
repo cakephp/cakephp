@@ -384,7 +384,7 @@ class CounterCacheBehavior extends Behavior
      */
     protected function _shouldUpdateCount(array $conditions): bool
     {
-        return !empty(array_filter($conditions, function ($value) {
+        return !empty(array_filter($conditions, static function ($value) {
             return $value !== null;
         }));
     }

@@ -114,7 +114,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
             'exceptionRenderer' => $factory,
         ]));
-        $handler = new TestRequestHandler(function (): void {
+        $handler = new TestRequestHandler(static function (): void {
             throw new LogicException('Something bad');
         });
         $middleware->process($request, $handler);
@@ -127,7 +127,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function (): void {
+        $handler = new TestRequestHandler(static function (): void {
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
@@ -145,7 +145,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
             'exceptionRenderer' => WebExceptionRenderer::class,
         ]));
-        $handler = new TestRequestHandler(function (): void {
+        $handler = new TestRequestHandler(static function (): void {
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
@@ -161,7 +161,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function (): void {
+        $handler = new TestRequestHandler(static function (): void {
             throw new RedirectException('http://example.org/login');
         });
         $result = $middleware->process($request, $handler);
@@ -181,7 +181,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function (): void {
+        $handler = new TestRequestHandler(static function (): void {
             $err = new RedirectException('http://example.org/login', 301, ['Constructor' => 'yes', 'Method' => 'yes']);
             throw $err;
         });
@@ -207,7 +207,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = $request->withHeader('Accept', 'application/json');
 
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function (): void {
+        $handler = new TestRequestHandler(static function (): void {
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
@@ -240,7 +240,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             'HTTP_REFERER' => '/other/path',
         ]);
         $middleware = new ErrorHandlerMiddleware(['log' => true, 'trace' => true]);
-        $handler = new TestRequestHandler(function (): void {
+        $handler = new TestRequestHandler(static function (): void {
             throw new NotFoundException('Kaboom!');
         });
         $result = $middleware->process($request, $handler);
@@ -270,7 +270,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             'HTTP_REFERER' => '/other/path',
         ]);
         $middleware = new ErrorHandlerMiddleware(['log' => true, 'trace' => true]);
-        $handler = new TestRequestHandler(function ($req): void {
+        $handler = new TestRequestHandler(static function ($req): void {
             $previous = new RecordNotFoundException('Previous logged');
             throw new NotFoundException('Kaboom!', null, $previous);
         });
@@ -304,7 +304,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             'log' => true,
             'skipLog' => [NotFoundException::class],
         ]);
-        $handler = new TestRequestHandler(function (): void {
+        $handler = new TestRequestHandler(static function (): void {
             throw new NotFoundException('Kaboom!');
         });
         $result = $middleware->process($request, $handler);
@@ -321,7 +321,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware(['log' => true]);
-        $handler = new TestRequestHandler(function (): void {
+        $handler = new TestRequestHandler(static function (): void {
             throw new MissingControllerException(['controller' => 'Articles']);
         });
         $result = $middleware->process($request, $handler);
@@ -343,13 +343,13 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
             'exceptionRenderer' => WebExceptionRenderer::class,
         ]));
-        $handler = new TestRequestHandler(function (): void {
+        $handler = new TestRequestHandler(static function (): void {
             throw new NotFoundException('whoops');
         });
 
         EventManager::instance()->on(
             'Exception.beforeRender',
-            function (EventInterface $event, Throwable $e, ServerRequestInterface $req): void {
+            static function (EventInterface $event, Throwable $e, ServerRequestInterface $req): void {
                 $event->setResult('Response string from event');
             },
         );
@@ -366,7 +366,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function () {
+        $factory = static function () {
             return new class implements ExceptionRendererInterface
             {
                 public function render(): ResponseInterface|string
@@ -382,7 +382,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
             'exceptionRenderer' => $factory,
         ]));
-        $handler = new TestRequestHandler(function (): void {
+        $handler = new TestRequestHandler(static function (): void {
             throw new ServiceUnavailableException('whoops');
         });
         $response = $middleware->process($request, $handler);

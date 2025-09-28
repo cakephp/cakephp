@@ -777,7 +777,7 @@ abstract class Association
         $target = $this->getTarget();
         if (!empty($options['negateMatch'])) {
             $primaryKey = $query->aliasFields((array)$target->getPrimaryKey(), $this->_name);
-            $query->andWhere(function ($exp) use ($primaryKey) {
+            $query->andWhere(static function ($exp) use ($primaryKey) {
                 /** @var callable $callable */
                 $callable = [$exp, 'isNull'];
                 array_map($callable, $primaryKey);
@@ -1016,7 +1016,14 @@ abstract class Association
         $property = $options['propertyPath'];
         $propertyPath = explode('.', $property);
         $query->formatResults(
-            function (CollectionInterface $results, SelectQuery $query) use ($formatters, $property, $propertyPath) {
+            static function (
+                CollectionInterface $results,
+                SelectQuery $query,
+            ) use (
+                $formatters,
+                $property,
+                $propertyPath,
+            ) {
                 $extracted = [];
                 foreach ($results as $result) {
                     foreach ($propertyPath as $propertyPathItem) {
@@ -1039,7 +1046,7 @@ abstract class Association
 
                 $results = $results->insert($property, $extracted);
                 if ($query->isHydrationEnabled()) {
-                    return $results->map(function (EntityInterface $result) {
+                    return $results->map(static function (EntityInterface $result) {
                         $result->clean();
 
                         return $result;

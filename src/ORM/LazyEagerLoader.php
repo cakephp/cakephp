@@ -80,7 +80,7 @@ class LazyEagerLoader
         $query = $source
             ->find()
             ->select((array)$primaryKey)
-            ->where(function (QueryExpression $exp, SelectQuery $q) use ($primaryKey, $keys, $source) {
+            ->where(static function (QueryExpression $exp, SelectQuery $q) use ($primaryKey, $keys, $source) {
                 if (is_array($primaryKey) && count($primaryKey) === 1) {
                     $primaryKey = current($primaryKey);
                 }

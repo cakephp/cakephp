@@ -136,7 +136,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     {
         $this->_insert();
         $result = $this->connection->selectQuery(fields: 'id', table: 'ordered_uuid_items')
-            ->where(function (QueryExpression $exp) {
+            ->where(static function (QueryExpression $exp) {
                 return $exp->between(
                     'id',
                     '482b7756-8da0-419a-b21f-27da40cf8569',
@@ -157,7 +157,7 @@ class ExpressionTypeCastingIntegrationTest extends TestCase
     {
         $this->_insert();
         $result = $this->connection->selectQuery(fields: 'id', table: 'ordered_uuid_items')
-            ->where(function (QueryExpression $exp, Query $q) {
+            ->where(static function (QueryExpression $exp, Query $q) {
                 return $exp->eq(
                     'id',
                     $q->func()->concat(['48298a29-81c0-4c26-a7fb', '-413140cf8569'], []),

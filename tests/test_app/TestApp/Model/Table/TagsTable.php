@@ -33,8 +33,8 @@ class TagsTable extends Table
     public function findSlugged(SelectQuery $query): SelectQuery
     {
         return $query->applyOptions(['preserveKeys' => true])
-            ->formatResults(function ($results) {
-                return $results->indexBy(function ($record) {
+            ->formatResults(static function ($results) {
+                return $results->indexBy(static function ($record) {
                     return Text::slug($record->name);
                 });
             });

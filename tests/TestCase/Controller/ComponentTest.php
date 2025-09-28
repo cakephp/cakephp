@@ -119,9 +119,9 @@ class ComponentTest extends TestCase
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The `Banana` alias has already been loaded. The `property` key');
         $Collection = new ComponentRegistry(new Controller(new ServerRequest()));
-        $Collection->load('Banana', ['property' => ['closure' => function (): void {
+        $Collection->load('Banana', ['property' => ['closure' => static function (): void {
         }]]);
-        $Collection->load('Banana', ['property' => ['closure' => function (): void {
+        $Collection->load('Banana', ['property' => ['closure' => static function (): void {
         }]]);
 
         $this->assertInstanceOf(BananaComponent::class, $Collection->Banana, 'class is wrong');

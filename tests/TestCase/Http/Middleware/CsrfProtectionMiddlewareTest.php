@@ -77,7 +77,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      */
     protected function _getRequestHandler(): RequestHandlerInterface
     {
-        return new TestRequestHandler(function () {
+        return new TestRequestHandler(static function () {
             return new Response();
         });
     }
@@ -94,7 +94,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+        $handler = new TestRequestHandler(static function ($request) use (&$updatedRequest) {
             $updatedRequest = $request;
 
             return new Response();
@@ -126,7 +126,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+        $handler = new TestRequestHandler(static function ($request) use (&$updatedRequest) {
             $updatedRequest = $request;
 
             return new Response();
@@ -162,7 +162,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+        $handler = new TestRequestHandler(static function ($request) use (&$updatedRequest) {
             $updatedRequest = $request;
 
             return new Response();
@@ -223,7 +223,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(static function () {
             return new RedirectResponse('/');
         });
 
@@ -241,7 +241,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
         $request = $request->withAttribute('csrfToken', 'not-good');
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(static function () {
             return new RedirectResponse('/');
         });
 
@@ -258,7 +258,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $request = new ServerRequest([
             'environment' => ['REQUEST_METHOD' => 'GET'],
         ]);
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(static function () {
             return new DiactorosResponse();
         });
 

@@ -50,7 +50,7 @@ class ResponseEmitterTest extends TestCase
 
         $this->emitter->expects($this->any())
             ->method('setCookie')
-            ->willReturnCallback(function ($cookie) {
+            ->willReturnCallback(static function ($cookie) {
                 if (is_string($cookie)) {
                     $cookie = Cookie::createFromHeaderString($cookie, ['path' => '']);
                 }
@@ -243,7 +243,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseCallbackStream(): void
     {
-        $stream = new CallbackStream(function (): void {
+        $stream = new CallbackStream(static function (): void {
             echo 'It worked';
         });
         $response = (new Response())
@@ -342,7 +342,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseBodyRangeCallbackStream(): void
     {
-        $stream = new CallbackStream(function () {
+        $stream = new CallbackStream(static function () {
             return 'It worked';
         });
         $response = (new Response())

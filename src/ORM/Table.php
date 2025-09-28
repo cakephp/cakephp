@@ -1463,7 +1463,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
             $fields = $options[$field];
             $glue = in_array($field, ['keyField', 'parentField'], true) ? ';' : $options['valueSeparator'];
-            $options[$field] = function ($row) use ($fields, $glue): string {
+            $options[$field] = static function ($row) use ($fields, $glue): string {
                 $matches = [];
                 foreach ($fields as $field) {
                     $matches[] = $row[$field];
@@ -1525,7 +1525,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         }
         if (count($key) !== count($primaryKey)) {
             $primaryKey = $primaryKey ?: [null];
-            $primaryKey = array_map(function ($key) {
+            $primaryKey = array_map(static function ($key) {
                 return var_export($key, true);
             }, $primaryKey);
 
@@ -2144,7 +2144,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         $primary = array_combine($primary, $id);
         $primary = array_intersect_key($data, $primary) + $primary;
 
-        $filteredKeys = array_filter($primary, function ($v) {
+        $filteredKeys = array_filter($primary, static function ($v) {
             return $v !== null;
         });
         $data += $filteredKeys;
@@ -2363,7 +2363,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             throw new PersistenceFailedException($failed, ['saveMany']);
         }
 
-        $cleanupOnSuccess = function (EntityInterface $entity) use (&$cleanupOnSuccess): void {
+        $cleanupOnSuccess = static function (EntityInterface $entity) use (&$cleanupOnSuccess): void {
             $entity->clean();
             $entity->setNew(false);
 

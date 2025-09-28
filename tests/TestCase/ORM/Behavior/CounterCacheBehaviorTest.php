@@ -465,7 +465,7 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->post->addBehavior('CounterCache', [
             'Users' => [
-                'posts_published' => function (EventInterface $event, EntityInterface $entity, Table $table) {
+                'posts_published' => static function (EventInterface $event, EntityInterface $entity, Table $table) {
                     return $table->getConnection()->selectQuery(4);
                 },
             ],
@@ -627,7 +627,7 @@ class CounterCacheBehaviorTest extends TestCase
         $this->post->addBehavior('CounterCache', [
             'Users' => [
                 'post_count',
-                'dummy' => function (): void {
+                'dummy' => static function (): void {
                     throw new Exception('Closures are never called by "updateCounterCache()"');
                 },
             ],

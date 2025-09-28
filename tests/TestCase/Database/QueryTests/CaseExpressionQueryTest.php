@@ -67,7 +67,7 @@ class CaseExpressionQueryTest extends TestCase
     public function testSimpleCase(): void
     {
         $query = $this->query
-            ->select(function (Query $query) {
+            ->select(static function (Query $query) {
                 return [
                     'name',
                     'category_name' => $query->expr()
@@ -107,7 +107,7 @@ class CaseExpressionQueryTest extends TestCase
         ]);
 
         $query = $this->query
-            ->select(function (Query $query) {
+            ->select(static function (Query $query) {
                 return [
                     'name',
                     'price',
@@ -156,13 +156,13 @@ class CaseExpressionQueryTest extends TestCase
             ->select(['article_id', 'user_id'])
             ->from('comments')
             ->orderByAsc('comments.article_id')
-            ->orderByDesc(function (QueryExpression $exp, Query $query) {
+            ->orderByDesc(static function (QueryExpression $exp, Query $query) {
                 return $query->expr()
                     ->case($query->identifier('comments.article_id'))
                     ->when(1)
                     ->then($query->identifier('comments.user_id'));
             })
-            ->orderByAsc(function (QueryExpression $exp, Query $query) {
+            ->orderByAsc(static function (QueryExpression $exp, Query $query) {
                 return $query->expr()
                     ->case($query->identifier('comments.article_id'))
                     ->when(2)
@@ -206,7 +206,7 @@ class CaseExpressionQueryTest extends TestCase
             ->from('articles')
             ->leftJoin('comments', ['comments.article_id = articles.id'])
             ->groupBy(['articles.id', 'articles.title'])
-            ->having(function (QueryExpression $exp, Query $query) {
+            ->having(static function (QueryExpression $exp, Query $query) {
                 $expression = $query->expr()
                     ->case()
                     ->when(['comments.published' => 'Y'])
@@ -292,7 +292,7 @@ class CaseExpressionQueryTest extends TestCase
         ]);
 
         $query = $this->query
-            ->select(function (Query $query) {
+            ->select(static function (Query $query) {
                 return [
                     'val' => $query->expr()
                         ->case($query->expr(':value'))

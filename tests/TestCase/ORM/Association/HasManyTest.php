@@ -179,7 +179,7 @@ class HasManyTest extends TestCase
         $assoc->setSort(['id' => 'ASC']);
         $this->assertSame(['id' => 'ASC'], $assoc->getSort());
 
-        $closure = function () {
+        $closure = static function () {
             return ['id' => 'ASC'];
         };
         $assoc->setSort($closure);
@@ -212,7 +212,7 @@ class HasManyTest extends TestCase
         $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
 
-        $assoc->setSort(function () {
+        $assoc->setSort(static function () {
             return ['Articles.id' => 'DESC'];
         });
         $result = $authors->get(1, ...['contain' => 'Articles']);
@@ -463,7 +463,7 @@ class HasManyTest extends TestCase
             ->with('all')
             ->willReturn($query);
 
-        $queryBuilder = function ($query) {
+        $queryBuilder = static function ($query) {
             return $query->select(['author_id'])->join('comments')->where(['comments.id' => 1]);
         };
         $association->eagerLoader(compact('keys', 'query', 'queryBuilder'));
@@ -661,8 +661,8 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Articles', $config);
         $articles = $association->getTarget();
-        $articles->getEventManager()->on('Model.buildRules', function ($event, $rules): void {
-            $rules->addDelete(function () {
+        $articles->getEventManager()->on('Model.buildRules', static function ($event, $rules): void {
+            $rules->addDelete(static function () {
                 return false;
             });
         });
@@ -1198,7 +1198,7 @@ class HasManyTest extends TestCase
         $authors->Articles
             ->setDependent(true)
             ->setSaveStrategy('replace')
-            ->setConditions(function () {
+            ->setConditions(static function () {
                 return ['published' => 'Y'];
             });
 

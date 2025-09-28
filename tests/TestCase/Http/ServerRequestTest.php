@@ -43,7 +43,7 @@ class ServerRequestTest extends TestCase
     public function testCustomArgsDetector(): void
     {
         $request = new ServerRequest();
-        $request->addDetector('controller', function ($request, $name) {
+        $request->addDetector('controller', static function ($request, $name) {
             return $request->getParam('controller') === $name;
         });
 
@@ -748,12 +748,12 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest();
 
-        ServerRequest::addDetector('closure', function ($request) {
+        ServerRequest::addDetector('closure', static function ($request) {
             return true;
         });
         $this->assertTrue($request->is('closure'));
 
-        ServerRequest::addDetector('get', function ($request) {
+        ServerRequest::addDetector('get', static function ($request) {
             return $request->getEnv('REQUEST_METHOD') === 'GET';
         });
         $request = $request->withEnv('REQUEST_METHOD', 'GET');
@@ -800,7 +800,7 @@ class ServerRequestTest extends TestCase
         $request->clearDetectorCache();
         $this->assertFalse($request->isIndex());
 
-        ServerRequest::addDetector('withParams', function ($request, array $params) {
+        ServerRequest::addDetector('withParams', static function ($request, array $params) {
             foreach ($params as $name => $value) {
                 if ($request->getParam($name) != $value) {
                     return false;
@@ -818,7 +818,7 @@ class ServerRequestTest extends TestCase
         $request->clearDetectorCache();
         $this->assertFalse($request->isWithParams(['controller' => 'Pages', 'action' => 'index']));
 
-        ServerRequest::addDetector('callme', function ($request) {
+        ServerRequest::addDetector('callme', static function ($request) {
             return $request->getAttribute('return');
         });
         $request = $request->withAttribute('return', true);

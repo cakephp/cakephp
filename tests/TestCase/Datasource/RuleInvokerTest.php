@@ -36,7 +36,7 @@ class RuleInvokerTest extends TestCase
             [
                 'count' => 2,
                 'errorField' => 'player_id',
-                'message' => function ($entity, $options) {
+                'message' => static function ($entity, $options) {
                     return 'Player count should be ' . $options['count'] . ' not ' . $entity->get('players');
                 },
             ],

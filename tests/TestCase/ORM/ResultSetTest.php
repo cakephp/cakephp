@@ -246,7 +246,7 @@ class ResultSetTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Comments');
         $query = $table->find()
-            ->formatResults(function ($results) {
+            ->formatResults(static function ($results) {
                 return $results;
             });
         $res = $query->all();

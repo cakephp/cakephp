@@ -1872,7 +1872,7 @@ abstract class Query implements ExpressionInterface, Stringable
         try {
             set_error_handler(
                 /** @return no-return */
-                function ($errno, $errstr): void {
+                static function ($errno, $errstr): void {
                     throw new CakeException($errstr, $errno);
                 },
                 E_ALL,

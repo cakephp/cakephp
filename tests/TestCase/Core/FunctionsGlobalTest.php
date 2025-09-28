@@ -269,7 +269,7 @@ class FunctionsGlobalTest extends TestCase
      */
     public function testDeprecationWarningEnabled(): void
     {
-        $error = $this->captureError(E_ALL, function (): void {
+        $error = $this->captureError(E_ALL, static function (): void {
             deprecationWarning('4.5.0', 'This is deprecated ' . uniqid(), 2);
         });
         $this->assertMatchesRegularExpression(
@@ -283,7 +283,7 @@ class FunctionsGlobalTest extends TestCase
      */
     public function testDeprecationWarningEnabledDefaultFrame(): void
     {
-        $error = $this->captureError(E_ALL, function (): void {
+        $error = $this->captureError(E_ALL, static function (): void {
             deprecationWarning('5.0.0', 'This is going away too ' . uniqid());
         });
         $this->assertMatchesRegularExpression(
@@ -300,7 +300,7 @@ class FunctionsGlobalTest extends TestCase
         $this->expectNotToPerformAssertions();
 
         Configure::write('Error.ignoredDeprecationPaths', ['src/TestSuite/*']);
-        $this->withErrorReporting(E_ALL, function (): void {
+        $this->withErrorReporting(E_ALL, static function (): void {
             deprecationWarning('5.0.1', 'This will be gone soon');
         });
     }
@@ -312,7 +312,7 @@ class FunctionsGlobalTest extends TestCase
     {
         $this->expectNotToPerformAssertions();
 
-        $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, function (): void {
+        $this->withErrorReporting(E_ALL ^ E_USER_DEPRECATED, static function (): void {
             deprecationWarning('5.0.0', 'This is leaving');
         });
     }

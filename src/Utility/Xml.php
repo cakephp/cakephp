@@ -149,7 +149,7 @@ class Xml
         return static::load(
             $input,
             $options,
-            function ($input, $options, $flags) {
+            static function ($input, $options, $flags) {
                 if ($options['return'] === 'simplexml' || $options['return'] === 'simplexmlelement') {
                     $flags |= LIBXML_NOCDATA;
                     $xml = new SimpleXMLElement($input, $flags);
@@ -182,7 +182,7 @@ class Xml
         return static::load(
             $input,
             $options,
-            function ($input, $options, $flags) {
+            static function ($input, $options, $flags) {
                 $xml = new DOMDocument();
                 $xml->loadHTML($input, $flags);
 

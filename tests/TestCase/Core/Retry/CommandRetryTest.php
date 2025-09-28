@@ -31,7 +31,7 @@ class CommandRetryTest extends TestCase
     public function testRetry(): void
     {
         $count = 0;
-        $action = function () use (&$count) {
+        $action = static function () use (&$count) {
             if ($count < 2) {
                 ++$count;
                 throw new Exception('this is failing');
@@ -51,7 +51,7 @@ class CommandRetryTest extends TestCase
     public function testExceedAttempts(): void
     {
         $count = 0;
-        $action = function () use (&$count) {
+        $action = static function () use (&$count) {
             if ($count < 2) {
                 ++$count;
                 throw new Exception('this is failing');
@@ -72,7 +72,7 @@ class CommandRetryTest extends TestCase
      */
     public function testRespectStrategy(): void
     {
-        $action = function (): void {
+        $action = static function (): void {
             throw new Exception('this is failing');
         };
 

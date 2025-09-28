@@ -701,7 +701,7 @@ class ViewTest extends TestCase
     public function testElementCallbacks(): void
     {
         $count = 0;
-        $callback = function (EventInterface $event, $file) use (&$count): void {
+        $callback = static function (EventInterface $event, $file) use (&$count): void {
             $count++;
         };
         $events = $this->View->getEventManager();
@@ -1664,7 +1664,7 @@ TEXT;
 
         $e = null;
         try {
-            $this->View->cache(function (): void {
+            $this->View->cache(static function (): void {
                 ob_start();
 
                 throw new Exception('Exception with open buffers');

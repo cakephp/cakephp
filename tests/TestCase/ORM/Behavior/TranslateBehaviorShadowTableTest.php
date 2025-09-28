@@ -361,7 +361,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table->addBehavior('Translate');
         $table->getBehavior('Translate')->setLocale('eng');
 
-        $query = $table->find()->select()->where(function (ExpressionInterface $exp) {
+        $query = $table->find()->select()->where(static function (ExpressionInterface $exp) {
             return $exp->lt(new QueryExpression('1'), 50);
         });
 
@@ -675,7 +675,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             ->find()
             ->where(['Comments.id' => 1])
             ->contain([
-                'Articles' => function ($q) {
+                'Articles' => static function ($q) {
                     return $q->find('translations');
                 }]);
         $record = $query->firstOrFail();
@@ -1224,7 +1224,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         $table->getBehavior('Translate')->setLocale('fra');
 
         $articles = $table->find()->all();
-        $articles->each(function ($article): void {
+        $articles->each(static function ($article): void {
             $article->published = 'N';
         });
 

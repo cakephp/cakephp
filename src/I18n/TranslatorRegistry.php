@@ -351,7 +351,7 @@ class TranslatorRegistry
             return $loader;
         }
 
-        return function () use ($loader, $fallbackDomain) {
+        return static function () use ($loader, $fallbackDomain) {
             /** @var \Cake\I18n\Package $package */
             $package = $loader();
             if (!$package->getFallback()) {

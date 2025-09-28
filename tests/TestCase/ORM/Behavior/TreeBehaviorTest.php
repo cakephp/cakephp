@@ -193,7 +193,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree', [
-            'scope' => function ($query) {
+            'scope' => static function ($query) {
                 return $query->where(['menu' => 'main-menu']);
             },
         ]);
@@ -256,7 +256,7 @@ class TreeBehaviorTest extends TestCase
         $query = $table->find('treeList');
 
         $result = null;
-        $query->clause('order')->iterateParts(function ($dir, $field) use (&$result): void {
+        $query->clause('order')->iterateParts(static function ($dir, $field) use (&$result): void {
             $result = $field;
         });
         $this->assertSame('MenuLinkTrees.lft', $result);
@@ -1449,7 +1449,7 @@ class TreeBehaviorTest extends TestCase
         $displayField = $table->getDisplayField();
 
         $options = [
-            'valuePath' => function ($item, $key, $iterator) use ($primaryKey, $displayField) {
+            'valuePath' => static function ($item, $key, $iterator) use ($primaryKey, $displayField) {
                 return sprintf(
                     '%s:%s - %s:%s',
                     str_pad((string)$item->lft, 2, ' ', STR_PAD_LEFT),

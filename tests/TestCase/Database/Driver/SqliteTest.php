@@ -173,7 +173,7 @@ class SqliteTest extends TestCase
             ->shouldAllowMockingMethod('quoteIdentifier')
             ->makePartial();
         $mock->shouldReceive('quote')
-            ->andReturnUsing(function ($value) {
+            ->andReturnUsing(static function ($value) {
                 return '"' . $value . '"';
             });
 

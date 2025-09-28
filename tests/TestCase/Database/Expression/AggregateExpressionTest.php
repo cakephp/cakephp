@@ -57,7 +57,7 @@ class AggregateExpressionTest extends FunctionExpressionTest
             $f->sql(new ValueBinder()),
         );
 
-        $f->filter(function (QueryExpression $q) {
+        $f->filter(static function (QueryExpression $q) {
             return $q->add(['this2' => new IdentifierExpression('that2')]);
         });
         $this->assertEqualsSql(
@@ -172,7 +172,7 @@ class AggregateExpressionTest extends FunctionExpressionTest
             ->over();
 
         $expressions = [];
-        $w->traverse(function ($expression) use (&$expressions): void {
+        $w->traverse(static function ($expression) use (&$expressions): void {
             $expressions[] = $expression;
         });
 

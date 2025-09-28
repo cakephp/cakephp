@@ -17,13 +17,13 @@ class MiddlewareApplication extends BaseApplication
     public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
     {
         $middlewareQueue
-            ->add(function ($request, $handler) {
+            ->add(static function ($request, $handler) {
                 return $handler->handle($request)->withHeader('X-First', 'first');
             })
-            ->add(function ($request, $handler) {
+            ->add(static function ($request, $handler) {
                 return $handler->handle($request)->withHeader('X-Second', 'second');
             })
-            ->add(function ($request, $handler) {
+            ->add(static function ($request, $handler) {
                 $response = $handler->handle($request);
 
                 if ($request->hasHeader('X-pass')) {

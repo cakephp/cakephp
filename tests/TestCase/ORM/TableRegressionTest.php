@@ -46,7 +46,7 @@ class TableRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $table->getEventManager()->on(
             'Model.afterSave',
-            function () use ($table): void {
+            static function () use ($table): void {
                 $table->getConnection()->rollback();
             },
         );

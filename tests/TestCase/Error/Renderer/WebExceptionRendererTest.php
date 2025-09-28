@@ -916,7 +916,7 @@ class WebExceptionRendererTest extends TestCase
     public function testRenderShutdownEvents(): void
     {
         $fired = [];
-        $listener = function (EventInterface $event) use (&$fired): void {
+        $listener = static function (EventInterface $event) use (&$fired): void {
             $fired[] = $event->getName();
         };
         $events = EventManager::instance();
@@ -936,7 +936,7 @@ class WebExceptionRendererTest extends TestCase
     public function testSubclassTriggerShutdownEvents(): void
     {
         $fired = [];
-        $listener = function (EventInterface $event) use (&$fired): void {
+        $listener = static function (EventInterface $event) use (&$fired): void {
             $fired[] = $event->getName();
         };
         $events = EventManager::instance();

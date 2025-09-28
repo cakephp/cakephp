@@ -167,9 +167,9 @@ trait PaginatorTestTrait
         $tags = $this->getTableLocator()->get('Tags');
         $tags->associations()->remove('Authors');
         $tags->belongsToMany('Authors');
-        $articles->getEventManager()->on('Model.beforeFind', function ($event, $query): void {
-            $query->matching('Tags', function ($q) {
-                return $q->matching('Authors', function ($q) {
+        $articles->getEventManager()->on('Model.beforeFind', static function ($event, $query): void {
+            $query->matching('Tags', static function ($q) {
+                return $q->matching('Authors', static function ($q) {
                     return $q->where(['Authors.name' => 'larry']);
                 });
             });

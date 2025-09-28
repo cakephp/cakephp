@@ -185,7 +185,7 @@ trait CollectionTrait
         $extractor = new ExtractIterator($this->unwrap(), $path);
         if (is_string($path) && str_contains($path, '{*}')) {
             return $extractor
-                ->filter(function ($data) {
+                ->filter(static function ($data) {
                     return is_iterable($data);
                 })
                 ->unfold();
@@ -220,7 +220,7 @@ trait CollectionTrait
             $result = $result->extract($path);
         }
         $result = $result
-            ->reduce(function (array $acc, $current) {
+            ->reduce(static function (array $acc, $current) {
                 [$count, $sum] = $acc;
 
                 return [$count + 1, $sum + $current];
@@ -513,7 +513,7 @@ trait CollectionTrait
             return $this->newCollection($iterator);
         }
 
-        $generator = function ($iterator, $length): Generator {
+        $generator = static function ($iterator, $length): Generator {
             $result = [];
             $bucket = 0;
             $offset = 0;
@@ -648,7 +648,7 @@ trait CollectionTrait
             'groupPath' => $groupPath ? $this->_propertyExtractor($groupPath) : null,
         ];
 
-        $mapper = function ($value, $key, MapReduce $mapReduce) use ($options) {
+        $mapper = static function ($value, $key, MapReduce $mapReduce) use ($options) {
             $rowKey = $options['keyPath'];
             $rowVal = $options['valuePath'];
 
@@ -694,7 +694,7 @@ trait CollectionTrait
             );
         };
 
-        $reducer = function ($values, $key, MapReduce $mapReduce): void {
+        $reducer = static function ($values, $key, MapReduce $mapReduce): void {
             $result = [];
             foreach ($values as $value) {
                 $result += $value;
@@ -718,7 +718,16 @@ trait CollectionTrait
         $parentPath = $this->_propertyExtractor($parentPath);
         $isObject = true;
 
-        $mapper = function ($row, $key, MapReduce $mapReduce) use (&$parents, $idPath, $parentPath, $nestingKey): void {
+        $mapper = static function (
+            $row,
+            $key,
+            MapReduce $mapReduce,
+        ) use (
+            &$parents,
+            $idPath,
+            $parentPath,
+            $nestingKey,
+        ): void {
             $row[$nestingKey] = [];
             $id = $idPath($row, $key);
             $parentId = $parentPath($row, $key);
@@ -726,7 +735,7 @@ trait CollectionTrait
             $mapReduce->emitIntermediate($id, $parentId);
         };
 
-        $reducer = function ($values, $key, MapReduce $mapReduce) use (&$parents, &$isObject, $nestingKey) {
+        $reducer = static function ($values, $key, MapReduce $mapReduce) use (&$parents, &$isObject, $nestingKey) {
             static $foundOutType = false;
             if (!$foundOutType) {
                 $isObject = is_object(current($parents));
@@ -749,7 +758,7 @@ trait CollectionTrait
         };
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer))
-            ->map(function ($value) use ($isObject) {
+            ->map(static function ($value) use ($isObject) {
                 /** @var \ArrayIterator|\ArrayObject $value */
                 return $isObject ? $value : $value->getArrayCopy();
             });
@@ -931,7 +940,7 @@ trait CollectionTrait
      */
     public function chunk(int $chunkSize): CollectionInterface
     {
-        return $this->map(function ($v, $k, Iterator $iterator) use ($chunkSize) {
+        return $this->map(static function ($v, $k, Iterator $iterator) use ($chunkSize) {
             $values = [$v];
             for ($i = 1; $i < $chunkSize; $i++) {
                 $iterator->next();
@@ -950,7 +959,7 @@ trait CollectionTrait
      */
     public function chunkWithKeys(int $chunkSize, bool $keepKeys = true): CollectionInterface
     {
-        return $this->map(function ($v, $k, Iterator $iterator) use ($chunkSize, $keepKeys) {
+        return $this->map(static function ($v, $k, Iterator $iterator) use ($chunkSize, $keepKeys) {
             $key = 0;
             if ($keepKeys) {
                 $key = $k;
@@ -1041,7 +1050,7 @@ trait CollectionTrait
         $changeIndex = $lastIndex;
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
-            $currentCombination = array_map(function ($value, $keys, $index) {
+            $currentCombination = array_map(static function ($value, $keys, $index) {
                 return $value[$keys[$index]];
             }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
 

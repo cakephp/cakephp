@@ -76,12 +76,12 @@ class IntegrationTestTraitTest extends TestCase
             $routes->options('/options/{controller}/{action}', []);
             $routes->connect('/{controller}/{action}/*', []);
 
-            $routes->scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+            $routes->scope('/cookie-csrf/', ['csrf' => 'cookie'], static function (RouteBuilder $routes): void {
                 $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware());
                 $routes->applyMiddleware('cookieCsrf');
                 $routes->connect('/posts/{action}', ['controller' => 'Posts']);
             });
-            $routes->scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes): void {
+            $routes->scope('/session-csrf/', ['csrf' => 'session'], static function (RouteBuilder $routes): void {
                 $routes->registerMiddleware('sessionCsrf', new SessionCsrfProtectionMiddleware());
                 $routes->applyMiddleware('sessionCsrf');
                 $routes->connect('/posts/{action}/', ['controller' => 'Posts']);
@@ -321,7 +321,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testExceptionsInMiddlewareJsonView(): void
     {
         Router::reload();
-        Configure::write('TestApp.routes', function (RouteBuilder $routes): void {
+        Configure::write('TestApp.routes', static function (RouteBuilder $routes): void {
             $routes->connect('/json_response/api_get_data', [
                 'controller' => 'JsonResponse',
                 'action' => 'apiGetData',
@@ -1057,8 +1057,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testPostSessionCsrfSuccessWithSetCookieName(): void
     {
-        Configure::write('TestApp.routes', function (RouteBuilder $routes): void {
-            $routes->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+        Configure::write('TestApp.routes', static function (RouteBuilder $routes): void {
+            $routes->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], static function (RouteBuilder $routes): void {
                 $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                     [
                         'cookieName' => 'customCsrfToken',
@@ -1083,8 +1083,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testPostSessionCsrfFailureWithSetCookieName(): void
     {
-        Configure::write('TestApp.routes', function (RouteBuilder $routes): void {
-            $routes->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+        Configure::write('TestApp.routes', static function (RouteBuilder $routes): void {
+            $routes->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], static function (RouteBuilder $routes): void {
                 $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                     [
                         'cookieName' => 'customCsrfToken',
@@ -2020,7 +2020,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServices(): void
     {
-        $this->mockService(stdClass::class, function () {
+        $this->mockService(stdClass::class, static function () {
             return json_decode('{"mock":true}');
         });
         $this->get('/dependencies/requiredDep');
@@ -2033,7 +2033,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesFromReflectionContainer(): void
     {
-        $this->mockService(ReflectionDependency::class, function () {
+        $this->mockService(ReflectionDependency::class, static function () {
             return new ReflectionDependency();
         });
         $this->get('/dependencies/reflectionDep');
@@ -2046,10 +2046,10 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesOverwrite(): void
     {
-        $this->mockService(stdClass::class, function () {
+        $this->mockService(stdClass::class, static function () {
             return json_decode('{"first":true}');
         });
-        $this->mockService(stdClass::class, function () {
+        $this->mockService(stdClass::class, static function () {
             return json_decode('{"second":true}');
         });
         $this->get('/dependencies/requiredDep');
@@ -2062,7 +2062,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHandleWithMockServicesUnset(): void
     {
-        $this->mockService(stdClass::class, function () {
+        $this->mockService(stdClass::class, static function () {
             return json_decode('{"first":true}');
         });
         $this->removeMockService(stdClass::class);

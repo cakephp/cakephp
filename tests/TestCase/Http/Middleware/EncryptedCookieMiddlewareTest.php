@@ -125,7 +125,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
     public function testEncodeResponseSetCookieHeader(): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(static function ($req) {
             return (new Response())->withAddedHeader('Set-Cookie', 'secret=be%20quiet')
                 ->withAddedHeader('Set-Cookie', 'plain=in%20clear')
                 ->withAddedHeader('Set-Cookie', 'ninja=shuriken');
@@ -148,7 +148,7 @@ class EncryptedCookieMiddlewareTest extends TestCase
     public function testEncodeResponseCookieData(): void
     {
         $request = new ServerRequest(['url' => '/cookies/nom']);
-        $handler = new TestRequestHandler(function ($req) {
+        $handler = new TestRequestHandler(static function ($req) {
             return (new Response())->withCookie(new Cookie('secret', 'be quiet'))
                 ->withCookie(new Cookie('plain', 'in clear'))
                 ->withCookie(new Cookie('ninja', 'shuriken'));

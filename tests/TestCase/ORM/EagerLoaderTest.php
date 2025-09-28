@@ -315,7 +315,7 @@ class EagerLoaderTest extends TestCase
      */
     public function testContainClosure(): void
     {
-        $builder = function ($query): void {
+        $builder = static function ($query): void {
         };
         $loader = new EagerLoader();
         $loader->contain([
@@ -346,7 +346,7 @@ class EagerLoaderTest extends TestCase
      */
     public function testContainSecondSignature(): void
     {
-        $builder = function ($query): void {
+        $builder = static function ($query): void {
         };
         $loader = new EagerLoader();
         $loader->contain('clients', $builder);
@@ -366,7 +366,7 @@ class EagerLoaderTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $builder = function ($query): void {
+        $builder = static function ($query): void {
         };
         $loader = new EagerLoader();
         $loader->contain(['clients'], $builder);
@@ -386,12 +386,12 @@ class EagerLoaderTest extends TestCase
     {
         $loader = new EagerLoader();
         $loader->contain([
-            'clients' => function ($query) {
+            'clients' => static function ($query) {
                 return $query->select(['a']);
             },
         ]);
         $loader->contain([
-            'clients' => function ($query) {
+            'clients' => static function ($query) {
                 return $query->select(['b']);
             },
         ]);

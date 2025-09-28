@@ -684,7 +684,7 @@ class Marshaller
         $primary = (array)$this->_table->getPrimaryKey();
 
         $indexed = (new Collection($data))
-            ->groupBy(function ($el) use ($primary) {
+            ->groupBy(static function ($el) use ($primary) {
                 $keys = [];
                 foreach ($primary as $key) {
                     $keys[] = $el[$key] ?? '';
@@ -692,7 +692,7 @@ class Marshaller
 
                 return implode(';', $keys);
             })
-            ->map(function ($element, $key) {
+            ->map(static function ($element, $key) {
                 return $key === '' ? $element : $element[0];
             })
             ->toArray();
@@ -716,7 +716,7 @@ class Marshaller
         }
 
         $conditions = (new Collection($indexed))
-            ->map(function ($data, $key) {
+            ->map(static function ($data, $key) {
                 return explode(';', (string)$key);
             })
             ->filter(fn($keys) => count(Hash::filter($keys)) === count($primary))

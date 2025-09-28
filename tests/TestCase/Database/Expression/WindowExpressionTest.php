@@ -64,7 +64,7 @@ class WindowExpressionTest extends TestCase
             $w->sql(new ValueBinder()),
         );
 
-        $w = (new WindowExpression())->partition(function (QueryExpression $expr) {
+        $w = (new WindowExpression())->partition(static function (QueryExpression $expr) {
             return $expr->add(new AggregateExpression('MyAggregate', ['param']));
         });
         $this->assertEqualsSql(
@@ -97,10 +97,10 @@ class WindowExpressionTest extends TestCase
         );
 
         $w = (new WindowExpression())
-            ->orderBy(function () {
+            ->orderBy(static function () {
                 return 'test';
             })
-            ->orderBy(function (QueryExpression $expr) {
+            ->orderBy(static function (QueryExpression $expr) {
                 return [$expr->add('test2'), new OrderClauseExpression(new IdentifierExpression('test3'), 'DESC')];
             });
         $this->assertEqualsSql(
@@ -414,7 +414,7 @@ class WindowExpressionTest extends TestCase
             ->range(new QueryExpression("'1 day'"));
 
         $expressions = [];
-        $w->traverse(function ($expression) use (&$expressions): void {
+        $w->traverse(static function ($expression) use (&$expressions): void {
             $expressions[] = $expression;
         });
 
@@ -426,7 +426,7 @@ class WindowExpressionTest extends TestCase
         $w->range(new QueryExpression("'1 day'"), new QueryExpression("'10 days'"));
 
         $expressions = [];
-        $w->traverse(function ($expression) use (&$expressions): void {
+        $w->traverse(static function ($expression) use (&$expressions): void {
             $expressions[] = $expression;
         });
 

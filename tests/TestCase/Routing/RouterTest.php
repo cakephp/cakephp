@@ -105,7 +105,7 @@ class RouterTest extends TestCase
         Configure::write('App.base', '/cakephp');
         Router::fullBaseUrl('http://example.com');
         Router::createRouteBuilder('/')
-            ->scope('/', function (RouteBuilder $routes): void {
+            ->scope('/', static function (RouteBuilder $routes): void {
                 $routes->get('/{controller}', ['action' => 'index']);
             });
 
@@ -213,7 +213,7 @@ class RouterTest extends TestCase
     public function testGenerateUrlResourceRoute(): void
     {
         Router::createRouteBuilder('/')
-            ->scope('/', function (RouteBuilder $routes): void {
+            ->scope('/', static function (RouteBuilder $routes): void {
                 $routes->resources('Posts');
             });
 
@@ -878,8 +878,8 @@ class RouterTest extends TestCase
     public function testUrlGenerationPrefixedPlugin(): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->prefix('admin', function (RouteBuilder $routes): void {
-            $routes->plugin('MyPlugin', function (RouteBuilder $routes): void {
+        $routes->prefix('admin', static function (RouteBuilder $routes): void {
+            $routes->plugin('MyPlugin', static function (RouteBuilder $routes): void {
                 $routes->fallbacks('InflectedRoute');
             });
         });
@@ -900,8 +900,8 @@ class RouterTest extends TestCase
     public function testUrlGenerationMultiplePrefixes(): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->prefix('admin', function (RouteBuilder $routes): void {
-            $routes->prefix('backoffice', function (RouteBuilder $routes): void {
+        $routes->prefix('admin', static function (RouteBuilder $routes): void {
+            $routes->prefix('backoffice', static function (RouteBuilder $routes): void {
                 $routes->fallbacks('InflectedRoute');
             });
         });
@@ -1095,13 +1095,13 @@ class RouterTest extends TestCase
         Router::setRequest($request);
 
         $calledCount = 0;
-        Router::addUrlFilter(function ($url, $request) use (&$calledCount) {
+        Router::addUrlFilter(static function ($url, $request) use (&$calledCount) {
             $calledCount++;
             $url['lang'] = $request->getParam('lang');
 
             return $url;
         });
-        Router::addUrlFilter(function ($url, $request) use (&$calledCount) {
+        Router::addUrlFilter(static function ($url, $request) use (&$calledCount) {
             $calledCount++;
             $url[] = '1234';
 
@@ -1134,7 +1134,7 @@ class RouterTest extends TestCase
         ]);
         Router::setRequest($request);
 
-        Router::addUrlFilter(function ($url, $request): void {
+        Router::addUrlFilter(static function ($url, $request): void {
             throw new RuntimeException('nope');
         });
         Router::url(['controller' => 'Posts', 'action' => 'index', 'lang' => 'en']);
@@ -1162,7 +1162,7 @@ class RouterTest extends TestCase
         ]);
         Router::setRequest($request);
 
-        Router::addUrlFilter(function (): void {
+        Router::addUrlFilter(static function (): void {
             throw new Exception();
         });
         Router::url(['controller' => 'Posts', 'action' => 'index', 'lang' => 'en']);
@@ -1725,11 +1725,11 @@ class RouterTest extends TestCase
         Router::extensions(['json']);
 
         $routes = Router::createRouteBuilder('/');
-        $routes->scope('/', function (RouteBuilder $routes): void {
+        $routes->scope('/', static function (RouteBuilder $routes): void {
             $routes->setExtensions('rss');
             $routes->connect('/', ['controller' => 'Pages', 'action' => 'index']);
 
-            $routes->scope('/api', function (RouteBuilder $routes): void {
+            $routes->scope('/api', static function (RouteBuilder $routes): void {
                 $routes->setExtensions('xml');
                 $routes->connect('/docs', ['controller' => 'ApiDocs', 'action' => 'index']);
             });
@@ -1744,7 +1744,7 @@ class RouterTest extends TestCase
     public function testResourcesInScope(): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->scope('/api', ['prefix' => 'Api'], function (RouteBuilder $routes): void {
+        $routes->scope('/api', ['prefix' => 'Api'], static function (RouteBuilder $routes): void {
             $routes->setExtensions(['json']);
             $routes->resources('Articles');
         });
@@ -3547,7 +3547,7 @@ class RouterTest extends TestCase
      */
     protected function _connectDefaultRoutes(): void
     {
-        Router::scope('/', function (RouteBuilder $routes): void {
+        Router::scope('/', static function (RouteBuilder $routes): void {
             $routes->fallbacks('InflectedRoute');
         });
     }

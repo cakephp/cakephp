@@ -217,7 +217,7 @@ class BasePluginTest extends TestCase
         {
             public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
-                $eventManager->on('testTrue', function ($event) {
+                $eventManager->on('testTrue', static function ($event) {
                     return true;
                 });
 
@@ -244,7 +244,7 @@ class BasePluginTest extends TestCase
         {
             public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
-                $eventManager->on('testTrue', function ($event) {
+                $eventManager->on('testTrue', static function ($event) {
                     return true;
                 });
 

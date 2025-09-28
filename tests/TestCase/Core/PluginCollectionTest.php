@@ -168,7 +168,7 @@ class PluginCollectionTest extends TestCase
     {
         $this->expectDeprecationMessageMatches(
             '#You can create the missing class using `bin/cake bake plugin TestPluginTwo --class-only`#',
-            function (): void {
+            static function (): void {
                 $plugins = new PluginCollection();
                 $plugins->create('TestPluginTwo');
             },

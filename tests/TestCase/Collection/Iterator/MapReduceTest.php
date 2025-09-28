@@ -36,13 +36,13 @@ class MapReduceTest extends TestCase
             'document_2' => 'History is not only amazing but boring',
             'document_3' => 'One thing that is not boring is dogs',
         ];
-        $mapper = function ($row, $document, $mr): void {
+        $mapper = static function ($row, $document, $mr): void {
             $words = array_map('strtolower', explode(' ', $row));
             foreach ($words as $word) {
                 $mr->emitIntermediate($document, $word);
             }
         };
-        $reducer = function ($documents, $word, $mr): void {
+        $reducer = static function ($documents, $word, $mr): void {
             $mr->emit(array_unique($documents), $word);
         };
         $results = new MapReduce(new ArrayIterator($data), $mapper, $reducer);
@@ -74,13 +74,13 @@ class MapReduceTest extends TestCase
             'document_2' => 'one three',
             'document_3' => 'two four',
         ];
-        $mapper = function ($row, $document, $mr): void {
+        $mapper = static function ($row, $document, $mr): void {
             $words = array_map('strtolower', explode(' ', $row));
             foreach ($words as $word) {
                 $mr->emitIntermediate($document, $word, $document);
             }
         };
-        $reducer = function ($documents, $word, $mr): void {
+        $reducer = static function ($documents, $word, $mr): void {
             $mr->emit(array_unique($documents), $word);
         };
         $results = new MapReduce(new ArrayIterator($data), $mapper, $reducer);
@@ -99,7 +99,7 @@ class MapReduceTest extends TestCase
     public function testEmitFinalInMapper(): void
     {
         $data = ['a' => ['one', 'two'], 'b' => ['three', 'four']];
-        $mapper = function ($row, $key, $mr): void {
+        $mapper = static function ($row, $key, $mr): void {
             foreach ($row as $number) {
                 $mr->emit($number);
             }
@@ -116,7 +116,7 @@ class MapReduceTest extends TestCase
     {
         $this->expectException(LogicException::class);
         $data = ['a' => ['one', 'two'], 'b' => ['three', 'four']];
-        $mapper = function ($row, $key, $mr): void {
+        $mapper = static function ($row, $key, $mr): void {
             foreach ($row as $number) {
                 $mr->emitIntermediate('a', $number);
             }

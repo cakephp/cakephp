@@ -62,7 +62,7 @@ class BaseApplicationTest extends TestCase
 
             public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
-                $eventManager->on('testTrue', function ($event) {
+                $eventManager->on('testTrue', static function ($event) {
                     return true;
                 });
 
@@ -213,7 +213,7 @@ class BaseApplicationTest extends TestCase
         $app = $this->app;
         $app->addPlugin('Named');
         // Remove the deprecated() wrapping once plugin class is added to TestPluginTwo
-        $this->deprecated(function () use ($app): void {
+        $this->deprecated(static function () use ($app): void {
             $app->pluginBootstrap();
         });
         $this->assertTrue(
@@ -282,7 +282,7 @@ class BaseApplicationTest extends TestCase
     public function testBuildContainerEventReplaceContainer(): void
     {
         $app = $this->app;
-        $app->getEventManager()->on('Application.buildContainer', function (EventInterface $event): void {
+        $app->getEventManager()->on('Application.buildContainer', static function (EventInterface $event): void {
             $new = new Container();
             $new->add('testing', 'yes');
 
@@ -325,7 +325,7 @@ class BaseApplicationTest extends TestCase
 
             public function events(EventManagerInterface $eventManager): EventManagerInterface
             {
-                $eventManager->on('testTrue', function ($event) {
+                $eventManager->on('testTrue', static function ($event) {
                     return true;
                 });
 

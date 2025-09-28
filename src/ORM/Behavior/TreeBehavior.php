@@ -366,7 +366,7 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         $this->_table->updateAll(
-            function (QueryExpression $exp) use ($config) {
+            static function (QueryExpression $exp) use ($config) {
                 $leftInverse = clone $exp;
                 $leftInverse->setConjunction('*')->add('-1');
                 $rightInverse = clone $leftInverse;

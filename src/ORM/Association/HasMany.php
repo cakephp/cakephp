@@ -295,7 +295,7 @@ class HasMany extends Association
             $pkFields = (array)$this->getTarget()->getPrimaryKey();
             $targetEntities = (new Collection($targetEntities))
                 ->reject(
-                    function (EntityInterface $entity) use ($currentEntities, $pkFields) {
+                    static function (EntityInterface $entity) use ($currentEntities, $pkFields) {
                         if ($entity->isNew()) {
                             return false;
                         }
@@ -389,7 +389,7 @@ class HasMany extends Association
 
         $conditions = [
             'OR' => (new Collection($targetEntities))
-                ->map(function (EntityInterface $entity) use ($targetPrimaryKey) {
+                ->map(static function (EntityInterface $entity) use ($targetPrimaryKey) {
                     /** @var array<string> $targetPrimaryKey */
                     return $entity->extract($targetPrimaryKey);
                 })
@@ -404,7 +404,7 @@ class HasMany extends Association
                 $property,
                 (new Collection($sourceEntity->get($property)))
                 ->reject(
-                    function ($assoc) use ($targetEntities) {
+                    static function ($assoc) use ($targetEntities) {
                         return in_array($assoc, $targetEntities);
                     },
                 )
@@ -498,12 +498,12 @@ class HasMany extends Association
         $primaryKey = (array)$target->getPrimaryKey();
         $exclusions = new Collection($remainingEntities);
         $exclusions = $exclusions->map(
-            function (EntityInterface $ent) use ($primaryKey) {
+            static function (EntityInterface $ent) use ($primaryKey) {
                 return $ent->extract($primaryKey);
             },
         )
         ->filter(
-            function ($v) {
+            static function ($v) {
                 return !in_array(null, $v, true);
             },
         )
@@ -542,7 +542,7 @@ class HasMany extends Association
         if ($mustBeDependent) {
             if ($this->_cascadeCallbacks) {
                 $conditions = new QueryExpression($conditions);
-                $conditions->traverse(function ($entry) use ($target): void {
+                $conditions->traverse(static function ($entry) use ($target): void {
                     if ($entry instanceof FieldInterface) {
                         $field = $entry->getField();
                         if (is_string($field)) {
@@ -582,7 +582,7 @@ class HasMany extends Association
         return !in_array(
             false,
             array_map(
-                function ($prop) use ($table) {
+                static function ($prop) use ($table) {
                     return $table->getSchema()->isNullable($prop);
                 },
                 $properties,

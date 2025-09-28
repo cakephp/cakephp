@@ -415,7 +415,7 @@ class LogTest extends TestCase
             'scopes' => false,
         ]);
 
-        $this->deprecated(function (): void {
+        $this->deprecated(static function (): void {
             Log::write('debug', 'debug message', 'orders');
         });
         $this->assertFileDoesNotExist(LOGS . 'debug.log');

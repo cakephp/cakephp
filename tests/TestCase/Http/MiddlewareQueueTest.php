@@ -56,7 +56,7 @@ class MiddlewareQueueTest extends TestCase
 
     public function testConstructorAddingMiddleware(): void
     {
-        $cb = function (): void {
+        $cb = static function (): void {
         };
         $queue = new MiddlewareQueue([$cb]);
         $this->assertCount(1, $queue);
@@ -69,7 +69,7 @@ class MiddlewareQueueTest extends TestCase
     public function testGet(): void
     {
         $queue = new MiddlewareQueue();
-        $cb = function (): void {
+        $cb = static function (): void {
         };
         $queue->add($cb);
         $this->assertSame($cb, $queue->current()->getCallable());
@@ -93,7 +93,7 @@ class MiddlewareQueueTest extends TestCase
     public function testAddReturn(): void
     {
         $queue = new MiddlewareQueue();
-        $cb = function (): void {
+        $cb = static function (): void {
         };
         $this->assertSame($queue, $queue->add($cb));
     }
@@ -103,9 +103,9 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testAddOrdering(): void
     {
-        $one = function (): void {
+        $one = static function (): void {
         };
-        $two = function (): void {
+        $two = static function (): void {
         };
 
         $queue = new MiddlewareQueue();
@@ -127,7 +127,7 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testPrependReturn(): void
     {
-        $cb = function (): void {
+        $cb = static function (): void {
         };
         $queue = new MiddlewareQueue();
         $this->assertSame($queue, $queue->prepend($cb));
@@ -138,9 +138,9 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testPrependOrdering(): void
     {
-        $one = function (): void {
+        $one = static function (): void {
         };
-        $two = function (): void {
+        $two = static function (): void {
         };
 
         $queue = new MiddlewareQueue();
@@ -175,7 +175,7 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testAddingPrependingUsingArray(): void
     {
-        $one = function (): void {
+        $one = static function (): void {
         };
 
         $queue = new MiddlewareQueue();
@@ -192,11 +192,11 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testInsertAt(): void
     {
-        $one = function (): void {
+        $one = static function (): void {
         };
-        $two = function (): void {
+        $two = static function (): void {
         };
-        $three = function (): void {
+        $three = static function (): void {
         };
         $four = new SampleMiddleware();
 
@@ -224,9 +224,9 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testInsertAtOutOfBounds(): void
     {
-        $one = function (): void {
+        $one = static function (): void {
         };
-        $two = function (): void {
+        $two = static function (): void {
         };
 
         $queue = new MiddlewareQueue();
@@ -243,9 +243,9 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testInsertAtNegative(): void
     {
-        $one = function (): void {
+        $one = static function (): void {
         };
-        $two = function (): void {
+        $two = static function (): void {
         };
         $three = new SampleMiddleware();
 
@@ -265,10 +265,10 @@ class MiddlewareQueueTest extends TestCase
      */
     public function testInsertBefore(): void
     {
-        $one = function (): void {
+        $one = static function (): void {
         };
         $two = new SampleMiddleware();
-        $three = function (): void {
+        $three = static function (): void {
         };
         $four = new DumbMiddleware();
 
@@ -306,10 +306,10 @@ class MiddlewareQueueTest extends TestCase
     {
         $this->expectException(LogicException::class);
         $this->expectExceptionMessage('No middleware matching `InvalidClassName` could be found.');
-        $one = function (): void {
+        $one = static function (): void {
         };
         $two = new SampleMiddleware();
-        $three = function (): void {
+        $three = static function (): void {
         };
         $queue = new MiddlewareQueue();
         $queue->add($one)->add($two)->insertBefore('InvalidClassName', $three);
@@ -321,9 +321,9 @@ class MiddlewareQueueTest extends TestCase
     public function testInsertAfter(): void
     {
         $one = new SampleMiddleware();
-        $two = function (): void {
+        $two = static function (): void {
         };
-        $three = function (): void {
+        $three = static function (): void {
         };
         $four = new DumbMiddleware();
         $queue = new MiddlewareQueue();
@@ -363,9 +363,9 @@ class MiddlewareQueueTest extends TestCase
     public function testInsertAfterInvalid(): void
     {
         $one = new SampleMiddleware();
-        $two = function (): void {
+        $two = static function (): void {
         };
-        $three = function (): void {
+        $three = static function (): void {
         };
         $queue = new MiddlewareQueue();
         $queue->add($one)->add($two)->insertAfter('InvalidClass', $three);

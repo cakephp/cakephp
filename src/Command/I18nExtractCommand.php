@@ -541,7 +541,7 @@ class I18nExtractCommand extends Command
         $paths = $this->_paths;
         $paths[] = realpath(APP) . DIRECTORY_SEPARATOR;
 
-        usort($paths, function (string $a, string $b) {
+        usort($paths, static function (string $a, string $b) {
             return strlen($a) - strlen($b);
         });
 

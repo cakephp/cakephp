@@ -54,8 +54,8 @@ class AuthorsTable extends Table
      */
     public function findFormatted(SelectQuery $query, array $options = []): SelectQuery
     {
-        return $query->formatResults(function ($results) {
-            return $results->map(function ($author) {
+        return $query->formatResults(static function ($results) {
+            return $results->map(static function ($author) {
                 $author->formatted = $author->name . '!!';
 
                 return $author;

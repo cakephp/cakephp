@@ -223,7 +223,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             return true;
         }
 
-        $select = array_filter($query->clause('select'), function ($field) {
+        $select = array_filter($query->clause('select'), static function ($field) {
             return is_string($field);
         });
 
@@ -274,7 +274,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $joinRequired = false;
 
         $clause->iterateParts(
-            function ($c, &$field) use ($fields, $alias, $mainTableAlias, $mainTableFields, &$joinRequired) {
+            static function ($c, &$field) use ($fields, $alias, $mainTableAlias, $mainTableFields, &$joinRequired) {
                 if (!is_string($field) || str_contains($field, '.')) {
                     return $c;
                 }
@@ -320,7 +320,15 @@ class ShadowTableStrategy implements TranslateStrategyInterface
         $joinRequired = false;
 
         $clause->traverse(
-            function ($expression) use ($fields, $alias, $mainTableAlias, $mainTableFields, &$joinRequired): void {
+            static function (
+                $expression,
+            ) use (
+                $fields,
+                $alias,
+                $mainTableAlias,
+                $mainTableFields,
+                &$joinRequired,
+            ): void {
                 if (!($expression instanceof FieldInterface)) {
                     return;
                 }
@@ -490,7 +498,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
     {
         $allowEmpty = $this->_config['allowEmptyTranslations'];
 
-        return $results->map(function ($row) use ($allowEmpty, $locale) {
+        return $results->map(static function ($row) use ($allowEmpty, $locale) {
             if ($row === null) {
                 return $row;
             }
@@ -556,7 +564,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      */
     public function groupTranslations(CollectionInterface $results): CollectionInterface
     {
-        return $results->map(function ($row) {
+        return $results->map(static function ($row) {
             if (!$row instanceof EntityInterface) {
                 return $row;
             }

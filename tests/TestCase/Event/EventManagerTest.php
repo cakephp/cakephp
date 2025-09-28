@@ -182,7 +182,7 @@ class EventManagerTest extends TestCase
     public function testOffFromAll(): void
     {
         $manager = new EventManager();
-        $callable = function (): void {
+        $callable = static function (): void {
         };
         $manager->on('fake.event', $callable);
         $manager->on('another.event', $callable);
@@ -778,7 +778,7 @@ class EventManagerTest extends TestCase
 
         $eventManager->unsetEventList();
 
-        $func = function (): void {
+        $func = static function (): void {
         };
         $eventManager->on('foo', $func);
 
@@ -810,13 +810,13 @@ class EventManagerTest extends TestCase
             $eventManager->__debugInfo(),
         );
 
-        $eventManager->on('bar', function (): void {
+        $eventManager->on('bar', static function (): void {
         });
-        $eventManager->on('bar', function (): void {
+        $eventManager->on('bar', static function (): void {
         });
-        $eventManager->on('bar', function (): void {
+        $eventManager->on('bar', static function (): void {
         });
-        $eventManager->on('baz', function (): void {
+        $eventManager->on('baz', static function (): void {
         });
 
         $this->assertSame(
@@ -843,7 +843,7 @@ class EventManagerTest extends TestCase
         $eventList = new EventList();
         $eventManager = new EventManager();
         $eventManager->setEventList($eventList);
-        $eventManager->on('example', function (): void {
+        $eventManager->on('example', static function (): void {
         });
         $eventManager->dispatch('example');
 
@@ -876,7 +876,7 @@ class EventManagerTest extends TestCase
                 return [];
             }
         };
-        $callable = function (): void {
+        $callable = static function (): void {
         };
 
         $returnValue = $eventManager->on($listener);
@@ -920,11 +920,11 @@ class EventManagerTest extends TestCase
     public function testEventWithoutSubjectWorksWithReturningListener(): void
     {
         $eventManager = new EventManager();
-        $eventManager->on('example', function (): string {
+        $eventManager->on('example', static function (): string {
             return 'example event called';
         });
         $result = '';
-        $this->deprecated(function () use (&$eventManager, &$result): void {
+        $this->deprecated(static function () use (&$eventManager, &$result): void {
             $result = $eventManager->dispatch(new Event('example'));
         });
         $this->assertEquals('example event called', $result->getResult());

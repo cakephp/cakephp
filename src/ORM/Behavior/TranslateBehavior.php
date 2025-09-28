@@ -347,7 +347,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         $targetAlias = $this->getStrategy()->getTranslationTable()->getAlias();
 
         return $query
-            ->contain([$targetAlias => function (QueryInterface $query) use ($locales, $targetAlias) {
+            ->contain([$targetAlias => static function (QueryInterface $query) use ($locales, $targetAlias) {
                 if ($locales) {
                     $query->where(["{$targetAlias}.locale IN" => $locales]);
                 }

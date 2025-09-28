@@ -1186,7 +1186,7 @@ class Validation
         $defaults = ['in' => null, 'max' => null, 'min' => null];
         $options += $defaults;
 
-        $check = array_filter((array)$check, function ($value) {
+        $check = array_filter((array)$check, static function ($value) {
             return $value || is_numeric($value);
         });
         if (!$check) {

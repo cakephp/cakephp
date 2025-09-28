@@ -812,11 +812,11 @@ class RouteCollectionTest extends TestCase
      */
     public function testRegisterMiddleware(): void
     {
-        $result = $this->collection->registerMiddleware('closure', function (): void {
+        $result = $this->collection->registerMiddleware('closure', static function (): void {
         });
         $this->assertSame($result, $this->collection);
 
-        $callable = function (): void {
+        $callable = static function (): void {
         };
         $result = $this->collection->registerMiddleware('callable', $callable);
         $this->assertSame($result, $this->collection);
@@ -832,10 +832,10 @@ class RouteCollectionTest extends TestCase
      */
     public function testMiddlewareGroup(): void
     {
-        $this->collection->registerMiddleware('closure', function (): void {
+        $this->collection->registerMiddleware('closure', static function (): void {
         });
 
-        $callable = function (): void {
+        $callable = static function (): void {
         };
         $this->collection->registerMiddleware('callable', $callable);
 
@@ -849,7 +849,7 @@ class RouteCollectionTest extends TestCase
      */
     public function testMiddlewareGroupOverwrite(): void
     {
-        $stub = function (): void {
+        $stub = static function (): void {
         };
         $this->collection->registerMiddleware('closure', $stub);
         $this->collection->registerMiddleware('callable', $stub);

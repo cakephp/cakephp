@@ -63,7 +63,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
      */
     protected function _getRequestHandler(): RequestHandlerInterface
     {
-        return new TestRequestHandler(function () {
+        return new TestRequestHandler(static function () {
             return new Response();
         });
     }
@@ -80,7 +80,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
 
         /** @var \Cake\Http\ServerRequest|null $updatedRequest */
         $updatedRequest = null;
-        $handler = new TestRequestHandler(function ($request) use (&$updatedRequest) {
+        $handler = new TestRequestHandler(static function ($request) use (&$updatedRequest) {
             $updatedRequest = $request;
 
             return new Response();

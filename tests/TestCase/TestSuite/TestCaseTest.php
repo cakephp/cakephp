@@ -155,7 +155,7 @@ class TestCaseTest extends TestCase
      */
     public function testCaptureError(): void
     {
-        $error = $this->captureError(E_USER_WARNING, function (): void {
+        $error = $this->captureError(E_USER_WARNING, static function (): void {
             trigger_error('Something bad', E_USER_WARNING);
         });
         $this->assertEquals('Something bad', $error->getMessage());
@@ -170,7 +170,7 @@ class TestCaseTest extends TestCase
     public function testCaptureErrorNoError(): void
     {
         $this->expectException(AssertionFailedError::class);
-        $this->captureError(E_USER_WARNING, function (): void {
+        $this->captureError(E_USER_WARNING, static function (): void {
             // nothing
         });
     }
@@ -197,7 +197,7 @@ class TestCaseTest extends TestCase
      */
     public function testDeprecated(): void
     {
-        $this->deprecated(function (): void {
+        $this->deprecated(static function (): void {
             trigger_error('deprecation message', E_USER_DEPRECATED);
         });
     }
@@ -225,7 +225,7 @@ class TestCaseTest extends TestCase
     public function testDeprecatedWithNoDeprecation(): void
     {
         try {
-            $this->deprecated(function (): void {
+            $this->deprecated(static function (): void {
             });
 
             $this->fail();
@@ -243,13 +243,13 @@ class TestCaseTest extends TestCase
          * setting stackframe = 0 and having same method
          * to have same deprecation message and same line for all cases
          */
-        $fun = function (): void {
+        $fun = static function (): void {
             deprecationWarning('5.0.0', 'Test same deprecation message', 0);
         };
-        $this->deprecated(function () use ($fun): void {
+        $this->deprecated(static function () use ($fun): void {
             $fun();
         });
-        $this->deprecated(function () use ($fun): void {
+        $this->deprecated(static function () use ($fun): void {
             $fun();
         });
     }

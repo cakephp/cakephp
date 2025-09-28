@@ -744,7 +744,7 @@ class ValidatorTest extends TestCase
         $validator->allowEmptyString(
             'title',
             'very required',
-            function ($context) {
+            static function ($context) {
                 return $context['data']['otherField'] === true;
             },
         )
@@ -3070,7 +3070,7 @@ class ValidatorTest extends TestCase
 
         $nestedValidator = new Validator();
         $nestedValidator->add('nested_field', 'custom', [
-            'rule' => function ($value, $context) use (&$contextCapture) {
+            'rule' => static function ($value, $context) use (&$contextCapture) {
                 $contextCapture = $context;
                 // Access parent data through context
                 if (isset($context['parentContext'])) {
@@ -3120,7 +3120,7 @@ class ValidatorTest extends TestCase
 
         $nestedValidator = new Validator();
         $nestedValidator->add('item_name', 'custom', [
-            'rule' => function ($value, $context) use (&$contextCaptures) {
+            'rule' => static function ($value, $context) use (&$contextCaptures) {
                 $contextCaptures[] = $context;
                 // Validate based on index
                 if (isset($context['nestedManyIndex']) && $context['nestedManyIndex'] === 0) {

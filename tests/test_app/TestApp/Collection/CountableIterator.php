@@ -13,7 +13,7 @@ class CountableIterator extends IteratorIterator implements Countable
      */
     public function __construct($items)
     {
-        $f = function () use ($items) {
+        $f = static function () use ($items) {
             foreach ($items as $e) {
                 yield $e;
             }

@@ -89,7 +89,7 @@ class CacheTest extends TestCase
             'prefix' => 'test_',
         ]);
 
-        $this->expectWarningMessageMatches('/^.* is not writable/', function () use (&$engine): void {
+        $this->expectWarningMessageMatches('/^.* is not writable/', static function () use (&$engine): void {
             $engine = Cache::pool('tests');
         });
         $path = $engine->getConfig('path');
@@ -115,7 +115,7 @@ class CacheTest extends TestCase
             'fallback' => false,
         ]);
 
-        $this->expectErrorMessageMatches('/^Cache engine `.*TestAppCacheEngine.*` is not properly configured/', function (): void {
+        $this->expectErrorMessageMatches('/^Cache engine `.*TestAppCacheEngine.*` is not properly configured/', static function (): void {
             Cache::pool('tests');
         });
     }
@@ -136,7 +136,7 @@ class CacheTest extends TestCase
 
         $e = null;
         try {
-            $this->expectWarningMessageMatches('/^.* is not writable/', function (): void {
+            $this->expectWarningMessageMatches('/^.* is not writable/', static function (): void {
                 Cache::pool('tests');
             });
         } catch (InvalidArgumentException $e) {
@@ -171,7 +171,7 @@ class CacheTest extends TestCase
             'groups' => ['group3', 'group1'],
         ]);
 
-        $this->expectWarningMessageMatches('/^.* is not writable/', function () use (&$result): void {
+        $this->expectWarningMessageMatches('/^.* is not writable/', static function () use (&$result): void {
             $result = Cache::groupConfigs('group1');
         });
         $this->assertSame(['group1' => ['tests', 'tests_fallback']], $result);
@@ -279,7 +279,7 @@ class CacheTest extends TestCase
         ]);
 
         $regex = '/^Cache engine `.*TestAppCacheEngine.*/';
-        $this->expectWarningMessageMatches($regex, function () use (&$engine): void {
+        $this->expectWarningMessageMatches($regex, static function () use (&$engine): void {
             $engine = Cache::pool('tests');
         });
 
@@ -831,7 +831,7 @@ class CacheTest extends TestCase
     {
         $this->_configCache();
         $counter = 0;
-        $cacher = function () use ($counter) {
+        $cacher = static function () use ($counter) {
             return 'This is some data ' . $counter;
         };
 

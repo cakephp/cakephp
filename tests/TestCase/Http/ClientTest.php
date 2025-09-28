@@ -901,7 +901,7 @@ class ClientTest extends TestCase
         $client = new Client();
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) use (&$eventTriggered): void {
+            static function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) use (&$eventTriggered): void {
                 $eventTriggered = true;
             },
         );
@@ -919,7 +919,7 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
+            static function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
                 $event->setRequest(new Request('http://bar.test'));
                 $event->setAdapterOptions(['some' => 'value']);
             },
@@ -946,7 +946,7 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.beforeSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
+            static function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
                 $event->setResult(new Response(body: 'short circuit'));
             },
         );
@@ -968,7 +968,7 @@ class ClientTest extends TestCase
 
         $client->getEventManager()->on(
             'HttpClient.afterSend',
-            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
+            static function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
                 $event->setResult(new Response(body: 'modified response'));
             },
         );
@@ -1160,7 +1160,7 @@ class ClientTest extends TestCase
     {
         $one = new Response(['HTTP/1.0 200'], 'one');
         Client::addMockResponse('GET', 'http://example.com/info', $one, [
-            'match' => function ($request) {
+            'match' => static function ($request) {
                 return false;
             },
         ]);
@@ -1253,7 +1253,7 @@ class ClientTest extends TestCase
     {
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub, [
-            'match' => function () {
+            'match' => static function () {
                 return false;
             },
         ]);
@@ -1272,7 +1272,7 @@ class ClientTest extends TestCase
     {
         $stub = new Response(['HTTP/1.0 200'], 'hello world');
         Client::addMockResponse('POST', 'http://example.com/path', $stub, [
-            'match' => function ($request) {
+            'match' => static function ($request) {
                 return 'invalid';
             },
         ]);

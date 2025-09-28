@@ -126,11 +126,11 @@ class CommonTableExpressionQueryTest extends TestCase
     public function testWithRecursiveCte(): void
     {
         $query = $this->connection->selectQuery()
-            ->with(function (CommonTableExpression $cte, SelectQuery $query) {
+            ->with(static function (CommonTableExpression $cte, SelectQuery $query) {
                 $anchorQuery = $query->select(1);
 
                 $recursiveQuery = $query->getConnection()
-                    ->selectQuery(function (Query $query) {
+                    ->selectQuery(static function (Query $query) {
                         return $query->expr('col + 1');
                     }, 'cte')
                     ->where(['col !=' => 3], ['col' => 'integer']);
@@ -203,7 +203,7 @@ class CommonTableExpressionQueryTest extends TestCase
 
         $query = $this->connection
             ->insertQuery()
-            ->with(function (CommonTableExpression $cte, SelectQuery $query) {
+            ->with(static function (CommonTableExpression $cte, SelectQuery $query) {
                 return $cte
                     ->name('cte')
                     ->field(['title', 'body'])
@@ -256,7 +256,7 @@ class CommonTableExpressionQueryTest extends TestCase
             ->insert(['title', 'body'])
             ->values(
                 $this->connection->selectQuery()
-                    ->with(function (CommonTableExpression $cte, SelectQuery $query) {
+                    ->with(static function (CommonTableExpression $cte, SelectQuery $query) {
                         return $cte
                             ->name('cte')
                             ->field(['title', 'body'])
@@ -310,7 +310,7 @@ class CommonTableExpressionQueryTest extends TestCase
         $result->closeCursor();
 
         $query = $this->connection->updateQuery()
-            ->with(function (CommonTableExpression $cte, SelectQuery $query) {
+            ->with(static function (CommonTableExpression $cte, SelectQuery $query) {
                 $cteQuery = $query
                     ->select('articles.id')
                     ->from('articles')
@@ -322,7 +322,7 @@ class CommonTableExpressionQueryTest extends TestCase
             })
             ->update('articles')
             ->set('published', 'N')
-            ->where(function (QueryExpression $exp, Query $query) {
+            ->where(static function (QueryExpression $exp, Query $query) {
                 return $exp->in(
                     'articles.id',
                     $query
@@ -366,7 +366,7 @@ class CommonTableExpressionQueryTest extends TestCase
         $result->closeCursor();
 
         $query = $this->connection->deleteQuery()
-            ->with(function (CommonTableExpression $cte, SelectQuery $query) {
+            ->with(static function (CommonTableExpression $cte, SelectQuery $query) {
                 $query->select('articles.id')
                     ->from('articles')
                     ->where(['articles.id !=' => 1]);
@@ -376,7 +376,7 @@ class CommonTableExpressionQueryTest extends TestCase
                     ->query($query);
             })
             ->from(['a' => 'articles'])
-            ->where(function (QueryExpression $exp, Query $query) {
+            ->where(static function (QueryExpression $exp, Query $query) {
                 return $exp->in(
                     'a.id',
                     $query

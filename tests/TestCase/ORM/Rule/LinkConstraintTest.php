@@ -122,7 +122,7 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasMany('Comments');
 
-        $Articles->getEventManager()->on('Model.beforeRules', function (Event $event): void {
+        $Articles->getEventManager()->on('Model.beforeRules', static function (Event $event): void {
             $event->getSubject()->setPrimaryKey(['id', 'nonexistent']);
         });
 
@@ -614,12 +614,12 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'foreignKey' => false,
-            'conditions' => function (QueryExpression $exp, SelectQuery $query) {
+            'conditions' => static function (QueryExpression $exp, SelectQuery $query) {
                 $connection = $query->getConnection();
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(function (QueryExpression $exp) {
+                    ->where(static function (QueryExpression $exp) {
                         return $exp->eq(
                             new IdentifierExpression('Articles.id'),
                             new IdentifierExpression('RecentComments.article_id'),
@@ -650,12 +650,12 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
             'foreignKey' => false,
-            'conditions' => function (QueryExpression $exp, SelectQuery $query) {
+            'conditions' => static function (QueryExpression $exp, SelectQuery $query) {
                 $connection = $query->getConnection();
                 $subQuery = $connection
                     ->selectQuery(['RecentComments.id'])
                     ->from(['RecentComments' => 'comments'])
-                    ->where(function (QueryExpression $exp) {
+                    ->where(static function (QueryExpression $exp) {
                         return $exp->eq(
                             new IdentifierExpression('Articles.id'),
                             new IdentifierExpression('RecentComments.article_id'),
@@ -749,7 +749,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => function (QueryExpression $exp) {
+            'conditions' => static function (QueryExpression $exp) {
                 return $exp->notEq(
                     new IdentifierExpression('Comments.published'),
                     new IdentifierExpression('Articles.published'),
@@ -785,7 +785,7 @@ class LinkConstraintTest extends TestCase
     {
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasOne('Comments', [
-            'conditions' => function (QueryExpression $exp) {
+            'conditions' => static function (QueryExpression $exp) {
                 return $exp->eq(
                     new IdentifierExpression('Comments.published'),
                     new IdentifierExpression('Articles.published'),

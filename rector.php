@@ -3,7 +3,6 @@ declare(strict_types=1);
 
 use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
-use Rector\Set\ValueObject\SetList;
 
 $cacheDir = getenv('RECTOR_CACHE_DIR') ?: sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'rector';
 
@@ -23,13 +22,17 @@ return RectorConfig::configure()
     ->withPhpSets()
     ->withAttributesSets()
 
-    ->withSets([
-        SetList::CODE_QUALITY,
-        SetList::CODING_STYLE,
-        SetList::DEAD_CODE,
-        SetList::EARLY_RETURN,
-        SetList::INSTANCEOF,
-        SetList::TYPE_DECLARATION,
+    ->withPreparedSets(
+        deadCode: true,
+        codeQuality: true,
+        codingStyle: true,
+        typeDeclarations: true,
+        instanceOf: true,
+        earlyReturn: true,
+    )
+
+    ->withRules([
+        \Rector\CodingStyle\Rector\Closure\StaticClosureRector::class,
     ])
 
     ->withSkip([

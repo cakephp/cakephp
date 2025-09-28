@@ -153,7 +153,7 @@ class QueryTest extends TestCase
                     $this->newQuery(),
                 ),
             )
-            ->with(function (CommonTableExpression $cte, Query $query) {
+            ->with(static function (CommonTableExpression $cte, Query $query) {
                 return $cte
                     ->name('cte2')
                     ->query($query);

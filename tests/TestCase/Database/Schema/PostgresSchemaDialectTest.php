@@ -1871,7 +1871,7 @@ SQL;
             ->getMock();
         $mock->expects($this->any())
             ->method('quote')
-            ->willReturnCallback(function ($value) {
+            ->willReturnCallback(static function ($value) {
                 return "'{$value}'";
             });
 
@@ -1886,7 +1886,7 @@ SQL;
 
         $driver->expects($this->any())
             ->method('version')
-            ->willReturnCallback(function () {
+            ->willReturnCallback(static function () {
                 return '10.0.0';
             });
 

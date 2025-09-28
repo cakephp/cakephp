@@ -226,7 +226,7 @@ class FormHelperTest extends TestCase
         $this->Form->widget('test', ['val' => 1]);
 
         $widget->shouldHaveReceived('render')
-            ->withArgs(function (array $data) {
+            ->withArgs(static function (array $data) {
                 return $data === ['val' => 1];
             })
             ->once();
@@ -249,7 +249,7 @@ class FormHelperTest extends TestCase
         $this->Form->widget('test', ['val' => 1, 'name' => 'test', 'secure' => true]);
 
         $widget->shouldHaveReceived('render')
-            ->withArgs(function (array $data) {
+            ->withArgs(static function (array $data) {
                 return $data === ['val' => 1, 'name' => 'test'];
             })
             ->once();
@@ -303,7 +303,7 @@ class FormHelperTest extends TestCase
     {
         $entity = new Article();
         $stub = new StubContext();
-        $this->Form->addContextProvider('orm', function ($request, $data) use ($stub) {
+        $this->Form->addContextProvider('orm', static function ($request, $data) use ($stub) {
             return $stub;
         });
         $this->Form->create($entity);
@@ -318,7 +318,7 @@ class FormHelperTest extends TestCase
     {
         $entity = new Article();
         $stub = new StubContext();
-        $this->Form->addContextProvider('newshiny', function ($request, $data) use ($stub) {
+        $this->Form->addContextProvider('newshiny', static function ($request, $data) use ($stub) {
             if ($data['entity'] instanceof Entity) {
                 return $stub;
             }

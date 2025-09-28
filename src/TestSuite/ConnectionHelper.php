@@ -133,7 +133,7 @@ class ConnectionHelper
         /** @var array<\Cake\Database\Schema\TableSchema> $schemas Specify type for psalm */
         $schemas = array_map(fn(string $table) => $collection->describe($table), $tables);
 
-        self::runWithoutConstraints($connection, function (Connection $connection) use ($schemas): void {
+        self::runWithoutConstraints($connection, static function (Connection $connection) use ($schemas): void {
             $dialect = $connection->getWriteDriver()->schemaDialect();
             foreach ($schemas as $schema) {
                 foreach ($dialect->truncateTableSql($schema) as $statement) {
@@ -155,7 +155,7 @@ class ConnectionHelper
         if ($connection->getWriteDriver()->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION)) {
             $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
         } else {
-            $connection->transactional(function (Connection $connection) use ($callback): void {
+            $connection->transactional(static function (Connection $connection) use ($callback): void {
                 $connection->disableConstraints(fn(Connection $connection) => $callback($connection));
             });
         }
