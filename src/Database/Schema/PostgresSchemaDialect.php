@@ -693,6 +693,7 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_SMALLINTEGER => ' SMALLINT',
             TableSchemaInterface::TYPE_INTEGER => ' INT',
             TableSchemaInterface::TYPE_BIGINTEGER => ' BIGINT',
+            TableSchemaInterface::TYPE_BINARY => ' BYTEA',
             TableSchemaInterface::TYPE_BINARY_UUID => ' UUID',
             TableSchemaInterface::TYPE_BOOLEAN => ' BOOLEAN',
             TableSchemaInterface::TYPE_FLOAT => ' FLOAT',
@@ -738,22 +739,20 @@ class PostgresSchemaDialect extends SchemaDialect
             unset($column['default']);
         }
 
+        $foundType = false;
         if (isset($typeMap[$column['type']])) {
             $out .= $typeMap[$column['type']];
+            $foundType = true;
         }
 
+        $hasLength = [
+            TableSchemaInterface::TYPE_CHAR,
+            TableSchemaInterface::TYPE_STRING,
+        ];
         if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
-        }
-        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
-            $out .= ' BYTEA';
-        }
-
-        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
-            $out .= '(' . $column['length'] . ')';
-        }
-
-        if (
+            $foundType = true;
+        } elseif (
             $column['type'] === TableSchemaInterface::TYPE_STRING ||
             (
                 $column['type'] === TableSchemaInterface::TYPE_TEXT &&
@@ -761,9 +760,17 @@ class PostgresSchemaDialect extends SchemaDialect
             )
         ) {
             $out .= ' VARCHAR';
-            if (isset($column['length']) && $column['length'] !== '') {
-                $out .= '(' . $column['length'] . ')';
-            }
+            $hasLength[] = $column['type'];
+            $foundType = true;
+        }
+
+        if (!$foundType) {
+            $out .= ' ' . strtoupper($column['type']);
+            $hasLength[] = $column['type'];
+        }
+
+        if (in_array($column['type'], $hasLength, true) && !empty($column['length'])) {
+            $out .= '(' . $column['length'] . ')';
         }
 
         $hasCollate = [

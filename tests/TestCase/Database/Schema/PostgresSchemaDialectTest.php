@@ -983,6 +983,12 @@ SQL;
     public static function columnSqlProvider(): array
     {
         return [
+            // Unknown column type is preserved.
+            [
+                'title',
+                ['type' => 'foobar', 'length' => 25, 'null' => true, 'default' => null],
+                '"title" FOOBAR(25) DEFAULT NULL',
+            ],
             // strings
             [
                 'title',
