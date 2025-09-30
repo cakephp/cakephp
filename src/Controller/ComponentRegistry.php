@@ -27,6 +27,7 @@ use League\Container\Argument\ArgumentResolverTrait;
 use League\Container\Exception\NotFoundException;
 use ReflectionClass;
 use RuntimeException;
+use Throwable;
 
 /**
  * ComponentRegistry is a registry for loaded components
@@ -150,22 +151,34 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             return $class;
         }
         if ($this->container?->has($class)) {
-            $constructor = (new ReflectionClass($class))->getConstructor();
+            // Try to resolve directly from container first
+            // This allows user-configured components to work without modification
+            try {
+                /** @var \Cake\Controller\Component $instance */
+                $instance = $this->container->get($class);
+            } catch (Throwable) {
+                // Can't resolve - need to configure with auto-wired arguments
+                $constructor = (new ReflectionClass($class))->getConstructor();
+                if ($constructor !== null) {
+                    $args = $this->reflectArguments($constructor, ['config' => $config]);
 
-            if ($constructor !== null) {
-                $args = $this->reflectArguments($constructor, ['config' => $config]);
-
-                try {
-                    $this->container->extend($class)
-                        ->addArguments($args);
-                } catch (NotFoundException) {
-                    $this->container->add($class)
-                        ->addArguments($args);
+                    // Check if definition exists (via extend()) or needs to be created (via add())
+                    try {
+                        $this->container->extend($class);
+                        // Definition exists but couldn't be resolved - likely a configuration error
+                        // that we can't fix by adding more arguments. Re-throw the original error.
+                        throw new CakeException(
+                            "Component `{$class}` is registered in container but cannot be resolved.",
+                        );
+                    } catch (NotFoundException) {
+                        // No definition exists, create one with auto-wired arguments
+                        $this->container->add($class)->addArguments($args);
+                    }
                 }
-            }
 
-            /** @var \Cake\Controller\Component $instance */
-            $instance = $this->container->get($class);
+                /** @var \Cake\Controller\Component $instance */
+                $instance = $this->container->get($class);
+            }
         } else {
             $instance = new $class($this, $config);
         }

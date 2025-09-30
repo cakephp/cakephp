@@ -31,6 +31,8 @@ use Exception;
 use League\Container\ReflectionContainer;
 use TestApp\Controller\Component\ConfiguredComponent;
 use TestApp\Controller\Component\FlashAliasComponent;
+use TestApp\Controller\Component\InjectedServiceComponent;
+use TestApp\Service\TestService;
 use TestPlugin\Controller\Component\OtherComponent;
 use Traversable;
 
@@ -40,6 +42,7 @@ class ComponentRegistryTest extends TestCase
      * @var \Cake\Controller\ComponentRegistry
      */
     protected $Components;
+
     private bool $created = false;
 
     /**
@@ -120,6 +123,31 @@ class ComponentRegistryTest extends TestCase
 
         $this->assertInstanceOf(ConfiguredComponent::class, $component);
         $this->assertSame(['key' => 'customFlash'], $component->configCopy);
+    }
+
+    /**
+     * Test loading component with manually configured DI in container
+     * Regression test for issue where arguments were duplicated
+     */
+    public function testLoadWithManualDependencyInjection(): void
+    {
+        $controller = new Controller(new ServerRequest());
+        $container = new Container();
+        $components = new ComponentRegistry($controller, $container);
+
+        // Register service and component with explicit arguments (as user would do)
+        $service = new TestService();
+        $container->add(TestService::class, $service);
+        $container->add(ComponentRegistry::class, $components);
+        $container->add(InjectedServiceComponent::class)
+            ->addArgument(ComponentRegistry::class)
+            ->addArgument(TestService::class);
+
+        // This should work without duplicating arguments
+        $component = $components->load(InjectedServiceComponent::class);
+
+        $this->assertInstanceOf(InjectedServiceComponent::class, $component);
+        $this->assertSame($service, $component->getService());
     }
 
     /**
