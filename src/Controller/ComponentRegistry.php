@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
+use ArgumentCountError;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
 use Cake\Core\ContainerInterface;
@@ -24,10 +25,11 @@ use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
 use League\Container\Argument\ArgumentResolverTrait;
+use League\Container\Exception\ContainerException;
 use League\Container\Exception\NotFoundException;
 use ReflectionClass;
 use RuntimeException;
-use Throwable;
+use TypeError;
 
 /**
  * ComponentRegistry is a registry for loaded components
@@ -156,7 +158,12 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             try {
                 /** @var \Cake\Controller\Component $instance */
                 $instance = $this->container->get($class);
-            } catch (Throwable) {
+
+                // Merge runtime config into the component
+                if ($config) {
+                    $instance->setConfig($config);
+                }
+            } catch (ContainerException | ArgumentCountError | TypeError $e) {
                 // Can't resolve - need to configure with auto-wired arguments
                 $constructor = (new ReflectionClass($class))->getConstructor();
                 if ($constructor !== null) {
@@ -169,6 +176,8 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
                         // that we can't fix by adding more arguments. Re-throw the original error.
                         throw new CakeException(
                             "Component `{$class}` is registered in container but cannot be resolved.",
+                            null,
+                            $e,
                         );
                     } catch (NotFoundException) {
                         // No definition exists, create one with auto-wired arguments

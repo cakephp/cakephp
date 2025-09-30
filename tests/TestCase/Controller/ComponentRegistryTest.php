@@ -143,11 +143,12 @@ class ComponentRegistryTest extends TestCase
             ->addArgument(ComponentRegistry::class)
             ->addArgument(TestService::class);
 
-        // This should work without duplicating arguments
-        $component = $components->load(InjectedServiceComponent::class);
+        // This should work without duplicating arguments and config should be passed through
+        $component = $components->load(InjectedServiceComponent::class, ['key' => 'value']);
 
         $this->assertInstanceOf(InjectedServiceComponent::class, $component);
         $this->assertSame($service, $component->getService());
+        $this->assertSame('value', $component->getConfig('key'));
     }
 
     /**
