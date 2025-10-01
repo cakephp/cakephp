@@ -818,7 +818,10 @@ class SqliteSchemaDialect extends SchemaDialect
         if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
             $foundType = true;
-        } elseif ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] === TableSchema::LENGTH_TINY) {
+        } elseif (
+            $column['type'] === TableSchemaInterface::TYPE_TEXT &&
+            $column['length'] === TableSchema::LENGTH_TINY
+        ) {
             $out .= ' VARCHAR';
             $hasLength[] = $column['type'];
             $foundType = true;
