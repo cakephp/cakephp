@@ -677,11 +677,14 @@ class SqlserverSchemaDialect extends SchemaDialect
             unset($column['default']);
         }
 
-        if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
+        if ($column['type'] === TableSchemaInterface::TYPE_STRING && !isset($column['length'])) {
+            $column['length'] = TableSchema::LENGTH_TINY;
+        } elseif (
+            $column['type'] === TableSchemaInterface::TYPE_TEXT &&
+            $column['length'] !== TableSchema::LENGTH_TINY
+        ) {
             $out .= ' NVARCHAR(MAX)';
             $foundType = true;
-        } elseif ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
-            // $out .= '(' . $column['length'] . ')';
         }
 
         if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
@@ -707,6 +710,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         }
         if (!$foundType) {
             $out .= ' ' . strtoupper($column['type']);
+            $hasLength[] = $column['type'];
         }
         if (in_array($column['type'], $hasLength, true) && isset($column['length'])) {
             $out .= '(' . $column['length'] . ')';
@@ -734,10 +738,7 @@ class SqlserverSchemaDialect extends SchemaDialect
 
         if (
             $column['type'] === TableSchemaInterface::TYPE_DECIMAL &&
-            (
-                isset($column['length']) ||
-                isset($column['precision'])
-            )
+            (isset($column['length']) || isset($column['precision']))
         ) {
             $out .= '(' . (int)$column['length'] . ',' . (int)$column['precision'] . ')';
         }

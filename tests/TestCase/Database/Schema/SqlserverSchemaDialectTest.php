@@ -734,7 +734,7 @@ SQL;
             [
                 'title',
                 ['type' => 'foobar', 'length' => 25, 'null' => true, 'default' => null],
-                '[title] FOOBAR(25)',
+                '[title] FOOBAR(25) DEFAULT NULL',
             ],
             // strings
             [
