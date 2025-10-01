@@ -161,11 +161,11 @@ class Filesystem
      * Create directory.
      *
      * @param string $dir Directory path.
-     * @param int $mode Octal mode passed to mkdir(). Defaults to 0755.
+     * @param int $mode Octal mode passed to mkdir(). Defaults to 0777.
      * @return void
      * @throws \Cake\Core\Exception\CakeException When directory creation fails.
      */
-    public function mkdir(string $dir, int $mode = 0755): void
+    public function mkdir(string $dir, int $mode = 0777): void
     {
         if (is_dir($dir)) {
             return;
