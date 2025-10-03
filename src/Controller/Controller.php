@@ -1072,7 +1072,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param array|string $url A string or array-based URL pointing to another location within the app,
      *     or an absolute URL
      * @param \Cake\Http\Response $response The response object.
-     * @return \Cake\Http\Response|null|void
+     * @return \Cake\Http\Response|false|null|void
      * @link https://book.cakephp.org/4/en/controllers.html#request-life-cycle-callbacks
      */
     public function beforeRedirect(EventInterface $event, $url, Response $response)
