@@ -152,6 +152,36 @@ class ComponentRegistryTest extends TestCase
     }
 
     /**
+     * Test loading component registered as shared instance in container
+     * Documents edge case where shared instances can cause state leakage
+     */
+    public function testLoadWithSharedInstance(): void
+    {
+        $controller1 = new Controller(new ServerRequest());
+        $controller2 = new Controller(new ServerRequest());
+        $container = new Container();
+
+        $components1 = new ComponentRegistry($controller1, $container);
+        $components2 = new ComponentRegistry($controller2, $container);
+
+        // Register component as shared - this is generally not recommended for components
+        $container->add(ComponentRegistry::class, $components1);
+        $container->add(FlashComponent::class)
+            ->addArgument(ComponentRegistry::class)
+            ->setShared(true);
+
+        $flash1 = $components1->load('Flash', ['key' => 'first']);
+        $flash2 = $components2->load('Flash', ['key' => 'second']);
+
+        // Both should be the same instance (shared)
+        $this->assertSame($flash1, $flash2);
+        // Config from second load should be merged into shared instance
+        $this->assertSame('second', $flash2->getConfig('key'));
+        // This demonstrates the edge case: config is shared between controllers
+        $this->assertSame('second', $flash1->getConfig('key'));
+    }
+
+    /**
      * Tests loading as an alias
      */
     public function testLoadWithAlias(): void

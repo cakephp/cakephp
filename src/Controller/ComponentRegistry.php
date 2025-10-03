@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Controller;
 
-use ArgumentCountError;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\App;
 use Cake\Core\ContainerInterface;
@@ -24,12 +23,12 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use League\Container\Argument\ArgumentReflectorTrait;
 use League\Container\Argument\ArgumentResolverTrait;
-use League\Container\Exception\ContainerException;
 use League\Container\Exception\NotFoundException;
+use League\Container\ReflectionContainer;
 use ReflectionClass;
 use RuntimeException;
-use TypeError;
 
 /**
  * ComponentRegistry is a registry for loaded components
@@ -48,6 +47,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     use EventDispatcherTrait;
 
     use ArgumentResolverTrait;
+    use ArgumentReflectorTrait;
 
     /**
      * The controller that this collection is associated with.
@@ -142,6 +142,22 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
      * Part of the template method for {@link \Cake\Core\ObjectRegistry::load()}
      * Enabled components will be registered with the event manager.
      *
+     * ## Container Resolution
+     *
+     * When a container is available, this method attempts to resolve components from it.
+     * Components registered in the container will be resolved using dependency injection.
+     * If not registered, a new definition will be created with auto-wired constructor arguments.
+     *
+     * ## Edge Cases
+     *
+     * - **Shared instances**: Components registered as shared instances in the container
+     *   will have their config merged via setConfig(). This means multiple controller
+     *   instances may share the same component instance, which could lead to unexpected
+     *   state sharing between requests.
+     * - **Manual registration**: Components manually registered in the container with
+     *   specific constructor arguments will use those arguments. The `$config` parameter
+     *   will be merged into the component after instantiation using setConfig().
+     *
      * @param \Cake\Controller\Component|class-string<\Cake\Controller\Component> $class The classname to create.
      * @param string $alias The alias of the component.
      * @param array<string, mixed> $config An array of config to use for the component.
@@ -153,40 +169,30 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             return $class;
         }
         if ($this->container?->has($class)) {
-            // Try to resolve directly from container first
-            // This allows user-configured components to work without modification
+            // Check if definition already exists - if so, user has manually configured it
+            $hasDefinition = false;
             try {
-                /** @var \Cake\Controller\Component $instance */
-                $instance = $this->container->get($class);
+                $this->container->extend($class);
+                $hasDefinition = true;
+            } catch (NotFoundException) {
+                // No definition exists yet
+            }
 
-                // Merge runtime config into the component
-                if ($config) {
-                    $instance->setConfig($config);
-                }
-            } catch (ContainerException | ArgumentCountError | TypeError $e) {
-                // Can't resolve - need to configure with auto-wired arguments
+            if (!$hasDefinition) {
+                // No user-defined configuration - add auto-wired arguments
                 $constructor = (new ReflectionClass($class))->getConstructor();
                 if ($constructor !== null) {
                     $args = $this->reflectArguments($constructor, ['config' => $config]);
-
-                    // Check if definition exists (via extend()) or needs to be created (via add())
-                    try {
-                        $this->container->extend($class);
-                        // Definition exists but couldn't be resolved - likely a configuration error
-                        // that we can't fix by adding more arguments. Re-throw the original error.
-                        throw new CakeException(
-                            "Component `{$class}` is registered in container but cannot be resolved.",
-                            null,
-                            $e,
-                        );
-                    } catch (NotFoundException) {
-                        // No definition exists, create one with auto-wired arguments
-                        $this->container->add($class)->addArguments($args);
-                    }
+                    $this->container->add($class)->addArguments($args);
                 }
+            }
 
-                /** @var \Cake\Controller\Component $instance */
-                $instance = $this->container->get($class);
+            /** @var \Cake\Controller\Component $instance */
+            $instance = $this->container->get($class);
+
+            // For manually configured components, merge runtime config
+            if ($hasDefinition && $config) {
+                $instance->setConfig($config);
             }
         } else {
             $instance = new $class($this, $config);
@@ -211,5 +217,18 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
         }
 
         return $this->container;
+    }
+
+    /**
+     * Get the mode for reflection-based argument resolution.
+     *
+     * This method is required by ArgumentReflectorTrait and controls
+     * how constructor arguments are resolved.
+     *
+     * @return int
+     */
+    protected function getMode(): int
+    {
+        return ReflectionContainer::AUTO_WIRING;
     }
 }
