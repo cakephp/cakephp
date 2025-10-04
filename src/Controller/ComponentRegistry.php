@@ -29,6 +29,8 @@ use League\Container\Argument\ResolvableArgument;
 use League\Container\Exception\NotFoundException;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
+use ReflectionMethod;
+use ReflectionNamedType;
 use RuntimeException;
 
 /**
@@ -245,7 +247,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
 
             // Check if parameter has a type hint
             $type = $param->getType();
-            if ($type && !$type->isBuiltin()) {
+            if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
                 // Type-hinted parameter - resolve from container
                 $arguments[] = new ResolvableArgument($type->getName());
                 continue;
@@ -258,11 +260,15 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
             }
 
             // No type hint, no default, no provided value - this will fail at runtime
+            $declaringClass = $method instanceof ReflectionMethod
+                ? $method->getDeclaringClass()->getName()
+                : 'unknown';
+
             throw new CakeException(
                 sprintf(
                     'Cannot auto-wire parameter $%s in %s - no type hint or default value',
                     $name,
-                    $method->getDeclaringClass()?->getName() ?? 'unknown',
+                    $declaringClass,
                 ),
             );
         }
