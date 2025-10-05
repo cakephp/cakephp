@@ -26,6 +26,9 @@ use LogicException;
  * configuration data registered and manipulated.
  *
  * Implementing objects are expected to declare a static `$_dsnClassMap` property.
+ *
+ * @property array<string, class-string> $_dsnClassMap
+ * @property \Cake\Core\ObjectRegistry|null $_registry
  */
 trait StaticConfigTrait
 {
@@ -157,7 +160,6 @@ trait StaticConfigTrait
         if (!isset(static::$_config[$config])) {
             return false;
         }
-        /** @phpstan-ignore-next-line */
         if (isset(static::$_registry)) {
             static::$_registry->unload($config);
         }
@@ -280,9 +282,6 @@ REGEXP;
 
         parse_str($query, $queryArgs);
 
-        /**
-         * @var string $key
-         */
         foreach ($queryArgs as $key => $value) {
             if ($value === 'true') {
                 $queryArgs[$key] = true;
@@ -312,9 +311,8 @@ REGEXP;
     /**
      * Updates the DSN class map for this class.
      *
-     * @param array<string, string> $map Additions/edits to the class map to apply.
+     * @param array<string, class-string> $map Additions/edits to the class map to apply.
      * @return void
-     * @phpstan-param array<string, class-string> $map
      */
     public static function setDsnClassMap(array $map): void
     {
