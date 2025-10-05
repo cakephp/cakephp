@@ -1,0 +1,30 @@
+# Enforce that PRs labeled with "needs documentation" have a linked docs PR.
+name: Documentation needed triage
+
+on:
+  pull_request:
+    # Do NOT run on "opened" aka created PRs, since it won't have labels yet.
+    types: [synchronize, labeled, unlabeled, edited]
+
+jobs:
+  check-docs-triage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check PR labels
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request
+            const labels = pr.labels.map(l => l.name)
+
+            // Rule: Must either have no "needs documentation" label
+            // OR have a linked docs PR in the description
+            const hasLabel = labels.includes("needs documentation")
+            const hasDocsLink = /\bhttps:\/\/github\.com\/cakephp\/docs\/pull\/\d+\b/.test(pr.body || "")
+
+            if (hasLabel && !hasDocsLink) {
+              core.setFailed("PR has `needs documentation` label but no linked docs PR.")
+            } else {
+              console.log("Documentation triage condition satisfied ✅")
+            }
