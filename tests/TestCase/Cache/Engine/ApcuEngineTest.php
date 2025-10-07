@@ -26,6 +26,8 @@ use DateInterval;
  */
 class ApcuEngineTest extends TestCase
 {
+    use EngineEventsTrait;
+
     /**
      * useRequestTime original value
      *
@@ -93,6 +95,7 @@ class ApcuEngineTest extends TestCase
             'prefix' => 'cake_',
             'warnOnWriteFailures' => true,
         ];
+        $this->engine = 'apcu';
         Cache::drop('apcu');
         Cache::setConfig('apcu', array_merge($defaults, $config));
     }

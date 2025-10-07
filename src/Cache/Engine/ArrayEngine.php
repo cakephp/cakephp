@@ -54,7 +54,9 @@ class ArrayEngine extends CacheEngine
     {
         $key = $this->_key($key);
         $expires = time() + $this->duration($ttl);
+        $this->dispatchEvent('Cache.beforeSet', ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
         $this->data[$key] = ['exp' => $expires, 'val' => $value];
+        $this->dispatchEvent('Cache.afterSet', ['key' => $key, 'value' => $value, 'success' => true]);
 
         return true;
     }
@@ -70,7 +72,10 @@ class ArrayEngine extends CacheEngine
     public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->_key($key);
+        $this->dispatchEvent('Cache.beforeGet', ['key' => $key, 'default' => $default]);
         if (!isset($this->data[$key])) {
+            $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => null, 'success' => false]);
+
             return $default;
         }
         $data = $this->data[$key];
@@ -79,9 +84,12 @@ class ArrayEngine extends CacheEngine
         $now = time();
         if ($data['exp'] <= $now) {
             unset($this->data[$key]);
+            $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => null, 'success' => false]);
 
             return $default;
         }
+
+        $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => $data['val'], 'success' => true]);
 
         return $data['val'];
     }
@@ -99,9 +107,14 @@ class ArrayEngine extends CacheEngine
             $this->set($key, 0);
         }
         $key = $this->_key($key);
+        $this->dispatchEvent('Cache.beforeIncrement', ['key' => $key, 'offset' => $offset]);
         $this->data[$key]['val'] += $offset;
+        $val = $this->data[$key]['val'];
+        $this->dispatchEvent('Cache.afterIncrement', [
+            'key' => $key, 'offset' => $offset, 'success' => true, 'value' => $val,
+        ]);
 
-        return $this->data[$key]['val'];
+        return $val;
     }
 
     /**
@@ -117,7 +130,11 @@ class ArrayEngine extends CacheEngine
             $this->set($key, 0);
         }
         $key = $this->_key($key);
+        $this->dispatchEvent('Cache.beforeDecrement', ['key' => $key, 'offset' => $offset]);
         $this->data[$key]['val'] -= $offset;
+        $this->dispatchEvent('Cache.afterDecrement', [
+            'key' => $key, 'offset' => $offset, 'success' => true, 'value' => $this->data[$key]['val'],
+        ]);
 
         return $this->data[$key]['val'];
     }
@@ -131,7 +148,9 @@ class ArrayEngine extends CacheEngine
     public function delete(string $key): bool
     {
         $key = $this->_key($key);
+        $this->dispatchEvent('Cache.beforeDelete', ['key' => $key]);
         unset($this->data[$key]);
+        $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => true]);
 
         return true;
     }
@@ -144,6 +163,7 @@ class ArrayEngine extends CacheEngine
     public function clear(): bool
     {
         $this->data = [];
+        $this->dispatchEvent('Cache.cleared');
 
         return true;
     }
@@ -181,6 +201,7 @@ class ArrayEngine extends CacheEngine
         if (isset($this->data[$key])) {
             $this->data[$key]['val'] += 1;
         }
+        $this->dispatchEvent('Cache.clearedGroup', ['group' => $group]);
 
         return true;
     }

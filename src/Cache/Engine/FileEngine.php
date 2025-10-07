@@ -117,11 +117,15 @@ class FileEngine extends CacheEngine
         }
 
         $key = $this->_key($key);
+        $this->dispatchEvent('Cache.beforeSet', ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
 
         if ($this->_setKey($key, true) === false) {
+            $this->dispatchEvent('Cache.afterSet', ['key' => $key, 'value' => $value, 'success' => false]);
+
             return false;
         }
 
+        $origValue = $value;
         if (!empty($this->_config['serialize'])) {
             $value = serialize($value);
         }
@@ -143,6 +147,8 @@ class FileEngine extends CacheEngine
         }
         unset($this->_File);
 
+        $this->dispatchEvent('Cache.afterSet', ['key' => $key, 'value' => $origValue, 'success' => $success]);
+
         return $success;
     }
 
@@ -157,8 +163,11 @@ class FileEngine extends CacheEngine
     public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->_key($key);
+        $this->dispatchEvent('Cache.beforeGet', ['key' => $key, 'default' => $default]);
 
         if (!$this->_init || $this->_setKey($key) === false) {
+            $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => null, 'success' => false]);
+
             return $default;
         }
 
@@ -174,6 +183,7 @@ class FileEngine extends CacheEngine
             if ($this->_config['lock']) {
                 $this->_File->flock(LOCK_UN);
             }
+            $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => null, 'success' => false]);
 
             return $default;
         }
@@ -192,8 +202,13 @@ class FileEngine extends CacheEngine
         $data = trim($data);
 
         if ($data !== '' && !empty($this->_config['serialize'])) {
-            return unserialize($data);
+            $data = unserialize($data);
+            $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => $data, 'success' => true]);
+
+            return $data;
         }
+
+        $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => $data, 'success' => true]);
 
         return $data;
     }
@@ -208,8 +223,11 @@ class FileEngine extends CacheEngine
     public function delete(string $key): bool
     {
         $key = $this->_key($key);
+        $this->dispatchEvent('Cache.beforeDelete', ['key' => $key]);
 
         if ($this->_setKey($key) === false || !$this->_init) {
+            $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => false]);
+
             return false;
         }
 
@@ -217,8 +235,12 @@ class FileEngine extends CacheEngine
         unset($this->_File);
 
         if ($path === false) {
+            $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => false]);
+
             return false;
         }
+
+        $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => true]);
 
         // phpcs:disable
         return @unlink($path);
@@ -274,6 +296,7 @@ class FileEngine extends CacheEngine
         // unsetting iterators helps releasing possible locks in certain environments,
         // which could otherwise make `rmdir()` fail
         unset($directory, $iterator);
+        $this->dispatchEvent('Cache.cleared');
 
         return true;
     }
@@ -483,6 +506,7 @@ class FileEngine extends CacheEngine
         // unsetting iterators helps releasing possible locks in certain environments,
         // which could otherwise make `rmdir()` fail
         unset($directoryIterator, $contents, $filtered);
+        $this->dispatchEvent('Cache.clearedGroup', ['group' => $group]);
 
         return true;
     }
