@@ -212,6 +212,20 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     }
 
     /**
+     * Get a table instance by fully-qualified class name.
+     *
+     * @template T of \Cake\ORM\Table
+     * @param class-string<T> $class FQCN of the table class (e.g. UsersTable::class)
+     * @param array<string, mixed> $options The options you want to build the table with.
+     * @return T
+     */
+    public function getByClass(string $class, array $options = []): Table
+    {
+        /** @var T */
+        return parent::get($class, $options);
+    }
+
+    /**
      * @inheritDoc
      */
     protected function createInstance(string $alias, array $options): Table
