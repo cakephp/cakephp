@@ -57,16 +57,6 @@ interface LocatorInterface extends BaseLocatorInterface
     public function get(string $alias, array $options = []): Table;
 
     /**
-     * Get a table instance by fully-qualified class name.
-     *
-     * @template T of \Cake\ORM\Table
-     * @param class-string<T> $class FQCN of the table class (e.g. UsersTable::class)
-     * @param array<string, mixed> $options The options you want to build the table with.
-     * @return T
-     */
-    public function getByClass(string $class, array $options = []): Table;
-
-    /**
      * Set a table instance.
      *
      * @param string $alias The alias to set.

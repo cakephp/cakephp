@@ -212,44 +212,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     }
 
     /**
-     * Get a table instance by fully-qualified class name.
-     *
-     * Tables are only created once until the registry is flushed.
-     * This means that aliases must be unique across your application.
-     * This is important because table associations are resolved at runtime
-     * and cyclic references need to be handled correctly.
-     *
-     * The options that can be passed are the same as in {@link \Cake\ORM\Table::__construct()}, but the
-     * `className` key is also recognized.
-     *
-     * ### Options
-     *
-     * - `className` Define the specific class name to use. If undefined, CakePHP will generate the
-     *   class name based on the alias. For example 'Users' would result in
-     *   `App\Model\Table\UsersTable` being used. If this class does not exist,
-     *   then the default `Cake\ORM\Table` class will be used. By setting the `className`
-     *   option you can define the specific class to use. The className option supports
-     *   plugin short class references {@link \Cake\Core\App::shortName()}.
-     * - `table` Define the table name to use. If undefined, this option will default to the underscored
-     *   version of the alias name.
-     * - `connection` Inject the specific connection object to use. If this option and `connectionName` are undefined,
-     *   The table class' `defaultConnectionName()` method will be invoked to fetch the connection name.
-     * - `connectionName` Define the connection name to use. The named connection will be fetched from
-     *   {@link \Cake\Datasource\ConnectionManager}.
-     *
-     * @template T of \Cake\ORM\Table
-     * @param class-string<T> $class FQCN of the table class (e.g. UsersTable::class)
-     * @param array<string, mixed> $options The options you want to build the table with.
-     * @return T
-     */
-    public function getByClass(string $class, array $options = []): Table
-    {
-        // phpcs:ignore
-        /** @var T */
-        return parent::get($class, $options);
-    }
-
-    /**
      * @inheritDoc
      */
     protected function createInstance(string $alias, array $options): Table

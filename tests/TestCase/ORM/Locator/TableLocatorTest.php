@@ -194,31 +194,6 @@ class TableLocatorTest extends TestCase
     }
 
     /**
-     * Test getting instances from the registry by FQCN.
-     */
-    public function testGetByClass(): void
-    {
-        $result = $this->_locator->getByClass('Articles', [
-            'table' => 'my_articles',
-        ]);
-        $this->assertInstanceOf(Table::class, $result);
-        $this->assertSame('my_articles', $result->getTable());
-
-        $result2 = $this->_locator->getByClass('Articles');
-        $this->assertSame($result, $result2);
-        $this->assertSame('my_articles', $result->getTable());
-
-        $this->assertSame($this->_locator, $result->associations()->getTableLocator());
-
-        $result = $this->_locator->getByClass(ArticlesTable::class);
-        $this->assertSame('Articles', $result->getAlias());
-        $this->assertSame(ArticlesTable::class, $result->getRegistryAlias());
-
-        $result2 = $this->_locator->getByClass($result->getRegistryAlias());
-        $this->assertSame($result, $result2);
-    }
-
-    /**
      * Are auto-models instantiated correctly? How about when they have an alias?
      */
     public function testGetFallbacks(): void

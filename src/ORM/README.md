@@ -51,15 +51,6 @@ $locator = new TableLocator();
 $articles = $locator->get('Articles');
 ```
 
-You can also access table by FQCN (Fully-Qualified Class Name).
-
-```php
-use Cake\ORM\Locator\TableLocator;
-
-$locator = new TableLocator();
-$articles = $locator->getByClass(ArticlesTable::class);
-```
-
 You can also use a trait for easy access to the locator instance:
 
 ```php

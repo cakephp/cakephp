@@ -95,4 +95,22 @@ trait LocatorAwareTrait
 
         return $this->getTableLocator()->get($alias, $options);
     }
+
+    /**
+     * Get a table instance by fully-qualified class name.
+     *
+     * @template T of \Cake\ORM\Table
+     * @param class-string<T> $class FQCN of the table class (e.g. UsersTable::class)
+     * @param array<string, mixed> $options The options you want to build the table with.
+     *   If a table has already been loaded the registry options will be ignored.
+     * @return T
+     * @throws \Cake\Core\Exception\CakeException If the class does not correspond to a valid table.
+     * @see \Cake\ORM\TableLocator::get()
+     */
+    public function fetchTableByClass(string $class, array $options = []): Table
+    {
+        // phpcs:ignore
+        /** @var T */
+        return $this->getTableLocator()->get($class, $options);
+    }
 }
