@@ -213,7 +213,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
 
     /**
      * Get a table instance by fully-qualified class name.
-     * 
+     *
      * Tables are only created once until the registry is flushed.
      * This means that aliases must be unique across your application.
      * This is important because table associations are resolved at runtime
