@@ -103,6 +103,8 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $prefix = 'app';
             if ($namespace === 'Cake') {
                 $prefix = 'cakephp';
+            } elseif (defined("$class::GROUP")) {
+                $prefix = constant("$class::GROUP");
             } elseif (in_array($namespace, $plugins, true)) {
                 $prefix = Inflector::underscore($namespace);
             }
