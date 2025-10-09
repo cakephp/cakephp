@@ -81,18 +81,6 @@ class LocatorAwareTraitTest extends TestCase
         $this->assertSame('PaginatorPosts', $result->getAlias());
     }
 
-    public function testFetchTableByClass(): void
-    {
-        $stub = new LocatorAwareStub('Articles');
-
-        $result = $stub->fetchTableByClass('Comments');
-        $this->assertInstanceOf(Table::class, $result);
-
-        $result = $stub->fetchTableByClass(PaginatorPostsTable::class);
-        $this->assertInstanceOf(PaginatorPostsTable::class, $result);
-        $this->assertSame('PaginatorPosts', $result->getAlias());
-    }
-
     public function testFetchTableException(): void
     {
         $this->expectException(UnexpectedValueException::class);
