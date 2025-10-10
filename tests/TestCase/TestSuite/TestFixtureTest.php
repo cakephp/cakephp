@@ -23,6 +23,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
+use Cake\Test\Fixture\AliasedArticlesFixture;
 use Cake\Test\Fixture\ArticlesFixture;
 use Cake\Test\Fixture\PostsFixture;
 use Cake\TestSuite\TestCase;
@@ -71,11 +72,18 @@ class TestFixtureTest extends TestCase
 
         $Fixture = new ArticlesFixture();
         $Fixture->table = '';
+        $Fixture->tableAlias = '';
         $Fixture->init();
         $this->assertSame('articles', $Fixture->table);
 
         $schema = $Fixture->getTableSchema();
         $this->assertInstanceOf(TableSchema::class, $schema);
+    }
+
+    public function testCustomTableAlias(): void
+    {
+        $Fixture = new AliasedArticlesFixture();
+        $this->assertSame('articles', $Fixture->table);
     }
 
     /**
@@ -153,9 +161,7 @@ class TestFixtureTest extends TestCase
         $this->setAppNamespace();
 
         $fixture = new FeaturedTagsFixture();
-
-        $posts = new PostsFixture();
-        $posts->init();
+        new PostsFixture();
 
         $expected = ['tag_id', 'priority'];
         $this->assertSame($expected, $fixture->getTableSchema()->columns());
