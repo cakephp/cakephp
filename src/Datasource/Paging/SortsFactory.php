@@ -35,7 +35,7 @@ class SortsFactory
      * @param \Cake\Datasource\Paging\SortField|string ...$fields The sort fields to add
      * @return $this
      */
-    public function add(string $sortKey, SortField|string ...$fields): self
+    public function add(string $sortKey, SortField|string ...$fields)
     {
         if ($fields === []) {
             // If no fields provided, use the key as the field name

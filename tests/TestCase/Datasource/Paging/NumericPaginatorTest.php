@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource\Paging;
 
 use Cake\Core\Exception\CakeException;
-use Cake\ORM\Entity;
 use Cake\Datasource\Paging\SortField;
+use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 
 class NumericPaginatorTest extends TestCase
@@ -596,12 +596,13 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sorts' => function($factory) {
+            'sorts' => function ($factory) {
                 return $factory
                     ->add('name', SortField::asc('PaginatorPosts.title'))
-                    ->add('popularity', 
-                        SortField::desc('PaginatorPosts.id', locked: true), 
-                        SortField::asc('PaginatorPosts.title')
+                    ->add(
+                        'popularity',
+                        SortField::desc('PaginatorPosts.id', locked: true),
+                        SortField::asc('PaginatorPosts.title'),
                     )
                     ->add('newest', SortField::desc('PaginatorPosts.id'))
                     ->add('simple_author', 'PaginatorPosts.author_id');
@@ -646,11 +647,12 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sorts' => function($factory) {
+            'sorts' => function ($factory) {
                 return $factory
-                    ->add('relevance', 
+                    ->add(
+                        'relevance',
                         SortField::desc('PaginatorPosts.id', locked: true),
-                        SortField::desc('PaginatorPosts.author_id')
+                        SortField::desc('PaginatorPosts.author_id'),
                     )
                     ->add('price', SortField::asc('PaginatorPosts.id'));
             },

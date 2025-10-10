@@ -23,7 +23,6 @@ use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
 use function Cake\Core\triggerWarning;
-use Cake\Datasource\Paging\SortsFactory;
 
 /**
  * This class is used to handle automatic model data pagination.
@@ -746,6 +745,7 @@ class NumericPaginator implements PaginatorInterface
         if (is_callable($sortsConfig)) {
             $factory = new SortsFactory();
             $factory = $sortsConfig($factory);
+
             return $factory->build();
         }
 

@@ -66,8 +66,6 @@ class SortFieldFactory
         return $this;
     }
 
-
-
     /**
      * Add a custom SortField instance.
      *

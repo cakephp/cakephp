@@ -459,18 +459,21 @@ class NumericPaginatorSortFieldTest extends TestCase
     {
         $factory = new SortsFactory();
         $factory
-            ->add('newest', 
+            ->add(
+                'newest',
                 SortField::desc('published'),
-                SortField::asc('title')
+                SortField::asc('title'),
             )
-            ->add('popular', 
+            ->add(
+                'popular',
                 SortField::desc('published', locked: true),
-                SortField::desc('author_id')
+                SortField::desc('author_id'),
             )
-            ->add('alphabetical', 
-                SortField::asc('title')
+            ->add(
+                'alphabetical',
+                SortField::asc('title'),
             );
-        
+
         $settings = [
             'sorts' => $factory->build(),
         ];
@@ -547,7 +550,7 @@ class NumericPaginatorSortFieldTest extends TestCase
             ->add('title') // Shorthand - uses 'title' as field
             ->add('published') // Shorthand - uses 'published' as field
             ->add('author_id'); // Shorthand - uses 'author_id' as field
-        
+
         $settings = [
             'sorts' => $factory->build(),
         ];
