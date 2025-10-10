@@ -379,7 +379,8 @@ class PostgresSchemaDialect extends SchemaDialect
         c2.relname,
         a.attname,
         i.indisprimary,
-        i.indisunique
+        i.indisunique,
+        i.indnkeyatts
         FROM pg_catalog.pg_namespace n
         INNER JOIN pg_catalog.pg_class c ON (n.oid = c.relnamespace)
         INNER JOIN pg_catalog.pg_index i ON (c.oid = i.indrelid)
@@ -446,6 +447,7 @@ class PostgresSchemaDialect extends SchemaDialect
             $type = TableSchema::INDEX_INDEX;
             $name = $row['relname'];
             $constraint = null;
+            $includeColumnIndex = $row['indnkeyatts'];
             if ($row['indisprimary']) {
                 $constraint = $name;
                 $name = TableSchema::CONSTRAINT_PRIMARY;
@@ -465,7 +467,11 @@ class PostgresSchemaDialect extends SchemaDialect
             if ($constraint) {
                 $indexes[$name]['constraint'] = $constraint;
             }
-            $indexes[$name]['columns'][] = $row['attname'];
+            if (count($indexes[$name]['columns']) < $includeColumnIndex) {
+                $indexes[$name]['columns'][] = $row['attname'];
+            } else {
+                $indexes[$name]['include'][] = $row['attname'];
+            }
         }
 
         return array_values($indexes);
@@ -687,6 +693,7 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_SMALLINTEGER => ' SMALLINT',
             TableSchemaInterface::TYPE_INTEGER => ' INT',
             TableSchemaInterface::TYPE_BIGINTEGER => ' BIGINT',
+            TableSchemaInterface::TYPE_BINARY => ' BYTEA',
             TableSchemaInterface::TYPE_BINARY_UUID => ' UUID',
             TableSchemaInterface::TYPE_BOOLEAN => ' BOOLEAN',
             TableSchemaInterface::TYPE_FLOAT => ' FLOAT',
@@ -732,22 +739,20 @@ class PostgresSchemaDialect extends SchemaDialect
             unset($column['default']);
         }
 
+        $foundType = false;
         if (isset($typeMap[$column['type']])) {
             $out .= $typeMap[$column['type']];
+            $foundType = true;
         }
 
+        $hasLength = [
+            TableSchemaInterface::TYPE_CHAR,
+            TableSchemaInterface::TYPE_STRING,
+        ];
         if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
-        }
-        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
-            $out .= ' BYTEA';
-        }
-
-        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
-            $out .= '(' . $column['length'] . ')';
-        }
-
-        if (
+            $foundType = true;
+        } elseif (
             $column['type'] === TableSchemaInterface::TYPE_STRING ||
             (
                 $column['type'] === TableSchemaInterface::TYPE_TEXT &&
@@ -755,9 +760,17 @@ class PostgresSchemaDialect extends SchemaDialect
             )
         ) {
             $out .= ' VARCHAR';
-            if (isset($column['length']) && $column['length'] !== '') {
-                $out .= '(' . $column['length'] . ')';
-            }
+            $hasLength[] = $column['type'];
+            $foundType = true;
+        }
+
+        if (!$foundType) {
+            $out .= ' ' . strtoupper($column['type']);
+            $hasLength[] = $column['type'];
+        }
+
+        if (in_array($column['type'], $hasLength, true) && !empty($column['length'])) {
+            $out .= '(' . $column['length'] . ')';
         }
 
         $hasCollate = [
@@ -876,18 +889,26 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
-        $data = $schema->getIndex($name);
-        assert($data !== null);
+        $index = $schema->index($name);
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns'],
+            (array)$index->getColumns(),
         );
+        $include = '';
+        if ($index->getInclude()) {
+            $included = array_map(
+                $this->_driver->quoteIdentifier(...),
+                $index->getInclude(),
+            );
+            $include = sprintf(' INCLUDE (%s)', implode(', ', $included));
+        }
 
         return sprintf(
-            'CREATE INDEX %s ON %s (%s)',
+            'CREATE INDEX %s ON %s (%s)%s',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
             implode(', ', $columns),
+            $include,
         );
     }
 

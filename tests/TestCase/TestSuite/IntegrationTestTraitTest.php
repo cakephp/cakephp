@@ -1809,7 +1809,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->get($url);
 
-        call_user_func_array($this->$assertion(...), $rest);
+        $this->$assertion(...$rest);
     }
 
     /**
@@ -1978,7 +1978,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->expectExceptionMessage('Possibly related to `OutOfBoundsException`: "oh no!"');
         $this->get('/posts/throw_exception');
         $this->_requestSession = new Session();
-        call_user_func_array($this->$assertMethod(...), $rest);
+        $this->$assertMethod(...$rest);
     }
 
     /**

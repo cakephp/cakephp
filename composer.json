@@ -57,7 +57,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
-        "cakephp/cakephp-codesniffer": "^5.2",
+        "cakephp/cakephp-codesniffer": "^5.3",
         "http-interop/http-factory-tests": "dev-main",
         "mikey179/vfsstream": "^1.6.12",
         "mockery/mockery": "^1.6",

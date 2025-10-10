@@ -23,19 +23,28 @@ jobs:
       matrix:
         php-version: ['8.2', '8.4']
         db-type: [sqlite, pgsql]
+        dependencies: ['highest']
         include:
           - php-version: '8.2'
             db-type: 'mariadb'
+            dependencies: highest
+
           - php-version: '8.2'
             db-type: 'mysql'
             dependencies: 'lowest'
+
           - php-version: '8.2'
             db-type: 'mysql'
+            dependencies: highest
+
           - php-version: '8.3'
             db-type: 'mysql'
+            dependencies: highest
+
           - php-version: '8.4'
             db-type: 'mysql'
             dependencies: highest
+
           - php-version: '8.5'
             db-type: 'sqlite'
             dependencies: highest
@@ -124,11 +133,15 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
-        if [[ ${{ matrix.php-version }} == '8.2' ]]; then
+        if [[ ${{ matrix.php-version }} == '8.2' && ${{ matrix.dependencies }} == 'highest' ]]; then
           export CODECOVERAGE=1
-          vendor/bin/phpunit --display-warnings --display-incomplete --coverage-clover=coverage.xml
-          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-deprecations --display-warnings --display-incomplete --testsuite=database
-          vendor/bin/phpunit --display-warnings --display-incomplete --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
+          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-phpunit-deprecation --testsuite=cakephp --coverage-clover=coverage.xml
+          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database.xml
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database
+          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-warning --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
+        elif [[ ${{ matrix.php-version }} == '8.2' && ${{ matrix.dependencies }} == 'lowest' ]]; then
+          vendor/bin/phpunit
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         else
           vendor/bin/phpunit --display-phpunit-deprecations --display-deprecations --display-warnings
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-phpunit-deprecations --display-deprecations --display-warnings --testsuite=database
@@ -138,7 +151,7 @@ jobs:
       if: matrix.php-version == '8.2'
       uses: codecov/codecov-action@v5
       with:
-        files: coverage.xml,coverage-functions.xml
+        files: coverage.xml,coverage-database.xml,coverage-functions.xml
         token: ${{ secrets.CODECOV_TOKEN }}
 
   testsuite-windows:
@@ -222,7 +235,7 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: '8.2'
-          extensions: mbstring, intl
+          extensions: mbstring, intl, pcntl
           coverage: none
           tools: phive, cs2pr
         env:
@@ -236,7 +249,7 @@ jobs:
 
       - name: Run phpcs
         if: always()
-        run: vendor/bin/phpcs --report=checkstyle | cs2pr
+        run: vendor/bin/phpcs --parallel=4 --report=checkstyle | cs2pr
 
       - name: Run phpstan
         if: always()
@@ -258,8 +271,22 @@ jobs:
         if: matrix.prefer-lowest == 'prefer-lowest'
         run: composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest -m
 
+      - name: Setup rector cache
+        if: always()
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/rector
+          key: ${{ runner.os }}-rector-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-rector-
+
+      - name: Create rector cache dir
+        if: always()
+        run: mkdir -p ${{ runner.temp }}/rector
+
       - name: Run rector
         if: always()
+        env:
+          RECTOR_CACHE_DIR: ${{ runner.temp }}/rector
         run: composer rector-setup && composer rector-check
 
   split-packages-stan:

@@ -303,7 +303,7 @@ class SelectLoader
             $conditions = $this->_createTupleCondition($query, $key, $filter, '=');
         } else {
             $filter = current($filter);
-            $conditions = $query->newExpr([$key => $filter]);
+            $conditions = $query->expr([$key => $filter]);
         }
 
         return $query->innerJoin(

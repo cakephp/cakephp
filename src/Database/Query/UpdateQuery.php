@@ -106,11 +106,11 @@ class UpdateQuery extends Query
     public function set(QueryExpression|Closure|array|string $key, mixed $value = null, array|string $types = [])
     {
         if (empty($this->_parts['set'])) {
-            $this->_parts['set'] = $this->newExpr()->setConjunction(',');
+            $this->_parts['set'] = $this->expr()->setConjunction(',');
         }
 
         if ($key instanceof Closure) {
-            $exp = $this->newExpr()->setConjunction(',');
+            $exp = $this->expr()->setConjunction(',');
             /** @var \Cake\Database\Expression\QueryExpression $setExpr */
             $setExpr = $this->_parts['set'];
             $setExpr->add($key($exp));

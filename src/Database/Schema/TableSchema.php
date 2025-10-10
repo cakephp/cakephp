@@ -208,6 +208,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         'columns' => [],
         'length' => [],
         'references' => [],
+        'include' => null,
         'update' => 'restrict',
         'delete' => 'restrict',
         'constraint' => null,
@@ -531,7 +532,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         $defaults = [];
         foreach ($this->_columns as $column) {
             $default = $column->getDefault();
-            if ($default === null && $column->getNull() !== true) {
+            if ($default === null && $column->getNull() !== true && $column->getName()) {
                 continue;
             }
             $defaults[$column->getName()] = $default;
@@ -688,7 +689,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
 
         $attrs['name'] = $attrs['constraint'] ?? $name;
-        unset($attrs['constraint']);
+        unset($attrs['constraint'], $attrs['include']);
 
         $type = $attrs['type'] ?? null;
         if ($type === static::CONSTRAINT_FOREIGN) {

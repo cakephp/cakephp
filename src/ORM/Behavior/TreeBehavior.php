@@ -891,7 +891,7 @@ class TreeBehavior extends Behavior
         /** @var \Cake\Database\Expression\IdentifierExpression $field */
         foreach ([$config['leftField'], $config['rightField']] as $field) {
             $query = $this->_scope($this->_table->updateQuery());
-            $exp = $query->newExpr();
+            $exp = $query->expr();
 
             $movement = clone $exp;
             $movement->add($field)->add((string)$shift)->setConjunction($dir);

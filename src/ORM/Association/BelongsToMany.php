@@ -531,7 +531,7 @@ class BelongsToMany extends Association
                 foreach (array_keys($conds) as $field) {
                     $identifiers[] = new IdentifierExpression($field);
                 }
-                $identifiers = $subquery->newExpr()->add($identifiers)->setConjunction(',');
+                $identifiers = $subquery->expr()->add($identifiers)->setConjunction(',');
                 $nullExp = clone $exp;
 
                 return $exp

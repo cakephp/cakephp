@@ -1,10 +1,11 @@
 <?php
-
 declare(strict_types=1);
 
+use Rector\Caching\ValueObject\Storage\FileCacheStorage;
 use Rector\Config\RectorConfig;
-use Rector\Set\ValueObject\LevelSetList;
 use Rector\Set\ValueObject\SetList;
+
+$cacheDir = getenv('RECTOR_CACHE_DIR') ?: sys_get_temp_dir() . DIRECTORY_SEPARATOR . 'rector';
 
 return RectorConfig::configure()
     ->withPaths([
@@ -14,7 +15,13 @@ return RectorConfig::configure()
         __DIR__ . '/tests',
     ])
 
+    ->withCache(
+        cacheClass: FileCacheStorage::class,
+        cacheDirectory: $cacheDir,
+    )
+
     ->withPhpSets()
+    ->withAttributesSets()
 
     ->withSets([
         SetList::CODE_QUALITY,

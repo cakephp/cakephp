@@ -160,6 +160,7 @@ class MimeType
         'xlm' => ['application/vnd.ms-excel'],
         'xls' => ['application/vnd.ms-excel'],
         'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+        'xlsm' => ['application/vnd.ms-excel.sheet.macroEnabled.12'],
         'xlw' => ['application/vnd.ms-excel'],
         'zip' => ['application/zip'],
         'aif' => ['audio/x-aiff'],

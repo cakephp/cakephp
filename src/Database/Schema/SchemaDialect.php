@@ -158,8 +158,8 @@ abstract class SchemaDialect
      *
      * @param string $columnType The column type.
      * @param array $definition The column definition.
-     * @return array|null Array of column information, or `null` in case no corresponding type was found or the type
-     *  didn't provide custom column information.
+     * @return array<string, mixed>|null Array of column information, or `null`
+     *  in case no corresponding type was found or the type didn't provide custom column information.
      */
     protected function _applyTypeSpecificColumnConversion(string $columnType, array $definition): ?array
     {

@@ -1,7 +1,5 @@
 <?xml version="1.0"?>
 <ruleset name="CakePHP Core">
-    <config name="installed_paths" value="../../cakephp/cakephp-codesniffer"/>
-
     <file>config/</file>
     <file>src/</file>
     <file>tests/</file>

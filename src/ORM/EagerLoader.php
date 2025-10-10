@@ -32,7 +32,7 @@ class EagerLoader
      * Nested array describing the association to be fetched
      * and the options to apply for each of them, if any
      *
-     * @var array<string, mixed>
+     * @var array<string, array>
      */
     protected array $_containments = [];
 
@@ -40,9 +40,9 @@ class EagerLoader
      * Contains a nested array with the compiled containments tree
      * This is a normalized version of the user provided containments array.
      *
-     * @var \Cake\ORM\EagerLoadable|array<\Cake\ORM\EagerLoadable>|null
+     * @var array<string, \Cake\ORM\EagerLoadable>|null
      */
-    protected EagerLoadable|array|null $_normalized = null;
+    protected ?array $_normalized = null;
 
     /**
      * List of options accepted by associations in contain()
@@ -68,7 +68,7 @@ class EagerLoader
     /**
      * A list of associations that should be loaded with a separate query.
      *
-     * @var array<\Cake\ORM\EagerLoadable>
+     * @var array<int, \Cake\ORM\EagerLoadable>
      */
     protected array $_loadExternal = [];
 
@@ -287,20 +287,16 @@ class EagerLoader
      *
      * @param \Cake\ORM\Table $repository The table containing the association that
      * will be normalized.
-     * @return array
+     * @return array<string, \Cake\ORM\EagerLoadable>
      */
     public function normalized(Table $repository): array
     {
-        if ($this->_normalized !== null || $this->_containments === []) {
-            return (array)$this->_normalized;
+        if ($this->_normalized !== null) {
+            return $this->_normalized;
         }
 
         $contain = [];
         foreach ($this->_containments as $alias => $options) {
-            if (!empty($options['instance'])) {
-                $contain = $this->_containments;
-                break;
-            }
             $contain[$alias] = $this->_normalizeContain(
                 $repository,
                 $alias,
@@ -438,7 +434,7 @@ class EagerLoader
      *
      * @param \Cake\ORM\Table $repository The table containing the associations to be
      * attached.
-     * @return array<\Cake\ORM\EagerLoadable>
+     * @return array<string, \Cake\ORM\EagerLoadable>
      */
     public function attachableAssociations(Table $repository): array
     {
@@ -581,9 +577,9 @@ class EagerLoader
      * Helper function used to compile a list of all associations that can be
      * joined in the query.
      *
-     * @param array<\Cake\ORM\EagerLoadable> $associations List of associations from which to obtain joins.
-     * @param array<\Cake\ORM\EagerLoadable> $matching List of associations that should be forcibly joined.
-     * @return array<\Cake\ORM\EagerLoadable>
+     * @param array<string, \Cake\ORM\EagerLoadable> $associations List of associations from which to obtain joins.
+     * @param array<string, \Cake\ORM\EagerLoadable> $matching List of associations that should be forcibly joined.
+     * @return array<string, \Cake\ORM\EagerLoadable>
      */
     protected function _resolveJoins(array $associations, array $matching = []): array
     {

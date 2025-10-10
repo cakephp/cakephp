@@ -502,7 +502,6 @@ class FunctionsTest extends TestCase
             // int input types
             '(int) number' => [55, 55],
             '(int) negative number' => [-5, -5],
-            '(int) PHP_INT_MAX + 1' => [9223372036854775808, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
             '(int) PHP_INT_MAX + 0' => [9223372036854775807, 9223372036854775807],
             '(int) PHP_INT_MAX - 1' => [9223372036854775806, 9223372036854775806],
             '(int) PHP_INT_MIN + 1' => [-9223372036854775807, -9223372036854775807],
@@ -515,9 +514,6 @@ class FunctionsTest extends TestCase
             '(float) round' => [5.0, 5],
             '(float) negative' => [-5.5, -5],
             '(float) round negative' => [-5.0, -5],
-            '(float) PHP_INT_MAX + 1' => [9223372036854775808.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
-            '(float) PHP_INT_MAX + 0' => [9223372036854775807.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
-            '(float) PHP_INT_MAX - 1' => [9223372036854775806.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
             '(float) PHP_INT_MIN + 1' => [-9223372036854775807.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
             '(float) PHP_INT_MIN + 0' => [-9223372036854775808.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
             '(float) PHP_INT_MIN - 1' => [-9223372036854775809.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
@@ -543,6 +539,32 @@ class FunctionsTest extends TestCase
             '(other) int-array' => [[5], null],
             '(other) string-array' => [['5'], null],
             '(other) simple object' => [new stdClass(), null],
+        ];
+    }
+
+    #[DataProvider('toIntProviderWithWarning')]
+    public function testToIntWithWarning(mixed $rawValue, null|int $expected): void
+    {
+        if (version_compare(PHP_VERSION, '8.5', '>=')) {
+            $this->expectErrorHandlerMessageMatches(
+                '/is not representable as an int, cast occurred/',
+                function () use ($expected, $rawValue): void {
+                    $this->assertSame($expected, toInt($rawValue));
+                },
+                E_WARNING,
+            );
+        } else {
+            $this->assertSame($expected, toInt($rawValue));
+        }
+    }
+
+    public static function toIntProviderWithWarning(): array
+    {
+        return [
+            '(float) PHP_INT_MAX + 0' => [9223372036854775807.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
+            '(float) PHP_INT_MAX + 1' => [9223372036854775808.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
+            '(float) PHP_INT_MAX - 1' => [9223372036854775806.0, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
+            '(int) PHP_INT_MAX + 1' => [9223372036854775808, -9223372036854775807 - 1], // ¯\_(ツ)_/¯
         ];
     }
 

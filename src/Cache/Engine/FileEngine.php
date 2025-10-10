@@ -64,7 +64,7 @@ class FileEngine extends CacheEngine
         'groups' => [],
         'lock' => true,
         'mask' => 0664,
-        'dirMask' => 0770,
+        'dirMask' => 0777,
         'path' => null,
         'prefix' => 'cake_',
         'serialize' => true,
@@ -364,7 +364,7 @@ class FileEngine extends CacheEngine
         $dir = $this->_config['path'] . $groups;
 
         if (!is_dir($dir)) {
-            mkdir($dir, $this->_config['dirMask'], true);
+            mkdir($dir, $this->_config['dirMask'] ^ umask(), true);
         }
 
         $path = new SplFileInfo($dir . $key);
@@ -411,7 +411,7 @@ class FileEngine extends CacheEngine
         $success = true;
         if (!is_dir($path)) {
             // phpcs:disable
-            $success = @mkdir($path, $this->_config['dirMask'], true);
+            $success = @mkdir($path, $this->_config['dirMask'] ^ umask(), true);
             // phpcs:enable
         }
 

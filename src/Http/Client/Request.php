@@ -55,7 +55,7 @@ class Request extends Message implements RequestInterface
             'User-Agent' => ini_get('user_agent') ?: 'CakePHP',
         ];
         $this->addHeaders($headers);
-        if ($data === null || $data === '' || $data === []) {
+        if (in_array($data, [null, '', []], true)) {
             $this->stream = new Stream('php://memory', 'rw');
         } else {
             $this->setContent($data);

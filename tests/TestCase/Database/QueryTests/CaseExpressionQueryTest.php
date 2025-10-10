@@ -70,7 +70,7 @@ class CaseExpressionQueryTest extends TestCase
             ->select(function (Query $query) {
                 return [
                     'name',
-                    'category_name' => $query->newExpr()
+                    'category_name' => $query->expr()
                         ->case($query->identifier('products.category'))
                         ->when(1)
                         ->then('Touring')
@@ -111,7 +111,7 @@ class CaseExpressionQueryTest extends TestCase
                 return [
                     'name',
                     'price',
-                    'price_range' => $query->newExpr()
+                    'price_range' => $query->expr()
                         ->case()
                         ->when(['price <' => 20])
                         ->then('Under $20')
@@ -157,13 +157,13 @@ class CaseExpressionQueryTest extends TestCase
             ->from('comments')
             ->orderByAsc('comments.article_id')
             ->orderByDesc(function (QueryExpression $exp, Query $query) {
-                return $query->newExpr()
+                return $query->expr()
                     ->case($query->identifier('comments.article_id'))
                     ->when(1)
                     ->then($query->identifier('comments.user_id'));
             })
             ->orderByAsc(function (QueryExpression $exp, Query $query) {
-                return $query->newExpr()
+                return $query->expr()
                     ->case($query->identifier('comments.article_id'))
                     ->when(2)
                     ->then($query->identifier('comments.user_id'));
@@ -207,7 +207,7 @@ class CaseExpressionQueryTest extends TestCase
             ->leftJoin('comments', ['comments.article_id = articles.id'])
             ->groupBy(['articles.id', 'articles.title'])
             ->having(function (QueryExpression $exp, Query $query) {
-                $expression = $query->newExpr()
+                $expression = $query->expr()
                     ->case()
                     ->when(['comments.published' => 'Y'])
                     ->then(1);
@@ -248,7 +248,7 @@ class CaseExpressionQueryTest extends TestCase
             ->update('comments')
             ->set([
                 'published' =>
-                    $this->query->newExpr()
+                    $this->query->expr()
                         ->case()
                         ->when(['published' => 'Y'])
                         ->then('N')
@@ -294,11 +294,11 @@ class CaseExpressionQueryTest extends TestCase
         $query = $this->query
             ->select(function (Query $query) {
                 return [
-                    'val' => $query->newExpr()
-                        ->case($query->newExpr(':value'))
-                        ->when($query->newExpr(':when'))
-                        ->then($query->newExpr(':then'))
-                        ->else($query->newExpr(':else')),
+                    'val' => $query->expr()
+                        ->case($query->expr(':value'))
+                        ->when($query->expr(':when'))
+                        ->then($query->expr(':then'))
+                        ->else($query->expr(':else')),
                 ];
             })
             ->from('products')

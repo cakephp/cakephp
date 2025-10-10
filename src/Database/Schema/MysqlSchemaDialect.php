@@ -674,6 +674,7 @@ class MysqlSchemaDialect extends SchemaDialect
                     if ($isKnownLength) {
                         $length = array_search($column['length'], TableSchema::$columnLengths);
                         assert(is_string($length));
+                        unset($column['length']);
                         $out .= ' ' . strtoupper($length) . 'BLOB';
                         break;
                     }
@@ -684,9 +685,9 @@ class MysqlSchemaDialect extends SchemaDialect
                     }
 
                     if ($column['length'] > 2) {
-                        $out .= ' VARBINARY(' . $column['length'] . ')';
+                        $out .= ' VARBINARY';
                     } else {
-                        $out .= ' BINARY(' . $column['length'] . ')';
+                        $out .= ' BINARY';
                     }
                     break;
             }
@@ -697,7 +698,12 @@ class MysqlSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_SMALLINTEGER,
             TableSchemaInterface::TYPE_TINYINTEGER,
             TableSchemaInterface::TYPE_STRING,
+            TableSchemaInterface::TYPE_BINARY,
         ];
+        if (!isset($typeMap[$column['type']]) && !isset($specialMap[$column['type']])) {
+            $out .= ' ' . strtoupper($column['type']);
+            $hasLength[] = $column['type'];
+        }
         if (in_array($column['type'], $hasLength, true) && isset($column['length'])) {
             $out .= '(' . $column['length'] . ')';
         }

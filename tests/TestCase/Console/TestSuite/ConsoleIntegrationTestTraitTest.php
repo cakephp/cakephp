@@ -233,7 +233,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
         $this->exec($command);
 
-        call_user_func_array($this->$assertion(...), $rest);
+        $this->$assertion(...$rest);
     }
 
     /**

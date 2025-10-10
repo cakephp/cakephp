@@ -689,6 +689,40 @@ SQL;
     }
 
     /**
+     * Ensure that included columns are included in reflection results
+     */
+    public function testDescribeIndexIncludedFields(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE schema_index_include (
+    "id" INTEGER NOT NULL,
+    "site_id" INTEGER NOT NULL,
+    "name" VARCHAR(255),
+    PRIMARY KEY("id")
+);
+SQL;
+        $connection->execute($sql);
+
+        $sql = 'CREATE INDEX [site_id_name] ON [schema_index_include] ([site_id]) INCLUDE ([name])';
+        $connection->execute($sql);
+
+        $dialect = new SqlserverSchemaDialect($connection->getDriver());
+        $indexExists = $dialect->hasIndex('schema_index_include', ['site_id']);
+        $indexExistsName = $dialect->hasIndex('schema_index_include', name: 'site_id_name');
+        $indexes = $dialect->describeIndexes('schema_index_include');
+        $connection->execute('DROP TABLE schema_index_include');
+
+        $this->assertTrue($indexExists);
+        $this->assertTrue($indexExistsName);
+        $this->assertCount(2, $indexes);
+        $this->assertEquals(['id'], $indexes[0]['columns']);
+        $this->assertEquals(['site_id'], $indexes[1]['columns']);
+        $this->assertEquals(['name'], $indexes[1]['include']);
+    }
+
+    /**
      * Column provider for creating column sql
      *
      * @return array
@@ -696,6 +730,12 @@ SQL;
     public static function columnSqlProvider(): array
     {
         return [
+            // Unknown column type is preserved.
+            [
+                'title',
+                ['type' => 'foobar', 'length' => 25, 'null' => true, 'default' => null],
+                '[title] FOOBAR(25) DEFAULT NULL',
+            ],
             // strings
             [
                 'title',
@@ -1157,6 +1197,46 @@ SQL;
         $result = $table->dropConstraintSql($connection);
         $this->assertCount(2, $result);
         $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Provide data for testing constraintSql
+     *
+     * @return array
+     */
+    public static function indexSqlProvider(): array
+    {
+        return [
+            [
+                'title_idx',
+                ['type' => 'index', 'columns' => ['title']],
+                'CREATE INDEX [title_idx] ON [schema_articles] ([title])',
+            ],
+            [
+                'author_idx',
+                ['type' => 'index', 'columns' => ['author_id'], 'include' => ['title']],
+                'CREATE INDEX [author_idx] ON [schema_articles] ([author_id]) INCLUDE ([title])',
+            ],
+        ];
+    }
+
+    /**
+     * Test the indexSql method.
+     */
+    #[DataProvider('indexSqlProvider')]
+    public function testIndexSql(string $name, array $data, string $expected): void
+    {
+        $driver = $this->_getMockedDriver();
+        $schema = new SqlserverSchemaDialect($driver);
+
+        $table = (new TableSchema('schema_articles'))->addColumn('title', [
+            'type' => 'string',
+            'length' => 255,
+        ])->addColumn('author_id', [
+            'type' => 'integer',
+        ])->addIndex($name, $data);
+
+        $this->assertTextEquals($expected, $schema->indexSql($table, $name));
     }
 
     /**

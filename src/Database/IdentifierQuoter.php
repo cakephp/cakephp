@@ -150,7 +150,7 @@ class IdentifierQuoter
      * Quotes all identifiers in each of the clauses/parts of a query
      *
      * @param \Cake\Database\Query $query The query to quote.
-     * @param array $parts Query clauses.
+     * @param array<string> $parts Query clauses.
      * @return void
      */
     protected function _quoteParts(Query $query, array $parts): void
@@ -197,7 +197,7 @@ class IdentifierQuoter
      * Quotes both the table and alias for an array of joins as stored in a Query
      * object
      *
-     * @param array $joins The joins to quote.
+     * @param array<array> $joins The joins to quote.
      * @return array<string, array>
      */
     protected function _quoteJoins(array $joins): array
@@ -262,6 +262,7 @@ class IdentifierQuoter
      */
     protected function _quoteInsert(InsertQuery $query): void
     {
+        /** @var array{0?: string, 1?: array} $insert */
         $insert = $query->clause('insert');
         if (!isset($insert[0]) || !isset($insert[1])) {
             return;

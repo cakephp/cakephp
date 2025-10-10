@@ -323,7 +323,7 @@ class Sqlserver extends Driver
         }
 
         if ($offset !== null && !$query->clause('order')) {
-            $query->orderBy($query->newExpr()->add('(SELECT NULL)'));
+            $query->orderBy($query->expr()->add('(SELECT NULL)'));
         }
 
         if ($this->version() < 11 && $offset !== null) {
@@ -426,9 +426,9 @@ class Sqlserver extends Driver
         $order = new OrderByExpression($distinct);
         $query
             ->select(function (Query $q) use ($distinct, $order) {
-                $over = $q->newExpr('ROW_NUMBER() OVER')
+                $over = $q->expr('ROW_NUMBER() OVER')
                     ->add('(PARTITION BY')
-                    ->add($q->newExpr()->add($distinct)->setConjunction(','))
+                    ->add($q->expr()->add($distinct)->setConjunction(','))
                     ->add($order)
                     ->add(')')
                     ->setConjunction(' ');

@@ -46,6 +46,10 @@ class Curl implements AdapterInterface
         }
 
         $ch = curl_init();
+        if ($ch === false) {
+            throw new ClientException('Could not initialize curl session.');
+        }
+
         $options = $this->buildOptions($request, $options);
         curl_setopt_array($ch, $options);
 

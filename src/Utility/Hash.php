@@ -678,7 +678,7 @@ class Hash
      */
     protected static function _filter(mixed $var): bool
     {
-        return $var === 0 || $var === 0.0 || $var === '0' || !empty($var);
+        return in_array($var, [0, 0.0, '0'], true) || !empty($var);
     }
 
     /**

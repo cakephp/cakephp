@@ -191,8 +191,8 @@ class SelectQueryTest extends TestCase
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
-        $exp = $query->newExpr('1 + 1');
-        $comp = $query->newExpr(['article_id +' => 2]);
+        $exp = $query->expr('1 + 1');
+        $comp = $query->expr(['article_id +' => 2]);
         $result = $query->select(['text' => 'comment', 'two' => $exp, 'three' => $comp])
             ->from('comments')->execute();
         $this->assertEquals(['text' => 'First Comment for First Article', 'two' => 2, 'three' => 3], $result->fetch('assoc'));
@@ -235,7 +235,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['title', 'name'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->expr()->equalFields('author_id', 'a.id')])
             ->orderBy(['title' => 'asc'])
             ->execute();
 
@@ -250,7 +250,7 @@ class SelectQueryTest extends TestCase
         $result->closeCursor();
 
         $result = $query->join([
-            ['table' => 'authors', 'type' => 'INNER', 'conditions' => $query->newExpr()->equalFields('author_id', 'authors.id')],
+            ['table' => 'authors', 'type' => 'INNER', 'conditions' => $query->expr()->equalFields('author_id', 'authors.id')],
         ], [], true)->execute();
         $rows = $result->fetchAll('assoc');
         $this->assertCount(3, $rows);
@@ -268,7 +268,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['title', 'name'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => [$query->newExpr()->equalFields('author_id ', 'a.id')]])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => [$query->expr()->equalFields('author_id ', 'a.id')]])
             ->orderBy(['title' => 'asc'])
             ->execute();
         $this->assertEquals(['title' => 'First Article', 'name' => 'mariano'], $result->fetch('assoc'));
@@ -276,7 +276,7 @@ class SelectQueryTest extends TestCase
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
-        $conditions = $query->newExpr()->equalFields('author_id', 'a.id');
+        $conditions = $query->expr()->equalFields('author_id', 'a.id');
         $result = $query
             ->select(['title', 'name'])
             ->from('articles')
@@ -316,7 +316,7 @@ class SelectQueryTest extends TestCase
         $result->closeCursor();
 
         $query = new SelectQuery($this->connection);
-        $conditions = $query->newExpr('author_id = a.id');
+        $conditions = $query->expr('author_id = a.id');
         $result = $query
             ->select(['title', 'name'])
             ->from('articles')
@@ -823,7 +823,7 @@ class SelectQueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function ($exp, $q) {
-                return $exp->in($q->newExpr('SELECT 1'), []);
+                return $exp->in($q->expr('SELECT 1'), []);
             })
             ->execute();
     }
@@ -1222,7 +1222,7 @@ class SelectQueryTest extends TestCase
             ->where(function ($exp, $q) {
                 return $exp->in(
                     'created',
-                    $q->newExpr("'2007-03-18 10:45:23'"),
+                    $q->expr("'2007-03-18 10:45:23'"),
                     'datetime',
                 );
             })
@@ -1239,7 +1239,7 @@ class SelectQueryTest extends TestCase
             ->where(function ($exp, $q) {
                 return $exp->notIn(
                     'created',
-                    $q->newExpr("'2007-03-18 10:45:23'"),
+                    $q->expr("'2007-03-18 10:45:23'"),
                     'datetime',
                 );
             })
@@ -1414,8 +1414,8 @@ class SelectQueryTest extends TestCase
             ->select(['id'])
             ->from('comments')
             ->where(function (ExpressionInterface $exp, Query $q) {
-                $from = $q->newExpr("'2007-03-18 10:51:00'");
-                $to = $q->newExpr("'2007-03-18 10:54:00'");
+                $from = $q->expr("'2007-03-18 10:51:00'");
+                $to = $q->expr("'2007-03-18 10:54:00'");
 
                 return $exp->between('created', $from, $to);
             })
@@ -1739,7 +1739,7 @@ class SelectQueryTest extends TestCase
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));
         $result->closeCursor();
 
-        $expression = $query->newExpr(['(id + :offset) % 2']);
+        $expression = $query->expr(['(id + :offset) % 2']);
         $result = $query
             ->orderBy([$expression, 'id' => 'desc'], true)
             ->bind(':offset', 1, null)
@@ -2170,7 +2170,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['city', 'state', 'country'])
             ->from(['addresses'])
-            ->modifier($query->newExpr('EXPRESSION'));
+            ->modifier($query->expr('EXPRESSION'));
         $this->assertQuotedQuery(
             'SELECT EXPRESSION <city>, <state>, <country> FROM <addresses>',
             $result->sql(),
@@ -2187,7 +2187,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->expr()->equalFields('author_id', 'a.id')])
             ->groupBy('author_id')
             ->having(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
             ->execute();
@@ -2217,7 +2217,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->expr()->equalFields('author_id', 'a.id')])
             ->groupBy('author_id')
             ->having(['count(author_id) >' => 2], ['count(author_id)' => 'integer'])
             ->andHaving(['count(author_id) <' => 2], ['count(author_id)' => 'integer'])
@@ -2228,7 +2228,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->expr()->equalFields('author_id', 'a.id')])
             ->groupBy('author_id')
             ->having(['count(author_id)' => 2], ['count(author_id)' => 'integer'])
             ->andHaving(['count(author_id) >' => 1], ['count(author_id)' => 'integer'])
@@ -2240,7 +2240,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select(['total' => 'count(author_id)', 'author_id'])
             ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->newExpr()->equalFields('author_id', 'a.id')])
+            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => $query->expr()->equalFields('author_id', 'a.id')])
             ->groupBy('author_id')
             ->andHaving(function ($e) {
                 return $e->add('count(author_id) = 2 - 1');
@@ -2413,7 +2413,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->select([
                 'id',
-                'ids_added' => $query->newExpr()->add('(user_id + article_id)'),
+                'ids_added' => $query->expr()->add('(user_id + article_id)'),
             ])
             ->from('comments')
             ->orderBy(['ids_added' => 'asc'])
@@ -2439,7 +2439,7 @@ class SelectQueryTest extends TestCase
         $subquery = (new SelectQuery($this->connection))
             ->select('name')
             ->from(['b' => 'authors'])
-            ->where([$query->newExpr()->equalFields('b.id', 'a.id')]);
+            ->where([$query->expr()->equalFields('b.id', 'a.id')]);
         $result = $query
             ->select(['id', 'name' => $subquery])
             ->from(['a' => 'comments'])->execute();
@@ -2606,7 +2606,7 @@ class SelectQueryTest extends TestCase
         $this->assertCount(3, $result->fetchAll());
         $result->closeCursor();
 
-        $query->join(['b' => ['table' => $subquery, 'conditions' => [$query->newExpr()->equalFields('b.id', 'articles.id')]]], [], true);
+        $query->join(['b' => ['table' => $subquery, 'conditions' => [$query->expr()->equalFields('b.id', 'articles.id')]]], [], true);
         $result = $query->execute();
         $this->assertCount(1, $result->fetchAll());
         $result->closeCursor();
@@ -2731,7 +2731,7 @@ class SelectQueryTest extends TestCase
         $intersect = (new SelectQuery($this->connection))
             ->select(['id', 'comment', 'other' => 'id', 'nameish' => 'comment'])
             ->from(['c' => 'comments'])
-            ->where($intersect->newExpr()->like('comment', '%First%'))
+            ->where($intersect->expr()->like('comment', '%First%'))
             ->orderBy(['id' => 'desc']);
         $expectedCount = count($query->select(['foo' => 'id', 'bar' => 'comment'])->execute()->fetchAll());
         $query->select(['foo' => 'id', 'bar' => 'comment'])->intersect($intersect);
@@ -2807,7 +2807,7 @@ class SelectQueryTest extends TestCase
         $intersect = (new SelectQuery($this->connection))
             ->select(['article_id', 'user_id'])
             ->from(['c' => 'comments'])
-            ->where($intersect->newExpr()->like('comment', '%First%'))
+            ->where($intersect->expr()->like('comment', '%First%'))
             ->orderBy(['id' => 'desc']);
         $expectedCount = count($intersect->execute()->fetchAll());
         $query->select(['article_id', 'user_id'], true)->intersectAll($intersect, true);
@@ -3246,7 +3246,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery('SELECT <1 \+ 1> AS <foo>$', $sql);
 
         $query = new SelectQuery($this->connection);
-        $sql = $query->select(['foo' => $query->newExpr('1 + 1')])->sql();
+        $sql = $query->select(['foo' => $query->expr('1 + 1')])->sql();
         $this->assertQuotedQuery('SELECT \(1 \+ 1\) AS <foo>$', $sql);
 
         $query = new SelectQuery($this->connection);
@@ -3269,7 +3269,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery('FROM <something> <foo>$', $sql);
 
         $query = new SelectQuery($this->connection);
-        $sql = $query->select('*')->from(['foo' => $query->newExpr('bar')])->sql();
+        $sql = $query->select('*')->from(['foo' => $query->expr('bar')])->sql();
         $this->assertQuotedQuery('FROM \(bar\) <foo>$', $sql);
     }
 
@@ -3299,7 +3299,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery('JOIN <something> <foo>', $sql);
 
         $query = new SelectQuery($this->connection);
-        $sql = $query->select('*')->join(['foo' => $query->newExpr('bar')])->sql();
+        $sql = $query->select('*')->join(['foo' => $query->expr('bar')])->sql();
         $this->assertQuotedQuery('JOIN \(bar\) <foo>', $sql);
 
         $query = new SelectQuery($this->connection);
@@ -3322,7 +3322,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery('GROUP BY <something>', $sql);
 
         $query = new SelectQuery($this->connection);
-        $sql = $query->select('*')->groupBy([$query->newExpr('bar')])->sql();
+        $sql = $query->select('*')->groupBy([$query->expr('bar')])->sql();
         $this->assertQuotedQuery('GROUP BY \(bar\)', $sql);
 
         $query = new SelectQuery($this->connection);
@@ -3565,8 +3565,8 @@ class SelectQueryTest extends TestCase
     {
         $query = new SelectQuery($this->connection);
         $query
-            ->select($query->newExpr('select'))
-            ->select(['alias' => $query->newExpr('select')]);
+            ->select($query->expr('select'))
+            ->select(['alias' => $query->expr('select')]);
 
         $clause = $query->clause('select');
         $clauseClone = (clone $query)->clause('select');
@@ -3582,7 +3582,7 @@ class SelectQueryTest extends TestCase
     public function testCloneDistinctExpression(): void
     {
         $query = new SelectQuery($this->connection);
-        $query->distinct($query->newExpr('distinct'));
+        $query->distinct($query->expr('distinct'));
 
         $clause = $query->clause('distinct');
         $clauseClone = (clone $query)->clause('distinct');
@@ -3596,7 +3596,7 @@ class SelectQueryTest extends TestCase
     public function testCloneModifierExpression(): void
     {
         $query = new SelectQuery($this->connection);
-        $query->modifier($query->newExpr('modifier'));
+        $query->modifier($query->expr('modifier'));
 
         $clause = $query->clause('modifier');
         $clauseClone = (clone $query)->clause('modifier');
@@ -3660,8 +3660,8 @@ class SelectQueryTest extends TestCase
     {
         $query = new SelectQuery($this->connection);
         $query
-            ->where($query->newExpr('where'))
-            ->where(['field' => $query->newExpr('where')]);
+            ->where($query->expr('where'))
+            ->where(['field' => $query->expr('where')]);
 
         $clause = $query->clause('where');
         $clauseClone = (clone $query)->clause('where');
@@ -3675,7 +3675,7 @@ class SelectQueryTest extends TestCase
     public function testCloneGroupExpression(): void
     {
         $query = new SelectQuery($this->connection);
-        $query->groupBy($query->newExpr('group'));
+        $query->groupBy($query->expr('group'));
 
         $clause = $query->clause('group');
         $clauseClone = (clone $query)->clause('group');
@@ -3691,7 +3691,7 @@ class SelectQueryTest extends TestCase
     public function testCloneHavingExpression(): void
     {
         $query = new SelectQuery($this->connection);
-        $query->having($query->newExpr('having'));
+        $query->having($query->expr('having'));
 
         $clause = $query->clause('having');
         $clauseClone = (clone $query)->clause('having');
@@ -3729,9 +3729,9 @@ class SelectQueryTest extends TestCase
     {
         $query = new SelectQuery($this->connection);
         $query
-            ->orderBy($query->newExpr('order'))
-            ->orderByAsc($query->newExpr('order_asc'))
-            ->orderByDesc($query->newExpr('order_desc'));
+            ->orderBy($query->expr('order'))
+            ->orderByAsc($query->expr('order_asc'))
+            ->orderByDesc($query->expr('order_desc'));
 
         $clause = $query->clause('order');
         $clauseClone = (clone $query)->clause('order');
@@ -3745,7 +3745,7 @@ class SelectQueryTest extends TestCase
     public function testCloneLimitExpression(): void
     {
         $query = new SelectQuery($this->connection);
-        $query->limit($query->newExpr('1'));
+        $query->limit($query->expr('1'));
 
         $clause = $query->clause('limit');
         $clauseClone = (clone $query)->clause('limit');
@@ -3759,7 +3759,7 @@ class SelectQueryTest extends TestCase
     public function testCloneOffsetExpression(): void
     {
         $query = new SelectQuery($this->connection);
-        $query->offset($query->newExpr('1'));
+        $query->offset($query->expr('1'));
 
         $clause = $query->clause('offset');
         $clauseClone = (clone $query)->clause('offset');
@@ -3794,7 +3794,7 @@ class SelectQueryTest extends TestCase
     public function testCloneEpilogExpression(): void
     {
         $query = new SelectQuery($this->connection);
-        $query->epilog($query->newExpr('epilog'));
+        $query->epilog($query->expr('epilog'));
 
         $clause = $query->clause('epilog');
         $clauseClone = (clone $query)->clause('epilog');
@@ -4152,7 +4152,7 @@ class SelectQueryTest extends TestCase
         $subquery = new SelectQuery($connection);
         $subquery
             ->select(
-                $subquery->newExpr()->case()->when(['a.published' => 'N'])->then(1)->else(0),
+                $subquery->expr()->case()->when(['a.published' => 'N'])->then(1)->else(0),
             )
             ->from(['a' => 'articles'])
             ->where([

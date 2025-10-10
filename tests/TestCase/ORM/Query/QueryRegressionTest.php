@@ -1069,11 +1069,11 @@ class QueryRegressionTest extends TestCase
         $ratio = $table->find()
             ->select(function ($query) use ($table) {
                 $allCommentsCount = $table->find()->select($query->func()->count('*'));
-                $countToFloat = $query->newExpr([$query->func()->count('*'), '1.0'])->setConjunction('*');
+                $countToFloat = $query->expr([$query->func()->count('*'), '1.0'])->setConjunction('*');
 
                 return [
                     'ratio' => $query
-                        ->newExpr($countToFloat)
+                        ->expr($countToFloat)
                         ->add($allCommentsCount)
                         ->setConjunction('/'),
                 ];
@@ -1457,7 +1457,7 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
         $query->orderByDesc(
-            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0),
+            $query->expr()->case()->when(['id' => 3])->then(1)->else(0),
         );
         $query->orderBy(['title' => 'desc']);
         // Executing the normal query before getting the count
@@ -1467,9 +1467,9 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
         $query->orderByDesc(
-            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0),
+            $query->expr()->case()->when(['id' => 3])->then(1)->else(0),
         );
-        $query->orderByDesc($query->newExpr()->add(['id' => 3]));
+        $query->orderByDesc($query->expr()->add(['id' => 3]));
         // Not executing the query first, just getting the count
         $this->assertSame(3, $query->count());
     }
@@ -1812,5 +1812,41 @@ class QueryRegressionTest extends TestCase
         $result = $query->first();
         $this->assertNotNull($result);
         $this->assertCount(1, $result->articles, 'Should return exactly 1 article when limit is 1');
+    }
+
+    /**
+     * Test that executed queries, can still be used as subqueries
+     */
+    public function testExecutedSubqueryCanBeReused(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $users = $this->getTableLocator()->get('Users');
+        $articles->belongsTo('Users', [
+            'foreignKey' => 'author_id',
+        ]);
+
+        $subquery1 = $articles->find()
+            ->select(['id'])
+            ->where(['title LIKE' => '%First%', 'id >=' => 1]);
+
+        $subquery2 = $users->find()
+            ->select(['id'])
+            ->where(['username' => 'mariano']);
+
+        // Execute the query to force it to have a different value binder
+        $subquery1->all();
+
+        $query = $articles->find()
+            ->contain('Users')
+            ->where([
+                'Users.id IN' => $subquery2,
+                'Articles.id IN' => $subquery1,
+            ]);
+        $result = $query->all()->toArray();
+
+        // If these assertions fail, the query is likely malformed
+        $this->assertCount(1, $result);
+        $this->assertEquals('First Article', $result[0]->title);
+        $this->assertNotEmpty($result[0]->user);
     }
 }

@@ -172,7 +172,7 @@ class QueryTest extends TestCase
 
     public function testCloneModifierExpression(): void
     {
-        $this->query->modifier($this->query->newExpr('modifier'));
+        $this->query->modifier($this->query->expr('modifier'));
 
         $clause = $this->query->clause('modifier');
         $clauseClone = (clone $this->query)->clause('modifier');
@@ -233,8 +233,8 @@ class QueryTest extends TestCase
     public function testCloneWhereExpression(): void
     {
         $this->query
-            ->where($this->query->newExpr('where'))
-            ->where(['field' => $this->query->newExpr('where')]);
+            ->where($this->query->expr('where'))
+            ->where(['field' => $this->query->expr('where')]);
 
         $clause = $this->query->clause('where');
         $clauseClone = (clone $this->query)->clause('where');
@@ -248,9 +248,9 @@ class QueryTest extends TestCase
     public function testCloneOrderExpression(): void
     {
         $this->query
-            ->orderBy($this->query->newExpr('order'))
-            ->orderByAsc($this->query->newExpr('order_asc'))
-            ->orderByDesc($this->query->newExpr('order_desc'));
+            ->orderBy($this->query->expr('order'))
+            ->orderByAsc($this->query->expr('order_asc'))
+            ->orderByDesc($this->query->expr('order_desc'));
 
         $clause = $this->query->clause('order');
         $clauseClone = (clone $this->query)->clause('order');
@@ -263,7 +263,7 @@ class QueryTest extends TestCase
 
     public function testCloneLimitExpression(): void
     {
-        $this->query->limit($this->query->newExpr('1'));
+        $this->query->limit($this->query->expr('1'));
 
         $clause = $this->query->clause('limit');
         $clauseClone = (clone $this->query)->clause('limit');
@@ -276,7 +276,7 @@ class QueryTest extends TestCase
 
     public function testCloneOffsetExpression(): void
     {
-        $this->query->offset($this->query->newExpr('1'));
+        $this->query->offset($this->query->expr('1'));
 
         $clause = $this->query->clause('offset');
         $clauseClone = (clone $this->query)->clause('offset');
@@ -289,7 +289,7 @@ class QueryTest extends TestCase
 
     public function testCloneEpilogExpression(): void
     {
-        $this->query->epilog($this->query->newExpr('epilog'));
+        $this->query->epilog($this->query->expr('epilog'));
 
         $clause = $this->query->clause('epilog');
         $clauseClone = (clone $this->query)->clause('epilog');
@@ -351,5 +351,17 @@ class QueryTest extends TestCase
 
         $this->query->with([$cte2, fn($query) => $cte1], true);
         $this->assertSame([$cte2, $cte1], $this->query->clause('with'));
+    }
+
+    /**
+     * Test that calling newExpr() emits a deprecation warning.
+     *
+     * @deprecated
+     */
+    public function testNewExprDeprecation(): void
+    {
+        $this->deprecated(function (): void {
+            $this->query->newExpr();
+        });
     }
 }

@@ -757,8 +757,10 @@ class SqliteSchemaDialect extends SchemaDialect
         ];
         $typeMap = [
             TableSchemaInterface::TYPE_BINARY_UUID => ' BINARY(16)',
+            TableSchemaInterface::TYPE_BINARY => ' BLOB',
             TableSchemaInterface::TYPE_UUID => ' CHAR(36)',
             TableSchemaInterface::TYPE_CHAR => ' CHAR',
+            TableSchemaInterface::TYPE_STRING => ' VARCHAR',
             TableSchemaInterface::TYPE_TINYINTEGER => ' TINYINT',
             TableSchemaInterface::TYPE_SMALLINTEGER => ' SMALLINT',
             TableSchemaInterface::TYPE_INTEGER => ' INTEGER',
@@ -799,49 +801,37 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= ' UNSIGNED';
         }
 
+        $foundType = false;
         if (isset($typeMap[$column['type']])) {
             $out .= $typeMap[$column['type']];
+            $foundType = true;
         }
 
-        if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
-            $out .= ' TEXT';
-        }
-
-        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
-            $out .= '(' . $column['length'] . ')';
-        }
-
-        if (
-            $column['type'] === TableSchemaInterface::TYPE_STRING ||
-            (
-                $column['type'] === TableSchemaInterface::TYPE_TEXT &&
-                $column['length'] === TableSchema::LENGTH_TINY
-            )
-        ) {
-            $out .= ' VARCHAR';
-
-            if (isset($column['length'])) {
-                $out .= '(' . $column['length'] . ')';
-            }
-        }
-
-        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
-            if (isset($column['length'])) {
-                $out .= ' BLOB(' . $column['length'] . ')';
-            } else {
-                $out .= ' BLOB';
-            }
-        }
-
-        $integerTypes = [
+        $hasLength = [
+            TableSchemaInterface::TYPE_BINARY,
+            TableSchemaInterface::TYPE_STRING,
+            TableSchemaInterface::TYPE_CHAR,
             TableSchemaInterface::TYPE_TINYINTEGER,
             TableSchemaInterface::TYPE_SMALLINTEGER,
             TableSchemaInterface::TYPE_INTEGER,
         ];
-        if (
-            in_array($column['type'], $integerTypes, true) &&
-            isset($column['length']) && !$autoIncrement
+        if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
+            $out .= ' TEXT';
+            $foundType = true;
+        } elseif (
+            $column['type'] === TableSchemaInterface::TYPE_TEXT &&
+            $column['length'] === TableSchema::LENGTH_TINY
         ) {
+            $out .= ' VARCHAR';
+            $hasLength[] = $column['type'];
+            $foundType = true;
+        }
+        if (!$foundType) {
+            $out .= ' ' . strtoupper($column['type']);
+            $hasLength[] = $column['type'];
+        }
+
+        if (in_array($column['type'], $hasLength, true) && isset($column['length']) && !$autoIncrement) {
             $out .= '(' . (int)$column['length'] . ')';
         }
 

@@ -1793,7 +1793,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('articles');
 
         $query = $table->updateQuery();
-        $result = $query->update($query->newExpr('articles, authors'))
+        $result = $query->update($query->expr('articles, authors'))
             ->set(['title' => 'First'])
             ->where(['articles.author_id = authors.id'])
             ->andWhere(['authors.name' => 'mariano'])
@@ -2762,7 +2762,7 @@ class SelectQueryTest extends TestCase
             ->join([
                 'person' => [
                     'table' => 'authors',
-                    'conditions' => [$query->newExpr()->equalFields('person.id', 'articles.author_id')],
+                    'conditions' => [$query->expr()->equalFields('person.id', 'articles.author_id')],
                 ],
             ])
             ->orderBy(['articles.id' => 'ASC'])
@@ -3305,7 +3305,7 @@ class SelectQueryTest extends TestCase
         $result = $table
             ->find()
             ->select(function ($q) {
-                return ['foo' => $q->newExpr('1 + 1')];
+                return ['foo' => $q->expr('1 + 1')];
             })
             ->select($table)
             ->select($table->authors)
@@ -3315,7 +3315,7 @@ class SelectQueryTest extends TestCase
         $expected = $table
             ->find()
             ->select(function ($q) {
-                return ['foo' => $q->newExpr('1 + 1')];
+                return ['foo' => $q->expr('1 + 1')];
             })
             ->enableAutoFields()
             ->contain(['authors'])
@@ -3879,7 +3879,7 @@ class SelectQueryTest extends TestCase
                 'post_count' => $query->func()->count('posts.id'),
             ])
             ->groupBy(['posts.author_id'])
-            ->having([$query->newExpr()->gte('post_count', 2, 'integer')])
+            ->having([$query->expr()->gte('post_count', 2, 'integer')])
             ->enableHydration(false)
             ->toArray();
 

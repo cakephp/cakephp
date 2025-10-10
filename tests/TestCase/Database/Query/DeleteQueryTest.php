@@ -164,7 +164,7 @@ class DeleteQueryTest extends TestCase
                     'AND' => [
                         'b.name NOT IN' => ['foo', 'bar'],
                         'OR' => [
-                            $query->newExpr()->eq(new IdentifierExpression('c.name'), 'zap'),
+                            $query->expr()->eq(new IdentifierExpression('c.name'), 'zap'),
                             'd.name' => 'baz',
                             (new SelectQuery($this->connection))->select(['e.name'])->where(['e.name' => 'oof']),
                         ],

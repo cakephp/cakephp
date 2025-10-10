@@ -209,13 +209,13 @@ class Cache
 
         $registry = static::getRegistry();
 
-        if (isset($registry->{$config})) {
-            return $registry->{$config};
+        if ($registry->has($config)) {
+            return $registry->get($config);
         }
 
         static::_buildEngine($config);
 
-        return $registry->{$config};
+        return $registry->get($config);
     }
 
     /**

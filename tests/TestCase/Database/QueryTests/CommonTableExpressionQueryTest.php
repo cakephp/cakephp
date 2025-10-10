@@ -131,7 +131,7 @@ class CommonTableExpressionQueryTest extends TestCase
 
                 $recursiveQuery = $query->getConnection()
                     ->selectQuery(function (Query $query) {
-                        return $query->newExpr('col + 1');
+                        return $query->expr('col + 1');
                     }, 'cte')
                     ->where(['col !=' => 3], ['col' => 'integer']);
 
@@ -207,7 +207,7 @@ class CommonTableExpressionQueryTest extends TestCase
                 return $cte
                     ->name('cte')
                     ->field(['title', 'body'])
-                    ->query($query->newExpr("SELECT 'Fourth Article', 'Fourth Article Body'"));
+                    ->query($query->expr("SELECT 'Fourth Article', 'Fourth Article Body'"));
             })
             ->insert(['title', 'body'])
             ->into('articles')
@@ -260,7 +260,7 @@ class CommonTableExpressionQueryTest extends TestCase
                         return $cte
                             ->name('cte')
                             ->field(['title', 'body'])
-                            ->query($query->newExpr("SELECT 'Fourth Article', 'Fourth Article Body'"));
+                            ->query($query->expr("SELECT 'Fourth Article', 'Fourth Article Body'"));
                     })
                     ->select('*')
                     ->from('cte'),

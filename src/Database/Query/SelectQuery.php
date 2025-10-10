@@ -328,7 +328,7 @@ class SelectQuery extends Query implements IteratorAggregate
         bool $overwrite = false,
     ) {
         if ($overwrite) {
-            $this->_parts['having'] = $this->newExpr();
+            $this->_parts['having'] = $this->expr();
         }
         $this->_conjugate('having', $conditions, 'AND', $types);
 

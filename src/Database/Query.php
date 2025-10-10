@@ -621,15 +621,15 @@ abstract class Query implements ExpressionInterface, Stringable
         $i = count($this->_parts['join']);
         foreach ($tables as $alias => $t) {
             if (!is_array($t)) {
-                $t = ['table' => $t, 'conditions' => $this->newExpr()];
+                $t = ['table' => $t, 'conditions' => $this->expr()];
             }
 
             if ($t['conditions'] instanceof Closure) {
-                $t['conditions'] = $t['conditions']($this->newExpr(), $this);
+                $t['conditions'] = $t['conditions']($this->expr(), $this);
             }
 
             if (!($t['conditions'] instanceof ExpressionInterface)) {
-                $t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
+                $t['conditions'] = $this->expr()->add($t['conditions'], $types);
             }
             $alias = is_string($alias) ? $alias : null;
             $joins[$alias ?: $i++] = $t + ['type' => static::JOIN_TYPE_INNER, 'alias' => $alias];
@@ -855,7 +855,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * ### Using expressions objects:
      *
      * ```
-     * $exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->tieWith('OR');
+     * $exp = $query->expr()->add(['id !=' => 100, 'author_id' != 1])->tieWith('OR');
      * $query->where(['published' => true], ['published' => 'boolean'])->where($exp);
      * ```
      *
@@ -930,7 +930,7 @@ abstract class Query implements ExpressionInterface, Stringable
         bool $overwrite = false,
     ) {
         if ($overwrite) {
-            $this->_parts['where'] = $this->newExpr();
+            $this->_parts['where'] = $this->expr();
         }
         $this->_conjugate('where', $conditions, 'AND', $types);
 
@@ -950,7 +950,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $fields = [$fields];
         }
 
-        $exp = $this->newExpr();
+        $exp = $this->expr();
 
         foreach ($fields as $field) {
             $exp->isNotNull($field);
@@ -972,7 +972,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $fields = [$fields];
         }
 
-        $exp = $this->newExpr();
+        $exp = $this->expr();
 
         foreach ($fields as $field) {
             $exp->isNull($field);
@@ -1161,7 +1161,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ```
      * $query
-     *     ->orderBy(['title' => $query->newExpr('DESC NULLS FIRST')])
+     *     ->orderBy(['title' => $query->expr('DESC NULLS FIRST')])
      *     ->orderBy('author_id');
      * ```
      *
@@ -1170,7 +1170,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * `ORDER BY title DESC NULLS FIRST, author_id`
      *
      * ```
-     * $expression = $query->newExpr()->add(['id % 2 = 0']);
+     * $expression = $query->expr()->add(['id % 2 = 0']);
      * $query->orderBy($expression)->orderBy(['title' => 'ASC']);
      * ```
      *
@@ -1230,7 +1230,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ```
      * $query
-     *     ->orderBy(['title' => $query->newExpr('DESC NULLS FIRST')])
+     *     ->orderBy(['title' => $query->expr('DESC NULLS FIRST')])
      *     ->orderBy('author_id');
      * ```
      *
@@ -1239,7 +1239,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * `ORDER BY title DESC NULLS FIRST, author_id`
      *
      * ```
-     * $expression = $query->newExpr()->add(['id % 2 = 0']);
+     * $expression = $query->expr()->add(['id % 2 = 0']);
      * $query->orderBy($expression)->orderBy(['title' => 'ASC']);
      * ```
      *
@@ -1326,7 +1326,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         if ($field instanceof Closure) {
-            $field = $field($this->newExpr(), $this);
+            $field = $field($this->expr(), $this);
         }
 
         $this->_parts['order'] ??= new OrderByExpression();
@@ -1382,7 +1382,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         if ($field instanceof Closure) {
-            $field = $field($this->newExpr(), $this);
+            $field = $field($this->expr(), $this);
         }
 
         $this->_parts['order'] ??= new OrderByExpression();
@@ -1424,7 +1424,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ```
      * $query->limit(10) // generates LIMIT 10
-     * $query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
+     * $query->limit($query->expr()->add(['1 + 1'])); // LIMIT (1 + 1)
      * ```
      *
      * @param \Cake\Database\ExpressionInterface|int|null $limit number of records to be returned
@@ -1450,7 +1450,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * ```
      * $query->offset(10) // generates OFFSET 10
-     * $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
+     * $query->offset($query->expr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
      * @param \Cake\Database\ExpressionInterface|int|null $offset number of records to be skipped
@@ -1474,7 +1474,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * ### Example
      *
      * ```
-     * $query->newExpr()->lte('count', $query->identifier('total'));
+     * $query->expr()->lte('count', $query->identifier('total'));
      * ```
      *
      * @param string $identifier The identifier for an expression
@@ -1557,9 +1557,12 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * @param \Cake\Database\ExpressionInterface|array|string|null $rawExpression A string, array or anything you want wrapped in an expression object
      * @return \Cake\Database\Expression\QueryExpression
+     * @deprecated 5.3.0 Use `expr()` instead of `newExpr()`.
      */
     public function newExpr(ExpressionInterface|array|string|null $rawExpression = null): QueryExpression
     {
+        deprecationWarning('5.3.0', 'Use `expr()` instead of `newExpr()`.');
+
         return $this->expr($rawExpression);
     }
 
@@ -1776,7 +1779,7 @@ abstract class Query implements ExpressionInterface, Stringable
         array $types,
     ): void {
         /** @var \Cake\Database\Expression\QueryExpression $expression */
-        $expression = $this->_parts[$part] ?: $this->newExpr();
+        $expression = $this->_parts[$part] ?: $this->expr();
         if (!$append) {
             $this->_parts[$part] = $expression;
 
@@ -1784,13 +1787,13 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         if ($append instanceof Closure) {
-            $append = $append($this->newExpr(), $this);
+            $append = $append($this->expr(), $this);
         }
 
         if ($expression->getConjunction() === $conjunction) {
             $expression->add($append, $types);
         } else {
-            $expression = $this->newExpr()
+            $expression = $this->expr()
                 ->setConjunction($conjunction)
                 ->add([$expression, $append], $types);
         }
