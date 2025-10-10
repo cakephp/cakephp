@@ -42,11 +42,12 @@ class SortFieldFactory
      * Add a field with ascending default direction.
      *
      * @param string $field The field name
+     * @param bool $locked Whether the sort direction is locked
      * @return $this
      */
-    public function asc(string $field)
+    public function asc(string $field, bool $locked = false)
     {
-        $this->fields[] = SortField::asc($field);
+        $this->fields[] = SortField::asc($field, locked: $locked);
 
         return $this;
     }
@@ -55,28 +56,17 @@ class SortFieldFactory
      * Add a field with descending default direction.
      *
      * @param string $field The field name
+     * @param bool $locked Whether the sort direction is locked
      * @return $this
      */
-    public function desc(string $field)
+    public function desc(string $field, bool $locked = false)
     {
-        $this->fields[] = SortField::desc($field);
+        $this->fields[] = SortField::desc($field, locked: $locked);
 
         return $this;
     }
 
-    /**
-     * Add a locked field with fixed direction.
-     *
-     * @param string $field The field name
-     * @param string $direction The fixed direction ('asc' or 'desc')
-     * @return $this
-     */
-    public function locked(string $field, string $direction)
-    {
-        $this->fields[] = SortField::locked($field, $direction);
 
-        return $this;
-    }
 
     /**
      * Add a custom SortField instance.

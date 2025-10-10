@@ -77,13 +77,29 @@ class SortFieldTest extends TestCase
     }
 
     /**
-     * Test locked() static factory method
+     * Test asc() with locked parameter
      *
      * @return void
      */
-    public function testLockedFactory(): void
+    public function testAscFactoryLocked(): void
     {
-        $field = SortField::locked('score', SortField::DESC);
+        $field = SortField::asc('score', locked: true);
+        $this->assertSame('score', $field->getField());
+        $this->assertTrue($field->isLocked());
+
+        // Should always return locked direction regardless of request
+        $this->assertSame(SortField::ASC, $field->getDirection(SortField::DESC, false));
+        $this->assertSame(SortField::ASC, $field->getDirection(SortField::DESC, true));
+    }
+
+    /**
+     * Test desc() with locked parameter
+     *
+     * @return void
+     */
+    public function testDescFactoryLocked(): void
+    {
+        $field = SortField::desc('score', locked: true);
         $this->assertSame('score', $field->getField());
         $this->assertTrue($field->isLocked());
 
@@ -155,7 +171,7 @@ class SortFieldTest extends TestCase
                 SortField::asc('title'), // Default asc, toggleable
             ],
             'popular' => [
-                SortField::locked('score', SortField::DESC), // Always desc
+                SortField::desc('score', locked: true), // Always desc
                 'author', // Still support strings for BC
             ],
         ];

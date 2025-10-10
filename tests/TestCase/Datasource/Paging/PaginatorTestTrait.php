@@ -295,7 +295,7 @@ trait PaginatorTestTrait
         $result = $this->Paginator->mergeOptions([], $defaults);
         $this->assertEquals($settings + [
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
             'finder' => 'all',
         ], $result);
 
@@ -307,7 +307,7 @@ trait PaginatorTestTrait
             'maxLimit' => 50,
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
             'finder' => 'all',
             'scope' => null,
         ];
@@ -343,7 +343,7 @@ trait PaginatorTestTrait
             'finder' => 'myCustomFind',
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
             'scope' => null,
         ];
         $this->assertEquals($expected, $result);
@@ -365,7 +365,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'nonexistent',
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
         ];
         $this->assertEquals($expected, $result);
 
@@ -386,7 +386,7 @@ trait PaginatorTestTrait
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'scope' => 'scope',
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
         ];
         $this->assertEquals($expected, $result);
     }
@@ -415,7 +415,7 @@ trait PaginatorTestTrait
             'finder' => 'myCustomFind',
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
             'scope' => null,
         ];
         $this->assertEquals($expected, $result);
@@ -443,7 +443,7 @@ trait PaginatorTestTrait
             'maxLimit' => 100,
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
             'finder' => 'all',
             'scope' => null,
         ];
@@ -476,7 +476,7 @@ trait PaginatorTestTrait
             'maxLimit' => 100,
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
             'finder' => 'all',
             'scope' => null,
         ];
@@ -512,7 +512,7 @@ trait PaginatorTestTrait
             'fields' => ['bad.stuff'],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction', 'fields'],
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
             'finder' => 'all',
             'scope' => null,
         ];
@@ -537,7 +537,7 @@ trait PaginatorTestTrait
             'paramType' => 'named',
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
             'finder' => 'all',
             'scope' => null,
         ];
@@ -556,7 +556,7 @@ trait PaginatorTestTrait
             'paramType' => 'named',
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
             'finder' => 'all',
             'scope' => null,
         ];
@@ -587,7 +587,7 @@ trait PaginatorTestTrait
             ],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
             'finder' => 'all',
             'scope' => null,
         ];
@@ -612,7 +612,7 @@ trait PaginatorTestTrait
             ],
             'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
             'sortableFields' => null,
-            'sortMap' => null,
+            'sorts' => null,
             'finder' => 'all',
             'scope' => null,
         ];

@@ -23,6 +23,7 @@ use Cake\Datasource\QueryInterface;
 use Cake\Datasource\RepositoryInterface;
 use Cake\Datasource\ResultSetInterface;
 use function Cake\Core\triggerWarning;
+use Cake\Datasource\Paging\SortsFactory;
 
 /**
  * This class is used to handle automatic model data pagination.
@@ -50,22 +51,19 @@ class NumericPaginator implements PaginatorInterface
      *   have to explicitly specify them (along with other fields). Using an empty
      *   array will disable sorting alltogether.
      *
-     * @deprecated 5.3.0 Use `sortMap` with SortField objects instead for more flexible sorting configuration.
-     * - `sortMap` - A map of sort keys to their corresponding database fields. Allows
+     * @deprecated 5.3.0 Use `sorts` with SortField objects instead for more flexible sorting configuration.
+     * - `sorts` - A map of sort keys to their corresponding database fields. Allows
      *   creating friendly sort keys that map to one or more actual fields. When defined,
      *   only the mapped keys will be sortable. Supports simple mapping, multi-column
      *   sorting, and fixed direction sorting. You can also use numeric arrays for 1:1
-     *   mappings where the field name is the same as the sort key. Example:
+     *   mappings where the field name is the same as the sort key. Can accept a callable
+     *   that receives a SortsFactory instance. Example:
      *   ```
-     *   'sortMap' => [
-     *       'name' => 'Users.name',                      // Simple mapping
-     *       'title',                                      // Shorthand for 'title' => 'title'
-     *       'modified' => ['modified', 'name'],          // Multi-column
-     *       'popularity' => [                            // Fixed direction
-     *           'score',
-     *           'created' => 'desc'
-     *       ]
-     *   ]
+     *   'sorts' => function($factory) {
+     *       return $factory
+     *           ->add('name', SortField::asc('Users.name'))
+     *           ->add('popularity', SortField::desc('score', locked: true), 'created');
+     *   }
      *   ```
      * - `finder` - The table finder to use. Defaults to `all`.
      * - `scope` - If specified this scope will be used to get the paging options
@@ -80,7 +78,7 @@ class NumericPaginator implements PaginatorInterface
         'maxLimit' => 100,
         'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         'sortableFields' => null,
-        'sortMap' => null,
+        'sorts' => null,
         'finder' => 'all',
         'scope' => null,
     ];
@@ -541,7 +539,7 @@ class NumericPaginator implements PaginatorInterface
      * - Combined: `?sort=title-asc` or `?sort=title-desc`
      *
      * The combined format merges the field and direction into a single parameter,
-     * making URLs cleaner and more RESTful. Both formats work with sortMap.
+     * making URLs cleaner and more RESTful. Both formats work with sorts.
      *
      * You can use the allowedParameters option to control which columns/fields are
      * available for sorting via URL parameters. This helps prevent users from ordering large
@@ -584,11 +582,12 @@ class NumericPaginator implements PaginatorInterface
                 $direction = 'asc';
             }
 
-            // Check sortMap first for mapped sorting
-            if (isset($options['sortMap'])) {
+            // Check sorts first for mapped sorting
+            if (isset($options['sorts'])) {
+                $sortsConfig = $this->resolveSortsConfig($options['sorts']);
                 $mappedOrder = $this->resolveSortMapping(
                     $options['sort'],
-                    $options['sortMap'],
+                    $sortsConfig,
                     $direction,
                     $directionSpecified,
                 );
@@ -597,7 +596,7 @@ class NumericPaginator implements PaginatorInterface
                     $existingOrder = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
                     $options['order'] = $mappedOrder + $existingOrder;
                 } else {
-                    // Sort key not in sortMap, clear sort
+                    // Sort key not in sorts, clear sort
                     $options['order'] = [];
                     $options['sort'] = null;
                     unset($options['direction']);
@@ -627,14 +626,14 @@ class NumericPaginator implements PaginatorInterface
 
         $sortAllowed = false;
 
-        // Skip sortableFields check if sortMap is being used
-        if (isset($options['sortMap'])) {
-            // When sortMap is used, we've already validated the sort key
+        // Skip sortableFields check if sorts is being used
+        if (isset($options['sorts'])) {
+            // When sorts is used, we've already validated the sort key
             $sortAllowed = true;
         } elseif (isset($options['sortableFields'])) {
             triggerWarning(
                 'The `sortableFields` configuration option is deprecated as of 5.3.0. ' .
-                'Use `sortMap` with SortField objects instead for more flexible sorting configuration.',
+                'Use `sorts` with SortField objects instead for more flexible sorting configuration.',
             );
             $field = key($options['order']);
             $sortAllowed = in_array($field, $options['sortableFields'], true);
@@ -737,35 +736,52 @@ class NumericPaginator implements PaginatorInterface
     }
 
     /**
+     * Resolves sorts configuration from callable or array.
+     *
+     * @param callable|array $sortsConfig The sorts configuration
+     * @return array|null The resolved sorts array
+     */
+    protected function resolveSortsConfig(callable|array $sortsConfig): ?array
+    {
+        if (is_callable($sortsConfig)) {
+            $factory = new SortsFactory();
+            $factory = $sortsConfig($factory);
+            return $factory->build();
+        }
+
+        return $sortsConfig;
+    }
+
+    /**
      * Resolves sort mapping for a given sort key.
      *
-     * Takes a sort key and resolves it using the sortMap configuration.
+     * Takes a sort key and resolves it using the sorts configuration.
      * Supports simple mapping, multi-column sorting, and fixed direction sorting.
      *
      * @param string $sortKey The sort key to resolve
-     * @param array|null $sortMap The sort mapping configuration
+     * @param array|null $sortsMap The sorts mapping configuration
      * @param string $direction The requested sort direction
      * @param bool $directionSpecified Whether direction was explicitly specified
      * @return array<string, mixed>|null Returns resolved order array or null if key not found
      */
     protected function resolveSortMapping(
         string $sortKey,
-        ?array $sortMap,
+        ?array $sortsMap,
         string $direction,
         bool $directionSpecified = true,
     ): ?array {
-        if ($sortMap === null) {
+        if ($sortsMap === null) {
             return null;
         }
 
         // Check for direct mapping first
-        if (isset($sortMap[$sortKey])) {
-            $mapping = $sortMap[$sortKey];
+        if (isset($sortsMap[$sortKey])) {
+            $mapping = $sortsMap[$sortKey];
         } else {
             // Check for shorthand numeric array syntax: ['name'] means 'name' => 'name'
             // We check if the sortKey exists as a value in numeric indices
             $found = false;
-            foreach ($sortMap as $key => $value) {
+            foreach ($sortsMap as $key => $value) {
                 if (is_int($key) && is_string($value) && $value === $sortKey) {
                     $found = true;
                     break;

@@ -46,7 +46,7 @@ class SortFieldFactoryTest extends TestCase
         $fields = SortFieldFactory::create()
             ->asc('title')
             ->desc('created')
-            ->locked('score', 'desc')
+            ->asc('score', locked: true) // locked
             ->field('author', 'asc')
             ->build();
 
@@ -68,7 +68,7 @@ class SortFieldFactoryTest extends TestCase
         $this->assertInstanceOf(SortField::class, $fields[2]);
         $this->assertSame('score', $fields[2]->getField());
         $this->assertTrue($fields[2]->isLocked());
-        $this->assertSame('desc', $fields[2]->getDirection('asc', true));
+        $this->assertSame('asc', $fields[2]->getDirection('desc', true));
 
         // Test fourth field (field with default)
         $this->assertInstanceOf(SortField::class, $fields[3]);
@@ -107,16 +107,16 @@ class SortFieldFactoryTest extends TestCase
         // Build a complex sortMap for an e-commerce product listing
         $sortMap = [
             'relevance' => SortFieldFactory::create()
-                ->locked('search_score', SortField::DESC)
+                ->desc('search_score', locked: true) // locked
                 ->desc('popularity')
                 ->asc('title')
                 ->build(),
             'price_low' => SortFieldFactory::create()
-                ->locked('price', SortField::ASC)
+                ->asc('price', locked: true) // locked
                 ->asc('title')
                 ->build(),
             'price_high' => SortFieldFactory::create()
-                ->locked('price', SortField::DESC)
+                ->desc('price', locked: true) // locked
                 ->asc('title')
                 ->build(),
             'newest' => SortFieldFactory::create()
@@ -124,7 +124,7 @@ class SortFieldFactoryTest extends TestCase
                 ->asc('title')
                 ->build(),
             'bestselling' => SortFieldFactory::create()
-                ->locked('sales_count', SortField::DESC)
+                ->desc('sales_count', locked: true) // locked
                 ->desc('rating')
                 ->build(),
             'rating' => SortFieldFactory::create()

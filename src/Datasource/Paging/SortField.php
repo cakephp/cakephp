@@ -68,34 +68,24 @@ class SortField
      * Create a sort field with ascending default direction.
      *
      * @param string $field The field name to sort by
+     * @param bool $locked Whether the sort direction is locked
      * @return self
      */
-    public static function asc(string $field): self
+    public static function asc(string $field, bool $locked = false): self
     {
-        return new self($field, self::ASC, false);
+        return new self($field, self::ASC, $locked);
     }
 
     /**
      * Create a sort field with descending default direction.
      *
      * @param string $field The field name to sort by
+     * @param bool $locked Whether the sort direction is locked
      * @return self
      */
-    public static function desc(string $field): self
+    public static function desc(string $field, bool $locked = false): self
     {
-        return new self($field, self::DESC, false);
-    }
-
-    /**
-     * Create a locked sort field with a fixed direction.
-     *
-     * @param string $field The field name to sort by
-     * @param string $direction The fixed sort direction
-     * @return self
-     */
-    public static function locked(string $field, string $direction): self
-    {
-        return new self($field, $direction, true);
+        return new self($field, self::DESC, $locked);
     }
 
     /**
