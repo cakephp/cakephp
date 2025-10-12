@@ -879,7 +879,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests new allowNullableNulls flag with author id set to null
+     * Tests that allowNullableNulls is true by default
      */
     public function testExistsInAllowNullableNullsDefaultValue(): void
     {
@@ -894,7 +894,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));
-        $this->assertFalse($table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**

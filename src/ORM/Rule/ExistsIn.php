@@ -52,18 +52,19 @@ class ExistsIn
      * Constructor.
      *
      * Available option for $options is 'allowNullableNulls' flag.
-     * Set to true to accept composite foreign keys where one or more nullable columns are null.
+     * When true (default), accepts composite foreign keys where one or more nullable columns are null.
      *
      * @param array<string>|string $fields The field or fields to check existence as primary key.
      * @param \Cake\ORM\Table|\Cake\ORM\Association|string $repository The repository where the
      * field will be looked for, or the association name for the repository.
      * @param array<string, mixed> $options The options that modify the rule's behavior.
      *     Options 'allowNullableNulls' will make the rule pass if given foreign keys are set to `null`.
-     *     Notice: allowNullableNulls cannot pass by database columns set to `NOT NULL`.
+     *     Only applies to columns that are nullable in the database schema.
+     *     Columns set to `NOT NULL` in the database will still fail validation if null.
      */
     public function __construct(array|string $fields, Table|Association|string $repository, array $options = [])
     {
-        $options += ['allowNullableNulls' => false];
+        $options += ['allowNullableNulls' => true];
         $this->_options = $options;
 
         $this->_fields = (array)$fields;
