@@ -41,12 +41,12 @@ class HttpException extends CakeException implements HttpErrorCodeInterface
      * Set a single HTTP response header.
      *
      * @param non-empty-string $header Header name
-     * @param array<string>|string|null $value Header value
+     * @param array<string>|string $value Header value
      * @return void
      */
-    public function setHeader(string $header, array|string|null $value = null): void
+    public function setHeader(string $header, array|string $value): void
     {
-        $this->headers[$header] = $value ?? '';
+        $this->headers[$header] = $value;
     }
 
     /**
