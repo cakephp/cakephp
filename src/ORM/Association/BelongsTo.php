@@ -171,7 +171,7 @@ class BelongsTo extends Association
     protected function _joinCondition(array $options): array
     {
         $conditions = [];
-        $tAlias = $this->_name;
+        $tAlias = $options['alias'] ?? $this->_name;
         $sAlias = $this->_sourceTable->getAlias();
         $foreignKey = (array)$options['foreignKey'];
         $bindingKey = (array)$this->getBindingKey();

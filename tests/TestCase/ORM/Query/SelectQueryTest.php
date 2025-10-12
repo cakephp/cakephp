@@ -4105,64 +4105,57 @@ class SelectQueryTest extends TestCase
     }
 
     /**
-     * Test that nested associations with duplicate table names properly select fields
-     * and populate entities with data from the correct associations.
+     * Tests that nested associations to the same table with renamed aliases
+     * properly hydrate data into entities using contain() with JOIN strategy.
+     *
+     * This verifies the fix for duplicate nested association aliases where
+     * both associations should be fully loaded with their nested data.
+     *
+     * Based on testDuplicateAttachableAliases from QueryRegressionTest but
+     * verifies the actual data hydration, not just that the query executes.
      *
      * @return void
      */
-    public function testNestedAssociationsWithDuplicateNamesSelectFieldsAndPopulateEntities(): void
+    public function testNestedAssociationsDuplicateAliasesHydration(): void
     {
-        // Articles -> Creator (Authors) -> Comments
-        // Articles -> Modifier (Authors) -> Comments
-        $articles = $this->getTableLocator()->get('Articles');
-        $articles->belongsTo('Creator', [
-            'className' => 'Authors',
-            'foreignKey' => 'author_id',
-        ]);
-        $articles->belongsTo('Modifier', [
-            'className' => 'Authors',
-            'foreignKey' => 'author_id',
-        ]);
+        $this->getTableLocator()->get('Stuff', ['table' => 'tags']);
+        $this->getTableLocator()->get('Things', ['table' => 'articles_tags']);
 
-        $articles->getAssociation('Creator')->getTarget()->hasMany('Comments', [
-            'foreignKey' => 'user_id',
-        ]);
-        $articles->getAssociation('Modifier')->getTarget()->hasMany('Comments', [
-            'foreignKey' => 'user_id',
+        $table = $this->getTableLocator()->get('Articles');
+        $table->belongsTo('Authors');
+        $table->hasOne('Things', ['propertyName' => 'articles_tag']);
+
+        // Authors.Stuff - Authors hasOne Tags (Stuff) with id as foreign key
+        $table->Authors->getTarget()->hasOne('Stuff', [
+            'foreignKey' => 'id',
+            'propertyName' => 'favorite_tag',
         ]);
 
-        // Use leftJoinWith to force JOINs for nested associations
-        $query = $articles->find()
-            ->contain(['Creator', 'Modifier'])
-            ->leftJoinWith('Creator.Comments')
-            ->leftJoinWith('Modifier.Comments')
-            ->where(['Articles.id' => 1]);
+        // Things.Stuff - ArticlesTags belongsTo Tags (Stuff) with tag_id as foreign key
+        $table->Things->getTarget()->belongsTo('Stuff', [
+            'foreignKey' => 'tag_id',
+            'propertyName' => 'foo',
+        ]);
 
-        $sql = $query->sql();
+        // Query with both nested Stuff associations
+        // Before the fix, this would cause duplicate alias issues
+        // After the fix, both should load with renamed aliases (Authors_Stuff and Things_Stuff)
+        $results = $table->find()
+            ->contain(['Authors.Stuff', 'Things.Stuff'])
+            ->where(['Articles.id' => 1])
+            ->first();
 
-        // Verify fields are selected with unique aliases
-        $sql = preg_replace('/[`"\[\]]/', '', $sql);
+        // Verify the main article and first-level associations loaded
+        $this->assertNotNull($results, 'Article should be found');
+        $this->assertNotNull($results->author, 'Authors should be loaded');
+        $this->assertNotNull($results->articles_tag, 'Things (ArticlesTags) should be loaded');
 
-        // Check that fields are being selected with the unique aliases
-        $this->assertMatchesRegularExpression(
-            '/Creator_Comments\./',
-            $sql,
-            'Fields should be selected with Creator_Comments alias',
-        );
-        $this->assertMatchesRegularExpression(
-            '/Modifier_Comments\./',
-            $sql,
-            'Fields should be selected with Modifier_Comments alias',
-        );
+        // The critical test: both nested Stuff associations should be loaded
+        // even though they reference the same tags table
+        $this->assertNotNull($results->articles_tag->foo, 'Things.Stuff should be loaded');
+        $this->assertSame(1, $results->articles_tag->foo->id, 'Things.Stuff should load correct tag');
 
-        // Execute the query and verify entities are populated
-        $result = $query->first();
-
-        // The result should have the article
-        $this->assertNotNull($result, 'Should return an article');
-
-        // Verify Creator and Modifier associations exist (even if empty)
-        $this->assertTrue($result->has('creator'), 'Should have creator property');
-        $this->assertTrue($result->has('modifier'), 'Should have modifier property');
+        $this->assertNotNull($results->author->favorite_tag, 'Authors.Stuff should be loaded');
+        $this->assertSame(1, $results->author->favorite_tag->id, 'Authors.Stuff should load correct tag');
     }
 }

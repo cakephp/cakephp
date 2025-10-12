@@ -719,17 +719,24 @@ abstract class Association
         $alias = $options['alias'] ?? $this->_name;
         $options['alias'] = $alias;
 
+        [$finder, $opts] = $this->_extractFinder($options['finder']);
+        $dummy = $this
+            ->find($finder, ...$opts)
+            ->eagerLoaded(true);
+
+        // If the alias has been renamed (e.g., for duplicate nested associations),
+        // update the repository alias in the dummy query to match. This must happen
+        // before generating join conditions so they use the correct alias.
+        if ($alias !== $this->_name) {
+            $dummy->getRepository()->setAlias($alias);
+        }
+
         if ($options['foreignKey']) {
             $joinCondition = $this->_joinCondition($options);
             if ($joinCondition) {
                 $options['conditions'][] = $joinCondition;
             }
         }
-
-        [$finder, $opts] = $this->_extractFinder($options['finder']);
-        $dummy = $this
-            ->find($finder, ...$opts)
-            ->eagerLoaded(true);
 
         if (!empty($options['queryBuilder'])) {
             $dummy = $options['queryBuilder']($dummy);
