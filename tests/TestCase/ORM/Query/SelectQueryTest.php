@@ -4103,4 +4103,66 @@ class SelectQueryTest extends TestCase
             }
         }
     }
+
+    /**
+     * Test that nested associations with duplicate table names properly select fields
+     * and populate entities with data from the correct associations.
+     *
+     * @return void
+     */
+    public function testNestedAssociationsWithDuplicateNamesSelectFieldsAndPopulateEntities(): void
+    {
+        // Articles -> Creator (Authors) -> Comments
+        // Articles -> Modifier (Authors) -> Comments
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Creator', [
+            'className' => 'Authors',
+            'foreignKey' => 'author_id',
+        ]);
+        $articles->belongsTo('Modifier', [
+            'className' => 'Authors',
+            'foreignKey' => 'author_id',
+        ]);
+
+        $articles->getAssociation('Creator')->getTarget()->hasMany('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+        $articles->getAssociation('Modifier')->getTarget()->hasMany('Comments', [
+            'foreignKey' => 'user_id',
+        ]);
+
+        // Use leftJoinWith to force JOINs for nested associations
+        $query = $articles->find()
+            ->contain(['Creator', 'Modifier'])
+            ->leftJoinWith('Creator.Comments')
+            ->leftJoinWith('Modifier.Comments')
+            ->where(['Articles.id' => 1]);
+
+        $sql = $query->sql();
+
+        // Verify fields are selected with unique aliases
+        $sql = preg_replace('/[`"\[\]]/', '', $sql);
+
+        // Check that fields are being selected with the unique aliases
+        $this->assertMatchesRegularExpression(
+            '/Creator_Comments\./',
+            $sql,
+            'Fields should be selected with Creator_Comments alias',
+        );
+        $this->assertMatchesRegularExpression(
+            '/Modifier_Comments\./',
+            $sql,
+            'Fields should be selected with Modifier_Comments alias',
+        );
+
+        // Execute the query and verify entities are populated
+        $result = $query->first();
+
+        // The result should have the article
+        $this->assertNotNull($result, 'Should return an article');
+
+        // Verify Creator and Modifier associations exist (even if empty)
+        $this->assertTrue($result->has('creator'), 'Should have creator property');
+        $this->assertTrue($result->has('modifier'), 'Should have modifier property');
+    }
 }

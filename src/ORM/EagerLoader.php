@@ -40,7 +40,7 @@ class EagerLoader
      * Contains a nested array with the compiled containments tree
      * This is a normalized version of the user provided containments array.
      *
-     * @var \Cake\ORM\EagerLoadable|array<\Cake\ORM\EagerLoadable>|null
+     * @var \Cake\ORM\EagerLoadable|array<string, \Cake\ORM\EagerLoadable>|null
      */
     protected EagerLoadable|array|null $_normalized = null;
 
@@ -287,7 +287,7 @@ class EagerLoader
      *
      * @param \Cake\ORM\Table $repository The table containing the association that
      * will be normalized.
-     * @return array
+     * @return array<string, \Cake\ORM\EagerLoadable>
      */
     public function normalized(Table $repository): array
     {
@@ -439,7 +439,7 @@ class EagerLoader
      *
      * @param \Cake\ORM\Table $repository The table containing the associations to be
      * attached.
-     * @return array<\Cake\ORM\EagerLoadable>
+     * @return array<string, \Cake\ORM\EagerLoadable>
      */
     public function attachableAssociations(Table $repository): array
     {
@@ -542,19 +542,10 @@ class EagerLoader
      */
     protected function _fixStrategies(): void
     {
-        foreach ($this->_aliasList as $aliases) {
-            foreach ($aliases as $configs) {
-                if (count($configs) < 2) {
-                    continue;
-                }
-                foreach ($configs as $loadable) {
-                    assert($loadable instanceof EagerLoadable);
-                    if (str_contains($loadable->aliasPath(), '.')) {
-                        $this->_correctStrategy($loadable);
-                    }
-                }
-            }
-        }
+        // Strategy correction is no longer needed here.
+        // The _mergeNestedJoins() method handles alias disambiguation by renaming
+        // conflicting nested associations with their full path (e.g., Creator_Comments).
+        // This allows nested associations to be joined instead of requiring SELECT strategy.
     }
 
     /**
@@ -582,9 +573,9 @@ class EagerLoader
      * Helper function used to compile a list of all associations that can be
      * joined in the query.
      *
-     * @param array<\Cake\ORM\EagerLoadable> $associations List of associations from which to obtain joins.
-     * @param array<\Cake\ORM\EagerLoadable> $matching List of associations that should be forcibly joined.
-     * @return array<\Cake\ORM\EagerLoadable>
+     * @param array<string, \Cake\ORM\EagerLoadable> $associations List of associations from which to obtain joins.
+     * @param array<string, \Cake\ORM\EagerLoadable> $matching List of associations that should be forcibly joined.
+     * @return array<string, \Cake\ORM\EagerLoadable>
      */
     protected function _resolveJoins(array $associations, array $matching = []): array
     {
@@ -612,12 +603,19 @@ class EagerLoader
         return $result;
     }
 
+    /**
+     * @param array<string, mixed> $result
+     * @param array<string, \Cake\ORM\EagerLoadable> $nested
+     * @return array<string, \Cake\ORM\EagerLoadable>
+     */
     protected function _mergeNestedJoins(array $result, array $nested): array
     {
         foreach ($nested as $nestedAlias => $nestedLoadable) {
             if (isset($result[$nestedAlias])) {
+                /** @var \Cake\ORM\EagerLoadable $loadable */
+                $loadable = $result[$nestedAlias];
                 // Check if it's the same path or different
-                $existingPath = $result[$nestedAlias]->aliasPath();
+                $existingPath = $loadable->aliasPath();
                 $currentPath = $nestedLoadable->aliasPath();
                 if ($existingPath !== $currentPath) {
                     // Conflict detected - both need to use full paths
@@ -747,7 +745,7 @@ class EagerLoader
      * associationsMap() method.
      *
      * @param array $map An initial array for the map.
-     * @param array<\Cake\ORM\EagerLoadable> $level An array of EagerLoadable instances.
+     * @param array<string, \Cake\ORM\EagerLoadable> $level An array of EagerLoadable instances.
      * @param bool $matching Whether it is an association loaded through `matching()`.
      * @return array
      */
