@@ -186,7 +186,7 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
 
             if (!$hasDefinition) {
                 // No user-defined configuration - add auto-wired arguments
-                $constructor = (new ReflectionClass($class))->getConstructor();
+                $constructor = new ReflectionClass($class)->getConstructor();
                 if ($constructor !== null) {
                     $args = $this->reflectArguments($constructor, ['config' => $config]);
                     $this->container->add($class)->addArguments($args);
