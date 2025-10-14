@@ -293,6 +293,7 @@ body TEXT,
 author_id INT(11) NOT NULL,
 unique_id UNSIGNED INTEGER NOT NULL,
 published BOOLEAN DEFAULT 0,
+reviewed BOOLEAN DEFAULT TRUE,
 created DATETIME,
 field1 VARCHAR(10) DEFAULT NULL,
 field2 VARCHAR(10) DEFAULT 'NULL',
@@ -448,6 +449,14 @@ SQL;
                 'precision' => null,
                 'comment' => null,
             ],
+            'reviewed' => [
+                'type' => 'boolean',
+                'null' => true,
+                'default' => true,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
             'created' => [
                 'type' => 'datetime',
                 'null' => true,
@@ -488,7 +497,11 @@ SQL;
         $this->assertInstanceOf(TableSchema::class, $result);
         $this->assertEquals(['id'], $result->getPrimaryKey());
         foreach ($expected as $field => $definition) {
-            $this->assertEquals($definition, $result->getColumn($field));
+            $testColumn = $result->getColumn($field);
+            $this->assertNotEmpty($testColumn);
+            ksort($testColumn);
+            ksort($definition);
+            $this->assertSame($definition, $testColumn);
         }
     }
 
