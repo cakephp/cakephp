@@ -313,7 +313,7 @@ class SqliteSchemaDialect extends SchemaDialect
             return null;
         }
 
-        if (strtolower($type) === TableSchemaInterface::TYPE_BOOLEAN) {
+        if ($type !== null && strtolower($type) === TableSchemaInterface::TYPE_BOOLEAN) {
             return is_numeric($default) ? (int)$default : filter_var($default, FILTER_VALIDATE_BOOLEAN);
         }
 
