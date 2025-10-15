@@ -305,7 +305,7 @@ class SqliteSchemaDialect extends SchemaDialect
      *
      * @param string|int|null $default The default value.
      * @param string|null $type The column type.
-     * @return string|int|bool|null
+     * @return string|int|null
      */
     protected function _defaultValue(string|int|null $default, ?string $type = null): string|int|null
     {
