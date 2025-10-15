@@ -192,7 +192,7 @@ class Socket
      */
     public function isConnected(): bool
     {
-        return $this->connected;
+        return is_resource($this->connection);
     }
 
     /**
@@ -367,7 +367,7 @@ class Socket
      */
     public function write(string $data): int
     {
-        if (!$this->connected && !$this->connect()) {
+        if (!$this->isConnected() && !$this->connect()) {
             return 0;
         }
         $totalBytes = strlen($data);
@@ -398,7 +398,7 @@ class Socket
             throw new InvalidArgumentException('Length must be greater than `0`');
         }
 
-        if (!$this->connected && !$this->connect()) {
+        if (!$this->isConnected() && !$this->connect()) {
             return null;
         }
 
