@@ -16,6 +16,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
+use Cake\Cache\Event\AfterCacheEvent;
+use Cake\Cache\Event\BeforeCacheEvent;
+use Cake\Cache\Event\GroupClearCacheEvent;
 
 trait EngineEventsTrait
 {
@@ -26,19 +29,19 @@ trait EngineEventsTrait
         $beforeEventIsCalled = false;
         $afterEventIsCalled = false;
         $manager = Cache::pool($this->engine)->getEventManager();
-        $manager->on('Cache.beforeGet', function ($event, $key, $default) use (&$beforeEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
-            $this->assertSame(null, $default);
+        $manager->on('Cache.beforeGet', function (BeforeCacheEvent $event) use (&$beforeEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
+            $this->assertSame(null, $event->getDefault());
             $beforeEventIsCalled = true;
         });
-        $manager->on('Cache.afterGet', function ($event, $key, $value, $success) use (&$afterEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
+        $manager->on('Cache.afterGet', function (AfterCacheEvent $event) use (&$afterEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
             if ($this->engine === 'apcu') {
-                $this->assertFalse($value);
+                $this->assertFalse($event->getValue());
             } else {
-                $this->assertNull($value);
+                $this->assertNull($event->getValue());
             }
-            $this->assertFalse($success);
+            $this->assertFalse($event->getResult());
             $afterEventIsCalled = true;
         });
 
@@ -53,16 +56,16 @@ trait EngineEventsTrait
         $beforeEventIsCalled = false;
         $afterEventIsCalled = false;
         $manager = Cache::pool($this->engine)->getEventManager();
-        $manager->on('Cache.beforeSet', function ($event, $key, $value, $ttl) use (&$beforeEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
-            $this->assertEquals(1234, $value);
-            $this->assertNull($ttl);
+        $manager->on('Cache.beforeSet', function (BeforeCacheEvent $event) use (&$beforeEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
+            $this->assertEquals(1234, $event->getValue());
+            $this->assertNull($event->getTtl());
             $beforeEventIsCalled = true;
         });
-        $manager->on('Cache.afterSet', function ($event, $key, $value, $success) use (&$afterEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
-            $this->assertEquals(1234, $value);
-            $this->assertTrue($success);
+        $manager->on('Cache.afterSet', function (AfterCacheEvent $event) use (&$afterEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
+            $this->assertEquals(1234, $event->getValue());
+            $this->assertTrue($event->getResult());
             $afterEventIsCalled = true;
         });
 
@@ -77,15 +80,15 @@ trait EngineEventsTrait
         $beforeEventIsCalled = false;
         $afterEventIsCalled = false;
         $manager = Cache::pool($this->engine)->getEventManager();
-        $manager->on('Cache.beforeAdd', function ($event, $key, $value) use (&$beforeEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
-            $this->assertEquals(1234, $value);
+        $manager->on('Cache.beforeAdd', function (BeforeCacheEvent $event) use (&$beforeEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
+            $this->assertEquals(1234, $event->getValue());
             $beforeEventIsCalled = true;
         });
-        $manager->on('Cache.afterAdd', function ($event, $key, $value, $success) use (&$afterEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
-            $this->assertEquals(1234, $value);
-            $this->assertTrue($success);
+        $manager->on('Cache.afterAdd', function (AfterCacheEvent $event) use (&$afterEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
+            $this->assertEquals(1234, $event->getValue());
+            $this->assertTrue($event->getResult());
             $afterEventIsCalled = true;
         });
 
@@ -105,33 +108,33 @@ trait EngineEventsTrait
         $afterIncEventIsCalled = false;
         $afterDecEventIsCalled = false;
         $manager = Cache::pool($this->engine)->getEventManager();
-        $manager->on('Cache.beforeIncrement', function ($event, $key, $offset) use (&$beforeIncEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
-            $this->assertEquals(1234, $offset);
+        $manager->on('Cache.beforeIncrement', function (BeforeCacheEvent $event) use (&$beforeIncEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
+            $this->assertEquals(1234, $event->getOffset());
             $beforeIncEventIsCalled = true;
         });
-        $manager->on('Cache.beforeDecrement', function ($event, $key, $offset) use (&$beforeDecEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
-            $this->assertEquals(234, $offset);
+        $manager->on('Cache.beforeDecrement', function (BeforeCacheEvent $event) use (&$beforeDecEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
+            $this->assertEquals(234, $event->getOffset());
             $beforeDecEventIsCalled = true;
         });
-        $manager->on('Cache.afterIncrement', function ($event, $key, $offset, $success, $value) use (&$afterIncEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
-            $this->assertEquals(1234, $offset);
+        $manager->on('Cache.afterIncrement', function (AfterCacheEvent $event) use (&$afterIncEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
+            $this->assertEquals(1234, $event->getOffset());
             if ($this->engine !== 'memcached') {
                 // No idea why memcached doesn't work in CI
-                $this->assertTrue($success);
-                $this->assertEquals(1234, $value);
+                $this->assertTrue($event->getResult());
+                $this->assertEquals(1234, $event->getValue());
             }
             $afterIncEventIsCalled = true;
         });
-        $manager->on('Cache.afterDecrement', function ($event, $key, $offset, $success, $value) use (&$afterDecEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
-            $this->assertEquals(234, $offset);
+        $manager->on('Cache.afterDecrement', function (AfterCacheEvent $event) use (&$afterDecEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
+            $this->assertEquals(234, $event->getOffset());
             if ($this->engine !== 'memcached') {
                 // No idea why memcached doesn't work in CI
-                $this->assertTrue($success);
-                $this->assertEquals(1000, $value);
+                $this->assertTrue($event->getResult());
+                $this->assertEquals(1000, $event->getValue());
             }
             $afterDecEventIsCalled = true;
         });
@@ -151,13 +154,13 @@ trait EngineEventsTrait
         $beforeEventIsCalled = false;
         $afterEventIsCalled = false;
         $manager = Cache::pool($this->engine)->getEventManager();
-        $manager->on('Cache.beforeDelete', function ($event, $key) use (&$beforeEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
+        $manager->on('Cache.beforeDelete', function (BeforeCacheEvent $event) use (&$beforeEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
             $beforeEventIsCalled = true;
         });
-        $manager->on('Cache.afterDelete', function ($event, $key, $success) use (&$afterEventIsCalled): void {
-            $this->assertSame('cake_test', $key);
-            $this->assertTrue($success);
+        $manager->on('Cache.afterDelete', function (AfterCacheEvent $event) use (&$afterEventIsCalled): void {
+            $this->assertSame('cake_test', $event->getKey());
+            $this->assertTrue($event->getResult());
             $afterEventIsCalled = true;
         });
 
@@ -186,8 +189,8 @@ trait EngineEventsTrait
     {
         $eventIsCalled = false;
         $manager = Cache::pool($this->engine)->getEventManager();
-        $manager->on('Cache.clearedGroup', function ($event, $group) use (&$eventIsCalled): void {
-            $this->assertSame('someGroup', $group);
+        $manager->on('Cache.clearedGroup', function (GroupClearCacheEvent $event) use (&$eventIsCalled): void {
+            $this->assertSame('someGroup', $event->getGroup());
             $eventIsCalled = true;
         });
 

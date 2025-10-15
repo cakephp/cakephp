@@ -17,6 +17,9 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Cake\Cache\Event\AfterCacheEvent;
+use Cake\Cache\Event\BeforeCacheEvent;
+use Cake\Cache\Event\GroupClearCacheEvent;
 use DateInterval;
 
 /**
@@ -54,7 +57,9 @@ class ArrayEngine extends CacheEngine
     {
         $key = $this->_key($key);
         $expires = time() + $this->duration($ttl);
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeSet', ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
+        $this->_eventClass = AfterCacheEvent::class;
         $this->data[$key] = ['exp' => $expires, 'val' => $value];
         $this->dispatchEvent('Cache.afterSet', ['key' => $key, 'value' => $value, 'success' => true]);
 
@@ -72,7 +77,9 @@ class ArrayEngine extends CacheEngine
     public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->_key($key);
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeGet', ['key' => $key, 'default' => $default]);
+        $this->_eventClass = AfterCacheEvent::class;
         if (!isset($this->data[$key])) {
             $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => null, 'success' => false]);
 
@@ -107,7 +114,9 @@ class ArrayEngine extends CacheEngine
             $this->set($key, 0);
         }
         $key = $this->_key($key);
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeIncrement', ['key' => $key, 'offset' => $offset]);
+        $this->_eventClass = AfterCacheEvent::class;
         $this->data[$key]['val'] += $offset;
         $val = $this->data[$key]['val'];
         $this->dispatchEvent('Cache.afterIncrement', [
@@ -130,7 +139,9 @@ class ArrayEngine extends CacheEngine
             $this->set($key, 0);
         }
         $key = $this->_key($key);
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeDecrement', ['key' => $key, 'offset' => $offset]);
+        $this->_eventClass = AfterCacheEvent::class;
         $this->data[$key]['val'] -= $offset;
         $this->dispatchEvent('Cache.afterDecrement', [
             'key' => $key, 'offset' => $offset, 'success' => true, 'value' => $this->data[$key]['val'],
@@ -148,8 +159,10 @@ class ArrayEngine extends CacheEngine
     public function delete(string $key): bool
     {
         $key = $this->_key($key);
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeDelete', ['key' => $key]);
         unset($this->data[$key]);
+        $this->_eventClass = AfterCacheEvent::class;
         $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => true]);
 
         return true;
@@ -201,6 +214,7 @@ class ArrayEngine extends CacheEngine
         if (isset($this->data[$key])) {
             $this->data[$key]['val'] += 1;
         }
+        $this->_eventClass = GroupClearCacheEvent::class;
         $this->dispatchEvent('Cache.clearedGroup', ['group' => $group]);
 
         return true;

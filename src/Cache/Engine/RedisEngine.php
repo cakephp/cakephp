@@ -18,6 +18,9 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Cake\Cache\Event\AfterCacheEvent;
+use Cake\Cache\Event\BeforeCacheEvent;
+use Cake\Cache\Event\GroupClearCacheEvent;
 use Cake\Core\Exception\CakeException;
 use Cake\Log\Log;
 use DateInterval;
@@ -331,7 +334,9 @@ class RedisEngine extends CacheEngine
     {
         $key = $this->_key($key);
         $value = $this->serialize($value);
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeSet', ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
+        $this->_eventClass = AfterCacheEvent::class;
 
         $duration = $this->duration($ttl);
         if ($duration === 0) {
@@ -358,7 +363,9 @@ class RedisEngine extends CacheEngine
     public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->_key($key);
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeGet', ['key' => $key, 'default' => $default]);
+        $this->_eventClass = AfterCacheEvent::class;
         $value = $this->_Redis->get($key);
         if ($value === false) {
             $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => null, 'success' => false]);
@@ -394,7 +401,9 @@ class RedisEngine extends CacheEngine
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
 
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeIncrement', ['key' => $key, 'offset' => $offset]);
+        $this->_eventClass = AfterCacheEvent::class;
         $value = $this->_Redis->incrBy($key, $offset);
         $this->dispatchEvent('Cache.afterIncrement', [
             'key' => $key, 'offset' => $offset, 'success' => $value !== false, 'value' => $value,
@@ -417,7 +426,9 @@ class RedisEngine extends CacheEngine
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeDecrement', ['key' => $key, 'offset' => $offset]);
+        $this->_eventClass = AfterCacheEvent::class;
         $value = $this->_Redis->decrBy($key, $offset);
         $this->dispatchEvent('Cache.afterDecrement', [
             'key' => $key, 'offset' => $offset, 'success' => $value !== false, 'value' => $value,
@@ -438,7 +449,9 @@ class RedisEngine extends CacheEngine
     public function delete(string $key): bool
     {
         $key = $this->_key($key);
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeDelete', ['key' => $key]);
+        $this->_eventClass = AfterCacheEvent::class;
         $success = (int)$this->_Redis->del($key) > 0;
         $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => $success]);
 
@@ -456,7 +469,9 @@ class RedisEngine extends CacheEngine
     public function deleteAsync(string $key): bool
     {
         $key = $this->_key($key);
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeDelete', ['key' => $key]);
+        $this->_eventClass = AfterCacheEvent::class;
         $success = (int)$this->_Redis->unlink($key) > 0;
         $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => $success]);
 
@@ -532,7 +547,9 @@ class RedisEngine extends CacheEngine
         $origValue = $value;
         $value = $this->serialize($value);
 
+        $this->_eventClass = BeforeCacheEvent::class;
         $this->dispatchEvent('Cache.beforeAdd', ['key' => $key, 'value' => $origValue]);
+        $this->_eventClass = AfterCacheEvent::class;
         if ($this->_Redis->set($key, $value, ['nx', 'ex' => $duration])) {
             $this->dispatchEvent('Cache.afterAdd', ['key' => $key, 'value' => $origValue, 'success' => true]);
 
@@ -575,6 +592,7 @@ class RedisEngine extends CacheEngine
     public function clearGroup(string $group): bool
     {
         $success = (bool)$this->_Redis->incr($this->_config['prefix'] . $group);
+        $this->_eventClass = GroupClearCacheEvent::class;
         $this->dispatchEvent('Cache.clearedGroup', ['group' => $group]);
 
         return $success;
