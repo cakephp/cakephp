@@ -1402,14 +1402,10 @@ class FormHelper extends Helper
     {
         assert(is_subclass_of($enumClass, BackedEnum::class));
 
-        $hasLabel = is_a($enumClass, EnumLabelInterface::class, true);
-
         $values = [];
         foreach ($enumClass::cases() as $enumClass) {
-            /**
-             * @phpstan-ignore-next-line
-             */
-            $values[$enumClass->value] = $hasLabel ? $enumClass->label()
+            $values[$enumClass->value] = $enumClass instanceof EnumLabelInterface
+                ? $enumClass->label()
                 : Inflector::humanize(Inflector::underscore($enumClass->name));
         }
 
