@@ -83,7 +83,7 @@ class SqliteSchemaDialectTest extends TestCase
             ],
             [
                 'BOOLEAN',
-                ['type' => 'boolean', 'length' => null],
+                ['type' => 'boolean', 'length' => null, 'default' => 0],
             ],
             [
                 'BIGINT',
@@ -452,7 +452,7 @@ SQL;
             'reviewed' => [
                 'type' => 'boolean',
                 'null' => true,
-                'default' => true,
+                'default' => 1,
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
@@ -853,6 +853,14 @@ SQL;
                 'type' => 'boolean',
                 'null' => true,
                 'default' => 0,
+                'length' => null,
+                'comment' => null,
+            ],
+            [
+                'name' => 'reviewed',
+                'type' => 'boolean',
+                'null' => true,
+                'default' => true,
                 'length' => null,
                 'comment' => null,
             ],

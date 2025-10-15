@@ -307,14 +307,18 @@ class SqliteSchemaDialect extends SchemaDialect
      * @param string|null $type The column type.
      * @return string|int|bool|null
      */
-    protected function _defaultValue(string|int|null $default, ?string $type = null): string|int|bool|null
+    protected function _defaultValue(string|int|null $default, ?string $type = null): string|int|null
     {
         if ($default === 'NULL' || $default === null) {
             return null;
         }
 
         if ($type !== null && strtolower($type) === TableSchemaInterface::TYPE_BOOLEAN) {
-            return is_numeric($default) ? (int)$default : filter_var($default, FILTER_VALIDATE_BOOLEAN);
+            if ($default === '0' || $default === '1') {
+                return (int)$default;
+            }
+
+            return (int)filter_var($default, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         }
 
         // Remove quotes
