@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Cache;
 
-use Cake\Cache\Event\AfterCacheEvent;
-use Cake\Cache\Event\BeforeCacheEvent;
+use Cake\Cache\Event\CacheAfterAddEvent;
+use Cake\Cache\Event\CacheBeforeAddEvent;
 use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Event\EventDispatcherInterface;
@@ -306,17 +306,22 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface, Even
         $cachedValue = $this->get($key);
         $prefixedKey = $this->_key($key);
 
-        $this->_eventClass = BeforeCacheEvent::class;
-        $this->dispatchEvent('Cache.beforeAdd', ['key' => $prefixedKey, 'value' => $value]);
+        $this->_eventClass = CacheBeforeAddEvent::class;
+        $this->dispatchEvent(CacheBeforeAddEvent::NAME, ['key' => $prefixedKey, 'value' => $value]);
 
-        $this->_eventClass = AfterCacheEvent::class;
         if ($cachedValue === null) {
             $success = $this->set($key, $value);
-            $this->dispatchEvent('Cache.afterAdd', ['key' => $prefixedKey, 'value' => $value, 'success' => $success]);
+            $this->_eventClass = CacheAfterAddEvent::class;
+            $this->dispatchEvent(CacheAfterAddEvent::NAME, [
+                'key' => $prefixedKey, 'value' => $value, 'success' => $success,
+            ]);
 
             return $success;
         }
-        $this->dispatchEvent('Cache.afterAdd', ['key' => $prefixedKey, 'value' => $value, 'success' => false]);
+        $this->_eventClass = CacheAfterAddEvent::class;
+        $this->dispatchEvent(CacheAfterAddEvent::NAME, [
+            'key' => $prefixedKey, 'value' => $value, 'success' => false,
+        ]);
 
         return false;
     }

@@ -17,9 +17,20 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use Cake\Cache\Event\AfterCacheEvent;
-use Cake\Cache\Event\BeforeCacheEvent;
-use Cake\Cache\Event\GroupClearCacheEvent;
+use Cake\Cache\Event\CacheAfterAddEvent;
+use Cake\Cache\Event\CacheAfterDecrementEvent;
+use Cake\Cache\Event\CacheAfterDeleteEvent;
+use Cake\Cache\Event\CacheAfterGetEvent;
+use Cake\Cache\Event\CacheAfterIncrementEvent;
+use Cake\Cache\Event\CacheAfterSetEvent;
+use Cake\Cache\Event\CacheBeforeAddEvent;
+use Cake\Cache\Event\CacheBeforeDecrementEvent;
+use Cake\Cache\Event\CacheBeforeDeleteEvent;
+use Cake\Cache\Event\CacheBeforeGetEvent;
+use Cake\Cache\Event\CacheBeforeIncrementEvent;
+use Cake\Cache\Event\CacheBeforeSetEvent;
+use Cake\Cache\Event\CacheClearedEvent;
+use Cake\Cache\Event\CacheGroupClearEvent;
 use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Core\Exception\CakeException;
 use DateInterval;
@@ -310,11 +321,13 @@ class MemcachedEngine extends CacheEngine
     {
         $key = $this->_key($key);
         $duration = $this->duration($ttl);
-        $this->_eventClass = BeforeCacheEvent::class;
-        $this->dispatchEvent('Cache.beforeSet', ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
-        $this->_eventClass = AfterCacheEvent::class;
+        $this->_eventClass = CacheBeforeSetEvent::class;
+        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
+
         $success = $this->_Memcached->set($key, $value, $duration);
-        $this->dispatchEvent('Cache.afterSet', ['key' => $key, 'value' => $value, 'success' => $success]);
+
+        $this->_eventClass = CacheAfterSetEvent::class;
+        $this->dispatchEvent(CacheAfterSetEvent::NAME, ['key' => $key, 'value' => $value, 'success' => $success]);
 
         return $success;
     }
@@ -350,17 +363,19 @@ class MemcachedEngine extends CacheEngine
     public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->_key($key);
-        $this->_eventClass = BeforeCacheEvent::class;
-        $this->dispatchEvent('Cache.beforeGet', ['key' => $key, 'default' => $default]);
-        $this->_eventClass = AfterCacheEvent::class;
+        $this->_eventClass = CacheBeforeGetEvent::class;
+        $this->dispatchEvent(CacheBeforeGetEvent::NAME, ['key' => $key, 'default' => $default]);
+
         $value = $this->_Memcached->get($key);
+
+        $this->_eventClass = CacheAfterGetEvent::class;
         if ($this->_Memcached->getResultCode() == Memcached::RES_NOTFOUND) {
-            $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => null, 'success' => false]);
+            $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => null, 'success' => false]);
 
             return $default;
         }
 
-        $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => $value, 'success' => true]);
+        $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => $value, 'success' => true]);
 
         return $value;
     }
@@ -403,11 +418,13 @@ class MemcachedEngine extends CacheEngine
     public function increment(string $key, int $offset = 1): int|false
     {
         $key = $this->_key($key);
-        $this->_eventClass = BeforeCacheEvent::class;
-        $this->dispatchEvent('Cache.beforeIncrement', ['key' => $key, 'offset' => $offset]);
-        $this->_eventClass = AfterCacheEvent::class;
+        $this->_eventClass = CacheBeforeIncrementEvent::class;
+        $this->dispatchEvent(CacheBeforeIncrementEvent::NAME, ['key' => $key, 'offset' => $offset]);
+
         $value = $this->_Memcached->increment($key, $offset);
-        $this->dispatchEvent('Cache.afterIncrement', [
+
+        $this->_eventClass = CacheAfterIncrementEvent::class;
+        $this->dispatchEvent(CacheAfterIncrementEvent::NAME, [
             'key' => $key, 'offset' => $offset, 'success' => $value !== false, 'value' => $value,
         ]);
 
@@ -424,11 +441,13 @@ class MemcachedEngine extends CacheEngine
     public function decrement(string $key, int $offset = 1): int|false
     {
         $key = $this->_key($key);
-        $this->_eventClass = BeforeCacheEvent::class;
-        $this->dispatchEvent('Cache.beforeDecrement', ['key' => $key, 'offset' => $offset]);
-        $this->_eventClass = AfterCacheEvent::class;
+        $this->_eventClass = CacheBeforeDecrementEvent::class;
+        $this->dispatchEvent(CacheBeforeDecrementEvent::NAME, ['key' => $key, 'offset' => $offset]);
+
         $value = $this->_Memcached->decrement($key, $offset);
-        $this->dispatchEvent('Cache.afterDecrement', [
+
+        $this->_eventClass = CacheAfterDecrementEvent::class;
+        $this->dispatchEvent(CacheAfterDecrementEvent::NAME, [
             'key' => $key, 'offset' => $offset, 'success' => $value !== false, 'value' => $value,
         ]);
 
@@ -445,11 +464,13 @@ class MemcachedEngine extends CacheEngine
     public function delete(string $key): bool
     {
         $key = $this->_key($key);
-        $this->_eventClass = BeforeCacheEvent::class;
-        $this->dispatchEvent('Cache.beforeDelete', ['key' => $key]);
-        $this->_eventClass = AfterCacheEvent::class;
+        $this->_eventClass = CacheBeforeDeleteEvent::class;
+        $this->dispatchEvent(CacheBeforeDeleteEvent::NAME, ['key' => $key]);
+
         $success = $this->_Memcached->delete($key);
-        $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => $success]);
+
+        $this->_eventClass = CacheAfterDeleteEvent::class;
+        $this->dispatchEvent(CacheAfterDeleteEvent::NAME, ['key' => $key, 'success' => $success]);
 
         return $success;
     }
@@ -464,15 +485,15 @@ class MemcachedEngine extends CacheEngine
     public function deleteMultiple(iterable $keys): bool
     {
         $cacheKeys = [];
-        $this->_eventClass = BeforeCacheEvent::class;
+        $this->_eventClass = CacheBeforeDeleteEvent::class;
         foreach ($keys as $key) {
             $cacheKeys[] = $this->_key($key);
-            $this->dispatchEvent('Cache.beforeDelete', ['key' => $key]);
+            $this->dispatchEvent(CacheBeforeDeleteEvent::NAME, ['key' => $key]);
         }
-        $this->_eventClass = AfterCacheEvent::class;
         $success = (bool)$this->_Memcached->deleteMulti($cacheKeys);
+        $this->_eventClass = CacheAfterDeleteEvent::class;
         foreach ($cacheKeys as $key) {
-            $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => $success]);
+            $this->dispatchEvent(CacheAfterDeleteEvent::NAME, ['key' => $key, 'success' => $success]);
         }
 
         return $success;
@@ -495,7 +516,8 @@ class MemcachedEngine extends CacheEngine
                 $this->_Memcached->delete($key);
             }
         }
-        $this->dispatchEvent('Cache.cleared');
+        $this->_eventClass = CacheClearedEvent::class;
+        $this->dispatchEvent(CacheClearedEvent::NAME);
 
         return true;
     }
@@ -512,11 +534,15 @@ class MemcachedEngine extends CacheEngine
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
 
-        $this->_eventClass = BeforeCacheEvent::class;
-        $this->dispatchEvent('Cache.beforeAdd', ['key' => $key, 'value' => $value]);
-        $this->_eventClass = AfterCacheEvent::class;
+        $this->_eventClass = CacheBeforeAddEvent::class;
+        $this->dispatchEvent(CacheBeforeAddEvent::NAME, ['key' => $key, 'value' => $value]);
+
         $success = $this->_Memcached->add($key, $value, $duration);
-        $this->dispatchEvent('Cache.afterAdd', ['key' => $key, 'value' => $value, 'success' => $success]);
+
+        $this->_eventClass = CacheAfterAddEvent::class;
+        $this->dispatchEvent(CacheAfterAddEvent::NAME, [
+            'key' => $key, 'value' => $value, 'success' => $success,
+        ]);
 
         return $success;
     }
@@ -566,8 +592,8 @@ class MemcachedEngine extends CacheEngine
     public function clearGroup(string $group): bool
     {
         $result = (bool)$this->_Memcached->increment($this->_config['prefix'] . $group);
-        $this->_eventClass = GroupClearCacheEvent::class;
-        $this->dispatchEvent('Cache.clearedGroup', ['group' => $group]);
+        $this->_eventClass = CacheGroupClearEvent::class;
+        $this->dispatchEvent(CacheGroupClearEvent::NAME, ['group' => $group]);
 
         return $result;
     }

@@ -17,24 +17,19 @@ declare(strict_types=1);
 namespace Cake\Cache\Event;
 
 use Cake\Cache\CacheEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Event\Event;
-use DateInterval;
-use InvalidArgumentException;
 
 /**
- * Class AfterCache Event
+ * Class Cache AfterDelete Event
  *
  * @extends \Cake\Event\Event<\Cake\Cache\CacheEngine>
  */
-class AfterCacheEvent extends Event
+class CacheAfterDeleteEvent extends Event
 {
+    public const NAME = 'Cache.afterDelete';
+
     protected string $key;
-
-    protected mixed $value = null;
-
-    protected ?int $offset = null;
-
-    protected DateInterval|int|null $ttl = null;
 
     /**
      * Constructor
@@ -48,14 +43,6 @@ class AfterCacheEvent extends Event
         if (isset($data['key'])) {
             $this->key = $data['key'];
             unset($data['key']);
-        }
-        if (isset($data['value'])) {
-            $this->value = $data['value'];
-            unset($data['value']);
-        }
-        if (isset($data['offset'])) {
-            $this->offset = $data['offset'];
-            unset($data['offset']);
         }
         if (isset($data['success'])) {
             $this->result = $data['success'];
@@ -98,21 +85,5 @@ class AfterCacheEvent extends Event
     public function getKey(): string
     {
         return $this->key;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getValue(): mixed
-    {
-        return $this->value;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getOffset(): ?int
-    {
-        return $this->offset;
     }
 }

@@ -20,13 +20,17 @@ use Cake\Cache\CacheEngine;
 use Cake\Event\Event;
 
 /**
- * Class GroupClearCache Event
+ * Class Cache BeforeDecrement Event
  *
  * @extends \Cake\Event\Event<\Cake\Cache\CacheEngine>
  */
-class GroupClearCacheEvent extends Event
+class CacheBeforeDecrementEvent extends Event
 {
-    protected string $group;
+    public const NAME = 'Cache.beforeDecrement';
+
+    protected string $key;
+
+    protected int $offset;
 
     /**
      * Constructor
@@ -37,21 +41,35 @@ class GroupClearCacheEvent extends Event
      */
     public function __construct(string $name, CacheEngine $subject, array $data = [])
     {
-        if (isset($data['group'])) {
-            $this->group = $data['group'];
-            unset($data['group']);
+        if (isset($data['key'])) {
+            $this->key = $data['key'];
+            unset($data['key']);
+        }
+        if (isset($data['offset'])) {
+            $this->offset = $data['offset'];
+            unset($data['offset']);
         }
 
         parent::__construct($name, $subject, $data);
     }
 
     /**
-     * Get the group name
+     * Get the cache key.
      *
      * @return string
      */
-    public function getGroup(): string
+    public function getKey(): string
     {
-        return $this->group;
+        return $this->key;
+    }
+
+    /**
+     * Get the decrement offset.
+     *
+     * @return int
+     */
+    public function getOffset(): int
+    {
+        return $this->offset;
     }
 }

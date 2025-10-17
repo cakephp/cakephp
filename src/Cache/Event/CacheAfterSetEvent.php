@@ -17,25 +17,21 @@ declare(strict_types=1);
 namespace Cake\Cache\Event;
 
 use Cake\Cache\CacheEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Event\Event;
-use DateInterval;
 
 /**
- * Class BeforeCache Event
+ * Class Cache AfterSet Event
  *
  * @extends \Cake\Event\Event<\Cake\Cache\CacheEngine>
  */
-class BeforeCacheEvent extends Event
+class CacheAfterSetEvent extends Event
 {
+    public const NAME = 'Cache.afterSet';
+
     protected string $key;
 
     protected mixed $value = null;
-
-    protected mixed $default = null;
-
-    protected ?int $offset = null;
-
-    protected DateInterval|int|null $ttl = null;
 
     /**
      * Constructor
@@ -54,20 +50,39 @@ class BeforeCacheEvent extends Event
             $this->value = $data['value'];
             unset($data['value']);
         }
-        if (isset($data['default'])) {
-            $this->default = $data['default'];
-            unset($data['default']);
-        }
-        if (isset($data['offset'])) {
-            $this->offset = $data['offset'];
-            unset($data['offset']);
-        }
-        if (isset($data['ttl'])) {
-            $this->ttl = $data['ttl'];
-            unset($data['ttl']);
+        if (isset($data['success'])) {
+            $this->result = $data['success'];
+            unset($data['success']);
         }
 
         parent::__construct($name, $subject, $data);
+    }
+
+    /**
+     * The result value of the event listeners
+     *
+     * @return bool|null
+     */
+    public function getResult(): ?bool
+    {
+        return $this->result;
+    }
+
+    /**
+     * Listeners can attach a result value to the event.
+     *
+     * @param mixed $value The value to set.
+     * @return $this
+     */
+    public function setResult(mixed $value = null)
+    {
+        if ($value !== null && !is_bool($value)) {
+            throw new InvalidArgumentException(
+                'The result for CacheEngine events must be a `bool`.',
+            );
+        }
+
+        return parent::setResult($value);
     }
 
     /**
@@ -84,29 +99,5 @@ class BeforeCacheEvent extends Event
     public function getValue(): mixed
     {
         return $this->value;
-    }
-
-    /**
-     * @return mixed
-     */
-    public function getDefault(): mixed
-    {
-        return $this->default;
-    }
-
-    /**
-     * @return int|null
-     */
-    public function getOffset(): ?int
-    {
-        return $this->offset;
-    }
-
-    /**
-     * @return \DateInterval|int|null
-     */
-    public function getTtl(): DateInterval|int|null
-    {
-        return $this->ttl;
     }
 }

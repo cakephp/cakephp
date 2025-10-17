@@ -17,9 +17,14 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
-use Cake\Cache\Event\AfterCacheEvent;
-use Cake\Cache\Event\BeforeCacheEvent;
-use Cake\Cache\Event\GroupClearCacheEvent;
+use Cake\Cache\Event\CacheAfterDeleteEvent;
+use Cake\Cache\Event\CacheAfterGetEvent;
+use Cake\Cache\Event\CacheAfterSetEvent;
+use Cake\Cache\Event\CacheBeforeDeleteEvent;
+use Cake\Cache\Event\CacheBeforeGetEvent;
+use Cake\Cache\Event\CacheBeforeSetEvent;
+use Cake\Cache\Event\CacheClearedEvent;
+use Cake\Cache\Event\CacheGroupClearEvent;
 use CallbackFilterIterator;
 use DateInterval;
 use Exception;
@@ -120,12 +125,14 @@ class FileEngine extends CacheEngine
         }
 
         $key = $this->_key($key);
-        $this->_eventClass = BeforeCacheEvent::class;
-        $this->dispatchEvent('Cache.beforeSet', ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
-        $this->_eventClass = AfterCacheEvent::class;
+        $this->_eventClass = CacheBeforeSetEvent::class;
+        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
 
+        $this->_eventClass = CacheAfterSetEvent::class;
         if ($this->_setKey($key, true) === false) {
-            $this->dispatchEvent('Cache.afterSet', ['key' => $key, 'value' => $value, 'success' => false]);
+            $this->dispatchEvent(CacheAfterSetEvent::NAME, [
+                'key' => $key, 'value' => $value, 'success' => false,
+            ]);
 
             return false;
         }
@@ -152,7 +159,9 @@ class FileEngine extends CacheEngine
         }
         unset($this->_File);
 
-        $this->dispatchEvent('Cache.afterSet', ['key' => $key, 'value' => $origValue, 'success' => $success]);
+        $this->dispatchEvent(CacheAfterSetEvent::NAME, [
+            'key' => $key, 'value' => $origValue, 'success' => $success,
+        ]);
 
         return $success;
     }
@@ -168,12 +177,12 @@ class FileEngine extends CacheEngine
     public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->_key($key);
-        $this->_eventClass = BeforeCacheEvent::class;
-        $this->dispatchEvent('Cache.beforeGet', ['key' => $key, 'default' => $default]);
-        $this->_eventClass = AfterCacheEvent::class;
+        $this->_eventClass = CacheBeforeGetEvent::class;
+        $this->dispatchEvent(CacheBeforeGetEvent::NAME, ['key' => $key, 'default' => $default]);
 
+        $this->_eventClass = CacheAfterGetEvent::class;
         if (!$this->_init || $this->_setKey($key) === false) {
-            $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => null, 'success' => false]);
+            $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => null, 'success' => false]);
 
             return $default;
         }
@@ -190,7 +199,7 @@ class FileEngine extends CacheEngine
             if ($this->_config['lock']) {
                 $this->_File->flock(LOCK_UN);
             }
-            $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => null, 'success' => false]);
+            $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => null, 'success' => false]);
 
             return $default;
         }
@@ -210,12 +219,12 @@ class FileEngine extends CacheEngine
 
         if ($data !== '' && !empty($this->_config['serialize'])) {
             $data = unserialize($data);
-            $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => $data, 'success' => true]);
+            $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => $data, 'success' => true]);
 
             return $data;
         }
 
-        $this->dispatchEvent('Cache.afterGet', ['key' => $key, 'value' => $data, 'success' => true]);
+        $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => $data, 'success' => true]);
 
         return $data;
     }
@@ -230,12 +239,12 @@ class FileEngine extends CacheEngine
     public function delete(string $key): bool
     {
         $key = $this->_key($key);
-        $this->_eventClass = BeforeCacheEvent::class;
-        $this->dispatchEvent('Cache.beforeDelete', ['key' => $key]);
-        $this->_eventClass = AfterCacheEvent::class;
+        $this->_eventClass = CacheBeforeDeleteEvent::class;
+        $this->dispatchEvent(CacheBeforeDeleteEvent::NAME, ['key' => $key]);
 
+        $this->_eventClass = CacheAfterDeleteEvent::class;
         if ($this->_setKey($key) === false || !$this->_init) {
-            $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => false]);
+            $this->dispatchEvent(CacheAfterDeleteEvent::NAME, ['key' => $key, 'success' => false]);
 
             return false;
         }
@@ -244,12 +253,12 @@ class FileEngine extends CacheEngine
         unset($this->_File);
 
         if ($path === false) {
-            $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => false]);
+            $this->dispatchEvent(CacheAfterDeleteEvent::NAME, ['key' => $key, 'success' => false]);
 
             return false;
         }
 
-        $this->dispatchEvent('Cache.afterDelete', ['key' => $key, 'success' => true]);
+        $this->dispatchEvent(CacheAfterDeleteEvent::NAME, ['key' => $key, 'success' => true]);
 
         // phpcs:disable
         return @unlink($path);
@@ -305,7 +314,8 @@ class FileEngine extends CacheEngine
         // unsetting iterators helps releasing possible locks in certain environments,
         // which could otherwise make `rmdir()` fail
         unset($directory, $iterator);
-        $this->dispatchEvent('Cache.cleared');
+        $this->_eventClass = CacheClearedEvent::class;
+        $this->dispatchEvent(CacheClearedEvent::NAME);
 
         return true;
     }
@@ -515,8 +525,8 @@ class FileEngine extends CacheEngine
         // unsetting iterators helps releasing possible locks in certain environments,
         // which could otherwise make `rmdir()` fail
         unset($directoryIterator, $contents, $filtered);
-        $this->_eventClass = GroupClearCacheEvent::class;
-        $this->dispatchEvent('Cache.clearedGroup', ['group' => $group]);
+        $this->_eventClass = CacheGroupClearEvent::class;
+        $this->dispatchEvent(CacheGroupClearEvent::NAME, ['group' => $group]);
 
         return true;
     }
