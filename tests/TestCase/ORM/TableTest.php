@@ -1752,6 +1752,85 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test find('list') when called on query with single select() field
+     */
+    public function testFindListAfterSelectSingleField(): void
+    {
+        $articles = new Table([
+            'table' => 'articles',
+            'connection' => $this->connection,
+        ]);
+        $articles->belongsTo('Authors');
+
+        // Select single field, then call find('list')
+        $query = $articles->find()
+            ->contain(['Authors'])
+            ->select(['Authors.name'])
+            ->find('list')
+            ->orderBy('articles.id');
+
+        $expected = [
+            'mariano' => 'mariano',
+            'larry' => 'larry',
+        ];
+        $this->assertSame($expected, $query->toArray());
+
+        // Test with own table field
+        $query = $articles->find()
+            ->select(['title'])
+            ->disableAutoFields()
+            ->find('list')
+            ->orderBy('id');
+
+        $expected = [
+            'First Article' => 'First Article',
+            'Second Article' => 'Second Article',
+            'Third Article' => 'Third Article',
+        ];
+        $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
+     * Test find('list') with single field edge cases
+     */
+    public function testFindListAfterSelectSingleFieldEdgeCases(): void
+    {
+        $articles = new Table([
+            'table' => 'articles',
+            'connection' => $this->connection,
+        ]);
+        $articles->belongsTo('Authors');
+
+        // Test with non-hydrated results
+        $query = $articles->find()
+            ->contain(['Authors'])
+            ->select(['Authors.name'])
+            ->enableHydration(false)
+            ->find('list')
+            ->orderBy('articles.id');
+
+        $expected = [
+            'mariano' => 'mariano',
+            'larry' => 'larry',
+        ];
+        $this->assertSame($expected, $query->toArray());
+
+        // Test with aliased field (string key without __ - tests fallback to value)
+        $query = $articles->find()
+            ->select(['title_alias' => 'title'])
+            ->disableAutoFields()
+            ->find('list')
+            ->orderBy('id');
+
+        $expected = [
+            'First Article' => 'First Article',
+            'Second Article' => 'Second Article',
+            'Third Article' => 'Third Article',
+        ];
+        $this->assertSame($expected, $query->toArray());
+    }
+
+    /**
      * Test the default entityClass.
      */
     public function testEntityClassDefault(): void

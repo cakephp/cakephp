@@ -1365,6 +1365,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
         Closure|array|string|null $groupField = null,
         string $valueSeparator = ' ',
     ): SelectQuery {
+        $originalKeyField = $keyField;
+        $originalValueField = $valueField;
+
         $keyField ??= $this->getPrimaryKey();
         $valueField ??= $this->getDisplayField();
 
@@ -1390,11 +1393,88 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             ['keyField', 'valueField', 'groupField'],
         );
 
-        return $query->formatResults(fn(CollectionInterface $results) => $results->combine(
-            $options['keyField'],
-            $options['valueField'],
-            $options['groupField'],
-        ));
+        return $query->formatResults(function (CollectionInterface $results) use (
+            $options,
+            $query,
+            $originalKeyField,
+            $originalValueField,
+        ) {
+            // If no explicit key/value fields were provided and only one field is selected,
+            // use that field for both key and value
+            if ($originalKeyField === null && $originalValueField === null) {
+                $select = $query->clause('select');
+                if ($select && count($select) === 1) {
+                    $field = array_key_first($select);
+                    $value = current($select);
+
+                    // Extract field name from alias or value
+                    // The field key is the alias (e.g., "Authors__name" or "Articles__title")
+                    // The field value is the SQL reference (e.g., "Authors.name" or "Articles.title")
+                    // For combine(), we need to use the entity/array path
+                    if (is_string($field) && !is_numeric($field)) {
+                        // Handle aliased fields like "Authors__name"
+                        if (str_contains($field, '__')) {
+                            $parts = explode('__', $field);
+                            $tableName = $parts[0];
+                            $fieldName = $parts[1];
+
+                            // Check if this is from the main table
+                            if (strcasecmp($tableName, $this->getAlias()) === 0) {
+                                // Main table field - use field name only
+                                $field = $fieldName;
+                            } else {
+                                // Association field - get property name from association
+                                if ($this->hasAssociation($tableName)) {
+                                    $property = $this->getAssociation($tableName)->getProperty();
+                                    $field = $property . '.' . $fieldName;
+                                } else {
+                                    // Fallback: convert table name to property name using inflection
+                                    $propertyName = Inflector::singularize(Inflector::variable($tableName));
+                                    $field = $propertyName . '.' . $fieldName;
+                                }
+                            }
+                        }
+                    } else {
+                        // Field key is numeric, so use the value (SQL reference)
+                        $field = $value;
+
+                        // If it's a SQL reference like 'Authors.name', convert to property path
+                        // Skip deeply nested paths (more than one dot) as they can't be easily converted
+                        if (is_string($field) && str_contains($field, '.') && substr_count($field, '.') === 1) {
+                            [$tableName, $fieldName] = explode('.', $field, 2);
+
+                            // Check if this is from the main table
+                            if (strcasecmp($tableName, $this->getAlias()) === 0) {
+                                // Main table field - use field name only
+                                $field = $fieldName;
+                            } else {
+                                // Association field - get property name from association
+                                if ($this->hasAssociation($tableName)) {
+                                    $property = $this->getAssociation($tableName)->getProperty();
+                                    $field = $property . '.' . $fieldName;
+                                } else {
+                                    // Fallback: convert table name to property name using inflection
+                                    $propertyName = Inflector::singularize(Inflector::variable($tableName));
+                                    $field = $propertyName . '.' . $fieldName;
+                                }
+                            }
+                        }
+                    }
+
+                    // Use the single field for both key and value
+                    // Fall back to default behavior if field couldn't be determined
+                    if ($field !== null) {
+                        return $results->combine($field, $field, $options['groupField']);
+                    }
+                }
+            }
+
+            return $results->combine(
+                $options['keyField'],
+                $options['valueField'],
+                $options['groupField'],
+            );
+        });
     }
 
     /**
