@@ -16,9 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Collection\Iterator;
 
-use ArrayIterator;
 use Cake\Collection\Collection;
-use Cake\Collection\CollectionInterface;
 use Iterator;
 
 /**
