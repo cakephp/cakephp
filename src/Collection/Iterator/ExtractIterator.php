@@ -80,26 +80,6 @@ class ExtractIterator extends Collection
      */
     public function unwrap(): Iterator
     {
-        $iterator = $this->getInnerIterator();
-
-        if ($iterator instanceof CollectionInterface) {
-            $iterator = $iterator->unwrap();
-        }
-
-        if ($iterator::class !== ArrayIterator::class) {
-            return $this;
-        }
-
-        // ArrayIterator can be traversed strictly.
-        // Let's do that for performance gains
-
-        $callback = $this->_extractor;
-        $res = [];
-
-        foreach ($iterator->getArrayCopy() as $k => $v) {
-            $res[$k] = $callback($v);
-        }
-
-        return new ArrayIterator($res);
+        return $this;
     }
 }
