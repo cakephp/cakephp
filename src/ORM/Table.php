@@ -1389,7 +1389,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
             }
 
             // Process 1-2 select fields into proper property paths
-            if ($keyField === null && $valueField === null && count($fields) === 2) {
+            if (count($fields) === 2) {
                 $keyField = array_shift($fields);
                 $valueField = array_shift($fields);
                 if (substr_count($keyField, '.') > 1) {
@@ -1426,7 +1426,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                         }
                     }
                 }
-            } elseif ($keyField === null && $valueField === null && count($fields) === 1) {
+            } elseif (count($fields) === 1) {
                 $field = array_shift($fields);
                 if (substr_count($field, '.') > 1) {
                     $field = null;
