@@ -662,8 +662,6 @@ class PaginatorHelperTest extends TestCase
         $this->assertHtml($expected, $result);
     }
 
-
-
     /**
      * Test that generated URLs work without sort defined within the request
      */
