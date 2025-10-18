@@ -19,7 +19,6 @@ namespace Cake\Test\TestCase\Datasource\Paging;
 use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\Paging\SortableFieldsBuilder;
 use Cake\Datasource\Paging\SortField;
-use Cake\Datasource\Paging\SortFieldBuilder;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
@@ -276,7 +275,7 @@ class NumericPaginatorSortFieldTest extends TestCase
     }
 
     /**
-     * Test paginator with SortFieldBuilder preset methods
+     * Test paginator with SortField array preset methods
      *
      * @return void
      */
@@ -288,16 +287,16 @@ class NumericPaginatorSortFieldTest extends TestCase
 
         $settings = [
             'sortableFields' => [
-                'newest' => SortFieldBuilder::create()
-                    ->desc('published')
-                    ->asc('title')
-                    ->build(),
-                'oldest' => SortFieldBuilder::create()
-                    ->asc('published')
-                    ->build(),
-                'alphabetical' => SortFieldBuilder::create()
-                    ->asc('title')
-                    ->build(),
+                'newest' => [
+                    SortField::desc('published'),
+                    SortField::asc('title'),
+                ],
+                'oldest' => [
+                    SortField::asc('published'),
+                ],
+                'alphabetical' => [
+                    SortField::asc('title'),
+                ],
             ],
         ];
 
@@ -314,7 +313,7 @@ class NumericPaginatorSortFieldTest extends TestCase
     }
 
     /**
-     * Test paginator with SortFieldBuilder fluent interface
+     * Test paginator with SortField array configuration
      *
      * @return void
      */
@@ -327,11 +326,11 @@ class NumericPaginatorSortFieldTest extends TestCase
 
         $settings = [
             'sortableFields' => [
-                'custom' => SortFieldBuilder::create()
-                    ->desc('published')
-                    ->asc('author_id', locked: true)
-                    ->asc('title')
-                    ->build(),
+                'custom' => [
+                    SortField::desc('published'),
+                    SortField::asc('author_id', locked: true),
+                    SortField::asc('title'),
+                ],
             ],
         ];
 
@@ -350,16 +349,16 @@ class NumericPaginatorSortFieldTest extends TestCase
     }
 
     /**
-     * Test paginator with complete sorts built using factory
+     * Test paginator with complete sorts built using SortField arrays
      *
      * @return void
      */
     public function testPaginateWithFactoryBuildMap(): void
     {
         $sorts = [
-            'newest' => SortFieldBuilder::create()->desc('published')->build(),
-            'popular' => SortFieldBuilder::create()->desc('published', locked: true)->build(),
-            'alphabetical' => SortFieldBuilder::create()->asc('title')->build(),
+            'newest' => [SortField::desc('published')],
+            'popular' => [SortField::desc('published', locked: true)],
+            'alphabetical' => [SortField::asc('title')],
         ];
 
         $params = [
