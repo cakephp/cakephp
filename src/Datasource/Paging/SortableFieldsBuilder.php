@@ -16,13 +16,15 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource\Paging;
 
+use Closure;
+
 /**
  * Builder for creating complete sortable fields configurations.
  *
  * Provides interface for building sortable fields with multiple sort keys and fields.
  * Also handles resolution of sort keys to database ORDER BY clauses.
  */
-class SortableFieldsBuilder
+final class SortableFieldsBuilder
 {
     /**
      * @var array<string, array<\Cake\Datasource\Paging\SortField|string>> The sortable fields map being built
@@ -37,20 +39,20 @@ class SortableFieldsBuilder
     /**
      * Create builder from various sortableFields configurations.
      *
-     * @param callable|array<mixed>|null $config The sortableFields configuration
+     * @param \Closure|array<mixed>|null $config The sortableFields configuration
      * @return self|null Builder instance or null if no config
      */
-    public static function create(array|callable|null $config): ?self
+    public static function create(array|Closure|null $config): ?self
     {
         if ($config === null) {
             return null;
         }
 
-        if (is_callable($config)) {
-            return static::fromCallable($config);
+        if ($config instanceof Closure) {
+            return self::fromCallable($config);
         }
 
-        return static::fromArray($config);
+        return self::fromArray($config);
     }
 
     /**
@@ -98,10 +100,10 @@ class SortableFieldsBuilder
     /**
      * Create builder from callable factory.
      *
-     * @param callable $factory Callable that receives builder and returns it
+     * @param \Closure $factory Closure that receives builder and returns it
      * @return self
      */
-    public static function fromCallable(callable $factory): self
+    public static function fromCallable(Closure $factory): self
     {
         $builder = new self();
         $builder = $factory($builder);
@@ -129,11 +131,11 @@ class SortableFieldsBuilder
     }
 
     /**
-     * Build and return the complete sortable fields map.
+     * Return the complete sortable fields map.
      *
      * @return array<string, array<\Cake\Datasource\Paging\SortField|string>>
      */
-    public function build(): array
+    public function toArray(): array
     {
         return $this->map;
     }

@@ -36,32 +36,17 @@ class SortField
     public const DESC = 'desc';
 
     /**
-     * @var string The field name to sort by
-     */
-    protected string $field;
-
-    /**
-     * @var string|null The default sort direction
-     */
-    protected ?string $defaultDirection;
-
-    /**
-     * @var bool Whether the sort direction is locked
-     */
-    protected bool $locked;
-
-    /**
      * Constructor.
      *
      * @param string $field The field name to sort by
      * @param string|null $defaultDirection The default sort direction
      * @param bool $locked Whether the sort direction is locked
      */
-    public function __construct(string $field, ?string $defaultDirection = null, bool $locked = false)
-    {
-        $this->field = $field;
-        $this->defaultDirection = $defaultDirection;
-        $this->locked = $locked;
+    public function __construct(
+        protected string $field,
+        protected ?string $defaultDirection = null,
+        protected bool $locked = false,
+    ) {
     }
 
     /**

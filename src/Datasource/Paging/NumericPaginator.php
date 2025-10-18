@@ -570,11 +570,15 @@ class NumericPaginator implements PaginatorInterface
 
         if (isset($options['sort'])) {
             // Parse sort and direction parameters
-            [$sortKey, $direction, $directionSpecified] = $this->parseSortParams($options);
+            $sortParams = $this->parseSortParams($options);
 
             if ($builder !== null) {
                 // Use builder to resolve sort key
-                $order = $builder->resolve($sortKey, $direction, $directionSpecified);
+                $order = $builder->resolve(
+                    $sortParams['sortKey'],
+                    $sortParams['direction'],
+                    $sortParams['directionSpecified'],
+                );
 
                 if ($order === null) {
                     // Invalid sort key, clear sort
@@ -597,11 +601,11 @@ class NumericPaginator implements PaginatorInterface
             } else {
                 // No sortableFields configured - allow any field (default behavior)
                 $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
-                if ($order && $sortKey && !str_contains($sortKey, '.')) {
+                if ($order && $sortParams['sortKey'] && !str_contains($sortParams['sortKey'], '.')) {
                     $order = $this->_removeAliases($order, $object->getAlias());
                 }
 
-                $options['order'] = [$sortKey => $direction] + $order;
+                $options['order'] = [$sortParams['sortKey'] => $sortParams['direction']] + $order;
             }
         } else {
             $options['sort'] = null;
@@ -712,20 +716,24 @@ class NumericPaginator implements PaginatorInterface
      * Extracts and normalizes sort key and direction from pagination options.
      *
      * @param array<string, mixed> $options The options array
-     * @return array{string, string, bool} [sortKey, direction, directionSpecified]
+     * @return array{sortKey: string, direction: string, directionSpecified: bool}
      */
     protected function parseSortParams(array $options): array
     {
         $sortKey = $options['sort'];
-        $direction = isset($options['direction']) ? strtolower($options['direction']) : 'asc';
+        $direction = isset($options['direction']) ? strtolower($options['direction']) : SortField::ASC;
         $directionSpecified = isset($options['direction']);
 
         // Validate direction
-        if (!in_array($direction, ['asc', 'desc'], true)) {
-            $direction = 'asc';
+        if (!in_array($direction, [SortField::ASC, SortField::DESC], true)) {
+            $direction = SortField::ASC;
         }
 
-        return [$sortKey, $direction, $directionSpecified];
+        return [
+            'sortKey' => $sortKey,
+            'direction' => $direction,
+            'directionSpecified' => $directionSpecified,
+        ];
     }
 
     /**

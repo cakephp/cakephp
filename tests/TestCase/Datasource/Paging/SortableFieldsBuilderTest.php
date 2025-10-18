@@ -34,7 +34,7 @@ class SortableFieldsBuilderTest extends TestCase
     {
         $factory = new SortableFieldsBuilder();
         $factory->add('newest', SortField::desc('created'));
-        $sorts = $factory->build();
+        $sorts = $factory->toArray();
 
         $this->assertArrayHasKey('newest', $sorts);
         $this->assertCount(1, $sorts['newest']);
@@ -50,7 +50,7 @@ class SortableFieldsBuilderTest extends TestCase
     {
         $factory = new SortableFieldsBuilder();
         $factory->add('relevance', SortField::desc('score'), SortField::asc('title'));
-        $sorts = $factory->build();
+        $sorts = $factory->toArray();
 
         $this->assertCount(2, $sorts['relevance']);
         $this->assertInstanceOf(SortField::class, $sorts['relevance'][0]);
@@ -66,7 +66,7 @@ class SortableFieldsBuilderTest extends TestCase
     {
         $factory = new SortableFieldsBuilder();
         $factory->add('simple', 'title', 'created');
-        $sorts = $factory->build();
+        $sorts = $factory->toArray();
 
         $this->assertCount(2, $sorts['simple']);
         $this->assertSame('title', $sorts['simple'][0]);
@@ -82,7 +82,7 @@ class SortableFieldsBuilderTest extends TestCase
     {
         $factory = new SortableFieldsBuilder();
         $factory->add('title');
-        $sorts = $factory->build();
+        $sorts = $factory->toArray();
 
         $this->assertCount(1, $sorts['title']);
         $this->assertSame('title', $sorts['title'][0]);
@@ -109,7 +109,7 @@ class SortableFieldsBuilderTest extends TestCase
         $builder = SortableFieldsBuilder::create(['title', 'created', 'author_id']);
         $this->assertInstanceOf(SortableFieldsBuilder::class, $builder);
 
-        $map = $builder->build();
+        $map = $builder->toArray();
         $this->assertArrayHasKey('title', $map);
         $this->assertArrayHasKey('created', $map);
         $this->assertArrayHasKey('author_id', $map);
@@ -130,7 +130,7 @@ class SortableFieldsBuilderTest extends TestCase
         $builder = SortableFieldsBuilder::create($config);
         $this->assertInstanceOf(SortableFieldsBuilder::class, $builder);
 
-        $map = $builder->build();
+        $map = $builder->toArray();
         $this->assertSame('Users.name', $map['name']);
         $this->assertInstanceOf(SortField::class, $map['newest'][0]);
     }
@@ -149,7 +149,7 @@ class SortableFieldsBuilderTest extends TestCase
         });
 
         $this->assertInstanceOf(SortableFieldsBuilder::class, $builder);
-        $map = $builder->build();
+        $map = $builder->toArray();
         $this->assertArrayHasKey('name', $map);
         $this->assertArrayHasKey('newest', $map);
     }
@@ -339,7 +339,7 @@ class SortableFieldsBuilderTest extends TestCase
     public function testFromArrayWithSimpleFormat(): void
     {
         $builder = SortableFieldsBuilder::fromArray(['title', 'created']);
-        $map = $builder->build();
+        $map = $builder->toArray();
 
         $this->assertArrayHasKey('title', $map);
         $this->assertArrayHasKey('created', $map);
@@ -360,7 +360,7 @@ class SortableFieldsBuilderTest extends TestCase
         ];
 
         $builder = SortableFieldsBuilder::fromArray($config);
-        $map = $builder->build();
+        $map = $builder->toArray();
 
         $this->assertSame('Users.name', $map['name']);
         $this->assertSame(['created', 'title'], $map['newest']);
@@ -379,7 +379,7 @@ class SortableFieldsBuilderTest extends TestCase
                 ->add('newest', SortField::desc('created'));
         });
 
-        $map = $builder->build();
+        $map = $builder->toArray();
         $this->assertArrayHasKey('name', $map);
         $this->assertArrayHasKey('newest', $map);
     }

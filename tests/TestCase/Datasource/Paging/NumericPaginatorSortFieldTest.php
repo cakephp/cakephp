@@ -408,7 +408,7 @@ class NumericPaginatorSortFieldTest extends TestCase
             );
 
         $settings = [
-            'sortableFields' => $factory->build(),
+            'sortableFields' => $factory->toArray(),
         ];
 
         // Test newest sort
@@ -458,7 +458,7 @@ class NumericPaginatorSortFieldTest extends TestCase
             ->add('author_id'); // Shorthand - uses 'author_id' as field
 
         $settings = [
-            'sortableFields' => $factory->build(),
+            'sortableFields' => $factory->toArray(),
         ];
 
         // Test title sort
