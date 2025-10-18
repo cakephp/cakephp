@@ -565,7 +565,12 @@ class NumericPaginator implements PaginatorInterface
     protected function validateSort(RepositoryInterface $object, array $options): array
     {
         // Check if we have sortableFields configured
-        $builder = SortableFieldsBuilder::create($options['sortableFields'] ?? null);
+        $sortableFields = $options['sortableFields'] ?? null;
+        if ($sortableFields instanceof SortableFieldsBuilder) {
+            $builder = $sortableFields;
+        } else {
+            $builder = SortableFieldsBuilder::create($sortableFields);
+        }
         $sortAllowed = $builder !== null;
 
         if (isset($options['sort'])) {

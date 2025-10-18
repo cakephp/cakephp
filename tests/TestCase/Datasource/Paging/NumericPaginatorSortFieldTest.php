@@ -487,4 +487,47 @@ class NumericPaginatorSortFieldTest extends TestCase
         $this->assertEquals('asc', $pagingParams['direction']);
         $this->assertEquals($expected, $pagingParams['completeSort']);
     }
+
+    /**
+     * Test passing SortableFieldsBuilder instance directly to paginate
+     *
+     * @return void
+     */
+    public function testSortableFieldsBuilderInstance(): void
+    {
+        $builder = SortableFieldsBuilder::create([
+            'name' => 'Articles.title',
+            'newest' => [SortField::desc('Articles.published')],
+        ]);
+
+        $settings = [
+            'sortableFields' => $builder,
+        ];
+
+        // Test with builder instance
+        $params = ['sort' => 'name', 'direction' => 'asc'];
+        $result = $this->paginator->paginate($this->table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $expected = [
+            'Articles.title' => 'asc',
+        ];
+
+        $this->assertEquals('name', $pagingParams['sort']);
+        $this->assertEquals('asc', $pagingParams['direction']);
+        $this->assertEquals($expected, $pagingParams['completeSort']);
+
+        // Test newest sort
+        $params = ['sort' => 'newest'];
+        $result = $this->paginator->paginate($this->table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $expected = [
+            'Articles.published' => 'desc',
+        ];
+
+        $this->assertEquals('newest', $pagingParams['sort']);
+        $this->assertEquals('desc', $pagingParams['direction']);
+        $this->assertEquals($expected, $pagingParams['completeSort']);
+    }
 }

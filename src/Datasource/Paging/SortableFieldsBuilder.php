@@ -27,7 +27,7 @@ use Closure;
 final class SortableFieldsBuilder
 {
     /**
-     * @var array<string, array<\Cake\Datasource\Paging\SortField|string>> The sortable fields map being built
+     * @var array<string, array<\Cake\Datasource\Paging\SortField|string>|string> The sortable fields map being built
      */
     protected array $map = [];
 
@@ -83,15 +83,17 @@ final class SortableFieldsBuilder
             foreach ($config as $key => $value) {
                 if (is_int($key) && is_string($value)) {
                     // Numeric key with string value: 'field' becomes 'field' => ['field']
-                    $builder->map[$value] = [$value];
+                    $builder->add($value, $value);
                 } else {
                     // String key: use as-is
-                    $builder->map[$key] = $value;
+                    $builder->set($key, $value);
                 }
             }
         } else {
             // Associative map format
-            $builder->map = $config;
+            foreach ($config as $key => $value) {
+                $builder->set($key, $value);
+            }
         }
 
         return $builder;
@@ -131,9 +133,38 @@ final class SortableFieldsBuilder
     }
 
     /**
+     * Set a sort key with type-safe validation.
+     *
+     * Internal method used by fromArray() to ensure type safety while preserving
+     * backward compatibility with string and array representations.
+     *
+     * @param string $sortKey The sort key name
+     * @param mixed $value The sort field(s) - can be string, SortField, or array
+     * @return $this
+     */
+    protected function set(string $sortKey, mixed $value)
+    {
+        if (is_string($value)) {
+            // Single string mapping - preserve as-is
+            $this->map[$sortKey] = $value;
+        } elseif ($value instanceof SortField) {
+            // Single SortField object - wrap in array
+            $this->map[$sortKey] = [$value];
+        } elseif (is_array($value)) {
+            // Array of fields - validate and store
+            $this->map[$sortKey] = $value;
+        } else {
+            // Fallback for other types
+            $this->map[$sortKey] = $value;
+        }
+
+        return $this;
+    }
+
+    /**
      * Return the complete sortable fields map.
      *
-     * @return array<string, array<\Cake\Datasource\Paging\SortField|string>>
+     * @return array<string, array<\Cake\Datasource\Paging\SortField|string>|string>
      */
     public function toArray(): array
     {

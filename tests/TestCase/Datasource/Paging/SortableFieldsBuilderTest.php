@@ -37,6 +37,7 @@ class SortableFieldsBuilderTest extends TestCase
         $sorts = $factory->toArray();
 
         $this->assertArrayHasKey('newest', $sorts);
+        $this->assertIsArray($sorts['newest']);
         $this->assertCount(1, $sorts['newest']);
         $this->assertInstanceOf(SortField::class, $sorts['newest'][0]);
     }
@@ -52,6 +53,7 @@ class SortableFieldsBuilderTest extends TestCase
         $factory->add('relevance', SortField::desc('score'), SortField::asc('title'));
         $sorts = $factory->toArray();
 
+        $this->assertIsArray($sorts['relevance']);
         $this->assertCount(2, $sorts['relevance']);
         $this->assertInstanceOf(SortField::class, $sorts['relevance'][0]);
         $this->assertInstanceOf(SortField::class, $sorts['relevance'][1]);
@@ -68,6 +70,7 @@ class SortableFieldsBuilderTest extends TestCase
         $factory->add('simple', 'title', 'created');
         $sorts = $factory->toArray();
 
+        $this->assertIsArray($sorts['simple']);
         $this->assertCount(2, $sorts['simple']);
         $this->assertSame('title', $sorts['simple'][0]);
         $this->assertSame('created', $sorts['simple'][1]);
@@ -84,6 +87,7 @@ class SortableFieldsBuilderTest extends TestCase
         $factory->add('title');
         $sorts = $factory->toArray();
 
+        $this->assertIsArray($sorts['title']);
         $this->assertCount(1, $sorts['title']);
         $this->assertSame('title', $sorts['title'][0]);
     }
