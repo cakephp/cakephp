@@ -576,6 +576,9 @@ class NumericPaginator implements PaginatorInterface
             // Parse sort and direction parameters
             $sortParams = $this->parseSortParams($options);
 
+            // Update options with parsed sort key (handles combined format)
+            $options['sort'] = $sortParams['sortKey'];
+
             if ($builder !== null) {
                 // Use builder to resolve sort key
                 $order = $builder->resolve(
@@ -718,6 +721,8 @@ class NumericPaginator implements PaginatorInterface
      * Parse sort parameters from options.
      *
      * Extracts and normalizes sort key and direction from pagination options.
+     * Supports both traditional format (?sort=field&direction=asc) and
+     * combined format (?sort=field-asc).
      *
      * @param array<string, mixed> $options The options array
      * @return array{sortKey: string, direction: string, directionSpecified: bool}
@@ -727,6 +732,13 @@ class NumericPaginator implements PaginatorInterface
         $sortKey = $options['sort'];
         $direction = isset($options['direction']) ? strtolower($options['direction']) : SortField::ASC;
         $directionSpecified = isset($options['direction']);
+
+        // Check for combined sort-direction format (e.g., 'title-asc' or 'title-desc')
+        if (preg_match('/^(.+)-(asc|desc)$/i', $sortKey, $matches)) {
+            $sortKey = $matches[1];
+            $direction = strtolower($matches[2]);
+            $directionSpecified = true;
+        }
 
         // Validate direction
         if (!in_array($direction, [SortField::ASC, SortField::DESC], true)) {

@@ -663,6 +663,80 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * Test sort links with combined format
+     */
+    public function testSortLinksCombinedFormat(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Accounts',
+                'action' => 'index',
+                'pass' => [],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+
+        $this->setPaginatedResult([
+            'alias' => 'Articles',
+            'currentPage' => 1,
+            'count' => 9,
+            'totalCount' => 62,
+            'hasPrevPage' => false,
+            'hasNextPage' => true,
+            'pageCount' => 7,
+        ], false);
+        $this->Paginator->options(['url' => ['param']]);
+
+        // Test default format (separate)
+        $result = $this->Paginator->sort('title');
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=asc'],
+            'Title',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Test combined format
+        $this->Paginator->setConfig('options.sortFormat', 'combined');
+        $result = $this->Paginator->sort('title');
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=title-asc'],
+            'Title',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Test combined format with currently sorted field (toggles direction)
+        $this->setPaginatedResult([
+            'alias' => 'Articles',
+            'sort' => 'title',
+        ]);
+        $result = $this->Paginator->sort('title');
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=title-desc', 'class' => 'asc'],
+            'Title',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Test combined format with dot notation
+        $this->setPaginatedResult([
+            'alias' => 'Articles',
+        ]);
+        $result = $this->Paginator->sort('Articles.author');
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=Articles.author-asc'],
+            'Articles Author',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test that generated URLs work without sort defined within the request
      */
     public function testDefaultSortAndNoSort(): void
