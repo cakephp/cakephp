@@ -244,7 +244,7 @@ final class SortableFieldsBuilder
             } elseif (is_int($key)) {
                 // Numeric array: ['field1', 'field2'] - use requested direction
                 $order[$value] = $direction;
-            } elseif (is_string($key) && is_string($value)) {
+            } elseif (is_string($value)) {
                 // Associative array with default directions per field
                 // Format: ['field1' => 'ASC', 'field2' => 'DESC']
                 $defaultDirection = strtolower($value);
