@@ -542,13 +542,7 @@ class NumericPaginator implements PaginatorInterface
      * also be sanitized. Lastly sort + direction keys will be converted into
      * the model friendly order key.
      *
-     * Supports two formats for sort parameters:
-     * - Traditional: `?sort=title&direction=asc`
-     * - Combined: `?sort=title-asc` or `?sort=title-desc`
-     *
-     * The combined format merges the field and direction into a single parameter,
-     * making URLs cleaner and more RESTful. Both formats work with sorts.
-     *
+     /**
      * You can use the allowedParameters option to control which columns/fields are
      * available for sorting via URL parameters. This helps prevent users from ordering large
      * result sets on un-indexed values.
@@ -570,59 +564,49 @@ class NumericPaginator implements PaginatorInterface
      */
     protected function validateSort(RepositoryInterface $object, array $options): array
     {
+        // Check if we have sortableFields configured
+        $builder = SortableFieldsBuilder::create($options['sortableFields'] ?? null);
+        $sortAllowed = $builder !== null;
+
         if (isset($options['sort'])) {
-            $direction = null;
-            $sortField = $options['sort'];
+            // Parse sort and direction parameters
+            [$sortKey, $direction, $directionSpecified] = $this->parseSortParams($options);
 
-            // Check for combined sort-direction format (e.g., 'title-asc' or 'title-desc')
-            $directionSpecified = false;
-            if (preg_match('/^(.+)-(asc|desc)$/i', $sortField, $matches)) {
-                $sortField = $matches[1];
-                $direction = strtolower($matches[2]);
-                $options['sort'] = $sortField;
-                $directionSpecified = true;
-            } elseif (isset($options['direction'])) {
-                $direction = strtolower($options['direction']);
-                $directionSpecified = true;
-            }
+            if ($builder !== null) {
+                // Use builder to resolve sort key
+                $order = $builder->resolve($sortKey, $direction, $directionSpecified);
 
-            if (!in_array($direction, ['asc', 'desc'], true)) {
-                $direction = 'asc';
-            }
-
-            // Check sortableFields first for mapped sorting (if it contains SortField objects or mappings)
-            if (isset($options['sortableFields']) && $this->isSortableFieldsMap($options['sortableFields'])) {
-                $sortsConfig = $this->resolveSortsConfig($options['sortableFields']);
-                $mappedOrder = $this->resolveSortMapping(
-                    $options['sort'],
-                    $sortsConfig,
-                    $direction,
-                    $directionSpecified,
-                );
-                if ($mappedOrder !== null) {
-                    // Use mapped order and merge with existing order
-                    $existingOrder = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
-                    $options['order'] = $mappedOrder + $existingOrder;
-                } else {
-                    // Sort key not in sortableFields map, clear sort
+                if ($order === null) {
+                    // Invalid sort key, clear sort
                     $options['order'] = [];
                     $options['sort'] = null;
                     unset($options['direction']);
 
                     return $options;
                 }
+
+                // Merge with existing order - existing order comes AFTER our resolved order
+                $existingOrder = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
+                // Only keep fields from existing order that aren't already in our resolved order
+                foreach ($existingOrder as $field => $dir) {
+                    if (!isset($order[$field])) {
+                        $order[$field] = $dir;
+                    }
+                }
+                $options['order'] = $order;
             } else {
-                // No sortableFields map, use traditional sorting
+                // No sortableFields configured - allow any field (default behavior)
                 $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
-                if ($order && $options['sort'] && !str_contains($options['sort'], '.')) {
+                if ($order && $sortKey && !str_contains($sortKey, '.')) {
                     $order = $this->_removeAliases($order, $object->getAlias());
                 }
 
-                $options['order'] = [$options['sort'] => $direction] + $order;
+                $options['order'] = [$sortKey => $direction] + $order;
             }
         } else {
             $options['sort'] = null;
         }
+
         unset($options['direction']);
 
         if (empty($options['order'])) {
@@ -630,24 +614,6 @@ class NumericPaginator implements PaginatorInterface
         }
         if (!is_array($options['order'])) {
             return $options;
-        }
-
-        $sortAllowed = false;
-
-        // Skip sortableFields check if sortableFields is being used as a map
-        if (isset($options['sortableFields']) && $this->isSortableFieldsMap($options['sortableFields'])) {
-            // When sortableFields map is used, we've already validated the sort key
-            $sortAllowed = true;
-        } elseif (isset($options['sortableFields'])) {
-            // Traditional sortableFields array - validate the field
-            $field = key($options['order']);
-            $sortAllowed = in_array($field, $options['sortableFields'], true);
-            if (!$sortAllowed) {
-                $options['sort'] = $options['direction'] = null;
-                $options['order'] = [];
-
-                return $options;
-            }
         }
 
         if (
@@ -741,133 +707,25 @@ class NumericPaginator implements PaginatorInterface
     }
 
     /**
-     * Check if sortableFields is configured as a map (vs simple array).
+     * Parse sort parameters from options.
      *
-     * @param mixed $sortableFields The sortableFields configuration
-     * @return bool True if it's a map with SortField objects or associative mappings
+     * Extracts and normalizes sort key and direction from pagination options.
+     *
+     * @param array<string, mixed> $options The options array
+     * @return array{string, string, bool} [sortKey, direction, directionSpecified]
      */
-    protected function isSortableFieldsMap(mixed $sortableFields): bool
+    protected function parseSortParams(array $options): array
     {
-        if (!is_array($sortableFields) && !is_callable($sortableFields)) {
-            return false;
+        $sortKey = $options['sort'];
+        $direction = isset($options['direction']) ? strtolower($options['direction']) : 'asc';
+        $directionSpecified = isset($options['direction']);
+
+        // Validate direction
+        if (!in_array($direction, ['asc', 'desc'], true)) {
+            $direction = 'asc';
         }
 
-        if (is_callable($sortableFields)) {
-            return true;
-        }
-
-        // Check if it's an associative array or contains SortField objects
-        foreach ($sortableFields as $key => $value) {
-            if (is_string($key) || $value instanceof SortField || is_array($value)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    /**
-     * Resolves sortableFields configuration from callable or array.
-     *
-     * @param callable|array $sortsConfig The sortableFields configuration
-     * @return array|null The resolved sortableFields array
-     */
-    protected function resolveSortsConfig(callable|array $sortsConfig): ?array
-    {
-        if (is_callable($sortsConfig)) {
-            $factory = new SortableFieldsBuilder();
-            $factory = $sortsConfig($factory);
-
-            return $factory->build();
-        }
-
-        return $sortsConfig;
-    }
-
-    /**
-     * Resolves sort mapping for a given sort key.
-     *
-     * Takes a sort key and resolves it using the sorts configuration.
-     * Supports simple mapping, multi-column sorting, and fixed direction sorting.
-     *
-     * @param string $sortKey The sort key to resolve
-     * @param array|null $sortsMap The sorts mapping configuration
-     * @param string $direction The requested sort direction
-     * @param bool $directionSpecified Whether direction was explicitly specified
-     * @return array<string, mixed>|null Returns resolved order array or null if key not found
-     */
-    protected function resolveSortMapping(
-        string $sortKey,
-        ?array $sortsMap,
-        string $direction,
-        bool $directionSpecified = true,
-    ): ?array {
-        if ($sortsMap === null) {
-            return null;
-        }
-
-        // Check for direct mapping first
-        if (isset($sortsMap[$sortKey])) {
-            $mapping = $sortsMap[$sortKey];
-        } else {
-            // Check for shorthand numeric array syntax: ['name'] means 'name' => 'name'
-            // We check if the sortKey exists as a value in numeric indices
-            $found = false;
-            foreach ($sortsMap as $key => $value) {
-                if (is_int($key) && is_string($value) && $value === $sortKey) {
-                    $found = true;
-                    break;
-                }
-            }
-            if ($found) {
-                $order = [$sortKey => $direction];
-
-                return $order;
-            }
-
-            return null;
-        }
-
-        $order = [];
-
-        // Simple string mapping: 'name' => 'Users.name'
-        if (is_string($mapping)) {
-            $order[$mapping] = $direction;
-
-            return $order;
-        }
-
-        // Array mapping (multi-column with default or locked directions)
-        if (is_array($mapping)) {
-            foreach ($mapping as $key => $value) {
-                // Handle SortField objects
-                if ($value instanceof SortField) {
-                    $field = $value->getField();
-                    $fieldDirection = $value->getDirection($direction, $directionSpecified);
-                    $order[$field] = $fieldDirection;
-                } elseif (is_int($key)) {
-                    // Indexed array: field uses querystring direction
-                    // e.g., ['modified', 'name']
-                    $order[$value] = $direction;
-                } elseif (str_ends_with($value, '!')) {
-                    // Associative array: check for locked (!) or default direction
-                    // Locked direction (ends with !): always use specified direction
-                    // e.g., ['created' => 'desc!'] always sorts desc
-                    $order[$key] = rtrim($value, '!');
-                } elseif (!$directionSpecified) {
-                    // Default direction that can be toggled
-                    // No direction specified, use the default
-                    $order[$key] = $value;
-                } else {
-                    // Direction specified, use it for all toggleable fields
-                    $order[$key] = $direction;
-                }
-            }
-
-            return $order;
-        }
-
-        return null;
+        return [$sortKey, $direction, $directionSpecified];
     }
 
     /**

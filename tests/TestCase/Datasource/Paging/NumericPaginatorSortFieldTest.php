@@ -17,9 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource\Paging;
 
 use Cake\Datasource\Paging\NumericPaginator;
+use Cake\Datasource\Paging\SortableFieldsBuilder;
 use Cake\Datasource\Paging\SortField;
 use Cake\Datasource\Paging\SortFieldBuilder;
-use Cake\Datasource\Paging\SortableFieldsBuilder;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 
@@ -190,72 +190,6 @@ class NumericPaginatorSortFieldTest extends TestCase
             'Articles.published' => 'desc', // SortField with default desc
             'Articles.author_id' => 'desc', // String field uses requested direction
             'Articles.title' => 'asc', // Locked field ignores requested direction
-        ];
-
-        $this->assertEquals($expected, $pagingParams['completeSort']);
-    }
-
-    /**
-     * Test paginator with combined sort format and SortField
-     *
-     * @return void
-     */
-    public function testPaginateWithCombinedSortFormat(): void
-    {
-        // Test with combined format: newest-desc
-        $params = [
-            'sort' => 'newest-desc',
-        ];
-
-        $settings = [
-            'sortableFields' => [
-                'newest' => [
-                    SortField::asc('title'),
-                    SortField::desc('published'),
-                ],
-            ],
-        ];
-
-        $result = $this->paginator->paginate($this->table, $params, $settings);
-        $pagingParams = $result->pagingParams();
-
-        // Direction is explicitly specified as desc
-        $expected = [
-            'Articles.title' => 'desc',
-            'Articles.published' => 'desc',
-        ];
-
-        $this->assertEquals($expected, $pagingParams['completeSort']);
-    }
-
-    /**
-     * Test paginator with SortField when no direction is provided in combined format
-     *
-     * @return void
-     */
-    public function testPaginateWithCombinedSortFormatNoDirection(): void
-    {
-        // Test with combined format but no direction: just "newest"
-        $params = [
-            'sort' => 'newest',
-        ];
-
-        $settings = [
-            'sortableFields' => [
-                'newest' => [
-                    SortField::desc('published'),
-                    SortField::asc('title'),
-                ],
-            ],
-        ];
-
-        $result = $this->paginator->paginate($this->table, $params, $settings);
-        $pagingParams = $result->pagingParams();
-
-        // Should use default directions from SortField
-        $expected = [
-            'Articles.published' => 'desc',
-            'Articles.title' => 'asc',
         ];
 
         $this->assertEquals($expected, $pagingParams['completeSort']);
@@ -510,33 +444,6 @@ class NumericPaginatorSortFieldTest extends TestCase
      *
      * @return void
      */
-    public function testCombinedSortFormatWithFactory(): void
-    {
-        $settings = [
-            'sortableFields' => [
-                'custom' => SortFieldBuilder::create()
-                    ->desc('published')
-                    ->asc('title')
-                    ->build(),
-            ],
-        ];
-
-        // Test with combined format: custom-asc
-        $params = ['sort' => 'custom-asc'];
-
-        $result = $this->paginator->paginate($this->table, $params, $settings);
-        $pagingParams = $result->pagingParams();
-
-        // Direction is explicitly specified as asc
-        $expected = [
-            'Articles.published' => 'asc',
-            'Articles.title' => 'asc',
-        ];
-
-        $this->assertEquals('custom', $pagingParams['sort']);
-        $this->assertEquals('asc', $pagingParams['direction']);
-        $this->assertEquals($expected, $pagingParams['completeSort']);
-    }
 
     /**
      * Test SortableFieldsBuilder shorthand where key is used as field

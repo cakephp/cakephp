@@ -16,8 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Datasource\Paging;
 
-use Cake\Datasource\Paging\SortField;
 use Cake\Datasource\Paging\SortableFieldsBuilder;
+use Cake\Datasource\Paging\SortField;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -86,5 +86,301 @@ class SortableFieldsBuilderTest extends TestCase
 
         $this->assertCount(1, $sorts['title']);
         $this->assertSame('title', $sorts['title'][0]);
+    }
+
+    /**
+     * Test create() with null returns null
+     *
+     * @return void
+     */
+    public function testCreateWithNull(): void
+    {
+        $builder = SortableFieldsBuilder::create(null);
+        $this->assertNull($builder);
+    }
+
+    /**
+     * Test create() from simple array
+     *
+     * @return void
+     */
+    public function testCreateFromSimpleArray(): void
+    {
+        $builder = SortableFieldsBuilder::create(['title', 'created', 'author_id']);
+        $this->assertInstanceOf(SortableFieldsBuilder::class, $builder);
+
+        $map = $builder->build();
+        $this->assertArrayHasKey('title', $map);
+        $this->assertArrayHasKey('created', $map);
+        $this->assertArrayHasKey('author_id', $map);
+    }
+
+    /**
+     * Test create() from associative map
+     *
+     * @return void
+     */
+    public function testCreateFromMap(): void
+    {
+        $config = [
+            'name' => 'Users.name',
+            'newest' => [SortField::desc('created')],
+        ];
+
+        $builder = SortableFieldsBuilder::create($config);
+        $this->assertInstanceOf(SortableFieldsBuilder::class, $builder);
+
+        $map = $builder->build();
+        $this->assertSame('Users.name', $map['name']);
+        $this->assertInstanceOf(SortField::class, $map['newest'][0]);
+    }
+
+    /**
+     * Test create() from callable
+     *
+     * @return void
+     */
+    public function testCreateFromCallable(): void
+    {
+        $builder = SortableFieldsBuilder::create(function ($factory) {
+            return $factory
+                ->add('name', SortField::asc('Users.name'))
+                ->add('newest', SortField::desc('created'));
+        });
+
+        $this->assertInstanceOf(SortableFieldsBuilder::class, $builder);
+        $map = $builder->build();
+        $this->assertArrayHasKey('name', $map);
+        $this->assertArrayHasKey('newest', $map);
+    }
+
+    /**
+     * Test resolve() with simple string mapping
+     *
+     * @return void
+     */
+    public function testResolveSimpleMapping(): void
+    {
+        $builder = SortableFieldsBuilder::create([
+            'name' => 'Users.name',
+        ]);
+        $this->assertNotNull($builder);
+
+        $result = $builder->resolve('name', 'asc', true);
+        $this->assertSame(['Users.name' => 'asc'], $result);
+
+        $result = $builder->resolve('name', 'desc', true);
+        $this->assertSame(['Users.name' => 'desc'], $result);
+    }
+
+    /**
+     * Test resolve() with invalid key returns null
+     *
+     * @return void
+     */
+    public function testResolveInvalidKey(): void
+    {
+        $builder = SortableFieldsBuilder::create([
+            'name' => 'Users.name',
+        ]);
+        $this->assertNotNull($builder);
+
+        $result = $builder->resolve('invalid', 'asc', true);
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test resolve() with multi-column array
+     *
+     * @return void
+     */
+    public function testResolveMultiColumn(): void
+    {
+        $builder = SortableFieldsBuilder::create([
+            'newest' => ['created', 'title'],
+        ]);
+        $this->assertNotNull($builder);
+
+        $result = $builder->resolve('newest', 'desc', true);
+        $expected = [
+            'created' => 'desc',
+            'title' => 'desc',
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test resolve() with SortField objects
+     *
+     * @return void
+     */
+    public function testResolveWithSortFieldObjects(): void
+    {
+        $builder = SortableFieldsBuilder::create([
+            'popular' => [
+                SortField::desc('score'),
+                SortField::asc('title'),
+            ],
+        ]);
+        $this->assertNotNull($builder);
+
+        // Without direction specified - use defaults
+        $result = $builder->resolve('popular', 'asc', false);
+        $expected = [
+            'score' => 'desc',
+            'title' => 'asc',
+        ];
+        $this->assertSame($expected, $result);
+
+        // With direction specified - toggleable fields use it
+        $result = $builder->resolve('popular', 'desc', true);
+        $expected = [
+            'score' => 'desc',
+            'title' => 'desc',
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test resolve() with locked SortField
+     *
+     * @return void
+     */
+    public function testResolveWithLockedSortField(): void
+    {
+        $builder = SortableFieldsBuilder::create([
+            'relevance' => [
+                SortField::desc('score', locked: true),
+                SortField::asc('title'),
+            ],
+        ]);
+        $this->assertNotNull($builder);
+
+        // Try to override locked field with asc
+        $result = $builder->resolve('relevance', 'asc', true);
+        $expected = [
+            'score' => 'desc', // Locked, stays desc
+            'title' => 'asc', // Toggleable, uses requested
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test resolve() with default directions when not specified
+     *
+     * @return void
+     */
+    public function testResolveWithDefaultDirections(): void
+    {
+        $builder = SortableFieldsBuilder::create([
+            'custom' => [
+                'title' => 'asc',
+                'created' => 'desc',
+            ],
+        ]);
+        $this->assertNotNull($builder);
+
+        // No direction specified - use defaults
+        $result = $builder->resolve('custom', 'asc', false);
+        $expected = [
+            'title' => 'asc',
+            'created' => 'desc',
+        ];
+        $this->assertSame($expected, $result);
+
+        // Direction specified - override defaults
+        $result = $builder->resolve('custom', 'desc', true);
+        $expected = [
+            'title' => 'desc',
+            'created' => 'desc',
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
+     * Test resolve() with simple array format
+     *
+     * @return void
+     */
+    public function testResolveWithSimpleArray(): void
+    {
+        $builder = SortableFieldsBuilder::create(['title', 'created', 'author_id']);
+        $this->assertNotNull($builder);
+
+        $result = $builder->resolve('title', 'asc', true);
+        $this->assertSame(['title' => 'asc'], $result);
+
+        $result = $builder->resolve('created', 'desc', true);
+        $this->assertSame(['created' => 'desc'], $result);
+
+        $result = $builder->resolve('invalid', 'asc', true);
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test resolve() with empty array uses key as field
+     *
+     * @return void
+     */
+    public function testResolveWithEmptyArray(): void
+    {
+        $builder = new SortableFieldsBuilder();
+        $builder->add('title'); // Adds empty array
+
+        $result = $builder->resolve('title', 'asc', true);
+        $this->assertSame(['title' => 'asc'], $result);
+    }
+
+    /**
+     * Test fromArray() static method with simple array format
+     *
+     * @return void
+     */
+    public function testFromArrayWithSimpleFormat(): void
+    {
+        $builder = SortableFieldsBuilder::fromArray(['title', 'created']);
+        $map = $builder->build();
+
+        $this->assertArrayHasKey('title', $map);
+        $this->assertArrayHasKey('created', $map);
+        $this->assertSame(['title'], $map['title']);
+        $this->assertSame(['created'], $map['created']);
+    }
+
+    /**
+     * Test fromArray() static method with associative map format
+     *
+     * @return void
+     */
+    public function testFromArrayWithMapFormat(): void
+    {
+        $config = [
+            'name' => 'Users.name',
+            'newest' => ['created', 'title'],
+        ];
+
+        $builder = SortableFieldsBuilder::fromArray($config);
+        $map = $builder->build();
+
+        $this->assertSame('Users.name', $map['name']);
+        $this->assertSame(['created', 'title'], $map['newest']);
+    }
+
+    /**
+     * Test fromCallable() static method
+     *
+     * @return void
+     */
+    public function testFromCallable(): void
+    {
+        $builder = SortableFieldsBuilder::fromCallable(function ($factory) {
+            return $factory
+                ->add('name', 'Users.name')
+                ->add('newest', SortField::desc('created'));
+        });
+
+        $map = $builder->build();
+        $this->assertArrayHasKey('name', $map);
+        $this->assertArrayHasKey('newest', $map);
     }
 }
