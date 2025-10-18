@@ -566,11 +566,10 @@ class NumericPaginator implements PaginatorInterface
     {
         // Check if we have sortableFields configured
         $sortableFields = $options['sortableFields'] ?? null;
-        if ($sortableFields instanceof SortableFieldsBuilder) {
-            $builder = $sortableFields;
-        } else {
-            $builder = SortableFieldsBuilder::create($sortableFields);
-        }
+        $builder = $sortableFields instanceof SortableFieldsBuilder
+            ? $sortableFields
+            : SortableFieldsBuilder::create($sortableFields);
+
         $sortAllowed = $builder !== null;
 
         if (isset($options['sort'])) {

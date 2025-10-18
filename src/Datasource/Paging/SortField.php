@@ -93,7 +93,7 @@ class SortField
     public function getDirection(string $requestedDirection, bool $directionSpecified): string
     {
         if ($this->locked) {
-            return $this->defaultDirection ?? static::ASC;
+            return $this->defaultDirection ?? self::ASC;
         }
 
         if (!$directionSpecified && $this->defaultDirection) {
