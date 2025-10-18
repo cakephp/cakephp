@@ -371,6 +371,67 @@ class SortableFieldsBuilderTest extends TestCase
     }
 
     /**
+     * Test fromArray() with SortField object (not in array)
+     *
+     * @return void
+     */
+    public function testFromArrayWithSortFieldObject(): void
+    {
+        $config = [
+            'newest' => SortField::desc('created'),
+        ];
+
+        $builder = SortableFieldsBuilder::fromArray($config);
+        $map = $builder->toArray();
+
+        $this->assertIsArray($map['newest']);
+        $this->assertCount(1, $map['newest']);
+        $this->assertInstanceOf(SortField::class, $map['newest'][0]);
+    }
+
+    /**
+     * Test fromArray() with mixed format (numeric and string keys)
+     *
+     * @return void
+     */
+    public function testFromArrayWithMixedFormat(): void
+    {
+        $config = [
+            'title',
+            'name' => 'Users.name',
+            'created',
+        ];
+
+        $builder = SortableFieldsBuilder::fromArray($config);
+        $map = $builder->toArray();
+
+        $this->assertArrayHasKey('title', $map);
+        $this->assertArrayHasKey('name', $map);
+        $this->assertArrayHasKey('created', $map);
+        $this->assertSame('Users.name', $map['name']);
+        $this->assertIsArray($map['title']);
+        $this->assertIsArray($map['created']);
+    }
+
+    /**
+     * Test fromArray() with invalid type (fallback case)
+     *
+     * @return void
+     */
+    public function testFromArrayWithInvalidType(): void
+    {
+        $config = [
+            'invalid' => 123,
+        ];
+
+        $builder = SortableFieldsBuilder::fromArray($config);
+        $map = $builder->toArray();
+
+        $this->assertArrayHasKey('invalid', $map);
+        $this->assertSame(123, $map['invalid']);
+    }
+
+    /**
      * Test fromCallable() static method
      *
      * @return void
