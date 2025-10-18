@@ -33,26 +33,26 @@ class HttpException extends CakeException implements HttpErrorCodeInterface
     protected int $_defaultCode = 500;
 
     /**
-     * @var array<string, mixed>
+     * @var array<non-empty-string, array<string>|string>
      */
     protected array $headers = [];
 
     /**
      * Set a single HTTP response header.
      *
-     * @param string $header Header name
+     * @param non-empty-string $header Header name
      * @param array<string>|string|null $value Header value
      * @return void
      */
     public function setHeader(string $header, array|string|null $value = null): void
     {
-        $this->headers[$header] = $value;
+        $this->headers[$header] = $value ?? '';
     }
 
     /**
      * Sets HTTP response headers.
      *
-     * @param array<string, mixed> $headers Array of header name and value pairs.
+     * @param array<non-empty-string, array<string>|string> $headers Array of header name and value pairs.
      * @return void
      */
     public function setHeaders(array $headers): void
@@ -63,7 +63,7 @@ class HttpException extends CakeException implements HttpErrorCodeInterface
     /**
      * Returns array of response headers.
      *
-     * @return array<string, mixed>
+     * @return array<non-empty-string, array<string>|string>
      */
     public function getHeaders(): array
     {

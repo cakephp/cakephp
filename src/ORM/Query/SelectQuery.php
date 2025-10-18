@@ -227,7 +227,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * iterated without having to call execute() manually, thus making it look like
      * a result set instead of the query itself.
      *
-     * @return \Cake\Datasource\ResultSetInterface<\Cake\Datasource\EntityInterface|array>
+     * @return \Cake\Datasource\ResultSetInterface<array-key, \Cake\Datasource\EntityInterface|array>
      */
     public function getIterator(): ResultSetInterface
     {
@@ -365,7 +365,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * ResultSetDecorator is a traversable object that implements the methods found
      * on Cake\Collection\Collection.
      *
-     * @return \Cake\Datasource\ResultSetInterface<mixed>
+     * @return \Cake\Datasource\ResultSetInterface<array-key, mixed>
      */
     public function all(): ResultSetInterface
     {
@@ -725,7 +725,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * Decorates the results iterator with MapReduce routines and formatters
      *
      * @param iterable $result Original results
-     * @return \Cake\Datasource\ResultSetInterface<\Cake\Datasource\EntityInterface|mixed>
+     * @return \Cake\Datasource\ResultSetInterface<array-key, \Cake\Datasource\EntityInterface|mixed>
      */
     protected function _decorateResults(iterable $result): ResultSetInterface
     {
@@ -1728,7 +1728,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * Part of JsonSerializable interface.
      *
-     * @return \Cake\Datasource\ResultSetInterface<(\Cake\Datasource\EntityInterface|mixed)> The data to convert to JSON.
+     * @return \Cake\Datasource\ResultSetInterface<array-key, (\Cake\Datasource\EntityInterface|mixed)> The data to convert to JSON.
      */
     public function jsonSerialize(): ResultSetInterface
     {

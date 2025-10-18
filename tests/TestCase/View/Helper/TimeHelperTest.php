@@ -202,7 +202,7 @@ class TimeHelperTest extends TestCase
     public function testToAtom(): void
     {
         $dateTime = new NativeDateTime();
-        $this->assertSame($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
+        $this->assertSame($dateTime->format(NativeDateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
     }
 
     /**

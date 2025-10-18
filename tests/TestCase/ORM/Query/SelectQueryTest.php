@@ -2121,7 +2121,7 @@ class SelectQueryTest extends TestCase
         $this->assertSame([], $query->getResultFormatters());
 
         $query->formatResults($callback1);
-        $query->formatResults($callback2, $query::PREPEND);
+        $query->formatResults($callback2, SelectQuery::PREPEND);
         $this->assertSame([$callback2, $callback1], $query->getResultFormatters());
     }
 

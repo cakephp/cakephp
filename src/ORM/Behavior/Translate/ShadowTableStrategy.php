@@ -155,7 +155,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $query->formatResults(
             fn(CollectionInterface $results) => $this->rowMapper($results, $locale),
-            $query::PREPEND,
+            SelectQuery::PREPEND,
         );
     }
 

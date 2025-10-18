@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - '4.x'
-      - '4.next'
       - '5.x'
       - '5.next'
   pull_request:
