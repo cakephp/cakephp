@@ -17,14 +17,14 @@ declare(strict_types=1);
 namespace Cake\Datasource\Paging;
 
 /**
- * Factory for creating complete sorts configurations.
+ * Builder for creating complete sortable fields configurations.
  *
- * Provides non-fluent interface for building sorts with multiple sort keys and fields.
+ * Provides non-fluent interface for building sortable fields with multiple sort keys and fields.
  */
-class SortsFactory
+class SortableFieldsBuilder
 {
     /**
-     * @var array<string, array<\Cake\Datasource\Paging\SortField|string>> The sorts map being built
+     * @var array<string, array<\Cake\Datasource\Paging\SortField|string>> The sortable fields map being built
      */
     protected array $map = [];
 
@@ -48,7 +48,7 @@ class SortsFactory
     }
 
     /**
-     * Build and return the complete sorts map.
+     * Build and return the complete sortable fields map.
      *
      * @return array<string, array<\Cake\Datasource\Paging\SortField|string>>
      */

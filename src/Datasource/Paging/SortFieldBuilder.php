@@ -17,11 +17,11 @@ declare(strict_types=1);
 namespace Cake\Datasource\Paging;
 
 /**
- * Factory for creating SortField configurations.
+ * Builder for creating SortField configurations.
  *
  * Provides fluent interface for building sort field collections.
  */
-class SortFieldFactory
+class SortFieldBuilder
 {
     /**
      * @var array<\Cake\Datasource\Paging\SortField> The sort fields being built
@@ -29,7 +29,7 @@ class SortFieldFactory
     protected array $fields = [];
 
     /**
-     * Create a new factory instance.
+     * Create a new builder instance.
      *
      * @return self
      */

@@ -17,13 +17,13 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource\Paging;
 
 use Cake\Datasource\Paging\SortField;
-use Cake\Datasource\Paging\SortFieldFactory;
+use Cake\Datasource\Paging\SortFieldBuilder;
 use Cake\TestSuite\TestCase;
 
 /**
- * SortFieldFactory Test Case
+ * SortFieldBuilder Test Case
  */
-class SortFieldFactoryTest extends TestCase
+class SortFieldBuilderTest extends TestCase
 {
     /**
      * Test create() method
@@ -32,8 +32,8 @@ class SortFieldFactoryTest extends TestCase
      */
     public function testCreate(): void
     {
-        $factory = SortFieldFactory::create();
-        $this->assertInstanceOf(SortFieldFactory::class, $factory);
+        $factory = SortFieldBuilder::create();
+        $this->assertInstanceOf(SortFieldBuilder::class, $factory);
     }
 
     /**
@@ -43,7 +43,7 @@ class SortFieldFactoryTest extends TestCase
      */
     public function testFluentInterface(): void
     {
-        $fields = SortFieldFactory::create()
+        $fields = SortFieldBuilder::create()
             ->asc('title')
             ->desc('created')
             ->asc('score', locked: true) // locked
@@ -86,7 +86,7 @@ class SortFieldFactoryTest extends TestCase
     {
         $customField = new SortField('custom', 'desc', true);
 
-        $fields = SortFieldFactory::create()
+        $fields = SortFieldBuilder::create()
             ->add($customField)
             ->asc('title')
             ->build();
@@ -106,28 +106,28 @@ class SortFieldFactoryTest extends TestCase
     {
         // Build a complex sortMap for an e-commerce product listing
         $sortMap = [
-            'relevance' => SortFieldFactory::create()
+            'relevance' => SortFieldBuilder::create()
                 ->desc('search_score', locked: true) // locked
                 ->desc('popularity')
                 ->asc('title')
                 ->build(),
-            'price_low' => SortFieldFactory::create()
+            'price_low' => SortFieldBuilder::create()
                 ->asc('price', locked: true) // locked
                 ->asc('title')
                 ->build(),
-            'price_high' => SortFieldFactory::create()
+            'price_high' => SortFieldBuilder::create()
                 ->desc('price', locked: true) // locked
                 ->asc('title')
                 ->build(),
-            'newest' => SortFieldFactory::create()
+            'newest' => SortFieldBuilder::create()
                 ->desc('created_at')
                 ->asc('title')
                 ->build(),
-            'bestselling' => SortFieldFactory::create()
+            'bestselling' => SortFieldBuilder::create()
                 ->desc('sales_count', locked: true) // locked
                 ->desc('rating')
                 ->build(),
-            'rating' => SortFieldFactory::create()
+            'rating' => SortFieldBuilder::create()
                 ->desc('rating')
                 ->desc('review_count')
                 ->asc('title')

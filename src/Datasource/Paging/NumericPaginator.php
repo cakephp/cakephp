@@ -43,22 +43,31 @@ class NumericPaginator implements PaginatorInterface
      * - `allowedParameters` - A list of parameters users are allowed to set using request
      *   parameters. Modifying this list will allow users to have more influence
      *   over pagination, be careful with what you permit.
-     * - `sortableFields` - A list of fields which can be used for sorting. By
-     *   default all table columns can be used for sorting. You can use this option
-     *   to restrict sorting only by particular fields. If you want to allow
-     *   sorting on either associated columns or calculated fields then you will
-     *   have to explicitly specify them (along with other fields). Using an empty
-     *   array will disable sorting alltogether.
+     * - `sortableFields` - Controls which fields can be used for sorting. Accepts multiple formats:
+     *   - Simple array: A list of field names that can be sorted. By default all table
+     *     columns can be used. Use this to restrict sorting to specific fields. An empty
+     *     array will disable sorting altogether.
+     *   - Map with SortField objects: A map of sort keys to their corresponding database fields.
+     *     Allows creating friendly sort keys that map to one or more actual fields. Supports
+     *     simple mapping, multi-column sorting, locked directions, and default directions.
+     *     Can accept a callable that receives a SortableFieldsBuilder instance.
      *
-     * @deprecated 5.3.0 Use `sorts` with SortField objects instead for more flexible sorting configuration.
-     * - `sorts` - A map of sort keys to their corresponding database fields. Allows
-     *   creating friendly sort keys that map to one or more actual fields. When defined,
-     *   only the mapped keys will be sortable. Supports simple mapping, multi-column
-     *   sorting, and fixed direction sorting. You can also use numeric arrays for 1:1
-     *   mappings where the field name is the same as the sort key. Can accept a callable
-     *   that receives a SortsFactory instance. Example:
+     *   Examples:
      *   ```
-     *   'sorts' => function($factory) {
+     *   // Simple array (traditional)
+     *   'sortableFields' => ['title', 'created', 'author_id']
+     *
+     *   // Map with SortField objects
+     *   'sortableFields' => [
+     *       'name' => 'Users.name',
+     *       'newest' => [
+     *           SortField::desc('created'),
+     *           SortField::asc('title'),
+     *       ],
+     *   ]
+     *
+     *   // Callable with builder
+     *   'sortableFields' => function($factory) {
      *       return $factory
      *           ->add('name', SortField::asc('Users.name'))
      *           ->add('popularity', SortField::desc('score', locked: true), 'created');
@@ -69,6 +78,7 @@ class NumericPaginator implements PaginatorInterface
      *   from the query params passed to paginate(). Scopes allow namespacing the
      *   paging options and allows paginating multiple models in the same action.
      *   Default `null`.
+     *
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
@@ -77,7 +87,6 @@ class NumericPaginator implements PaginatorInterface
         'maxLimit' => 100,
         'allowedParameters' => ['limit', 'sort', 'page', 'direction'],
         'sortableFields' => null,
-        'sorts' => null,
         'finder' => 'all',
         'scope' => null,
     ];
@@ -581,9 +590,9 @@ class NumericPaginator implements PaginatorInterface
                 $direction = 'asc';
             }
 
-            // Check sorts first for mapped sorting
-            if (isset($options['sorts'])) {
-                $sortsConfig = $this->resolveSortsConfig($options['sorts']);
+            // Check sortableFields first for mapped sorting (if it contains SortField objects or mappings)
+            if (isset($options['sortableFields']) && $this->isSortableFieldsMap($options['sortableFields'])) {
+                $sortsConfig = $this->resolveSortsConfig($options['sortableFields']);
                 $mappedOrder = $this->resolveSortMapping(
                     $options['sort'],
                     $sortsConfig,
@@ -595,7 +604,7 @@ class NumericPaginator implements PaginatorInterface
                     $existingOrder = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
                     $options['order'] = $mappedOrder + $existingOrder;
                 } else {
-                    // Sort key not in sorts, clear sort
+                    // Sort key not in sortableFields map, clear sort
                     $options['order'] = [];
                     $options['sort'] = null;
                     unset($options['direction']);
@@ -603,7 +612,7 @@ class NumericPaginator implements PaginatorInterface
                     return $options;
                 }
             } else {
-                // No sortMap, use traditional sorting
+                // No sortableFields map, use traditional sorting
                 $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
                 if ($order && $options['sort'] && !str_contains($options['sort'], '.')) {
                     $order = $this->_removeAliases($order, $object->getAlias());
@@ -625,20 +634,17 @@ class NumericPaginator implements PaginatorInterface
 
         $sortAllowed = false;
 
-        // Skip sortableFields check if sorts is being used
-        if (isset($options['sorts'])) {
-            // When sorts is used, we've already validated the sort key
+        // Skip sortableFields check if sortableFields is being used as a map
+        if (isset($options['sortableFields']) && $this->isSortableFieldsMap($options['sortableFields'])) {
+            // When sortableFields map is used, we've already validated the sort key
             $sortAllowed = true;
         } elseif (isset($options['sortableFields'])) {
-            triggerWarning(
-                'The `sortableFields` configuration option is deprecated as of 5.3.0. ' .
-                'Use `sorts` with SortField objects instead for more flexible sorting configuration.',
-            );
+            // Traditional sortableFields array - validate the field
             $field = key($options['order']);
             $sortAllowed = in_array($field, $options['sortableFields'], true);
             if (!$sortAllowed) {
+                $options['sort'] = $options['direction'] = null;
                 $options['order'] = [];
-                $options['sort'] = null;
 
                 return $options;
             }
@@ -735,15 +741,41 @@ class NumericPaginator implements PaginatorInterface
     }
 
     /**
-     * Resolves sorts configuration from callable or array.
+     * Check if sortableFields is configured as a map (vs simple array).
      *
-     * @param callable|array $sortsConfig The sorts configuration
-     * @return array|null The resolved sorts array
+     * @param mixed $sortableFields The sortableFields configuration
+     * @return bool True if it's a map with SortField objects or associative mappings
+     */
+    protected function isSortableFieldsMap(mixed $sortableFields): bool
+    {
+        if (!is_array($sortableFields) && !is_callable($sortableFields)) {
+            return false;
+        }
+
+        if (is_callable($sortableFields)) {
+            return true;
+        }
+
+        // Check if it's an associative array or contains SortField objects
+        foreach ($sortableFields as $key => $value) {
+            if (is_string($key) || $value instanceof SortField || is_array($value)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Resolves sortableFields configuration from callable or array.
+     *
+     * @param callable|array $sortsConfig The sortableFields configuration
+     * @return array|null The resolved sortableFields array
      */
     protected function resolveSortsConfig(callable|array $sortsConfig): ?array
     {
         if (is_callable($sortsConfig)) {
-            $factory = new SortsFactory();
+            $factory = new SortableFieldsBuilder();
             $factory = $sortsConfig($factory);
 
             return $factory->build();

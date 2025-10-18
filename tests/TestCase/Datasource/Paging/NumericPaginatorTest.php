@@ -188,7 +188,7 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sorts' => [
+            'sortableFields' => [
                 'name' => 'PaginatorPosts.title',
                 'content' => 'PaginatorPosts.body',
             ],
@@ -220,7 +220,7 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sorts' => [
+            'sortableFields' => [
                 'title',
                 'body',
                 'name' => 'PaginatorPosts.title',
@@ -264,7 +264,7 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sorts' => [
+            'sortableFields' => [
                 'titleauthor' => ['PaginatorPosts.title', 'PaginatorPosts.author_id'],
                 'relevance' => ['PaginatorPosts.id', 'PaginatorPosts.body'],
             ],
@@ -302,7 +302,7 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sorts' => [
+            'sortableFields' => [
                 'fresh' => [
                     'PaginatorPosts.title',
                     'PaginatorPosts.body' => 'desc!', // Locked to desc with !
@@ -345,7 +345,7 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sorts' => [
+            'sortableFields' => [
                 'custom' => [
                     'PaginatorPosts.title' => 'asc', // Default asc, can toggle
                     'PaginatorPosts.body' => 'desc', // Default desc, can toggle
@@ -416,7 +416,7 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sorts' => [
+            'sortableFields' => [
                 'name' => 'PaginatorPosts.title',
             ],
         ];
@@ -500,7 +500,7 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sorts' => [
+            'sortableFields' => [
                 'name' => 'PaginatorPosts.title',
                 'content' => 'PaginatorPosts.body',
                 'newest' => ['PaginatorPosts.id' => 'desc!', 'PaginatorPosts.title'],
@@ -572,7 +572,7 @@ class NumericPaginatorTest extends TestCase
        // Association is already set up in the Articles table
 
         $settings = [
-            'sorts' => [
+            'sortableFields' => [
                 'author' => 'Authors.name',
                 'author_article' => ['Authors.name', 'Articles.title'],
             ],
@@ -596,7 +596,7 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sorts' => function ($factory) {
+            'sortableFields' => function ($factory) {
                 return $factory
                     ->add('name', SortField::asc('PaginatorPosts.title'))
                     ->add(
@@ -647,7 +647,7 @@ class NumericPaginatorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('PaginatorPosts');
         $settings = [
-            'sorts' => function ($factory) {
+            'sortableFields' => function ($factory) {
                 return $factory
                     ->add(
                         'relevance',

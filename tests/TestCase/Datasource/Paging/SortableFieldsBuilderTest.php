@@ -17,13 +17,13 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Datasource\Paging;
 
 use Cake\Datasource\Paging\SortField;
-use Cake\Datasource\Paging\SortsFactory;
+use Cake\Datasource\Paging\SortableFieldsBuilder;
 use Cake\TestSuite\TestCase;
 
 /**
- * SortsFactory Test Case
+ * SortableFieldsBuilder Test Case
  */
-class SortsFactoryTest extends TestCase
+class SortableFieldsBuilderTest extends TestCase
 {
     /**
      * Test basic add() functionality
@@ -32,7 +32,7 @@ class SortsFactoryTest extends TestCase
      */
     public function testAdd(): void
     {
-        $factory = new SortsFactory();
+        $factory = new SortableFieldsBuilder();
         $factory->add('newest', SortField::desc('created'));
         $sorts = $factory->build();
 
@@ -48,7 +48,7 @@ class SortsFactoryTest extends TestCase
      */
     public function testAddMultipleFields(): void
     {
-        $factory = new SortsFactory();
+        $factory = new SortableFieldsBuilder();
         $factory->add('relevance', SortField::desc('score'), SortField::asc('title'));
         $sorts = $factory->build();
 
@@ -64,7 +64,7 @@ class SortsFactoryTest extends TestCase
      */
     public function testAddStringFields(): void
     {
-        $factory = new SortsFactory();
+        $factory = new SortableFieldsBuilder();
         $factory->add('simple', 'title', 'created');
         $sorts = $factory->build();
 
@@ -80,7 +80,7 @@ class SortsFactoryTest extends TestCase
      */
     public function testAddShorthand(): void
     {
-        $factory = new SortsFactory();
+        $factory = new SortableFieldsBuilder();
         $factory->add('title');
         $sorts = $factory->build();
 
