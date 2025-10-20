@@ -17,14 +17,17 @@ declare(strict_types=1);
 namespace Cake\Datasource\Paging;
 
 use Closure;
+use InvalidArgumentException;
 
 /**
  * Builder for creating complete sortable fields configurations.
  *
  * Provides interface for building sortable fields with multiple sort keys and fields.
  * Also handles resolution of sort keys to database ORDER BY clauses.
+ *
+ * @phpstan-consistent-constructor
  */
-final class SortableFieldsBuilder
+class SortableFieldsBuilder
 {
     /**
      * @var array<string, array<\Cake\Datasource\Paging\SortField|string>|string> The sortable fields map being built
@@ -40,19 +43,19 @@ final class SortableFieldsBuilder
      * Create builder from various sortableFields configurations.
      *
      * @param \Closure|array<mixed>|null $config The sortableFields configuration
-     * @return self|null Builder instance or null if no config
+     * @return static|null Builder instance or null if no config
      */
-    public static function create(array|Closure|null $config): ?self
+    public static function create(array|Closure|null $config): ?static
     {
         if ($config === null) {
             return null;
         }
 
         if ($config instanceof Closure) {
-            return self::fromCallable($config);
+            return static::fromCallable($config);
         }
 
-        return self::fromArray($config);
+        return static::fromArray($config);
     }
 
     /**
@@ -62,11 +65,11 @@ final class SortableFieldsBuilder
      * associative map format (['key' => 'field', ...]).
      *
      * @param array<mixed> $config Array configuration
-     * @return self
+     * @return static
      */
-    public static function fromArray(array $config): self
+    public static function fromArray(array $config): static
     {
-        $builder = new self();
+        $builder = new static();
         $hasNumericKeys = false;
 
         // Check if it's a simple array format
@@ -103,11 +106,11 @@ final class SortableFieldsBuilder
      * Create builder from callable factory.
      *
      * @param \Closure $factory Closure that receives builder and returns it
-     * @return self
+     * @return static
      */
-    public static function fromCallable(Closure $factory): self
+    public static function fromCallable(Closure $factory): static
     {
-        $builder = new self();
+        $builder = new static();
         $builder = $factory($builder);
 
         return $builder;
@@ -145,17 +148,17 @@ final class SortableFieldsBuilder
     protected function set(string $sortKey, mixed $value)
     {
         if (is_string($value)) {
-            // Single string mapping - preserve as-is
             $this->map[$sortKey] = $value;
         } elseif ($value instanceof SortField) {
-            // Single SortField object - wrap in array
             $this->map[$sortKey] = [$value];
         } elseif (is_array($value)) {
-            // Array of fields - validate and store
-            $this->map[$sortKey] = $value;
+            $this->add($sortKey, ...$value);
         } else {
-            // Fallback for other types
-            $this->map[$sortKey] = $value;
+            throw new InvalidArgumentException(sprintf(
+                'Invalid sortable field value type for key `%s`. Expected string, array, or SortField, got `%s`.',
+                $sortKey,
+                get_debug_type($value),
+            ));
         }
 
         return $this;

@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Datasource\Paging;
 use Cake\Datasource\Paging\SortableFieldsBuilder;
 use Cake\Datasource\Paging\SortField;
 use Cake\TestSuite\TestCase;
+use InvalidArgumentException;
 
 /**
  * SortableFieldsBuilder Test Case
@@ -414,21 +415,20 @@ class SortableFieldsBuilderTest extends TestCase
     }
 
     /**
-     * Test fromArray() with invalid type (fallback case)
+     * Test fromArray() with invalid type throws exception
      *
      * @return void
      */
     public function testFromArrayWithInvalidType(): void
     {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Invalid sortable field value type for key `invalid`. Expected string, array, or SortField, got `int`.');
+
         $config = [
             'invalid' => 123,
         ];
 
-        $builder = SortableFieldsBuilder::fromArray($config);
-        $map = $builder->toArray();
-
-        $this->assertArrayHasKey('invalid', $map);
-        $this->assertSame(123, $map['invalid']);
+        SortableFieldsBuilder::fromArray($config);
     }
 
     /**
