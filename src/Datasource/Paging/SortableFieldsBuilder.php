@@ -24,8 +24,6 @@ use InvalidArgumentException;
  *
  * Provides interface for building sortable fields with multiple sort keys and fields.
  * Also handles resolution of sort keys to database ORDER BY clauses.
- *
- * @phpstan-consistent-constructor
  */
 class SortableFieldsBuilder
 {

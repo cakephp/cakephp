@@ -646,6 +646,12 @@ parameters:
 			path: src/View/Form/ContextFactory.php
 
 		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 2
+			path: src/Datasource/Paging/SortableFieldsBuilder.php
+
+		-
 			message: '#^Constructor of class Cake\\View\\Form\\NullContext has an unused parameter \$context\.$#'
 			identifier: constructor.unusedParameter
 			count: 1
