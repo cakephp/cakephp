@@ -35,7 +35,6 @@ return RectorConfig::configure()
     ->withSkip([
         __DIR__ . '/tests/test_app/templates',
         __DIR__ . '/tests/test_app/Plugin/TestPlugin/templates',
-
         \Rector\CodeQuality\Rector\Catch_\ThrowWithPreviousExceptionRector::class,
         \Rector\CodeQuality\Rector\ClassMethod\ExplicitReturnNullRector::class,
         \Rector\CodeQuality\Rector\ClassMethod\OptionalParametersAfterRequiredRector::class,
@@ -60,6 +59,7 @@ return RectorConfig::configure()
         \Rector\CodingStyle\Rector\Encapsed\EncapsedStringsToSprintfRector::class,
         \Rector\CodingStyle\Rector\FuncCall\StrictArraySearchRector::class,
         \Rector\CodingStyle\Rector\FuncCall\VersionCompareFuncCallToConstantRector::class,
+        \Rector\CodingStyle\Rector\FunctionLike\FunctionLikeToFirstClassCallableRector::class,
         \Rector\CodingStyle\Rector\If_\NullableCompareToNullRector::class,
         \Rector\CodingStyle\Rector\Stmt\NewlineAfterStatementRector::class,
         \Rector\CodingStyle\Rector\String_\UseClassKeywordForClassNameResolutionRector::class,
@@ -95,6 +95,7 @@ return RectorConfig::configure()
         \Rector\Strict\Rector\Empty_\DisallowedEmptyRuleFixerRector::class,
         \Rector\TypeDeclaration\Rector\ArrowFunction\AddArrowFunctionReturnTypeRector::class,
         \Rector\TypeDeclaration\Rector\BooleanAnd\BinaryOpNullableToInstanceofRector::class,
+        \Rector\TypeDeclaration\Rector\ClassMethod\AddParamStringTypeFromSprintfUseRector::class,
         \Rector\TypeDeclaration\Rector\ClassMethod\AddParamTypeBasedOnPHPUnitDataProviderRector::class,
         \Rector\TypeDeclaration\Rector\ClassMethod\AddVoidReturnTypeWhereNoReturnRector::class,
         \Rector\TypeDeclaration\Rector\ClassMethod\BoolReturnTypeFromBooleanConstReturnsRector::class,
