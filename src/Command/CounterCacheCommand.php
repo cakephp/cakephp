@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -47,35 +45,33 @@ class CounterCacheCommand extends Command
      * Updates the counter cache for the specified model and association based
      * on the model's counter cache behavior's configuration.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): int
+    public function execute(): int
     {
-        $table = $this->fetchTable($args->getArgument('model'));
+        $table = $this->fetchTable($this->args->getArgument('model'));
 
         if (!$table->hasBehavior('CounterCache')) {
-            $io->error('The specified model does not have the CounterCache behavior attached.');
+            $this->io->error('The specified model does not have the CounterCache behavior attached.');
 
             return static::CODE_ERROR;
         }
 
         $methodArgs = [];
-        if ($args->hasOption('assoc')) {
-            $methodArgs['assocName'] = $args->getOption('assoc');
+        if ($this->args->hasOption('assoc')) {
+            $methodArgs['assocName'] = $this->args->getOption('assoc');
         }
-        if ($args->hasOption('limit')) {
-            $methodArgs['limit'] = (int)$args->getOption('limit');
+        if ($this->args->hasOption('limit')) {
+            $methodArgs['limit'] = (int)$this->args->getOption('limit');
         }
-        if ($args->hasOption('page')) {
-            $methodArgs['page'] = (int)$args->getOption('page');
+        if ($this->args->hasOption('page')) {
+            $methodArgs['page'] = (int)$this->args->getOption('page');
         }
 
         /** @var \Cake\ORM\Table<array{CounterCache: \Cake\ORM\Behavior\CounterCacheBehavior}> $table */
         $table->getBehavior('CounterCache')->updateCounterCache(...$methodArgs);
 
-        $io->success('Counter cache updated successfully.');
+        $this->io->success('Counter cache updated successfully.');
 
         return static::CODE_SUCCESS;
     }

@@ -4,14 +4,12 @@ declare(strict_types=1);
 namespace TestApp\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 
 class NonInteractiveCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIoInterface $io)
+    public function execute()
     {
-        $result = $io->ask('What?', 'Default!');
-        $io->quiet('Result: ' . $result);
+        $result = $this->io->ask('What?', 'Default!');
+        $this->io->quiet('Result: ' . $result);
     }
 }

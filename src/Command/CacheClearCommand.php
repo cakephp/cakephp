@@ -19,8 +19,6 @@ namespace Cake\Command;
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\ApcuEngine;
 use Cake\Cache\Exception\InvalidArgumentException;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -69,26 +67,24 @@ class CacheClearCommand extends Command
     /**
      * Implement this method with your command's logic.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $name = (string)$args->getArgument('engine');
+        $name = (string)$this->args->getArgument('engine');
         try {
-            $io->out("Clearing {$name}");
+            $this->io->out("Clearing {$name}");
 
             $engine = Cache::pool($name);
             Cache::clear($name);
             if ($engine instanceof ApcuEngine) {
-                $io->warning("ApcuEngine detected: Cleared {$name} CLI cache successfully " .
+                $this->io->warning("ApcuEngine detected: Cleared {$name} CLI cache successfully " .
                     "but {$name} web cache must be cleared separately.");
             } else {
-                $io->out("<success>Cleared {$name} cache</success>");
+                $this->io->out("<success>Cleared {$name} cache</success>");
             }
         } catch (InvalidArgumentException $e) {
-            $io->error($e->getMessage());
+            $this->io->error($e->getMessage());
             $this->abort();
         }
 

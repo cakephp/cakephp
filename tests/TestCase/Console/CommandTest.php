@@ -22,8 +22,10 @@ use Cake\Console\CommandFactory;
 use Cake\Console\CommandFactoryInterface;
 use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\Exception\StopException;
+use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Container;
 use Cake\ORM\Locator\TableLocator;
@@ -43,12 +45,15 @@ use TestApp\Command\NonInteractiveCommand;
  */
 class CommandTest extends TestCase
 {
+    use ConsoleIntegrationTestTrait;
+
     /**
      * test orm locator is setup
      */
     public function testConstructorSetsLocator(): void
     {
         $command = new Command();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $result = $command->getTableLocator();
         $this->assertInstanceOf(TableLocator::class, $result);
     }
@@ -60,6 +65,7 @@ class CommandTest extends TestCase
     {
         // No deprecation as AutoLoadModelCommand class defines Posts property
         $command = new AutoLoadModelCommand();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $this->assertInstanceOf(Table::class, $command->fetchTable());
     }
 
@@ -69,6 +75,7 @@ class CommandTest extends TestCase
     public function testSetName(): void
     {
         $command = new Command();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $this->assertSame($command, $command->setName('routes show'));
         $this->assertSame('routes show', $command->getName());
         $this->assertSame('routes', $command->getRootName());
@@ -83,6 +90,7 @@ class CommandTest extends TestCase
         $this->expectExceptionMessage("The name 'routes_show' is missing a space. Names should look like `cake routes`");
 
         $command = new Command();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $command->setName('routes_show');
     }
 
@@ -94,6 +102,7 @@ class CommandTest extends TestCase
         $this->expectException(AssertionError::class);
 
         $command = new Command();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $command->setName(' routes_show');
     }
 
@@ -103,6 +112,7 @@ class CommandTest extends TestCase
     public function testGetOptionParser(): void
     {
         $command = new Command();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $command->setName('cake routes show');
         $parser = $command->getOptionParser();
         $this->assertInstanceOf(ConsoleOptionParser::class, $parser);
@@ -133,6 +143,7 @@ class CommandTest extends TestCase
     public function testRunOutputHelp(): void
     {
         $command = new Command();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $command->setName('cake demo');
         $output = new StubConsoleOutput();
 
@@ -151,6 +162,7 @@ class CommandTest extends TestCase
     public function testRunOutputHelpLongOption(): void
     {
         $command = new Command();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $command->setName('cake demo');
         $output = new StubConsoleOutput();
 
@@ -169,6 +181,7 @@ class CommandTest extends TestCase
     public function testRunVerboseOption(): void
     {
         $command = new DemoCommand();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $command->setName('cake demo');
         $output = new StubConsoleOutput();
 
@@ -186,6 +199,7 @@ class CommandTest extends TestCase
     public function testRunQuietOption(): void
     {
         $command = new DemoCommand();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $command->setName('cake demo');
         $output = new StubConsoleOutput();
 
@@ -231,6 +245,7 @@ class CommandTest extends TestCase
         $this->expectExceptionCode(1);
 
         $command = new Command();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $command->abort();
     }
 
@@ -243,6 +258,7 @@ class CommandTest extends TestCase
         $this->expectExceptionCode(99);
 
         $command = new Command();
+        $command->setIo($this->getMockIo(new StubConsoleOutput()));
         $command->abort(99);
     }
 
@@ -253,7 +269,8 @@ class CommandTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $command = new Command();
-        $result = $command->executeCommand(DemoCommand::class, [], $this->getMockIo($output));
+        $command->setIo($this->getMockIo($output));
+        $result = $command->executeCommand(DemoCommand::class, []);
         $this->assertNull($result);
         $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
     }
@@ -265,7 +282,8 @@ class CommandTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $command = new Command();
-        $command->executeCommand(DemoCommand::class, ['Jane'], $this->getMockIo($output));
+        $command->setIo($this->getMockIo($output));
+        $command->executeCommand(DemoCommand::class, ['Jane']);
         $this->assertEquals(['Quiet!', 'Demo Command!', 'Jane'], $output->messages());
     }
 
@@ -276,7 +294,8 @@ class CommandTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $command = new Command();
-        $command->executeCommand(DemoCommand::class, ['--quiet', 'Jane'], $this->getMockIo($output));
+        $command->setIo($this->getMockIo($output));
+        $command->executeCommand(DemoCommand::class, ['--quiet', 'Jane']);
         $this->assertEquals(['Quiet!'], $output->messages());
     }
 
@@ -287,7 +306,8 @@ class CommandTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $command = new Command();
-        $result = $command->executeCommand(new DemoCommand(), [], $this->getMockIo($output));
+        $command->setIo($this->getMockIo($output));
+        $result = $command->executeCommand(new DemoCommand(), []);
         $this->assertNull($result);
         $this->assertEquals(['Quiet!', 'Demo Command!'], $output->messages());
     }
@@ -299,7 +319,8 @@ class CommandTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $command = new Command();
-        $result = $command->executeCommand(AbortCommand::class, [], $this->getMockIo($output));
+        $command->setIo($this->getMockIo($output));
+        $result = $command->executeCommand(AbortCommand::class, []);
         $this->assertSame(127, $result);
         $this->assertEquals(['<error>Command aborted</error>'], $output->messages());
     }
@@ -311,13 +332,15 @@ class CommandTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $command = new Command();
-        $command->executeCommand(NonInteractiveCommand::class, ['--quiet'], $this->getMockIo($output));
+        $command->setIo($this->getMockIo($output));
+        $command->executeCommand(NonInteractiveCommand::class, ['--quiet']);
         $this->assertEquals(['Result: Default!'], $output->messages());
     }
 
     public function testExecuteCommandWithDI(): void
     {
         $output = new StubConsoleOutput();
+        $mockIo = $this->getMockIo($output);
         $container = new Container();
         $factory = new CommandFactory($container);
 
@@ -329,7 +352,8 @@ class CommandTest extends TestCase
             ->addArgument(stdClass::class);
 
         $command = $factory->create(Command::class);
-        $result = $command->executeCommand(DependencyCommand::class, [], $this->getMockIo($output));
+        $command->setIo($mockIo);
+        $result = $command->executeCommand(DependencyCommand::class, []);
 
         $this->assertSame(Command::CODE_SUCCESS, $result);
         $this->assertEquals(['Dependency Command', 'constructor inject: {}'], $output->messages());
@@ -339,7 +363,8 @@ class CommandTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $command = new Command();
-        $command->executeCommand(EventsCommand::class, [], $this->getMockIo($output));
+        $command->setIo($this->getMockIo($output));
+        $command->executeCommand(EventsCommand::class, []);
         $this->assertEquals([
             'beforeExecute run',
             'execute run',
@@ -354,5 +379,24 @@ class CommandTest extends TestCase
     protected function getMockIo($output)
     {
         return Mockery::mock(ConsoleIo::class, [$output, $output, null, null])->makePartial();
+    }
+
+    /**
+     * @param class-string<CommandInterface> $command
+     * @return array{0: \Cake\Console\CommandInterface, 1: \Cake\Console\ConsoleIoInterface, 2: \Cake\Console\ConsoleOutput}
+     */
+    protected function getCommandWithMockedIo(string $command): array
+    {
+        $output = new StubConsoleOutput();
+        $mockIo = $this->getMockIo($output);
+        $container = new Container();
+        $factory = new CommandFactory($container);
+        $container->add($command)
+            ->addArgument(ConsoleIoInterface::class);
+
+        $command = $factory->create($command);
+        $command->setIo($mockIo);
+
+        return [$command, $mockIo, $output];
     }
 }

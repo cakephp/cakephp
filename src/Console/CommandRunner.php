@@ -165,7 +165,7 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         $command = $this->getCommand($io, $commands, $name);
-        $result = $this->runCommand($command, $argv, $io);
+        $result = $this->runCommand($command, $argv);
 
         if ($result === null) {
             return CommandInterface::CODE_SUCCESS;
@@ -237,7 +237,9 @@ class CommandRunner implements EventDispatcherInterface
             $instance = $this->createCommand($instance);
         }
 
+        assert($instance instanceof BaseCommand);
         $instance->setName("{$this->root} {$name}");
+        $instance->setIo($io);
 
         if ($instance instanceof CommandCollectionAwareInterface) {
             $instance->setCommandCollection($commands);
@@ -318,11 +320,9 @@ class CommandRunner implements EventDispatcherInterface
      * Execute a Command class.
      *
      * @param \Cake\Console\CommandInterface $command The command to run.
-     * @param array $argv The CLI arguments to invoke.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null Exit code
      */
-    protected function runCommand(CommandInterface $command, array $argv, ConsoleIoInterface $io): ?int
+    protected function runCommand(CommandInterface $command, array $argv): ?int
     {
         try {
             $eventManager = $this->getEventManager();
@@ -335,7 +335,7 @@ class CommandRunner implements EventDispatcherInterface
                 $command->setEventManager($this->getEventManager());
             }
 
-            return $command->run($argv, $io);
+            return $command->run($argv);
         } catch (StopException $e) {
             return $e->getCode();
         }

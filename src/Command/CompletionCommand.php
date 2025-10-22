@@ -16,11 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
 use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use ReflectionClass;
 
@@ -99,16 +97,14 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     /**
      * Main function Prints out the list of commands.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        return match ($args->getArgument('mode')) {
-            'commands' => $this->getCommands($args, $io),
-            'subcommands' => $this->getSubcommands($args, $io),
-            'options' => $this->getOptions($args, $io),
+        return match ($this->args->getArgument('mode')) {
+            'commands' => $this->getCommands(),
+            'subcommands' => $this->getSubcommands(),
+            'options' => $this->getOptions(),
             default => static::CODE_ERROR,
         };
     }
@@ -116,11 +112,9 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     /**
      * Get the list of defined commands.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int
      */
-    protected function getCommands(Arguments $args, ConsoleIoInterface $io): int
+    protected function getCommands(): int
     {
         $options = [];
         foreach ($this->commands as $key => $value) {
@@ -128,7 +122,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             $options[] = $parts[0];
         }
         $options = array_unique($options);
-        $io->out(implode(' ', $options));
+        $this->io->out(implode(' ', $options));
 
         return static::CODE_SUCCESS;
     }
@@ -136,13 +130,11 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     /**
      * Get the list of defined sub-commands.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int
      */
-    protected function getSubcommands(Arguments $args, ConsoleIoInterface $io): int
+    protected function getSubcommands(): int
     {
-        $name = $args->getArgument('command');
+        $name = $this->args->getArgument('command');
         if ($name === null || $name === '') {
             return static::CODE_SUCCESS;
         }
@@ -161,7 +153,7 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
             }
         }
         $options = array_unique($options);
-        $io->out(implode(' ', $options));
+        $this->io->out(implode(' ', $options));
 
         return static::CODE_SUCCESS;
     }
@@ -169,14 +161,12 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     /**
      * Get the options for a command or subcommand
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null
      */
-    protected function getOptions(Arguments $args, ConsoleIoInterface $io): ?int
+    protected function getOptions(): ?int
     {
-        $name = $args->getArgument('command');
-        $subcommand = $args->getArgument('subcommand');
+        $name = $this->args->getArgument('command');
+        $subcommand = $this->args->getArgument('subcommand');
 
         $options = [];
         foreach ($this->commands as $key => $value) {
@@ -191,28 +181,21 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
                 continue;
             }
 
-            // Handle class strings
-            if (is_string($value)) {
-                $reflection = new ReflectionClass($value);
-                $value = $reflection->newInstance();
-                assert($value instanceof BaseCommand);
-            }
+            $reflection = new ReflectionClass($value);
+            $value = $reflection->newInstance();
+            assert($value instanceof BaseCommand);
 
-            if (method_exists($value, 'getOptionParser')) {
-                /** @var \Cake\Console\ConsoleOptionParser $parser */
-                $parser = $value->getOptionParser();
-
-                foreach ($parser->options() as $name => $option) {
-                    $options[] = "--{$name}";
-                    $short = $option->short();
-                    if ($short) {
-                        $options[] = "-{$short}";
-                    }
+            $parser = $value->getOptionParser();
+            foreach ($parser->options() as $name => $option) {
+                $options[] = "--{$name}";
+                $short = $option->short();
+                if ($short) {
+                    $options[] = "-{$short}";
                 }
             }
         }
         $options = array_unique($options);
-        $io->out(implode(' ', $options));
+        $this->io->out(implode(' ', $options));
 
         return static::CODE_SUCCESS;
     }

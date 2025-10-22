@@ -4,16 +4,14 @@ declare(strict_types=1);
 namespace TestApp\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 class IntegrationCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIoInterface $io)
+    public function execute()
     {
-        $io->out('arg: ' . $args->getArgument('arg'));
-        $io->out('opt: ' . $args->getOption('opt'));
+        $this->io->out('arg: ' . $this->args->getArgument('arg'));
+        $this->io->out('opt: ' . $this->args->getOption('opt'));
     }
 
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser

@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Plugin;
 use Cake\Core\PluginConfig;
@@ -47,14 +45,12 @@ class PluginListCommand extends Command
     /**
      * Displays all currently available plugins.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
         $loadedPluginsCollection = Plugin::getCollection();
-        $path = (string)$args->getOption('composer-path');
+        $path = (string)$this->args->getOption('composer-path');
         $config = PluginConfig::getAppConfig($path ?: null);
 
         $table = [
@@ -62,7 +58,7 @@ class PluginListCommand extends Command
         ];
 
         if ($config === []) {
-            $io->warning(__d('cake', 'No plugins have been found.'));
+            $this->io->warning(__d('cake', 'No plugins have been found.'));
 
             return static::CODE_ERROR;
         }
@@ -82,7 +78,7 @@ class PluginListCommand extends Command
                 $version,
             ];
         }
-        $io->helper('Table')->output($table);
+        $this->io->helper('Table')->output($table);
 
         return static::CODE_SUCCESS;
     }

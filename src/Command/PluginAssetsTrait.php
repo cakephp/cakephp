@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
 use Cake\Utility\Filesystem;
@@ -31,20 +29,6 @@ use InvalidArgumentException;
  */
 trait PluginAssetsTrait
 {
-    /**
-     * Arguments
-     *
-     * @var \Cake\Console\Arguments
-     */
-    protected Arguments $args;
-
-    /**
-     * Console IO
-     *
-     * @var \Cake\Console\ConsoleIoInterface
-     */
-    protected ConsoleIoInterface $io;
-
     /**
      * Get list of plugins to process. Plugins without a webroot directory are skipped.
      *

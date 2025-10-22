@@ -16,9 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
 use Cake\Console\BaseCommand;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Log\LogTrait;
 use Cake\ORM\Locator\LocatorAwareTrait;
 
@@ -37,11 +35,9 @@ class Command extends BaseCommand
     /**
      * Implement this method with your command's logic.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null|void The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io)
+    public function execute()
     {
     }
 }

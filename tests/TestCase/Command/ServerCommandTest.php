@@ -17,7 +17,11 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Command\ServerCommand;
+use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
+use Mockery;
 
 /**
  * ServerShell test.
@@ -36,6 +40,8 @@ class ServerCommandTest extends TestCase
     {
         parent::setUp();
         $this->command = new ServerCommand();
+        $io = $this->getMockIo(new StubConsoleOutput());
+        $this->command->setIo($io);
     }
 
     /**
@@ -50,5 +56,12 @@ class ServerCommandTest extends TestCase
         $this->assertArrayHasKey('ini_path', $options);
         $this->assertArrayHasKey('document_root', $options);
         $this->assertArrayHasKey('frankenphp', $options);
+    }
+
+    protected function getMockIo(StubConsoleOutput $output): ConsoleIoInterface
+    {
+        return Mockery::mock(ConsoleIo::class, [$output, $output, null, null])
+            ->shouldAllowMockingMethod('in')
+            ->makePartial();
     }
 }

@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Plugin;
 
@@ -45,14 +43,12 @@ class PluginLoadedCommand extends Command
     /**
      * Displays all currently loaded plugins.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
         $loaded = Plugin::loaded();
-        $io->out($loaded);
+        $this->io->out($loaded);
 
         return static::CODE_SUCCESS;
     }

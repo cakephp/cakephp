@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Routing\Router;
 
@@ -37,18 +35,16 @@ class RoutesCommand extends Command
     /**
      * Display all routes in an application
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      * @throws \JsonException
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
         $header = ['Route name', 'URI template', 'Plugin', 'Prefix', 'Controller', 'Action', 'Method(s)'];
-        if ($args->getOption('with-middlewares') || $args->getOption('verbose')) {
+        if ($this->args->getOption('with-middlewares') || $this->args->getOption('verbose')) {
             $header[] = 'Middlewares';
         }
-        if ($args->getOption('verbose')) {
+        if ($this->args->getOption('verbose')) {
             $header[] = 'Defaults';
         }
 
@@ -69,10 +65,10 @@ class RoutesCommand extends Command
                 implode(', ', $methods),
             ];
 
-            if ($args->getOption('with-middlewares') || $args->getOption('verbose')) {
+            if ($this->args->getOption('with-middlewares') || $this->args->getOption('verbose')) {
                 $item[] = implode(', ', $route->getMiddleware());
             }
-            if ($args->getOption('verbose')) {
+            if ($this->args->getOption('verbose')) {
                 ksort($route->defaults);
                 $item[] = json_encode($route->defaults, JSON_THROW_ON_ERROR);
             }
@@ -85,7 +81,7 @@ class RoutesCommand extends Command
             }
         }
 
-        if ($args->getOption('sort')) {
+        if ($this->args->getOption('sort')) {
             usort($output, function (array $a, array $b) {
                 return strcasecmp($a[0], $b[0]);
             });
@@ -93,8 +89,8 @@ class RoutesCommand extends Command
 
         array_unshift($output, $header);
 
-        $io->helper('table')->output($output);
-        $io->out();
+        $this->io->helper('table')->output($output);
+        $this->io->out();
 
         $duplicateRoutes = [];
 
@@ -124,9 +120,9 @@ class RoutesCommand extends Command
 
         if ($duplicateRoutes) {
             array_unshift($duplicateRoutes, $header);
-            $io->warning('The following possible route collisions were detected.');
-            $io->helper('table')->output($duplicateRoutes);
-            $io->out();
+            $this->io->warning('The following possible route collisions were detected.');
+            $this->io->helper('table')->output($duplicateRoutes);
+            $this->io->out();
         }
 
         return static::CODE_SUCCESS;

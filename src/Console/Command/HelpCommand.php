@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Console\Command;
 
 use ArrayIterator;
-use Cake\Console\Arguments;
 use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
@@ -52,24 +51,22 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     /**
      * Main function Prints out the list of commands.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
         $commands = $this->commands->getIterator();
         if ($commands instanceof ArrayIterator) {
             $commands->ksort();
         }
 
-        if ($args->getOption('xml')) {
-            $this->asXml($io, $commands);
+        if ($this->args->getOption('xml')) {
+            $this->asXml($this->io, $commands);
 
             return static::CODE_SUCCESS;
         }
 
-        $this->asText($io, $commands);
+        $this->asText($this->io, $commands);
 
         return static::CODE_SUCCESS;
     }

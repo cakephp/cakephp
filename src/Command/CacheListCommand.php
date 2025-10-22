@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Cache\Cache;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -60,14 +58,12 @@ class CacheListCommand extends Command
     /**
      * Get the list of cache prefixes
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
         foreach (Cache::configured() as $engine) {
-            $io->out("- {$engine}");
+            $this->io->out("- {$engine}");
         }
 
         return static::CODE_SUCCESS;

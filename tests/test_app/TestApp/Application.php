@@ -52,8 +52,8 @@ class Application extends BaseApplication
     public function console(CommandCollection $commands): CommandCollection
     {
         return $commands
-            ->add('abort_command', new AbortCommand())
-            ->add('format_specifier_command', new FormatSpecifierCommand())
+            ->add('abort_command', AbortCommand::class)
+            ->add('format_specifier_command', FormatSpecifierCommand::class)
             ->addMany($commands->autoDiscover());
     }
 

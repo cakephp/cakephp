@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -36,37 +34,35 @@ class I18nCommand extends Command
     /**
      * Execute interactive mode
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $io->out('<info>I18n Command</info>');
-        $io->hr();
-        $io->out('[E]xtract POT file from sources');
-        $io->out('[I]nitialize a language from POT file');
-        $io->out('[H]elp');
-        $io->out('[Q]uit');
+        $this->io->out('<info>I18n Command</info>');
+        $this->io->hr();
+        $this->io->out('[E]xtract POT file from sources');
+        $this->io->out('[I]nitialize a language from POT file');
+        $this->io->out('[H]elp');
+        $this->io->out('[Q]uit');
 
         do {
-            $choice = strtolower($io->askChoice('What would you like to do?', ['E', 'I', 'H', 'Q']));
+            $choice = strtolower($this->io->askChoice('What would you like to do?', ['E', 'I', 'H', 'Q']));
             $code = null;
             switch ($choice) {
                 case 'e':
-                    $code = $this->executeCommand(I18nExtractCommand::class, [], $io);
+                    $code = $this->executeCommand(I18nExtractCommand::class, []);
                     break;
                 case 'i':
-                    $code = $this->executeCommand(I18nInitCommand::class, [], $io);
+                    $code = $this->executeCommand(I18nInitCommand::class, []);
                     break;
                 case 'h':
-                    $io->out($this->getOptionParser()->help());
+                    $this->io->out($this->getOptionParser()->help());
                     break;
                 case 'q':
                     // Do nothing
                     break;
                 default:
-                    $io->err(
+                    $this->io->err(
                         'You have made an invalid selection. ' .
                         'Please choose a command to execute by entering E, I, H, or Q.',
                     );

@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Core\Configure;
 
 /**
@@ -36,13 +34,11 @@ class VersionCommand extends Command
     /**
      * Print out the version of CakePHP in use.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $io->out(Configure::version());
+        $this->io->out(Configure::version());
 
         return static::CODE_SUCCESS;
     }

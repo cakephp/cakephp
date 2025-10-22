@@ -347,10 +347,12 @@ class CommandRunnerTest extends TestCase
         $output = new StubConsoleOutput();
         $io = $this->getMockIo($output);
         $factory = $this->createMock(CommandFactoryInterface::class);
+        $command = new DemoCommand($factory);
+        $command->setIo($io);
         $factory->expects($this->once())
             ->method('create')
             ->with(DemoCommand::class)
-            ->willReturn(new DemoCommand());
+            ->willReturn($command);
 
         $app = $this->makeAppWithCommands(['ex' => DemoCommand::class]);
 
@@ -367,15 +369,15 @@ class CommandRunnerTest extends TestCase
         $app = $this->makeAppWithCommands([
             'dependency' => DependencyCommand::class,
         ]);
+        $output = new StubConsoleOutput();
+        $mockIo = $this->getMockIo($output);
         $container = $app->getContainer();
         $container->add(stdClass::class, json_decode('{"key":"value"}'));
         $container->add(DependencyCommand::class)
             ->addArgument(stdClass::class);
 
-        $output = new StubConsoleOutput();
-
         $runner = new CommandRunner($app, 'cake');
-        $result = $runner->run(['cake', 'dependency'], $this->getMockIo($output));
+        $result = $runner->run(['cake', 'dependency'], $mockIo);
         $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
 
         $messages = implode("\n", $output->messages());
