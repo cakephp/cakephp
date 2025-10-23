@@ -24,6 +24,7 @@
     "require": {
         "php": ">=8.2",
         "cakephp/core": "5.3.*@dev",
+        "cakephp/event": "5.3.*@dev",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
     "provide": {

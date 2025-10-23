@@ -1,0 +1,123 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         5.3.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Cache\Event;
+
+use Cake\Cache\CacheEngine;
+use Cake\Cache\Exception\InvalidArgumentException;
+use Cake\Event\Event;
+
+/**
+ * Class Cache AfterIncrement Event
+ *
+ * @extends \Cake\Event\Event<\Cake\Cache\CacheEngine>
+ */
+class CacheAfterIncrementEvent extends Event
+{
+    public const NAME = 'Cache.afterIncrement';
+
+    protected string $key;
+
+    protected int $offset;
+
+    protected mixed $value;
+
+    /**
+     * Constructor
+     *
+     * @param string $name Name of the event
+     * @param \Cake\Cache\CacheEngine $subject The Cache engine instance this event applies to.
+     * @param array $data Any value you wish to be transported with this event to it can be read by listeners.
+     */
+    public function __construct(string $name, CacheEngine $subject, array $data = [])
+    {
+        if (isset($data['key'])) {
+            $this->key = $data['key'];
+            unset($data['key']);
+        }
+        if (isset($data['offset'])) {
+            $this->offset = $data['offset'];
+            unset($data['offset']);
+        }
+        if (isset($data['value'])) {
+            $this->value = $data['value'];
+            unset($data['value']);
+        }
+        if (isset($data['success'])) {
+            $this->result = $data['success'];
+            unset($data['success']);
+        }
+
+        parent::__construct($name, $subject, $data);
+    }
+
+    /**
+     * The result value of the event listeners
+     *
+     * @return bool|null
+     */
+    public function getResult(): ?bool
+    {
+        return $this->result;
+    }
+
+    /**
+     * Listeners can attach a result value to the event.
+     *
+     * @param mixed $value The value to set.
+     * @return $this
+     */
+    public function setResult(mixed $value = null)
+    {
+        if ($value !== null && !is_bool($value)) {
+            throw new InvalidArgumentException(
+                'The result for CacheEngine events must be a `bool`.',
+            );
+        }
+
+        return parent::setResult($value);
+    }
+
+    /**
+     * Get the cache key.
+     *
+     * @return string
+     */
+    public function getKey(): string
+    {
+        return $this->key;
+    }
+
+    /**
+     * Get the increment offset.
+     *
+     * @return int
+     */
+    public function getOffset(): int
+    {
+        return $this->offset;
+    }
+
+    /**
+     * Get the new value after increment.
+     *
+     * @return mixed
+     */
+    public function getValue(): mixed
+    {
+        return $this->value;
+    }
+}

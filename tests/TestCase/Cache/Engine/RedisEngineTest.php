@@ -28,6 +28,8 @@ use function Cake\Core\env;
  */
 class RedisEngineTest extends TestCase
 {
+    use EngineEventsTrait;
+
     /**
      * @var string
      */
@@ -90,6 +92,7 @@ class RedisEngineTest extends TestCase
             'duration' => 3600,
             'port' => $this->port,
         ];
+        $this->engine = 'redis';
         Cache::drop('redis');
         Cache::setConfig('redis', array_merge($defaults, $config));
     }

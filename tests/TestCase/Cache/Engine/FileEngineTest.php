@@ -27,6 +27,8 @@ use DateInterval;
  */
 class FileEngineTest extends TestCase
 {
+    use EngineEventsTrait;
+
     /**
      * setUp method
      */
@@ -61,6 +63,7 @@ class FileEngineTest extends TestCase
             'className' => 'File',
             'path' => TMP . 'tests',
         ];
+        $this->engine = 'file_test';
         Cache::drop('file_test');
         Cache::setConfig('file_test', array_merge($defaults, $config));
     }

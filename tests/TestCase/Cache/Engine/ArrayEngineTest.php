@@ -24,6 +24,8 @@ use Cake\TestSuite\TestCase;
  */
 class ArrayEngineTest extends TestCase
 {
+    use EngineEventsTrait;
+
     /**
      * setUp method
      */
@@ -58,6 +60,7 @@ class ArrayEngineTest extends TestCase
             'prefix' => 'cake_',
             'warnOnWriteFailures' => true,
         ];
+        $this->engine = 'array';
         Cache::drop('array');
         Cache::setConfig('array', array_merge($defaults, $config));
     }
