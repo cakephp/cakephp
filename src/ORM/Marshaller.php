@@ -191,6 +191,16 @@ class Marshaller
      *  ]);
      *  ```
      *
+     * You can also use the same nested array format as contain():
+     *
+     * ```
+     * $result = $marshaller->one($data, [
+     *   'associated' => [
+     *     'Tags' => ['DeeperAssoc1', 'DeeperAssoc2']
+     *   ]
+     * ]);
+     * ```
+     *
      * @param array<string, mixed> $data The data to hydrate.
      * @param array<string, mixed> $options List of options
      * @return \Cake\Datasource\EntityInterface
@@ -559,6 +569,16 @@ class Marshaller
      *     'Tags' => [
      *       'associated' => ['DeeperAssoc1', 'DeeperAssoc2']
      *     ]
+     *   ]
+     * ]);
+     * ```
+     *
+     * You can also use the same nested array format as contain():
+     *
+     * ```
+     * $result = $marshaller->merge($entity, $data, [
+     *   'associated' => [
+     *     'Tags' => ['DeeperAssoc1', 'DeeperAssoc2']
      *   ]
      * ]);
      * ```
