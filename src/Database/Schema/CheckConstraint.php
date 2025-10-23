@@ -77,6 +77,7 @@ class CheckConstraint extends Constraint
     {
         return [
             'name' => $this->name,
+            'type' => $this->type,
             'expression' => $this->expression,
         ];
     }

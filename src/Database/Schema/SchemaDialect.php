@@ -444,6 +444,9 @@ abstract class SchemaDialect
         foreach ($this->describeForeignKeys($name) as $key) {
             $table->addConstraint($key['name'], $key);
         }
+        foreach ($this->describeCheckConstraints($name) as $key) {
+            $table->addConstraint($key['name'], $key);
+        }
         $options = $this->describeOptions($name);
         if ($options) {
             $table->setOptions($options);
@@ -622,6 +625,22 @@ abstract class SchemaDialect
         }
 
         return $table->getOptions();
+    }
+
+    /**
+     * Get a list of check constraint metadata as an array.
+     *
+     * Each item in the array will contain the following keys:
+     *
+     * - name - The name of the constraint.
+     * - expression - The check constraint expression as a SQL fragment.
+     *
+     * @param string $tableName The name of the table to describe options on.
+     * @return array
+     */
+    public function describeCheckConstraints(string $tableName): array
+    {
+        return [];
     }
 
     /**
