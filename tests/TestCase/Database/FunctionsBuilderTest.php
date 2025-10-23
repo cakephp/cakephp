@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Expression\AggregateExpression;
+use Cake\Database\Expression\CastExpression;
 use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\FunctionsBuilder;
@@ -162,12 +163,12 @@ class FunctionsBuilderTest extends TestCase
     public function testCast(): void
     {
         $function = $this->functions->cast('field', 'varchar');
-        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertInstanceOf(CastExpression::class, $function);
         $this->assertSame('CAST(field AS varchar)', $function->sql(new ValueBinder()));
         $this->assertSame('string', $function->getReturnType());
 
         $function = $this->functions->cast($this->functions->now(), 'varchar');
-        $this->assertInstanceOf(FunctionExpression::class, $function);
+        $this->assertInstanceOf(CastExpression::class, $function);
         $this->assertSame('CAST(NOW() AS varchar)', $function->sql(new ValueBinder()));
         $this->assertSame('string', $function->getReturnType());
     }

@@ -19,6 +19,8 @@ namespace Cake\Database\Expression;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
+use Cake\Database\TypedResultInterface;
+use Cake\Database\TypedResultTrait;
 use Cake\Database\ValueBinder;
 use Closure;
 
@@ -27,10 +29,11 @@ use Closure;
  * involving a field an operator and a value. In its most common form the
  * string representation of a comparison is `field = value`
  */
-class ComparisonExpression implements ExpressionInterface, FieldInterface
+class ComparisonExpression implements ExpressionInterface, FieldInterface, TypedResultInterface
 {
     use ExpressionTypeCasterTrait;
     use FieldTrait;
+    use TypedResultTrait;
 
     /**
      * The value to be used in the right hand side of the operation
@@ -86,6 +89,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface
         $this->setField($field);
         $this->setValue($value);
         $this->operator = $operator;
+        $this->returnType = 'boolean';
     }
 
     /**

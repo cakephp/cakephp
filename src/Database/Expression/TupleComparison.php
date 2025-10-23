@@ -53,6 +53,7 @@ class TupleComparison extends ComparisonExpression
         $this->setField($fields);
         $this->operator = $conjunction;
         $this->setValue($values);
+        $this->returnType = 'boolean';
     }
 
     /**

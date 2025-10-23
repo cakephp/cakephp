@@ -42,6 +42,15 @@ class TupleComparisonTest extends TestCase
     }
 
     /**
+     * Tests that return type is set to boolean
+     */
+    public function testReturnType(): void
+    {
+        $f = new TupleComparison(['field1', 'field2'], [1, 2], ['integer', 'integer'], '=');
+        $this->assertSame('boolean', $f->getReturnType());
+    }
+
+    /**
      * Tests generating tuples in the fields side containing expressions
      */
     public function testTupleWithExpressionFields(): void

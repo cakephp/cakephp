@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Database\Expression\AggregateExpression;
+use Cake\Database\Expression\CastExpression;
 use Cake\Database\Expression\FunctionExpression;
 use InvalidArgumentException;
 
@@ -127,20 +128,18 @@ class FunctionsBuilder
     }
 
     /**
-     * Returns a FunctionExpression representing a SQL CAST.
+     * Returns a CastExpression representing a SQL CAST.
      *
      * The `$type` parameter is a SQL type. The return type for the returned expression
      * is the default type name. Use `setReturnType()` to update it.
      *
      * @param \Cake\Database\ExpressionInterface|string $field Field or expression to cast.
      * @param string $dataType The SQL data type
-     * @return \Cake\Database\Expression\FunctionExpression
+     * @return \Cake\Database\Expression\CastExpression
      */
-    public function cast(ExpressionInterface|string $field, string $dataType): FunctionExpression
+    public function cast(ExpressionInterface|string $field, string $dataType): CastExpression
     {
-        $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
-
-        return $expression->setConjunction(' AS')->add([$dataType => 'literal']);
+        return new CastExpression($field, $dataType);
     }
 
     /**
