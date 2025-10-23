@@ -67,8 +67,8 @@ class NumericPaginator implements PaginatorInterface
      *   ]
      *
      *   // Callable with builder
-     *   'sortableFields' => function($factory) {
-     *       return $factory
+     *   'sortableFields' => function(SortableFieldsBuilder $builder) {
+     *       return $builder
      *           ->add('name', SortField::asc('Users.name'))
      *           ->add('popularity', SortField::desc('score', locked: true), 'created');
      *   }
