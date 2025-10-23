@@ -293,11 +293,19 @@ class SortableFieldsBuilderTest extends TestCase
         ];
         $this->assertSame($expected, $result);
 
-        // Direction specified - override defaults
+        // Direction 'asc' specified - use defaults as-is
+        $result = $builder->resolve('custom', 'asc', true);
+        $expected = [
+            'title' => 'asc',
+            'created' => 'desc',
+        ];
+        $this->assertSame($expected, $result);
+
+        // Direction 'desc' specified - invert all defaults
         $result = $builder->resolve('custom', 'desc', true);
         $expected = [
-            'title' => 'desc',
-            'created' => 'desc',
+            'title' => 'desc', // default asc, inverted to desc
+            'created' => 'asc', // default desc, inverted to asc
         ];
         $this->assertSame($expected, $result);
     }

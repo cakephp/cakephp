@@ -234,6 +234,7 @@ class SortableFieldsBuilder
     protected function resolveArrayMapping(array $fields, string $direction, bool $directionSpecified): array
     {
         $order = [];
+        $shouldInvert = $directionSpecified && $direction === SortField::DESC;
 
         foreach ($fields as $key => $value) {
             if ($value instanceof SortField) {
@@ -244,11 +245,22 @@ class SortableFieldsBuilder
             } elseif (is_int($key)) {
                 // Numeric array: ['field1', 'field2'] - use requested direction
                 $order[$value] = $direction;
-            } elseif (!$directionSpecified) {
-                // Default direction: 'field' => 'asc'
-                $order[$key] = $value;
+            } elseif (is_string($value)) {
+                // Associative array with default directions per field
+                // Format: ['field1' => 'ASC', 'field2' => 'DESC']
+                $defaultDirection = strtolower($value);
+
+                if ($shouldInvert) {
+                    // Invert the direction when toggling to desc
+                    $fieldDirection = $defaultDirection === SortField::ASC ? SortField::DESC : SortField::ASC;
+                } else {
+                    // Use default direction (for asc or no direction specified)
+                    $fieldDirection = $defaultDirection;
+                }
+
+                $order[$key] = $fieldDirection;
             } else {
-                // Toggleable with default
+                // Fallback for other cases
                 $order[$key] = $direction;
             }
         }

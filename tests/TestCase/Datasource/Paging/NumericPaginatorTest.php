@@ -368,44 +368,44 @@ class NumericPaginatorTest extends TestCase
             'PaginatorPosts.body' => 'desc', // Uses default
         ], $pagingParams['completeSort']);
 
-       // Test 'custom' with asc direction (should use defaults)
+       // Test 'custom' with asc direction (should use defaults as-is)
         $params = ['sort' => 'custom', 'direction' => 'asc'];
         $result = $this->Paginator->paginate($table, $params, $settings);
         $pagingParams = $result->pagingParams();
 
         $this->assertEquals([
-            'PaginatorPosts.title' => 'asc', // Default was asc, stays asc
-            'PaginatorPosts.body' => 'asc', // Default was desc, flips to asc
+            'PaginatorPosts.title' => 'asc', // Default is asc
+            'PaginatorPosts.body' => 'desc', // Default is desc
         ], $pagingParams['completeSort']);
 
-       // Test 'custom' with desc direction (should flip defaults)
+       // Test 'custom' with desc direction (should invert all defaults)
         $params = ['sort' => 'custom', 'direction' => 'desc'];
         $result = $this->Paginator->paginate($table, $params, $settings);
         $pagingParams = $result->pagingParams();
 
         $this->assertEquals([
-            'PaginatorPosts.title' => 'desc', // Default was asc, flips to desc
-            'PaginatorPosts.body' => 'desc', // Default was desc, stays desc
+            'PaginatorPosts.title' => 'desc', // Default was asc, inverted to desc
+            'PaginatorPosts.body' => 'asc', // Default was desc, inverted to asc
         ], $pagingParams['completeSort']);
 
-       // Test 'locked' with asc direction
+       // Test 'locked' with asc direction (uses defaults)
         $params = ['sort' => 'locked', 'direction' => 'asc'];
         $result = $this->Paginator->paginate($table, $params, $settings);
         $pagingParams = $result->pagingParams();
 
         $this->assertEquals([
             'PaginatorPosts.id' => 'desc', // Locked, never changes
-            'PaginatorPosts.author_id' => 'asc', // Default asc, stays asc
+            'PaginatorPosts.author_id' => 'asc', // Default asc
         ], $pagingParams['completeSort']);
 
-       // Test 'locked' with desc direction
+       // Test 'locked' with desc direction (inverts toggleable fields)
         $params = ['sort' => 'locked', 'direction' => 'desc'];
         $result = $this->Paginator->paginate($table, $params, $settings);
         $pagingParams = $result->pagingParams();
 
         $this->assertEquals([
             'PaginatorPosts.id' => 'desc', // Locked, never changes
-            'PaginatorPosts.author_id' => 'desc', // Default asc, flips to desc
+            'PaginatorPosts.author_id' => 'desc', // Default asc, inverted to desc
         ], $pagingParams['completeSort']);
     }
 
@@ -524,5 +524,122 @@ class NumericPaginatorTest extends TestCase
         $this->assertEquals('simple_author', $pagingParams['sort']);
         $this->assertEquals('desc', $pagingParams['direction']);
         $this->assertEquals(['PaginatorPosts.author_id' => 'desc'], $pagingParams['completeSort']);
+    }
+
+    /**
+     * Test combined sort-direction parameter format (e.g., 'title-asc')
+     */
+    public function testCombinedSortDirectionFormat(): void
+    {
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+
+        // Test ascending with combined format
+        $params = ['sort' => 'title-asc'];
+        $result = $this->Paginator->paginate($table, $params);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('title', $pagingParams['sort']);
+        $this->assertEquals('asc', $pagingParams['direction']);
+        $this->assertEquals(['PaginatorPosts.title' => 'asc'], $pagingParams['completeSort']);
+
+        // Test descending with combined format
+        $params = ['sort' => 'body-desc'];
+        $result = $this->Paginator->paginate($table, $params);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('body', $pagingParams['sort']);
+        $this->assertEquals('desc', $pagingParams['direction']);
+        $this->assertEquals(['PaginatorPosts.body' => 'desc'], $pagingParams['completeSort']);
+
+        // Test that traditional format still works
+        $params = ['sort' => 'title', 'direction' => 'desc'];
+        $result = $this->Paginator->paginate($table, $params);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('title', $pagingParams['sort']);
+        $this->assertEquals('desc', $pagingParams['direction']);
+        $this->assertEquals(['PaginatorPosts.title' => 'desc'], $pagingParams['completeSort']);
+
+        // Test combined format with hyphenated field names
+        $params = ['sort' => 'author_id-desc'];
+        $result = $this->Paginator->paginate($table, $params);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('author_id', $pagingParams['sort']);
+        $this->assertEquals('desc', $pagingParams['direction']);
+        $this->assertEquals(['PaginatorPosts.author_id' => 'desc'], $pagingParams['completeSort']);
+    }
+
+    /**
+     * Test combined sort format with sortableFields
+     */
+    public function testCombinedSortFormatWithSortableFields(): void
+    {
+        $table = $this->getTableLocator()->get('PaginatorPosts');
+        $settings = [
+            'sortableFields' => [
+                'name' => 'PaginatorPosts.title',
+                'content' => 'PaginatorPosts.body',
+                'newest' => [
+                    SortField::desc('PaginatorPosts.id', locked: true),
+                    'PaginatorPosts.title',
+                ],
+                'custom' => [
+                    'PaginatorPosts.author_id' => 'asc', // Toggleable default
+                    'PaginatorPosts.body' => 'desc', // Toggleable default
+                ],
+            ],
+        ];
+
+        // Test simple mapping with combined format
+        $params = ['sort' => 'name-desc'];
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('name', $pagingParams['sort']);
+        $this->assertEquals('desc', $pagingParams['direction']);
+        $this->assertEquals(['PaginatorPosts.title' => 'desc'], $pagingParams['completeSort']);
+
+        // Test that unmapped fields with combined format are still rejected
+        $params = ['sort' => 'unmapped-asc'];
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertNull($pagingParams['sort']);
+        $this->assertNull($pagingParams['direction']);
+        $this->assertEquals([], $pagingParams['completeSort']);
+
+        // Test multi-field mapping with combined format (locked field)
+        $params = ['sort' => 'newest-asc']; // Direction should apply to non-locked fields
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('newest', $pagingParams['sort']);
+        $this->assertEquals([
+            'PaginatorPosts.id' => 'desc', // Locked direction
+            'PaginatorPosts.title' => 'asc', // Uses combined format direction
+        ], $pagingParams['completeSort']);
+
+        // Test toggleable defaults with combined format - asc (uses defaults)
+        $params = ['sort' => 'custom-asc'];
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('custom', $pagingParams['sort']);
+        $this->assertEquals([
+            'PaginatorPosts.author_id' => 'asc', // Default is asc
+            'PaginatorPosts.body' => 'desc', // Default is desc
+        ], $pagingParams['completeSort']);
+
+        // Test toggleable defaults with combined format - desc (inverts all)
+        $params = ['sort' => 'custom-desc'];
+        $result = $this->Paginator->paginate($table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $this->assertEquals('custom', $pagingParams['sort']);
+        $this->assertEquals([
+            'PaginatorPosts.author_id' => 'desc', // Default asc, inverted to desc
+            'PaginatorPosts.body' => 'asc', // Default desc, inverted to asc
+        ], $pagingParams['completeSort']);
     }
 }

@@ -61,6 +61,7 @@ class PaginatorHelper extends Helper
      * - `url['?']['direction']` Direction of the sorting (default: 'asc').
      * - `url['?']['page']` Page number to use in links.
      * - `escape` Defines if the title field for the link should be escaped (default: true).
+     * - `sortFormat` Format for sort URLs: 'separate' (default, ?sort=x&direction=y) or 'combined' (?sort=x-y).
      * - `routePlaceholders` An array specifying which paging params should be
      *   passed as route placeholders instead of query string parameters. The array
      *   can have values `'sort'`, `'direction'`, `'page'`.
@@ -71,7 +72,9 @@ class PaginatorHelper extends Helper
      */
     protected array $_defaultConfig = [
         'params' => [],
-        'options' => [],
+        'options' => [
+            'sortFormat' => 'separate',
+        ],
         'templates' => [
             'nextActive' => '<li class="next"><a rel="next" href="{{url}}">{{text}}</a></li>',
             'nextDisabled' => '<li class="next disabled"><a>{{text}}</a></li>',
@@ -433,7 +436,12 @@ class PaginatorHelper extends Helper
             $title = $title[$dir];
         }
 
-        $paging = ['sort' => $key, 'direction' => $dir, 'page' => 1];
+        $sortFormat = $this->getConfig('options.sortFormat', 'separate');
+        if ($sortFormat === 'combined') {
+            $paging = ['sort' => $key . '-' . $dir, 'page' => 1];
+        } else {
+            $paging = ['sort' => $key, 'direction' => $dir, 'page' => 1];
+        }
 
         $vars = [
             'text' => $options['escape'] ? h($title) : $title,
