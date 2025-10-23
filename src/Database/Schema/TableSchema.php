@@ -213,6 +213,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         'delete' => 'restrict',
         'constraint' => null,
         'deferrable' => null,
+        'expression' => null,
     ];
 
     /**
@@ -234,6 +235,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         self::CONSTRAINT_PRIMARY,
         self::CONSTRAINT_UNIQUE,
         self::CONSTRAINT_FOREIGN,
+        self::CONSTRAINT_CHECK,
     ];
 
     /**
@@ -269,6 +271,13 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      * @var string
      */
     public const CONSTRAINT_FOREIGN = 'foreign';
+
+    /**
+     * check constraint type
+     *
+     * @var string
+     */
+    public const CONSTRAINT_CHECK = 'check';
 
     /**
      * Index - index type
@@ -551,7 +560,14 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
         $attrs = array_intersect_key($attrs, static::$_indexKeys);
         $attrs += static::$_indexKeys;
-        unset($attrs['references'], $attrs['update'], $attrs['delete'], $attrs['constraint'], $attrs['deferrable']);
+        unset(
+            $attrs['references'],
+            $attrs['update'],
+            $attrs['delete'],
+            $attrs['constraint'],
+            $attrs['deferrable'],
+            $attrs['expression'],
+        );
 
         if (!in_array($attrs['type'], static::$_validIndexTypes, true)) {
             throw new DatabaseException(sprintf(
@@ -669,22 +685,24 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 $this->_table,
             ));
         }
-        if (empty($attrs['columns'])) {
-            throw new DatabaseException(sprintf(
-                'Constraints in table `%s` must have at least one column.',
-                $this->_table,
-            ));
-        }
-        $attrs['columns'] = (array)$attrs['columns'];
-        foreach ($attrs['columns'] as $field) {
-            if (empty($this->_columns[$field])) {
-                $msg = sprintf(
-                    'Columns used in constraints must be added to the Table schema first. ' .
-                    'The column `%s` was not found in table `%s`.',
-                    $field,
+        if ($attrs['type'] !== TableSchema::CONSTRAINT_CHECK) {
+            if (empty($attrs['columns'])) {
+                throw new DatabaseException(sprintf(
+                    'Constraints in table `%s` must have at least one column.',
                     $this->_table,
-                );
-                throw new DatabaseException($msg);
+                ));
+            }
+            $attrs['columns'] = (array)$attrs['columns'];
+            foreach ($attrs['columns'] as $field) {
+                if (empty($this->_columns[$field])) {
+                    $msg = sprintf(
+                        'Columns used in constraints must be added to the Table schema first. ' .
+                        'The column `%s` was not found in table `%s`.',
+                        $field,
+                        $this->_table,
+                    );
+                    throw new DatabaseException($msg);
+                }
             }
         }
 
@@ -699,6 +717,11 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 'type' => $type,
                 'name' => $attrs['name'],
                 'columns' => $attrs['columns'],
+            ];
+        } elseif ($type === static::CONSTRAINT_CHECK) {
+            $attrs = [
+                'name' => $attrs['name'],
+                'expression' => $attrs['expression'],
             ];
         } elseif ($type === static::CONSTRAINT_UNIQUE) {
             $attrs = [
@@ -727,14 +750,13 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 
                 return $this;
             }
-        } else {
-            unset($attrs['references'], $attrs['update'], $attrs['delete'], $attrs['deferrable']);
         }
 
         $this->_constraints[$name] = match ($type) {
             static::CONSTRAINT_UNIQUE => new UniqueKey(...$attrs),
             static::CONSTRAINT_FOREIGN => new ForeignKey(...$attrs),
             static::CONSTRAINT_PRIMARY => new Constraint(...$attrs),
+            static::CONSTRAINT_CHECK => new CheckConstraint(...$attrs),
             default => new Constraint(...$attrs),
         };
 
@@ -797,7 +819,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         // Map the backwards compatible attributes in. Need to check for existing instance.
         $attrs['referencedTable'] = $attrs['references'][0];
         $attrs['referencedColumns'] = (array)$attrs['references'][1];
-        unset($attrs['type'], $attrs['references'], $attrs['length']);
+        unset($attrs['type'], $attrs['references'], $attrs['length'], $attrs['expression']);
 
         return $attrs;
     }
