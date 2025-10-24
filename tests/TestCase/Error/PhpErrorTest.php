@@ -39,8 +39,7 @@ class PhpErrorTest extends TestCase
             [E_ERROR, 'error', LOG_ERR],
             [E_WARNING, 'warning', LOG_WARNING],
             [E_NOTICE, 'notice', LOG_NOTICE],
-            [E_STRICT, 'strict', LOG_NOTICE],
-            [E_STRICT, 'strict', LOG_NOTICE],
+            [2048, 'strict', LOG_NOTICE], // E_STRICT is deprecated and unused
             [E_USER_DEPRECATED, 'deprecated', LOG_NOTICE],
         ];
     }
