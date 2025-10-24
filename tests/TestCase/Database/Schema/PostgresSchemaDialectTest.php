@@ -1442,6 +1442,11 @@ SQL;
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
                 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
             ],
+            [
+                'author_id_check',
+                ['type' => 'check', 'expression' => 'author_id > 0'],
+                'CONSTRAINT "author_id_check" CHECK (author_id > 0)',
+            ],
         ];
     }
 

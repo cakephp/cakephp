@@ -950,9 +950,10 @@ class PostgresSchemaDialect extends SchemaDialect
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
-        }
-        if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_CHECK) {
+            return $out . ' CHECK (' . $data['expression'] . ')';
         }
 
         return $this->_keySql($out, $data);
