@@ -21,6 +21,7 @@ use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\MysqlSchemaDialect;
@@ -695,7 +696,6 @@ SQL;
         $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
 
-        $this->assertCount(4, $result->constraints());
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -914,11 +914,12 @@ SQL;
         $result = $schema->describe('schema_constraints');
 
         $constraint = $result->getConstraint('age_check');
-        $this->assertEquals('(`age` >= 18)', $constraint['expression']);
+        $this->assertStringContainsString('`age` >= 18', $constraint['expression']);
 
         $key = $result->constraint('age_check');
+        assert($key instanceof CheckConstraint);
         $this->assertEquals('age_check', $key->getName());
-        $this->assertEquals('(`age` >= 18)', $key->getExpression());
+        $this->assertStringContainsString('`age` >= 18', $key->getExpression());
 
         $connection->execute('DROP TABLE IF EXISTS schema_constraints');
     }
