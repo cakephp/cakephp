@@ -347,7 +347,8 @@ SQL;
                 KEY `author_idx` (`author_id`),
                 CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
                 FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
-                UNIQUE INDEX `unique_id_idx` (`unique_id`)
+                UNIQUE INDEX `unique_id_idx` (`unique_id`),
+                CONSTRAINT `unique_id_check` CHECK (`unique_id` > 0)
             ) ENGINE=InnoDB COLLATE=utf8_general_ci
 SQL;
         $connection->execute($table);
@@ -695,7 +696,7 @@ SQL;
         $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
 
-        $this->assertCount(4, $result->constraints());
+        $this->assertCount(5, $result->constraints());
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -728,6 +729,10 @@ SQL;
                 'columns' => ['author_id'],
                 'length' => [],
             ],
+            'unique_id_check' => [
+                'type' => 'check',
+                'expression' => '(`unique_id` > 0)',
+            ],
         ];
 
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
@@ -740,6 +745,11 @@ SQL;
         $this->assertEquals('length_idx', $key->getName());
         $this->assertEquals($expected['length_idx']['columns'], $key->getColumns());
         $this->assertEquals(['title' => 4], $key->getLength());
+
+        $this->assertEquals($expected['unique_id_check'], $result->getConstraint('unique_id_check'));
+        $key = $result->constraint('unique_id_check');
+        $this->assertEquals('unique_id_check', $key->getName());
+        $this->assertEquals($expected['unique_id_check']['expression'], $key->getExpression());
 
         if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
             $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('author_idx'));
@@ -1411,6 +1421,11 @@ SQL;
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
                 'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
                 'REFERENCES `authors` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT',
+            ],
+            [
+                'author_id_check',
+                ['type' => 'check', 'expression' => 'author_id > 0'],
+                'CONSTRAINT `author_id_check` CHECK (author_id > 0)',
             ],
         ];
     }
