@@ -38,7 +38,7 @@ jobs:
             db-type: 'mysql'
           - php-version: '8.2'
             db-type: 'mysql'
-          - php-version: '8.3'
+          - php-version: '8.5'
             db-type: 'mysql'
 
     services:
@@ -76,7 +76,7 @@ jobs:
         mysql database: 'cakephp'
         mysql root password: 'root'
 
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v5
 
     - name: Setup PHP
       uses: shivammathur/setup-php@v2
@@ -107,7 +107,9 @@ jobs:
 
     - name: Composer install
       run: |
-        if ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
+        if ${{ matrix.php-version == '8.5' }}; then
+          composer update --ignore-platform-req=php
+        elif ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
           composer update --prefer-lowest --prefer-stable
         else
           composer update
