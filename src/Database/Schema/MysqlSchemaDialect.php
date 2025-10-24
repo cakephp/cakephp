@@ -890,7 +890,6 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
-        //
         $data = $schema->getConstraint($name);
         assert($data !== null);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
