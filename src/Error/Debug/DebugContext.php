@@ -88,11 +88,11 @@ class DebugContext
      */
     public function getReferenceId(object $object): int
     {
-        if ($this->refs->contains($object)) {
+        if ($this->refs->offsetExists($object)) {
             return $this->refs[$object];
         }
         $refId = $this->refs->count();
-        $this->refs->attach($object, $refId);
+        $this->refs->offsetSet($object, $refId);
 
         return $refId;
     }
@@ -105,6 +105,6 @@ class DebugContext
      */
     public function hasReference(object $object): bool
     {
-        return $this->refs->contains($object);
+        return $this->refs->offsetExists($object);
     }
 }
