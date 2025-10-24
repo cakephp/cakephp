@@ -83,10 +83,10 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Database\TypeMap|null $typeMap The type map to use when using an array of conditions for the `WHEN`
+     * @param \Cake\Database\TypeMap $typeMap The type map to use when using an array of conditions for the `WHEN`
      *  value.
      */
-    public function __construct(protected ?TypeMap $typeMap = new TypeMap())
+    public function __construct(protected TypeMap $typeMap = new TypeMap())
     {
     }
 
