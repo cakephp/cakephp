@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database\Statement;
 
 use PDO;
+use Pdo\Mysql as PdoMySql;
 
 /**
  * Statement class meant to be used by a MySQL PDO driver
@@ -35,10 +36,18 @@ class MysqlStatement extends PDOStatement
         $connection = $this->_driver->getConnection();
 
         try {
-            $connection->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, $this->_bufferResults);
+            if (PHP_VERSION_ID >= 80400) {
+                $connection->setAttribute(PdoMySql::ATTR_USE_BUFFERED_QUERY, $this->_bufferResults);
+            } else {
+                $connection->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, $this->_bufferResults);
+            }
             $result = $this->_statement->execute($params);
         } finally {
-            $connection->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+            if (PHP_VERSION_ID >= 80400) {
+                $connection->setAttribute(PdoMySql::ATTR_USE_BUFFERED_QUERY, true);
+            } else {
+                $connection->setAttribute(PDO::MYSQL_ATTR_USE_BUFFERED_QUERY, true);
+            }
         }
 
         return $result;

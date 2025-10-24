@@ -22,6 +22,7 @@ use Cake\Database\DriverInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use Pdo\Mysql as PdoMySql;
 
 /**
  * Tests MySQL driver
@@ -62,9 +63,15 @@ class MysqlTest extends TestCase
 
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => true,
-            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
+
+        if (PHP_VERSION_ID >= 80400) {
+            $expected['flags'] += [PdoMySql::ATTR_USE_BUFFERED_QUERY => true];
+        } else {
+            $expected['flags'] += [PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true];
+        }
+
         $connection = $this->getMockBuilder('StdClass')
             ->addMethods(['exec'])
             ->getMock();
@@ -90,7 +97,6 @@ class MysqlTest extends TestCase
             'username' => 'user',
             'password' => 'pass',
             'port' => 3440,
-            'flags' => [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'],
             'encoding' => null,
             'timezone' => 'Antarctica',
             'init' => [
@@ -98,6 +104,13 @@ class MysqlTest extends TestCase
                 'this too',
             ],
         ];
+
+        if (PHP_VERSION_ID >= 80400) {
+            $config['flags'] = [PdoMySql::ATTR_INIT_COMMAND => 'SET NAMES utf8'];
+        } else {
+            $config['flags'] = [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'];
+        }
+
         $driver = $this->getMockBuilder('Cake\Database\Driver\Mysql')
             ->onlyMethods(['_connect', 'getConnection'])
             ->setConstructorArgs([$config])
@@ -106,11 +119,21 @@ class MysqlTest extends TestCase
         $expected = $config;
         $expected['init'][] = "SET time_zone = 'Antarctica'";
         $expected['flags'] += [
-            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT => false,
-            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
+
+        if (PHP_VERSION_ID >= 80400) {
+            $expected['flags'] += [
+                PdoMySql::ATTR_INIT_COMMAND => 'SET NAMES utf8',
+                PdoMySql::ATTR_USE_BUFFERED_QUERY => true,
+            ];
+        } else {
+            $expected['flags'] += [
+                PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+                PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+            ];
+        }
 
         $connection = $this->getMockBuilder('StdClass')
             ->addMethods(['exec'])
