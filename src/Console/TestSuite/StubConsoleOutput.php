@@ -41,6 +41,16 @@ class StubConsoleOutput extends ConsoleOutput
     protected array $_out = [];
 
     /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        // Don't call parent on purpose as it opens php://stdin which doesn't
+        // always exist in RunInSeparateProcess tests.
+        $this->_outputAs = self::PLAIN;
+    }
+
+    /**
      * Write output to the buffer.
      *
      * @param array<string>|string $message A string or an array of strings to output
@@ -70,6 +80,16 @@ class StubConsoleOutput extends ConsoleOutput
     public function messages(): array
     {
         return $this->_out;
+    }
+
+    /**
+     * Clear buffered output
+     *
+     * @return void
+     */
+    public function clear(): void
+    {
+        $this->_out = [];
     }
 
     /**

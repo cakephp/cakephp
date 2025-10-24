@@ -47,11 +47,9 @@ class UploadedFileFactory implements UploadedFileFactoryInterface
         ?int $size = null,
         int $error = UPLOAD_ERR_OK,
         ?string $clientFilename = null,
-        ?string $clientMediaType = null
+        ?string $clientMediaType = null,
     ): UploadedFileInterface {
-        if ($size === null) {
-            $size = $stream->getSize() ?? 0;
-        }
+        $size ??= $stream->getSize() ?? 0;
 
         return new UploadedFile($stream, $size, $error, $clientFilename, $clientMediaType);
     }

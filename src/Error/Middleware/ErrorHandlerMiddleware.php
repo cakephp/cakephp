@@ -116,7 +116,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         } catch (RedirectException $exception) {
             return $this->handleRedirect($exception);
         } catch (Throwable $exception) {
-            return $this->handleException($exception, $request);
+            return $this->handleException($exception, Router::getRequest() ?? $request);
         }
     }
 
@@ -137,25 +137,21 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         $event = $this->dispatchEvent(
             'Exception.beforeRender',
             ['exception' => $exception, 'request' => $request],
-            $trap
+            $trap,
         );
 
-        $exception = $event->getData('exception');
-        assert($exception instanceof Throwable);
-        $renderer = $trap->renderer($exception, $request);
-
         $response = $event->getResult();
+        if ($response === null) {
+            $renderer = $trap->renderer($event->getData('exception'), $request);
+        }
+
         try {
-            if ($response === null) {
-                $response = $renderer->render();
-            }
+            $response ??= $renderer->render();
             if (is_string($response)) {
                 return new Response(['body' => $response, 'status' => 500]);
             }
 
-            return $response instanceof ResponseInterface
-                ? $response
-                : new Response(['body' => $response, 'status' => 500]);
+            return $response;
         } catch (Throwable $internalException) {
             $trap->logException($internalException, $request);
 
@@ -174,7 +170,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         return new RedirectResponse(
             $exception->getMessage(),
             $exception->getCode(),
-            $exception->getHeaders()
+            $exception->getHeaders(),
         );
     }
 
@@ -231,8 +227,8 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
         } catch (Throwable $e) {
             triggerWarning(sprintf(
                 "Exception loading routes when rendering an error page: \n %s - %s",
-                get_class($e),
-                $e->getMessage()
+                $e::class,
+                $e->getMessage(),
             ));
         }
     }

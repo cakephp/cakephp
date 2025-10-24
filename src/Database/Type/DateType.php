@@ -161,7 +161,6 @@ class DateType extends BaseType implements BatchCastingInterface
             return $value;
         }
 
-        /** @phpstan-ignore-next-line */
         if ($value instanceof DateTimeInterface || $value instanceof ChronosDate) {
             return new $this->_className($value->format($this->_format));
         }
@@ -216,7 +215,7 @@ class DateType extends BaseType implements BatchCastingInterface
             return $this;
         }
         throw new DatabaseException(
-            sprintf('Cannot use locale parsing with %s', $this->_className)
+            sprintf('Cannot use locale parsing with %s', $this->_className),
         );
     }
 

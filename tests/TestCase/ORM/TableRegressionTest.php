@@ -48,7 +48,7 @@ class TableRegressionTest extends TestCase
             'Model.afterSave',
             function () use ($table): void {
                 $table->getConnection()->rollback();
-            }
+            },
         );
         $entity = $table->newEntity(['name' => 'Jon']);
         $table->save($entity);

@@ -66,7 +66,7 @@ class FormProtector
         $this->debugMessage = null;
 
         $extractedToken = $this->extractToken($formData);
-        if (empty($extractedToken)) {
+        if (!$extractedToken) {
             return false;
         }
 
@@ -75,7 +75,7 @@ class FormProtector
             $hashParts['fields'],
             $hashParts['unlockedFields'],
             $url,
-            $sessionId
+            $sessionId,
         );
 
         if (hash_equals($generatedToken, $extractedToken)) {
@@ -120,7 +120,7 @@ class FormProtector
             $field = $this->getFieldNameArray($field);
         }
 
-        if (empty($field)) {
+        if (!$field) {
             return $this;
         }
 
@@ -164,7 +164,7 @@ class FormProtector
      */
     protected function getFieldNameArray(string $name): array
     {
-        if (empty($name) && $name !== '0') {
+        if ($name === '') {
             return [];
         }
 
@@ -270,8 +270,8 @@ class FormProtector
      * Return hash parts for the token generation
      *
      * @param array<string, array> $formData Form data.
-     * @return array<string, array>
-     * @psalm-return array{fields: array, unlockedFields: array}
+     * @return array<string, array> Contains 'fields' and 'unlockedFields' keys. Additional keys allowed.
+     * @phpstan-return array{fields: array, unlockedFields: array<string>, ...}
      */
     protected function extractHashParts(array $formData): array
     {
@@ -306,7 +306,8 @@ class FormProtector
 
         $fields = Hash::flatten($formData);
         $fieldList = array_keys($fields);
-        $multi = $lockedFields = [];
+        $multi = [];
+        $lockedFields = [];
         $isUnlocked = false;
 
         foreach ($fieldList as $i => $key) {
@@ -317,29 +318,27 @@ class FormProtector
                 $fieldList[$i] = (string)$key;
             }
         }
-        if (!empty($multi)) {
+        if ($multi) {
             $fieldList += array_unique($multi);
         }
 
         $unlockedFields = array_unique(
             array_merge(
                 $this->unlockedFields,
-                $unlocked
-            )
+                $unlocked,
+            ),
         );
 
         /** @var string $key */
         foreach ($fieldList as $i => $key) {
             $isLocked = in_array($key, $locked, true);
 
-            if (!empty($unlockedFields)) {
-                foreach ($unlockedFields as $off) {
-                    $off = explode('.', $off);
-                    $field = array_values(array_intersect(explode('.', $key), $off));
-                    $isUnlocked = ($field === $off);
-                    if ($isUnlocked) {
-                        break;
-                    }
+            foreach ($unlockedFields as $off) {
+                $off = explode('.', $off);
+                $field = array_values(array_intersect(explode('.', $key), $off));
+                $isUnlocked = ($field === $off);
+                if ($isUnlocked) {
+                    break;
                 }
             }
 
@@ -366,7 +365,7 @@ class FormProtector
     protected function sortedUnlockedFields(array $formData): array
     {
         $unlocked = urldecode($formData['_Token']['unlocked']);
-        if (empty($unlocked)) {
+        if (!$unlocked) {
             return [];
         }
 
@@ -380,9 +379,9 @@ class FormProtector
      * Generate the token data.
      *
      * @param string $url Form URL.
-     * @param string $sessionId Session Id.
-     * @return array<string, string> The token data.
-     * @psalm-return array{fields: string, unlocked: string, debug: string}
+     * @param string $sessionId Session ID.
+     * @return array<string, string> The token data. Contains 'fields', 'unlocked', and 'debug' keys. Additional keys allowed.
+     * @phpstan-return array{fields: string, unlocked: string, debug: string, ...}
      */
     public function buildTokenData(string $url = '', string $sessionId = ''): array
     {
@@ -391,9 +390,14 @@ class FormProtector
 
         $locked = [];
         foreach ($fields as $key => $value) {
-            if (is_numeric($value)) {
+            if ($value === true) {
+                $value = '1';
+            } elseif ($value === false) {
+                $value = '0';
+            } elseif (is_numeric($value)) {
                 $value = (string)$value;
             }
+
             if (!is_int($key)) {
                 $locked[$key] = $value;
                 unset($fields[$key]);
@@ -470,7 +474,7 @@ class FormProtector
             $expectedFields,
             'Unexpected field `%s` in POST data',
             'Tampered field `%s` in POST data (expected value `%s` but found `%s`)',
-            'Missing field `%s` in POST data'
+            'Missing field `%s` in POST data',
         );
         $expectedUnlockedFields = Hash::get($expectedParts, 2);
         $dataUnlockedFields = Hash::get($hashParts, 'unlockedFields') ?: [];
@@ -479,7 +483,7 @@ class FormProtector
             $expectedUnlockedFields,
             'Unexpected unlocked field `%s` in POST data',
             '',
-            'Missing unlocked field: `%s`'
+            'Missing unlocked field: `%s`',
         );
 
         $messages = array_merge($messages, $fieldsMessages, $unlockFieldsMessages);
@@ -503,7 +507,7 @@ class FormProtector
         array $expectedFields = [],
         string $intKeyMessage = '',
         string $stringKeyMessage = '',
-        string $missingMessage = ''
+        string $missingMessage = '',
     ): array {
         $messages = $this->matchExistingFields($dataFields, $expectedFields, $intKeyMessage, $stringKeyMessage);
         $expectedFieldsMessage = $this->debugExpectedFields($expectedFields, $missingMessage);
@@ -529,7 +533,7 @@ class FormProtector
         array $dataFields,
         array &$expectedFields,
         string $intKeyMessage,
-        string $stringKeyMessage
+        string $stringKeyMessage,
     ): array {
         $messages = [];
         foreach ($dataFields as $key => $value) {
@@ -560,7 +564,7 @@ class FormProtector
      */
     protected function debugExpectedFields(array $expectedFields = [], string $missingMessage = ''): ?string
     {
-        if (count($expectedFields) === 0) {
+        if ($expectedFields === []) {
             return null;
         }
 

@@ -36,7 +36,7 @@ class NumberTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->Number = new Number();
@@ -45,7 +45,7 @@ class NumberTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->Number);
@@ -91,6 +91,17 @@ class NumberTest extends TestCase
         $options = ['locale' => 'fr_FR', 'after' => ' €'];
         $result = $this->Number->format($value, $options);
         $expected = '1,23 €';
+        $this->assertSame($expected, $result);
+
+        $value = 1.665;
+        $options = ['locale' => 'cs_CZ', 'precision' => 2];
+        $result = $this->Number->format($value, $options);
+        $expected = '1,66';
+        $this->assertSame($expected, $result);
+
+        $options = ['locale' => 'cs_CZ', 'precision' => 2, 'roundingMode' => NumberFormatter::ROUND_HALFUP];
+        $result = $this->Number->format($value, $options);
+        $expected = '1,67';
         $this->assertSame($expected, $result);
     }
 
@@ -281,6 +292,14 @@ class NumberTest extends TestCase
     {
         $result = $this->Number->currency('1.23', 'EUR', ['locale' => 'de_DE', 'places' => 3]);
         $expected = '1,230 €';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->currency('1.665', 'CZK', ['locale' => 'cs_CZ', 'places' => 2]);
+        $expected = '1,66 Kč';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->currency('1.665', 'CZK', ['locale' => 'cs_CZ', 'places' => 2, 'roundingMode' => NumberFormatter::ROUND_HALFUP]);
+        $expected = '1,67 Kč';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->currency('0.23', 'GBP', ['places' => 3, 'fractionSymbol' => 'p']);

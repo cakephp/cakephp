@@ -16,8 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Schema;
 
+use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\SqlserverSchemaDialect;
 use Cake\Database\Schema\TableSchema;
@@ -25,11 +27,12 @@ use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * SQL Server schema test case.
  */
-class SqlserverSchemaTest extends TestCase
+class SqlserverSchemaDialectTest extends TestCase
 {
     /**
      * Helper method for skipping tests that need a real connection.
@@ -84,6 +87,15 @@ INDEX [unique_id_idx] UNIQUE ([unique_id])
 )
 SQL;
         $connection->execute($table);
+
+        $comment = <<<SQL
+            EXECUTE sp_addextendedproperty
+            N'MS_Description', N'is published or not',
+            N'SCHEMA', N'dbo',
+            N'TABLE', N'schema_articles',
+            N'COLUMN', N'published';
+SQL;
+        $connection->execute($comment);
         $connection->execute('CREATE INDEX [author_idx] ON [schema_articles] ([author_id])');
 
         $table = <<<SQL
@@ -299,14 +311,28 @@ SQL;
                 null,
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
             ],
+            // Geospatial types
+            [
+                'GEOMETRY',
+                null,
+                null,
+                null,
+                ['type' => 'geometry', 'null' => true],
+            ],
+            [
+                'GEOGRAPHY',
+                null,
+                null,
+                null,
+                ['type' => 'point', 'null' => true],
+            ],
         ];
     }
 
     /**
      * Test parsing Sqlserver column types from field description.
-     *
-     * @dataProvider convertColumnProvider
      */
+    #[DataProvider('convertColumnProvider')]
     public function testConvertColumn(string $type, ?int $length, ?int $precision, ?int $scale, array $expected): void
     {
         $field = [
@@ -324,7 +350,7 @@ SQL;
             'default' => 'Default value',
         ];
 
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')->getMock();
+        $driver = $this->getMockBuilder(Sqlserver::class)->getMock();
         $dialect = new SqlserverSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -365,8 +391,8 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describe('schema_articles');
         $expected = [
             'id' => [
                 'type' => 'biginteger',
@@ -406,13 +432,23 @@ SQL;
                 'autoIncrement' => null,
                 'comment' => null,
             ],
+            'unique_id' => [
+                'type' => 'integer',
+                'null' => false,
+                'unsigned' => null,
+                'default' => null,
+                'length' => 10,
+                'precision' => null,
+                'comment' => null,
+                'autoIncrement' => null,
+            ],
             'published' => [
                 'type' => 'boolean',
                 'null' => true,
                 'default' => 0,
                 'length' => null,
                 'precision' => null,
-                'comment' => null,
+                'comment' => 'is published or not',
             ],
             'views' => [
                 'type' => 'smallinteger',
@@ -431,6 +467,7 @@ SQL;
                 'length' => null,
                 'precision' => null,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created2' => [
                 'type' => 'datetimefractional',
@@ -439,6 +476,7 @@ SQL;
                 'length' => null,
                 'precision' => 7,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created2_with_default' => [
                 'type' => 'datetimefractional',
@@ -447,6 +485,7 @@ SQL;
                 'length' => null,
                 'precision' => 7,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created2_with_precision' => [
                 'type' => 'datetimefractional',
@@ -455,6 +494,7 @@ SQL;
                 'length' => null,
                 'precision' => 3,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'created2_without_precision' => [
                 'type' => 'datetime',
@@ -463,6 +503,7 @@ SQL;
                 'length' => null,
                 'precision' => 0,
                 'comment' => null,
+                'onUpdate' => null,
             ],
             'field1' => [
                 'type' => 'string',
@@ -485,7 +526,7 @@ SQL;
             'field3' => [
                 'type' => 'string',
                 'null' => true,
-                'default' => 'O\'hare',
+                'default' => "O'hare",
                 'length' => 10,
                 'precision' => null,
                 'comment' => null,
@@ -498,6 +539,19 @@ SQL;
             $this->assertEquals($definition, $column, 'Failed to match field ' . $field);
             $this->assertSame($definition['length'], $column['length']);
             $this->assertSame($definition['precision'], $column['precision']);
+        }
+
+        // Compare with describeColumns()
+        $columns = $dialect->describeColumns('schema_articles');
+        foreach ($columns as $column) {
+            $name = $column['name'];
+            $this->assertArrayHasKey($name, $expected);
+            $expectedItem = $expected[$name];
+            $expectedFields = array_intersect_key($expectedItem, $column);
+            $resultFields = array_intersect_key($column, $expectedFields);
+
+            $this->assertNotEmpty($resultFields);
+            $this->assertEquals($expectedFields, $resultFields);
         }
     }
 
@@ -548,10 +602,10 @@ SQL;
         $connection = ConnectionManager::get('test');
         $this->_createTables($connection);
 
-        $schema = new SchemaCollection($connection);
-        $result = $schema->describe('schema_articles');
+        $dialect = $connection->getDriver()->schemaDialect();
+        $result = $dialect->describe('schema_articles');
 
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $result);
+        $this->assertInstanceOf(TableSchema::class, $result);
         $this->assertCount(4, $result->constraints());
         $expected = [
             'primary' => [
@@ -585,13 +639,47 @@ SQL;
         $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
 
+        // Compare describeForeignKeys()
+        $keys = $dialect->describeForeignKeys('schema_articles');
+        $this->assertCount(1, $keys);
+        foreach ($keys as $foreignKey) {
+            $name = $foreignKey['name'];
+            $this->assertArrayHasKey($name, $expected);
+            $expectedItem = $expected[$name];
+            $expectedFields = array_intersect_key($expectedItem, $foreignKey);
+            $resultFields = array_intersect_key($foreignKey, $expectedFields);
+
+            $this->assertNotEmpty($resultFields);
+            $this->assertEquals($expectedFields, $resultFields);
+        }
+
         $this->assertCount(1, $result->indexes());
-        $expected = [
+        $authorIdx = [
             'type' => 'index',
             'columns' => ['author_id'],
             'length' => [],
         ];
-        $this->assertEquals($expected, $result->getIndex('author_idx'));
+        $this->assertEquals($authorIdx, $result->getIndex('author_idx'));
+
+        // Compare with describeIndexes() which includes indexes + uniques
+        $expected['author_idx'] = $authorIdx;
+
+        $indexes = $dialect->describeIndexes('schema_articles');
+        $this->assertCount(4, $indexes);
+        foreach ($indexes as $index) {
+            $name = $index['name'];
+            $this->assertArrayHasKey($name, $expected);
+            $expectedItem = $expected[$name];
+            $expectedFields = array_intersect_key($expectedItem, $index);
+            $resultFields = array_intersect_key($index, $expectedFields);
+
+            if (isset($index['constraint'])) {
+                $this->assertStringStartsWith('PK__schema', $index['constraint']);
+            }
+
+            $this->assertNotEmpty($resultFields);
+            $this->assertEquals($expectedFields, $resultFields);
+        }
     }
 
     /**
@@ -621,6 +709,11 @@ SQL;
             [
                 'id',
                 ['type' => 'uuid', 'null' => false],
+                '[id] UNIQUEIDENTIFIER NOT NULL',
+            ],
+            [
+                'id',
+                ['type' => 'nativeuuid', 'null' => false],
                 '[id] UNIQUEIDENTIFIER NOT NULL',
             ],
             [
@@ -768,7 +861,7 @@ SQL;
             [
                 'open_date',
                 ['type' => 'datetime', 'null' => false, 'default' => '2016-12-07 23:04:00'],
-                '[open_date] DATETIME2 NOT NULL DEFAULT \'2016-12-07 23:04:00\'',
+                "[open_date] DATETIME2 NOT NULL DEFAULT '2016-12-07 23:04:00'",
             ],
             [
                 'open_date',
@@ -801,6 +894,11 @@ SQL;
                 '[open_date] DATETIME2 NOT NULL DEFAULT SYSDATETIMEOFFSET()',
             ],
             [
+                'open_date',
+                ['type' => 'datetime', 'null' => false, 'default' => new QueryExpression('getutcdate()')],
+                '[open_date] DATETIME2 NOT NULL DEFAULT getutcdate()',
+            ],
+            [
                 'null_date',
                 ['type' => 'datetime', 'null' => true, 'default' => 'current_timestamp'],
                 '[null_date] DATETIME2 DEFAULT CURRENT_TIMESTAMP',
@@ -827,14 +925,54 @@ SQL;
                 ['type' => 'timestamp', 'null' => true],
                 '[created] DATETIME2 DEFAULT NULL',
             ],
+            // Geospatial
+            [
+                'g',
+                ['type' => 'geometry'],
+                '[g] GEOMETRY',
+            ],
+            [
+                'g',
+                ['type' => 'geometry', 'null' => false, 'srid' => 4326],
+                '[g] GEOMETRY NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'point'],
+                '[p] GEOGRAPHY',
+            ],
+            [
+                'p',
+                ['type' => 'point', 'null' => false, 'srid' => 4326],
+                '[p] GEOGRAPHY NOT NULL',
+            ],
+            [
+                'l',
+                ['type' => 'linestring'],
+                '[l] GEOGRAPHY',
+            ],
+            [
+                'l',
+                ['type' => 'linestring', 'null' => false, 'srid' => 4326],
+                '[l] GEOGRAPHY NOT NULL',
+            ],
+            [
+                'p',
+                ['type' => 'polygon'],
+                '[p] GEOGRAPHY',
+            ],
+            [
+                'p',
+                ['type' => 'polygon', 'null' => false, 'srid' => 4326],
+                '[p] GEOGRAPHY NOT NULL',
+            ],
         ];
     }
 
     /**
      * Test generating column definitions
-     *
-     * @dataProvider columnSqlProvider
      */
+    #[DataProvider('columnSqlProvider')]
     public function testColumnSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -842,6 +980,9 @@ SQL;
 
         $table = (new TableSchema('schema_articles'))->addColumn($name, $data);
         $this->assertEquals($expected, $schema->columnSql($table, $name));
+
+        $data['name'] = $name;
+        $this->assertEquals($expected, $schema->columnDefinitionSql($data));
     }
 
     /**
@@ -897,9 +1038,8 @@ SQL;
 
     /**
      * Test the constraintSql method.
-     *
-     * @dataProvider constraintSqlProvider
      */
+    #[DataProvider('constraintSqlProvider')]
     public function testConstraintSql(string $name, array $data, string $expected): void
     {
         $driver = $this->_getMockedDriver();
@@ -921,7 +1061,7 @@ SQL;
     public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -970,7 +1110,7 @@ SQL;
     public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1019,7 +1159,7 @@ SQL;
     public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1083,7 +1223,7 @@ SQL;
         $this->assertSame(str_replace("\r\n", "\n", $expected), str_replace("\r\n", "\n", $result[0]));
         $this->assertSame(
             'CREATE INDEX [title_idx] ON [schema_articles] ([title])',
-            $result[1]
+            $result[1],
         );
     }
 
@@ -1093,7 +1233,7 @@ SQL;
     public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1111,7 +1251,7 @@ SQL;
     public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder('Cake\Database\Connection')
+        $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())->method('getDriver')
@@ -1129,8 +1269,49 @@ SQL;
         $this->assertSame(
             "IF EXISTS (SELECT * FROM sys.identity_columns WHERE OBJECT_NAME(OBJECT_ID) = 'schema_articles' AND last_value IS NOT NULL) " .
             "DBCC CHECKIDENT('schema_articles', RESEED, 0)",
-            $result[1]
+            $result[1],
         );
+    }
+
+    public function testCreateTableColumnComment(): void
+    {
+        $this->_needsConnection();
+
+        $columns = [
+            'id' => [
+                'type' => 'biginteger',
+                'default' => null,
+                'null' => false,
+                'length' => 19,
+                'precision' => null,
+                'unsigned' => null,
+                'autoIncrement' => true,
+                'comment' => null,
+            ],
+            'title' => [
+                'type' => 'string',
+                'length' => 20,
+                'null' => true,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'body' => [
+                'type' => 'string',
+                'null' => true,
+                'length' => 1000,
+                'precision' => null,
+                'comment' => 'the body field',
+            ],
+        ];
+        $schema = new TableSchema('schema_comment');
+        foreach ($columns as $name => $column) {
+            $schema->addColumn($name, $column);
+        }
+        $connection = ConnectionManager::get('test');
+        $sql = $schema->createSql($connection);
+        $comment = $sql[1];
+        $this->assertStringContainsString('the body field', $comment);
+        $this->assertStringContainsString("EXEC sp_addextendedproperty N'MS_Description'", $comment);
     }
 
     /**
@@ -1147,7 +1328,7 @@ SQL;
         $mock->expects($this->any())
             ->method('quote')
             ->willReturnCallback(function ($value) {
-                return "'$value'";
+                return "'{$value}'";
             });
 
         $driver = $this->getMockBuilder(Sqlserver::class)

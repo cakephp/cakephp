@@ -40,6 +40,14 @@ class SchemacacheBuildCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Build all metadata caches for the connection.';
+    }
+
+    /**
      * Display all routes in an application
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -77,10 +85,10 @@ class SchemacacheBuildCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription(
-            'Build all metadata caches for the connection. If a ' .
-            'table name is provided, only that table will be cached.'
-        )->addOption('connection', [
+        $parser->setDescription([
+            static::getDescription(),
+            ' If a table name is provided, only that table will be cached.',
+        ])->addOption('connection', [
             'help' => 'The connection to build/clear metadata cache data for.',
             'short' => 'c',
             'default' => 'default',

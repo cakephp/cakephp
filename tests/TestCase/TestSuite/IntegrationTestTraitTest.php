@@ -31,11 +31,14 @@ use Cake\Routing\RouteBuilder;
 use Cake\Routing\Router;
 use Cake\TestSuite\IntegrationTestTrait;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Hash;
 use Cake\Utility\Security;
 use Laminas\Diactoros\UploadedFile;
 use LogicException;
 use OutOfBoundsException;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\Depends;
 use stdClass;
 use TestApp\ReflectionDependency;
 
@@ -54,40 +57,38 @@ class IntegrationTestTraitTest extends TestCase
     protected $key = 'abcdabcdabcdabcdabcdabcdabcdabcdabcd';
 
     /**
-     * @var \Cake\Routing\RouteBuilder
-     */
-    protected $builder;
-
-    /**
      * Setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
 
         Router::reload();
-        $this->builder = Router::createRouteBuilder('/');
-        $this->builder->setExtensions(['json']);
-        $this->builder->registerMiddleware('cookie', new EncryptedCookieMiddleware(['secrets'], $this->key));
-        $this->builder->applyMiddleware('cookie');
+        $routesClosure = function (RouteBuilder $routes): void {
+            $routes->setExtensions(['json']);
+            $routes->registerMiddleware('cookie', new EncryptedCookieMiddleware(['secrets'], $this->key));
+            $routes->applyMiddleware('cookie');
 
-        $this->builder->setRouteClass(InflectedRoute::class);
-        $this->builder->get('/get/{controller}/{action}', []);
-        $this->builder->head('/head/{controller}/{action}', []);
-        $this->builder->options('/options/{controller}/{action}', []);
-        $this->builder->connect('/{controller}/{action}/*', []);
+            $routes->setRouteClass(InflectedRoute::class);
+            $routes->get('/get/{controller}/{action}', []);
+            $routes->head('/head/{controller}/{action}', []);
+            $routes->options('/options/{controller}/{action}', []);
+            $routes->connect('/{controller}/{action}/*', []);
 
-        $this->builder->scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
-            $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware());
-            $routes->applyMiddleware('cookieCsrf');
-            $routes->connect('/posts/{action}', ['controller' => 'Posts']);
-        });
-        $this->builder->scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes): void {
-            $routes->registerMiddleware('sessionCsrf', new SessionCsrfProtectionMiddleware());
-            $routes->applyMiddleware('sessionCsrf');
-            $routes->connect('/posts/{action}/', ['controller' => 'Posts']);
-        });
+            $routes->scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+                $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware());
+                $routes->applyMiddleware('cookieCsrf');
+                $routes->connect('/posts/{action}', ['controller' => 'Posts']);
+            });
+            $routes->scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes): void {
+                $routes->registerMiddleware('sessionCsrf', new SessionCsrfProtectionMiddleware());
+                $routes->applyMiddleware('sessionCsrf');
+                $routes->connect('/posts/{action}/', ['controller' => 'Posts']);
+            });
+        };
+        $routesClosure(Router::createRouteBuilder('/'));
+        Configure::write('TestApp.routes', $routesClosure);
 
         $this->configApplication(Configure::read('App.namespace') . '\Application', null);
     }
@@ -182,6 +183,14 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertSame(['id' => '1', 'username' => 'mark'], $request['session']->read('User'));
         $this->assertSame('foo', $request['environment']['PHP_AUTH_USER']);
         $this->assertSame('bar', $request['environment']['PHP_AUTH_PW']);
+
+        $this->replaceRequest([
+            'headers' => [
+                'X-CSRF-Token' => 'test321',
+            ],
+        ]);
+        $this->assertSame('test321', $this->_request['headers']['X-CSRF-Token']);
+        $this->assertArrayNotHasKey('webroot', $this->_request);
     }
 
     /**
@@ -218,18 +227,40 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertSame(
             $first['cookies']['csrfToken'],
             $second['post']['_csrfToken'],
-            'Csrf token should match cookie'
+            'Csrf token should match cookie',
         );
         $this->assertSame(
             $first['session']->read('csrfToken'),
             $second['post']['_csrfToken'],
-            'Csrf token should match session'
+            'Csrf token should match session',
         );
         $this->assertSame(
             $first['post']['_csrfToken'],
             $second['post']['_csrfToken'],
-            'Tokens should be consistent per test method'
+            'Tokens should be consistent per test method',
         );
+    }
+
+    /**
+     * Test for issue #17612 - skip adding tokens for GET without data.
+     */
+    public function testAddTokenInGetRequest(): void
+    {
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        $requestWithoutTokens = $this->_buildRequest('tasks/view', 'GET');
+
+        $this->assertArrayNotHasKey('_Token', $requestWithoutTokens['post']);
+        $this->assertArrayNotHasKey('_csrfToken', $requestWithoutTokens['post']);
+        $this->assertArrayNotHasKey('csrfToken', $requestWithoutTokens['cookies']);
+
+        $this->enableCsrfToken();
+        $this->enableSecurityToken();
+        $requestWithTokens = $this->_buildRequest('tasks/view', 'GET', ['lorem' => 'ipsum']);
+
+        $this->assertArrayHasKey('_Token', $requestWithTokens['post']);
+        $this->assertArrayHasKey('csrfToken', $requestWithTokens['cookies']);
+        $this->assertArrayNotHasKey('_csrfToken', $requestWithTokens['post']);
     }
 
     /**
@@ -290,10 +321,12 @@ class IntegrationTestTraitTest extends TestCase
     public function testExceptionsInMiddlewareJsonView(): void
     {
         Router::reload();
-        $this->builder->connect('/json_response/api_get_data', [
-            'controller' => 'JsonResponse',
-            'action' => 'apiGetData',
-        ]);
+        Configure::write('TestApp.routes', function (RouteBuilder $routes): void {
+            $routes->connect('/json_response/api_get_data', [
+                'controller' => 'JsonResponse',
+                'action' => 'apiGetData',
+            ]);
+        });
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithExceptionsInMiddleware', null);
 
@@ -314,7 +347,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->head('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertResponseSuccess();
     }
 
@@ -336,7 +369,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->options('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertResponseSuccess();
     }
 
@@ -379,7 +412,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->get('/request_action/test_request_action');
         $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf('Cake\Http\Response', $this->_response);
+        $this->assertInstanceOf(Response::class, $this->_response);
         $this->assertSame('This is a test', (string)$this->_response->getBody());
         $this->assertHeader('X-Middleware', 'true');
     }
@@ -550,7 +583,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsProperties(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+        $this->assertInstanceOf(Controller::class, $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
@@ -567,7 +600,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsPropertiesHttpServer(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf('Cake\Controller\Controller', $this->_controller);
+        $this->assertInstanceOf(Controller::class, $this->_controller);
         $this->assertNotEmpty($this->_viewName, 'View name not set');
         $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
         $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
@@ -690,6 +723,22 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test asserting session and flash messages.
+     */
+    public function testFlashAssertionsWithSession(): void
+    {
+        $this->enableRetainFlashMessages();
+        $this->get('/posts/flashWithSession');
+        $this->assertRedirect();
+
+        $this->assertFlashElement('flash/error');
+        $this->assertSession(true, 'test');
+
+        $result = $this->_requestSession->read('Flash.flash');
+        $this->assertSame(['flash/error'], Hash::extract($result, '{n}.element'));
+    }
+
+    /**
      * Test flash assertions stored with enableRememberFlashMessages() even if
      * no view is rendered
      */
@@ -741,7 +790,10 @@ class IntegrationTestTraitTest extends TestCase
     public function testAssertCookieNotSet(): void
     {
         $this->cookie('test', 'value');
-        $this->get('/cookie_component_test/remove_cookie/test');
+        $this->get('/posts/index');
+        $this->assertCookieNotSet('test');
+
+        $this->get('/posts/redirectWithCookie');
         $this->assertCookieNotSet('test');
     }
 
@@ -751,7 +803,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testCookieNotSetFailure(): void
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage('Failed asserting that \'remember_me\' cookie is not set');
+        $this->expectExceptionMessage("Failed asserting that 'remember_me' cookie is not set");
         $this->post('/posts/index');
         $this->assertCookieNotSet('remember_me');
     }
@@ -774,6 +826,9 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->get('/posts/secretCookie');
         $this->assertCookieIsSet('secrets');
+
+        $this->get('/posts/redirectWithCookie');
+        $this->assertCookieIsSet('remember');
     }
 
     /**
@@ -782,7 +837,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testCookieIsSetFailure(): void
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessage('Failed asserting that \'not-secrets\' cookie is set');
+        $this->expectExceptionMessage("Failed asserting that 'not-secrets' cookie is set");
         $this->post('/posts/secretCookie');
         $this->assertCookieIsSet('not-secrets');
     }
@@ -818,6 +873,20 @@ class IntegrationTestTraitTest extends TestCase
         $data = [
             'title' => 'Some title',
             'body' => 'Some text',
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
+     * Test posting to a secured form action.
+     */
+    public function testPostSecuredFormNumericField(): void
+    {
+        $this->enableSecurityToken();
+        $data = [
+            '123456789' => 'Some text',
         ];
         $this->post('/posts/securePost', $data);
         $this->assertResponseOk();
@@ -988,15 +1057,18 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testPostSessionCsrfSuccessWithSetCookieName(): void
     {
-        $this->builder->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
-            $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
-                [
-                    'cookieName' => 'customCsrfToken',
-                ]
-            ));
-            $routes->applyMiddleware('cookieCsrf');
-            $routes->connect('/posts/{action}', ['controller' => 'Posts']);
+        Configure::write('TestApp.routes', function (RouteBuilder $routes): void {
+            $routes->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+                $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
+                    [
+                        'cookieName' => 'customCsrfToken',
+                    ],
+                ));
+                $routes->applyMiddleware('cookieCsrf');
+                $routes->connect('/posts/{action}', ['controller' => 'Posts']);
+            });
         });
+
         $this->enableCsrfToken('customCsrfToken');
         $data = [
             'title' => 'Some title',
@@ -1011,15 +1083,18 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testPostSessionCsrfFailureWithSetCookieName(): void
     {
-        $this->builder->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
-            $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
-                [
-                    'cookieName' => 'customCsrfToken',
-                ]
-            ));
-            $routes->applyMiddleware('cookieCsrf');
-            $routes->connect('/posts/{action}', ['controller' => 'Posts']);
+        Configure::write('TestApp.routes', function (RouteBuilder $routes): void {
+            $routes->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+                $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
+                    [
+                        'cookieName' => 'customCsrfToken',
+                    ],
+                ));
+                $routes->applyMiddleware('cookieCsrf');
+                $routes->connect('/posts/{action}', ['controller' => 'Posts']);
+            });
         });
+
         $this->enableCsrfToken('customCsrfToken');
         $data = [
             'title' => 'Some title',
@@ -1188,6 +1263,76 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test assertRedirect with relative URL in Location header
+     */
+    public function testAssertRedirectWithRelativeUrl(): void
+    {
+        $this->_response = new Response();
+        // Simulate authentication plugin returning relative URL
+        $this->_response = $this->_response->withHeader('Location', '/get/users/login');
+
+        // Should work with string URL
+        $this->assertRedirect('/get/users/login');
+
+        // Should work with array URL
+        $this->assertRedirect(['controller' => 'Users', 'action' => 'login']);
+    }
+
+    /**
+     * Test assertRedirectEquals with relative URL in Location header
+     */
+    public function testAssertRedirectEqualsWithRelativeUrl(): void
+    {
+        $this->_response = new Response();
+        // Simulate authentication plugin returning relative URL
+        $this->_response = $this->_response->withHeader('Location', '/get/users/login');
+
+        // Should work with string URL
+        $this->assertRedirectEquals('/get/users/login');
+
+        // Should work with array URL
+        $this->assertRedirectEquals(['controller' => 'Users', 'action' => 'login']);
+    }
+
+    /**
+     * Test assertRedirect with named routes and relative URLs
+     */
+    public function testAssertRedirectWithNamedRouteAndRelativeUrl(): void
+    {
+        Router::createRouteBuilder('/')->connect(
+            '/user/signin',
+            ['controller' => 'Users', 'action' => 'login'],
+            ['_name' => 'login:form'],
+        );
+
+        $this->_response = new Response();
+        // Simulate authentication plugin returning relative URL
+        $this->_response = $this->_response->withHeader('Location', '/user/signin');
+
+        // Should work with named route
+        $this->assertRedirect(['_name' => 'login:form']);
+        $this->assertRedirectEquals(['_name' => 'login:form']);
+    }
+
+    /**
+     * Test assertRedirect handles mixed absolute/relative URLs correctly
+     */
+    public function testAssertRedirectMixedUrlFormats(): void
+    {
+        $this->_response = new Response();
+
+        // Test with absolute URL in header, checking with relative path
+        $this->_response = $this->_response->withHeader('Location', 'http://localhost/get/tasks/view/1');
+        $this->assertRedirect('/get/tasks/view/1');
+        $this->assertRedirectEquals('/get/tasks/view/1');
+
+        // Test with relative URL in header, checking with absolute URL
+        $this->_response = $this->_response->withHeader('Location', '/get/tasks/edit/2');
+        $this->assertRedirect('http://localhost/get/tasks/edit/2');
+        $this->assertRedirectEquals('http://localhost/get/tasks/edit/2');
+    }
+
+    /**
      * Test the header assertion.
      */
     public function testAssertHeader(): void
@@ -1350,19 +1495,18 @@ class IntegrationTestTraitTest extends TestCase
     public function testEventManagerReset1(): EventManager
     {
         $eventManager = EventManager::instance();
-        $this->assertInstanceOf('Cake\Event\EventManager', $eventManager);
+        $this->assertInstanceOf(EventManager::class, $eventManager);
 
         return $eventManager;
     }
 
     /**
      * Test if the EventManager is reset between tests.
-     *
-     * @depends testEventManagerReset1
      */
+    #[Depends('testEventManagerReset1')]
     public function testEventManagerReset2(EventManager $prevEventManager): void
     {
-        $this->assertInstanceOf('Cake\Event\EventManager', $prevEventManager);
+        $this->assertInstanceOf(EventManager::class, $prevEventManager);
         $this->assertNotSame($prevEventManager, EventManager::instance());
     }
 
@@ -1436,9 +1580,8 @@ class IntegrationTestTraitTest extends TestCase
 
     /**
      * tests getting a secure action while passing a query string
-     *
-     * @dataProvider methodsProvider
      */
+    #[DataProvider('methodsProvider')]
     public function testSecureWithQueryString(string $method): void
     {
         $this->enableSecurityToken();
@@ -1495,8 +1638,8 @@ class IntegrationTestTraitTest extends TestCase
      * @param string $message Expected failure message
      * @param string $url URL to test
      * @param mixed ...$rest
-     * @dataProvider assertionFailureMessagesProvider
      */
+    #[DataProvider('assertionFailureMessagesProvider')]
     public function testAssertionFailureMessages($assertion, $message, $url, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
@@ -1514,7 +1657,7 @@ class IntegrationTestTraitTest extends TestCase
      *
      * @return void
      */
-    public function testAssertMessagePrevious()
+    public function testAssertMessagePrevious(): void
     {
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Caused by `RuntimeException`');
@@ -1533,37 +1676,37 @@ class IntegrationTestTraitTest extends TestCase
         $templateDir = TEST_APP . 'templates' . DS;
 
         return [
-            'assertContentType' => ['assertContentType', 'Failed asserting that \'test\' is set as the Content-Type (`text/html`).', '/posts/index', 'test'],
+            'assertContentType' => ['assertContentType', "Failed asserting that 'test' is set as the Content-Type (`text/html`).", '/posts/index', 'test'],
             'assertContentTypeVerbose' => ['assertContentType', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test'],
-            'assertCookie' => ['assertCookie', 'Failed asserting that \'test\' is in cookie \'remember_me\'.', '/posts/index', 'test', 'remember_me'],
+            'assertCookie' => ['assertCookie', "Failed asserting that 'test' is in cookie 'remember_me'.", '/posts/index', 'test', 'remember_me'],
             'assertCookieVerbose' => ['assertCookie', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test', 'remember_me'],
-            'assertCookieEncrypted' => ['assertCookieEncrypted', 'Failed asserting that \'test\' is encrypted in cookie \'secrets\'.', '/posts/secretCookie', 'test', 'secrets'],
+            'assertCookieEncrypted' => ['assertCookieEncrypted', "Failed asserting that 'test' is encrypted in cookie 'secrets'.", '/posts/secretCookie', 'test', 'secrets'],
             'assertCookieEncryptedVerbose' => ['assertCookieEncrypted', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test', 'NameOfCookie'],
-            'assertCookieNotSet' => ['assertCookieNotSet', 'Failed asserting that \'remember_me\' cookie is not set.', '/posts/index', 'remember_me'],
-            'assertFileResponse' => ['assertFileResponse', 'Failed asserting that \'test\' file was sent.', '/posts/file', 'test'],
+            'assertCookieNotSet' => ['assertCookieNotSet', "Failed asserting that 'remember_me' cookie is not set.", '/posts/index', 'remember_me'],
+            'assertFileResponse' => ['assertFileResponse', "Failed asserting that 'test' file was sent.", '/posts/file', 'test'],
             'assertFileResponseVerbose' => ['assertFileResponse', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test'],
-            'assertHeader' => ['assertHeader', 'Failed asserting that \'test\' equals content in header \'X-Cake\' (`custom header`).', '/posts/header', 'X-Cake', 'test'],
-            'assertHeaderContains' => ['assertHeaderContains', 'Failed asserting that \'test\' is in header \'X-Cake\' (`custom header`)', '/posts/header', 'X-Cake', 'test'],
-            'assertHeaderNotContains' => ['assertHeaderNotContains', 'Failed asserting that \'custom header\' is not in header \'X-Cake\' (`custom header`)', '/posts/header', 'X-Cake', 'custom header'],
+            'assertHeader' => ['assertHeader', "Failed asserting that 'test' equals content in header 'X-Cake' (`custom header`).", '/posts/header', 'X-Cake', 'test'],
+            'assertHeaderContains' => ['assertHeaderContains', "Failed asserting that 'test' is in header 'X-Cake' (`custom header`)", '/posts/header', 'X-Cake', 'test'],
+            'assertHeaderNotContains' => ['assertHeaderNotContains', "Failed asserting that 'custom header' is not in header 'X-Cake' (`custom header`)", '/posts/header', 'X-Cake', 'custom header'],
             'assertHeaderContainsVerbose' => ['assertHeaderContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'X-Cake', 'test'],
             'assertHeaderNotContainsVerbose' => ['assertHeaderNotContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'X-Cake', 'test'],
-            'assertLayout' => ['assertLayout', 'Failed asserting that \'custom_layout\' equals layout file `' . $templateDir . 'layout' . DS . 'default.php`.', '/posts/index', 'custom_layout'],
+            'assertLayout' => ['assertLayout', "Failed asserting that 'custom_layout' equals layout file `" . $templateDir . 'layout' . DS . 'default.php`.', '/posts/index', 'custom_layout'],
             'assertLayoutVerbose' => ['assertLayout', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'custom_layout'],
-            'assertRedirect' => ['assertRedirect', 'Failed asserting that \'http://localhost/\' equals content in header \'Location\' (`http://localhost/posts`).', '/posts/flashNoRender', '/'],
+            'assertRedirect' => ['assertRedirect', "Failed asserting that 'http://localhost/' equals content in header 'Location' (`http://localhost/posts`).", '/posts/flashNoRender', '/'],
             'assertRedirectVerbose' => ['assertRedirect', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/'],
-            'assertRedirectContains' => ['assertRedirectContains', 'Failed asserting that \'/posts/somewhere-else\' is in header \'Location\' (`http://localhost/posts`).', '/posts/flashNoRender', '/posts/somewhere-else'],
+            'assertRedirectContains' => ['assertRedirectContains', "Failed asserting that '/posts/somewhere-else' is in header 'Location' (`http://localhost/posts`).", '/posts/flashNoRender', '/posts/somewhere-else'],
             'assertRedirectContainsVerbose' => ['assertRedirectContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/posts/somewhere-else'],
             'assertRedirectNotContainsVerbose' => ['assertRedirectNotContains', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/posts/somewhere-else'],
             'assertResponseCode' => ['assertResponseCode', 'Failed asserting that `302` matches response status code `200`.', '/posts/index', 302],
-            'assertResponseContains' => ['assertResponseContains', 'Failed asserting that \'test\' is in response body.', '/posts/index', 'test'],
+            'assertResponseContains' => ['assertResponseContains', "Failed asserting that 'test' is in response body.", '/posts/index', 'test'],
             'assertResponseEmpty' => ['assertResponseEmpty', 'Failed asserting that response body is empty.', '/posts/index'],
-            'assertResponseEquals' => ['assertResponseEquals', 'Failed asserting that \'test\' matches response body.', '/posts/index', 'test'],
+            'assertResponseEquals' => ['assertResponseEquals', "Failed asserting that 'test' matches response body.", '/posts/index', 'test'],
             'assertResponseEqualsVerbose' => ['assertResponseEquals', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'test'],
             'assertResponseError' => ['assertResponseError', 'Failed asserting that 200 is between 400 and 429.', '/posts/index'],
             'assertResponseFailure' => ['assertResponseFailure', 'Failed asserting that 200 is between 500 and 505.', '/posts/index'],
-            'assertResponseNotContains' => ['assertResponseNotContains', 'Failed asserting that \'index\' is not in response body.', '/posts/index', 'index'],
+            'assertResponseNotContains' => ['assertResponseNotContains', "Failed asserting that 'index' is not in response body.", '/posts/index', 'index'],
             'assertResponseNotEmpty' => ['assertResponseNotEmpty', 'Failed asserting that response body is not empty.', '/posts/empty_response'],
-            'assertResponseNotEquals' => ['assertResponseNotEquals', 'Failed asserting that \'posts index\' does not match response body.', '/posts/index/error', 'posts index'],
+            'assertResponseNotEquals' => ['assertResponseNotEquals', "Failed asserting that 'posts index' does not match response body.", '/posts/index/error', 'posts index'],
             'assertResponseNotRegExp' => ['assertResponseNotRegExp', 'Failed asserting that `/index/` PCRE pattern not found in response body.', '/posts/index/error', '/index/'],
             'assertResponseNotRegExpVerbose' => ['assertResponseNotRegExp', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', '/index/'],
             'assertResponseOk' => ['assertResponseOk', 'Failed asserting that 404 is between 200 and 204.', '/posts/missing', '/index/'],
@@ -1571,20 +1714,20 @@ class IntegrationTestTraitTest extends TestCase
             'assertResponseSuccess' => ['assertResponseSuccess', 'Failed asserting that 404 is between 200 and 308.', '/posts/missing'],
             'assertResponseSuccessVerbose' => ['assertResponseSuccess', 'Possibly related to `Cake\Controller\Exception\MissingActionException`: "Action `PostsController::missing()` could not be found, or is not accessible."', '/posts/missing'],
 
-            'assertSession' => ['assertSession', 'Failed asserting that \'test\' is in session path \'Missing.path\'.', '/posts/index', 'test', 'Missing.path'],
-            'assertSessionHasKey' => ['assertSessionHasKey', 'Failed asserting that \'Missing.path\' is a path present in the session.', '/posts/index', 'Missing.path'],
-            'assertSessionNotHasKey' => ['assertSessionNotHasKey', 'Failed asserting that \'Flash.flash\' is not a path present in the session.', '/posts/index', 'Flash.flash'],
+            'assertSession' => ['assertSession', "Failed asserting that 'test' is in session path 'Missing.path'.", '/posts/index', 'test', 'Missing.path'],
+            'assertSessionHasKey' => ['assertSessionHasKey', "Failed asserting that 'Missing.path' is a path present in the session.", '/posts/index', 'Missing.path'],
+            'assertSessionNotHasKey' => ['assertSessionNotHasKey', "Failed asserting that 'Flash.flash' is not a path present in the session.", '/posts/index', 'Flash.flash'],
 
-            'assertTemplate' => ['assertTemplate', 'Failed asserting that \'custom_template\' equals template file `' . $templateDir . 'Posts' . DS . 'index.php`.', '/posts/index', 'custom_template'],
+            'assertTemplate' => ['assertTemplate', "Failed asserting that 'custom_template' equals template file `" . $templateDir . 'Posts' . DS . 'index.php`.', '/posts/index', 'custom_template'],
             'assertTemplateVerbose' => ['assertTemplate', 'Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."', '/notfound', 'custom_template'],
-            'assertFlashMessage' => ['assertFlashMessage', 'Failed asserting that \'missing\' is in \'flash\' message.', '/posts/index', 'missing'],
-            'assertFlashMessageWithKey' => ['assertFlashMessage', 'Failed asserting that \'missing\' is in \'auth\' message.', '/posts/index', 'missing', 'auth'],
-            'assertFlashMessageAt' => ['assertFlashMessageAt', 'Failed asserting that \'missing\' is in \'flash\' message #0.', '/posts/index', 0, 'missing'],
-            'assertFlashMessageAtWithKey' => ['assertFlashMessageAt', 'Failed asserting that \'missing\' is in \'auth\' message #0.', '/posts/index', 0, 'missing', 'auth'],
-            'assertFlashElement' => ['assertFlashElement', 'Failed asserting that \'missing\' is in \'flash\' element.', '/posts/index', 'missing'],
-            'assertFlashElementWithKey' => ['assertFlashElement', 'Failed asserting that \'missing\' is in \'auth\' element.', '/posts/index', 'missing', 'auth'],
-            'assertFlashElementAt' => ['assertFlashElementAt', 'Failed asserting that \'missing\' is in \'flash\' element #0.', '/posts/index', 0, 'missing'],
-            'assertFlashElementAtWithKey' => ['assertFlashElementAt', 'Failed asserting that \'missing\' is in \'auth\' element #0.', '/posts/index', 0, 'missing', 'auth'],
+            'assertFlashMessage' => ['assertFlashMessage', "Failed asserting that 'missing' is in 'flash' message.", '/posts/index', 'missing'],
+            'assertFlashMessageWithKey' => ['assertFlashMessage', "Failed asserting that 'missing' is in 'auth' message.", '/posts/index', 'missing', 'auth'],
+            'assertFlashMessageAt' => ['assertFlashMessageAt', "Failed asserting that 'missing' is in 'flash' message #0.", '/posts/index', 0, 'missing'],
+            'assertFlashMessageAtWithKey' => ['assertFlashMessageAt', "Failed asserting that 'missing' is in 'auth' message #0.", '/posts/index', 0, 'missing', 'auth'],
+            'assertFlashElement' => ['assertFlashElement', "Failed asserting that 'missing' is in 'flash' element.", '/posts/index', 'missing'],
+            'assertFlashElementWithKey' => ['assertFlashElement', "Failed asserting that 'missing' is in 'auth' element.", '/posts/index', 'missing', 'auth'],
+            'assertFlashElementAt' => ['assertFlashElementAt', "Failed asserting that 'missing' is in 'flash' element #0.", '/posts/index', 0, 'missing'],
+            'assertFlashElementAtWithKey' => ['assertFlashElementAt', "Failed asserting that 'missing' is in 'auth' element #0.", '/posts/index', 0, 'missing', 'auth'],
         ];
     }
 
@@ -1666,9 +1809,9 @@ class IntegrationTestTraitTest extends TestCase
     /**
      * Test the assertion generates a verbose message for session related checks.
      *
-     * @dataProvider assertionFailureSessionVerboseProvider
      * @param mixed ...$rest
      */
+    #[DataProvider('assertionFailureSessionVerboseProvider')]
     public function testAssertSessionRelatedVerboseMessages(string $assertMethod, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);

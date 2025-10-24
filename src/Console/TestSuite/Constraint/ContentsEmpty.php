@@ -40,7 +40,7 @@ class ContentsEmpty extends ContentsBase
      */
     public function toString(): string
     {
-        return sprintf('%s is empty', $this->output);
+        return sprintf('%s is empty.', $this->output);
     }
 
     /**
@@ -52,6 +52,14 @@ class ContentsEmpty extends ContentsBase
     protected function failureDescription(mixed $other): string
     {
         return $this->toString();
+    }
+
+    /**
+     * @inheritDoc
+     */
+    protected function additionalFailureDescription(mixed $other): string
+    {
+        return sprintf("actual result:\n%s", $this->contents);
     }
 }
 

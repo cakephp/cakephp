@@ -162,7 +162,7 @@ class SelectBoxWidget extends BasicWidget
         if (!empty($data['empty'])) {
             $options = $this->_emptyValue($data['empty']) + (array)$options;
         }
-        if (empty($options)) {
+        if (!$options) {
             return [];
         }
 
@@ -199,7 +199,7 @@ class SelectBoxWidget extends BasicWidget
      *
      * @param string $label The optgroup label text
      * @param \ArrayAccess<string, mixed>|array<string, mixed> $optgroup The optgroup data.
-     * @param array|null $disabled The options to disable.
+     * @param array<string>|null $disabled The options to disable.
      * @param mixed $selected The options to select.
      * @param array $templateVars Additional template variables.
      * @param bool $escape Toggle HTML escaping
@@ -211,7 +211,7 @@ class SelectBoxWidget extends BasicWidget
         ?array $disabled,
         mixed $selected,
         array $templateVars,
-        bool $escape
+        bool $escape,
     ): string {
         $opts = $optgroup;
         $attrs = [];
@@ -247,12 +247,13 @@ class SelectBoxWidget extends BasicWidget
         ?array $disabled,
         mixed $selected,
         array $templateVars,
-        bool $escape
+        bool $escape,
     ): array {
         $out = [];
         foreach ($options as $key => $val) {
             // Option groups
             $isIterable = is_iterable($val);
+            /** @var \ArrayAccess|array $val */
             if (
                 (
                     !is_int($key) &&
@@ -290,7 +291,7 @@ class SelectBoxWidget extends BasicWidget
             if ($this->_isDisabled((string)$key, $disabled)) {
                 $optAttrs['disabled'] = true;
             }
-            if (!empty($templateVars)) {
+            if ($templateVars) {
                 $optAttrs['templateVars'] = array_merge($templateVars, $optAttrs['templateVars']);
             }
             $optAttrs['escape'] = $escape;

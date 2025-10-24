@@ -301,7 +301,7 @@ class ServerRequest implements ServerRequestInterface
             throw new InvalidArgumentException(sprintf(
                 '`post` key must be an array, object or null.'
                 . ' Got `%s` instead.',
-                get_debug_type($post)
+                get_debug_type($post),
             ));
         }
         $this->data = $post;
@@ -322,7 +322,7 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function processUrlOption(array $config): array
     {
-        if ($config['url'][0] !== '/') {
+        if (!str_starts_with($config['url'], '/')) {
             $config['url'] = '/' . $config['url'];
         }
 
@@ -377,7 +377,7 @@ class ServerRequest implements ServerRequestInterface
     {
         if ($this->trustProxy && $this->getEnv('HTTP_X_FORWARDED_FOR')) {
             $addresses = array_map('trim', explode(',', (string)$this->getEnv('HTTP_X_FORWARDED_FOR')));
-            $trusted = (count($this->trustedProxies) > 0);
+            $trusted = $this->trustedProxies !== [];
             $n = count($addresses);
 
             if ($trusted) {
@@ -438,7 +438,7 @@ class ServerRequest implements ServerRequestInterface
         $ref = $this->getEnv('HTTP_REFERER');
 
         $base = Configure::read('App.fullBaseUrl') . $this->webroot;
-        if (empty($ref) || empty($base)) {
+        if (!$ref || !$base) {
             return null;
         }
 
@@ -447,8 +447,8 @@ class ServerRequest implements ServerRequestInterface
             if ($ref === '' || str_starts_with($ref, '//')) {
                 $ref = '/';
             }
-            if ($ref[0] !== '/') {
-                $ref = '/' . $ref;
+            if (!str_starts_with($ref, '/')) {
+                return '/' . $ref;
             }
 
             return $ref;
@@ -514,7 +514,7 @@ class ServerRequest implements ServerRequestInterface
             return $this->_is($type, $args);
         }
 
-        return $this->_detectorCache[$type] = $this->_detectorCache[$type] ?? $this->_is($type, $args);
+        return $this->_detectorCache[$type] ??= $this->_is($type, $args);
     }
 
     /**
@@ -622,10 +622,10 @@ class ServerRequest implements ServerRequestInterface
         if (isset($detect['value'])) {
             $value = $detect['value'];
 
-            return isset($this->params[$key]) ? $this->params[$key] == $value : false;
+            return isset($this->params[$key]) && $this->params[$key] == $value;
         }
         if (isset($detect['options'])) {
-            return isset($this->params[$key]) ? in_array($this->params[$key], $detect['options']) : false;
+            return isset($this->params[$key]) && in_array($this->params[$key], $detect['options']);
         }
 
         return false;
@@ -721,7 +721,7 @@ class ServerRequest implements ServerRequestInterface
      * Allows for one or more headers to be compared.
      *
      * ```
-     * addDetector('fancy', ['header' => ['X-Fancy' => 1]);
+     * addDetector('fancy', ['header' => ['X-Fancy' => 1]]);
      * ```
      *
      * The `param`, `env` and comparison types allow the following
@@ -781,7 +781,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $name = str_replace('-', '_', strtoupper($name));
         if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'], true)) {
-            $name = 'HTTP_' . $name;
+            return 'HTTP_' . $name;
         }
 
         return $name;
@@ -796,7 +796,7 @@ class ServerRequest implements ServerRequestInterface
      * While header names are not case-sensitive, getHeaders() will normalize
      * the headers.
      *
-     * @return array<string[]> An associative array of headers and their values.
+     * @return array<string, array<string>> An associative array of headers and their values.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
     public function getHeaders(): array
@@ -838,10 +838,10 @@ class ServerRequest implements ServerRequestInterface
      * Get a single header from the request.
      *
      * Return the header value as an array. If the header
-     * is not present an empty array will be returned.
+     * is not present, an empty array will be returned.
      *
      * @param string $name The header you want to get (case-insensitive)
-     * @return array<string> An associative array of headers and their values.
+     * @return array<string, string> An associative array of headers and their values.
      *   If the header doesn't exist, an empty array will be returned.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */
@@ -934,11 +934,11 @@ class ServerRequest implements ServerRequestInterface
      * There are a few ways to specify a method.
      *
      * - If your client supports it you can use native HTTP methods.
-     * - You can set the HTTP-X-Method-Override header.
+     * - You can set the X-Http-Method-Override header.
      * - You can submit an input with the name `_method`
      *
      * Any of these 3 approaches can be used to set the HTTP method used
-     * by CakePHP internally, and will effect the result of this method.
+     * by CakePHP internally, and will affect the result of this method.
      *
      * @return string The name of the HTTP method used.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
@@ -962,7 +962,7 @@ class ServerRequest implements ServerRequestInterface
         if (!preg_match('/^[!#$%&\'*+.^_`\|~0-9a-z-]+$/i', $method)) {
             throw new InvalidArgumentException(sprintf(
                 'Unsupported HTTP method `%s` provided.',
-                $method
+                $method,
             ));
         }
         $new->_environment['REQUEST_METHOD'] = $method;
@@ -1065,7 +1065,7 @@ class ServerRequest implements ServerRequestInterface
     public function domain(int $tldLength = 1): string
     {
         $host = $this->host();
-        if (empty($host)) {
+        if (!$host) {
             return '';
         }
 
@@ -1085,7 +1085,7 @@ class ServerRequest implements ServerRequestInterface
     public function subdomains(int $tldLength = 1): array
     {
         $host = $this->host();
-        if (empty($host)) {
+        if (!$host) {
             return [];
         }
 
@@ -1391,7 +1391,15 @@ class ServerRequest implements ServerRequestInterface
             $this->_environment[$key] = env($key);
         }
 
-        return $this->_environment[$key] !== null ? (string)$this->_environment[$key] : $default;
+        if ($this->_environment[$key] === null) {
+            return $default;
+        }
+
+        if (is_array($this->_environment[$key])) {
+            return implode(', ', $this->_environment[$key]);
+        }
+
+        return (string)$this->_environment[$key];
     }
 
     /**
@@ -1450,7 +1458,7 @@ class ServerRequest implements ServerRequestInterface
      * Returns an updated request object. This method returns
      * a *new* request object and does not mutate the request in-place.
      *
-     * Use `withParsedBody()` if you need to replace the all request data.
+     * Use `withParsedBody()` if you need to replace all the request data.
      *
      * @param string $name The dot separated path to insert $value at.
      * @param mixed $value The value to insert into the request data.
@@ -1548,7 +1556,7 @@ class ServerRequest implements ServerRequestInterface
         $new = clone $this;
         if (in_array($name, $this->emulatedAttributes, true)) {
             throw new InvalidArgumentException(
-                "You cannot unset '$name'. It is a required CakePHP attribute."
+                "You cannot unset '{$name}'. It is a required CakePHP attribute.",
             );
         }
         unset($new->attributes[$name]);
@@ -1562,7 +1570,6 @@ class ServerRequest implements ServerRequestInterface
      * @param string $name The attribute name.
      * @param mixed $default The default value if the attribute has not been set.
      * @return mixed
-     * @psalm-suppress MethodSignatureMismatch
      */
     public function getAttribute(string $name, mixed $default = null): mixed
     {
@@ -1772,8 +1779,8 @@ class ServerRequest implements ServerRequestInterface
             $target .= '?' . $this->uri->getQuery();
         }
 
-        if (empty($target)) {
-            $target = '/';
+        if (!$target) {
+            return '/';
         }
 
         return $target;

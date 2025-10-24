@@ -18,10 +18,13 @@ namespace Cake\ORM;
 
 use Cake\Collection\Collection;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\Query\SelectQuery;
+use InvalidArgumentException;
+use SplFixedArray;
 
 /**
- * Factory class for generation ResulSet instances.
+ * Factory class for generating ResulSet instances.
  *
  * It is responsible for correctly nesting result keys reported from the query
  * and hydrating entities.
@@ -31,21 +34,37 @@ use Cake\ORM\Query\SelectQuery;
 class ResultSetFactory
 {
     /**
-     * Constructor
-     *
-     * @param \Cake\ORM\Query\SelectQuery<T> $query Query from where results came.
-     * @param array $results Results array.
-     * @return \Cake\ORM\ResultSet<array|\Cake\Datasource\EntityInterface>
+     * @var class-string<\Cake\Datasource\ResultSetInterface>
      */
-    public function createResultSet(SelectQuery $query, array $results): ResultSet
-    {
-        $data = $this->collectData($query);
+    protected string $resultSetClass = ResultSet::class;
 
-        foreach ($results as $i => $row) {
-            $results[$i] = $this->groupResult($row, $data);
+    /**
+     * Create a result set instance.
+     *
+     * @param iterable $results Results.
+     * @param \Cake\ORM\Query\SelectQuery<T>|null $query Query from where results came.
+     * @return \Cake\Datasource\ResultSetInterface
+     */
+    public function createResultSet(iterable $results, ?SelectQuery $query = null): ResultSetInterface
+    {
+        if ($query) {
+            $data = $this->collectData($query);
+
+            if (is_array($results)) {
+                foreach ($results as $i => $row) {
+                    $results[$i] = $this->groupResult($row, $data);
+                }
+
+                $results = SplFixedArray::fromArray($results);
+            } else {
+                $results = (new Collection($results))
+                    ->map(function ($row) use ($data) {
+                        return $this->groupResult($row, $data);
+                    });
+            }
         }
 
-        return new ResultSet($results);
+        return new $this->resultSetClass($results);
     }
 
     /**
@@ -80,7 +99,7 @@ class ResultSetFactory
 
         $fields = [];
         foreach ($query->clause('select') as $key => $field) {
-            $key = trim($key, '"`[]');
+            $key = trim((string)$key, '"`[]');
 
             if (strpos($key, '__') <= 0) {
                 $fields[$data['primaryAlias']][$key] = $key;
@@ -115,7 +134,8 @@ class ResultSetFactory
      */
     protected function groupResult(array $row, array $data): EntityInterface|array
     {
-        $results = $presentAliases = [];
+        $results = [];
+        $presentAliases = [];
         $options = [
             'useSetters' => false,
             'markClean' => true,
@@ -127,7 +147,7 @@ class ResultSetFactory
             $matching = $data['matchingAssoc'][$alias];
             $results['_matchingData'][$alias] = array_combine(
                 $keys,
-                array_intersect_key($row, $keys)
+                array_intersect_key($row, $keys),
             );
             if ($data['hydrate']) {
                 $table = $matching['instance'];
@@ -215,9 +235,41 @@ class ResultSetFactory
             $results = $results[$data['primaryAlias']];
         }
         if ($data['hydrate'] && !($results instanceof EntityInterface)) {
-            $results = new $data['entityClass']($results, $options);
+            /** @var \Cake\Datasource\EntityInterface */
+            return new $data['entityClass']($results, $options);
         }
 
         return $results;
+    }
+
+    /**
+     * Set the ResultSet class to use.
+     *
+     * @param class-string<\Cake\Datasource\ResultSetInterface> $resultSetClass Class name.
+     * @return $this
+     */
+    public function setResultSetClass(string $resultSetClass)
+    {
+        if (!is_a($resultSetClass, ResultSetInterface::class, true)) {
+            throw new InvalidArgumentException(sprintf(
+                'Invalid ResultSet class `%s`. It must implement `%s`',
+                $resultSetClass,
+                ResultSetInterface::class,
+            ));
+        }
+
+        $this->resultSetClass = $resultSetClass;
+
+        return $this;
+    }
+
+    /**
+     * Get the ResultSet class to use.
+     *
+     * @return class-string<\Cake\Datasource\ResultSetInterface>
+     */
+    public function getResultSetClass(): string
+    {
+        return $this->resultSetClass;
     }
 }

@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Association;
 
+use Cake\Database\Connection;
+use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
@@ -23,13 +25,17 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Log\Log;
 use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\ResultSet;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\I18n\__;
 
 /**
@@ -74,7 +80,7 @@ class HasManyTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->setAppNamespace('TestApp');
@@ -89,7 +95,7 @@ class HasManyTest extends TestCase
             ],
         ]);
         $connection = ConnectionManager::get('test');
-        $this->article = $this->getMockBuilder('Cake\ORM\Table')
+        $this->article = $this->getMockBuilder(Table::class)
             ->onlyMethods(['find', 'deleteAll', 'delete'])
             ->setConstructorArgs([['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]])
             ->getMock();
@@ -114,6 +120,13 @@ class HasManyTest extends TestCase
             'Articles__author_id' => 'integer',
         ]);
         $this->autoQuote = $connection->getDriver()->isAutoQuotingEnabled();
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+        ConnectionManager::drop('test_read_write');
+        Log::drop('queries');
     }
 
     /**
@@ -181,7 +194,7 @@ class HasManyTest extends TestCase
     public function testSorting(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $assoc = $authors->hasMany('Articles');
+        $assoc = $authors->Articles;
 
         $field = 'Articles.id';
         $driver = $authors->getConnection()->getDriver();
@@ -189,7 +202,7 @@ class HasManyTest extends TestCase
             $field = $driver->quoteIdentifier($field);
         }
 
-        $assoc->setSort("$field DESC");
+        $assoc->setSort("{$field} DESC");
         $result = $authors->get(1, ...['contain' => 'Articles']);
         $this->assertSame([3, 1], array_column($result['articles'], 'id'));
 
@@ -297,7 +310,7 @@ class HasManyTest extends TestCase
 
         $expected = new QueryExpression(
             ['Articles.published' => 'Y', 'Articles.author_id IN' => $keys],
-            $this->articlesTypeMap
+            $this->articlesTypeMap,
         );
         $this->assertWhereClause($expected, $query);
 
@@ -351,7 +364,7 @@ class HasManyTest extends TestCase
                 'Articles.id !=' => 3,
                 'Articles.author_id IN' => $keys,
             ],
-            $query->getTypeMap()
+            $query->getTypeMap(),
         );
         $this->assertWhereClause($expected, $query);
 
@@ -431,7 +444,7 @@ class HasManyTest extends TestCase
                 'Articles.author_id IN' => $keys,
                 'comments.id' => 1,
             ],
-            $query->getTypeMap()
+            $query->getTypeMap(),
         );
         $this->assertWhereClause($expected, $query);
     }
@@ -451,7 +464,7 @@ class HasManyTest extends TestCase
         $this->author->setPrimaryKey(['id', 'site_id']);
         $association = new HasMany('Articles', $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(Query::class)
             ->onlyMethods(['all', 'andWhere', 'getRepository'])
             ->setConstructorArgs([$this->article])
             ->getMock();
@@ -461,9 +474,7 @@ class HasManyTest extends TestCase
             ->with('all')
             ->willReturn($query);
 
-        $results = new ResultSet([]);
-
-        $results->__unserialize([
+        $results = new ResultSet([
             ['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10],
             ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20],
         ]);
@@ -474,7 +485,7 @@ class HasManyTest extends TestCase
             ['Articles.author_id', 'Articles.site_id'],
             $keys,
             ['integer'],
-            'IN'
+            'IN',
         );
         $query->expects($this->once())->method('andWhere')
             ->with($tuple)
@@ -502,7 +513,6 @@ class HasManyTest extends TestCase
     public function testEagerloaderNoForeignKeys(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles');
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Unable to load `Articles` association. Ensure foreign key in `Authors`');
@@ -554,7 +564,7 @@ class HasManyTest extends TestCase
         // Exclude one record from the association finder
         $articles->updateAll(
             ['published' => 'N'],
-            ['author_id' => 1, 'title' => 'First Article']
+            ['author_id' => 1, 'title' => 'First Article'],
         );
         $association = new HasMany('Articles', $config);
 
@@ -626,12 +636,10 @@ class HasManyTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock('Cake\ORM\Table')
-            ->shouldAllowMockingMethod('saveAssociated')
-            ->makePartial();
+        $spy = Mockery::spy(Table::class);
         $config = [
             'sourceTable' => $this->author,
-            'targetTable' => $mock,
+            'targetTable' => $spy,
         ];
 
         $entity = new Entity([
@@ -643,11 +651,11 @@ class HasManyTest extends TestCase
             ],
         ]);
 
-        $mock->shouldNotReceive('saveAssociated');
-
         $association = new HasMany('Articles', $config);
         $result = $association->saveAssociated($entity);
         $this->assertSame($result, $entity);
+
+        $spy->shouldNotHaveReceived('saveAssociated');
     }
 
     /**
@@ -666,9 +674,7 @@ class HasManyTest extends TestCase
     public function testPropertyOptionMarshalAndValidation(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles', [
-            'propertyName' => 'blogs',
-        ]);
+        $authors->Articles->setProperty('blogs');
         $authors->getValidator()
             ->requirePresence('blogs', true, 'blogs must be set');
 
@@ -686,7 +692,7 @@ class HasManyTest extends TestCase
      */
     public function testPropertyNoPlugin(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
+        $mock = $this->getMockBuilder(Table::class)
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
@@ -703,9 +709,7 @@ class HasManyTest extends TestCase
     public function testValueBinderUpdateOnSubQueryStrategy(): void
     {
         $Authors = $this->getTableLocator()->get('Authors');
-        $Authors->hasMany('Articles', [
-            'strategy' => Association::STRATEGY_SUBQUERY,
-        ]);
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
 
         $query = $Authors->find();
         $authorsAndArticles = $query
@@ -727,12 +731,10 @@ class HasManyTest extends TestCase
      * Tests using subquery strategy when parent query
      * that contains limit without order.
      */
-    public function testSubqueryWithLimit()
+    public function testSubqueryWithLimit(): void
     {
         $Authors = $this->getTableLocator()->get('Authors');
-        $Authors->hasMany('Articles', [
-            'strategy' => Association::STRATEGY_SUBQUERY,
-        ]);
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
 
         $query = $Authors->find();
         $result = $query
@@ -750,14 +752,12 @@ class HasManyTest extends TestCase
      * Tests using subquery strategy when parent query
      * that contains limit with order.
      */
-    public function testSubqueryWithLimitAndOrder()
+    public function testSubqueryWithLimitAndOrder(): void
     {
         $this->skipIf(ConnectionManager::get('test')->getDriver() instanceof Sqlserver, 'Sql Server does not support ORDER BY on field not in GROUP BY');
 
         $Authors = $this->getTableLocator()->get('Authors');
-        $Authors->hasMany('Articles', [
-            'strategy' => Association::STRATEGY_SUBQUERY,
-        ]);
+        $Authors->Articles->setStrategy(Association::STRATEGY_SUBQUERY);
 
         $query = $Authors->find();
         $result = $query
@@ -842,10 +842,7 @@ class HasManyTest extends TestCase
     public function testUnlinkSuccess(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $assoc = $this->author->hasMany('Articles', [
-            'sourceTable' => $this->author,
-            'targetTable' => $articles,
-        ]);
+        $assoc = $this->author->Articles;
 
         $entity = $this->author->get(1, ...['contain' => 'Articles']);
         $initial = $entity->articles;
@@ -866,10 +863,7 @@ class HasManyTest extends TestCase
     public function testUnlinkWithEmptyArray(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $assoc = $this->author->hasMany('Articles', [
-            'sourceTable' => $this->author,
-            'targetTable' => $articles,
-        ]);
+        $assoc = $this->author->Articles;
 
         $entity = $this->author->get(1, ...['contain' => 'Articles']);
         $initial = $entity->articles;
@@ -889,10 +883,7 @@ class HasManyTest extends TestCase
     public function testLinkUsesSingleTransaction(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $assoc = $this->author->hasMany('Articles', [
-            'sourceTable' => $this->author,
-            'targetTable' => $articles,
-        ]);
+        $assoc = $this->author->Articles;
 
         // Ensure author in fixture has zero associated articles
         $entity = $this->author->get(2, ...['contain' => 'Articles']);
@@ -903,7 +894,7 @@ class HasManyTest extends TestCase
         $listenerAfterSave = function ($e, $entity, $options) use ($articles): void {
             $this->assertTrue(
                 $articles->getConnection()->inTransaction(),
-                'Multiple transactions used to save associated models.'
+                'Multiple transactions used to save associated models.',
             );
         };
         $articles->getEventManager()->on('Model.afterSave', $listenerAfterSave);
@@ -953,9 +944,9 @@ class HasManyTest extends TestCase
      * Test that saving empty sets with the `append` strategy does not
      * affect the associated records for not yet persisted parent entities.
      *
-     * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
+    #[DataProvider('emptySetDataProvider')]
     public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
@@ -978,9 +969,9 @@ class HasManyTest extends TestCase
      * Test that saving empty sets with the `append` strategy does not
      * affect the associated records for already persisted parent entities.
      *
-     * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
+    #[DataProvider('emptySetDataProvider')]
     public function testSaveAssociatedEmptySetWithAppendStrategyDoesNotAffectAssociatedRecordsOnUpdate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
@@ -1008,9 +999,9 @@ class HasManyTest extends TestCase
      * Test that saving empty sets with the `replace` strategy does not
      * affect the associated records for not yet persisted parent entities.
      *
-     * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
+    #[DataProvider('emptySetDataProvider')]
     public function testSaveAssociatedEmptySetWithReplaceStrategyDoesNotAffectAssociatedRecordsOnCreate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
@@ -1033,9 +1024,9 @@ class HasManyTest extends TestCase
      * Test that saving empty sets with the `replace` strategy does remove
      * the associated records for already persisted parent entities.
      *
-     * @dataProvider emptySetDataProvider
      * @param mixed $value Empty value.
      */
+    #[DataProvider('emptySetDataProvider')]
     public function testSaveAssociatedEmptySetWithReplaceStrategyRemovesAssociatedRecordsOnUpdate($value): void
     {
         $articles = $this->getTableLocator()->get('Articles');
@@ -1129,7 +1120,7 @@ class HasManyTest extends TestCase
     public function testSaveReplaceSaveStrategy(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_REPLACE]);
+        $authors->Articles->setSaveStrategy(HasMany::SAVE_REPLACE);
 
         $entity = $authors->newEntity([
             'name' => 'mylux',
@@ -1160,7 +1151,7 @@ class HasManyTest extends TestCase
     public function testSaveReplaceSaveStrategyClosureConditions(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles')
+        $authors->Articles
             ->setDependent(true)
             ->setSaveStrategy('replace')
             ->setConditions(function () {
@@ -1201,7 +1192,7 @@ class HasManyTest extends TestCase
     public function testSaveReplaceSaveStrategyNotAdding(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles', ['saveStrategy' => 'replace']);
+        $authors->Articles->setSaveStrategy('replace');
 
         $entity = $authors->newEntity([
             'name' => 'mylux',
@@ -1229,7 +1220,7 @@ class HasManyTest extends TestCase
     public function testSaveAppendSaveStrategy(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles', ['saveStrategy' => 'append']);
+        $authors->Articles->setSaveStrategy('append');
 
         $entity = $authors->newEntity([
             'name' => 'mylux',
@@ -1261,8 +1252,8 @@ class HasManyTest extends TestCase
     public function testSaveDefaultSaveStrategy(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_APPEND]);
-        $this->assertSame(HasMany::SAVE_APPEND, $authors->getAssociation('articles')->getSaveStrategy());
+        $authors->Articles->setSaveStrategy(HasMany::SAVE_APPEND);
+        $this->assertSame(HasMany::SAVE_APPEND, $authors->getAssociation('Articles')->getSaveStrategy());
     }
 
     /**
@@ -1271,7 +1262,8 @@ class HasManyTest extends TestCase
     public function testSaveReplaceSaveStrategyDependent(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_REPLACE, 'dependent' => true]);
+        $authors->Articles->setSaveStrategy(HasMany::SAVE_REPLACE)
+            ->setDependent(true);
 
         $entity = $authors->newEntity([
             'name' => 'mylux',
@@ -1303,7 +1295,8 @@ class HasManyTest extends TestCase
     public function testSaveReplaceSaveStrategyDependentWithStringKeys(): void
     {
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles', ['saveStrategy' => HasMany::SAVE_REPLACE, 'dependent' => true]);
+        $authors->Articles->setSaveStrategy(HasMany::SAVE_REPLACE)
+            ->setDependent(true);
 
         $entity = $authors->newEntity([
             'name' => 'mylux',
@@ -1341,11 +1334,9 @@ class HasManyTest extends TestCase
         $this->setAppNamespace('TestApp');
 
         $authors = $this->getTableLocator()->get('Authors');
-        $authors->hasMany('Articles', [
-            'finder' => 'published',
-            'saveStrategy' => HasMany::SAVE_REPLACE,
-            'dependent' => true,
-        ]);
+        $authors->Articles->setSaveStrategy(HasMany::SAVE_REPLACE)
+            ->setDependent(true)
+            ->setFinder('published');
         $articles = $authors->Articles->getTarget();
 
         // Remove an article from the association finder scope
@@ -1367,7 +1358,7 @@ class HasManyTest extends TestCase
         // No additional records in db.
         $this->assertCount(
             1,
-            $authors->Articles->find()->where(['author_id' => 1])->toArray()
+            $authors->Articles->find()->where(['author_id' => 1])->toArray(),
         );
 
         $others = $articles->find('all')
@@ -1377,7 +1368,7 @@ class HasManyTest extends TestCase
         $this->assertCount(
             1,
             $others,
-            'Record not matching association condition should stay'
+            'Record not matching association condition should stay',
         );
         $this->assertSame('Third Article', $others[0]->title);
     }
@@ -1584,5 +1575,66 @@ class HasManyTest extends TestCase
         $this->assertSame(2, $Articles->getTarget()->find()->where(['Articles.author_id' => $author->get('id')])->count());
         $this->assertNull($Articles->get($article2->get('id'))->get('author_id'));
         $this->assertEquals($author->get('id'), $Articles->get($article3->get('id'))->get('author_id'));
+    }
+
+    public function testEagerLoaderConnectionRole(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+
+        Log::setConfig('queries', [
+            'className' => 'Array',
+            'scopes' => ['queriesLog'],
+        ]);
+
+        ConnectionManager::setConfig('test_read_write', [
+            'className' => Connection::class,
+            'driver' => Sqlite::class,
+            'write' => [
+                'database' => ':memory:',
+                'cached' => 'shared', // used so role configs are unique
+                'log' => true,
+            ],
+            'read' => [
+                'database' => ':memory:',
+                'log' => true,
+            ],
+        ]);
+
+        $connection = ConnectionManager::get('test_read_write');
+        $this->assertNotSame($connection->getDriver(Connection::ROLE_READ), $connection->getDriver(Connection::ROLE_WRITE));
+
+        // Create belongs to many relationships with unique table names
+        $driver = $connection->getDriver(Connection::ROLE_WRITE);
+        $driver->execute('CREATE TABLE unique_items (id int PRIMARY KEY, article_id int);');
+        $driver->execute('CREATE TABLE articles (id int PRIMARY KEY);');
+
+        $driver = $connection->getDriver(Connection::ROLE_READ);
+        $driver->execute('CREATE TABLE unique_items (id int PRIMARY KEY, article_id int);');
+        $driver->execute('CREATE TABLE articles (id int PRIMARY KEY);');
+        $driver->execute('INSERT INTO unique_items (id, article_id) VALUES (1, 1)');
+        $driver->execute('INSERT INTO articles (id) VALUES (1)');
+
+        $articles = $this->getTableLocator()->get('Articles')->setConnection($connection);
+        $articles->hasMany('UniqueItems')->setStrategy('select')->getTarget()->setConnection($connection);
+
+        $query = $articles->find();
+        $this->assertSame(Connection::ROLE_WRITE, $query->getConnectionRole(), 'This test assumes select queries still default to write role');
+
+        $results = $query->contain('UniqueItems')->useReadRole()->toArray();
+        $this->assertCount(1, $results);
+        $this->assertCount(1, $results[0]->unique_items);
+        $this->assertSame(1, $results[0]->unique_items[0]->id);
+
+        $logs = Log::engine('queries')->read();
+        $this->assertNotEmpty($logs);
+
+        foreach ($logs as $log) {
+            if (
+                str_contains($log, 'FROM articles') ||
+                str_contains($log, 'FROM unique_items')
+            ) {
+                $this->assertStringContainsString('role=read', $log);
+            }
+        }
     }
 }

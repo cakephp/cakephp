@@ -12,7 +12,7 @@
  * @since         0.10.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-use Cake\Error\Debugger;
+use Cake\Database\Exception\QueryException;
 use function Cake\Core\h;
 
 $this->setLayout('dev_error');
@@ -31,15 +31,11 @@ $this->start('subheading');
     If you are using SQL keywords as table column names, you can enable identifier
     quoting for your database connection in config/app.php.
 </p>
-<?php if (!empty($error->queryString)) : ?>
+<?php if ($error instanceof QueryException) : ?>
     <p class="notice">
         <strong>SQL Query: </strong>
     </p>
-    <pre><?= h($error->queryString); ?></pre>
-<?php endif; ?>
-<?php if (!empty($error->params)) : ?>
-        <strong>SQL Query Params: </strong>
-        <pre><?php Debugger::dump($error->params); ?></pre>
+    <pre><?= h($error->getQueryString()); ?></pre>
 <?php endif; ?>
 <?= $this->element('auto_table_warning'); ?>
 <?php $this->end() ?>

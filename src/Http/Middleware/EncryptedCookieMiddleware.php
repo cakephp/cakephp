@@ -95,7 +95,7 @@ class EncryptedCookieMiddleware implements MiddlewareInterface
             $response = $this->encodeSetCookieHeader($response);
         }
         if ($response instanceof Response) {
-            $response = $this->encodeCookies($response);
+            return $this->encodeCookies($response);
         }
 
         return $response;

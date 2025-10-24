@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\I18n;
 
 use Cake\I18n\PluralRules;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * PluralRules tests
@@ -39,19 +40,22 @@ class PluralRulesTest extends TestCase
             ['en_US', 0, 1],
             ['en', 1, 0],
             ['en_UK', 2, 1],
-            ['es-ES', 2, 1],
+            ['es-ES', 2, 2],
             ['pt-br', 0, 0],
             ['pt_BR', 1, 0],
-            ['pt_BR', 2, 1],
-            ['pt', 0, 1],
+            ['pt_BR', 2, 2],
+            ['pt', 0, 0],
             ['pt', 1, 0],
-            ['pt', 2, 1],
-            ['pt_PT', 0, 1],
+            ['pt', 2, 2],
+            ['pt', 1000000, 1],
+            ['pt_PT', 0, 2],
             ['pt_PT', 1, 0],
-            ['pt_PT', 2, 1],
+            ['pt_PT', 2, 2],
+            ['pt_PT', 1000000, 1],
             ['fr_FR', 0, 0],
             ['fr', 1, 0],
-            ['fr', 2, 1],
+            ['fr', 2, 2],
+            ['fr', 1000000, 1],
             ['ru', 0, 2],
             ['ru', 1, 0],
             ['ru', 2, 1],
@@ -126,9 +130,8 @@ class PluralRulesTest extends TestCase
 
     /**
      * Tests that the correct plural form is selected for the locale, number combination
-     *
-     * @dataProvider localesProvider
      */
+    #[DataProvider('localesProvider')]
     public function testCalculate(string $locale, int $number, int $expected): void
     {
         $this->assertEquals($expected, PluralRules::calculate($locale, $number));

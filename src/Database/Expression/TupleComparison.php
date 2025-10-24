@@ -31,7 +31,6 @@ class TupleComparison extends ComparisonExpression
      * The type to be used for casting the value to a database representation
      *
      * @var array<string|null>
-     * @psalm-suppress NonInvariantDocblockPropertyType
      */
     protected array $types;
 
@@ -48,7 +47,7 @@ class TupleComparison extends ComparisonExpression
         ExpressionInterface|array|string $fields,
         ExpressionInterface|array $values,
         array $types = [],
-        string $conjunction = '='
+        string $conjunction = '=',
     ) {
         $this->types = $types;
         $this->setField($fields);
@@ -77,15 +76,13 @@ class TupleComparison extends ComparisonExpression
         if ($this->isMulti()) {
             if (is_array($value) && !is_array(current($value))) {
                 throw new InvalidArgumentException(
-                    'Multi-tuple comparisons require a multi-tuple value, single-tuple given.'
+                    'Multi-tuple comparisons require a multi-tuple value, single-tuple given.',
                 );
             }
-        } else {
-            if (is_array($value) && is_array(current($value))) {
-                throw new InvalidArgumentException(
-                    'Single-tuple comparisons require a single-tuple value, multi-tuple given.'
-                );
-            }
+        } elseif (is_array($value) && is_array(current($value))) {
+            throw new InvalidArgumentException(
+                'Single-tuple comparisons require a single-tuple value, multi-tuple given.',
+            );
         }
 
         $this->_value = $value;
@@ -139,7 +136,7 @@ class TupleComparison extends ComparisonExpression
 
             $type = $this->types;
             $isMultiOperation = $this->isMulti();
-            if (empty($type)) {
+            if (!$type) {
                 $type = null;
             }
 

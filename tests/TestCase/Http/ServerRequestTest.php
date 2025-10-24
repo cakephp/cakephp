@@ -28,6 +28,9 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\DataProvider;
+use Psr\Http\Message\StreamInterface;
+use Psr\Http\Message\UriInterface;
 
 /**
  * ServerRequest Test
@@ -236,7 +239,7 @@ class ServerRequestTest extends TestCase
             123,
             UPLOAD_ERR_OK,
             'test.php',
-            'text/plain'
+            'text/plain',
         );
         $request = new ServerRequest(['files' => ['avatar' => $file]]);
         $this->assertSame(['avatar' => $file], $request->getUploadedFiles());
@@ -265,7 +268,7 @@ class ServerRequestTest extends TestCase
             123,
             UPLOAD_ERR_OK,
             'test.php',
-            'text/plain'
+            'text/plain',
         );
         $request = new ServerRequest();
         $new = $request->withUploadedFiles(['picture' => $file]);
@@ -285,7 +288,7 @@ class ServerRequestTest extends TestCase
             123,
             UPLOAD_ERR_OK,
             'test.php',
-            'text/plain'
+            'text/plain',
         );
         $request = new ServerRequest();
         $new = $request->withUploadedFiles(['picture' => $file]);
@@ -381,7 +384,7 @@ class ServerRequestTest extends TestCase
 
         $request = $request->withEnv(
             'HTTP_X_FORWARDED_FOR',
-            'spoof.fake.ip, real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3'
+            'spoof.fake.ip, real.ip, 192.168.1.0, 192.168.1.2, 192.168.1.3',
         );
         $this->assertSame('192.168.1.3', $request->clientIp());
 
@@ -473,7 +476,7 @@ class ServerRequestTest extends TestCase
         $this->assertFalse($request->is('delete'));
     }
 
-    public function testExceptionForInvalidType()
+    public function testExceptionForInvalidType(): void
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('No detector set for type `nonexistent`');
@@ -1199,9 +1202,9 @@ class ServerRequestTest extends TestCase
     /**
      * Test reading params
      *
-     * @dataProvider paramReadingDataProvider
      * @param mixed $expected
      */
+    #[DataProvider('paramReadingDataProvider')]
     public function testGetParam(string $toRead, $expected): void
     {
         $request = new ServerRequest([
@@ -1291,9 +1294,9 @@ class ServerRequestTest extends TestCase
         $request = $request->withParam('action', 'index');
 
         $this->assertInstanceOf(
-            'Cake\Http\ServerRequest',
+            ServerRequest::class,
             $request->withParam('some', 'thing'),
-            'Method has not returned $this'
+            'Method has not returned $this',
         );
 
         $request = $request->withParam('Post.null', null);
@@ -1365,7 +1368,7 @@ class ServerRequestTest extends TestCase
             'input' => 'key=val&some=data',
         ]);
         $result = $request->getBody();
-        $this->assertInstanceOf('Psr\Http\Message\StreamInterface', $result);
+        $this->assertInstanceOf(StreamInterface::class, $result);
         $this->assertSame('key=val&some=data', $result->getContents());
     }
 
@@ -1377,7 +1380,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest([
             'input' => 'key=val&some=data',
         ]);
-        $body = $this->getMockBuilder('Psr\Http\Message\StreamInterface')->getMock();
+        $body = $this->getMockBuilder(StreamInterface::class)->getMock();
         $new = $request->withBody($body);
         $this->assertNotSame($new, $request);
         $this->assertNotSame($body, $request->getBody());
@@ -1391,7 +1394,7 @@ class ServerRequestTest extends TestCase
     {
         $request = new ServerRequest(['url' => 'articles/view/3']);
         $result = $request->getUri();
-        $this->assertInstanceOf('Psr\Http\Message\UriInterface', $result);
+        $this->assertInstanceOf(UriInterface::class, $result);
         $this->assertSame('/articles/view/3', $result->getPath());
     }
 
@@ -1406,7 +1409,7 @@ class ServerRequestTest extends TestCase
             ],
             'url' => 'articles/view/3',
         ]);
-        $uri = $this->getMockBuilder('Psr\Http\Message\UriInterface')->getMock();
+        $uri = $this->getMockBuilder(UriInterface::class)->getMock();
         $new = $request->withUri($uri);
         $this->assertNotSame($new, $request);
         $this->assertNotSame($uri, $request->getUri());
@@ -1715,11 +1718,11 @@ class ServerRequestTest extends TestCase
         $result = $request->withData('Model.field.new_value', 'new value');
         $this->assertSame(
             'new value',
-            $result->getData('Model.field.new_value')
+            $result->getData('Model.field.new_value'),
         );
         $this->assertSame(
             'new value',
-            $result->getData()['Model']['field']['new_value']
+            $result->getData()['Model']['field']['new_value'],
         );
     }
 
@@ -1824,9 +1827,8 @@ class ServerRequestTest extends TestCase
 
     /**
      * Test that withoutAttribute() cannot remove emulatedAttributes properties.
-     *
-     * @dataProvider emulatedPropertyProvider
      */
+    #[DataProvider('emulatedPropertyProvider')]
     public function testWithoutAttributesDenyEmulatedProperties(string $prop): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -1849,7 +1851,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame(
             '/articles/view/1?comments=1&open=0',
             $request->getRequestTarget(),
-            'Should not include basedir.'
+            'Should not include basedir.',
         );
 
         $new = $request->withRequestTarget('/articles/view/3');
@@ -1857,7 +1859,7 @@ class ServerRequestTest extends TestCase
         $this->assertSame(
             '/articles/view/1?comments=1&open=0',
             $request->getRequestTarget(),
-            'should be unchanged.'
+            'should be unchanged.',
         );
         $this->assertSame('/articles/view/3', $new->getRequestTarget(), 'reflects method call');
     }
@@ -1891,6 +1893,36 @@ class ServerRequestTest extends TestCase
 
         //Test env() fallback
         $this->assertSame('ing', $request->getEnv('test'));
+    }
+
+    /**
+     * Test getEnv() handles array values correctly
+     */
+    public function testGetEnvWithArrayValues(): void
+    {
+        // Test single value added via withAddedHeader
+        $request = new ServerRequest();
+        $request = $request->withAddedHeader('X-Forwarded-For', '1.1.1.1');
+        $this->assertSame('1.1.1.1', $request->getEnv('HTTP_X_FORWARDED_FOR'));
+
+        // Test multiple values
+        $request = $request->withAddedHeader('X-Forwarded-For', '2.2.2.2');
+        $this->assertSame('1.1.1.1, 2.2.2.2', $request->getEnv('HTTP_X_FORWARDED_FOR'));
+
+        // Test array values in environment
+        $request = new ServerRequest(['environment' => [
+            'HTTP_X_CUSTOM' => ['value1', 'value2', 'value3'],
+        ]]);
+        $this->assertSame('value1, value2, value3', $request->getEnv('HTTP_X_CUSTOM'));
+
+        // Test that clientIp() works correctly with array header values
+        $request = new ServerRequest(['environment' => [
+            'REMOTE_ADDR' => '127.0.0.1',
+        ]]);
+        $request->trustProxy = true;
+        $request = $request->withAddedHeader('X-Forwarded-For', '192.168.1.1');
+        $request = $request->withAddedHeader('X-Forwarded-For', '10.0.1.1');
+        $this->assertSame('10.0.1.1', $request->clientIp());
     }
 
     /**

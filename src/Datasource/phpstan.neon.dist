@@ -1,0 +1,21 @@
+parameters:
+	level: 8
+	treatPhpDocTypesAsCertain: false
+	bootstrapFiles:
+		- tests/phpstan-bootstrap.php
+	paths:
+		- ./
+	excludePaths:
+		- vendor/
+	ignoreErrors:
+		-
+			identifier: trait.unused
+		-
+			identifier: missingType.iterableValue
+		-
+			identifier: missingType.generics
+		- "#^Template type T of method Cake\\\\Datasource\\\\QueryInterface\\:\\:all\\(\\) is not referenced in a parameter\\.$#"
+		- '#Class Cake\\Database\\Driver\\.+ not found.#'
+		- '#Class Cake\\Database\\Connection not found.#'
+		- '#Method Cake\\Datasource\\QueryInterface::aliasFields\(\) has invalid return type Cake\\Database\\Expression\\IdentifierExpression.#'
+		- '#Parameter \$fields of method Cake\\Datasource\\QueryInterface::aliasFields\(\) has invalid type Cake\\Database\\Expression\\IdentifierExpression.#'

@@ -154,7 +154,7 @@ class Cookie implements CookieInterface
         ?string $domain = null,
         ?bool $secure = null,
         ?bool $httpOnly = null,
-        SameSiteEnum|string|null $sameSite = null
+        SameSiteEnum|string|null $sameSite = null,
     ) {
         $this->validateName($name);
         $this->name = $name;
@@ -185,7 +185,7 @@ class Cookie implements CookieInterface
      * Valid option keys are:
      *
      * - `expires`: Can be a UNIX timestamp or `strtotime()` compatible string or `DateTimeInterface` instance or `null`.
-     * - `path`: A path string. Defauts to `'/'`.
+     * - `path`: A path string. Defaults to `'/'`.
      * - `domain`: Domain name string. Defaults to `''`.
      * - `httponly`: Boolean. Defaults to `false`.
      * - `secure`: Boolean. Defaults to `false`.
@@ -229,7 +229,7 @@ class Cookie implements CookieInterface
             $options['domain'],
             $options['secure'],
             $options['httponly'],
-            $options['samesite']
+            $options['samesite'],
         );
     }
 
@@ -247,7 +247,6 @@ class Cookie implements CookieInterface
 
         if ($expires instanceof DateTimeInterface) {
             /**
-             * @psalm-suppress UndefinedInterfaceMethod
              * @phpstan-ignore-next-line
              */
             return $expires->setTimezone(new DateTimeZone('GMT'));
@@ -258,10 +257,10 @@ class Cookie implements CookieInterface
         }
 
         if ($expires !== null) {
-            $expires = new DateTimeImmutable('@' . (string)$expires);
+            return new DateTimeImmutable('@' . $expires);
         }
 
-        return $expires;
+        return null;
     }
 
     /**
@@ -322,10 +321,11 @@ class Cookie implements CookieInterface
         assert(is_string($name) && is_string($value));
         unset($data['name'], $data['value']);
 
+        /** @phpstan-ignore-next-line */
         return Cookie::create(
             $name,
             $value,
-            $data
+            $data,
         );
     }
 
@@ -409,11 +409,11 @@ class Cookie implements CookieInterface
     {
         if (preg_match("/[=,;\t\r\n\013\014]/", $name)) {
             throw new InvalidArgumentException(
-                sprintf('The cookie name `%s` contains invalid characters.', $name)
+                sprintf('The cookie name `%s` contains invalid characters.', $name),
             );
         }
 
-        if (empty($name)) {
+        if (!$name) {
             throw new InvalidArgumentException('The cookie name cannot be empty.');
         }
     }

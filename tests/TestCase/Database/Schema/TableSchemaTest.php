@@ -17,12 +17,12 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Postgres;
-use Cake\Database\Driver\Sqlite;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Type\IntType;
 
 /**
@@ -40,13 +40,13 @@ class TableSchemaTest extends TestCase
 
     protected $_map;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->_map = TypeFactory::getMap();
         parent::setUp();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         TypeFactory::clear();
         TypeFactory::setMap($this->_map);
@@ -369,9 +369,8 @@ class TableSchemaTest extends TestCase
     /**
      * Test that an exception is raised when constraints
      * are added for fields that do not exist.
-     *
-     * @dataProvider addConstraintErrorProvider
      */
+    #[DataProvider('addConstraintErrorProvider')]
     public function testAddConstraintError(array $props): void
     {
         $this->expectException(DatabaseException::class);
@@ -417,9 +416,8 @@ class TableSchemaTest extends TestCase
     /**
      * Test that an exception is raised when indexes
      * are added for fields that do not exist.
-     *
-     * @dataProvider addIndexErrorProvider
      */
+    #[DataProvider('addIndexErrorProvider')]
     public function testAddIndexError(array $props): void
     {
         $this->expectException(DatabaseException::class);
@@ -448,7 +446,7 @@ class TableSchemaTest extends TestCase
 
         $this->assertEquals(
             ['author_idx', 'texty'],
-            $table->indexes()
+            $table->indexes(),
         );
     }
 
@@ -487,7 +485,7 @@ class TableSchemaTest extends TestCase
             'engine' => 'InnoDB',
         ];
         $return = $table->setOptions($options);
-        $this->assertInstanceOf('Cake\Database\Schema\TableSchema', $return);
+        $this->assertInstanceOf(TableSchema::class, $return);
         $this->assertEquals($options, $table->getOptions());
     }
 
@@ -516,10 +514,6 @@ class TableSchemaTest extends TestCase
         $table = $this->getTableLocator()->get('ArticlesTags');
 
         $name = 'tag_id_fk';
-        if ($table->getConnection()->getDriver() instanceof Sqlite) {
-            $name = 'tag_id_0_fk';
-        }
-
         $compositeConstraint = $table->getSchema()->getConstraint($name);
         $expected = [
             'type' => 'foreign',
@@ -545,14 +539,10 @@ class TableSchemaTest extends TestCase
         $connection = $table->getConnection();
         $this->skipIf(
             $connection->getDriver() instanceof Postgres,
-            'Constraints get dropped in postgres for some reason'
+            'Constraints get dropped in postgres for some reason',
         );
 
         $name = 'product_category_fk';
-        if ($table->getConnection()->getDriver() instanceof Sqlite) {
-            $name = 'product_category_product_id_0_fk';
-        }
-
         $compositeConstraint = $table->getSchema()->getConstraint($name);
         $expected = [
             'type' => 'foreign',
@@ -607,9 +597,8 @@ class TableSchemaTest extends TestCase
 
     /**
      * Add a foreign key constraint with bad data
-     *
-     * @dataProvider badForeignKeyProvider
      */
+    #[DataProvider('badForeignKeyProvider')]
     public function testAddConstraintForeignKeyBadData(array $data): void
     {
         $this->expectException(DatabaseException::class);

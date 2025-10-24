@@ -45,7 +45,7 @@ class MissingCellTemplateException extends MissingTemplateException
         string $file,
         array $paths = [],
         ?int $code = null,
-        ?Throwable $previous = null
+        ?Throwable $previous = null,
     ) {
         $this->name = $name;
 
@@ -56,7 +56,7 @@ class MissingCellTemplateException extends MissingTemplateException
      * Get the passed in attributes
      *
      * @return array<string, mixed>
-     * @psalm-return array{name: string, file: string, paths: array<string>}
+     * @phpstan-return array{name: string, file: string, paths: array<string>}
      */
     public function getAttributes(): array
     {

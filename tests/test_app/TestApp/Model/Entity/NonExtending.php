@@ -23,8 +23,8 @@ class NonExtending implements EntityInterface
             'source' => null,
         ];
 
-        if (!empty($properties)) {
-            $this->set($properties, [
+        if ($properties) {
+            $this->patch($properties, [
                 'setter' => $options['useSetters'],
                 'guard' => $options['guard'],
             ]);
@@ -35,7 +35,7 @@ class NonExtending implements EntityInterface
         }
 
         if ($options['markNew'] !== null) {
-            $this->isNew($options['markNew']);
+            $this->setNew($options['markNew']);
         }
 
         if (!empty($options['source'])) {

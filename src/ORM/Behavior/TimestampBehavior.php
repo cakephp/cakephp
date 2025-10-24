@@ -88,23 +88,23 @@ class TimestampBehavior extends Behavior
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event Event instance.
      * @param \Cake\Datasource\EntityInterface $entity Entity instance.
-     * @throws \UnexpectedValueException if a field's when value is misdefined
+     * @throws \UnexpectedValueException If a field's value is misdefined.
+     * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'.
      * @return void
-     * @throws \UnexpectedValueException When the value for an event is not 'always', 'new' or 'existing'
      */
     public function handleEvent(EventInterface $event, EntityInterface $entity): void
     {
         $eventName = $event->getName();
         $events = $this->_config['events'];
 
-        $new = $entity->isNew() !== false;
+        $new = $entity->isNew();
         $refresh = $this->_config['refreshTimestamp'];
 
         foreach ($events[$eventName] as $field => $when) {
             if (!in_array($when, ['always', 'new', 'existing'], true)) {
                 throw new UnexpectedValueException(sprintf(
                     'When should be one of "always", "new" or "existing". The passed value `%s` is invalid.',
-                    $when
+                    $when,
                 ));
             }
             if (
@@ -217,9 +217,10 @@ class TimestampBehavior extends Behavior
         $type = TypeFactory::build($columnType);
         assert(
             $type instanceof DateTimeType,
-            sprintf('TimestampBehavior only supports columns of type `%s`.', DateTimeType::class)
+            sprintf('TimestampBehavior only supports columns of type `%s`.', DateTimeType::class),
         );
 
+        /** @var class-string<\Cake\I18n\DateTime> $class */
         $class = $type->getDateTimeClassName();
 
         $entity->set($field, new $class($ts));

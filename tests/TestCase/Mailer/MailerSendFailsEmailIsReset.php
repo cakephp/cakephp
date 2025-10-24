@@ -22,31 +22,31 @@ class MailerSendFailsEmailIsReset extends TestCase
 {
     public function testSendAction(): void
     {
-        $mailer = $this->getMockBuilder(SendFailsEmailIsResetMailer::class)
-            ->onlyMethods(['restore', 'deliver', 'welcome'])
-            ->getMock();
+        $mailer = new class extends Mailer {
+            public bool $restoreIsCalled = false;
 
-        $mailer->expects($this->once())
-            ->method('deliver')
-            ->will($this->throwException(new RuntimeException('kaboom')));
-        // Mailer should be reset even if sending fails.
-        $mailer->expects($this->once())
-            ->method('restore');
+            public function welcome()
+            {
+            }
+
+            public function deliver(string $content = ''): array
+            {
+                throw new RuntimeException('kaboom');
+            }
+
+            protected function restore()
+            {
+                $this->restoreIsCalled = true;
+
+                return $this;
+            }
+        };
 
         try {
             $mailer->send('welcome', ['foo', 'bar']);
             $this->fail('Exception should bubble up.');
-        } catch (RuntimeException $e) {
-            $this->assertTrue(true, 'Exception was raised');
+        } catch (RuntimeException) {
+            $this->assertTrue($mailer->restoreIsCalled, 'Exception was raised');
         }
     }
 }
-
-// phpcs:disable
-class SendFailsEmailIsResetMailer extends Mailer
-{
-    public function welcome()
-    {
-    }
-}
-// phpcs:enable

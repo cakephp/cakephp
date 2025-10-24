@@ -112,9 +112,6 @@ class PoFileParser
                     case 2:
                         assert(isset($stage[0]));
                         assert(isset($stage[1]));
-                        /**
-                         * @psalm-suppress InvalidArrayOffset
-                         */
                         $item[$stage[0]][$stage[1]] .= substr($line, 1, -1);
                         break;
 
@@ -177,8 +174,7 @@ class PoFileParser
             ksort($plurals);
 
             // Make sure every index is filled.
-            end($plurals);
-            $count = (int)key($plurals);
+            $count = (int)array_key_last($plurals);
 
             // Fill missing spots with an empty string.
             $empties = array_fill(0, $count + 1, '');

@@ -29,7 +29,7 @@ class TypeFactory
      * representing the class that will do actual type conversions.
      *
      * @var array<string, string>
-     * @psalm-var array<string, class-string<\Cake\Database\TypeInterface>>
+     * @phpstan-var array<string, class-string<\Cake\Database\TypeInterface>>
      */
     protected static array $_types = [
         'tinyinteger' => Type\IntegerType::class,
@@ -53,6 +53,11 @@ class TypeFactory
         'timestampfractional' => Type\DateTimeFractionalType::class,
         'timestamptimezone' => Type\DateTimeTimezoneType::class,
         'uuid' => Type\UuidType::class,
+        'nativeuuid' => Type\UuidType::class,
+        'linestring' => Type\StringType::class,
+        'geometry' => Type\StringType::class,
+        'point' => Type\StringType::class,
+        'polygon' => Type\StringType::class,
     ];
 
     /**
@@ -113,7 +118,7 @@ class TypeFactory
      * @param string $type Name of type to map.
      * @param string $className The classname to register.
      * @return void
-     * @psalm-param class-string<\Cake\Database\TypeInterface> $className
+     * @phpstan-param class-string<\Cake\Database\TypeInterface> $className
      */
     public static function map(string $type, string $className): void
     {
@@ -124,9 +129,9 @@ class TypeFactory
     /**
      * Set type to classname mapping.
      *
-     * @param array<string> $map List of types to be mapped.
+     * @param array<string, string> $map List of types to be mapped.
      * @return void
-     * @psalm-param array<string, class-string<\Cake\Database\TypeInterface>> $map
+     * @phpstan-param array<string, class-string<\Cake\Database\TypeInterface>> $map
      */
     public static function setMap(array $map): void
     {
@@ -138,7 +143,7 @@ class TypeFactory
      * Get mapped class name for given type or map array.
      *
      * @param string|null $type Type name to get mapped class for or null to get map array.
-     * @return array<string>|string|null Configured class name for given $type or map array.
+     * @return array<string, class-string<\Cake\Database\TypeInterface>>|string|null Configured class name for given $type or map array.
      */
     public static function getMap(?string $type = null): array|string|null
     {

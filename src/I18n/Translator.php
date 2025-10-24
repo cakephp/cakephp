@@ -68,7 +68,7 @@ class Translator
         string $locale,
         Package $package,
         FormatterInterface $formatter,
-        ?Translator $fallback = null
+        ?Translator $fallback = null,
     ) {
         $this->locale = $locale;
         $this->package = $package;
@@ -134,7 +134,7 @@ class Translator
             unset($tokensValues['_context']);
         }
 
-        if (empty($tokensValues)) {
+        if (!$tokensValues) {
             // Fallback for plurals that were using the singular key
             if (is_array($message)) {
                 return array_values($message + [''])[0];

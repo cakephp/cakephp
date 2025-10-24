@@ -27,6 +27,7 @@ use Stringable;
  * @property mixed $id Alias for commonly used primary key.
  * @template-extends \ArrayAccess<string, mixed>
  * @method bool hasValue(string $field)
+ * @method static patch(array $values, array $options = [])
  */
 interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
 {
@@ -66,6 +67,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * Returns whether a field is an original one.
      * Original fields are those that an entity was instantiated with.
      *
+     * @param string $name Name
      * @return bool
      */
     public function isOriginalField(string $name): bool;
@@ -190,7 +192,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * stored in this entity, indexed by field name.
      *
      * @param array<string> $fields List of fields to be returned
-     * @return array
+     * @return array<string, mixed>
      */
     public function extractOriginal(array $fields): array;
 
@@ -199,7 +201,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * stored in this entity, indexed by field name.
      *
      * @param array<string> $fields List of fields to be returned
-     * @return array
+     * @return array<string, mixed>
      */
     public function extractOriginalChanged(array $fields): array;
 
@@ -288,7 +290,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * *Note* hidden fields are not visible, and will not be output
      * by toArray().
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array;
 
@@ -298,7 +300,7 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      *
      * @param array<string> $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
-     * @return array
+     * @return array<string, mixed>
      */
     public function extract(array $fields, bool $onlyDirty = false): array;
 
@@ -328,4 +330,12 @@ interface EntityInterface extends ArrayAccess, JsonSerializable, Stringable
      * @return bool Whether the entity has been persisted.
      */
     public function isNew(): bool;
+
+    /**
+     * Returns a string representation of this object.
+     *
+     * @return string
+     * @deprecated 5.2.0 Casting an entity to string is deprecated. Use `json_encode()` instead to get a string representation of the entity.
+     */
+    public function __toString(): string;
 }

@@ -43,7 +43,7 @@ class DependentDeleteHelper
         }
         $table = $association->getTarget();
         /** @var callable $callable */
-        $callable = [$association, 'aliasField'];
+        $callable = $association->aliasField(...);
         $foreignKey = array_map($callable, (array)$association->getForeignKey());
         $bindingKey = (array)$association->getBindingKey();
         $bindingValue = $entity->extract($bindingKey);

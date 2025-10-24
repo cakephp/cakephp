@@ -71,6 +71,14 @@ class ServerCommand extends Command
     protected string $_iniPath = '';
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'PHP Built-in Server for CakePHP';
+    }
+
+    /**
      * Starts up the Command and displays the welcome message.
      * Allows for checking and configuring prior to command or main execution
      *
@@ -133,7 +141,7 @@ class ServerCommand extends Command
             $phpBinary,
             $this->_host,
             $this->_port,
-            escapeshellarg($this->_documentRoot)
+            escapeshellarg($this->_documentRoot),
         );
 
         if ($this->_iniPath) {
@@ -159,8 +167,8 @@ class ServerCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription([
-            'PHP Built-in Server for CakePHP',
-            '<warning>[WARN] Don\'t use this in a production environment</warning>',
+            static::getDescription(),
+            "<warning>[WARN] Don't use this in a production environment</warning>",
         ])->addOption('host', [
             'short' => 'H',
             'help' => 'ServerHost',

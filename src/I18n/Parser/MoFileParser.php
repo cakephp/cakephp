@@ -119,7 +119,7 @@ class MoFileParser
 
             fseek($stream, $offsetTranslated + $i * 8);
             $length = $this->_readLong($stream, $isBigEndian);
-            if ($length < 0) {
+            if ($length < 1) {
                 throw new CakeException('Length must be > 0');
             }
 
@@ -154,7 +154,7 @@ class MoFileParser
     }
 
     /**
-     * Reads an unsigned long from stream respecting endianess.
+     * Reads an unsigned long from stream respecting endianness.
      *
      * @param resource $stream The File being read.
      * @param bool $isBigEndian Whether the current platform is Big Endian

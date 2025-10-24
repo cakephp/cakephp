@@ -172,7 +172,7 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
         $this->checkValues($option, [self::DENY, self::SAMEORIGIN, self::ALLOW_FROM]);
 
         if ($option === self::ALLOW_FROM) {
-            if (empty($url)) {
+            if (!$url) {
                 throw new InvalidArgumentException('The 2nd arg $url can not be empty when `allow-from` is used');
             }
             $option .= ' ' . $url;
@@ -227,6 +227,22 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
     }
 
     /**
+     * Permissions Policy
+     *
+     * @link https://developer.mozilla.org/en-US/docs/Web/HTTP/Permissions_Policy
+     * @link https://www.w3.org/TR/permissions-policy/
+     * @param string $policy Policy value.
+     * @return $this
+     * @since 5.1.0
+     */
+    public function setPermissionsPolicy(string $policy)
+    {
+        $this->headers['permissions-policy'] = $policy;
+
+        return $this;
+    }
+
+    /**
      * Convenience method to check if a value is in the list of allowed args
      *
      * @throws \InvalidArgumentException Thrown when a value is invalid.
@@ -237,11 +253,11 @@ class SecurityHeadersMiddleware implements MiddlewareInterface
     protected function checkValues(string $value, array $allowed): void
     {
         if (!in_array($value, $allowed, true)) {
-            array_walk($allowed, fn (&$x) => $x = "`$x`");
+            array_walk($allowed, fn(&$x) => $x = "`{$x}`");
             throw new InvalidArgumentException(sprintf(
                 'Invalid arg `%s`, use one of these: %s.',
                 $value,
-                implode(', ', $allowed)
+                implode(', ', $allowed),
             ));
         }
     }

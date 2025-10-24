@@ -6,28 +6,19 @@ declare(strict_types=1);
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice.
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         5.2.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Database;
+namespace Cake\Controller\Exception;
+
+use Cake\Http\Exception\BadRequestException;
 
 /**
- * Responsible for compiling a Query object into its SQL representation
- * for SQLite
- *
- * @internal
+ * Form Protection exception - used when FormProtection detects any issue with the current request
  */
-class SqliteCompiler extends QueryCompiler
+class FormProtectionException extends BadRequestException
 {
-    /**
-     * SQLite does not support ORDER BY in UNION queries.
-     *
-     * @var bool
-     */
-    protected bool $_orderedUnion = false;
 }

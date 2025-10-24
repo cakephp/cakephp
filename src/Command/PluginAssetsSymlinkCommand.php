@@ -22,8 +22,6 @@ use Cake\Console\ConsoleOptionParser;
 
 /**
  * Command for symlinking / copying plugin assets to app's webroot.
- *
- * @psalm-suppress PropertyNotSetInConstructor
  */
 class PluginAssetsSymlinkCommand extends Command
 {
@@ -35,6 +33,14 @@ class PluginAssetsSymlinkCommand extends Command
     public static function defaultName(): string
     {
         return 'plugin assets symlink';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return "Symlink (copy as fallback) plugin assets to app's webroot.";
     }
 
     /**
@@ -68,9 +74,9 @@ class PluginAssetsSymlinkCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription([
-            'Symlink (copy as fallback) plugin assets to app\'s webroot.',
-        ])->addArgument('name', [
+        $parser->setDescription(
+            static::getDescription(),
+        )->addArgument('name', [
             'help' => 'A specific plugin you want to symlink assets for.',
             'required' => false,
         ])->addOption('overwrite', [

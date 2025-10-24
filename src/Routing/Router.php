@@ -32,12 +32,6 @@ use Throwable;
  * to match the incoming URL string to parameters that will allow the request to be dispatched. Also
  * handles converting parameter lists into URL strings, using the connected routes. Routing allows you to decouple
  * the way the world interacts with your application (URLs) and the implementation (controllers and actions).
- *
- * ### Connecting routes
- *
- * Connecting routes is done using Router::connect(). When parsing incoming requests or reverse matching
- * parameters, routes are enumerated in the order they were connected. For more information on routes and
- * how to connect them see Router::connect().
  */
 class Router
 {
@@ -239,7 +233,7 @@ class Router
      */
     public static function reload(): void
     {
-        if (empty(static::$_initialState)) {
+        if (static::$_initialState === []) {
             static::$_collection = new RouteCollection();
             static::$_initialState = get_class_vars(static::class);
 
@@ -331,7 +325,7 @@ class Router
                     'URL filter defined in %s on line %s could not be applied. The filter failed with: %s',
                     $ref->getFileName(),
                     $ref->getStartLine(),
-                    $e->getMessage()
+                    $e->getMessage(),
                 );
                 throw new CakeException($message, (int)$e->getCode(), $e);
             }
@@ -381,13 +375,14 @@ class Router
     public static function url(UriInterface|array|string|null $url = null, bool $full = false): string
     {
         $context = static::$_requestContext;
-        $context['_base'] ??= '';
+        // For CLI request context would be empty
+        $context['_base'] ??= Configure::read('App.base', '');
 
-        if (empty($url)) {
+        if (!$url) {
             $here = static::getRequest()?->getRequestTarget() ?? '/';
             $output = $context['_base'] . $here;
             if ($full) {
-                $output = static::fullBaseUrl() . $output;
+                return static::fullBaseUrl() . $output;
             }
 
             return $output;
@@ -567,7 +562,7 @@ class Router
                 $base = sprintf(
                     '%s://%s',
                     static::$_requestContext['_scheme'],
-                    static::$_requestContext['_host']
+                    static::$_requestContext['_host'],
                 );
                 if (!empty(static::$_requestContext['_port'])) {
                     $base .= ':' . static::$_requestContext['_port'];
@@ -620,7 +615,7 @@ class Router
         unset(
             $params['pass'],
             $params['_matchedRoute'],
-            $params['_name']
+            $params['_name'],
         );
         if (!$route && $template) {
             // Locate the route that was used to match this route
@@ -693,7 +688,7 @@ class Router
         }
         $url = preg_replace('/(?:(\/$))/', '', $url);
 
-        if (empty($url)) {
+        if (!$url) {
             return '/';
         }
 
@@ -708,7 +703,7 @@ class Router
      * extension of "rss". The file extension itself is made available in the
      * controller as `$this->request->getParam('_ext')`, and is used by content
      * type negotiation to automatically switch to alternate layouts and templates, and
-     * load helpers corresponding to the given content, i.e. RssHelper. Switching
+     * load helpers corresponding to the given content. Switching
      * layouts and helpers requires that the chosen extension has a defined mime type
      * in `Cake\Http\Response`.
      *
@@ -798,7 +793,7 @@ class Router
         foreach (['plugin', 'prefix', 'controller', 'action'] as $key) {
             if (array_key_exists($key, $url)) {
                 throw new InvalidArgumentException(
-                    "`$key` cannot be used when defining route targets with a string route path."
+                    "`{$key}` cannot be used when defining route targets with a string route path.",
                 );
             }
         }
@@ -859,16 +854,16 @@ class Router
         if (isset($matches['params']) && $matches['params'] !== '') {
             $paramsArray = explode('/', trim($matches['params'], '/'));
             foreach ($paramsArray as $param) {
-                if (strpos($param, '=') !== false) {
+                if (str_contains($param, '=')) {
                     if (!preg_match('/(?<key>.+?)=(?<value>.*)/', $param, $paramMatches)) {
                         throw new InvalidArgumentException(
-                            "Could not parse a key=value from `{$param}` in route path `{$url}`."
+                            "Could not parse a key=value from `{$param}` in route path `{$url}`.",
                         );
                     }
                     $paramKey = $paramMatches['key'];
                     if (!preg_match('/^[a-zA-Z_][a-zA-Z0-9_]*$/', $paramKey)) {
                         throw new InvalidArgumentException(
-                            "Param key `{$paramKey}` is not valid in route path `{$url}`."
+                            "Param key `{$paramKey}` is not valid in route path `{$url}`.",
                         );
                     }
                     $defaults[$paramKey] = trim($paramMatches['value'], '\'"');

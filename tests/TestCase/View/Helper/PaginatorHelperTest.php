@@ -25,6 +25,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\PaginatorHelper;
 use Cake\View\View;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * PaginatorHelperTest class
@@ -49,7 +50,7 @@ class PaginatorHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('Config.language', 'eng');
@@ -84,7 +85,7 @@ class PaginatorHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->View, $this->Paginator);
@@ -122,7 +123,7 @@ class PaginatorHelperTest extends TestCase
         $this->assertSame(
             $this->Paginator,
             $result,
-            'Setting should return the same object'
+            'Setting should return the same object',
         );
 
         $result = $this->Paginator->getTemplates();
@@ -301,6 +302,52 @@ class PaginatorHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=desc', 'class' => 'asc'],
             'Title',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * testSortLinksWithLockOption method
+     *
+     * @return void
+     */
+    public function testSortLinksWithLockOption(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Accounts',
+                'action' => 'index',
+                'pass' => [],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+
+        $params = [
+            'sort' => 'date',
+            'direction' => 'asc',
+        ];
+        $this->setPaginatedResult($params);
+        $this->Paginator->options(['url' => ['param']]);
+
+        $result = $this->Paginator->sort('distance', options: ['lock' => true]);
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=distance&amp;direction=asc'],
+            'Distance',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->setPaginatedResult(['sort' => 'distance'], true);
+
+        $result = $this->Paginator->sort('distance', options: ['lock' => true]);
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=distance&amp;direction=asc', 'class' => 'asc locked'],
+            'Distance',
             '/a',
         ];
         $this->assertHtml($expected, $result);
@@ -539,7 +586,7 @@ class PaginatorHelperTest extends TestCase
                 'direction' => 'asc',
                 'page' => 1,
                 'scope' => 'tags',
-            ]
+            ],
         ));
 
         $result = $this->Paginator->sort('tag', 'Tag', ['model' => 'Tags']);
@@ -687,8 +734,8 @@ class PaginatorHelperTest extends TestCase
      * @param string $field
      * @param array $options
      * @param string $expected
-     * @dataProvider urlGenerationResetsToPage1Provider
      */
+    #[DataProvider('urlGenerationResetsToPage1Provider')]
     public function testUrlGenerationResetsToPage1($field, $options, $expected): void
     {
         $this->setPaginatedResult([
@@ -1091,7 +1138,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->prev('<< Previous');
         $expected = [
             'li' => ['class' => 'prev disabled'],
-            'a' => ['href' => '', 'onclick' => 'return false;'],
+            'a' => [],
             '&lt;&lt; Previous',
             '/a',
             '/li',
@@ -1101,7 +1148,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->prev('<< Previous', ['disabledTitle' => 'Prev']);
         $expected = [
             'li' => ['class' => 'prev disabled'],
-            'a' => ['href' => '', 'onclick' => 'return false;'],
+            'a' => [],
             'Prev',
             '/a',
             '/li',
@@ -1219,7 +1266,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->next('Next >>');
         $expected = [
             'li' => ['class' => 'next disabled'],
-            'a' => ['href' => '', 'onclick' => 'return false;'],
+            'a' => [],
             'Next &gt;&gt;',
             '/a',
             '/li',
@@ -1229,7 +1276,7 @@ class PaginatorHelperTest extends TestCase
         $result = $this->Paginator->next('Next >>', ['disabledTitle' => 'Next']);
         $expected = [
             'li' => ['class' => 'next disabled'],
-            'a' => ['href' => '', 'onclick' => 'return false;'],
+            'a' => [],
             'Next',
             '/a',
             '/li',
@@ -1811,7 +1858,7 @@ class PaginatorHelperTest extends TestCase
         $this->assertStringContainsString(
             '<li',
             $this->Paginator->templater()->get('current'),
-            'Templates were not restored.'
+            'Templates were not restored.',
         );
     }
 
@@ -2679,8 +2726,8 @@ class PaginatorHelperTest extends TestCase
      * @param int $pageCount
      * @param array $options
      * @param string $expected
-     * @dataProvider dataMetaProvider
      */
+    #[DataProvider('dataMetaProvider')]
     public function testMeta($page, $prevPage, $nextPage, $pageCount, $options, $expected): void
     {
         $this->setPaginatedResult([
@@ -2799,10 +2846,10 @@ class PaginatorHelperTest extends TestCase
      *
      * @return void
      */
-    public function testLimitControlUrlWithQuery()
+    public function testLimitControlUrlWithQuery(): void
     {
         $request = new ServerRequest([
-            'url' => '/batches?owner=billy&expected=1',
+            'url' => '/batches?owner=billy&expected=1&page=2',
             'params' => [
                 'plugin' => null, 'controller' => 'Batches', 'action' => 'index', 'pass' => [],
             ],
@@ -2812,11 +2859,11 @@ class PaginatorHelperTest extends TestCase
         ]);
         Router::setRequest($request);
         $this->View->setRequest($request);
-        $this->setPaginatedResult(['perPage' => 10]);
+        $this->setPaginatedResult(['perPage' => 10, 'currentPage' => 2]);
 
         $out = $this->Paginator->limitControl([1 => 1]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/batches?owner=billy&amp;expected=1']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/batches?owner=billy&amp;expected=1&amp;page=1']],
             ['div' => ['class' => 'input select']],
             ['label' => ['for' => 'limit']],
             'View',
@@ -2909,13 +2956,13 @@ class PaginatorHelperTest extends TestCase
             'pageCount' => 7,
             'sort' => 'date',
             'direction' => 'asc',
-            'page' => 1,
+            'currentPage' => 2,
             'scope' => 'article',
         ], false);
 
         $out = $this->Paginator->limitControl([25 => 25, 50 => 50]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/?article%5Bpage%5D=1']],
             ['div' => ['class' => 'input select']],
             ['label' => ['for' => 'article-limit']],
             'View',

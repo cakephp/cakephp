@@ -27,6 +27,14 @@ use Cake\Routing\Router;
 class RoutesCommand extends Command
 {
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Get the list of routes connected in this application.';
+    }
+
+    /**
      * Display all routes in an application
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -37,12 +45,16 @@ class RoutesCommand extends Command
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
         $header = ['Route name', 'URI template', 'Plugin', 'Prefix', 'Controller', 'Action', 'Method(s)'];
+        if ($args->getOption('with-middlewares') || $args->getOption('verbose')) {
+            $header[] = 'Middlewares';
+        }
         if ($args->getOption('verbose')) {
             $header[] = 'Defaults';
         }
 
         $availableRoutes = Router::routes();
-        $output = $duplicateRoutesCounter = [];
+        $output = [];
+        $duplicateRoutesCounter = [];
 
         foreach ($availableRoutes as $route) {
             $methods = isset($route->defaults['_method']) ? (array)$route->defaults['_method'] : [''];
@@ -57,6 +69,9 @@ class RoutesCommand extends Command
                 implode(', ', $methods),
             ];
 
+            if ($args->getOption('with-middlewares') || $args->getOption('verbose')) {
+                $item[] = implode(', ', $route->getMiddleware());
+            }
             if ($args->getOption('verbose')) {
                 ksort($route->defaults);
                 $item[] = json_encode($route->defaults, JSON_THROW_ON_ERROR);
@@ -65,10 +80,7 @@ class RoutesCommand extends Command
             $output[] = $item;
 
             foreach ($methods as $method) {
-                if (!isset($duplicateRoutesCounter[$route->template][$method])) {
-                    $duplicateRoutesCounter[$route->template][$method] = 0;
-                }
-
+                $duplicateRoutesCounter[$route->template][$method] ??= 0;
                 $duplicateRoutesCounter[$route->template][$method]++;
             }
         }
@@ -129,10 +141,15 @@ class RoutesCommand extends Command
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser
-            ->setDescription('Get the list of routes connected in this application.')
+            ->setDescription(static::getDescription())
             ->addOption('sort', [
                 'help' => 'Sorts alphabetically by route name A-Z',
                 'short' => 's',
+                'boolean' => true,
+            ])
+            ->addOption('with-middlewares', [
+                'help' => 'Show route specific middlewares',
+                'short' => 'm',
                 'boolean' => true,
             ]);
 

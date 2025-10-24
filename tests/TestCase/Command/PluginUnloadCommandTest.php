@@ -17,7 +17,9 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * PluginUnloadCommandTest class
@@ -39,9 +41,11 @@ class PluginUnloadCommandTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
+
+        Plugin::getCollection()->clear();
 
         $this->configFile = CONFIG . 'plugins.php';
         $this->originalContent = file_get_contents($this->configFile);
@@ -63,7 +67,7 @@ class PluginUnloadCommandTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -72,9 +76,8 @@ class PluginUnloadCommandTest extends TestCase
 
     /**
      * testUnload
-     *
-     * @dataProvider pluginNameProvider
      */
+    #[DataProvider('pluginNameProvider')]
     public function testUnload($plugin): void
     {
         $this->exec('plugin unload ' . $plugin);
@@ -86,7 +89,7 @@ class PluginUnloadCommandTest extends TestCase
         $this->assertStringContainsString("'Company/TestPluginThree'", $contents);
     }
 
-    public static function pluginNameProvider()
+    public static function pluginNameProvider(): array
     {
         return [
             ['TestPlugin'],

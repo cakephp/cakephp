@@ -25,6 +25,7 @@ use Cake\Event\Event;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
@@ -59,7 +60,7 @@ class BelongsToTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->company = $this->getTableLocator()->get('Companies', [
@@ -208,7 +209,7 @@ class BelongsToTest extends TestCase
         $this->assertSame(
             'integer',
             $query->getTypeMap()->type('Companies__id'),
-            'Associations should map types.'
+            'Associations should map types.',
         );
     }
 
@@ -293,7 +294,7 @@ class BelongsToTest extends TestCase
      */
     public function testCascadeDelete(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
+        $mock = $this->getMockBuilder(Table::class)
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
@@ -315,14 +316,11 @@ class BelongsToTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock('Cake\ORM\Table')
-            ->shouldAllowMockingMethod('saveAssociated')
-            ->makePartial();
+        $spy = Mockery::spy(Table::class);
         $config = [
             'sourceTable' => $this->client,
-            'targetTable' => $mock,
+            'targetTable' => $spy,
         ];
-        $mock->shouldNotReceive('saveAssociated');
 
         $entity = new Entity([
             'title' => 'A Title',
@@ -334,6 +332,8 @@ class BelongsToTest extends TestCase
         $result = $association->saveAssociated($entity);
         $this->assertSame($result, $entity);
         $this->assertNull($entity->author_id);
+
+        $spy->shouldNotHaveReceived('saveAssociated');
     }
 
     /**
@@ -351,7 +351,7 @@ class BelongsToTest extends TestCase
      */
     public function testPropertyNoPlugin(): void
     {
-        $mock = $this->getMockBuilder('Cake\ORM\Table')
+        $mock = $this->getMockBuilder(Table::class)
             ->disableOriginalConstructor()
             ->getMock();
         $config = [
@@ -461,7 +461,7 @@ class BelongsToTest extends TestCase
     {
         $this->setAppNamespace('TestApp');
         $articles = $this->getTableLocator()->get('Articles');
-        $articles->belongsTo('Authors')
+        $articles->associations()->get('Authors')
             ->setFinder('formatted');
 
         $query = $articles->find()

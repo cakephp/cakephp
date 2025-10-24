@@ -23,6 +23,7 @@ use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use DateTimeZone;
 use IntlDateFormatter;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * DateTimeTest class
@@ -37,7 +38,7 @@ class DateTimeTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->now = DateTime::getTestNow();
@@ -46,7 +47,7 @@ class DateTimeTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         DateTime::setTestNow($this->now);
@@ -104,9 +105,8 @@ class DateTimeTest extends TestCase
 
     /**
      * testTimeAgoInWords method
-     *
-     * @dataProvider timeAgoProvider
      */
+    #[DataProvider('timeAgoProvider')]
     public function testTimeAgoInWords(string $input, string $expected): void
     {
         $time = new DateTime($input);
@@ -171,16 +171,15 @@ class DateTimeTest extends TestCase
                 'timezone' => 'America/Vancouver',
                 'end' => '+1month',
                 'format' => 'dd-MM-YYYY HH:mm:ss',
-            ]
+            ],
         );
         $this->assertSame('on 31-07-1990 13:33:00', $result);
     }
 
     /**
      * test the end option for timeAgoInWords
-     *
-     * @dataProvider timeAgoEndProvider
      */
+    #[DataProvider('timeAgoEndProvider')]
     public function testTimeAgoInWordsEnd(string $input, string $expected, string $end): void
     {
         $time = new DateTime($input);
@@ -326,13 +325,13 @@ class DateTimeTest extends TestCase
 
         $time = new DateTime('-1 month -1 week -6 days');
         $result = $time->timeAgoInWords(
-            ['end' => '1 year', 'accuracy' => ['month' => 'month']]
+            ['end' => '1 year', 'accuracy' => ['month' => 'month']],
         );
         $this->assertSame('1 month ago', $result);
 
         $time = new DateTime('-1 years -2 weeks -3 days');
         $result = $time->timeAgoInWords(
-            ['accuracy' => ['year' => 'year']]
+            ['accuracy' => ['year' => 'year']],
         );
         $expected = 'on ' . $time->format('n/j/y');
         $this->assertSame($expected, $result);
@@ -412,6 +411,12 @@ class DateTimeTest extends TestCase
         $result = $time->i18nFormat(IntlDateFormatter::FULL, 'Asia/Tokyo', 'ja-JP@calendar=japanese');
         $expected = '平成22年1月14日木曜日 22時59分28秒 日本標準時';
         $this->assertTimeFormat($expected, $result);
+
+        // Test with milliseconds
+        $timeMillis = new DateTime('2014-07-06T13:09:01.523000+00:00');
+        $result = $timeMillis->i18nFormat("yyyy-MM-dd'T'HH':'mm':'ss.SSSxxx", null, 'en-US');
+        $expected = '2014-07-06T13:09:01.523+00:00';
+        $this->assertSame($expected, $result);
     }
 
     /**
@@ -420,7 +425,7 @@ class DateTimeTest extends TestCase
     public function testI18nFormatUsingSystemLocale(): void
     {
         $time = new DateTime(1556864870);
-        I18n::setLocale('ar');
+        I18n::setLocale('ar-u-nu-arab');
         $this->assertSame('٢٠١٩-٠٥-٠٣', $time->i18nFormat('yyyy-MM-dd'));
 
         I18n::setLocale('en');
@@ -531,9 +536,9 @@ class DateTimeTest extends TestCase
     /**
      * Test that invalid datetime values do not trigger errors.
      *
-     * @dataProvider invalidDataProvider
      * @param mixed $value
      */
+    #[DataProvider('invalidDataProvider')]
     public function testToStringInvalid($value): void
     {
         $time = new DateTime($value);
@@ -544,9 +549,9 @@ class DateTimeTest extends TestCase
     /**
      * Test that invalid datetime values do not trigger errors.
      *
-     * @dataProvider invalidDataProvider
      * @param mixed $value
      */
+    #[DataProvider('invalidDataProvider')]
     public function testToStringInvalidFrozen($value): void
     {
         $time = new DateTime($value);

@@ -29,7 +29,7 @@ class FormContextTest extends TestCase
     /**
      * setup method.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
     }
@@ -40,7 +40,7 @@ class FormContextTest extends TestCase
     public function testGetRequiredMessage(): void
     {
         $validator = new Validator();
-        $validator->notEmptyString('title', 'Don\'t forget a title!');
+        $validator->notEmptyString('title', "Don't forget a title!");
 
         $form = new Form();
         $form->setValidator(Form::DEFAULT_VALIDATOR, $validator);
@@ -50,7 +50,7 @@ class FormContextTest extends TestCase
         ]);
 
         $this->assertNull($context->getRequiredMessage('body'));
-        $this->assertSame('Don\'t forget a title!', $context->getRequiredMessage('title'));
+        $this->assertSame("Don't forget a title!", $context->getRequiredMessage('title'));
     }
 
     /**
@@ -224,11 +224,11 @@ class FormContextTest extends TestCase
         $this->assertEquals([], $context->attributes('id'));
         $this->assertEquals(
             ['length' => 10, 'precision' => null, 'default' => null],
-            $context->attributes('email')
+            $context->attributes('email'),
         );
         $this->assertEquals(
             ['precision' => 2, 'length' => 5, 'default' => null],
-            $context->attributes('amount')
+            $context->attributes('amount'),
         );
     }
 
@@ -271,7 +271,7 @@ class FormContextTest extends TestCase
         $this->assertEquals(
             ['_required' => 'should be an array, not a string'],
             $context->error('key'),
-            'This test should not produce a PHP warning from array_values().'
+            'This test should not produce a PHP warning from array_values().',
         );
     }
 

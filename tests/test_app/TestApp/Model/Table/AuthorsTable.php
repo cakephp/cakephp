@@ -28,17 +28,17 @@ class AuthorsTable extends Table
      */
     public function initialize(array $config): void
     {
-        $this->hasMany('articles');
+        $this->hasMany('Articles');
     }
 
     /**
      * @param \Cake\ORM\Query\SelectQuery $query
-     * @param array<string, mixed> $options
+     * @param int|null $authorId
      * @return \Cake\ORM\Query\SelectQuery
      */
     public function findByAuthor(SelectQuery $query, ?int $authorId = null): SelectQuery
     {
-        if (isset($authorId)) {
+        if ($authorId !== null) {
             $query->where(['Articles.id' => $authorId]);
         }
 
@@ -66,12 +66,22 @@ class AuthorsTable extends Table
     /**
      * Finder that accepts an option via a typed parameter.
      *
-     * @param \Cake\ORM\SelectQuery $query The query
+     * @param \Cake\ORM\Query\SelectQuery $query The query
      * @param int $id Author ID
      * @return \Cake\ORM\Query\SelectQuery
      */
     public function findWithIdArgument(SelectQuery $query, int $id): SelectQuery
     {
         return $query->where(['id' => $id]);
+    }
+
+    public function findCustom(SelectQuery $query, array $id = [], bool $second = true): SelectQuery
+    {
+        return $query;
+    }
+
+    public function findCustom2(SelectQuery $query, array $id, bool $second): SelectQuery
+    {
+        return $query;
     }
 }

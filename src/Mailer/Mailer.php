@@ -22,6 +22,7 @@ use Cake\Mailer\Exception\MissingActionException;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\View\ViewBuilder;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Mailer base class.
@@ -117,7 +118,7 @@ use InvalidArgumentException;
  * @method $this setHeaders(array $headers) Sets headers for the message. {@see \Cake\Mailer\Message::setHeaders()}
  * @method $this addHeaders(array $headers) Add header for the message. {@see \Cake\Mailer\Message::addHeaders()}
  * @method $this getHeaders(array $include = []) Get list of headers. {@see \Cake\Mailer\Message::getHeaders()}
- * @method $this setEmailFormat($format) Sets email format. {@see \Cake\Mailer\Message::getHeaders()}
+ * @method $this setEmailFormat($format) Sets email format. {@see \Cake\Mailer\Message::setEmailFormat()}
  * @method string getEmailFormat() Gets email format. {@see \Cake\Mailer\Message::getEmailFormat()}
  * @method $this setMessageId($message) Sets message ID. {@see \Cake\Mailer\Message::setMessageId()}
  * @method string|bool getMessageId() Gets message ID. {@see \Cake\Mailer\Message::getMessageId()}
@@ -152,7 +153,7 @@ class Mailer implements EventListenerInterface
      * Message class name.
      *
      * @var string
-     * @psalm-var class-string<\Cake\Mailer\Message>
+     * @phpstan-var class-string<\Cake\Mailer\Message>
      */
     protected string $messageClass = Message::class;
 
@@ -186,7 +187,7 @@ class Mailer implements EventListenerInterface
      * Mailer driver class map.
      *
      * @var array<string, string>
-     * @psalm-var array<string, class-string>
+     * @phpstan-var array<string, class-string>
      */
     protected static array $_dsnClassMap = [];
 
@@ -259,9 +260,14 @@ class Mailer implements EventListenerInterface
      *
      * @param \Cake\Mailer\Message $message Message instance.
      * @return $this
+     * @deprecated 5.1.0 Configure the mailer according to the documentation instead of manually setting the Message instance.
      */
     public function setMessage(Message $message)
     {
+        deprecationWarning(
+            '5.1.0',
+            'Setting the message instance is deprecated. Configure the mailer according to the documentation instead.',
+        );
         $this->message = $message;
 
         return $this;
@@ -301,14 +307,17 @@ class Mailer implements EventListenerInterface
     /**
      * Sends email.
      *
+     * If an `$action` is specified the internal state of the mailer will be
+     * backed up and restored after the action is run.
+     *
      * @param string|null $action The name of the mailer action to trigger.
      *   If no action is specified then all other method arguments will be ignored.
      * @param array $args Arguments to pass to the triggered mailer action.
      * @param array $headers Headers to set.
-     * @return array
+     * @return array<string, mixed> Contains 'headers' and 'message' keys. Additional keys allowed.
+     * @phpstan-return array{headers: string, message: string, ...}
      * @throws \Cake\Mailer\Exception\MissingActionException
      * @throws \BadMethodCallException
-     * @psalm-return array{headers: string, message: string}
      */
     public function send(?string $action = null, array $args = [], array $headers = []): array
     {
@@ -323,11 +332,7 @@ class Mailer implements EventListenerInterface
             ]);
         }
 
-        $this->clonedInstances['message'] = clone $this->message;
-        $this->clonedInstances['renderer'] = clone $this->getRenderer();
-        if ($this->transport !== null) {
-            $this->clonedInstances['transport'] = clone $this->transport;
-        }
+        $this->backup();
 
         $this->getMessage()->setHeaders($headers);
         if (!$this->viewBuilder()->getTemplate()) {
@@ -355,7 +360,7 @@ class Mailer implements EventListenerInterface
     {
         $content = $this->getRenderer()->render(
             $content,
-            $this->message->getBodyTypes()
+            $this->message->getBodyTypes(),
         );
 
         $this->message->setBody($content);
@@ -367,8 +372,8 @@ class Mailer implements EventListenerInterface
      * Render content and send email using configured transport.
      *
      * @param string $content Content.
-     * @return array
-     * @psalm-return array{headers: string, message: string}
+     * @return array<string, mixed> Contains 'headers' and 'message' keys. Additional keys allowed.
+     * @phpstan-return array{headers: string, message: string, ...}
      */
     public function deliver(string $content = ''): array
     {
@@ -392,7 +397,7 @@ class Mailer implements EventListenerInterface
         if (is_string($config)) {
             $name = $config;
             $config = static::getConfig($name);
-            if (empty($config)) {
+            if (!$config) {
                 throw new InvalidArgumentException(sprintf('Unknown email configuration `%s`.', $name));
             }
             unset($name);
@@ -478,11 +483,27 @@ class Mailer implements EventListenerInterface
         if ($this->transport === null) {
             throw new BadMethodCallException(
                 'Transport was not defined. '
-                . 'You must set on using setTransport() or set `transport` option in your mailer profile.'
+                . 'You must set on using setTransport() or set `transport` option in your mailer profile.',
             );
         }
 
         return $this->transport;
+    }
+
+    /**
+     * Backup message, renderer, transport instances before an action is run.
+     *
+     * @return void
+     */
+    protected function backup(): void
+    {
+        $this->clonedInstances['message'] = clone $this->message;
+        if ($this->renderer !== null) {
+            $this->clonedInstances['renderer'] = clone $this->renderer;
+        }
+        if ($this->transport !== null) {
+            $this->clonedInstances['transport'] = clone $this->transport;
+        }
     }
 
     /**
@@ -494,7 +515,11 @@ class Mailer implements EventListenerInterface
     {
         foreach (array_keys($this->clonedInstances) as $key) {
             if ($this->clonedInstances[$key] === null) {
-                $this->{$key} = null;
+                if ($key === 'message') {
+                    $this->message->reset();
+                } else {
+                    $this->{$key} = null;
+                }
             } else {
                 $this->{$key} = clone $this->clonedInstances[$key];
                 $this->clonedInstances[$key] = null;
@@ -526,9 +551,9 @@ class Mailer implements EventListenerInterface
     /**
      * Log the email message delivery.
      *
-     * @param array $contents The content with 'headers' and 'message' keys.
+     * @param array<string, mixed> $contents The content with 'headers' and 'message' keys.
+     * @phpstan-param array{headers: string, message: string, ...} $contents
      * @return void
-     * @psalm-param array{headers: string, message: string} $contents
      */
     protected function logDelivery(array $contents): void
     {
@@ -539,7 +564,7 @@ class Mailer implements EventListenerInterface
         Log::write(
             $this->logConfig['level'],
             PHP_EOL . $this->flatten($contents['headers']) . PHP_EOL . PHP_EOL . $this->flatten($contents['message']),
-            $this->logConfig['scope']
+            $this->logConfig['scope'],
         );
     }
 

@@ -59,14 +59,14 @@ trait LocatorAwareTrait
      */
     public function getTableLocator(): LocatorInterface
     {
-        if (isset($this->_tableLocator)) {
+        if ($this->_tableLocator !== null) {
             return $this->_tableLocator;
         }
 
         $locator = FactoryLocator::get('Table');
         assert(
             $locator instanceof LocatorInterface,
-            '`FactoryLocator` must return an instance of Cake\ORM\LocatorInterface for type `Table`.'
+            '`FactoryLocator` must return an instance of Cake\ORM\LocatorInterface for type `Table`.',
         );
 
         return $this->_tableLocator = $locator;
@@ -75,11 +75,12 @@ trait LocatorAwareTrait
     /**
      * Convenience method to get a table instance.
      *
-     * @param string|null $alias The alias name you want to get. Should be in CamelCase format.
+     * @template T of \Cake\ORM\Table
+     * @param class-string<T>|string|null $alias The alias name you want to get. Should be in CamelCase format.
      *  If `null` then the value of $defaultTable property is used.
      * @param array<string, mixed> $options The options you want to build the table with.
      *   If a table has already been loaded the registry options will be ignored.
-     * @return \Cake\ORM\Table
+     * @return ($alias is class-string<T> ? T : \Cake\ORM\Table)
      * @throws \Cake\Core\Exception\CakeException If `$alias` argument and `$defaultTable` property both are `null`.
      * @see \Cake\ORM\TableLocator::get()
      * @since 4.3.0
@@ -87,12 +88,14 @@ trait LocatorAwareTrait
     public function fetchTable(?string $alias = null, array $options = []): Table
     {
         $alias ??= $this->defaultTable;
-        if (empty($alias)) {
+        if (!$alias) {
             throw new UnexpectedValueException(
-                'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.'
+                'You must provide an `$alias` or set the `$defaultTable` property to a non empty string.',
             );
         }
 
+        // phpcs:ignore
+        /** @var T */
         return $this->getTableLocator()->get($alias, $options);
     }
 }

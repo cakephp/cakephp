@@ -21,6 +21,7 @@ use Cake\View\Form\NullContext;
 use Cake\View\StringTemplate;
 use Cake\View\Widget\DateTimeWidget;
 use DateTime;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * DateTimeWidget test case
@@ -42,7 +43,7 @@ class DateTimeWidgetTest extends TestCase
      */
     protected $DateTime;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $templates = [
@@ -73,9 +74,9 @@ class DateTimeWidgetTest extends TestCase
     /**
      * test rendering selected values.
      *
-     * @dataProvider selectedValuesProvider
      * @param mixed $selected
      */
+    #[DataProvider('selectedValuesProvider')]
     public function testRenderValid($selected): void
     {
         $result = $this->DateTime->render(['val' => $selected], $this->context);

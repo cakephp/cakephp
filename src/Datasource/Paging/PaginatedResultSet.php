@@ -16,18 +16,28 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource\Paging;
 
-use IteratorIterator;
+use IteratorAggregate;
 use JsonSerializable;
 use Traversable;
+use function Cake\Core\deprecationWarning;
 
 /**
- * Paginated resultset.
+ * Paginated result set.
  *
- * @template-extends \IteratorIterator<mixed, mixed, \Traversable<mixed>>
- * @template T
+ * @template TKey
+ * @template TValue
+ * @implements \IteratorAggregate<TKey, TValue>
+ * @implements \Cake\Datasource\Paging\PaginatedInterface<TKey, TValue>
  */
-class PaginatedResultSet extends IteratorIterator implements JsonSerializable, PaginatedInterface
+class PaginatedResultSet implements IteratorAggregate, JsonSerializable, PaginatedInterface
 {
+    /**
+     * Resultset instance.
+     *
+     * @var \Traversable<TKey, TValue>
+     */
+    protected Traversable $results;
+
     /**
      * Paging params.
      *
@@ -38,13 +48,12 @@ class PaginatedResultSet extends IteratorIterator implements JsonSerializable, P
     /**
      * Constructor
      *
-     * @param \Traversable<T> $results Resultset instance.
+     * @param \Traversable<TKey, TValue> $results Resultset instance.
      * @param array $params Paging params.
      */
     public function __construct(Traversable $results, array $params)
     {
-        parent::__construct($results);
-
+        $this->results = $results;
         $this->params = $params;
     }
 
@@ -57,13 +66,25 @@ class PaginatedResultSet extends IteratorIterator implements JsonSerializable, P
     }
 
     /**
+     * Get the paginated items as an array.
+     *
+     * This will exhaust the iterator `items`.
+     *
+     * @return array<array-key, TValue>
+     */
+    public function toArray(): array
+    {
+        return $this->jsonSerialize();
+    }
+
+    /**
      * Get paginated items.
      *
-     * @return \Traversable<T> The paginated items result set.
+     * @return \Traversable<TKey, TValue> The paginated items result set.
      */
     public function items(): Traversable
     {
-        return $this->getInnerIterator();
+        return $this->results;
     }
 
     /**
@@ -138,5 +159,36 @@ class PaginatedResultSet extends IteratorIterator implements JsonSerializable, P
     public function pagingParams(): array
     {
         return $this->params;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getIterator(): Traversable
+    {
+        return $this->results;
+    }
+
+    /**
+     * Proxies method calls to internal result set instance.
+     *
+     * @param string $name Method name
+     * @param array $arguments Arguments
+     * @return mixed
+     */
+    public function __call(string $name, array $arguments): mixed
+    {
+        deprecationWarning(
+            '5.1.0',
+            sprintf(
+                'Calling `%s` methods, such as `%s()`, on PaginatedResultSet is deprecated. ' .
+                'You must call `items()` first (for example, `items()->%s()`).',
+                $this->results::class,
+                $name,
+                $name,
+            ),
+        );
+
+        return $this->results->$name(...$arguments);
     }
 }

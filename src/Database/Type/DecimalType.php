@@ -33,13 +33,13 @@ class DecimalType extends BaseType implements BatchCastingInterface
     /**
      * The class to use for representing number objects
      *
-     * @var string
+     * @var class-string<\Cake\I18n\Number>|string
      */
     public static string $numberClass = Number::class;
 
     /**
      * Whether numbers should be parsed using a locale aware parser
-     * when marshalling string inputs.
+     * when marshaling string inputs.
      *
      * @var bool
      */
@@ -74,7 +74,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
         throw new InvalidArgumentException(sprintf(
             'Cannot convert value `%s` of type `%s` to a decimal',
             print_r($value, true),
-            get_debug_type($value)
+            get_debug_type($value),
         ));
     }
 
@@ -166,7 +166,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
             return $this;
         }
         throw new DatabaseException(
-            sprintf('Cannot use locale parsing with the %s class', static::$numberClass)
+            sprintf('Cannot use locale parsing with the %s class', static::$numberClass),
         );
     }
 
@@ -179,7 +179,6 @@ class DecimalType extends BaseType implements BatchCastingInterface
      */
     protected function _parseValue(string $value): string
     {
-        /** @var \Cake\I18n\Number $class */
         $class = static::$numberClass;
 
         return (string)$class::parseFloat($value);

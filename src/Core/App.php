@@ -184,7 +184,7 @@ class App
      *
      * @param string $type Type of path
      * @param string|null $plugin Plugin name
-     * @return array<string>
+     * @return array<int|string, string>
      * @link https://book.cakephp.org/5/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path(string $type, ?string $plugin = null): array
@@ -198,7 +198,7 @@ class App
             'locales' => [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR],
             default => throw new CakeException(sprintf(
                 'Invalid type `%s`. Only path types `templates` and `locales` are supported for plugins.',
-                $type
+                $type,
             ))
         };
     }

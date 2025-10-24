@@ -59,23 +59,23 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * in the application folder, then it tries looking under the current plugin
      * if any
      *
-     * @param string $helper The helper name to be loaded
+     * @param string $name The helper name to be loaded
      * @return bool whether the helper could be loaded or not
      * @throws \Cake\View\Exception\MissingHelperException When a helper could not be found.
      *    App helpers are searched, and then plugin helpers.
      */
-    public function __isset(string $helper): bool
+    public function __isset(string $name): bool
     {
-        if (isset($this->_loaded[$helper])) {
+        if (isset($this->_loaded[$name])) {
             return true;
         }
 
         try {
-            $this->load($helper);
+            $this->load($name);
         } catch (MissingHelperException $exception) {
             $plugin = $this->_View->getPlugin();
-            if (!empty($plugin)) {
-                $this->load($helper, ['className' => $plugin . '.' . $helper]);
+            if ($plugin) {
+                $this->load($name, ['className' => $plugin . '.' . $name]);
 
                 return true;
             }
@@ -97,7 +97,6 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     public function __get(string $name): ?Helper
     {
         // This calls __isset() and loading the named helper if it isn't already loaded.
-        /** @psalm-suppress NoValue */
         if (isset($this->{$name})) {
             return $this->_loaded[$name];
         }

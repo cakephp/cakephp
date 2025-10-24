@@ -74,7 +74,7 @@ class Cache
      * class names.
      *
      * @var array<string, string>
-     * @psalm-var array<string, class-string>
+     * @phpstan-var array<string, class-string>
      */
     protected static array $_dsnClassMap = [
         'array' => Engine\ArrayEngine::class,
@@ -143,7 +143,7 @@ class Cache
 
         if (empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
-                sprintf('The `%s` cache configuration does not exist.', $name)
+                sprintf('The `%s` cache configuration does not exist.', $name),
             );
         }
 
@@ -166,7 +166,7 @@ class Cache
             if ($config['fallback'] === $name) {
                 throw new InvalidArgumentException(sprintf(
                     '`%s` cache configuration cannot fallback to itself.',
-                    $name
+                    $name,
                 ), 0, $e);
             }
 
@@ -209,13 +209,13 @@ class Cache
 
         $registry = static::getRegistry();
 
-        if (isset($registry->{$config})) {
-            return $registry->{$config};
+        if ($registry->has($config)) {
+            return $registry->get($config);
         }
 
         static::_buildEngine($config);
 
-        return $registry->{$config};
+        return $registry->get($config);
     }
 
     /**
@@ -253,7 +253,7 @@ class Cache
                 "%s cache was unable to write '%s' to %s cache",
                 $config,
                 $key,
-                get_class($backend)
+                $backend::class,
             ));
         }
 

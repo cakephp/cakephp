@@ -31,7 +31,7 @@ class NoMailSent extends MailConstraintBase
      */
     public function matches(mixed $other): bool
     {
-        return count($this->getMessages()) === 0;
+        return $this->getMessages() === [];
     }
 
     /**

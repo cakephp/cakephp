@@ -20,6 +20,7 @@ use Cake\Cache\Cache;
 use Cake\Cache\Engine\RedisEngine;
 use Cake\TestSuite\TestCase;
 use DateInterval;
+use Redis;
 use function Cake\Core\env;
 
 /**
@@ -35,7 +36,7 @@ class RedisEngineTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->skipIf(!class_exists('Redis'), 'Redis extension is not installed or configured properly.');
@@ -55,10 +56,12 @@ class RedisEngineTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('redis');
+        Cache::drop('redis2');
+        Cache::drop('redis_clear_blocking');
         Cache::drop('redis_groups');
         Cache::drop('redis_helper');
     }
@@ -92,6 +95,7 @@ class RedisEngineTest extends TestCase
             'groups' => [],
             'server' => '127.0.0.1',
             'port' => $this->port,
+            'tls' => false,
             'timeout' => 0,
             'persistent' => true,
             'password' => false,
@@ -99,6 +103,7 @@ class RedisEngineTest extends TestCase
             'unix_socket' => false,
             'host' => null,
             'scanCount' => 10,
+            'clearUsesFlushDb' => false,
         ];
         $this->assertEquals($expecting, $config);
     }
@@ -119,6 +124,7 @@ class RedisEngineTest extends TestCase
             'groups' => [],
             'server' => 'localhost',
             'port' => $this->port,
+            'tls' => false,
             'timeout' => 0,
             'persistent' => true,
             'password' => false,
@@ -127,6 +133,46 @@ class RedisEngineTest extends TestCase
             'host' => 'localhost',
             'scheme' => 'redis',
             'scanCount' => 10,
+            'clearUsesFlushDb' => false,
+        ];
+        $this->assertEquals($expecting, $config);
+
+        Cache::drop('redis_dsn');
+    }
+
+    /**
+     * testConfigDsnSSLContext method
+     */
+    public function testConfigDsnSSLContext(): void
+    {
+        $url = 'redis://localhost:' . $this->port;
+
+        $url .= '?ssl_ca=/tmp/cert.crt';
+        $url .= '&ssl_key=/tmp/local.key';
+        $url .= '&ssl_cert=/tmp/local.crt';
+
+        Cache::setConfig('redis_dsn', compact('url'));
+
+        $config = Cache::pool('redis_dsn')->getConfig();
+        $expecting = [
+            'prefix' => 'cake_',
+            'duration' => 3600,
+            'groups' => [],
+            'server' => 'localhost',
+            'port' => $this->port,
+            'tls' => false,
+            'timeout' => 0,
+            'persistent' => true,
+            'password' => false,
+            'database' => 0,
+            'unix_socket' => false,
+            'host' => 'localhost',
+            'scheme' => 'redis',
+            'scanCount' => 10,
+            'ssl_ca' => '/tmp/cert.crt',
+            'ssl_key' => '/tmp/local.key',
+            'ssl_cert' => '/tmp/local.crt',
+            'clearUsesFlushDb' => false,
         ];
         $this->assertEquals($expecting, $config);
 
@@ -140,6 +186,225 @@ class RedisEngineTest extends TestCase
     {
         $Redis = new RedisEngine();
         $this->assertTrue($Redis->init(Cache::pool('redis')->getConfig()));
+    }
+
+    /**
+     * testConnectTransient method
+     */
+    public function testConnectTransient(): void
+    {
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('connect')
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => false,
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('connect')
+            ->with(
+                'tls://' . $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => false,
+            'tls' => true,
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+    }
+
+    /**
+     * testConnectTransientContext method
+     */
+    public function testConnectTransientContext(): void
+    {
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
+
+        $context = [
+            'ssl' => [
+                'cafile' => $cafile,
+            ],
+        ];
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('connect')
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+                null,
+                0,
+                0.0,
+                $context,
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => false,
+            'ssl_ca' => $cafile,
+        ];
+
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+    }
+
+    /**
+     * testConnectPersistent method
+     */
+    public function testConnectPersistent(): void
+    {
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $expectedPersistentId = $this->port . $Redis->getConfig('timeout') . $Redis->getConfig('database');
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('pconnect')
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+                $expectedPersistentId,
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('pconnect')
+            ->with(
+                'tls://' . $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+                $expectedPersistentId,
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'tls' => true,
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
+    }
+
+    /**
+     * testConnectPersistentContext method
+     */
+    public function testConnectPersistentContext(): void
+    {
+        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
+        $phpredis = $this->createMock(Redis::class);
+
+        $expectedPersistentId = $this->port . $Redis->getConfig('timeout') . $Redis->getConfig('database');
+
+        $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
+
+        $context = [
+            'ssl' => [
+                'cafile' => $cafile,
+            ],
+        ];
+
+        $phpredis->expects($this->once())
+            ->method('select')
+            ->with((int)$Redis->getConfig('database'))
+            ->willReturn(true);
+
+        $phpredis->expects($this->once())
+            ->method('pconnect')
+            ->with(
+                $Redis->getConfig('server'),
+                (int)$this->port,
+                (int)$Redis->getConfig('timeout'),
+                $expectedPersistentId,
+                0,
+                0.0,
+                $context,
+            )
+            ->willReturn(true);
+
+        $Redis->expects($this->once())
+            ->method('_createRedisInstance')
+            ->willReturn($phpredis);
+
+        $config = [
+            'port' => $this->port,
+            'persistent' => true,
+            'ssl_ca' => $cafile,
+        ];
+        $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
     }
 
     /**
@@ -468,6 +733,33 @@ class RedisEngineTest extends TestCase
     }
 
     /**
+     * test clearing redis.
+     */
+    public function testClearWithFlush(): void
+    {
+        Cache::setConfig('redis2', [
+            'engine' => 'Redis',
+            'prefix' => 'cake2_',
+            'duration' => 3600,
+            'port' => $this->port,
+            'clearUsesFlushDb' => true,
+        ]);
+
+        Cache::write('some_value', 'cache1', 'redis2');
+        $result = Cache::clear('redis2');
+        $this->assertTrue($result);
+        $this->assertNull(Cache::read('some_value', 'redis2'));
+
+        Cache::write('some_value', 'cache2', 'redis');
+        $result = Cache::clear('redis2');
+        $this->assertTrue($result);
+
+        // Both cache prefixes are cleared
+        $this->assertNull(Cache::read('some_value', 'redis'));
+        $this->assertNull(Cache::read('some_value', 'redis2'));
+    }
+
+    /**
      * testClearBlocking method
      */
     public function testClearBlocking(): void
@@ -479,18 +771,43 @@ class RedisEngineTest extends TestCase
             'port' => $this->port,
         ]);
 
+        Cache::write('some_value', 'cache1', 'redis_clear_blocking');
+        $result = Cache::pool('redis_clear_blocking')->clearBlocking();
+        $this->assertTrue($result);
+        $this->assertNull(Cache::read('some_value', 'redis_clear_blocking'));
+
+        Cache::write('some_value', 'cache2', 'redis');
+        $result = Cache::pool('redis_clear_blocking')->clearBlocking();
+        $this->assertTrue($result);
+        $this->assertSame('cache2', Cache::read('some_value', 'redis'));
+        $this->assertNull(Cache::read('some_value', 'redis_clear_blocking'));
+    }
+
+    /**
+     * testClearBlocking method
+     */
+    public function testClearBlockingWithFlush(): void
+    {
+        Cache::setConfig('redis_clear_blocking', [
+            'engine' => 'Redis',
+            'prefix' => 'cake2_',
+            'duration' => 3600,
+            'port' => $this->port,
+            'clearUsesFlushDb' => true,
+        ]);
+
         Cache::write('some_value', 'cache1', 'redis');
-        $result = Cache::pool('redis')->clearBlocking();
+        $result = Cache::pool('redis_clear_blocking')->clearBlocking();
         $this->assertTrue($result);
         $this->assertNull(Cache::read('some_value', 'redis'));
 
         Cache::write('some_value', 'cache2', 'redis_clear_blocking');
-        $result = Cache::pool('redis')->clearBlocking();
+        $result = Cache::pool('redis_clear_blocking')->clearBlocking();
         $this->assertTrue($result);
-        $this->assertNull(Cache::read('some_value', 'redis'));
-        $this->assertSame('cache2', Cache::read('some_value', 'redis_clear_blocking'));
 
-        Cache::pool('redis_clear_blocking')->clearBlocking();
+        // Both cache prefixes are cleared
+        $this->assertNull(Cache::read('some_value', 'redis'));
+        $this->assertNull(Cache::read('some_value', 'redis_clear_blocking'));
     }
 
     /**

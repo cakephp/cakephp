@@ -18,6 +18,7 @@ namespace Cake\Validation;
 
 use BackedEnum;
 use Cake\Chronos\ChronosDate;
+use Cake\Chronos\ChronosTime;
 use Cake\Core\Exception\CakeException;
 use Cake\I18n\DateTime;
 use Cake\Utility\Text;
@@ -147,7 +148,7 @@ class Validation
      */
     public static function notBlank(mixed $check): bool
     {
-        if (empty($check) && !is_bool($check) && !is_numeric($check)) {
+        if (!$check && !is_bool($check) && !is_numeric($check)) {
             return false;
         }
 
@@ -249,9 +250,9 @@ class Validation
         mixed $check,
         array|string $type = 'fast',
         bool $deep = false,
-        ?string $regex = null
+        ?string $regex = null,
     ): bool {
-        if (!(is_string($check) || is_int($check))) {
+        if (!is_string($check) && !is_int($check)) {
             return false;
         }
 
@@ -432,9 +433,9 @@ class Validation
      *
      * ### Formats:
      *
+     * - `ymd` 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
      * - `dmy` 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
      * - `mdy` 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
-     * - `ymd` 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
      * - `dMy` 27 December 2006 or 27 Dec 2006
      * - `Mdy` December 27, 2006 or Dec 27, 2006 comma is optional
      * - `My` December 2006 or Dec 2006
@@ -450,7 +451,10 @@ class Validation
      */
     public static function date(mixed $check, array|string $format = 'ymd', ?string $regex = null): bool
     {
-        if ($check instanceof ChronosDate || $check instanceof DateTimeInterface) {
+        if (
+            (class_exists(ChronosDate::class) && $check instanceof ChronosDate)
+            || $check instanceof DateTimeInterface
+        ) {
             return true;
         }
         if (is_object($check)) {
@@ -502,9 +506,9 @@ class Validation
         $regex['ym'] = '%^(' . $year . $separator . $month . ')$%';
         $regex['y'] = '%^(' . $fourDigitYear . ')$%';
 
-        $format = is_array($format) ? array_values($format) : [$format];
+        $format = (array)$format;
         foreach ($format as $key) {
-            if (static::_check($check, $regex[$key]) === true) {
+            if (static::_check($check, $regex[$key])) {
                 return true;
             }
         }
@@ -516,6 +520,25 @@ class Validation
      * Validates a datetime value
      *
      * All values matching the "date" core validation rule, and the "time" one will be valid
+     *
+     * Years are valid from 0001 to 2999.
+     *
+     * ### Formats:
+     *
+     *  - `ymd` 2006-12-27 or 06-12-27 separators can be a space, period, dash, forward slash
+     *  - `dmy` 27-12-2006 or 27-12-06 separators can be a space, period, dash, forward slash
+     *  - `mdy` 12-27-2006 or 12-27-06 separators can be a space, period, dash, forward slash
+     *  - `dMy` 27 December 2006 or 27 Dec 2006
+     *  - `Mdy` December 27, 2006 or Dec 27, 2006 comma is optional
+     *  - `My` December 2006 or Dec 2006
+     *  - `my` 12/2006 or 12/06 separators can be a space, period, dash, forward slash
+     *  - `ym` 2006/12 or 06/12 separators can be a space, period, dash, forward slash
+     *  - `y` 2006 just the year without any separators
+     *
+     * Time is validated as 24hr (HH:MM[:SS][.FFFFFF]) or am/pm ([H]H:MM[a|p]m)
+     *
+     * Seconds and fractional seconds (microseconds) are allowed but optional
+     * in 24hr format.
      *
      * @param mixed $check Value to check
      * @param array|string $dateFormat Format of the date part. See Validation::date() for more information.
@@ -545,6 +568,9 @@ class Validation
         if (is_array($check)) {
             $check = static::_getDateString($check);
             $dateFormat = 'ymd';
+        }
+        if (!is_string($check)) {
+            return false;
         }
         $parts = preg_split('/[\sT]+/', $check);
         if ($parts && count($parts) > 1) {
@@ -596,7 +622,10 @@ class Validation
      */
     public static function time(mixed $check): bool
     {
-        if ($check instanceof DateTimeInterface) {
+        if (
+            (class_exists(ChronosTime::class) && $check instanceof ChronosTime)
+            || $check instanceof DateTimeInterface
+        ) {
             return true;
         }
         if (is_array($check)) {
@@ -628,7 +657,16 @@ class Validation
      */
     public static function localizedTime(mixed $check, string $type = 'datetime', string|int|null $format = null): bool
     {
-        if ($check instanceof DateTimeInterface) {
+        if (!class_exists(DateTime::class)) {
+            throw new CakeException(
+                'The Cake\I18n\DateTime class is not available. Install the cakephp/i18n package.',
+            );
+        }
+
+        if (
+            (class_exists(ChronosTime::class) && $check instanceof ChronosTime)
+            || $check instanceof DateTimeInterface
+        ) {
             return true;
         }
         if (!is_string($check)) {
@@ -755,7 +793,7 @@ class Validation
      * any PHP version on a non-windows distribution
      *
      * @param mixed $check Value to check
-     * @param bool $deep Perform a deeper validation (if true), by also checking availability of host
+     * @param bool|null $deep Perform a deeper validation (if true), by also checking availability of host
      * @param string|null $regex Regex to use (if none it will use built in regex)
      * @return bool Success
      */
@@ -773,7 +811,7 @@ class Validation
             return $return;
         }
 
-        if ($return === true && preg_match('/@(' . static::$_pattern['hostname'] . ')$/i', $check, $regs)) {
+        if ($return && preg_match('/@(' . static::$_pattern['hostname'] . ')$/i', $check, $regs)) {
             if (function_exists('getmxrr') && getmxrr($regs[1], $mxhosts)) {
                 return true;
             }
@@ -797,31 +835,153 @@ class Validation
      */
     public static function enum(mixed $check, string $enumClassName): bool
     {
+        return static::checkEnum($check, $enumClassName);
+    }
+
+    /**
+     * Checks that the value is a valid backed enum instance or value.
+     *
+     * @param mixed $check Value to check
+     * @param array<\BackedEnum> $cases Array of enum cases that are valid.
+     * @return bool Success
+     * @since 5.1.0
+     */
+    public static function enumOnly(mixed $check, array $cases): bool
+    {
+        if ($cases === []) {
+            throw new InvalidArgumentException('At least one case needed for `enumOnly()` validation.');
+        }
+
+        $firstKey = array_key_first($cases);
+        $firstValue = $cases[$firstKey];
+        $enumClassName = $firstValue::class;
+
+        $options = ['only' => $cases];
+
+        return static::checkEnum($check, $enumClassName, $options);
+    }
+
+    /**
+     * Checks that the value is a valid backed enum instance or value.
+     *
+     * @param mixed $check Value to check
+     * @param array<\BackedEnum> $cases Array of enum cases that are not valid.
+     * @return bool Success
+     * @since 5.1.0
+     */
+    public static function enumExcept(mixed $check, array $cases): bool
+    {
+        if ($cases === []) {
+            throw new InvalidArgumentException('At least one case needed for `enumExcept()` validation.');
+        }
+
+        $firstKey = array_key_first($cases);
+        $firstValue = $cases[$firstKey];
+        $enumClassName = $firstValue::class;
+
+        $options = ['except' => $cases];
+
+        return static::checkEnum($check, $enumClassName, $options);
+    }
+
+    /**
+     * @param mixed $check
+     * @param class-string $enumClassName
+     * @param array<string, mixed> $options
+     * @return bool
+     */
+    protected static function checkEnum(mixed $check, string $enumClassName, array $options = []): bool
+    {
         if (
             $check instanceof $enumClassName &&
             $check instanceof BackedEnum
         ) {
-            return true;
+            return static::isValidEnum($check, $options);
         }
 
         $backingType = null;
         try {
             $reflectionEnum = new ReflectionEnum($enumClassName);
-            $backingType = $reflectionEnum->getBackingType();
+
+            /** @var \ReflectionNamedType|null $reflectionBackingType */
+            $reflectionBackingType = $reflectionEnum->getBackingType();
+            if ($reflectionBackingType) {
+                if (method_exists($reflectionBackingType, 'getName')) {
+                    $backingType = $reflectionBackingType->getName();
+                } else {
+                    $backingType = (string)$reflectionBackingType;
+                }
+            }
         } catch (ReflectionException) {
         }
 
         if ($backingType === null) {
             throw new InvalidArgumentException(
-                'The `$enumClassName` argument must be the classname of a valid backed enum.'
+                'The `$enumClassName` argument must be the classname of a valid backed enum.',
             );
+        }
+
+        if (!is_string($check) && !is_int($check)) {
+            return false;
+        }
+
+        if ($backingType === 'int') {
+            if (!is_numeric($check)) {
+                return false;
+            }
+            $check = (int)$check;
         }
 
         if (get_debug_type($check) !== (string)$backingType) {
             return false;
         }
 
-        return $enumClassName::tryFrom($check) !== null;
+        $options += [
+            'only' => null,
+            'except' => null,
+        ];
+
+        /** @var class-string<\BackedEnum> $enumClassName */
+        $enum = $enumClassName::tryFrom($check);
+        if ($enum === null) {
+            return false;
+        }
+
+        return static::isValidEnum($enum, $options);
+    }
+
+    /**
+     * @param \BackedEnum $enum
+     * @param array<string, mixed> $options
+     * @return bool
+     */
+    protected static function isValidEnum(BackedEnum $enum, array $options): bool
+    {
+        $options += ['only' => null, 'except' => null];
+
+        if ($options['only']) {
+            if (!is_array($options['only'])) {
+                $options['only'] = [$options['only']];
+            }
+
+            if (in_array($enum, $options['only'], true)) {
+                return true;
+            }
+
+            return false;
+        }
+
+        if ($options['except']) {
+            if (!is_array($options['except'])) {
+                $options['except'] = [$options['except']];
+            }
+
+            if (in_array($enum, $options['except'], true)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -848,7 +1008,7 @@ class Validation
      */
     public static function extension(mixed $check, array $extensions = ['gif', 'jpeg', 'png', 'jpg']): bool
     {
-        if ($check instanceof UploadedFileInterface) {
+        if (interface_exists(UploadedFileInterface::class) && $check instanceof UploadedFileInterface) {
             $check = $check->getClientFilename();
         } elseif (is_array($check) && isset($check['name'])) {
             $check = $check['name'];
@@ -856,7 +1016,7 @@ class Validation
             return static::extension(array_shift($check), $extensions);
         }
 
-        if (empty($check)) {
+        if (!$check) {
             return false;
         }
 
@@ -1000,7 +1160,7 @@ class Validation
         $check = array_filter((array)$check, function ($value) {
             return $value || is_numeric($value);
         });
-        if (empty($check)) {
+        if (!$check) {
             return false;
         }
         if ($options['max'] && count($check) > $options['max']) {
@@ -1124,11 +1284,11 @@ class Validation
     }
 
     /**
-     * Checks if a value is in a given list. Comparison is case sensitive by default.
+     * Checks if a value is in a given list. Comparison is case-sensitive by default.
      *
      * @param mixed $check Value to check.
      * @param array<string> $list List to check against.
-     * @param bool $caseInsensitive Set to true for case insensitive comparison.
+     * @param bool $caseInsensitive Set to true for case-insensitive comparison.
      * @return bool Success.
      */
     public static function inList(mixed $check, array $list, bool $caseInsensitive = false): bool
@@ -1154,7 +1314,7 @@ class Validation
      */
     public static function uuid(mixed $check): bool
     {
-        $regex = '/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[0-5][a-fA-F0-9]{3}-[089aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$/';
+        $regex = '/^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[0-8][a-fA-F0-9]{3}-[089aAbB][a-fA-F0-9]{3}-[a-fA-F0-9]{12}$/';
 
         return self::_check($check, $regex);
     }
@@ -1405,7 +1565,7 @@ class Validation
     {
         if (!isset($options['height']) && !isset($options['width'])) {
             throw new InvalidArgumentException(
-                'Invalid image size validation parameters! Missing `width` and / or `height`.'
+                'Invalid image size validation parameters! Missing `width` and / or `height`.',
             );
         }
 
@@ -1413,13 +1573,14 @@ class Validation
         if ($file === null) {
             return false;
         }
-
-        $width = $height = null;
+        $width = null;
+        $height = null;
         $imageSize = getimagesize($file);
         if ($imageSize) {
             [$width, $height] = $imageSize;
         }
-        $validWidth = $validHeight = null;
+        $validWidth = null;
+        $validHeight = null;
 
         if (isset($options['height'])) {
             $validHeight = self::comparison($height, $options['height'][0], $options['height'][1]);
@@ -1506,7 +1667,7 @@ class Validation
         if ($options['type'] !== 'latLong') {
             throw new InvalidArgumentException(sprintf(
                 'Unsupported coordinate type `%s`. Use `latLong` instead.',
-                $options['type']
+                $options['type'],
             ));
         }
         $pattern = '/^' . self::$_pattern['latitude'] . ',\s*' . self::$_pattern['longitude'] . '$/';
@@ -1733,7 +1894,7 @@ class Validation
                     $value['hour'],
                     $value['minute'],
                     $value['second'],
-                    $value['microsecond']
+                    $value['microsecond'],
                 );
             }
         }

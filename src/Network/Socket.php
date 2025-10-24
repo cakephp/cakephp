@@ -57,6 +57,7 @@ class Socket
      * This boolean contains the current state of the Socket class
      *
      * @var bool
+     * @deprecated 5.2.9 Use isConnected() instead.
      */
     protected bool $connected = false;
 
@@ -144,7 +145,6 @@ class Socket
         }
 
         /**
-         * @psalm-suppress InvalidArgument
          * @phpstan-ignore-next-line
          */
         set_error_handler($this->_connectionErrorHandler(...));
@@ -162,7 +162,7 @@ class Socket
             $errStr,
             (int)$this->_config['timeout'],
             $connectAs,
-            $context
+            $context,
         );
         restore_error_handler();
 
@@ -176,14 +176,15 @@ class Socket
             throw new SocketException($message, E_WARNING);
         }
 
-        $this->connected = is_resource($this->connection);
-        if ($this->connected) {
+        $connected = is_resource($this->connection);
+        $this->connected = $connected;
+        if ($connected) {
             assert($this->connection !== null);
 
             stream_set_timeout($this->connection, (int)$this->_config['timeout']);
         }
 
-        return $this->connected;
+        return $connected;
     }
 
     /**
@@ -193,7 +194,7 @@ class Socket
      */
     public function isConnected(): bool
     {
-        return $this->connected;
+        return is_resource($this->connection);
     }
 
     /**
@@ -203,7 +204,7 @@ class Socket
      * @param int $errNum error number
      * @param string $errStr error string
      * @param int $timeout timeout
-     * @param int $connectAs flags
+     * @param int<0, 7> $connectAs flags
      * @param resource $context context
      * @return resource|null
      */
@@ -213,7 +214,7 @@ class Socket
         string &$errStr,
         int $timeout,
         int $connectAs,
-        $context
+        $context,
     ) {
         $resource = stream_socket_client(
             $remoteSocketTarget,
@@ -221,7 +222,7 @@ class Socket
             $errStr,
             $timeout,
             $connectAs,
-            $context
+            $context,
         );
 
         if (!$resource) {
@@ -249,9 +250,8 @@ class Socket
             }
             unset($this->_config[$key]);
         }
-        if (!isset($this->_config['context']['ssl']['SNI_enabled'])) {
-            $this->_config['context']['ssl']['SNI_enabled'] = true;
-        }
+        $this->_config['context']['ssl']['SNI_enabled'] ??= true;
+
         if (empty($this->_config['context']['ssl']['peer_name'])) {
             $this->_config['context']['ssl']['peer_name'] = $host;
         }
@@ -268,7 +268,7 @@ class Socket
      * socket_stream_client() does not populate errNum, or $errStr when there are
      * connection errors, as in the case of SSL verification failure.
      *
-     * Instead we need to handle those errors manually.
+     * Instead, we need to handle those errors manually.
      *
      * @param int $code Code number.
      * @param string $message Message.
@@ -282,7 +282,7 @@ class Socket
     /**
      * Get the connection context.
      *
-     * @return array|null Null when there is no connection, an array when there is.
+     * @return array<string, mixed>|null Null when there is no connection, an array when there is.
      */
     public function context(): ?array
     {
@@ -324,7 +324,7 @@ class Socket
     /**
      * Get all IP addresses associated with the current connection.
      *
-     * @return array IP addresses
+     * @return array<string> IP addresses
      */
     public function addresses(): array
     {
@@ -369,7 +369,7 @@ class Socket
      */
     public function write(string $data): int
     {
-        if (!$this->connected && !$this->connect()) {
+        if (!$this->isConnected() && !$this->connect()) {
             return 0;
         }
         $totalBytes = strlen($data);
@@ -396,11 +396,11 @@ class Socket
      */
     public function read(int $length = 1024): ?string
     {
-        if ($length < 0) {
+        if ($length < 1) {
             throw new InvalidArgumentException('Length must be greater than `0`');
         }
 
-        if (!$this->connected && !$this->connect()) {
+        if (!$this->isConnected() && !$this->connect()) {
             return null;
         }
 
@@ -432,7 +432,6 @@ class Socket
 
             return true;
         }
-        /** @psalm-suppress InvalidPropertyAssignmentValue */
         $this->connected = !fclose($this->connection);
 
         if (!$this->connected) {
@@ -458,9 +457,9 @@ class Socket
      */
     public function reset(?array $state = null): void
     {
-        if (empty($state)) {
+        if (!$state) {
             static $initialState = [];
-            if (empty($initialState)) {
+            if (!$initialState) {
                 $initialState = get_class_vars(self::class);
             }
             $state = $initialState;

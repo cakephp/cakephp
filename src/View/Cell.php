@@ -120,7 +120,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
         ServerRequest $request,
         Response $response,
         ?EventManagerInterface $eventManager = null,
-        array $cellOptions = []
+        array $cellOptions = [],
     ) {
         if ($eventManager !== null) {
             $this->setEventManager($eventManager);
@@ -168,15 +168,17 @@ abstract class Cell implements EventDispatcherInterface, Stringable
             $cache = $this->_cacheConfig($this->action, $template);
         }
 
-        $render = function () use ($template) {
+        $render = function () use ($template): string {
             try {
+                $this->dispatchEvent('Cell.beforeAction', [$this, $this->action, $this->args]);
                 $reflect = new ReflectionMethod($this, $this->action);
                 $reflect->invokeArgs($this, $this->args);
-            } catch (ReflectionException $e) {
+                $this->dispatchEvent('Cell.afterAction', [$this, $this->action, $this->args]);
+            } catch (ReflectionException) {
                 throw new BadMethodCallException(sprintf(
                     'Class `%s` does not have a `%s` method.',
                     static::class,
-                    $this->action
+                    $this->action,
                 ));
             }
 
@@ -188,12 +190,11 @@ abstract class Cell implements EventDispatcherInterface, Stringable
 
             $className = static::class;
             $namePrefix = '\View\Cell\\';
-            /** @psalm-suppress PossiblyFalseOperand */
             $name = substr($className, strpos($className, $namePrefix) + strlen($namePrefix));
             $name = substr($name, 0, -4);
             if (!$builder->getTemplatePath()) {
                 $builder->setTemplatePath(
-                    static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name)
+                    static::TEMPLATE_FOLDER . DIRECTORY_SEPARATOR . str_replace('\\', DIRECTORY_SEPARATOR, $name),
                 );
             }
             $template = $builder->getTemplate();
@@ -208,7 +209,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
                     $attributes['file'],
                     $attributes['paths'],
                     null,
-                    $e
+                    $e,
                 );
             }
         };
@@ -268,7 +269,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
                 'Could not render cell - %s [%s, line %d]',
                 $e->getMessage(),
                 $e->getFile(),
-                $e->getLine()
+                $e->getLine(),
             ), E_USER_WARNING);
 
             return '';
@@ -278,7 +279,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
                 'Could not render cell - %s [%s, line %d]',
                 $e->getMessage(),
                 $e->getFile(),
-                $e->getLine()
+                $e->getLine(),
             ), 0, $e);
         }
     }

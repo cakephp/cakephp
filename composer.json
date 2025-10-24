@@ -26,14 +26,14 @@
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "cakephp/chronos": "^3.0.2",
-        "composer/ca-bundle": "^1.2",
-        "laminas/laminas-diactoros": "^3.0",
+        "cakephp/chronos": "^3.1",
+        "composer/ca-bundle": "^1.5",
+        "laminas/laminas-diactoros": "^3.3",
         "laminas/laminas-httphandlerrunner": "^2.6",
         "league/container": "^4.2",
         "psr/container": "^1.1 || ^2.0",
         "psr/http-client": "^1.0.2",
-        "psr/http-factory": "^1.0.2",
+        "psr/http-factory": "^1.1",
         "psr/http-message": "^1.1 || ^2.0",
         "psr/http-server-handler": "^1.0.2",
         "psr/http-server-middleware": "^1.0.2",
@@ -57,17 +57,16 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
-        "cakephp/cakephp-codesniffer": "^5.0",
-        "http-interop/http-factory-tests": "^2.0",
+        "cakephp/cakephp-codesniffer": "^5.3",
+        "http-interop/http-factory-tests": "dev-main",
         "mikey179/vfsstream": "^1.6.10",
         "mockery/mockery": "^1.6",
         "paragonie/csp-builder": "^2.3 || ^3.0",
-        "phpunit/phpunit": "^10.1.0"
+        "phpunit/phpunit": "^10.5.5 || ^11.1.3 || ^12.0.9"
     },
     "suggest": {
         "ext-curl": "To enable more efficient network calls in Http\\Client.",
         "ext-openssl": "To use Security::encrypt() or have secure CSRF token generation.",
-        "lib-ICU": "To use locale-aware features in the I18n and Database packages",
         "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
     },
     "provide": {
@@ -80,10 +79,12 @@
         "psr/simple-cache-implementation": "^3.0"
     },
     "config": {
+        "lock": false,
         "process-timeout": 900,
         "sort-packages": true,
         "allow-plugins": {
-            "dealerdirect/phpcodesniffer-composer-installer": true
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
         }
     },
     "autoload": {
@@ -119,8 +120,8 @@
             "@cs-check",
             "@test"
         ],
-        "cs-check": "phpcs --colors --parallel=16 -p src/ tests/",
-        "cs-fix": "phpcbf --colors --parallel=16 -p src/ tests/",
+        "cs-check": "phpcs --colors --parallel=16 -p",
+        "cs-fix": "phpcbf --colors --parallel=16 -p",
         "phpstan": "tools/phpstan analyse",
         "psalm": "tools/psalm --show-info=false",
         "stan": [
@@ -138,8 +139,12 @@
     },
     "support": {
         "issues": "https://github.com/cakephp/cakephp/issues",
-        "forum": "https://stackoverflow.com/tags/cakephp",
-        "irc": "irc://irc.freenode.org/cakephp",
+        "forum": "https://discourse.cakephp.org/",
         "source": "https://github.com/cakephp/cakephp"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-5.next": "5.2.x-dev"
+        }
     }
 }

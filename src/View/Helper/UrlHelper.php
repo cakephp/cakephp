@@ -41,7 +41,7 @@ class UrlHelper extends Helper
      * Asset URL engine class name
      *
      * @var string
-     * @psalm-var class-string<\Cake\Routing\Asset>
+     * @phpstan-var class-string<\Cake\Routing\Asset>
      */
     protected string $_assetUrlClassName;
 
@@ -90,7 +90,7 @@ class UrlHelper extends Helper
 
         $url = Router::url($url, $options['fullBase']);
         if ($options['escape']) {
-            $url = (string)h($url);
+            return (string)h($url);
         }
 
         return $url;
@@ -226,7 +226,7 @@ class UrlHelper extends Helper
      * a timestamp will be added.
      *
      * @param string $path The file path to timestamp, the path must be inside `App.wwwRoot` in Configure.
-     * @param string|bool $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
+     * @param string|bool|null $timestamp If set will overrule the value of `Asset.timestamp` in Configure.
      * @return string Path with a timestamp added, or not.
      */
     public function assetTimestamp(string $path, string|bool|null $timestamp = null): string

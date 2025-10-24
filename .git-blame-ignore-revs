@@ -1,0 +1,8 @@
+# Use HTTPS for the cakefoundation.org URL
+c61ab5ee95cbf30a1720457c961337b200ab0c73
+# Run phpcbf for PSR2 CS fixers
+be845a3a01e3271fc075e49dcb81d73b0ec169c5
+# CS: Trailing comma on function calls (#18032)
+df42951a67281549f5ccdf9a65cfe4c2c8c69a6e
+# CS: Trailing comma (#18047)
+6a0a69422e86bbea3d0ea9b591949727410e6fcb

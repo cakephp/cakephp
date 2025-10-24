@@ -90,10 +90,7 @@ class FixtureHelper
                 throw new UnexpectedValueException(sprintf('Could not find fixture `%s`.', $fixtureName));
             }
 
-            if (!isset($cachedFixtures[$className])) {
-                $cachedFixtures[$className] = new $className();
-            }
-
+            $cachedFixtures[$className] ??= new $className();
             $fixtures[$className] = $cachedFixtures[$className];
         }
 
@@ -139,10 +136,9 @@ class FixtureHelper
                 if ($sortedFixtures) {
                     $this->insertConnection($connection, $sortedFixtures);
                 } else {
-                    $helper = new ConnectionHelper();
-                    $helper->runWithoutConstraints(
+                    ConnectionHelper::runWithoutConstraints(
                         $connection,
-                        fn (Connection $connection) => $this->insertConnection($connection, $groupFixtures)
+                        fn(Connection $connection) => $this->insertConnection($connection, $groupFixtures),
                     );
                 }
             } else {
@@ -168,7 +164,7 @@ class FixtureHelper
                     'Unable to insert rows for table `%s`.'
                         . " Fixture records might have invalid data or unknown constraints.\n%s",
                     $fixture->sourceName(),
-                    $exception->getMessage()
+                    $exception->getMessage(),
                 );
                 throw new CakeException($message);
             }
@@ -197,7 +193,7 @@ class FixtureHelper
                     $helper = new ConnectionHelper();
                     $helper->runWithoutConstraints(
                         $connection,
-                        fn (Connection $connection) => $this->truncateConnection($connection, $groupFixtures)
+                        fn(Connection $connection) => $this->truncateConnection($connection, $groupFixtures),
                     );
                 }
             } else {
@@ -221,9 +217,9 @@ class FixtureHelper
             } catch (PDOException $exception) {
                 $message = sprintf(
                     'Unable to truncate table `%s`.'
-                        . " Fixture records might have invalid data or unknown contraints.\n%s",
+                        . " Fixture records might have invalid data or unknown constraints.\n%s",
                     $fixture->sourceName(),
-                    $exception->getMessage()
+                    $exception->getMessage(),
                 );
                 throw new CakeException($message);
             }
@@ -250,7 +246,7 @@ class FixtureHelper
             }
         }
 
-        // Check if any fixtures reference another fixture with constrants
+        // Check if any fixtures reference another fixture with constraints
         // If they do, then there might be cross-dependencies which we don't support sorting
         foreach ($constrained as ['references' => $references]) {
             foreach ($references as $reference) {

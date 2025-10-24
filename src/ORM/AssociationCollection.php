@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM;
 
 use ArrayIterator;
+use Cake\Core\Exception\CakeException;
 use Cake\Datasource\EntityInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Locator\LocatorInterface;
@@ -70,13 +71,18 @@ class AssociationCollection implements IteratorAggregate
      * @param string $alias The association alias
      * @param \Cake\ORM\Association $association The association to add.
      * @return \Cake\ORM\Association The association object being added.
+     * @throws \Cake\Core\Exception\CakeException If the alias is already added.
      * @template T of \Cake\ORM\Association
-     * @psalm-param T $association
-     * @psalm-return T
+     * @phpstan-param T $association
+     * @phpstan-return T
      */
     public function add(string $alias, Association $association): Association
     {
         [, $alias] = pluginSplit($alias);
+
+        if (isset($this->_items[$alias])) {
+            throw new CakeException(sprintf('Association alias `%s` is already set.', $alias));
+        }
 
         return $this->_items[$alias] = $association;
     }
@@ -90,8 +96,8 @@ class AssociationCollection implements IteratorAggregate
      * @return \Cake\ORM\Association
      * @throws \InvalidArgumentException
      * @template T of \Cake\ORM\Association
-     * @psalm-param class-string<T> $className
-     * @psalm-return T
+     * @phpstan-param class-string<T> $className
+     * @phpstan-return T
      */
     public function load(string $className, string $associated, array $options = []): Association
     {
@@ -216,7 +222,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function saveParents(Table $table, EntityInterface $entity, array $associations, array $options = []): bool
     {
-        if (empty($associations)) {
+        if (!$associations) {
             return true;
         }
 
@@ -238,7 +244,7 @@ class AssociationCollection implements IteratorAggregate
      */
     public function saveChildren(Table $table, EntityInterface $entity, array $associations, array $options): bool
     {
-        if (empty($associations)) {
+        if (!$associations) {
             return true;
         }
 
@@ -262,7 +268,7 @@ class AssociationCollection implements IteratorAggregate
         EntityInterface $entity,
         array $associations,
         array $options,
-        bool $owningSide
+        bool $owningSide,
     ): bool {
         unset($options['associated']);
         foreach ($associations as $alias => $nested) {
@@ -275,7 +281,7 @@ class AssociationCollection implements IteratorAggregate
                 $msg = sprintf(
                     'Cannot save `%s`, it is not associated to `%s`.',
                     $alias,
-                    $table->getAlias()
+                    $table->getAlias(),
                 );
                 throw new InvalidArgumentException($msg);
             }
@@ -303,12 +309,12 @@ class AssociationCollection implements IteratorAggregate
         Association $association,
         EntityInterface $entity,
         array $nested,
-        array $options
+        array $options,
     ): bool {
         if (!$entity->isDirty($association->getProperty())) {
             return true;
         }
-        if (!empty($nested)) {
+        if ($nested) {
             $options = $nested + $options;
         }
 
@@ -361,7 +367,7 @@ class AssociationCollection implements IteratorAggregate
             $keys = $this->keys();
         }
 
-        if (empty($keys)) {
+        if (!$keys) {
             return [];
         }
 

@@ -21,8 +21,10 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Exception\QueryException;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query\DeleteQuery;
@@ -37,6 +39,7 @@ use Cake\Database\Statement\Statement;
 use InvalidArgumentException;
 use PDO;
 use PDOException;
+use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerAwareTrait;
 use Psr\Log\LoggerInterface;
 use Stringable;
@@ -45,7 +48,7 @@ use Stringable;
  * Represents a database driver containing all specificities for
  * a database engine including its SQL dialect.
  */
-abstract class Driver
+abstract class Driver implements LoggerAwareInterface
 {
     use LoggerAwareTrait;
 
@@ -123,6 +126,13 @@ abstract class Driver
     protected ?string $_version = null;
 
     /**
+     * Whether to log queries generated during this connection.
+     *
+     * @var bool
+     */
+    protected bool $logQueries = false;
+
+    /**
      * The last number of connection retry attempts.
      *
      * @var int
@@ -146,7 +156,7 @@ abstract class Driver
     {
         if (empty($config['username']) && !empty($config['login'])) {
             throw new InvalidArgumentException(
-                'Please pass "username" instead of "login" for connecting to the database'
+                'Please pass "username" instead of "login" for connecting to the database',
             );
         }
         $config += $this->_baseConfig + ['log' => false];
@@ -155,6 +165,7 @@ abstract class Driver
             $this->enableAutoQuoting();
         }
         if ($config['log'] !== false) {
+            $this->logQueries = true;
             $this->logger = $this->createLogger($config['log'] === true ? null : $config['log']);
         }
     }
@@ -178,11 +189,11 @@ abstract class Driver
      */
     protected function createPdo(string $dsn, array $config): PDO
     {
-        $action = fn () => new PDO(
+        $action = fn(): PDO => new PDO(
             $dsn,
             $config['username'] ?: null,
             $config['password'] ?: null,
-            $config['flags']
+            $config['flags'],
         );
 
         $retry = new CommandRetry(new ErrorCodeWaitStrategy(static::RETRY_ERROR_CODES, 5), 4);
@@ -195,7 +206,7 @@ abstract class Driver
                     'reason' => $e->getMessage(),
                 ],
                 null,
-                $e
+                $e,
             );
         } finally {
             $this->connectRetries = $retry->getRetries();
@@ -254,7 +265,11 @@ abstract class Driver
      */
     public function exec(string $sql): int|false
     {
-        return $this->getPdo()->exec($sql);
+        try {
+            return $this->getPdo()->exec($sql);
+        } catch (PDOException $e) {
+            throw new QueryException($sql, $e);
+        }
     }
 
     /**
@@ -276,7 +291,7 @@ abstract class Driver
     public function execute(string $sql, array $params = [], array $types = []): StatementInterface
     {
         $statement = $this->prepare($sql);
-        if (!empty($params)) {
+        if ($params) {
             $statement->bind($params, $types);
         }
         $this->executeStatement($statement);
@@ -310,7 +325,11 @@ abstract class Driver
     protected function executeStatement(StatementInterface $statement, ?array $params = null): void
     {
         if ($this->logger === null) {
-            $statement->execute($params);
+            try {
+                $statement->execute($params);
+            } catch (PDOException $e) {
+                throw $this->createQueryException($e, $statement, $params);
+            }
 
             return;
         }
@@ -338,8 +357,31 @@ abstract class Driver
         $this->log($statement->queryString(), $logContext);
 
         if ($exception) {
-            throw $exception;
+            throw $this->createQueryException($exception, $statement, $params);
         }
+    }
+
+    /**
+     * Create a QueryException from a PDOException
+     *
+     * @param \PDOException $exception
+     * @param \Cake\Database\StatementInterface $statement
+     * @param array|null $params
+     * @return \Cake\Database\Exception\QueryException
+     */
+    protected function createQueryException(
+        PDOException $exception,
+        StatementInterface $statement,
+        ?array $params = null,
+    ): QueryException {
+        $loggedQuery = new LoggedQuery();
+        $loggedQuery->setContext([
+            'query' => $statement->queryString(),
+            'driver' => $this,
+            'params' => $params ?? $statement->getBoundParams(),
+        ]);
+
+        return new QueryException($loggedQuery, $exception);
     }
 
     /**
@@ -350,15 +392,38 @@ abstract class Driver
      */
     public function prepare(Query|string $query): StatementInterface
     {
-        $statement = $this->getPdo()->prepare($query instanceof Query ? $query->sql() : $query);
-
-        $typeMap = null;
-        if ($query instanceof SelectQuery && $query->isResultsCastingEnabled()) {
-            $typeMap = $query->getSelectTypeMap();
+        try {
+            $statement = $this->getPdo()->prepare($query instanceof Query ? $query->sql() : $query);
+        } catch (PDOException $e) {
+            throw new QueryException(
+                $query instanceof Query ? $query->sql() : $query,
+                $e,
+            );
         }
 
         /** @var \Cake\Database\StatementInterface */
-        return new (static::STATEMENT_CLASS)($statement, $this, $typeMap);
+        return new (static::STATEMENT_CLASS)($statement, $this, $this->getResultSetDecorators($query));
+    }
+
+    /**
+     * Returns the decorators to be applied to the result set incase of a SelectQuery.
+     *
+     * @param \Cake\Database\Query|string $query The query to be decorated.
+     * @return array<\Closure>
+     */
+    protected function getResultSetDecorators(Query|string $query): array
+    {
+        if ($query instanceof SelectQuery) {
+            $decorators = $query->getResultDecorators();
+            if ($query->isResultsCastingEnabled()) {
+                $typeConverter = new FieldTypeConverter($query->getSelectTypeMap(), $this);
+                array_unshift($decorators, $typeConverter(...));
+            }
+
+            return $decorators;
+        }
+
+        return [];
     }
 
     /**
@@ -487,7 +552,7 @@ abstract class Driver
             $query instanceof DeleteQuery => $this->_deleteQueryTranslator($query),
             default => throw new InvalidArgumentException(sprintf(
                 'Instance of SelectQuery, UpdateQuery, InsertQuery, DeleteQuery expected. Found `%s` instead.',
-                get_debug_type($query)
+                get_debug_type($query),
             )),
         };
 
@@ -604,15 +669,15 @@ abstract class Driver
      * @throws \Cake\Database\Exception\DatabaseException In case the processed query contains any joins, as removing
      *  aliases from the conditions can break references to the joined tables.
      * @template T of \Cake\Database\Query\UpdateQuery|\Cake\Database\Query\DeleteQuery
-     * @psalm-param T $query
-     * @psalm-return T
+     * @phpstan-param T $query
+     * @phpstan-return T
      */
     protected function _removeAliasesFromConditions(UpdateQuery|DeleteQuery $query): UpdateQuery|DeleteQuery
     {
         if ($query->clause('join')) {
             throw new DatabaseException(
                 'Aliases are being removed from conditions for UPDATE/DELETE queries, ' .
-                'this can break references to joined tables.'
+                'this can break references to joined tables.',
             );
         }
 
@@ -687,6 +752,25 @@ abstract class Driver
     }
 
     /**
+     * Quotes a database value.
+     *
+     * This makes values safe for concatenation in SQL queries.
+     *
+     * Using this method **is not** recommended. You should use `execute()`
+     * instead, as it uses prepared statements which are safer than
+     * string concatenation.
+     *
+     * This method should only be used for queries that do not support placeholders.
+     *
+     * @param string $value The value to quote.
+     * @return string
+     */
+    public function quote(string $value): string
+    {
+        return $this->getPdo()->quote($value);
+    }
+
+    /**
      * Get identifier quoter instance.
      *
      * @return \Cake\Database\IdentifierQuoter
@@ -716,7 +800,6 @@ abstract class Driver
         if (is_float($value)) {
             return str_replace(',', '.', (string)$value);
         }
-        /** @psalm-suppress InvalidArgument */
         if (
             (
                 is_int($value) ||
@@ -730,6 +813,9 @@ abstract class Driver
             )
         ) {
             return (string)$value;
+        }
+        if ($value instanceof QueryExpression) {
+            return $value->sql(new ValueBinder());
         }
 
         return $this->getPdo()->quote((string)$value, PDO::PARAM_STR);
@@ -763,17 +849,15 @@ abstract class Driver
      */
     public function isConnected(): bool
     {
-        if (isset($this->pdo)) {
-            try {
-                $connected = (bool)$this->pdo->query('SELECT 1');
-            } catch (PDOException $e) {
-                $connected = false;
-            }
-        } else {
-            $connected = false;
+        if ($this->pdo === null) {
+            return false;
         }
 
-        return $connected;
+        try {
+            return (bool)$this->pdo->query('SELECT 1');
+        } catch (PDOException) {
+            return false;
+        }
     }
 
     /**
@@ -851,7 +935,7 @@ abstract class Driver
      * Constructs new TableSchema.
      *
      * @param string $table The table name.
-     * @param array $columns The list of columns for the schema.
+     * @param array<string, mixed> $columns The list of columns for the schema.
      * @return \Cake\Database\Schema\TableSchemaInterface
      */
     public function newTableSchema(string $table, array $columns = []): TableSchemaInterface
@@ -898,8 +982,8 @@ abstract class Driver
         $className = App::className($className, 'Cake/Log', 'Log');
         if ($className === null) {
             throw new CakeException(
-                'For logging you must either set the `log` config to a FQCN which implemnts Psr\Log\LoggerInterface' .
-                ' or require the cakephp/log package in your composer config.'
+                'For logging you must either set the `log` config to a FQCN which implements Psr\Log\LoggerInterface' .
+                ' or require the cakephp/log package in your composer config.',
             );
         }
 
@@ -915,7 +999,7 @@ abstract class Driver
      */
     public function log(Stringable|string $message, array $context = []): bool
     {
-        if ($this->logger === null) {
+        if ($this->logger === null || !$this->logQueries) {
             return false;
         }
 
@@ -936,6 +1020,39 @@ abstract class Driver
     public function getRole(): string
     {
         return $this->_config['_role'] ?? Connection::ROLE_WRITE;
+    }
+
+    /**
+     * Enable query logging.
+     *
+     * @return $this
+     */
+    public function enableQueryLogging()
+    {
+        $this->logQueries = true;
+
+        return $this;
+    }
+
+    /**
+     * Disable query logging.
+     *
+     * @return $this
+     */
+    public function disableQueryLogging()
+    {
+        $this->logQueries = false;
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function setLogger(LoggerInterface $logger): void
+    {
+        $this->logger = $logger;
+        $this->enableQueryLogging();
     }
 
     /**

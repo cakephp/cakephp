@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
+use Closure;
+
 /**
  * Contains logic for invoking an application rule.
  *
@@ -115,20 +117,24 @@ class RuleInvoker
     {
         $rule = $this->rule;
         $pass = $rule($entity, $this->options + $scope);
-        if ($pass === true || empty($this->options['errorField'])) {
-            return $pass === true;
+        if ($pass === true) {
+            return true;
         }
 
         $message = $this->options['message'] ?? 'invalid';
         if (is_string($pass)) {
             $message = $pass;
         }
+        if ($message instanceof Closure) {
+            $message = $message($entity, $this->options + $scope);
+        }
         if ($this->name) {
             $message = [$this->name => $message];
         } else {
             $message = [$message];
         }
-        $errorField = $this->options['errorField'];
+
+        $errorField = $this->options['errorField'] ?? ($this->name ?? '_rule');
         $entity->setError($errorField, $message);
 
         if ($entity instanceof InvalidPropertyInterface && isset($entity->{$errorField})) {
@@ -136,7 +142,6 @@ class RuleInvoker
             $entity->setInvalidField($errorField, $invalidValue);
         }
 
-        /** @phpstan-ignore-next-line */
-        return $pass === true;
+        return false;
     }
 }

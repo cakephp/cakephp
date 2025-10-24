@@ -48,8 +48,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests saving belongsTo association and get a validation error
-     *
-     * @group save
      */
     public function testSaveBelongsToWithValidationError(): void
     {
@@ -72,7 +70,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
                     return false;
                 },
-                ['errorField' => 'name', 'message' => 'This is an error']
+                ['errorField' => 'name', 'message' => 'This is an error'],
             );
 
         $this->assertFalse($table->save($entity));
@@ -86,8 +84,6 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests saving hasOne association and returning a validation error will
      * abort the saving process
-     *
-     * @group save
      */
     public function testSaveHasOneWithValidationError(): void
     {
@@ -108,7 +104,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 function (EntityInterface $entity) {
                     return false;
                 },
-                ['errorField' => 'title', 'message' => 'This is an error']
+                ['errorField' => 'title', 'message' => 'This is an error'],
             );
 
         $this->assertFalse($table->save($entity));
@@ -153,7 +149,7 @@ class RulesCheckerIntegrationTest extends TestCase
 
                     return $entity->title === '1';
                 },
-                ['errorField' => 'title', 'message' => 'This is an error']
+                ['errorField' => 'title', 'message' => 'This is an error'],
             );
 
         $this->assertFalse($table->save($entity));
@@ -198,7 +194,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 function (Entity $article) {
                     return is_numeric($article->title);
                 },
-                ['errorField' => 'title', 'message' => 'This is an error']
+                ['errorField' => 'title', 'message' => 'This is an error'],
             );
 
         $result = $table->save($entity, ['atomic' => false]);
@@ -213,8 +209,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests saving belongsToMany records with a validation error in a joint entity
-     *
-     * @group save
      */
     public function testSaveBelongsToManyWithValidationErrorInJointEntity(): void
     {
@@ -252,8 +246,6 @@ class RulesCheckerIntegrationTest extends TestCase
     /**
      * Tests saving belongsToMany records with a validation error in a joint entity
      * and atomic set to false
-     *
-     * @group save
      */
     public function testSaveBelongsToManyWithValidationErrorInJointEntityNonAtomic(): void
     {
@@ -291,8 +283,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Test adding rule with name
-     *
-     * @group save
      */
     public function testAddingRuleWithName(): void
     {
@@ -307,7 +297,7 @@ class RulesCheckerIntegrationTest extends TestCase
                 return false;
             },
             'ruleName',
-            ['errorField' => 'name']
+            ['errorField' => 'name'],
         );
 
         $this->assertFalse($table->save($entity));
@@ -331,15 +321,13 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertEquals(
             ['_isUnique' => 'This value is already in use'],
             $entity->getError('title'),
-            'Provided field should have errors'
+            'Provided field should have errors',
         );
         $this->assertEmpty($entity->getError('name'), 'Errors should not apply to original field.');
     }
 
     /**
      * Tests the isUnique domain rule
-     *
-     * @group save
      */
     public function testIsUniqueDomainRule(): void
     {
@@ -364,8 +352,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests isUnique with multiple fields
-     *
-     * @group save
      */
     public function testIsUniqueMultipleFields(): void
     {
@@ -395,7 +381,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(
             ['first_author_id', 'second_author_id'],
-            ['allowMultipleNulls' => false]
+            ['allowMultipleNulls' => false],
         ));
 
         $entity = new Entity([
@@ -408,8 +394,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests isUnique with allowMultipleNulls
-     *
-     * @group save
      */
     public function testIsUniqueAllowMultipleNulls(): void
     {
@@ -418,7 +402,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $table = $this->getTableLocator()->get('UniqueAuthors');
         $rules = $table->rulesChecker();
         $rules->add($rules->isUnique(
-            ['first_author_id', 'second_author_id']
+            ['first_author_id', 'second_author_id'],
         ));
 
         $entity = new Entity([
@@ -440,8 +424,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the existsIn domain rule
-     *
-     * @group save
      */
     public function testExistsInDomainRule(): void
     {
@@ -478,15 +460,13 @@ class RulesCheckerIntegrationTest extends TestCase
         $this->assertEquals(
             ['_existsIn' => 'This value does not exist'],
             $entity->getError('other'),
-            'Provided field should have errors'
+            'Provided field should have errors',
         );
         $this->assertEmpty($entity->getError('author_id'), 'Errors should not apply to original field.');
     }
 
     /**
      * Tests the existsIn domain rule when passing an object
-     *
-     * @group save
      */
     public function testExistsInDomainRuleWithObject(): void
     {
@@ -571,8 +551,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests existsIn with invalid associations
-     *
-     * @group save
      */
     public function testExistsInInvalidAssociation(): void
     {
@@ -649,8 +627,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the checkRules save option
-     *
-     * @group save
      */
     public function testSkipRulesChecking(): void
     {
@@ -668,8 +644,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the beforeRules event
-     *
-     * @group save
      */
     public function testUseBeforeRules(): void
     {
@@ -694,13 +668,13 @@ class RulesCheckerIntegrationTest extends TestCase
                         '_primary' => true,
                         '_cleanOnSuccess' => true,
                     ],
-                    $options->getArrayCopy()
+                    $options->getArrayCopy(),
                 );
                 $this->assertSame('create', $operation);
                 $event->stopPropagation();
 
-                return true;
-            }
+                $event->setResult(true);
+            },
         );
 
         $this->assertSame($entity, $table->save($entity));
@@ -708,8 +682,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the afterRules event
-     *
-     * @group save
      */
     public function testUseAfterRules(): void
     {
@@ -734,14 +706,14 @@ class RulesCheckerIntegrationTest extends TestCase
                         '_primary' => true,
                         '_cleanOnSuccess' => true,
                     ],
-                    $options->getArrayCopy()
+                    $options->getArrayCopy(),
                 );
                 $this->assertSame('create', $operation);
                 $this->assertFalse($result);
                 $event->stopPropagation();
 
-                return true;
-            }
+                $event->setResult(true);
+            },
         );
 
         $this->assertSame($entity, $table->save($entity));
@@ -749,8 +721,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests that rules can be changed using the buildRules event
-     *
-     * @group save
      */
     public function testUseBuildRulesEvent(): void
     {
@@ -769,8 +739,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests isUnique with untouched fields
-     *
-     * @group save
      */
     public function testIsUniqueWithCleanFields(): void
     {
@@ -788,8 +756,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests isUnique rule with conflicting columns
-     *
-     * @group save
      */
     public function testIsUniqueAliasPrefix(): void
     {
@@ -813,8 +779,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the existsIn rule when passing non dirty fields
-     *
-     * @group save
      */
     public function testExistsInWithCleanFields(): void
     {
@@ -832,8 +796,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the existsIn with conflicting columns
-     *
-     * @group save
      */
     public function testExistsInAliasPrefix(): void
     {
@@ -892,7 +854,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
             'allowNullableNulls' => true,
         ]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**
@@ -974,7 +936,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowNullableNulls' => true]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**
@@ -993,7 +955,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowNullableNulls' => false]));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**
@@ -1014,7 +976,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
             'allowNullableNulls' => true,
             'message' => 'will not error']));
-        $this->assertInstanceOf('Cake\ORM\Entity', $table->save($entity));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
     }
 
     /**
@@ -1123,8 +1085,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests using rules to prevent delete operations
-     *
-     * @group delete
      */
     public function testDeleteRules(): void
     {
@@ -1140,8 +1100,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Checks that it is possible to pass custom options to rules when saving
-     *
-     * @group save
      */
     public function testCustomOptionsPassingSave(): void
     {
@@ -1163,8 +1121,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests passing custom options to rules from delete
-     *
-     * @group delete
      */
     public function testCustomOptionsPassingDelete(): void
     {
@@ -1183,8 +1139,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Test adding rules that return error string
-     *
-     * @group save
      */
     public function testCustomErrorMessageFromRule(): void
     {
@@ -1203,9 +1157,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Test adding rules with no errorField do not accept strings
-     *
-     * @group save
+     * Test adding rules with no errorField now sets errors under _rule key
      */
     public function testCustomErrorMessageFromRuleNoErrorField(): void
     {
@@ -1220,14 +1172,13 @@ class RulesCheckerIntegrationTest extends TestCase
         });
 
         $this->assertFalse($table->save($entity));
-        $this->assertEmpty($entity->getErrors());
+        $this->assertNotEmpty($entity->getErrors());
+        $this->assertEquals(['So much nope'], $entity->getError('_rule'));
     }
 
     /**
      * Tests that using existsIn for a hasMany association will not be called
      * as the foreign key for the association was automatically validated already.
-     *
-     * @group save
      */
     public function testAvoidExistsInOnAutomaticSaving(): void
     {
@@ -1265,8 +1216,6 @@ class RulesCheckerIntegrationTest extends TestCase
 
     /**
      * Tests the existsIn domain rule respects the conditions set for the associations
-     *
-     * @group save
      */
     public function testExistsInDomainRuleWithAssociationConditions(): void
     {
@@ -1353,7 +1302,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
-            $rulesChecker->isLinkedTo('Articles')
+            $rulesChecker->isLinkedTo('Articles'),
         );
 
         $comment->setDirty('comment', true);
@@ -1378,7 +1327,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
-            $rulesChecker->isNotLinkedTo('Comments')
+            $rulesChecker->isNotLinkedTo('Comments'),
         );
 
         $article = $Articles->get(1);
@@ -1398,16 +1347,22 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testIsLinkedToInferFieldFromAssociationNameWithNoRepositoryAvailable(): void
     {
-        $rulesChecker = new RulesChecker();
+        $Comments = new class extends Table {
+            public function initialize(array $config): void
+            {
+                $this->setAlias('Comments');
+                $this->setTable('comments');
+                $this->belongsTo('Articles');
+            }
 
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $Comments */
-        $Comments = $this->getMockForModel('Comments', ['rulesChecker'], ['className' => Table::class]);
-        $Comments
-            ->expects($this->any())
-            ->method('rulesChecker')
-            ->willReturn($rulesChecker);
-
-        $Comments->belongsTo('Articles');
+            public function buildRules(RulesChecker $rules): RulesChecker
+            {
+                return $rules->addUpdate(
+                    $rules->isLinkedTo('Articles'),
+                    ['repository' => $this],
+                );
+            }
+        };
 
         $comment = $Comments->save($Comments->newEntity([
             'article_id' => 9999,
@@ -1415,16 +1370,11 @@ class RulesCheckerIntegrationTest extends TestCase
             'comment' => 'Orphaned Comment',
         ]));
 
-        $rulesChecker->addUpdate(
-            $rulesChecker->isLinkedTo('Articles'),
-            ['repository' => $Comments]
-        );
-
         $comment->setDirty('comment', true);
         $this->assertFalse($Comments->save($comment));
 
         $expected = [
-            'articles' => [
+            'article' => [
                 '_isLinkedTo' => 'Cannot modify row: a constraint for the `Articles` association fails.',
             ],
         ];
@@ -1437,21 +1387,22 @@ class RulesCheckerIntegrationTest extends TestCase
      */
     public function testIsNotLinkedToInferFieldFromAssociationNameWithNoRepositoryAvailable(): void
     {
-        $rulesChecker = new RulesChecker();
+        $Articles = new class extends Table {
+            public function initialize(array $config): void
+            {
+                $this->setAlias('Articles');
+                $this->setTable('articles');
+                $this->hasMany('Comments');
+            }
 
-        /** @var \Cake\ORM\Table&\PHPUnit\Framework\MockObject\MockObject $Articles */
-        $Articles = $this->getMockForModel('Articles', ['rulesChecker'], ['className' => Table::class]);
-        $Articles
-            ->expects($this->any())
-            ->method('rulesChecker')
-            ->willReturn($rulesChecker);
-
-        $Articles->hasMany('Comments');
-
-        $rulesChecker->addDelete(
-            $rulesChecker->isNotLinkedTo('Comments'),
-            ['repository' => $Articles]
-        );
+            public function buildRules(RulesChecker $rules): RulesChecker
+            {
+                return $rules->addDelete(
+                    $rules->isNotLinkedTo('Comments'),
+                    ['repository' => $this],
+                );
+            }
+        };
 
         $article = $Articles->get(1);
         $this->assertFalse($Articles->delete($article));
@@ -1481,7 +1432,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
-            $rulesChecker->isLinkedTo($Comments->getAssociation('Articles'))
+            $rulesChecker->isLinkedTo($Comments->getAssociation('Articles')),
         );
 
         $comment->setDirty('comment', true);
@@ -1506,7 +1457,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
-            $rulesChecker->isNotLinkedTo($Articles->getAssociation('Comments'))
+            $rulesChecker->isNotLinkedTo($Articles->getAssociation('Comments')),
         );
 
         $article = $Articles->get(1);
@@ -1537,7 +1488,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
-            $rulesChecker->isLinkedTo('Articles', 'custom')
+            $rulesChecker->isLinkedTo('Articles', 'custom'),
         );
 
         $comment->setDirty('comment', true);
@@ -1562,7 +1513,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
-            $rulesChecker->isNotLinkedTo('Comments', 'custom')
+            $rulesChecker->isNotLinkedTo('Comments', 'custom'),
         );
 
         $article = $Articles->get(1);
@@ -1593,7 +1544,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
-            $rulesChecker->isLinkedTo('Articles', 'article', 'custom')
+            $rulesChecker->isLinkedTo('Articles', 'article', 'custom'),
         );
 
         $comment->setDirty('comment', true);
@@ -1618,7 +1569,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
-            $rulesChecker->isNotLinkedTo('Comments', 'comments', 'custom')
+            $rulesChecker->isNotLinkedTo('Comments', 'comments', 'custom'),
         );
 
         $article = $Articles->get(1);
@@ -1643,7 +1594,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $messageId = 'Cannot modify row: a constraint for the `{0}` association fails.';
         $translator->getPackage()->addMessage(
             $messageId,
-            'Zeile kann nicht geändert werden: Eine Einschränkung für die "{0}" Beziehung schlägt fehl.'
+            'Zeile kann nicht geändert werden: Eine Einschränkung für die "{0}" Beziehung schlägt fehl.',
         );
 
         $Comments = $this->getTableLocator()->get('Comments');
@@ -1659,7 +1610,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rulesChecker = $Comments->rulesChecker();
 
         $rulesChecker->addUpdate(
-            $rulesChecker->isLinkedTo('Articles', 'article')
+            $rulesChecker->isLinkedTo('Articles', 'article'),
         );
 
         $comment->setDirty('comment', true);
@@ -1686,7 +1637,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $messageId = 'Cannot modify row: a constraint for the `{0}` association fails.';
         $translator->getPackage()->addMessage(
             $messageId,
-            'Zeile kann nicht geändert werden: Eine Einschränkung für die "{0}" Beziehung schlägt fehl.'
+            'Zeile kann nicht geändert werden: Eine Einschränkung für die "{0}" Beziehung schlägt fehl.',
         );
 
         $Comments = $this->getTableLocator()->get('Comments');
@@ -1696,7 +1647,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $rulesChecker = $Comments->rulesChecker();
 
         $rulesChecker->addUpdate(
-            $rulesChecker->isNotLinkedTo('Articles', 'articles')
+            $rulesChecker->isNotLinkedTo('Articles', 'articles'),
         );
 
         $comment = $Comments->get(1);
@@ -1724,7 +1675,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $messageId = 'Cannot modify row: a constraint for the `{0}` association fails.';
         $translator->getPackage()->addMessage(
             $messageId,
-            'translated'
+            'translated',
         );
 
         $Comments = $this->getTableLocator()->get('Comments');
@@ -1744,11 +1695,11 @@ class RulesCheckerIntegrationTest extends TestCase
                 $rulesChecker->{'_useI18n'} = false;
             },
             null,
-            RulesChecker::class
+            RulesChecker::class,
         )();
 
         $rulesChecker->addUpdate(
-            $rulesChecker->isLinkedTo('Articles', 'article')
+            $rulesChecker->isLinkedTo('Articles', 'article'),
         );
 
         $comment->setDirty('comment', true);
@@ -1775,7 +1726,7 @@ class RulesCheckerIntegrationTest extends TestCase
         $messageId = 'Cannot modify row: a constraint for the `{0}` association fails.';
         $translator->getPackage()->addMessage(
             $messageId,
-            'translated'
+            'translated',
         );
 
         $Comments = $this->getTableLocator()->get('Comments');
@@ -1789,11 +1740,11 @@ class RulesCheckerIntegrationTest extends TestCase
                 $rulesChecker->{'_useI18n'} = false;
             },
             null,
-            RulesChecker::class
+            RulesChecker::class,
         )();
 
         $rulesChecker->addUpdate(
-            $rulesChecker->isNotLinkedTo('Articles', 'articles')
+            $rulesChecker->isNotLinkedTo('Articles', 'articles'),
         );
 
         $comment = $Comments->get(1);
@@ -1821,7 +1772,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Comments->rulesChecker();
         $rulesChecker->addUpdate(
-            $rulesChecker->isLinkedTo('Articles', 'articles')
+            $rulesChecker->isLinkedTo('Articles', 'articles'),
         );
 
         $comment = $Comments->get(1);
@@ -1840,7 +1791,7 @@ class RulesCheckerIntegrationTest extends TestCase
         /** @var \Cake\ORM\RulesChecker $rulesChecker */
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete(
-            $rulesChecker->isNotLinkedTo('Comments', 'comments')
+            $rulesChecker->isNotLinkedTo('Comments', 'comments'),
         );
 
         $article = $Articles->get(3);

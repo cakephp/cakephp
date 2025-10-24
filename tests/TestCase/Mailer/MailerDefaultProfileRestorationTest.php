@@ -21,27 +21,22 @@ class MailerDefaultProfileRestorationTest extends TestCase
 {
     public function testSendAction(): void
     {
-        $mailer = $this->getMockBuilder(DefaultProfileRestorationMailer::class)
-            ->onlyMethods(['deliver', 'test'])
-            ->setConstructorArgs([['template' => 'cakephp']])
-            ->getMock();
-        $mailer->expects($this->once())
-            ->method('test')
-            ->with('foo', 'bar');
-        $mailer->expects($this->once())
-            ->method('deliver')
-            ->willReturn([]);
+        $mailer = new class (['template' => 'cakephp']) extends Mailer {
+            public bool $testIsCalled = false;
+
+            public function test($to, $subject)
+            {
+                $this->testIsCalled = true;
+            }
+
+            public function deliver(string $content = ''): array
+            {
+                return [];
+            }
+        };
 
         $mailer->send('test', ['foo', 'bar']);
         $this->assertSame('cakephp', $mailer->viewBuilder()->getTemplate());
+        $this->assertTrue($mailer->testIsCalled);
     }
 }
-
-// phpcs:disable
-class DefaultProfileRestorationMailer extends Mailer
-{
-    public function test($to, $subject)
-    {
-    }
-}
-// phpcs:enable

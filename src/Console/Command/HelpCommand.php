@@ -26,6 +26,7 @@ use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Utility\Inflector;
 use SimpleXMLElement;
 
 /**
@@ -87,9 +88,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             if (is_object($class)) {
                 $class = $class::class;
             }
-            if (!isset($invert[$class])) {
-                $invert[$class] = [];
-            }
+            $invert[$class] ??= [];
             $invert[$class][] = $name;
         }
         $grouped = [];
@@ -97,15 +96,15 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         foreach ($invert as $class => $names) {
             preg_match('/^(.+)\\\\Command\\\\/', $class, $matches);
             // Probably not a useful class
-            if (empty($matches)) {
+            if (!$matches) {
                 continue;
             }
             $namespace = str_replace('\\', '/', $matches[1]);
-            $prefix = 'App';
+            $prefix = 'app';
             if ($namespace === 'Cake') {
-                $prefix = 'CakePHP';
+                $prefix = 'cakephp';
             } elseif (in_array($namespace, $plugins, true)) {
-                $prefix = $namespace;
+                $prefix = Inflector::underscore($namespace);
             }
             $shortestName = $this->getShortestName($names);
             if (str_contains($shortestName, '.')) {
@@ -118,6 +117,16 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             ];
         }
         ksort($grouped);
+
+        if (isset($grouped['CakePHP'])) {
+            $cakephp = $grouped['CakePHP'];
+            $grouped = ['CakePHP' => $cakephp] + $grouped;
+        }
+
+        if (isset($grouped['App'])) {
+            $app = $grouped['App'];
+            $grouped = ['App' => $app] + $grouped;
+        }
 
         $this->outputPaths($io);
         $io->out('<info>Available Commands:</info>', 2);
@@ -159,7 +168,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         if (defined('CORE_PATH')) {
             $paths['core'] = rtrim(CORE_PATH, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         }
-        if (!count($paths)) {
+        if ($paths === []) {
             return;
         }
         $io->out('<info>Current Paths:</info>', 2);
@@ -172,13 +181,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     /**
      * @param array<string> $names Names
      * @return string
+     * @phpstan-param non-empty-array<string> $names
      */
     protected function getShortestName(array $names): string
     {
-        if (count($names) <= 1) {
-            return (string)array_shift($names);
-        }
-
         usort($names, function ($a, $b) {
             return strlen($a) - strlen($b);
         });
@@ -219,7 +225,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     protected function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser->setDescription(
-            'Get the list of available commands for this application.'
+            'Get the list of available commands for this application.',
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
             'boolean' => true,

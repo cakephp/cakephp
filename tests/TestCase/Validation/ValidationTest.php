@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Validation;
 
+use Cake\Chronos\ChronosTime;
 use Cake\Collection\Collection;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
@@ -29,6 +30,7 @@ use DateTimeImmutable;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Locale;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use TestApp\Model\Enum\ArticleStatus;
 use TestApp\Model\Enum\NonBacked;
@@ -42,26 +44,11 @@ require_once __DIR__ . '/stubs.php';
 class ValidationTest extends TestCase
 {
     /**
-     * @var string
-     */
-    protected $_appEncoding;
-
-    /**
-     * setUp method
-     */
-    public function setUp(): void
-    {
-        parent::setUp();
-        $this->_appEncoding = Configure::read('App.encoding');
-    }
-
-    /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
-        Configure::write('App.encoding', $this->_appEncoding);
         I18n::setLocale(I18n::getDefaultLocale());
     }
 
@@ -981,6 +968,18 @@ class ValidationTest extends TestCase
     }
 
     /**
+     * testDateTimeObject
+     */
+    public function testDateTimeBoolean(): void
+    {
+        $dateTime = true;
+        $this->assertFalse(Validation::date($dateTime));
+        $this->assertFalse(Validation::time($dateTime));
+        $this->assertFalse(Validation::dateTime($dateTime));
+        $this->assertFalse(Validation::localizedTime($dateTime));
+    }
+
+    /**
      * testDateDdmmyyyy method
      */
     public function testDateDdmmyyyy(): void
@@ -1542,7 +1541,6 @@ class ValidationTest extends TestCase
     {
         $this->assertTrue(Validation::time('00:00'));
         $this->assertTrue(Validation::time('23:59'));
-        $this->assertFalse(Validation::time('24:00'));
         $this->assertTrue(Validation::time('12:00'));
         $this->assertTrue(Validation::time('12:01'));
         $this->assertTrue(Validation::time('12:01am'));
@@ -1551,8 +1549,10 @@ class ValidationTest extends TestCase
         $this->assertTrue(Validation::time('1 pm'));
         $this->assertTrue(Validation::time('1 PM'));
         $this->assertTrue(Validation::time('01:00'));
-        $this->assertFalse(Validation::time('1:00'));
         $this->assertTrue(Validation::time('1:00pm'));
+        $this->assertTrue(Validation::time(new ChronosTime()));
+
+        $this->assertFalse(Validation::time('1:00'));
         $this->assertFalse(Validation::time('13:00pm'));
         $this->assertFalse(Validation::time('9:00'));
         $this->assertFalse(Validation::time('00'));
@@ -1561,6 +1561,7 @@ class ValidationTest extends TestCase
         $this->assertFalse(Validation::time('9'));
         $this->assertFalse(Validation::time('10'));
         $this->assertFalse(Validation::time('23'));
+        $this->assertFalse(Validation::time('24:00'));
     }
 
     /**
@@ -1659,6 +1660,8 @@ class ValidationTest extends TestCase
      */
     public function testLocalizedTime(): void
     {
+        $this->assertTrue(Validation::localizedTime(new ChronosTime()));
+
         $this->assertFalse(Validation::localizedTime('', 'date'));
         $this->assertFalse(Validation::localizedTime('invalid', 'date'));
         $this->assertFalse(Validation::localizedTime(1, 'date'));
@@ -2019,19 +2022,34 @@ class ValidationTest extends TestCase
 
     public function testEnum(): void
     {
-        $this->assertTrue(Validation::enum(ArticleStatus::PUBLISHED, ArticleStatus::class));
+        $this->assertTrue(Validation::enum(ArticleStatus::Published, ArticleStatus::class));
         $this->assertTrue(Validation::enum('Y', ArticleStatus::class));
 
-        $this->assertTrue(Validation::enum(Priority::LOW, Priority::class));
+        $this->assertTrue(Validation::enum(Priority::Low, Priority::class));
         $this->assertTrue(Validation::enum(1, Priority::class));
 
-        $this->assertFalse(Validation::enum(Priority::LOW, ArticleStatus::class));
+        $this->assertFalse(Validation::enum(Priority::Low, ArticleStatus::class));
         $this->assertFalse(Validation::enum(1, ArticleStatus::class));
         $this->assertFalse(Validation::enum('non-existent', ArticleStatus::class));
 
-        $this->assertFalse(Validation::enum(ArticleStatus::PUBLISHED, Priority::class));
+        $this->assertFalse(Validation::enum(ArticleStatus::Published, Priority::class));
         $this->assertFalse(Validation::enum('wrong type', Priority::class));
         $this->assertFalse(Validation::enum(123, Priority::class));
+
+        $this->assertTrue(Validation::enum('1', Priority::class));
+        $this->assertFalse(Validation::enum('a1', Priority::class));
+    }
+
+    public function testEnumOnly(): void
+    {
+        $this->assertTrue(Validation::enumOnly(ArticleStatus::Published, [ArticleStatus::Published]));
+        $this->assertFalse(Validation::enumOnly(ArticleStatus::Published, [ArticleStatus::Unpublished]));
+    }
+
+    public function testEnumExcept(): void
+    {
+        $this->assertFalse(Validation::enumExcept(ArticleStatus::Published, [ArticleStatus::Published]));
+        $this->assertTrue(Validation::enumExcept(ArticleStatus::Published, [ArticleStatus::Unpublished]));
     }
 
     public function testEnumNonBacked(): void
@@ -2254,10 +2272,17 @@ class ValidationTest extends TestCase
 
     public function testUuid(): void
     {
+        // v0
         $this->assertTrue(Validation::uuid('00000000-0000-0000-0000-000000000000'));
+        // v1
         $this->assertTrue(Validation::uuid('550e8400-e29b-11d4-a716-446655440000'));
-        $this->assertFalse(Validation::uuid('BRAP-e29b-11d4-a716-446655440000'));
         $this->assertTrue(Validation::uuid('550E8400-e29b-11D4-A716-446655440000'));
+        // v4
+        $this->assertTrue(Validation::uuid('5b79da75-e0d7-4059-a759-ad6c20684376'));
+        // v7
+        $this->assertTrue(Validation::uuid('01989013-1fe3-702f-9c63-d4e051daa3d9'));
+
+        $this->assertFalse(Validation::uuid('BRAP-e29b-11d4-a716-446655440000'));
         $this->assertFalse(Validation::uuid('550e8400-e29b11d4-a716-446655440000'));
         $this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a716-4466440000'));
         $this->assertFalse(Validation::uuid('550e8400-e29b-11d4-a71-446655440000'));
@@ -2355,14 +2380,14 @@ class ValidationTest extends TestCase
                 'file1' => ['name' => 'file.jpg'],
                 'file2' => ['name' => 'file.gif'],
             ],
-            ['gif']
+            ['gif'],
         ), 'Only the first element should be checked');
         $this->assertTrue(Validation::extension(
             [
                 'file1' => ['name' => 'file.gif'],
                 'file2' => ['name' => 'file.jpg'],
             ],
-            ['gif']
+            ['gif'],
         ), 'Only the first element should be checked');
 
         $file = [
@@ -2716,9 +2741,8 @@ class ValidationTest extends TestCase
 
     /**
      * Test uploadedFile with a PSR7 object.
-     *
-     * @dataProvider uploadedFileProvider
      */
+    #[DataProvider('uploadedFileProvider')]
     public function testUploadedFile(bool $expected, array $options): void
     {
         $image = TEST_APP . 'webroot/img/cake.power.gif';

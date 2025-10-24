@@ -4,7 +4,6 @@ declare(strict_types=1);
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
  * Redistributions of files must retain the above copyright notice
@@ -26,6 +25,7 @@ use Cake\Console\TestSuite\StubConsoleInput;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 use LogicException;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 
 /**
  * ConsoleOptionParserTest
@@ -37,7 +37,7 @@ class ConsoleOptionParserTest extends TestCase
      */
     private $io;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->io = new ConsoleIo(new StubConsoleOutput(), new StubConsoleOutput(), new StubConsoleInput([]));
@@ -94,6 +94,20 @@ class ConsoleOptionParserTest extends TestCase
             ->removeOption('help');
         $this->assertSame($parser, $result, 'Did not return $this from removeOption');
         $this->assertEquals([], $result->options());
+    }
+
+    /**
+     * test removing an option clears also shortOption.
+     */
+    #[WithoutErrorHandler]
+    public function testRemoveOptionAlsoClearsShort(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addOption('test', ['short' => 't'])
+            ->removeOption('test')
+            ->removeOption('help')
+            ->addOption('test', ['short' => 't']);
+        $this->assertSame($parser, $result, 'Did not return $this from removeOption');
     }
 
     /**
@@ -160,7 +174,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertSame(
             ['test' => 'default value', 'help' => false],
             $result[0],
-            'Default value did not parse out'
+            'Default value did not parse out',
         );
 
         $parser = new ConsoleOptionParser('test', false);
@@ -169,6 +183,29 @@ class ConsoleOptionParserTest extends TestCase
         ]);
         $result = $parser->parse([], $this->io);
         $this->assertEquals(['test' => 'default value', 'help' => false], $result[0], 'Default value did not parse out');
+    }
+
+    /**
+     * test adding an option with a non-string default.
+     */
+    public function testAddOptionNonStringDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser
+            ->addOption('test_int', [
+                'default' => 1,
+            ])
+            ->addOption('test_float', [
+                'default' => 1.5,
+            ])
+            ->addOption('no-default', []);
+
+        $result = $parser->parse([], $this->io);
+        $this->assertEquals(
+            ['test_int' => '1', 'test_float' => '1.5', 'help' => false],
+            $result[0],
+            'Default value did not parse out',
+        );
     }
 
     /**
@@ -182,6 +219,23 @@ class ConsoleOptionParserTest extends TestCase
         ]);
         $result = $parser->parse(['-t', 'value'], $this->io);
         $this->assertEquals(['test' => 'value', 'help' => false], $result[0], 'Short parameter did not parse out');
+    }
+
+    /**
+     * test adding an option and using the short value for parsing throws deprecation if conflicting.
+     */
+    public function testAddOptionShortConflict(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('test', [
+            'short' => 't',
+        ]);
+
+        $this->deprecated(function () use ($parser) {
+            $parser->addOption('other', [
+                'short' => 't',
+            ]);
+        });
     }
 
     /**
@@ -201,7 +255,7 @@ class ConsoleOptionParserTest extends TestCase
                 'help' => false,
             ],
             $result[0],
-            'Short parameter did not parse out'
+            'Short parameter did not parse out',
         );
     }
 
@@ -328,13 +382,13 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->parse(['--test', '--no-default', 'value'], $this->io);
         $this->assertSame(
             ['test' => 'default value', 'no-default' => 'value', 'help' => false],
-            $result[0]
+            $result[0],
         );
 
         $result = $parser->parse(['--no-default', 'value'], $this->io);
         $this->assertSame(
             ['no-default' => 'value', 'help' => false, 'test' => 'default value'],
-            $result[0]
+            $result[0],
         );
     }
 
@@ -517,7 +571,7 @@ class ConsoleOptionParserTest extends TestCase
                 "Other valid choices:\n" .
                 "\n" .
                 '- help',
-                $e->getFullMessage()
+                $e->getFullMessage(),
             );
         }
     }
@@ -580,6 +634,18 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * test positional argument with default parsing.
+     */
+    public function testAddArgumentWithDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addArgument('name', ['help' => 'An argument', 'default' => 'foo']);
+        $args = $parser->arguments();
+        $this->assertEquals($parser, $result, 'Should return this');
+        $this->assertEquals('foo', $args[0]->defaultValue());
+    }
+
+    /**
      * Add arguments that were once considered the same
      */
     public function testAddArgumentDuplicate(): void
@@ -595,7 +661,7 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
-     * test addOption with an object.
+     * test addArgument with an object.
      */
     public function testAddArgumentObject(): void
     {
@@ -604,6 +670,18 @@ class ConsoleOptionParserTest extends TestCase
         $result = $parser->arguments();
         $this->assertCount(1, $result);
         $this->assertSame('test', $result[0]->name());
+    }
+
+    /**
+     * test addArgument with default value with an object.
+     */
+    public function testAddArgumentDefaultObject(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addArgument(new ConsoleInputArgument('test', '', false, [], 'foo'));
+        $result = $parser->arguments();
+        $this->assertCount(1, $result);
+        $this->assertSame('foo', $result[0]->defaultValue());
     }
 
     /**
@@ -624,7 +702,7 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertSame([0, 1, 2], array_keys($result));
         $this->assertEquals(
             ['other', 'name', 'bag'],
-            $parser->argumentNames()
+            $parser->argumentNames(),
         );
     }
 
@@ -671,6 +749,75 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
+     * Test parsing argument with separator
+     */
+    public function testParseArgumentWithSeparator(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addArgument('colors', [
+            'separator' => ',',
+            'choices' => ['red', 'blue', 'green'],
+        ]);
+        $result = $parser->parse(['blue,red'], $this->io);
+        $this->assertEquals([['blue', 'red']], $result[1]);
+    }
+
+    /**
+     * test parse with multiples and default list separator.
+     */
+    public function testParseOptionWithMultiplesDefaultSeparator(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('colors', [
+            'multiple' => true,
+            'choices' => ['blue,red', 'yellow,green'],
+        ]);
+        $out = new StubConsoleOutput();
+
+        $result = $parser->parse(['--colors', 'blue,red']);
+        $this->assertEquals(['colors' => ['blue,red'], 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
+    }
+
+    /**
+     * test parse with multiples and custom list separator.
+     */
+    public function testParseOptionWithMultiplesCustomSeparator(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('colors', [
+            'multiple' => true,
+            'choices' => ['1st,choice', '2nd,choice', '3rd,choice'],
+            'separator' => ';',
+        ]);
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
+
+        $result = $parser->parse(['--colors', '2nd,choice;3rd,choice'], $io);
+        $this->assertEquals(['colors' => ['2nd,choice', '3rd,choice'], 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
+    }
+
+    /**
+     * test mixing multiples option as list and duplicate
+     */
+    public function testParseOptionWithMultiplesMixed(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $parser->addOption('colors', [
+            'multiple' => true,
+            'separator' => ',',
+            'choices' => ['red', 'blue', 'green', 'yellow', 'purple'],
+        ]);
+        $out = new StubConsoleOutput();
+        $io = new ConsoleIo($out, new StubConsoleOutput(), new StubConsoleInput([]));
+
+        $result = $parser->parse(['--colors', 'green,purple', '--colors', 'red'], $io);
+        $this->assertEquals(['colors' => ['green', 'purple', 'red'], 'help' => false], $result[0]);
+        $this->assertCount(0, $out->messages());
+    }
+
+    /**
      * test that when there are not enough arguments an exception is raised
      */
     public function testPositionalArgNotEnough(): void
@@ -710,6 +857,21 @@ class ConsoleOptionParserTest extends TestCase
         $this->assertEquals($expected, $result[1], 'Got the correct value.');
 
         $parser->parse(['jose', 'coder'], $this->io);
+    }
+
+    /**
+     * test argument with default value.
+     */
+    public function testPositionalArgumentWithDefault(): void
+    {
+        $parser = new ConsoleOptionParser('test', false);
+        $result = $parser->addArgument('name', ['help' => 'An argument', 'default' => 'foo']);
+
+        $result = $parser->parse(['bar'], $this->io);
+        $this->assertEquals(['bar'], $result[1], 'Got the correct value.');
+
+        $result = $parser->parse([], $this->io);
+        $this->assertEquals(['foo'], $result[1], 'Got the correct default value.');
     }
 
     /**
@@ -785,20 +947,26 @@ class ConsoleOptionParserTest extends TestCase
         $parser->setDescription('A command!')
             ->setRootName('tool')
             ->addOption('test', ['help' => 'A test option.'])
-            ->addOption('reqd', ['help' => 'A required option.', 'required' => true]);
+            ->addOption('reqd', ['help' => 'A required option.', 'required' => true])
+            ->addArgument('name', ['help' => 'An argument', 'default' => 'foo']);
 
         $result = $parser->help();
         $expected = <<<TEXT
 A command!
 
 <info>Usage:</info>
-tool sample [-h] --reqd [--test]
+tool sample [-h] --reqd [--test] [<name>]
 
 <info>Options:</info>
 
 --help, -h  Display this help.
 --reqd      A required option. <comment>(required)</comment>
 --test      A test option.
+
+<info>Arguments:</info>
+
+name  An argument <comment>(optional)</comment> <comment>default:
+      "foo"</comment>
 
 TEXT;
         $this->assertTextEquals($expected, $result, 'Help is not correct.');
@@ -841,7 +1009,7 @@ TEXT;
     public function testCreateFactory(): void
     {
         $parser = ConsoleOptionParser::create('factory', false);
-        $this->assertInstanceOf('Cake\Console\ConsoleOptionParser', $parser);
+        $this->assertInstanceOf(ConsoleOptionParser::class, $parser);
         $this->assertSame('factory', $parser->getCommand());
     }
 
@@ -862,7 +1030,7 @@ TEXT;
         $spec = [
             'command' => 'test',
             'arguments' => [
-                'name' => ['help' => 'The name'],
+                'name' => ['help' => 'The name', 'default' => 'foo'],
                 'other' => ['help' => 'The other arg'],
             ],
             'options' => [

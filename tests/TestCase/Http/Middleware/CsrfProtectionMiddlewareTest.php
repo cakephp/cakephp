@@ -27,6 +27,7 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Security;
 use Laminas\Diactoros\Response as DiactorosResponse;
 use Laminas\Diactoros\Response\RedirectResponse;
+use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\RequestHandlerInterface;
 use TestApp\Http\TestRequestHandler;
@@ -175,9 +176,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that the CSRF tokens are not required for idempotent operations
-     *
-     * @dataProvider safeHttpMethodProvider
      */
+    #[DataProvider('safeHttpMethodProvider')]
     public function testSafeMethodNoCsrfRequired(string $method): void
     {
         $request = new ServerRequest([
@@ -199,7 +199,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function testRegenerateTokenOnGetWithInvalidData()
+    public function testRegenerateTokenOnGetWithInvalidData(): void
     {
         $request = new ServerRequest([
             'environment' => [
@@ -269,9 +269,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that the X-CSRF-Token works with the various http methods.
-     *
-     * @dataProvider httpMethodProvider
      */
+    #[DataProvider('httpMethodProvider')]
     public function testValidTokenInHeaderCompat(string $method): void
     {
         $middleware = new CsrfProtectionMiddleware();
@@ -293,9 +292,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that the X-CSRF-Token works with the various http methods.
-     *
-     * @dataProvider httpMethodProvider
      */
+    #[DataProvider('httpMethodProvider')]
     public function testValidTokenInHeader(string $method): void
     {
         $middleware = new CsrfProtectionMiddleware();
@@ -318,9 +316,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that the X-CSRF-Token works with the various http methods.
-     *
-     * @dataProvider httpMethodProvider
      */
+    #[DataProvider('httpMethodProvider')]
     public function testInvalidTokenInHeader(string $method): void
     {
         $request = new ServerRequest([
@@ -351,9 +348,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that request data works with the various http methods.
-     *
-     * @dataProvider httpMethodProvider
      */
+    #[DataProvider('httpMethodProvider')]
     public function testValidTokenRequestDataCompat(string $method): void
     {
         $middleware = new CsrfProtectionMiddleware();
@@ -379,9 +375,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that request data works with the various http methods.
-     *
-     * @dataProvider httpMethodProvider
      */
+    #[DataProvider('httpMethodProvider')]
     public function testValidTokenRequestDataSalted(string $method): void
     {
         $middleware = new CsrfProtectionMiddleware();
@@ -411,7 +406,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function testInvalidTokenStringCookies()
+    public function testInvalidTokenStringCookies(): void
     {
         $this->expectException(InvalidCsrfTokenException::class);
         $request = new ServerRequest([
@@ -430,7 +425,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
      *
      * @return void
      */
-    public function testInvalidTokenEmptyStringCookies()
+    public function testInvalidTokenEmptyStringCookies(): void
     {
         $this->expectException(InvalidCsrfTokenException::class);
         $request = new ServerRequest([
@@ -464,9 +459,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that request data works with the various http methods.
-     *
-     * @dataProvider httpMethodProvider
      */
+    #[DataProvider('httpMethodProvider')]
     public function testInvalidTokenRequestData(string $method): void
     {
         $request = new ServerRequest([
@@ -532,9 +526,8 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
     /**
      * Test that missing header and cookie fails
-     *
-     * @dataProvider httpMethodProvider
      */
+    #[DataProvider('httpMethodProvider')]
     public function testInvalidTokenMissingCookie(string $method): void
     {
         $request = new ServerRequest([

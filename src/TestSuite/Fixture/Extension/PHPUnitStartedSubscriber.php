@@ -32,12 +32,11 @@ class PHPUnitStartedSubscriber implements PHPUnitStarted
      */
     public function notify(Started $event): void
     {
-        $helper = new ConnectionHelper();
-        $helper->addTestAliases();
+        ConnectionHelper::addTestAliases();
 
         $enableLogging = env('LOG_QUERIES', false);
         if ((int)$enableLogging !== 0) {
-            $helper->enableQueryLogging();
+            ConnectionHelper::enableQueryLogging();
             Log::drop('queries');
             Log::setConfig('queries', [
                 'className' => 'Console',

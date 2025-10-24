@@ -33,9 +33,8 @@ class SubjectFilterDecorator extends AbstractDecorator
     /**
      * @inheritDoc
      */
-    public function __invoke(): mixed
+    public function __invoke(mixed ...$args): mixed
     {
-        $args = func_get_args();
         if (!$this->canTrigger($args[0])) {
             return null;
         }

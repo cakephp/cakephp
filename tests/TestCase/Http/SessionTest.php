@@ -20,8 +20,12 @@ use Cake\Core\Exception\CakeException;
 use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
+use ReflectionProperty;
 use TestApp\Http\Session\TestAppLibSession;
 use TestApp\Http\Session\TestWebSession;
+use TestPlugin\Http\Session\TestPluginSession;
 
 /**
  * SessionTest class
@@ -38,38 +42,103 @@ class SessionTest extends TestCase
         unset($_SESSION);
     }
 
+    public function testInvalidDefaultsNameException(): void
+    {
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Invalid session defaults name `derp`. Valid values are: php, cake, cache, database.');
+
+        Session::create(['defaults' => 'derp']);
+    }
+
     /**
      * test setting ini properties with Session configuration.
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testSessionConfigIniSetting(): void
     {
         $_SESSION = null;
 
-        $config = [
-            'cookie' => 'test',
-            'checkAgent' => false,
-            'timeout' => 86400,
-            'ini' => [
-                'session.referer_check' => 'example.com',
-                'session.use_trans_sid' => false,
-            ],
-        ];
+        $this->deprecated(function (): void {
+            $config = [
+                'cookie' => 'test',
+                'checkAgent' => false,
+                'timeout' => 86400,
+                'ini' => [
+                    'session.referer_check' => 'example.com',
+                    'session.use_trans_sid' => false,
+                ],
+            ];
 
-        Session::create($config);
+            Session::create($config);
+        }, E_DEPRECATED, '8.4');
+
         $this->assertSame('', ini_get('session.use_trans_sid'), 'Ini value is incorrect');
         $this->assertSame('example.com', ini_get('session.referer_check'), 'Ini value is incorrect');
         $this->assertSame('test', ini_get('session.name'), 'Ini value is incorrect');
     }
 
     /**
-     * test session cookie path setting
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
+     * test default `session.gc_maxlifetime` value is set as lifetime if timeout is not present.
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
+    public function testSessionLifetimeIsSetToDefaultPHPIni(): void
+    {
+        $_SESSION = null;
+
+        ini_set('session.gc_maxlifetime', 1440);
+
+        $config = ['defaults' => 'php'];
+        $session = new Session($config);
+
+        $prop = new ReflectionProperty($session, '_lifetime');
+        $this->assertSame(1440, $prop->getValue($session));
+    }
+
+    /**
+     * test setting ini properties with Session configuration with timeout set to zero.
+     */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
+    public function testSessionConfigTimeoutZero(): void
+    {
+        $_SESSION = null;
+
+        ini_set('session.gc_maxlifetime', 86400);
+        $config = [
+            'defaults' => 'php',
+            'timeout' => 0,
+        ];
+
+        Session::create($config);
+        $this->assertEquals(86400, ini_get('session.gc_maxlifetime'), 'ini value unchanged when timeout disabled');
+    }
+
+    /**
+     * test setting ini properties with Session configuration.
+     */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
+    public function testSessionConfigTimeout(): void
+    {
+        $_SESSION = null;
+
+        ini_set('session.gc_maxlifetime', 86400);
+        $config = [
+            'defaults' => 'php',
+            'timeout' => 30,
+        ];
+
+        Session::create($config);
+        $this->assertEquals(30 * 60, ini_get('session.gc_maxlifetime'), 'timeout should set gc maxlifetime');
+    }
+
+    /**
+     * test session cookie path setting
+     */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testCookiePath(): void
     {
         ini_set('session.cookie_path', '/foo');
@@ -246,10 +315,9 @@ class SessionTest extends TestCase
 
     /**
      * testId method
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testId(): void
     {
         $session = new Session();
@@ -428,10 +496,9 @@ class SessionTest extends TestCase
 
     /**
      * test using a handler from app/Http/Session.
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testUsingAppLibsHandler(): void
     {
         static::setAppNamespace();
@@ -445,17 +512,16 @@ class SessionTest extends TestCase
         ];
 
         $session = Session::create($config);
-        $this->assertInstanceOf('TestApp\Http\Session\TestAppLibSession', $session->engine());
+        $this->assertInstanceOf(TestAppLibSession::class, $session->engine());
         $this->assertSame('user', ini_get('session.save_handler'));
         $this->assertEquals(['these' => 'are', 'a few' => 'options'], $session->engine()->options);
     }
 
     /**
      * test using a handler from a plugin.
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testUsingPluginHandler(): void
     {
         static::setAppNamespace();
@@ -469,16 +535,15 @@ class SessionTest extends TestCase
         ];
 
         $session = Session::create($config);
-        $this->assertInstanceOf('TestPlugin\Http\Session\TestPluginSession', $session->engine());
+        $this->assertInstanceOf(TestPluginSession::class, $session->engine());
         $this->assertSame('user', ini_get('session.save_handler'));
     }
 
     /**
      * Tests that it is possible to pass an already made instance as the session engine
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testEngineWithPreMadeInstance(): void
     {
         static::setAppNamespace();
@@ -491,7 +556,7 @@ class SessionTest extends TestCase
         $this->assertSame($engine, $session->engine());
     }
 
-    public function testEngineIsNull()
+    public function testEngineIsNull(): void
     {
         $session = new Session();
         $this->assertNull($session->engine());
@@ -510,10 +575,9 @@ class SessionTest extends TestCase
 
     /**
      * Test that cookieTimeout matches timeout when unspecified.
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testCookieTimeoutFallback(): void
     {
         $config = [
@@ -528,10 +592,9 @@ class SessionTest extends TestCase
 
     /**
      * Tests that the cookie name can be changed with configuration
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testSessionName(): void
     {
         new Session(['cookie' => 'made_up_name']);
@@ -540,10 +603,9 @@ class SessionTest extends TestCase
 
     /**
      * Test that a call of check() starts the session when cookies are disabled in php.ini
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testCheckStartsSessionWithCookiesDisabled(): void
     {
         $_COOKIE = [];
@@ -583,25 +645,26 @@ class SessionTest extends TestCase
 
     /**
      * Test that a call of check() starts the session when the session ID is passed via URL and session.use_trans_sid is enabled
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testCheckStartsSessionWithSIDinURL(): void
     {
         $_COOKIE = [];
         $_GET[session_name()] = '123abc';
 
-        $session = new TestWebSession([
-            'ini' => [
-                'session.use_cookies' => 1,
-                'session.use_trans_sid' => 1,
-            ],
-        ]);
+        $this->deprecated(function (): void {
+            $session = new TestWebSession([
+                'ini' => [
+                    'session.use_cookies' => 1,
+                    'session.use_trans_sid' => 1,
+                ],
+            ]);
 
-        $this->assertFalse($session->started());
-        $session->check('something');
-        $this->assertTrue($session->started());
+            $this->assertFalse($session->started());
+            $session->check('something');
+            $this->assertTrue($session->started());
+        }, E_DEPRECATED, '8.4');
     }
 
     /**
@@ -622,5 +685,28 @@ class SessionTest extends TestCase
         $this->assertFalse($session->started());
         $session->check('something');
         $this->assertFalse($session->started());
+    }
+
+    /**
+     * test setting ini properties with Session configuration after session is created before started.
+     */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
+    public function testSessionConfigTimeoutUpdate(): void
+    {
+        $_SESSION = null;
+
+        ini_set('session.gc_maxlifetime', 86400);
+        $config = [
+            'defaults' => 'php',
+        ];
+
+        $session = Session::create($config);
+        $session->setSessionLifetime(3540); // 59*60
+        $this->assertEquals(59 * 60, ini_get('session.gc_maxlifetime'), 'timeout should set gc maxlifetime');
+
+        $session->start();
+        $this->expectException(CakeException::class);
+        $session->setSessionLifetime(3600); // 60*60
     }
 }

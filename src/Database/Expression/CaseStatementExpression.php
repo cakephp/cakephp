@@ -134,7 +134,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
                     'The `$value` argument must be either `null`, a scalar value, an object, ' .
                     'or an instance of `\%s`, `%s` given.',
                     ExpressionInterface::class,
-                    get_debug_type($value)
+                    get_debug_type($value),
                 ));
             }
 
@@ -303,7 +303,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
                 throw new LogicException(sprintf(
                     '`when()` callables must return an instance of `\%s`, `%s` given.',
                     WhenThenExpression::class,
-                    get_debug_type($when)
+                    get_debug_type($when),
                 ));
             }
         }
@@ -416,7 +416,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
                 'The `$result` argument must be either `null`, a scalar value, an object, ' .
                 'or an instance of `\%s`, `%s` given.',
                 ExpressionInterface::class,
-                get_debug_type($result)
+                get_debug_type($result),
             ));
         }
 
@@ -504,8 +504,8 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
                 sprintf(
                     'The `$clause` argument must be one of `%s`, the given value `%s` is invalid.',
                     implode('`, `', $this->validClauseNames),
-                    $clause
-                )
+                    $clause,
+                ),
             );
         }
 
@@ -538,7 +538,7 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
 
         $else = $this->compileNullableValue($binder, $this->else, $this->elseType);
 
-        return "CASE {$value}{$whenThen} ELSE $else END";
+        return "CASE {$value}{$whenThen} ELSE {$else} END";
     }
 
     /**

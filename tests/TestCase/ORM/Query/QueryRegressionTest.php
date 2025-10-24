@@ -28,6 +28,9 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use TestApp\Model\Table\ArticlesTable;
+use TestApp\Model\Table\TagsTable;
 use function Cake\Collection\collection;
 
 /**
@@ -232,7 +235,7 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
         ]);
@@ -312,19 +315,20 @@ class QueryRegressionTest extends TestCase
      * Checks that only relevant associations are passed when saving _joinData
      * Tests that _joinData can also save deeper associations
      *
-     * @dataProvider strategyProvider
      * @param string $strategy
      */
+    #[DataProvider('strategyProvider')]
     public function testBelongsToManyDeepSave($strategy): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
             'saveStrategy' => $strategy,
         ]);
         $articles->Highlights->junction()->belongsTo('Authors');
+        $articles->Highlights->associations()->remove('Authors');
         $articles->Highlights->hasOne('Authors', [
             'foreignKey' => 'id',
         ]);
@@ -410,12 +414,12 @@ class QueryRegressionTest extends TestCase
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsToMany('Highlights', [
-            'className' => 'TestApp\Model\Table\TagsTable',
+            'className' => TagsTable::class,
             'targetForeignKey' => 'tag_id',
             'through' => 'SpecialTags',
         ]);
         $articles->Highlights->hasMany('TopArticles', [
-            'className' => 'TestApp\Model\Table\ArticlesTable',
+            'className' => ArticlesTable::class,
             'foreignKey' => 'author_id',
         ]);
         $entity = $articles->get(2, ...['contain' => ['Highlights']]);
@@ -452,7 +456,7 @@ class QueryRegressionTest extends TestCase
         $this->assertSame('Second top article', $highlights->top_articles[1]->title);
         $this->assertEquals(
             new DateTime('2014-06-01 10:10:00'),
-            $highlights->_joinData->highlighted_time
+            $highlights->_joinData->highlighted_time,
         );
     }
 
@@ -474,11 +478,11 @@ class QueryRegressionTest extends TestCase
 
         $this->assertNotEmpty(
             $result->comments[0]->id,
-            'No SQL error and comment exists.'
+            'No SQL error and comment exists.',
         );
         $this->assertNotEmpty(
             $result->author->id,
-            'No SQL error and author exists.'
+            'No SQL error and author exists.',
         );
         $this->clearPlugins();
     }
@@ -548,7 +552,7 @@ class QueryRegressionTest extends TestCase
 
         $this->assertEquals(
             ['tag1', 'tag3'],
-            collection($result[2]->articles[0]->tags)->sortBy('name')->extract('name')->toArray()
+            collection($result[2]->articles[0]->tags)->sortBy('name')->extract('name')->toArray(),
         );
     }
 
@@ -575,7 +579,7 @@ class QueryRegressionTest extends TestCase
             ->toArray();
         $this->assertEquals(
             ['tag1', 'tag2'],
-            collection($result[0]->author->tags)->extract('name')->toArray()
+            collection($result[0]->author->tags)->extract('name')->toArray(),
         );
         $this->assertSame(3, $result[0]->author->id);
     }
@@ -592,7 +596,7 @@ class QueryRegressionTest extends TestCase
 
         $this->skipIf(
             $tags->getConnection()->getDriver() instanceof Sqlserver,
-            'SQL server is temporarily weird in this test, will investigate later'
+            'SQL server is temporarily weird in this test, will investigate later',
         );
         $tags = $this->getTableLocator()->get('Tags');
         $featuredTags = $this->getTableLocator()->get('FeaturedTags');
@@ -608,10 +612,7 @@ class QueryRegressionTest extends TestCase
             ->contain('Tags.TagsTranslations')
             ->all();
 
-        $tags->hasMany('TagsTranslations', [
-            'foreignKey' => 'id',
-            'strategy' => 'subquery',
-        ]);
+        $tags->TagsTranslations->setStrategy('subquery');
         $findViaSubquery = $featuredTags
             ->find()
             ->where(['FeaturedTags.tag_id' => 2])
@@ -943,8 +944,8 @@ class QueryRegressionTest extends TestCase
             })
             ->orderBy(['Comments.id' => 'ASC'])
             ->first();
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->article);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->user);
+        $this->assertInstanceOf(Entity::class, $result->article);
+        $this->assertInstanceOf(Entity::class, $result->user);
         $this->assertSame(2, $result->user->id);
         $this->assertSame(1, $result->article->id);
     }
@@ -1116,14 +1117,14 @@ class QueryRegressionTest extends TestCase
             'id',
             'coalesced' => $query->func()->coalesce(
                 ['published' => 'identifier', -1],
-                ['integer']
+                ['integer'],
             ),
         ]);
         $result = $query->all()->first();
         $this->assertSame(
             -1,
             $result['coalesced'],
-            'Output values for functions should be casted'
+            'Output values for functions should be casted',
         );
     }
 
@@ -1456,7 +1457,7 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
         $query->orderByDesc(
-            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0)
+            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0),
         );
         $query->orderBy(['title' => 'desc']);
         // Executing the normal query before getting the count
@@ -1466,7 +1467,7 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
         $query->orderByDesc(
-            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0)
+            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0),
         );
         $query->orderByDesc($query->newExpr()->add(['id' => 3]));
         // Not executing the query first, just getting the count
@@ -1519,7 +1520,7 @@ class QueryRegressionTest extends TestCase
         $tags = $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
         $tags->getTarget()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
-            return $query->formatResults(function ($results) {
+            $query->formatResults(function ($results) {
                 return $results->map(function (Entity $tag) {
                     $tag->name .= ' - visited';
 
@@ -1616,7 +1617,7 @@ class QueryRegressionTest extends TestCase
                                     ->selectQuery(1.23456),
                                 2,
                             ],
-                            [null, 'integer']
+                            [null, 'integer'],
                         )
                         ->setReturnType('float'),
                 ];
@@ -1636,7 +1637,7 @@ class QueryRegressionTest extends TestCase
 
         $this->assertSame(
             1,
-            $table->getAssociation('Authors')->updateAll(['name' => null], ['id' => 3])
+            $table->getAssociation('Authors')->updateAll(['name' => null], ['id' => 3]),
         );
 
         $query = $table
@@ -1714,5 +1715,138 @@ class QueryRegressionTest extends TestCase
 
         $result = $query->first()->get('value');
         $this->assertSame('mariano appended', $result);
+    }
+
+    /**
+     * Test that eager loading with subquery strategy properly preserves limit and order clauses.
+     * This is a regression test for issue #11395 where limit and order clauses were not
+     * properly propagated in eager loaded associations.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/11395
+     * @return void
+     */
+    public function testEagerLoadingWithOrderAndLimitPreservation(): void
+    {
+        // Set up Authors table with Articles association
+        $authors = $this->getTableLocator()->get('Authors');
+        $articles = $this->getTableLocator()->get('Articles');
+        $authors->hasMany('Articles', [
+            'foreignKey' => 'author_id',
+            'strategy' => 'subquery',
+        ]);
+
+        // First, ensure we have an author with more than 2 articles to properly test the limit
+        // Create additional test articles for author_id 1 (mariano)
+        $testArticles = [
+            ['author_id' => 1, 'title' => 'Test Article X', 'body' => 'Body X', 'published' => 'Y'],
+            ['author_id' => 1, 'title' => 'Test Article Y', 'body' => 'Body Y', 'published' => 'Y'],
+            ['author_id' => 1, 'title' => 'Test Article Z', 'body' => 'Body Z', 'published' => 'Y'],
+        ];
+
+        foreach ($testArticles as $article) {
+            $entity = $articles->newEntity($article);
+            $articles->save($entity);
+        }
+
+        // Verify author 1 now has more than 2 articles
+        $totalArticles = $articles->find()
+            ->where(['author_id' => 1])
+            ->count();
+        $this->assertGreaterThan(2, $totalArticles, 'Test requires author to have more than 2 articles');
+
+        // Test with both order and limit - both should be preserved
+        $query = $authors->find()
+            ->contain(['Articles' => function ($q) {
+                return $q->orderBy(['Articles.id' => 'DESC'])
+                    ->limit(2);
+            }])
+            ->where(['Authors.id' => 1]);
+
+        $result = $query->first();
+        $this->assertNotNull($result);
+        $this->assertNotEmpty($result->articles, 'Author should have articles');
+
+        // Check that we got exactly 2 articles due to the limit (not less)
+        $this->assertCount(2, $result->articles, 'Should return exactly 2 articles when limit is applied');
+
+        // Verify that articles are ordered by id DESC
+        $ids = collection($result->articles)->extract('id')->toArray();
+        $sortedIds = $ids;
+        rsort($sortedIds);
+        $this->assertEquals($sortedIds, $ids, 'Articles should be ordered by id DESC');
+
+        // Verify we got the 2 articles with highest IDs
+        $allIds = $articles->find()
+            ->select(['id'])
+            ->where(['author_id' => 1])
+            ->orderBy(['id' => 'DESC'])
+            ->limit(2)
+            ->all()
+            ->extract('id')
+            ->toArray();
+        $this->assertEquals($allIds, $ids, 'Should return the 2 articles with highest IDs');
+
+        // Test with only order (no limit) - order should be preserved
+        $query = $authors->find()
+            ->contain(['Articles' => function ($q) {
+                return $q->orderBy(['Articles.title' => 'ASC']);
+            }])
+            ->where(['Authors.id' => 1]);
+
+        $result = $query->first();
+        $this->assertNotNull($result);
+        $this->assertGreaterThan(2, count($result->articles), 'Should have all articles when no limit');
+
+        $titles = collection($result->articles)->extract('title')->toArray();
+        $sortedTitles = $titles;
+        sort($sortedTitles);
+        $this->assertEquals($sortedTitles, $titles, 'Articles should be ordered by title ASC');
+
+        // Test with only limit (no order) - limit should be respected
+        $query = $authors->find()
+            ->contain(['Articles' => function ($q) {
+                return $q->limit(1);
+            }])
+            ->where(['Authors.id' => 1]);
+
+        $result = $query->first();
+        $this->assertNotNull($result);
+        $this->assertCount(1, $result->articles, 'Should return exactly 1 article when limit is 1');
+    }
+
+    /**
+     * Test that executed queries, can still be used as subqueries
+     */
+    public function testExecutedSubqueryCanBeReused(): void
+    {
+        $articles = $this->getTableLocator()->get('Articles');
+        $users = $this->getTableLocator()->get('Users');
+        $articles->belongsTo('Users', [
+            'foreignKey' => 'author_id',
+        ]);
+
+        $subquery1 = $articles->find()
+            ->select(['id'])
+            ->where(['title LIKE' => '%First%', 'id >=' => 1]);
+
+        $subquery2 = $users->find()
+            ->select(['id'])
+            ->where(['username' => 'mariano']);
+
+        // Execute the query to force it to have a different value binder
+        $subquery1->all();
+
+        $query = $articles->find()
+            ->contain('Users')
+            ->where([
+                'Users.id IN' => $subquery2,
+                'Articles.id IN' => $subquery1,
+            ]);
+        $result = $query->all()->toArray();
+
+        // If these assertions fail, the query is likely malformed
+        $this->assertCount(1, $result);
+        $this->assertEquals('First Article', $result[0]->title);
+        $this->assertNotEmpty($result[0]->user);
     }
 }

@@ -20,6 +20,7 @@ namespace Cake\Test\TestCase\Mailer\Transport;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Mailer\Message;
+use Cake\Mailer\Transport\MailTransport;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -35,10 +36,10 @@ class MailTransportTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
-        $this->MailTransport = $this->getMockBuilder('Cake\Mailer\Transport\MailTransport')
+        $this->MailTransport = $this->getMockBuilder(MailTransport::class)
             ->onlyMethods(['_mail'])
             ->getMock();
         $this->MailTransport->setConfig(['additionalParameters' => '-f']);
@@ -103,7 +104,7 @@ class MailTransportTest extends TestCase
                 $encoded,
                 implode($eol, ['First Line', 'Second Line', '.Third Line', '', '']),
                 $data,
-                '-f'
+                '-f',
             );
 
         $result = $this->MailTransport->send($message);

@@ -73,7 +73,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * Schema class.
      *
      * @var string
-     * @psalm-var class-string<\Cake\Form\Schema>
+     * @phpstan-var class-string<\Cake\Form\Schema>
      */
     protected string $_schemaClass = Schema::class;
 
@@ -192,7 +192,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
         $this->_errors = $this->getValidator($validator ?: static::DEFAULT_VALIDATOR)
             ->validate($data);
 
-        return count($this->_errors) === 0;
+        return $this->_errors === [];
     }
 
     /**
@@ -211,12 +211,22 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     /**
      * Returns validation errors for the given field
      *
-     * @param string $field Field name to get the errors from.
+     * Supports dot notation for nested fields. For example:
+     * - `$form->getError('Common.field_name')`
+     * - `$form->getError('parent.level.deep_field')`
+     *
+     * @param string $field Field name to get the errors from. Supports dot notation for nested fields.
      * @return array The validation errors for the given field.
      */
     public function getError(string $field): array
     {
-        return $this->_errors[$field] ?? [];
+        if (isset($this->_errors[$field])) {
+            return $this->_errors[$field];
+        }
+
+        $error = Hash::get($this->_errors, $field);
+
+        return is_array($error) ? $error : [];
     }
 
     /**
@@ -270,7 +280,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
 
         $validator = $options['validate'] === true ? static::DEFAULT_VALIDATOR : $options['validate'];
 
-        return $this->validate($data, $validator) ? $this->_execute($data) : false;
+        return $this->validate($data, $validator) && $this->_execute($data);
     }
 
     /**

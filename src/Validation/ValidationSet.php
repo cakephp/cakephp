@@ -18,6 +18,7 @@ namespace Cake\Validation;
 
 use ArrayAccess;
 use ArrayIterator;
+use Cake\Core\Exception\CakeException;
 use Countable;
 use IteratorAggregate;
 use Traversable;
@@ -39,7 +40,7 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     protected array $_rules = [];
 
     /**
-     * Denotes whether the fieldname key must be present in data array
+     * Denotes whether the field name key must be present in data array
      *
      * @var callable|string|bool
      */
@@ -125,6 +126,17 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     }
 
     /**
+     * Returns whether a validation rule with the given name exists in this set.
+     *
+     * @param string $name The name to check
+     * @return bool
+     */
+    public function has(string $name): bool
+    {
+        return array_key_exists($name, $this->_rules);
+    }
+
+    /**
      * Sets a ValidationRule $rule with a $name
      *
      * ### Example:
@@ -138,11 +150,15 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
      * @param string $name The name under which the rule should be set
      * @param \Cake\Validation\ValidationRule|array $rule The validation rule to be set
      * @return $this
+     * @throws \Cake\Core\Exception\CakeException If a rule with the same name already exists
      */
     public function add(string $name, ValidationRule|array $rule)
     {
         if (!($rule instanceof ValidationRule)) {
             $rule = new ValidationRule($rule);
+        }
+        if (array_key_exists($name, $this->_rules)) {
+            throw new CakeException("A validation rule with the name `{$name}` already exists");
         }
         $this->_rules[$name] = $rule;
 
@@ -195,13 +211,13 @@ class ValidationSet implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Sets or replace a validation rule
      *
-     * @param string $index name of the rule
-     * @param \Cake\Validation\ValidationRule|array $rule Rule to add to $index
+     * @param string $offset name of the rule
+     * @param \Cake\Validation\ValidationRule|array $value Rule to add to $index
      * @return void
      */
-    public function offsetSet(mixed $index, mixed $rule): void
+    public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->add($index, $rule);
+        $this->add($offset, $value);
     }
 
     /**

@@ -22,6 +22,7 @@ use Cake\Mailer\Transport\DebugTransport;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionClass;
 use TestApp\Mailer\TestMessage;
 use function Cake\Core\env;
@@ -36,7 +37,7 @@ class MessageTest extends TestCase
      */
     protected $message;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -484,9 +485,9 @@ HTML;
     /**
      * testBuildInvalidData
      *
-     * @dataProvider invalidEmails
      * @param array|string $value
      */
+    #[DataProvider('invalidEmails')]
     public function testInvalidEmail($value): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -496,9 +497,9 @@ HTML;
     /**
      * testBuildInvalidData
      *
-     * @dataProvider invalidEmails
      * @param array|string $value
      */
+    #[DataProvider('invalidEmails')]
     public function testInvalidEmailAdd($value): void
     {
         $this->expectException(InvalidArgumentException::class);
@@ -796,7 +797,7 @@ HTML;
     public function testDomain(): void
     {
         $result = $this->message->getDomain();
-        $expected = env('HTTP_HOST') ? env('HTTP_HOST') : php_uname('n');
+        $expected = env('HTTP_HOST') ?: php_uname('n');
         $this->assertSame($expected, $result);
 
         $this->message->setDomain('example.org');
@@ -873,7 +874,7 @@ HTML;
             filesize(__FILE__),
             UPLOAD_ERR_OK,
             'MessageTest.php',
-            'text/x-php'
+            'text/x-php',
         );
 
         $this->message->setAttachments([
@@ -936,7 +937,7 @@ HTML;
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'File must be a filepath or UploadedFileInterface instance. Found `boolean` instead.'
+            'File must be a filepath or UploadedFileInterface instance. Found `boolean` instead.',
         );
 
         $this->message->setAttachments(['cake.icon.gif' => [
@@ -1019,7 +1020,7 @@ HTML;
             filesize(__FILE__),
             UPLOAD_ERR_OK,
             'MessageTest.php',
-            'text/x-php'
+            'text/x-php',
         );
         $chunks = base64_encode(file_get_contents(__FILE__));
 
@@ -1250,10 +1251,10 @@ HTML;
     {
         $message = new Message(['transport' => 'debug']);
 
-        if (!empty($charset)) {
+        if ($charset) {
             $message->setCharset($charset);
         }
-        if (!empty($headerCharset)) {
+        if ($headerCharset) {
             $message->setHeaderCharset($headerCharset);
         }
 
@@ -1274,10 +1275,10 @@ HTML;
     {
         $message = new Message();
 
-        if (!empty($charset)) {
+        if ($charset) {
             $message->setCharset($charset);
         }
-        if (!empty($headerCharset)) {
+        if ($headerCharset) {
             $message->setHeaderCharset($headerCharset);
         }
 
@@ -1299,7 +1300,7 @@ HTML;
         foreach ($lines as $line) {
             $this->assertTrue(
                 strlen($line) <= Message::LINE_LENGTH_MUST,
-                'Line length exceeds the max. limit of Message::LINE_LENGTH_MUST'
+                'Line length exceeds the max. limit of Message::LINE_LENGTH_MUST',
             );
         }
     }
@@ -1309,7 +1310,6 @@ HTML;
         $message = new Message();
         $reflection = new ReflectionClass($message);
         $property = $reflection->getProperty('serializableProperties');
-        $property->setAccessible(true);
         $serializableProperties = $property->getValue($message);
 
         $message

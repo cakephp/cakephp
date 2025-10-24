@@ -2,16 +2,16 @@
 declare(strict_types=1);
 
 /**
- * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
- * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- *
- * Licensed under The MIT License
- * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
- *
- * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
- * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+* CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+* Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+*
+* Licensed under The MIT License
+* For full copyright and license information, please see the LICENSE.txt
+* Redistributions of files must retain the above copyright notice.
+*
+* @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+* @link          https://cakephp.org CakePHP(tm) Project
+* @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
 namespace Cake\Database;
@@ -37,6 +37,7 @@ use Cake\Log\Log;
 use Closure;
 use Psr\SimpleCache\CacheInterface;
 use Throwable;
+use function Cake\Core\env;
 
 /**
  * Represents a connection with a database server.
@@ -111,7 +112,7 @@ class Connection implements ConnectionInterface
      *
      * ### Available options:
      *
-     * - `driver` Sort name or FCQN for driver.
+     * - `driver` Sort name or FQCN for driver.
      * - `log` Boolean indicating whether to use query logging.
      * - `name` Connection name.
      * - `cacheMetaData` Boolean indicating whether metadata (datasource schemas) should be cached.
@@ -129,9 +130,9 @@ class Connection implements ConnectionInterface
     /**
      * Creates read and write drivers.
      *
-     * @param array $config Connection config
+     * @param array<string, mixed> $config Connection config
      * @return array<string, \Cake\Database\Driver>
-     * @psalm-return array{read: \Cake\Database\Driver, write: \Cake\Database\Driver}
+     * @phpstan-return array{read: \Cake\Database\Driver, write: \Cake\Database\Driver}
      */
     protected function createDrivers(array $config): array
     {
@@ -139,7 +140,7 @@ class Connection implements ConnectionInterface
         if (!is_string($driver)) {
             assert($driver instanceof Driver);
             if (!$driver->enabled()) {
-                throw new MissingExtensionException(['driver' => get_class($driver), 'name' => $this->configName()]);
+                throw new MissingExtensionException(['driver' => $driver::class, 'name' => $this->configName()]);
             }
 
             // Legacy support for setting instance instead of driver class
@@ -154,22 +155,26 @@ class Connection implements ConnectionInterface
 
         $sharedConfig = array_diff_key($config, array_flip([
             'name',
+            'className',
             'driver',
             'cacheMetaData',
             'cacheKeyPrefix',
+            'read',
+            'write',
         ]));
 
-        $writeConfig = $config['write'] ?? [] + $sharedConfig;
-        $readConfig = $config['read'] ?? [] + $sharedConfig;
-        if ($readConfig == $writeConfig) {
-            $readDriver = $writeDriver = new $driverClass(['_role' => self::ROLE_WRITE] + $writeConfig);
-        } else {
+        $writeConfig = ($config['write'] ?? []) + $sharedConfig;
+        $readConfig = ($config['read'] ?? []) + $sharedConfig;
+        if (array_key_exists('write', $config) || array_key_exists('read', $config)) {
             $readDriver = new $driverClass(['_role' => self::ROLE_READ] + $readConfig);
             $writeDriver = new $driverClass(['_role' => self::ROLE_WRITE] + $writeConfig);
+        } else {
+            $readDriver = new $driverClass(['_role' => self::ROLE_WRITE] + $writeConfig);
+            $writeDriver = $readDriver;
         }
 
         if (!$writeDriver->enabled()) {
-            throw new MissingExtensionException(['driver' => get_class($writeDriver), 'name' => $this->configName()]);
+            throw new MissingExtensionException(['driver' => $writeDriver::class, 'name' => $this->configName()]);
         }
 
         return [self::ROLE_READ => $readDriver, self::ROLE_WRITE => $writeDriver];
@@ -183,7 +188,19 @@ class Connection implements ConnectionInterface
     public function __destruct()
     {
         if ($this->_transactionStarted && class_exists(Log::class)) {
-            Log::warning('The connection is going to be closed but there is an active transaction.');
+            $message = 'The connection is going to be closed but there is an active transaction.';
+
+            $requestUrl = env('REQUEST_URI');
+            if ($requestUrl) {
+                $message .= "\nRequest URL: " . $requestUrl;
+            }
+
+            $clientIp = env('REMOTE_ADDR');
+            if ($clientIp) {
+                $message .= "\nClient IP: " . $clientIp;
+            }
+
+            Log::warning($message);
         }
     }
 
@@ -248,7 +265,7 @@ class Connection implements ConnectionInterface
      */
     public function execute(string $sql, array $params = [], array $types = []): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(fn () => $this->getDriver()->execute($sql, $params, $types));
+        return $this->getDisconnectRetry()->run(fn() => $this->getDriver()->execute($sql, $params, $types));
     }
 
     /**
@@ -260,7 +277,7 @@ class Connection implements ConnectionInterface
      */
     public function run(Query $query): StatementInterface
     {
-        return $this->getDisconnectRetry()->run(fn () => $this->getDriver($query->getConnectionRole())->run($query));
+        return $this->getDisconnectRetry()->run(fn() => $this->getDriver($query->getConnectionRole())->run($query));
     }
 
     /**
@@ -284,7 +301,7 @@ class Connection implements ConnectionInterface
     public function selectQuery(
         ExpressionInterface|Closure|array|string|float|int $fields = [],
         array|string $table = [],
-        array $types = []
+        array $types = [],
     ): SelectQuery {
         return $this->queryFactory()->select($fields, $table, $types);
     }
@@ -315,7 +332,7 @@ class Connection implements ConnectionInterface
         ExpressionInterface|string|null $table = null,
         array $values = [],
         array $conditions = [],
-        array $types = []
+        array $types = [],
     ): UpdateQuery {
         return $this->queryFactory()->update($table, $values, $conditions, $types);
     }
@@ -361,7 +378,7 @@ class Connection implements ConnectionInterface
             return $this->_schemaCollection = new CachedCollection(
                 new SchemaCollection($this),
                 empty($this->_config['cacheKeyPrefix']) ? $this->configName() : $this->_config['cacheKeyPrefix'],
-                $this->getCacher()
+                $this->getCacher(),
             );
         }
 
@@ -373,7 +390,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $table the table to insert values in
      * @param array $values values to be inserted
-     * @param array<int|string, string> $types Array containing the types to be used for casting
+     * @param array<string, string> $types Array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
      */
     public function insert(string $table, array $values, array $types = []): StatementInterface
@@ -387,7 +404,7 @@ class Connection implements ConnectionInterface
      * @param string $table the table to update rows from
      * @param array $values values to be updated
      * @param array $conditions conditions to be set for update statement
-     * @param array<string> $types list of associative array containing the types to be used for casting
+     * @param array<string, string> $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
      */
     public function update(string $table, array $values, array $conditions = [], array $types = []): StatementInterface
@@ -400,7 +417,7 @@ class Connection implements ConnectionInterface
      *
      * @param string $table the table to delete rows from
      * @param array $conditions conditions to be set for delete statement
-     * @param array<string> $types list of associative array containing the types to be used for casting
+     * @param array<string, string> $types list of associative array containing the types to be used for casting
      * @return \Cake\Database\StatementInterface
      */
     public function delete(string $table, array $conditions = [], array $types = []): StatementInterface
@@ -749,7 +766,7 @@ class Connection implements ConnectionInterface
         if (!class_exists(Cache::class)) {
             throw new CakeException(
                 'To use caching you must either set a cacher using Connection::setCacher()' .
-                ' or require the cakephp/cache package in your composer config.'
+                ' or require the cakephp/cache package in your composer config.',
             );
         }
 
@@ -775,11 +792,9 @@ class Connection implements ConnectionInterface
         $config = $replace + $this->_config;
 
         if (isset($config['read'])) {
-            /** @psalm-suppress PossiblyInvalidArgument */
             $config['read'] = array_intersect_key($secrets, $config['read']) + $config['read'];
         }
         if (isset($config['write'])) {
-            /** @psalm-suppress PossiblyInvalidArgument */
             $config['write'] = array_intersect_key($secrets, $config['write']) + $config['write'];
         }
 

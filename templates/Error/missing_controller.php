@@ -20,8 +20,10 @@ use function Cake\Core\h;
 
 $pluginDot = empty($plugin) ? null : $plugin . '.';
 $namespace = Configure::read('App.namespace');
-$prefixNs = $prefixPath = '';
+$prefixNs = '';
+$prefixPath = '';
 
+$controller = (string)$controller;
 $incompleteInflection = (str_contains($controller, '_') || str_contains($controller, '-'));
 $originalClass = $controller;
 

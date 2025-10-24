@@ -35,7 +35,7 @@ class AssetTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -54,7 +54,7 @@ class AssetTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -229,7 +229,7 @@ class AssetTest extends TestCase
     public function testAssetTimestampPluginsAndThemes(): void
     {
         Configure::write('Asset.timestamp', 'force');
-        $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
+        $this->loadPlugins(['TestTheme', 'TestPlugin', 'Company/TestPluginThree']);
 
         $result = Asset::assetTimestamp('/test_plugin/css/test_plugin_asset.css');
         $this->assertMatchesRegularExpression('#/test_plugin/css/test_plugin_asset.css\?[0-9]+$#', $result, 'Missing timestamp plugin');

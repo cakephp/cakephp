@@ -36,7 +36,7 @@ class OrderByExpression extends QueryExpression
     public function __construct(
         ExpressionInterface|array|string $conditions = [],
         TypeMap|array $types = [],
-        string $conjunction = ''
+        string $conjunction = '',
     ) {
         parent::__construct($conditions, $types, $conjunction);
     }
@@ -77,12 +77,12 @@ class OrderByExpression extends QueryExpression
             ) {
                 throw new InvalidArgumentException(
                     sprintf(
-                        'Passing extra expressions by associative array (`\'%s\' => \'%s\'`) ' .
+                        "Passing extra expressions by associative array (`'%s' => '%s'`) " .
                         'is not allowed to avoid potential SQL injection. ' .
                         'Use QueryExpression or numeric array instead.',
                         $key,
-                        $val
-                    )
+                        $val,
+                    ),
                 );
             }
         }

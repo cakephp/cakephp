@@ -22,8 +22,6 @@ use Cake\Console\ConsoleOptionParser;
 
 /**
  * Command for copying plugin assets to app's webroot.
- *
- * @psalm-suppress PropertyNotSetInConstructor
  */
 class PluginAssetsCopyCommand extends Command
 {
@@ -35,6 +33,14 @@ class PluginAssetsCopyCommand extends Command
     public static function defaultName(): string
     {
         return 'plugin assets copy';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return "Copy plugin assets to app's webroot.";
     }
 
     /**
@@ -67,9 +73,9 @@ class PluginAssetsCopyCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription([
-            'Copy plugin assets to app\'s webroot.',
-        ])->addArgument('name', [
+        $parser->setDescription(
+            static::getDescription(),
+        )->addArgument('name', [
             'help' => 'A specific plugin you want to copy assets for.',
             'required' => false,
         ])->addOption('overwrite', [

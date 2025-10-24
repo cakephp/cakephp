@@ -35,7 +35,7 @@ class MailSubjectContains extends MailConstraintBase
     {
         if (!is_string($other)) {
             throw new InvalidArgumentException(
-                'Invalid data type, must be a string.'
+                'Invalid data type, must be a string.',
             );
         }
         $messages = $this->getMessages();

@@ -75,7 +75,7 @@ class LazyEagerLoader
         $primaryKey = $source->getPrimaryKey();
         $method = is_string($primaryKey) ? 'get' : 'extract';
 
-        $keys = Hash::map($entities, '{*}', fn (EntityInterface $entity) => $entity->{$method}($primaryKey));
+        $keys = Hash::map($entities, '{*}', fn(EntityInterface $entity) => $entity->{$method}($primaryKey));
 
         $query = $source
             ->find()
@@ -90,7 +90,7 @@ class LazyEagerLoader
                 }
 
                 $types = array_intersect_key($q->getDefaultTypes(), array_flip($primaryKey));
-                $primaryKey = array_map([$source, 'aliasField'], $primaryKey);
+                $primaryKey = array_map($source->aliasField(...), $primaryKey);
 
                 return new TupleComparison($primaryKey, $keys, $types, 'IN');
             })
@@ -112,7 +112,7 @@ class LazyEagerLoader
      *
      * @param \Cake\ORM\Table $source The table having the top level associations
      * @param array<string> $associations The name of the top level associations
-     * @return array<string>
+     * @return array<string, string>
      */
     protected function _getPropertyMap(Table $source, array $associations): array
     {
@@ -141,7 +141,7 @@ class LazyEagerLoader
         array $entities,
         SelectQuery $query,
         array $associations,
-        Table $source
+        Table $source,
     ): array {
         $injected = [];
         $properties = $this->_getPropertyMap($source, $associations);
@@ -149,7 +149,7 @@ class LazyEagerLoader
         /** @var array<\Cake\Datasource\EntityInterface> $results */
         $results = $query
             ->all()
-            ->indexBy(fn (EntityInterface $e) => implode(';', $e->extract($primaryKey)))
+            ->indexBy(fn(EntityInterface $e) => implode(';', $e->extract($primaryKey)))
             ->toArray();
 
         foreach ($entities as $k => $object) {

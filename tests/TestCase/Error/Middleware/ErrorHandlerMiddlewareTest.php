@@ -54,7 +54,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -70,7 +70,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::drop('error_test');
@@ -98,14 +98,18 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
         $factory = function ($exception) {
             $this->assertInstanceOf('LogicException', $exception);
-            $response = new Response();
-            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
-                ->getMock();
-            $mock->expects($this->once())
-                ->method('render')
-                ->willReturn($response);
 
-            return $mock;
+            return new class implements ExceptionRendererInterface
+            {
+                public function render(): ResponseInterface|string
+                {
+                    return new Response();
+                }
+
+                public function write(string|ResponseInterface $output): void
+                {
+                }
+            };
         };
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
             'exceptionRenderer' => $factory,
@@ -127,7 +131,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
@@ -145,7 +149,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('was not found', '' . $result->getBody());
     }
@@ -177,7 +181,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware();
-        $handler = new TestRequestHandler(function () {
+        $handler = new TestRequestHandler(function (): void {
             $err = new RedirectException('http://example.org/login', 301, ['Constructor' => 'yes', 'Method' => 'yes']);
             throw $err;
         });
@@ -207,7 +211,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             throw new NotFoundException('whoops');
         });
         $result = $middleware->process($request, $handler);
-        $this->assertInstanceOf('Cake\Http\Response', $result);
+        $this->assertInstanceOf(Response::class, $result);
         $this->assertSame(404, $result->getStatusCode());
         $this->assertStringContainsString('"message": "whoops"', (string)$result->getBody());
         $this->assertStringContainsString('application/json', $result->getHeaderLine('Content-type'));
@@ -249,7 +253,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $logs[0]);
         $this->assertStringContainsString(
             str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
-            $logs[0]
+            $logs[0],
         );
         $this->assertStringContainsString('Request URL: /target/url', $logs[0]);
         $this->assertStringContainsString('Referer URL: /other/path', $logs[0]);
@@ -280,11 +284,11 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $this->assertStringContainsString('[Cake\Http\Exception\NotFoundException] Kaboom!', $logs[0]);
         $this->assertStringContainsString(
             'Caused by: [Cake\Datasource\Exception\RecordNotFoundException]',
-            $logs[0]
+            $logs[0],
         );
         $this->assertStringContainsString(
             str_replace('/', DS, 'vendor/phpunit/phpunit/src/Framework/TestCase.php'),
-            $logs[0]
+            $logs[0],
         );
         $this->assertStringContainsString('Request URL: /target/url', $logs[0]);
         $this->assertStringContainsString('Referer URL: /other/path', $logs[0]);
@@ -298,7 +302,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware([
             'log' => true,
-            'skipLog' => ['Cake\Http\Exception\NotFoundException'],
+            'skipLog' => [NotFoundException::class],
         ]);
         $handler = new TestRequestHandler(function (): void {
             throw new NotFoundException('Kaboom!');
@@ -318,7 +322,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $request = ServerRequestFactory::fromGlobals();
         $middleware = new ErrorHandlerMiddleware(['log' => true]);
         $handler = new TestRequestHandler(function (): void {
-            throw new MissingControllerException(['class' => 'Articles']);
+            throw new MissingControllerException(['controller' => 'Articles']);
         });
         $result = $middleware->process($request, $handler);
         $this->assertSame(404, $result->getStatusCode());
@@ -326,10 +330,10 @@ class ErrorHandlerMiddlewareTest extends TestCase
         $logs = $this->logger->read();
         $this->assertStringContainsString(
             '[Cake\Http\Exception\MissingControllerException] Controller class `Articles` could not be found.',
-            $logs[0]
+            $logs[0],
         );
         $this->assertStringContainsString('Exception Attributes:', $logs[0]);
-        $this->assertStringContainsString("'class' => 'Articles'", $logs[0]);
+        $this->assertStringContainsString("'controller' => 'Articles'", $logs[0]);
         $this->assertStringContainsString('Request URL:', $logs[0]);
     }
 
@@ -346,8 +350,8 @@ class ErrorHandlerMiddlewareTest extends TestCase
         EventManager::instance()->on(
             'Exception.beforeRender',
             function (EventInterface $event, Throwable $e, ServerRequestInterface $req) {
-                return 'Response string from event';
-            }
+                $event->setResult('Response string from event');
+            },
         );
 
         $result = $middleware->process($request, $handler);
@@ -362,14 +366,18 @@ class ErrorHandlerMiddlewareTest extends TestCase
     {
         $request = ServerRequestFactory::fromGlobals();
 
-        $factory = function ($exception) {
-            $mock = $this->getMockBuilder(ExceptionRendererInterface::class)
-                ->getMock();
-            $mock->expects($this->once())
-                ->method('render')
-                ->will($this->throwException(new LogicException('Rendering failed')));
+        $factory = function () {
+            return new class implements ExceptionRendererInterface
+            {
+                public function render(): ResponseInterface|string
+                {
+                    throw new LogicException('Rendering failed');
+                }
 
-            return $mock;
+                public function write(string|ResponseInterface $output): void
+                {
+                }
+            };
         };
         $middleware = new ErrorHandlerMiddleware(new ExceptionTrap([
             'exceptionRenderer' => $factory,
@@ -396,7 +404,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
             new ExceptionTrap([
                 'exceptionRenderer' => WebExceptionRenderer::class,
             ]),
-            $app
+            $app,
         );
 
         $this->assertSame([], Router::routes());

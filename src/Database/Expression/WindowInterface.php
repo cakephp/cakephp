@@ -140,16 +140,16 @@ interface WindowInterface
      * @param string $endDirection Frame end direction
      * @return $this
      * @throws \InvalidArgumentException WHen offsets are negative.
-     * @psalm-param self::RANGE|self::ROWS|self::GROUPS $type
-     * @psalm-param self::PRECEDING|self::FOLLOWING $startDirection
-     * @psalm-param self::PRECEDING|self::FOLLOWING $endDirection
+     * @phpstan-param self::RANGE|self::ROWS|self::GROUPS $type
+     * @phpstan-param self::PRECEDING|self::FOLLOWING $startDirection
+     * @phpstan-param self::PRECEDING|self::FOLLOWING $endDirection
      */
     public function frame(
         string $type,
         ExpressionInterface|string|int|null $startOffset,
         string $startDirection,
         ExpressionInterface|string|int|null $endOffset,
-        string $endDirection
+        string $endDirection,
     );
 
     /**

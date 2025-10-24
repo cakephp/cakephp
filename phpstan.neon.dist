@@ -3,13 +3,22 @@ includes:
 
 parameters:
 	level: 8
-	checkMissingIterableValueType: false
-	checkGenericClassInNonGenericObjectType: false
 	treatPhpDocTypesAsCertain: false
+	featureToggles:
+		internalTag: true
 	bootstrapFiles:
 		- tests/bootstrap.php
 	paths:
 		- src/
+	ignoreErrors:
+		-
+			identifier: missingType.iterableValue
+		-
+			identifier: missingType.generics
+		-
+			identifier: include.fileNotFound
+		-
+			identifier: method.internalClass
 
 services:
 	-

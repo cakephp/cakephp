@@ -173,6 +173,10 @@ class FlashComponent extends Component
 
         $options = ['element' => $element];
 
+        if (isset($args['options'])) {
+            $args[1] = $args['options'];
+        }
+
         if (!empty($args[1])) {
             if (!empty($args[1]['plugin'])) {
                 $options = ['element' => $args[1]['plugin'] . '.' . $element];
@@ -181,6 +185,6 @@ class FlashComponent extends Component
             $options += (array)$args[1];
         }
 
-        $this->set($args[0], $options);
+        $this->set($args[0] ?? $args['message'], $options);
     }
 }

@@ -27,7 +27,7 @@ class NestedTransactionRollbackException extends CakeException
     /**
      * Constructor
      *
-     * @param string|null $message If no message is given a default meesage will be used.
+     * @param string|null $message If no message is given, a default message will be used.
      * @param int|null $code Status code, defaults to 500.
      * @param \Throwable|null $previous the previous exception.
      */

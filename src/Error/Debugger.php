@@ -80,6 +80,7 @@ class Debugger
         'sublime' => 'subl://open?url=file://{file}&line={line}',
         'textmate' => 'txmt://open?url=file://{file}&line={line}',
         'vscode' => 'vscode://file/{file}:{line}',
+        'vscodium' => 'vscodium://file/{file}:{line}',
     ];
 
     /**
@@ -95,7 +96,7 @@ class Debugger
     public function __construct()
     {
         $docRef = ini_get('docref_root');
-        if (empty($docRef) && function_exists('ini_set')) {
+        if (!$docRef && function_exists('ini_set')) {
             ini_set('docref_root', 'https://secure.php.net/');
         }
         if (!defined('E_RECOVERABLE_ERROR')) {
@@ -116,10 +117,8 @@ class Debugger
     {
         /** @var array<int, static> $instance */
         static $instance = [];
-        if ($class) {
-            if (!$instance || strtolower($class) !== strtolower(get_class($instance[0]))) {
-                $instance[0] = new $class();
-            }
+        if ($class && (!$instance || strtolower($class) !== strtolower($instance[0]::class))) {
+            $instance[0] = new $class();
         }
         if (!$instance) {
             $instance[0] = new Debugger();
@@ -166,7 +165,7 @@ class Debugger
      *
      * ### Example
      *
-     * Debugger::setOutputMask(['password' => '[*************]');
+     * Debugger::setOutputMask(['password' => '[*************]']);
      *
      * @param array<string, string> $value An array where keys are replaced by their values in output.
      * @param bool $merge Whether to recursively merge or overwrite existing config, defaults to true.
@@ -208,7 +207,7 @@ class Debugger
             throw new InvalidArgumentException(sprintf(
                 'Unknown editor `%s`. Known editors are `%s`.',
                 $name,
-                $known
+                $known,
             ));
         }
         $instance->setConfig('editor', $name);
@@ -228,7 +227,7 @@ class Debugger
         if (!isset($instance->editors[$editor])) {
             throw new InvalidArgumentException(sprintf(
                 'Cannot format editor URL `%s` is not a known editor.',
-                $editor
+                $editor,
             ));
         }
 
@@ -271,7 +270,7 @@ class Debugger
 
         Log::write(
             $level,
-            "\n" . $source . static::exportVarAsPlainText($var, $maxDepth)
+            "\n" . $source . static::exportVarAsPlainText($var, $maxDepth),
         );
     }
 
@@ -279,7 +278,7 @@ class Debugger
      * Get the frames from $exception that are not present in $parent
      *
      * @param \Throwable $exception The exception to get frames from.
-     * @param ?\Throwable $parent The parent exception to compare frames with.
+     * @param \Throwable|null $parent The parent exception to compare frames with.
      * @return array An array of frame structures.
      */
     public static function getUniqueFrames(Throwable $exception, ?Throwable $parent): array
@@ -326,7 +325,7 @@ class Debugger
      *
      * - `depth` - The number of stack frames to return. Defaults to 999
      * - `format` - The format you want the return. Defaults to the currently selected format. If
-     *    format is 'array' or 'points' the return will be an array.
+     *    format is 'array', 'points', or 'shortPoints' the return will be an array.
      * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
@@ -351,7 +350,7 @@ class Debugger
      *
      * - `depth` - The number of stack frames to return. Defaults to 999
      * - `format` - The format you want the return. Defaults to 'text'. If
-     *    format is 'array' or 'points' the return will be an array.
+     *    format is 'array', 'points', or 'shortPoints' the return will be an array.
      * - `args` - Should arguments for functions be shown? If true, the arguments for each method call
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 0
@@ -374,6 +373,7 @@ class Debugger
             'start' => 0,
             'scope' => null,
             'exclude' => ['call_user_func_array', 'trigger_error'],
+            'shortPath' => false,
         ];
         $options = Hash::merge($defaults, $options);
 
@@ -385,8 +385,8 @@ class Debugger
             if (isset($backtrace[$i])) {
                 $frame = $backtrace[$i] + ['file' => '[internal]', 'line' => '??'];
             }
-
-            $signature = $reference = $frame['file'];
+            $signature = $frame['file'];
+            $reference = $frame['file'];
             if (!empty($frame['class'])) {
                 $signature = $frame['class'] . $frame['type'] . $frame['function'];
                 $reference = $signature . '(';
@@ -402,29 +402,35 @@ class Debugger
             if (in_array($signature, $options['exclude'], true)) {
                 continue;
             }
-            if ($options['format'] === 'points') {
+
+            $format = $options['format'];
+            if ($format === 'shortPoints') {
+                $back[] = [
+                    'file' => self::trimPath($frame['file']),
+                    'line' => $frame['line'],
+                    'reference' => $reference,
+                ];
+            } elseif ($format === 'points') {
                 $back[] = ['file' => $frame['file'], 'line' => $frame['line'], 'reference' => $reference];
-            } elseif ($options['format'] === 'array') {
+            } elseif ($format === 'array') {
                 if (!$options['args']) {
                     unset($frame['args']);
                 }
                 $back[] = $frame;
-            } elseif ($options['format'] === 'text') {
+            } elseif ($format === 'text') {
                 $path = static::trimPath($frame['file']);
                 $back[] = sprintf('%s - %s, line %d', $reference, $path, $frame['line']);
             } else {
-                debug($options);
                 throw new InvalidArgumentException(
-                    "Invalid trace format of `{$options['format']}` chosen. Must be one of `array`, `points` or `text`."
+                    "Invalid trace format of `$format` chosen. Must be one of `array`, `points` or `text`.",
                 );
             }
         }
-        if ($options['format'] === 'array' || $options['format'] === 'points') {
+        if (in_array($options['format'], ['array', 'points', 'shortPoints'])) {
             return $back;
         }
 
         /**
-         * @psalm-suppress InvalidArgument
          * @phpstan-ignore-next-line
          */
         return implode("\n", $back);
@@ -480,7 +486,7 @@ class Debugger
             return [];
         }
         $data = file_get_contents($file);
-        if (empty($data)) {
+        if (!$data) {
             return $lines;
         }
         if (str_contains($data, "\n")) {
@@ -514,9 +520,6 @@ class Debugger
      */
     protected static function _highlight(string $str): string
     {
-        if (function_exists('hphp_log') || function_exists('hphp_gettid')) {
-            return htmlentities($str);
-        }
         $added = false;
         if (!str_contains($str, '<?php')) {
             $added = true;
@@ -524,10 +527,10 @@ class Debugger
         }
         $highlight = highlight_string($str, true);
         if ($added) {
-            $highlight = str_replace(
-                ['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />'],
+            return str_replace(
+                ['&lt;?php&nbsp;<br/>', '&lt;?php&nbsp;<br />', '&lt;?php '],
                 '',
-                $highlight
+                $highlight,
             );
         }
 
@@ -559,7 +562,7 @@ class Debugger
             throw new CakeException(sprintf(
                 'The `%s` formatter does not implement `%s`.',
                 $class,
-                FormatterInterface::class
+                FormatterInterface::class,
             ));
         }
 
@@ -605,7 +608,7 @@ class Debugger
     public static function exportVarAsPlainText(mixed $var, int $maxDepth = 3): string
     {
         return (new TextFormatter())->dump(
-            static::export($var, new DebugContext($maxDepth))
+            static::export($var, new DebugContext($maxDepth)),
         );
     }
 
@@ -688,7 +691,7 @@ class Debugger
         } else {
             $items[] = new ArrayItemNode(
                 new ScalarNode('string', ''),
-                new SpecialNode('[maximum depth reached]')
+                new SpecialNode('[maximum depth reached]'),
             );
         }
 
@@ -735,7 +738,7 @@ class Debugger
                     $value = $outputMask[$key];
                 }
                 $node->addProperty(
-                    new PropertyNode((string)$key, 'public', static::export($value, $context->withAddedDepth()))
+                    new PropertyNode((string)$key, 'public', static::export($value, $context->withAddedDepth())),
                 );
             }
 
@@ -748,8 +751,6 @@ class Debugger
             foreach ($filters as $filter => $visibility) {
                 $reflectionProperties = $ref->getProperties($filter);
                 foreach ($reflectionProperties as $reflectionProperty) {
-                    $reflectionProperty->setAccessible(true);
-
                     if (
                         method_exists($reflectionProperty, 'isInitialized') &&
                         !$reflectionProperty->isInitialized($var)
@@ -762,8 +763,8 @@ class Debugger
                         new PropertyNode(
                             $reflectionProperty->getName(),
                             $visibility,
-                            $value
-                        )
+                            $value,
+                        ),
                     );
                 }
             }
@@ -860,7 +861,7 @@ class Debugger
             trigger_error(
                 'Please change the value of `Security.salt` in `ROOT/config/app_local.php` ' .
                 'to a random value of at least 32 characters.',
-                E_USER_NOTICE
+                E_USER_NOTICE,
             );
         }
     }

@@ -36,19 +36,6 @@ use InvalidArgumentException;
 class SchemaLoader
 {
     /**
-     * @var \Cake\TestSuite\ConnectionHelper
-     */
-    protected ConnectionHelper $helper;
-
-    /**
-     * Constructor.
-     */
-    public function __construct()
-    {
-        $this->helper = new ConnectionHelper();
-    }
-
-    /**
      * Load and apply schema sql file, or an array of files.
      *
      * @param array<string>|string $paths Schema files to load
@@ -61,7 +48,7 @@ class SchemaLoader
         array|string $paths,
         string $connectionName = 'test',
         bool $dropTables = true,
-        bool $truncateTables = false
+        bool $truncateTables = false,
     ): void {
         $files = (array)$paths;
 
@@ -71,7 +58,7 @@ class SchemaLoader
         }
 
         if ($dropTables) {
-            $this->helper->dropTables($connectionName);
+            ConnectionHelper::dropTables($connectionName);
         }
 
         /** @var \Cake\Database\Connection $connection */
@@ -92,7 +79,7 @@ class SchemaLoader
         }
 
         if ($truncateTables) {
-            $this->helper->truncateTables($connectionName);
+            ConnectionHelper::truncateTables($connectionName);
         }
     }
 
@@ -140,7 +127,7 @@ class SchemaLoader
      *
      * This schema format can be useful for plugins that want to include
      * tables to test against but don't need to include production
-     * ready schema via migrations. Applications should favour using migrations
+     * ready schema via migrations. Applications should favor using migrations
      * or SQL dump files over this format for ease of maintenance.
      *
      * A more complete example can be found in `tests/schema.php`.
@@ -157,7 +144,7 @@ class SchemaLoader
             return;
         }
 
-        $this->helper->dropTables($connectionName);
+        ConnectionHelper::dropTables($connectionName);
 
         $tables = include $file;
 
@@ -171,7 +158,7 @@ class SchemaLoader
                 if (!is_string($name)) {
                     throw new InvalidArgumentException(
                         sprintf('`%s` is not a valid table name. Either use a string key for the table definition'
-                            . '(`\'articles\' => [...]`) or define the `table` key in the table definition.', $name)
+                            . "(`'articles' => [...]`) or define the `table` key in the table definition.", $name),
                     );
                 }
                 $schema = new TableSchema($name, $table['columns']);

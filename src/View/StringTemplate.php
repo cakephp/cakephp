@@ -155,7 +155,7 @@ class StringTemplate
      * ]);
      * ```
      *
-     * @param array<string> $templates An associative list of named templates.
+     * @param array<string, string> $templates An associative list of named templates.
      * @return $this
      */
     public function add(array $templates)
@@ -174,7 +174,7 @@ class StringTemplate
      */
     protected function _compileTemplates(array $templates = []): void
     {
-        if (empty($templates)) {
+        if (!$templates) {
             $templates = array_keys($this->_config);
         }
         foreach ($templates as $name) {
@@ -185,7 +185,7 @@ class StringTemplate
 
             assert(
                 is_string($template),
-                sprintf('Template for `%s` must be of type `string`, but is `%s`', $name, gettype($template))
+                sprintf('Template for `%s` must be of type `string`, but is `%s`', $name, gettype($template)),
             );
 
             $template = str_replace('%', '%%', $template);
@@ -326,7 +326,7 @@ class StringTemplate
             $value = implode(' ', $value);
         }
         if (is_numeric($key)) {
-            return "$value=\"$value\"";
+            return "{$value}=\"{$value}\"";
         }
         $truthy = [1, '1', true, 'true', $key];
         $isMinimized = isset($this->_compactAttributes[$key]);
@@ -334,7 +334,7 @@ class StringTemplate
             $key = h($key);
         }
         if ($isMinimized && in_array($value, $truthy, true)) {
-            return "$key=\"$key\"";
+            return "{$key}=\"{$key}\"";
         }
         if ($isMinimized) {
             return '';
@@ -346,18 +346,18 @@ class StringTemplate
     /**
      * Adds a class and returns a unique list either in array or space separated
      *
-     * @param mixed $input The array or string to add the class to
+     * @param array<string, mixed>|string|null $input The array or string to add the class to
      * @param array<string>|string|false|null $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return array<string>|string|null
+     * @return array<string, string>|string|null
      */
     public function addClass(
         mixed $input,
         array|string|false|null $newClass,
-        string $useIndex = 'class'
+        string $useIndex = 'class',
     ): array|string|null {
         // NOOP
-        if (empty($newClass)) {
+        if (!$newClass) {
             return $input;
         }
 
@@ -368,7 +368,7 @@ class StringTemplate
             $input = [];
         }
 
-        // Convert and sanitise the inputs
+        // Convert and sanitize the inputs
         if (!is_array($class)) {
             if (is_string($class) && !empty($class)) {
                 $class = explode(' ', $class);

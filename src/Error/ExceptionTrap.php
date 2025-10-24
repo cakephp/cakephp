@@ -46,7 +46,7 @@ class ExceptionTrap
      *   implement the `render()` method and return either a string or Http\Response.
      * - `log` Set to false to disable logging.
      * - `logger` - string - The class name of the error logger to use.
-     * - `trace` - boolean - Whether or not backtraces should be included in
+     * - `trace` - boolean - Whether backtraces should be included in
      *   logged exceptions.
      * - `skipLog` - array - List of exceptions to skip for logging. Exceptions that
      *   extend one of the listed exceptions will also not be logged. E.g.:
@@ -125,7 +125,7 @@ class ExceptionTrap
             if (!is_subclass_of($class, ExceptionRendererInterface::class)) {
                 throw new InvalidArgumentException(
                     "Cannot use `{$class}` as an `exceptionRenderer`. " .
-                    'It must be an instance of `Cake\Error\ExceptionRendererInterface`.'
+                    'It must be an instance of `Cake\Error\ExceptionRendererInterface`.',
                 );
             }
 
@@ -190,6 +190,7 @@ class ExceptionTrap
         if (static::$registeredTrap == $this) {
             $this->disabled = true;
             static::$registeredTrap = null;
+            restore_exception_handler();
         }
     }
 
@@ -229,16 +230,19 @@ class ExceptionTrap
 
         try {
             $event = $this->dispatchEvent('Exception.beforeRender', ['exception' => $exception, 'request' => $request]);
+            if ($event->isStopped()) {
+                return;
+            }
             $exception = $event->getData('exception');
             assert($exception instanceof Throwable);
 
             $renderer = $this->renderer($exception, $request);
-            $renderer->write($event->getResult() ?? $renderer->render());
+            $renderer->write($event->getResult() ?: $renderer->render());
         } catch (Throwable $exception) {
             $this->logInternalError($exception);
         }
         // Use this constant as a proxy for cakephp tests.
-        if (PHP_SAPI == 'cli' && !env('FIXTURE_SCHEMA_METADATA')) {
+        if (PHP_SAPI === 'cli' && !env('FIXTURE_SCHEMA_METADATA')) {
             exit(1);
         }
     }
@@ -275,7 +279,7 @@ class ExceptionTrap
             $error['type'],
             $error['message'],
             $error['file'],
-            $error['line']
+            $error['line'],
         );
     }
 
@@ -355,7 +359,7 @@ class ExceptionTrap
     /**
      * Trigger an error that occurred during rendering an exception.
      *
-     * By triggering an E_USER_ERROR we can end up in the default
+     * By triggering an E_USER_WARNING we can end up in the default
      * exception handling which will log the rendering failure,
      * and hopefully render an error page.
      *
@@ -371,6 +375,6 @@ class ExceptionTrap
             $exception->getFile(),
             $exception->getLine(),
         );
-        trigger_error($message, E_USER_ERROR);
+        trigger_error($message, E_USER_WARNING);
     }
 }

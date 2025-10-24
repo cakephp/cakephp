@@ -97,13 +97,6 @@ class Configure
             if (static::$_hasIniSet) {
                 ini_set('display_errors', $config['debug'] ? '1' : '0');
             }
-
-            if ($config['debug'] && PHP_SAPI !== 'cli' && ini_get('zend.assertions') === '-1') {
-                trigger_error(
-                    'You should set `zend.assertions` to `1` in your php.ini for your development environment.',
-                    E_USER_WARNING
-                );
-            }
         }
     }
 
@@ -139,7 +132,7 @@ class Configure
      */
     public static function check(string $var): bool
     {
-        if (empty($var)) {
+        if (!$var) {
             return false;
         }
 
@@ -338,8 +331,8 @@ class Configure
                 sprintf(
                     'Config %s engine not found when attempting to load %s.',
                     $config,
-                    $key
-                )
+                    $key,
+                ),
             );
         }
 
@@ -390,7 +383,7 @@ class Configure
             throw new CakeException(sprintf('There is no `%s` config engine.', $config));
         }
         $values = static::$_values;
-        if (!empty($keys)) {
+        if ($keys) {
             $values = array_intersect_key($values, array_flip($keys));
         }
 

@@ -19,6 +19,7 @@ namespace Cake\Database\Expression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\ValueBinder;
 use Closure;
+use function Cake\Core\deprecationWarning;
 
 /**
  * This represents a SQL window expression used by aggregate and window functions.
@@ -117,6 +118,11 @@ class WindowExpression implements ExpressionInterface, WindowInterface
      */
     public function order(ExpressionInterface|Closure|array|string $fields)
     {
+        deprecationWarning(
+            '5.0.0',
+            'WindowExpression::order() is deprecated. Use WindowExpression::orderBy() instead.',
+        );
+
         return $this->orderBy($fields);
     }
 
@@ -172,7 +178,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         ExpressionInterface|string|int|null $startOffset,
         string $startDirection,
         ExpressionInterface|string|int|null $endOffset,
-        string $endDirection
+        string $endDirection,
     ) {
         $this->frame = [
             'type' => $type,
@@ -246,12 +252,12 @@ class WindowExpression implements ExpressionInterface, WindowInterface
             $start = $this->buildOffsetSql(
                 $binder,
                 $this->frame['start']['offset'],
-                $this->frame['start']['direction']
+                $this->frame['start']['direction'],
             );
             $end = $this->buildOffsetSql(
                 $binder,
                 $this->frame['end']['offset'],
-                $this->frame['end']['direction']
+                $this->frame['end']['direction'],
             );
 
             $frameSql = sprintf('%s BETWEEN %s AND %s', $this->frame['type'], $start, $end);
@@ -309,7 +315,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
     protected function buildOffsetSql(
         ValueBinder $binder,
         ExpressionInterface|string|int|null $offset,
-        string $direction
+        string $direction,
     ): string {
         if ($offset === 0) {
             return 'CURRENT ROW';
@@ -322,7 +328,7 @@ class WindowExpression implements ExpressionInterface, WindowInterface
         return sprintf(
             '%s %s',
             $offset ?? 'UNBOUNDED',
-            $direction
+            $direction,
         );
     }
 

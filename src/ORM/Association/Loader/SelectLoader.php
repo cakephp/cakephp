@@ -178,7 +178,8 @@ class SelectLoader
             ->select($options['fields'])
             ->where($options['conditions'])
             ->eagerLoaded(true)
-            ->enableHydration($selectQuery->isHydrationEnabled());
+            ->enableHydration($selectQuery->isHydrationEnabled())
+            ->setConnectionRole($selectQuery->getConnectionRole());
         if ($selectQuery->isResultsCastingEnabled()) {
             $fetchQuery->enableResultsCasting();
         } else {
@@ -253,10 +254,10 @@ class SelectLoader
         }
 
         $select = $fetchQuery->aliasFields($fetchQuery->clause('select'));
-        if (empty($select)) {
+        if (!$select) {
             return;
         }
-        $missingKey = function ($fieldList, $key) {
+        $missingKey = function ($fieldList, $key): bool {
             foreach ($key as $keyField) {
                 if (!in_array($keyField, $fieldList, true)) {
                     return true;
@@ -269,7 +270,7 @@ class SelectLoader
         $missingFields = $missingKey($select, $key);
         if ($missingFields) {
             $driver = $fetchQuery->getConnection()->getDriver();
-            $quoted = array_map([$driver, 'quoteIdentifier'], $key);
+            $quoted = array_map($driver->quoteIdentifier(...), $key);
             $missingFields = $missingKey($select, $quoted);
         }
 
@@ -277,8 +278,8 @@ class SelectLoader
             throw new InvalidArgumentException(
                 sprintf(
                     'You are required to select the "%s" field(s)',
-                    implode(', ', $key)
-                )
+                    implode(', ', $key),
+                ),
             );
         }
     }
@@ -316,7 +317,7 @@ class SelectLoader
 
         return $query->innerJoin(
             [$aliasedTable => $subquery],
-            $conditions
+            $conditions,
         );
     }
 
@@ -354,7 +355,7 @@ class SelectLoader
         SelectQuery $query,
         array $keys,
         mixed $filter,
-        string $operator
+        string $operator,
     ): TupleComparison {
         $types = [];
         $defaults = $query->getDefaultTypes();
@@ -418,11 +419,19 @@ class SelectLoader
         $filterQuery->contain([], true);
         $filterQuery->setValueBinder(new ValueBinder());
 
-        // Ignore limit if there is no order since we need all rows to find matches
-        if (!$filterQuery->clause('limit') || !$filterQuery->clause('order')) {
+        // Only remove limit and order when BOTH are missing or when order exists without limit
+        // When limit exists with order, preserve both for proper subquery results
+        $hasLimit = $filterQuery->clause('limit') !== null;
+        $hasOrder = $filterQuery->clause('order') !== null;
+
+        // Remove order if there's no limit to avoid SQL grouping errors
+        // But preserve both when they exist together
+        if (!$hasLimit) {
             $filterQuery->limit(null);
-            $filterQuery->orderBy([], true);
             $filterQuery->offset(null);
+            if ($hasOrder) {
+                $filterQuery->orderBy([], true);
+            }
         }
 
         $fields = $this->_subqueryFields($query);
@@ -450,7 +459,8 @@ class SelectLoader
         }
 
         $fields = $query->aliasFields($keys, $this->sourceAlias);
-        $group = $fields = array_values($fields);
+        $group = array_values($fields);
+        $fields = $group;
 
         /** @var \Cake\Database\Expression\QueryExpression $order */
         $order = $query->clause('order');
@@ -483,16 +493,25 @@ class SelectLoader
             $this->bindingKey;
         $key = (array)$keys;
 
-        foreach ($fetchQuery->all() as $result) {
+        $preserveKeys = $fetchQuery->getOptions()['preserveKeys'] ?? false;
+
+        foreach ($fetchQuery->all() as $i => $result) {
             $values = [];
             foreach ($key as $k) {
                 $values[] = $result[$k];
             }
+
             if ($singleResult) {
                 $resultMap[implode(';', $values)] = $result;
-            } else {
-                $resultMap[implode(';', $values)][] = $result;
+                continue;
             }
+
+            if ($preserveKeys) {
+                $resultMap[implode(';', $values)][$i] = $result;
+                continue;
+            }
+
+            $resultMap[implode(';', $values)][] = $result;
         }
 
         return $resultMap;

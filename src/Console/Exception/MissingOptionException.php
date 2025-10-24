@@ -50,7 +50,7 @@ class MissingOptionException extends ConsoleException
         string $requested = '',
         array $suggestions = [],
         ?int $code = null,
-        ?Throwable $previous = null
+        ?Throwable $previous = null,
     ) {
         $this->suggestions = $suggestions;
         $this->requested = $requested;

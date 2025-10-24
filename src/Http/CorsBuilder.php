@@ -126,7 +126,7 @@ class CorsBuilder
      * Normalize the origin to regular expressions and put in an array format
      *
      * @param array<string> $domains Domain names to normalize.
-     * @return array
+     * @return array<array<string, string>>
      */
     protected function _normalizeDomains(array $domains): array
     {
@@ -136,8 +136,8 @@ class CorsBuilder
                 $result[] = ['preg' => '@.@', 'original' => '*'];
                 continue;
             }
-
-            $original = $preg = $domain;
+            $original = $domain;
+            $preg = $domain;
             if (!str_contains($domain, '://')) {
                 $preg = ($this->_isSsl ? 'https://' : 'http://') . $domain;
             }

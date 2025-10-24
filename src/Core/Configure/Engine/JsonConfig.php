@@ -85,13 +85,13 @@ class JsonConfig implements ConfigEngineInterface
             throw new CakeException(sprintf(
                 'Error parsing JSON string fetched from config file `%s.json`: %s',
                 $key,
-                json_last_error_msg()
+                json_last_error_msg(),
             ));
         }
         if (!is_array($values)) {
             throw new CakeException(sprintf(
                 'Decoding JSON config file `%s.json` did not return an array',
-                $key
+                $key,
             ));
         }
 
@@ -111,6 +111,6 @@ class JsonConfig implements ConfigEngineInterface
     {
         $filename = $this->_getFilePath($key);
 
-        return file_put_contents($filename, json_encode($data, JSON_PRETTY_PRINT)) > 0;
+        return file_put_contents($filename, json_encode($data, JSON_PRETTY_PRINT)) !== false;
     }
 }

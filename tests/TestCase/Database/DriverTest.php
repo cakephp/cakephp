@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\MissingConnectionException;
+use Cake\Database\Exception\QueryException;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
@@ -32,6 +33,7 @@ use Exception;
 use PDO;
 use PDOException;
 use PDOStatement;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Driver\RetryDriver;
 use TestApp\Database\Driver\StubDriver;
 
@@ -48,7 +50,7 @@ class DriverTest extends TestCase
     /**
      * Setup.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -62,7 +64,7 @@ class DriverTest extends TestCase
             ->getMock();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::drop('queries');
@@ -79,7 +81,7 @@ class DriverTest extends TestCase
         } catch (Exception $e) {
             $this->assertStringContainsString(
                 'Please pass "username" instead of "login" for connecting to the database',
-                $e->getMessage()
+                $e->getMessage(),
             );
         }
     }
@@ -100,9 +102,9 @@ class DriverTest extends TestCase
      * Test schemaValue().
      * Uses a provider for all the different values we can pass to the method.
      *
-     * @dataProvider schemaValueProvider
      * @param mixed $input
      */
+    #[DataProvider('schemaValueProvider')]
     public function testSchemaValue($input, string $expected): void
     {
         $result = $this->driver->schemaValue($input);
@@ -348,7 +350,7 @@ class DriverTest extends TestCase
                 'a' => 1,
                 'b' => new DateTime('2013-01-01'),
             ],
-            ['b' => 'date']
+            ['b' => 'date'],
         );
 
         $messages = Log::engine('queries')->read();
@@ -378,7 +380,7 @@ class DriverTest extends TestCase
 
         try {
             $this->driver->execute('SELECT foo FROM bar');
-        } catch (PDOException $e) {
+        } catch (PDOException) {
         }
 
         $messages = Log::engine('queries')->read();
@@ -459,5 +461,50 @@ class DriverTest extends TestCase
         $this->assertSame('debug: connection= role= duration=0 rows=0 ROLLBACK', $messages[1]);
         $this->assertSame('debug: connection= role= duration=0 rows=0 BEGIN', $messages[2]);
         $this->assertSame('debug: connection= role= duration=0 rows=0 COMMIT', $messages[3]);
+    }
+
+    public function testQueryException(): void
+    {
+        $this->expectException(QueryException::class);
+
+        ConnectionManager::get('default')->execute('SELECT * FROM non_existent_table');
+    }
+
+    public function testQueryExceptionStatementExecute(): void
+    {
+        $this->expectException(QueryException::class);
+
+        ConnectionManager::get('default')->getDriver()
+            ->execute('SELECT * FROM :foo', ['foo' => 'bar']);
+    }
+
+    /**
+     * Tests that queries are logged when executed without params
+     */
+    public function testDisableQueryLogging(): void
+    {
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo');
+        $statement->method('rowCount')->willReturn(3);
+        $statement->method('execute')->willReturn(true);
+
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+        $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
+
+        $this->driver->execute('SELECT bar FROM foo');
+
+        $messages = Log::engine('queries')->read();
+        $this->driver->disableQueryLogging();
+
+        $this->driver->execute('SELECT bar FROM foo');
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo$/', $messages[0]);
     }
 }

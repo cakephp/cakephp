@@ -23,6 +23,9 @@ use Cake\Datasource\Paging\Exception\PageOutOfBoundsException;
 use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Query\SelectQuery;
+use Cake\ORM\ResultSet;
+use PHPUnit\Framework\Attributes\DataProvider;
+use TestApp\Model\Table\PaginatorPostsTable;
 
 trait PaginatorTestTrait
 {
@@ -39,7 +42,7 @@ trait PaginatorTestTrait
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -73,7 +76,7 @@ trait PaginatorTestTrait
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->getTableLocator()->clear();
@@ -109,9 +112,7 @@ trait PaginatorTestTrait
         $params = ['page' => '-1'];
         $settings = [
             'PaginatorPosts' => [
-                'contain' => ['PaginatorAuthor'],
                 'maxLimit' => 10,
-                'group' => 'PaginatorPosts.published',
                 'order' => ['PaginatorPosts.id' => 'ASC'],
             ],
         ];
@@ -163,18 +164,18 @@ trait PaginatorTestTrait
     public function testPaginateNestedEagerLoader(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
-        $articles->belongsToMany('Tags');
         $tags = $this->getTableLocator()->get('Tags');
+        $tags->associations()->remove('Authors');
         $tags->belongsToMany('Authors');
         $articles->getEventManager()->on('Model.beforeFind', function ($event, $query): void {
-            $query ->matching('Tags', function ($q) {
+            $query->matching('Tags', function ($q) {
                 return $q->matching('Authors', function ($q) {
                     return $q->where(['Authors.name' => 'larry']);
                 });
             });
         });
         $results = $this->Paginator->paginate($articles);
-        $result = $results->first();
+        $result = $results->items()->first();
         $this->assertInstanceOf(EntityInterface::class, $result);
         $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Tags']);
         $this->assertInstanceOf(EntityInterface::class, $result->_matchingData['Authors']);
@@ -776,7 +777,7 @@ trait PaginatorTestTrait
         } catch (PageOutOfBoundsException $exception) {
             $this->assertEquals(
                 'Page number `3000` could not be found.',
-                $exception->getMessage()
+                $exception->getMessage(),
             );
 
             $attributes = $exception->getAttributes();
@@ -834,7 +835,7 @@ trait PaginatorTestTrait
         $this->assertEquals(
             $expected,
             $result['order'],
-            'Trusted fields in schema should be prefixed'
+            'Trusted fields in schema should be prefixed',
         );
     }
 
@@ -882,7 +883,7 @@ trait PaginatorTestTrait
         $this->assertEquals(
             $expected,
             $result['order'],
-            'Trusted fields not in schema should not be altered'
+            'Trusted fields not in schema should not be altered',
         );
     }
 
@@ -1115,9 +1116,8 @@ trait PaginatorTestTrait
 
     /**
      * test that maxLimit is respected
-     *
-     * @dataProvider checkLimitProvider
      */
+    #[DataProvider('checkLimitProvider')]
     public function testCheckLimit(array $input, int $expected): void
     {
         $result = $this->Paginator->checkLimit($input);
@@ -1149,31 +1149,6 @@ trait PaginatorTestTrait
         $pagingParams = $result->pagingParams();
         $this->assertEquals(10, $pagingParams['limit']);
         $this->assertEquals(10, $pagingParams['perPage']);
-    }
-
-    /**
-     * test the `finder` is unused if paginate() is called with a query instance.
-     */
-    public function testPaginateQueryUnusedFinder(): void
-    {
-        $settings = [
-            'finder' => 'published',
-            'limit' => 2,
-        ];
-        $table = $this->_getMockPosts(['find']);
-        $query = $this->_getMockFindQuery();
-        $query->setRepository($table);
-
-        $table->expects($this->never())
-            ->method('find');
-
-        $query->expects($this->once())->method('applyOptions')
-            ->with([
-                'limit' => 2,
-                'page' => 1,
-                'order' => [],
-            ]);
-        $this->Paginator->paginate($query, [], $settings)->pagingParams();
     }
 
     /**
@@ -1214,7 +1189,6 @@ trait PaginatorTestTrait
             ->where(['PaginatorPosts.author_id BETWEEN :start AND :end'])
             ->bind(':start', 1)
             ->bind(':end', 2);
-
         $results = $this->Paginator->paginate($query, []);
 
         $result = $results->toArray();
@@ -1259,7 +1233,7 @@ trait PaginatorTestTrait
      */
     protected function _getMockPosts($methods = [])
     {
-        return $this->getMockBuilder('TestApp\Model\Table\PaginatorPostsTable')
+        return $this->getMockBuilder(PaginatorPostsTable::class)
             ->onlyMethods($methods)
             ->setConstructorArgs([[
                 'connection' => ConnectionManager::get('test'),
@@ -1290,7 +1264,7 @@ trait PaginatorTestTrait
             ->disableOriginalConstructor()
             ->getMock();
 
-        $results = $this->getMockBuilder('Cake\ORM\ResultSet')
+        $results = $this->getMockBuilder(ResultSet::class)
             ->disableOriginalConstructor()
             ->getMock();
 

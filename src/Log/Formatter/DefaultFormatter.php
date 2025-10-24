@@ -32,14 +32,6 @@ class DefaultFormatter extends AbstractFormatter
     ];
 
     /**
-     * @param array<string, mixed> $config Formatter config
-     */
-    public function __construct(array $config = [])
-    {
-        $this->setConfig($config);
-    }
-
-    /**
      * @inheritDoc
      */
     public function format($level, string $message, array $context = []): string
@@ -50,7 +42,7 @@ class DefaultFormatter extends AbstractFormatter
             $message = sprintf('%s: %s', $level, $message);
         }
         if ($this->_config['includeTags']) {
-            $message = sprintf('<%s>%s</%s>', $level, $message, $level);
+            return sprintf('<%s>%s</%s>', $level, $message, $level);
         }
 
         return $message;

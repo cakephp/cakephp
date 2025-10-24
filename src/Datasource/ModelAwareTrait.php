@@ -69,9 +69,7 @@ trait ModelAwareTrait
      */
     protected function _setModelClass(string $name): void
     {
-        if ($this->modelClass === null) {
-            $this->modelClass = $name;
-        }
+        $this->modelClass ??= $name;
     }
 
     /**
@@ -96,21 +94,20 @@ trait ModelAwareTrait
     public function fetchModel(?string $modelClass = null, ?string $modelType = null): RepositoryInterface
     {
         $modelClass ??= $this->modelClass;
-        if (empty($modelClass)) {
+        if (!$modelClass) {
             throw new UnexpectedValueException('Default modelClass is empty');
         }
         $modelType ??= $this->getModelType();
 
         $options = [];
-        if (strpos($modelClass, '\\') === false) {
+        if (!str_contains($modelClass, '\\')) {
             [, $alias] = pluginSplit($modelClass, true);
         } else {
             $options['className'] = $modelClass;
-            /** @psalm-suppress PossiblyFalseOperand */
             $alias = substr(
                 $modelClass,
                 strrpos($modelClass, '\\') + 1,
-                -strlen($modelType)
+                -strlen($modelType),
             );
             $modelClass = $alias;
         }

@@ -19,6 +19,7 @@ use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query;
+use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
@@ -50,7 +51,7 @@ class QueryTest extends TestCase
 
     protected Query $query;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -58,7 +59,7 @@ class QueryTest extends TestCase
         $this->query = $this->newQuery();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -84,7 +85,7 @@ class QueryTest extends TestCase
         $this->assertSame(Connection::ROLE_WRITE, $selectQuery->useWriteRole()->getConnectionRole());
     }
 
-    protected function newQuery()
+    protected function newQuery(): Query
     {
         return new class ($this->connection) extends Query
         {
@@ -149,8 +150,8 @@ class QueryTest extends TestCase
             ->with(
                 new CommonTableExpression(
                     'cte',
-                    $this->newQuery()
-                )
+                    $this->newQuery(),
+                ),
             )
             ->with(function (CommonTableExpression $cte, Query $query) {
                 return $cte
@@ -204,15 +205,15 @@ class QueryTest extends TestCase
         $this->query
             ->innerJoin(
                 ['alias_inner' => $this->newQuery()],
-                ['alias_inner.fk = parent.pk']
+                ['alias_inner.fk = parent.pk'],
             )
             ->leftJoin(
                 ['alias_left' => $this->newQuery()],
-                ['alias_left.fk = parent.pk']
+                ['alias_left.fk = parent.pk'],
             )
             ->rightJoin(
                 ['alias_right' => $this->newQuery()],
-                ['alias_right.fk = parent.pk']
+                ['alias_right.fk = parent.pk'],
             );
 
         $clause = $this->query->clause('join');
@@ -304,7 +305,7 @@ class QueryTest extends TestCase
      */
     public function testGetValueBinder(): void
     {
-        $this->assertInstanceOf('Cake\Database\ValueBinder', $this->query->getValueBinder());
+        $this->assertInstanceOf(ValueBinder::class, $this->query->getValueBinder());
     }
 
     /**

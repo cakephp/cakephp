@@ -67,7 +67,7 @@ trait PluginAssetsTrait
                 $this->io->verbose('', 1);
                 $this->io->verbose(
                     sprintf('Skipping plugin %s. It does not have webroot folder.', $plugin),
-                    2
+                    2,
                 );
                 continue;
             }
@@ -122,12 +122,12 @@ trait PluginAssetsTrait
             if (file_exists($dest)) {
                 if ($overwrite && !$this->_remove($config)) {
                     continue;
-                } elseif (!$overwrite) {
+                }
+                if (!$overwrite) {
                     $this->io->verbose(
                         $dest . ' already exists',
-                        1
+                        1,
                     );
-
                     continue;
                 }
             }
@@ -135,7 +135,7 @@ trait PluginAssetsTrait
             if (!$copy) {
                 $result = $this->_createSymlink(
                     $config['srcPath'],
-                    $dest
+                    $dest,
                 );
                 if ($result) {
                     continue;
@@ -144,7 +144,7 @@ trait PluginAssetsTrait
 
             $this->_copyDirectory(
                 $config['srcPath'],
-                $dest
+                $dest,
             );
         }
 
@@ -163,7 +163,7 @@ trait PluginAssetsTrait
         if ($config['namespaced'] && !is_dir($config['destDir'])) {
             $this->io->verbose(
                 $config['destDir'] . $config['link'] . ' does not exist',
-                1
+                1,
             );
 
             return false;
@@ -174,7 +174,7 @@ trait PluginAssetsTrait
         if (!file_exists($dest)) {
             $this->io->verbose(
                 $dest . ' does not exist',
-                1
+                1,
             );
 
             return false;
@@ -187,11 +187,10 @@ trait PluginAssetsTrait
                 $this->io->out('Unlinked ' . $dest);
 
                 return true;
-            } else {
-                $this->io->err('Failed to unlink  ' . $dest);
-
-                return false;
             }
+            $this->io->err('Failed to unlink  ' . $dest);
+
+            return false;
         }
 
         $fs = new Filesystem();
@@ -199,11 +198,10 @@ trait PluginAssetsTrait
             $this->io->out('Deleted ' . $dest);
 
             return true;
-        } else {
-            $this->io->err('Failed to delete ' . $dest);
-
-            return false;
         }
+        $this->io->err('Failed to delete ' . $dest);
+
+        return false;
     }
 
     /**

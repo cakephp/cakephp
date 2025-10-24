@@ -34,9 +34,9 @@ class ErrorTrap
      * - `errorLevel` - int - The level of errors you are interested in capturing.
      * - `errorRenderer` - string - The class name of render errors with. Defaults
      *   to choosing between Html and Console based on the SAPI.
-     * - `log` - boolean - Whether or not you want errors logged.
+     * - `log` - boolean - Whether you want errors logged.
      * - `logger` - string - The class name of the error logger to use.
-     * - `trace` - boolean - Whether or not backtraces should be included in
+     * - `trace` - boolean - Whether backtraces should be included in
      *   logged errors.
      *
      * @var array<string, mixed>
@@ -112,7 +112,7 @@ class ErrorTrap
         int $code,
         string $description,
         ?string $file = null,
-        ?int $line = null
+        ?int $line = null,
     ): bool {
         if (!(error_reporting() & $code)) {
             return false;
@@ -121,7 +121,7 @@ class ErrorTrap
             throw new FatalErrorException($description, $code, $file, $line);
         }
 
-        $trace = (array)Debugger::trace(['start' => 1, 'format' => 'points']);
+        $trace = (array)Debugger::trace(['start' => 0, 'format' => 'points']);
         $error = new PhpError($code, $description, $file, $line, $trace);
 
         $ignoredPaths = (array)Configure::read('Error.ignoredDeprecationPaths');
@@ -139,7 +139,7 @@ class ErrorTrap
         $renderer = $this->renderer();
 
         try {
-            // Log first incase rendering or event listeners fail
+            // Log first in case rendering or event listeners fail
             $this->logError($error);
             $event = $this->dispatchEvent('Error.beforeRender', ['error' => $error]);
             if ($event->isStopped()) {

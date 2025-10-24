@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Query;
 
+use Cake\Cache\CacheEngine;
 use Cake\Cache\Engine\FileEngine;
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
@@ -31,16 +33,21 @@ use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
-use Cake\Datasource\ResultSetDecorator;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
+use TestApp\Model\Table\ArticlesTable;
+use TestApp\Model\Table\AuthorsTable;
+use TestApp\Model\Table\TagsTable;
 
 /**
  * Tests SelectQuery class
@@ -76,7 +83,7 @@ class SelectQueryTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -174,7 +181,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertSame(
             ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
-            $results
+            $results,
         );
 
         $query = new SelectQuery($table);
@@ -187,7 +194,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertSame(
             ['id' => 2, 'extra' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
-            $results
+            $results,
         );
 
         $query = new SelectQuery($table);
@@ -200,16 +207,15 @@ class SelectQueryTest extends TestCase
 
         $this->assertSame(
             ['extra' => 2, 'id' => 2, 'author_id' => 3, 'title' => 'Second Article', 'body' => 'Second Article Body', 'published' => 'Y'],
-            $results
+            $results,
         );
     }
 
     /**
      * Tests that results are grouped correctly when using contain()
      * and results are not hydrated
-     *
-     * @dataProvider strategiesProviderBelongsTo
      */
+    #[DataProvider('strategiesProviderBelongsTo')]
     public function testContainResultFetchingOneLevel(string $strategy): void
     {
         $table = $this->getTableLocator()->get('articles', ['table' => 'articles']);
@@ -264,9 +270,8 @@ class SelectQueryTest extends TestCase
      * correctly nested when no hydration is used
      * Also that the query object passes the correct parent model keys to the
      * association objects in order to perform eager loading with select strategy
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEagerLoadingNoHydration(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
@@ -342,9 +347,8 @@ class SelectQueryTest extends TestCase
     /**
      * Tests that it is possible to count results containing hasMany associations
      * both hydrating and not hydrating the results.
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEagerLoadingCount(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
@@ -372,9 +376,8 @@ class SelectQueryTest extends TestCase
 
     /**
      * Tests that it is possible to set fields & order in a hasMany result set
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEagerLoadingFieldsAndOrderNoHydration(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
@@ -423,9 +426,8 @@ class SelectQueryTest extends TestCase
 
     /**
      * Tests that deep associations can be eagerly loaded
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEagerLoadingDeep(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
@@ -496,9 +498,8 @@ class SelectQueryTest extends TestCase
     /**
      * Tests that hasMany associations can be loaded even when related to a secondary
      * model in the query
-     *
-     * @dataProvider strategiesProviderHasMany
      */
+    #[DataProvider('strategiesProviderHasMany')]
     public function testHasManyEagerLoadingFromSecondaryTable(string $strategy): void
     {
         $author = $this->getTableLocator()->get('authors');
@@ -601,9 +602,8 @@ class SelectQueryTest extends TestCase
      * Tests that BelongsToMany associations are correctly eager loaded.
      * Also that the query object passes the correct parent model keys to the
      * association objects in order to perform eager loading with select strategy
-     *
-     * @dataProvider strategiesProviderBelongsToMany
      */
+    #[DataProvider('strategiesProviderBelongsToMany')]
     public function testBelongsToManyEagerLoadingNoHydration(string $strategy): void
     {
         $table = $this->getTableLocator()->get('Articles');
@@ -771,8 +771,8 @@ class SelectQueryTest extends TestCase
                 return $q->where(['Comments.user_id' => 4]);
             })
             ->first();
-        $this->assertInstanceOf('Cake\ORM\Entity', $result);
-        $this->assertInstanceOf('Cake\ORM\Entity', $result->_matchingData['Comments']);
+        $this->assertInstanceOf(Entity::class, $result);
+        $this->assertInstanceOf(Entity::class, $result->_matchingData['Comments']);
         $this->assertIsInt($result->_matchingData['Comments']->id);
         $this->assertInstanceOf(DateTime::class, $result->_matchingData['Comments']->created);
     }
@@ -904,7 +904,7 @@ class SelectQueryTest extends TestCase
         $this->assertSame($results, $query->all());
 
         $query->setResult([]);
-        $this->assertInstanceOf(ResultSetDecorator::class, $query->all());
+        $this->assertInstanceOf(ResultSet::class, $query->all());
     }
 
     /**
@@ -1088,7 +1088,7 @@ class SelectQueryTest extends TestCase
         $this->assertSame($query, $query->mapReduce($mapper1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => null]],
-            $query->getMapReducers()
+            $query->getMapReducers(),
         );
 
         $this->assertEquals($query, $query->mapReduce($mapper2));
@@ -1098,7 +1098,7 @@ class SelectQueryTest extends TestCase
                 ['mapper' => $mapper1, 'reducer' => null],
                 ['mapper' => $mapper2, 'reducer' => null],
             ],
-            $result
+            $result,
         );
     }
 
@@ -1119,7 +1119,7 @@ class SelectQueryTest extends TestCase
         $this->assertSame($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => $reducer1]],
-            $query->getMapReducers()
+            $query->getMapReducers(),
         );
 
         $this->assertSame($query, $query->mapReduce($mapper2, $reducer2));
@@ -1128,7 +1128,7 @@ class SelectQueryTest extends TestCase
                 ['mapper' => $mapper1, 'reducer' => $reducer1],
                 ['mapper' => $mapper2, 'reducer' => $reducer2],
             ],
-            $query->getMapReducers()
+            $query->getMapReducers(),
         );
     }
 
@@ -1149,13 +1149,13 @@ class SelectQueryTest extends TestCase
         $this->assertEquals($query, $query->mapReduce($mapper1, $reducer1));
         $this->assertEquals(
             [['mapper' => $mapper1, 'reducer' => $reducer1]],
-            $query->getMapReducers()
+            $query->getMapReducers(),
         );
 
         $this->assertEquals($query, $query->mapReduce($mapper2, $reducer2, true));
         $this->assertEquals(
             [['mapper' => $mapper2, 'reducer' => $reducer2]],
-            $query->getMapReducers()
+            $query->getMapReducers(),
         );
     }
 
@@ -1176,7 +1176,7 @@ class SelectQueryTest extends TestCase
             },
             function ($v, $k, $mr): void {
                 $mr->emit($v[0] + 1);
-            }
+            },
         );
 
         $this->assertEquals([2, 3], iterator_to_array($query->all()));
@@ -1272,7 +1272,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertCount(3, $results);
         foreach ($results as $r) {
-            $this->assertInstanceOf('Cake\ORM\Entity', $r);
+            $this->assertInstanceOf(Entity::class, $r);
         }
 
         $first = $results[0];
@@ -1300,7 +1300,7 @@ class SelectQueryTest extends TestCase
 
         $first = $results[0];
         foreach ($first->articles as $r) {
-            $this->assertInstanceOf('Cake\ORM\Entity', $r);
+            $this->assertInstanceOf(Entity::class, $r);
         }
 
         $this->assertCount(2, $first->articles);
@@ -1342,7 +1342,7 @@ class SelectQueryTest extends TestCase
 
         $first = $results[0];
         foreach ($first->tags as $r) {
-            $this->assertInstanceOf('Cake\ORM\Entity', $r);
+            $this->assertInstanceOf(Entity::class, $r);
         }
 
         $this->assertCount(2, $first->tags);
@@ -1400,7 +1400,7 @@ class SelectQueryTest extends TestCase
 
         $first = $results[0];
         foreach ($first->tags as $r) {
-            $this->assertInstanceOf('Cake\ORM\Entity', $r);
+            $this->assertInstanceOf(Entity::class, $r);
         }
 
         $this->assertCount(2, $first->tags);
@@ -1433,11 +1433,28 @@ class SelectQueryTest extends TestCase
         $this->assertInstanceOf(DateTime::class, $first->tags[0]->created);
     }
 
+    public function testBelongsToManyWithPreservedKeys(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+        $this->getTableLocator()->get('Tags', ['className' => TagsTable::class]);
+        $table->belongsToMany('Tags');
+
+        $first = $table->find()
+            ->where(['Articles.id' => 1])
+            ->contain([
+                'Tags' => ['finder' => 'slugged'],
+            ])
+            ->first();
+
+        $this->assertArrayHasKey('tag1', $first->tags);
+        $this->assertArrayHasKey('tag2', $first->tags);
+        $this->assertSame('tag1', $first->tags['tag1']->name);
+    }
+
     /**
      * Tests that belongsTo relations are correctly hydrated
-     *
-     * @dataProvider strategiesProviderBelongsTo
      */
+    #[DataProvider('strategiesProviderBelongsTo')]
     public function testHydrateBelongsTo(string $strategy): void
     {
         $table = $this->getTableLocator()->get('articles');
@@ -1452,16 +1469,15 @@ class SelectQueryTest extends TestCase
 
         $this->assertCount(3, $results);
         $first = $results[0];
-        $this->assertInstanceOf('Cake\ORM\Entity', $first->author);
+        $this->assertInstanceOf(Entity::class, $first->author);
         $expected = ['id' => 1, 'name' => 'mariano'];
         $this->assertEquals($expected, $first->author->toArray());
     }
 
     /**
      * Tests that deeply nested associations are also hydrated correctly
-     *
-     * @dataProvider strategiesProviderBelongsTo
      */
+    #[DataProvider('strategiesProviderBelongsTo')]
     public function testHydrateDeep(string $strategy): void
     {
         $table = $this->getTableLocator()->get('authors');
@@ -1478,7 +1494,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertCount(4, $results);
         $first = $results[0];
-        $this->assertInstanceOf('Cake\ORM\Entity', $first->articles[0]->author);
+        $this->assertInstanceOf(Entity::class, $first->articles[0]->author);
         $expected = ['id' => 1, 'name' => 'mariano'];
         $this->assertEquals($expected, $first->articles[0]->author->toArray());
         $this->assertTrue(isset($results[3]->articles));
@@ -1490,7 +1506,7 @@ class SelectQueryTest extends TestCase
     public function testHydrateCustomObject(): void
     {
         // phpcs:ignore
-        $class = get_class(new class extends Entity {});
+        $class = (new class extends Entity {})::class;
         $table = $this->getTableLocator()->get('articles', [
             'table' => 'articles',
             'entityClass' => '\\' . $class,
@@ -1518,8 +1534,8 @@ class SelectQueryTest extends TestCase
     public function testHydrateHasManyCustomEntity(): void
     {
         // phpcs:disable
-        $authorEntity = get_class(new class extends Entity {});
-        $articleEntity = get_class(new class extends Entity {});
+        $authorEntity = (new class extends Entity {})::class;
+        $articleEntity = (new class extends Entity {})::class;
         // phpcs:enable
         $table = $this->getTableLocator()->get('authors', [
             'entityClass' => '\\' . $authorEntity,
@@ -1557,7 +1573,8 @@ class SelectQueryTest extends TestCase
      */
     public function testHydrateBelongsToCustomEntity(): void
     {
-        $authorEntity = get_class($this->createMock('Cake\ORM\Entity'));
+        // phpcs:ignore
+        $authorEntity = (new class extends Entity {})::class;
         $table = $this->getTableLocator()->get('articles');
         $this->getTableLocator()->get('authors', [
             'entityClass' => '\\' . $authorEntity,
@@ -1652,7 +1669,7 @@ class SelectQueryTest extends TestCase
         $query->select([
             'title' => $query->func()->concat(
                 ['title' => 'identifier', 'test'],
-                ['string']
+                ['string'],
             ),
         ]);
         $query->where(['id' => 1]);
@@ -1826,7 +1843,7 @@ class SelectQueryTest extends TestCase
     public function testClearContain(): void
     {
         /** @var \Cake\ORM\Query\SelectQuery $query */
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(Query::class)
             ->onlyMethods(['all'])
             ->setConstructorArgs([$this->table])
             ->getMock();
@@ -1852,7 +1869,7 @@ class SelectQueryTest extends TestCase
      */
     public function testCacheReadIntegration(): void
     {
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(Query::class)
             ->onlyMethods(['execute'])
             ->setConstructorArgs([$this->table])
             ->getMock();
@@ -1861,7 +1878,7 @@ class SelectQueryTest extends TestCase
         $query->expects($this->never())
             ->method('execute');
 
-        $cacher = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
+        $cacher = $this->getMockBuilder(CacheEngine::class)->getMock();
         $cacher->expects($this->once())
             ->method('get')
             ->with('my_key')
@@ -1884,12 +1901,12 @@ class SelectQueryTest extends TestCase
 
         $query->select(['id', 'title']);
 
-        $cacher = $this->getMockBuilder('Cake\Cache\CacheEngine')->getMock();
+        $cacher = $this->getMockBuilder(CacheEngine::class)->getMock();
         $cacher->expects($this->once())
             ->method('set')
             ->with(
                 'my_key',
-                $this->isInstanceOf('Cake\Datasource\ResultSetInterface')
+                $this->isInstanceOf(ResultSetInterface::class),
             );
 
         $query->cache('my_key', $cacher)
@@ -1952,6 +1969,7 @@ class SelectQueryTest extends TestCase
         $query = new SelectQuery($table);
         $query
             ->select()
+            ->disableBufferedResults()
             ->contain([
                 'articles' => function ($q) {
                     return $q->where(['articles.id' => 1]);
@@ -2149,7 +2167,7 @@ class SelectQueryTest extends TestCase
 
                     return $results;
                 });
-            }
+            },
         );
 
         $sourceQuery = $articles
@@ -2180,7 +2198,7 @@ class SelectQueryTest extends TestCase
             ->find()
             ->contain('Authors', function (SelectQuery $targetQuery) use (
                 &$resultFormatterTargetQuery,
-                &$resultFormatterSourceQuery
+                &$resultFormatterSourceQuery,
             ) {
                 $resultFormatterTargetQuery = $targetQuery;
 
@@ -2221,7 +2239,7 @@ class SelectQueryTest extends TestCase
 
                     return $results;
                 });
-            }
+            },
         );
 
         $sourceQuery = $articles
@@ -2252,7 +2270,7 @@ class SelectQueryTest extends TestCase
             ->find()
             ->contain('Tags', function (SelectQuery $targetQuery) use (
                 &$resultFormatterTargetQuery,
-                &$resultFormatterSourceQuery
+                &$resultFormatterSourceQuery,
             ) {
                 $resultFormatterTargetQuery = $targetQuery;
 
@@ -2278,7 +2296,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $query = new SelectQuery($table);
         $query->select()->formatResults(function ($results) {
-            $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
+            $this->assertInstanceOf(ResultSet::class, $results);
 
             return $results->indexBy('id');
         });
@@ -2293,7 +2311,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('authors');
         $query = new SelectQuery($table);
         $query->select()->formatResults(function ($results) {
-            $this->assertInstanceOf('Cake\ORM\ResultSet', $results);
+            $this->assertInstanceOf(ResultSet::class, $results);
 
             return $results->indexBy('id');
         });
@@ -2336,7 +2354,7 @@ class SelectQueryTest extends TestCase
      */
     public function testCountCache(): void
     {
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['_performCount'])
             ->getMock();
@@ -2358,7 +2376,7 @@ class SelectQueryTest extends TestCase
      */
     public function testCountCacheDirty(): void
     {
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(Query::class)
             ->disableOriginalConstructor()
             ->onlyMethods(['_performCount'])
             ->getMock();
@@ -2401,7 +2419,7 @@ class SelectQueryTest extends TestCase
                         })
                         ->formatResults(function ($authors) {
                             return $authors->map(function ($author) {
-                                $author->idCopy = $author->idCopy + 2;
+                                $author->idCopy += 2;
 
                                 return $author;
                             });
@@ -2437,7 +2455,7 @@ class SelectQueryTest extends TestCase
                 })
                 ->formatResults(function ($results) {
                     return $results->map(function ($result) {
-                        $result->idCopy = $result->idCopy + 2;
+                        $result->idCopy += 2;
 
                         return $result;
                     });
@@ -2453,7 +2471,7 @@ class SelectQueryTest extends TestCase
                     '%s - %s - %s',
                     $row->tag_id,
                     $row->article->idCopy,
-                    $row->article->author->idCopy
+                    $row->article->author->idCopy,
                 );
             });
         });
@@ -2505,7 +2523,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
         $table->belongsTo('Articles', [
-            'className' => 'TestApp\Model\Table\ArticlesTable',
+            'className' => ArticlesTable::class,
             'finder' => 'published',
         ]);
         $result = $table->find()->contain('Articles');
@@ -2602,6 +2620,7 @@ class SelectQueryTest extends TestCase
             '(help)' => 'This is a Query object, to get the results execute or iterate it.',
             'sql' => $query->sql(),
             'params' => $query->getValueBinder()->bindings(),
+            'role' => Connection::ROLE_WRITE,
             'defaultTypes' => [
                 'authors__id' => 'integer',
                 'authors.id' => 'integer',
@@ -2728,9 +2747,8 @@ class SelectQueryTest extends TestCase
     /**
      * Tests that it is possible to use the same association aliases in the association
      * chain for contain
-     *
-     * @dataProvider strategiesProviderBelongsTo
      */
+    #[DataProvider('strategiesProviderBelongsTo')]
     public function testRepeatedAssociationAliases(string $strategy): void
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
@@ -2774,7 +2792,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $this->assertEquals(
             json_encode($table->find()),
-            json_encode($table->find()->toArray())
+            json_encode($table->find()->toArray()),
         );
     }
 
@@ -2886,7 +2904,7 @@ class SelectQueryTest extends TestCase
         $this->assertNotSame(
             $reflect->getValue($copyLoader),
             $reflect->getValue($loader),
-            'should be clones'
+            'should be clones',
         );
         $this->assertNull($copy->clause('offset'));
         $this->assertNull($copy->clause('limit'));
@@ -2946,7 +2964,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $table->belongsTo(
             'Authors',
-            ['className' => 'TestApp\Model\Table\AuthorsTable']
+            ['className' => AuthorsTable::class],
         );
         $authorId = 1;
 
@@ -2978,7 +2996,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany(
             'Articles',
-            ['className' => 'TestApp\Model\Table\ArticlesTable']
+            ['className' => ArticlesTable::class],
         );
 
         $newArticle = $table->newEntity([
@@ -3029,16 +3047,30 @@ class SelectQueryTest extends TestCase
                 ],
             ]);
 
+        $resultWithSlugIndexedArticles = $table->find('all')
+            ->where(['id' => 1])
+            ->contain([
+                'Articles' => [
+                    'finder' => [
+                        'slugged' => [
+                            'preserveKeys' => true,
+                        ],
+                    ],
+                ],
+            ]);
+
         $this->assertCount(2, $resultWithArticles->first()->articles);
         $this->assertCount(2, $resultWithArticlesArray->first()->articles);
 
         $this->assertCount(1, $resultWithArticlesArrayOptions->first()->articles);
         $this->assertSame(
             'First Article',
-            $resultWithArticlesArrayOptions->first()->articles[0]->title
+            $resultWithArticlesArrayOptions->first()->articles[0]->title,
         );
 
         $this->assertCount(0, $resultWithoutArticles->first()->articles);
+
+        $this->assertSame('First-Article', key($resultWithSlugIndexedArticles->first()->articles));
     }
 
     /**
@@ -3049,7 +3081,7 @@ class SelectQueryTest extends TestCase
         $table = $this->getTableLocator()->get('Authors');
         $table->hasMany(
             'Articles',
-            ['className' => 'TestApp\Model\Table\ArticlesTable']
+            ['className' => ArticlesTable::class],
         );
 
         $newArticle = $table->newEntity([
@@ -3371,11 +3403,11 @@ class SelectQueryTest extends TestCase
         $expected = ['id' => 2, 'title' => 'Second Article'];
         $this->assertEquals(
             $expected,
-            $results->first()->_matchingData['articles']->toArray()
+            $results->first()->_matchingData['articles']->toArray(),
         );
         $this->assertEquals(
             ['name' => 'tag3'],
-            $results->first()->_matchingData['tags']->toArray()
+            $results->first()->_matchingData['tags']->toArray(),
         );
     }
 
@@ -3836,7 +3868,7 @@ class SelectQueryTest extends TestCase
     {
         $this->skipIf(
             !$this->connection->getDriver()->supports(DriverFeatureEnum::CTE),
-            'The current driver does not support common table expressions.'
+            'The current driver does not support common table expressions.',
         );
         $this->skipIf(
             (
@@ -3844,7 +3876,7 @@ class SelectQueryTest extends TestCase
                 $this->connection->getDriver() instanceof Sqlite
             ) &&
             !$this->connection->getDriver()->supports(DriverFeatureEnum::WINDOW),
-            'The current driver does not support window functions.'
+            'The current driver does not support window functions.',
         );
 
         $table = $this->getTableLocator()->get('Articles');
@@ -3963,7 +3995,7 @@ class SelectQueryTest extends TestCase
         $function = new FunctionExpression('MyFunction', [$query]);
         $this->assertSame(
             'MyFunction((SELECT Articles.column AS Articles__column FROM articles Articles))',
-            preg_replace('/[`"\[\]]/', '', $function->sql($binder))
+            preg_replace('/[`"\[\]]/', '', $function->sql($binder)),
         );
     }
 }

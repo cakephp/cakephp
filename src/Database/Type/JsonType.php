@@ -23,7 +23,7 @@ use PDO;
 /**
  * JSON type converter.
  *
- * Use to convert JSON data between PHP and the database types.
+ * Used to convert JSON data between PHP and the database types.
  */
 class JsonType extends BaseType implements BatchCastingInterface
 {
@@ -31,6 +31,13 @@ class JsonType extends BaseType implements BatchCastingInterface
      * @var int
      */
     protected int $_encodingOptions = 0;
+
+    /**
+     * Flags for json_decode()
+     *
+     * @var int
+     */
+    protected int $_decodingOptions = JSON_OBJECT_AS_ARRAY;
 
     /**
      * Convert a value data into a JSON string
@@ -67,7 +74,7 @@ class JsonType extends BaseType implements BatchCastingInterface
             return null;
         }
 
-        return json_decode($value, true);
+        return json_decode($value, flags: $this->_decodingOptions);
     }
 
     /**
@@ -80,7 +87,7 @@ class JsonType extends BaseType implements BatchCastingInterface
                 continue;
             }
 
-            $values[$field] = json_decode($values[$field], true);
+            $values[$field] = json_decode($values[$field], flags: $this->_decodingOptions);
         }
 
         return $values;
@@ -115,6 +122,21 @@ class JsonType extends BaseType implements BatchCastingInterface
     public function setEncodingOptions(int $options)
     {
         $this->_encodingOptions = $options;
+
+        return $this;
+    }
+
+    /**
+     * Set json_decode() options.
+     *
+     * By default, the value is `JSON_OBJECT_AS_ARRAY`.
+     *
+     * @param int $options Decoding flags. Use JSON_* flags. Set `0` to reset.
+     * @return $this
+     */
+    public function setDecodingOptions(int $options)
+    {
+        $this->_decodingOptions = $options;
 
         return $this;
     }

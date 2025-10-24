@@ -16,11 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Driver;
 use Cake\Database\Type\JsonType;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
+use stdClass;
 
 /**
  * Test for the String type.
@@ -40,11 +42,11 @@ class JsonTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = TypeFactory::build('json');
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**
@@ -76,7 +78,7 @@ class JsonTypeTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+            $this->type->manyToPHP($values, array_keys($values), $this->driver),
         );
     }
 
@@ -127,7 +129,7 @@ class JsonTypeTest extends TestCase
      *
      * @return void
      */
-    public function testEncodingOptions()
+    public function testEncodingOptions(): void
     {
         // New instance to prevent others tests breaking
         $instance = new JsonType();
@@ -135,5 +137,22 @@ class JsonTypeTest extends TestCase
 
         $result = $instance->toDatabase(['é', 'https://cakephp.org/'], $this->driver);
         $this->assertSame('["é","https://cakephp.org/"]', $result);
+    }
+
+    /**
+     * Test decoding options
+     *
+     * @return void
+     */
+    public function testDecodingOptions(): void
+    {
+        // New instance to prevent others tests breaking
+        $instance = new JsonType();
+        $instance->setDecodingOptions(0);
+
+        $result = $instance->toPHP('{"foo":"bar"}', $this->driver);
+        $expected = new stdClass();
+        $expected->foo = 'bar';
+        $this->assertEquals($expected, $result);
     }
 }

@@ -46,6 +46,10 @@ class Curl implements AdapterInterface
         }
 
         $ch = curl_init();
+        if ($ch === false) {
+            throw new ClientException('Could not initialize curl session.');
+        }
+
         $options = $this->buildOptions($request, $options);
         curl_setopt_array($ch, $options);
 
@@ -54,7 +58,6 @@ class Curl implements AdapterInterface
         if ($body === false) {
             $errorCode = curl_errno($ch);
             $error = curl_error($ch);
-            curl_close($ch);
 
             $message = "cURL Error ({$errorCode}) {$error}";
             $errorNumbers = [
@@ -69,7 +72,6 @@ class Curl implements AdapterInterface
         }
 
         $responses = $this->createResponse($ch, $body);
-        curl_close($ch);
 
         return $responses;
     }
@@ -119,7 +121,7 @@ class Curl implements AdapterInterface
         $out[CURLOPT_POSTFIELDS] = $body->getContents();
         // GET requests with bodies require custom request to be used.
         if ($out[CURLOPT_POSTFIELDS] !== '' && isset($out[CURLOPT_HTTPGET])) {
-            $out[CURLOPT_CUSTOMREQUEST] = 'get';
+            $out[CURLOPT_CUSTOMREQUEST] = 'GET';
         }
         if ($out[CURLOPT_POSTFIELDS] === '') {
             unset($out[CURLOPT_POSTFIELDS]);

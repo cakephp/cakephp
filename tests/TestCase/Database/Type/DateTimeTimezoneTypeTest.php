@@ -16,10 +16,12 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Driver;
 use Cake\Database\Type\DateTimeTimezoneType;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for the DateTimeTimezone type.
@@ -39,11 +41,11 @@ class DateTimeTimezoneTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new DateTimeTimezoneType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**
@@ -134,7 +136,7 @@ class DateTimeTimezoneTypeTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+            $this->type->manyToPHP($values, array_keys($values), $this->driver),
         );
 
         $this->type->setDatabaseTimezone('Asia/Kolkata'); // UTC+5:30
@@ -152,7 +154,7 @@ class DateTimeTimezoneTypeTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+            $this->type->manyToPHP($values, array_keys($values), $this->driver),
         );
     }
 
@@ -316,10 +318,10 @@ class DateTimeTimezoneTypeTest extends TestCase
     /**
      * test marshalling data.
      *
-     * @dataProvider marshalProvider
      * @param mixed $value
      * @param mixed $expected
      */
+    #[DataProvider('marshalProvider')]
     public function testMarshal($value, $expected): void
     {
         $result = $this->type->marshal($value);
@@ -422,10 +424,10 @@ class DateTimeTimezoneTypeTest extends TestCase
     /**
      * test marshalling data.
      *
-     * @dataProvider marshalProviderWithoutMicroseconds
      * @param mixed $value
      * @param mixed $expected
      */
+    #[DataProvider('marshalProviderWithoutMicroseconds')]
     public function testMarshalWithoutMicroseconds($value, $expected): void
     {
         $result = $this->type->marshal($value);

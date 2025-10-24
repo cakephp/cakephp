@@ -23,7 +23,7 @@ class UnionDependenciesController extends Controller
         ?string $name = null,
         ?EventManagerInterface $eventManager = null,
         ?ComponentRegistry $components = null,
-        ?stdClass $inject = null
+        ?stdClass $inject = null,
     ) {
         parent::__construct($request, $response, $name, $eventManager, $components);
         $this->inject = $inject;

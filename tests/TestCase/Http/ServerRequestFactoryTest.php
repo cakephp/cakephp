@@ -23,6 +23,9 @@ use Cake\Http\Session;
 use Cake\TestSuite\TestCase;
 use Laminas\Diactoros\Exception\InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
+use PHPUnit\Framework\Attributes\DataProvider;
+use PHPUnit\Framework\Attributes\PreserveGlobalState;
+use PHPUnit\Framework\Attributes\RunInSeparateProcess;
 use Psr\Http\Message\UploadedFileInterface;
 
 /**
@@ -86,10 +89,9 @@ class ServerRequestFactoryTest extends TestCase
 
     /**
      * Test fromGlobals includes the session
-     *
-     * @preserveGlobalState disabled
-     * @runInSeparateProcess
      */
+    #[PreserveGlobalState(false)]
+    #[RunInSeparateProcess]
     public function testFromGlobalsUrlSession(): void
     {
         Configure::write('App.base', '/basedir');
@@ -122,6 +124,23 @@ class ServerRequestFactoryTest extends TestCase
     }
 
     /**
+     * Test fromGlobals with urlencoded path separators
+     */
+    public function testFromGlobalsUrlEncoded(): void
+    {
+        $server = [
+            'DOCUMENT_ROOT' => '/cake/repo/branches/webroot',
+            'PHP_SELF' => '/index.php',
+            'REQUEST_URI' => '/posts%2fadd',
+        ];
+        $res = ServerRequestFactory::fromGlobals($server);
+
+        $this->assertSame('', $res->getAttribute('base'));
+        $this->assertSame('/', $res->getAttribute('webroot'));
+        $this->assertSame('/posts%2fadd', $res->getUri()->getPath());
+    }
+
+    /**
      * Test fromGlobals with mod-rewrite server configuration.
      */
     public function testFromGlobalsUrlModRewrite(): void
@@ -142,7 +161,7 @@ class ServerRequestFactoryTest extends TestCase
         $request = ServerRequestFactory::fromGlobals([
             'DOCUMENT_ROOT' => '/cake/repo/branches',
             'PHP_SELF' => '/1.2.x.x/webroot/index.php',
-            'PATH_INFO' => '/posts/view/1',
+            'REQUEST_URI' => '/posts/view/1',
         ]);
         $this->assertSame('/1.2.x.x', $request->getAttribute('base'));
         $this->assertSame('/1.2.x.x/', $request->getAttribute('webroot'));
@@ -217,17 +236,19 @@ class ServerRequestFactoryTest extends TestCase
      * Test base, webroot, URL and here parsing when there is URL rewriting but
      * CakePHP gets called with index.php in URL nonetheless.
      *
+     * The request instance generated should not have index.php stripped from its Uri.
+     *
      * Tests uri with
      *
      * - index.php/
-     * - index.php/
      * - index.php/apples/
+     * - index.php?%3C%3E?
      * - index.php/bananas/eat/tasty_banana
      */
     public function testBaseUrlWithModRewriteAndIndexPhp(): void
     {
         $request = ServerRequestFactory::fromGlobals([
-            'DOCUMENT_ROOT' => '/cakephp/webroot/index.php',
+            'DOCUMENT_ROOT' => '/cakephp/webroot',
             'PHP_SELF' => '/cakephp/webroot/index.php',
         ]);
 
@@ -236,61 +257,46 @@ class ServerRequestFactoryTest extends TestCase
         $this->assertSame('/', $request->getRequestTarget());
 
         $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/cakephp/webroot/index.php/',
+            'REQUEST_URI' => '/cakephp/index.php/',
             'PHP_SELF' => '/cakephp/webroot/index.php/',
             'PATH_INFO' => '/',
         ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/', $request->getRequestTarget());
+        $this->assertSame('/index.php/', $request->getRequestTarget());
 
         $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/cakephp/webroot/index.php/apples',
+            'REQUEST_URI' => '/cakephp/index.php/apples',
             'PHP_SELF' => '/cakephp/webroot/index.php/apples',
             'PATH_INFO' => '/apples',
         ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/apples', $request->getRequestTarget());
+        $this->assertSame('/index.php/apples', $request->getRequestTarget());
 
         $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/cakephp/webroot/index.php/melons/share/',
-            'PHP_SELF' => '/cakephp/webroot/index.php/melons/share/',
-            'PATH_INFO' => '/melons/share/',
+            'QUERY_STRING' => '%3C%3E?',
+            'REQUEST_URI' => '/cakephp/index.php?%3C%3E?',
+            'PHP_SELF' => '/cakephp/webroot/index.php',
+            'SCRIPT_NAME' => '/filepath/cakephp/webroot/index.php',
         ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/melons/share/', $request->getRequestTarget());
+        $this->assertSame('/index.php?%3C%3E?', $request->getRequestTarget());
+        $this->assertSame('%3C%3E?', $request->getUri()->getQuery());
 
         $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/cakephp/webroot/index.php/bananas/eat/tasty_banana',
+            'REQUEST_URI' => '/cakephp/index.php/bananas/eat/tasty_banana',
             'PHP_SELF' => '/cakephp/webroot/index.php/bananas/eat/tasty_banana',
             'PATH_INFO' => '/bananas/eat/tasty_banana',
         ]);
 
         $this->assertSame('/cakephp', $request->getAttribute('base'));
         $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/bananas/eat/tasty_banana', $request->getRequestTarget());
-    }
-
-    /**
-     * Test that even if mod_rewrite is on, and the url contains index.php
-     * and there are numerous //s that the base/webroot is calculated correctly.
-     */
-    public function testBaseUrlWithModRewriteAndExtraSlashes(): void
-    {
-        $request = ServerRequestFactory::fromGlobals([
-            'REQUEST_URI' => '/cakephp/webroot///index.php/bananas/eat',
-            'PHP_SELF' => '/cakephp/webroot///index.php/bananas/eat',
-            'PATH_INFO' => '/bananas/eat',
-        ]);
-
-        $this->assertSame('/cakephp', $request->getAttribute('base'));
-        $this->assertSame('/cakephp/', $request->getAttribute('webroot'));
-        $this->assertSame('/bananas/eat', $request->getRequestTarget());
+        $this->assertSame('/index.php/bananas/eat/tasty_banana', $request->getRequestTarget());
     }
 
     /**
@@ -900,11 +906,11 @@ class ServerRequestFactoryTest extends TestCase
     /**
      * Test environment detection
      *
-     * @dataProvider environmentGenerator
      * @param string $name
      * @param array $data
      * @param array $expected
      */
+    #[DataProvider('environmentGenerator')]
     public function testEnvironmentDetection($name, $data, $expected): void
     {
         if (isset($data['App'])) {
@@ -913,7 +919,7 @@ class ServerRequestFactoryTest extends TestCase
 
         $request = ServerRequestFactory::fromGlobals(
             $data['SERVER'] ?? null,
-            $data['GET'] ?? null
+            $data['GET'] ?? null,
         );
         $uri = $request->getUri();
 
@@ -988,7 +994,7 @@ class ServerRequestFactoryTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_METHOD' => 'POST'],
             [],
-            ['_method' => 'PUT']
+            ['_method' => 'PUT'],
         );
         $this->assertSame('PUT', $request->getEnv('REQUEST_METHOD'));
         $this->assertSame('POST', $request->getEnv('ORIGINAL_REQUEST_METHOD'));
@@ -1024,7 +1030,7 @@ class ServerRequestFactoryTest extends TestCase
         $request = ServerRequestFactory::fromGlobals(
             ['REQUEST_METHOD' => 'POST'],
             [],
-            $body
+            $body,
         );
         $this->assertEmpty($request->getParsedBody());
 
@@ -1034,7 +1040,7 @@ class ServerRequestFactoryTest extends TestCase
                 'HTTP_X_HTTP_METHOD_OVERRIDE' => 'GET',
             ],
             [],
-            ['foo' => 'bar']
+            ['foo' => 'bar'],
         );
         $this->assertEmpty($request->getParsedBody());
     }
@@ -1044,8 +1050,6 @@ class ServerRequestFactoryTest extends TestCase
      */
     public function testFromGlobalsWithFiles(): void
     {
-        $this->assertNull(Configure::read('App.uploadedFilesAsObjects'));
-
         $files = [
             'file' => [
                 'name' => 'file.txt',
@@ -1127,7 +1131,7 @@ class ServerRequestFactoryTest extends TestCase
                     17178,
                     0,
                     'born on.txt',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
             'pictures' => [
@@ -1138,7 +1142,7 @@ class ServerRequestFactoryTest extends TestCase
                         17188,
                         0,
                         'a-file.png',
-                        'image/png'
+                        'image/png',
                     ),
                 ],
                 1 => [
@@ -1148,7 +1152,7 @@ class ServerRequestFactoryTest extends TestCase
                         2010,
                         0,
                         'a-moose.png',
-                        'image/jpg'
+                        'image/jpg',
                     ),
                 ],
             ],
@@ -1159,7 +1163,7 @@ class ServerRequestFactoryTest extends TestCase
                     1490,
                     0,
                     'scratch.text',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
         ];
@@ -1312,7 +1316,7 @@ class ServerRequestFactoryTest extends TestCase
                 1,
                 0,
                 'flat.txt',
-                'text/plain'
+                'text/plain',
             ),
             'nested' => [
                 'name' => 'nested',
@@ -1321,7 +1325,7 @@ class ServerRequestFactoryTest extends TestCase
                     12,
                     0,
                     'nested.txt',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
             'deep' => [
@@ -1332,7 +1336,7 @@ class ServerRequestFactoryTest extends TestCase
                         12345,
                         0,
                         'deep-1.txt',
-                        'text/plain'
+                        'text/plain',
                     ),
                 ],
                 1 => [
@@ -1342,7 +1346,7 @@ class ServerRequestFactoryTest extends TestCase
                         123456,
                         0,
                         'deep-2.txt',
-                        'text/plain'
+                        'text/plain',
                     ),
                 ],
             ],
@@ -1351,7 +1355,7 @@ class ServerRequestFactoryTest extends TestCase
                 123,
                 0,
                 'numeric.txt',
-                'text/plain'
+                'text/plain',
             ),
             1 => [
                 'name' => 'numeric nested',
@@ -1360,7 +1364,7 @@ class ServerRequestFactoryTest extends TestCase
                     1234,
                     0,
                     'numeric-nested.txt',
-                    'text/plain'
+                    'text/plain',
                 ),
             ],
         ];

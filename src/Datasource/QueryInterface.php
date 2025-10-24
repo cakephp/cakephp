@@ -62,9 +62,9 @@ interface QueryInterface
      * Runs `aliasField()` for each field in the provided list and returns
      * the result under a single array.
      *
-     * @param array $fields The fields to alias
+     * @param array<int|string, string|\Cake\Database\Expression\IdentifierExpression> $fields The fields to alias
      * @param string|null $defaultAlias The default alias
-     * @return array<string, string>
+     * @return array<int|string, string|\Cake\Database\Expression\IdentifierExpression>
      */
     public function aliasFields(array $fields, ?string $defaultAlias = null): array;
 
@@ -338,7 +338,7 @@ interface QueryInterface
 
     /**
      * Returns the default repository object that will be used by this query,
-     * that is, the repository that will appear in the from clause.
+     * that is, the repository that will appear in the "from" clause.
      *
      * @return \Cake\Datasource\RepositoryInterface|null $repository The default repository object to use
      */
@@ -356,7 +356,7 @@ interface QueryInterface
      * conditions specified using the AND operator. Additionally, values can be
      * expressed using expression objects which can include other query objects.
      *
-     * Any conditions created with this methods can be used with any SELECT, UPDATE
+     * Any conditions created with this method can be used with any SELECT, UPDATE
      * and DELETE type of queries.
      *
      * ### Conditions using operators:
@@ -418,8 +418,8 @@ interface QueryInterface
      *
      * You can use callback to construct complex expressions, functions
      * receive as first argument a new QueryExpression object and this query instance
-     * as second argument. Functions must return an expression object, that will be
-     * added the list of conditions for the query using the AND operator.
+     * as second argument. Functions must return an expression object that will be
+     * added to the list of conditions for the query using the AND operator.
      *
      * ```
      *  $query
@@ -448,7 +448,7 @@ interface QueryInterface
      * Please note that when using the array notation or the expression objects, all
      * values will be correctly quoted and transformed to the correspondent database
      * data type automatically for you, thus securing your application from SQL injections.
-     * If you use string conditions make sure that your values are correctly quoted.
+     * If you use string conditions, make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
      *
      * @param \Closure|array|string|null $conditions The conditions to filter on.

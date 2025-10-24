@@ -28,10 +28,7 @@ use InvalidArgumentException;
 use Psr\Http\Server\MiddlewareInterface;
 
 /**
- * Provides features for building routes inside scopes.
- *
- * Gives an easy to use way to build routes and append them
- * into a route collection.
+ * Provides features for building routes and parsing/matching URLs to routes.
  */
 class RouteBuilder
 {
@@ -389,7 +386,7 @@ class RouteBuilder
         $resourceMap = array_merge(static::$_resourceMap, $options['map']);
 
         $only = (array)$options['only'];
-        if (empty($only)) {
+        if (!$only) {
             $only = array_keys($resourceMap);
         }
 
@@ -701,11 +698,11 @@ class RouteBuilder
      */
     protected function parseDefaults(array|string $defaults): array
     {
-        if (!is_string($defaults)) {
-            return $defaults;
+        if (is_string($defaults)) {
+            return Router::parseRoutePath($defaults);
         }
 
-        return Router::parseRoutePath($defaults);
+        return $defaults;
     }
 
     /**
@@ -726,7 +723,7 @@ class RouteBuilder
             if ($routeClass === null) {
                 throw new InvalidArgumentException(sprintf(
                     'Cannot find route class %s',
-                    $options['routeClass']
+                    $options['routeClass'],
                 ));
             }
 
@@ -744,7 +741,7 @@ class RouteBuilder
                         $param,
                         $val,
                         $param,
-                        $defaults[$param]
+                        $defaults[$param],
                     ));
                 }
             }
@@ -994,10 +991,11 @@ class RouteBuilder
      */
     public function applyMiddleware(string ...$names)
     {
+        /** @var array<string> $names */
         foreach ($names as $name) {
             if (!$this->_collection->middlewareExists($name)) {
-                $message = "Cannot apply '$name' middleware or middleware group. " .
-                    'Use registerMiddleware() to register middleware.';
+                $message = "Cannot apply `{$name}` middleware or middleware group. " .
+                    'Use `registerMiddleware()` to register middleware.';
                 throw new InvalidArgumentException($message);
             }
         }
@@ -1009,7 +1007,7 @@ class RouteBuilder
     /**
      * Get the middleware that this builder will apply to routes.
      *
-     * @return array
+     * @return array<string>
      */
     public function getMiddleware(): array
     {

@@ -19,7 +19,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\ConsoleOutput;
-use Cake\Console\Exception\ConsoleException;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
 
@@ -36,7 +35,7 @@ class ConsoleOutputTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->output = $this->getMockBuilder(ConsoleOutput::class)
@@ -48,7 +47,7 @@ class ConsoleOutputTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         unset($this->output);
@@ -246,20 +245,6 @@ class ConsoleOutputTest extends TestCase
             ->with('Bad Regular <b>Left</b> <i>behind</i> <name>');
 
         $this->output->write('<error>Bad</error> Regular <b>Left</b> <i>behind</i> <name>', 0);
-    }
-
-    public function testWithInvalidStreamNum(): void
-    {
-        $this->expectException(ConsoleException::class);
-        $this->expectExceptionMessage('Invalid stream in constructor. It is not a valid resource.');
-        new StubConsoleOutput(1);
-    }
-
-    public function testWithInvalidStreamArray(): void
-    {
-        $this->expectException(ConsoleException::class);
-        $this->expectExceptionMessage('Invalid stream in constructor. It is not a valid resource.');
-        new StubConsoleOutput([]);
     }
 
     public function testWorkingWithStub(): void

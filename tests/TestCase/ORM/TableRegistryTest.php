@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\ORM\Locator\LocatorInterface;
+use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
 
@@ -35,7 +37,7 @@ class TableRegistryTest extends TestCase
      * Remember original instance to set it back on tearDown() just to make sure
      * other tests are not broken.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->_originalLocator = TableRegistry::getTableLocator();
@@ -44,7 +46,7 @@ class TableRegistryTest extends TestCase
     /**
      * tear down
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         TableRegistry::setTableLocator($this->_originalLocator);
@@ -57,7 +59,7 @@ class TableRegistryTest extends TestCase
      */
     protected function _setMockLocator()
     {
-        $locator = $this->getMockBuilder('Cake\ORM\Locator\LocatorInterface')->getMock();
+        $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
         TableRegistry::setTableLocator($locator);
 
         return $locator;
@@ -78,7 +80,7 @@ class TableRegistryTest extends TestCase
      */
     public function testGetLocator(): void
     {
-        $this->assertInstanceOf('Cake\ORM\Locator\LocatorInterface', TableRegistry::getTableLocator());
+        $this->assertInstanceOf(LocatorInterface::class, TableRegistry::getTableLocator());
     }
 
     /**
@@ -87,6 +89,6 @@ class TableRegistryTest extends TestCase
     public function testLocatorDefault(): void
     {
         $locator = TableRegistry::getTableLocator();
-        $this->assertInstanceOf('Cake\ORM\Locator\TableLocator', $locator);
+        $this->assertInstanceOf(TableLocator::class, $locator);
     }
 }

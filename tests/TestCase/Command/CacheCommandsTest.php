@@ -31,7 +31,7 @@ class CacheCommandsTest extends TestCase
     /**
      * setup method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::setConfig('test', ['engine' => 'File', 'path' => CACHE, 'groups' => ['test_group']]);
@@ -42,7 +42,7 @@ class CacheCommandsTest extends TestCase
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Cache::drop('test');
@@ -80,7 +80,7 @@ class CacheCommandsTest extends TestCase
 
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('- test');
-        $this->assertOutputContains('- _cake_core_');
+        $this->assertOutputContains('- _cake_translations_');
         $this->assertOutputContains('- _cake_model_');
     }
 
@@ -123,7 +123,7 @@ class CacheCommandsTest extends TestCase
     public function testClearIgnoresOtherCaches(): void
     {
         Cache::add('key', 'value', 'test');
-        $this->exec('cache clear _cake_core_');
+        $this->exec('cache clear _cake_translations_');
 
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertSame('value', Cache::read('key', 'test'));
@@ -135,12 +135,12 @@ class CacheCommandsTest extends TestCase
     public function testClearAll(): void
     {
         Cache::add('key', 'value1', 'test');
-        Cache::add('key', 'value3', '_cake_core_');
+        Cache::add('key', 'value3', '_cake_translations_');
         $this->exec('cache clear_all');
 
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertNull(Cache::read('key', 'test'));
-        $this->assertNull(Cache::read('key', '_cake_core_'));
+        $this->assertNull(Cache::read('key', '_cake_translations_'));
     }
 
     public function testClearGroup(): void

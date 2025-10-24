@@ -15,6 +15,8 @@ declare(strict_types=1);
  */
 namespace Cake\Console\TestSuite\Constraint;
 
+use SebastianBergmann\Exporter\Exporter;
+
 /**
  * ContentsContainRow
  *
@@ -55,7 +57,7 @@ class ContentsContainRow extends ContentsRegExp
      */
     public function failureDescription(mixed $other): string
     {
-        return '`' . $this->exporter()->shortenedExport($other) . '` ' . $this->toString();
+        return '`' . (new Exporter())->shortenedExport($other) . '` ' . $this->toString();
     }
 }
 

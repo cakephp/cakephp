@@ -47,7 +47,7 @@ class NumericPaginator implements PaginatorInterface
      *   default all table columns can be used for sorting. You can use this option
      *   to restrict sorting only by particular fields. If you want to allow
      *   sorting on either associated columns or calculated fields then you will
-     *   have to explicity specify them (along with other fields). Using an empty
+     *   have to explicitly specify them (along with other fields). Using an empty
      *   array will disable sorting alltogether.
      * - `finder` - The table finder to use. Defaults to `all`.
      * - `scope` - If specified this scope will be used to get the paging options
@@ -202,7 +202,7 @@ class NumericPaginator implements PaginatorInterface
     public function paginate(
         mixed $target,
         array $params = [],
-        array $settings = []
+        array $settings = [],
     ): PaginatedInterface {
         $query = null;
         if ($target instanceof QueryInterface) {
@@ -216,15 +216,16 @@ class NumericPaginator implements PaginatorInterface
         assert(
             $target instanceof RepositoryInterface,
             'Pagination target must be an instance of `' . QueryInterface::class
-                . '` or `' . RepositoryInterface::class . '`.'
+                . '` or `' . RepositoryInterface::class . '`.',
         );
 
         $data = $this->extractData($target, $params, $settings);
         $query = $this->getQuery($target, $query, $data);
 
-        $items = $this->getItems(clone $query, $data);
+        $countQuery = clone $query;
+        $items = $this->getItems($query, $data);
         $this->pagingParams['count'] = count($items);
-        $this->pagingParams['totalCount'] = $this->getCount($query, $data);
+        $this->pagingParams['totalCount'] = $this->getCount($countQuery, $data);
 
         $pagingParams = $this->buildParams($data);
         if ($pagingParams['requestedPage'] > $pagingParams['currentPage']) {
@@ -238,7 +239,7 @@ class NumericPaginator implements PaginatorInterface
     }
 
     /**
-     * Build paginated resultset.
+     * Build paginated result set.
      *
      * @param \Cake\Datasource\ResultSetInterface $items
      * @param array $pagingParams
@@ -265,15 +266,17 @@ class NumericPaginator implements PaginatorInterface
             ['order' => null, 'page' => null, 'limit' => null],
         );
 
-        if ($query === null) {
-            $args = [];
-            $type = !empty($options['finder']) ? $options['finder'] : 'all';
-            if (is_array($type)) {
-                $args = (array)current($type);
-                $type = key($type);
-            }
+        $args = [];
+        $type = $options['finder'] ?? null;
+        if (is_array($type)) {
+            $args = (array)current($type);
+            $type = key($type);
+        }
 
-            $query = $object->find($type, ...$args);
+        if ($query === null) {
+            $query = $object->find($type ?? 'all', ...$args);
+        } elseif ($type !== null) {
+            $query->find($type, ...$args);
         }
 
         $query->applyOptions($queryOptions);
@@ -325,7 +328,7 @@ class NumericPaginator implements PaginatorInterface
             triggerWarning(
                 'Passing query options as paginator settings is no longer supported.'
                 . ' Use a custom finder through the `finder` config or pass a SelectQuery instance to paginate().'
-                . ' Extra keys found are: `' . implode('`, `', array_keys($extraSettings)) . '`.'
+                . ' Extra keys found are: `' . implode('`, `', array_keys($extraSettings)) . '`.',
             );
         }
 
@@ -396,8 +399,8 @@ class NumericPaginator implements PaginatorInterface
      */
     protected function addStartEndParams(array $data): void
     {
-        $start = $end = 0;
-
+        $start = 0;
+        $end = 0;
         if ($this->pagingParams['count'] > 0) {
             $start = (($this->pagingParams['currentPage'] - 1) * $this->pagingParams['perPage']) + 1;
             $end = $start + $this->pagingParams['count'] - 1;
@@ -434,7 +437,8 @@ class NumericPaginator implements PaginatorInterface
     {
         $defaults = $data['defaults'];
         $order = (array)$data['options']['order'];
-        $sortDefault = $directionDefault = false;
+        $sortDefault = false;
+        $directionDefault = false;
 
         if (!empty($defaults['order']) && count($defaults['order']) >= 1) {
             $sortDefault = key($defaults['order']);
@@ -601,7 +605,7 @@ class NumericPaginator implements PaginatorInterface
             if (is_int($field)) {
                 throw new CakeException(sprintf(
                     'The `order` config must be an associative array. Found invalid value with numeric key: `%s`',
-                    $sort
+                    $sort,
                 ));
             }
 

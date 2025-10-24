@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Http;
 use Cake\Core\Exception\CakeException;
 use Cake\Http\Client;
 use Cake\Http\Client\Adapter\Stream;
+use Cake\Http\Client\ClientEvent;
 use Cake\Http\Client\Exception\MissingResponseException;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
@@ -26,13 +27,15 @@ use Cake\Http\Cookie\CookieCollection;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\Request as LaminasRequest;
+use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * HTTP client test.
  */
 class ClientTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -202,10 +205,8 @@ class ClientTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider urlProvider
-     */
-    public function testBuildUrl(string $expected, string $url, array $query, ?array $opts): void
+    #[DataProvider('urlProvider')]
+    public function testBuildUrl(string $expected, string $url, array $query, ?array $opts, string $type): void
     {
         $http = new Client();
 
@@ -235,7 +236,7 @@ class ClientTest extends TestCase
         $mock->expects($this->once())
             ->method('send')
             ->with($this->callback(function ($request) use ($headers) {
-                $this->assertInstanceOf('Cake\Http\Client\Request', $request);
+                $this->assertInstanceOf(Request::class, $request);
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('2', $request->getProtocolVersion());
                 $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
@@ -272,7 +273,7 @@ class ClientTest extends TestCase
                 $this->assertEmpty($request->getHeaderLine('Content-Type'), 'Should have no content-type set');
                 $this->assertSame(
                     'http://cakephp.org/search',
-                    $request->getUri() . ''
+                    $request->getUri() . '',
                 );
 
                 return true;
@@ -303,7 +304,7 @@ class ClientTest extends TestCase
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame(
                     'http://cakephp.org/search?q=hi%20there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
-                    $request->getUri() . ''
+                    $request->getUri() . '',
                 );
 
                 return true;
@@ -336,7 +337,7 @@ class ClientTest extends TestCase
             ->with($this->callback(function ($request) {
                 $this->assertSame(
                     'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
-                    $request->getUri() . ''
+                    $request->getUri() . '',
                 );
 
                 return true;
@@ -465,9 +466,8 @@ class ClientTest extends TestCase
 
     /**
      * test simple POST request.
-     *
-     * @dataProvider methodProvider
      */
+    #[DataProvider('methodProvider')]
     public function testMethodsSimple(string $method): void
     {
         $response = new Response();
@@ -478,7 +478,7 @@ class ClientTest extends TestCase
         $mock->expects($this->once())
             ->method('send')
             ->with($this->callback(function ($request) use ($method) {
-                $this->assertInstanceOf('Cake\Http\Client\Request', $request);
+                $this->assertInstanceOf(Request::class, $request);
                 $this->assertEquals($method, $request->getMethod());
                 $this->assertSame('http://cakephp.org/projects/add', '' . $request->getUri());
 
@@ -511,9 +511,8 @@ class ClientTest extends TestCase
 
     /**
      * Test that using the 'type' option sets the correct headers
-     *
-     * @dataProvider typeProvider
      */
+    #[DataProvider('typeProvider')]
     public function testPostWithTypeKey(string $type, string $mime): void
     {
         $response = new Response();
@@ -542,6 +541,76 @@ class ClientTest extends TestCase
             'adapter' => $mock,
         ]);
         $http->post('/projects/add', $data, ['type' => $type]);
+    }
+
+    public function testPostWithContentType(): void
+    {
+        $response = new Response();
+        $headers = [
+            'Content-Type' => 'application/octet-stream',
+        ];
+
+        $mock = $this->getMockBuilder(Stream::class)
+            ->onlyMethods(['send'])
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function ($request) use ($headers) {
+                $this->assertSame(Request::METHOD_POST, $request->getMethod());
+                $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
+                $this->assertEquals('', (string)$request->getBody());
+
+                return true;
+            }))
+            ->willReturn([$response]);
+
+        $http = new Client([
+            'adapter' => $mock,
+        ]);
+        $http->post(
+            'https://example.org/2/files/upload',
+            [],
+            [
+                'headers' => [
+                    'Content-Type' => 'application/octet-stream',
+                ],
+            ],
+        );
+    }
+
+    public function testPostWithZero(): void
+    {
+        $response = new Response();
+        $headers = [
+            'Content-Type' => 'application/octet-stream',
+        ];
+
+        $mock = $this->getMockBuilder(Stream::class)
+            ->onlyMethods(['send'])
+            ->getMock();
+        $mock->expects($this->once())
+            ->method('send')
+            ->with($this->callback(function ($request) use ($headers) {
+                $this->assertSame(Request::METHOD_POST, $request->getMethod());
+                $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
+                $this->assertEquals('0', (string)$request->getBody());
+
+                return true;
+            }))
+            ->willReturn([$response]);
+
+        $http = new Client([
+            'adapter' => $mock,
+        ]);
+        $http->post(
+            'https://example.org/2/files/upload',
+            '0',
+            [
+                'headers' => [
+                    'Content-Type' => 'application/octet-stream',
+                ],
+            ],
+        );
     }
 
     /**
@@ -696,7 +765,7 @@ class ClientTest extends TestCase
         $mock->expects($this->once())
             ->method('send')
             ->with($this->callback(function ($request) {
-                $this->assertInstanceOf('Cake\Http\Client\Request', $request);
+                $this->assertInstanceOf(Request::class, $request);
                 $this->assertSame(Request::METHOD_HEAD, $request->getMethod());
                 $this->assertSame('http://cakephp.org/search?q=hi%20there', '' . $request->getUri());
 
@@ -721,9 +790,7 @@ class ClientTest extends TestCase
     {
         $url = 'http://cakephp.org';
 
-        $adapter = $this->getMockBuilder(Client\Adapter\Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
+        $adapter = Mockery::mock(Client\Adapter\Stream::class);
 
         $redirect = new Response([
             'HTTP/1.0 301',
@@ -741,48 +808,35 @@ class ClientTest extends TestCase
             'HTTP/1.0 200',
         ]);
 
-        $adapter->expects($this->exactly(3))
-            ->method('send')
-            ->with(
-                ...self::withConsecutive(
-                    [
-                    $this->callback(function (Request $request) use ($url) {
-                        $this->assertInstanceOf(Request::class, $request);
-                        $this->assertSame($url, (string)$request->getUri());
+        $adapter->shouldReceive('send')
+            ->withArgs(function (Request $request, $options) use ($url) {
+                $this->assertSame($url, (string)$request->getUri());
+                $this->assertArrayNotHasKey('redirect', $options);
 
-                        return true;
-                    }),
-                    $this->callback(function ($options) {
-                        $this->assertArrayNotHasKey('redirect', $options);
+                return true;
+            })
+            ->andReturn([$redirect])
+            ->once();
 
-                        return true;
-                    }),
-                    ],
-                    [
-                    $this->callback(function (Request $request) use ($url) {
-                        $this->assertInstanceOf(Request::class, $request);
-                        $this->assertSame($url . '/redirect1?foo=bar', (string)$request->getUri());
+        $adapter->shouldReceive('send')
+            ->withArgs(function (Request $request, $options) use ($url) {
+                $this->assertSame($url . '/redirect1?foo=bar', (string)$request->getUri());
+                $this->assertArrayNotHasKey('redirect', $options);
 
-                        return true;
-                    }),
-                    $this->callback(function ($options) {
-                        $this->assertArrayNotHasKey('redirect', $options);
+                return true;
+            })
+            ->andReturn([$redirect2])
+            ->once();
 
-                        return true;
-                    }),
-                    ],
-                    [
-                    $this->callback(function (Request $request) use ($url) {
-                        $this->assertInstanceOf(Request::class, $request);
-                        $this->assertSame($url . '/redirect2#foo', (string)$request->getUri());
+        $adapter->shouldReceive('send')
+            ->withArgs(function (Request $request, $options) use ($url) {
+                $this->assertSame($url . '/redirect2#foo', (string)$request->getUri());
+                $this->assertSame([], $options);
 
-                        return true;
-                    }),
-                    [],
-                    ]
-                )
-            )
-            ->willReturn([$redirect], [$redirect2], [$response]);
+                return true;
+            })
+            ->andReturn([$response])
+            ->once();
 
         $client = new Client([
             'adapter' => $adapter,
@@ -819,7 +873,7 @@ class ClientTest extends TestCase
         $mock->expects($this->once())
             ->method('send')
             ->with($this->callback(function ($request) use ($headers) {
-                $this->assertInstanceOf('Laminas\Diactoros\Request', $request);
+                $this->assertInstanceOf(LaminasRequest::class, $request);
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
                 $this->assertSame($headers['Content-Type'], $request->getHeaderLine('content-type'));
@@ -834,11 +888,95 @@ class ClientTest extends TestCase
             'http://cakephp.org/test.html',
             Request::METHOD_GET,
             'php://temp',
-            $headers
+            $headers,
         );
         $result = $http->sendRequest($request);
 
         $this->assertSame($result, $response);
+    }
+
+    public function testBeforeSend(): void
+    {
+        $eventTriggered = false;
+        $client = new Client();
+        $client->getEventManager()->on(
+            'HttpClient.beforeSend',
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) use (&$eventTriggered): void {
+                $eventTriggered = true;
+            },
+        );
+
+        Client::addMockResponse('GET', 'http://foo.test', new Response(body: 'test'));
+
+        $response = $client->get('http://foo.test', options: ['some' => 'thing']);
+        $this->assertSame('test', $response->getStringBody());
+        $this->assertTrue($eventTriggered);
+    }
+
+    public function testBeforeSendModifyRequest(): void
+    {
+        $client = new Client();
+
+        $client->getEventManager()->on(
+            'HttpClient.beforeSend',
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
+                $event->setRequest(new Request('http://bar.test'));
+                $event->setAdapterOptions(['some' => 'value']);
+            },
+        );
+
+        Client::addMockResponse(
+            'GET',
+            'http://bar.test',
+            new Response(body: 'other'),
+            ['match' => function (Request $request, array $options) {
+                $this->assertSame(['some' => 'value'], $options);
+
+                return true;
+            }],
+        );
+
+        $response = $client->get('http://foo.test');
+        $this->assertSame('other', $response->getStringBody());
+    }
+
+    public function testBeforeSendReturnResponse(): void
+    {
+        $client = new Client();
+
+        $client->getEventManager()->on(
+            'HttpClient.beforeSend',
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+                $event->setResult(new Response(body: 'short circuit'));
+            },
+        );
+
+        $client->getEventManager()->on(
+            'HttpClient.afterSend',
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects): void {
+                $this->assertFalse($event->getData('requestSent'));
+            },
+        );
+
+        $response = $client->get('http://foo.test');
+        $this->assertSame('short circuit', $response->getStringBody());
+    }
+
+    public function testAfterSendModifyResponse(): void
+    {
+        $client = new Client();
+
+        $client->getEventManager()->on(
+            'HttpClient.afterSend',
+            function (ClientEvent $event, Request $request, array $adapterOptions, int $redirects) {
+                $event->setResult(new Response(body: 'modified response'));
+            },
+        );
+
+        Client::addMockResponse('GET', 'http://foo.test', new Response(body: 'response text'));
+
+        $response = $client->get('http://foo.test');
+        $this->assertSame('modified response', $response->getStringBody());
     }
 
     /**
@@ -846,9 +984,7 @@ class ClientTest extends TestCase
      */
     public function testRedirectDifferentSubDomains(): void
     {
-        $adapter = $this->getMockBuilder(Client\Adapter\Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
+        $adapter = Mockery::mock(Client\Adapter\Stream::class);
 
         $url = 'http://auth.example.org';
 
@@ -859,22 +995,20 @@ class ClientTest extends TestCase
         $response = new Response([
             'HTTP/1.0 200',
         ]);
-        $adapter->expects($this->exactly(2))
-            ->method('send')
-            ->with(
-                ...self::withConsecutive(
-                    [$this->anything()],
-                    [
-                    $this->callback(function ($request) {
-                        $this->assertSame('http://backstage.example.org', (string)$request->getUri());
-                        $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
 
-                        return true;
-                    }),
-                    ]
-                )
-            )
-            ->willReturn([$redirect], [$response]);
+        $adapter->shouldReceive('send')
+            ->andReturn([$redirect])
+            ->once();
+
+        $adapter->shouldReceive('send')
+            ->withArgs(function ($request) {
+                $this->assertSame('http://backstage.example.org', (string)$request->getUri());
+                $this->assertSame('session=backend', $request->getHeaderLine('Cookie'));
+
+                return true;
+            })
+            ->andReturn([$response])
+            ->once();
 
         $client = new Client([
             'adapter' => $adapter,

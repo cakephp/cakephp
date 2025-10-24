@@ -44,7 +44,7 @@ class CakesController extends Controller
      *
      * @return string
      */
-    public function invalid()
+    public function invalid(): string
     {
         return 'Some string';
     }

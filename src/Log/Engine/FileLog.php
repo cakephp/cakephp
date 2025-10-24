@@ -38,7 +38,7 @@ class FileLog extends BaseLog
      *   to filename and new log file is created. Can be integer bytes value or
      *   human readable string values like '10MB', '100KB' etc.
      * - `rotate` Log files are rotated specified times before being removed.
-     *   If value is 0, old versions are removed rather then rotated.
+     *   If value is 0, old versions are removed rather than rotated.
      * - `mask` A mask is applied when log files are created. Left empty no chmod
      *   is made.
      * - `dirMask` The mask used for created folders.
@@ -147,7 +147,7 @@ class FileLog extends BaseLog
             $selfError = true;
             trigger_error(vsprintf(
                 'Could not apply permission mask `%s` on log file `%s`',
-                [$mask, $pathname]
+                [$mask, $pathname],
             ), E_USER_WARNING);
             $selfError = false;
         }

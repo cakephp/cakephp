@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\Log\Engine;
 
 use Cake\Log\Engine\SyslogLog;
 use Cake\TestSuite\TestCase;
+use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * SyslogLogTest class
@@ -51,9 +53,8 @@ class SyslogLogTest extends TestCase
 
     /**
      * Tests that single lines are written to syslog
-     *
-     * @dataProvider typesProvider
      */
+    #[DataProvider('typesProvider')]
     public function testWriteOneLine(string $type, int $expected): void
     {
         /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
@@ -69,18 +70,12 @@ class SyslogLogTest extends TestCase
      */
     public function testWriteMultiLine(): void
     {
-        /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
-        $log = $this->getMockBuilder(SyslogLog::class)
-            ->onlyMethods(['_open', '_write'])
-            ->getMock();
-        $log->expects($this->exactly(2))
-            ->method('_write')
-            ->with(
-                ...self::withConsecutive(
-                    [LOG_DEBUG, 'debug: Foo'],
-                    [LOG_DEBUG, 'debug: Bar']
-                )
-            );
+        $log = Mockery::mock(SyslogLog::class . '[_write]');
+        $log->shouldAllowMockingProtectedMethods();
+
+        $log->shouldReceive('_write')->with(LOG_DEBUG, 'debug: Foo')->once();
+        $log->shouldReceive('_write')->with(LOG_DEBUG, 'debug: Bar')->once();
+
         $log->log('debug', "Foo\nBar");
     }
 

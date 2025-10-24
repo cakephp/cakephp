@@ -17,6 +17,9 @@ declare(strict_types=1);
 // phpcs:disable PSR1.Files.SideEffects
 namespace Cake\I18n;
 
+use DateTimeInterface;
+use Throwable;
+
 /**
  * Returns a translated string if one is found; Otherwise, the submitted message.
  *
@@ -59,7 +62,7 @@ function __n(string $singular, string $plural, int $count, mixed ...$args): stri
 
     return I18n::getTranslator()->translate(
         $plural,
-        ['_count' => $count, '_singular' => $singular] + $args
+        ['_count' => $count, '_singular' => $singular] + $args,
     );
 }
 
@@ -108,7 +111,7 @@ function __dn(string $domain, string $singular, string $plural, int $count, mixe
 
     return I18n::getTranslator($domain)->translate(
         $plural,
-        ['_count' => $count, '_singular' => $singular] + $args
+        ['_count' => $count, '_singular' => $singular] + $args,
     );
 }
 
@@ -160,7 +163,7 @@ function __xn(string $context, string $singular, string $plural, int $count, mix
 
     return I18n::getTranslator()->translate(
         $plural,
-        ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args
+        ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args,
     );
 }
 
@@ -187,7 +190,7 @@ function __dx(string $domain, string $context, string $msg, mixed ...$args): str
 
     return I18n::getTranslator($domain)->translate(
         $msg,
-        ['_context' => $context] + $args
+        ['_context' => $context] + $args,
     );
 }
 
@@ -212,7 +215,7 @@ function __dxn(
     string $singular,
     string $plural,
     int $count,
-    mixed ...$args
+    mixed ...$args,
 ): string {
     if (!$singular) {
         return '';
@@ -223,6 +226,97 @@ function __dxn(
 
     return I18n::getTranslator($domain)->translate(
         $plural,
-        ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args
+        ['_count' => $count, '_singular' => $singular, '_context' => $context] + $args,
     );
+}
+
+/**
+ * Converts a value to a DateTime object.
+ *
+ *  integer - value is treated as a Unix timestamp
+ *  float - value is treated as a Unix timestamp with microseconds
+ *  string - value is treated as an Atom-formatted timestamp, unless otherwise specified
+ *  Other values returns as null.
+ *
+ * @param mixed $value The value to convert to DateTime.
+ * @param string $format The datetime format the value is in. Defaults to Atom (ex: 1970-01-01T12:00:00+00:00) format.
+ * @return \Cake\I18n\DateTime|null Returns a DateTime object if parsing is successful, or NULL otherwise.
+ * @since 5.1.0
+ */
+function toDateTime(mixed $value, string $format = DateTimeInterface::ATOM): ?DateTime
+{
+    if ($value instanceof DateTime) {
+        return $value;
+    }
+
+    if (
+        $value instanceof DateTimeInterface ||
+        $value instanceof Date
+    ) {
+        return DateTime::parse($value);
+    }
+
+    if (is_numeric($value)) {
+        try {
+            return DateTime::createFromTimestamp((float)$value);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    if (is_string($value)) {
+        try {
+            return DateTime::createFromFormat($format, $value);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    return null;
+}
+
+/**
+ * Converts a value to a Date object.
+ *
+ *  integer - value is treated as a Unix timestamp
+ *  float - value is treated as a Unix timestamp with microseconds
+ *  string - value is treated as a I18N short formatted date, unless otherwise specified
+ *  Other values returns as null.
+ *
+ * @param mixed $value The value to convert to Date.
+ * @param string $format The date format the value is in. Defaults to Short (ex: 1970-01-01) format.
+ * @return \Cake\I18n\Date|null Returns a Date object if parsing is successful, or NULL otherwise.
+ * @since 5.1.0
+ */
+function toDate(mixed $value, string $format = 'Y-m-d'): ?Date
+{
+    if ($value instanceof Date) {
+        return $value;
+    }
+
+    if ($value instanceof DateTimeInterface) {
+        return Date::parse($value);
+    }
+
+    if (is_numeric($value)) {
+        try {
+            $datetime = DateTime::createFromTimestamp((float)$value);
+
+            return Date::create($datetime->year, $datetime->month, $datetime->day);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    if (is_string($value)) {
+        try {
+            $datetime = DateTime::createFromFormat($format, $value);
+
+            return Date::parse($datetime);
+        } catch (Throwable) {
+            return null;
+        }
+    }
+
+    return null;
 }

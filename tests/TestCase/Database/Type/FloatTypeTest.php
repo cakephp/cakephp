@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Type;
 
+use Cake\Database\Driver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Type\FloatType;
 use Cake\I18n\I18n;
@@ -45,18 +46,18 @@ class FloatTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new FloatType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
         $this->numberClass = FloatType::$numberClass;
     }
 
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
@@ -96,7 +97,7 @@ class FloatTypeTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+            $this->type->manyToPHP($values, array_keys($values), $this->driver),
         );
     }
 
@@ -138,7 +139,7 @@ class FloatTypeTest extends TestCase
         $result = $this->type->marshal('2.51');
         $this->assertSame(2.51, $result);
 
-        // allow custom decimal format (@see https://github.com/cakephp/cakephp/issues/12800)
+        // allow custom decimal format (https://github.com/cakephp/cakephp/issues/12800)
         $result = $this->type->marshal('1 230,73');
         $this->assertSame('1 230,73', $result);
 

@@ -60,7 +60,7 @@ class DateTimeWidget extends BasicWidget
     /**
      * Formats for various input types.
      *
-     * @var array<string>
+     * @var array<string, string>
      */
     protected array $formatMap = [
         'datetime-local' => 'Y-m-d\TH:i:s',
@@ -116,7 +116,7 @@ class DateTimeWidget extends BasicWidget
         if (!isset($this->formatMap[$data['type']])) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid type `%s` for input tag, expected datetime-local, date, time, month or week',
-                $data['type']
+                $data['type'],
             ));
         }
 
@@ -131,7 +131,7 @@ class DateTimeWidget extends BasicWidget
             'templateVars' => $data['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $data,
-                ['name', 'type']
+                ['name', 'type'],
             ),
         ]);
     }
@@ -184,7 +184,7 @@ class DateTimeWidget extends BasicWidget
      */
     protected function formatDateTime(
         ChronosDate|ChronosTime|DateTimeInterface|string|int|null $value,
-        array $options
+        array $options,
     ): string {
         if ($value === '' || $value === null) {
             return '';
@@ -196,10 +196,8 @@ class DateTimeWidget extends BasicWidget
                 $dateTime = clone $value;
             } elseif (is_string($value) && !is_numeric($value)) {
                 $dateTime = new DateTime($value);
-            } elseif (is_numeric($value)) {
-                $dateTime = new DateTime('@' . $value);
             } else {
-                $dateTime = new DateTime();
+                $dateTime = new DateTime('@' . $value);
             }
         } catch (Exception) {
             $dateTime = new DateTime();

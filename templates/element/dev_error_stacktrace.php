@@ -31,7 +31,7 @@ foreach ($exceptions as $level => $exc):
         <div class="stack-exception-header">
             <span class="stack-exception-caused">Caused by</span>
             <span class="stack-exception-message"><?= Debugger::formatHtmlMessage($exc->getMessage()) ?></span>
-            <span class="stack-exception-type"><?= h(get_class($exc)); ?></span>
+            <span class="stack-exception-type"><?= h($exc::class); ?></span>
         </div>
     <?php endif; ?>
 
@@ -63,8 +63,8 @@ foreach ($exceptions as $level => $exc):
     <ul class="stack-frames">
     <?php
     foreach ($stackTrace as $i => $stack):
-        $excerpt = $params = [];
-
+        $excerpt = [];
+        $params = [];
         $line = null;
         if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
             $line = $stack['line'];

@@ -199,7 +199,7 @@ trait StaticConfigTrait
      * $dsn = 'file:///?className=\My\Cache\Engine\FileEngine';
      * $config = Cache::parseDsn($dsn);
      *
-     * $dsn = 'File://?prefix=myapp_cake_core_&serialize=true&duration=+2 minutes&path=/tmp/persistent/';
+     * $dsn = 'File://?prefix=myapp_cake_translations_&serialize=true&duration=+2 minutes&path=/tmp/persistent/';
      * $config = Cache::parseDsn($dsn);
      * ```
      *
@@ -209,12 +209,12 @@ trait StaticConfigTrait
      * Note that querystring arguments are also parsed and set as values in the returned configuration.
      *
      * @param string $dsn The DSN string to convert to a configuration array
-     * @return array<string, mixed> The configuration array to be stored after parsing the DSN
+     * @return array<int|string, array|bool|string|null> The configuration array to be stored after parsing the DSN
      * @throws \InvalidArgumentException If not passed a string, or passed an invalid string
      */
     public static function parseDsn(string $dsn): array
     {
-        if (empty($dsn)) {
+        if (!$dsn) {
             return [];
         }
 
@@ -232,7 +232,7 @@ trait StaticConfigTrait
         @
     )?
     (?P<_host>
-        (?P<host>[^?#/:@]+)
+        (?P<host>\[[^]]+]|[^?#/:@]+)
         (?P<_port>
             :(?P<port>\d+)
         )?
@@ -293,7 +293,6 @@ REGEXP;
             }
         }
 
-        /** @var array<string, mixed> $parsed */
         $parsed = $queryArgs + $parsed;
 
         if (empty($parsed['className'])) {
@@ -315,7 +314,7 @@ REGEXP;
      *
      * @param array<string, string> $map Additions/edits to the class map to apply.
      * @return void
-     * @psalm-param array<string, class-string> $map
+     * @phpstan-param array<string, class-string> $map
      */
     public static function setDsnClassMap(array $map): void
     {

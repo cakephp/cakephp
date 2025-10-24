@@ -3,6 +3,9 @@
 namespace TestApp\Config;
 
 use Cake\Core\StaticConfigTrait;
+use Cake\Log\Engine\ConsoleLog;
+use Cake\Log\Engine\FileLog;
+use Cake\Log\Engine\SyslogLog;
 
 class TestLogStaticConfig
 {
@@ -14,8 +17,8 @@ class TestLogStaticConfig
      * @var array
      */
     protected static $_dsnClassMap = [
-        'console' => 'Cake\Log\Engine\ConsoleLog',
-        'file' => 'Cake\Log\Engine\FileLog',
-        'syslog' => 'Cake\Log\Engine\SyslogLog',
+        'console' => ConsoleLog::class,
+        'file' => FileLog::class,
+        'syslog' => SyslogLog::class,
     ];
 }

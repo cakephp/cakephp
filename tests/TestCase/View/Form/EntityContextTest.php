@@ -24,6 +24,7 @@ use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Cake\View\Form\EntityContext;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Entity\ArticlesTag;
@@ -55,7 +56,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $this->assertNull($context->getRequiredMessage('body'));
-        $this->assertSame('Don\'t forget a title!', $context->getRequiredMessage('title'));
+        $this->assertSame("Don't forget a title!", $context->getRequiredMessage('title'));
     }
 
     /**
@@ -126,9 +127,9 @@ class EntityContextTest extends TestCase
     /**
      * Test isCreate on a collection.
      *
-     * @dataProvider collectionProvider
      * @param mixed $collection
      */
+    #[DataProvider('collectionProvider')]
     public function testIsCreateCollection($collection): void
     {
         $context = new EntityContext([
@@ -222,9 +223,9 @@ class EntityContextTest extends TestCase
     /**
      * Test collection operations that lack a table argument.
      *
-     * @dataProvider collectionProvider
      * @param mixed $collection
      */
+    #[DataProvider('collectionProvider')]
     public function testCollectionOperationsNoTableArg($collection): void
     {
         $context = new EntityContext([
@@ -272,9 +273,9 @@ class EntityContextTest extends TestCase
     /**
      * Test operations on a collection of entities.
      *
-     * @dataProvider collectionProvider
      * @param mixed $collection
      */
+    #[DataProvider('collectionProvider')]
     public function testValOnCollections($collection): void
     {
         $context = new EntityContext([
@@ -302,9 +303,9 @@ class EntityContextTest extends TestCase
      * Test operations on a collection of entities when prefixing with the
      * table name
      *
-     * @dataProvider collectionProvider
      * @param mixed $collection
      */
+    #[DataProvider('collectionProvider')]
     public function testValOnCollectionsWithRootName($collection): void
     {
         $context = new EntityContext([
@@ -330,9 +331,9 @@ class EntityContextTest extends TestCase
     /**
      * Test error operations on a collection of entities.
      *
-     * @dataProvider collectionProvider
      * @param mixed $collection
      */
+    #[DataProvider('collectionProvider')]
     public function testErrorsOnCollections($collection): void
     {
         $context = new EntityContext([
@@ -355,9 +356,9 @@ class EntityContextTest extends TestCase
     /**
      * Test schema operations on a collection of entities.
      *
-     * @dataProvider collectionProvider
      * @param mixed $collection
      */
+    #[DataProvider('collectionProvider')]
     public function testSchemaOnCollections($collection): void
     {
         $this->_setupTables();
@@ -383,9 +384,9 @@ class EntityContextTest extends TestCase
     /**
      * Test validation operations on a collection of entities.
      *
-     * @dataProvider collectionProvider
      * @param mixed $collection
      */
+    #[DataProvider('collectionProvider')]
     public function testValidatorsOnCollections($collection): void
     {
         $this->_setupTables();
@@ -427,6 +428,7 @@ class EntityContextTest extends TestCase
         $result = $context->val('body');
         $this->assertEquals($row->body, $result);
 
+        $row->requireFieldPresence(true);
         $result = $context->val('nope');
         $this->assertNull($result);
     }
@@ -860,11 +862,11 @@ class EntityContextTest extends TestCase
 
         $this->assertTrue(
             $context->isRequired('comments.0.comment'),
-            'comment is required as object is not new'
+            'comment is required as object is not new',
         );
         $this->assertFalse(
             $context->isRequired('comments.1.comment'),
-            'comment is not required as missing object is "new"'
+            'comment is not required as missing object is "new"',
         );
     }
 
@@ -1243,7 +1245,7 @@ class EntityContextTest extends TestCase
         $tagTwo = new Tag(['name' => 'second-post']);
         $tagOne->setError(
             'metadata',
-            ['description' => ['_empty' => 'required value']]
+            ['description' => ['_empty' => 'required value']],
         );
         $row = new Article([
             'title' => 'My title',
@@ -1299,7 +1301,7 @@ class EntityContextTest extends TestCase
         ]);
 
         $validator = new Validator();
-        $validator->notEmptyString('title', 'Don\'t forget a title!');
+        $validator->notEmptyString('title', "Don't forget a title!");
         $validator->add('title', 'minlength', [
             'rule' => ['minlength', 10],
         ])

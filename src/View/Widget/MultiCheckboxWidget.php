@@ -72,7 +72,8 @@ class MultiCheckboxWidget extends BasicWidget
      */
     public function __construct(StringTemplate $templates, LabelWidget $label)
     {
-        $this->_templates = $templates;
+        parent::__construct($templates);
+
         $this->_label = $label;
     }
 
@@ -157,12 +158,8 @@ class MultiCheckboxWidget extends BasicWidget
             if (is_array($val) && isset($val['text'], $val['value'])) {
                 $checkbox = $val;
             }
-            if (!isset($checkbox['templateVars'])) {
-                $checkbox['templateVars'] = $data['templateVars'];
-            }
-            if (!isset($checkbox['label'])) {
-                $checkbox['label'] = $data['label'];
-            }
+            $checkbox['templateVars'] ??= $data['templateVars'];
+            $checkbox['label'] ??= $data['label'];
             if (!empty($data['templateVars'])) {
                 $checkbox['templateVars'] = array_merge($data['templateVars'], $checkbox['templateVars']);
             }
@@ -174,7 +171,7 @@ class MultiCheckboxWidget extends BasicWidget
                 if (isset($data['id'])) {
                     $checkbox['id'] = $data['id'] . '-' . trim(
                         $this->_idSuffix((string)$checkbox['value']),
-                        '-'
+                        '-',
                     );
                 } else {
                     $checkbox['id'] = $this->_id($checkbox['name'], (string)$checkbox['value']);
@@ -201,7 +198,7 @@ class MultiCheckboxWidget extends BasicWidget
             'templateVars' => $checkbox['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $checkbox,
-                ['name', 'value', 'text', 'options', 'label', 'val', 'type']
+                ['name', 'value', 'text', 'options', 'label', 'val', 'type'],
             ),
         ]);
 

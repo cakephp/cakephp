@@ -20,6 +20,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Database\Driver;
 use Cake\Database\Type\DecimalType;
 use Cake\I18n\I18n;
+use Cake\Test\TestCase\Database\Driver\BaseDriverTrait;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
@@ -47,18 +48,20 @@ class DecimalTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new DecimalType();
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = new class extends Driver {
+            use BaseDriverTrait;
+        };
         $this->numberClass = DecimalType::$numberClass;
     }
 
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
@@ -98,7 +101,7 @@ class DecimalTypeTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+            $this->type->manyToPHP($values, array_keys($values), $this->driver),
         );
     }
 
@@ -164,7 +167,7 @@ class DecimalTypeTest extends TestCase
         $result = $this->type->marshal('2.51');
         $this->assertSame('2.51', $result);
 
-        // allow custom decimal format (@see https://github.com/cakephp/cakephp/issues/12800)
+        // allow custom decimal format (https://github.com/cakephp/cakephp/issues/12800)
         $result = $this->type->marshal('1 230,73');
         $this->assertSame('1 230,73', $result);
 

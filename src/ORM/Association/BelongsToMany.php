@@ -118,9 +118,9 @@ class BelongsToMany extends Association
     /**
      * The table instance for the junction relation.
      *
-     * @var \Cake\ORM\Table|string
+     * @var \Cake\ORM\Table|string|null
      */
-    protected Table|string $_through;
+    protected Table|string|null $_through = null;
 
     /**
      * Valid strategies for this type of association
@@ -203,11 +203,7 @@ class BelongsToMany extends Association
      */
     public function getForeignKey(): array|string|false
     {
-        if (!isset($this->_foreignKey)) {
-            $this->_foreignKey = $this->_modelKey($this->getSource()->getTable());
-        }
-
-        return $this->_foreignKey;
+        return $this->_foreignKey ??= $this->_modelKey($this->getSource()->getTable());
     }
 
     /**
@@ -261,7 +257,7 @@ class BelongsToMany extends Association
         }
 
         $tableLocator = $this->getTableLocator();
-        if ($table === null && isset($this->_through)) {
+        if ($table === null && $this->_through !== null) {
             $table = $this->_through;
         } elseif ($table === null) {
             $tableName = $this->_junctionTableName();
@@ -289,7 +285,7 @@ class BelongsToMany extends Association
             throw new InvalidArgumentException(sprintf(
                 'The `%s` association on `%s` cannot target the same table.',
                 $this->getName(),
-                $source->getAlias()
+                $source->getAlias(),
             ));
         }
 
@@ -298,6 +294,29 @@ class BelongsToMany extends Association
         $this->_generateJunctionAssociations($table, $source, $target);
 
         return $this->_junctionTable = $table;
+    }
+
+    /**
+     * Set the junction property name.
+     *
+     * @param string $junctionProperty Property name.
+     * @return $this
+     */
+    public function setJunctionProperty(string $junctionProperty)
+    {
+        $this->_junctionProperty = $junctionProperty;
+
+        return $this;
+    }
+
+    /**
+     * Get the junction property naeme.
+     *
+     * @return string
+     */
+    public function getJunctionProperty(): string
+    {
+        return $this->_junctionProperty;
     }
 
     /**
@@ -417,7 +436,7 @@ class BelongsToMany extends Association
             ) {
                 throw new InvalidArgumentException(
                     "The existing `{$tAlias}` association on `{$junction->getAlias()}` " .
-                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`"
+                    "is incompatible with the `{$this->getName()}` association on `{$source->getAlias()}`",
                 );
             }
         }
@@ -463,7 +482,7 @@ class BelongsToMany extends Association
 
         $includeFields = $options['includeFields'] ?? null;
 
-        // Attach the junction table as well we need it to populate _joinData.
+        // Attach the junction table as well we need it to populate junction property (_joinData).
         $assoc = $this->getTarget()->getAssociation($junction->getAlias());
         $newOptions = array_intersect_key($options, ['joinType' => 1, 'fields' => 1]);
         $newOptions += [
@@ -518,7 +537,7 @@ class BelongsToMany extends Association
                 return $exp
                     ->or([
                         $exp->notIn($identifiers, $subquery),
-                        $nullExp->and(array_map([$nullExp, 'isNull'], array_keys($conds))),
+                        $nullExp->and(array_map($nullExp->isNull(...), array_keys($conds))),
                     ]);
             });
     }
@@ -724,7 +743,7 @@ class BelongsToMany extends Association
     protected function _saveTarget(
         EntityInterface $parentEntity,
         array $entities,
-        array $options
+        array $options,
     ): EntityInterface|false {
         $joinAssociations = false;
         if (isset($options['associated']) && is_array($options['associated'])) {
@@ -805,7 +824,7 @@ class BelongsToMany extends Association
 
         foreach ($targetEntities as $e) {
             $joint = $e->get($jointProperty);
-            if (!$joint || !($joint instanceof EntityInterface)) {
+            if (!($joint instanceof EntityInterface)) {
                 $joint = new $entityClass([], ['markNew' => true, 'source' => $junctionRegistryAlias]);
             }
             $sourceKeys = array_combine($foreignKey, $sourceEntity->extract($bindingKey));
@@ -820,8 +839,12 @@ class BelongsToMany extends Association
             // or if we are updating an existing link.
             if ($changedKeys) {
                 $joint->setNew(true);
-                $joint->unset($junction->getPrimaryKey())
-                    ->set(array_merge($sourceKeys, $targetKeys), ['guard' => false]);
+                $joint->unset($junction->getPrimaryKey());
+                if (method_exists($joint, 'patch')) {
+                    $joint->patch(array_merge($sourceKeys, $targetKeys), ['guard' => false]);
+                } else {
+                    $joint->set(array_merge($sourceKeys, $targetKeys), ['guard' => false]);
+                }
             }
             $saved = $junction->save($joint, $options);
 
@@ -876,7 +899,7 @@ class BelongsToMany extends Association
         return $this->junction()->getConnection()->transactional(
             function () use ($sourceEntity, $targetEntities, $options) {
                 return $this->_saveLinks($sourceEntity, $targetEntities, $options);
-            }
+            },
         );
     }
 
@@ -910,9 +933,9 @@ class BelongsToMany extends Association
      *   this association.
      * @param array<\Cake\Datasource\EntityInterface> $targetEntities List of entities persisted in the target table for
      *   this association.
-     * @param array<string>|bool $options List of options to be passed to the internal `delete` call,
+     * @param array<string, mixed>|bool $options List of options to be passed to the internal `delete` call,
      *   or a `boolean` as `cleanProperty` key shortcut.
-     * @throws \InvalidArgumentException If non persisted entities are passed or if
+     * @throws \InvalidArgumentException If non-persisted entities are passed or if
      *   any of them is lacking a primary key value.
      * @return bool Success
      */
@@ -935,7 +958,7 @@ class BelongsToMany extends Association
                 foreach ($links as $entity) {
                     $this->_junctionTable->delete($entity, $options);
                 }
-            }
+            },
         );
 
         /** @var array<\Cake\Datasource\EntityInterface> $existing */
@@ -947,11 +970,11 @@ class BelongsToMany extends Association
         /** @var \SplObjectStorage<\Cake\Datasource\EntityInterface, null> $storage */
         $storage = new SplObjectStorage();
         foreach ($targetEntities as $e) {
-            $storage->attach($e);
+            $storage->offsetSet($e);
         }
 
         foreach ($existing as $k => $e) {
-            if ($storage->contains($e)) {
+            if ($storage->offsetExists($e)) {
                 unset($existing[$k]);
             }
         }
@@ -968,7 +991,8 @@ class BelongsToMany extends Association
     public function setConditions(Closure|array $conditions)
     {
         parent::setConditions($conditions);
-        $this->_targetConditions = $this->_junctionConditions = null;
+        $this->_targetConditions = null;
+        $this->_junctionConditions = null;
 
         return $this;
     }
@@ -988,10 +1012,11 @@ class BelongsToMany extends Association
 
     /**
      * Gets the current join table, either the name of the Table instance or the instance itself.
+     * Returns null if not defined.
      *
-     * @return \Cake\ORM\Table|string
+     * @return \Cake\ORM\Table|string|null
      */
-    public function getThrough(): Table|string
+    public function getThrough(): Table|string|null
     {
         return $this->_through;
     }
@@ -1196,12 +1221,12 @@ class BelongsToMany extends Association
                 /** @var array<string> $foreignKey */
                 $foreignKey = (array)$this->getForeignKey();
                 $assocForeignKey = (array)$junction->getAssociation($target->getAlias())->getForeignKey();
-                $prefixedForeignKey = array_map([$junction, 'aliasField'], $foreignKey);
+                $prefixedForeignKey = array_map($junction->aliasField(...), $foreignKey);
 
                 $junctionPrimaryKey = (array)$junction->getPrimaryKey();
                 $junctionQueryAlias = $junction->getAlias() . '__matches';
-
-                $keys = $matchesConditions = [];
+                $keys = [];
+                $matchesConditions = [];
                 /** @var string $key */
                 foreach (array_merge($assocForeignKey, $junctionPrimaryKey) as $key) {
                     $aliased = $junction->aliasField($key);
@@ -1221,7 +1246,7 @@ class BelongsToMany extends Association
                     ->from([$junctionQueryAlias => $matches])
                     ->innerJoin(
                         [$junction->getAlias() => $junction->getTable()],
-                        $matchesConditions
+                        $matchesConditions,
                     );
 
                 $jointEntities = $this->_collectJointEntities($sourceEntity, $targetEntities);
@@ -1236,11 +1261,10 @@ class BelongsToMany extends Association
 
                 $property = $this->getProperty();
 
-                if (count($inserts)) {
-                    /** @psalm-suppress RedundantConditionGivenDocblockType */
+                if ($inserts !== []) {
                     $inserted = array_combine(
                         array_keys($inserts),
-                        (array)$sourceEntity->get($property)
+                        (array)$sourceEntity->get($property),
                     ) ?: [];
                     $targetEntities = $inserted + $targetEntities;
                 }
@@ -1250,7 +1274,7 @@ class BelongsToMany extends Association
                 $sourceEntity->setDirty($property, false);
 
                 return true;
-            }
+            },
         );
     }
 
@@ -1270,7 +1294,7 @@ class BelongsToMany extends Association
         SelectQuery $existing,
         array $jointEntities,
         array $targetEntities,
-        array $options = []
+        array $options = [],
     ): array|false {
         $junction = $this->junction();
         $target = $this->getTarget();
@@ -1281,7 +1305,9 @@ class BelongsToMany extends Association
         $assocForeignKey = (array)$belongsTo->getForeignKey();
 
         $keys = array_merge($foreignKey, $assocForeignKey);
-        $deletes = $unmatchedEntityKeys = $present = [];
+        $deletes = [];
+        $unmatchedEntityKeys = [];
+        $present = [];
 
         foreach ($jointEntities as $i => $entity) {
             $unmatchedEntityKeys[$i] = $entity->extract($keys);
@@ -1401,7 +1427,7 @@ class BelongsToMany extends Association
             }
             $joint = $entity->get($jointProperty);
 
-            if (!$joint || !($joint instanceof EntityInterface)) {
+            if (!($joint instanceof EntityInterface)) {
                 $missing[] = $entity->extract($primary);
                 continue;
             }
@@ -1409,7 +1435,7 @@ class BelongsToMany extends Association
             $result[] = $joint;
         }
 
-        if (empty($missing)) {
+        if (!$missing) {
             return $result;
         }
 
@@ -1507,6 +1533,11 @@ class BelongsToMany extends Association
         }
         if (isset($options['sort'])) {
             $this->setSort($options['sort']);
+        }
+        if (isset($options['junctionProperty'])) {
+            assert(is_string($options['junctionProperty']), '`junctionProperty` must be a string');
+
+            $this->_junctionProperty = $options['junctionProperty'];
         }
     }
 }

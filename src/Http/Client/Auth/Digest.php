@@ -109,7 +109,7 @@ class Digest
                 implode(',', array_keys(self::HASH_ALGORITHMS)));
         }
         $this->algorithm = $algorithm;
-        $this->isSessAlgorithm = strpos($this->algorithm, '-sess') !== false;
+        $this->isSessAlgorithm = str_contains($this->algorithm, '-sess');
         $this->hashType = Hash::get(self::HASH_ALGORITHMS, $this->algorithm);
     }
 
@@ -155,7 +155,7 @@ class Digest
         $response = $this->_client->get(
             (string)$request->getUri(),
             [],
-            ['auth' => ['type' => null]]
+            ['auth' => ['type' => null]],
         );
 
         $header = $response->getHeader('WWW-Authenticate');
@@ -221,7 +221,7 @@ class Digest
             $response = hash(
                 $this->hashType,
                 $ha1 . ':' . $credentials['nonce'] . ':' . $nc . ':' .
-                $credentials['cnonce'] . ':' . $credentials['qop'] . ':' . $ha2
+                $credentials['cnonce'] . ':' . $credentials['qop'] . ':' . $ha2,
             );
         }
 

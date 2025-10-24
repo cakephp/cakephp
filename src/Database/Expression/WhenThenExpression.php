@@ -121,7 +121,7 @@ class WhenThenExpression implements ExpressionInterface
     public function when(object|array|string|float|int|bool $when, array|string|null $type = null)
     {
         if (is_array($when)) {
-            if (empty($when)) {
+            if (!$when) {
                 throw new InvalidArgumentException('The `$when` argument must be a non-empty array');
             }
 
@@ -132,7 +132,7 @@ class WhenThenExpression implements ExpressionInterface
                 throw new InvalidArgumentException(sprintf(
                     'When using an array for the `$when` argument, the `$type` argument must be an ' .
                     'array too, `%s` given.',
-                    get_debug_type($type)
+                    get_debug_type($type),
                 ));
             }
 
@@ -140,7 +140,7 @@ class WhenThenExpression implements ExpressionInterface
             $typeMap = clone $this->_typeMap;
             if (
                 is_array($type) &&
-                count($type) > 0
+                $type !== []
             ) {
                 $typeMap = $typeMap->setTypes($type);
             }
@@ -154,7 +154,7 @@ class WhenThenExpression implements ExpressionInterface
                 throw new InvalidArgumentException(sprintf(
                     'When using a non-array value for the `$when` argument, the `$type` argument must ' .
                     'be a string, `%s` given.',
-                    get_debug_type($type)
+                    get_debug_type($type),
                 ));
             }
 
@@ -182,7 +182,6 @@ class WhenThenExpression implements ExpressionInterface
      */
     public function then(mixed $result, ?string $type = null)
     {
-        /** @psalm-suppress DocblockTypeContradiction */
         if (
             $result !== null &&
             !is_scalar($result) &&
@@ -192,7 +191,7 @@ class WhenThenExpression implements ExpressionInterface
                 'The `$result` argument must be either `null`, a scalar value, an object, ' .
                 'or an instance of `\%s`, `%s` given.',
                 ExpressionInterface::class,
-                get_debug_type($result)
+                get_debug_type($result),
             ));
         }
 
@@ -237,8 +236,8 @@ class WhenThenExpression implements ExpressionInterface
                 sprintf(
                     'The `$clause` argument must be one of `%s`, the given value `%s` is invalid.',
                     implode('`, `', $this->validClauseNames),
-                    $clause
-                )
+                    $clause,
+                ),
             );
         }
 
@@ -282,7 +281,7 @@ class WhenThenExpression implements ExpressionInterface
 
         $then = $this->compileNullableValue($binder, $this->then, $this->thenType);
 
-        return "WHEN $when THEN $then";
+        return "WHEN {$when} THEN {$then}";
     }
 
     /**

@@ -31,7 +31,7 @@ class ConfigureTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Cache::disable();
@@ -40,7 +40,7 @@ class ConfigureTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         if (file_exists(TMP . 'cache/persistent/cake_core_core_paths')) {
@@ -273,7 +273,7 @@ class ConfigureTest extends TestCase
     {
         try {
             Configure::load('nonexistent_configuration_file');
-        } catch (Exception $e) {
+        } catch (Exception) {
             $this->assertTrue(Configure::isConfigured('default'));
             $this->assertFalse(Configure::isConfigured('nonexistent_configuration_file'));
         }
@@ -412,7 +412,7 @@ class ConfigureTest extends TestCase
         Configure::write('testing', 'value');
         Configure::store('store_test', 'configure', ['store_test' => 'one']);
         Configure::delete('testing');
-        $this->assertNull(Configure::read('store_test'), 'Calling store with data shouldn\'t modify runtime.');
+        $this->assertNull(Configure::read('store_test'), "Calling store with data shouldn't modify runtime.");
 
         Configure::restore('store_test', 'configure');
         $this->assertSame('one', Configure::read('store_test'));

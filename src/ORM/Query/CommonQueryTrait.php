@@ -66,7 +66,7 @@ trait CommonQueryTrait
     {
         assert(
             $repository instanceof Table,
-            '`$repository` must be an instance of `' . Table::class . '`.'
+            '`$repository` must be an instance of `' . Table::class . '`.',
         );
 
         $this->_repository = $repository;
@@ -76,7 +76,7 @@ trait CommonQueryTrait
 
     /**
      * Returns the default repository object that will be used by this query,
-     * that is, the table that will appear in the from clause.
+     * that is, the table that will appear in the "from" clause.
      *
      * @return \Cake\ORM\Table
      */

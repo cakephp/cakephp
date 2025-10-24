@@ -16,6 +16,6 @@ namespace TestApp\Model\Enum;
 
 enum ArticleStatus: string
 {
-    case PUBLISHED = 'Y';
-    case UNPUBLISHED = 'N';
+    case Published = 'Y';
+    case Unpublished = 'N';
 }

@@ -139,9 +139,8 @@ class FunctionsBuilder
     public function cast(ExpressionInterface|string $field, string $dataType): FunctionExpression
     {
         $expression = new FunctionExpression('CAST', $this->toLiteralParam($field));
-        $expression->setConjunction(' AS')->add([$dataType => 'literal']);
 
-        return $expression;
+        return $expression->setConjunction(' AS')->add([$dataType => 'literal']);
     }
 
     /**
@@ -168,7 +167,7 @@ class FunctionsBuilder
     public function datePart(
         string $part,
         ExpressionInterface|string $expression,
-        array $types = []
+        array $types = [],
     ): FunctionExpression {
         return $this->extract($part, $expression, $types);
     }
@@ -184,9 +183,8 @@ class FunctionsBuilder
     public function extract(string $part, ExpressionInterface|string $expression, array $types = []): FunctionExpression
     {
         $expression = new FunctionExpression('EXTRACT', $this->toLiteralParam($expression), $types, 'integer');
-        $expression->setConjunction(' FROM')->add([$part => 'literal'], [], true);
 
-        return $expression;
+        return $expression->setConjunction(' FROM')->add([$part => 'literal'], [], true);
     }
 
     /**
@@ -202,16 +200,15 @@ class FunctionsBuilder
         ExpressionInterface|string $expression,
         string|int $value,
         string $unit,
-        array $types = []
+        array $types = [],
     ): FunctionExpression {
         if (!is_numeric($value)) {
             $value = 0;
         }
         $interval = $value . ' ' . $unit;
         $expression = new FunctionExpression('DATE_ADD', $this->toLiteralParam($expression), $types, 'datetime');
-        $expression->setConjunction(', INTERVAL')->add([$interval => 'literal']);
 
-        return $expression;
+        return $expression->setConjunction(', INTERVAL')->add([$interval => 'literal']);
     }
 
     /**
@@ -250,17 +247,12 @@ class FunctionsBuilder
      */
     public function now(string $type = 'datetime'): FunctionExpression
     {
-        if ($type === 'datetime') {
-            return new FunctionExpression('NOW', [], [], 'datetime');
-        }
-        if ($type === 'date') {
-            return new FunctionExpression('CURRENT_DATE', [], [], 'date');
-        }
-        if ($type === 'time') {
-            return new FunctionExpression('CURRENT_TIME', [], [], 'time');
-        }
-
-        throw new InvalidArgumentException('Invalid argument for FunctionsBuilder::now(): ' . $type);
+        return match ($type) {
+            'datetime' => new FunctionExpression('NOW', [], [], 'datetime'),
+            'date' => new FunctionExpression('CURRENT_DATE', [], [], 'date'),
+            'time' => new FunctionExpression('CURRENT_TIME', [], [], 'time'),
+            default => throw new InvalidArgumentException('Invalid argument for FunctionsBuilder::now(): ' . $type),
+        };
     }
 
     /**
@@ -286,7 +278,7 @@ class FunctionsBuilder
         ExpressionInterface|string $expression,
         int $offset,
         mixed $default = null,
-        ?string $type = null
+        ?string $type = null,
     ): AggregateExpression {
         $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
         if ($default !== null) {
@@ -314,7 +306,7 @@ class FunctionsBuilder
         ExpressionInterface|string $expression,
         int $offset,
         mixed $default = null,
-        ?string $type = null
+        ?string $type = null,
     ): AggregateExpression {
         $params = $this->toLiteralParam($expression) + [$offset => 'literal'];
         if ($default !== null) {
@@ -327,6 +319,24 @@ class FunctionsBuilder
         }
 
         return (new AggregateExpression('LEAD', $params, $types, $type ?? 'float'))->over();
+    }
+
+    /**
+     * Returns a FunctionExpression representing the Json Value
+     *
+     * @param \Cake\Database\ExpressionInterface|string $expression The Json value or json field
+     * @param string $jsonPath A valid JSON PATH Query
+     * @param array $types list of types to bind to the arguments
+     * @return \Cake\Database\Expression\FunctionExpression
+     */
+    public function jsonValue(
+        ExpressionInterface|string $expression,
+        string $jsonPath,
+        array $types = [],
+    ): FunctionExpression {
+        $params = $this->toLiteralParam($expression) + [$jsonPath];
+
+        return new FunctionExpression('JSON_VALUE', $params, $types);
     }
 
     /**
@@ -345,7 +355,7 @@ class FunctionsBuilder
         string $name,
         array $params = [],
         array $types = [],
-        string $return = 'float'
+        string $return = 'float',
     ): AggregateExpression {
         return new AggregateExpression($name, $params, $types, $return);
     }

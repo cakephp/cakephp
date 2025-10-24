@@ -24,7 +24,7 @@ use function Cake\Core\h;
 <?php foreach ($exceptions as $level => $exc): ?>
     <?php if ($level > 0): ?>
         <li class="stack-previous">
-            <span class="stack-function">Caused by</span> <?= h(get_class($exc)) ?>
+            <span class="stack-function">Caused by</span> <?= h($exc::class) ?>
         </li>
     <?php endif; ?>
     <?php $stackTrace = Debugger::formatTrace($exc->getTrace(), ['format' => 'array']); ?>

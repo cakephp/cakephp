@@ -111,7 +111,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
         }
 
         $session = $request->getAttribute('session');
-        if (!$session || !($session instanceof Session)) {
+        if (!($session instanceof Session)) {
             throw new CakeException('You must have a `session` attribute to use session based CSRF tokens');
         }
 
@@ -266,7 +266,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
 
         throw new InvalidCsrfTokenException(__d(
             'cake',
-            'CSRF token from either the request body or request headers did not match or is missing.'
+            'CSRF token from either the request body or request headers did not match or is missing.',
         ));
     }
 

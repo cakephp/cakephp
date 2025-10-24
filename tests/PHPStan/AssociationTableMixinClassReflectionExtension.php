@@ -5,32 +5,29 @@ namespace Cake\PHPStan;
 
 use Cake\ORM\Association;
 use Cake\ORM\Table;
-use PHPStan\Broker\Broker;
-use PHPStan\Reflection\BrokerAwareExtension;
 use PHPStan\Reflection\ClassReflection;
 use PHPStan\Reflection\MethodReflection;
 use PHPStan\Reflection\MethodsClassReflectionExtension;
 use PHPStan\Reflection\PropertiesClassReflectionExtension;
 use PHPStan\Reflection\PropertyReflection;
+use PHPStan\Reflection\ReflectionProvider;
 
-class AssociationTableMixinClassReflectionExtension implements PropertiesClassReflectionExtension, MethodsClassReflectionExtension, BrokerAwareExtension
+class AssociationTableMixinClassReflectionExtension implements PropertiesClassReflectionExtension, MethodsClassReflectionExtension
 {
     /**
-     * @var \PHPStan\Broker\Broker
+     * @var \PHPStan\Reflection\ReflectionProvider
      */
-    private $broker;
+    private ReflectionProvider $reflectionProvider;
 
-    /**
-     * @param Broker $broker Class reflection broker
-     */
-    public function setBroker(Broker $broker): void
-    {
-        $this->broker = $broker;
+    public function __construct(
+        ReflectionProvider $reflectionProvider,
+    ) {
+        $this->reflectionProvider = $reflectionProvider;
     }
 
     protected function getTableReflection(): ClassReflection
     {
-        return $this->broker->getClass(Table::class);
+        return $this->reflectionProvider->getClass(Table::class);
     }
 
     /**

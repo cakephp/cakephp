@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Http\TestSuite;
 use Cake\Http\Client;
 use Cake\Http\TestSuite\HttpClientTrait;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class HttpClientTraitTest extends TestCase
 {
@@ -40,10 +41,8 @@ class HttpClientTraitTest extends TestCase
         ];
     }
 
-    /**
-     * @dataProvider methodProvider
-     */
-    public function testRequestMethods(string $httpMethod)
+    #[DataProvider('methodProvider')]
+    public function testRequestMethods(string $httpMethod): void
     {
         $traitMethod = "mockClient{$httpMethod}";
 

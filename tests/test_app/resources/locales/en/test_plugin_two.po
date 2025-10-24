@@ -1,0 +1,2 @@
+msgid "Test Message"
+msgstr "Test Message (from app)"

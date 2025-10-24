@@ -102,7 +102,6 @@ if (!function_exists('dd')) {
         }
 
         $trace = Debugger::trace(['start' => 0, 'depth' => 2, 'format' => 'array']);
-        /** @psalm-suppress PossiblyInvalidArrayOffset */
         $location = [
             'line' => $trace[0]['line'],
             'file' => $trace[0]['file'],
@@ -134,7 +133,7 @@ if (!function_exists('breakpoint')) {
         }
         trigger_error(
             'psy/psysh must be installed and you must be in a CLI environment to use the breakpoint function',
-            E_USER_WARNING
+            E_USER_WARNING,
         );
 
         return null;

@@ -46,7 +46,7 @@ class QueryFactory
     public function select(
         ExpressionInterface|Closure|array|string|float|int $fields = [],
         array|string $table = [],
-        array $types = []
+        array $types = [],
     ): SelectQuery {
         $query = new SelectQuery($this->connection);
 
@@ -97,7 +97,7 @@ class QueryFactory
         ExpressionInterface|string|null $table = null,
         array $values = [],
         array $conditions = [],
-        array $types = []
+        array $types = [],
     ): UpdateQuery {
         $query = new UpdateQuery($this->connection);
 

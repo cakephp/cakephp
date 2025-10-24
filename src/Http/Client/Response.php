@@ -168,8 +168,8 @@ class Response extends Message implements ResponseInterface
     /**
      * Parses headers if necessary.
      *
-     * - Decodes the status code and reasonphrase.
-     * - Parses and normalizes header names + values.
+     * - Decodes the status code and reason phrase.
+     * - Parses and normalizes header names and values.
      *
      * @param array<string> $headers Headers to parse.
      * @return void
@@ -189,7 +189,7 @@ class Response extends Message implements ResponseInterface
             }
             [$name, $value] = explode(':', $value, 2);
             $value = trim($value);
-            /** @phpstan-var non-empty-string $name */
+            /** @var non-empty-string $name */
             $name = trim($name);
 
             $normalized = strtolower($name);

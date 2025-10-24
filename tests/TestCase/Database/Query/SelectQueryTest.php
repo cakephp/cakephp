@@ -16,10 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Query;
 
+use ArrayIterator;
+use Cake\Database\Connection;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
@@ -82,14 +85,14 @@ class SelectQueryTest extends TestCase
      */
     protected $autoQuote;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -183,7 +186,7 @@ class SelectQueryTest extends TestCase
         $result = $query->from('comments')->execute();
         $this->assertEquals(
             ['foo' => 'First Comment for First Article', 'text' => 'First Comment for First Article', 'article_id' => 1],
-            $result->fetch('assoc')
+            $result->fetch('assoc'),
         );
         $result->closeCursor();
 
@@ -214,11 +217,11 @@ class SelectQueryTest extends TestCase
             ->execute();
         $this->assertEquals(
             ['text' => 'Third Article Body', 'author_id' => 1, 'name' => 'nate'],
-            $result->fetch('assoc')
+            $result->fetch('assoc'),
         );
         $this->assertEquals(
             ['text' => 'Third Article Body', 'author_id' => 1, 'name' => 'mariano'],
-            $result->fetch('assoc')
+            $result->fetch('assoc'),
         );
         $result->closeCursor();
     }
@@ -361,7 +364,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $this->assertEquals(
             ['title' => 'First Article', 'name' => 'Second Comment for First Article'],
-            $result->fetch('assoc')
+            $result->fetch('assoc'),
         );
         $result->closeCursor();
     }
@@ -390,7 +393,7 @@ class SelectQueryTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlite,
-            'SQLite does not support RIGHT joins'
+            'SQLite does not support RIGHT joins',
         );
         $query = new SelectQuery($this->connection);
         $time = new DateTime('2007-03-18 10:45:23');
@@ -404,7 +407,7 @@ class SelectQueryTest extends TestCase
         $this->assertCount(6, $rows);
         $this->assertEquals(
             ['title' => null, 'name' => 'First Comment for First Article'],
-            $rows[0]
+            $rows[0],
         );
         $result->closeCursor();
     }
@@ -449,7 +452,7 @@ class SelectQueryTest extends TestCase
             ->execute();
         $this->assertEquals(
             ['name' => 'mariano', 'commentary' => 'Second Comment for First Article'],
-            $result->fetch('assoc')
+            $result->fetch('assoc'),
         );
         $result->closeCursor();
     }
@@ -623,7 +626,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE \(\(<title>\) IS NOT NULL AND \(<user_id>\) IS NULL\)',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -664,7 +667,7 @@ class SelectQueryTest extends TestCase
                     'created >' => new DateTime('2007-03-18 10:40:00'),
                     'created <' => new DateTime('2007-03-18 10:46:00'),
                 ],
-                ['created' => 'datetime']
+                ['created' => 'datetime'],
             )
             ->execute();
         $rows = $result->fetchAll('assoc');
@@ -681,7 +684,7 @@ class SelectQueryTest extends TestCase
                     'id' => '3',
                     'created <' => new DateTime('2013-01-01 12:00'),
                 ],
-                ['created' => 'datetime', 'id' => 'integer']
+                ['created' => 'datetime', 'id' => 'integer'],
             )
             ->execute();
         $rows = $result->fetchAll('assoc');
@@ -698,7 +701,7 @@ class SelectQueryTest extends TestCase
                     'id' => '1',
                     'created <' => new DateTime('2013-01-01 12:00'),
                 ],
-                ['created' => 'datetime', 'id' => 'integer']
+                ['created' => 'datetime', 'id' => 'integer'],
             )
             ->execute();
         $rows = $result->fetchAll('assoc');
@@ -940,7 +943,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <comments> WHERE \(<id> = :c0 OR <id> = :c1\)',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -1150,7 +1153,7 @@ class SelectQueryTest extends TestCase
                 return $exp->in(
                     'created',
                     [new DateTime('2007-03-18 10:45:23'), new DateTime('2007-03-18 10:47:23')],
-                    'datetime'
+                    'datetime',
                 );
             })
             ->execute();
@@ -1168,7 +1171,7 @@ class SelectQueryTest extends TestCase
                 return $exp->notIn(
                     'created',
                     [new DateTime('2007-03-18 10:45:23'), new DateTime('2007-03-18 10:47:23')],
-                    'datetime'
+                    'datetime',
                 );
             })
             ->execute();
@@ -1220,7 +1223,7 @@ class SelectQueryTest extends TestCase
                 return $exp->in(
                     'created',
                     $q->newExpr("'2007-03-18 10:45:23'"),
-                    'datetime'
+                    'datetime',
                 );
             })
             ->execute();
@@ -1237,7 +1240,7 @@ class SelectQueryTest extends TestCase
                 return $exp->notIn(
                     'created',
                     $q->newExpr("'2007-03-18 10:45:23'"),
-                    'datetime'
+                    'datetime',
                 );
             })
             ->execute();
@@ -1307,7 +1310,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE \(<id> = :c0 AND <title> = :c1 AND <author_id> = :c2\)',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -1524,7 +1527,7 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->where(function (ExpressionInterface $exp) {
                 return $exp->not(
-                    $exp->and(['id' => 2, 'created' => new DateTime('2007-03-18 10:47:23')], ['created' => 'datetime'])
+                    $exp->and(['id' => 2, 'created' => new DateTime('2007-03-18 10:47:23')], ['created' => 'datetime']),
                 );
             })
             ->execute();
@@ -1540,7 +1543,7 @@ class SelectQueryTest extends TestCase
             ->from('comments')
             ->where(function (ExpressionInterface $exp) {
                 return $exp->not(
-                    $exp->and(['id' => 2, 'created' => new DateTime('2012-12-21 12:00')], ['created' => 'datetime'])
+                    $exp->and(['id' => 2, 'created' => new DateTime('2012-12-21 12:00')], ['created' => 'datetime']),
                 );
             })
             ->execute();
@@ -1585,7 +1588,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE <id> IN \\(:c0,:c1\\)',
             $sql,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $result = $query->execute()->fetchAll('assoc');
@@ -1605,7 +1608,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE 1=0',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $statement = $query->execute();
@@ -1626,7 +1629,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE <id> NOT IN \\(:c0,:c1\\)',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $result = $query->execute()->fetchAll('assoc');
@@ -1647,7 +1650,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE \(<id>\) IS NOT NULL',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $result = $query->execute()->fetchAll('assoc');
@@ -1667,7 +1670,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE \\(<id> NOT IN \\(:c0,:c1\\) OR \\(<id>\\) IS NULL\\)',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $result = $query->execute()->fetchAll('assoc');
@@ -1688,7 +1691,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE \(<id>\) IS NOT NULL',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $result = $query->execute()->fetchAll('assoc');
@@ -1759,29 +1762,31 @@ class SelectQueryTest extends TestCase
 
     public function testSelectOrderDeprecated(): void
     {
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->order(['id' => 'desc'])
-            ->execute();
-        $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
+        $this->deprecated(function (): void {
+            $query = new SelectQuery($this->connection);
+            $result = $query
+                ->select(['id'])
+                ->from('comments')
+                ->order(['id' => 'desc'])
+                ->execute();
+            $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['id'])
-            ->from('comments')
-            ->orderDesc('id')
-            ->execute();
-        $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
+            $query = new SelectQuery($this->connection);
+            $result = $query
+                ->select(['id'])
+                ->from('comments')
+                ->orderDesc('id')
+                ->execute();
+            $this->assertEquals([6, 5, 4, 3, 2, 1], array_column($result->fetchAll('assoc'), 'id'));
 
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['user_id'])
-            ->from('comments')
-            ->orderAsc('user_id')
-            ->execute();
-        $this->assertEquals([1, 1, 1, 2, 2, 4], array_column($result->fetchAll('assoc'), 'user_id'));
+            $query = new SelectQuery($this->connection);
+            $result = $query
+                ->select(['user_id'])
+                ->from('comments')
+                ->orderAsc('user_id')
+                ->execute();
+            $this->assertEquals([1, 1, 1, 2, 2, 4], array_column($result->fetchAll('assoc'), 'user_id'));
+        });
     }
 
     /**
@@ -1807,9 +1812,9 @@ class SelectQueryTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'Passing extra expressions by associative array (`\'id\' => \'desc -- Comment\'`) ' .
+            "Passing extra expressions by associative array (`'id' => 'desc -- Comment'`) " .
             'is not allowed to avoid potential SQL injection. ' .
-            'Use QueryExpression or numeric array instead.'
+            'Use QueryExpression or numeric array instead.',
         );
 
         $query = new SelectQuery($this->connection);
@@ -1839,7 +1844,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT \* FROM <articles> ORDER BY <id> ASC',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new SelectQuery($this->connection);
@@ -1853,7 +1858,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT \* FROM <articles> ORDER BY id % 2 = 0, <title> ASC',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new SelectQuery($this->connection);
@@ -1867,7 +1872,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT \* FROM <articles> ORDER BY a \+ b',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new SelectQuery($this->connection);
@@ -1881,7 +1886,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT \* FROM <articles> ORDER BY SUM\(a\)',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -1906,7 +1911,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> ORDER BY <id> ASC',
             $sql,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new SelectQuery($this->connection);
@@ -1944,7 +1949,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :c1 ELSE <id> END ASC, <id> ASC',
             $sql,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -1968,7 +1973,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> ORDER BY <id> DESC',
             $sql,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new SelectQuery($this->connection);
@@ -2006,7 +2011,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> ORDER BY CASE WHEN <author_id> = :c0 THEN :c1 ELSE <id> END DESC, <id> DESC',
             $sql,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -2042,16 +2047,18 @@ class SelectQueryTest extends TestCase
 
     public function testSelectGroupDeprecated(): void
     {
-        $query = new SelectQuery($this->connection);
-        $result = $query
-            ->select(['total' => 'count(author_id)', 'author_id'])
-            ->from('articles')
-            ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
-            ->group('author_id')
-            ->orderBy(['total' => 'desc'])
-            ->execute();
-        $expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
-        $this->assertEquals($expected, $result->fetchAll('assoc'));
+        $this->deprecated(function (): void {
+            $query = new SelectQuery($this->connection);
+            $result = $query
+                ->select(['total' => 'count(author_id)', 'author_id'])
+                ->from('articles')
+                ->join(['table' => 'authors', 'alias' => 'a', 'conditions' => 'author_id = a.id'])
+                ->group('author_id')
+                ->orderBy(['total' => 'desc'])
+                ->execute();
+            $expected = [['total' => 2, 'author_id' => 1], ['total' => '1', 'author_id' => 3]];
+            $this->assertEquals($expected, $result->fetchAll('assoc'));
+        });
     }
 
     /**
@@ -2089,7 +2096,7 @@ class SelectQueryTest extends TestCase
         $this->assertCount(2, $results);
         $this->assertEquals(
             [3, 1],
-            collection($results)->sortBy('author_id')->extract('author_id')->toList()
+            collection($results)->sortBy('author_id')->extract('author_id')->toList(),
         );
 
         $query = new SelectQuery($this->connection);
@@ -2103,7 +2110,7 @@ class SelectQueryTest extends TestCase
         $this->assertCount(2, $results);
         $this->assertEquals(
             [3, 1],
-            collection($results)->sortBy('author_id')->extract('author_id')->toList()
+            collection($results)->sortBy('author_id')->extract('author_id')->toList(),
         );
     }
 
@@ -2122,7 +2129,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT DISTINCTROW <city>, <state>, <country> FROM <addresses>',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new SelectQuery($this->connection);
@@ -2133,7 +2140,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT DISTINCTROW SQL_NO_CACHE <city>, <state>, <country> FROM <addresses>',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new SelectQuery($this->connection);
@@ -2145,7 +2152,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT DISTINCTROW SQL_NO_CACHE <city>, <state>, <country> FROM <addresses>',
             $result->sql(),
-            true
+            true,
         );
 
         $query = new SelectQuery($this->connection);
@@ -2156,7 +2163,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT TOP 10 <city>, <state>, <country> FROM <addresses>',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new SelectQuery($this->connection);
@@ -2167,7 +2174,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT EXPRESSION <city>, <state>, <country> FROM <addresses>',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -2263,7 +2270,7 @@ class SelectQueryTest extends TestCase
             'SELECT id FROM authors Authors WHERE ' .
             '(FUNC( Authors.id) = :c0 AND (FUNC( Authors.id)) IS NOT NULL) ' .
             'HAVING COUNT(DISTINCT Authors.id) = :c1',
-            trim($query->sql())
+            trim($query->sql()),
         );
     }
 
@@ -2418,7 +2425,7 @@ class SelectQueryTest extends TestCase
                 ['id' => '6', 'ids_added' => '4'],
                 ['id' => '2', 'ids_added' => '5'],
             ],
-            $result->fetchAll('assoc')
+            $result->fetchAll('assoc'),
         );
     }
 
@@ -2651,10 +2658,10 @@ class SelectQueryTest extends TestCase
     public function testUnionOrderBy(): void
     {
         $this->skipIf(
-            ($this->connection->getDriver() instanceof Sqlite ||
-            $this->connection->getDriver() instanceof Sqlserver),
-            'Driver does not support ORDER BY in UNIONed queries.'
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY),
+            'Driver does not support ORDER BY on UNIONed queries.',
         );
+
         $union = (new SelectQuery($this->connection))
             ->select(['id', 'title'])
             ->from(['a' => 'articles'])
@@ -2695,6 +2702,119 @@ class SelectQueryTest extends TestCase
         $result = $query->execute();
         $rows2 = $result->fetchAll();
         $this->assertCount(1 + self::COMMENT_COUNT + self::ARTICLE_COUNT, $rows2);
+        $this->assertNotEquals($rows, $rows2);
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests that it is possible to one or multiple INTERSECT statements in a query
+     */
+    public function testIntersect(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::INTERSECT),
+            'Driver does not support INTERSECT clause.',
+        );
+
+        $intersect = (new SelectQuery($this->connection))->select(['id', 'comment'])->from(['c' => 'comments'])->where(['article_id' => 1]);
+        $query = new SelectQuery($this->connection);
+        $result = $query->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->intersect($intersect)
+            ->execute();
+        $rows = $result->fetchAll();
+
+        $this->assertCount(count($intersect->execute()->fetchAll()), $rows);
+        $result->closeCursor();
+
+        $intersect->select(['foo' => 'id', 'bar' => 'comment']);
+        $intersect = (new SelectQuery($this->connection))
+            ->select(['id', 'comment', 'other' => 'id', 'nameish' => 'comment'])
+            ->from(['c' => 'comments'])
+            ->where($intersect->newExpr()->like('comment', '%First%'))
+            ->orderBy(['id' => 'desc']);
+        $expectedCount = count($query->select(['foo' => 'id', 'bar' => 'comment'])->execute()->fetchAll());
+        $query->select(['foo' => 'id', 'bar' => 'comment'])->intersect($intersect);
+        $result = $query->execute();
+        $rows2 = $result->fetchAll();
+
+        $this->assertCount($expectedCount, $rows2);
+        $this->assertNotEquals($rows, $rows2);
+        $result->closeCursor();
+
+        $intersect = (new SelectQuery($this->connection))
+            ->select(['id', 'comment'])
+            ->where(['article_id' => 1])
+            ->from(['c' => 'comments']);
+        $query->select(['id', 'comment'], true)->intersect($intersect, true);
+        $result = $query->execute();
+        $rows3 = $result->fetchAll();
+
+        $this->assertCount(count($intersect->execute()->fetchAll()), $rows3);
+        $this->assertEquals($rows, $rows3);
+        $result->closeCursor();
+    }
+
+    /**
+     * Tests that it is possible to run intersects with order by statements
+     */
+    public function testIntersectOrderBy(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::INTERSECT),
+            'Driver does not support INTERSECT clause.',
+        );
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY),
+            'Driver does not support ORDER BY on INTERSECTed queries.',
+        );
+        $intersect = (new SelectQuery($this->connection))
+            ->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->where(['article_id' => 1])
+            ->orderBy(['c.id' => 'asc']);
+
+        $query = new SelectQuery($this->connection);
+        $result = $query->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->orderBy(['c.id' => 'asc'])
+            ->intersect($intersect)
+            ->execute();
+
+        $this->assertCount(count($intersect->execute()->fetchAll()), $result->fetchAll());
+    }
+
+    /**
+     * Tests that INTERSECT ALL can be built
+     */
+    public function testIntersectAll(): void
+    {
+        $this->skipIf(
+            !$this->connection->getDriver()->supports(DriverFeatureEnum::INTERSECT_ALL),
+            'Driver does not support INTERSECT ALL clause.',
+        );
+        $intersect = (new SelectQuery($this->connection))->select(['id', 'comment'])->from(['c' => 'comments'])->where(['article_id' => 1]);
+        $query = new SelectQuery($this->connection);
+        $result = $query->select(['id', 'comment'])
+            ->from(['c' => 'comments'])
+            ->intersectAll($intersect)
+            ->execute();
+        $rows = $result->fetchAll('assoc');
+
+        $this->assertCount(count($intersect->execute()->fetchAll()), $rows);
+        $result->closeCursor();
+
+        $intersect = (new SelectQuery($this->connection))
+            ->select(['article_id', 'user_id'])
+            ->from(['c' => 'comments'])
+            ->where($intersect->newExpr()->like('comment', '%First%'))
+            ->orderBy(['id' => 'desc']);
+        $expectedCount = count($intersect->execute()->fetchAll());
+        $query->select(['article_id', 'user_id'], true)->intersectAll($intersect, true);
+        $result = $query->execute();
+        $rows2 = $result->fetchAll();
+
+        $this->assertCount($expectedCount, $rows2);
         $this->assertNotEquals($rows, $rows2);
         $result->closeCursor();
     }
@@ -2816,12 +2936,13 @@ class SelectQueryTest extends TestCase
         }
         $this->assertSame(3, $count);
 
+        $iterable = $query->getIterator();
+        $this->assertInstanceOf(ArrayIterator::class, $iterable);
+
         $this->connection->execute('DELETE FROM articles WHERE author_id = 3')->closeCursor();
 
-        // Mark query as dirty
-        $query->select(['id'], true);
+        $query->disableBufferedResults();
 
-        // Verify all() is called again
         $count = 0;
         foreach ($query as $row) {
             ++$count;
@@ -2829,12 +2950,13 @@ class SelectQueryTest extends TestCase
             $this->assertSame('test', $row['generated']);
         }
         $this->assertSame(2, $count);
+
+        $iterable = $query->getIterator();
+        $this->assertInstanceOf(StatementInterface::class, $iterable);
     }
 
     /**
      * Tests that functions are correctly transformed and their parameters are bound
-     *
-     * @group FunctionExpression
      */
     public function testSQLFunctions(): void
     {
@@ -2842,7 +2964,7 @@ class SelectQueryTest extends TestCase
         $result = $query->select(
             function ($q) {
                 return ['total' => $q->func()->count('*')];
-            }
+            },
         )
             ->from('comments')
             ->execute();
@@ -2885,7 +3007,7 @@ class SelectQueryTest extends TestCase
         $this->assertWithinRange(
             date('U'),
             (new DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
-            10
+            10,
         );
 
         $query = new SelectQuery($this->connection);
@@ -2895,7 +3017,7 @@ class SelectQueryTest extends TestCase
         $this->assertWithinRange(
             date('U'),
             (new DateTime($result->fetchAll('assoc')[0]['d']))->format('U'),
-            10
+            10,
         );
 
         $query = new SelectQuery($this->connection);
@@ -2964,7 +3086,7 @@ class SelectQueryTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlserver,
-            'This test fails sporadically in SQLServer'
+            'This test fails sporadically in SQLServer',
         );
 
         $query = (new SelectQuery($this->connection))
@@ -2975,8 +3097,8 @@ class SelectQueryTest extends TestCase
                     ['id', 'user_id'],
                     [[1, 1]],
                     ['integer', 'integer'],
-                    'IN'
-                )
+                    'IN',
+                ),
             );
 
         $result = $query->all()[0];
@@ -3004,7 +3126,7 @@ class SelectQueryTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlserver,
-            'This test fails sporadically in SQLServer'
+            'This test fails sporadically in SQLServer',
         );
 
         $query = (new SelectQuery($this->connection))
@@ -3015,8 +3137,8 @@ class SelectQueryTest extends TestCase
                     ['id', 'user_id'],
                     [[1, 1]],
                     [],
-                    'IN'
-                )
+                    'IN',
+                ),
             );
 
         $result = $query->all()[0];
@@ -3260,6 +3382,7 @@ class SelectQueryTest extends TestCase
             'params' => [
                 ':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0'],
             ],
+            'role' => Connection::ROLE_WRITE,
             'defaultTypes' => ['id' => 'integer'],
             'decorators' => 0,
             'executed' => false,
@@ -3274,6 +3397,7 @@ class SelectQueryTest extends TestCase
             'params' => [
                 ':c0' => ['value' => '1', 'type' => 'integer', 'placeholder' => 'c0'],
             ],
+            'role' => Connection::ROLE_WRITE,
             'defaultTypes' => ['id' => 'integer'],
             'decorators' => 0,
             'executed' => true,
@@ -3362,7 +3486,7 @@ class SelectQueryTest extends TestCase
     public function testIsNullInvalid(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Expression `name` is missing operator (IS, IS NOT) with `null` value.');
+        $this->expectExceptionMessage('Expression `name` has invalid `null` value. If `null` is a valid value, operator (IS, IS NOT) is missing.');
 
         (new SelectQuery($this->connection))
             ->select(['name'])
@@ -3417,8 +3541,8 @@ class SelectQueryTest extends TestCase
             ->with(
                 new CommonTableExpression(
                     'cte',
-                    new SelectQuery($this->connection)
-                )
+                    new SelectQuery($this->connection),
+                ),
             )
             ->with(function (CommonTableExpression $cte, Query $query) {
                 return $cte
@@ -3507,15 +3631,15 @@ class SelectQueryTest extends TestCase
         $query
             ->innerJoin(
                 ['alias_inner' => new SelectQuery($this->connection)],
-                ['alias_inner.fk = parent.pk']
+                ['alias_inner.fk = parent.pk'],
             )
             ->leftJoin(
                 ['alias_left' => new SelectQuery($this->connection)],
-                ['alias_left.fk = parent.pk']
+                ['alias_left.fk = parent.pk'],
             )
             ->rightJoin(
                 ['alias_right' => new SelectQuery($this->connection)],
-                ['alias_right.fk = parent.pk']
+                ['alias_right.fk = parent.pk'],
             );
 
         $clause = $query->clause('join');
@@ -3702,7 +3826,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertNotSame(
             $query->clause('select')['title'],
-            $dupe->clause('select')['title']
+            $dupe->clause('select')['title'],
         );
         $this->assertEquals($query->clause('order'), $dupe->clause('order'));
         $this->assertNotSame($query->clause('order'), $dupe->clause('order'));
@@ -3712,7 +3836,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertNotSame(
             $query->getSelectTypeMap(),
-            $dupe->getSelectTypeMap()
+            $dupe->getSelectTypeMap(),
         );
     }
 
@@ -4028,7 +4152,7 @@ class SelectQueryTest extends TestCase
         $subquery = new SelectQuery($connection);
         $subquery
             ->select(
-                $subquery->newExpr()->case()->when(['a.published' => 'N'])->then(1)->else(0)
+                $subquery->newExpr()->case()->when(['a.published' => 'N'])->then(1)->else(0),
             )
             ->from(['a' => 'articles'])
             ->where([
@@ -4051,7 +4175,7 @@ class SelectQueryTest extends TestCase
                 'WHERE a\.id = articles\.id' .
             '\) DESC, <id> ASC',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $this->assertEquals(
@@ -4066,7 +4190,7 @@ class SelectQueryTest extends TestCase
                     'id' => 2,
                 ],
             ],
-            $query->execute()->fetchAll('assoc')
+            $query->execute()->fetchAll('assoc'),
         );
     }
 
@@ -4129,7 +4253,7 @@ class SelectQueryTest extends TestCase
                 'SELECT count\(\*\) FROM <articles> <b> WHERE \(b\.id = articles\.id AND <b>\.<published> = :c2\)' .
             '\) DESC, <id> ASC',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $this->assertSame(
@@ -4150,7 +4274,7 @@ class SelectQueryTest extends TestCase
                     'computedB' => 0,
                 ],
             ],
-            $query->execute()->fetchAll('assoc')
+            $query->execute()->fetchAll('assoc'),
         );
 
         $this->assertSame(
@@ -4171,7 +4295,7 @@ class SelectQueryTest extends TestCase
                     'placeholder' => 'c2',
                 ],
             ],
-            $query->getValueBinder()->bindings()
+            $query->getValueBinder()->bindings(),
         );
     }
 
@@ -4265,7 +4389,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE <id> IN \(:c0,:c1,:c2\)',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = (new SelectQuery($this->connection))
@@ -4276,7 +4400,7 @@ class SelectQueryTest extends TestCase
         $this->assertQuotedQuery(
             'SELECT <id> FROM <articles> WHERE <id> IN \(:c0,:c1,:c2\)',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -4295,7 +4419,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertSame(
             'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) in \(:c0,:c1\)',
-            $query->sql()
+            $query->sql(),
         );
 
         $query = (new SelectQuery($this->connection))
@@ -4305,7 +4429,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertSame(
             'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) in \(:c0,:c1\)',
-            $query->sql()
+            $query->sql(),
         );
 
         $query = (new SelectQuery($this->connection))
@@ -4315,7 +4439,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertSame(
             'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) not in \(:c0,:c1\)',
-            $query->sql()
+            $query->sql(),
         );
 
         $query = (new SelectQuery($this->connection))
@@ -4325,7 +4449,7 @@ class SelectQueryTest extends TestCase
 
         $this->assertSame(
             'SELECT id FROM profiles WHERE CONCAT\(first_name, " ", last_name\) not in \(:c0,:c1\)',
-            $query->sql()
+            $query->sql(),
         );
     }
 }

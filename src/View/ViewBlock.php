@@ -50,14 +50,14 @@ class ViewBlock
     /**
      * Block content. An array of blocks indexed by name.
      *
-     * @var array<string>
+     * @var array<string, string>
      */
     protected array $_blocks = [];
 
     /**
      * The active blocks being captured.
      *
-     * @var array<string>
+     * @var array<string, string>
      */
     protected array $_active = [];
 
@@ -126,7 +126,7 @@ class ViewBlock
 
     /**
      * Concat content to an existing or new block.
-     * Concating to a new block will create the block.
+     * Concatenating to a new block will create the block.
      *
      * Calling concat() without a value will create a new capturing
      * block that needs to be finished with View::end(). The content
@@ -211,16 +211,14 @@ class ViewBlock
      */
     public function active(): ?string
     {
-        end($this->_active);
-
         /** @var string|null */
-        return key($this->_active);
+        return array_key_last($this->_active);
     }
 
     /**
      * Get the unclosed/active blocks. Key is name, value is mode.
      *
-     * @return array<string> An array of unclosed blocks.
+     * @return array<string, string> An array of unclosed blocks.
      */
     public function unclosed(): array
     {

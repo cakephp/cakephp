@@ -59,8 +59,9 @@ class YearWidget extends BasicWidget
      */
     public function __construct(StringTemplate $templates, SelectBoxWidget $selectBox)
     {
+        parent::__construct($templates);
+
         $this->_select = $selectBox;
-        $this->_templates = $templates;
     }
 
     /**

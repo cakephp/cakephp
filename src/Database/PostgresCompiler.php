@@ -76,7 +76,7 @@ class PostgresCompiler extends QueryCompiler
                 preg_match_all(
                     '/\b' . trim($selectKey, '"') . '\b/i',
                     $p,
-                    $matches
+                    $matches,
                 );
 
                 if (empty($matches[0])) {
@@ -86,7 +86,7 @@ class PostgresCompiler extends QueryCompiler
                 $parts[$k] = preg_replace(
                     ['/"/', '/\b' . trim($selectKey, '"') . '\b/i'],
                     ['', $selectPart->sql($binder)],
-                    $p
+                    $p,
                 );
             }
         }

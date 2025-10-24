@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Chronos\ChronosTime;
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver;
 use Cake\Database\Type\TimeType;
 use Cake\I18n\DateTime;
 use Cake\I18n\I18n;
@@ -25,6 +26,7 @@ use Cake\I18n\Time;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for the Time type.
@@ -44,17 +46,17 @@ class TimeTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new TimeType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**
      * Teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         I18n::setLocale(I18n::getDefaultLocale());
@@ -103,7 +105,7 @@ class TimeTypeTest extends TestCase
         ];
         $this->assertEquals(
             $expected,
-            $this->type->manyToPHP($values, array_keys($values), $this->driver)
+            $this->type->manyToPHP($values, array_keys($values), $this->driver),
         );
     }
 
@@ -211,10 +213,10 @@ class TimeTypeTest extends TestCase
     /**
      * test marshalling data.
      *
-     * @dataProvider marshalProvider
      * @param mixed $value
      * @param mixed $expected
      */
+    #[DataProvider('marshalProvider')]
     public function testMarshal($value, $expected): void
     {
         $result = $this->type->marshal($value);

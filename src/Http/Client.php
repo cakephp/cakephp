@@ -18,10 +18,13 @@ namespace Cake\Http;
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
+use Cake\Event\EventDispatcherInterface;
+use Cake\Event\EventDispatcherTrait;
 use Cake\Http\Client\Adapter\Curl;
 use Cake\Http\Client\Adapter\Mock as MockAdapter;
 use Cake\Http\Client\Adapter\Stream;
 use Cake\Http\Client\AdapterInterface;
+use Cake\Http\Client\ClientEvent;
 use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\Http\Cookie\CookieCollection;
@@ -100,9 +103,15 @@ use Psr\Http\Message\ResponseInterface;
  * a proxy if you need to use one. The type sub option can be used to
  * specify which authentication strategy you want to use.
  * CakePHP comes with built-in support for basic authentication.
+ *
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\Http\Client>
  */
-class Client implements ClientInterface
+class Client implements EventDispatcherInterface, ClientInterface
 {
+    /**
+     * @use \Cake\Event\EventDispatcherTrait<\Cake\Http\Client>
+     */
+    use EventDispatcherTrait;
     use InstanceConfigTrait;
 
     /**
@@ -184,6 +193,7 @@ class Client implements ClientInterface
      */
     public function __construct(array $config = [])
     {
+        $this->_eventClass = ClientEvent::class;
         $this->setConfig($config);
 
         $adapter = $this->_config['adapter'];
@@ -228,7 +238,7 @@ class Client implements ClientInterface
         if ($parts === false) {
             throw new InvalidArgumentException(sprintf(
                 'String `%s` did not parse.',
-                $url
+                $url,
             ));
         }
 
@@ -300,7 +310,7 @@ class Client implements ClientInterface
             Request::METHOD_GET,
             $url,
             $body,
-            $options
+            $options,
         );
     }
 
@@ -431,7 +441,7 @@ class Client implements ClientInterface
             $method,
             $url,
             $data,
-            $options
+            $options,
         );
 
         return $this->send($request, $options);
@@ -479,7 +489,33 @@ class Client implements ClientInterface
         }
 
         do {
-            $response = $this->_sendRequest($request, $options);
+            /** @var \Cake\Http\Client\ClientEvent $event */
+            $event = $this->dispatchEvent(
+                'HttpClient.beforeSend',
+                ['request' => $request, 'adapterOptions' => $options, 'redirects' => $redirects],
+            );
+
+            $request = $event->getRequest();
+            $response = $event->getResult();
+            $requestSent = false;
+            if ($response === null) {
+                $requestSent = true;
+                $response = $this->_sendRequest($request, $event->getAdapterOptions());
+            }
+
+            /** @var \Cake\Http\Client\ClientEvent $event */
+            $event = $this->dispatchEvent(
+                'HttpClient.afterSend',
+                [
+                    'request' => $request,
+                    'adapterOptions' => $options,
+                    'redirects' => $redirects,
+                    'requestSent' => $requestSent,
+                    'response' => $response,
+                ],
+            );
+            $response = $event->getResult();
+            assert($response instanceof Response);
 
             $handleRedirect = $response->isRedirect() && $redirects-- > 0;
             if ($handleRedirect) {
@@ -548,10 +584,11 @@ class Client implements ClientInterface
      */
     protected function _sendRequest(RequestInterface $request, array $options): Response
     {
+        $responses = [];
         if (static::$_mockAdapter) {
             $responses = static::$_mockAdapter->send($request, $options);
         }
-        if (empty($responses)) {
+        if (!$responses) {
             $responses = $this->_adapter->send($request, $options);
         }
         foreach ($responses as $response) {
@@ -572,7 +609,7 @@ class Client implements ClientInterface
      */
     public function buildUrl(string $url, array|string $query = [], array $options = []): string
     {
-        if (empty($options) && empty($query)) {
+        if (!$options && !$query) {
             return $url;
         }
         $defaults = [
@@ -642,7 +679,7 @@ class Client implements ClientInterface
             $request = $this->_addAuthentication($request, $options);
         }
         if (isset($options['proxy'])) {
-            $request = $this->_addProxy($request, $options);
+            return $this->_addProxy($request, $options);
         }
 
         return $request;
@@ -656,7 +693,7 @@ class Client implements ClientInterface
      * @param string $type short type alias or full mimetype.
      * @return array<string, string> Headers to set on the request.
      * @throws \Cake\Core\Exception\CakeException When an unknown type alias is used.
-     * @psalm-return array<non-empty-string, non-empty-string>
+     * @phpstan-return array<non-empty-string, non-empty-string>
      */
     protected function _typeHeaders(string $type): array
     {
@@ -673,7 +710,7 @@ class Client implements ClientInterface
         if (!isset($typeMap[$type])) {
             throw new CakeException(sprintf(
                 'Unknown type alias `%s`.',
-                $type
+                $type,
             ));
         }
 
@@ -741,7 +778,7 @@ class Client implements ClientInterface
         $class = App::className($name, 'Http/Client/Auth');
         if (!$class) {
             throw new CakeException(
-                sprintf('Invalid authentication type `%s`.', $name)
+                sprintf('Invalid authentication type `%s`.', $name),
             );
         }
 

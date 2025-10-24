@@ -46,7 +46,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
      *
      *        - 'maxAge' - `max-age` directive value in seconds.
      *        - 'includeSubDomains' - Whether to include `includeSubDomains` directive. Defaults to `false`.
-     *        - 'preload' - Whether to include 'preload' directive. Defauls to `false`.
+     *        - 'preload' - Whether to include 'preload' directive. Defaults to `false`.
      *
      * @var array<string, mixed>
      */
@@ -94,7 +94,7 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
         ) {
             $response = $handler->handle($request);
             if ($this->config['hsts']) {
-                $response = $this->addHsts($response);
+                return $this->addHsts($response);
             }
 
             return $response;
@@ -110,12 +110,12 @@ class HttpsEnforcerMiddleware implements MiddlewareInterface
             return new RedirectResponse(
                 $uri,
                 $this->config['statusCode'],
-                $this->config['headers']
+                $this->config['headers'],
             );
         }
 
         throw new BadRequestException(
-            'Requests to this URL must be made with HTTPS.'
+            'Requests to this URL must be made with HTTPS.',
         );
     }
 

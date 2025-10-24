@@ -22,6 +22,8 @@ use TestApp\Validation\CustomProvider;
 
 /**
  * Tests RulesProvider class
+ *
+ * @deprecated
  */
 class RulesProviderTest extends TestCase
 {
@@ -32,9 +34,11 @@ class RulesProviderTest extends TestCase
      */
     public function testProxyToValidation(): void
     {
-        $provider = new RulesProvider();
-        $this->assertTrue($provider->extension('foo.jpg', compact('provider')));
-        $this->assertFalse($provider->extension('foo.jpg', ['png'], compact('provider')));
+        $this->deprecated(function (): void {
+            $provider = new RulesProvider();
+            $this->assertTrue($provider->extension('foo.jpg', compact('provider')));
+            $this->assertFalse($provider->extension('foo.jpg', ['png'], compact('provider')));
+        });
     }
 
     /**
@@ -43,10 +47,12 @@ class RulesProviderTest extends TestCase
      */
     public function testCustomObject(): void
     {
-        $object = new CustomProvider();
+        $this->deprecated(function (): void {
+            $object = new CustomProvider();
 
-        /** @var \TestApp\Validation\CustomProvider|\Cake\Validation\RulesProvider $provider */
-        $provider = new RulesProvider($object);
-        $this->assertFalse($provider->validate('string', 'context'));
+            /** @var \TestApp\Validation\CustomProvider|\Cake\Validation\RulesProvider $provider */
+            $provider = new RulesProvider($object);
+            $this->assertFalse($provider->validate('string', 'context'));
+        });
     }
 }

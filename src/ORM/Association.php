@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
-use Cake\Collection\Collection;
 use Cake\Collection\CollectionInterface;
 use Cake\Core\App;
 use Cake\Core\ConventionsTrait;
@@ -25,7 +24,6 @@ use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Datasource\EntityInterface;
-use Cake\Datasource\ResultSetDecorator;
 use Cake\Datasource\ResultSetInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
@@ -232,9 +230,7 @@ abstract class Association
             }
         }
 
-        if (empty($this->_className)) {
-            $this->_className = $alias;
-        }
+        $this->_className ??= $alias;
 
         [, $name] = pluginSplit($alias);
         $this->_name = $name;
@@ -295,9 +291,9 @@ abstract class Association
             get_class($this->_targetTable) !== App::className($className, 'Model/Table', 'Table')
         ) {
             throw new InvalidArgumentException(sprintf(
-                'The class name `%s` doesn\'t match the target table class name of `%s`.',
+                "The class name `%s` doesn't match the target table class name of `%s`.",
                 $className,
-                get_class($this->_targetTable)
+                $this->_targetTable::class,
             ));
         }
 
@@ -362,7 +358,7 @@ abstract class Association
         if (!isset($this->_targetTable)) {
             if (str_contains($this->_className, '.')) {
                 [$plugin] = pluginSplit($this->_className, true);
-                $registryAlias = (string)$plugin . $this->_name;
+                $registryAlias = $plugin . $this->_name;
             } else {
                 $registryAlias = $this->_name;
             }
@@ -380,17 +376,17 @@ abstract class Association
                 $className = App::className($this->_className, 'Model/Table', 'Table') ?: Table::class;
 
                 if (!$this->_targetTable instanceof $className) {
-                    $msg = '`%s` association `%s` of type `%s` to `%s` doesn\'t match the expected class `%s`. ';
-                    $msg .= 'You can\'t have an association of the same name with a different target ';
+                    $msg = "`%s` association `%s` of type `%s` to `%s` doesn't match the expected class `%s`. ";
+                    $msg .= "You can't have an association of the same name with a different target ";
                     $msg .= '"className" option anywhere in your app.';
 
                     throw new DatabaseException(sprintf(
                         $msg,
-                        isset($this->_sourceTable) ? get_class($this->_sourceTable) : 'null',
+                        isset($this->_sourceTable) ? $this->_sourceTable::class : 'null',
                         $this->getName(),
                         $this->type(),
-                        get_class($this->_targetTable),
-                        $className
+                        $this->_targetTable::class,
+                        $className,
                     ));
                 }
             }
@@ -576,7 +572,7 @@ abstract class Association
                     ' You should explicitly specify the `propertyName` option.';
                 trigger_error(
                     sprintf($msg, $this->_propertyName, $this->_sourceTable->getTable()),
-                    E_USER_WARNING
+                    E_USER_WARNING,
                 );
             }
         }
@@ -611,7 +607,7 @@ abstract class Association
             throw new InvalidArgumentException(sprintf(
                 'Invalid strategy `%s` was provided. Valid options are `(%s)`.',
                 $name,
-                implode(', ', $this->_validStrategies)
+                implode(', ', $this->_validStrategies),
             ));
         }
         $this->_strategy = $name;
@@ -669,7 +665,7 @@ abstract class Association
      * Alters a Query object to include the associated target table data in the final
      * result
      *
-     * The options array accept the following keys:
+     * The options array accepts the following keys:
      *
      * - includeFields: Whether to include target model fields in the result or not
      * - foreignKey: The name of the field to use as foreign key, if false none
@@ -687,7 +683,7 @@ abstract class Association
      *   with this association.
      *
      * @param \Cake\ORM\Query\SelectQuery $query the query to be altered to include the target table data
-     * @param array<string, mixed> $options Any extra options or overrides to be taken in account
+     * @param array<string, mixed> $options Any extra options or overrides to be taken into account
      * @return void
      * @throws \RuntimeException Unable to build the query or associations.
      */
@@ -712,7 +708,7 @@ abstract class Association
             $options['includeFields'] = false;
         }
 
-        if (!empty($options['foreignKey'])) {
+        if ($options['foreignKey']) {
             $joinCondition = $this->_joinCondition($options);
             if ($joinCondition) {
                 $options['conditions'][] = $joinCondition;
@@ -729,7 +725,7 @@ abstract class Association
             if (!($dummy instanceof SelectQuery)) {
                 throw new DatabaseException(sprintf(
                     'Query builder for association `%s` did not return a query.',
-                    $this->getName()
+                    $this->getName(),
                 ));
             }
         }
@@ -741,7 +737,7 @@ abstract class Association
         ) {
             throw new DatabaseException(sprintf(
                 '`%s` association cannot contain() associations when using JOIN strategy.',
-                $this->getName()
+                $this->getName(),
             ));
         }
 
@@ -787,13 +783,13 @@ abstract class Association
      * Correctly nests a result row associated values into the correct array keys inside the
      * source results.
      *
-     * @param array $row The row to transform
+     * @param array<string, mixed> $row The row to transform
      * @param string $nestKey The array key under which the results for this association
      *   should be found
      * @param bool $joined Whether the row is a result of a direct join
      *   with this association
      * @param string|null $targetProperty The property name in the source results where the association
-     * data shuld be nested in. Will use the default one if not provided.
+     * data should be nested in. Will use the default one if not provided.
      * @return array
      */
     public function transformRow(array $row, string $nestKey, bool $joined, ?string $targetProperty = null): array
@@ -834,7 +830,7 @@ abstract class Association
      * and modifies the query accordingly based of this association
      * configuration
      *
-     * @param array<string, mixed>|string|null $type the type of query to perform, if an array is passed,
+     * @param array<string, mixed>|string|null $type the type of query to perform if an array is passed,
      *   it will be interpreted as the `$args` parameter
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @see \Cake\ORM\Table::find()
@@ -880,7 +876,7 @@ abstract class Association
      */
     public function updateAll(
         QueryExpression|Closure|array|string $fields,
-        QueryExpression|Closure|array|string|null $conditions
+        QueryExpression|Closure|array|string|null $conditions,
     ): int {
         $expression = $this->find()
             ->where($conditions)
@@ -921,7 +917,7 @@ abstract class Association
     }
 
     /**
-     * Triggers beforeFind on the target table for the query this association is
+     * Triggers `beforeFind` on the target table for the query this association is
      * attaching to
      *
      * @param \Cake\ORM\Query\SelectQuery $query the query this association is attaching itself to
@@ -950,7 +946,7 @@ abstract class Association
         $fields = array_merge($surrogate->clause('select'), $options['fields']);
 
         if (
-            (empty($fields) && $options['includeFields']) ||
+            ($fields === [] && $options['includeFields']) ||
             $surrogate->isAutoFieldsEnabled()
         ) {
             $fields = array_merge($fields, $this->getTarget()->getSchema()->columns());
@@ -962,10 +958,10 @@ abstract class Association
 
     /**
      * Adds a formatter function to the passed `$query` if the `$surrogate` query
-     * declares any other formatter. Since the `$surrogate` query correspond to
+     * declares any other formatter. Since the `$surrogate` query corresponds to
      * the associated target table, the resulting formatter will be the result of
      * applying the surrogate formatters to only the property corresponding to
-     * such table.
+     * such a table.
      *
      * @param \Cake\ORM\Query\SelectQuery $query the query that will get the formatter applied to
      * @param \Cake\ORM\Query\SelectQuery $surrogate the query having formatters for the associated
@@ -996,17 +992,18 @@ abstract class Association
                     }
                     $extracted[] = $result;
                 }
-                $extracted = new Collection($extracted);
+                $extracted = $query->resultSetFactory()->createResultSet($extracted);
+                $resultSetClass = $query->resultSetFactory()->getResultSetClass();
                 foreach ($formatters as $callable) {
                     $extracted = $callable($extracted, $query);
                     if (!$extracted instanceof ResultSetInterface) {
-                        $extracted = new ResultSetDecorator($extracted);
+                        $extracted = new $resultSetClass($extracted);
                     }
                 }
 
                 $results = $results->insert($property, $extracted);
                 if ($query->isHydrationEnabled()) {
-                    $results = $results->map(function (EntityInterface $result) {
+                    return $results->map(function (EntityInterface $result) {
                         $result->clean();
 
                         return $result;
@@ -1015,7 +1012,7 @@ abstract class Association
 
                 return $results;
             },
-            SelectQuery::PREPEND
+            SelectQuery::PREPEND,
         );
     }
 
@@ -1024,7 +1021,7 @@ abstract class Association
      * in the `$surrogate` query.
      *
      * Copies all contained associations from the `$surrogate` query into the
-     * passed `$query`. Containments are altered so that they respect the associations
+     * passed `$query`. Containments are altered so that they respect the association
      * chain from which they originated.
      *
      * @param \Cake\ORM\Query\SelectQuery $query the query that will get the associations attached to
@@ -1056,7 +1053,7 @@ abstract class Association
             $eagerLoader->setMatching(
                 $options['aliasPath'] . '.' . $alias,
                 $value['queryBuilder'],
-                $value
+                $value,
             );
         }
     }
@@ -1079,7 +1076,7 @@ abstract class Association
         $bindingKey = (array)$this->getBindingKey();
 
         if (count($foreignKey) !== count($bindingKey)) {
-            if (empty($bindingKey)) {
+            if (!$bindingKey) {
                 $table = $this->getTarget()->getTable();
                 if ($this->isOwningSide($this->getSource())) {
                     $table = $this->getSource()->getTable();
@@ -1093,7 +1090,7 @@ abstract class Association
                 $msg,
                 $this->_name,
                 implode(', ', $foreignKey),
-                implode(', ', $bindingKey)
+                implode(', ', $bindingKey),
             ));
         }
 
@@ -1139,7 +1136,7 @@ abstract class Association
      *
      * @param string $property the property name
      * @return self
-     * @throws \RuntimeException if no association with such name exists
+     * @throws \RuntimeException if no association with such a name exists
      */
     public function __get(string $property): Association
     {

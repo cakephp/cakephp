@@ -39,7 +39,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     public function diffForHumans(
         ChronosDate|DateTimeInterface $first,
         ChronosDate|DateTimeInterface|null $second = null,
-        bool $absolute = false
+        bool $absolute = false,
     ): string {
         $isNow = $second === null;
         if ($second === null) {
@@ -51,7 +51,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         }
         assert(
             ($first instanceof ChronosDate && $second instanceof ChronosDate) ||
-            ($first instanceof DateTimeInterface && $second instanceof DateTimeInterface)
+            ($first instanceof DateTimeInterface && $second instanceof DateTimeInterface),
         );
 
         $diffInterval = $first->diff($second);
@@ -230,7 +230,11 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $past['m'],
                 $past['Y'],
             ] = explode('/', date('H/i/s/d/m/Y', $pastTime));
-            $weeks = $days = $hours = $minutes = $seconds = 0;
+            $weeks = 0;
+            $days = 0;
+            $hours = 0;
+            $minutes = 0;
+            $seconds = 0;
 
             $years = (int)$future['Y'] - (int)$past['Y'];
             $months = (int)$future['m'] + (12 * $years) - (int)$past['m'];
@@ -275,7 +279,9 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
                 $days -= $weeks * 7;
             }
         } else {
-            $years = $months = $weeks = 0;
+            $years = 0;
+            $months = 0;
+            $weeks = 0;
             $days = floor($diff / 86400);
 
             $diff -= $days * 86400;
@@ -306,7 +312,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
         $fNum = str_replace(
             ['year', 'month', 'week', 'day', 'hour', 'minute', 'second'],
             ['1', '2', '3', '4', '5', '6', '7'],
-            $fWord
+            $fWord,
         );
 
         return [
@@ -409,7 +415,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
      * @param array<string, mixed> $options The options provided by the user.
      * @param string $class The class name to use for defaults.
      * @return array<string, mixed> Options with defaults applied.
-     * @psalm-param class-string<\Cake\I18n\Date>|class-string<\Cake\I18n\DateTime> $class
+     * @phpstan-param class-string<\Cake\I18n\Date>|class-string<\Cake\I18n\DateTime> $class
      */
     protected function _options(array $options, string $class): array
     {

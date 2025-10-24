@@ -34,27 +34,34 @@ class HeaderUtility
     {
         preg_match('/<(.*)>[; ]?[; ]?(.*)?/i', $value, $matches);
 
+        if ($matches === []) {
+            return [];
+        }
+
         $url = $matches[1];
         $parsedParams = ['link' => $url];
 
         $params = $matches[2];
-        if ($params) {
-            $explodedParams = explode(';', $params);
-            foreach ($explodedParams as $param) {
-                $explodedParam = explode('=', $param);
-                $trimedKey = trim($explodedParam[0]);
-                $trimedValue = trim($explodedParam[1], '"');
-                if ($trimedKey === 'title*') {
-                    // See https://www.rfc-editor.org/rfc/rfc8187#section-3.2.3
-                    preg_match('/(.*)\'(.*)\'(.*)/i', $trimedValue, $matches);
-                    $trimedValue = [
-                        'language' => $matches[2],
-                        'encoding' => $matches[1],
-                        'value' => urldecode($matches[3]),
-                    ];
-                }
-                $parsedParams[$trimedKey] = $trimedValue;
+        if (!$params) {
+            return $parsedParams;
+        }
+
+        $explodedParams = explode(';', $params);
+        foreach ($explodedParams as $param) {
+            $explodedParam = explode('=', $param);
+            $trimmedKey = trim($explodedParam[0]);
+            $trimmedValue = trim($explodedParam[1], '"');
+            if ($trimmedKey === 'title*') {
+                // See https://www.rfc-editor.org/rfc/rfc8187#section-3.2.3
+                preg_match("/(.*)'(.*)'(.*)/i", $trimmedValue, $matches);
+                assert(!empty($matches[1]) && !empty($matches[2]) && !empty($matches[3]));
+                $trimmedValue = [
+                    'language' => $matches[2],
+                    'encoding' => $matches[1],
+                    'value' => urldecode($matches[3]),
+                ];
             }
+            $parsedParams[$trimmedKey] = $trimmedValue;
         }
 
         return $parsedParams;
@@ -90,9 +97,7 @@ class HeaderUtility
                 }
             }
 
-            if (!isset($accept[$prefValue])) {
-                $accept[$prefValue] = [];
-            }
+            $accept[$prefValue] ??= [];
             if ($prefValue) {
                 $accept[$prefValue][] = $value;
             }
@@ -112,11 +117,12 @@ class HeaderUtility
             '@(\w+)=(?:(?:")([^"]+)"|([^\s,$]+))@',
             $value,
             $matches,
-            PREG_SET_ORDER
+            PREG_SET_ORDER,
         );
 
         $return = [];
         foreach ($matches as $match) {
+            /** @phpstan-ignore-next-line */
             $return[$match[1]] = $match[3] ?? $match[2];
         }
 

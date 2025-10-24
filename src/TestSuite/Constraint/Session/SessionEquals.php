@@ -51,7 +51,6 @@ class SessionEquals extends Constraint
         // Server::run calls Session::close at the end of the request.
         // Which means, that we cannot use Session object here to access the session data.
         // Call to Session::read will start new session (and will erase the data).
-        /** @psalm-suppress InvalidScalarArgument */
         return Hash::get($_SESSION, $this->path) === $other;
     }
 
@@ -62,6 +61,6 @@ class SessionEquals extends Constraint
      */
     public function toString(): string
     {
-        return sprintf('is in session path \'%s\'', $this->path);
+        return sprintf("is in session path '%s'", $this->path);
     }
 }

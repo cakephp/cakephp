@@ -20,7 +20,7 @@ use UnexpectedValueException;
 
 /**
  * Create a visually pleasing ASCII art table
- * from 2 dimensional array data.
+ * from 2-dimensional array data.
  */
 class TableHelper extends Helper
 {
@@ -38,7 +38,7 @@ class TableHelper extends Helper
     /**
      * Calculate the column widths
      *
-     * @param array $rows The rows on which the columns width will be calculated on.
+     * @param array $rows The rows on which the column's width will be calculated on.
      * @return array<int>
      */
     protected function _calculateWidths(array $rows): array
@@ -46,7 +46,6 @@ class TableHelper extends Helper
         $widths = [];
         foreach ($rows as $line) {
             foreach (array_values($line) as $k => $v) {
-                /** @psalm-suppress InvalidCast */
                 $columnLength = $this->_cellWidth((string)$v);
                 if ($columnLength >= ($widths[$k] ?? 0)) {
                     $widths[$k] = $columnLength;
@@ -106,7 +105,7 @@ class TableHelper extends Helper
      */
     protected function _render(array $row, array $widths, array $options = []): void
     {
-        if (count($row) === 0) {
+        if ($row === []) {
             return;
         }
 
@@ -142,7 +141,7 @@ class TableHelper extends Helper
      */
     public function output(array $args): void
     {
-        if (empty($args)) {
+        if (!$args) {
             return;
         }
 
@@ -157,7 +156,7 @@ class TableHelper extends Helper
             $this->_rowSeparator($widths);
         }
 
-        if (empty($args)) {
+        if (!$args) {
             return;
         }
 

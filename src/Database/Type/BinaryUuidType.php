@@ -118,11 +118,11 @@ class BinaryUuidType extends BaseType
         $string = unpack('H*', $binary);
         assert($string !== false, 'Could not unpack uuid');
 
-        /** @var array<string> $string */
+        /** @var array<int, string> $string */
         $string = preg_replace(
             '/([0-9a-f]{8})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{4})([0-9a-f]{12})/',
             '$1-$2-$3-$4-$5',
-            $string
+            $string,
         );
 
         return $string[1];

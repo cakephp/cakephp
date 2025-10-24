@@ -37,16 +37,24 @@ class CacheClearallCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Clear all data in all configured cache engines.';
+    }
+
+    /**
      * Hook method for defining this command's option parser.
      *
-     * @see https://book.cakephp.org/5/en/console-commands/option-parsers.html
+     * @link https://book.cakephp.org/5/en/console-commands/option-parsers.html
      * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
      * @return \Cake\Console\ConsoleOptionParser The built parser.
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
         $parser = parent::buildOptionParser($parser);
-        $parser->setDescription('Clear all data in all configured cache engines.');
+        $parser->setDescription(static::getDescription());
 
         return $parser;
     }
@@ -60,8 +68,7 @@ class CacheClearallCommand extends Command
      */
     public function execute(Arguments $args, ConsoleIo $io): ?int
     {
-        $engines = Cache::configured();
-        foreach ($engines as $engine) {
+        foreach (Cache::configured() as $engine) {
             $this->executeCommand(CacheClearCommand::class, [$engine], $io);
         }
 

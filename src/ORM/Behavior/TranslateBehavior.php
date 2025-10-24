@@ -57,6 +57,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
             'setLocale' => 'setLocale',
             'getLocale' => 'getLocale',
             'translationField' => 'translationField',
+            'getStrategy' => 'getStrategy',
         ],
         'fields' => [],
         'defaultLocale' => null,
@@ -73,7 +74,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * Default strategy class name.
      *
      * @var string
-     * @psalm-var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
+     * @phpstan-var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
     protected static string $defaultStrategyClass = ShadowTableStrategy::class;
 
@@ -94,7 +95,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *   using `ShadowTableStrategy` then the list will be auto generated based on
      *   shadow table schema.
      * - `defaultLocale`: The locale which is treated as default by the behavior.
-     *   Fields values for defaut locale will be stored in the primary table itself
+     *   Fields values for default locale will be stored in the primary table itself
      *   and the rest in translation table. If not explicitly set the value of
      *   `I18n::getDefaultLocale()` will be used to get default locale.
      *   If you do not want any default locale and want translated fields
@@ -138,7 +139,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * @param string $class Class name.
      * @return void
      * @since 4.0.0
-     * @psalm-param class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $class
+     * @phpstan-param class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $class
      */
     public static function setDefaultStrategyClass(string $class): void
     {
@@ -150,7 +151,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      *
      * @return string
      * @since 4.0.0
-     * @psalm-return class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
+     * @phpstan-return class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface>
      */
     public static function getDefaultStrategyClass(): string
     {
@@ -165,11 +166,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function getStrategy(): TranslateStrategyInterface
     {
-        if ($this->strategy !== null) {
-            return $this->strategy;
-        }
-
-        return $this->strategy = $this->createStrategy();
+        return $this->strategy ??= $this->createStrategy();
     }
 
     /**
@@ -182,7 +179,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     {
         $config = array_diff_key(
             $this->_config,
-            ['implementedFinders', 'implementedMethods', 'strategyClass']
+            ['implementedFinders', 'implementedMethods', 'strategyClass'],
         );
         /** @var class-string<\Cake\ORM\Behavior\Translate\TranslateStrategyInterface> $className */
         $className = $this->getConfig('strategyClass', static::$defaultStrategyClass);
@@ -252,13 +249,13 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     /**
      * {@inheritDoc}
      *
-     * Add in `_translations` marshalling handlers. You can disable marshalling
+     * Add in `_translations` marshaling handlers. You can disable marshaling
      * of translations by setting `'translations' => false` in the options
      * provided to `Table::newEntity()` or `Table::patchEntity()`.
      *
-     * @param \Cake\ORM\Marshaller $marshaller The marhshaller of the table the behavior is attached to.
+     * @param \Cake\ORM\Marshaller $marshaller The marshaler of the table the behavior is attached to.
      * @param array $map The property map being built.
-     * @param array<string, mixed> $options The options array used in the marshalling call.
+     * @param array<string, mixed> $options The options array used in the marshaling call.
      * @return array A map of `[property => callable]` of additional properties to marshal.
      */
     public function buildMarshalMap(Marshaller $marshaller, array $map, array $options): array
@@ -279,7 +276,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * that matter)!
      *
      * @param string|null $locale The locale to use for fetching and saving records. Pass `null`
-     * in order to unset the current locale, and to make the behavior fall back to using the
+     * in order to unset the current locale, and to make the behavior falls back to using the
      * globally configured locale.
      * @return $this
      * @see \Cake\ORM\Behavior\TranslateBehavior::getLocale()
@@ -352,7 +349,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
         return $query
             ->contain([$targetAlias => function (QueryInterface $query) use ($locales, $targetAlias) {
                 if ($locales) {
-                    $query->where(["$targetAlias.locale IN" => $locales]);
+                    $query->where(["{$targetAlias}.locale IN" => $locales]);
                 }
 
                 return $query;
@@ -369,7 +366,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      */
     public function __call(string $method, array $args): mixed
     {
-        return $this->strategy->{$method}(...$args);
+        return $this->getStrategy()->{$method}(...$args);
     }
 
     /**
@@ -386,8 +383,8 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
     protected function referenceName(Table $table): string
     {
         $name = namespaceSplit($table::class);
-        $name = substr((string)end($name), 0, -5);
-        if (empty($name)) {
+        $name = substr(end($name), 0, -5);
+        if (!$name) {
             $name = $table->getTable() ?: $table->getAlias();
             $name = Inflector::camelize($name);
         }

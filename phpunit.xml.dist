@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/10.0/phpunit.xsd"
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/12.0/phpunit.xsd"
          colors="true"
          bootstrap="tests/bootstrap.php"
          backupGlobals="true"
+         failOnDeprecation="true"
+         displayDetailsOnTestsThatTriggerDeprecations="true"
          cacheDirectory=".phpunit.cache">
     <testsuites>
         <testsuite name="cakephp">
@@ -32,7 +34,9 @@
         <bootstrap class="Cake\TestSuite\Fixture\Extension\PHPUnitExtension"/>
     </extensions>
 
-    <source>
+    <source restrictDeprecations="true"
+               restrictNotices="true"
+               restrictWarnings="true">
         <include>
             <directory suffix=".php">src/</directory>
         </include>
@@ -45,7 +49,7 @@
         <ini name="error_reporting" value="32767"/>
         <env name="FIXTURE_SCHEMA_METADATA" value="./tests/schema.php"/>
 
-        <!-- Enable query logging output for the testrun.
+        <!-- Enable query logging output for the test run.
         <env name="LOG_QUERIES" value="1" />
         -->
         <!-- SQLite

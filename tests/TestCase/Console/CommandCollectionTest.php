@@ -22,18 +22,22 @@ use Cake\Console\CommandCollection;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\SampleCommand;
+use TestPlugin\Command\ExampleCommand;
+use TestPlugin\Command\SampleCommand as PluginSampleCommand;
 
 /**
  * Test case for the CommandCollection
  */
 class CommandCollectionTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
+        $this->clearPlugins();
     }
 
     /**
@@ -118,13 +122,12 @@ class CommandCollectionTest extends TestCase
 
     /**
      * test adding a command instance.
-     *
-     * @dataProvider invalidNameProvider
      */
+    #[DataProvider('invalidNameProvider')]
     public function testAddCommandInvalidName(string $name): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage("The command name `$name` is invalid.");
+        $this->expectExceptionMessage("The command name `{$name}` is invalid.");
         $collection = new CommandCollection();
         $collection->add($name, DemoCommand::class);
     }
@@ -178,8 +181,8 @@ class CommandCollectionTest extends TestCase
         $this->assertTrue($collection->has('demo'));
         $this->assertTrue($collection->has('sample'));
 
-        $this->assertSame('TestApp\Command\DemoCommand', $collection->get('demo'));
-        $this->assertSame('TestApp\Command\SampleCommand', $collection->get('sample'));
+        $this->assertSame(DemoCommand::class, $collection->get('demo'));
+        $this->assertSame(SampleCommand::class, $collection->get('sample'));
     }
 
     /**
@@ -230,33 +233,33 @@ class CommandCollectionTest extends TestCase
         $this->assertArrayHasKey(
             'example',
             $result,
-            'Used short name for unique plugin shell'
+            'Used short name for unique plugin shell',
         );
         $this->assertArrayHasKey(
             'test_plugin.example',
             $result,
-            'Long names are stored for unique shells'
+            'Long names are stored for unique shells',
         );
         $this->assertArrayNotHasKey('sample', $result, 'Existing command not output');
         $this->assertArrayHasKey(
             'test_plugin.sample',
             $result,
-            'Duplicate shell was given a full alias'
+            'Duplicate shell was given a full alias',
         );
-        $this->assertSame('TestPlugin\Command\ExampleCommand', $result['example']);
+        $this->assertSame(ExampleCommand::class, $result['example']);
         $this->assertSame($result['example'], $result['test_plugin.example']);
-        $this->assertSame('TestPlugin\Command\SampleCommand', $result['test_plugin.sample']);
+        $this->assertSame(PluginSampleCommand::class, $result['test_plugin.sample']);
 
         $result = $collection->discoverPlugin('Company/TestPluginThree');
         $this->assertArrayHasKey(
             'company',
             $result,
-            'Used short name for unique plugin shell'
+            'Used short name for unique plugin shell',
         );
         $this->assertArrayHasKey(
             'company/test_plugin_three.company',
             $result,
-            'Long names are stored as well'
+            'Long names are stored as well',
         );
         $this->assertSame($result['company'], $result['company/test_plugin_three.company']);
         $this->clearPlugins();

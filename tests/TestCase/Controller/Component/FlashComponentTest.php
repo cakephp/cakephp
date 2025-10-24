@@ -47,7 +47,7 @@ class FlashComponentTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -60,7 +60,7 @@ class FlashComponentTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->Session->destroy();
@@ -68,8 +68,6 @@ class FlashComponentTest extends TestCase
 
     /**
      * testSet method
-     *
-     * @covers \Cake\Controller\Component\FlashComponent::set
      */
     public function testSet(): void
     {
@@ -162,8 +160,6 @@ class FlashComponentTest extends TestCase
 
     /**
      * test setting messages with using the clear option
-     *
-     * @covers \Cake\Controller\Component\FlashComponent::set
      */
     public function testSetWithClear(): void
     {
@@ -196,8 +192,6 @@ class FlashComponentTest extends TestCase
 
     /**
      * testSetWithException method
-     *
-     * @covers \Cake\Controller\Component\FlashComponent::set
      */
     public function testSetWithException(): void
     {
@@ -239,8 +233,6 @@ class FlashComponentTest extends TestCase
 
     /**
      * Test magic call method.
-     *
-     * @covers \Cake\Controller\Component\FlashComponent::__call
      */
     public function testCall(): void
     {
@@ -282,9 +274,61 @@ class FlashComponentTest extends TestCase
     }
 
     /**
+     * Test magic call method, with named parameters.
+     */
+    public function testCallWithNamedParams(): void
+    {
+        $this->assertNull($this->Session->read('Flash.flash'));
+
+        $this->Flash->success(message: 'It worked');
+        $expected = [
+            [
+                'message' => 'It worked',
+                'key' => 'flash',
+                'element' => 'flash/success',
+                'params' => [],
+            ],
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+
+        $this->Flash->error(message: 'It did not work', options: ['element' => 'error_thing']);
+
+        $expected[] = [
+            'message' => 'It did not work',
+            'key' => 'flash',
+            'element' => 'flash/error',
+            'params' => [],
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result, 'Element is ignored in magic call.');
+
+        $this->Flash->success(message: 'It worked', options: ['plugin' => 'MyPlugin']);
+
+        $expected[] = [
+            'message' => 'It worked',
+            'key' => 'flash',
+            'element' => 'MyPlugin.flash/success',
+            'params' => [],
+        ];
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+
+        $this->Flash->success('It worked', options: ['plugin' => 'MyPlugin']);
+
+        $expected[] = [
+            'message' => 'It worked',
+            'key' => 'flash',
+            'element' => 'MyPlugin.flash/success',
+            'params' => [],
+        ];
+
+        $result = $this->Session->read('Flash.flash');
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test a magic call with the "clear" flag to true
-     *
-     * @covers \Cake\Controller\Component\FlashComponent::set
      */
     public function testCallWithClear(): void
     {

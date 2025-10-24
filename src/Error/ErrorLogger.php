@@ -22,6 +22,8 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Http\ServerRequest;
 use Cake\Log\Log;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerTrait;
+use Stringable;
 use Throwable;
 
 /**
@@ -30,6 +32,7 @@ use Throwable;
 class ErrorLogger implements ErrorLoggerInterface
 {
     use InstanceConfigTrait;
+    use LoggerTrait;
 
     /**
      * Default configuration values.
@@ -55,15 +58,22 @@ class ErrorLogger implements ErrorLoggerInterface
     /**
      * @inheritDoc
      */
+    public function log($level, Stringable|string $message, array $context = []): void
+    {
+        Log::write($level, $message, $context);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function logError(PhpError $error, ?ServerRequestInterface $request = null, bool $includeTrace = false): void
     {
-        $message = $error->getMessage();
-        if ($request) {
+        $message = $this->getErrorMessage($error, $includeTrace);
+
+        if ($request instanceof ServerRequestInterface) {
             $message .= $this->getRequestContext($request);
         }
-        if ($includeTrace) {
-            $message .= "\nTrace:\n" . $error->getTraceAsString() . "\n";
-        }
+
         $label = $error->getLabel();
         $level = match ($label) {
             'strict' => LOG_NOTICE,
@@ -71,7 +81,32 @@ class ErrorLogger implements ErrorLoggerInterface
             default => $label,
         };
 
-        Log::write($level, $message);
+        $this->log($level, $message);
+    }
+
+    /**
+     * Generate the message for the error
+     *
+     * @param \Cake\Error\PhpError $error The exception to log a message for.
+     * @param bool $includeTrace Whether to include a stack trace.
+     * @return string Error message
+     */
+    protected function getErrorMessage(PhpError $error, bool $includeTrace = false): string
+    {
+        $message = sprintf(
+            '%s in %s on line %s',
+            $error->getMessage(),
+            $error->getFile(),
+            $error->getLine(),
+        );
+
+        if (!$includeTrace) {
+            return $message;
+        }
+
+        $message .= "\nTrace:\n" . $error->getTraceAsString() . "\n";
+
+        return $message;
     }
 
     /**
@@ -80,14 +115,14 @@ class ErrorLogger implements ErrorLoggerInterface
     public function logException(
         Throwable $exception,
         ?ServerRequestInterface $request = null,
-        bool $includeTrace = false
+        bool $includeTrace = false,
     ): void {
         $message = $this->getMessage($exception, false, $includeTrace);
 
         if ($request !== null) {
             $message .= $this->getRequestContext($request);
         }
-        Log::error($message);
+        $this->error($message);
     }
 
     /**
@@ -95,7 +130,7 @@ class ErrorLogger implements ErrorLoggerInterface
      *
      * @param \Throwable $exception The exception to log a message for.
      * @param bool $isPrevious False for original exception, true for previous
-     * @param bool $includeTrace Whether or not to include a stack trace.
+     * @param bool $includeTrace Whether to include a stack trace.
      * @return string Error message
      */
     protected function getMessage(Throwable $exception, bool $isPrevious = false, bool $includeTrace = false): string
@@ -106,7 +141,7 @@ class ErrorLogger implements ErrorLoggerInterface
             $exception::class,
             $exception->getMessage(),
             $exception->getFile(),
-            $exception->getLine()
+            $exception->getLine(),
         );
         $debug = Configure::read('debug');
 
@@ -118,7 +153,7 @@ class ErrorLogger implements ErrorLoggerInterface
         }
 
         if ($includeTrace) {
-            $trace = Debugger::formatTrace($exception, ['format' => 'points']);
+            $trace = Debugger::formatTrace($exception, ['format' => 'shortPoints']);
             assert(is_array($trace));
             $message .= "\nStack Trace:\n";
             foreach ($trace as $line) {

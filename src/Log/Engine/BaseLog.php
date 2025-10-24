@@ -73,7 +73,7 @@ abstract class BaseLog extends AbstractLogger
             $this->_config['levels'] = (array)$this->_config['types'];
         }
 
-        /** @var \Cake\Log\Formatter\AbstractFormatter|class-string<\Cake\Log\Formatter\AbstractFormatter> $formatter */
+        /** @var \Cake\Log\Formatter\AbstractFormatter|array|class-string<\Cake\Log\Formatter\AbstractFormatter> $formatter */
         $formatter = $this->_config['formatter'] ?? DefaultFormatter::class;
         if (!is_object($formatter)) {
             if (is_array($formatter)) {
@@ -125,12 +125,12 @@ abstract class BaseLog extends AbstractLogger
             return $message;
         }
 
-        preg_match_all(
-            '/(?<!' . preg_quote('\\', '/') . ')\{([a-z0-9-_]+)\}/i',
+        $found = preg_match_all(
+            '/(?<!\\\\)\{([a-z0-9-_]+)\}/i',
             $message,
-            $matches
+            $matches,
         );
-        if (empty($matches)) {
+        if ($found === false) {
             return $message;
         }
 
@@ -191,7 +191,6 @@ abstract class BaseLog extends AbstractLogger
             $replacements['{' . $key . '}'] = sprintf('[unhandled value of type %s]', get_debug_type($value));
         }
 
-        /** @psalm-suppress InvalidArgument */
         return str_replace(array_keys($replacements), $replacements, $message);
     }
 }

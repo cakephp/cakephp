@@ -145,7 +145,7 @@ class ApcuEngine extends CacheEngine
         if (class_exists(APCUIterator::class, false)) {
             $iterator = new APCUIterator(
                 '/^' . preg_quote($this->_config['prefix'], '/') . '/',
-                APC_ITER_NONE
+                APC_ITER_NONE,
             );
             apcu_delete($iterator);
 
@@ -204,7 +204,7 @@ class ApcuEngine extends CacheEngine
                     $value = 1;
                     if (apcu_store($group, $value) === false) {
                         $this->warning(
-                            sprintf('Failed to store key `%s` with value `%s` into APCu cache.', $group, $value)
+                            sprintf('Failed to store key `%s` with value `%s` into APCu cache.', $group, $value),
                         );
                     }
                     $groups[$group] = $value;

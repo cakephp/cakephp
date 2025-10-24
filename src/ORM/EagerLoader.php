@@ -62,6 +62,7 @@ class EagerLoader
         'joinType' => 1,
         'strategy' => 1,
         'negateMatch' => 1,
+        'includeFields' => 1,
     ];
 
     /**
@@ -134,7 +135,7 @@ class EagerLoader
         if ($queryBuilder) {
             if (!is_string($associations)) {
                 throw new InvalidArgumentException(
-                    'Cannot set containments. To use $queryBuilder, $associations must be a string'
+                    'Cannot set containments. To use $queryBuilder, $associations must be a string',
                 );
             }
 
@@ -290,7 +291,7 @@ class EagerLoader
      */
     public function normalized(Table $repository): array
     {
-        if ($this->_normalized !== null || empty($this->_containments)) {
+        if ($this->_normalized !== null || $this->_containments === []) {
             return (array)$this->_normalized;
         }
 
@@ -304,7 +305,7 @@ class EagerLoader
                 $repository,
                 $alias,
                 $options,
-                ['root' => null]
+                ['root' => ''],
             );
         }
 
@@ -353,13 +354,22 @@ class EagerLoader
             }
 
             if (is_array($options)) {
-                $options = isset($options['config']) ?
-                    $options['config'] + $options['associations'] :
-                    $options;
-                $options = $this->_reformatContain(
-                    $options,
-                    $pointer[$table] ?? []
-                );
+                // When options come from asContainArray(), they have 'config' and 'associations' keys
+                // We need to keep them separate to avoid config options being treated as associations
+                if (isset($options['config']) && isset($options['associations'])) {
+                    // Process associations recursively, but keep config separate
+                    $associations = $this->_reformatContain(
+                        $options['associations'],
+                        $pointer[$table] ?? [],
+                    );
+                    // Merge config with associations, ensuring config options stay as options
+                    $options = $options['config'] + $associations;
+                } else {
+                    $options = $this->_reformatContain(
+                        $options,
+                        $pointer[$table] ?? [],
+                    );
+                }
             }
 
             if ($options instanceof Closure) {
@@ -371,11 +381,10 @@ class EagerLoader
             if (isset($options['queryBuilder'], $pointer[$table]['queryBuilder'])) {
                 $first = $pointer[$table]['queryBuilder'];
                 $second = $options['queryBuilder'];
-                $options['queryBuilder'] = fn ($query) => $second($first($query));
+                $options['queryBuilder'] = fn($query) => $second($first($query));
             }
 
             if (!is_array($options)) {
-                /** @psalm-suppress InvalidArrayOffset */
                 $options = [$options => []];
             }
 
@@ -419,7 +428,7 @@ class EagerLoader
 
             $newAttachable = $this->attachableAssociations($repository);
             $attachable = array_diff_key($newAttachable, $processed);
-        } while (!empty($attachable));
+        } while ($attachable !== []);
     }
 
     /**
@@ -514,7 +523,7 @@ class EagerLoader
         foreach ($extra as $t => $assoc) {
             $eagerLoadable->addAssociation(
                 $t,
-                $this->_normalizeContain($table, $t, $assoc, $paths)
+                $this->_normalizeContain($table, $t, $assoc, $paths),
             );
         }
 
@@ -557,10 +566,9 @@ class EagerLoader
     protected function _correctStrategy(EagerLoadable $loadable): void
     {
         $config = $loadable->getConfig();
-        $currentStrategy = $config['strategy'] ??
-            'join';
+        $currentStrategy = $config['strategy'] ?? Association::STRATEGY_JOIN;
 
-        if (!$loadable->canBeJoined() || $currentStrategy !== 'join') {
+        if (!$loadable->canBeJoined() || $currentStrategy !== Association::STRATEGY_JOIN) {
             return;
         }
 
@@ -608,19 +616,25 @@ class EagerLoader
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query for which to eager load external.
      * associations.
-     * @param array $results Results array.
-     * @return array
+     * @param iterable $results Results.
+     * @return iterable
      * @throws \RuntimeException
      */
-    public function loadExternal(SelectQuery $query, array $results): array
+    public function loadExternal(SelectQuery $query, iterable $results): iterable
     {
-        if (empty($results)) {
+        if (!$results) {
             return $results;
         }
 
-        $table = $query->getRepository();
-        $external = $this->externalAssociations($table);
-        if (empty($external)) {
+        $external = $this->externalAssociations($query->getRepository());
+        if (!$external) {
+            return $results;
+        }
+
+        if (!is_array($results)) {
+            $results = iterator_to_array($results);
+        }
+        if (!$results) {
             return $results;
         }
 
@@ -660,7 +674,7 @@ class EagerLoader
                     'contain' => $contain,
                     'keys' => $keys,
                     'nestKey' => $meta->aliasPath(),
-                ]
+                ],
             );
             $results = array_map($callback, $results);
         }
@@ -687,7 +701,7 @@ class EagerLoader
     {
         $map = [];
 
-        if (!$this->getMatching() && !$this->getContain() && empty($this->_joinsMap)) {
+        if (!$this->getMatching() && !$this->getContain() && $this->_joinsMap === []) {
             return $map;
         }
 
@@ -750,7 +764,7 @@ class EagerLoader
         string $alias,
         Association $assoc,
         bool $asMatching = false,
-        ?string $targetProperty = null
+        ?string $targetProperty = null,
     ): void {
         $this->_joinsMap[$alias] = new EagerLoadable($alias, [
             'aliasPath' => $alias,
@@ -792,7 +806,7 @@ class EagerLoader
             }
             $collectKeys[$meta->aliasPath()] = [$alias, $pkFields, count($pkFields) === 1];
         }
-        if (empty($collectKeys)) {
+        if (!$collectKeys) {
             return [];
         }
 

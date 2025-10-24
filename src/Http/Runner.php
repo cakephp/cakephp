@@ -51,18 +51,11 @@ class Runner implements RequestHandlerInterface
     public function run(
         MiddlewareQueue $queue,
         ServerRequestInterface $request,
-        ?RequestHandlerInterface $fallbackHandler = null
+        ?RequestHandlerInterface $fallbackHandler = null,
     ): ResponseInterface {
         $this->queue = $queue;
         $this->queue->rewind();
         $this->fallbackHandler = $fallbackHandler;
-
-        if (
-            $fallbackHandler instanceof RoutingApplicationInterface &&
-            $request instanceof ServerRequest
-        ) {
-            Router::setRequest($request);
-        }
 
         return $this->handle($request);
     }
@@ -75,6 +68,13 @@ class Runner implements RequestHandlerInterface
      */
     public function handle(ServerRequestInterface $request): ResponseInterface
     {
+        if (
+            $this->fallbackHandler instanceof RoutingApplicationInterface &&
+            $request instanceof ServerRequest
+        ) {
+            Router::setRequest($request);
+        }
+
         if ($this->queue->valid()) {
             $middleware = $this->queue->current();
             $this->queue->next();

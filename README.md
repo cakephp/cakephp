@@ -54,13 +54,12 @@ tests for CakePHP by doing the following:
    a non-SQLite datasource.
 3. Run `phpunit`.
 
-## Some Handy Links
+## Learn More
 
-* [CakePHP](https://cakephp.org) - The rapid development PHP framework.
-* [CookBook](https://book.cakephp.org) - The CakePHP user documentation; start learning here!
-* [API](https://api.cakephp.org) - A reference to CakePHP's classes.
-* [Awesome CakePHP](https://github.com/FriendsOfCake/awesome-cakephp) - A list of featured resources around the framework.
-* [Plugins](https://plugins.cakephp.org) - A repository of extensions to the framework.
+* [CakePHP](https://cakephp.org) - The home of the CakePHP project.
+* [Book](https://book.cakephp.org) - The CakePHP documentation; start learning here!
+* [API](https://api.cakephp.org) - A reference to CakePHP's classes and API documentation.
+* [Awesome CakePHP](https://github.com/FriendsOfCake/awesome-cakephp) - A curated list of featured resources around the framework.
 * [The Bakery](https://bakery.cakephp.org) - Tips, tutorials and articles.
 * [Community Center](https://community.cakephp.org) - A source for everything community related.
 * [Training](https://training.cakephp.org) - Join a live session and get skilled with the framework.

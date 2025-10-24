@@ -28,6 +28,7 @@ use Cake\Test\Fixture\ArticlesFixture;
 use Cake\Test\Fixture\CommentsFixture;
 use Cake\Test\Fixture\ProductsFixture;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 class CaseExpressionQueryTest extends TestCase
 {
@@ -47,7 +48,7 @@ class CaseExpressionQueryTest extends TestCase
      */
     protected $query;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -55,7 +56,7 @@ class CaseExpressionQueryTest extends TestCase
         $this->query = new SelectQuery($this->connection);
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -218,7 +219,7 @@ class CaseExpressionQueryTest extends TestCase
                 return $exp->gt(
                     $query->func()->sum($expression),
                     2,
-                    'integer'
+                    'integer',
                 );
             });
 
@@ -276,10 +277,10 @@ class CaseExpressionQueryTest extends TestCase
     }
 
     /**
-     * @dataProvider bindingValueDataProvider
      * @param string $when The `WHEN` value.
      * @param int $result The result value.
      */
+    #[DataProvider('bindingValueDataProvider')]
     public function testBindValues(string $when, int $result): void
     {
         $value = '1';

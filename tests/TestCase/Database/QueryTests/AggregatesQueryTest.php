@@ -33,20 +33,20 @@ class AggregatesQueryTest extends TestCase
     /**
      * @var \Cake\Database\Connection
      */
-    protected $connection = null;
+    protected $connection;
 
     /**
      * @var bool
      */
     protected $skipTests = false;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
     }

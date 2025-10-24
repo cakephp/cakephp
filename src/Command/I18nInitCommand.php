@@ -39,6 +39,14 @@ class I18nInitCommand extends Command
     }
 
     /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'Initialize a language PO file from the POT file.';
+    }
+
+    /**
      * Execute the command
      *
      * @param \Cake\Console\Arguments $args The command arguments.
@@ -57,7 +65,7 @@ class I18nInitCommand extends Command
             return static::CODE_ERROR;
         }
 
-        $paths = App::path('locales');
+        $paths = array_values(App::path('locales'));
         if ($args->hasOption('plugin')) {
             $plugin = Inflector::camelize((string)$args->getOption('plugin'));
             $paths = [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR];
@@ -67,7 +75,7 @@ class I18nInitCommand extends Command
         $sourceFolder = rtrim($response, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $targetFolder = $sourceFolder . $language . DIRECTORY_SEPARATOR;
         if (!is_dir($targetFolder)) {
-            mkdir($targetFolder, 0770, true);
+            mkdir($targetFolder, 0755, true);
         }
 
         $count = 0;
@@ -101,7 +109,7 @@ class I18nInitCommand extends Command
      */
     public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
     {
-        $parser->setDescription('Initialize a language PO file from the POT file')
+        $parser->setDescription(static::getDescription())
            ->addOption('plugin', [
                'help' => 'The plugin to create a PO file in.',
                'short' => 'p',

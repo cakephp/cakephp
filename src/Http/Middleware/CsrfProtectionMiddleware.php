@@ -138,7 +138,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
                 'A CSRF token is already set in the request.' .
                 "\n" .
                 'Ensure you do not have the CSRF middleware applied more than once. ' .
-                'Check both your `Application::middleware()` method and `config/routes.php`.'
+                'Check both your `Application::middleware()` method and `config/routes.php`.',
             );
         }
 
@@ -148,7 +148,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         if (is_string($cookieData) && $cookieData !== '') {
             try {
                 $request = $request->withAttribute('csrfToken', $this->saltToken($cookieData));
-            } catch (InvalidArgumentException $e) {
+            } catch (InvalidArgumentException) {
                 $cookieData = null;
             }
         }
@@ -329,7 +329,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     protected function _addTokenCookie(
         string $token,
         ServerRequestInterface $request,
-        ResponseInterface $response
+        ResponseInterface $response,
     ): ResponseInterface {
         $cookie = $this->_createCookie($token, $request);
         if ($response instanceof Response) {
@@ -380,7 +380,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
 
         throw new InvalidCsrfTokenException(__d(
             'cake',
-            'CSRF token from either the request body or request headers did not match or is missing.'
+            'CSRF token from either the request body or request headers did not match or is missing.',
         ));
     }
 
@@ -402,7 +402,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
                 'secure' => $this->_config['secure'],
                 'httponly' => $this->_config['httponly'],
                 'samesite' => $this->_config['samesite'],
-            ]
+            ],
         );
     }
 }

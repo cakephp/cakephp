@@ -38,19 +38,36 @@ foreach ($iterator as $file) {
 }
 ksort($packages);
 
+$phivePharsXml = simplexml_load_file(dirname(__FILE__, 2) . DS . '.phive' . DS . 'phars.xml');
+$phpstanVersion = null;
+foreach ($phivePharsXml->phar as $phar) {
+    if ($phar->attributes()->name == 'phpstan') {
+        $phpstanVersion = (string)$phar->attributes()->version;
+        break;
+    }
+}
+$composerCommand = 'composer require --dev phpstan/phpstan:' . $phpstanVersion;
+
 $issues = [];
 foreach ($packages as $path => $package) {
-    // For now, demo only
     if (!file_exists($path . 'phpstan.neon.dist')) {
         continue;
     }
 
     $exitCode = null;
-    exec('cd ' . $path . ' && composer install && vendor/bin/phpstan analyze ./', $output, $exitCode);
+    exec(
+        'cd ' . $path . ' && ' . $composerCommand . ' && vendor/bin/phpstan analyze ./',
+        $output,
+        $exitCode
+    );
     if ($exitCode !== 0) {
         $code = $exitCode;
+
+        $issues[] = $package . ': ' . PHP_EOL . implode(PHP_EOL, $output);
     }
-    exec('cd ' . $path . ' && rm composer.lock && rm -rf vendor');
+    exec('cd ' . $path . ' && rm composer.lock && rm -rf vendor && git checkout composer.json');
 }
+
+echo implode(PHP_EOL . PHP_EOL, $issues);
 
 exit($code);

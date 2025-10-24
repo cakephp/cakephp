@@ -5,6 +5,7 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\TestSuite\TestCase;
 use DateInterval;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Cache\Engine\TestAppCacheEngine;
 
 class CacheEngineTest extends TestCase
@@ -21,9 +22,8 @@ class CacheEngineTest extends TestCase
 
     /**
      * Test duration with null, int and DateInterval multiple format.
-     *
-     * @dataProvider durationProvider
      */
+    #[DataProvider('durationProvider')]
     public function testDuration($ttl, $expected): void
     {
         $engine = new TestAppCacheEngine();

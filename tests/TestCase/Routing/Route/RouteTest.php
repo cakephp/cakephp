@@ -23,6 +23,8 @@ use Cake\Routing\Route\Route;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Routing\Route\ProtectedRoute;
 
 /**
@@ -33,7 +35,7 @@ class RouteTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('Routing', ['prefixes' => []]);
@@ -113,7 +115,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/fighters/{id}/move/{x}/{y}',
             ['controller' => 'Fighters', 'action' => 'move'],
-            ['id' => '\d+', 'x' => '\d+', 'y' => '\d+', 'pass' => ['id', 'x', 'y']]
+            ['id' => '\d+', 'x' => '\d+', 'y' => '\d+', 'pass' => ['id', 'x', 'y']],
         );
         $pattern = $route->compile();
         $this->assertMatchesRegularExpression($pattern, '/fighters/123/move/8/42');
@@ -136,7 +138,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/fighters/{id}/move/{x}/{y}',
             ['controller' => 'Fighters', 'action' => 'move'],
-            ['id' => '\d+', 'x' => '\d+', 'y' => '\d+', 'pass' => ['id', 'x', 'y']]
+            ['id' => '\d+', 'x' => '\d+', 'y' => '\d+', 'pass' => ['id', 'x', 'y']],
         );
         $this->assertMatchesRegularExpression($route->compile(), '/fighters/123/move/8/42');
 
@@ -151,7 +153,7 @@ class RouteTest extends TestCase
 
         $route = new Route(
             '/images/{id}/{x}x{y}',
-            ['controller' => 'Images', 'action' => 'view']
+            ['controller' => 'Images', 'action' => 'view'],
         );
         $this->assertMatchesRegularExpression($route->compile(), '/images/123/640x480');
 
@@ -172,7 +174,7 @@ class RouteTest extends TestCase
     {
         $route = new Route(
             '/fighters/{0id}',
-            ['controller' => 'Fighters', 'action' => 'move']
+            ['controller' => 'Fighters', 'action' => 'move'],
         );
         $this->assertDoesNotMatchRegularExpression($route->compile(), '/fighters/123', 'Placeholders must start with letter');
 
@@ -193,13 +195,13 @@ class RouteTest extends TestCase
     {
         $route = new Route(
             '/fighters/{ id }',
-            ['controller' => 'Fighters', 'action' => 'move']
+            ['controller' => 'Fighters', 'action' => 'move'],
         );
         $this->assertDoesNotMatchRegularExpression($route->compile(), '/fighters/123', 'no spaces in placeholder');
 
         $route = new Route(
             '/fighters/{i d}',
-            ['controller' => 'Fighters', 'action' => 'move']
+            ['controller' => 'Fighters', 'action' => 'move'],
         );
         $this->assertDoesNotMatchRegularExpression($route->compile(), '/fighters/123', 'no spaces in placeholder');
     }
@@ -211,7 +213,7 @@ class RouteTest extends TestCase
     {
         $route = new Route(
             '/images/{open/{id}',
-            ['controller' => 'Images', 'action' => 'open']
+            ['controller' => 'Images', 'action' => 'open'],
         );
         $pattern = $route->compile();
         $this->assertMatchesRegularExpression($pattern, '/images/{open/9', 'Need both {} to enable brace mode');
@@ -225,7 +227,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/fighters/{id}/move/{x}/:y',
             ['controller' => 'Fighters', 'action' => 'move'],
-            ['id' => '\d+', 'x' => '\d+', 'pass' => ['id', 'x']]
+            ['id' => '\d+', 'x' => '\d+', 'pass' => ['id', 'x']],
         );
         $pattern = $route->compile();
         $this->assertMatchesRegularExpression($pattern, '/fighters/123/move/8/:y');
@@ -248,7 +250,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/{controller}/{action}/*',
             [],
-            ['_ext' => ['json', 'xml']]
+            ['_ext' => ['json', 'xml']],
         );
 
         $result = $route->parse('/posts/index', 'GET');
@@ -292,8 +294,8 @@ class RouteTest extends TestCase
      * @param string $url
      * @param array $expected
      * @param array $ext
-     * @dataProvider provideMatchParseExtension
      */
+    #[DataProvider('provideMatchParseExtension')]
     public function testMatchParseExtension($url, array $expected, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);
@@ -321,8 +323,8 @@ class RouteTest extends TestCase
      *
      * @param string $url
      * @param array $ext
-     * @dataProvider provideNoMatchParseExtension
      */
+    #[DataProvider('provideNoMatchParseExtension')]
     public function testNoMatchParseExtension($url, array $ext): void
     {
         $route = new ProtectedRoute('/{controller}/{action}/*', [], ['_ext' => $ext]);
@@ -388,7 +390,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/{controller}/{action}/{id}',
             [],
-            ['id' => Router::ID]
+            ['id' => Router::ID],
         );
         $result = $route->compile();
         $this->assertMatchesRegularExpression($result, '/posts/edit/1');
@@ -400,7 +402,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/{lang}/{controller}/{action}/{id}',
             ['controller' => 'Testing4'],
-            ['id' => Router::ID, 'lang' => '[a-z]{3}']
+            ['id' => Router::ID, 'lang' => '[a-z]{3}'],
         );
         $result = $route->compile();
         $this->assertMatchesRegularExpression($result, '/eng/posts/edit/1');
@@ -424,7 +426,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/posts/{id}:{title}/{year}',
             ['controller' => 'Posts', 'action' => 'view'],
-            ['id' => Router::ID, 'year' => Router::YEAR, 'title' => '[a-z-_]+']
+            ['id' => Router::ID, 'year' => Router::YEAR, 'title' => '[a-z-_]+'],
         );
         $result = $route->compile();
         $this->assertMatchesRegularExpression($result, '/posts/1:name-of-article/2009/');
@@ -437,7 +439,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/posts/{url_title}-(uuid:{id})',
             ['controller' => 'Posts', 'action' => 'view'],
-            ['pass' => ['id', 'url_title'], 'id' => Router::ID]
+            ['pass' => ['id', 'url_title'], 'id' => Router::ID],
         );
         $result = $route->compile();
         $this->assertMatchesRegularExpression($result, '/posts/some_title_for_article-(uuid:12534)/');
@@ -456,7 +458,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/test/{slug}',
             ['controller' => 'Pages', 'action' => 'display'],
-            ['pass' => ['slug'], 'multibytePattern' => false, 'slug' => '[A-zА-я\-\ ]+']
+            ['pass' => ['slug'], 'multibytePattern' => false, 'slug' => '[A-zА-я\-\ ]+'],
         );
         $result = $route->compile();
         $this->assertDoesNotMatchRegularExpression($result, '/test/bla-blan-тест');
@@ -464,7 +466,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/test/{slug}',
             ['controller' => 'Pages', 'action' => 'display'],
-            ['pass' => ['slug'], 'multibytePattern' => true, 'slug' => '[A-zА-я\-\ ]+']
+            ['pass' => ['slug'], 'multibytePattern' => true, 'slug' => '[A-zА-я\-\ ]+'],
         );
         $result = $route->compile();
         $this->assertMatchesRegularExpression($result, '/test/bla-blan-тест');
@@ -479,7 +481,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/posts/{month}/{day}/{year}/*',
             ['controller' => 'Posts', 'action' => 'view'],
-            ['year' => Router::YEAR, 'month' => Router::MONTH, 'day' => Router::DAY]
+            ['year' => Router::YEAR, 'month' => Router::MONTH, 'day' => Router::DAY],
         );
         $result = $route->compile();
         $this->assertMatchesRegularExpression($result, '/posts/08/01/2007/title-of-post');
@@ -498,7 +500,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/{extra}/page/{slug}/*',
             ['controller' => 'Pages', 'action' => 'view', 'extra' => null],
-            ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view']
+            ['extra' => '[a-z1-9_]*', 'slug' => '[a-z1-9_]+', 'action' => 'view'],
         );
         $result = $route->compile();
 
@@ -518,7 +520,7 @@ class RouteTest extends TestCase
             [
                 'controller' => 'source|wiki|commits|tickets|comments|view',
                 'action' => 'branches|history|branch|logs|view|start|add|edit|modify',
-            ]
+            ],
         );
         $this->assertNull($route->parse('/chaw_test/wiki', 'GET'));
 
@@ -620,7 +622,7 @@ class RouteTest extends TestCase
         $route = new Route('/{lang}/{controller}/{action}', [], ['persist' => ['lang']]);
         $result = $route->match(
             ['controller' => 'Tasks', 'action' => 'add'],
-            $context
+            $context,
         );
         $this->assertSame('/en/Tasks/add', $result);
     }
@@ -639,27 +641,27 @@ class RouteTest extends TestCase
         $route = new Route('/{controller}/{action}');
         $result = $route->match(
             ['controller' => 'Posts', 'action' => 'index', '_host' => 'example.com'],
-            $context
+            $context,
         );
         // Http has port 80 as default, do not include it in the url
         $this->assertSame('http://example.com/Posts/index', $result);
 
         $result = $route->match(
             ['controller' => 'Posts', 'action' => 'index', '_scheme' => 'webcal'],
-            $context
+            $context,
         );
         // Webcal is not on port 80 by default, include it in url
         $this->assertSame('webcal://foo.com:80/Posts/index', $result);
 
         $result = $route->match(
             ['controller' => 'Posts', 'action' => 'index', '_port' => '8080'],
-            $context
+            $context,
         );
         $this->assertSame('http://foo.com:8080/Posts/index', $result);
 
         $result = $route->match(
             ['controller' => 'Posts', 'action' => 'index', '_base' => '/dir'],
-            $context
+            $context,
         );
         $this->assertSame('/dir/Posts/index', $result);
 
@@ -672,7 +674,7 @@ class RouteTest extends TestCase
                 '_scheme' => 'https',
                 '_base' => '/dir',
             ],
-            $context
+            $context,
         );
         $this->assertSame('https://example.com:8080/dir/Posts/index', $result);
 
@@ -691,7 +693,7 @@ class RouteTest extends TestCase
                 '_scheme' => 'https',
                 '_base' => '/dir',
             ],
-            $context
+            $context,
         );
         // Https scheme is not on port 8080 by default, include the port
         $this->assertSame('https://example.com:8080/dir/Posts/index', $result);
@@ -705,7 +707,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/fallback',
             ['controller' => 'Articles', 'action' => 'index'],
-            ['_host' => 'www.example.com']
+            ['_host' => 'www.example.com'],
         );
         $result = $route->match([
             'controller' => 'Articles',
@@ -722,7 +724,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/fallback',
             ['controller' => 'Articles', 'action' => 'index'],
-            ['_host' => '*.example.com']
+            ['_host' => '*.example.com'],
         );
         $result = $route->match([
             'controller' => 'Articles',
@@ -835,7 +837,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/blog/{id}-{slug}',
             ['controller' => 'Blog', 'action' => 'view'],
-            ['pass' => ['id', 'slug']]
+            ['pass' => ['id', 'slug']],
         );
         $result = $route->match([
             'controller' => 'Blog',
@@ -879,7 +881,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/blog/{id}-{slug}/*',
             ['controller' => 'Blog', 'action' => 'view'],
-            ['pass' => ['id', 'slug']]
+            ['pass' => ['id', 'slug']],
         );
         $result = $route->match([
             'controller' => 'Blog',
@@ -980,7 +982,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/articles/{action}/{id}',
             ['controller' => 'Articles'],
-            ['multibytePattern' => true, 'id' => '\pL+']
+            ['multibytePattern' => true, 'id' => '\pL+'],
         );
         $result = $route->match([
             'controller' => 'Articles',
@@ -997,7 +999,7 @@ class RouteTest extends TestCase
     {
         $route = new Route(
             '/anything',
-            ['controller' => 'Articles', 'action' => 'foo', '_method' => 'GET']
+            ['controller' => 'Articles', 'action' => 'foo', '_method' => 'GET'],
         );
         $result = $route->match([
             'controller' => 'Articles',
@@ -1037,25 +1039,19 @@ class RouteTest extends TestCase
      */
     public function testParseRequestDelegates(): void
     {
-        /** @var \Cake\Routing\Route\Route|\PHPUnit\Framework\MockObject\MockObject $route */
-        $route = $this->getMockBuilder('Cake\Routing\Route\Route')
-            ->onlyMethods(['parse'])
-            ->setConstructorArgs(['/forward', ['controller' => 'Articles', 'action' => 'index']])
-            ->getMock();
-
-        $route->expects($this->once())
-            ->method('parse')
-            ->with('/forward', 'GET')
-            ->willReturn(['works!']);
+        $route = Mockery::spy(Route::class)->makePartial();
 
         $request = new ServerRequest([
             'environment' => [
                 'REQUEST_METHOD' => 'GET',
-                'PATH_INFO' => '/forward',
+                'REQUEST_URI' => '/forward',
             ],
         ]);
-        $result = $route->parseRequest($request);
-        $this->assertNotEmpty($result);
+        $route->parseRequest($request);
+
+        $route->shouldHaveReceived('parse')
+            ->with('/forward', 'GET')
+            ->once();
     }
 
     /**
@@ -1066,13 +1062,13 @@ class RouteTest extends TestCase
         $route = new Route(
             '/fallback',
             ['controller' => 'Articles', 'action' => 'index'],
-            ['_host' => '*.example.com']
+            ['_host' => '*.example.com'],
         );
 
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'a.example.com',
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         $result = $route->parseRequest($request);
@@ -1088,7 +1084,7 @@ class RouteTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'foo.bar.example.com',
-                'PATH_INFO' => '/fallback',
+                'REQUEST_URI' => '/fallback',
             ],
         ]);
         $result = $route->parseRequest($request);
@@ -1111,7 +1107,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/{controller}/{action}/{id}',
             ['controller' => 'Testing4', 'id' => null],
-            ['id' => Router::ID]
+            ['id' => Router::ID],
         );
         $route->compile();
         $result = $route->parse('/Posts/view/1', 'GET');
@@ -1121,7 +1117,7 @@ class RouteTest extends TestCase
 
         $route = new Route(
             '/admin/{controller}',
-            ['prefix' => 'Admin', 'action' => 'index']
+            ['prefix' => 'Admin', 'action' => 'index'],
         );
         $route->compile();
         $result = $route->parse('/admin/', 'GET');
@@ -1133,7 +1129,7 @@ class RouteTest extends TestCase
 
         $route = new Route(
             '/media/search/*',
-            ['controller' => 'Media', 'action' => 'search']
+            ['controller' => 'Media', 'action' => 'search'],
         );
         $result = $route->parse('/media/search', 'GET');
         $this->assertSame('Media', $result['controller']);
@@ -1159,7 +1155,7 @@ class RouteTest extends TestCase
 
         $route = new Route(
             '/{controller}',
-            ['prefix' => 'Admin', 'action' => 'index']
+            ['prefix' => 'Admin', 'action' => 'index'],
         );
         $route->parse('/posts', 'NOPE');
     }
@@ -1171,7 +1167,7 @@ class RouteTest extends TestCase
     {
         $route = new Route(
             '/{controller}/{slug}',
-            ['action' => 'view']
+            ['action' => 'view'],
         );
         $route->compile();
         $result = $route->parse('/posts/%E2%88%82%E2%88%82', 'GET');
@@ -1317,7 +1313,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/blog/{action}/*',
             ['controller' => 'BlogPosts'],
-            ['action' => 'other|actions']
+            ['action' => 'other|actions'],
         );
         $result = $route->match(['controller' => 'BlogPosts', 'action' => 'foo']);
         $this->assertNull($result);
@@ -1411,6 +1407,26 @@ class RouteTest extends TestCase
 
         $route = new Route('/test/{action}', ['controller' => 'Thing']);
         $this->assertNull($route->match(['action' => null, 'controller' => 'Thing']));
+    }
+
+    /**
+     * Test matching with null prefix in defaults
+     */
+    public function testMatchWithNullPrefix(): void
+    {
+        // Test that a route with null prefix can match URLs without prefix
+        $route = new Route('/login', ['controller' => 'Users', 'action' => 'login', 'prefix' => null]);
+        $result = $route->match(['controller' => 'Users', 'action' => 'login']);
+        $this->assertSame('/login', $result);
+
+        // Test that null prefix in defaults should match when URL has a prefix key
+        $route = new Route('/logout', ['controller' => 'Users', 'action' => 'logout', 'prefix' => null]);
+        $result = $route->match(['controller' => 'Users', 'action' => 'logout', 'prefix' => null]);
+        $this->assertSame('/logout', $result);
+
+        $route = new Route('/logout', ['controller' => 'Users', 'action' => 'logout', 'prefix' => null]);
+        $result = $route->match(['controller' => 'Users', 'action' => 'logout', 'prefix' => 'admin']);
+        $this->assertNull($result);
     }
 
     /**
@@ -1514,19 +1530,19 @@ class RouteTest extends TestCase
     {
         $route = new Route(
             '/a/{controller}/{action}',
-            ['plugin' => 'Asset']
+            ['plugin' => 'Asset'],
         );
         $this->assertSame('asset._controller:_action', $route->getName());
 
         $route = new Route(
             '/a/assets/{action}',
-            ['plugin' => 'Asset', 'controller' => 'Assets']
+            ['plugin' => 'Asset', 'controller' => 'Assets'],
         );
         $this->assertSame('asset.assets:_action', $route->getName());
 
         $route = new Route(
             '/assets/get',
-            ['plugin' => 'Asset', 'controller' => 'Assets', 'action' => 'get']
+            ['plugin' => 'Asset', 'controller' => 'Assets', 'action' => 'get'],
         );
         $this->assertSame('asset.assets:get', $route->getName());
     }
@@ -1538,25 +1554,25 @@ class RouteTest extends TestCase
     {
         $route = new Route(
             '/admin/{controller}/{action}',
-            ['prefix' => 'Admin']
+            ['prefix' => 'Admin'],
         );
         $this->assertSame('admin:_controller:_action', $route->getName());
 
         $route = new Route(
             '/{prefix}/assets/{action}',
-            ['controller' => 'Assets']
+            ['controller' => 'Assets'],
         );
         $this->assertSame('_prefix:assets:_action', $route->getName());
 
         $route = new Route(
             '/admin/assets/get',
-            ['prefix' => 'Admin', 'plugin' => 'Asset', 'controller' => 'Assets', 'action' => 'get']
+            ['prefix' => 'Admin', 'plugin' => 'Asset', 'controller' => 'Assets', 'action' => 'get'],
         );
         $this->assertSame('admin:asset.assets:get', $route->getName());
 
         $route = new Route(
             '/{prefix}/{plugin}/{controller}/{action}/*',
-            []
+            [],
         );
         $this->assertSame('_prefix:_plugin._controller:_action', $route->getName());
     }
@@ -1572,7 +1588,7 @@ class RouteTest extends TestCase
             [
                 'persist' => ['section'],
                 'section' => 'آموزش|weblog',
-            ]
+            ],
         );
 
         $result = $route->parse('/%D8%A2%D9%85%D9%88%D8%B2%D8%B4', 'GET');
@@ -1605,7 +1621,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/products/tests/*',
             ['controller' => 'Products', 'action' => 'test'],
-            ['_urldecode' => false]
+            ['_urldecode' => false],
         );
 
         $result = $route->parse('/products/tests/xx%2Fyy', 'GET');
@@ -1621,7 +1637,7 @@ class RouteTest extends TestCase
         $route = new Route(
             '/products/view/{slug}',
             ['controller' => 'Products', 'action' => 'view'],
-            ['_urldecode' => false]
+            ['_urldecode' => false],
         );
 
         $result = $route->parse('/products/view/xx%2Fyy', 'GET');
@@ -1677,7 +1693,7 @@ class RouteTest extends TestCase
             '_greedy' => false,
             '_compiledRoute' => null,
         ]);
-        $this->assertInstanceOf('Cake\Routing\Route\Route', $route);
+        $this->assertInstanceOf(Route::class, $route);
         $this->assertSame('/', $route->match(['controller' => 'Pages', 'action' => 'display', 'home']));
         $this->assertNull($route->match(['controller' => 'Pages', 'action' => 'display', 'about']));
         $expected = [
@@ -1763,7 +1779,7 @@ class RouteTest extends TestCase
         $request = new ServerRequest([
             'environment' => [
                 'HTTP_HOST' => 'a.example.com',
-                'PATH_INFO' => '/reviews',
+                'REQUEST_URI' => '/reviews',
             ],
         ]);
         $this->assertNull($route->parseRequest($request));

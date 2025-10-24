@@ -23,9 +23,17 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/utility": "^5.0",
+        "cakephp/utility": "5.2.*@dev",
         "league/container": "^4.2",
         "psr/container": "^1.1 || ^2.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\Core\\": "."
+        },
+        "files": [
+            "functions.php"
+        ]
     },
     "provide": {
         "psr/container-implementation": "^2.0"
@@ -35,12 +43,10 @@
         "cakephp/cache": "To use Configure::store() and restore().",
         "league/container": "To use Container and ServiceProvider classes"
     },
-    "autoload": {
-        "psr-4": {
-            "Cake\\Core\\": "."
-        },
-        "files": [
-            "functions.php"
-        ]
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.x": "5.2.x-dev"
+        }
     }
 }

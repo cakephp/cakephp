@@ -61,7 +61,7 @@ class ResponseEmitter
         $file = '';
         $line = 0;
         if (headers_sent($file, $line)) {
-            $message = "Unable to emit headers. Headers sent in file=$file line=$line";
+            $message = "Unable to emit headers. Headers sent in file={$file} line={$line}";
             trigger_error($message, E_USER_WARNING);
         }
 
@@ -160,7 +160,7 @@ class ResponseEmitter
             'HTTP/%s %d%s',
             $response->getProtocolVersion(),
             $response->getStatusCode(),
-            ($reasonPhrase ? ' ' . $reasonPhrase : '')
+            ($reasonPhrase ? ' ' . $reasonPhrase : ''),
         ));
     }
 
@@ -192,7 +192,7 @@ class ResponseEmitter
                 header(sprintf(
                     '%s: %s',
                     $name,
-                    $value
+                    $value,
                 ), $first);
                 $first = false;
             }

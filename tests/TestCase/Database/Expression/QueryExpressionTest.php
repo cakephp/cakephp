@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Database\Expression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ValueBinder;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests QueryExpression class
@@ -98,7 +99,7 @@ class QueryExpressionTest extends TestCase
     public function testAndOrCalls(): void
     {
         $expr = new QueryExpression();
-        $expected = 'Cake\Database\Expression\QueryExpression';
+        $expected = QueryExpression::class;
         $this->assertInstanceOf($expected, $expr->and([]));
         $this->assertInstanceOf($expected, $expr->or([]));
     }
@@ -131,7 +132,7 @@ class QueryExpressionTest extends TestCase
             [
                 'Users.username' => 'string',
                 'Users.active' => 'boolean',
-            ]
+            ],
         );
 
         $result = $expr->sql($binder);
@@ -206,9 +207,8 @@ class QueryExpressionTest extends TestCase
     /**
      * Tests that the query expression uses the type map when the
      * specific comparison functions are used.
-     *
-     * @dataProvider methodsProvider
      */
+    #[DataProvider('methodsProvider')]
     public function testTypeMapUsage(string $method): void
     {
         $expr = new QueryExpression([], ['created' => 'date']);
@@ -249,7 +249,7 @@ class QueryExpressionTest extends TestCase
         $expr->notInOrNull('test', ['one', 'two']);
         $this->assertEqualsSql(
             '(test NOT IN (:c0,:c1) OR (test) IS NULL)',
-            $expr->sql(new ValueBinder())
+            $expr->sql(new ValueBinder()),
         );
     }
 
@@ -262,7 +262,7 @@ class QueryExpressionTest extends TestCase
 
         $this->assertEqualsSql(
             'CASE WHEN :c0 THEN :c1 ELSE NULL END',
-            $expression->sql(new ValueBinder())
+            $expression->sql(new ValueBinder()),
         );
     }
 
@@ -275,7 +275,7 @@ class QueryExpressionTest extends TestCase
 
         $this->assertEqualsSql(
             'CASE NULL WHEN :c0 THEN :c1 ELSE NULL END',
-            $expression->sql(new ValueBinder())
+            $expression->sql(new ValueBinder()),
         );
     }
 
@@ -290,7 +290,7 @@ class QueryExpressionTest extends TestCase
 
         $this->assertEqualsSql(
             'CASE :c0 WHEN :c1 THEN :c2 ELSE NULL END',
-            $expression->sql($valueBinder)
+            $expression->sql($valueBinder),
         );
 
         $this->assertSame(
@@ -299,7 +299,7 @@ class QueryExpressionTest extends TestCase
                 'type' => 'integer',
                 'placeholder' => 'c0',
             ],
-            $valueBinder->bindings()[':c0']
+            $valueBinder->bindings()[':c0'],
         );
     }
 }

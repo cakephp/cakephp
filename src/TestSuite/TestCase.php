@@ -73,6 +73,13 @@ abstract class TestCase extends BaseTestCase
     protected array $_configure = [];
 
     /**
+     * Plugins to be loaded after app instance is created ContainerStubTrait::creatApp()
+     *
+     * @var array
+     */
+    protected array $appPluginsToLoad = [];
+
+    /**
      * @var \Cake\Error\PhpError|null
      */
     private ?PhpError $_capturedError = null;
@@ -134,7 +141,7 @@ abstract class TestCase extends BaseTestCase
 
                 return true;
             },
-            $errorLevel
+            $errorLevel,
         );
 
         try {
@@ -153,19 +160,37 @@ abstract class TestCase extends BaseTestCase
     /**
      * Helper method for check deprecation methods
      *
-     * @param \Closure $callable callable function that will receive asserts
+     * @param \Closure $callable callable function that will receive asserts.
+     * @param int $type Error level to expect, E_DEPRECATED or E_USER_DEPRECATED.
+     * @param string|null $phpVersion If set, only applies to this version forward, e.g. `8.4`.
      * @return void
      */
-    public function deprecated(Closure $callable): void
+    public function deprecated(Closure $callable, int $type = E_USER_DEPRECATED, ?string $phpVersion = null): void
     {
+        if ($phpVersion !== null && version_compare(PHP_VERSION, $phpVersion, '<')) {
+            $callable();
+
+            return;
+        }
+
         $duplicate = Configure::read('Error.allowDuplicateDeprecations');
         Configure::write('Error.allowDuplicateDeprecations', true);
         /** @var bool $deprecation Expand type for psalm */
         $deprecation = false;
 
         $previousHandler = set_error_handler(
-            function ($code, $message, $file, $line, $context = null) use (&$previousHandler, &$deprecation): bool {
-                if ($code == E_USER_DEPRECATED) {
+            function (
+                $code,
+                $message,
+                $file,
+                $line,
+                $context = null,
+            ) use (
+                &$previousHandler,
+                &$deprecation,
+                $type,
+            ): bool {
+                if ($code == $type) {
                     $deprecation = true;
 
                     return true;
@@ -175,7 +200,7 @@ abstract class TestCase extends BaseTestCase
                 }
 
                 return false;
-            }
+            },
         );
         try {
             $callable();
@@ -186,6 +211,23 @@ abstract class TestCase extends BaseTestCase
             }
         }
         $this->assertTrue($deprecation, 'Should have at least one deprecation warning');
+    }
+
+    /**
+     * This method is called between test and tearDown().
+     *
+     * Gets the count of expectations on the mocks produced through Mockery.
+     *
+     * @return void
+     */
+    protected function assertPostConditions(): void
+    {
+        parent::assertPostConditions();
+
+        if (class_exists(Mockery::class)) {
+            // @phpstan-ignore method.internal
+            $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
+        }
     }
 
     /**
@@ -208,6 +250,12 @@ abstract class TestCase extends BaseTestCase
         }
 
         EventManager::instance(new EventManager());
+
+        /** @var int|false $errorLevelOverwrite */
+        $errorLevelOverwrite = Configure::read('TestSuite.errorLevel', E_ALL);
+        if ($errorLevelOverwrite !== false) {
+            error_reporting($errorLevelOverwrite);
+        }
     }
 
     /**
@@ -265,7 +313,10 @@ abstract class TestCase extends BaseTestCase
      */
     protected function getFixtureStrategy(): FixtureStrategyInterface
     {
-        return new TruncateStrategy();
+        /** @var class-string<\Cake\TestSuite\Fixture\FixtureStrategyInterface> $className */
+        $className = Configure::read('TestSuite.fixtureStrategy') ?: TruncateStrategy::class;
+
+        return new $className();
     }
 
     /**
@@ -302,14 +353,13 @@ abstract class TestCase extends BaseTestCase
      * Useful to test how plugins being loaded/not loaded interact with other
      * elements in CakePHP or applications.
      *
-     * @param array<string, mixed> $plugins List of Plugins to load.
+     * @param array $plugins List of Plugins to load.
      * @return \Cake\Http\BaseApplication
      */
     public function loadPlugins(array $plugins = []): BaseApplication
     {
-        /**
-         * @psalm-suppress MissingTemplateParam
-         */
+        $this->appPluginsToLoad = $plugins;
+
         $app = new class ('') extends BaseApplication
         {
             /**
@@ -397,7 +447,7 @@ abstract class TestCase extends BaseTestCase
         string $dataKey,
         mixed $dataValue,
         ?EventManager $eventManager = null,
-        string $message = ''
+        string $message = '',
     ): void {
         if (!$eventManager) {
             $eventManager = EventManager::instance();
@@ -519,7 +569,7 @@ abstract class TestCase extends BaseTestCase
         string $needle,
         string $haystack,
         string $message = '',
-        bool $ignoreCase = false
+        bool $ignoreCase = false,
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
@@ -545,7 +595,7 @@ abstract class TestCase extends BaseTestCase
         string $needle,
         string $haystack,
         string $message = '',
-        bool $ignoreCase = false
+        bool $ignoreCase = false,
     ): void {
         $needle = str_replace(["\r\n", "\r"], "\n", $needle);
         $haystack = str_replace(["\r\n", "\r"], "\n", $haystack);
@@ -568,7 +618,7 @@ abstract class TestCase extends BaseTestCase
     public function assertEqualsSql(
         string $expected,
         string $actual,
-        string $message = ''
+        string $message = '',
     ): void {
         $this->assertEquals($expected, preg_replace('/[`"\[\]]/', '', $actual), $message);
     }
@@ -653,7 +703,7 @@ abstract class TestCase extends BaseTestCase
                 $tags = (string)$tags;
             }
             $i++;
-            if (is_string($tags) && $tags[0] === '<') {
+            if (is_string($tags) && str_starts_with($tags, '<')) {
                 $tags = [substr($tags, 1) => []];
             } elseif (is_string($tags)) {
                 $tagsTrimmed = preg_replace('/\s+/m', '', $tags);
@@ -671,7 +721,7 @@ abstract class TestCase extends BaseTestCase
                     ];
                     continue;
                 }
-                if (!empty($tags) && preg_match('/^preg\:\/(.+)\/$/i', $tags, $matches)) {
+                if ($tags && preg_match('/^preg\:\/(.+)\/$/i', $tags, $matches)) {
                     $tags = $matches[1];
                     $type = 'Regex matches';
                 } else {
@@ -698,7 +748,7 @@ abstract class TestCase extends BaseTestCase
                 $explanations = [];
                 $i = 1;
                 foreach ($attributes as $attr => $val) {
-                    if (is_numeric($attr) && preg_match('/^preg\:\/(.+)\/$/i', (string)$val, $matches)) {
+                    if (is_numeric($attr) && preg_match('/^preg:\/(.+)\/$/i', (string)$val, $matches)) {
                         $attrs[] = $matches[1];
                         $explanations[] = sprintf('Regex `%s` matches', $matches[1]);
                         continue;
@@ -710,11 +760,11 @@ abstract class TestCase extends BaseTestCase
                         $attr = $val;
                         $val = '.+?';
                         $explanations[] = sprintf('Attribute `%s` present', $attr);
-                    } elseif (!empty($val) && preg_match('/^preg\:\/(.+)\/$/i', $val, $matches)) {
+                    } elseif ($val && preg_match('/^preg:\/(.+)\/$/i', $val, $matches)) {
                         $val = str_replace(
                             ['.*', '.+'],
                             ['.*?', '.+?'],
-                            $matches[1]
+                            $matches[1],
                         );
                         $quotes = $val !== $matches[1] ? '["\']' : '["\']?';
 
@@ -748,7 +798,7 @@ abstract class TestCase extends BaseTestCase
                  * @var string $string
                  */
                 $string = $this->_assertAttributes($assertion, $string, $fullDebug, $regex);
-                if ($fullDebug === true && $string === false) {
+                if ($fullDebug && $string === false) {
                     debug($string, true);
                     debug($regex, true);
                 }
@@ -770,14 +820,14 @@ abstract class TestCase extends BaseTestCase
                 }
             }
             if (!$matches) {
-                if ($fullDebug === true) {
+                if ($fullDebug) {
                     debug($string);
                     debug($regex);
                 }
                 $this->assertMatchesRegularExpression(
                     $expression,
                     (string)$string,
-                    sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description)
+                    sprintf('Item #%d / regex #%d failed: %s', $itemNum, $i, $description),
                 );
 
                 return false;
@@ -802,7 +852,7 @@ abstract class TestCase extends BaseTestCase
         array $assertions,
         string $string,
         bool $fullDebug = false,
-        array|string $regex = ''
+        array|string $regex = '',
     ): string|false {
         $asserts = $assertions['attrs'];
         $explains = $assertions['explains'];
@@ -819,7 +869,7 @@ abstract class TestCase extends BaseTestCase
                 }
             }
             if ($matches === false) {
-                if ($fullDebug === true) {
+                if ($fullDebug) {
                     debug($string);
                     debug($regex);
                 }
@@ -935,6 +985,7 @@ abstract class TestCase extends BaseTestCase
         }, $reflection->getMethods());
 
         $existingMethods = array_intersect($classMethods, $methods);
+        /** @var list<non-empty-string> $nonExistingMethods */
         $nonExistingMethods = array_diff($methods, $existingMethods);
 
         $builder = $this->getMockBuilder($className)
@@ -945,13 +996,20 @@ abstract class TestCase extends BaseTestCase
         }
 
         if ($nonExistingMethods) {
-            trigger_error('Adding non existent methods to your model ' .
-                'via testing will not work in future PHPUnit versions.', E_USER_DEPRECATED);
+            trigger_error(
+                sprintf(
+                    'Adding non-existent methods (%s) to model `%s` ' .
+                    'when mocking will not work in future PHPUnit versions.',
+                    implode(',', $nonExistingMethods),
+                    $alias,
+                ),
+                E_USER_DEPRECATED,
+            );
             $builder->addMethods($nonExistingMethods);
         }
 
-        /** @var \Cake\ORM\Table $mock */
         $mock = $builder->getMock();
+        assert($mock instanceof Table);
 
         if (empty($options['entityClass']) && $mock->getEntityClass() === Entity::class) {
             $parts = explode('\\', $className);

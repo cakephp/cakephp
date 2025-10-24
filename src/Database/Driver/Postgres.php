@@ -56,6 +56,11 @@ class Postgres extends Driver
         'timezone' => null,
         'flags' => [],
         'init' => [],
+        'ssl_key' => null,
+        'ssl_cert' => null,
+        'ssl_ca' => null,
+        'ssl' => false,
+        'ssl_mode' => null,
     ];
 
     /**
@@ -77,7 +82,7 @@ class Postgres extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->pdo)) {
+        if ($this->pdo !== null) {
             return;
         }
         $config = $this->_config;
@@ -90,6 +95,24 @@ class Postgres extends Driver
             $dsn = "pgsql:host={$config['host']};port={$config['port']};dbname={$config['database']}";
         } else {
             $dsn = "pgsql:dbname={$config['database']}";
+        }
+
+        if ($this->_config['ssl']) {
+            if ($this->_config['ssl_mode']) {
+                $dsn .= ';sslmode=' . $this->_config['ssl_mode'];
+            } else {
+                $dsn .= ';sslmode=allow';
+            }
+
+            if ($this->_config['ssl_key']) {
+                $dsn .= ';sslkey=' . $this->_config['ssl_key'];
+            }
+            if ($this->_config['ssl_cert']) {
+                $dsn .= ';sslcert=' . $this->_config['ssl_cert'];
+            }
+            if ($this->_config['ssl_ca']) {
+                $dsn .= ';sslrootcert=' . $this->_config['ssl_ca'];
+            }
         }
 
         $this->pdo = $this->createPdo($dsn, $config);
@@ -106,7 +129,8 @@ class Postgres extends Driver
         }
 
         foreach ($config['init'] as $command) {
-            $this->getPdo()->exec($command);
+            /** @phpstan-ignore-next-line */
+            $this->pdo->exec($command);
         }
     }
 
@@ -125,11 +149,7 @@ class Postgres extends Driver
      */
     public function schemaDialect(): SchemaDialect
     {
-        if (isset($this->_schemaDialect)) {
-            return $this->_schemaDialect;
-        }
-
-        return $this->_schemaDialect = new PostgresSchemaDialect($this);
+        return $this->_schemaDialect ?? ($this->_schemaDialect = new PostgresSchemaDialect($this));
     }
 
     /**
@@ -186,7 +206,9 @@ class Postgres extends Driver
             DriverFeatureEnum::SAVEPOINT,
             DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
             DriverFeatureEnum::WINDOW => true,
-
+            DriverFeatureEnum::INTERSECT => true,
+            DriverFeatureEnum::INTERSECT_ALL => true,
+            DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => true,
             DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION => false,
         };
     }
@@ -226,7 +248,7 @@ class Postgres extends Driver
     /**
      * Changes identifer expression into postgresql format.
      *
-     * @param \Cake\Database\Expression\IdentifierExpression $expression The expression to tranform.
+     * @param \Cake\Database\Expression\IdentifierExpression $expression The expression to transform.
      * @return void
      */
     protected function _transformIdentifierExpression(IdentifierExpression $expression): void
@@ -287,7 +309,7 @@ class Postgres extends Driver
                     ->setConjunction(' + INTERVAL')
                     ->iterateParts(function ($p, $key) {
                         if ($key === 1) {
-                            $p = sprintf("'%s'", $p);
+                            return sprintf("'%s'", $p);
                         }
 
                         return $p;
@@ -300,13 +322,25 @@ class Postgres extends Driver
                     ->add(['DOW FROM' => 'literal'], [], true)
                     ->add([') + (1' => 'literal']); // Postgres starts on index 0 but Sunday should be 1
                 break;
+            case 'JSON_VALUE':
+                $expression->setName('JSONB_PATH_QUERY')
+                    ->iterateParts(function ($p, $key) {
+                        if ($key === 0) {
+                            $p = sprintf('%s::jsonb', $p);
+                        } elseif ($key === 1) {
+                            $p = sprintf("'%s'::jsonpath", $this->quoteIdentifier($p['value']));
+                        }
+
+                        return $p;
+                    });
+                break;
         }
     }
 
     /**
      * Changes string expression into postgresql format.
      *
-     * @param \Cake\Database\Expression\StringExpression $expression The string expression to tranform.
+     * @param \Cake\Database\Expression\StringExpression $expression The string expression to transform.
      * @return void
      */
     protected function _transformStringExpression(StringExpression $expression): void

@@ -36,7 +36,7 @@ class RedirectException extends HttpException
      *
      * @param string $target The URL to redirect to.
      * @param int $code The exception code that will be used as a HTTP status code
-     * @param array $headers The headers that should be sent in the unauthorized challenge response.
+     * @param array<non-empty-string, array<string>|string> $headers The headers that should be sent in the unauthorized challenge response.
      */
     public function __construct(string $target, int $code = 302, array $headers = [])
     {

@@ -21,19 +21,23 @@ use Cake\Log\Engine\FileLog;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use TestApp\Log\Engine\TestAppLog;
+use TestPlugin\Log\Engine\TestPluginLog;
 
 /**
  * LogTest class
  */
 class LogTest extends TestCase
 {
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Log::reset();
+        $this->clearPlugins();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Log::reset();
@@ -55,11 +59,11 @@ class LogTest extends TestCase
         ]);
 
         $result = Log::engine('libtest');
-        $this->assertInstanceOf('TestApp\Log\Engine\TestAppLog', $result);
+        $this->assertInstanceOf(TestAppLog::class, $result);
         $this->assertContains('libtest', Log::configured());
 
         $result = Log::engine('plugintest');
-        $this->assertInstanceOf('TestPlugin\Log\Engine\TestPluginLog', $result);
+        $this->assertInstanceOf(TestPluginLog::class, $result);
         $this->assertContains('libtest', Log::configured());
         $this->assertContains('plugintest', Log::configured());
 
@@ -153,9 +157,9 @@ class LogTest extends TestCase
     /**
      * Test the various config call signatures.
      *
-     * @dataProvider configProvider
      * @param mixed $settings
      */
+    #[DataProvider('configProvider')]
     public function testConfigVariants($settings): void
     {
         Log::setConfig('test', $settings);
@@ -167,9 +171,9 @@ class LogTest extends TestCase
     /**
      * Test the various setConfig call signatures.
      *
-     * @dataProvider configProvider
      * @param mixed $settings
      */
+    #[DataProvider('configProvider')]
     public function testSetConfigVariants($settings): void
     {
         Log::setConfig('test', $settings);
@@ -411,7 +415,7 @@ class LogTest extends TestCase
             'scopes' => false,
         ]);
 
-        $this->deprecated(function () {
+        $this->deprecated(function (): void {
             Log::write('debug', 'debug message', 'orders');
         });
         $this->assertFileDoesNotExist(LOGS . 'debug.log');

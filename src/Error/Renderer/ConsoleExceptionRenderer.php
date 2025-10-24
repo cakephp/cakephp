@@ -80,14 +80,14 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
             $out = array_merge($out, $this->renderException($error, $parent));
         }
 
-        return join("\n", $out);
+        return implode("\n", $out);
     }
 
     /**
      * Render an individual exception
      *
      * @param \Throwable $exception The exception to render.
-     * @param ?\Throwable $parent The Exception index in the chain
+     * @param \Throwable|null $parent The Exception index in the chain
      * @return array
      */
     protected function renderException(Throwable $exception, ?Throwable $parent): array
@@ -99,7 +99,7 @@ class ConsoleExceptionRenderer implements ExceptionRendererInterface
                 $exception::class,
                 $exception->getMessage(),
                 $exception->getFile(),
-                $exception->getLine()
+                $exception->getLine(),
             ),
         ];
 

@@ -52,7 +52,7 @@ class EventFiredWith extends Constraint
 
         if ($this->_eventManager->getEventList() === null) {
             throw new AssertionFailedError(
-                'The event manager you are asserting against is not configured to track events.'
+                'The event manager you are asserting against is not configured to track events.',
             );
         }
     }
@@ -92,7 +92,7 @@ class EventFiredWith extends Constraint
             throw new AssertionFailedError(sprintf(
                 'Event `%s` was fired %d times, cannot make data assertion',
                 $other,
-                count($events)
+                count($events),
             ));
         }
 
@@ -112,6 +112,6 @@ class EventFiredWith extends Constraint
      */
     public function toString(): string
     {
-        return 'was fired with ' . $this->_dataKey . ' matching ' . (string)$this->_dataValue;
+        return "was fired with `{$this->_dataKey}` matching `" . json_encode($this->_dataValue) . '`';
     }
 }

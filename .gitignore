@@ -8,7 +8,6 @@
 /phpstan.neon
 /tools
 /vendor
-/vendors
 /composer.phar
 *.mo
 debug.log

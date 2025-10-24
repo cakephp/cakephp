@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\I18n;
 
 use Cake\Core\Exception\CakeException;
+use InvalidArgumentException;
 use Locale;
 
 /**
@@ -53,14 +54,14 @@ class PluralRules
         'el' => 1,
         'en' => 1,
         'eo' => 1,
-        'es' => 1,
+        'es' => 17,
         'et' => 1,
         'eu' => 1,
         'fa' => 1,
         'fi' => 1,
         'fil' => 2,
         'fo' => 1,
-        'fr' => 2,
+        'fr' => 16,
         'fur' => 1,
         'fy' => 1,
         'ga' => 5,
@@ -74,7 +75,7 @@ class PluralRules
         'hu' => 1,
         'id' => 0,
         'is' => 15,
-        'it' => 1,
+        'it' => 17,
         'ja' => 0,
         'jv' => 0,
         'ka' => 0,
@@ -106,8 +107,8 @@ class PluralRules
         'pap' => 1,
         'pl' => 11,
         'ps' => 1,
-        'pt_BR' => 2,
-        'pt' => 1,
+        'pt_PT' => 17,
+        'pt' => 16,
         'ro' => 12,
         'ru' => 3,
         'sk' => 4,
@@ -138,12 +139,15 @@ class PluralRules
      * @param string $locale The locale to get the rule calculated for.
      * @param int $n The number to apply the rules to.
      * @return int The plural rule number that should be used.
-     * @link http://localization-guide.readthedocs.org/en/latest/l10n/pluralforms.html
-     * @link https://developer.mozilla.org/en-US/docs/Mozilla/Localization/Localization_and_Plurals#List_of_Plural_Rules
+     * @link https://php-gettext.github.io/Languages/#47
      */
     public static function calculate(string $locale, int $n): int
     {
         $locale = Locale::canonicalize($locale);
+
+        if ($locale === null) {
+            throw new InvalidArgumentException('Invalid locale provided');
+        }
 
         if (!isset(static::$_rulesMap[$locale])) {
             $locale = explode('_', $locale)[0];
@@ -185,6 +189,8 @@ class PluralRules
                     ($n === 2 ? 1 :
                     ($n !== 8 && $n !== 11 ? 2 : 3)),
             15 => $n % 10 !== 1 || $n % 100 === 11 ? 1 : 0,
+            16 => $n === 0 || $n === 1 ? 0 : ($n % 1000000 === 0 ? 1 : 2),
+            17 => $n === 1 ? 0 : ($n !== 0 && $n % 1000000 === 0 ? 1 : 2),
             default => throw new CakeException('Unable to find plural rule number.'),
         };
     }

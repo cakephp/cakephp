@@ -37,7 +37,7 @@ class SomePagesController extends Controller
      *
      * @return void
      */
-    public function index()
+    public function index(): bool
     {
         return true;
     }

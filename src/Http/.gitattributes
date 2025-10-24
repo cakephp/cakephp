@@ -1,0 +1,10 @@
+# Define the line ending behavior of the different file extensions
+# Set default behavior, in case users don't have core.autocrlf set.
+* text text=auto eol=lf
+
+.php diff=php
+
+# Remove files for archives generated using `git archive`
+.gitattributes export-ignore
+phpstan.neon.dist export-ignore
+tests/ export-ignore

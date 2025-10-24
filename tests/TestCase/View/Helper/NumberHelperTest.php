@@ -21,6 +21,7 @@ namespace Cake\Test\TestCase\View\Helper;
 use Cake\TestSuite\TestCase;
 use Cake\View\Helper\NumberHelper;
 use Cake\View\View;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * NumberHelperTest class
@@ -33,14 +34,9 @@ class NumberHelperTest extends TestCase
     protected $View;
 
     /**
-     * @var string
-     */
-    protected $appNamespace;
-
-    /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -51,7 +47,7 @@ class NumberHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -74,9 +70,8 @@ class NumberHelperTest extends TestCase
 
     /**
      * Tests calls are proxied to Number class.
-     *
-     * @dataProvider methodProvider
      */
+    #[DataProvider('methodProvider')]
     public function testMethodProxying(string $method, mixed $arg): void
     {
         $helper = new NumberHelper($this->View);

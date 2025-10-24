@@ -1,0 +1,27 @@
+parameters:
+	level: 8
+	treatPhpDocTypesAsCertain: false
+	bootstrapFiles:
+		- tests/phpstan-bootstrap.php
+	paths:
+		- ./
+	excludePaths:
+		- vendor/
+	ignoreErrors:
+		- '#Unsafe usage of new static\(\).#'
+		-
+			identifier: notIdentical.alwaysTrue
+		-
+			identifier: missingType.iterableValue
+		-
+			identifier: missingType.generics
+
+		-
+			message: "#^Result of && is always false\\.$#"
+			count: 1
+			path: Type/EnumType.php
+
+		-
+			message: "#^Strict comparison using \\=\\=\\= between \\*NEVER\\* and '' will always evaluate to false\\.$#"
+			count: 1
+			path: Type/EnumType.php

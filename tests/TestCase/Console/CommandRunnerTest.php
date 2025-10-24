@@ -25,7 +25,6 @@ use Cake\Console\CommandRunner;
 use Cake\Console\ConsoleIo;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Configure;
-use Cake\Core\ConsoleApplicationInterface;
 use Cake\Event\EventManager;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
@@ -58,11 +57,11 @@ class CommandRunnerTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('App.namespace', 'TestApp');
-        $this->config = dirname(__DIR__, 2);
+        $this->config = CONFIG;
     }
 
     /**
@@ -87,9 +86,7 @@ class CommandRunnerTest extends TestCase
      */
     public function testGetEventManagerNonEventedApplication(): void
     {
-        $app = $this->createMock(ConsoleApplicationInterface::class);
-
-        $runner = new CommandRunner($app);
+        $runner = $this->getRunner();
         $this->assertSame(EventManager::instance(), $runner->getEventManager());
     }
 
@@ -98,19 +95,14 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunInvalidCommand(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
         $output = new StubConsoleOutput();
-        $runner = new CommandRunner($app);
+        $runner = $this->getRunner();
         $runner->run(['cake', 'nope', 'nope', 'nope'], $this->getMockIo($output));
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString(
             'Unknown command `cake nope`. Run `cake --help` to get the list of commands.',
-            $messages
+            $messages,
         );
     }
 
@@ -120,19 +112,14 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunInvalidCommandWithSpecialCharacters(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
         $output = new StubConsoleOutput();
-        $runner = new CommandRunner($app);
+        $runner = $this->getRunner();
         $runner->run(['cake', 's/pec[ial'], $this->getMockIo($output));
 
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString(
             'Unknown command `cake s/pec[ial`. Run `cake --help` to get the list of commands.',
-            $messages
+            $messages,
         );
     }
 
@@ -141,13 +128,8 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunInvalidCommandSuggestion(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
         $output = new StubConsoleOutput();
-        $runner = new CommandRunner($app);
+        $runner = $this->getRunner();
         $runner->run(['cake', 'cache'], $this->getMockIo($output));
 
         $messages = implode("\n", $output->messages());
@@ -157,7 +139,7 @@ class CommandRunnerTest extends TestCase
             "Other valid choices:\n" .
             "\n" .
             '- help',
-            $messages
+            $messages,
         );
     }
 
@@ -166,13 +148,8 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunHelpLongOption(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
         $output = new StubConsoleOutput();
-        $runner = new CommandRunner($app, 'cake');
+        $runner = $this->getRunner();
         $result = $runner->run(['cake', '--help'], $this->getMockIo($output));
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
@@ -186,13 +163,8 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunHelpShortOption(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
         $output = new StubConsoleOutput();
-        $runner = new CommandRunner($app, 'cake');
+        $runner = $this->getRunner();
         $result = $runner->run(['cake', '-h'], $this->getMockIo($output));
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
@@ -205,13 +177,8 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunNoCommand(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
         $output = new StubConsoleOutput();
-        $runner = new CommandRunner($app);
+        $runner = $this->getRunner();
         $result = $runner->run(['cake'], $this->getMockIo($output));
 
         $this->assertSame(0, $result, 'help output is success.');
@@ -226,13 +193,8 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunVersionAlias(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
         $output = new StubConsoleOutput();
-        $runner = new CommandRunner($app, 'cake');
+        $runner = $this->getRunner();
         $runner->run(['cake', '--version'], $this->getMockIo($output));
         $this->assertStringContainsString(Configure::version(), $output->messages()[0]);
     }
@@ -242,14 +204,8 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunValidCommand(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
         $output = new StubConsoleOutput();
-
-        $runner = new CommandRunner($app, 'cake');
+        $runner = $this->getRunner();
         $result = $runner->run(['cake', 'routes'], $this->getMockIo($output));
         $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
 
@@ -263,14 +219,8 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunValidCommandInflection(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
         $output = new StubConsoleOutput();
-
-        $runner = new CommandRunner($app, 'cake');
+        $runner = $this->getRunner();
         $result = $runner->run(['cake', 'schema_cache', 'build'], $this->getMockIo($output));
         $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
 
@@ -361,6 +311,34 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * Test running a valid command with spaces in the name
+     */
+    public function testRunSubcommandNameInflection(): void
+    {
+        // Simulate typical plugin command registration.
+        $app = $this->makeAppWithCommands([
+            'my_plugin.tool demo' => DemoCommand::class,
+            'tool demo' => DemoCommand::class,
+        ]);
+        $runner = new CommandRunner($app, 'cake');
+
+        // With underscore inflection
+        $output = new StubConsoleOutput();
+        $result = $runner->run(['cake', 'my_plugin.tool', 'demo'], $this->getMockIo($output));
+        $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
+
+        // Unprefixed
+        $output = new StubConsoleOutput();
+        $result = $runner->run(['cake', 'tool', 'demo'], $this->getMockIo($output));
+        $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
+
+        // Inflected in typical plugin casing
+        $output = new StubConsoleOutput();
+        $result = $runner->run(['cake', 'MyPlugin.tool', 'demo'], $this->getMockIo($output));
+        $this->assertSame(CommandInterface::CODE_SUCCESS, $result);
+    }
+
+    /**
      * Test using a custom factory
      */
     public function testRunWithCustomFactory(): void
@@ -426,13 +404,8 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunTriggersBuildCommandsEvent(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
         $output = new StubConsoleOutput();
-        $runner = new CommandRunner($app, 'cake');
+        $runner = $this->getRunner();
         $runner->getEventManager()->on('Console.buildCommands', function ($event, $commands): void {
             $this->assertInstanceOf(CommandCollection::class, $commands);
             $this->eventTriggered = true;
@@ -446,15 +419,10 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunTriggersCommandEvents(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap', 'routes'])
-            ->setConstructorArgs([$this->config])
-            ->getMock();
-
         $output = new StubConsoleOutput();
-        $runner = new CommandRunner($app, 'cake');
-
-        $startedEventTriggered = $finishedEventTriggered = false;
+        $runner = $this->getRunner();
+        $startedEventTriggered = false;
+        $finishedEventTriggered = false;
         $runner->getEventManager()->on('Command.beforeExecute', function ($event, $args) use (&$startedEventTriggered): void {
             $this->assertInstanceOf(VersionCommand::class, $event->getSubject());
             $this->assertInstanceOf(Arguments::class, $args);
@@ -507,13 +475,9 @@ class CommandRunnerTest extends TestCase
      */
     public function testRunLoadsRoutes(): void
     {
-        $app = $this->getMockBuilder(BaseApplication::class)
-            ->onlyMethods(['middleware', 'bootstrap'])
-            ->setConstructorArgs([TEST_APP . 'config' . DS])
-            ->getMock();
-
+        $this->config = TEST_APP . 'config' . DS;
         $output = new StubConsoleOutput();
-        $runner = new CommandRunner($app, 'cake');
+        $runner = $this->getRunner();
         $runner->run(['cake', '--version'], $this->getMockIo($output));
         $this->assertGreaterThan(2, count(Router::getRouteCollection()->routes()));
     }
@@ -535,5 +499,29 @@ class CommandRunnerTest extends TestCase
         return Mockery::mock(ConsoleIo::class, [$output, $output, null, null])
             ->shouldAllowMockingMethod('in')
             ->makePartial();
+    }
+
+    protected function getRunner(): CommandRunner
+    {
+        $app = new class ($this->config) extends BaseApplication {
+            public function bootstrap(): void
+            {
+                parent::bootstrap();
+            }
+
+            public function console(CommandCollection $commands): CommandCollection
+            {
+                parent::console($commands);
+
+                return $commands;
+            }
+
+            public function middleware(MiddlewareQueue $middlewareQueue): MiddlewareQueue
+            {
+                return $middlewareQueue;
+            }
+        };
+
+        return new CommandRunner($app);
     }
 }

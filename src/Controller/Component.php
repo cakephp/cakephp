@@ -152,7 +152,7 @@ class Component implements EventListenerInterface
 
             return $this->componentInstances[$name] = $this->_registry->load(
                 $name,
-                $config
+                $config,
             );
         }
 

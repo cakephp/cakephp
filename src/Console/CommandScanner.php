@@ -42,7 +42,7 @@ class CommandScanner
             dirname(__DIR__) . DIRECTORY_SEPARATOR . 'Command' . DIRECTORY_SEPARATOR,
             'Cake\Command\\',
             '',
-            ['command_list']
+            ['command_list'],
         );
     }
 
@@ -59,7 +59,7 @@ class CommandScanner
             App::classPath('Command')[0],
             $appNamespace . '\Command\\',
             '',
-            []
+            [],
         );
     }
 
@@ -102,7 +102,7 @@ class CommandScanner
 
         $classPattern = '/Command\.php$/';
         $fs = new Filesystem();
-        /** @var array<\SplFileInfo> $files */
+        /** @var \Iterator<\SplFileInfo> $files */
         $files = $fs->find($path, $classPattern);
 
         $commands = [];

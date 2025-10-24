@@ -20,9 +20,11 @@ use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\ContainerInterface;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Event\EventInterface;
+use Cake\Routing\Router;
 use Closure;
 use League\Container\Exception\NotFoundException;
 use LogicException;
+use PHPUnit\Framework\Attributes\After;
 
 /**
  * A set of methods used for defining container services
@@ -37,7 +39,7 @@ trait ContainerStubTrait
     /**
      * The customized application class name.
      *
-     * @psalm-var class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface>|null
+     * @phpstan-var class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface>|null
      * @var string|null
      */
     protected ?string $_appClass = null;
@@ -52,7 +54,7 @@ trait ContainerStubTrait
     /**
      * The collection of container services.
      *
-     * @var array
+     * @var array<string, mixed>
      */
     private array $containerServices = [];
 
@@ -62,7 +64,7 @@ trait ContainerStubTrait
      * @param string $class The application class name.
      * @param array|null $constructorArgs The constructor arguments for your application class.
      * @return void
-     * @psalm-param class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface> $class
+     * @phpstan-param class-string<\Cake\Core\HttpApplicationInterface>|class-string<\Cake\Core\ConsoleApplicationInterface> $class
      */
     public function configApplication(string $class, ?array $constructorArgs): void
     {
@@ -79,6 +81,10 @@ trait ContainerStubTrait
      */
     protected function createApp(): HttpApplicationInterface|ConsoleApplicationInterface
     {
+        if (class_exists(Router::class)) {
+            Router::resetRoutes();
+        }
+
         if ($this->_appClass) {
             $appClass = $this->_appClass;
         } else {
@@ -93,6 +99,14 @@ trait ContainerStubTrait
         $app = new $appClass(...$appArgs);
         if ($this->containerServices && method_exists($app, 'getEventManager')) {
             $app->getEventManager()->on('Application.buildContainer', [$this, 'modifyContainer']);
+        }
+
+        foreach ($this->appPluginsToLoad as $pluginName => $config) {
+            if (is_array($config)) {
+                $app->addPlugin($pluginName, $config);
+            } else {
+                $app->addPlugin($config);
+            }
         }
 
         return $app;
@@ -149,7 +163,7 @@ trait ContainerStubTrait
             if ($container->has($key)) {
                 try {
                     $container->extend($key)->setConcrete($factory);
-                } catch (NotFoundException $e) {
+                } catch (NotFoundException) {
                     $container->add($key, $factory);
                 }
             } else {
@@ -164,9 +178,9 @@ trait ContainerStubTrait
      * Clears any mocks that were defined and cleans
      * up application class configuration.
      *
-     * @after
      * @return void
      */
+    #[After]
     public function cleanupContainer(): void
     {
         $this->_appArgs = null;

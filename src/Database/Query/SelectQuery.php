@@ -29,6 +29,7 @@ use Closure;
 use InvalidArgumentException;
 use IteratorAggregate;
 use Traversable;
+use function Cake\Core\deprecationWarning;
 
 /**
  * This class is used to generate SELECT queries for the relational database.
@@ -67,6 +68,7 @@ class SelectQuery extends Query implements IteratorAggregate
         'offset' => null,
         'union' => [],
         'epilog' => null,
+        'intersect' => [],
     ];
 
     /**
@@ -79,11 +81,19 @@ class SelectQuery extends Query implements IteratorAggregate
     protected array $_resultDecorators = [];
 
     /**
-     * Result set from exeuted SELCT query.
+     * Result set from executed SELECT query.
      *
      * @var iterable|null
      */
     protected ?iterable $_results = null;
+
+    /**
+     * Boolean for tracking whether buffered results
+     * are enabled.
+     *
+     * @var bool
+     */
+    protected bool $bufferedResults = true;
 
     /**
      * The Type map for fields in the select clause
@@ -111,13 +121,6 @@ class SelectQuery extends Query implements IteratorAggregate
     {
         if ($this->_results === null || $this->_dirty) {
             $this->_results = $this->execute()->fetchAll(StatementInterface::FETCH_TYPE_ASSOC);
-            if ($this->_resultDecorators) {
-                foreach ($this->_results as &$row) {
-                    foreach ($this->_resultDecorators as $decorator) {
-                        $row = $decorator($row);
-                    }
-                }
-            }
         }
 
         return $this->_results;
@@ -146,7 +149,7 @@ class SelectQuery extends Query implements IteratorAggregate
      * $query->select('id', true); // Resets the list: SELECT id
      * $query->select(['total' => $countQuery]); // SELECT id, (SELECT ...) AS total
      * $query->select(function ($query) {
-     *     return ['article_id', 'total' => $query->count('*')];
+     *     return ['article_id', 'total' => $query->func()->count('*')];
      * })
      * ```
      *
@@ -230,272 +233,6 @@ class SelectQuery extends Query implements IteratorAggregate
     }
 
     /**
-     * Adds a single or multiple tables to be used as JOIN clauses to this query.
-     * Tables can be passed as an array of strings, an array describing the
-     * join parts, an array with multiple join descriptions, or a single string.
-     *
-     * By default this function will append any passed argument to the list of tables
-     * to be joined, unless the third argument is set to true.
-     *
-     * When no join type is specified an `INNER JOIN` is used by default:
-     * `$query->join(['authors'])` will produce `INNER JOIN authors ON 1 = 1`
-     *
-     * It is also possible to alias joins using the array key:
-     * `$query->join(['a' => 'authors'])` will produce `INNER JOIN authors a ON 1 = 1`
-     *
-     * A join can be fully described and aliased using the array notation:
-     *
-     * ```
-     * $query->join([
-     *     'a' => [
-     *         'table' => 'authors',
-     *         'type' => 'LEFT',
-     *         'conditions' => 'a.id = b.author_id'
-     *     ]
-     * ]);
-     * // Produces LEFT JOIN authors a ON a.id = b.author_id
-     * ```
-     *
-     * You can even specify multiple joins in an array, including the full description:
-     *
-     * ```
-     * $query->join([
-     *     'a' => [
-     *         'table' => 'authors',
-     *         'type' => 'LEFT',
-     *         'conditions' => 'a.id = b.author_id'
-     *     ],
-     *     'p' => [
-     *         'table' => 'publishers',
-     *         'type' => 'INNER',
-     *         'conditions' => 'p.id = b.publisher_id AND p.name = "Cake Software Foundation"'
-     *     ]
-     * ]);
-     * // LEFT JOIN authors a ON a.id = b.author_id
-     * // INNER JOIN publishers p ON p.id = b.publisher_id AND p.name = "Cake Software Foundation"
-     * ```
-     *
-     * ### Using conditions and types
-     *
-     * Conditions can be expressed, as in the examples above, using a string for comparing
-     * columns, or string with already quoted literal values. Additionally it is
-     * possible to use conditions expressed in arrays or expression objects.
-     *
-     * When using arrays for expressing conditions, it is often desirable to convert
-     * the literal values to the correct database representation. This is achieved
-     * using the second parameter of this function.
-     *
-     * ```
-     * $query->join(['a' => [
-     *     'table' => 'articles',
-     *     'conditions' => [
-     *         'a.posted >=' => new DateTime('-3 days'),
-     *         'a.published' => true,
-     *         'a.author_id = authors.id'
-     *     ]
-     * ]], ['a.posted' => 'datetime', 'a.published' => 'boolean'])
-     * ```
-     *
-     * ### Overwriting joins
-     *
-     * When creating aliased joins using the array notation, you can override
-     * previous join definitions by using the same alias in consequent
-     * calls to this function or you can replace all previously defined joins
-     * with another list if the third parameter for this function is set to true.
-     *
-     * ```
-     * $query->join(['alias' => 'table']); // joins table with as alias
-     * $query->join(['alias' => 'another_table']); // joins another_table with as alias
-     * $query->join(['something' => 'different_table'], [], true); // resets joins list
-     * ```
-     *
-     * @param array<string, mixed>|string $tables list of tables to be joined in the query
-     * @param array<string, string> $types Associative array of type names used to bind values to query
-     * @param bool $overwrite whether to reset joins with passed list or not
-     * @see \Cake\Database\TypeFactory
-     * @return $this
-     */
-    public function join(array|string $tables, array $types = [], bool $overwrite = false)
-    {
-        if (is_string($tables) || isset($tables['table'])) {
-            $tables = [$tables];
-        }
-
-        $joins = [];
-        $i = count($this->_parts['join']);
-        foreach ($tables as $alias => $t) {
-            if (!is_array($t)) {
-                $t = ['table' => $t, 'conditions' => $this->newExpr()];
-            }
-
-            if (!is_string($t['conditions']) && $t['conditions'] instanceof Closure) {
-                $t['conditions'] = $t['conditions']($this->newExpr(), $this);
-            }
-
-            if (!($t['conditions'] instanceof ExpressionInterface)) {
-                $t['conditions'] = $this->newExpr()->add($t['conditions'], $types);
-            }
-            $alias = is_string($alias) ? $alias : null;
-            $joins[$alias ?: $i++] = $t + ['type' => static::JOIN_TYPE_INNER, 'alias' => $alias];
-        }
-
-        if ($overwrite) {
-            $this->_parts['join'] = $joins;
-        } else {
-            $this->_parts['join'] = array_merge($this->_parts['join'], $joins);
-        }
-
-        $this->_dirty();
-
-        return $this;
-    }
-
-    /**
-     * Remove a join if it has been defined.
-     *
-     * Useful when you are redefining joins or want to re-order
-     * the join clauses.
-     *
-     * @param string $name The alias/name of the join to remove.
-     * @return $this
-     */
-    public function removeJoin(string $name)
-    {
-        unset($this->_parts['join'][$name]);
-        $this->_dirty();
-
-        return $this;
-    }
-
-    /**
-     * Adds a single `LEFT JOIN` clause to the query.
-     *
-     * This is a shorthand method for building joins via `join()`.
-     *
-     * The table name can be passed as a string, or as an array in case it needs to
-     * be aliased:
-     *
-     * ```
-     * // LEFT JOIN authors ON authors.id = posts.author_id
-     * $query->leftJoin('authors', 'authors.id = posts.author_id');
-     *
-     * // LEFT JOIN authors a ON a.id = posts.author_id
-     * $query->leftJoin(['a' => 'authors'], 'a.id = posts.author_id');
-     * ```
-     *
-     * Conditions can be passed as strings, arrays, or expression objects. When
-     * using arrays it is possible to combine them with the `$types` parameter
-     * in order to define how to convert the values:
-     *
-     * ```
-     * $query->leftJoin(['a' => 'articles'], [
-     *      'a.posted >=' => new DateTime('-3 days'),
-     *      'a.published' => true,
-     *      'a.author_id = authors.id'
-     * ], ['a.posted' => 'datetime', 'a.published' => 'boolean']);
-     * ```
-     *
-     * See `join()` for further details on conditions and types.
-     *
-     * @param array<string, mixed>|string $table The table to join with
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
-     * to use for joining.
-     * @param array $types a list of types associated to the conditions used for converting
-     * values to the corresponding database representation.
-     * @return $this
-     */
-    public function leftJoin(
-        array|string $table,
-        ExpressionInterface|Closure|array|string $conditions = [],
-        array $types = []
-    ) {
-        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_LEFT), $types);
-
-        return $this;
-    }
-
-    /**
-     * Adds a single `RIGHT JOIN` clause to the query.
-     *
-     * This is a shorthand method for building joins via `join()`.
-     *
-     * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
-     * to that methods description for further details.
-     *
-     * @param array<string, mixed>|string $table The table to join with
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
-     * to use for joining.
-     * @param array $types a list of types associated to the conditions used for converting
-     * values to the corresponding database representation.
-     * @return $this
-     */
-    public function rightJoin(
-        array|string $table,
-        ExpressionInterface|Closure|array|string $conditions = [],
-        array $types = []
-    ) {
-        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_RIGHT), $types);
-
-        return $this;
-    }
-
-    /**
-     * Adds a single `INNER JOIN` clause to the query.
-     *
-     * This is a shorthand method for building joins via `join()`.
-     *
-     * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
-     * to that method's description for further details.
-     *
-     * @param array<string, mixed>|string $table The table to join with
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
-     * to use for joining.
-     * @param array<string, string> $types a list of types associated to the conditions used for converting
-     * values to the corresponding database representation.
-     * @return $this
-     */
-    public function innerJoin(
-        array|string $table,
-        ExpressionInterface|Closure|array|string $conditions = [],
-        array $types = []
-    ) {
-        $this->join($this->_makeJoin($table, $conditions, static::JOIN_TYPE_INNER), $types);
-
-        return $this;
-    }
-
-    /**
-     * Returns an array that can be passed to the join method describing a single join clause
-     *
-     * @param array<string, mixed>|string $table The table to join with
-     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
-     * to use for joining.
-     * @param string $type the join type to use
-     * @return array
-     */
-    protected function _makeJoin(
-        array|string $table,
-        ExpressionInterface|Closure|array|string $conditions,
-        string $type
-    ): array {
-        $alias = $table;
-
-        if (is_array($table)) {
-            $alias = key($table);
-            $table = current($table);
-        }
-
-        /** @var string $alias */
-        return [
-            $alias => [
-                'table' => $table,
-                'conditions' => $conditions,
-                'type' => $type,
-            ],
-        ];
-    }
-
-    /**
      * Adds a single or multiple fields to be used in the GROUP BY clause for this query.
      * Fields can be passed as an array of strings, array of expression
      * objects, a single expression or a single string.
@@ -523,6 +260,8 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function group(ExpressionInterface|array|string $fields, bool $overwrite = false)
     {
+        deprecationWarning('5.0.0', 'SelectQuery::group() is deprecated. Use SelectQuery::groupBy() instead.');
+
         return $this->groupBy($fields, $overwrite);
     }
 
@@ -585,7 +324,7 @@ class SelectQuery extends Query implements IteratorAggregate
     public function having(
         ExpressionInterface|Closure|array|string|null $conditions = null,
         array $types = [],
-        bool $overwrite = false
+        bool $overwrite = false,
     ) {
         if ($overwrite) {
             $this->_parts['having'] = $this->newExpr();
@@ -756,6 +495,79 @@ class SelectQuery extends Query implements IteratorAggregate
     }
 
     /**
+     * Adds a complete query to be used in conjunction with an INTERSECT operator with
+     * this query. This is used to combine the result set of this query with the one
+     * that will be returned by the passed query. You can add as many queries as you
+     * required by calling multiple times this method with different queries.
+     *
+     * By default, the INTERSECT operator will remove duplicate rows, if you wish to include
+     * every row for all queries, use intersectAll().
+     *
+     * ### Examples
+     *
+     * ```
+     * $intersect = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $query->select(['id', 'name'])->from(['d' => 'things'])->intersect($intersect);
+     * ```
+     *
+     * Will produce:
+     *
+     * `SELECT id, name FROM things d INTERSECT SELECT id, title FROM articles a`
+     *
+     * @param \Cake\Database\Query|string $query full SQL query to be used in INTERSECT operator
+     * @param bool $overwrite whether to reset the list of queries to be operated or not
+     * @return $this
+     */
+    public function intersect(Query|string $query, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['intersect'] = [];
+        }
+        $this->_parts['intersect'][] = [
+            'all' => false,
+            'query' => $query,
+        ];
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
+     * Adds a complete query to be used in conjunction with the INTERSECT ALL operator with
+     * this query. This is used to combine the result set of this query with the one
+     * that will be returned by the passed query. You can add as many queries as you
+     * required by calling multiple times this method with different queries.
+     *
+     * Unlike INTERSECT, INTERSECT ALL will not remove duplicate rows.
+     *
+     * ```
+     * $intersect = (new SelectQuery($conn))->select(['id', 'title'])->from(['a' => 'articles']);
+     * $query->select(['id', 'name'])->from(['d' => 'things'])->intersectAll($intersect);
+     * ```
+     *
+     * Will produce:
+     *
+     * `SELECT id, name FROM things d INTERSECT ALL SELECT id, title FROM articles a`
+     *
+     * @param \Cake\Database\Query|string $query full SQL query to be used in INTERSECT operator
+     * @param bool $overwrite whether to reset the list of queries to be operated or not
+     * @return $this
+     */
+    public function intersectAll(Query|string $query, bool $overwrite = false)
+    {
+        if ($overwrite) {
+            $this->_parts['intersect'] = [];
+        }
+        $this->_parts['intersect'][] = [
+            'all' => true,
+            'query' => $query,
+        ];
+        $this->_dirty();
+
+        return $this;
+    }
+
+    /**
      * Executes this query and returns a results iterator. This function is required
      * for implementing the IteratorAggregate interface and allows the query to be
      * iterated without having to call all() manually, thus making it look like
@@ -765,13 +577,17 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     public function getIterator(): Traversable
     {
-        /** @var \Traversable|array $results */
-        $results = $this->all();
-        if (is_array($results)) {
-            return new ArrayIterator($results);
+        if ($this->bufferedResults) {
+            /** @var \Traversable|array $results */
+            $results = $this->all();
+            if (is_array($results)) {
+                return new ArrayIterator($results);
+            }
+
+            return $results;
         }
 
-        return $results;
+        return $this->execute();
     }
 
     /**
@@ -814,6 +630,69 @@ class SelectQuery extends Query implements IteratorAggregate
         }
 
         return $this;
+    }
+
+    /**
+     * Get result decorators.
+     *
+     * @return array
+     */
+    public function getResultDecorators(): array
+    {
+        return $this->_resultDecorators;
+    }
+
+    /**
+     * Enables buffered results.
+     *
+     * When enabled the results returned by this query will be
+     * buffered. This enables you to iterate a result set multiple times, or
+     * both cache and iterate it.
+     *
+     * When disabled it will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return $this
+     */
+    public function enableBufferedResults()
+    {
+        $this->_dirty();
+        $this->bufferedResults = true;
+
+        return $this;
+    }
+
+    /**
+     * Disables buffered results.
+     *
+     * Disabling buffering will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return $this
+     */
+    public function disableBufferedResults()
+    {
+        $this->_dirty();
+        $this->bufferedResults = false;
+
+        return $this;
+    }
+
+    /**
+     * Returns whether buffered results are enabled/disabled.
+     *
+     * When enabled the results returned by this query will be
+     * buffered. This enables you to iterate a result set multiple times, or
+     * both cache and iterate it.
+     *
+     * When disabled it will consume less memory as fetched results are not
+     * remembered for future iterations.
+     *
+     * @return bool
+     */
+    public function isBufferedResultsEnabled(): bool
+    {
+        return $this->bufferedResults;
     }
 
     /**

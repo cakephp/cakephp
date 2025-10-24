@@ -34,7 +34,7 @@ class ConsoleInputTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -48,15 +48,15 @@ class ConsoleInputTest extends TestCase
     {
         $this->skipIf(
             (bool)env('GITHUB_ACTIONS'),
-            'Skip test for ConsoleInput::dataAvailable() on Github VM as stream_select() incorrectly return 1 even though no data is available on STDIN.'
+            'Skip test for ConsoleInput::dataAvailable() on Github VM as stream_select() incorrectly return 1 even though no data is available on STDIN.',
         );
 
         try {
             $this->assertFalse($this->in->dataAvailable());
-        } catch (ConsoleException $e) {
+        } catch (ConsoleException) {
             $this->markTestSkipped(
                 'stream_select raised an exception. ' .
-                'This can happen when FD_SETSIZE is too small.'
+                'This can happen when FD_SETSIZE is too small.',
             );
         }
     }

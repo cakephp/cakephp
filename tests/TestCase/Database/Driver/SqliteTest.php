@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database\Driver;
 
+use Cake\Core\Configure;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\DriverFeatureEnum;
@@ -23,13 +24,14 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use PDO;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests Sqlite driver
  */
 class SqliteTest extends TestCase
 {
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         ConnectionManager::drop('test_shared_cache');
@@ -41,7 +43,7 @@ class SqliteTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlite')
+        $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'sqlite::memory:';
@@ -83,7 +85,7 @@ class SqliteTest extends TestCase
             'init' => ['Execute this', 'this too'],
             'mask' => 0666,
         ];
-        $driver = $this->getMockBuilder('Cake\Database\driver\Sqlite')
+        $driver = $this->getMockBuilder(Sqlite::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -97,15 +99,9 @@ class SqliteTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = $this->getMockBuilder('PDO')
-            ->disableOriginalConstructor()
-            ->onlyMethods(['exec'])
-            ->getMock();
-        $connection->expects($this->exactly(2))
-            ->method('exec')
-            ->with(
-                ...self::withConsecutive(['Execute this'], ['this too'])
-            );
+        $connection = Mockery::mock('PDO');
+        $connection->shouldReceive('exec')->with('Execute this')->once();
+        $connection->shouldReceive('exec')->with('this too')->once();
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
@@ -117,7 +113,7 @@ class SqliteTest extends TestCase
     /**
      * Tests creating multiple connections to same db.
      */
-    public function testConnectionSharedCached()
+    public function testConnectionSharedCached(): void
     {
         $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
         ConnectionManager::setConfig('test_shared_cache', [
@@ -167,10 +163,10 @@ class SqliteTest extends TestCase
     /**
      * Test the schemaValue method on Driver.
      *
-     * @dataProvider schemaValueProvider
      * @param mixed $input
      * @param mixed $expected
      */
+    #[DataProvider('schemaValueProvider')]
     public function testSchemaValue($input, $expected): void
     {
         $mock = Mockery::mock(PDO::class)
@@ -207,15 +203,42 @@ class SqliteTest extends TestCase
         foreach ($featureVersions as $feature => $version) {
             $this->assertSame(
                 version_compare($driver->version(), $version, '>='),
-                $driver->supports(DriverFeatureEnum::from($feature))
+                $driver->supports(DriverFeatureEnum::from($feature)),
             );
         }
 
         $this->assertTrue($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
         $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
         $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT));
 
+        $this->assertFalse($driver->supports(DriverFeatureEnum::INTERSECT_ALL));
         $this->assertFalse($driver->supports(DriverFeatureEnum::JSON));
+        $this->assertFalse($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));
+    }
+
+    /**
+     * Test of Inconsistency for JSON type field between mysql and sqlite
+     *
+     * @return void
+     */
+
+    public function testJSON(): void
+    {
+        Configure::write('ORM.mapJsonTypeForSqlite', true);
+        $connection = ConnectionManager::get('test');
+        $this->skipIf(!($connection->getDriver() instanceof Sqlite));
+        assert($connection instanceof Connection);
+
+        $connection->execute('CREATE TABLE json_test (id INTEGER PRIMARY KEY, data JSON_TEXT);');
+        $table = $this->getTableLocator()->get('json_test');
+
+        $data = ['foo' => 'bar', 'baz' => 1, 'qux' => ['a', 'b', 'c' => true]];
+        $entity = $table->newEntity(['data' => $data]);
+        $table->save($entity);
+        $result = $table->find()->first();
+        $this->assertEquals($data, $result->data);
+        Configure::write('ORM.mapJsonTypeForSqlite', false);
     }
 
     /**
@@ -319,6 +342,35 @@ class SqliteTest extends TestCase
 
         $result = $driver->quoteIdentifier('Model.näme Datum as y');
         $expected = '"Model"."näme Datum" AS "y"';
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Tests value quoting
+     */
+    public function testQuote(): void
+    {
+        $this->skipIf(!extension_loaded('pdo_sqlite'), 'Skipping as SQLite extension is missing');
+        $driver = new Sqlite();
+
+        $result = $driver->quote('name');
+        $expected = "'name'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote('Model.*');
+        $expected = "'Model.*'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O'hare");
+        $expected = "'O''hare'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O''hare");
+        $expected = "'O''''hare'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O\slash");
+        $expected = "'O\slash'";
         $this->assertEquals($expected, $result);
     }
 }

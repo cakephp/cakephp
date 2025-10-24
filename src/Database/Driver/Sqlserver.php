@@ -112,7 +112,7 @@ class Sqlserver extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->pdo)) {
+        if ($this->pdo !== null) {
             return;
         }
         $config = $this->_config;
@@ -120,7 +120,7 @@ class Sqlserver extends Driver
         if (isset($config['persistent']) && $config['persistent']) {
             throw new InvalidArgumentException(
                 'Config setting "persistent" cannot be set to true, '
-                . 'as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT'
+                . 'as the Sqlserver PDO driver does not support PDO::ATTR_PERSISTENT',
             );
         }
 
@@ -192,6 +192,11 @@ class Sqlserver extends Driver
      */
     public function prepare(Query|string $query): StatementInterface
     {
+        $options = [
+            PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
+            PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
+        ];
+
         $sql = $query;
         if ($query instanceof Query) {
             $sql = $query->sql();
@@ -200,27 +205,23 @@ class Sqlserver extends Driver
                     'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server. ' .
                     'This is probably due to a very large WHERE IN () clause which generates a parameter ' .
                     'for each value in the array. ' .
-                    'If using an Association, try changing the `strategy` from select to subquery.'
+                    'If using an Association, try changing the `strategy` from select to subquery.',
                 );
+            }
+
+            if ($query instanceof SelectQuery && !$query->isBufferedResultsEnabled()) {
+                $options = [];
             }
         }
 
         /** @var string $sql */
         $statement = $this->getPdo()->prepare(
             $sql,
-            [
-                PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
-                PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
-            ]
+            $options,
         );
 
-        $typeMap = null;
-        if ($query instanceof SelectQuery && $query->isResultsCastingEnabled()) {
-            $typeMap = $query->getSelectTypeMap();
-        }
-
         /** @var \Cake\Database\StatementInterface */
-        return new (static::STATEMENT_CLASS)($statement, $this, $typeMap);
+        return new (static::STATEMENT_CLASS)($statement, $this, $this->getResultSetDecorators($query));
     }
 
     /**
@@ -275,8 +276,10 @@ class Sqlserver extends Driver
             DriverFeatureEnum::SAVEPOINT,
             DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS,
             DriverFeatureEnum::WINDOW => true,
-
+            DriverFeatureEnum::INTERSECT => true,
+            DriverFeatureEnum::INTERSECT_ALL => false,
             DriverFeatureEnum::JSON => false,
+            DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => false,
         };
     }
 
@@ -376,11 +379,11 @@ class Sqlserver extends Driver
             ->from(['_cake_paging_' => $query]);
 
         if ($offset) {
-            $outer->where(["$field > " . $offset]);
+            $outer->where(["{$field} > " . $offset]);
         }
         if ($limit) {
             $value = (int)$offset + $limit;
-            $outer->where(["$field <= $value"]);
+            $outer->where(["{$field} <= {$value}"]);
         }
 
         // Decorate the original query as that is what the

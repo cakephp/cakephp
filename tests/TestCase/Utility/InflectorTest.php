@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Utility;
 
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Short description for class.
@@ -78,7 +79,7 @@ class InflectorTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         Inflector::reset();
@@ -86,9 +87,8 @@ class InflectorTest extends TestCase
 
     /**
      * testInflectingSingulars method
-     *
-     * @dataProvider singularizeProvider
      */
+    #[DataProvider('singularizeProvider')]
     public function testInflectingSingulars(string $singular, string $plural): void
     {
         $this->assertSame($singular, Inflector::singularize($plural));
@@ -211,19 +211,18 @@ class InflectorTest extends TestCase
         $this->assertSame('pregunta_frecuente', Inflector::singularize('preguntas_frecuentes'));
         $this->assertSame(
             'categoria_pregunta_frecuente',
-            Inflector::singularize('categorias_preguntas_frecuentes')
+            Inflector::singularize('categorias_preguntas_frecuentes'),
         );
         $this->assertSame(
             'faq_categoria_pregunta_frecuente',
-            Inflector::singularize('faq_categorias_preguntas_frecuentes')
+            Inflector::singularize('faq_categorias_preguntas_frecuentes'),
         );
     }
 
     /**
      * testInflectingPlurals method
-     *
-     * @dataProvider pluralizeProvider
      */
+    #[DataProvider('pluralizeProvider')]
     public function testInflectingPlurals(string $plural, string $singular): void
     {
         $this->assertSame($plural, Inflector::pluralize($singular));
@@ -328,11 +327,11 @@ class InflectorTest extends TestCase
         $this->assertSame('preguntas_frecuentes', Inflector::pluralize('pregunta_frecuente'));
         $this->assertSame(
             'categorias_preguntas_frecuentes',
-            Inflector::pluralize('categoria_pregunta_frecuente')
+            Inflector::pluralize('categoria_pregunta_frecuente'),
         );
         $this->assertSame(
             'faq_categorias_preguntas_frecuentes',
-            Inflector::pluralize('faq_categoria_pregunta_frecuente')
+            Inflector::pluralize('faq_categoria_pregunta_frecuente'),
         );
     }
 

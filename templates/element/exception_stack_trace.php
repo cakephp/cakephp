@@ -18,14 +18,14 @@
 use Cake\Error\Debugger;
 use function Cake\Core\h;
 
-foreach ($exceptions as $level => $exc):
+foreach ($exceptions as $exc):
     $stackTrace = Debugger::formatTrace($exc->getTrace(), [
         'format' => 'array',
         'args' => true,
     ]);
     foreach ($stackTrace as $i => $stack):
-        $excerpt = $params = [];
-
+        $excerpt = [];
+        $params = [];
         $line = null;
         if (isset($stack['file'], $stack['line']) && is_numeric($stack['line'])):
             $line = $stack['line'];

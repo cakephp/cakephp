@@ -36,7 +36,7 @@ interface EventInterface
      * Returns the subject of this event.
      *
      * @return object
-     * @psalm-return TSubject
+     * @phpstan-return TSubject
      */
     public function getSubject(): object;
 

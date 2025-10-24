@@ -29,7 +29,7 @@ use Stringable;
  *
  * Adds handy methods and locale-aware formatting helpers.
  *
- * @psalm-immutable
+ * @phpstan-immutable
  */
 class Date extends ChronosDate implements JsonSerializable, Stringable
 {
@@ -85,7 +85,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * The format to use when formatting a time using `Date::timeAgoInWords()`
      * and the difference is less than `Date::$wordEnd`
      *
-     * @var array<string>
+     * @var array<string, string>
      * @see \Cake\I18n\Date::timeAgoInWords()
      */
     public static array $wordAccuracy = [
@@ -238,7 +238,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      */
     public function i18nFormat(
         string|int|null $format = null,
-        ?string $locale = null
+        ?string $locale = null,
     ): string|int {
         if ($format === DateTime::UNIX_TIMESTAMP_FORMAT) {
             throw new InvalidArgumentException('UNIT_TIMESTAMP_FORMAT is not supported for Date.');
@@ -271,7 +271,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * ### Options:
      *
      * - `from` => another Date object representing the "now" date
-     * - `format` => a fall back format if the relative time is longer than the duration specified by end
+     * - `format` => a fallback format if the relative time is longer than the duration specified by end
      * - `accuracy` => Specifies how accurate the date should be described (array)
      *     - year =>   The format if years > 0   (default "day")
      *     - month =>  The format if months > 0  (default "day")

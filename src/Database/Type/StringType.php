@@ -52,7 +52,7 @@ class StringType extends BaseType implements OptionalConvertInterface
         throw new InvalidArgumentException(sprintf(
             'Cannot convert value `%s` of type `%s` to string',
             print_r($value, true),
-            get_debug_type($value)
+            get_debug_type($value),
         ));
     }
 

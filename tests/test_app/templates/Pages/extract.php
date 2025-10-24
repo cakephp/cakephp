@@ -26,9 +26,9 @@ __('Hot features!'
     . "\n - No Configuration:"
         . ' Set-up the database and let the magic begin'
     . "\n - Extremely Simple:"
-        . ' Just look at the name...It\'s Cake'
+        . " Just look at the name...It's Cake"
     . "\n - Active, Friendly Community:"
-        . ' Join us #cakephp on IRC. We\'d love to help you get started');
+        . " Join us #cakephp on IRC. We'd love to help you get started");
 
 // Context
 echo __x('mail', 'letter');

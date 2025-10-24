@@ -37,7 +37,7 @@ class FloatType extends BaseType implements BatchCastingInterface
 
     /**
      * Whether numbers should be parsed using a locale aware parser
-     * when marshalling string inputs.
+     * when marshaling string inputs.
      *
      * @var bool
      */
@@ -65,7 +65,6 @@ class FloatType extends BaseType implements BatchCastingInterface
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return float|null
-     * @throws \Cake\Core\Exception\CakeException
      */
     public function toPHP(mixed $value, Driver $driver): ?float
     {
@@ -147,7 +146,7 @@ class FloatType extends BaseType implements BatchCastingInterface
             return $this;
         }
         throw new DatabaseException(
-            sprintf('Cannot use locale parsing with the %s class', static::$numberClass)
+            sprintf('Cannot use locale parsing with the %s class', static::$numberClass),
         );
     }
 

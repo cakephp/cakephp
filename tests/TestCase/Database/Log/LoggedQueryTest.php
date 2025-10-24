@@ -34,7 +34,7 @@ class LoggedQueryTest extends TestCase
 
     protected $false = 'FALSE';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         $this->driver = ConnectionManager::get('test')->getDriver();
 
@@ -175,6 +175,24 @@ class LoggedQueryTest extends TestCase
             'query' => 'SELECT a FROM b where a = :p1',
             'numRows' => 10,
             'took' => 15.0,
+            'role' => '',
+        ];
+        $this->assertSame($expected, $query->getContext());
+    }
+
+    public function testSetContext(): void
+    {
+        $query = new LoggedQuery();
+        $query->setContext([
+            'query' => 'SELECT a FROM b where a = :p1',
+            'lol' => 'nope',
+            'connection' => $this->driver,
+        ]);
+
+        $expected = [
+            'query' => 'SELECT a FROM b where a = :p1',
+            'numRows' => 0,
+            'took' => 0.0,
             'role' => '',
         ];
         $this->assertSame($expected, $query->getContext());

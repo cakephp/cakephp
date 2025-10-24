@@ -66,7 +66,7 @@ class ClosureDecoratorMiddleware implements MiddlewareInterface
     {
         return ($this->callable)(
             $request,
-            $handler
+            $handler,
         );
     }
 

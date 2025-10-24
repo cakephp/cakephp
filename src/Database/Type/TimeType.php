@@ -26,7 +26,7 @@ use InvalidArgumentException;
 /**
  * Time type converter.
  *
- * Use to convert time instances to strings & back.
+ * Use to convert time instances to strings and back.
  */
 class TimeType extends BaseType implements BatchCastingInterface
 {
@@ -89,7 +89,6 @@ class TimeType extends BaseType implements BatchCastingInterface
             return $value;
         }
 
-        /** @phpstan-ignore-next-line */
         if ($value instanceof DateTimeInterface || $value instanceof ChronosTime) {
             return new $this->_className($value->format($this->_format));
         }
@@ -97,9 +96,9 @@ class TimeType extends BaseType implements BatchCastingInterface
         if (is_string($value)) {
             if ($this->_useLocaleMarshal) {
                 return $this->_parseLocalTimeValue($value);
-            } else {
-                return $this->_parseTimeValue($value);
             }
+
+            return $this->_parseTimeValue($value);
         }
 
         if (!is_array($value)) {
@@ -125,7 +124,7 @@ class TimeType extends BaseType implements BatchCastingInterface
             $value['hour'],
             $value['minute'],
             $value['second'],
-            $value['microsecond']
+            $value['microsecond'],
         );
 
         return new $this->_className($format);
@@ -233,10 +232,7 @@ class TimeType extends BaseType implements BatchCastingInterface
     {
         if (
             $enable &&
-            !(
-                $this->_className === Time::class ||
-                is_subclass_of($this->_className, Time::class)
-            )
+            ($this->_className !== Time::class && !is_subclass_of($this->_className, Time::class))
         ) {
             throw new CakeException('You must install the `cakephp/i18n` package to use locale aware parsing.');
         }

@@ -51,7 +51,6 @@ class QueryCacher
      *
      * @param \Closure|string $key The key or function to generate a key.
      * @param \Psr\SimpleCache\CacheInterface|string $config The cache config name or cache engine instance.
-     * @throws \RuntimeException
      */
     public function __construct(Closure|string $key, CacheInterface|string $config)
     {
@@ -70,7 +69,7 @@ class QueryCacher
         $key = $this->_resolveKey($query);
         $storage = $this->_resolveCacher();
         $result = $storage->get($key);
-        if (empty($result)) {
+        if (!$result) {
             return null;
         }
 

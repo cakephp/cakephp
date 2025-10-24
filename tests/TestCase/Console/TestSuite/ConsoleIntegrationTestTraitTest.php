@@ -20,6 +20,7 @@ use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Console\TestSuite\MissingConsoleInputException;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 
 class ConsoleIntegrationTestTraitTest extends TestCase
@@ -29,7 +30,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -77,6 +78,21 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->exec('format_specifier_command');
         $this->assertOutputContains('format specifier');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+    }
+
+    /**
+     * tests exec clears output
+     */
+    public function testExecClearsOutput(): void
+    {
+        $this->exec('sample');
+        $this->assertOutputContains('SampleCommand');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $this->exec('abort');
+        $this->assertOutputNotContains('SampleCommand');
+        $this->assertErrorContains('Command aborted');
+        $this->assertExitCode(127);
     }
 
     /**
@@ -194,7 +210,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->assertSame($expected, $result);
 
         $json = json_encode(['key' => '"val"', 'this' => true]);
-        $result = $this->commandStringToArgs("   --json='$json'");
+        $result = $this->commandStringToArgs("   --json='{$json}'");
         $expected = [
             '--json=' . $json,
         ];
@@ -208,12 +224,12 @@ class ConsoleIntegrationTestTraitTest extends TestCase
      * @param string $message Expected failure message
      * @param string $command Command to test
      * @param mixed ...$rest
-     * @dataProvider assertionFailureMessagesProvider
      */
+    #[DataProvider('assertionFailureMessagesProvider')]
     public function testAssertionFailureMessages($assertion, $message, $command, ...$rest): void
     {
         $this->expectException(AssertionFailedError::class);
-        $this->expectExceptionMessageMatches('#' . $message . '.?#');
+        $this->expectExceptionMessageMatches('#' . $message . '.?#sm');
 
         $this->exec($command);
 
@@ -229,13 +245,48 @@ class ConsoleIntegrationTestTraitTest extends TestCase
     {
         return [
             'assertExitCode' => ['assertExitCode', 'Failed asserting that `1` matches exit code `0`', 'routes', CommandInterface::CODE_ERROR],
+            'assertExitCodeOutput' => ['assertExitCode', 'STDOUT.*Route name.*STDERR', 'routes', CommandInterface::CODE_ERROR],
             'assertOutputEmpty' => ['assertOutputEmpty', 'Failed asserting that output is empty', 'routes'],
-            'assertOutputContains' => ['assertOutputContains', 'Failed asserting that \'missing\' is in output', 'routes', 'missing'],
-            'assertOutputNotContains' => ['assertOutputNotContains', 'Failed asserting that \'controller\' is not in output', 'routes', 'controller'],
+            'assertOutputContains' => ['assertOutputContains', "Failed asserting that 'missing' is in output", 'routes', 'missing'],
+            'assertOutputNotContains' => ['assertOutputNotContains', "Failed asserting that 'controller' is not in output", 'routes', 'controller'],
             'assertOutputRegExp' => ['assertOutputRegExp', 'Failed asserting that `/missing/` PCRE pattern found in output', 'routes', '/missing/'],
             'assertOutputContainsRow' => ['assertOutputContainsRow', 'Failed asserting that `.*` row was in output', 'routes', ['test', 'missing']],
-            'assertErrorContains' => ['assertErrorContains', 'Failed asserting that \'test\' is in error output', 'routes', 'test'],
+            'assertErrorContains' => ['assertErrorContains', "Failed asserting that 'test' is in error output", 'routes', 'test'],
             'assertErrorRegExp' => ['assertErrorRegExp', 'Failed asserting that `/test/` PCRE pattern found in error output', 'routes', '/test/'],
         ];
+    }
+
+    /**
+     * Test the debugOutput helper
+     *
+     * @return void
+     */
+    public function testDebugOutput(): void
+    {
+        $this->exec('sample');
+        $temp = tempnam(TMP, 'debug-output');
+        $f = fopen($temp, 'w');
+        $this->debugOutput($f);
+
+        $f = fopen($temp, 'r');
+        $result = fread($f, 1024);
+        $file = __FILE__;
+        $line = __LINE__ - 5;
+
+        $expected = <<<TEXT
+$file on $line
+########## debugOutput() ##########
+Exit Code
+0
+
+STDOUT
+This is the main method called from SampleCommand
+
+STDERR
+
+###################################
+
+TEXT;
+        $this->assertEquals($expected, str_replace("\r\n", "\n", $result));
     }
 }

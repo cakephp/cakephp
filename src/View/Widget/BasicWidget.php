@@ -105,7 +105,7 @@ class BasicWidget implements WidgetInterface
             'templateVars' => $data['templateVars'],
             'attrs' => $this->_templates->formatAttributes(
                 $data,
-                ['name', 'type']
+                ['name', 'type'],
             ),
         ]);
     }
@@ -122,7 +122,7 @@ class BasicWidget implements WidgetInterface
         $data += $this->defaults;
 
         if (isset($data['fieldName']) && !array_key_exists('required', $data)) {
-            $data = $this->setRequired($data, $context, $data['fieldName']);
+            return $this->setRequired($data, $context, $data['fieldName']);
         }
 
         return $data;

@@ -18,7 +18,6 @@ namespace Cake\Collection;
 
 use ArrayAccess;
 use Closure;
-use Traversable;
 
 /**
  * Provides utility protected methods for extracting a property or column
@@ -44,7 +43,7 @@ trait ExtractTrait
         $parts = explode('.', $path);
 
         if (str_contains($path, '{*}')) {
-            return fn ($element) => $this->_extract($element, $parts);
+            return fn($element) => $this->_extract($element, $parts);
         }
 
         return function ($element) use ($parts) {
@@ -78,10 +77,7 @@ trait ExtractTrait
 
             if (
                 $collectionTransform &&
-                !(
-                    $data instanceof Traversable ||
-                    is_array($data)
-                )
+                !is_iterable($data)
             ) {
                 return null;
             }
@@ -139,7 +135,7 @@ trait ExtractTrait
         $matchers = [];
         foreach ($conditions as $property => $value) {
             $extractor = $this->_propertyExtractor($property);
-            $matchers[] = function ($v) use ($extractor, $value) {
+            $matchers[] = function ($v) use ($extractor, $value): bool {
                 return $extractor($v) == $value;
             };
         }

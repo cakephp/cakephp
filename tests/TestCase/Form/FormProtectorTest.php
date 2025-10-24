@@ -36,7 +36,7 @@ class FormProtectorTest extends TestCase
      */
     protected $sessionId = 'cli';
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -51,7 +51,7 @@ class FormProtectorTest extends TestCase
      * @param array $data
      * @param string|null $errorMessage
      */
-    public function validate($data, $errorMessage = null): void
+    protected function validate(array $data, ?string $errorMessage = null): void
     {
         $protector = new FormProtector();
         $result = $protector->validate($data, $this->url, $this->sessionId);
@@ -386,7 +386,7 @@ class FormProtectorTest extends TestCase
         $unlocked = 'Model.username';
         $fields = ['Model.hidden', 'Model.password'];
         $fields = urlencode(
-            hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::getSalt())
+            hash_hmac('sha1', '/articles/index' . serialize($fields) . $unlocked . 'cli', Security::getSalt()),
         );
         $debug = 'not used';
 
@@ -718,13 +718,13 @@ class FormProtectorTest extends TestCase
         $this->url = '/posts/index?page=1';
         $this->validate(
             $data,
-            'URL mismatch in POST data (expected `another-url` but found `/posts/index?page=1`)'
+            'URL mismatch in POST data (expected `another-url` but found `/posts/index?page=1`)',
         );
 
         $this->url = '/posts/edit/1';
         $this->validate(
             $data,
-            'URL mismatch in POST data (expected `another-url` but found `/posts/edit/1`)'
+            'URL mismatch in POST data (expected `another-url` but found `/posts/edit/1`)',
         );
     }
 
@@ -810,7 +810,7 @@ class FormProtectorTest extends TestCase
 
         $this->validate(
             $data,
-            'Unexpected field `Model.hidden.some-key` in POST data, Missing field `Model.hidden` in POST data'
+            'Unexpected field `Model.hidden.some-key` in POST data, Missing field `Model.hidden` in POST data',
         );
     }
 

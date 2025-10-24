@@ -87,7 +87,7 @@ class MissingTemplateException extends CakeException
      * Get the passed in attributes
      *
      * @return array<string, mixed>
-     * @psalm-return array{file: string, paths: array<string>}
+     * @phpstan-return array{file: string, paths: array<string>}
      */
     public function getAttributes(): array
     {

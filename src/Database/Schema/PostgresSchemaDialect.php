@@ -26,6 +26,11 @@ use Cake\Database\Exception\DatabaseException;
 class PostgresSchemaDialect extends SchemaDialect
 {
     /**
+     * @const int
+     */
+    public const DEFAULT_SRID = 4326;
+
+    /**
      * Generate the SQL to list the tables and views.
      *
      * @param array<string, mixed> $config The connection configuration to use for
@@ -36,7 +41,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables
                 WHERE table_schema = ? ORDER BY name';
-        $schema = empty($config['schema']) ? 'public' : $config['schema'];
+        $schema = $config['schema'] ?? 'public';
 
         return [$sql, [$schema]];
     }
@@ -52,7 +57,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables
                 WHERE table_schema = ? AND table_type = \'BASE TABLE\' ORDER BY name';
-        $schema = empty($config['schema']) ? 'public' : $config['schema'];
+        $schema = $config['schema'] ?? 'public';
 
         return [$sql, [$schema]];
     }
@@ -62,10 +67,26 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function describeColumnSql(string $tableName, array $config): array
     {
-        $sql = 'SELECT DISTINCT table_schema AS schema,
+        $sql = $this->describeColumnQuery();
+        $schema = $config['schema'] ?? 'public';
+
+        return [$sql, [$tableName, $schema, $config['database']]];
+    }
+
+    /**
+     * Helper method for creating SQL to describe columns in a table.
+     *
+     * @return string SQL to reflect columns
+     */
+    private function describeColumnQuery(): string
+    {
+        return 'SELECT DISTINCT table_schema AS schema,
             column_name AS name,
             data_type AS type,
-            is_nullable AS null, column_default AS default,
+            udt_name,
+            is_identity,
+            is_nullable AS null,
+            column_default AS default,
             character_maximum_length AS char_length,
             c.collation_name,
             d.description as comment,
@@ -73,6 +94,7 @@ class PostgresSchemaDialect extends SchemaDialect
             c.datetime_precision,
             c.numeric_precision as column_precision,
             c.numeric_scale as column_scale,
+            c.identity_generation,
             pg_get_serial_sequence(attr.attrelid::regclass::text, attr.attname) IS NOT NULL AS has_serial
         FROM information_schema.columns c
         INNER JOIN pg_catalog.pg_namespace ns ON (ns.nspname = table_schema)
@@ -82,10 +104,6 @@ class PostgresSchemaDialect extends SchemaDialect
         LEFT JOIN pg_catalog.pg_attribute attr ON (cl.oid = attr.attrelid AND column_name = attr.attname)
         WHERE table_name = ? AND table_schema = ? AND table_catalog = ?
         ORDER BY ordinal_position';
-
-        $schema = empty($config['schema']) ? 'public' : $config['schema'];
-
-        return [$sql, [$tableName, $schema, $config['database']]];
     }
 
     /**
@@ -100,20 +118,22 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     protected function _convertColumn(string $column): array
     {
-        preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
-        if (empty($matches)) {
+        preg_match('/([a-z\s]+)(?:\(([a-z0-9,]+)(?:,\s*([0-9]+))?\))?/i', $column, $matches);
+        if (!$matches) {
             throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
         }
 
         $col = strtolower($matches[1]);
-        $length = $precision = $scale = null;
+        $length = null;
+        $precision = null;
+        $scale = null;
         if (isset($matches[2])) {
             $length = (int)$matches[2];
         }
 
         $type = $this->_applyTypeSpecificColumnConversion(
             $col,
-            compact('length', 'precision', 'scale')
+            compact('length', 'precision', 'scale'),
         );
         if ($type !== null) {
             return $type;
@@ -169,9 +189,14 @@ class PostgresSchemaDialect extends SchemaDialect
         if (str_contains($col, 'numeric') || str_contains($col, 'decimal')) {
             return ['type' => TableSchemaInterface::TYPE_DECIMAL, 'length' => null];
         }
-
         if (str_contains($col, 'json')) {
             return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
+        }
+        if ($col === 'geography') {
+            $srid = (int)($matches[3] ?? self::DEFAULT_SRID);
+            $type = strtolower($matches[2] ?? 'point');
+
+            return ['type' => $type, 'length' => null, 'srid' => $srid];
         }
 
         $length = is_numeric($length) ? $length : null;
@@ -226,6 +251,84 @@ class PostgresSchemaDialect extends SchemaDialect
     }
 
     /**
+     * Split a tablename into a tuple of schema, table
+     * If the table does not have a schema name included, the connection
+     * schema will be used.
+     *
+     * @param string $tableName The table name to split
+     * @param array $config Additional configuration data
+     * @return array A tuple of [schema, tablename]
+     */
+    private function splitTablename(string $tableName, array $config = []): array
+    {
+        if (str_contains($tableName, '.')) {
+            return explode('.', $tableName);
+        }
+        $driverConfig = $this->_driver->config();
+        $schema = $config['schema'] ?? $driverConfig['schema'] ?? 'public';
+
+        return [$schema, $tableName];
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeColumns(string $tableName): array
+    {
+        $config = $this->_driver->config();
+        [$schema, $name] = $this->splitTablename($tableName);
+
+        $sql = $this->describeColumnQuery();
+        $statement = $this->_driver->execute($sql, [$name, $schema, $config['database']]);
+        $columns = [];
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $field = $this->_convertColumn($row['type']);
+            if ($field['type'] === TableSchemaInterface::TYPE_BOOLEAN) {
+                if ($row['default'] === 'true') {
+                    $row['default'] = 1;
+                } elseif ($row['default'] === 'false') {
+                    $row['default'] = 0;
+                }
+            }
+            if (!empty($row['has_serial'])) {
+                $field['autoIncrement'] = true;
+            }
+
+            $field += [
+                'name' => $row['name'],
+                'default' => $this->_defaultValue($row['default']),
+                'null' => $row['null'] === 'YES',
+                'collate' => $row['collation_name'],
+                'comment' => $row['comment'],
+            ];
+            $field['length'] = $row['char_length'] ?: $field['length'];
+
+            if ($field['type'] === 'numeric' || $field['type'] === 'decimal') {
+                $field['length'] = $row['column_precision'];
+                $field['precision'] = $row['column_scale'] ?: null;
+            }
+
+            if ($field['type'] === TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL) {
+                $field['precision'] = $row['datetime_precision'];
+                if ($field['precision'] === 0) {
+                    $field['type'] = TableSchemaInterface::TYPE_TIMESTAMP;
+                }
+            }
+
+            if ($field['type'] === TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE) {
+                $field['precision'] = $row['datetime_precision'];
+            }
+            if (isset($row['identity_generation']) && $row['identity_generation']) {
+                $field['generated'] = $row['identity_generation'];
+            }
+
+            $columns[] = $field;
+        }
+
+        return $columns;
+    }
+
+    /**
      * Manipulate the default value.
      *
      * Postgres includes sequence data and casting information in default values.
@@ -252,16 +355,18 @@ class PostgresSchemaDialect extends SchemaDialect
         return preg_replace(
             "/^'(.*)'(?:::.*)$/",
             '$1',
-            $default
+            $default,
         );
     }
 
     /**
-     * @inheritDoc
+     * Get the query to describe indexes
+     *
+     * @return string
      */
-    public function describeIndexSql(string $tableName, array $config): array
+    private function describeIndexQuery(): string
     {
-        $sql = 'SELECT
+        return 'SELECT
         c2.relname,
         a.attname,
         i.indisprimary,
@@ -275,13 +380,17 @@ class PostgresSchemaDialect extends SchemaDialect
         AND a.attnum = ANY(i.indkey)
         AND c.relname = ?
         ORDER BY i.indisprimary DESC, i.indisunique DESC, c.relname, a.attnum';
+    }
 
-        $schema = 'public';
-        if (!empty($config['schema'])) {
-            $schema = $config['schema'];
-        }
+    /**
+     * @inheritDoc
+     */
+    public function describeIndexSql(string $tableName, array $config): array
+    {
+        $sql = $this->describeIndexQuery();
+        [$schema, $name] = $this->splitTablename($tableName, $config);
 
-        return [$sql, [$schema, $tableName]];
+        return [$sql, [$schema, $name]];
     }
 
     /**
@@ -292,7 +401,8 @@ class PostgresSchemaDialect extends SchemaDialect
         $type = TableSchema::INDEX_INDEX;
         $name = $row['relname'];
         if ($row['indisprimary']) {
-            $name = $type = TableSchema::CONSTRAINT_PRIMARY;
+            $name = TableSchema::CONSTRAINT_PRIMARY;
+            $type = TableSchema::CONSTRAINT_PRIMARY;
         }
         if ($row['indisunique'] && $type === TableSchema::INDEX_INDEX) {
             $type = TableSchema::CONSTRAINT_UNIQUE;
@@ -311,6 +421,45 @@ class PostgresSchemaDialect extends SchemaDialect
         }
         $index['columns'][] = $row['attname'];
         $schema->addIndex($name, $index);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeIndexes(string $tableName): array
+    {
+        [$schema, $name] = $this->splitTablename($tableName);
+        $sql = $this->describeIndexQuery();
+
+        $indexes = [];
+        $statement = $this->_driver->execute($sql, [$schema, $name]);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $type = TableSchema::INDEX_INDEX;
+            $name = $row['relname'];
+            $constraint = null;
+            if ($row['indisprimary']) {
+                $constraint = $name;
+                $name = TableSchema::CONSTRAINT_PRIMARY;
+                $type = TableSchema::CONSTRAINT_PRIMARY;
+            }
+            if ($row['indisunique'] && $type === TableSchema::INDEX_INDEX) {
+                $type = TableSchema::CONSTRAINT_UNIQUE;
+            }
+            if (!isset($indexes[$name])) {
+                $indexes[$name] = [
+                    'name' => $name,
+                    'type' => $type,
+                    'columns' => [],
+                    'length' => [],
+                ];
+            }
+            if ($constraint) {
+                $indexes[$name]['constraint'] = $constraint;
+            }
+            $indexes[$name]['columns'][] = $row['attname'];
+        }
+
+        return array_values($indexes);
     }
 
     /**
@@ -340,29 +489,10 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function describeForeignKeySql(string $tableName, array $config): array
     {
-        // phpcs:disable Generic.Files.LineLength
-        $sql = 'SELECT
-        c.conname AS name,
-        c.contype AS type,
-        a.attname AS column_name,
-        c.confmatchtype AS match_type,
-        c.confupdtype AS on_update,
-        c.confdeltype AS on_delete,
-        c.confrelid::regclass AS references_table,
-        ab.attname AS references_field
-        FROM pg_catalog.pg_namespace n
-        INNER JOIN pg_catalog.pg_class cl ON (n.oid = cl.relnamespace)
-        INNER JOIN pg_catalog.pg_constraint c ON (n.oid = c.connamespace)
-        INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = cl.oid AND c.conrelid = a.attrelid AND a.attnum = ANY(c.conkey))
-        INNER JOIN pg_catalog.pg_attribute ab ON (a.attrelid = cl.oid AND c.confrelid = ab.attrelid AND ab.attnum = ANY(c.confkey))
-        WHERE n.nspname = ?
-        AND cl.relname = ?
-        ORDER BY name, a.attnum, ab.attnum DESC';
-        // phpcs:enable Generic.Files.LineLength
+        $sql = $this->describeForeignKeyQuery();
+        [$schema, $name] = $this->splitTablename($tableName, $config);
 
-        $schema = empty($config['schema']) ? 'public' : $config['schema'];
-
-        return [$sql, [$schema, $tableName]];
+        return [$sql, [$schema, $name]];
     }
 
     /**
@@ -378,6 +508,85 @@ class PostgresSchemaDialect extends SchemaDialect
             'delete' => $this->_convertOnClause($row['on_delete']),
         ];
         $schema->addConstraint($row['name'], $data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeForeignKeys(string $tableName): array
+    {
+        [$schema, $name] = $this->splitTablename($tableName);
+        $sql = $this->describeForeignKeyQuery();
+        $keys = [];
+        $statement = $this->_driver->execute($sql, [$schema, $name]);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $name = $row['name'];
+            if (!isset($keys[$name])) {
+                $keys[$name] = [
+                    'name' => $name,
+                    'type' => TableSchema::CONSTRAINT_FOREIGN,
+                    'columns' => [],
+                    'references' => [$row['references_table'], []],
+                    'update' => $this->_convertOnClause($row['on_update']),
+                    'delete' => $this->_convertOnClause($row['on_delete']),
+                ];
+            }
+            // column indexes start at 1
+            $columnOrder = $row['column_order'] - 1;
+            $referencedColumnOrder = $row['references_field_order'] - 1;
+
+            $keys[$name]['columns'][$columnOrder] = $row['column_name'];
+            $keys[$name]['references'][1][$referencedColumnOrder] = $row['references_field'];
+        }
+        foreach ($keys as $id => $key) {
+            // references.1 is the referenced columns. Backwards compat
+            // requires a single column to be a string, but multiple to be an array.
+            if (count($key['references'][1]) === 1) {
+                $keys[$id]['references'][1] = $key['references'][1][0];
+            }
+        }
+
+        return array_values($keys);
+    }
+
+    /**
+     * Get the query to describe foreign keys
+     *
+     * @return string
+     */
+    private function describeForeignKeyQuery(): string
+    {
+        // phpcs:disable Generic.Files.LineLength
+        $sql = 'SELECT
+        c.conname AS name,
+        c.contype AS type,
+        a.attname AS column_name,
+        array_position(c.conkey, a.attnum) AS column_order,
+        c.confmatchtype AS match_type,
+        c.confupdtype AS on_update,
+        c.confdeltype AS on_delete,
+        c.confrelid::regclass AS references_table,
+        ab.attname AS references_field,
+        array_position(c.confkey, ab.attnum) AS references_field_order
+        FROM pg_catalog.pg_namespace n
+        INNER JOIN pg_catalog.pg_class cl ON (n.oid = cl.relnamespace)
+        INNER JOIN pg_catalog.pg_constraint c ON (n.oid = c.connamespace)
+        INNER JOIN pg_catalog.pg_attribute a ON (a.attrelid = cl.oid AND c.conrelid = a.attrelid AND a.attnum = ANY(c.conkey))
+        INNER JOIN pg_catalog.pg_attribute ab ON (a.attrelid = cl.oid AND c.confrelid = ab.attrelid AND ab.attnum = ANY(c.confkey))
+        WHERE n.nspname = ?
+        AND cl.relname = ?
+        ORDER BY name, column_order ASC, references_field_order ASC';
+        // phpcs:enable Generic.Files.LineLength
+
+        return $sql;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeOptions(string $tableName): array
+    {
+        return [];
     }
 
     /**
@@ -405,12 +614,39 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $data = $schema->getColumn($name);
         assert($data !== null);
+        $data['name'] = $name;
 
         $sql = $this->_getTypeSpecificColumnSql($data['type'], $schema, $name);
         if ($sql !== null) {
             return $sql;
         }
+        $autoIncrementTypes = [
+            TableSchemaInterface::TYPE_TINYINTEGER,
+            TableSchemaInterface::TYPE_SMALLINTEGER,
+            TableSchemaInterface::TYPE_INTEGER,
+            TableSchemaInterface::TYPE_BIGINTEGER,
+        ];
+        $primaryKey = $schema->getPrimaryKey();
+        if (
+            in_array($data['type'], $autoIncrementTypes, true) &&
+            $primaryKey === [$name] && $name === 'id'
+        ) {
+            $data['autoIncrement'] = true;
+        }
 
+        return $this->columnDefinitionSql($data);
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function columnDefinitionSql(array $column): string
+    {
+        $name = $column['name'];
+        $column += [
+            'length' => null,
+            'precision' => null,
+        ];
         $out = $this->_driver->quoteIdentifier($name);
         $typeMap = [
             TableSchemaInterface::TYPE_TINYINTEGER => ' SMALLINT',
@@ -429,8 +665,13 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL => ' TIMESTAMP',
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE => ' TIMESTAMPTZ',
             TableSchemaInterface::TYPE_UUID => ' UUID',
+            TableSchemaInterface::TYPE_NATIVE_UUID => ' UUID',
             TableSchemaInterface::TYPE_CHAR => ' CHAR',
             TableSchemaInterface::TYPE_JSON => ' JSONB',
+            TableSchemaInterface::TYPE_GEOMETRY => ' GEOGRAPHY(GEOMETRY, %s)',
+            TableSchemaInterface::TYPE_POINT => ' GEOGRAPHY(POINT, %s)',
+            TableSchemaInterface::TYPE_LINESTRING => ' GEOGRAPHY(LINESTRING, %s)',
+            TableSchemaInterface::TYPE_POLYGON => ' GEOGRAPHY(POLYGON, %s)',
         ];
 
         $autoIncrementTypes = [
@@ -439,41 +680,40 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_INTEGER,
             TableSchemaInterface::TYPE_BIGINTEGER,
         ];
+        $autoIncrement = (bool)($column['autoIncrement'] ?? false);
         if (
-            in_array($data['type'], $autoIncrementTypes, true) &&
-            (
-                ($schema->getPrimaryKey() === [$name] && $name === 'id') || $data['autoIncrement']
-            )
+            in_array($column['type'], $autoIncrementTypes, true) &&
+            $autoIncrement
         ) {
-            $typeMap[$data['type']] = str_replace('INT', 'SERIAL', $typeMap[$data['type']]);
-            unset($data['default']);
+            $typeMap[$column['type']] = str_replace('INT', 'SERIAL', $typeMap[$column['type']]);
+            unset($column['default']);
         }
 
-        if (isset($typeMap[$data['type']])) {
-            $out .= $typeMap[$data['type']];
+        if (isset($typeMap[$column['type']])) {
+            $out .= $typeMap[$column['type']];
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_TEXT && $data['length'] !== TableSchema::LENGTH_TINY) {
+        if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
         }
-        if ($data['type'] === TableSchemaInterface::TYPE_BINARY) {
+        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
             $out .= ' BYTEA';
         }
 
-        if ($data['type'] === TableSchemaInterface::TYPE_CHAR) {
-            $out .= '(' . $data['length'] . ')';
+        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
+            $out .= '(' . $column['length'] . ')';
         }
 
         if (
-            $data['type'] === TableSchemaInterface::TYPE_STRING ||
+            $column['type'] === TableSchemaInterface::TYPE_STRING ||
             (
-                $data['type'] === TableSchemaInterface::TYPE_TEXT &&
-                $data['length'] === TableSchema::LENGTH_TINY
+                $column['type'] === TableSchemaInterface::TYPE_TEXT &&
+                $column['length'] === TableSchema::LENGTH_TINY
             )
         ) {
             $out .= ' VARCHAR';
-            if (isset($data['length']) && $data['length'] !== '') {
-                $out .= '(' . $data['length'] . ')';
+            if (isset($column['length']) && $column['length'] !== '') {
+                $out .= '(' . $column['length'] . ')';
             }
         }
 
@@ -482,8 +722,8 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_STRING,
             TableSchemaInterface::TYPE_CHAR,
         ];
-        if (in_array($data['type'], $hasCollate, true) && isset($data['collate']) && $data['collate'] !== '') {
-            $out .= ' COLLATE "' . $data['collate'] . '"';
+        if (in_array($column['type'], $hasCollate, true) && isset($column['collate']) && $column['collate'] !== '') {
+            $out .= ' COLLATE "' . $column['collate'] . '"';
         }
 
         $hasPrecision = [
@@ -494,21 +734,24 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL,
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
-        if (in_array($data['type'], $hasPrecision) && isset($data['precision'])) {
-            $out .= '(' . $data['precision'] . ')';
+        if (in_array($column['type'], $hasPrecision) && isset($column['precision'])) {
+            $out .= '(' . $column['precision'] . ')';
         }
 
         if (
-            $data['type'] === TableSchemaInterface::TYPE_DECIMAL &&
+            $column['type'] === TableSchemaInterface::TYPE_DECIMAL &&
             (
-                isset($data['length']) ||
-                isset($data['precision'])
+                isset($column['length']) ||
+                isset($column['precision'])
             )
         ) {
-            $out .= '(' . $data['length'] . ',' . (int)$data['precision'] . ')';
+            $out .= '(' . $column['length'] . ',' . (int)$column['precision'] . ')';
+        }
+        if (in_array($column['type'], TableSchemaInterface::GEOSPATIAL_TYPES)) {
+            $out = sprintf($out, $column['srid'] ?? self::DEFAULT_SRID);
         }
 
-        if (isset($data['null']) && $data['null'] === false) {
+        if (isset($column['null']) && $column['null'] === false) {
             $out .= ' NOT NULL';
         }
 
@@ -520,18 +763,19 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE,
         ];
         if (
-            isset($data['default']) &&
-            in_array($data['type'], $datetimeTypes) &&
-            strtolower($data['default']) === 'current_timestamp'
+            isset($column['default']) &&
+            in_array($column['type'], $datetimeTypes) &&
+            is_string($column['default']) &&
+            strtolower($column['default']) === 'current_timestamp'
         ) {
             $out .= ' DEFAULT CURRENT_TIMESTAMP';
-        } elseif (isset($data['default'])) {
-            $defaultValue = $data['default'];
-            if ($data['type'] === 'boolean') {
+        } elseif (isset($column['default'])) {
+            $defaultValue = $column['default'];
+            if ($column['type'] === 'boolean') {
                 $defaultValue = (bool)$defaultValue;
             }
             $out .= ' DEFAULT ' . $this->_driver->schemaValue($defaultValue);
-        } elseif (isset($data['null']) && $data['null'] !== false) {
+        } elseif (isset($column['null']) && $column['null'] !== false) {
             $out .= ' DEFAULT NULL';
         }
 
@@ -587,15 +831,15 @@ class PostgresSchemaDialect extends SchemaDialect
         $data = $schema->getIndex($name);
         assert($data !== null);
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
-            $data['columns']
+            $this->_driver->quoteIdentifier(...),
+            $data['columns'],
         );
 
         return sprintf(
             'CREATE INDEX %s ON %s (%s)',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
-            implode(', ', $columns)
+            implode(', ', $columns),
         );
     }
 
@@ -627,8 +871,8 @@ class PostgresSchemaDialect extends SchemaDialect
     protected function _keySql(string $prefix, array $data): string
     {
         $columns = array_map(
-            [$this->_driver, 'quoteIdentifier'],
-            $data['columns']
+            $this->_driver->quoteIdentifier(...),
+            $data['columns'],
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
@@ -637,7 +881,7 @@ class PostgresSchemaDialect extends SchemaDialect
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
-                $this->_foreignOnClause($data['delete'])
+                $this->_foreignOnClause($data['delete']),
             );
         }
 
@@ -653,7 +897,7 @@ class PostgresSchemaDialect extends SchemaDialect
         $content = implode(",\n", array_filter($content));
         $tableName = $this->_driver->quoteIdentifier($schema->name());
         $dbSchema = $this->_driver->schema();
-        if ($dbSchema != 'public') {
+        if ($dbSchema !== 'public') {
             $tableName = $this->_driver->quoteIdentifier($dbSchema) . '.' . $tableName;
         }
         $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';
@@ -669,7 +913,7 @@ class PostgresSchemaDialect extends SchemaDialect
                     'COMMENT ON COLUMN %s.%s IS %s',
                     $tableName,
                     $this->_driver->quoteIdentifier($column),
-                    $this->_driver->schemaValue($columnData['comment'])
+                    $this->_driver->schemaValue($columnData['comment']),
                 );
             }
         }
@@ -699,7 +943,7 @@ class PostgresSchemaDialect extends SchemaDialect
     {
         $sql = sprintf(
             'DROP TABLE %s CASCADE',
-            $this->_driver->quoteIdentifier($schema->name())
+            $this->_driver->quoteIdentifier($schema->name()),
         );
 
         return [$sql];

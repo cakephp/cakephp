@@ -23,6 +23,7 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Exception;
 use TestApp\Model\Table\PublishedPostsTable;
 
 /**
@@ -76,7 +77,7 @@ class CounterCacheBehaviorTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
@@ -113,7 +114,7 @@ class CounterCacheBehaviorTest extends TestCase
     /**
      * teardown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -127,7 +128,7 @@ class CounterCacheBehaviorTest extends TestCase
     {
         $this->skipIf(
             $this->connection->getDriver() instanceof Sqlserver,
-            'This test fails sporadically in SQLServer'
+            'This test fails sporadically in SQLServer',
         );
 
         $this->post->belongsTo('Users');
@@ -325,6 +326,28 @@ class CounterCacheBehaviorTest extends TestCase
             'Users' => [
                 'posts_published' => [
                     'finder' => 'published',
+                ],
+            ],
+        ]);
+
+        $before = $this->_getUser();
+        $entity = $this->_getEntity()->set('published', true);
+        $this->post->save($entity);
+        $after = $this->_getUser();
+
+        $this->assertSame(1, $before->get('posts_published'));
+        $this->assertSame(2, $after->get('posts_published'));
+    }
+
+    public function testCustomFindWithoutSubquery(): void
+    {
+        $this->post->belongsTo('Users');
+
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'posts_published' => [
+                    'finder' => 'published',
+                    'useSubQuery' => false,
                 ],
             ],
         ]);
@@ -596,6 +619,40 @@ class CounterCacheBehaviorTest extends TestCase
         $this->assertSame(10, $user->get('post_count'));
         $this->assertSame(2, $user->get('comment_count'));
         $this->assertSame(1, $user->get('posts_published'));
+    }
+
+    public function testUpdateCounterCache(): void
+    {
+        $this->post->belongsTo('Users');
+        $this->post->addBehavior('CounterCache', [
+            'Users' => [
+                'post_count',
+                'dummy' => function () {
+                    throw new Exception('Closures are never called by "updateCounterCache()"');
+                },
+            ],
+        ]);
+
+        $this->user->updateAll(['post_count' => 0], []);
+
+        $user = $this->_getUser(1);
+        $this->assertSame(0, $user->get('post_count'));
+
+        $this->post->updateCounterCache('Users');
+
+        $user = $this->_getUser(1);
+        $this->assertSame(2, $user->get('post_count'));
+        $user = $this->_getUser(2);
+        $this->assertSame(1, $user->get('post_count'));
+
+        $this->user->updateAll(['post_count' => 0], []);
+
+        $this->post->updateCounterCache(limit: 1, page: 2);
+
+        $user = $this->_getUser(1);
+        $this->assertSame(0, $user->get('post_count'));
+        $user = $this->_getUser(2);
+        $this->assertSame(1, $user->get('post_count'));
     }
 
     /**

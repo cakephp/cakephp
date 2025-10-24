@@ -22,7 +22,6 @@ use Cake\Collection\CollectionInterface;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
-use Cake\ORM\Entity;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
@@ -82,7 +81,7 @@ class EavStrategy implements TranslateStrategyInterface
         $this->table = $table;
         $this->translationTable = $this->getTableLocator()->get(
             $this->_config['translationTable'],
-            ['allowFallbackClass' => true]
+            ['allowFallbackClass' => true],
         );
 
         $this->setupAssociations();
@@ -131,20 +130,27 @@ class EavStrategy implements TranslateStrategyInterface
                 $conditions[$name . '.content !='] = '';
             }
 
+            if ($this->table->associations()->has($name)) {
+                $this->table->associations()->remove($name);
+            }
+
             $this->table->hasOne($name, [
                 'targetTable' => $fieldTable,
                 'foreignKey' => 'foreign_key',
-                'joinType' => $filter ? SelectQuery::JOIN_TYPE_INNER : SelectQuery ::JOIN_TYPE_LEFT,
+                'joinType' => $filter ? SelectQuery::JOIN_TYPE_INNER : SelectQuery::JOIN_TYPE_LEFT,
                 'conditions' => $conditions,
                 'propertyName' => $field . '_translation',
             ]);
         }
 
-        $conditions = ["$targetAlias.model" => $model];
+        $conditions = ["{$targetAlias}.model" => $model];
         if (!$this->_config['allowEmptyTranslations']) {
-            $conditions["$targetAlias.content !="] = '';
+            $conditions["{$targetAlias}.content !="] = '';
         }
 
+        if ($this->table->associations()->has($targetAlias)) {
+            $this->table->associations()->remove($targetAlias);
+        }
         $this->table->hasMany($targetAlias, [
             'className' => $table,
             'foreignKey' => 'foreign_key',
@@ -205,21 +211,21 @@ class EavStrategy implements TranslateStrategyInterface
                 $field,
                 $locale,
                 $query,
-                $select
+                $select,
             );
 
             if ($changeFilter) {
                 $filter = $options['filterByCurrentLocale']
                     ? SelectQuery::JOIN_TYPE_INNER
-                    : SelectQuery ::JOIN_TYPE_LEFT;
+                    : SelectQuery::JOIN_TYPE_LEFT;
                 $contain[$name]['joinType'] = $filter;
             }
         }
 
         $query->contain($contain);
         $query->formatResults(
-            fn (CollectionInterface $results) => $this->rowMapper($results, $locale),
-            $query::PREPEND
+            fn(CollectionInterface $results) => $this->rowMapper($results, $locale),
+            $query::PREPEND,
         );
     }
 
@@ -234,7 +240,7 @@ class EavStrategy implements TranslateStrategyInterface
      */
     public function beforeSave(EventInterface $event, EntityInterface $entity, ArrayObject $options): void
     {
-        $locale = $entity->get('_locale') ?: $this->getLocale();
+        $locale = $entity->has('_locale') ? $entity->get('_locale') : $this->getLocale();
         $newOptions = [$this->translationTable->getAlias() => ['validate' => false]];
         $options['associated'] = $newOptions + $options['associated'];
 
@@ -246,7 +252,7 @@ class EavStrategy implements TranslateStrategyInterface
         }
 
         $this->bundleTranslatedFields($entity);
-        $bundled = $entity->get('_i18n') ?: [];
+        $bundled = $entity->has('_i18n') ? $entity->get('_i18n') : [];
         $noBundled = count($bundled) === 0;
 
         // No additional translation records need to be saved,
@@ -257,17 +263,18 @@ class EavStrategy implements TranslateStrategyInterface
 
         $values = $entity->extract($this->_config['fields'], true);
         $fields = array_keys($values);
-        $noFields = empty($fields);
+        $noFields = $fields === [];
 
         // If there are no fields and no bundled translations, or both fields
         // in the default locale and bundled translations we can
-        // skip the remaining logic as its not necessary.
+        // skip the remaining logic as it is not necessary.
         if ($noFields && $noBundled || ($fields && $bundled)) {
             return;
         }
 
-        $primaryKey = (array)$this->table->getPrimaryKey();
-        $key = $entity->get((string)current($primaryKey));
+        /** @var string $primaryKey */
+        $primaryKey = current((array)$this->table->getPrimaryKey());
+        $key = $entity->has($primaryKey) ? $entity->get($primaryKey) : null;
 
         // When we have no key and bundled translations, we
         // need to mark the entity dirty so the root
@@ -307,9 +314,10 @@ class EavStrategy implements TranslateStrategyInterface
             $modified[$field] = $translation;
         }
 
+        $entityClass = $this->translationTable->getEntityClass();
         $new = array_diff_key($values, $modified);
         foreach ($new as $field => $content) {
-            $new[$field] = new Entity(compact('locale', 'field', 'content', 'model'), [
+            $new[$field] = new $entityClass(compact('locale', 'field', 'content', 'model'), [
                 'useSetters' => false,
                 'markNew' => true,
             ]);
@@ -364,7 +372,7 @@ class EavStrategy implements TranslateStrategyInterface
             if ($row === null) {
                 return $row;
             }
-            $hydrated = !is_array($row);
+            $hydrated = $row instanceof EntityInterface;
 
             foreach ($this->_config['fields'] as $field) {
                 $name = $field . '_translation';
@@ -378,6 +386,11 @@ class EavStrategy implements TranslateStrategyInterface
                 $content = $translation['content'] ?? null;
                 if ($content !== null) {
                     $row[$field] = $content;
+
+                    if ($hydrated) {
+                        /** @var \Cake\Datasource\EntityInterface $row */
+                        $row->setDirty($field, false);
+                    }
                 }
 
                 unset($row[$name]);
@@ -386,7 +399,7 @@ class EavStrategy implements TranslateStrategyInterface
             $row['_locale'] = $locale;
             if ($hydrated) {
                 /** @var \Cake\Datasource\EntityInterface $row */
-                $row->clean();
+                $row->setDirty('_locale', false);
             }
 
             return $row;
@@ -406,15 +419,25 @@ class EavStrategy implements TranslateStrategyInterface
             if (!$row instanceof EntityInterface) {
                 return $row;
             }
-            $translations = (array)$row->get('_i18n');
-            if (empty($translations) && $row->get('_translations')) {
+
+            $translations = $row->has('_i18n') ? $row->get('_i18n') : [];
+            if ($translations === []) {
+                if ($row->has('_translations')) {
+                    return $row;
+                }
+
+                $row->set('_translations', [])
+                    ->setDirty('_translations', false);
+                unset($row['_i18n']);
+
                 return $row;
             }
+
             $grouped = new Collection($translations);
 
+            $entityClass = $this->table->getEntityClass();
             $result = [];
             foreach ($grouped->combine('field', 'content', 'locale') as $locale => $keys) {
-                $entityClass = $this->table->getEntityClass();
                 $translation = new $entityClass($keys + ['locale' => $locale], [
                     'markNew' => false,
                     'useSetters' => false,
@@ -423,10 +446,9 @@ class EavStrategy implements TranslateStrategyInterface
                 $result[$locale] = $translation;
             }
 
-            $options = ['setter' => false, 'guard' => false];
-            $row->set('_translations', $result, $options);
+            $row->set('_translations', $result, ['setter' => false, 'guard' => false])
+                ->setDirty('_translations', false);
             unset($row['_i18n']);
-            $row->clean();
 
             return $row;
         });
@@ -443,17 +465,22 @@ class EavStrategy implements TranslateStrategyInterface
     protected function bundleTranslatedFields(EntityInterface $entity): void
     {
         /** @var array<string, \Cake\Datasource\EntityInterface> $translations */
-        $translations = (array)$entity->get('_translations');
+        $translations = $entity->has('_translations') ? (array)$entity->get('_translations') : [];
 
-        if (empty($translations) && !$entity->isDirty('_translations')) {
+        if (!$translations && !$entity->isDirty('_translations')) {
             return;
         }
 
         $fields = $this->_config['fields'];
-        $primaryKey = (array)$this->table->getPrimaryKey();
-        $key = $entity->get((string)current($primaryKey));
+        if ($entity->isNew()) {
+            $key = null;
+        } else {
+            $primaryKey = (array)$this->table->getPrimaryKey();
+            $key = $entity->get((string)current($primaryKey));
+        }
         $find = [];
         $contents = [];
+        $entityClass = $this->translationTable->getEntityClass();
 
         foreach ($translations as $lang => $translation) {
             foreach ($fields as $field) {
@@ -461,13 +488,13 @@ class EavStrategy implements TranslateStrategyInterface
                     continue;
                 }
                 $find[] = ['locale' => $lang, 'field' => $field, 'foreign_key IS' => $key];
-                $contents[] = new Entity(['content' => $translation->get($field)], [
+                $contents[] = new $entityClass(['content' => $translation->get($field)], [
                     'useSetters' => false,
                 ]);
             }
         }
 
-        if (empty($find)) {
+        if (!$find) {
             return;
         }
 
@@ -479,7 +506,12 @@ class EavStrategy implements TranslateStrategyInterface
                 $contents[$i]->setNew(false);
             } else {
                 $translation['model'] = $this->_config['referenceName'];
-                $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
+                unset($translation['foreign_key IS']);
+                if (method_exists($contents[$i], 'patch')) {
+                    $contents[$i]->patch($translation, ['setter' => false, 'guard' => false]);
+                } else {
+                    $contents[$i]->set($translation, ['setter' => false, 'guard' => false]);
+                }
                 $contents[$i]->setNew(true);
             }
         }

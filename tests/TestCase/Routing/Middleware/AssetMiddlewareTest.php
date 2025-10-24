@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Routing\Middleware;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Http\TestRequestHandler;
 
 /**
@@ -29,7 +30,7 @@ class AssetMiddlewareTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->loadPlugins(['TestPlugin', 'Company/TestPluginThree']);
@@ -38,7 +39,7 @@ class AssetMiddlewareTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->clearPlugins();
         parent::tearDown();
@@ -52,7 +53,7 @@ class AssetMiddlewareTest extends TestCase
         $modified = filemtime(TEST_APP . 'Plugin/TestPlugin/webroot/root.js');
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/test_plugin/root.js',
-            'HTTP_IF_MODIFIED_SINCE' => date(DATE_RFC7231, $modified),
+            'HTTP_IF_MODIFIED_SINCE' => date(CAKE_DATE_RFC7231, $modified),
         ]);
         $handler = new TestRequestHandler();
         $middleware = new AssetMiddleware();
@@ -112,9 +113,8 @@ class AssetMiddlewareTest extends TestCase
 
     /**
      * Test assets in a plugin.
-     *
-     * @dataProvider assetProvider
      */
+    #[DataProvider('assetProvider')]
     public function testPluginAsset(string $url, string $expectedFile): void
     {
         $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => $url]);
@@ -144,23 +144,23 @@ class AssetMiddlewareTest extends TestCase
 
         $this->assertSame(
             'application/javascript',
-            $res->getHeaderLine('Content-Type')
+            $res->getHeaderLine('Content-Type'),
         );
         $this->assertSame(
-            gmdate(DATE_RFC7231, $time),
-            $res->getHeaderLine('Date')
+            gmdate(CAKE_DATE_RFC7231, $time),
+            $res->getHeaderLine('Date'),
         );
         $this->assertSame(
             'public,max-age=' . ($expires - $time),
-            $res->getHeaderLine('Cache-Control')
+            $res->getHeaderLine('Cache-Control'),
         );
         $this->assertSame(
-            gmdate(DATE_RFC7231, $modified),
-            $res->getHeaderLine('Last-Modified')
+            gmdate(CAKE_DATE_RFC7231, $modified),
+            $res->getHeaderLine('Last-Modified'),
         );
         $this->assertSame(
-            gmdate(DATE_RFC7231, $expires),
-            $res->getHeaderLine('Expires')
+            gmdate(CAKE_DATE_RFC7231, $expires),
+            $res->getHeaderLine('Expires'),
         );
     }
 

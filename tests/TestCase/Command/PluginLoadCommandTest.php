@@ -17,6 +17,7 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Core\Plugin;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 
@@ -40,7 +41,7 @@ class PluginLoadCommandTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
 
@@ -53,7 +54,7 @@ class PluginLoadCommandTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
 
@@ -77,11 +78,13 @@ class PluginLoadCommandTest extends TestCase
     {
         $this->exec('plugin load TestPlugin');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        Plugin::getCollection()->remove('TestPlugin');
 
         // Needed to not have duplicate named routes
         Router::reload();
         $this->exec('plugin load TestPluginTwo --no-bootstrap --no-console --no-middleware --no-routes --no-services');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        Plugin::getCollection()->remove('TestPluginTwo');
 
         // Needed to not have duplicate named routes
         Router::reload();
@@ -95,7 +98,7 @@ class PluginLoadCommandTest extends TestCase
         $this->assertSame(['onlyDebug' => true, 'onlyCli' => true], $config['Company/TestPluginThree']);
         $this->assertSame(
             ['bootstrap' => false, 'console' => false, 'middleware' => false, 'routes' => false, 'services' => false],
-            $config['TestPluginTwo']
+            $config['TestPluginTwo'],
         );
     }
 

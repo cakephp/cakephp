@@ -17,8 +17,12 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Query;
 
 use Cake\Database\Driver\Mysql;
+use Cake\Database\Driver\Postgres;
+use Cake\Database\Driver\Sqlite;
+use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
+use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Query\UpdateQuery;
@@ -53,14 +57,14 @@ class UpdateQueryTest extends TestCase
      */
     protected $autoQuote;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->connection = ConnectionManager::get('test');
         $this->autoQuote = $this->connection->getDriver()->isAutoQuotingEnabled();
     }
 
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->connection->getDriver()->enableAutoQuoting($this->autoQuote);
@@ -85,6 +89,29 @@ class UpdateQueryTest extends TestCase
     }
 
     /**
+     * Test query construction with fields containing spaces.
+     */
+    public function testUpdateSpaceColumnNames(): void
+    {
+        $data = [
+            'Column with spaces' => '1',
+            'Column_without_spaces' => '1',
+        ];
+
+        $query = new UpdateQuery($this->connection);
+        $query->update('example')
+            ->set($data)
+            ->where(['id' => 1]);
+
+        $result = $query->sql();
+        $this->assertQuotedQuery(
+            'UPDATE <example> SET <Column with spaces> = :c0 , <Column_without_spaces> = :c1',
+            $result,
+            !$this->autoQuote,
+        );
+    }
+
+    /**
      * Test update with multiple fields.
      */
     public function testUpdateMultipleFields(): void
@@ -99,7 +126,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
@@ -125,7 +152,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <articles> SET <title> = :c0 , <body> = :c1',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
         $this->assertQuotedQuery('WHERE <id> = :', $result, !$this->autoQuote);
 
@@ -151,7 +178,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <comments> SET <article_id> = <user_id> WHERE <id> = :',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $result = $query->execute();
@@ -178,7 +205,7 @@ class UpdateQueryTest extends TestCase
 
         $this->assertEqualsSql(
             'UPDATE comments SET updated = (SELECT created FROM comments c WHERE c.id = comments.id)',
-            $query->sql(new ValueBinder())
+            $query->sql(new ValueBinder()),
         );
 
         $result = $query->execute();
@@ -207,7 +234,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <comments> SET <comment> = :c0 , <created> = :c1',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
@@ -239,12 +266,29 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE <comments> SET <comment> = :c0 , <created> = :c1',
             $result,
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $this->assertQuotedQuery(' WHERE <id> = :c2$', $result, !$this->autoQuote);
         $result = $query->execute();
         $this->assertSame(1, $result->rowCount());
+    }
+
+    /**
+     * Ensure that queries build when they contain expressions.
+     */
+    public function testUpdateExpression(): void
+    {
+        $expression = new QueryExpression(['post_count = post_count + 10']);
+        $query = new UpdateQuery($this->connection);
+        $query
+            ->update('counter_cache_users')
+            ->set($expression)
+            ->where(['id' => 1]);
+        $this->assertStringContainsString(
+            'SET post_count = post_count + 10',
+            $query->sql(),
+        );
     }
 
     /**
@@ -283,7 +327,7 @@ class UpdateQueryTest extends TestCase
                 '\)' .
             '\)',
             $query->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -408,7 +452,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE TOP 10 PERCENT <authors> SET <name> = :c0',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new UpdateQuery($this->connection);
@@ -419,7 +463,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE TOP 10 PERCENT FOO <authors> SET <name> = :c0',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
 
         $query = new UpdateQuery($this->connection);
@@ -430,7 +474,7 @@ class UpdateQueryTest extends TestCase
         $this->assertQuotedQuery(
             'UPDATE TOP 10 PERCENT <authors> SET <name> = :c0',
             $result->sql(),
-            !$this->autoQuote
+            !$this->autoQuote,
         );
     }
 
@@ -457,5 +501,44 @@ class UpdateQueryTest extends TestCase
         $comment = $result->fetchAll('assoc')[0]['comment'];
         $result->closeCursor();
         $this->assertSame(['a' => 'b', 'c' => true], $comment);
+    }
+
+    /**
+     * Test jsonValue() Expression
+     */
+    public function testJsonValue(): void
+    {
+        $skip = false;
+        $driver = $this->connection->getDriver();
+        $version = $this->connection->getDriver()->version();
+        if ($driver instanceof Postgres && version_compare($version, '12.0.0', '<')) {
+            $skip = true;
+        } elseif ($driver instanceof Mysql && version_compare($version, '8.0.21', '<')) {
+            $skip = true;
+        } elseif ($driver instanceof Sqlserver && version_compare($version, '13', '<')) {
+            $skip = true;
+        } elseif ($driver instanceof Sqlite && version_compare($version, '3.19', '<')) {
+            $skip = true;
+        }
+        $this->skipIf($skip, 'The current database backend does not support JSON value operations');
+
+        $query = new UpdateQuery($this->connection);
+        $query
+            ->update('comments')
+            ->set('comment', ['a' => ['a1' => 'b1'], 'c' => true, 'scores' => [25, 36, 48]], 'json')
+            ->where(['id' => 1]);
+        $query->execute()->closeCursor();
+
+        $query = new SelectQuery($this->connection);
+        $query
+            ->select(['score' => $query->func()->jsonValue('comment', '$.scores[1]')])
+            ->from('comments')
+            ->where(['id' => 1])
+            ->getSelectTypeMap()->setTypes(['score' => 'integer']);
+
+        $result = $query->execute();
+        $comment = $result->fetchAll('assoc')[0]['score'];
+        $result->closeCursor();
+        $this->assertSame(36, $comment);
     }
 }

@@ -90,7 +90,7 @@ class HelpFormatter
         $parser = $this->_parser;
         $out = [];
         $description = $parser->getDescription();
-        if (!empty($description)) {
+        if ($description) {
             $out[] = Text::wrap($description, $width);
             $out[] = '';
         }
@@ -114,7 +114,7 @@ class HelpFormatter
         }
 
         $arguments = $parser->arguments();
-        if (!empty($arguments)) {
+        if ($arguments) {
             $max = $this->_getMaxLength($arguments) + 2;
             $out[] = '<info>Arguments:</info>';
             $out[] = '';
@@ -128,7 +128,7 @@ class HelpFormatter
             $out[] = '';
         }
         $epilog = $parser->getEpilog();
-        if (!empty($epilog)) {
+        if ($epilog) {
             $out[] = Text::wrap($epilog, $width);
             $out[] = '';
         }

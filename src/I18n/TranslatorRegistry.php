@@ -103,7 +103,7 @@ class TranslatorRegistry
     public function __construct(
         PackageLocator $packages,
         FormatterLocator $formatters,
-        string $locale
+        string $locale,
     ) {
         $this->packages = $packages;
         $this->formatters = $formatters;
@@ -230,6 +230,11 @@ class TranslatorRegistry
             $package = $this->_loaders[$name]($name, $locale);
         } else {
             $package = $this->_loaders[static::FALLBACK_LOADER]($name, $locale);
+        }
+
+        // Support __invoke() wrapper classes
+        if (!$package instanceof Package && is_callable($package)) {
+            $package = $package();
         }
 
         $package = $this->setFallbackPackage($name, $package);

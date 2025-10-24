@@ -36,10 +36,10 @@ class MailContainsAttachment extends MailContains
         $messages = $this->getMessages();
         foreach ($messages as $message) {
             foreach ($message->getAttachments() as $filename => $fileInfo) {
-                if ($filename === $expectedFilename && empty($expectedFileInfo)) {
+                if ($filename === $expectedFilename && !$expectedFileInfo) {
                     return true;
                 }
-                if (!empty($expectedFileInfo) && array_intersect($expectedFileInfo, $fileInfo) === $expectedFileInfo) {
+                if ($expectedFileInfo && array_intersect($expectedFileInfo, $fileInfo) === $expectedFileInfo) {
                     return true;
                 }
             }
@@ -72,6 +72,6 @@ class MailContainsAttachment extends MailContains
     {
         [$expectedFilename] = $other;
 
-        return '\'' . $expectedFilename . '\' ' . $this->toString();
+        return "'" . $expectedFilename . "' " . $this->toString();
     }
 }

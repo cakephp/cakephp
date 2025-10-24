@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Core;
 
 use Cake\Console\CommandCollection;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\RouteBuilder;
 use Closure;
@@ -64,6 +65,13 @@ class BasePlugin implements PluginInterface
      * @var bool
      */
     protected bool $routesEnabled = true;
+
+    /**
+     * Load events or not
+     *
+     * @var bool
+     */
+    protected bool $eventsEnabled = true;
 
     /**
      * The path to this plugin.
@@ -140,9 +148,8 @@ class BasePlugin implements PluginInterface
         }
         $parts = explode('\\', static::class);
         array_pop($parts);
-        $this->name = implode('/', $parts);
 
-        return $this->name;
+        return $this->name = implode('/', $parts);
     }
 
     /**
@@ -160,9 +167,8 @@ class BasePlugin implements PluginInterface
         if (str_ends_with($path, 'src')) {
             $path = substr($path, 0, -3);
         }
-        $this->path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
 
-        return $this->path;
+        return $this->path = rtrim($path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
     }
 
     /**
@@ -249,7 +255,7 @@ class BasePlugin implements PluginInterface
             throw new InvalidArgumentException(sprintf(
                 '`%s` is not a valid hook name. Must be one of `%s.`',
                 $hook,
-                implode(', ', static::VALID_HOOKS)
+                implode(', ', static::VALID_HOOKS),
             ));
         }
     }
@@ -303,5 +309,16 @@ class BasePlugin implements PluginInterface
      */
     public function services(ContainerInterface $container): void
     {
+    }
+
+    /**
+     * Register application events.
+     *
+     * @param \Cake\Event\EventManagerInterface $eventManager The global event manager to register listeners on
+     * @return \Cake\Event\EventManagerInterface
+     */
+    public function events(EventManagerInterface $eventManager): EventManagerInterface
+    {
+        return $eventManager;
     }
 }

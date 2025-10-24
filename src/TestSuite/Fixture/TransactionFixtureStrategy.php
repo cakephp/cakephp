@@ -56,14 +56,14 @@ class TransactionFixtureStrategy implements FixtureStrategyInterface
             if ($connection instanceof Connection) {
                 assert(
                     $connection->inTransaction() === false,
-                    'Cannot start transaction strategy inside a transaction. This is most likely a bug.'
+                    'Cannot start transaction strategy inside a transaction. This is most likely a bug.',
                 );
                 $connection->enableSavePoints();
                 if (!$connection->isSavePointsEnabled()) {
                     throw new DatabaseException(
                         "Could not enable save points for the `{$connection->configName()}` connection. " .
                             'Your database needs to support savepoints in order to use ' .
-                            'TransactionFixtureStrategy.'
+                            'TransactionFixtureStrategy.',
                     );
                 }
 

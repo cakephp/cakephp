@@ -22,6 +22,7 @@ use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use PDO;
 
 /**
@@ -34,7 +35,7 @@ class PostgresTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+        $driver = $this->getMockBuilder(Postgres::class)
             ->onlyMethods(['createPdo'])
             ->getMock();
         $dsn = 'pgsql:host=localhost;port=5432;dbname=cake';
@@ -51,6 +52,11 @@ class PostgresTest extends TestCase
             'flags' => [],
             'init' => [],
             'log' => false,
+            'ssl_key' => null,
+            'ssl_cert' => null,
+            'ssl_ca' => null,
+            'ssl' => false,
+            'ssl_mode' => null,
         ];
 
         $expected['flags'] += [
@@ -59,22 +65,14 @@ class PostgresTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = $this->getMockBuilder('PDO')
-            ->disableOriginalConstructor()
-            ->onlyMethods(['exec', 'quote'])
-            ->getMock();
-        $connection->expects($this->any())
-            ->method('quote')
-            ->willReturnArgument(0);
+        $connection = Mockery::mock(PDO::class);
 
-        $connection->expects($this->exactly(2))
-            ->method('exec')
-            ->with(
-                ...self::withConsecutive(
-                    ['SET NAMES utf8'],
-                    ['SET search_path TO public']
-                )
-            );
+        $connection->shouldReceive('quote')
+            ->andReturnArg(0)
+            ->twice();
+
+        $connection->shouldReceive('exec')->with('SET NAMES utf8')->once();
+        $connection->shouldReceive('exec')->with('SET search_path TO public')->once();
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
@@ -101,12 +99,17 @@ class PostgresTest extends TestCase
             'schema' => 'fooblic',
             'init' => ['Execute this', 'this too'],
             'log' => false,
+            'ssl_key' => '/path/to/key',
+            'ssl_cert' => '/path/to/crt',
+            'ssl_ca' => '/path/to/ca',
+            'ssl' => true,
+            'ssl_mode' => 'verify-ca',
         ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+        $driver = $this->getMockBuilder(Postgres::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
-        $dsn = 'pgsql:host=foo;port=3440;dbname=bar';
+        $dsn = 'pgsql:host=foo;port=3440;dbname=bar;sslmode=verify-ca;sslkey=/path/to/key;sslcert=/path/to/crt;sslrootcert=/path/to/ca';
 
         $expected = $config;
         $expected['flags'] += [
@@ -115,25 +118,17 @@ class PostgresTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $connection = $this->getMockBuilder('PDO')
-            ->disableOriginalConstructor()
-            ->onlyMethods(['exec', 'quote'])
-            ->getMock();
-        $connection->expects($this->any())
-            ->method('quote')
-            ->willReturnArgument(0);
+        $connection = Mockery::mock(PDO::class);
 
-        $connection->expects($this->exactly(5))
-            ->method('exec')
-            ->with(
-                ...self::withConsecutive(
-                    ['SET NAMES a-language'],
-                    ['SET search_path TO fooblic'],
-                    ['Execute this'],
-                    ['this too'],
-                    ['SET timezone = Antarctica']
-                )
-            );
+        $connection->shouldReceive('quote')
+            ->andReturnArg(0)
+            ->times(3);
+
+        $connection->shouldReceive('exec')->with('SET NAMES a-language')->once();
+        $connection->shouldReceive('exec')->with('SET search_path TO fooblic')->once();
+        $connection->shouldReceive('exec')->with('Execute this')->once();
+        $connection->shouldReceive('exec')->with('this too')->once();
+        $connection->shouldReceive('exec')->with('SET timezone = Antarctica')->once();
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
@@ -167,7 +162,7 @@ class PostgresTest extends TestCase
      */
     public function testHavingReplacesAlias(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+        $driver = $this->getMockBuilder(Postgres::class)
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -195,7 +190,7 @@ class PostgresTest extends TestCase
      */
     public function testHavingWhenNoAliasIsUsed(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Postgres')
+        $driver = $this->getMockBuilder(Postgres::class)
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -231,7 +226,39 @@ class PostgresTest extends TestCase
         $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
         $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
         $this->assertTrue($driver->supports(DriverFeatureEnum::WINDOW));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT_ALL));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));
 
         $this->assertFalse($driver->supports(DriverFeatureEnum::DISABLE_CONSTRAINT_WITHOUT_TRANSACTION));
+    }
+
+    /**
+     * Tests value quoting
+     */
+    public function testQuote(): void
+    {
+        $driver = ConnectionManager::get('test')->getDriver();
+        $this->skipIf(!$driver instanceof Postgres);
+
+        $result = $driver->quote('name');
+        $expected = "'name'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote('Model.*');
+        $expected = "'Model.*'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O'hare");
+        $expected = "'O''hare'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O''hare");
+        $expected = "'O''''hare'";
+        $this->assertEquals($expected, $result);
+
+        $result = $driver->quote("O\slash");
+        $expected = "'O\slash'";
+        $this->assertEquals($expected, $result);
     }
 }

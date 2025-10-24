@@ -37,7 +37,7 @@ class TransportFactory
      * An array mapping url schemes to fully qualified Transport class names
      *
      * @var array<string, string>
-     * @psalm-var array<string, class-string>
+     * @phpstan-var array<string, class-string>
      */
     protected static array $_dsnClassMap = [
         'debug' => Transport\DebugTransport::class,
@@ -69,9 +69,9 @@ class TransportFactory
     }
 
     /**
-     * Finds and builds the instance of the required tranport class.
+     * Finds and builds the instance of the required transport class.
      *
-     * @param string $name Name of the config array that needs a tranport instance built
+     * @param string $name Name of the config array that needs a transport instance built
      * @return void
      * @throws \InvalidArgumentException When a tranport cannot be created.
      */
@@ -79,13 +79,13 @@ class TransportFactory
     {
         if (!isset(static::$_config[$name])) {
             throw new InvalidArgumentException(
-                sprintf('The `%s` transport configuration does not exist', $name)
+                sprintf('The `%s` transport configuration does not exist', $name),
             );
         }
 
         if (is_array(static::$_config[$name]) && empty(static::$_config[$name]['className'])) {
             throw new InvalidArgumentException(
-                sprintf('Transport config `%s` is invalid, the required `className` option is missing', $name)
+                sprintf('Transport config `%s` is invalid, the required `className` option is missing', $name),
             );
         }
 

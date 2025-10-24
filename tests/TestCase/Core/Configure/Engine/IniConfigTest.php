@@ -53,7 +53,7 @@ class IniConfigTest extends TestCase
     /**
      * setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->path = CONFIG;

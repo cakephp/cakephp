@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\View;
 
 use Cake\Core\Exception\CakeException;
+use Cake\I18n\Number;
 use Cake\TestSuite\TestCase;
 use Cake\View\Exception\MissingHelperException;
 use Cake\View\Helper\FormHelper;
@@ -49,7 +50,7 @@ class HelperRegistryTest extends TestCase
     /**
      * setUp
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -60,7 +61,7 @@ class HelperRegistryTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         $this->clearPlugins();
         unset($this->Helpers, $this->View);
@@ -193,7 +194,7 @@ class HelperRegistryTest extends TestCase
         $this->assertInstanceOf(
             OtherHelperHelper::class,
             $this->Helpers->get('thing.helper'),
-            'Class is wrong'
+            'Class is wrong',
         );
         $this->assertTrue($this->Helpers->has('thing.helper'));
         $this->assertFalse($this->Helpers->has('thing'));
@@ -214,7 +215,7 @@ class HelperRegistryTest extends TestCase
         $this->assertSame(
             $instance,
             $this->Helpers->EventListenerTest,
-            'Instance in registry should be the same as previously loaded'
+            'Instance in registry should be the same as previously loaded',
         );
         $this->assertCount(1, $this->Events->listeners('View.beforeRender'));
 
@@ -235,7 +236,7 @@ class HelperRegistryTest extends TestCase
         $this->assertSame(
             $instance,
             $this->Helpers->EventListenerTest,
-            'Instance in registry should be the same as previously loaded'
+            'Instance in registry should be the same as previously loaded',
         );
         $this->assertCount(1, $this->Events->listeners('View.beforeRender'));
 
@@ -248,8 +249,8 @@ class HelperRegistryTest extends TestCase
      */
     public function testUnloadUnknown(): void
     {
-        $this->expectException(MissingHelperException::class);
-        $this->expectExceptionMessage('Helper class `FooHelper` could not be found.');
+        $this->expectException(CakeException::class);
+        $this->expectExceptionMessage('Object named `Foo` is not loaded.');
         $this->Helpers->unload('Foo');
     }
 
@@ -284,7 +285,7 @@ class HelperRegistryTest extends TestCase
      */
     public function testLoadMultipleTimesDefaultConfigValuesWorks(): void
     {
-        $this->Helpers->load('Number', ['engine' => 'Cake\I18n\Number']);
+        $this->Helpers->load('Number', ['engine' => Number::class]);
         $this->Helpers->load('Number');
         $this->addToAssertionCount(1);
     }

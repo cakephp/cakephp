@@ -108,9 +108,7 @@ trait MergeVariablesTrait
         }
         $parent = Hash::normalize($parent);
         foreach ($parent as $key => $value) {
-            if (!isset($current[$key])) {
-                $current[$key] = $value;
-            }
+            $current[$key] ??= $value;
         }
 
         return $current;

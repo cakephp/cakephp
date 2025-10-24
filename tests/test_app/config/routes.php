@@ -15,7 +15,7 @@
 
 use Cake\Routing\RouteBuilder;
 
-return function (RouteBuilder $routes) {
+return function (RouteBuilder $routes): void {
     $routes->setExtensions('json');
     $routes->scope('/', function (RouteBuilder $routes): void {
         $routes->connect('/', ['controller' => 'Pages', 'action' => 'display', 'home']);
@@ -27,7 +27,7 @@ return function (RouteBuilder $routes) {
             [
                 '_name' => 'some_alias',
                 'routeClass' => 'InflectedRoute',
-            ]
+            ],
         );
         $routes->fallbacks();
     });

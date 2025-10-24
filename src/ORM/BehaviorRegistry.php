@@ -91,7 +91,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
      *
      * @param string $class Partial classname to resolve.
      * @return string|null Either the correct classname or null.
-     * @psalm-return class-string|null
+     * @phpstan-return class-string|null
      */
     public static function className(string $class): ?string
     {
@@ -187,7 +187,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
                     '`%s` contains duplicate finder `%s` which is already provided by `%s`.',
                     $class,
                     $finder,
-                    $duplicate[0]
+                    $duplicate[0],
                 );
                 throw new LogicException($error);
             }
@@ -201,7 +201,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
                     '`%s` contains duplicate method `%s` which is already provided by `%s`.',
                     $class,
                     $method,
-                    $duplicate[0]
+                    $duplicate[0],
                 );
                 throw new LogicException($error);
             }
@@ -209,6 +209,49 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         return compact('methods', 'finders');
+    }
+
+    /**
+     * Set an object directly into the registry by name.
+     *
+     * @param string $name The name of the object to set in the registry.
+     * @param \Cake\ORM\Behavior $object instance to store in the registry
+     * @return $this
+     */
+    public function set(string $name, object $object)
+    {
+        parent::set($name, $object);
+
+        $methods = $this->_getMethods($object, $object::class, $name);
+        $this->_methodMap += $methods['methods'];
+        $this->_finderMap += $methods['finders'];
+
+        return $this;
+    }
+
+    /**
+     * Remove an object from the registry.
+     *
+     * If this registry has an event manager, the object will be detached from any events as well.
+     *
+     * @param string $name The name of the object to remove from the registry.
+     * @return $this
+     */
+    public function unload(string $name)
+    {
+        $instance = $this->get($name);
+        $result = parent::unload($name);
+
+        $methods = array_map('strtolower', array_keys($instance->implementedMethods()));
+        foreach ($methods as $method) {
+            unset($this->_methodMap[$method]);
+        }
+        $finders = array_map('strtolower', array_keys($instance->implementedFinders()));
+        foreach ($finders as $finder) {
+            unset($this->_finderMap[$finder]);
+        }
+
+        return $result;
     }
 
     /**
@@ -261,7 +304,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call `%s`, it does not belong to any attached behavior.', $method)
+            sprintf('Cannot call `%s`, it does not belong to any attached behavior.', $method),
         );
     }
 
@@ -280,7 +323,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
     {
         $type = strtolower($type);
 
-        if ($this->hasFinder($type) && $this->has($this->_finderMap[$type][0])) {
+        if ($this->hasFinder($type)) {
             [$behavior, $callMethod] = $this->_finderMap[$type];
             $callable = $this->_loaded[$behavior]->$callMethod(...);
 
@@ -288,7 +331,7 @@ class BehaviorRegistry extends ObjectRegistry implements EventDispatcherInterfac
         }
 
         throw new BadMethodCallException(
-            sprintf('Cannot call finder `%s`, it does not belong to any attached behavior.', $type)
+            sprintf('Cannot call finder `%s`, it does not belong to any attached behavior.', $type),
         );
     }
 }

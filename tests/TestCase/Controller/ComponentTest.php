@@ -23,6 +23,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Exception;
 use TestApp\Controller\Component\AppleComponent;
 use TestApp\Controller\Component\BananaComponent;
 use TestApp\Controller\Component\ConfiguredComponent;
@@ -38,7 +39,7 @@ class ComponentTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         static::setAppNamespace();
@@ -74,18 +75,25 @@ class ComponentTest extends TestCase
      */
     public function testInnerComponentsAreNotEnabled(): void
     {
-        $mock = $this->getMockBuilder(EventManager::class)->getMock();
+        $eventManager = new class extends EventManager
+        {
+            public bool $isCalled = false;
+            public bool $isCorrectType = false;
+            public function on($eventKey, $options = null, $callable = []): void
+            {
+                $this->isCalled = true;
+                $this->isCorrectType = $eventKey instanceof AppleComponent;
+            }
+        };
         $controller = new Controller(new ServerRequest());
-        $controller->setEventManager($mock);
-
-        $mock->expects($this->once())
-            ->method('on')
-            ->with($this->isInstanceOf(AppleComponent::class));
+        $controller->setEventManager($eventManager);
 
         $Collection = new ComponentRegistry($controller);
         $Apple = $Collection->load('Apple');
 
         $this->assertInstanceOf(OrangeComponent::class, $Apple->Orange, 'class is wrong');
+        $this->assertTrue($eventManager->isCalled, 'on() should be called');
+        $this->assertTrue($eventManager->isCorrectType, 'on() should be called with the correct type');
     }
 
     /**
@@ -171,7 +179,7 @@ class ComponentTest extends TestCase
     {
         $Component = new ConfiguredComponent(
             new ComponentRegistry(new Controller(new ServerRequest())),
-            ['chicken' => 'soup']
+            ['chicken' => 'soup'],
         );
         $this->assertEquals(['chicken' => 'soup'], $Component->configCopy);
         $this->assertEquals(['chicken' => 'soup'], $Component->getConfig());
@@ -185,7 +193,7 @@ class ComponentTest extends TestCase
         $Component = new ConfiguredComponent(
             new ComponentRegistry(new Controller(new ServerRequest())),
             [],
-            ['Apple', 'Banana', 'Orange']
+            ['Apple', 'Banana', 'Orange'],
         );
         $this->assertInstanceOf(AppleComponent::class, $Component->Apple, 'class is wrong');
         $this->assertInstanceOf(OrangeComponent::class, $Component->Orange, 'class is wrong');
@@ -211,7 +219,7 @@ class ComponentTest extends TestCase
         $Component = new ConfiguredComponent(
             new ComponentRegistry(new Controller(new ServerRequest())),
             [],
-            ['Configured' => ['foo' => 'bar']]
+            ['Configured' => ['foo' => 'bar']],
         );
         $this->assertInstanceOf(ConfiguredComponent::class, $Component->Configured, 'class is wrong');
         $this->assertNotSame($Component, $Component->Configured, 'Component instance was reused');
@@ -223,10 +231,16 @@ class ComponentTest extends TestCase
      */
     public function testEventsInnerComponent(): void
     {
-        $eventManager = $this->getMockBuilder(EventManager::class)->getMock();
-        $eventManager->expects($this->once())
-            ->method('on')
-            ->with($this->isInstanceOf(AppleComponent::class));
+        $eventManager = new class extends EventManager
+        {
+            public bool $isCalled = false;
+            public bool $isCorrectType = false;
+            public function on($eventKey, $options = null, $callable = []): void
+            {
+                $this->isCalled = true;
+                $this->isCorrectType = $eventKey instanceof AppleComponent;
+            }
+        };
 
         $controller = new Controller(new ServerRequest());
         $controller->setEventManager($eventManager);
@@ -235,6 +249,8 @@ class ComponentTest extends TestCase
 
         $Component = new ConfiguredComponent($Collection, [], ['Apple' => ['enabled' => true]]);
         $this->assertInstanceOf(AppleComponent::class, $Component->Apple, 'class is wrong');
+        $this->assertTrue($eventManager->isCalled, 'on() should be called');
+        $this->assertTrue($eventManager->isCorrectType, 'on() should be called with the correct type');
     }
 
     /**
@@ -242,8 +258,13 @@ class ComponentTest extends TestCase
      */
     public function testNoEventsInnerComponent(): void
     {
-        $eventManager = $this->getMockBuilder(EventManager::class)->getMock();
-        $eventManager->expects($this->never())->method('on');
+        $eventManager = new class extends EventManager
+        {
+            public function on($eventKey, $options = null, $callable = []): never
+            {
+                throw new Exception('Should not be called');
+            }
+        };
 
         $controller = new Controller(new ServerRequest());
         $controller->setEventManager($eventManager);

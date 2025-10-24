@@ -41,7 +41,6 @@ trait CaseExpressionTrait
     {
         $type = null;
 
-        /** @psalm-suppress RedundantCondition */
         if (is_string($value)) {
             $type = 'string';
         } elseif (is_int($value)) {
@@ -55,7 +54,6 @@ trait CaseExpressionTrait
         } elseif ($value instanceof DateTimeInterface) {
             $type = 'datetime';
         } elseif (
-            is_object($value) &&
             $value instanceof Stringable
         ) {
             $type = 'string';

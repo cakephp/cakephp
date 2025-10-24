@@ -115,7 +115,7 @@ class RouteCollection
         $path = $route->staticPath();
 
         $extensions = $route->getExtensions();
-        if (count($extensions) > 0) {
+        if ($extensions !== []) {
             $this->setExtensions($extensions);
         }
 
@@ -136,11 +136,19 @@ class RouteCollection
     public function parseRequest(ServerRequestInterface $request): array
     {
         $uri = $request->getUri();
-        $urlPath = urldecode($uri->getPath());
+        $urlPath = $uri->getPath();
+        if (str_contains($urlPath, '%')) {
+            // decode urlencoded segments, but don't decode %2f aka /
+            $parts = explode('/', $urlPath);
+            $parts = array_map(
+                fn(string $part) => str_replace('/', '%2f', urldecode($part)),
+                $parts,
+            );
+            $urlPath = implode('/', $parts);
+        }
         if ($urlPath !== '/') {
             $urlPath = rtrim($urlPath, '/');
         }
-
         if (isset($this->staticPaths[$urlPath])) {
             foreach ($this->staticPaths[$urlPath] as $route) {
                 $r = $route->parseRequest($request);
@@ -149,7 +157,7 @@ class RouteCollection
                 }
                 if ($uri->getQuery()) {
                     parse_str($uri->getQuery(), $queryParameters);
-                    $r['?'] = $queryParameters;
+                    $r['?'] = array_merge($r['?'] ?? [], $queryParameters);
                 }
 
                 return $r;
@@ -160,7 +168,7 @@ class RouteCollection
         krsort($this->_paths);
 
         foreach ($this->_paths as $path => $routes) {
-            if (strpos($urlPath, $path) !== 0) {
+            if (!str_starts_with($urlPath, $path)) {
                 continue;
             }
 
@@ -323,7 +331,7 @@ class RouteCollection
         return array_reduce(
             $this->_paths,
             'array_merge',
-            []
+            [],
         );
     }
 
@@ -360,7 +368,7 @@ class RouteCollection
         if ($merge) {
             $extensions = array_unique(array_merge(
                 $this->_extensions,
-                $extensions
+                $extensions,
             ));
         }
         $this->_extensions = $extensions;
@@ -377,7 +385,6 @@ class RouteCollection
      * @param string $name The name of the middleware. Used when applying middleware to a scope.
      * @param \Psr\Http\Server\MiddlewareInterface|\Closure|string $middleware The middleware to register.
      * @return $this
-     * @throws \RuntimeException
      */
     public function registerMiddleware(string $name, MiddlewareInterface|Closure|string $middleware)
     {
@@ -397,13 +404,13 @@ class RouteCollection
     public function middlewareGroup(string $name, array $middlewareNames)
     {
         if ($this->hasMiddleware($name)) {
-            $message = "Cannot add middleware group '$name'. A middleware by this name has already been registered.";
+            $message = "Cannot add middleware group '{$name}'. A middleware by this name has already been registered.";
             throw new InvalidArgumentException($message);
         }
 
         foreach ($middlewareNames as $middlewareName) {
             if (!$this->hasMiddleware($middlewareName)) {
-                $message = "Cannot add '$middlewareName' middleware to group '$name'. It has not been registered.";
+                $message = "Cannot add '{$middlewareName}' middleware to group '{$name}'. It has not been registered.";
                 throw new InvalidArgumentException($message);
             }
         }
@@ -465,7 +472,7 @@ class RouteCollection
             if (!$this->hasMiddleware($name)) {
                 throw new InvalidArgumentException(sprintf(
                     'The middleware named `%s` has not been registered. Use registerMiddleware() to define it.',
-                    $name
+                    $name,
                 ));
             }
             $out[] = $this->_middleware[$name];

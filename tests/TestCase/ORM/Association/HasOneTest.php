@@ -21,8 +21,11 @@ use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\TypeMap;
+use Cake\Event\Event;
 use Cake\ORM\Association\HasOne;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
+use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Mockery;
 
@@ -56,7 +59,7 @@ class HasOneTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->user = $this->getTableLocator()->get('Users');
@@ -180,7 +183,7 @@ class HasOneTest extends TestCase
         $this->user->setPrimaryKey(['id', 'site_id']);
         $association = new HasOne('Profiles', $config);
 
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(Query::class)
             ->onlyMethods(['join'])
             ->disableOriginalConstructor()
             ->getMock();
@@ -207,7 +210,7 @@ class HasOneTest extends TestCase
     {
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for `Profiles`, got `(user_id)` but expected foreign key for `(id, site_id)`');
-        $query = $this->getMockBuilder('Cake\ORM\Query')
+        $query = $this->getMockBuilder(Query::class)
             ->onlyMethods(['join', 'select'])
             ->setConstructorArgs([$this->user])
             ->getMock();
@@ -226,14 +229,11 @@ class HasOneTest extends TestCase
      */
     public function testSaveAssociatedOnlyEntities(): void
     {
-        $mock = Mockery::mock('Cake\ORM\Table')
-            ->shouldAllowMockingMethod('saveAssociated')
-            ->makePartial();
+        $spy = Mockery::spy(Table::class);
         $config = [
             'sourceTable' => $this->user,
-            'targetTable' => $mock,
+            'targetTable' => $spy,
         ];
-        $mock->shouldNotReceive('saveAssociated');
 
         $entity = new Entity([
             'username' => 'Mark',
@@ -245,6 +245,7 @@ class HasOneTest extends TestCase
         $result = $association->saveAssociated($entity);
 
         $this->assertSame($result, $entity);
+        $spy->shouldNotHaveReceived('saveAssociated');
     }
 
     /**
@@ -285,8 +286,8 @@ class HasOneTest extends TestCase
         $this->listenerCalled = false;
         $this->profile->getEventManager()->on('Model.beforeFind', function ($event, $query, $options, bool $primary): void {
             $this->listenerCalled = true;
-            $this->assertInstanceOf('Cake\Event\Event', $event);
-            $this->assertInstanceOf('Cake\ORM\Query', $query);
+            $this->assertInstanceOf(Event::class, $event);
+            $this->assertInstanceOf(Query::class, $query);
             $this->assertInstanceOf('ArrayObject', $options);
             $this->assertFalse($primary);
         });
@@ -311,11 +312,11 @@ class HasOneTest extends TestCase
             'Model.beforeFind',
             function ($event, $query, $options, bool $primary) use ($opts): void {
                 $this->listenerCalled = true;
-                $this->assertInstanceOf('Cake\Event\Event', $event);
-                $this->assertInstanceOf('Cake\ORM\Query', $query);
+                $this->assertInstanceOf(Event::class, $event);
+                $this->assertInstanceOf(Query::class, $query);
                 $this->assertEquals($options, $opts);
                 $this->assertFalse($primary);
-            }
+            },
         );
         $association = new HasOne('Profiles', $config);
         $query = $this->user->find();

@@ -107,11 +107,12 @@ class SelectWithPivotLoader extends SelectLoader
 
         $tempName = $this->alias . '_CJoin';
         $schema = $assoc->getSchema();
-        $joinFields = $types = [];
+        $joinFields = [];
+        $types = [];
 
         foreach ($schema->typeMap() as $f => $type) {
             $key = $tempName . '__' . $f;
-            $joinFields[$key] = "$name.$f";
+            $joinFields[$key] = "{$name}.{$f}";
             $types[$key] = $type;
         }
 
@@ -177,12 +178,13 @@ class SelectWithPivotLoader extends SelectLoader
     {
         $resultMap = [];
         $key = (array)$options['foreignKey'];
+        $preserveKeys = $fetchQuery->getOptions()['preserveKeys'] ?? false;
 
-        foreach ($fetchQuery->all() as $result) {
+        foreach ($fetchQuery->all() as $i => $result) {
             if (!isset($result[$this->junctionProperty])) {
                 throw new DatabaseException(sprintf(
                     '`%s` is missing from the belongsToMany results. Results cannot be created.',
-                    $this->junctionProperty
+                    $this->junctionProperty,
                 ));
             }
 
@@ -190,6 +192,12 @@ class SelectWithPivotLoader extends SelectLoader
             foreach ($key as $k) {
                 $values[] = $result[$this->junctionProperty][$k];
             }
+
+            if ($preserveKeys) {
+                $resultMap[implode(';', $values)][$i] = $result;
+                continue;
+            }
+
             $resultMap[implode(';', $values)][] = $result;
         }
 

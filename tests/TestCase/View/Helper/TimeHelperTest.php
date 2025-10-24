@@ -43,7 +43,7 @@ class TimeHelperTest extends TestCase
     /**
      * setUp method
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->View = new View();
@@ -53,7 +53,7 @@ class TimeHelperTest extends TestCase
     /**
      * tearDown method
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         DateTime::setDefaultLocale(null);
@@ -102,7 +102,7 @@ class TimeHelperTest extends TestCase
         $timestamp = strtotime('+2 weeks');
         $result = $Time->timeAgoInWords(
             $timestamp,
-            ['end' => '1 years', 'element' => 'div']
+            ['end' => '1 years', 'element' => 'div'],
         );
         $expected = [
             'div' => [
@@ -218,7 +218,7 @@ class TimeHelperTest extends TestCase
             $yourTimezone = new DateTimeZone($timezone);
             $yourTime = new NativeDateTime($date, $yourTimezone);
             $time = $yourTime->format('U');
-            $this->assertSame($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on $timezone");
+            $this->assertSame($yourTime->format('r'), $this->Time->toRss($time, $timezone), "Failed on {$timezone}");
         }
     }
 
@@ -555,11 +555,11 @@ class TimeHelperTest extends TestCase
      * @param string $expected
      * @param string $result
      */
-    public function assertTimeFormat($expected, $result): void
+    protected function assertTimeFormat($expected, $result): void
     {
         $this->assertSame(
             str_replace([',', '(', ')', ' at', ' à'], '', $expected),
-            str_replace([',', '(', ')', ' at', ' à'], '', $result)
+            str_replace([',', '(', ')', ' at', ' à'], '', $result),
         );
     }
 

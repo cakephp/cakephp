@@ -26,31 +26,45 @@
     },
     "require": {
         "php": ">=8.1",
-        "cakephp/core": "^5.0",
-        "cakephp/event": "^5.0",
-        "cakephp/utility": "^5.0",
-        "composer/ca-bundle": "^1.2",
+        "cakephp/core": "5.2.*@dev",
+        "cakephp/event": "5.2.*@dev",
+        "cakephp/utility": "5.2.*@dev",
+        "composer/ca-bundle": "^1.5",
         "psr/http-client": "^1.0.2",
-        "psr/http-factory": "^1.0.2",
+        "psr/http-factory": "^1.1",
         "psr/http-message": "^1.1 || ^2.0",
         "psr/http-server-handler": "^1.0.2",
         "psr/http-server-middleware": "^1.0.2",
-        "laminas/laminas-diactoros": "^3.0",
+        "laminas/laminas-diactoros": "^3.3",
         "laminas/laminas-httphandlerrunner": "^2.6"
+    },
+    "require-dev": {
+        "cakephp/cache": "5.2.*@dev",
+        "cakephp/console": "5.2.*@dev",
+        "cakephp/orm": "5.2.*@dev",
+        "cakephp/i18n": "5.2.*@dev",
+        "paragonie/csp-builder": "^3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\Http\\": "."
+        }
     },
     "provide": {
         "psr/http-client-implementation": "^1.0",
-        "psr/http-factory-implementation": "^1.0",
+        "psr/http-factory-implementation": "^1.1",
         "psr/http-server-handler-implementation": "^1.0",
         "psr/http-server-middleware-implementation": "^1.0"
     },
     "suggest": {
         "cakephp/cache": "To use cache session storage",
-        "cakephp/orm": "To use database session storage"
+        "cakephp/orm": "To use database session storage",
+        "paragonie/csp-builder": "To use CspMiddleware"
     },
-    "autoload": {
-        "psr-4": {
-            "Cake\\Http\\": "."
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-5.x": "5.2.x-dev"
         }
     }
 }

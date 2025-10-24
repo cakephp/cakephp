@@ -23,8 +23,9 @@ use Cake\Core\Configure;
  * Generic ResultSet decorator. This will make any traversable object appear to
  * be a database result
  *
- * @template T of \Cake\Datasource\EntityInterface|array
- * @implements \Cake\Datasource\ResultSetInterface<T>
+ * @template TKey
+ * @template TValue
+ * @template-extends \Cake\Collection\Collection<TKey, TValue>
  */
 class ResultSetDecorator extends Collection implements ResultSetInterface
 {

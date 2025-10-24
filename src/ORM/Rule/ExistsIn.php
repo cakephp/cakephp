@@ -90,7 +90,7 @@ class ExistsIn
                     'ExistsIn rule for `%s` is invalid. `%s` is not associated with `%s`.',
                     implode(', ', $this->_fields),
                     $this->_repository,
-                    get_class($options['repository'])
+                    $options['repository']::class,
                 ));
             }
             $repository = $table->getAssociation($this->_repository);
@@ -98,7 +98,8 @@ class ExistsIn
         }
 
         $fields = $this->_fields;
-        $source = $target = $this->_repository;
+        $source = $this->_repository;
+        $target = $this->_repository;
         if ($target instanceof Association) {
             $bindingKey = (array)$target->getBindingKey();
             $realTarget = $target->getTarget();
@@ -137,12 +138,12 @@ class ExistsIn
         }
 
         $primary = array_map(
-            fn ($key) => $target->aliasField($key) . ' IS',
-            $bindingKey
+            fn($key) => $target->aliasField($key) . ' IS',
+            $bindingKey,
         );
         $conditions = array_combine(
             $primary,
-            $entity->extract($fields)
+            $entity->extract($fields),
         );
 
         return $target->exists($conditions);

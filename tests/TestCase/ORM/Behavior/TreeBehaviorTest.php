@@ -42,7 +42,7 @@ class TreeBehaviorTest extends TestCase
      */
     protected $table;
 
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->table = $this->getTableLocator()->get('NumberTrees');
@@ -734,7 +734,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = new Entity(
             ['name' => 'New Orphan', 'parent_id' => null, 'level' => null],
-            ['markNew' => true]
+            ['markNew' => true],
         );
         $this->assertSame($entity, $table->save($entity));
         $this->assertSame(23, $entity->lft);
@@ -765,7 +765,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = new Entity(
             ['name' => 'laptops', 'parent_id' => 1],
-            ['markNew' => true]
+            ['markNew' => true],
         );
         $this->assertSame($entity, $table->save($entity));
         $this->assertSame(20, $entity->lft);
@@ -796,7 +796,7 @@ class TreeBehaviorTest extends TestCase
         $table = $this->table;
         $entity = new Entity(
             ['name' => 'laptops', 'parent_id' => 2],
-            ['markNew' => true]
+            ['markNew' => true],
         );
         $this->assertSame($entity, $table->save($entity));
         $this->assertSame(9, $entity->lft);
@@ -860,7 +860,7 @@ class TreeBehaviorTest extends TestCase
     public function testReParentSelf(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
+        $this->expectExceptionMessage("Cannot set a node's parent as itself");
         $entity = $this->table->get(1);
         $entity->parent_id = $entity->id;
         $this->table->save($entity);
@@ -872,7 +872,7 @@ class TreeBehaviorTest extends TestCase
     public function testReParentSelfNewEntity(): void
     {
         $this->expectException(DatabaseException::class);
-        $this->expectExceptionMessage('Cannot set a node\'s parent as itself');
+        $this->expectExceptionMessage("Cannot set a node's parent as itself");
         $entity = $this->table->newEntity(['name' => 'root']);
         $entity->id = 1;
         $entity->parent_id = $entity->id;
@@ -1455,7 +1455,7 @@ class TreeBehaviorTest extends TestCase
                     str_pad((string)$item->lft, 2, ' ', STR_PAD_LEFT),
                     str_pad((string)$item->rght, 2, ' ', STR_PAD_LEFT),
                     str_pad((string)$item->$primaryKey, 2, ' ', STR_PAD_LEFT),
-                    $item->{$displayField}
+                    $item->{$displayField},
                 );
             },
         ];

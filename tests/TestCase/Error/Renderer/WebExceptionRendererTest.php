@@ -17,12 +17,16 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Error;
 
 use Cake\Controller\Controller;
+use Cake\Controller\ErrorController;
 use Cake\Controller\Exception\InvalidParameterException;
 use Cake\Controller\Exception\MissingActionException;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Exception\MissingPluginException;
+use Cake\Database\Driver;
+use Cake\Database\Exception\QueryException;
+use Cake\Database\Log\LoggedQuery;
 use Cake\Datasource\Exception\MissingDatasourceConfigException;
 use Cake\Datasource\Exception\MissingDatasourceException;
 use Cake\Error\Renderer\WebExceptionRenderer;
@@ -33,21 +37,26 @@ use Cake\Http\Exception\InternalErrorException;
 use Cake\Http\Exception\MethodNotAllowedException;
 use Cake\Http\Exception\MissingControllerException;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\Mailer\Exception\MissingActionException as MissingMailerActionException;
 use Cake\ORM\Exception\MissingBehaviorException;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Exception\XmlException;
 use Cake\View\Exception\MissingHelperException;
 use Cake\View\Exception\MissingLayoutException;
 use Cake\View\Exception\MissingTemplateException;
 use Exception;
+use Mockery;
 use OutOfBoundsException;
+use PDOException;
+use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionMethod;
 use RuntimeException;
 use TestApp\Controller\Admin\ErrorController as PrefixErrorController;
 use TestApp\Error\Exception\MissingWidgetThing;
 use TestApp\Error\Exception\MissingWidgetThingException;
-use TestApp\Error\Exception\MyPDOException;
 use TestApp\Error\Renderer\MyCustomExceptionRenderer;
 use TestApp\Error\Renderer\TestAppsExceptionRenderer;
 use TestPlugin\Controller\ErrorController as PluginErrorController;
@@ -68,7 +77,7 @@ class WebExceptionRendererTest extends TestCase
     /**
      * setup create a request object to get out of router later.
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         Configure::write('Config.language', 'eng');
@@ -82,7 +91,7 @@ class WebExceptionRendererTest extends TestCase
     /**
      * tearDown
      */
-    public function tearDown(): void
+    protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearPlugins();
@@ -105,7 +114,7 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertInstanceOf(
             PrefixErrorController::class,
-            $ExceptionRenderer->__debugInfo()['controller']
+            $ExceptionRenderer->__debugInfo()['controller'],
         );
     }
 
@@ -131,7 +140,7 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertInstanceOf(
             PluginErrorController::class,
-            $ExceptionRenderer->__debugInfo()['controller']
+            $ExceptionRenderer->__debugInfo()['controller'],
         );
     }
 
@@ -169,7 +178,7 @@ class WebExceptionRendererTest extends TestCase
         $this->assertSame('error400', $controller->viewBuilder()->getTemplate());
         $this->assertSame(
             'Admin' . DIRECTORY_SEPARATOR . 'Error',
-            $controller->viewBuilder()->getTemplatePath()
+            $controller->viewBuilder()->getTemplatePath(),
         );
     }
 
@@ -200,12 +209,12 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertSame(
             'missingWidgetThing',
-            $ExceptionRenderer->__debugInfo()['method']
+            $ExceptionRenderer->__debugInfo()['method'],
         );
         $this->assertSame(
             'widget thing is missing',
             (string)$result->getBody(),
-            'Method declared in subclass converted to error400'
+            'Method declared in subclass converted to error400',
         );
     }
 
@@ -224,7 +233,7 @@ class WebExceptionRendererTest extends TestCase
         $this->assertMatchesRegularExpression(
             '/Not Found/',
             (string)$result->getBody(),
-            'Method declared in error handler not converted to error400. %s'
+            'Method declared in error handler not converted to error400. %s',
         );
     }
 
@@ -237,8 +246,8 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $this->assertInstanceOf(
-            'Cake\Controller\ErrorController',
-            $ExceptionRenderer->__debugInfo()['controller']
+            ErrorController::class,
+            $ExceptionRenderer->__debugInfo()['controller'],
         );
         $this->assertEquals($exception, $ExceptionRenderer->__debugInfo()['error']);
     }
@@ -253,8 +262,8 @@ class WebExceptionRendererTest extends TestCase
         $ExceptionRenderer = new WebExceptionRenderer($exception);
 
         $this->assertInstanceOf(
-            'Cake\Controller\ErrorController',
-            $ExceptionRenderer->__debugInfo()['controller']
+            ErrorController::class,
+            $ExceptionRenderer->__debugInfo()['controller'],
         );
         $this->assertEquals($exception, $ExceptionRenderer->__debugInfo()['error']);
 
@@ -476,7 +485,7 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertSame(
             'missingController',
-            $ExceptionRenderer->__debugInfo()['template']
+            $ExceptionRenderer->__debugInfo()['template'],
         );
         $this->assertStringContainsString('Missing Controller', $result);
         $this->assertStringContainsString('<em>PostsController</em>', $result);
@@ -498,7 +507,7 @@ class WebExceptionRendererTest extends TestCase
 
         $this->assertSame(
             'missingController',
-            $ExceptionRenderer->__debugInfo()['template']
+            $ExceptionRenderer->__debugInfo()['template'],
         );
         $this->assertStringContainsString('Missing Controller', $result);
         $this->assertStringContainsString('<em>PostsController</em>', $result);
@@ -653,9 +662,8 @@ class WebExceptionRendererTest extends TestCase
 
     /**
      * Test the various Cake Exception sub classes
-     *
-     * @dataProvider exceptionProvider
      */
+    #[DataProvider('exceptionProvider')]
     public function testCakeExceptionHandling(Exception $exception, array $patterns, int $code): void
     {
         $exceptionRenderer = new WebExceptionRenderer($exception);
@@ -673,17 +681,19 @@ class WebExceptionRendererTest extends TestCase
      */
     public function testExceptionNameMangling(): void
     {
-        $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
+        $this->deprecated(function (): void {
+            $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
 
-        $result = (string)$exceptionRenderer->render()->getBody();
-        $this->assertStringContainsString('widget thing is missing', $result);
+            $result = (string)$exceptionRenderer->render()->getBody();
+            $this->assertStringContainsString('widget thing is missing', $result);
 
-        // Custom method should be called even when debug is off.
-        Configure::write('debug', false);
-        $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
+            // Custom method should be called even when debug is off.
+            Configure::write('debug', false);
+            $exceptionRenderer = new MyCustomExceptionRenderer(new MissingWidgetThing());
 
-        $result = (string)$exceptionRenderer->render()->getBody();
-        $this->assertStringContainsString('widget thing is missing', $result);
+            $result = (string)$exceptionRenderer->render()->getBody();
+            $this->assertStringContainsString('widget thing is missing', $result);
+        });
     }
 
     /**
@@ -694,17 +704,17 @@ class WebExceptionRendererTest extends TestCase
         $exception = new MissingHelperException(['class' => 'Fail']);
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->onlyMethods(['render'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
-        $controller->viewBuilder()->setHelpers(['Fail', 'Boom']);
-        $controller->setRequest(new ServerRequest());
-        $controller->expects($this->once())
-            ->method('render')
+        $controller = Mockery::mock(Controller::class)->makePartial();
+        $controller->shouldReceive('render')
             ->with('missingHelper')
-            ->will($this->throwException($exception));
+            ->once()
+            ->andThrow($exception);
+        $controller->shouldReceive('getRequest')
+            ->times(1)
+            ->andReturn(new ServerRequest());
+        $controller->shouldReceive('getResponse')
+            ->times(2)
+            ->andReturn(new Response());
 
         $ExceptionRenderer->setController($controller);
 
@@ -723,15 +733,13 @@ class WebExceptionRendererTest extends TestCase
         $exception = new NotFoundException('Not there, sorry');
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->onlyMethods(['beforeRender'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
-        $controller->setRequest(new ServerRequest());
-        $controller->expects($this->any())
-            ->method('beforeRender')
-            ->will($this->throwException($exception));
+        $request = new ServerRequest();
+        $controller = new class ($request) extends Controller {
+            public function beforeRender(EventInterface $event): never
+            {
+                throw new NotFoundException('Not there, sorry');
+            }
+        };
 
         $ExceptionRenderer->setController($controller);
 
@@ -755,7 +763,7 @@ class WebExceptionRendererTest extends TestCase
             function (EventInterface $event): void {
                 $this->called = true;
                 $event->getSubject()->viewBuilder()->setLayoutPath('boom');
-            }
+            },
         );
         $controller->setRequest(new ServerRequest());
         $ExceptionRenderer->setController($controller);
@@ -784,7 +792,7 @@ class WebExceptionRendererTest extends TestCase
                 $this->called = true;
                 $event->getSubject()->viewBuilder()->setTemplatePath('Error');
                 $event->getSubject()->viewBuilder()->setLayout('does-not-exist');
-            }
+            },
         );
         $controller->setRequest(new ServerRequest());
         $ExceptionRenderer->setController($controller);
@@ -804,21 +812,20 @@ class WebExceptionRendererTest extends TestCase
     {
         $exception = new NotFoundException();
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
+        $pluginException = new MissingPluginException(['plugin' => 'TestPlugin']);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->onlyMethods(['render'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
-        $controller->setPlugin('TestPlugin');
-        $controller->setRequest(new ServerRequest());
-
-        $exception = new MissingPluginException(['plugin' => 'TestPlugin']);
-        $controller->expects($this->once())
-            ->method('render')
+        $controller = Mockery::mock(Controller::class)->makePartial();
+        $controller->shouldReceive('render')
             ->with('error400')
-            ->will($this->throwException($exception));
-
+            ->once()
+            ->andThrow($pluginException);
+        $controller->shouldReceive('getRequest')
+            ->times(1)
+            ->andReturn(new ServerRequest());
+        $controller->shouldReceive('getResponse')
+            ->times(2)
+            ->andReturn(new Response());
+        $controller->setPlugin('TestPlugin');
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
@@ -835,20 +842,20 @@ class WebExceptionRendererTest extends TestCase
         $this->loadPlugins(['TestPlugin']);
         $exception = new NotFoundException();
         $ExceptionRenderer = new MyCustomExceptionRenderer($exception);
+        $innerException = new MissingPluginException(['plugin' => 'TestPluginTwo']);
 
-        /** @var \Cake\Controller\Controller|\PHPUnit\Framework\MockObject\MockObject $controller */
-        $controller = $this->getMockBuilder('Cake\Controller\Controller')
-            ->onlyMethods(['render'])
-            ->setConstructorArgs([new ServerRequest()])
-            ->getMock();
-        $controller->setPlugin('TestPlugin');
-
-        $exception = new MissingPluginException(['plugin' => 'TestPluginTwo']);
-        $controller->expects($this->once())
-            ->method('render')
+        $controller = Mockery::mock(Controller::class)->makePartial();
+        $controller->shouldReceive('render')
             ->with('error400')
-            ->will($this->throwException($exception));
-
+            ->once()
+            ->andThrow($innerException);
+        $controller->shouldReceive('getRequest')
+            ->times(1)
+            ->andReturn(new ServerRequest());
+        $controller->shouldReceive('getResponse')
+            ->times(2)
+            ->andReturn(new Response());
+        $controller->setPlugin('TestPlugin');
         $ExceptionRenderer->setController($controller);
 
         $response = $ExceptionRenderer->render();
@@ -948,17 +955,53 @@ class WebExceptionRendererTest extends TestCase
      */
     public function testPDOException(): void
     {
-        $exception = new MyPDOException('There was an error in the SQL query');
-        $exception->queryString = 'SELECT * from poo_query < 5 and :seven';
-        $exception->params = ['seven' => 7];
+        $loggedQuery = new LoggedQuery();
+        $loggedQuery->setContext([
+            'query' => 'SELECT * from poo_query < 5 and :seven',
+            'driver' => $this->getMockBuilder(Driver::class)->getMock(),
+            'params' => ['seven' => 7],
+        ]);
+        $exception = new QueryException($loggedQuery, new PDOException());
+
         $ExceptionRenderer = new WebExceptionRenderer($exception);
         $response = $ExceptionRenderer->render();
 
         $this->assertSame(500, $response->getStatusCode());
         $result = (string)$response->getBody();
         $this->assertStringContainsString('Database Error', $result);
-        $this->assertStringContainsString('There was an error in the SQL query', $result);
-        $this->assertStringContainsString(h('SELECT * from poo_query < 5 and :seven'), $result);
-        $this->assertStringContainsString("'seven' => (int) 7", $result);
+        $this->assertStringContainsString('SQL Query', $result);
+        $this->assertStringContainsString(h('SELECT * from poo_query < 5 and 7'), $result);
+    }
+
+    /**
+     * Tests for customzing responses using methods of ErrorController.
+     *
+     * @return void
+     */
+    public function testExceptionWithMatchingControllerMethod(): void
+    {
+        $exception = new MissingWidgetThingException();
+        $exceptionRenderer = new TestAppsExceptionRenderer($exception);
+
+        $result = (string)$exceptionRenderer->render()->getBody();
+        $this->assertStringContainsString('template for TestApp\Error\Exception\MissingWidgetThingException was rendered', $result);
+
+        $exception = new XmlException();
+        $exceptionRenderer = new TestAppsExceptionRenderer($exception);
+
+        $result = (string)$exceptionRenderer->render()->getBody();
+        $this->assertStringContainsString('<xml>rendered xml exception</xml>', $result);
+    }
+
+    public function testDeprecatedHttpErrorCodeMapping(): void
+    {
+        $this->deprecated(function (): void {
+            $exception = new MissingWidgetThing();
+            $exceptionRenderer = new MyCustomExceptionRenderer($exception);
+
+            $reflectedMethod = new ReflectionMethod($exceptionRenderer, 'getHttpCode');
+
+            $this->assertSame(404, $reflectedMethod->invoke($exceptionRenderer, $exception));
+        });
     }
 }

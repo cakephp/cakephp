@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database\Type;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Database\Driver;
 use Cake\Database\Type\BinaryUuidType;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
@@ -40,11 +41,11 @@ class BinaryUuidTypeTest extends TestCase
     /**
      * Setup
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->type = new BinaryUuidType();
-        $this->driver = $this->getMockBuilder('Cake\Database\Driver')->getMock();
+        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
     }
 
     /**
@@ -59,7 +60,7 @@ class BinaryUuidTypeTest extends TestCase
         preg_match_all(
             $uuidRegex,
             $result,
-            $matches
+            $matches,
         );
 
         $result = $matches[0];

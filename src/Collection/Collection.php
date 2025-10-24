@@ -24,7 +24,10 @@ use IteratorIterator;
  * A collection is an immutable list of elements with a handful of functions to
  * iterate, group, transform and extract information from it.
  *
- * @template-extends \IteratorIterator<mixed, mixed, \Traversable<mixed>>
+ * @template TKey
+ * @template TValue
+ * @extends \IteratorIterator<TKey, TValue, \Traversable<TKey, TValue>>
+ * @implements \Cake\Collection\CollectionInterface<TKey, TValue>
  */
 class Collection extends IteratorIterator implements CollectionInterface
 {
@@ -76,7 +79,7 @@ class Collection extends IteratorIterator implements CollectionInterface
     {
         try {
             $count = $this->count();
-        } catch (Exception $e) {
+        } catch (Exception) {
             $count = 'An exception occurred while getting count';
         }
 

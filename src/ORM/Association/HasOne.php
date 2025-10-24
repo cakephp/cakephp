@@ -50,11 +50,7 @@ class HasOne extends Association
      */
     public function getForeignKey(): array|string|false
     {
-        if (!isset($this->_foreignKey)) {
-            $this->_foreignKey = $this->_modelKey($this->getSource()->getAlias());
-        }
-
-        return $this->_foreignKey;
+        return $this->_foreignKey ??= $this->_modelKey($this->getSource()->getAlias());
     }
 
     /**
@@ -121,7 +117,7 @@ class HasOne extends Association
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
-        if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
+        if (!$targetEntity instanceof EntityInterface) {
             return $entity;
         }
 
@@ -129,9 +125,13 @@ class HasOne extends Association
         $foreignKeys = (array)$this->getForeignKey();
         $properties = array_combine(
             $foreignKeys,
-            $entity->extract((array)$this->getBindingKey())
+            $entity->extract((array)$this->getBindingKey()),
         );
-        $targetEntity->set($properties, ['guard' => false]);
+        if (method_exists($targetEntity, 'patch')) {
+            $targetEntity = $targetEntity->patch($properties, ['guard' => false]);
+        } else {
+            $targetEntity->set($properties, ['guard' => false]);
+        }
 
         if (!$this->getTarget()->save($targetEntity, $options)) {
             $targetEntity->unset(array_keys($properties));

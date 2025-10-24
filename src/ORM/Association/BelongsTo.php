@@ -52,11 +52,7 @@ class BelongsTo extends Association
      */
     public function getForeignKey(): array|string|false
     {
-        if (!isset($this->_foreignKey)) {
-            $this->_foreignKey = $this->_modelKey($this->getTarget()->getAlias());
-        }
-
-        return $this->_foreignKey;
+        return $this->_foreignKey ??= $this->_modelKey($this->getTarget()->getAlias());
     }
 
     /**
@@ -137,7 +133,7 @@ class BelongsTo extends Association
     public function saveAssociated(EntityInterface $entity, array $options = []): EntityInterface|false
     {
         $targetEntity = $entity->get($this->getProperty());
-        if (empty($targetEntity) || !($targetEntity instanceof EntityInterface)) {
+        if (!$targetEntity instanceof EntityInterface) {
             return $entity;
         }
 
@@ -151,9 +147,14 @@ class BelongsTo extends Association
         $foreignKeys = (array)$this->getForeignKey();
         $properties = array_combine(
             $foreignKeys,
-            $targetEntity->extract((array)$this->getBindingKey())
+            $targetEntity->extract((array)$this->getBindingKey()),
         );
-        $entity->set($properties, ['guard' => false]);
+
+        if (method_exists($entity, 'patch')) {
+            $entity = $entity->patch($properties, ['guard' => false]);
+        } else {
+            $entity->set($properties, ['guard' => false]);
+        }
 
         return $entity;
     }
@@ -176,7 +177,7 @@ class BelongsTo extends Association
         $bindingKey = (array)$this->getBindingKey();
 
         if (count($foreignKey) !== count($bindingKey)) {
-            if (empty($bindingKey)) {
+            if (!$bindingKey) {
                 $msg = 'The `%s` table does not define a primary key. Please set one.';
                 throw new DatabaseException(sprintf($msg, $this->getTarget()->getTable()));
             }
@@ -186,7 +187,7 @@ class BelongsTo extends Association
                 $msg,
                 $this->_name,
                 implode(', ', $foreignKey),
-                implode(', ', $bindingKey)
+                implode(', ', $bindingKey),
             ));
         }
 

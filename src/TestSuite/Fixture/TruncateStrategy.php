@@ -44,7 +44,7 @@ class TruncateStrategy implements FixtureStrategyInterface
      */
     public function setupTest(array $fixtureNames): void
     {
-        if (empty($fixtureNames)) {
+        if (!$fixtureNames) {
             return;
         }
 

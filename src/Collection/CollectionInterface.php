@@ -26,7 +26,9 @@ use const SORT_NUMERIC;
  * list of elements exposing a number of traversing and extracting method for
  * generating other collections.
  *
- * @template-extends \Iterator<mixed>
+ * @template TKey
+ * @template-covariant TValue
+ * @template-extends \Iterator<TKey, TValue>
  */
 interface CollectionInterface extends Iterator, JsonSerializable, Countable
 {
@@ -92,7 +94,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable $callback the method that will receive each of the elements and
+     * @param callable|null $callback the method that will receive each of the elements and
      *   returns true whether they should be out of the resulting collection.
      *   If left null, a callback that filters out truthy values will be used.
      * @return self
@@ -101,12 +103,12 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
 
     /**
      * Loops through each value in the collection and returns a new collection
-     * with only unique values based on the value returned by ``callback``.
+     * with only unique values based on the value returned by the callback.
      *
      * The callback is passed the value as the first argument and the key as the
      * second argument.
      *
-     * @param callable $callback the method that will receive each of the elements and
+     * @param callable|null $callback the method that will receive each of the elements and
      * returns the value used to determine uniqueness.
      * @return self
      */
@@ -191,10 +193,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
 
     /**
      * Folds the values in this collection to a single value, as the result of
-     * applying the callback function to all elements. $zero is the initial state
+     * applying the callback function to all elements. $initial is the initial state
      * of the reduction, and each successive step of it should be returned
      * by the callback function.
-     * If $zero is omitted the first value of the collection will be used in its place
+     * If $initial is omitted the first value of the collection will be used in its place
      * and reduction will start from the second item.
      *
      * @param callable $callback The callback function to be called
@@ -219,8 +221,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * ```
      * $items = [
-     *  ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
-     *  ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]
+     *     ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']]],
+     *     ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]],
      * ];
      * $extracted = (new Collection($items))->extract('comment.user.name');
      *
@@ -233,7 +235,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ```
      *  $items = [
      *      ['comment' => ['votes' => [['value' => 1], ['value' => 2], ['value' => 3]]],
-     *      ['comment' => ['votes' => [['value' => 4]]
+     *      ['comment' => ['votes' => [['value' => 4]],
      * ];
      * $extracted = (new Collection($items))->extract('comment.votes.{*}.value');
      *
@@ -398,7 +400,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function sortBy(
         callable|string $path,
         int $order = SORT_DESC,
-        int $sort = SORT_NUMERIC
+        int $sort = SORT_NUMERIC,
     ): CollectionInterface;
 
     /**
@@ -614,15 +616,15 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * ```
      * $items = [
-     *  ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
-     *  ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']],
+     *     ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']]],
+     *     ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]],
      * ];
      *
      * $extracted = (new Collection($items))->match(['user.name' => 'Renan']);
      *
      * // Result will look like this when converted to array
      * [
-     *  ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]]
+     *     ['comment' => ['body' => 'very cool', 'user' => ['name' => 'Renan']]],
      * ]
      * ```
      *
@@ -641,21 +643,21 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * a property path as accepted by `Collection::extract`, and the value the
      * condition against with each element will be matched
      * @see \Cake\Collection\CollectionInterface::match()
-     * @return mixed
+     * @return TValue|null
      */
     public function firstMatch(array $conditions): mixed;
 
     /**
      * Returns the first result in this collection
      *
-     * @return mixed The first value in the collection will be returned.
+     * @return TValue|null The first value in the collection will be returned.
      */
     public function first(): mixed;
 
     /**
      * Returns the last result in this collection
      *
-     * @return mixed The last value in the collection will be returned.
+     * @return TValue|null The last value in the collection will be returned.
      */
     public function last(): mixed;
 
@@ -737,7 +739,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function combine(
         callable|string $keyPath,
         callable|string $valuePath,
-        callable|string|null $groupPath = null
+        callable|string|null $groupPath = null,
     ): CollectionInterface;
 
     /**
@@ -754,7 +756,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
     public function nest(
         callable|string $idPath,
         callable|string $parentPath,
-        string $nestingKey = 'children'
+        string $nestingKey = 'children',
     ): CollectionInterface;
 
     /**
@@ -774,16 +776,16 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * ```
      * $items = [
-     *  ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']],
-     *  ['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan']]
+     *     ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark']]],
+     *     ['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan']]],
      * ];
      * $ages = [25, 28];
      * $inserted = (new Collection($items))->insert('comment.user.age', $ages);
      *
      * // Result will look like this when converted to array
      * [
-     *  ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark', 'age' => 25]],
-     *  ['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan', 'age' => 28]]
+     *     ['comment' => ['body' => 'cool', 'user' => ['name' => 'Mark', 'age' => 25]]],
+     *     ['comment' => ['body' => 'awesome', 'user' => ['name' => 'Renan', 'age' => 28]]]
      * ];
      * ```
      *
@@ -802,7 +804,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * collection as the array keys. Keep in mind that it is valid for iterators
      * to return the same key for different elements, setting this value to false
      * can help getting all items if keys are not important in the result.
-     * @return array
+     * @phpstan-return ($keepKeys is true ? array<TKey, TValue> : array<int, TValue>)
+     * @return array<TKey, TValue>|array<int, TValue>
      */
     public function toArray(bool $keepKeys = true): array;
 
@@ -810,7 +813,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * Returns an numerically-indexed array representation of the results.
      * This is equivalent to calling `toArray(false)`
      *
-     * @return array
+     * @return array<int, TValue>
      */
     public function toList(): array;
 
@@ -920,7 +923,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      */
     public function listNested(
         string|int $order = 'desc',
-        callable|string $nestingKey = 'children'
+        callable|string $nestingKey = 'children',
     ): CollectionInterface;
 
     /**

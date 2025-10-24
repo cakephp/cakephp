@@ -16,6 +16,7 @@ namespace TestApp\Model\Table;
 
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
+use Cake\Utility\Text;
 
 /**
  * Article table class
@@ -55,6 +56,27 @@ class ArticlesTable extends Table
     public function findWithAuthors($query, array $options = []): SelectQuery
     {
         return $query->contain('Authors');
+    }
+
+    /**
+     * Finder for testing named parameter compatibility
+     */
+    public function findTitled(SelectQuery $query, array $options): SelectQuery
+    {
+        if (!empty($options['title'])) {
+            $query->where(['Articles.title' => $options['title']]);
+        }
+
+        return $query;
+    }
+
+    public function findSlugged(SelectQuery $query): SelectQuery
+    {
+        return $query->formatResults(function ($results) {
+            return $results->indexBy(function ($row) {
+                return Text::slug($row['title']);
+            });
+        });
     }
 
     /**

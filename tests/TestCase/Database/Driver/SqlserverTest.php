@@ -26,7 +26,10 @@ use Cake\Database\Query\SelectQuery;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
 use PDO;
+use PDOStatement;
+use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests Sqlserver driver
@@ -41,7 +44,7 @@ class SqlserverTest extends TestCase
     /**
      * Set up
      */
-    public function setUp(): void
+    protected function setUp(): void
     {
         parent::setUp();
         $this->missingExtension = !defined('PDO::SQLSRV_ENCODING_UTF8');
@@ -96,13 +99,13 @@ class SqlserverTest extends TestCase
     /**
      * Test if all options in dns string are set
      *
-     * @dataProvider dnsStringDataProvider
      * @param array $constructorArgs
      * @param string $dnsString
      */
+    #[DataProvider('dnsStringDataProvider')]
     public function testDnsString($constructorArgs, $dnsString): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo'])
             ->setConstructorArgs([$constructorArgs])
             ->getMock();
@@ -133,7 +136,7 @@ class SqlserverTest extends TestCase
             'init' => ['Execute this', 'this too'],
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo'])
             ->setConstructorArgs([$config])
             ->getMock();
@@ -155,24 +158,15 @@ class SqlserverTest extends TestCase
         $expected['encrypt'] = null;
         $expected['trustServerCertificate'] = null;
 
-        $connection = $this->getMockBuilder('PDO')
-            ->disableOriginalConstructor()
-            ->onlyMethods(['exec', 'quote'])
-            ->getMock();
-        $connection->expects($this->any())
-            ->method('quote')
-            ->willReturnArgument(0);
+        $connection = Mockery::mock(PDO::class);
 
-        $connection->expects($this->exactly(4))
-            ->method('exec')
-            ->with(
-                ...self::withConsecutive(
-                    ['Execute this'],
-                    ['this too'],
-                    ['SET config1 value1'],
-                    ['SET config2 value2']
-                )
-            );
+        $connection->shouldReceive('quote')
+            ->andReturnArg(0);
+
+        $connection->shouldReceive('exec')->with('Execute this')->once();
+        $connection->shouldReceive('exec')->with('this too')->once();
+        $connection->shouldReceive('exec')->with('SET config1 value1')->once();
+        $connection->shouldReceive('exec')->with('SET config2 value2')->once();
 
         $driver->expects($this->once())->method('createPdo')
             ->with($dsn, $expected)
@@ -226,11 +220,58 @@ class SqlserverTest extends TestCase
     }
 
     /**
+     * Test setting/skipping of client side buffering options based on output of
+     * SelectQuery::isBufferedResultsEnabled()
+     *
+     * @return void
+     */
+    public function testPrepare(): void
+    {
+        $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
+
+        $driver = $this->getMockBuilder(Sqlserver::class)
+            ->onlyMethods(['getPdo'])
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $pdo = Mockery::mock(PDO::class);
+
+        $statement = $this->getMockBuilder(PDOStatement::class)
+            ->getMock();
+
+        $connection = $this->getMockBuilder(Connection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+
+        $driver->method('getPdo')
+            ->willReturn($pdo);
+
+        $pdo->shouldReceive('prepare')
+            ->with('', [
+                PDO::ATTR_CURSOR => PDO::CURSOR_SCROLL,
+                PDO::SQLSRV_ATTR_CURSOR_SCROLL_TYPE => PDO::SQLSRV_CURSOR_BUFFERED,
+            ])
+            ->andReturn($statement)
+            ->once();
+
+        $pdo->shouldReceive('prepare')
+            ->with('', [])
+            ->andReturn($statement)
+            ->once();
+
+        $query = new SelectQuery($connection);
+        $driver->prepare($query);
+
+        $query->disableBufferedResults();
+        $driver->prepare($query);
+    }
+
+    /**
      * Test select with limit only and SQLServer2012+
      */
     public function testSelectLimitVersion12(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -274,7 +315,7 @@ class SqlserverTest extends TestCase
      */
     public function testSelectLimitOldServer(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -388,7 +429,7 @@ class SqlserverTest extends TestCase
                 '(ROW_NUMBER() OVER (ORDER BY (SELECT count(*) FROM articles a WHERE (a.id = articles.id AND a.published = :c2)) ASC)) AS _cake_page_rownum_ FROM articles' .
             ') _cake_paging_ ' .
             'WHERE _cake_paging_._cake_page_rownum_ > 10',
-            $query->sql()
+            $query->sql(),
         );
     }
 
@@ -397,7 +438,7 @@ class SqlserverTest extends TestCase
      */
     public function testInsertUsesOutput(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['createPdo', 'getPdo', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -417,7 +458,7 @@ class SqlserverTest extends TestCase
      */
     public function testHavingReplacesAlias(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -448,7 +489,7 @@ class SqlserverTest extends TestCase
      */
     public function testHavingWhenNoAliasIsUsed(): void
     {
-        $driver = $this->getMockBuilder('Cake\Database\Driver\Sqlserver')
+        $driver = $this->getMockBuilder(Sqlserver::class)
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
@@ -485,7 +526,7 @@ class SqlserverTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage(
-            'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server'
+            'Exceeded maximum number of parameters (2100) for prepared statements in Sql Server',
         );
         $connection->getDriver()->prepare($query);
     }
@@ -503,7 +544,10 @@ class SqlserverTest extends TestCase
         $this->assertTrue($driver->supports(DriverFeatureEnum::SAVEPOINT));
         $this->assertTrue($driver->supports(DriverFeatureEnum::TRUNCATE_WITH_CONSTRAINTS));
         $this->assertTrue($driver->supports(DriverFeatureEnum::WINDOW));
+        $this->assertTrue($driver->supports(DriverFeatureEnum::INTERSECT));
 
+        $this->assertFalse($driver->supports(DriverFeatureEnum::INTERSECT_ALL));
         $this->assertFalse($driver->supports(DriverFeatureEnum::JSON));
+        $this->assertFalse($driver->supports(DriverFeatureEnum::SET_OPERATIONS_ORDER_BY));
     }
 }

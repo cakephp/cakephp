@@ -7,16 +7,16 @@ body:
       label: Description
       description: "Please provide a description and way to reproduce the problem."
       placeholder: |
-        Please use the CakePHP Slack channel, Discord channel or IRC channel for questions.
-
-        https://cakephp.org/get-involved#getHelp
+        This issue tracker is *not* a support forum.
+        Please use the CakePHP Slack channel, Discord channel or Discourse forum for support questions.
+        https://book.cakephp.org/5/en/intro/where-to-get-help.html
     validations:
       required: true
   - type: input
     attributes:
       label: CakePHP Version
       description: "The CakePHP version used."
-      placeholder: "4.4.0"
+      placeholder: "5.0"
     validations:
       required: true
   - type: input

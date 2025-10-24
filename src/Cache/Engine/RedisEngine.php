@@ -46,12 +46,16 @@ class RedisEngine extends CacheEngine
      * - `password` Redis server password.
      * - `persistent` Connect to the Redis server with a persistent connection
      * - `port` port number to the Redis server.
+     * - `tls` connect to the Redis server using TLS.
      * - `prefix` Prefix appended to all entries. Good for when you need to share a keyspace
      *    with either another cache config or another application.
      * - `scanCount` Number of keys to ask for each scan (default: 10)
      * - `server` URL or IP to the Redis server host.
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
+     * - `clearUsesFlushDb` Enable clear() and clearBlocking() to use FLUSHDB. This will be
+     *   faster than standard clear()/clearBlocking() but will ignore prefixes and will
+     *   cause dataloss if other applications are sharing a redis database.
      *
      * @var array<string, mixed>
      */
@@ -62,12 +66,14 @@ class RedisEngine extends CacheEngine
         'password' => false,
         'persistent' => true,
         'port' => 6379,
+        'tls' => false,
         'prefix' => 'cake_',
         'host' => null,
         'server' => '127.0.0.1',
         'timeout' => 0,
         'unix_socket' => false,
         'scanCount' => 10,
+        'clearUsesFlushDb' => false,
     ];
 
     /**
@@ -100,24 +106,29 @@ class RedisEngine extends CacheEngine
      */
     protected function _connect(): bool
     {
+        $tls = $this->_config['tls'] === true ? 'tls://' : '';
+
+        $map = [
+            'ssl_ca' => 'cafile',
+            'ssl_key' => 'local_pk',
+            'ssl_cert' => 'local_cert',
+        ];
+
+        $ssl = [];
+        foreach ($map as $key => $context) {
+            if (!empty($this->_config[$key])) {
+                $ssl[$context] = $this->_config[$key];
+            }
+        }
+
         try {
-            $this->_Redis = new Redis();
+            $this->_Redis = $this->_createRedisInstance();
             if (!empty($this->_config['unix_socket'])) {
                 $return = $this->_Redis->connect($this->_config['unix_socket']);
             } elseif (empty($this->_config['persistent'])) {
-                $return = $this->_Redis->connect(
-                    $this->_config['server'],
-                    (int)$this->_config['port'],
-                    (int)$this->_config['timeout']
-                );
+                $return = $this->_connectTransient($tls . $this->_config['server'], $ssl);
             } else {
-                $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
-                $return = $this->_Redis->pconnect(
-                    $this->_config['server'],
-                    (int)$this->_config['port'],
-                    (int)$this->_config['timeout'],
-                    $persistentId
-                );
+                $return = $this->_connectPersistent($tls . $this->_config['server'], $ssl);
             }
         } catch (RedisException $e) {
             if (class_exists(Log::class)) {
@@ -130,10 +141,71 @@ class RedisEngine extends CacheEngine
             $return = $this->_Redis->auth($this->_config['password']);
         }
         if ($return) {
-            $return = $this->_Redis->select((int)$this->_config['database']);
+            return $this->_Redis->select((int)$this->_config['database']);
         }
 
         return $return;
+    }
+
+    /**
+     * Connects to a Redis server using a new connection.
+     *
+     * @param string $server Server to connect to.
+     * @param array $ssl SSL context options.
+     * @throws \RedisException
+     * @return bool True if Redis server was connected
+     */
+    protected function _connectTransient(string $server, array $ssl): bool
+    {
+        if ($ssl === []) {
+            return $this->_Redis->connect(
+                $server,
+                (int)$this->_config['port'],
+                (int)$this->_config['timeout'],
+            );
+        }
+
+        return $this->_Redis->connect(
+            $server,
+            (int)$this->_config['port'],
+            (int)$this->_config['timeout'],
+            null,
+            0,
+            0.0,
+            ['ssl' => $ssl],
+        );
+    }
+
+    /**
+     * Connects to a Redis server using a persistent connection.
+     *
+     * @param string $server Server to connect to.
+     * @param array $ssl SSL context options.
+     * @throws \RedisException
+     * @return bool True if Redis server was connected
+     */
+    protected function _connectPersistent(string $server, array $ssl): bool
+    {
+        $persistentId = $this->_config['port'] . $this->_config['timeout'] . $this->_config['database'];
+
+        if ($ssl === []) {
+            return $this->_Redis->pconnect(
+                $server,
+                (int)$this->_config['port'],
+                (int)$this->_config['timeout'],
+                $persistentId,
+            );
+        }
+
+        return $this->_Redis->pconnect(
+            $server,
+            (int)$this->_config['port'],
+            (int)$this->_config['timeout'],
+            $persistentId,
+            0,
+            0.0,
+            ['ssl' => $ssl],
+        );
     }
 
     /**
@@ -252,37 +324,12 @@ class RedisEngine extends CacheEngine
      */
     public function clear(): bool
     {
-        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+        if ($this->getConfig('clearUsesFlushDb')) {
+            $this->_Redis->flushDB(false);
 
-        $isAllDeleted = true;
-        $iterator = null;
-        $pattern = $this->_config['prefix'] . '*';
-
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
-
-            if ($keys === false) {
-                break;
-            }
-
-            foreach ($keys as $key) {
-                $isDeleted = ((int)$this->_Redis->del($key) > 0);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
-            }
+            return true;
         }
 
-        return $isAllDeleted;
-    }
-
-    /**
-     * Delete all keys from the cache by a blocking operation
-     *
-     * Faster than clear() using unlink method.
-     *
-     * @return bool True if the cache was successfully cleared, false otherwise
-     */
-    public function clearBlocking(): bool
-    {
         $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
 
         $isAllDeleted = true;
@@ -298,6 +345,41 @@ class RedisEngine extends CacheEngine
 
             foreach ($keys as $key) {
                 $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
+                $isAllDeleted = $isAllDeleted && $isDeleted;
+            }
+        }
+
+        return $isAllDeleted;
+    }
+
+    /**
+     * Delete all keys from the cache by a blocking operation
+     *
+     * @return bool True if the cache was successfully cleared, false otherwise
+     */
+    public function clearBlocking(): bool
+    {
+        if ($this->getConfig('clearUsesFlushDb')) {
+            $this->_Redis->flushDB(true);
+
+            return true;
+        }
+
+        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+
+        $isAllDeleted = true;
+        $iterator = null;
+        $pattern = $this->_config['prefix'] . '*';
+
+        while (true) {
+            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
+
+            if ($keys === false) {
+                break;
+            }
+
+            foreach ($keys as $key) {
+                $isDeleted = ((int)$this->_Redis->del($key) > 0);
                 $isAllDeleted = $isAllDeleted && $isDeleted;
             }
         }
@@ -365,7 +447,7 @@ class RedisEngine extends CacheEngine
      * Serialize value for saving to Redis.
      *
      * This is needed instead of using Redis' in built serialization feature
-     * as it creates problems incrementing/decrementing intially set integer value.
+     * as it creates problems incrementing/decrementing initially set integer value.
      *
      * @param mixed $value Value to serialize.
      * @return string
@@ -396,11 +478,21 @@ class RedisEngine extends CacheEngine
     }
 
     /**
+     * Create new Redis instance.
+     *
+     * @return \Redis
+     */
+    protected function _createRedisInstance(): Redis
+    {
+        return new Redis();
+    }
+
+    /**
      * Disconnects from the redis server
      */
     public function __destruct()
     {
-        if (empty($this->_config['persistent'])) {
+        if (isset($this->_Redis) && empty($this->_config['persistent'])) {
             $this->_Redis->close();
         }
     }
