@@ -347,8 +347,7 @@ SQL;
                 KEY `author_idx` (`author_id`),
                 CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
                 FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
-                UNIQUE INDEX `unique_id_idx` (`unique_id`),
-                CONSTRAINT `unique_id_check` CHECK (`unique_id` > 0)
+                UNIQUE INDEX `unique_id_idx` (`unique_id`)
             ) ENGINE=InnoDB COLLATE=utf8_general_ci
 SQL;
         $connection->execute($table);
@@ -696,7 +695,7 @@ SQL;
         $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
 
-        $this->assertCount(5, $result->constraints());
+        $this->assertCount(4, $result->constraints());
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -729,10 +728,6 @@ SQL;
                 'columns' => ['author_id'],
                 'length' => [],
             ],
-            'unique_id_check' => [
-                'type' => 'check',
-                'expression' => '(`unique_id` > 0)',
-            ],
         ];
 
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
@@ -745,11 +740,6 @@ SQL;
         $this->assertEquals('length_idx', $key->getName());
         $this->assertEquals($expected['length_idx']['columns'], $key->getColumns());
         $this->assertEquals(['title' => 4], $key->getLength());
-
-        $this->assertEquals($expected['unique_id_check'], $result->getConstraint('unique_id_check'));
-        $key = $result->constraint('unique_id_check');
-        $this->assertEquals('unique_id_check', $key->getName());
-        $this->assertEquals($expected['unique_id_check']['expression'], $key->getExpression());
 
         if (ConnectionManager::get('test')->getDriver()->isMariadb()) {
             $this->assertEquals($expected['schema_articles_ibfk_1'], $result->getConstraint('author_idx'));
@@ -901,6 +891,36 @@ SQL;
         $this->assertNotEmpty($index);
         $this->assertEquals('index', $index['type']);
         $this->assertEquals([], $index['columns']);
+    }
+
+    public function testDescribeTableCheckConstraints(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $this->skipIf(!$driver->supports(DriverFeatureEnum::CHECK_CONSTRAINTS), 'This test requires check constraint support');
+
+        $connection->execute('DROP TABLE IF EXISTS schema_constraints');
+        $table = <<<SQL
+CREATE TABLE schema_constraints (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    age INT,
+    CONSTRAINT age_check CHECK (age >= 18)
+) Engine=InnoDB;
+SQL;
+        $connection->execute($table);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_constraints');
+
+        $constraint = $result->getConstraint('age_check');
+        $this->assertEquals('(`age` >= 18)', $constraint['expression']);
+
+        $key = $result->constraint('age_check');
+        $this->assertEquals('age_check', $key->getName());
+        $this->assertEquals('(`age` >= 18)', $key->getExpression());
+
+        $connection->execute('DROP TABLE IF EXISTS schema_constraints');
     }
 
     /**

@@ -573,6 +573,10 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function describeCheckConstraints(string $tableName): array
     {
+        if (!$this->_driver->supports(DriverFeatureEnum::CHECK_CONSTRAINTS)) {
+            return [];
+        }
+
         [$schema, $name] = $this->splitTablename($tableName);
         $sql = "SELECT
         cc.CONSTRAINT_NAME AS name,
@@ -886,6 +890,7 @@ class MysqlSchemaDialect extends SchemaDialect
      */
     public function constraintSql(TableSchema $schema, string $name): string
     {
+        //
         $data = $schema->getConstraint($name);
         assert($data !== null);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {

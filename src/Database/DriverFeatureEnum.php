@@ -67,4 +67,9 @@ enum DriverFeatureEnum: string
      * Support for optimizer hints in comment form after statement keyword (SELECT <hint>, etc)
      */
     case OPTIMIZER_HINT_COMMENT = 'optimizer-hint-comment';
+
+    /**
+     * Support for CHECK constraints.
+     */
+    case CHECK_CONSTRAINTS = 'check-constraints';
 }
