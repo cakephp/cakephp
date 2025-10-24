@@ -598,7 +598,7 @@ SQL;
                 ],
                 'length' => [],
             ],
-            'author_id_value_check' => [
+            'author_value_chk' => [
                 'type' => 'check',
                 'expression' => 'author_id > 0',
             ],
@@ -610,6 +610,11 @@ SQL;
         $this->assertInstanceOf(Constraint::class, $primary);
         $this->assertSame('primary', $primary->getName());
         $this->assertSame($expected['primary']['columns'], $primary->getColumns());
+
+        $check = $result->constraint('author_value_chk');
+        $this->assertInstanceOf(CheckConstraint::class, $check);
+        $this->assertSame('author_value_chk', $check->getName());
+        $this->assertSame($expected['author_value_chk']['expression'], $check->getExpression());
 
         $this->assertEquals(
             $expected['author_fk'],
@@ -633,6 +638,7 @@ SQL;
             $result->getConstraint('title_idx'),
         );
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
+
         // Compare with describeIndexes() & constraint() result
         $this->assertEquals($expected['unique_id_idx'] + ['name' => 'unique_id_idx'], $indexes[0]);
         $unique = $result->constraint('unique_id_idx');
