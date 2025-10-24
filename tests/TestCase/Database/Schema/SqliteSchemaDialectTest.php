@@ -20,6 +20,7 @@ use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\Constraint;
 use Cake\Database\Schema\ForeignKey;
@@ -301,6 +302,7 @@ field2 VARCHAR(10) DEFAULT 'NULL',
 location POINT_TEXT,
 CONSTRAINT "title_idx" UNIQUE ("title", "body")
 CONSTRAINT "author_fk" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
+CONSTRAINT "author_value_chk" CHECK (author_id > 0)
 );
 SQL;
         $connection->execute($table);
@@ -596,8 +598,12 @@ SQL;
                 ],
                 'length' => [],
             ],
+            'author_id_value_check' => [
+                'type' => 'check',
+                'expression' => 'author_id > 0',
+            ],
         ];
-        $this->assertCount(4, $result->constraints());
+        $this->assertCount(5, $result->constraints());
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
 
         $primary = $result->constraint('primary');
@@ -947,6 +953,23 @@ SQL;
                 $this->assertFalse($col->getIdentity());
             }
         }
+    }
+
+    public function testDescribeTableCheckConstraints(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_articles');
+
+        $constraint = $result->getConstraint('author_value_chk');
+        $this->assertSame('author_id > 0', $constraint['expression']);
+
+        $constraint = $result->constraint('author_value_chk');
+        assert($constraint instanceof CheckConstraint);
+        $this->assertSame('author_value_chk', $constraint->getName());
+        $this->assertSame('author_id > 0', $constraint->getExpression());
     }
 
     /**
@@ -1351,6 +1374,11 @@ SQL;
                 ],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
                 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
+            ],
+            [
+                'author_id_check',
+                ['type' => 'check', 'expression' => 'author_id > 0'],
+                'CONSTRAINT "author_id_check" CHECK (author_id > 0)',
             ],
         ];
     }
