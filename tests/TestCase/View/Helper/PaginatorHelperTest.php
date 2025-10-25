@@ -2863,7 +2863,7 @@ class PaginatorHelperTest extends TestCase
 
         $out = $this->Paginator->limitControl([1 => 1]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/batches']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Batches/index']],
             ['input' => ['type' => 'hidden', 'name' => 'owner', 'value' => 'billy']],
             ['input' => ['type' => 'hidden', 'name' => 'expected', 'value' => '1']],
             ['input' => ['type' => 'hidden', 'name' => 'page', 'value' => '1']],
@@ -3005,7 +3005,7 @@ class PaginatorHelperTest extends TestCase
 
         $out = $this->Paginator->limitControl([20 => 20, 50 => 50]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/users']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Users/index']],
             ['input' => ['type' => 'hidden', 'name' => 'status', 'value' => 'active']],
             ['input' => ['type' => 'hidden', 'name' => 'role', 'value' => 'admin']],
             ['div' => ['class' => 'input select']],
@@ -3047,7 +3047,7 @@ class PaginatorHelperTest extends TestCase
         $out = $this->Paginator->limitControl([25 => 25, 100 => 100]);
         $expected = [
             // Should only have category as hidden field, not sort/direction/page/limit
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/posts']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Posts/index']],
             ['input' => ['type' => 'hidden', 'name' => 'category', 'value' => 'tech']],
             ['div' => ['class' => 'input select']],
             ['label' => ['for' => 'limit']],
@@ -3096,7 +3096,7 @@ class PaginatorHelperTest extends TestCase
 
         $out = $this->Paginator->limitControl([20 => 20, 50 => 50]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/posts']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Posts/index']],
             ['input' => ['type' => 'hidden', 'name' => 'filter[date][start]', 'value' => '2024-01-01']],
             ['input' => ['type' => 'hidden', 'name' => 'filter[date][end]', 'value' => '2024-12-31']],
             ['input' => ['type' => 'hidden', 'name' => 'filter[status]', 'value' => 'active']],
