@@ -3068,62 +3068,6 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
-     * Test to demonstrate how nested query strings are parsed from URLs.
-     * This shows the structure of deeply nested params when accessed via getQuery().
-     */
-    public function testNestedQueryStringStructure(): void
-    {
-        // Simulate a URL with various nesting levels:
-        // ?status=active&filter[category]=tech&filter[date][start]=2024-01-01&filter[date][end]=2024-12-31
-        $request = new ServerRequest([
-            'url' => '/posts?status=active&filter[category]=tech&filter[date][start]=2024-01-01&filter[date][end]=2024-12-31',
-            'params' => [
-                'plugin' => null, 'controller' => 'Posts', 'action' => 'index', 'pass' => [],
-            ],
-            'query' => [
-                'status' => 'active',
-                'filter' => [
-                    'category' => 'tech',
-                    'date' => [
-                        'start' => '2024-01-01',
-                        'end' => '2024-12-31',
-                    ],
-                ],
-            ],
-            'base' => '',
-            'webroot' => '/',
-        ]);
-
-        // Verify the structure
-        $query = $request->getQueryParams();
-
-        // Level 1: Simple value
-        $this->assertSame('active', $query['status']);
-
-        // Level 2: Array with simple value
-        $this->assertIsArray($query['filter']);
-        $this->assertSame('tech', $query['filter']['category']);
-
-        // Level 3: Nested array with values
-        $this->assertIsArray($query['filter']['date']);
-        $this->assertSame('2024-01-01', $query['filter']['date']['start']);
-        $this->assertSame('2024-12-31', $query['filter']['date']['end']);
-
-        // Show what the structure looks like
-        $expected = [
-            'status' => 'active',
-            'filter' => [
-                'category' => 'tech',
-                'date' => [
-                    'start' => '2024-01-01',
-                    'end' => '2024-12-31',
-                ],
-            ],
-        ];
-        $this->assertSame($expected, $query);
-    }
-
-    /**
      * Test limitControl with deeply nested query parameters (3+ levels).
      * This verifies the recursive implementation handles arbitrary nesting.
      */

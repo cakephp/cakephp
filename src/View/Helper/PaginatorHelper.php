@@ -1181,12 +1181,10 @@ class PaginatorHelper extends Helper
             $scope .= '.';
         }
 
-        $url = $this->_View->getRequest()->getPath();
-        $out = $this->Form->create(null, ['type' => 'get', 'url' => $url]);
+        $out = $this->Form->create(null, ['type' => 'get', 'url' => $this->_View->getRequest()->getPath()]);
 
         // Add hidden fields to preserve query parameters
         $out .= $this->generateHiddenFields($hiddenFields);
-
         $out .= $this->Form->control($scope . 'limit', $options + [
             'type' => 'select',
             'label' => __('View'),
@@ -1195,6 +1193,7 @@ class PaginatorHelper extends Helper
             'options' => $limits,
             'onChange' => 'this.form.submit()',
         ]);
+
         $out .= $this->Form->end();
 
         return $out;
