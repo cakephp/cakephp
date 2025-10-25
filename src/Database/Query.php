@@ -1691,6 +1691,7 @@ abstract class Query implements ExpressionInterface, Stringable
      */
     public function bind(string|int $param, mixed $value, string|int|null $type = null)
     {
+        $this->_dirty();
         $this->getValueBinder()->bind($param, $value, $type);
 
         return $this;
