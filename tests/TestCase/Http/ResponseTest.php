@@ -277,7 +277,7 @@ class ResponseTest extends TestCase
         $response = new Response();
         $expected = [
             'Expires' => ['Mon, 26 Jul 1997 05:00:00 GMT'],
-            'Last-Modified' => [gmdate(DATE_RFC7231)],
+            'Last-Modified' => [gmdate('D, d M Y H:i:s \\G\\M\\T')], // DATE_RFC7231
             'Cache-Control' => ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0'],
             'Content-Type' => ['text/html; charset=UTF-8'],
         ];
@@ -299,9 +299,10 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Date'));
         $this->assertFalse($response->hasHeader('Last-Modified'));
 
-        $this->assertSame(gmdate(DATE_RFC7231, $since), $new->getHeaderLine('Date'));
-        $this->assertSame(gmdate(DATE_RFC7231, $since), $new->getHeaderLine('Last-Modified'));
-        $this->assertSame(gmdate(DATE_RFC7231, $time), $new->getHeaderLine('Expires'));
+        // DATE_RFC7231
+        $this->assertSame(gmdate('D, d M Y H:i:s \\G\\M\\T', $since), $new->getHeaderLine('Date'));
+        $this->assertSame(gmdate('D, d M Y H:i:s \\G\\M\\T', $since), $new->getHeaderLine('Last-Modified'));
+        $this->assertSame(gmdate('D, d M Y H:i:s \\G\\M\\T', $time), $new->getHeaderLine('Expires'));
         $this->assertSame('public, max-age=0', $new->getHeaderLine('Cache-Control'));
     }
 
@@ -437,15 +438,15 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Expires'));
 
         $now->setTimeZone(new DateTimeZone('UTC'));
-        $this->assertSame($now->format(DATE_RFC7231), $new->getHeaderLine('Expires'));
+        $this->assertSame($now->format('D, d M Y H:i:s \\G\\M\\T'), $new->getHeaderLine('Expires')); // DATE_RFC7231
 
         $now = time();
         $new = $response->withExpires($now);
-        $this->assertSame(gmdate(DATE_RFC7231), $new->getHeaderLine('Expires'));
+        $this->assertSame(gmdate('D, d M Y H:i:s \\G\\M\\T'), $new->getHeaderLine('Expires')); // DATE_RFC7231
 
         $time = new NativeDateTime('+1 day', new DateTimeZone('UTC'));
         $new = $response->withExpires('+1 day');
-        $this->assertSame($time->format(DATE_RFC7231), $new->getHeaderLine('Expires'));
+        $this->assertSame($time->format('D, d M Y H:i:s \\G\\M\\T'), $new->getHeaderLine('Expires')); // DATE_RFC7231
     }
 
     /**
@@ -458,20 +459,24 @@ class ResponseTest extends TestCase
         $new = $response->withModified($now);
         $this->assertFalse($response->hasHeader('Last-Modified'));
 
+        // DATE_RFC7231
         $now->setTimeZone(new DateTimeZone('UTC'));
-        $this->assertSame($now->format(DATE_RFC7231), $new->getHeaderLine('Last-Modified'));
+        $this->assertSame($now->format('D, d M Y H:i:s \\G\\M\\T'), $new->getHeaderLine('Last-Modified'));
 
+        // DATE_RFC7231
         $now = time();
         $new = $response->withModified($now);
-        $this->assertSame(gmdate(DATE_RFC7231, $now), $new->getHeaderLine('Last-Modified'));
+        $this->assertSame(gmdate('D, d M Y H:i:s \\G\\M\\T', $now), $new->getHeaderLine('Last-Modified'));
 
+        // DATE_RFC7231
         $now = new DateTimeImmutable();
         $new = $response->withModified($now);
-        $this->assertSame(gmdate(DATE_RFC7231, $now->getTimestamp()), $new->getHeaderLine('Last-Modified'));
+        $this->assertSame(gmdate('D, d M Y H:i:s \\G\\M\\T', $now->getTimestamp()), $new->getHeaderLine('Last-Modified'));
 
+        // DATE_RFC7231
         $time = new NativeDateTime('+1 day', new DateTimeZone('UTC'));
         $new = $response->withModified('+1 day');
-        $this->assertSame($time->format(DATE_RFC7231), $new->getHeaderLine('Last-Modified'));
+        $this->assertSame($time->format('D, d M Y H:i:s \\G\\M\\T'), $new->getHeaderLine('Last-Modified'));
     }
 
     /**
