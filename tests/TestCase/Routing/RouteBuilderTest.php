@@ -1292,7 +1292,7 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/');
         $routes->setOptions(['_host' => 'example.com']);
 
-        $routes->scope('/api', function ($routes) {
+        $routes->scope('/api', function ($routes): void {
             $routes->connect('/users', ['controller' => 'Users', 'action' => 'index']);
         });
 
@@ -1308,7 +1308,7 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/');
         $routes->setOptions(['_host' => 'example.com']);
 
-        $routes->scope('/api', function ($routes) {
+        $routes->scope('/api', function ($routes): void {
             $routes->setOptions(['_host' => 'api.example.com']);
             $routes->connect('/users', ['controller' => 'Users', 'action' => 'index']);
         });
@@ -1329,7 +1329,7 @@ class RouteBuilderTest extends TestCase
     public function testSetOptionsWithPrefix(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->prefix('Admin', function ($routes) {
+        $routes->prefix('Admin', function ($routes): void {
             $routes->setOptions(['_host' => 'admin.example.com']);
             $routes->connect('/dashboard', ['controller' => 'Dashboard', 'action' => 'index']);
         });
@@ -1345,7 +1345,7 @@ class RouteBuilderTest extends TestCase
     public function testSetOptionsWithPlugin(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->plugin('MyPlugin', function ($routes) {
+        $routes->plugin('MyPlugin', function ($routes): void {
             $routes->setOptions(['_host' => 'plugin.example.com']);
             $routes->connect('/dashboard', ['controller' => 'Dashboard', 'action' => 'index']);
         });
