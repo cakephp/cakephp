@@ -470,6 +470,22 @@ class ViewBuilderTest extends TestCase
     }
 
     /**
+     * Test that the default merge strategy is MERGE_DEEP for backward compatibility.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/18879
+     */
+    public function testBuildMergeOptionsDefault(): void
+    {
+        $builder = new ViewBuilder();
+
+        $this->assertSame(
+            ViewBuilder::MERGE_DEEP,
+            $builder->getConfigMergeStrategy(),
+            'Default merge strategy should be MERGE_DEEP for BC',
+        );
+    }
+
+    /**
      * Test that options are deep merged by default (BC behavior).
      * This tests deep merging for both associative and non-associative arrays.
      *
