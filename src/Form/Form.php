@@ -68,28 +68,28 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      * @var string
      * @phpstan-var class-string<\Cake\Form\Schema>
      */
-    protected string $_schemaClass = Schema::class;
+    protected string $schemaClass = Schema::class;
 
     /**
      * The schema used by this form.
      *
      * @var \Cake\Form\Schema|null
      */
-    protected ?Schema $_schema = null;
+    protected ?Schema $schema = null;
 
     /**
      * The errors if any
      *
      * @var array
      */
-    protected array $_errors = [];
+    protected array $errors = [];
 
     /**
      * Form's data.
      *
      * @var array
      */
-    protected array $_data = [];
+    protected array $data = [];
 
     /**
      * Constructor
@@ -135,7 +135,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function setSchema(Schema $schema): static
     {
-        $this->_schema = $schema;
+        $this->schema = $schema;
 
         return $this;
     }
@@ -152,9 +152,9 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function getSchema(): Schema
     {
-        $this->_schema ??= $this->buildSchema(new $this->_schemaClass());
+        $this->schema ??= $this->buildSchema(new $this->schemaClass());
 
-        return $this->_schema;
+        return $this->schema;
     }
 
     /**
@@ -182,10 +182,10 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function validate(array $data, ?string $validator = null): bool
     {
-        $this->_errors = $this->getValidator($validator ?: static::DEFAULT_VALIDATOR)
+        $this->errors = $this->getValidator($validator ?: static::DEFAULT_VALIDATOR)
             ->validate($data);
 
-        return $this->_errors === [];
+        return $this->errors === [];
     }
 
     /**
@@ -198,7 +198,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function getErrors(): array
     {
-        return $this->_errors;
+        return $this->errors;
     }
 
     /**
@@ -213,11 +213,11 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function getError(string $field): array
     {
-        if (isset($this->_errors[$field])) {
-            return $this->_errors[$field];
+        if (isset($this->errors[$field])) {
+            return $this->errors[$field];
         }
 
-        $error = Hash::get($this->_errors, $field);
+        $error = Hash::get($this->errors, $field);
 
         return is_array($error) ? $error : [];
     }
@@ -238,7 +238,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function setErrors(array $errors): static
     {
-        $this->_errors = $errors;
+        $this->errors = $errors;
 
         return $this;
     }
@@ -263,7 +263,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function execute(array $data, array $options = []): bool
     {
-        $this->_data = $data;
+        $this->data = $data;
         $options += ['validate' => true];
 
         if ($options['validate'] === false) {
@@ -298,10 +298,10 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     public function getData(?string $field = null): mixed
     {
         if ($field === null) {
-            return $this->_data;
+            return $this->data;
         }
 
-        return Hash::get($this->_data, $field);
+        return Hash::get($this->data, $field);
     }
 
     /**
@@ -321,7 +321,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
 
         /** @var array<string, mixed> $write */
         foreach ($write as $key => $val) {
-            $this->_data = Hash::insert($this->_data, $key, $val);
+            $this->data = Hash::insert($this->data, $key, $val);
         }
 
         return $this;
@@ -335,7 +335,7 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
      */
     public function setData(array $data): static
     {
-        $this->_data = $data;
+        $this->data = $data;
 
         return $this;
     }
@@ -348,9 +348,9 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     public function __debugInfo(): array
     {
         $special = [
-            '_schema' => $this->getSchema()->__debugInfo(),
-            '_errors' => $this->getErrors(),
-            '_validator' => $this->getValidator()->__debugInfo(),
+            'schema' => $this->getSchema()->__debugInfo(),
+            'errors' => $this->getErrors(),
+            'validator' => $this->getValidator()->__debugInfo(),
         ];
 
         return $special + get_object_vars($this);

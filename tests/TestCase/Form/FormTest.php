@@ -298,10 +298,10 @@ class FormTest extends TestCase
     {
         $form = new Form();
         $result = $form->__debugInfo();
-        $this->assertArrayHasKey('_schema', $result);
-        $this->assertArrayHasKey('_errors', $result);
-        $this->assertArrayHasKey('_validator', $result);
-        $this->assertArrayHasKey('_data', $result);
+        $this->assertArrayHasKey('schema', $result);
+        $this->assertArrayHasKey('errors', $result);
+        $this->assertArrayHasKey('validator', $result);
+        $this->assertArrayHasKey('data', $result);
     }
 
     /**

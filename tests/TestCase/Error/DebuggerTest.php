@@ -357,8 +357,8 @@ TEXT;
         $form = new Form();
 
         $result = Debugger::exportVar($form, 6);
-        $this->assertStringContainsString("'_schema' => [", $result, 'Has debuginfo keys');
-        $this->assertStringContainsString("'_validator' => [", $result);
+        $this->assertStringContainsString("'schema' => [", $result, 'Has debuginfo keys');
+        $this->assertStringContainsString("'validator' => [", $result);
     }
 
     /**
