@@ -21,6 +21,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
+use function Cake\Core\deprecationWarning;
 use function Cake\Core\h;
 
 /**
@@ -344,8 +345,53 @@ class StringTemplate
     }
 
     /**
+     * Adds CSS classes to an attribute array.
+     *
+     * Merges the provided classes with any existing classes in the specified key
+     * and returns the updated attribute array with unique class values.
+     *
+     * @param array<string, mixed> $attributes The attribute array to add classes to.
+     * @param array<string>|string $newClasses The class(es) to add.
+     * @param string $key The array key to use. Defaults to 'class'.
+     * @return array<string, mixed> The updated attribute array.
+     */
+    public function addClassToArray(
+        array $attributes,
+        array|string $newClasses,
+        string $key = 'class',
+    ): array {
+        $existingClasses = Hash::get($attributes, $key, []);
+        $mergedClasses = $this->mergeClasses($existingClasses, $newClasses);
+
+        return Hash::insert($attributes, $key, $mergedClasses);
+    }
+
+    /**
+     * Merges two sets of CSS classes into a unique array.
+     *
+     * Accepts class lists as arrays or space-separated strings and returns
+     * a unique, indexed array of all classes.
+     *
+     * @param array<string>|string $existing The existing class(es).
+     * @param array<string>|string $new The new class(es) to merge.
+     * @return array<string> A unique array of merged classes.
+     */
+    public function mergeClasses(array|string $existing, array|string $new): array
+    {
+        if (!is_array($existing)) {
+            $existing = $existing !== '' ? explode(' ', (string)$existing) : [];
+        }
+        if (!is_array($new)) {
+            $new = $new !== '' ? explode(' ', (string)$new) : [];
+        }
+
+        return array_values(array_unique(array_merge($existing, $new)));
+    }
+
+    /**
      * Adds a class and returns a unique list either in array or space separated
      *
+     * @deprecated 5.3.0 Use `addClassToArray()` or `mergeClasses()` instead. Will be removed in 6.0.
      * @param array<string, mixed>|string|null $input The array or string to add the class to
      * @param array<string>|string|false|null $newClass the new class or classes to add
      * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
@@ -356,17 +402,23 @@ class StringTemplate
         array|string|false|null $newClass,
         string $useIndex = 'class',
     ): array|string|null {
+        deprecationWarning(
+            '5.3.0',
+            '`StringTemplate::addClass()` is deprecated. Use `addClassToArray()` or `mergeClasses()` instead.',
+        );
+
         // NOOP
         if (!$newClass) {
             return $input;
         }
 
         if (is_array($input)) {
-            $class = Hash::get($input, $useIndex, []);
-        } else {
-            $class = $input;
-            $input = [];
+            return $this->addClassToArray($input, $newClass, $useIndex);
         }
+
+        // For non-array input, maintain BC behavior
+        $class = $input;
+        $input = [];
 
         // Convert and sanitize the inputs
         if (!is_array($class)) {

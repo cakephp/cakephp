@@ -304,122 +304,243 @@ class StringTemplateTest extends TestCase
     }
 
     /**
+     * Test addClassToArray method with various inputs.
+     */
+    public function testAddClassToArray(): void
+    {
+        // Test adding a single class to empty array
+        $result = $this->template->addClassToArray([], 'new-class');
+        $this->assertSame(['class' => ['new-class']], $result);
+
+        // Test adding array of classes to empty array
+        $result = $this->template->addClassToArray([], ['class-one', 'class-two']);
+        $this->assertSame(['class' => ['class-one', 'class-two']], $result);
+
+        // Test adding to existing classes
+        $result = $this->template->addClassToArray(['class' => ['existing']], 'new-class');
+        $this->assertSame(['class' => ['existing', 'new-class']], $result);
+
+        // Test with custom key
+        $result = $this->template->addClassToArray([], 'custom-class', 'custom-key');
+        $this->assertSame(['custom-key' => ['custom-class']], $result);
+
+        // Test preserves other attributes
+        $attrs = ['id' => 'test', 'class' => ['current']];
+        $result = $this->template->addClassToArray($attrs, 'new-class');
+        $this->assertSame(['id' => 'test', 'class' => ['current', 'new-class']], $result);
+
+        // Test with string existing classes
+        $attrs = ['class' => 'foo bar'];
+        $result = $this->template->addClassToArray($attrs, 'baz');
+        $this->assertSame(['class' => ['foo', 'bar', 'baz']], $result);
+
+        // Test uniqueness
+        $attrs = ['class' => ['duplicate']];
+        $result = $this->template->addClassToArray($attrs, 'duplicate');
+        $this->assertSame(['class' => ['duplicate']], $result);
+    }
+
+    /**
+     * Test mergeClasses method with various input types.
+     */
+    public function testMergeClasses(): void
+    {
+        // Test merging two arrays
+        $result = $this->template->mergeClasses(['existing'], ['new']);
+        $this->assertSame(['existing', 'new'], $result);
+
+        // Test merging string with array
+        $result = $this->template->mergeClasses('existing', ['new']);
+        $this->assertSame(['existing', 'new'], $result);
+
+        // Test merging array with string
+        $result = $this->template->mergeClasses(['existing'], 'new');
+        $this->assertSame(['existing', 'new'], $result);
+
+        // Test merging two strings
+        $result = $this->template->mergeClasses('existing', 'new');
+        $this->assertSame(['existing', 'new'], $result);
+
+        // Test merging space-separated string classes
+        $result = $this->template->mergeClasses('class-one class-two', 'class-three class-four');
+        $this->assertSame(['class-one', 'class-two', 'class-three', 'class-four'], $result);
+
+        // Test uniqueness - duplicates should be removed
+        $result = $this->template->mergeClasses(['duplicate'], ['duplicate']);
+        $this->assertSame(['duplicate'], $result);
+
+        // Test empty strings
+        $result = $this->template->mergeClasses('', 'new');
+        $this->assertSame(['new'], $result);
+
+        $result = $this->template->mergeClasses('existing', '');
+        $this->assertSame(['existing'], $result);
+
+        // Test both empty
+        $result = $this->template->mergeClasses('', '');
+        $this->assertSame([], $result);
+
+        // Test empty arrays
+        $result = $this->template->mergeClasses([], []);
+        $this->assertSame([], $result);
+
+        // Test maintains numeric indexing
+        $result = $this->template->mergeClasses(['one', 'two'], ['three']);
+        $this->assertSame([0, 1, 2], array_keys($result));
+    }
+
+    /**
      * Test addClass method newClass parameter
      *
      * Tests null, string, array and false for `input`
+     *
+     * @deprecated Tests deprecated addClass method
      */
     public function testAddClassMethodNewClass(): void
     {
-        $result = $this->template->addClass([], 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
+        $this->expectDeprecationMessageMatches(
+            '/`StringTemplate::addClass\(\)` is deprecated/',
+            function (): void {
+                $result = $this->template->addClass([], 'new_class');
+                $this->assertEquals($result, ['class' => ['new_class']]);
 
-        $result = $this->template->addClass([], ['new_class']);
-        $this->assertEquals($result, ['class' => ['new_class']]);
+                $result = $this->template->addClass([], ['new_class']);
+                $this->assertEquals($result, ['class' => ['new_class']]);
 
-        $result = $this->template->addClass([], false);
-        $this->assertEquals($result, []);
+                $result = $this->template->addClass([], false);
+                $this->assertEquals($result, []);
 
-        $result = $this->template->addClass([], null);
-        $this->assertEquals($result, []);
+                $result = $this->template->addClass([], null);
+                $this->assertEquals($result, []);
 
-        $result = $this->template->addClass(null, null);
-        $this->assertNull($result);
+                $result = $this->template->addClass(null, null);
+                $this->assertNull($result);
+            },
+        );
     }
 
     /**
      * Test addClass method input (currentClass) parameter
      *
      * Tests null, string, array, false and object
+     *
+     * @deprecated Tests deprecated addClass method
      */
     public function testAddClassMethodCurrentClass(): void
     {
-        $result = $this->template->addClass(['class' => ['current']], 'new_class');
-        $this->assertEquals($result, ['class' => ['current', 'new_class']]);
+        $this->expectDeprecationMessageMatches(
+            '/`StringTemplate::addClass\(\)` is deprecated/',
+            function (): void {
+                $result = $this->template->addClass(['class' => ['current']], 'new_class');
+                $this->assertEquals($result, ['class' => ['current', 'new_class']]);
 
-        $result = $this->template->addClass('', 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
+                $result = $this->template->addClass('', 'new_class');
+                $this->assertEquals($result, ['class' => ['new_class']]);
 
-        $result = $this->template->addClass(null, 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
+                $result = $this->template->addClass(null, 'new_class');
+                $this->assertEquals($result, ['class' => ['new_class']]);
 
-        $result = $this->template->addClass(false, 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
+                $result = $this->template->addClass(false, 'new_class');
+                $this->assertEquals($result, ['class' => ['new_class']]);
 
-        $result = $this->template->addClass(new stdClass(), 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
+                $result = $this->template->addClass(new stdClass(), 'new_class');
+                $this->assertEquals($result, ['class' => ['new_class']]);
+            },
+        );
     }
 
     /**
      * Test addClass method string parameter, it should fallback to string
+     *
+     * @deprecated Tests deprecated addClass method
      */
     public function testAddClassMethodFallbackToString(): void
     {
-        $result = $this->template->addClass('current', 'new_class');
-        $this->assertEquals($result, ['class' => ['current', 'new_class']]);
+        $this->expectDeprecationMessageMatches(
+            '/`StringTemplate::addClass\(\)` is deprecated/',
+            function (): void {
+                $result = $this->template->addClass('current', 'new_class');
+                $this->assertEquals($result, ['class' => ['current', 'new_class']]);
+            },
+        );
     }
 
     /**
      * Test addClass method to make sure the returned array is unique
+     *
+     * @deprecated Tests deprecated addClass method
      */
     public function testAddClassMethodUnique(): void
     {
-        $result = $this->template->addClass(['class' => ['new_class']], 'new_class');
-        $this->assertEquals($result, ['class' => ['new_class']]);
+        $this->expectDeprecationMessageMatches(
+            '/`StringTemplate::addClass\(\)` is deprecated/',
+            function (): void {
+                $result = $this->template->addClass(['class' => ['new_class']], 'new_class');
+                $this->assertEquals($result, ['class' => ['new_class']]);
+            },
+        );
     }
 
     /**
      * Test addClass method useIndex param
      *
      * Tests for useIndex being the default, 'my_class' and false
+     *
+     * @deprecated Tests deprecated addClass method
      */
     public function testAddClassMethodUseIndex(): void
     {
-        $result = $this->template->addClass(
-            [
-                'class' => 'current_class',
-                'other_index1' => false,
-                'type' => 'text',
-            ],
-            'new_class',
-            'class',
-        );
-        $this->assertEquals($result, [
-            'class' => ['current_class', 'new_class'],
-            'other_index1' => false,
-            'type' => 'text',
-        ]);
+        $this->expectDeprecationMessageMatches(
+            '/`StringTemplate::addClass\(\)` is deprecated/',
+            function (): void {
+                $result = $this->template->addClass(
+                    [
+                        'class' => 'current_class',
+                        'other_index1' => false,
+                        'type' => 'text',
+                    ],
+                    'new_class',
+                    'class',
+                );
+                $this->assertEquals($result, [
+                    'class' => ['current_class', 'new_class'],
+                    'other_index1' => false,
+                    'type' => 'text',
+                ]);
 
-        $result = $this->template->addClass(
-            [
-                'my_class' => 'current_class',
-                'other_index1' => false,
-                'type' => 'text',
-            ],
-            'new_class',
-            'my_class',
-        );
-        $this->assertEquals($result, [
-            'other_index1' => false,
-            'type' => 'text',
-            'my_class' => ['current_class', 'new_class'],
-        ]);
+                $result = $this->template->addClass(
+                    [
+                        'my_class' => 'current_class',
+                        'other_index1' => false,
+                        'type' => 'text',
+                    ],
+                    'new_class',
+                    'my_class',
+                );
+                $this->assertEquals($result, [
+                    'other_index1' => false,
+                    'type' => 'text',
+                    'my_class' => ['current_class', 'new_class'],
+                ]);
 
-        $result = $this->template->addClass(
-            [
-                'class' => [
-                    'current_class',
-                    'text',
-                ],
-            ],
-            'new_class',
-            'nonexistent',
+                $result = $this->template->addClass(
+                    [
+                        'class' => [
+                            'current_class',
+                            'text',
+                        ],
+                    ],
+                    'new_class',
+                    'nonexistent',
+                );
+                $this->assertEquals($result, [
+                    'class' => [
+                        'current_class',
+                        'text',
+                    ],
+                    'nonexistent' => ['new_class'],
+                ]);
+            },
         );
-        $this->assertEquals($result, [
-            'class' => [
-                'current_class',
-                'text',
-            ],
-            'nonexistent' => ['new_class'],
-        ]);
     }
 }
