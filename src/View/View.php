@@ -355,10 +355,20 @@ class View implements EventDispatcherInterface
             $this->helpers = $this->helpers()->normalizeArray($this->helpers);
         }
 
-        $this->setConfig(array_diff_key(
+        $configMerge = $viewOptions['_configMerge'] ?? 'shallow';
+        $config = array_diff_key(
             $viewOptions,
             array_flip($this->_passedVars),
-        ));
+            ['_configMerge' => true],
+        );
+
+        if ($configMerge === 'shallow') {
+            $this->configShallow($config);
+        } elseif ($configMerge === 'deep' || $configMerge === true) {
+            $this->setConfig($config);
+        } else {
+            $this->setConfig($config, null, false);
+        }
 
         $request ??= Router::getRequest() ?: new ServerRequest(['base' => '', 'url' => '', 'webroot' => '/']);
         $this->request = $request;

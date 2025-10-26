@@ -113,6 +113,15 @@ class ViewBuilder implements JsonSerializable
     protected array $_options = [];
 
     /**
+     * The merge strategy for config options.
+     * Can be 'deep' (default, recursive merge), 'shallow' (simple merge),
+     * or false (no merge, replace).
+     *
+     * @var string|bool
+     */
+    protected string|bool $_configMerge = 'shallow';
+
+    /**
      * The helpers to use
      *
      * @var array
@@ -501,6 +510,35 @@ class ViewBuilder implements JsonSerializable
     }
 
     /**
+     * Set the config merge strategy for view options.
+     *
+     * This controls how options set via ViewBuilder are merged with
+     * the View class's default configuration.
+     *
+     * @param string|bool $strategy The merge strategy. Can be:
+     *   - 'shallow': Simple array merge (default, replaces array values)
+     *   - 'deep' or true: Recursive merge (merges nested arrays)
+     *   - false: No merge (completely replaces config)
+     * @return $this
+     */
+    public function setConfigMerge(string|bool $strategy)
+    {
+        $this->_configMerge = $strategy;
+
+        return $this;
+    }
+
+    /**
+     * Get the config merge strategy.
+     *
+     * @return string|bool
+     */
+    public function getConfigMerge(): string|bool
+    {
+        return $this->_configMerge;
+    }
+
+    /**
      * Sets the view name.
      *
      * @param string|null $name The name of the view, or null to remove the current name.
@@ -588,6 +626,7 @@ class ViewBuilder implements JsonSerializable
             'layoutPath' => $this->_layoutPath,
             'helpers' => $this->_helpers,
             'viewVars' => $this->_vars,
+            '_configMerge' => $this->_configMerge,
         ];
         $data += $this->_options;
 
@@ -612,7 +651,7 @@ class ViewBuilder implements JsonSerializable
     {
         $properties = [
             '_templatePath', '_template', '_plugin', '_theme', '_layout', '_autoLayout',
-            '_layoutPath', '_name', '_className', '_options', '_helpers', '_vars',
+            '_layoutPath', '_name', '_className', '_options', '_helpers', '_vars', '_configMerge',
         ];
 
         $array = [];
