@@ -63,7 +63,7 @@ class PhpError
         E_RECOVERABLE_ERROR => 'warning',
         E_NOTICE => 'notice',
         E_USER_NOTICE => 'notice',
-        E_STRICT => 'strict',
+        2048 => 'strict', // E_STRICT is deprecated and unused
         E_DEPRECATED => 'deprecated',
         E_USER_DEPRECATED => 'deprecated',
     ];

@@ -52,7 +52,7 @@ class AssetMiddlewareTest extends TestCase
         $modified = filemtime(TEST_APP . 'Plugin/TestPlugin/webroot/root.js');
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/test_plugin/root.js',
-            'HTTP_IF_MODIFIED_SINCE' => date(DATE_RFC7231, $modified),
+            'HTTP_IF_MODIFIED_SINCE' => date('D, d M Y H:i:s \\G\\M\\T', $modified), // DATE_RFC7231
         ]);
         $handler = new TestRequestHandler();
         $middleware = new AssetMiddleware();
@@ -147,7 +147,7 @@ class AssetMiddlewareTest extends TestCase
             $res->getHeaderLine('Content-Type')
         );
         $this->assertSame(
-            gmdate(DATE_RFC7231, $time),
+            gmdate('D, d M Y H:i:s \\G\\M\\T', $time), // DATE_RFC7231
             $res->getHeaderLine('Date')
         );
         $this->assertSame(
@@ -155,11 +155,11 @@ class AssetMiddlewareTest extends TestCase
             $res->getHeaderLine('Cache-Control')
         );
         $this->assertSame(
-            gmdate(DATE_RFC7231, $modified),
+            gmdate('D, d M Y H:i:s \\G\\M\\T', $modified), // DATE_RFC7231
             $res->getHeaderLine('Last-Modified')
         );
         $this->assertSame(
-            gmdate(DATE_RFC7231, $expires),
+            gmdate('D, d M Y H:i:s \\G\\M\\T', $expires), // DATE_RFC7231
             $res->getHeaderLine('Expires')
         );
     }

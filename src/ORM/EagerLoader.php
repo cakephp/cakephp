@@ -312,7 +312,7 @@ class EagerLoader
                 $repository,
                 $alias,
                 $options,
-                ['root' => null]
+                ['root' => '']
             );
         }
 

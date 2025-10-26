@@ -148,7 +148,7 @@ class MapReduce implements IteratorAggregate
      */
     public function emitIntermediate($val, $bucket): void
     {
-        $this->_intermediate[$bucket][] = $val;
+        $this->_intermediate[$bucket ?? ''][] = $val;
     }
 
     /**

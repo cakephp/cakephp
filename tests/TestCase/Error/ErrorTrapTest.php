@@ -95,6 +95,7 @@ class ErrorTrapTest extends TestCase
 
     public function testRegisterAndHandleFatalUserError()
     {
+        $this->skipIf(version_compare(PHP_VERSION, '8.4.0', '>='));
         $trap = new ErrorTrap(['errorRenderer' => TextErrorRenderer::class]);
         $trap->register();
         try {

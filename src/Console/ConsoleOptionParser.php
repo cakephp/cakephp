@@ -683,7 +683,7 @@ class ConsoleOptionParser
      */
     public function parse(array $argv, ?ConsoleIo $io = null): array
     {
-        $command = isset($argv[0]) ? Inflector::underscore($argv[0]) : null;
+        $command = isset($argv[0]) ? Inflector::underscore($argv[0]) : '';
         if (isset($this->_subcommands[$command])) {
             array_shift($argv);
         }
