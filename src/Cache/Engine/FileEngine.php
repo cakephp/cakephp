@@ -125,10 +125,10 @@ class FileEngine extends CacheEngine
         }
 
         $key = $this->key($key);
-        $this->_eventClass = CacheBeforeSetEvent::class;
+        $this->eventClass = CacheBeforeSetEvent::class;
         $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
 
-        $this->_eventClass = CacheAfterSetEvent::class;
+        $this->eventClass = CacheAfterSetEvent::class;
         if ($this->setKey($key, true) === false) {
             $this->dispatchEvent(CacheAfterSetEvent::NAME, [
                 'key' => $key, 'value' => $value, 'success' => false,
@@ -177,10 +177,10 @@ class FileEngine extends CacheEngine
     public function get(string $key, mixed $default = null): mixed
     {
         $key = $this->key($key);
-        $this->_eventClass = CacheBeforeGetEvent::class;
+        $this->eventClass = CacheBeforeGetEvent::class;
         $this->dispatchEvent(CacheBeforeGetEvent::NAME, ['key' => $key, 'default' => $default]);
 
-        $this->_eventClass = CacheAfterGetEvent::class;
+        $this->eventClass = CacheAfterGetEvent::class;
         if (!$this->init || $this->setKey($key) === false) {
             $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => null, 'success' => false]);
 
@@ -239,10 +239,10 @@ class FileEngine extends CacheEngine
     public function delete(string $key): bool
     {
         $key = $this->key($key);
-        $this->_eventClass = CacheBeforeDeleteEvent::class;
+        $this->eventClass = CacheBeforeDeleteEvent::class;
         $this->dispatchEvent(CacheBeforeDeleteEvent::NAME, ['key' => $key]);
 
-        $this->_eventClass = CacheAfterDeleteEvent::class;
+        $this->eventClass = CacheAfterDeleteEvent::class;
         if ($this->setKey($key) === false || !$this->init) {
             $this->dispatchEvent(CacheAfterDeleteEvent::NAME, ['key' => $key, 'success' => false]);
 
@@ -314,7 +314,7 @@ class FileEngine extends CacheEngine
         // unsetting iterators helps releasing possible locks in certain environments,
         // which could otherwise make `rmdir()` fail
         unset($directory, $iterator);
-        $this->_eventClass = CacheClearedEvent::class;
+        $this->eventClass = CacheClearedEvent::class;
         $this->dispatchEvent(CacheClearedEvent::NAME);
 
         return true;
@@ -525,7 +525,7 @@ class FileEngine extends CacheEngine
         // unsetting iterators helps releasing possible locks in certain environments,
         // which could otherwise make `rmdir()` fail
         unset($directoryIterator, $contents, $filtered);
-        $this->_eventClass = CacheGroupClearEvent::class;
+        $this->eventClass = CacheGroupClearEvent::class;
         $this->dispatchEvent(CacheGroupClearEvent::NAME, ['group' => $group]);
 
         return true;

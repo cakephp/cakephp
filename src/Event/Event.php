@@ -29,7 +29,7 @@ class Event implements EventInterface
      *
      * @var string
      */
-    protected string $_name;
+    protected string $name;
 
     /**
      * The object this event applies to (usually the same object that generates the event)
@@ -37,14 +37,14 @@ class Event implements EventInterface
      * @var object|null
      * @phpstan-var TSubject|null
      */
-    protected ?object $_subject = null;
+    protected ?object $subject = null;
 
     /**
      * Custom data for the method that receives the event
      *
      * @var array
      */
-    protected array $_data;
+    protected array $data;
 
     /**
      * Property used to retain the result value of the event listeners
@@ -60,7 +60,7 @@ class Event implements EventInterface
      *
      * @var bool
      */
-    protected bool $_stopped = false;
+    protected bool $stopped = false;
 
     /**
      * Constructor
@@ -81,9 +81,9 @@ class Event implements EventInterface
      */
     public function __construct(string $name, ?object $subject = null, array $data = [])
     {
-        $this->_name = $name;
-        $this->_subject = $subject;
-        $this->_data = $data;
+        $this->name = $name;
+        $this->subject = $subject;
+        $this->data = $data;
     }
 
     /**
@@ -93,7 +93,7 @@ class Event implements EventInterface
      */
     public function getName(): string
     {
-        return $this->_name;
+        return $this->name;
     }
 
     /**
@@ -104,7 +104,7 @@ class Event implements EventInterface
      */
     public function getSubject(): ?object
     {
-        return $this->_subject;
+        return $this->subject;
     }
 
     /**
@@ -114,7 +114,7 @@ class Event implements EventInterface
      */
     public function stopPropagation(): void
     {
-        $this->_stopped = true;
+        $this->stopped = true;
     }
 
     /**
@@ -124,7 +124,7 @@ class Event implements EventInterface
      */
     public function isStopped(): bool
     {
-        return $this->_stopped;
+        return $this->stopped;
     }
 
     /**
@@ -158,10 +158,10 @@ class Event implements EventInterface
     public function getData(?string $key = null): mixed
     {
         if ($key !== null) {
-            return $this->_data[$key] ?? null;
+            return $this->data[$key] ?? null;
         }
 
-        return $this->_data;
+        return $this->data;
     }
 
     /**
@@ -170,9 +170,9 @@ class Event implements EventInterface
     public function setData(array|string $key, $value = null): static
     {
         if (is_array($key)) {
-            $this->_data = $key;
+            $this->data = $key;
         } else {
-            $this->_data[$key] = $value;
+            $this->data[$key] = $value;
         }
 
         return $this;

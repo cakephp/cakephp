@@ -29,14 +29,14 @@ trait EventDispatcherTrait
      *
      * @var \Cake\Event\EventManagerInterface
      */
-    protected EventManagerInterface $_eventManager;
+    protected EventManagerInterface $eventManager;
 
     /**
      * Default class name for new event objects.
      *
      * @var string
      */
-    protected string $_eventClass = Event::class;
+    protected string $eventClass = Event::class;
 
     /**
      * Returns the Cake\Event\EventManager manager instance for this object.
@@ -48,7 +48,7 @@ trait EventDispatcherTrait
      */
     public function getEventManager(): EventManagerInterface
     {
-        return $this->_eventManager ??= new EventManager();
+        return $this->eventManager ??= new EventManager();
     }
 
     /**
@@ -62,7 +62,7 @@ trait EventDispatcherTrait
      */
     public function setEventManager(EventManagerInterface $eventManager): static
     {
-        $this->_eventManager = $eventManager;
+        $this->eventManager = $eventManager;
 
         return $this;
     }
@@ -84,7 +84,7 @@ trait EventDispatcherTrait
         $subject ??= $this;
 
         /** @var \Cake\Event\EventInterface<TSubject> $event Coerce for psalm/phpstan */
-        $event = new $this->_eventClass($name, $subject, $data);
+        $event = new $this->eventClass($name, $subject, $data);
         $this->getEventManager()->dispatch($event);
 
         return $event;

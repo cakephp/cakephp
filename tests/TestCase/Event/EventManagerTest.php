@@ -752,11 +752,11 @@ class EventManagerTest extends TestCase
 
         $this->assertSame(
             [
-                '_listeners' => [],
-                '_isGlobal' => false,
-                '_trackEvents' => false,
-                '_generalManager' => '(object) EventManager',
-                '_dispatchedEvents' => null,
+                'listeners' => [],
+                'isGlobal' => false,
+                'trackEvents' => false,
+                'generalManager' => '(object) EventManager',
+                'dispatchedEvents' => null,
             ],
             $eventManager->__debugInfo(),
         );
@@ -765,11 +765,11 @@ class EventManagerTest extends TestCase
         $eventManager->addEventToList(new Event('Foo', $this));
         $this->assertSame(
             [
-                '_listeners' => [],
-                '_isGlobal' => false,
-                '_trackEvents' => true,
-                '_generalManager' => '(object) EventManager',
-                '_dispatchedEvents' => [
+                'listeners' => [],
+                'isGlobal' => false,
+                'trackEvents' => true,
+                'generalManager' => '(object) EventManager',
+                'dispatchedEvents' => [
                     'Foo with subject Cake\Test\TestCase\Event\EventManagerTest',
                 ],
             ],
@@ -784,13 +784,13 @@ class EventManagerTest extends TestCase
 
         $this->assertSame(
             [
-                '_listeners' => [
+                'listeners' => [
                     'foo' => '1 listener(s)',
                 ],
-                '_isGlobal' => false,
-                '_trackEvents' => false,
-                '_generalManager' => '(object) EventManager',
-                '_dispatchedEvents' => null,
+                'isGlobal' => false,
+                'trackEvents' => false,
+                'generalManager' => '(object) EventManager',
+                'dispatchedEvents' => null,
             ],
             $eventManager->__debugInfo(),
         );
@@ -799,13 +799,13 @@ class EventManagerTest extends TestCase
 
         $this->assertSame(
             [
-                '_listeners' => [
+                'listeners' => [
                     'foo' => '0 listener(s)',
                 ],
-                '_isGlobal' => false,
-                '_trackEvents' => false,
-                '_generalManager' => '(object) EventManager',
-                '_dispatchedEvents' => null,
+                'isGlobal' => false,
+                'trackEvents' => false,
+                'generalManager' => '(object) EventManager',
+                'dispatchedEvents' => null,
             ],
             $eventManager->__debugInfo(),
         );
@@ -821,15 +821,15 @@ class EventManagerTest extends TestCase
 
         $this->assertSame(
             [
-                '_listeners' => [
+                'listeners' => [
                     'foo' => '0 listener(s)',
                     'bar' => '3 listener(s)',
                     'baz' => '1 listener(s)',
                 ],
-                '_isGlobal' => false,
-                '_trackEvents' => false,
-                '_generalManager' => '(object) EventManager',
-                '_dispatchedEvents' => null,
+                'isGlobal' => false,
+                'trackEvents' => false,
+                'generalManager' => '(object) EventManager',
+                'dispatchedEvents' => null,
             ],
             $eventManager->__debugInfo(),
         );
@@ -849,13 +849,13 @@ class EventManagerTest extends TestCase
 
         $this->assertSame(
             [
-                '_listeners' => [
+                'listeners' => [
                     'example' => '1 listener(s)',
                 ],
-                '_isGlobal' => false,
-                '_trackEvents' => true,
-                '_generalManager' => '(object) EventManager',
-                '_dispatchedEvents' => [
+                'isGlobal' => false,
+                'trackEvents' => true,
+                'generalManager' => '(object) EventManager',
+                'dispatchedEvents' => [
                     'example with no subject',
                 ],
             ],

@@ -38,35 +38,35 @@ class EventManager implements EventManagerInterface
      *
      * @var \Cake\Event\EventManager|null
      */
-    protected static ?EventManager $_generalManager = null;
+    protected static ?EventManager $generalManager = null;
 
     /**
      * List of listener callbacks associated to
      *
      * @var array
      */
-    protected array $_listeners = [];
+    protected array $listeners = [];
 
     /**
      * Internal flag to distinguish a common manager from the singleton
      *
      * @var bool
      */
-    protected bool $_isGlobal = false;
+    protected bool $isGlobal = false;
 
     /**
      * The event list object.
      *
      * @var \Cake\Event\EventList|null
      */
-    protected ?EventList $_eventList = null;
+    protected ?EventList $eventList = null;
 
     /**
      * Enables automatic adding of events to the event list object if it is present.
      *
      * @var bool
      */
-    protected bool $_trackEvents = false;
+    protected bool $trackEvents = false;
 
     /**
      * Returns the globally available instance of a Cake\Event\EventManager
@@ -81,17 +81,17 @@ class EventManager implements EventManagerInterface
      */
     public static function instance(?EventManager $manager = null): EventManager
     {
-        if ($manager === null && static::$_generalManager) {
-            return static::$_generalManager;
+        if ($manager === null && static::$generalManager) {
+            return static::$generalManager;
         }
 
         if ($manager instanceof EventManager) {
-            static::$_generalManager = $manager;
+            static::$generalManager = $manager;
         }
-        static::$_generalManager ??= new static();
-        static::$_generalManager->_isGlobal = true;
+        static::$generalManager ??= new static();
+        static::$generalManager->isGlobal = true;
 
-        return static::$_generalManager;
+        return static::$generalManager;
     }
 
     /**
@@ -116,7 +116,7 @@ class EventManager implements EventManagerInterface
 
         if ($callable === null) {
             /** @var callable $options */
-            $this->_listeners[$eventKey][static::$defaultPriority][] = [
+            $this->listeners[$eventKey][static::$defaultPriority][] = [
                 'callable' => $options(...),
             ];
 
@@ -125,7 +125,7 @@ class EventManager implements EventManagerInterface
 
         /** @var array $options */
         $priority = $options['priority'] ?? static::$defaultPriority;
-        $this->_listeners[$eventKey][$priority][] = [
+        $this->listeners[$eventKey][$priority][] = [
             'callable' => $callable(...),
         ];
 
@@ -162,7 +162,7 @@ class EventManager implements EventManagerInterface
         }
 
         if (!is_string($eventKey)) {
-            foreach (array_keys($this->_listeners) as $name) {
+            foreach (array_keys($this->listeners) as $name) {
                 $this->off($name, $eventKey);
             }
 
@@ -176,20 +176,20 @@ class EventManager implements EventManagerInterface
         }
 
         if ($callable === null) {
-            unset($this->_listeners[$eventKey]);
+            unset($this->listeners[$eventKey]);
 
             return $this;
         }
 
-        if (empty($this->_listeners[$eventKey])) {
+        if (empty($this->listeners[$eventKey])) {
             return $this;
         }
 
         $callable = $callable(...);
-        foreach ($this->_listeners[$eventKey] as $priority => $callables) {
+        foreach ($this->listeners[$eventKey] as $priority => $callables) {
             foreach ($callables as $k => $callback) {
                 if ($callback['callable'] == $callable) {
-                    unset($this->_listeners[$eventKey][$priority][$k]);
+                    unset($this->listeners[$eventKey][$priority][$k]);
                     break;
                 }
             }
@@ -292,11 +292,11 @@ class EventManager implements EventManagerInterface
 
         $listeners = $this->listeners($event->getName());
 
-        if ($this->_trackEvents) {
+        if ($this->trackEvents) {
             $this->addEventToList($event);
         }
 
-        if (!$this->_isGlobal && static::instance()->isTrackingEvents()) {
+        if (!$this->isGlobal && static::instance()->isTrackingEvents()) {
             static::instance()->addEventToList($event);
         }
 
@@ -338,7 +338,7 @@ class EventManager implements EventManagerInterface
     public function listeners(string $eventKey): array
     {
         $localListeners = [];
-        if (!$this->_isGlobal) {
+        if (!$this->isGlobal) {
             $localListeners = $this->prioritisedListeners($eventKey);
         }
         $globalListeners = static::instance()->prioritisedListeners($eventKey);
@@ -368,11 +368,11 @@ class EventManager implements EventManagerInterface
      */
     public function prioritisedListeners(string $eventKey): array
     {
-        if (empty($this->_listeners[$eventKey])) {
+        if (empty($this->listeners[$eventKey])) {
             return [];
         }
 
-        return $this->_listeners[$eventKey];
+        return $this->listeners[$eventKey];
     }
 
     /**
@@ -386,9 +386,9 @@ class EventManager implements EventManagerInterface
         $matchPattern = '/' . preg_quote($eventKeyPattern, '/') . '/';
 
         return array_intersect_key(
-            $this->_listeners,
+            $this->listeners,
             array_flip(
-                preg_grep($matchPattern, array_keys($this->_listeners), 0) ?: [],
+                preg_grep($matchPattern, array_keys($this->listeners), 0) ?: [],
             ),
         );
     }
@@ -400,7 +400,7 @@ class EventManager implements EventManagerInterface
      */
     public function getEventList(): ?EventList
     {
-        return $this->_eventList;
+        return $this->eventList;
     }
 
     /**
@@ -412,7 +412,7 @@ class EventManager implements EventManagerInterface
      */
     public function addEventToList(EventInterface $event): static
     {
-        $this->_eventList?->add($event);
+        $this->eventList?->add($event);
 
         return $this;
     }
@@ -425,7 +425,7 @@ class EventManager implements EventManagerInterface
      */
     public function trackEvents(bool $enabled): static
     {
-        $this->_trackEvents = $enabled;
+        $this->trackEvents = $enabled;
 
         return $this;
     }
@@ -437,7 +437,7 @@ class EventManager implements EventManagerInterface
      */
     public function isTrackingEvents(): bool
     {
-        return $this->_trackEvents && $this->_eventList;
+        return $this->trackEvents && $this->eventList;
     }
 
     /**
@@ -448,8 +448,8 @@ class EventManager implements EventManagerInterface
      */
     public function setEventList(EventList $eventList): static
     {
-        $this->_eventList = $eventList;
-        $this->_trackEvents = true;
+        $this->eventList = $eventList;
+        $this->trackEvents = true;
 
         return $this;
     }
@@ -461,8 +461,8 @@ class EventManager implements EventManagerInterface
      */
     public function unsetEventList(): static
     {
-        $this->_eventList = null;
-        $this->_trackEvents = false;
+        $this->eventList = null;
+        $this->trackEvents = false;
 
         return $this;
     }
@@ -475,32 +475,32 @@ class EventManager implements EventManagerInterface
     public function __debugInfo(): array
     {
         $properties = get_object_vars($this);
-        $properties['_generalManager'] = '(object) EventManager';
-        $properties['_listeners'] = [];
-        foreach ($this->_listeners as $key => $priorities) {
+        $properties['generalManager'] = '(object) EventManager';
+        $properties['listeners'] = [];
+        foreach ($this->listeners as $key => $priorities) {
             $listenerCount = 0;
             foreach ($priorities as $listeners) {
                 $listenerCount += count($listeners);
             }
-            $properties['_listeners'][$key] = $listenerCount . ' listener(s)';
+            $properties['listeners'][$key] = $listenerCount . ' listener(s)';
         }
-        if ($this->_eventList) {
-            $count = count($this->_eventList);
+        if ($this->eventList) {
+            $count = count($this->eventList);
             for ($i = 0; $i < $count; $i++) {
-                assert(!empty($this->_eventList[$i]), 'Given event item not present');
+                assert(!empty($this->eventList[$i]), 'Given event item not present');
 
-                $event = $this->_eventList[$i];
+                $event = $this->eventList[$i];
                 $subject = $event->getSubject();
                 if ($subject) {
-                    $properties['_dispatchedEvents'][] = $event->getName() . ' with subject ' . $subject::class;
+                    $properties['dispatchedEvents'][] = $event->getName() . ' with subject ' . $subject::class;
                 } else {
-                    $properties['_dispatchedEvents'][] = $event->getName() . ' with no subject';
+                    $properties['dispatchedEvents'][] = $event->getName() . ' with no subject';
                 }
             }
         } else {
-            $properties['_dispatchedEvents'] = null;
+            $properties['dispatchedEvents'] = null;
         }
-        unset($properties['_eventList']);
+        unset($properties['eventList']);
 
         return $properties;
     }

@@ -312,7 +312,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
                 $this->setValidator(static::DEFAULT_VALIDATOR, $config['validator']);
             }
         }
-        $this->_eventManager = $config['eventManager'] ?? new EventManager();
+        $this->eventManager = $config['eventManager'] ?? new EventManager();
         $this->behaviors = $config['behaviors'] ?? new BehaviorRegistry();
         $this->behaviors->setTable($this);
         $this->associations = $config['associations'] ?? new AssociationCollection();

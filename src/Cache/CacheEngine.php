@@ -306,19 +306,19 @@ abstract class CacheEngine implements CacheInterface, CacheEngineInterface, Even
         $cachedValue = $this->get($key);
         $prefixedKey = $this->key($key);
 
-        $this->_eventClass = CacheBeforeAddEvent::class;
+        $this->eventClass = CacheBeforeAddEvent::class;
         $this->dispatchEvent(CacheBeforeAddEvent::NAME, ['key' => $prefixedKey, 'value' => $value]);
 
         if ($cachedValue === null) {
             $success = $this->set($key, $value);
-            $this->_eventClass = CacheAfterAddEvent::class;
+            $this->eventClass = CacheAfterAddEvent::class;
             $this->dispatchEvent(CacheAfterAddEvent::NAME, [
                 'key' => $prefixedKey, 'value' => $value, 'success' => $success,
             ]);
 
             return $success;
         }
-        $this->_eventClass = CacheAfterAddEvent::class;
+        $this->eventClass = CacheAfterAddEvent::class;
         $this->dispatchEvent(CacheAfterAddEvent::NAME, [
             'key' => $prefixedKey, 'value' => $value, 'success' => false,
         ]);

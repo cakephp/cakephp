@@ -193,7 +193,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     public function __construct(array $config = [])
     {
-        $this->_eventClass = ClientEvent::class;
+        $this->eventClass = ClientEvent::class;
         $this->setConfig($config);
 
         $adapter = $this->config['adapter'];

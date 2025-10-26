@@ -81,7 +81,7 @@ class ClientEvent extends Event
      */
     public function setRequest(RequestInterface $request): static
     {
-        $this->_data['request'] = $request;
+        $this->data['request'] = $request;
 
         return $this;
     }
@@ -93,7 +93,7 @@ class ClientEvent extends Event
      */
     public function getRequest(): RequestInterface
     {
-        return $this->_data['request'];
+        return $this->data['request'];
     }
 
     /**
@@ -103,7 +103,7 @@ class ClientEvent extends Event
      */
     public function setAdapterOptions(array $options = []): static
     {
-        $this->_data['adapterOptions'] = $options;
+        $this->data['adapterOptions'] = $options;
 
         return $this;
     }
@@ -115,6 +115,6 @@ class ClientEvent extends Event
      */
     public function getAdapterOptions(): array
     {
-        return $this->_data['adapterOptions'];
+        return $this->data['adapterOptions'];
     }
 }

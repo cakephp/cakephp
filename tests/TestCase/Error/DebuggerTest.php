@@ -211,8 +211,8 @@ object(Cake\View\View) id:0 {
   [protected] _currentType => ''
   [protected] _stack => []
   [protected] _viewBlockClass => 'Cake\View\ViewBlock'
-  [protected] _eventManager => object(Cake\Event\EventManager) id:5 {}
-  [protected] _eventClass => 'Cake\Event\Event'
+  [protected] eventManager => object(Cake\Event\EventManager) id:5 {}
+  [protected] eventClass => 'Cake\Event\Event'
   [protected] config => []
   [protected] configInitialized => true
 }
