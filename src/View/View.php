@@ -355,14 +355,14 @@ class View implements EventDispatcherInterface
             $this->helpers = $this->helpers()->normalizeArray($this->helpers);
         }
 
-        $configMerge = $viewOptions['configMergeStrategy'] ?? 'deep';
+        $configMerge = $viewOptions['configMergeStrategy'] ?? ViewBuilder::MERGE_DEEP;
         $config = array_diff_key(
             $viewOptions,
             array_flip($this->_passedVars),
             ['configMergeStrategy' => true],
         );
 
-        if ($configMerge === 'shallow') {
+        if ($configMerge === ViewBuilder::MERGE_SHALLOW) {
             $this->configShallow($config);
         } else {
             $this->setConfig($config);

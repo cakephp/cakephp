@@ -511,7 +511,7 @@ class ViewBuilderTest extends TestCase
         $builder = new ViewBuilder();
         $builder->setClassName(TestViewWithDefaultConfig::class);
         $builder->setOption('myOption', ['new' => 'value', 'list' => ['a', 'b']]);
-        $builder->setConfigMerge('shallow');
+        $builder->setConfigMergeStrategy(ViewBuilder::MERGE_SHALLOW);
 
         $view = $builder->build();
 

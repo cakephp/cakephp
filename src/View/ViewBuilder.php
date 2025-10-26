@@ -37,6 +37,20 @@ use function Cake\Core\pluginSplit;
 class ViewBuilder implements JsonSerializable
 {
     /**
+     * Deep merge strategy - recursively merges nested arrays (default for BC).
+     *
+     * @var string
+     */
+    public const MERGE_DEEP = 'deep';
+
+    /**
+     * Shallow merge strategy - simple array merge, replaces array values.
+     *
+     * @var string
+     */
+    public const MERGE_SHALLOW = 'shallow';
+
+    /**
      * The subdirectory to the template.
      *
      * @var string|null
@@ -114,11 +128,11 @@ class ViewBuilder implements JsonSerializable
 
     /**
      * The merge strategy for config options.
-     * Can be 'deep' (recursive merge, default for BC) or 'shallow' (simple merge).
+     * Can be MERGE_DEEP (recursive merge, default for BC) or MERGE_SHALLOW (simple merge).
      *
      * @var string
      */
-    protected string $_configMergeStrategy = 'deep';
+    protected string $_configMergeStrategy = self::MERGE_DEEP;
 
     /**
      * The helpers to use
@@ -519,7 +533,7 @@ class ViewBuilder implements JsonSerializable
      *   - 'shallow': Simple array merge (replaces array values)
      * @return $this
      */
-    public function setConfigMerge(string $strategy)
+    public function setConfigMergeStrategy(string $strategy)
     {
         $this->_configMergeStrategy = $strategy;
 
@@ -531,7 +545,7 @@ class ViewBuilder implements JsonSerializable
      *
      * @return string
      */
-    public function getConfigMerge(): string
+    public function getConfigMergeStrategy(): string
     {
         return $this->_configMergeStrategy;
     }
