@@ -416,17 +416,10 @@ class StringTemplate
             return $this->addClassToArray($input, $newClass, $useIndex);
         }
 
-        // For non-array input, maintain BC behavior
-        $class = $input;
-        $input = [];
-
-        // Convert and sanitize the inputs
-        if (!is_array($class)) {
-            if (is_string($class) && !empty($class)) {
-                $class = explode(' ', $class);
-            } else {
-                $class = [];
-            }
+        if (is_string($input) && $input !== '') {
+            $class = explode(' ', $input);
+        } else {
+            $class = [];
         }
 
         if (is_string($newClass)) {
@@ -435,6 +428,6 @@ class StringTemplate
 
         $class = array_unique(array_merge($class, $newClass));
 
-        return Hash::insert($input, $useIndex, $class);
+        return Hash::insert([], $useIndex, $class);
     }
 }
