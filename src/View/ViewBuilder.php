@@ -114,12 +114,11 @@ class ViewBuilder implements JsonSerializable
 
     /**
      * The merge strategy for config options.
-     * Can be 'deep' (default, recursive merge), 'shallow' (simple merge),
-     * or false (no merge, replace).
+     * Can be 'deep' (recursive merge, default for BC) or 'shallow' (simple merge).
      *
-     * @var string|bool
+     * @var string
      */
-    protected string|bool $_configMerge = 'shallow';
+    protected string $_configMergeStrategy = 'deep';
 
     /**
      * The helpers to use
@@ -515,15 +514,14 @@ class ViewBuilder implements JsonSerializable
      * This controls how options set via ViewBuilder are merged with
      * the View class's default configuration.
      *
-     * @param string|bool $strategy The merge strategy. Can be:
-     *   - 'shallow': Simple array merge (default, replaces array values)
-     *   - 'deep' or true: Recursive merge (merges nested arrays)
-     *   - false: No merge (completely replaces config)
+     * @param string $strategy The merge strategy. Can be:
+     *   - 'deep': Recursive merge (default for BC, merges nested arrays)
+     *   - 'shallow': Simple array merge (replaces array values)
      * @return $this
      */
-    public function setConfigMerge(string|bool $strategy)
+    public function setConfigMerge(string $strategy)
     {
-        $this->_configMerge = $strategy;
+        $this->_configMergeStrategy = $strategy;
 
         return $this;
     }
@@ -531,11 +529,11 @@ class ViewBuilder implements JsonSerializable
     /**
      * Get the config merge strategy.
      *
-     * @return string|bool
+     * @return string
      */
-    public function getConfigMerge(): string|bool
+    public function getConfigMerge(): string
     {
-        return $this->_configMerge;
+        return $this->_configMergeStrategy;
     }
 
     /**
@@ -626,7 +624,7 @@ class ViewBuilder implements JsonSerializable
             'layoutPath' => $this->_layoutPath,
             'helpers' => $this->_helpers,
             'viewVars' => $this->_vars,
-            '_configMerge' => $this->_configMerge,
+            'configMergeStrategy' => $this->_configMergeStrategy,
         ];
         $data += $this->_options;
 
@@ -651,7 +649,7 @@ class ViewBuilder implements JsonSerializable
     {
         $properties = [
             '_templatePath', '_template', '_plugin', '_theme', '_layout', '_autoLayout',
-            '_layoutPath', '_name', '_className', '_options', '_helpers', '_vars', '_configMerge',
+            '_layoutPath', '_name', '_className', '_options', '_helpers', '_vars', '_configMergeStrategy',
         ];
 
         $array = [];

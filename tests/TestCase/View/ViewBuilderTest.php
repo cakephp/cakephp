@@ -304,7 +304,7 @@ class ViewBuilderTest extends TestCase
             '_helpers' => ['Html' => []],
             '_className' => 'JsonView',
             '_autoLayout' => true,
-            '_configMerge' => 'shallow',
+            '_configMergeStrategy' => 'deep',
         ];
         $this->assertEquals($expected, $result);
 
@@ -470,7 +470,36 @@ class ViewBuilderTest extends TestCase
     }
 
     /**
-     * Test that options are shallow merged by default when building a view.
+     * Test that options are deep merged by default (BC behavior).
+     * This tests deep merging for both associative and non-associative arrays.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/18879
+     */
+    public function testBuildWithDeepMergeOptions(): void
+    {
+        $builder = new ViewBuilder();
+        $builder->setClassName(TestViewWithDefaultConfig::class);
+        $builder->setOption('myOption', ['new' => 'value', 'non-assoc' => ['z']]);
+
+        $view = $builder->build();
+
+        // With deep merge (default for BC):
+        // - Associative arrays are recursively merged (value + new)
+        // - Non-associative arrays are appended (x, y + z)
+        $expected = [
+            'value' => ['sub' => 'val'], // From default
+            'non-assoc' => ['x', 'y', 'z'], // Default array + new value appended
+            'new' => 'value', // New key
+        ];
+        $this->assertSame(
+            $expected,
+            $view->getConfig('myOption'),
+            'Deep merge (default) recursively merges assoc arrays and appends non-assoc arrays',
+        );
+    }
+
+    /**
+     * Test that shallow merge can be explicitly enabled.
      * This ensures that array options set via ViewBuilder replace
      * default config arrays instead of deep merging them, for both
      * associative and non-associative arrays.
@@ -482,6 +511,7 @@ class ViewBuilderTest extends TestCase
         $builder = new ViewBuilder();
         $builder->setClassName(TestViewWithDefaultConfig::class);
         $builder->setOption('myOption', ['new' => 'value', 'list' => ['a', 'b']]);
+        $builder->setConfigMerge('shallow');
 
         $view = $builder->build();
 
@@ -492,58 +522,5 @@ class ViewBuilderTest extends TestCase
             $view->getConfig('myOption'),
             'Shallow merge replaces entire array, both assoc and non-assoc',
         );
-    }
-
-    /**
-     * Test that deep merge can be explicitly enabled.
-     * This tests deep merging for both associative and non-associative arrays.
-     *
-     * @see https://github.com/cakephp/cakephp/issues/18879
-     */
-    public function testBuildWithDeepMergeOptions(): void
-    {
-        $builder = new ViewBuilder();
-        $builder->setClassName(TestViewWithDefaultConfig::class);
-        $builder->setOption('myOption', ['new' => 'value', 'non-assoc' => ['z']]);
-        $builder->setConfigMerge('deep');
-
-        $view = $builder->build();
-
-        // With deep merge:
-        // - Associative arrays are recursively merged (value + new)
-        // - Non-associative arrays are appended (x, y + z)
-        $expected = [
-            'value' => ['sub' => 'val'], // From default
-            'non-assoc' => ['x', 'y', 'z'], // Default array + new value appended
-            'new' => 'value', // New key
-        ];
-        $this->assertSame(
-            $expected,
-            $view->getConfig('myOption'),
-            'Deep merge recursively merges assoc arrays and appends non-assoc arrays',
-        );
-    }
-
-    /**
-     * Test that merge can be disabled completely.
-     *
-     * @see https://github.com/cakephp/cakephp/issues/18879
-     */
-    public function testBuildWithNoMergeOptions(): void
-    {
-        $builder = new ViewBuilder();
-        $builder->setClassName(TestViewWithDefaultConfig::class);
-        $builder->setOption('myOption', ['newValue']);
-        $builder->setOption('anotherOption', 'test');
-        $builder->setConfigMerge(false);
-
-        $view = $builder->build();
-
-        $this->assertSame(
-            ['newValue'],
-            $view->getConfig('myOption'),
-            'With merge disabled, config is completely replaced',
-        );
-        $this->assertSame('test', $view->getConfig('anotherOption'));
     }
 }
