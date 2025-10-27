@@ -52,7 +52,7 @@ class CheckConstraint extends Constraint
             throw new InvalidArgumentException('Check constraint expression cannot be empty');
         }
 
-        $this->expression = $expression;
+        $this->expression = trim($expression);
 
         return $this;
     }

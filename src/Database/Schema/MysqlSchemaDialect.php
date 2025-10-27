@@ -578,7 +578,8 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         [$schema, $name] = $this->splitTablename($tableName);
-        $sql = "SELECT
+        $sql = <<<SQL
+        SELECT
         cc.CONSTRAINT_NAME AS name,
         cc.CHECK_CLAUSE AS expression
         FROM INFORMATION_SCHEMA.CHECK_CONSTRAINTS AS cc
@@ -586,7 +587,8 @@ class MysqlSchemaDialect extends SchemaDialect
             tc.CONSTRAINT_SCHEMA = cc.CONSTRAINT_SCHEMA
             AND tc.CONSTRAINT_NAME = cc.CONSTRAINT_NAME
         )
-        WHERE tc.CONSTRAINT_SCHEMA = ? AND tc.TABLE_NAME = ? AND tc.CONSTRAINT_TYPE = 'CHECK'";
+        WHERE tc.CONSTRAINT_SCHEMA = ? AND tc.TABLE_NAME = ? AND tc.CONSTRAINT_TYPE = 'CHECK'
+SQL;
 
         $constraints = [];
         $statement = $this->_driver->execute($sql, [$schema, $name]);
