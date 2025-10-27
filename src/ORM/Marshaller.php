@@ -560,11 +560,12 @@ class Marshaller
      * ]);
      * ```
      *
-     * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
+     * @template TEntity of \Cake\Datasource\EntityInterface
+     * @param TEntity $entity the entity that will get the
      * data merged in
      * @param array $data key value list of fields to be merged into the entity
      * @param array<string, mixed> $options List of options.
-     * @return \Cake\Datasource\EntityInterface
+     * @return TEntity
      * @see \Cake\ORM\Entity::$_accessible
      */
     public function merge(EntityInterface $entity, array $data, array $options = []): EntityInterface
@@ -662,11 +663,12 @@ class Marshaller
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
-     * @param iterable<\Cake\Datasource\EntityInterface> $entities the entities that will get the
+     * @template TEntity of \Cake\Datasource\EntityInterface
+     * @param iterable<TEntity> $entities the entities that will get the
      *   data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array<string, mixed> $options List of options.
-     * @return array<\Cake\Datasource\EntityInterface>
+     * @return array<TEntity>
      * @see \Cake\ORM\Entity::$_accessible
      */
     public function mergeMany(iterable $entities, array $data, array $options = []): array

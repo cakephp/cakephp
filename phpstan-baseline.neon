@@ -379,6 +379,12 @@ parameters:
 			path: src/ORM/Marshaller.php
 
 		-
+			message: '#^Method Cake\\ORM\\Marshaller\:\:mergeMany\(\) should return array\<TEntity of Cake\\Datasource\\EntityInterface\> but returns list\<Cake\\Datasource\\EntityInterface\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/ORM/Marshaller.php
+
+		-
 			message: '#^Method Cake\\ORM\\Query\\SelectQuery\:\:find\(\) should return static\(Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\) but returns Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\.$#'
 			identifier: return.type
 			count: 1
