@@ -23,7 +23,6 @@ use Cake\View\StringTemplateTrait;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
-
 use function Cake\Core\deprecationWarning;
 
 /**
