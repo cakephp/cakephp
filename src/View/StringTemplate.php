@@ -379,10 +379,10 @@ class StringTemplate
     public function mergeClasses(array|string $existing, array|string $new): array
     {
         if (!is_array($existing)) {
-            $existing = $existing !== '' ? explode(' ', (string)$existing) : [];
+            $existing = $existing !== '' ? explode(' ', $existing) : [];
         }
         if (!is_array($new)) {
-            $new = $new !== '' ? explode(' ', (string)$new) : [];
+            $new = $new !== '' ? explode(' ', $new) : [];
         }
 
         return array_values(array_unique(array_merge($existing, $new)));
