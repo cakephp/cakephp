@@ -353,7 +353,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function addColumn(string $name, $attrs): static
+    public function addColumn(string $name, array|string $attrs): static
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -553,7 +553,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function addIndex(string $name, $attrs): static
+    public function addIndex(string $name, array|string $attrs): static
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
@@ -667,7 +667,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     /**
      * @inheritDoc
      */
-    public function addConstraint(string $name, $attrs): static
+    public function addConstraint(string $name, array|string $attrs): static
     {
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];

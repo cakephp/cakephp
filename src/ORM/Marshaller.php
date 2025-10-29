@@ -725,7 +725,10 @@ class Marshaller
         $maybeExistentQuery = $this->table->find()->where($conditions);
 
         if ($indexed && count($maybeExistentQuery->clause('where'))) {
-            /** @var \Traversable<\Cake\Datasource\EntityInterface> $existent */
+            /**
+             * phpcs:ignore SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName
+             * @var \Traversable<TEntity> $existent
+             */
             $existent = $maybeExistentQuery->all();
             foreach ($existent as $entity) {
                 $key = implode(';', $entity->extract($primary));
@@ -740,7 +743,12 @@ class Marshaller
             if (!is_array($value)) {
                 continue;
             }
-            $output[] = $this->one($value, $options);
+            /**
+             * phpcs:ignore SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName
+             * @var TEntity $entity
+             */
+            $entity = $this->one($value, $options);
+            $output[] = $entity;
         }
 
         return $output;
