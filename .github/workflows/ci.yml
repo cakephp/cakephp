@@ -45,7 +45,7 @@ jobs:
             dependencies: highest
 
           - php-version: '8.5'
-            db-type: 'sqlite'
+            db-type: 'mysql'
             dependencies: highest
 
     services:
