@@ -54,14 +54,6 @@ class Socket
     protected $connection;
 
     /**
-     * This boolean contains the current state of the Socket class
-     *
-     * @var bool
-     * @deprecated 5.2.9 Use isConnected() instead.
-     */
-    protected bool $connected = false;
-
-    /**
      * This variable contains an array with the last error number (num) and string (str)
      *
      * @var array<string, mixed>
@@ -177,7 +169,6 @@ class Socket
         }
 
         $connected = is_resource($this->connection);
-        $this->connected = $connected;
         if ($connected) {
             assert($this->connection !== null);
 
@@ -428,17 +419,16 @@ class Socket
     public function disconnect(): bool
     {
         if (!is_resource($this->connection)) {
-            $this->connected = false;
-
             return true;
         }
-        $this->connected = !fclose($this->connection);
 
-        if (!$this->connected) {
+        $notConnected = fclose($this->connection);
+
+        if ($notConnected) {
             $this->connection = null;
         }
 
-        return !$this->connected;
+        return $notConnected;
     }
 
     /**

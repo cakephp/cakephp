@@ -130,18 +130,6 @@ class TypeFactoryTest extends TestCase
     }
 
     /**
-     * Test that getMap() with argument triggers deprecation
-     */
-    public function testGetMapDeprecation(): void
-    {
-        $this->deprecated(function (): void {
-            TypeFactory::map('test', FooType::class);
-            $result = TypeFactory::getMap('test');
-            $this->assertSame(FooType::class, $result);
-        });
-    }
-
-    /**
      * Tests new types set with set() are not returned by getMap()
      * as the constructor of a Type could be arbitrary.
      */
