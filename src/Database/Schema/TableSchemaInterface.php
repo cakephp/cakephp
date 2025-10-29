@@ -335,7 +335,7 @@ interface TableSchemaInterface extends SchemaInterface
      * Add a constraint.
      *
      * Used to add constraints to a table. For example primary keys, unique
-     * keys and foreign keys.
+     * keys, check constraints and foreign keys.
      *
      * ### Attributes
      *
@@ -344,6 +344,7 @@ interface TableSchemaInterface extends SchemaInterface
      * - `references` The table, column a foreign key references.
      * - `update` The behavior on update. Options are 'restrict', 'setNull', 'cascade', 'noAction'.
      * - `delete` The behavior on delete. Options are 'restrict', 'setNull', 'cascade', 'noAction'.
+     * - `expression` The SQL expression for check constraints.
      *
      * The default for 'update' & 'delete' is 'cascade'.
      *

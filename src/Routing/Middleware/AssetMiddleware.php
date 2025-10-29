@@ -20,6 +20,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
 use Cake\Http\MimeType;
 use Cake\Http\Response;
+use Cake\I18n\DateTime;
 use Cake\Utility\Inflector;
 use Laminas\Diactoros\Stream;
 use Psr\Http\Message\ResponseInterface;
@@ -162,13 +163,15 @@ class AssetMiddleware implements MiddlewareInterface
         if ($expire === false) {
             throw new CakeException(sprintf('Invalid cache time value `%s`', $this->cacheTime));
         }
-        $maxAge = $expire - time();
+
+        $now = time();
+        $maxAge = $expire - $now;
 
         return $response
             ->withHeader('Content-Type', $contentType)
             ->withHeader('Cache-Control', 'public,max-age=' . $maxAge)
-            ->withHeader('Date', gmdate(CAKE_DATE_RFC7231, time()))
-            ->withHeader('Last-Modified', gmdate(CAKE_DATE_RFC7231, $modified))
-            ->withHeader('Expires', gmdate(CAKE_DATE_RFC7231, $expire));
+            ->withHeader('Date', DateTime::parse($now)->toRfc7231String())
+            ->withHeader('Last-Modified', DateTime::parse($modified)->toRfc7231String())
+            ->withHeader('Expires', DateTime::parse($expire)->toRfc7231String());
     }
 }

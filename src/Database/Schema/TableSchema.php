@@ -75,53 +75,60 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
     public const string CONSTRAINT_FOREIGN = 'foreign';
 
     /**
+     * check constraint type
+     *
+     * @var string
+     */
+    public const string CONSTRAINT_CHECK = 'check';
+
+    /**
      * Index - index type
      *
      * @var string
      */
-    public const string INDEX_INDEX = 'index';
+    public const string INDEX_INDEX = Index::INDEX;
 
     /**
      * Fulltext index type
      *
      * @var string
      */
-    public const string INDEX_FULLTEXT = 'fulltext';
+    public const string INDEX_FULLTEXT = Index::FULLTEXT;
 
     /**
      * Foreign key cascade action
      *
      * @var string
      */
-    public const string ACTION_CASCADE = 'cascade';
+    public const string ACTION_CASCADE = ForeignKey::CASCADE;
 
     /**
      * Foreign key set null action
      *
      * @var string
      */
-    public const string ACTION_SET_NULL = 'setNull';
+    public const string ACTION_SET_NULL = ForeignKey::SET_NULL;
 
     /**
      * Foreign key no action
      *
      * @var string
      */
-    public const string ACTION_NO_ACTION = 'noAction';
+    public const string ACTION_NO_ACTION = ForeignKey::NO_ACTION;
 
     /**
      * Foreign key restrict action
      *
      * @var string
      */
-    public const string ACTION_RESTRICT = 'restrict';
+    public const string ACTION_RESTRICT = ForeignKey::RESTRICT;
 
     /**
      * Foreign key restrict default
      *
      * @var string
      */
-    public const string ACTION_SET_DEFAULT = 'setDefault';
+    public const string ACTION_SET_DEFAULT = ForeignKey::SET_DEFAULT;
 
     /**
      * The name of the table
@@ -283,6 +290,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         'delete' => 'restrict',
         'constraint' => null,
         'deferrable' => null,
+        'expression' => null,
     ];
 
     /**
@@ -304,6 +312,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         self::CONSTRAINT_PRIMARY,
         self::CONSTRAINT_UNIQUE,
         self::CONSTRAINT_FOREIGN,
+        self::CONSTRAINT_CHECK,
     ];
 
     /**
@@ -551,7 +560,14 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
         $attrs = array_intersect_key($attrs, static::$indexKeys);
         $attrs += static::$indexKeys;
-        unset($attrs['references'], $attrs['update'], $attrs['delete'], $attrs['constraint'], $attrs['deferrable']);
+        unset(
+            $attrs['references'],
+            $attrs['update'],
+            $attrs['delete'],
+            $attrs['constraint'],
+            $attrs['deferrable'],
+            $attrs['expression'],
+        );
 
         if (!in_array($attrs['type'], static::$validIndexTypes, true)) {
             throw new DatabaseException(sprintf(
@@ -669,22 +685,24 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 $this->table,
             ));
         }
-        if (empty($attrs['columns'])) {
-            throw new DatabaseException(sprintf(
-                'Constraints in table `%s` must have at least one column.',
-                $this->table,
-            ));
-        }
-        $attrs['columns'] = (array)$attrs['columns'];
-        foreach ($attrs['columns'] as $field) {
-            if (empty($this->columns[$field])) {
-                $msg = sprintf(
-                    'Columns used in constraints must be added to the Table schema first. ' .
-                    'The column `%s` was not found in table `%s`.',
-                    $field,
+        if ($attrs['type'] !== TableSchema::CONSTRAINT_CHECK) {
+            if (empty($attrs['columns'])) {
+                throw new DatabaseException(sprintf(
+                    'Constraints in table `%s` must have at least one column.',
                     $this->table,
-                );
-                throw new DatabaseException($msg);
+                ));
+            }
+            $attrs['columns'] = (array)$attrs['columns'];
+            foreach ($attrs['columns'] as $field) {
+                if (empty($this->columns[$field])) {
+                    $msg = sprintf(
+                        'Columns used in constraints must be added to the Table schema first. ' .
+                        'The column `%s` was not found in table `%s`.',
+                        $field,
+                        $this->table,
+                    );
+                    throw new DatabaseException($msg);
+                }
             }
         }
 
@@ -699,6 +717,11 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
                 'type' => $type,
                 'name' => $attrs['name'],
                 'columns' => $attrs['columns'],
+            ];
+        } elseif ($type === static::CONSTRAINT_CHECK) {
+            $attrs = [
+                'name' => $attrs['name'],
+                'expression' => $attrs['expression'],
             ];
         } elseif ($type === static::CONSTRAINT_UNIQUE) {
             $attrs = [
@@ -727,14 +750,13 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 
                 return $this;
             }
-        } else {
-            unset($attrs['references'], $attrs['update'], $attrs['delete'], $attrs['deferrable']);
         }
 
         $this->constraints[$name] = match ($type) {
             static::CONSTRAINT_UNIQUE => new UniqueKey(...$attrs),
             static::CONSTRAINT_FOREIGN => new ForeignKey(...$attrs),
             static::CONSTRAINT_PRIMARY => new Constraint(...$attrs),
+            static::CONSTRAINT_CHECK => new CheckConstraint(...$attrs),
             default => new Constraint(...$attrs),
         };
 
@@ -791,7 +813,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         // Map the backwards compatible attributes in. Need to check for existing instance.
         $attrs['referencedTable'] = $attrs['references'][0];
         $attrs['referencedColumns'] = (array)$attrs['references'][1];
-        unset($attrs['type'], $attrs['references'], $attrs['length']);
+        unset($attrs['type'], $attrs['references'], $attrs['length'], $attrs['expression']);
 
         return $attrs;
     }
