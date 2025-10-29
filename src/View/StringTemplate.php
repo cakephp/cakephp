@@ -345,28 +345,6 @@ class StringTemplate
     }
 
     /**
-     * Adds CSS classes to an attribute array.
-     *
-     * Merges the provided classes with any existing classes in the specified key
-     * and returns the updated attribute array with unique class values.
-     *
-     * @param array<string, mixed> $attributes The attribute array to add classes to.
-     * @param array<string>|string $newClasses The class(es) to add.
-     * @param string $key The array key to use. Defaults to 'class'.
-     * @return array<string, mixed> The updated attribute array.
-     */
-    public function addClassToArray(
-        array $attributes,
-        array|string $newClasses,
-        string $key = 'class',
-    ): array {
-        $existingClasses = Hash::get($attributes, $key, []);
-        $mergedClasses = $this->mergeClasses($existingClasses, $newClasses);
-
-        return Hash::insert($attributes, $key, $mergedClasses);
-    }
-
-    /**
      * Merges two sets of CSS classes into a unique array.
      *
      * Accepts class lists as arrays or space-separated strings and returns
@@ -376,7 +354,7 @@ class StringTemplate
      * @param array<string>|string $new The new class(es) to merge.
      * @return array<string> A unique array of merged classes.
      */
-    public function mergeClasses(array|string $existing, array|string $new): array
+    public function addClassNames(array|string $existing, array|string $new): array
     {
         if (!is_array($existing)) {
             $existing = $existing !== '' ? explode(' ', $existing) : [];
@@ -389,45 +367,64 @@ class StringTemplate
     }
 
     /**
-     * Adds a class and returns a unique list either in array or space separated
+     * Adds CSS classes to an attribute array.
      *
-     * @deprecated 5.3.0 Use `addClassToArray()` or `mergeClasses()` instead. Will be removed in 6.0.
-     * @param array<string, mixed>|string|null $input The array or string to add the class to
-     * @param array<string>|string|false|null $newClass the new class or classes to add
-     * @param string $useIndex if you are inputting an array with an element other than default of 'class'.
-     * @return array<string, string>|string|null
+     * Merges the provided classes with any existing classes in the specified key
+     * and returns the updated attribute array with unique class values.
+     *
+     * Deprecated: Passing a non-array as first argument is deprecated.
+     *   Pass an attributes array instead.
+     * Deprecated: Returning a non-array value is deprecated.
+     *   The method will only return arrays in the future.
+     *
+     * @param array<string, mixed>|string|null $input The attribute array to add classes to.
+     * @param array<string>|string|false|null $newClass The class(es) to add.
+     * @param string $useIndex The array key to use. Defaults to 'class'.
+     * @return array<string, string>|string|null The updated attribute array.
      */
     public function addClass(
         mixed $input,
         array|string|false|null $newClass,
         string $useIndex = 'class',
     ): array|string|null {
-        deprecationWarning(
-            '5.3.0',
-            '`StringTemplate::addClass()` is deprecated. Use `addClassToArray()` or `mergeClasses()` instead.',
-        );
+        if (!is_array($input)) {
+            deprecationWarning(
+                '5.3.0',
+                'Passing a non-array as first argument to `StringTemplate::addClass()` is deprecated. ' .
+                'Pass an attributes array instead.',
+            );
+        }
 
         // NOOP
         if (!$newClass) {
             return $input;
         }
 
-        if (is_array($input)) {
-            return $this->addClassToArray($input, $newClass, $useIndex);
+        if (!is_array($input)) {
+            if (is_string($input) && $input !== '') {
+                $class = explode(' ', $input);
+            } else {
+                $class = [];
+            }
+
+            if (is_string($newClass)) {
+                $newClass = explode(' ', $newClass);
+            }
+
+            $class = array_unique(array_merge($class, $newClass));
+
+            deprecationWarning(
+                '5.3.0',
+                'Returning a non-array value from `StringTemplate::addClass()` is deprecated. ' .
+                'The method will only return arrays in the future.',
+            );
+
+            return Hash::insert([], $useIndex, $class);
         }
 
-        if (is_string($input) && $input !== '') {
-            $class = explode(' ', $input);
-        } else {
-            $class = [];
-        }
+        $existingClasses = Hash::get($input, $useIndex, []);
+        $mergedClasses = $this->addClassNames($existingClasses, $newClass);
 
-        if (is_string($newClass)) {
-            $newClass = explode(' ', $newClass);
-        }
-
-        $class = array_unique(array_merge($class, $newClass));
-
-        return Hash::insert([], $useIndex, $class);
+        return Hash::insert($input, $useIndex, $mergedClasses);
     }
 }
