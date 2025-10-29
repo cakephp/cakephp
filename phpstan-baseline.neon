@@ -397,12 +397,6 @@ parameters:
 			path: src/ORM/EagerLoader.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 2
-			path: src/ORM/Marshaller.php
-
-		-
 			message: '#^Method Cake\\ORM\\Marshaller\:\:mergeMany\(\) should return array\<TEntity of Cake\\Datasource\\EntityInterface\> but returns list\<Cake\\Datasource\\EntityInterface\>\.$#'
 			identifier: return.type
 			count: 1
