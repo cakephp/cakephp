@@ -92,7 +92,7 @@ class SessionTest extends TestCase
         $config = ['defaults' => 'php'];
         $session = new Session($config);
 
-        $prop = new ReflectionProperty($session, '_lifetime');
+        $prop = new ReflectionProperty($session, 'lifetime');
         $this->assertSame(1440, $prop->getValue($session));
     }
 

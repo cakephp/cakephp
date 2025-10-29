@@ -663,6 +663,80 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * Test sort links with combined format
+     */
+    public function testSortLinksCombinedFormat(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Accounts',
+                'action' => 'index',
+                'pass' => [],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+
+        $this->setPaginatedResult([
+            'alias' => 'Articles',
+            'currentPage' => 1,
+            'count' => 9,
+            'totalCount' => 62,
+            'hasPrevPage' => false,
+            'hasNextPage' => true,
+            'pageCount' => 7,
+        ], false);
+        $this->Paginator->options(['url' => ['param']]);
+
+        // Test default format (separate)
+        $result = $this->Paginator->sort('title');
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=asc'],
+            'Title',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Test combined format
+        $this->Paginator->setConfig('options.sortFormat', 'combined');
+        $result = $this->Paginator->sort('title');
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=title-asc'],
+            'Title',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Test combined format with currently sorted field (toggles direction)
+        $this->setPaginatedResult([
+            'alias' => 'Articles',
+            'sort' => 'title',
+        ]);
+        $result = $this->Paginator->sort('title');
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=title-desc', 'class' => 'asc'],
+            'Title',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Test combined format with dot notation
+        $this->setPaginatedResult([
+            'alias' => 'Articles',
+        ]);
+        $result = $this->Paginator->sort('Articles.author');
+        $expected = [
+            'a' => ['href' => '/Accounts/index/param?sort=Articles.author-asc'],
+            'Articles Author',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
      * Test that generated URLs work without sort defined within the request
      */
     public function testDefaultSortAndNoSort(): void
@@ -2876,7 +2950,10 @@ class PaginatorHelperTest extends TestCase
 
         $out = $this->Paginator->limitControl([1 => 1]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/batches?owner=billy&amp;expected=1&amp;page=1']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Batches/index']],
+            ['input' => ['type' => 'hidden', 'name' => 'owner', 'value' => 'billy']],
+            ['input' => ['type' => 'hidden', 'name' => 'expected', 'value' => '1']],
+            ['input' => ['type' => 'hidden', 'name' => 'page', 'value' => '1']],
             ['div' => ['class' => 'input']],
             ['label' => ['for' => 'limit']],
             'View',
@@ -2975,7 +3052,8 @@ class PaginatorHelperTest extends TestCase
 
         $out = $this->Paginator->limitControl([25 => 25, 50 => 50]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/?article%5Bpage%5D=1']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
+            ['input' => ['type' => 'hidden', 'name' => 'article[page]', 'value' => '1']],
             ['div' => ['class' => 'input']],
             ['label' => ['for' => 'article-limit']],
             'View',
@@ -2983,6 +3061,139 @@ class PaginatorHelperTest extends TestCase
             ['select' => ['name' => 'article[limit]', 'id' => 'article-limit', 'onChange' => 'this.form.requestSubmit()']],
             ['option' => ['value' => '25', 'selected' => 'selected']],
             '25',
+            '/option',
+            ['option' => ['value' => '50']],
+            '50',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
+    }
+
+    /**
+     * test the limitControl() method preserves query strings on page 1
+     */
+    public function testLimitControlPreservesQueryStringsOnPageOne(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/users?status=active&role=admin',
+            'params' => [
+                'plugin' => null, 'controller' => 'Users', 'action' => 'index', 'pass' => [],
+            ],
+            'query' => ['status' => 'active', 'role' => 'admin'],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+        $this->View->setRequest($request);
+        $this->setPaginatedResult(['perPage' => 20, 'currentPage' => 1]);
+
+        $out = $this->Paginator->limitControl([20 => 20, 50 => 50]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Users/index']],
+            ['input' => ['type' => 'hidden', 'name' => 'status', 'value' => 'active']],
+            ['input' => ['type' => 'hidden', 'name' => 'role', 'value' => 'admin']],
+            ['div' => ['class' => 'input']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
+            ['option' => ['value' => '20', 'selected' => 'selected']],
+            '20',
+            '/option',
+            ['option' => ['value' => '50']],
+            '50',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
+    }
+
+    /**
+     * test the limitControl() method excludes pagination params but preserves other query strings
+     */
+    public function testLimitControlExcludesPaginationParams(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/posts?category=tech&sort=title&direction=asc&page=1&limit=25',
+            'params' => [
+                'plugin' => null, 'controller' => 'Posts', 'action' => 'index', 'pass' => [],
+            ],
+            'query' => ['category' => 'tech', 'sort' => 'title', 'direction' => 'asc', 'page' => '1', 'limit' => '25'],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+        $this->View->setRequest($request);
+        $this->setPaginatedResult(['perPage' => 25, 'currentPage' => 1]);
+
+        $out = $this->Paginator->limitControl([25 => 25, 100 => 100]);
+        $expected = [
+            // Should only have category as hidden field, not sort/direction/page/limit
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Posts/index']],
+            ['input' => ['type' => 'hidden', 'name' => 'category', 'value' => 'tech']],
+            ['div' => ['class' => 'input']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
+            ['option' => ['value' => '25', 'selected' => 'selected']],
+            '25',
+            '/option',
+            ['option' => ['value' => '100']],
+            '100',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
+    }
+
+    /**
+     * Test limitControl with deeply nested query parameters (3+ levels).
+     * This verifies the recursive implementation handles arbitrary nesting.
+     */
+    public function testLimitControlWithDeeplyNestedParams(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/posts?filter[date][start]=2024-01-01&filter[date][end]=2024-12-31&filter[status]=active',
+            'params' => [
+                'plugin' => null, 'controller' => 'Posts', 'action' => 'index', 'pass' => [],
+            ],
+            'query' => [
+                'filter' => [
+                    'date' => [
+                        'start' => '2024-01-01',
+                        'end' => '2024-12-31',
+                    ],
+                    'status' => 'active',
+                ],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+        $this->View->setRequest($request);
+        $this->setPaginatedResult(['perPage' => 20, 'currentPage' => 1]);
+
+        $out = $this->Paginator->limitControl([20 => 20, 50 => 50]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Posts/index']],
+            ['input' => ['type' => 'hidden', 'name' => 'filter[date][start]', 'value' => '2024-01-01']],
+            ['input' => ['type' => 'hidden', 'name' => 'filter[date][end]', 'value' => '2024-12-31']],
+            ['input' => ['type' => 'hidden', 'name' => 'filter[status]', 'value' => 'active']],
+            ['div' => ['class' => 'input']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
+            ['option' => ['value' => '20', 'selected' => 'selected']],
+            '20',
             '/option',
             ['option' => ['value' => '50']],
             '50',

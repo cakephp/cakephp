@@ -57,6 +57,7 @@ class Socket
      * This boolean contains the current state of the Socket class
      *
      * @var bool
+     * @deprecated 5.2.9 Use isConnected() instead.
      */
     protected bool $connected = false;
 
@@ -175,14 +176,15 @@ class Socket
             throw new SocketException($message, E_WARNING);
         }
 
-        $this->connected = is_resource($this->connection);
-        if ($this->connected) {
+        $connected = is_resource($this->connection);
+        $this->connected = $connected;
+        if ($connected) {
             assert($this->connection !== null);
 
             stream_set_timeout($this->connection, (int)$this->config['timeout']);
         }
 
-        return $this->connected;
+        return $connected;
     }
 
     /**
@@ -192,7 +194,7 @@ class Socket
      */
     public function isConnected(): bool
     {
-        return $this->connected;
+        return is_resource($this->connection);
     }
 
     /**
@@ -367,7 +369,7 @@ class Socket
      */
     public function write(string $data): int
     {
-        if (!$this->connected && !$this->connect()) {
+        if (!$this->isConnected() && !$this->connect()) {
             return 0;
         }
         $totalBytes = strlen($data);
@@ -398,7 +400,7 @@ class Socket
             throw new InvalidArgumentException('Length must be greater than `0`');
         }
 
-        if (!$this->connected && !$this->connect()) {
+        if (!$this->isConnected() && !$this->connect()) {
             return null;
         }
 

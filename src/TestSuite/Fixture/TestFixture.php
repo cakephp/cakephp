@@ -43,11 +43,27 @@ class TestFixture implements FixtureInterface
     public string $connection = 'test';
 
     /**
-     * Full Table Name
+     * The physical database table name to use.
+     *
+     * If set, tableAlias must initially be empty.
+     * $tableAlias will then be inflected as Inflector::camelize($table).
      *
      * @var string
      */
     public string $table = '';
+
+    /**
+     * The ORM table alias to use.
+     *
+     * If set, table must initially be empty.
+     * $table will be read from the ORM table loaded via the alias.
+     *
+     * If both table and tableAlias are empty, the alias,
+     * will be inflected from the class name with Inflector::pluralize()
+     *
+     * @var string
+     */
+    public string $tableAlias = '';
 
     /**
      * Fixture records to be inserted.
@@ -114,8 +130,11 @@ class TestFixture implements FixtureInterface
      */
     public function init(): void
     {
-        if (!$this->table) {
-            $this->table = $this->tableFromClass();
+        assert(!$this->table || !$this->tableAlias, 'Cannot configure both database table and Cake table alias.');
+        if ($this->table) {
+            $this->tableAlias = Inflector::camelize($this->table);
+        } elseif (!$this->tableAlias) {
+            $this->tableAlias = $this->aliasFromClass();
         }
 
         $this->schemaFromReflection();
@@ -126,13 +145,12 @@ class TestFixture implements FixtureInterface
      *
      * @return string
      */
-    protected function tableFromClass(): string
+    protected function aliasFromClass(): string
     {
         [, $class] = namespaceSplit(static::class);
         preg_match('/^(.*)Fixture$/', $class, $matches);
-        $table = $matches[1] ?? $class;
 
-        return Inflector::tableize($table);
+        return Inflector::pluralize($matches[1] ?? $class);
     }
 
     /**
@@ -146,12 +164,15 @@ class TestFixture implements FixtureInterface
         $db = ConnectionManager::get($this->connection());
         assert($db instanceof Connection);
         try {
-            $name = Inflector::camelize($this->table);
-            $ormTable = $this->fetchTable($name, ['connection' => $db]);
+            $ormTable = $this->fetchTable($this->tableAlias, ['connection' => $db]);
 
             // Remove the fetched table from the locator to avoid conflicts
             // with test cases that need to (re)configure the alias.
-            $this->getTableLocator()->remove($name);
+            $this->getTableLocator()->remove($this->tableAlias);
+
+            if (!$this->table) {
+                $this->table = $ormTable->getTable();
+            }
 
             $schema = $ormTable->getSchema();
             assert($schema instanceof TableSchema);

@@ -34,14 +34,14 @@ class DatabaseSession implements SessionHandlerInterface
      *
      * @var \Cake\ORM\Table
      */
-    protected Table $_table;
+    protected Table $table;
 
     /**
      * Number of seconds to mark the session as expired
      *
      * @var int
      */
-    protected int $_timeout;
+    protected int $timeout;
 
     /**
      * Constructor. Looks at Session configuration information and
@@ -59,12 +59,12 @@ class DatabaseSession implements SessionHandlerInterface
 
         if (empty($config['model'])) {
             $config = $tableLocator->exists('Sessions') ? [] : ['table' => 'sessions', 'allowFallbackClass' => true];
-            $this->_table = $tableLocator->get('Sessions', $config);
+            $this->table = $tableLocator->get('Sessions', $config);
         } else {
-            $this->_table = $tableLocator->get($config['model']);
+            $this->table = $tableLocator->get($config['model']);
         }
 
-        $this->_timeout = (int)ini_get('session.gc_maxlifetime');
+        $this->timeout = (int)ini_get('session.gc_maxlifetime');
     }
 
     /**
@@ -77,7 +77,7 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function setTimeout(int $timeout): static
     {
-        $this->_timeout = $timeout;
+        $this->timeout = $timeout;
 
         return $this;
     }
@@ -112,9 +112,9 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function read(string $id): string|false
     {
-        $pkField = $this->_table->getPrimaryKey();
+        $pkField = $this->table->getPrimaryKey();
         assert(is_string($pkField));
-        $result = $this->_table
+        $result = $this->table
             ->find('all')
             ->select(['data'])
             ->where([$pkField => $id])
@@ -152,14 +152,14 @@ class DatabaseSession implements SessionHandlerInterface
         }
 
         /** @var string $pkField */
-        $pkField = $this->_table->getPrimaryKey();
-        $session = $this->_table->newEntity([
+        $pkField = $this->table->getPrimaryKey();
+        $session = $this->table->newEntity([
             $pkField => $id,
             'data' => $data,
-            'expires' => time() + $this->_timeout,
+            'expires' => time() + $this->timeout,
         ], ['patchableFields' => [$pkField => true]]);
 
-        return (bool)$this->_table->save($session);
+        return (bool)$this->table->save($session);
     }
 
     /**
@@ -171,8 +171,8 @@ class DatabaseSession implements SessionHandlerInterface
     public function destroy(string $id): bool
     {
         /** @var string $pkField */
-        $pkField = $this->_table->getPrimaryKey();
-        $this->_table->deleteAll([$pkField => $id]);
+        $pkField = $this->table->getPrimaryKey();
+        $this->table->deleteAll([$pkField => $id]);
 
         return true;
     }
@@ -185,6 +185,6 @@ class DatabaseSession implements SessionHandlerInterface
      */
     public function gc(int $max_lifetime): int|false
     {
-        return $this->_table->deleteAll(['expires <' => time()]);
+        return $this->table->deleteAll(['expires <' => time()]);
     }
 }

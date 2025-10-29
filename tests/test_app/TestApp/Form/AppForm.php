@@ -20,5 +20,5 @@ use Cake\Form\Form;
 
 class AppForm extends Form
 {
-    protected string $_schemaClass = FormSchema::class;
+    protected string $schemaClass = FormSchema::class;
 }

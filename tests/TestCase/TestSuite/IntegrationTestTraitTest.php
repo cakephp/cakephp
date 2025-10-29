@@ -982,6 +982,23 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test that security token does not include debug field when debug mode is disabled
+     */
+    public function testPostSecuredFormWithDebugDisabled(): void
+    {
+        Configure::write('debug', false);
+
+        $this->enableSecurityToken();
+        $data = [
+            'title' => 'Some title',
+            'body' => 'Some text',
+        ];
+        $this->post('/posts/securePost', $data);
+        $this->assertResponseOk();
+        $this->assertResponseContains('Request was accepted');
+    }
+
+    /**
      * Test posting to a secured form action action.
      */
     public function testPostSecuredFormFailure(): void

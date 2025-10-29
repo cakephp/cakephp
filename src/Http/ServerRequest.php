@@ -79,7 +79,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var array<string, mixed>
      */
-    protected array $_environment = [];
+    protected array $environment = [];
 
     /**
      * Base URL path.
@@ -119,7 +119,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var array<\Closure|array>
      */
-    protected static array $_detectors = [
+    protected static array $detectors = [
         'get' => ['env' => 'REQUEST_METHOD', 'value' => 'GET'],
         'post' => ['env' => 'REQUEST_METHOD', 'value' => 'POST'],
         'put' => ['env' => 'REQUEST_METHOD', 'value' => 'PUT'],
@@ -143,7 +143,7 @@ class ServerRequest implements ServerRequestInterface
      *
      * @var array<string, bool>
      */
-    protected array $_detectorCache = [];
+    protected array $detectorCache = [];
 
     /**
      * Request body stream. Contains php://input unless `input` constructor option is used.
@@ -281,7 +281,7 @@ class ServerRequest implements ServerRequestInterface
             ['uri' => $uri] = UriFactory::marshalUriAndBaseFromSapi($config['environment']);
         }
 
-        $this->_environment = $config['environment'];
+        $this->environment = $config['environment'];
 
         $this->uri = $uri;
         $this->base = $config['base'];
@@ -501,14 +501,14 @@ class ServerRequest implements ServerRequestInterface
         }
 
         $type = strtolower($type);
-        if (!isset(static::$_detectors[$type])) {
+        if (!isset(static::$detectors[$type])) {
             throw new InvalidArgumentException(sprintf('No detector set for type `%s`.', $type));
         }
         if ($args) {
             return $this->isType($type, $args);
         }
 
-        return $this->_detectorCache[$type] ??= $this->isType($type, $args);
+        return $this->detectorCache[$type] ??= $this->isType($type, $args);
     }
 
     /**
@@ -518,7 +518,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function clearDetectorCache(): void
     {
-        $this->_detectorCache = [];
+        $this->detectorCache = [];
     }
 
     /**
@@ -530,7 +530,7 @@ class ServerRequest implements ServerRequestInterface
      */
     protected function isType(string $type, array $args): bool
     {
-        $detect = static::$_detectors[$type];
+        $detect = static::$detectors[$type];
         if ($detect instanceof Closure) {
             array_unshift($args, $this);
 
@@ -746,17 +746,17 @@ class ServerRequest implements ServerRequestInterface
     {
         $name = strtolower($name);
         if ($detector instanceof Closure) {
-            static::$_detectors[$name] = $detector;
+            static::$detectors[$name] = $detector;
 
             return;
         }
 
-        if (isset(static::$_detectors[$name], $detector['options'])) {
+        if (isset(static::$detectors[$name], $detector['options'])) {
             /** @var array $data */
-            $data = static::$_detectors[$name];
+            $data = static::$detectors[$name];
             $detector = Hash::merge($data, $detector);
         }
-        static::$_detectors[$name] = $detector;
+        static::$detectors[$name] = $detector;
     }
 
     /**
@@ -790,7 +790,7 @@ class ServerRequest implements ServerRequestInterface
     public function getHeaders(): array
     {
         $headers = [];
-        foreach ($this->_environment as $key => $value) {
+        foreach ($this->environment as $key => $value) {
             $name = null;
             if (str_starts_with($key, 'HTTP_')) {
                 $name = substr($key, 5);
@@ -819,7 +819,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $name = $this->normalizeHeaderName($name);
 
-        return isset($this->_environment[$name]);
+        return isset($this->environment[$name]);
     }
 
     /**
@@ -836,8 +836,8 @@ class ServerRequest implements ServerRequestInterface
     public function getHeader(string $name): array
     {
         $name = $this->normalizeHeaderName($name);
-        if (isset($this->_environment[$name])) {
-            return (array)$this->_environment[$name];
+        if (isset($this->environment[$name])) {
+            return (array)$this->environment[$name];
         }
 
         return [];
@@ -870,7 +870,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
-        $new->_environment[$name] = $value;
+        $new->environment[$name] = $value;
 
         return $new;
     }
@@ -892,11 +892,11 @@ class ServerRequest implements ServerRequestInterface
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
         $existing = [];
-        if (isset($new->_environment[$name])) {
-            $existing = (array)$new->_environment[$name];
+        if (isset($new->environment[$name])) {
+            $existing = (array)$new->environment[$name];
         }
         $existing = array_merge($existing, (array)$value);
-        $new->_environment[$name] = $existing;
+        $new->environment[$name] = $existing;
 
         return $new;
     }
@@ -912,7 +912,7 @@ class ServerRequest implements ServerRequestInterface
     {
         $new = clone $this;
         $name = $this->normalizeHeaderName($name);
-        unset($new->_environment[$name]);
+        unset($new->environment[$name]);
 
         return $new;
     }
@@ -953,7 +953,7 @@ class ServerRequest implements ServerRequestInterface
                 $method,
             ));
         }
-        $new->_environment['REQUEST_METHOD'] = $method;
+        $new->environment['REQUEST_METHOD'] = $method;
 
         return $new;
     }
@@ -969,7 +969,7 @@ class ServerRequest implements ServerRequestInterface
      */
     public function getServerParams(): array
     {
-        return $this->_environment;
+        return $this->environment;
     }
 
     /**
@@ -1401,19 +1401,19 @@ class ServerRequest implements ServerRequestInterface
     public function getEnv(string $key, ?string $default = null): ?string
     {
         $key = strtoupper($key);
-        if (!array_key_exists($key, $this->_environment)) {
-            $this->_environment[$key] = env($key);
+        if (!array_key_exists($key, $this->environment)) {
+            $this->environment[$key] = env($key);
         }
 
-        if ($this->_environment[$key] === null) {
+        if ($this->environment[$key] === null) {
             return $default;
         }
 
-        if (is_array($this->_environment[$key])) {
-            return implode(', ', $this->_environment[$key]);
+        if (is_array($this->environment[$key])) {
+            return implode(', ', $this->environment[$key]);
         }
 
-        return (string)$this->_environment[$key];
+        return (string)$this->environment[$key];
     }
 
     /**
@@ -1429,7 +1429,7 @@ class ServerRequest implements ServerRequestInterface
     public function withEnv(string $key, string $value): static
     {
         $new = clone $this;
-        $new->_environment[$key] = $value;
+        $new->environment[$key] = $value;
         $new->clearDetectorCache();
 
         return $new;
@@ -1747,7 +1747,7 @@ class ServerRequest implements ServerRequestInterface
         if ($port) {
             $host .= ':' . $port;
         }
-        $new->_environment['HTTP_HOST'] = $host;
+        $new->environment['HTTP_HOST'] = $host;
 
         return $new;
     }

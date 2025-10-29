@@ -31,7 +31,7 @@ class EventList implements ArrayAccess, Countable
      *
      * @var array<\Cake\Event\EventInterface<object>>
      */
-    protected array $_events = [];
+    protected array $events = [];
 
     /**
      * Empties the list of dispatched events.
@@ -40,7 +40,7 @@ class EventList implements ArrayAccess, Countable
      */
     public function flush(): void
     {
-        $this->_events = [];
+        $this->events = [];
     }
 
     /**
@@ -51,7 +51,7 @@ class EventList implements ArrayAccess, Countable
      */
     public function add(EventInterface $event): void
     {
-        $this->_events[] = $event;
+        $this->events[] = $event;
     }
 
     /**
@@ -63,7 +63,7 @@ class EventList implements ArrayAccess, Countable
      */
     public function offsetExists(mixed $offset): bool
     {
-        return isset($this->_events[$offset]);
+        return isset($this->events[$offset]);
     }
 
     /**
@@ -79,7 +79,7 @@ class EventList implements ArrayAccess, Countable
             return null;
         }
 
-        return $this->_events[$offset];
+        return $this->events[$offset];
     }
 
     /**
@@ -92,7 +92,7 @@ class EventList implements ArrayAccess, Countable
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->_events[$offset] = $value;
+        $this->events[$offset] = $value;
     }
 
     /**
@@ -104,7 +104,7 @@ class EventList implements ArrayAccess, Countable
      */
     public function offsetUnset(mixed $offset): void
     {
-        unset($this->_events[$offset]);
+        unset($this->events[$offset]);
     }
 
     /**
@@ -115,7 +115,7 @@ class EventList implements ArrayAccess, Countable
      */
     public function count(): int
     {
-        return count($this->_events);
+        return count($this->events);
     }
 
     /**
@@ -126,6 +126,6 @@ class EventList implements ArrayAccess, Countable
      */
     public function hasEvent(string $name): bool
     {
-        return array_any($this->_events, fn($event) => $event->getName() === $name);
+        return array_any($this->events, fn($event) => $event->getName() === $name);
     }
 }

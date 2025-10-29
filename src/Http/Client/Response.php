@@ -110,14 +110,14 @@ class Response extends Message implements ResponseInterface
      *
      * @var \SimpleXMLElement|null
      */
-    protected ?SimpleXMLElement $_xml = null;
+    protected ?SimpleXMLElement $xml = null;
 
     /**
      * Cached decoded JSON data.
      *
      * @var mixed
      */
-    protected mixed $_json = null;
+    protected mixed $json = null;
 
     /**
      * Constructor
@@ -390,11 +390,11 @@ class Response extends Message implements ResponseInterface
      */
     public function getJson(): mixed
     {
-        if ($this->_json) {
-            return $this->_json;
+        if ($this->json) {
+            return $this->json;
         }
 
-        return $this->_json = json_decode($this->getStringBody(), true);
+        return $this->json = json_decode($this->getStringBody(), true);
     }
 
     /**
@@ -404,8 +404,8 @@ class Response extends Message implements ResponseInterface
      */
     public function getXml(): ?SimpleXMLElement
     {
-        if ($this->_xml !== null) {
-            return $this->_xml;
+        if ($this->xml !== null) {
+            return $this->xml;
         }
         libxml_use_internal_errors();
         $data = simplexml_load_string($this->getStringBody());
@@ -413,8 +413,8 @@ class Response extends Message implements ResponseInterface
             return null;
         }
 
-        $this->_xml = $data;
+        $this->xml = $data;
 
-        return $this->_xml;
+        return $this->xml;
     }
 }

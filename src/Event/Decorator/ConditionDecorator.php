@@ -64,13 +64,13 @@ class ConditionDecorator extends AbstractDecorator
      */
     protected function evaluateCondition(string $condition, EventInterface $event): bool
     {
-        if (!isset($this->_options[$condition])) {
+        if (!isset($this->options[$condition])) {
             return $condition !== 'unless';
         }
-        if (!is_callable($this->_options[$condition])) {
+        if (!is_callable($this->options[$condition])) {
             throw new InvalidArgumentException(self::class . ' the `' . $condition . '` condition is not a callable!');
         }
 
-        return (bool)$this->_options[$condition]($event);
+        return (bool)$this->options[$condition]($event);
     }
 }

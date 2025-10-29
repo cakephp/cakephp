@@ -85,13 +85,6 @@ class Debugger
     ];
 
     /**
-     * Holds current output data when outputFormat is false.
-     *
-     * @var array
-     */
-    protected array $_data = [];
-
-    /**
      * Constructor.
      */
     public function __construct()

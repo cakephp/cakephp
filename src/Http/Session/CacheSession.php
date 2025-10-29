@@ -34,7 +34,7 @@ class CacheSession implements SessionHandlerInterface
      *
      * @var array<string, mixed>
      */
-    protected array $_options = [];
+    protected array $options = [];
 
     /**
      * Constructor.
@@ -49,7 +49,7 @@ class CacheSession implements SessionHandlerInterface
         if (empty($config['config'])) {
             throw new InvalidArgumentException('The cache configuration name to use is required');
         }
-        $this->_options = $config;
+        $this->options = $config;
     }
 
     /**
@@ -82,7 +82,7 @@ class CacheSession implements SessionHandlerInterface
      */
     public function read(string $id): string|false
     {
-        return Cache::read($id, $this->_options['config']) ?? '';
+        return Cache::read($id, $this->options['config']) ?? '';
     }
 
     /**
@@ -98,7 +98,7 @@ class CacheSession implements SessionHandlerInterface
             return false;
         }
 
-        return Cache::write($id, $data, $this->_options['config']);
+        return Cache::write($id, $data, $this->options['config']);
     }
 
     /**
@@ -109,7 +109,7 @@ class CacheSession implements SessionHandlerInterface
      */
     public function destroy(string $id): bool
     {
-        Cache::delete($id, $this->_options['config']);
+        Cache::delete($id, $this->options['config']);
 
         return true;
     }

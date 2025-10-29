@@ -61,7 +61,7 @@ class Digest
      *
      * @var \Cake\Http\Client
      */
-    protected Client $_client;
+    protected Client $client;
 
     /**
      * Algorithm
@@ -92,7 +92,7 @@ class Digest
      */
     public function __construct(Client $client, ?array $options = null)
     {
-        $this->_client = $client;
+        $this->client = $client;
     }
 
     /**
@@ -152,7 +152,7 @@ class Digest
      */
     protected function getServerInfo(Request $request, array $credentials): array
     {
-        $response = $this->_client->get(
+        $response = $this->client->get(
             (string)$request->getUri(),
             [],
             ['auth' => ['type' => null]],

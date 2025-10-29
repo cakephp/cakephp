@@ -65,7 +65,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      *
      * @var array<string, mixed>
      */
-    protected array $_config = [
+    protected array $config = [
         'cookieName' => 'csrfToken',
         'expiry' => 0,
         'secure' => false,
@@ -108,7 +108,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function __construct(array $config = [])
     {
-        $this->_config = $config + $this->_config;
+        $this->config = $config + $this->config;
     }
 
     /**
@@ -143,7 +143,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
         }
 
         $cookies = $request->getCookieParams();
-        $cookieData = Hash::get($cookies, $this->_config['cookieName']);
+        $cookieData = Hash::get($cookies, $this->config['cookieName']);
 
         if (is_string($cookieData) && $cookieData !== '') {
             try {
@@ -195,7 +195,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     {
         $body = $request->getParsedBody();
         if (is_array($body)) {
-            unset($body[$this->_config['field']]);
+            unset($body[$this->config['field']]);
             $request = $request->withParsedBody($body);
         }
 
@@ -348,7 +348,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function validateToken(ServerRequestInterface $request): void
     {
-        $cookie = Hash::get($request->getCookieParams(), $this->_config['cookieName']);
+        $cookie = Hash::get($request->getCookieParams(), $this->config['cookieName']);
 
         if (!$cookie || !is_string($cookie)) {
             throw new InvalidCsrfTokenException(__d('cake', 'Missing or incorrect CSRF cookie type.'));
@@ -365,7 +365,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
 
         $body = $request->getParsedBody();
         if (is_array($body) || $body instanceof ArrayAccess) {
-            $post = (string)Hash::get($body, $this->_config['field']);
+            $post = (string)Hash::get($body, $this->config['field']);
             $post = $this->unsaltToken($post);
             if (hash_equals($post, $cookie)) {
                 return;
@@ -394,14 +394,14 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
     protected function createCookie(string $value, ServerRequestInterface $request): CookieInterface
     {
         return Cookie::create(
-            $this->_config['cookieName'],
+            $this->config['cookieName'],
             $value,
             [
-                'expires' => $this->_config['expiry'] ?: null,
+                'expires' => $this->config['expiry'] ?: null,
                 'path' => $request->getAttribute('webroot'),
-                'secure' => $this->_config['secure'],
-                'httponly' => $this->_config['httponly'],
-                'samesite' => $this->_config['samesite'],
+                'secure' => $this->config['secure'],
+                'httponly' => $this->config['httponly'],
+                'samesite' => $this->config['samesite'],
             ],
         );
     }

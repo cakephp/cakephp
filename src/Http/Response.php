@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\NotFoundException;
+use Cake\I18n\DateTime as CakeDateTime;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -61,7 +62,7 @@ class Response implements ResponseInterface, Stringable
      *
      * @var array<int, string>
      */
-    protected array $_statusCodes = [
+    protected array $statusCodes = [
         100 => 'Continue',
         101 => 'Switching Protocols',
         102 => 'Processing',
@@ -134,28 +135,28 @@ class Response implements ResponseInterface, Stringable
      *
      * @var int
      */
-    protected int $_status = 200;
+    protected int $status = 200;
 
     /**
      * File object for file to be read out as response
      *
      * @var \SplFileInfo|null
      */
-    protected ?SplFileInfo $_file = null;
+    protected ?SplFileInfo $file = null;
 
     /**
      * File range. Used for requesting ranges of files.
      *
      * @var array<int>
      */
-    protected array $_fileRange = [];
+    protected array $fileRange = [];
 
     /**
      * The charset the response body is encoded with
      *
      * @var string
      */
-    protected string $_charset = 'UTF-8';
+    protected string $charset = 'UTF-8';
 
     /**
      * Holds all the cache directives that will be converted
@@ -163,35 +164,35 @@ class Response implements ResponseInterface, Stringable
      *
      * @var array<string, mixed>
      */
-    protected array $_cacheDirectives = [];
+    protected array $cacheDirectives = [];
 
     /**
      * Collection of cookies to send to the client
      *
      * @var \Cake\Http\Cookie\CookieCollection
      */
-    protected CookieCollection $_cookies;
+    protected CookieCollection $cookies;
 
     /**
      * Reason Phrase
      *
      * @var string
      */
-    protected string $_reasonPhrase = 'OK';
+    protected string $reasonPhrase = 'OK';
 
     /**
      * Stream mode options.
      *
      * @var string
      */
-    protected string $_streamMode = 'wb+';
+    protected string $streamMode = 'wb+';
 
     /**
      * Stream target or resource object.
      *
      * @var resource|string
      */
-    protected $_streamTarget = 'php://memory';
+    protected $streamTarget = 'php://memory';
 
     /**
      * Constructor
@@ -206,8 +207,8 @@ class Response implements ResponseInterface, Stringable
      */
     public function __construct(array $options = [])
     {
-        $this->_streamTarget = $options['streamTarget'] ?? $this->_streamTarget;
-        $this->_streamMode = $options['streamMode'] ?? $this->_streamMode;
+        $this->streamTarget = $options['streamTarget'] ?? $this->streamTarget;
+        $this->streamMode = $options['streamMode'] ?? $this->streamMode;
         if (isset($options['stream'])) {
             if (!$options['stream'] instanceof StreamInterface) {
                 throw new InvalidArgumentException('Stream option must be an object that implements StreamInterface');
@@ -223,13 +224,13 @@ class Response implements ResponseInterface, Stringable
             $this->setStatus($options['status']);
         }
         $options['charset'] ??= Configure::read('App.encoding');
-        $this->_charset = $options['charset'];
+        $this->charset = $options['charset'];
         $type = 'text/html';
         if (isset($options['type'])) {
             $type = $this->resolveType($options['type']);
         }
         $this->setContentType($type);
-        $this->_cookies = new CookieCollection();
+        $this->cookies = new CookieCollection();
     }
 
     /**
@@ -239,7 +240,7 @@ class Response implements ResponseInterface, Stringable
      */
     protected function createStream(): void
     {
-        $this->stream = new Stream($this->_streamTarget, $this->_streamMode);
+        $this->stream = new Stream($this->streamTarget, $this->streamMode);
     }
 
     /**
@@ -251,7 +252,7 @@ class Response implements ResponseInterface, Stringable
      */
     protected function setContentType(string $type): void
     {
-        if (in_array($this->_status, [304, 204], true)) {
+        if (in_array($this->status, [304, 204], true)) {
             $this->clearHeader('Content-Type');
 
             return;
@@ -262,7 +263,7 @@ class Response implements ResponseInterface, Stringable
 
         $charset = false;
         if (
-            $this->_charset &&
+            $this->charset &&
             (
                 str_starts_with($type, 'text/') ||
                 in_array($type, $allowed, true)
@@ -272,7 +273,7 @@ class Response implements ResponseInterface, Stringable
         }
 
         if ($charset && !str_contains($type, ';')) {
-            $this->setHeader('Content-Type', "{$type}; charset={$this->_charset}");
+            $this->setHeader('Content-Type', "{$type}; charset={$this->charset}");
         } else {
             $this->setHeader('Content-Type', $type);
         }
@@ -290,8 +291,8 @@ class Response implements ResponseInterface, Stringable
     public function withLocation(string $url): static
     {
         $new = $this->withHeader('Location', $url);
-        if ($new->_status === 200) {
-            $new->_status = 302;
+        if ($new->status === 200) {
+            $new->status = 302;
         }
 
         return $new;
@@ -339,7 +340,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function getStatusCode(): int
     {
-        return $this->_status;
+        return $this->status;
     }
 
     /**
@@ -396,11 +397,11 @@ class Response implements ResponseInterface, Stringable
             ));
         }
 
-        $this->_status = $code;
-        if ($reasonPhrase === '' && isset($this->_statusCodes[$code])) {
-            $reasonPhrase = $this->_statusCodes[$code];
+        $this->status = $code;
+        if ($reasonPhrase === '' && isset($this->statusCodes[$code])) {
+            $reasonPhrase = $this->statusCodes[$code];
         }
-        $this->_reasonPhrase = $reasonPhrase;
+        $this->reasonPhrase = $reasonPhrase;
 
         // These status codes don't have bodies and can't have content-types.
         if (in_array($code, [304, 204], true)) {
@@ -423,7 +424,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function getReasonPhrase(): string
     {
-        return $this->_reasonPhrase;
+        return $this->reasonPhrase;
     }
 
     /**
@@ -539,7 +540,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function getCharset(): string
     {
-        return $this->_charset;
+        return $this->charset;
     }
 
     /**
@@ -551,7 +552,7 @@ class Response implements ResponseInterface, Stringable
     public function withCharset(string $charset): static
     {
         $new = clone $this;
-        $new->_charset = $charset;
+        $new->charset = $charset;
         $new->setContentType($this->getType());
 
         return $new;
@@ -565,7 +566,7 @@ class Response implements ResponseInterface, Stringable
     public function withDisabledCache(): static
     {
         return $this->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
-            ->withHeader('Last-Modified', gmdate(CAKE_DATE_RFC7231))
+            ->withHeader('Last-Modified', CakeDateTime::parse(time())->toRfc7231String())
             ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
@@ -587,7 +588,7 @@ class Response implements ResponseInterface, Stringable
             }
         }
 
-        return $this->withHeader('Date', gmdate(CAKE_DATE_RFC7231, time()))
+        return $this->withHeader('Date', CakeDateTime::parse(time())->toRfc7231String())
             ->withModified($since)
             ->withExpires($time)
             ->withSharable(true)
@@ -605,13 +606,13 @@ class Response implements ResponseInterface, Stringable
     public function withSharable(bool $public, ?int $time = null): static
     {
         $new = clone $this;
-        unset($new->_cacheDirectives['private'], $new->_cacheDirectives['public']);
+        unset($new->cacheDirectives['private'], $new->cacheDirectives['public']);
 
         $key = $public ? 'public' : 'private';
-        $new->_cacheDirectives[$key] = true;
+        $new->cacheDirectives[$key] = true;
 
         if ($time !== null) {
-            $new->_cacheDirectives['max-age'] = $time;
+            $new->cacheDirectives['max-age'] = $time;
         }
         $new->setCacheControl();
 
@@ -630,7 +631,7 @@ class Response implements ResponseInterface, Stringable
     public function withSharedMaxAge(int $seconds): static
     {
         $new = clone $this;
-        $new->_cacheDirectives['s-maxage'] = $seconds;
+        $new->cacheDirectives['s-maxage'] = $seconds;
         $new->setCacheControl();
 
         return $new;
@@ -648,7 +649,7 @@ class Response implements ResponseInterface, Stringable
     public function withMaxAge(int $seconds): static
     {
         $new = clone $this;
-        $new->_cacheDirectives['max-age'] = $seconds;
+        $new->cacheDirectives['max-age'] = $seconds;
         $new->setCacheControl();
 
         return $new;
@@ -669,9 +670,9 @@ class Response implements ResponseInterface, Stringable
     {
         $new = clone $this;
         if ($enable) {
-            $new->_cacheDirectives['must-revalidate'] = true;
+            $new->cacheDirectives['must-revalidate'] = true;
         } else {
-            unset($new->_cacheDirectives['must-revalidate']);
+            unset($new->cacheDirectives['must-revalidate']);
         }
         $new->setCacheControl();
 
@@ -687,7 +688,7 @@ class Response implements ResponseInterface, Stringable
     protected function setCacheControl(): void
     {
         $control = '';
-        foreach ($this->_cacheDirectives as $key => $val) {
+        foreach ($this->cacheDirectives as $key => $val) {
             $control .= $val === true ? $key : sprintf('%s=%s', $key, $val);
             $control .= ', ';
         }
@@ -697,6 +698,9 @@ class Response implements ResponseInterface, Stringable
 
     /**
      * Create a new instance with the Expires header set.
+     *
+     * Strings without an explicit time zone will be converted
+     * from the default time zone to UTC.
      *
      * ### Examples:
      *
@@ -713,13 +717,14 @@ class Response implements ResponseInterface, Stringable
      */
     public function withExpires(DateTimeInterface|string|int|null $time): static
     {
-        $date = $this->getUTCDate($time);
-
-        return $this->withHeader('Expires', $date->format(CAKE_DATE_RFC7231));
+        return $this->withHeader('Expires', $this->getRfc7231($time));
     }
 
     /**
      * Create a new instance with the Last-Modified header set.
+     *
+     * Strings without an explicit time zone will be converted
+     * from the default time zone to UTC.
      *
      * ### Examples:
      *
@@ -736,9 +741,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function withModified(DateTimeInterface|string|int $time): static
     {
-        $date = $this->getUTCDate($time);
-
-        return $this->withHeader('Last-Modified', $date->format(CAKE_DATE_RFC7231));
+        return $this->withHeader('Last-Modified', $this->getRfc7231($time));
     }
 
     /**
@@ -831,10 +834,20 @@ class Response implements ResponseInterface, Stringable
             $result = new DateTime($time ?? 'now');
         }
 
-        /**
-         * @phpstan-ignore-next-line
-         */
+        /** @phpstan-ignore-next-line */
         return $result->setTimezone(new DateTimeZone('UTC'));
+    }
+
+    /**
+     * Converts the time zone to GMT and returns a string in RFC7231 format.
+     * This replaced the deprecated and broken ``DATE_RFC7231`` formatting constant.
+     *
+     * @param \DateTimeInterface|string|int|null $time
+     * @return string
+     */
+    protected function getRfc7231(DateTimeInterface|string|int|null $time = null): string
+    {
+        return $this->getUTCDate($time)->format('D, d M Y H:i:s \G\M\T');
     }
 
     /**
@@ -984,7 +997,7 @@ class Response implements ResponseInterface, Stringable
     public function withCookie(CookieInterface $cookie): static
     {
         $new = clone $this;
-        $new->_cookies = $new->_cookies->add($cookie);
+        $new->cookies = $new->cookies->add($cookie);
 
         return $new;
     }
@@ -1007,7 +1020,7 @@ class Response implements ResponseInterface, Stringable
         $cookie = $cookie->withExpired();
 
         $new = clone $this;
-        $new->_cookies = $new->_cookies->add($cookie);
+        $new->cookies = $new->cookies->add($cookie);
 
         return $new;
     }
@@ -1023,11 +1036,11 @@ class Response implements ResponseInterface, Stringable
      */
     public function getCookie(string $name): ?array
     {
-        if (!$this->_cookies->has($name)) {
+        if (!$this->cookies->has($name)) {
             return null;
         }
 
-        return $this->_cookies->get($name)->toArray();
+        return $this->cookies->get($name)->toArray();
     }
 
     /**
@@ -1040,7 +1053,7 @@ class Response implements ResponseInterface, Stringable
     public function getCookies(): array
     {
         $out = [];
-        foreach ($this->_cookies as $cookie) {
+        foreach ($this->cookies as $cookie) {
             $out[$cookie->getName()] = $cookie->toArray();
         }
 
@@ -1054,7 +1067,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function getCookieCollection(): CookieCollection
     {
-        return $this->_cookies;
+        return $this->cookies;
     }
 
     /**
@@ -1066,7 +1079,7 @@ class Response implements ResponseInterface, Stringable
     public function withCookieCollection(CookieCollection $cookieCollection): static
     {
         $new = clone $this;
-        $new->_cookies = $cookieCollection;
+        $new->cookies = $cookieCollection;
 
         return $new;
     }
@@ -1138,7 +1151,7 @@ class Response implements ResponseInterface, Stringable
         } else {
             $new = $new->withHeader('Content-Length', (string)$fileSize);
         }
-        $new->_file = $file;
+        $new->file = $file;
         $new->stream = new Stream($file->getPathname(), 'rb');
 
         return $new;
@@ -1190,7 +1203,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function getFile(): ?SplFileInfo
     {
-        return $this->_file;
+        return $this->file;
     }
 
     /**
@@ -1238,7 +1251,7 @@ class Response implements ResponseInterface, Stringable
          * @var int $start
          * @var int $end
          */
-        $this->_fileRange = [$start, $end];
+        $this->fileRange = [$start, $end];
     }
 
     /**
@@ -1250,13 +1263,13 @@ class Response implements ResponseInterface, Stringable
     public function __debugInfo(): array
     {
         return [
-            'status' => $this->_status,
+            'status' => $this->status,
             'contentType' => $this->getType(),
             'headers' => $this->headers,
-            'file' => $this->_file,
-            'fileRange' => $this->_fileRange,
-            'cookies' => $this->_cookies,
-            'cacheDirectives' => $this->_cacheDirectives,
+            'file' => $this->file,
+            'fileRange' => $this->fileRange,
+            'cookies' => $this->cookies,
+            'cacheDirectives' => $this->cacheDirectives,
             'body' => (string)$this->getBody(),
         ];
     }

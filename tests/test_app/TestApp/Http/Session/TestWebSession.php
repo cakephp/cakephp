@@ -12,12 +12,12 @@ class TestWebSession extends Session
 {
     protected function hasSession(): bool
     {
-        $isCLI = $this->_isCLI;
-        $this->_isCLI = false;
+        $isCLI = $this->isCLI;
+        $this->isCLI = false;
 
         $result = parent::hasSession();
 
-        $this->_isCLI = $isCLI;
+        $this->isCLI = $isCLI;
 
         return $result;
     }

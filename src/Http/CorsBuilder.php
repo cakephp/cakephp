@@ -37,28 +37,28 @@ class CorsBuilder
      *
      * @var \Psr\Http\Message\ResponseInterface
      */
-    protected ResponseInterface $_response;
+    protected ResponseInterface $response;
 
     /**
      * The request's Origin header value
      *
      * @var string
      */
-    protected string $_origin;
+    protected string $origin;
 
     /**
      * Whether the request was over SSL.
      *
      * @var bool
      */
-    protected bool $_isSsl;
+    protected bool $isSsl;
 
     /**
      * The headers that have been queued so far.
      *
      * @var array<string, mixed>
      */
-    protected array $_headers = [];
+    protected array $headers = [];
 
     /**
      * Constructor.
@@ -69,9 +69,9 @@ class CorsBuilder
      */
     public function __construct(ResponseInterface $response, string $origin, bool $isSsl = false)
     {
-        $this->_origin = $origin;
-        $this->_isSsl = $isSsl;
-        $this->_response = $response;
+        $this->origin = $origin;
+        $this->isSsl = $isSsl;
+        $this->response = $response;
     }
 
     /**
@@ -84,13 +84,13 @@ class CorsBuilder
      */
     public function build(): ResponseInterface
     {
-        $response = $this->_response;
-        if (empty($this->_origin)) {
+        $response = $this->response;
+        if (empty($this->origin)) {
             return $response;
         }
 
-        if (isset($this->_headers['Access-Control-Allow-Origin'])) {
-            foreach ($this->_headers as $key => $value) {
+        if (isset($this->headers['Access-Control-Allow-Origin'])) {
+            foreach ($this->headers as $key => $value) {
                 $response = $response->withHeader($key, $value);
             }
         }
@@ -111,11 +111,11 @@ class CorsBuilder
     {
         $allowed = $this->normalizeDomains((array)$domains);
         foreach ($allowed as $domain) {
-            if (!preg_match($domain['preg'], $this->_origin)) {
+            if (!preg_match($domain['preg'], $this->origin)) {
                 continue;
             }
-            $value = $domain['original'] === '*' ? '*' : $this->_origin;
-            $this->_headers['Access-Control-Allow-Origin'] = $value;
+            $value = $domain['original'] === '*' ? '*' : $this->origin;
+            $this->headers['Access-Control-Allow-Origin'] = $value;
             break;
         }
 
@@ -139,7 +139,7 @@ class CorsBuilder
             $original = $domain;
             $preg = $domain;
             if (!str_contains($domain, '://')) {
-                $preg = ($this->_isSsl ? 'https://' : 'http://') . $domain;
+                $preg = ($this->isSsl ? 'https://' : 'http://') . $domain;
             }
             $preg = '@^' . str_replace('\*', '.*', preg_quote($preg, '@')) . '$@';
             $result[] = compact('original', 'preg');
@@ -156,7 +156,7 @@ class CorsBuilder
      */
     public function allowMethods(array $methods): static
     {
-        $this->_headers['Access-Control-Allow-Methods'] = implode(', ', $methods);
+        $this->headers['Access-Control-Allow-Methods'] = implode(', ', $methods);
 
         return $this;
     }
@@ -168,7 +168,7 @@ class CorsBuilder
      */
     public function allowCredentials(): static
     {
-        $this->_headers['Access-Control-Allow-Credentials'] = 'true';
+        $this->headers['Access-Control-Allow-Credentials'] = 'true';
 
         return $this;
     }
@@ -181,7 +181,7 @@ class CorsBuilder
      */
     public function allowHeaders(array $headers): static
     {
-        $this->_headers['Access-Control-Allow-Headers'] = implode(', ', $headers);
+        $this->headers['Access-Control-Allow-Headers'] = implode(', ', $headers);
 
         return $this;
     }
@@ -194,7 +194,7 @@ class CorsBuilder
      */
     public function exposeHeaders(array $headers): static
     {
-        $this->_headers['Access-Control-Expose-Headers'] = implode(', ', $headers);
+        $this->headers['Access-Control-Expose-Headers'] = implode(', ', $headers);
 
         return $this;
     }
@@ -207,7 +207,7 @@ class CorsBuilder
      */
     public function maxAge(string|int $age): static
     {
-        $this->_headers['Access-Control-Max-Age'] = $age;
+        $this->headers['Access-Control-Max-Age'] = $age;
 
         return $this;
     }

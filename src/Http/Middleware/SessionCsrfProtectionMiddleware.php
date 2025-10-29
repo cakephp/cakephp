@@ -58,7 +58,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      *
      * @var array<string, mixed>
      */
-    protected array $_config = [
+    protected array $config = [
         'key' => 'csrfToken',
         'field' => '_csrfToken',
     ];
@@ -84,7 +84,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      */
     public function __construct(array $config = [])
     {
-        $this->_config = $config + $this->_config;
+        $this->config = $config + $this->config;
     }
 
     /**
@@ -115,10 +115,10 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
             throw new CakeException('You must have a `session` attribute to use session based CSRF tokens');
         }
 
-        $token = $session->read($this->_config['key']);
+        $token = $session->read($this->config['key']);
         if ($token === null) {
             $token = $this->createToken();
-            $session->write($this->_config['key'], $token);
+            $session->write($this->config['key'], $token);
         }
         $request = $request->withAttribute('csrfToken', $this->saltToken($token));
 
@@ -214,7 +214,7 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
     {
         $body = $request->getParsedBody();
         if (is_array($body)) {
-            unset($body[$this->_config['field']]);
+            unset($body[$this->config['field']]);
             $request = $request->withParsedBody($body);
         }
 
@@ -244,14 +244,14 @@ class SessionCsrfProtectionMiddleware implements MiddlewareInterface
      */
     protected function validateToken(ServerRequestInterface $request, Session $session): void
     {
-        $token = $session->read($this->_config['key']);
+        $token = $session->read($this->config['key']);
         if (!$token || !is_string($token)) {
             throw new InvalidCsrfTokenException(__d('cake', 'Missing or incorrect CSRF session key'));
         }
 
         $body = $request->getParsedBody();
         if (is_array($body) || $body instanceof ArrayAccess) {
-            $post = (string)Hash::get($body, $this->_config['field']);
+            $post = (string)Hash::get($body, $this->config['field']);
             $post = $this->unsaltToken($post);
             if (hash_equals($post, $token)) {
                 return;

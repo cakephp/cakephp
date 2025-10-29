@@ -51,15 +51,15 @@ class SubjectFilterDecorator extends AbstractDecorator
      */
     public function canTrigger(EventInterface $event): bool
     {
-        if (!isset($this->_options['allowedSubject'])) {
+        if (!isset($this->options['allowedSubject'])) {
             throw new CakeException(self::class . ' Missing subject filter options!');
         }
-        if (is_string($this->_options['allowedSubject'])) {
-            $this->_options['allowedSubject'] = [$this->_options['allowedSubject']];
+        if (is_string($this->options['allowedSubject'])) {
+            $this->options['allowedSubject'] = [$this->options['allowedSubject']];
         }
 
         $subject = $event->getSubject();
 
-        return $subject !== null && in_array($subject::class, $this->_options['allowedSubject'], true);
+        return $subject !== null && in_array($subject::class, $this->options['allowedSubject'], true);
     }
 }

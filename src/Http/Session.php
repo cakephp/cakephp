@@ -45,28 +45,28 @@ class Session
      *
      * @var \SessionHandlerInterface|null
      */
-    protected ?SessionHandlerInterface $_engine = null;
+    protected ?SessionHandlerInterface $engine = null;
 
     /**
      * Indicates whether the sessions has already started
      *
      * @var bool
      */
-    protected bool $_started = false;
+    protected bool $started = false;
 
     /**
      * The time in seconds the session will be valid for
      *
      * @var int
      */
-    protected int $_lifetime = 0;
+    protected int $lifetime = 0;
 
     /**
      * Whether this session is running under a CLI environment
      *
      * @var bool
      */
-    protected bool $_isCLI = false;
+    protected bool $isCLI = false;
 
     /**
      * Info about where the headers were sent.
@@ -246,7 +246,7 @@ class Session
             $this->engine($class, $config['handler']);
         }
 
-        $this->_isCLI = (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
+        $this->isCLI = (PHP_SAPI === 'cli' || PHP_SAPI === 'phpdbg');
         session_register_shutdown();
     }
 
@@ -272,7 +272,7 @@ class Session
         array $options = [],
     ): ?SessionHandlerInterface {
         if ($class === null) {
-            return $this->_engine;
+            return $this->engine;
         }
         if ($class instanceof SessionHandlerInterface) {
             return $this->setEngine($class);
@@ -301,7 +301,7 @@ class Session
             session_set_save_handler($handler, false);
         }
 
-        return $this->_engine = $handler;
+        return $this->engine = $handler;
     }
 
     /**
@@ -341,15 +341,15 @@ class Session
      */
     public function start(): bool
     {
-        if ($this->_started) {
+        if ($this->started) {
             return true;
         }
 
-        if ($this->_isCLI) {
+        if ($this->isCLI) {
             $_SESSION = [];
             $this->id('cli');
 
-            return $this->_started = true;
+            return $this->started = true;
         }
 
         if (session_status() === PHP_SESSION_ACTIVE) {
@@ -367,7 +367,7 @@ class Session
             throw new CakeException('Could not start the session');
         }
 
-        $this->_started = true;
+        $this->started = true;
 
         if ($this->timedOut()) {
             $this->destroy();
@@ -375,7 +375,7 @@ class Session
             return $this->start();
         }
 
-        return $this->_started;
+        return $this->started;
     }
 
     /**
@@ -385,12 +385,12 @@ class Session
      */
     public function close(): bool
     {
-        if (!$this->_started) {
+        if (!$this->started) {
             return true;
         }
 
-        if ($this->_isCLI) {
-            $this->_started = false;
+        if ($this->isCLI) {
+            $this->started = false;
 
             return true;
         }
@@ -399,7 +399,7 @@ class Session
             throw new CakeException('Could not close the session');
         }
 
-        $this->_started = false;
+        $this->started = false;
 
         return true;
     }
@@ -411,7 +411,7 @@ class Session
      */
     public function started(): bool
     {
-        return $this->_started || session_status() === PHP_SESSION_ACTIVE;
+        return $this->started || session_status() === PHP_SESSION_ACTIVE;
     }
 
     /**
@@ -600,12 +600,12 @@ class Session
             $this->start();
         }
 
-        if (!$this->_isCLI && session_status() === PHP_SESSION_ACTIVE) {
+        if (!$this->isCLI && session_status() === PHP_SESSION_ACTIVE) {
             session_destroy();
         }
 
         $_SESSION = [];
-        $this->_started = false;
+        $this->started = false;
     }
 
     /**
@@ -633,7 +633,7 @@ class Session
     {
         return !ini_get('session.use_cookies')
             || isset($_COOKIE[session_name()])
-            || $this->_isCLI
+            || $this->isCLI
             || (ini_get('session.use_trans_sid') && isset($_GET[session_name()]));
     }
 
@@ -644,7 +644,7 @@ class Session
      */
     public function renew(): void
     {
-        if (!$this->hasSession() || $this->_isCLI) {
+        if (!$this->hasSession() || $this->isCLI) {
             return;
         }
 
@@ -674,8 +674,8 @@ class Session
         $time = $this->read('Config.time');
         $result = false;
 
-        $checkTime = $time !== null && $this->_lifetime > 0;
-        if ($checkTime && (time() - (int)$time > $this->_lifetime)) {
+        $checkTime = $time !== null && $this->lifetime > 0;
+        if ($checkTime && (time() - (int)$time > $this->lifetime)) {
             $result = true;
         }
 
@@ -716,6 +716,6 @@ class Session
             ]);
         }
 
-        $this->_lifetime = $lifetime;
+        $this->lifetime = $lifetime;
     }
 }

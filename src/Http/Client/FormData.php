@@ -34,28 +34,28 @@ class FormData implements Countable, Stringable
      *
      * @var string
      */
-    protected string $_boundary = '';
+    protected string $boundary = '';
 
     /**
      * Whether this formdata object has attached files.
      *
      * @var bool
      */
-    protected bool $_hasFile = false;
+    protected bool $hasFile = false;
 
     /**
      * Whether this formdata object has a complex part.
      *
      * @var bool
      */
-    protected bool $_hasComplexPart = false;
+    protected bool $hasComplexPart = false;
 
     /**
      * The parts in the form data.
      *
      * @var array<\Cake\Http\Client\FormDataPart>
      */
-    protected array $_parts = [];
+    protected array $parts = [];
 
     /**
      * Get the boundary marker
@@ -64,12 +64,12 @@ class FormData implements Countable, Stringable
      */
     public function boundary(): string
     {
-        if ($this->_boundary) {
-            return $this->_boundary;
+        if ($this->boundary) {
+            return $this->boundary;
         }
-        $this->_boundary = hash('xxh128', uniqid((string)time()));
+        $this->boundary = hash('xxh128', uniqid((string)time()));
 
-        return $this->_boundary;
+        return $this->boundary;
     }
 
     /**
@@ -106,11 +106,11 @@ class FormData implements Countable, Stringable
             } elseif (is_resource($value) || $value instanceof UploadedFileInterface) {
                 $this->addFile($name, $value);
             } else {
-                $this->_parts[] = $this->newPart($name, (string)$value);
+                $this->parts[] = $this->newPart($name, (string)$value);
             }
         } else {
-            $this->_hasComplexPart = true;
-            $this->_parts[] = $name;
+            $this->hasComplexPart = true;
+            $this->parts[] = $name;
         }
 
         return $this;
@@ -144,7 +144,7 @@ class FormData implements Countable, Stringable
      */
     public function addFile(string $name, mixed $value): FormDataPart
     {
-        $this->_hasFile = true;
+        $this->hasFile = true;
 
         $filename = false;
         $contentType = 'application/octet-stream';
@@ -209,7 +209,7 @@ class FormData implements Countable, Stringable
      */
     public function count(): int
     {
-        return count($this->_parts);
+        return count($this->parts);
     }
 
     /**
@@ -220,7 +220,7 @@ class FormData implements Countable, Stringable
      */
     public function hasFile(): bool
     {
-        return $this->_hasFile;
+        return $this->hasFile;
     }
 
     /**
@@ -234,7 +234,7 @@ class FormData implements Countable, Stringable
      */
     public function isMultipart(): bool
     {
-        return $this->hasFile() || $this->_hasComplexPart;
+        return $this->hasFile() || $this->hasComplexPart;
     }
 
     /**
@@ -265,7 +265,7 @@ class FormData implements Countable, Stringable
         if ($this->isMultipart()) {
             $boundary = $this->boundary();
             $out = '';
-            foreach ($this->_parts as $part) {
+            foreach ($this->parts as $part) {
                 $out .= "--{$boundary}\r\n";
                 $out .= (string)$part;
                 $out .= "\r\n";
@@ -275,7 +275,7 @@ class FormData implements Countable, Stringable
             return $out;
         }
         $data = [];
-        foreach ($this->_parts as $part) {
+        foreach ($this->parts as $part) {
             $data[$part->name()] = $part->value();
         }
 

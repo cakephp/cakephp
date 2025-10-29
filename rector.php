@@ -60,6 +60,7 @@ return RectorConfig::configure()
         \Rector\CodingStyle\Rector\FuncCall\StrictArraySearchRector::class,
         \Rector\CodingStyle\Rector\FuncCall\VersionCompareFuncCallToConstantRector::class,
         \Rector\CodingStyle\Rector\FunctionLike\FunctionLikeToFirstClassCallableRector::class,
+        \Rector\CodingStyle\Rector\FuncCall\FunctionFirstClassCallableRector::class,
         \Rector\CodingStyle\Rector\If_\NullableCompareToNullRector::class,
         \Rector\CodingStyle\Rector\Stmt\NewlineAfterStatementRector::class,
         \Rector\CodingStyle\Rector\String_\UseClassKeywordForClassNameResolutionRector::class,

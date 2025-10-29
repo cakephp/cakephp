@@ -26,14 +26,14 @@ class Schema
      *
      * @var array<string, array<string, mixed>>
      */
-    protected array $_fields = [];
+    protected array $fields = [];
 
     /**
      * The default values for fields.
      *
      * @var array<string, mixed>
      */
-    protected array $_fieldDefaults = [
+    protected array $fieldDefaults = [
         'type' => null,
         'length' => null,
         'precision' => null,
@@ -68,8 +68,8 @@ class Schema
         if (is_string($attrs)) {
             $attrs = ['type' => $attrs];
         }
-        $attrs = array_intersect_key($attrs, $this->_fieldDefaults);
-        $this->_fields[$name] = $attrs + $this->_fieldDefaults;
+        $attrs = array_intersect_key($attrs, $this->fieldDefaults);
+        $this->fields[$name] = $attrs + $this->fieldDefaults;
 
         return $this;
     }
@@ -82,7 +82,7 @@ class Schema
      */
     public function removeField(string $name): static
     {
-        unset($this->_fields[$name]);
+        unset($this->fields[$name]);
 
         return $this;
     }
@@ -94,7 +94,7 @@ class Schema
      */
     public function fields(): array
     {
-        return array_keys($this->_fields);
+        return array_keys($this->fields);
     }
 
     /**
@@ -105,7 +105,7 @@ class Schema
      */
     public function field(string $name): ?array
     {
-        return $this->_fields[$name] ?? null;
+        return $this->fields[$name] ?? null;
     }
 
     /**
@@ -133,7 +133,7 @@ class Schema
     public function __debugInfo(): array
     {
         return [
-            '_fields' => $this->_fields,
+            '_fields' => $this->fields,
         ];
     }
 }

@@ -143,21 +143,21 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * @var \Cake\Http\Cookie\CookieCollection
      */
-    protected CookieCollection $_cookies;
+    protected CookieCollection $cookies;
 
     /**
      * Mock adapter for stubbing requests in tests.
      *
      * @var \Cake\Http\Client\Adapter\Mock|null
      */
-    protected static ?MockAdapter $_mockAdapter = null;
+    protected static ?MockAdapter $mockAdapter = null;
 
     /**
      * Adapter for sending requests.
      *
      * @var \Cake\Http\Client\AdapterInterface
      */
-    protected AdapterInterface $_adapter;
+    protected AdapterInterface $adapter;
 
     /**
      * Create a new HTTP Client.
@@ -193,7 +193,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     public function __construct(array $config = [])
     {
-        $this->_eventClass = ClientEvent::class;
+        $this->eventClass = ClientEvent::class;
         $this->setConfig($config);
 
         $adapter = $this->config['adapter'];
@@ -211,13 +211,13 @@ class Client implements EventDispatcherInterface, ClientInterface
             $adapter = new $adapter();
         }
 
-        $this->_adapter = $adapter;
+        $this->adapter = $adapter;
 
         if (!empty($this->config['cookieJar'])) {
-            $this->_cookies = $this->config['cookieJar'];
+            $this->cookies = $this->config['cookieJar'];
             $this->setConfig('cookieJar', null);
         } else {
-            $this->_cookies = new CookieCollection();
+            $this->cookies = new CookieCollection();
         }
     }
 
@@ -263,7 +263,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     public function cookies(): CookieCollection
     {
-        return $this->_cookies;
+        return $this->cookies;
     }
 
     /**
@@ -278,7 +278,7 @@ class Client implements EventDispatcherInterface, ClientInterface
         if (!$cookie->getDomain() || !$cookie->getPath()) {
             throw new InvalidArgumentException('Cookie must have a domain and a path set.');
         }
-        $this->_cookies = $this->_cookies->add($cookie);
+        $this->cookies = $this->cookies->add($cookie);
 
         return $this;
     }
@@ -529,7 +529,7 @@ class Client implements EventDispatcherInterface, ClientInterface
                     'protocolRelative' => true,
                 ]);
                 $request = $request->withUri(new Uri($locationUrl));
-                $request = $this->_cookies->addToRequest($request, []);
+                $request = $this->cookies->addToRequest($request, []);
             }
         } while ($handleRedirect);
 
@@ -543,7 +543,7 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     public static function clearMockResponses(): void
     {
-        static::$_mockAdapter = null;
+        static::$mockAdapter = null;
     }
 
     /**
@@ -568,11 +568,11 @@ class Client implements EventDispatcherInterface, ClientInterface
      */
     public static function addMockResponse(string $method, string $url, Response $response, array $options = []): void
     {
-        if (!static::$_mockAdapter) {
-            static::$_mockAdapter = new MockAdapter();
+        if (!static::$mockAdapter) {
+            static::$mockAdapter = new MockAdapter();
         }
         $request = new Request($url, $method);
-        static::$_mockAdapter->addResponse($request, $response, $options);
+        static::$mockAdapter->addResponse($request, $response, $options);
     }
 
     /**
@@ -585,14 +585,14 @@ class Client implements EventDispatcherInterface, ClientInterface
     protected function processRequest(RequestInterface $request, array $options): Response
     {
         $responses = [];
-        if (static::$_mockAdapter) {
-            $responses = static::$_mockAdapter->send($request, $options);
+        if (static::$mockAdapter) {
+            $responses = static::$mockAdapter->send($request, $options);
         }
         if (!$responses) {
-            $responses = $this->_adapter->send($request, $options);
+            $responses = $this->adapter->send($request, $options);
         }
         foreach ($responses as $response) {
-            $this->_cookies = $this->_cookies->addFromResponse($response, $request);
+            $this->cookies = $this->cookies->addFromResponse($response, $request);
         }
 
         /** @var \Cake\Http\Client\Response */
@@ -674,7 +674,7 @@ class Client implements EventDispatcherInterface, ClientInterface
         $request = $request->withProtocolVersion($this->getConfig('protocolVersion'));
         $cookies = $options['cookies'] ?? [];
         /** @var \Cake\Http\Client\Request $request */
-        $request = $this->_cookies->addToRequest($request, $cookies);
+        $request = $this->cookies->addToRequest($request, $cookies);
         if (isset($options['auth'])) {
             $request = $this->addAuthentication($request, $options);
         }

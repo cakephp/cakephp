@@ -148,21 +148,4 @@ class Message
      * @var string
      */
     public const string METHOD_HEAD = 'HEAD';
-
-    /**
-     * The array of cookies in the response.
-     *
-     * @var array
-     */
-    protected array $_cookies = [];
-
-    /**
-     * Get all cookies
-     *
-     * @return array
-     */
-    public function cookies(): array
-    {
-        return $this->_cookies;
-    }
 }
