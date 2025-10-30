@@ -27,7 +27,6 @@ use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
-use DateTime as NativeDateTime;
 use DateTimeImmutable;
 use DateTimeZone;
 use InvalidArgumentException;
@@ -279,7 +278,7 @@ class ResponseTest extends TestCase
         $response = new Response();
         $expected = [
             'Expires' => ['Mon, 26 Jul 1997 05:00:00 GMT'],
-            'Last-Modified' => [gmdate(CAKE_DATE_RFC7231)],
+            'Last-Modified' => [DateTime::parse(time())->toRfc7231String()],
             'Cache-Control' => ['no-store, no-cache, must-revalidate, post-check=0, pre-check=0'],
             'Content-Type' => ['text/html; charset=UTF-8'],
         ];
@@ -302,9 +301,9 @@ class ResponseTest extends TestCase
         $this->assertFalse($response->hasHeader('Date'));
         $this->assertFalse($response->hasHeader('Last-Modified'));
 
-        $this->assertSame(gmdate(CAKE_DATE_RFC7231, $since), $new->getHeaderLine('Date'));
-        $this->assertSame(gmdate(CAKE_DATE_RFC7231, $since), $new->getHeaderLine('Last-Modified'));
-        $this->assertSame(gmdate(CAKE_DATE_RFC7231, $time), $new->getHeaderLine('Expires'));
+        $this->assertSame(DateTime::parse($since)->toRfc7231String(), $new->getHeaderLine('Date'));
+        $this->assertSame(DateTime::parse($since)->toRfc7231String(), $new->getHeaderLine('Last-Modified'));
+        $this->assertSame(DateTime::parse($time)->toRfc7231String(), $new->getHeaderLine('Expires'));
         $this->assertSame('public, max-age=0', $new->getHeaderLine('Cache-Control'));
     }
 
@@ -462,21 +461,19 @@ class ResponseTest extends TestCase
     public function testWithExpires(): void
     {
         $response = new Response();
-        $now = new NativeDateTime('now', new DateTimeZone('America/Los_Angeles'));
+        $now = new DateTime('now', new DateTimeZone('America/Los_Angeles'));
 
         $new = $response->withExpires($now);
         $this->assertFalse($response->hasHeader('Expires'));
-
-        $now->setTimeZone(new DateTimeZone('UTC'));
-        $this->assertSame($now->format(CAKE_DATE_RFC7231), $new->getHeaderLine('Expires'));
+        $this->assertSame($now->toRfc7231String(), $new->getHeaderLine('Expires'));
 
         $now = time();
         $new = $response->withExpires($now);
-        $this->assertSame(gmdate(CAKE_DATE_RFC7231), $new->getHeaderLine('Expires'));
+        $this->assertSame(DateTime::parse($now)->toRfc7231String(), $new->getHeaderLine('Expires'));
 
-        $time = new NativeDateTime('+1 day', new DateTimeZone('UTC'));
-        $new = $response->withExpires('+1 day');
-        $this->assertSame($time->format(CAKE_DATE_RFC7231), $new->getHeaderLine('Expires'));
+        $time = new DateTime('2024-01-01');
+        $new = $response->withExpires('2024-01-01');
+        $this->assertSame($time->toRfc7231String(), $new->getHeaderLine('Expires'));
     }
 
     /**
@@ -485,24 +482,22 @@ class ResponseTest extends TestCase
     public function testWithModified(): void
     {
         $response = new Response();
-        $now = new NativeDateTime('now', new DateTimeZone('America/Los_Angeles'));
+        $now = new DateTime('now', new DateTimeZone('America/Los_Angeles'));
         $new = $response->withModified($now);
         $this->assertFalse($response->hasHeader('Last-Modified'));
-
-        $now->setTimeZone(new DateTimeZone('UTC'));
-        $this->assertSame($now->format(CAKE_DATE_RFC7231), $new->getHeaderLine('Last-Modified'));
+        $this->assertSame($now->toRfc7231String(), $new->getHeaderLine('Last-Modified'));
 
         $now = time();
         $new = $response->withModified($now);
-        $this->assertSame(gmdate(CAKE_DATE_RFC7231, $now), $new->getHeaderLine('Last-Modified'));
+        $this->assertSame(DateTime::parse($now)->toRfc7231String(), $new->getHeaderLine('Last-Modified'));
 
-        $now = new DateTimeImmutable();
+        $now = new DateTime();
         $new = $response->withModified($now);
-        $this->assertSame(gmdate(CAKE_DATE_RFC7231, $now->getTimestamp()), $new->getHeaderLine('Last-Modified'));
+        $this->assertSame($now->toRfc7231String(), $new->getHeaderLine('Last-Modified'));
 
-        $time = new NativeDateTime('+1 day', new DateTimeZone('UTC'));
-        $new = $response->withModified('+1 day');
-        $this->assertSame($time->format(CAKE_DATE_RFC7231), $new->getHeaderLine('Last-Modified'));
+        $time = new DateTime('2024-01-01');
+        $new = $response->withModified('2024-01-01');
+        $this->assertSame($time->toRfc7231String(), $new->getHeaderLine('Last-Modified'));
     }
 
     /**

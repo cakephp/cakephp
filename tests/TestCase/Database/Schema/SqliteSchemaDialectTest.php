@@ -20,6 +20,7 @@ use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\Constraint;
 use Cake\Database\Schema\ForeignKey;
@@ -302,6 +303,7 @@ field2 VARCHAR(10) DEFAULT 'NULL',
 location POINT_TEXT,
 CONSTRAINT "title_idx" UNIQUE ("title", "body")
 CONSTRAINT "author_fk" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
+CONSTRAINT "author_value_chk" CHECK (author_id > 0)
 );
 SQL;
         $connection->execute($table);
@@ -609,14 +611,23 @@ SQL;
                 ],
                 'length' => [],
             ],
+            'author_value_chk' => [
+                'type' => 'check',
+                'expression' => 'author_id > 0',
+            ],
         ];
-        $this->assertCount(4, $result->constraints());
+        $this->assertCount(5, $result->constraints());
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
 
         $primary = $result->constraint('primary');
         $this->assertInstanceOf(Constraint::class, $primary);
         $this->assertSame('primary', $primary->getName());
         $this->assertSame($expected['primary']['columns'], $primary->getColumns());
+
+        $check = $result->constraint('author_value_chk');
+        $this->assertInstanceOf(CheckConstraint::class, $check);
+        $this->assertSame('author_value_chk', $check->getName());
+        $this->assertSame($expected['author_value_chk']['expression'], $check->getExpression());
 
         $this->assertEquals(
             $expected['author_fk'],
@@ -640,6 +651,7 @@ SQL;
             $result->getConstraint('title_idx'),
         );
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
+
         // Compare with describeIndexes() & constraint() result
         $this->assertEquals($expected['unique_id_idx'] + ['name' => 'unique_id_idx'], $indexes[0]);
         $unique = $result->constraint('unique_id_idx');
@@ -968,6 +980,23 @@ SQL;
                 $this->assertFalse($col->getIdentity());
             }
         }
+    }
+
+    public function testDescribeTableCheckConstraints(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_articles');
+
+        $constraint = $result->getConstraint('author_value_chk');
+        $this->assertSame('author_id > 0', $constraint['expression']);
+
+        $constraint = $result->constraint('author_value_chk');
+        assert($constraint instanceof CheckConstraint);
+        $this->assertSame('author_value_chk', $constraint->getName());
+        $this->assertSame('author_id > 0', $constraint->getExpression());
     }
 
     /**
@@ -1372,6 +1401,11 @@ SQL;
                 ],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
                 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
+            ],
+            [
+                'author_id_check',
+                ['type' => 'check', 'expression' => 'author_id > 0'],
+                'CONSTRAINT "author_id_check" CHECK (author_id > 0)',
             ],
         ];
     }

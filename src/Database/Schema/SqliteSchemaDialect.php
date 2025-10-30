@@ -705,6 +705,36 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    public function describeCheckConstraints(string $tableName): array
+    {
+        $constraints = [];
+        $createSql = $this->getCreateTableSql($tableName);
+
+        // Parse CHECK constraints from CREATE TABLE statement
+        // Match CONSTRAINT name CHECK (expression) or just CHECK (expression)
+        $pattern = '/(?:CONSTRAINT\s+([^\s]+)\s+)?CHECK\s*\(([^)]+(?:\([^)]*\)[^)]*)*)\)/is';
+
+        if (preg_match_all($pattern, $createSql, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $index => $match) {
+                $name = !empty($match[1])
+                    ? trim($match[1], '"`[]')
+                    : 'check_' . $index;
+                $expression = trim($match[2]);
+
+                $constraints[] = [
+                    'name' => $name,
+                    'type' => TableSchema::CONSTRAINT_CHECK,
+                    'expression' => $expression,
+                ];
+            }
+        }
+
+        return $constraints;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function describeOptions(string $tableName): array
     {
         return [];
@@ -899,25 +929,33 @@ class SqliteSchemaDialect extends SchemaDialect
         $data = $schema->getConstraint($name);
         assert($data !== null, 'Data does not exist');
 
-        $column = $schema->getColumn($data['columns'][0]);
-        assert($column !== null, 'Data does not exist');
+        $columns = '';
+        if (isset($data['columns'])) {
+            $column = $schema->getColumn($data['columns'][0]);
+            assert($column !== null, 'Data does not exist');
 
-        if (
-            $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
-            count($data['columns']) === 1 &&
-            $column['type'] === TableSchemaInterface::TYPE_INTEGER
-        ) {
-            return '';
+            if (
+                $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
+                count($data['columns']) === 1 &&
+                $column['type'] === TableSchemaInterface::TYPE_INTEGER
+            ) {
+                return '';
+            }
+
+            $aliased = array_map(
+                $this->_driver->quoteIdentifier(...),
+                $data['columns'],
+            );
+            $columns = implode(', ', $aliased);
         }
+
         $clause = '';
         $type = '';
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $type = 'PRIMARY KEY';
-        }
-        if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $type = 'UNIQUE';
-        }
-        if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             $type = 'FOREIGN KEY';
 
             $clause = rtrim(sprintf(
@@ -928,17 +966,16 @@ class SqliteSchemaDialect extends SchemaDialect
                 $this->_foreignOnClause($data['delete']),
                 $data['deferrable'] ?? null,
             ));
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_CHECK) {
+            $type = 'CHECK';
+            $columns = $data['expression'];
         }
-        $columns = array_map(
-            $this->_driver->quoteIdentifier(...),
-            $data['columns'],
-        );
 
         return sprintf(
             'CONSTRAINT %s %s (%s)%s',
             $this->_driver->quoteIdentifier($name),
             $type,
-            implode(', ', $columns),
+            $columns,
             $clause,
         );
     }

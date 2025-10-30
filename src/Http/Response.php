@@ -20,6 +20,7 @@ use Cake\Core\Configure;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\Cookie\CookieInterface;
 use Cake\Http\Exception\NotFoundException;
+use Cake\I18n\DateTime as CakeDateTime;
 use DateTime;
 use DateTimeInterface;
 use DateTimeZone;
@@ -565,7 +566,7 @@ class Response implements ResponseInterface, Stringable
     public function withDisabledCache(): static
     {
         return $this->withHeader('Expires', 'Mon, 26 Jul 1997 05:00:00 GMT')
-            ->withHeader('Last-Modified', gmdate(CAKE_DATE_RFC7231))
+            ->withHeader('Last-Modified', CakeDateTime::parse(time())->toRfc7231String())
             ->withHeader('Cache-Control', 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0');
     }
 
@@ -587,7 +588,7 @@ class Response implements ResponseInterface, Stringable
             }
         }
 
-        return $this->withHeader('Date', gmdate(CAKE_DATE_RFC7231, time()))
+        return $this->withHeader('Date', CakeDateTime::parse(time())->toRfc7231String())
             ->withModified($since)
             ->withExpires($time)
             ->withSharable(true)
@@ -698,6 +699,9 @@ class Response implements ResponseInterface, Stringable
     /**
      * Create a new instance with the Expires header set.
      *
+     * Strings without an explicit time zone will be converted
+     * from the default time zone to UTC.
+     *
      * ### Examples:
      *
      * ```
@@ -713,13 +717,14 @@ class Response implements ResponseInterface, Stringable
      */
     public function withExpires(DateTimeInterface|string|int|null $time): static
     {
-        $date = $this->_getUTCDate($time);
-
-        return $this->withHeader('Expires', $date->format(CAKE_DATE_RFC7231));
+        return $this->withHeader('Expires', $this->getRfc7231($time));
     }
 
     /**
      * Create a new instance with the Last-Modified header set.
+     *
+     * Strings without an explicit time zone will be converted
+     * from the default time zone to UTC.
      *
      * ### Examples:
      *
@@ -736,9 +741,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function withModified(DateTimeInterface|string|int $time): static
     {
-        $date = $this->_getUTCDate($time);
-
-        return $this->withHeader('Last-Modified', $date->format(CAKE_DATE_RFC7231));
+        return $this->withHeader('Last-Modified', $this->getRfc7231($time));
     }
 
     /**
@@ -831,10 +834,20 @@ class Response implements ResponseInterface, Stringable
             $result = new DateTime($time ?? 'now');
         }
 
-        /**
-         * @phpstan-ignore-next-line
-         */
+        /** @phpstan-ignore-next-line */
         return $result->setTimezone(new DateTimeZone('UTC'));
+    }
+
+    /**
+     * Converts the time zone to GMT and returns a string in RFC7231 format.
+     * This replaced the deprecated and broken ``DATE_RFC7231`` formatting constant.
+     *
+     * @param \DateTimeInterface|string|int|null $time
+     * @return string
+     */
+    protected function getRfc7231(DateTimeInterface|string|int|null $time = null): string
+    {
+        return $this->_getUTCDate($time)->format('D, d M Y H:i:s \G\M\T');
     }
 
     /**

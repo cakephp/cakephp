@@ -1742,7 +1742,7 @@ class SelectQueryTest extends TestCase
         $expression = $query->expr(['(id + :offset) % 2']);
         $result = $query
             ->orderBy([$expression, 'id' => 'desc'], true)
-            ->bind(':offset', 1, null)
+            ->bind(':offset', 1)
             ->execute();
         $this->assertEquals(['id' => 5], $result->fetch('assoc'));
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));
@@ -1752,7 +1752,7 @@ class SelectQueryTest extends TestCase
         $result = $query
             ->orderBy($expression, true)
             ->orderBy(['id' => 'asc'])
-            ->bind(':offset', 1, null)
+            ->bind(':offset', 1)
             ->execute();
         $this->assertEquals(['id' => 1], $result->fetch('assoc'));
         $this->assertEquals(['id' => 3], $result->fetch('assoc'));

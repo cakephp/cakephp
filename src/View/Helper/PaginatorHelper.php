@@ -61,6 +61,7 @@ class PaginatorHelper extends Helper
      * - `url['?']['direction']` Direction of the sorting (default: 'asc').
      * - `url['?']['page']` Page number to use in links.
      * - `escape` Defines if the title field for the link should be escaped (default: true).
+     * - `sortFormat` Format for sort URLs: 'separate' (default, ?sort=x&direction=y) or 'combined' (?sort=x-y).
      * - `routePlaceholders` An array specifying which paging params should be
      *   passed as route placeholders instead of query string parameters. The array
      *   can have values `'sort'`, `'direction'`, `'page'`.
@@ -71,7 +72,9 @@ class PaginatorHelper extends Helper
      */
     protected array $_defaultConfig = [
         'params' => [],
-        'options' => [],
+        'options' => [
+            'sortFormat' => 'separate',
+        ],
         'templates' => [
             'nextActive' => '<li class="next"><a rel="next" href="{{url}}">{{text}}</a></li>',
             'nextDisabled' => '<li class="next disabled"><a>{{text}}</a></li>',
@@ -433,7 +436,12 @@ class PaginatorHelper extends Helper
             $title = $title[$dir];
         }
 
-        $paging = ['sort' => $key, 'direction' => $dir, 'page' => 1];
+        $sortFormat = $this->getConfig('options.sortFormat', 'separate');
+        if ($sortFormat === 'combined') {
+            $paging = ['sort' => $key . '-' . $dir, 'page' => 1];
+        } else {
+            $paging = ['sort' => $key, 'direction' => $dir, 'page' => 1];
+        }
 
         $vars = [
             'text' => $options['escape'] ? h($title) : $title,
@@ -1153,26 +1161,37 @@ class PaginatorHelper extends Helper
         $scope = $this->param('scope');
         assert($scope === null || is_string($scope));
 
-        $url = null;
         $currentPage = $this->paginated()->currentPage();
+        $query = $this->_View->getRequest()->getQueryParams();
 
-        if ($currentPage > 1) {
-            $query = $this->_View->getRequest()->getQueryParams();
-
-            if ($scope) {
-                $query[$scope]['page'] = 1;
-            } else {
-                $query['page'] = 1;
+        // Prepare query params to preserve as hidden fields
+        $hiddenFields = $query;
+        if ($scope) {
+            // Remove limit and page from scoped params
+            unset($hiddenFields[$scope]['limit'], $hiddenFields[$scope]['page']);
+            if (isset($hiddenFields[$scope]) && empty($hiddenFields[$scope])) {
+                unset($hiddenFields[$scope]);
             }
-
-            $url = $this->_View->getRequest()->getPath();
-            $url .= '?' . http_build_query($query);
+            // Set page to 1 if not on first page
+            if ($currentPage > 1) {
+                $hiddenFields[$scope]['page'] = 1;
+            }
+        } else {
+            // Remove pagination params that will be handled separately
+            unset($hiddenFields['limit'], $hiddenFields['page'], $hiddenFields['sort'], $hiddenFields['direction']);
+            // Set page to 1 if not on first page
+            if ($currentPage > 1) {
+                $hiddenFields['page'] = 1;
+            }
         }
 
         if ($scope) {
             $scope .= '.';
         }
-        $out = $this->Form->create(null, ['type' => 'get', 'url' => $url]);
+
+        $out = $this->Form->create(null, ['type' => 'get', 'url' => []]);
+
+        $out .= $this->generateHiddenFields($hiddenFields);
         $out .= $this->Form->control($scope . 'limit', $options + [
             'type' => 'select',
             'label' => __('View'),
@@ -1181,7 +1200,41 @@ class PaginatorHelper extends Helper
             'options' => $limits,
             'onChange' => 'this.form.requestSubmit()',
         ]);
+
         $out .= $this->Form->end();
+
+        return $out;
+    }
+
+    /**
+     * Recursively generate hidden form fields for nested arrays.
+     *
+     * This handles query parameters with arbitrary nesting levels by converting
+     * nested arrays into dot-notation field names.
+     *
+     * Example:
+     * ['filter' => ['date' => ['start' => '2024-01-01']]]
+     * becomes: hidden field "filter.date.start" with value "2024-01-01"
+     *
+     * @param array $data The data to convert to hidden fields
+     * @param string $prefix The current key prefix for nested fields
+     * @return string HTML for hidden form fields
+     */
+    protected function generateHiddenFields(array $data, string $prefix = ''): string
+    {
+        $out = '';
+
+        foreach ($data as $key => $value) {
+            $fieldName = $prefix === '' ? $key : "{$prefix}.{$key}";
+
+            if (is_array($value)) {
+                // Recursively handle nested arrays
+                $out .= $this->generateHiddenFields($value, $fieldName);
+            } else {
+                // Generate hidden field for scalar values
+                $out .= $this->Form->hidden($fieldName, ['value' => $value]);
+            }
+        }
 
         return $out;
     }

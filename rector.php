@@ -81,6 +81,9 @@ return RectorConfig::configure()
         \Rector\DeadCode\Rector\If_\RemoveAlwaysTrueIfConditionRector::class,
         \Rector\DeadCode\Rector\If_\RemoveDeadInstanceOfRector::class,
         \Rector\DeadCode\Rector\If_\UnwrapFutureCompatibleIfPhpVersionRector::class,
+        \Rector\DeadCode\Rector\MethodCall\RemoveNullArgOnNullDefaultParamRector::class => [
+            __DIR__ . '/tests/TestCase/Database/Expression/QueryExpressionTest.php',
+        ],
         \Rector\DeadCode\Rector\Node\RemoveNonExistingVarAnnotationRector::class,
         \Rector\DeadCode\Rector\Property\RemoveUselessVarTagRector::class,
         \Rector\EarlyReturn\Rector\If_\ChangeOrIfContinueToMultiContinueRector::class,
