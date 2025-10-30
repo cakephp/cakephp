@@ -4,7 +4,7 @@ includes:
 parameters:
 	level: 8
 	phpVersion:
-		min: 80200
+		min: 80400
 		max: 80499
 	treatPhpDocTypesAsCertain: false
 	featureToggles:
@@ -19,6 +19,7 @@ parameters:
 		- identifier: include.fileNotFound
 		- identifier: method.internalClass
 		- identifier: new.internalClass
+		- identifier: unset.possiblyHookedProperty
 		-
 			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:addMethods\(\)\.$#'
 			reportUnmatched: false
