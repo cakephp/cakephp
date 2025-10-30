@@ -430,7 +430,7 @@ class SessionTest extends TestCase
         $session->write('SessionTestCase', false);
         $this->assertTrue($session->check('SessionTestCase'));
 
-        $session->write('SessionTestCase', null);
+        $session->write('SessionTestCase');
         $this->assertFalse($session->check('SessionTestCase'));
     }
 
@@ -490,7 +490,7 @@ class SessionTest extends TestCase
         $session->write('SessionTestCase', false);
         $this->assertFalse($session->read('SessionTestCase'));
 
-        $session->write('SessionTestCase', null);
+        $session->write('SessionTestCase');
         $this->assertNull($session->read('SessionTestCase'));
     }
 

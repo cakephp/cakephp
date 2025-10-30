@@ -56,7 +56,7 @@ class TimeHelperTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        DateTime::setDefaultLocale(null);
+        DateTime::setDefaultLocale();
         I18n::setLocale(I18n::getDefaultLocale());
     }
 

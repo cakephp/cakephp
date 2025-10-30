@@ -54,7 +54,7 @@ class DateTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        DateTime::setDefaultLocale(null);
+        DateTime::setDefaultLocale();
         date_default_timezone_set('UTC');
     }
 

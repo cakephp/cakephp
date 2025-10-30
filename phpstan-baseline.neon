@@ -37,6 +37,18 @@ parameters:
 			path: src/Cache/Engine/RedisEngine.php
 
 		-
+			message: '#^Method RedisCluster\:\:scan\(\) invoked with 4 parameters, 1\-3 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: '#^Parameter \#3 \$pattern of method RedisCluster\:\:scan\(\) expects int, string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
 			message: '#^Parameter \#1 \$value of function count expects array\|Countable, TValue\|false given\.$#'
 			identifier: argument.type
 			count: 1
@@ -161,6 +173,12 @@ parameters:
 			identifier: generics.wrongParent
 			count: 1
 			path: src/Datasource/Paging/PaginatedResultSet.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 2
+			path: src/Datasource/Paging/SortableFieldsBuilder.php
 
 		-
 			message: '#^Template type T of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
@@ -641,12 +659,6 @@ parameters:
 			identifier: new.static
 			count: 1
 			path: src/View/Form/ContextFactory.php
-
-		-
-			message: '#^Unsafe usage of new static\(\)\.$#'
-			identifier: new.static
-			count: 2
-			path: src/Datasource/Paging/SortableFieldsBuilder.php
 
 		-
 			message: '#^Constructor of class Cake\\View\\Form\\NullContext has an unused parameter \$context\.$#'

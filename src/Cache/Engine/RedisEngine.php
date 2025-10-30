@@ -495,7 +495,8 @@ class RedisEngine extends CacheEngine
         $this->eventClass = CacheBeforeDeleteEvent::class;
         $this->dispatchEvent(CacheBeforeDeleteEvent::NAME, ['key' => $key]);
 
-        $success = (int)$this->Redis->unlink($key) > 0;
+        $result = $this->Redis->unlink($key);
+        $success = is_int($result) && $result > 0;
 
         $this->eventClass = CacheAfterDeleteEvent::class;
         $this->dispatchEvent(CacheAfterDeleteEvent::NAME, ['key' => $key, 'success' => $success]);
@@ -522,7 +523,8 @@ class RedisEngine extends CacheEngine
         $pattern = $this->config['prefix'] . '*';
 
         foreach ($this->scanKeys($pattern) as $key) {
-            $isDeleted = ((int)$this->Redis->unlink($key) > 0);
+            $result = $this->Redis->unlink($key);
+            $isDeleted = is_int($result) && $result > 0;
             $isAllDeleted = $isAllDeleted && $isDeleted;
         }
         $this->eventClass = CacheClearedEvent::class;
@@ -690,14 +692,15 @@ class RedisEngine extends CacheEngine
             foreach ($this->Redis->_masters() as $node) {
                 $iterator = null;
                 while (true) {
-                    // @phpstan-ignore arguments.count, argument.type
                     $keys = $this->Redis->scan($iterator, $node, $pattern, (int)$this->config['scanCount']);
                     if ($keys === false) {
                         break;
                     }
 
-                    foreach ($keys as $key) {
-                        yield $key;
+                    if (is_array($keys)) {
+                        foreach ($keys as $key) {
+                            yield $key;
+                        }
                     }
                 }
             }

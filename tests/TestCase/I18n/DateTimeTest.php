@@ -51,7 +51,7 @@ class DateTimeTest extends TestCase
     {
         parent::tearDown();
         DateTime::setTestNow($this->now);
-        DateTime::setDefaultLocale(null);
+        DateTime::setDefaultLocale();
         DateTime::resetToStringFormat();
         DateTime::setJsonEncodeFormat("yyyy-MM-dd'T'HH':'mm':'ssxxx");
 

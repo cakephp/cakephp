@@ -3,6 +3,9 @@ includes:
 
 parameters:
 	level: 8
+	phpVersion:
+		min: 80200
+		max: 80499
 	treatPhpDocTypesAsCertain: false
 	featureToggles:
 		internalTag: true
@@ -16,12 +19,6 @@ parameters:
 		- identifier: include.fileNotFound
 		- identifier: method.internalClass
 		- identifier: new.internalClass
-		-
-			identifier: unset.possiblyHookedProperty
-			reportUnmatched: false
-		-
-			message: '#^Offset ''uri'' on array\{timed_out\: bool, blocked\: bool, eof\: bool, unread_bytes\: int, stream_type\: string, wrapper_type\: string, wrapper_data\: mixed, mode\: string, \.\.\.\} on left side of \?\? always exists and is not nullable\.$#'
-			reportUnmatched: false
 		-
 			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:addMethods\(\)\.$#'
 			reportUnmatched: false

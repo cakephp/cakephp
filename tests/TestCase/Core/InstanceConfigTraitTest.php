@@ -419,13 +419,13 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testDeleteSimple(): void
     {
-        $this->object->setConfig('foo', null);
+        $this->object->setConfig('foo');
         $this->assertNull(
             $this->object->getConfig('foo'),
             'setting a new key to null should have no effect',
         );
 
-        $this->object->setConfig('some', null);
+        $this->object->setConfig('some');
         $this->assertNull(
             $this->object->getConfig('some'),
             'should delete the existing value',
@@ -445,13 +445,13 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testDeleteNested(): void
     {
-        $this->object->setConfig('new.foo', null);
+        $this->object->setConfig('new.foo');
         $this->assertNull(
             $this->object->getConfig('new.foo'),
             'setting a new key to null should have no effect',
         );
 
-        $this->object->setConfig('a.nested', null);
+        $this->object->setConfig('a.nested');
         $this->assertNull(
             $this->object->getConfig('a.nested'),
             'should delete the existing value',
@@ -467,7 +467,7 @@ class InstanceConfigTraitTest extends TestCase
             'deleted keys should not be present',
         );
 
-        $this->object->setConfig('a.other', null);
+        $this->object->setConfig('a.other');
         $this->assertNull(
             $this->object->getConfig('a.other'),
             'should delete the existing value',
@@ -487,7 +487,7 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testDeleteArray(): void
     {
-        $this->object->setConfig('a', null);
+        $this->object->setConfig('a');
         $this->assertNull(
             $this->object->getConfig('a'),
             'should delete the existing value',
@@ -508,6 +508,6 @@ class InstanceConfigTraitTest extends TestCase
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Cannot unset `a.nested.value.whoops`');
-        $this->object->setConfig('a.nested.value.whoops', null);
+        $this->object->setConfig('a.nested.value.whoops');
     }
 }

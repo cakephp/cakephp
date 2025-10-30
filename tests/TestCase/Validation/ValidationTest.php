@@ -1797,7 +1797,31 @@ class ValidationTest extends TestCase
     #[DataProvider('providerDecimal')]
     public function testDecimal(mixed $value, int|bool|null $places, bool $expected): void
     {
-        $this->assertSame($expected, Validation::decimal($value, $places));
+        $this->assertTrue(Validation::decimal('+1234.54321'));
+        $this->assertTrue(Validation::decimal('-1234.54321'));
+        $this->assertTrue(Validation::decimal('1234.54321'));
+        $this->assertTrue(Validation::decimal('+0123.45e6'));
+        $this->assertTrue(Validation::decimal('-0123.45e6'));
+        $this->assertTrue(Validation::decimal('0123.45e6'));
+        $this->assertTrue(Validation::decimal(1234.56));
+        $this->assertTrue(Validation::decimal(1234.00));
+        $this->assertTrue(Validation::decimal(1234.));
+        $this->assertTrue(Validation::decimal('1234.00'));
+        $this->assertTrue(Validation::decimal(.0));
+        $this->assertTrue(Validation::decimal(.00));
+        $this->assertTrue(Validation::decimal('.00'));
+        $this->assertTrue(Validation::decimal(.01));
+        $this->assertTrue(Validation::decimal('.01'));
+        $this->assertTrue(Validation::decimal('1234'));
+        $this->assertTrue(Validation::decimal('-1234'));
+        $this->assertTrue(Validation::decimal('+1234'));
+        $this->assertTrue(Validation::decimal((float)1234));
+        $this->assertTrue(Validation::decimal((float)1234));
+        $this->assertTrue(Validation::decimal((int)1234));
+
+        $this->assertFalse(Validation::decimal(''));
+        $this->assertFalse(Validation::decimal('string'));
+        $this->assertFalse(Validation::decimal('1234.'));
     }
 
     public function testDecimalWithGroupingSeparator(): void
