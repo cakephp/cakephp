@@ -525,12 +525,14 @@ class ViewBuilder implements JsonSerializable
     /**
      * Set the config merge strategy for view options.
      *
+     * Can be:
+     *  - 'deep': Recursive merge (default for BC, merges nested arrays)
+     *  - 'shallow': Simple array merge (replaces array values)
+     *
      * This controls how options set via ViewBuilder are merged with
      * the View class's default configuration.
      *
-     * @param self::MERGE_DEEP|self::MERGE_SHALLOW $strategy The merge strategy. Can be:
-     *   - 'deep': Recursive merge (default for BC, merges nested arrays)
-     *   - 'shallow': Simple array merge (replaces array values)
+     * @param self::MERGE_DEEP|self::MERGE_SHALLOW $strategy The merge strategy.
      * @return $this
      */
     public function setConfigMergeStrategy(string $strategy)
