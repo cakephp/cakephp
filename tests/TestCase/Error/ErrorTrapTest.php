@@ -55,7 +55,7 @@ class ErrorTrapTest extends TestCase
     public function testConfigRendererHandleUnsafeOverwrite(): void
     {
         $trap = new ErrorTrap();
-        $trap->setConfig('errorRenderer', null);
+        $trap->setConfig('errorRenderer');
         $this->assertInstanceOf(ConsoleErrorRenderer::class, $trap->renderer());
     }
 
@@ -68,7 +68,7 @@ class ErrorTrapTest extends TestCase
     public function testLoggerHandleUnsafeOverwrite(): void
     {
         $trap = new ErrorTrap();
-        $trap->setConfig('logger', null);
+        $trap->setConfig('logger');
         $this->assertInstanceOf(ErrorLogger::class, $trap->logger());
     }
 

@@ -268,8 +268,7 @@ class QueryExpressionTest extends TestCase
 
     public function testCaseWithNullValue(): void
     {
-        $expression = (new QueryExpression())
-            ->case(null)
+        $expression = (new QueryExpression())->case()
             ->when(1)
             ->then('Yes');
 

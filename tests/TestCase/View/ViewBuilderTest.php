@@ -75,7 +75,7 @@ class ViewBuilderTest extends TestCase
         $builder->setVar('foo', 'value');
         $this->assertTrue($builder->hasVar('foo'));
 
-        $builder->setVar('bar', null);
+        $builder->setVar('bar');
         $this->assertTrue($builder->hasVar('bar'));
     }
 
