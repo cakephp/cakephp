@@ -2163,6 +2163,7 @@ class Query implements ExpressionInterface, IteratorAggregate
      */
     public function bind($param, $value, $type = null)
     {
+        $this->_dirty();
         $this->getValueBinder()->bind($param, $value, $type);
 
         return $this;
