@@ -1648,7 +1648,7 @@ class EntityTest extends TestCase
         $this->assertSame(true, $return);
 
         $entity = new Entity([]);
-        $entity->set('foo');
+        $entity->set('foo', null);
         $return = $entity->isOriginalField('foo');
         $this->assertSame(false, $return);
 

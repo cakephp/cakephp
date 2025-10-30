@@ -558,7 +558,7 @@ class TreeBehavior extends Behavior
         $right = $node->get($config['right']);
         $parent = $node->get($config['parent']);
 
-        $node->set($config['parent']);
+        $node->set($config['parent'], null);
 
         if ($right - $left === 1) {
             return $this->table->save($node);
