@@ -348,7 +348,7 @@ TEXT;
      */
     public function testExportVarAsPlainText(): void
     {
-        Debugger::configInstance('exportFormatter', null);
+        Debugger::configInstance('exportFormatter');
         $result = Debugger::exportVarAsPlainText(123);
         $this->assertSame('(int) 123', $result);
 
@@ -456,7 +456,7 @@ TEXT;
             'className' => 'Array',
         ]);
 
-        Debugger::configInstance('exportFormatter', null);
+        Debugger::configInstance('exportFormatter');
         Debugger::log(123);
         $messages = implode('', Log::engine('test')->read());
         Log::engine('test')->clear();

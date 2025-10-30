@@ -2732,7 +2732,7 @@ class TableTest extends TestCase
         $this->assertEquals($entity->id, self::$nextUserId);
 
         $row = $table->find('all')->where(['id' => self::$nextUserId])->first();
-        $entity->set('password', null);
+        $entity->set('password');
         $this->assertEquals($entity->toArray(), $row->toArray());
     }
 
