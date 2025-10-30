@@ -130,7 +130,7 @@ class ViewBuilder implements JsonSerializable
      * The merge strategy for config options.
      * Can be MERGE_DEEP (recursive merge, default for BC) or MERGE_SHALLOW (simple merge).
      *
-     * @var string
+     * @var self::MERGE_DEEP|self::MERGE_SHALLOW
      */
     protected string $_configMergeStrategy = self::MERGE_DEEP;
 
@@ -537,6 +537,10 @@ class ViewBuilder implements JsonSerializable
      */
     public function setConfigMergeStrategy(string $strategy)
     {
+        if (!in_array($strategy, [self::MERGE_DEEP, self::MERGE_SHALLOW], true)) {
+            throw new InvalidArgumentException('Invalid merge strategy');
+        }
+
         $this->_configMergeStrategy = $strategy;
 
         return $this;
@@ -545,7 +549,7 @@ class ViewBuilder implements JsonSerializable
     /**
      * Get the config merge strategy.
      *
-     * @return string
+     * @return self::MERGE_DEEP|self::MERGE_SHALLOW
      */
     public function getConfigMergeStrategy(): string
     {
