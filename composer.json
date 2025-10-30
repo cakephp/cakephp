@@ -124,15 +124,9 @@
         ],
         "cs-check": "phpcs --colors --parallel=16 -p",
         "cs-fix": "phpcbf --colors --parallel=16 -p",
-        "phpstan": "tools/phpstan analyse",
-        "psalm": "tools/psalm --show-info=false",
-        "stan": [
-            "@phpstan",
-            "@psalm"
-        ],
-        "phpstan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
-        "phpstan-baseline": "tools/phpstan --generate-baseline",
-        "psalm-baseline": "tools/psalm  --set-baseline=psalm-baseline.xml",
+        "stan": "tools/phpstan analyse",
+        "stan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
+        "stan-baseline": "tools/phpstan --generate-baseline",
         "stan-setup": "phive install",
         "lowest": "validate-prefer-lowest",
         "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",
