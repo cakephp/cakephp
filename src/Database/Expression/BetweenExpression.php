@@ -18,16 +18,19 @@ namespace Cake\Database\Expression;
 
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Type\ExpressionTypeCasterTrait;
+use Cake\Database\TypedResultInterface;
+use Cake\Database\TypedResultTrait;
 use Cake\Database\ValueBinder;
 use Closure;
 
 /**
  * An expression object that represents a SQL BETWEEN snippet
  */
-class BetweenExpression implements ExpressionInterface, FieldInterface
+class BetweenExpression implements ExpressionInterface, FieldInterface, TypedResultInterface
 {
     use ExpressionTypeCasterTrait;
     use FieldTrait;
+    use TypedResultTrait;
 
     /**
      * The first value in the expression
@@ -69,6 +72,7 @@ class BetweenExpression implements ExpressionInterface, FieldInterface
         $this->from = $from;
         $this->to = $to;
         $this->type = $type;
+        $this->returnType = 'boolean';
     }
 
     /**

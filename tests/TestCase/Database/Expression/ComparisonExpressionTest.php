@@ -49,6 +49,15 @@ class ComparisonExpressionTest extends TestCase
     }
 
     /**
+     * Tests that return type is set to boolean
+     */
+    public function testReturnType(): void
+    {
+        $expr = new ComparisonExpression('field', 'value', 'string', '=');
+        $this->assertSame('boolean', $expr->getReturnType());
+    }
+
+    /**
      * Tests that cloning Comparion instance clones it's value and field expressions.
      */
     public function testClone(): void
