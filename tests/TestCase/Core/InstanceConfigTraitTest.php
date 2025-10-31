@@ -414,18 +414,43 @@ class InstanceConfigTraitTest extends TestCase
         $object->setConfig('throw.me', 'an exception');
     }
 
+    public function testDeleteUsingSetConfig(): void
+    {
+        $this->object->setConfig('some');
+        $this->assertNull(
+            $this->object->getConfig('some'),
+            'setting a new key to null should have no effect',
+        );
+
+        $this->object->setConfig('a.nested');
+        $this->assertNull(
+            $this->object->getConfig('a.nested'),
+            'should delete the existing value',
+        );
+
+        $this->assertSame(
+            [
+                'a' => [
+                    'other' => 'value',
+                ],
+            ],
+            $this->object->getConfig(),
+            'deleted keys should not be present',
+        );
+    }
+
     /**
      * testDeleteSimple
      */
     public function testDeleteSimple(): void
     {
-        $this->object->setConfig('foo');
+        $this->object->deleteConfig('foo');
         $this->assertNull(
             $this->object->getConfig('foo'),
             'setting a new key to null should have no effect',
         );
 
-        $this->object->setConfig('some');
+        $this->object->deleteConfig('some');
         $this->assertNull(
             $this->object->getConfig('some'),
             'should delete the existing value',
@@ -445,13 +470,13 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testDeleteNested(): void
     {
-        $this->object->setConfig('new.foo');
+        $this->object->deleteConfig('new.foo');
         $this->assertNull(
             $this->object->getConfig('new.foo'),
             'setting a new key to null should have no effect',
         );
 
-        $this->object->setConfig('a.nested');
+        $this->object->deleteConfig('a.nested');
         $this->assertNull(
             $this->object->getConfig('a.nested'),
             'should delete the existing value',
@@ -467,7 +492,7 @@ class InstanceConfigTraitTest extends TestCase
             'deleted keys should not be present',
         );
 
-        $this->object->setConfig('a.other');
+        $this->object->deleteConfig('a.other');
         $this->assertNull(
             $this->object->getConfig('a.other'),
             'should delete the existing value',
@@ -487,7 +512,7 @@ class InstanceConfigTraitTest extends TestCase
      */
     public function testDeleteArray(): void
     {
-        $this->object->setConfig('a');
+        $this->object->deleteConfig('a');
         $this->assertNull(
             $this->object->getConfig('a'),
             'should delete the existing value',
@@ -508,6 +533,6 @@ class InstanceConfigTraitTest extends TestCase
     {
         $this->expectException(Exception::class);
         $this->expectExceptionMessage('Cannot unset `a.nested.value.whoops`');
-        $this->object->setConfig('a.nested.value.whoops');
+        $this->object->deleteConfig('a.nested.value.whoops');
     }
 }
