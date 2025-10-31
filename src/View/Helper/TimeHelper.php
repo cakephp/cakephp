@@ -215,7 +215,7 @@ class TimeHelper extends Helper
      * Returns the quarter
      *
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
-     * @return int 1, 2, 3, or 4 quarter of year
+     * @return int<1, 4>
      * @see \Cake\I18n\DateTime::toQuarter()
      */
     public function toQuarter(ChronosDate|DateTimeInterface|string|int $dateString): int
