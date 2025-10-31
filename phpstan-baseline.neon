@@ -695,27 +695,3 @@ parameters:
 			identifier: method.notFound
 			count: 1
 			path: src/View/Widget/DateTimeWidget.php
-
-		-
-			message: '#^Access to constant ATTR_SSL_KEY on an unknown class Pdo\\Mysql\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Database/Driver/Mysql.php
-
-		-
-			message: '#^Access to constant ATTR_SSL_CERT on an unknown class Pdo\\Mysql\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Database/Driver/Mysql.php
-
-		-
-			message: '#^Access to constant ATTR_SSL_CA on an unknown class Pdo\\Mysql\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Database/Driver/Mysql.php
-
-		-
-			message: '#^Access to constant ATTR_USE_BUFFERED_QUERY on an unknown class Pdo\\Mysql\.$#'
-			identifier: class.notFound
-			count: 1
-			path: src/Database/Driver/Mysql.php

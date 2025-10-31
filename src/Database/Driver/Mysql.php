@@ -138,16 +138,16 @@ class Mysql extends Driver
 
         $config['flags'] += [
             PDO::ATTR_PERSISTENT => $config['persistent'],
-            $this->attrUseBufferedQueryId() => true,
+            PdoMysql::ATTR_USE_BUFFERED_QUERY => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
         if (!empty($config['ssl_key']) && !empty($config['ssl_cert'])) {
-            $config['flags'][$this->attrSslKeyId()] = $config['ssl_key'];
-            $config['flags'][$this->attrSslCertId()] = $config['ssl_cert'];
+            $config['flags'][PdoMysql::ATTR_SSL_KEY] = $config['ssl_key'];
+            $config['flags'][PdoMysql::ATTR_SSL_CERT] = $config['ssl_cert'];
         }
         if (!empty($config['ssl_ca'])) {
-            $config['flags'][$this->attrSslCaId()] = $config['ssl_ca'];
+            $config['flags'][PdoMysql::ATTR_SSL_CA] = $config['ssl_ca'];
         }
 
         if (empty($config['unix_socket'])) {
@@ -179,10 +179,10 @@ class Mysql extends Driver
 
         if ($query instanceof SelectQuery) {
             try {
-                $this->getPdo()->setAttribute($this->attrUseBufferedQueryId(), $query->isBufferedResultsEnabled());
+                $this->getPdo()->setAttribute(PdoMysql::ATTR_USE_BUFFERED_QUERY, $query->isBufferedResultsEnabled());
                 $this->executeStatement($statement);
             } finally {
-                $this->getPdo()->setAttribute($this->attrUseBufferedQueryId(), true);
+                $this->getPdo()->setAttribute(PdoMysql::ATTR_USE_BUFFERED_QUERY, true);
             }
         } else {
             $this->executeStatement($statement);
@@ -295,45 +295,5 @@ class Mysql extends Driver
         }
 
         return $this->version;
-    }
-
-    /**
-     * Get PDO ATTR_SSL_KEY id.
-     *
-     * @return int
-     */
-    private function attrSslKeyId(): int
-    {
-        return PHP_VERSION_ID < 80400 ? PDO::MYSQL_ATTR_SSL_KEY : PdoMysql::ATTR_SSL_KEY;
-    }
-
-    /**
-     * Get PDO ATTR_SSL_CERT id.
-     *
-     * @return int
-     */
-    private function attrSslCertId(): int
-    {
-        return PHP_VERSION_ID < 80400 ? PDO::MYSQL_ATTR_SSL_CERT : PdoMysql::ATTR_SSL_CERT;
-    }
-
-    /**
-     * Get PDO ATTR_SSL_CA id.
-     *
-     * @return int
-     */
-    private function attrSslCaId(): int
-    {
-        return PHP_VERSION_ID < 80400 ? PDO::MYSQL_ATTR_SSL_CA : PdoMysql::ATTR_SSL_CA;
-    }
-
-    /**
-     * Get PDO ATTR_USE_BUFFERED_QUERY id.
-     *
-     * @return int
-     */
-    private function attrUseBufferedQueryId(): int
-    {
-        return PHP_VERSION_ID < 80400 ? PDO::MYSQL_ATTR_USE_BUFFERED_QUERY : PdoMysql::ATTR_USE_BUFFERED_QUERY;
     }
 }
