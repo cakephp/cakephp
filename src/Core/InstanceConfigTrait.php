@@ -190,7 +190,7 @@ trait InstanceConfigTrait
      *
      * @return void
      */
-    protected function initCfg(): void
+    private function initCfg(): void
     {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
