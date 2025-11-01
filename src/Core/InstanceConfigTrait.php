@@ -180,7 +180,7 @@ trait InstanceConfigTrait
     public function deleteConfig(string $key): static
     {
         $this->initCfg();
-        $this->_configDelete($key);
+        $this->configDelete($key);
 
         return $this;
     }
@@ -192,9 +192,9 @@ trait InstanceConfigTrait
      */
     private function initCfg(): void
     {
-        if (!$this->_configInitialized) {
-            $this->_config = $this->_defaultConfig;
-            $this->_configInitialized = true;
+        if (!$this->configInitialized) {
+            $this->config = $this->defaultConfig;
+            $this->configInitialized = true;
         }
     }
 
