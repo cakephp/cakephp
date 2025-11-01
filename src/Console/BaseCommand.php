@@ -248,8 +248,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
             $this->io = $io;
         }
 
-        $this->initialize();
-
         $parser = $this->getOptionParser();
         try {
             $this->parseArguments($parser, $argv);
@@ -269,6 +267,8 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
         if ($this->args->getOption('quiet')) {
             $this->io->setInteractive(false);
         }
+
+        $this->initialize();
 
         $this->dispatchEvent('Command.beforeExecute', ['args' => $this->args, 'io' => $this->io]);
         /** @var int|null $result */

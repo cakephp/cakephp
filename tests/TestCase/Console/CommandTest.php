@@ -127,14 +127,26 @@ class CommandTest extends TestCase
         $command = new class extends Command {
             public bool $initializeCalled = false;
 
+            public string $someArg = '';
+
+            public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+            {
+                $parser->addArgument('someArg', ['required' => false]);
+
+                return parent::buildOptionParser($parser);
+            }
+
             public function initialize(): void
             {
                 $this->initializeCalled = true;
+                $this->someArg = $this->args->getArgument('someArg');
             }
         };
         $command->setName('cake example');
-        $command->run([], $this->getMockIo(new StubConsoleOutput()));
+        $command->run(['something'], $this->getMockIo(new StubConsoleOutput()));
         $this->assertTrue($command->initializeCalled);
+        // Make sure args are parsed and passed to initialize
+        $this->assertEquals('something', $command->someArg);
     }
 
     /**
