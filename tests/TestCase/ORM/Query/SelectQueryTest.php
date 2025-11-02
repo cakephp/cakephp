@@ -2121,7 +2121,7 @@ class SelectQueryTest extends TestCase
         $this->assertSame([], $query->getResultFormatters());
 
         $query->formatResults($callback1);
-        $query->formatResults($callback2, $query::PREPEND);
+        $query->formatResults($callback2, \Cake\ORM\Query\SelectQuery::PREPEND);
         $this->assertSame([$callback2, $callback1], $query->getResultFormatters());
     }
 
@@ -4093,14 +4093,12 @@ class SelectQueryTest extends TestCase
         // Look for JOIN pattern with just Comments as alias (not part of Creator_Comments or Modifier_Comments)
         // Note: We check that if Comments appears as an alias in a JOIN, it's part of the compound aliases
         preg_match_all('/JOIN\s+comments\s+(\w+)\s+ON/i', $sql, $matches);
-        if (!empty($matches[1])) {
-            foreach ($matches[1] as $alias) {
-                $this->assertMatchesRegularExpression(
-                    '/^(Creator_Comments|Modifier_Comments|Comments)$/i',
-                    $alias,
-                    "Unexpected alias '$alias' for comments table in JOIN",
-                );
-            }
+        foreach ($matches[1] as $alias) {
+            $this->assertMatchesRegularExpression(
+                '/^(Creator_Comments|Modifier_Comments|Comments)$/i',
+                $alias,
+                "Unexpected alias '{$alias}' for comments table in JOIN",
+            );
         }
     }
 }
