@@ -672,6 +672,31 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test that prefix-specific plugin templates take precedence over non-prefixed app overrides.
+     *
+     * This test ensures that when:
+     * - A plugin provides a prefix-specific element (Admin/element/foo.php)
+     * - The app provides a non-prefixed override (templates/plugin/Plugin/element/foo.php)
+     *
+     * The plugin's prefixed version is used in the prefixed context, not the app's non-prefixed override.
+     * The expected resolution order is:
+     * 1. App prefix-element
+     * 2. Plugin prefix-element (should win in this test)
+     * 3. App element
+     * 4. Plugin element
+     */
+    public function testPrefixedPluginElementTakesPrecedenceOverNonPrefixedAppOverride(): void
+    {
+        $this->View->setRequest($this->View->getRequest()->withParam('prefix', 'Admin'));
+        $result = $this->View->element('TestPlugin.prefix_override_test');
+        $this->assertSame('plugin - admin prefixed', $result);
+
+        $this->View->setRequest($this->View->getRequest()->withParam('prefix', null));
+        $result = $this->View->element('TestPlugin.prefix_override_test');
+        $this->assertSame('app override - non-prefixed', $result);
+    }
+
+    /**
      * Test loading missing view element
      */
     public function testElementMissing(): void
