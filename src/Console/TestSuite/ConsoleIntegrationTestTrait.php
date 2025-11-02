@@ -29,7 +29,6 @@ use Cake\Console\TestSuite\Constraint\ExitCode;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\TestSuite\ContainerStubTrait;
 use Cake\Error\Debugger;
-use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\After;
 
 /**
