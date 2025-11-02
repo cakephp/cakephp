@@ -612,6 +612,11 @@ class EagerLoader
         return $result;
     }
 
+    /**
+     * @param array<string, \Cake\ORM\EagerLoadable> $result
+     * @param array<string, \Cake\ORM\EagerLoadable> $nested
+     * @return array<string, \Cake\ORM\EagerLoadable>
+     */
     protected function _mergeNestedJoins(array $result, array $nested): array
     {
         foreach ($nested as $nestedAlias => $nestedLoadable) {
@@ -622,14 +627,15 @@ class EagerLoader
                 if ($existingPath !== $currentPath) {
                     // Conflict detected - both need to use full paths
                     // Update the existing one if it's using simple name
-                    if (!isset($result[str_replace('.', '_', $existingPath)])) {
-                        $result[str_replace('.', '_', $existingPath)] = $result[$nestedAlias];
+                    $existingKey = str_replace('.', '_', $existingPath);
+                    if (!isset($result[$existingKey])) {
+                        $result[$existingKey] = $result[$nestedAlias];
                         unset($result[$nestedAlias]);
                     }
 
                     // Add the new one with full path
-                    $key = str_replace('.', '_', $currentPath);
-                    $result[$key] = $nestedLoadable;
+                    $newKey = str_replace('.', '_', $currentPath);
+                    $result[$newKey] = $nestedLoadable;
                     continue;
                 }
             }
