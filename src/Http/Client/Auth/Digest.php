@@ -87,6 +87,8 @@ class Digest
     /**
      * Constructor
      *
+     * Deprecated: $options list is unused and will be removed in 6.0.     
+     *
      * @param \Cake\Http\Client $client Http client object.
      * @param array|null $options Options list.
      */
