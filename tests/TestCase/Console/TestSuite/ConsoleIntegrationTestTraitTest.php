@@ -174,6 +174,20 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
     }
 
+    /**
+     * tests exec with input
+     */
+    public function testExecWithInputOnSecondCall(): void
+    {
+        $this->exec('integration "test"');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        // This exec() call should work.
+        $this->exec('bridge', ['cake', 'blue']);
+        $this->assertOutputContains('You may pass');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+    }
+
     public function testExecWithMockServiceDependencies(): void
     {
         $this->mockService(stdClass::class, function () {

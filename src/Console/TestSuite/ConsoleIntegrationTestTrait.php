@@ -86,12 +86,8 @@ trait ConsoleIntegrationTestTrait
 
         $this->_out ??= new StubConsoleOutput();
         $this->_err ??= new StubConsoleOutput();
-        if ($this->_in === null) {
+        if ($this->_in === null || $input) {
             $this->_in = new StubConsoleInput($input);
-        } elseif ($input) {
-            throw new InvalidArgumentException(
-                'You can use `$input` only if `$_in` property is null and will be reset.',
-            );
         }
         $this->_out->clear();
         $this->_err->clear();
