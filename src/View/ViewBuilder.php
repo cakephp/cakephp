@@ -538,7 +538,7 @@ class ViewBuilder implements JsonSerializable
     public function setConfigMergeStrategy(string $strategy)
     {
         if (!in_array($strategy, [self::MERGE_DEEP, self::MERGE_SHALLOW], true)) {
-            throw new InvalidArgumentException('Invalid merge strategy');
+            throw new InvalidArgumentException('Invalid merge strategy. Valid options are: `deep`, `shallow`.');
         }
 
         $this->_configMergeStrategy = $strategy;
