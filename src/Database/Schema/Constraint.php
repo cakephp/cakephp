@@ -41,6 +41,11 @@ class Constraint
     public const FOREIGN = TableSchema::CONSTRAINT_FOREIGN;
 
     /**
+     * @var string
+     */
+    public const CHECK = TableSchema::CONSTRAINT_CHECK;
+
+    /**
      * Constructor
      *
      * @param string $name The name of the constraint.

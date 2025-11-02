@@ -56,7 +56,7 @@ class TimeHelperTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        DateTime::setDefaultLocale(null);
+        DateTime::setDefaultLocale();
         I18n::setLocale(I18n::getDefaultLocale());
     }
 
@@ -202,7 +202,7 @@ class TimeHelperTest extends TestCase
     public function testToAtom(): void
     {
         $dateTime = new NativeDateTime();
-        $this->assertSame($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
+        $this->assertSame($dateTime->format(NativeDateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
     }
 
     /**

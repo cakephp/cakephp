@@ -39,6 +39,7 @@ use League\Container\Attribute\AttributeInterface;
  *         #[Configure('CustomService.apiKey')] protected string $apiKey,
  *     ) { }
  * }
+ * ```
  */
 #[Attribute(Attribute::TARGET_PARAMETER)]
 class Configure implements AttributeInterface

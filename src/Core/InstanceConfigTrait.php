@@ -72,11 +72,7 @@ trait InstanceConfigTrait
      */
     public function setConfig(array|string $key, mixed $value = null, bool $merge = true)
     {
-        if (!$this->_configInitialized) {
-            $this->_config = $this->_defaultConfig;
-            $this->_configInitialized = true;
-        }
-
+        $this->initCfg();
         $this->_configWrite($key, $value, $merge);
 
         return $this;
@@ -117,10 +113,7 @@ trait InstanceConfigTrait
      */
     public function getConfig(?string $key = null, mixed $default = null): mixed
     {
-        if (!$this->_configInitialized) {
-            $this->_config = $this->_defaultConfig;
-            $this->_configInitialized = true;
-        }
+        $this->initCfg();
 
         return $this->_configRead($key) ?? $default;
     }
@@ -172,14 +165,37 @@ trait InstanceConfigTrait
      */
     public function configShallow(array|string $key, mixed $value = null)
     {
+        $this->initCfg();
+        $this->_configWrite($key, $value, 'shallow');
+
+        return $this;
+    }
+
+    /**
+     * Deletes a config key.
+     *
+     * @param string $key Key to delete. It can be a dot separated string to delete nested keys.
+     * @return $this
+     */
+    public function deleteConfig(string $key)
+    {
+        $this->initCfg();
+        $this->_configDelete($key);
+
+        return $this;
+    }
+
+    /**
+     * Initializes the config with the default config.
+     *
+     * @return void
+     */
+    private function initCfg(): void
+    {
         if (!$this->_configInitialized) {
             $this->_config = $this->_defaultConfig;
             $this->_configInitialized = true;
         }
-
-        $this->_configWrite($key, $value, 'shallow');
-
-        return $this;
     }
 
     /**

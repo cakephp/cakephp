@@ -565,11 +565,12 @@ class Marshaller
      * ]);
      * ```
      *
-     * @param \Cake\Datasource\EntityInterface $entity the entity that will get the
+     * @template TEntity of \Cake\Datasource\EntityInterface
+     * @param TEntity $entity the entity that will get the
      * data merged in
      * @param array $data key value list of fields to be merged into the entity
      * @param array<string, mixed> $options List of options.
-     * @return \Cake\Datasource\EntityInterface
+     * @return TEntity
      * @see \Cake\ORM\Entity::$_accessible
      */
     public function merge(EntityInterface $entity, array $data, array $options = []): EntityInterface
@@ -672,11 +673,12 @@ class Marshaller
      *   the accessible fields list in the entity will be used.
      * - accessibleFields: A list of fields to allow or deny in entity accessible fields.
      *
-     * @param iterable<\Cake\Datasource\EntityInterface> $entities the entities that will get the
+     * @template TEntity of \Cake\Datasource\EntityInterface
+     * @param iterable<TEntity> $entities the entities that will get the
      *   data merged in
      * @param array $data list of arrays to be merged into the entities
      * @param array<string, mixed> $options List of options.
-     * @return array<\Cake\Datasource\EntityInterface>
+     * @return array<TEntity>
      * @see \Cake\ORM\Entity::$_accessible
      */
     public function mergeMany(iterable $entities, array $data, array $options = []): array
@@ -729,7 +731,10 @@ class Marshaller
         $maybeExistentQuery = $this->_table->find()->where($conditions);
 
         if ($indexed && count($maybeExistentQuery->clause('where'))) {
-            /** @var \Traversable<\Cake\Datasource\EntityInterface> $existent */
+            /**
+             * phpcs:ignore SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName
+             * @var \Traversable<TEntity> $existent
+             */
             $existent = $maybeExistentQuery->all();
             foreach ($existent as $entity) {
                 $key = implode(';', $entity->extract($primary));
@@ -744,7 +749,12 @@ class Marshaller
             if (!is_array($value)) {
                 continue;
             }
-            $output[] = $this->one($value, $options);
+            /**
+             * phpcs:ignore SlevomatCodingStandard.Namespaces.FullyQualifiedClassNameInAnnotation.NonFullyQualifiedClassName
+             * @var TEntity $entity
+             */
+            $entity = $this->one($value, $options);
+            $output[] = $entity;
         }
 
         return $output;

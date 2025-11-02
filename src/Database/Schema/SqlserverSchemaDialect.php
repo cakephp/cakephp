@@ -186,7 +186,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         }
         // SqlServer schema reflection returns double length for unicode
         // columns because internally it uses UTF16/UCS2
-        if ($col === 'nvarchar' || $col === 'nchar' || $col === 'ntext') {
+        if (in_array($col, ['nvarchar', 'nchar', 'ntext'], true)) {
             $length /= 2;
         }
         if (str_contains($col, 'varchar') && $length < 0) {
@@ -634,6 +634,7 @@ class SqlserverSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_BINARY_UUID => ' UNIQUEIDENTIFIER',
             TableSchemaInterface::TYPE_BOOLEAN => ' BIT',
             TableSchemaInterface::TYPE_CHAR => ' NCHAR',
+            TableSchemaInterface::TYPE_STRING => ' NVARCHAR',
             TableSchemaInterface::TYPE_FLOAT => ' FLOAT',
             TableSchemaInterface::TYPE_DECIMAL => ' DECIMAL',
             TableSchemaInterface::TYPE_DATE => ' DATE',
@@ -652,10 +653,17 @@ class SqlserverSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_POLYGON => ' GEOGRAPHY',
         ];
 
+        $foundType = false;
         if (isset($typeMap[$column['type']])) {
             $out .= $typeMap[$column['type']];
+            $foundType = true;
         }
 
+        $hasLength = [
+            TableSchemaInterface::TYPE_CHAR,
+            TableSchemaInterface::TYPE_STRING,
+            TableSchemaInterface::TYPE_BINARY,
+        ];
         $autoIncrementTypes = [
             TableSchemaInterface::TYPE_TINYINTEGER,
             TableSchemaInterface::TYPE_SMALLINTEGER,
@@ -663,20 +671,20 @@ class SqlserverSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_BIGINTEGER,
         ];
         $autoIncrement = (bool)($column['autoIncrement'] ?? false);
-        if (
-            in_array($column['type'], $autoIncrementTypes, true) &&
-            $autoIncrement
-        ) {
+        if (in_array($column['type'], $autoIncrementTypes, true) && $autoIncrement) {
             $out .= ' IDENTITY(1, 1)';
+            $foundType = true;
             unset($column['default']);
         }
 
-        if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
+        if ($column['type'] === TableSchemaInterface::TYPE_STRING && !isset($column['length'])) {
+            $column['length'] = TableSchema::LENGTH_TINY;
+        } elseif (
+            $column['type'] === TableSchemaInterface::TYPE_TEXT &&
+            $column['length'] !== TableSchema::LENGTH_TINY
+        ) {
             $out .= ' NVARCHAR(MAX)';
-        }
-
-        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
-            $out .= '(' . $column['length'] . ')';
+            $foundType = true;
         }
 
         if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
@@ -688,24 +696,24 @@ class SqlserverSchemaDialect extends SchemaDialect
             }
 
             if ($column['length'] === 1) {
-                $out .= ' BINARY(1)';
+                $out .= ' BINARY';
             } else {
                 $out .= ' VARBINARY';
-
-                $out .= sprintf('(%s)', $column['length']);
             }
+            $foundType = true;
         }
 
-        if (
-            $column['type'] === TableSchemaInterface::TYPE_STRING ||
-            (
-                $column['type'] === TableSchemaInterface::TYPE_TEXT &&
-                $column['length'] === TableSchema::LENGTH_TINY
-            )
-        ) {
-            $type = ' NVARCHAR';
-            $length = $column['length'] ?? TableSchema::LENGTH_TINY;
-            $out .= sprintf('%s(%d)', $type, $length);
+        if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] === TableSchema::LENGTH_TINY) {
+            $out .= ' NVARCHAR';
+            $hasLength[] = $column['type'];
+            $foundType = true;
+        }
+        if (!$foundType) {
+            $out .= ' ' . strtoupper($column['type']);
+            $hasLength[] = $column['type'];
+        }
+        if (in_array($column['type'], $hasLength, true) && isset($column['length'])) {
+            $out .= '(' . $column['length'] . ')';
         }
 
         $hasCollate = [
@@ -730,10 +738,7 @@ class SqlserverSchemaDialect extends SchemaDialect
 
         if (
             $column['type'] === TableSchemaInterface::TYPE_DECIMAL &&
-            (
-                isset($column['length']) ||
-                isset($column['precision'])
-            )
+            (isset($column['length']) || isset($column['precision']))
         ) {
             $out .= '(' . (int)$column['length'] . ',' . (int)$column['precision'] . ')';
         }
@@ -827,10 +832,11 @@ class SqlserverSchemaDialect extends SchemaDialect
             (array)$index->getColumns(),
         );
         $include = '';
-        if ($index->getInclude()) {
+        $included = $index->getInclude();
+        if ($included !== null) {
             $included = array_map(
                 $this->_driver->quoteIdentifier(...),
-                $index->getInclude(),
+                $included,
             );
             $include = sprintf(' INCLUDE (%s)', implode(', ', $included));
         }

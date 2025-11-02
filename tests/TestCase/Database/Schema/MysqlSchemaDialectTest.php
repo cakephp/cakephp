@@ -21,6 +21,7 @@ use Cake\Database\Driver;
 use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\MysqlSchemaDialect;
@@ -695,7 +696,6 @@ SQL;
         $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
 
-        $this->assertCount(4, $result->constraints());
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -893,6 +893,37 @@ SQL;
         $this->assertEquals([], $index['columns']);
     }
 
+    public function testDescribeTableCheckConstraints(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+        $this->skipIf(!$driver->supports(DriverFeatureEnum::CHECK_CONSTRAINTS), 'This test requires check constraint support');
+
+        $connection->execute('DROP TABLE IF EXISTS schema_constraints');
+        $table = <<<SQL
+CREATE TABLE schema_constraints (
+    id BIGINT PRIMARY KEY AUTO_INCREMENT,
+    age INT,
+    CONSTRAINT age_check CHECK (age >= 18)
+) Engine=InnoDB;
+SQL;
+        $connection->execute($table);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_constraints');
+
+        $constraint = $result->getConstraint('age_check');
+        $this->assertStringContainsString('`age` >= 18', $constraint['expression']);
+
+        $key = $result->constraint('age_check');
+        assert($key instanceof CheckConstraint);
+        $this->assertEquals('age_check', $key->getName());
+        $this->assertStringContainsString('`age` >= 18', $key->getExpression());
+
+        $connection->execute('DROP TABLE IF EXISTS schema_constraints');
+    }
+
     /**
      * Test describing a table creates options
      */
@@ -937,6 +968,12 @@ SQL;
     public static function columnSqlProvider(): array
     {
         return [
+            // Unknown column type is preserved.
+            [
+                'title',
+                ['type' => 'foobar', 'length' => 25, 'null' => true, 'default' => null],
+                '`title` FOOBAR(25)',
+            ],
             // strings
             [
                 'title',
@@ -1405,6 +1442,11 @@ SQL;
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
                 'CONSTRAINT `author_id_idx` FOREIGN KEY (`author_id`) ' .
                 'REFERENCES `authors` (`id`) ON UPDATE NO ACTION ON DELETE RESTRICT',
+            ],
+            [
+                'author_id_check',
+                ['type' => 'check', 'expression' => 'author_id > 0'],
+                'CONSTRAINT `author_id_check` CHECK (author_id > 0)',
             ],
         ];
     }

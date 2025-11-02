@@ -217,7 +217,7 @@ class SqliteSchemaDialect extends SchemaDialect
         $field = $this->_convertColumn($row['type']);
         $field += [
             'null' => !$row['notnull'],
-            'default' => $this->_defaultValue($row['dflt_value']),
+            'default' => $this->_defaultValue($row['dflt_value'], $row['type']),
         ];
         $primary = $schema->getConstraint('primary');
 
@@ -282,7 +282,7 @@ class SqliteSchemaDialect extends SchemaDialect
             $field += [
                 'name' => $name,
                 'null' => !$row['notnull'],
-                'default' => $this->_defaultValue($row['dflt_value']),
+                'default' => $this->_defaultValue($row['dflt_value'], $row['type']),
                 'comment' => null,
                 'length' => null,
             ];
@@ -308,12 +308,21 @@ class SqliteSchemaDialect extends SchemaDialect
      * We need to remove those.
      *
      * @param string|int|null $default The default value.
+     * @param string|null $type The column type.
      * @return string|int|null
      */
-    protected function _defaultValue(string|int|null $default): string|int|null
+    protected function _defaultValue(string|int|null $default, ?string $type = null): string|int|null
     {
         if ($default === 'NULL' || $default === null) {
             return null;
+        }
+
+        if ($type !== null && strtolower($type) === TableSchemaInterface::TYPE_BOOLEAN) {
+            if ($default === '0' || $default === '1') {
+                return (int)$default;
+            }
+
+            return (int)filter_var($default, FILTER_VALIDATE_BOOLEAN, FILTER_NULL_ON_FAILURE);
         }
 
         // Remove quotes
@@ -696,6 +705,36 @@ class SqliteSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    public function describeCheckConstraints(string $tableName): array
+    {
+        $constraints = [];
+        $createSql = $this->getCreateTableSql($tableName);
+
+        // Parse CHECK constraints from CREATE TABLE statement
+        // Match CONSTRAINT name CHECK (expression) or just CHECK (expression)
+        $pattern = '/(?:CONSTRAINT\s+([^\s]+)\s+)?CHECK\s*\(([^)]+(?:\([^)]*\)[^)]*)*)\)/is';
+
+        if (preg_match_all($pattern, $createSql, $matches, PREG_SET_ORDER)) {
+            foreach ($matches as $index => $match) {
+                $name = !empty($match[1])
+                    ? trim($match[1], '"`[]')
+                    : 'check_' . $index;
+                $expression = trim($match[2]);
+
+                $constraints[] = [
+                    'name' => $name,
+                    'type' => TableSchema::CONSTRAINT_CHECK,
+                    'expression' => $expression,
+                ];
+            }
+        }
+
+        return $constraints;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function describeOptions(string $tableName): array
     {
         return [];
@@ -757,8 +796,10 @@ class SqliteSchemaDialect extends SchemaDialect
         ];
         $typeMap = [
             TableSchemaInterface::TYPE_BINARY_UUID => ' BINARY(16)',
+            TableSchemaInterface::TYPE_BINARY => ' BLOB',
             TableSchemaInterface::TYPE_UUID => ' CHAR(36)',
             TableSchemaInterface::TYPE_CHAR => ' CHAR',
+            TableSchemaInterface::TYPE_STRING => ' VARCHAR',
             TableSchemaInterface::TYPE_TINYINTEGER => ' TINYINT',
             TableSchemaInterface::TYPE_SMALLINTEGER => ' SMALLINT',
             TableSchemaInterface::TYPE_INTEGER => ' INTEGER',
@@ -799,49 +840,37 @@ class SqliteSchemaDialect extends SchemaDialect
             $out .= ' UNSIGNED';
         }
 
+        $foundType = false;
         if (isset($typeMap[$column['type']])) {
             $out .= $typeMap[$column['type']];
+            $foundType = true;
         }
 
-        if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
-            $out .= ' TEXT';
-        }
-
-        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
-            $out .= '(' . $column['length'] . ')';
-        }
-
-        if (
-            $column['type'] === TableSchemaInterface::TYPE_STRING ||
-            (
-                $column['type'] === TableSchemaInterface::TYPE_TEXT &&
-                $column['length'] === TableSchema::LENGTH_TINY
-            )
-        ) {
-            $out .= ' VARCHAR';
-
-            if (isset($column['length'])) {
-                $out .= '(' . $column['length'] . ')';
-            }
-        }
-
-        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
-            if (isset($column['length'])) {
-                $out .= ' BLOB(' . $column['length'] . ')';
-            } else {
-                $out .= ' BLOB';
-            }
-        }
-
-        $integerTypes = [
+        $hasLength = [
+            TableSchemaInterface::TYPE_BINARY,
+            TableSchemaInterface::TYPE_STRING,
+            TableSchemaInterface::TYPE_CHAR,
             TableSchemaInterface::TYPE_TINYINTEGER,
             TableSchemaInterface::TYPE_SMALLINTEGER,
             TableSchemaInterface::TYPE_INTEGER,
         ];
-        if (
-            in_array($column['type'], $integerTypes, true) &&
-            isset($column['length']) && !$autoIncrement
+        if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
+            $out .= ' TEXT';
+            $foundType = true;
+        } elseif (
+            $column['type'] === TableSchemaInterface::TYPE_TEXT &&
+            $column['length'] === TableSchema::LENGTH_TINY
         ) {
+            $out .= ' VARCHAR';
+            $hasLength[] = $column['type'];
+            $foundType = true;
+        }
+        if (!$foundType) {
+            $out .= ' ' . strtoupper($column['type']);
+            $hasLength[] = $column['type'];
+        }
+
+        if (in_array($column['type'], $hasLength, true) && isset($column['length']) && !$autoIncrement) {
             $out .= '(' . (int)$column['length'] . ')';
         }
 
@@ -900,25 +929,33 @@ class SqliteSchemaDialect extends SchemaDialect
         $data = $schema->getConstraint($name);
         assert($data !== null, 'Data does not exist');
 
-        $column = $schema->getColumn($data['columns'][0]);
-        assert($column !== null, 'Data does not exist');
+        $columns = '';
+        if (isset($data['columns'])) {
+            $column = $schema->getColumn($data['columns'][0]);
+            assert($column !== null, 'Data does not exist');
 
-        if (
-            $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
-            count($data['columns']) === 1 &&
-            $column['type'] === TableSchemaInterface::TYPE_INTEGER
-        ) {
-            return '';
+            if (
+                $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
+                count($data['columns']) === 1 &&
+                $column['type'] === TableSchemaInterface::TYPE_INTEGER
+            ) {
+                return '';
+            }
+
+            $aliased = array_map(
+                $this->_driver->quoteIdentifier(...),
+                $data['columns'],
+            );
+            $columns = implode(', ', $aliased);
         }
+
         $clause = '';
         $type = '';
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $type = 'PRIMARY KEY';
-        }
-        if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $type = 'UNIQUE';
-        }
-        if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             $type = 'FOREIGN KEY';
 
             $clause = rtrim(sprintf(
@@ -929,17 +966,16 @@ class SqliteSchemaDialect extends SchemaDialect
                 $this->_foreignOnClause($data['delete']),
                 $data['deferrable'] ?? null,
             ));
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_CHECK) {
+            $type = 'CHECK';
+            $columns = $data['expression'];
         }
-        $columns = array_map(
-            $this->_driver->quoteIdentifier(...),
-            $data['columns'],
-        );
 
         return sprintf(
             'CONSTRAINT %s %s (%s)%s',
             $this->_driver->quoteIdentifier($name),
             $type,
-            implode(', ', $columns),
+            $columns,
             $clause,
         );
     }

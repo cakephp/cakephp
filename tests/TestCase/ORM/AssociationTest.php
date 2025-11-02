@@ -394,33 +394,6 @@ class AssociationTest extends TestCase
     }
 
     /**
-     * Test that warning is not shown if "propertyName" option is explicitly specified.
-     */
-    public function testPropertyNameExplicitySet(): void
-    {
-        $this->source->setSchema(['foo' => ['type' => 'string']]);
-
-        $config = [
-            'className' => TestTable::class,
-            'foreignKey' => 'a_key',
-            'conditions' => ['field' => 'value'],
-            'dependent' => true,
-            'sourceTable' => $this->source,
-            'joinType' => 'INNER',
-            'propertyName' => 'foo',
-        ];
-        $association = $this->getMockBuilder(Association::class)
-            ->onlyMethods([
-                '_options', 'attachTo', '_joinCondition', 'cascadeDelete', 'isOwningSide',
-                'saveAssociated', 'eagerLoader', 'type', 'requiresKeys',
-            ])
-            ->setConstructorArgs(['Foo', $config])
-            ->getMock();
-
-        $this->assertSame('foo', $association->getProperty());
-    }
-
-    /**
      * Tests strategy method
      */
     public function testSetStrategy(): void

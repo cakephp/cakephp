@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - '4.x'
-      - '4.next'
       - '5.x'
       - '5.next'
   pull_request:
@@ -21,25 +20,33 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.2', '8.4']
+        php-version: ['8.2', '8.5']
         db-type: [sqlite, pgsql]
+        dependencies: ['highest']
         include:
           - php-version: '8.2'
             db-type: 'mariadb'
+            dependencies: highest
+
           - php-version: '8.2'
             db-type: 'mysql'
             dependencies: 'lowest'
+
           - php-version: '8.2'
             db-type: 'mysql'
+            dependencies: highest
+
           - php-version: '8.3'
             db-type: 'mysql'
+            dependencies: highest
+
           - php-version: '8.4'
             db-type: 'mysql'
             dependencies: highest
+
           - php-version: '8.5'
-            db-type: 'sqlite'
+            db-type: 'mysql'
             dependencies: highest
-            composer-options: '--ignore-platform-req=php'
 
     services:
       redis:
@@ -63,11 +70,11 @@ jobs:
 
     steps:
     - name: Setup MySQL 8.4
-      if: matrix.db-type == 'mysql' && matrix.dependencies == 'highest'
+      if: matrix.db-type == 'mysql' && matrix.dependencies == 'highest' && matrix.php-version != '8.3'
       run: docker run --rm --name=mysqld -e MYSQL_ROOT_PASSWORD=root -e MYSQL_DATABASE=cakephp -p 3306:3306 -d mysql:8.4
 
     - name: Setup MySQL 8.0
-      if: matrix.db-type == 'mysql' && matrix.dependencies == ''
+      if: matrix.db-type == 'mysql' && matrix.dependencies == 'highest' && matrix.php-version == '8.3'
       run: |
         sudo service mysql start
         mysql -h 127.0.0.1 -u root -proot -e 'CREATE DATABASE cakephp;'
@@ -124,11 +131,15 @@ jobs:
         if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
-        if [[ ${{ matrix.php-version }} == '8.2' ]]; then
+        if [[ ${{ matrix.php-version }} == '8.2' && ${{ matrix.dependencies }} == 'highest' ]]; then
           export CODECOVERAGE=1
-          vendor/bin/phpunit --display-warnings --display-incomplete --coverage-clover=coverage.xml
-          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-deprecations --display-warnings --display-incomplete --testsuite=database
-          vendor/bin/phpunit --display-warnings --display-incomplete --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
+          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-phpunit-deprecation --testsuite=cakephp --coverage-clover=coverage.xml
+          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database.xml
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database
+          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-warning --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
+        elif [[ ${{ matrix.php-version }} == '8.2' && ${{ matrix.dependencies }} == 'lowest' ]]; then
+          vendor/bin/phpunit
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         else
           vendor/bin/phpunit --display-phpunit-deprecations --display-deprecations --display-warnings
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-phpunit-deprecations --display-deprecations --display-warnings --testsuite=database
@@ -138,7 +149,7 @@ jobs:
       if: matrix.php-version == '8.2'
       uses: codecov/codecov-action@v5
       with:
-        files: coverage.xml,coverage-functions.xml
+        files: coverage.xml,coverage-database.xml,coverage-functions.xml
         token: ${{ secrets.CODECOV_TOKEN }}
 
   testsuite-windows:
@@ -302,6 +313,8 @@ jobs:
         uses: ramsey/composer-install@v3
 
       - name: Install PHP tools with phive.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
 
       - name: Run phpstan for split packages

@@ -603,6 +603,34 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    public function describeCheckConstraints(string $tableName): array
+    {
+        [$schema, $name] = $this->splitTablename($tableName);
+        $sql = 'SELECT
+        con.conname AS name,
+        pg_get_constraintdef(con.oid) AS expression
+        FROM pg_catalog.pg_constraint AS con
+        INNER JOIN pg_catalog.pg_namespace AS ns ON (ns.oid = con.connamespace)
+        INNER JOIN pg_catalog.pg_class AS cls ON (cls.oid = con.conrelid)
+        WHERE ns.nspname = ? AND cls.relname = ? AND con.contype = \'c\'';
+
+        $results = [];
+        $statement = $this->_driver->execute($sql, [$schema, $name]);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $expression = preg_replace('/^CHECK \(\((.*)\)\)$/i', '$1', $row['expression']);
+            $results[] = [
+                'name' => $row['name'],
+                'type' => TableSchema::CONSTRAINT_CHECK,
+                'expression' => $expression,
+            ];
+        }
+
+        return $results;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function describeOptions(string $tableName): array
     {
         return [];
@@ -693,6 +721,7 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_SMALLINTEGER => ' SMALLINT',
             TableSchemaInterface::TYPE_INTEGER => ' INT',
             TableSchemaInterface::TYPE_BIGINTEGER => ' BIGINT',
+            TableSchemaInterface::TYPE_BINARY => ' BYTEA',
             TableSchemaInterface::TYPE_BINARY_UUID => ' UUID',
             TableSchemaInterface::TYPE_BOOLEAN => ' BOOLEAN',
             TableSchemaInterface::TYPE_FLOAT => ' FLOAT',
@@ -738,22 +767,20 @@ class PostgresSchemaDialect extends SchemaDialect
             unset($column['default']);
         }
 
+        $foundType = false;
         if (isset($typeMap[$column['type']])) {
             $out .= $typeMap[$column['type']];
+            $foundType = true;
         }
 
+        $hasLength = [
+            TableSchemaInterface::TYPE_CHAR,
+            TableSchemaInterface::TYPE_STRING,
+        ];
         if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
-        }
-        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
-            $out .= ' BYTEA';
-        }
-
-        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
-            $out .= '(' . $column['length'] . ')';
-        }
-
-        if (
+            $foundType = true;
+        } elseif (
             $column['type'] === TableSchemaInterface::TYPE_STRING ||
             (
                 $column['type'] === TableSchemaInterface::TYPE_TEXT &&
@@ -761,9 +788,17 @@ class PostgresSchemaDialect extends SchemaDialect
             )
         ) {
             $out .= ' VARCHAR';
-            if (isset($column['length']) && $column['length'] !== '') {
-                $out .= '(' . $column['length'] . ')';
-            }
+            $hasLength[] = $column['type'];
+            $foundType = true;
+        }
+
+        if (!$foundType) {
+            $out .= ' ' . strtoupper($column['type']);
+            $hasLength[] = $column['type'];
+        }
+
+        if (in_array($column['type'], $hasLength, true) && !empty($column['length'])) {
+            $out .= '(' . $column['length'] . ')';
         }
 
         $hasCollate = [
@@ -915,9 +950,10 @@ class PostgresSchemaDialect extends SchemaDialect
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
-        }
-        if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_CHECK) {
+            return $out . ' CHECK (' . $data['expression'] . ')';
         }
 
         return $this->_keySql($out, $data);

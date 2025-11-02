@@ -219,11 +219,9 @@ trait PluginAssetsTrait
      */
     protected function _createDirectory(string $dir): bool
     {
-        $old = umask(0);
         // phpcs:disable
-        $result = @mkdir($dir, 0755, true);
+        $result = @mkdir($dir, 0777 ^ umask(), true);
         // phpcs:enable
-        umask($old);
 
         if ($result) {
             $this->io->out('Created directory ' . $dir);

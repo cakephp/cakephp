@@ -1,0 +1,13 @@
+parameters:
+	ignoreErrors:
+		-
+			message: '#^Access to constant ATTR_INIT_COMMAND on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			count: 1
+			path: TestCase/Database/Driver/MysqlTest.php
+
+		-
+			message: '#^Access to constant ATTR_USE_BUFFERED_QUERY on an unknown class Pdo\\Mysql\.$#'
+			identifier: class.notFound
+			count: 2
+			path: TestCase/Database/Driver/MysqlTest.php

@@ -933,7 +933,7 @@ class RouteBuilderTest extends TestCase
         $this->expectExceptionMessage('Need a valid Closure to connect routes.');
 
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->scope('/v1', ['fail'], null);
+        $routes->scope('/v1', ['fail']);
     }
 
     /**

@@ -213,12 +213,22 @@ class Form implements EventListenerInterface, EventDispatcherInterface, Validato
     /**
      * Returns validation errors for the given field
      *
-     * @param string $field Field name to get the errors from.
+     * Supports dot notation for nested fields. For example:
+     * - `$form->getError('Common.field_name')`
+     * - `$form->getError('parent.level.deep_field')`
+     *
+     * @param string $field Field name to get the errors from. Supports dot notation for nested fields.
      * @return array The validation errors for the given field.
      */
     public function getError(string $field): array
     {
-        return $this->_errors[$field] ?? [];
+        if (isset($this->_errors[$field])) {
+            return $this->_errors[$field];
+        }
+
+        $error = Hash::get($this->_errors, $field);
+
+        return is_array($error) ? $error : [];
     }
 
     /**

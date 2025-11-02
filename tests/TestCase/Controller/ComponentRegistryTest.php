@@ -31,6 +31,8 @@ use Exception;
 use League\Container\ReflectionContainer;
 use TestApp\Controller\Component\ConfiguredComponent;
 use TestApp\Controller\Component\FlashAliasComponent;
+use TestApp\Controller\Component\InjectedServiceComponent;
+use TestApp\Service\TestService;
 use TestPlugin\Controller\Component\OtherComponent;
 use Traversable;
 
@@ -40,6 +42,7 @@ class ComponentRegistryTest extends TestCase
      * @var \Cake\Controller\ComponentRegistry
      */
     protected $Components;
+
     private bool $created = false;
 
     /**
@@ -120,6 +123,62 @@ class ComponentRegistryTest extends TestCase
 
         $this->assertInstanceOf(ConfiguredComponent::class, $component);
         $this->assertSame(['key' => 'customFlash'], $component->configCopy);
+    }
+
+    /**
+     * Test loading component with manually configured DI in container
+     * Regression test for issue where arguments were duplicated
+     */
+    public function testLoadWithManualDependencyInjection(): void
+    {
+        $controller = new Controller(new ServerRequest());
+        $container = new Container();
+        $components = new ComponentRegistry($controller, $container);
+
+        // Register service and component with explicit arguments (as user would do)
+        $service = new TestService();
+        $container->add(TestService::class, $service);
+        $container->add(ComponentRegistry::class, $components);
+        $container->add(InjectedServiceComponent::class)
+            ->addArgument(ComponentRegistry::class)
+            ->addArgument(TestService::class);
+
+        // This should work without duplicating arguments and config should be passed through
+        $component = $components->load(InjectedServiceComponent::class, ['key' => 'value']);
+
+        $this->assertInstanceOf(InjectedServiceComponent::class, $component);
+        $this->assertSame($service, $component->getService());
+        $this->assertSame('value', $component->getConfig('key'));
+    }
+
+    /**
+     * Test loading component registered as shared instance in container
+     * Documents edge case where shared instances can cause state leakage
+     */
+    public function testLoadWithSharedInstance(): void
+    {
+        $controller1 = new Controller(new ServerRequest());
+        $controller2 = new Controller(new ServerRequest());
+        $container = new Container();
+
+        $components1 = new ComponentRegistry($controller1, $container);
+        $components2 = new ComponentRegistry($controller2, $container);
+
+        // Register component as shared - this is generally not recommended for components
+        $container->add(ComponentRegistry::class, $components1);
+        $container->add(FlashComponent::class)
+            ->addArgument(ComponentRegistry::class)
+            ->setShared(true);
+
+        $flash1 = $components1->load('Flash', ['key' => 'first']);
+        $flash2 = $components2->load('Flash', ['key' => 'second']);
+
+        // Both should be the same instance (shared)
+        $this->assertSame($flash1, $flash2);
+        // Config from second load should be merged into shared instance
+        $this->assertSame('second', $flash2->getConfig('key'));
+        // This demonstrates the edge case: config is shared between controllers
+        $this->assertSame('second', $flash1->getConfig('key'));
     }
 
     /**

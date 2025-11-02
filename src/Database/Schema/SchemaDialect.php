@@ -158,8 +158,8 @@ abstract class SchemaDialect
      *
      * @param string $columnType The column type.
      * @param array $definition The column definition.
-     * @return array|null Array of column information, or `null` in case no corresponding type was found or the type
-     *  didn't provide custom column information.
+     * @return array<string, mixed>|null Array of column information, or `null`
+     *  in case no corresponding type was found or the type didn't provide custom column information.
      */
     protected function _applyTypeSpecificColumnConversion(string $columnType, array $definition): ?array
     {
@@ -444,6 +444,9 @@ abstract class SchemaDialect
         foreach ($this->describeForeignKeys($name) as $key) {
             $table->addConstraint($key['name'], $key);
         }
+        foreach ($this->describeCheckConstraints($name) as $key) {
+            $table->addConstraint($key['name'], $key);
+        }
         $options = $this->describeOptions($name);
         if ($options) {
             $table->setOptions($options);
@@ -622,6 +625,22 @@ abstract class SchemaDialect
         }
 
         return $table->getOptions();
+    }
+
+    /**
+     * Get a list of check constraint metadata as an array.
+     *
+     * Each item in the array will contain the following keys:
+     *
+     * - name - The name of the constraint.
+     * - expression - The check constraint expression as a SQL fragment.
+     *
+     * @param string $tableName The name of the table to describe options on.
+     * @return array
+     */
+    public function describeCheckConstraints(string $tableName): array
+    {
+        return [];
     }
 
     /**

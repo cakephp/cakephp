@@ -382,7 +382,7 @@ class Oauth
             $error .= $text;
         }
 
-        if (strlen($error) > 0) {
+        if ($error !== '') {
             throw new CakeException('openssl error: ' . $error);
         }
     }

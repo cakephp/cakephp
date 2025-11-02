@@ -854,9 +854,15 @@ trait CollectionTrait
         }
 
         assert(
-            $order === RecursiveIteratorIterator::LEAVES_ONLY ||
-            $order === RecursiveIteratorIterator::SELF_FIRST ||
-            $order === RecursiveIteratorIterator::CHILD_FIRST,
+            in_array(
+                $order,
+                [
+                    RecursiveIteratorIterator::LEAVES_ONLY,
+                    RecursiveIteratorIterator::SELF_FIRST,
+                    RecursiveIteratorIterator::CHILD_FIRST,
+                ],
+                true,
+            ),
         );
 
         return new TreeIterator(
@@ -1041,7 +1047,7 @@ trait CollectionTrait
         $changeIndex = $lastIndex;
 
         while (!($changeIndex === 0 && $currentIndexes[0] === $collectionArraysCounts[0])) {
-            $currentCombination = array_map(function ($value, $keys, $index) {
+            $currentCombination = array_map(function ($value, array $keys, $index) {
                 return $value[$keys[$index]];
             }, $collectionArrays, $collectionArraysKeys, $currentIndexes);
 

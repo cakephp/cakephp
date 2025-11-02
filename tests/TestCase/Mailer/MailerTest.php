@@ -960,7 +960,7 @@ class MailerTest extends TestCase
         $result = $this->mailer->send();
         $dateTime = new DateTime();
         $dateTime->setTimestamp($timestamp);
-        $this->assertStringContainsString('Right now: ' . $dateTime->format($dateTime::ATOM), $result['message']);
+        $this->assertStringContainsString('Right now: ' . $dateTime->format(DateTime::ATOM), $result['message']);
 
         $result = $this->mailer->viewBuilder()->getHelpers();
         $this->assertEquals(['Time' => []], $result);

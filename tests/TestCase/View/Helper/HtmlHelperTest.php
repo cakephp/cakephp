@@ -670,7 +670,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->css('more_css_in_head_2');
         $this->assertNull($result);
 
-        $this->Html->setConfig('defaultCssBlock', null);
+        $this->Html->setConfig('defaultCssBlock');
     }
 
     /**
@@ -1182,7 +1182,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->script('second_script_2');
         $this->assertNull($result);
 
-        $this->Html->setConfig('defaultScriptBlock', null);
+        $this->Html->setConfig('defaultScriptBlock');
     }
 
     /**
@@ -1557,7 +1557,7 @@ class HtmlHelperTest extends TestCase
      */
     public function testCharsetTag(): void
     {
-        Configure::write('App.encoding', null);
+        Configure::write('App.encoding');
         $result = $this->Html->charset();
         $expected = ['meta' => ['charset' => 'utf-8']];
         $this->assertHtml($expected, $result);
@@ -1862,7 +1862,7 @@ class HtmlHelperTest extends TestCase
         $this->Html->setConfig('defaultMetaBlock', 'myMeta');
         $this->assertNull($this->Html->meta('csrf-token'));
         $this->assertHtml($expected, $result);
-        $this->Html->setConfig('defaultMetaBlock', null);
+        $this->Html->setConfig('defaultMetaBlock');
     }
 
     /**

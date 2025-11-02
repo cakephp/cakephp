@@ -48,7 +48,7 @@ class TimeTest extends TestCase
     {
         parent::tearDown();
         DateTime::setTestNow($this->now);
-        DateTime::setDefaultLocale(null);
+        DateTime::setDefaultLocale();
         Time::resetToStringFormat();
 
         I18n::setLocale(I18n::getDefaultLocale());
