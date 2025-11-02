@@ -215,13 +215,21 @@ class View implements EventDispatcherInterface
     protected string $elementCache = 'default';
 
     /**
+     * The merge strategy for config options.
+     * Can be MERGE_DEEP (recursive merge, default for BC) or MERGE_SHALLOW (simple merge).
+     *
+     * @var string
+     */
+    protected string $configMergeStrategy = ViewBuilder::MERGE_DEEP;
+
+    /**
      * List of variables to collect from the associated controller.
      *
      * @var array<string>
      */
     protected array $_passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
-        'layoutPath', 'templatePath', 'plugin',
+        'layoutPath', 'templatePath', 'plugin', 'configMergeStrategy',
     ];
 
     /**
@@ -355,14 +363,12 @@ class View implements EventDispatcherInterface
             $this->helpers = $this->helpers()->normalizeArray($this->helpers);
         }
 
-        $configMerge = $viewOptions['configMergeStrategy'] ?? ViewBuilder::MERGE_DEEP;
         $config = array_diff_key(
             $viewOptions,
             array_flip($this->_passedVars),
-            ['configMergeStrategy' => true],
         );
 
-        if ($configMerge === ViewBuilder::MERGE_SHALLOW) {
+        if ($this->configMergeStrategy === ViewBuilder::MERGE_SHALLOW) {
             $this->configShallow($config);
         } else {
             $this->setConfig($config);
