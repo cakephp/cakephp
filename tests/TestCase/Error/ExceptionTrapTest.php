@@ -83,7 +83,7 @@ class ExceptionTrapTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $trap = new ExceptionTrap(['stderr' => $output]);
-        $trap->setConfig('exceptionRenderer');
+        $trap->deleteConfig('exceptionRenderer');
         $error = new InvalidArgumentException('nope');
         $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
     }
@@ -97,7 +97,7 @@ class ExceptionTrapTest extends TestCase
     public function testLoggerHandleUnsafeOverwrite(): void
     {
         $trap = new ExceptionTrap();
-        $trap->setConfig('logger');
+        $trap->deleteConfig('logger');
         $this->assertInstanceOf(ErrorLogger::class, $trap->logger());
     }
 

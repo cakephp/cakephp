@@ -229,7 +229,7 @@ class TreeBehaviorTest extends TestCase
     {
         $table = $this->getTableLocator()->get('MenuLinkTrees');
         $table->addBehavior('Tree');
-        $table->behaviors()->get('Tree')->setConfig('scope');
+        $table->behaviors()->get('Tree')->deleteConfig('scope');
 
         $nodes = $table->find('children', for: 1, direct: true)->all();
         $this->assertEquals([2, 3], $nodes->extract('id')->toArray());

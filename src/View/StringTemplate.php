@@ -226,7 +226,7 @@ class StringTemplate
      */
     public function remove(string $name): void
     {
-        $this->setConfig($name);
+        $this->deleteConfig($name);
         unset($this->_compiled[$name]);
     }
 

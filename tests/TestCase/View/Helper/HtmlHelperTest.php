@@ -671,7 +671,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->css('more_css_in_head_2');
         $this->assertNull($result);
 
-        $this->Html->setConfig('defaultCssBlock');
+        $this->Html->deleteConfig('defaultCssBlock');
     }
 
     /**
@@ -1183,7 +1183,7 @@ class HtmlHelperTest extends TestCase
         $result = $this->Html->script('second_script_2');
         $this->assertNull($result);
 
-        $this->Html->setConfig('defaultScriptBlock');
+        $this->Html->deleteConfig('defaultScriptBlock');
     }
 
     /**
@@ -1863,7 +1863,7 @@ class HtmlHelperTest extends TestCase
         $this->Html->setConfig('defaultMetaBlock', 'myMeta');
         $this->assertNull($this->Html->meta('csrf-token'));
         $this->assertHtml($expected, $result);
-        $this->Html->setConfig('defaultMetaBlock');
+        $this->Html->deleteConfig('defaultMetaBlock');
     }
 
     /**
