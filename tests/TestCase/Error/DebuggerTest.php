@@ -195,6 +195,7 @@ object(Cake\View\View) id:0 {
   [protected] request => object(Cake\Http\ServerRequest) id:3 {}
   [protected] response => object(Cake\Http\Response) id:4 {}
   [protected] elementCache => 'default'
+  [protected] configMergeStrategy => 'deep'
   [protected] _passedVars => [
     (int) 0 => 'viewVars',
     (int) 1 => 'autoLayout',
@@ -205,7 +206,8 @@ object(Cake\View\View) id:0 {
     (int) 6 => 'theme',
     (int) 7 => 'layoutPath',
     (int) 8 => 'templatePath',
-    (int) 9 => 'plugin'
+    (int) 9 => 'plugin',
+    (int) 10 => 'configMergeStrategy'
   ]
   [protected] _defaultConfig => []
   [protected] _paths => []
