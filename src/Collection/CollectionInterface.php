@@ -144,6 +144,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * The callback is passed the value and key of the element being tested and should
      * return true if the test passed.
      *
+     * Alias of ``Collection::any()``.
+     *
      * ### Example:
      *
      * ```
