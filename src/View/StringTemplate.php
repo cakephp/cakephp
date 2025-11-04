@@ -362,8 +362,24 @@ class StringTemplate
         if (!is_array($new)) {
             $new = $new !== '' ? explode(' ', $new) : [];
         }
+        $remove = [];
+        $add = [];
+        foreach ($new as $key => $value) {
+            if (is_string($key)) {
+                if ($value) {
+                    $add[] = $key;
+                } elseif (!$value) {
+                    $remove[] = $key;
+                }
+            } else {
+                $add[] = $value;
+            }
+        }
+        // Remove any classes and then add.
+        $update = array_diff($existing, $remove);
+        $update = array_merge($update, $add);
 
-        return array_values(array_unique(array_merge($existing, $new)));
+        return array_values(array_unique($update));
     }
 
     /**

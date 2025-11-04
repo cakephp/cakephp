@@ -390,6 +390,31 @@ class StringTemplateTest extends TestCase
     }
 
     /**
+     * Test addClassNames method with various input types.
+     */
+    public function testAddClassNamesMap(): void
+    {
+        // Falsey values remove, truthy values add.
+        $result = $this->template->addClassNames(['existing'], ['new' => true, 'no' => false, 'nullish' => null]);
+        $this->assertSame(['existing', 'new'], $result);
+
+        $result = $this->template->addClassNames(['clear', 'one'], ['new' => true, 'clear' => false]);
+        $this->assertSame(['one', 'new'], $result);
+
+        $result = $this->template->addClassNames(['clear', 'one'], ['new' => true, 'clear' => null]);
+        $this->assertSame(['one', 'new'], $result);
+
+        $result = $this->template->addClassNames(['clear', 'one'], ['new' => true, 'clear' => 0]);
+        $this->assertSame(['one', 'new'], $result);
+
+        $result = $this->template->addClassNames('one', ['new' => 1]);
+        $this->assertSame(['one', 'new'], $result);
+
+        $result = $this->template->addClassNames('one', ['new' => 'hotdog']);
+        $this->assertSame(['one', 'new'], $result);
+    }
+
+    /**
      * Test addClass method with deprecated string input
      *
      * @deprecated Tests deprecated addClass method with string input
