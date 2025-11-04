@@ -368,7 +368,7 @@ class StringTemplate
             if (is_string($key)) {
                 if ($value) {
                     $add[] = $key;
-                } elseif (!$value) {
+                } else {
                     $remove[] = $key;
                 }
             } else {
