@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Database;
 
+use Cake\Core\Configure;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\QueryException;
 use Cake\Database\Log\QueryLogger;
@@ -36,6 +38,7 @@ use PDOStatement;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Driver\RetryDriver;
 use TestApp\Database\Driver\StubDriver;
+use TestApp\Error\Exception\MyPDOStringException;
 
 /**
  * Tests Driver class
@@ -506,5 +509,155 @@ class DriverTest extends TestCase
         $this->driver->execute('SELECT bar FROM foo');
         $this->assertCount(1, $messages);
         $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=[\d\.]+ rows=3 SELECT bar FROM foo$/', $messages[0]);
+    }
+
+    /**
+     * Tests that we do exception wrapping correctly when logging is enabled.
+     * The exception returns a string code like most PDOExceptions.
+     */
+    public function testExecuteWithErrorWrapStatementStringCodeWithLogging(): void
+    {
+        Configure::write('Error.convertStatementToDatabaseException', true);
+
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo');
+        $statement->method('rowCount')->willReturn(0);
+        $statement->method('execute')->will($this->throwException(new MyPDOStringException('This is bad', 1234)));
+
+        $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+
+        try {
+            $this->driver->execute('SELECT bar FROM foo');
+            $this->fail('Exception not thrown');
+        } catch (DatabaseException $e) {
+            $attrs = $e->getAttributes();
+            $this->assertSame('This is bad', $e->getMessage());
+            $this->assertArrayHasKey('queryString', $attrs);
+            $this->assertSame('SELECT bar FROM foo', $attrs['queryString']);
+        }
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=\d+ rows=0 SELECT bar FROM foo$/', $messages[0]);
+
+        Configure::delete('Error.convertStatementToDatabaseException');
+    }
+
+    /**
+     * Tests that we do exception wrapping correctly when logging is enabled.
+     * The exception returns an int code.
+     */
+    public function testExecuteWithErrorWrapStatementIntCodeWithLogging(): void
+    {
+        Configure::write('Error.convertStatementToDatabaseException', true);
+
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo');
+        $statement->method('rowCount')->willReturn(0);
+        $statement->method('execute')->will($this->throwException(new PDOException('This is bad', 1234)));
+
+        $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+
+        try {
+            $this->driver->execute('SELECT bar FROM foo');
+            $this->fail('Exception not thrown');
+        } catch (DatabaseException $e) {
+            $attrs = $e->getAttributes();
+            $this->assertSame('This is bad', $e->getMessage());
+            $this->assertSame(1234, $e->getCode());
+            $this->assertArrayHasKey('queryString', $attrs);
+            $this->assertSame('SELECT bar FROM foo', $attrs['queryString']);
+        }
+
+        $messages = Log::engine('queries')->read();
+        $this->assertCount(1, $messages);
+        $this->assertMatchesRegularExpression('/^debug: connection=test role=write duration=\d+ rows=0 SELECT bar FROM foo$/', $messages[0]);
+
+        Configure::delete('Error.convertStatementToDatabaseException');
+    }
+
+    /**
+     * Tests that we do exception wrapping correctly when logging is disabled.
+     * The exception returns a string code like most PDOExceptions.
+     */
+    public function testExecuteWithErrorWrapStatementStringCodeWithoutLogging(): void
+    {
+        Configure::write('Error.convertStatementToDatabaseException', true);
+
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo');
+        $statement->method('execute')->will($this->throwException(new MyPDOStringException('This is bad', 1234)));
+
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+
+        try {
+            $this->driver->execute('SELECT bar FROM foo');
+            $this->fail('Exception not thrown');
+        } catch (DatabaseException $e) {
+            $attrs = $e->getAttributes();
+            $this->assertSame('This is bad', $e->getMessage());
+            $this->assertArrayHasKey('queryString', $attrs);
+            $this->assertSame('SELECT bar FROM foo', $attrs['queryString']);
+        }
+
+        Configure::delete('Error.convertStatementToDatabaseException');
+    }
+
+    /**
+     * Tests that we do exception wrapping correctly when logging is disabled.
+     * The exception returns an int code.
+     */
+    public function testExecuteWithErrorWrapStatementIntCodeWithoutLogging(): void
+    {
+        Configure::write('Error.convertStatementToDatabaseException', true);
+
+        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+
+        $statement = $this->getMockBuilder(Statement::class)
+            ->setConstructorArgs([$inner, $this->driver])
+            ->onlyMethods(['queryString','rowCount','execute'])
+            ->getMock();
+        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo');
+        $statement->method('execute')->will($this->throwException(new PDOException('This is bad', 1234)));
+
+        $this->driver->expects($this->any())
+            ->method('prepare')
+            ->willReturn($statement);
+
+        try {
+            $this->driver->execute('SELECT bar FROM foo');
+            $this->fail('Exception not thrown');
+        } catch (DatabaseException $e) {
+            $attrs = $e->getAttributes();
+            $this->assertSame('This is bad', $e->getMessage());
+            $this->assertSame(1234, $e->getCode());
+            $this->assertArrayHasKey('queryString', $attrs);
+            $this->assertSame('SELECT bar FROM foo', $attrs['queryString']);
+        }
+
+        Configure::delete('Error.convertStatementToDatabaseException');
     }
 }

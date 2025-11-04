@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Database;
 
 use Cake\Core\App;
+use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Retry\CommandRetry;
 use Cake\Database\Exception\DatabaseException;
@@ -328,7 +329,7 @@ abstract class Driver implements LoggerAwareInterface
             try {
                 $statement->execute($params);
             } catch (PDOException $e) {
-                throw $this->createQueryException($e, $statement, $params);
+                throw $this->convertException($e, $statement, $params);
             }
 
             return;
@@ -357,7 +358,7 @@ abstract class Driver implements LoggerAwareInterface
         $this->log($statement->queryString(), $logContext);
 
         if ($exception) {
-            throw $this->createQueryException($exception, $statement, $params);
+            throw $this->convertException($exception, $statement, $params);
         }
     }
 
@@ -382,6 +383,34 @@ abstract class Driver implements LoggerAwareInterface
         ]);
 
         return new QueryException($loggedQuery, $exception);
+    }
+
+    /**
+     * Convert a PDOException to DatabaseException or QueryException based on configuration
+     *
+     * @param \PDOException $exception
+     * @param \Cake\Database\StatementInterface $statement
+     * @param array|null $params
+     * @return \Cake\Database\Exception\DatabaseException|\Cake\Database\Exception\QueryException
+     */
+    protected function convertException(
+        PDOException $exception,
+        StatementInterface $statement,
+        ?array $params = null,
+    ): DatabaseException|QueryException {
+        if (Configure::read('Error.convertStatementToDatabaseException', false) === true) {
+            $code = $exception->getCode();
+            if (!is_int($code)) {
+                $code = null;
+            }
+
+            return new DatabaseException([
+                'message' => $exception->getMessage(),
+                'queryString' => $statement->queryString(),
+            ], $code, $exception);
+        }
+
+        return $this->createQueryException($exception, $statement, $params);
     }
 
     /**
