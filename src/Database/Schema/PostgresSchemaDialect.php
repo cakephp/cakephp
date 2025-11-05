@@ -603,6 +603,34 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    public function describeCheckConstraints(string $tableName): array
+    {
+        [$schema, $name] = $this->splitTablename($tableName);
+        $sql = 'SELECT
+        con.conname AS name,
+        pg_get_constraintdef(con.oid) AS expression
+        FROM pg_catalog.pg_constraint AS con
+        INNER JOIN pg_catalog.pg_namespace AS ns ON (ns.oid = con.connamespace)
+        INNER JOIN pg_catalog.pg_class AS cls ON (cls.oid = con.conrelid)
+        WHERE ns.nspname = ? AND cls.relname = ? AND con.contype = \'c\'';
+
+        $results = [];
+        $statement = $this->_driver->execute($sql, [$schema, $name]);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $expression = preg_replace('/^CHECK \(\((.*)\)\)$/i', '$1', $row['expression']);
+            $results[] = [
+                'name' => $row['name'],
+                'type' => TableSchema::CONSTRAINT_CHECK,
+                'expression' => $expression,
+            ];
+        }
+
+        return $results;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function describeOptions(string $tableName): array
     {
         return [];
@@ -922,9 +950,10 @@ class PostgresSchemaDialect extends SchemaDialect
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
-        }
-        if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_CHECK) {
+            return $out . ' CHECK (' . $data['expression'] . ')';
         }
 
         return $this->_keySql($out, $data);

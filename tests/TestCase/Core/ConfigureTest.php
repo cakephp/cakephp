@@ -129,7 +129,7 @@ class ConfigureTest extends TestCase
         $result = Configure::read('SomeName.someKey');
         $this->assertSame('myvalue', $result);
 
-        Configure::write('SomeName.someKey', null);
+        Configure::write('SomeName.someKey');
         $result = Configure::read('SomeName.someKey');
         $this->assertNull($result);
 
@@ -222,7 +222,7 @@ class ConfigureTest extends TestCase
         Configure::write('ConfigureTestCase', false);
         $this->assertTrue(Configure::check('ConfigureTestCase'));
 
-        Configure::write('ConfigureTestCase', null);
+        Configure::write('ConfigureTestCase');
         $this->assertFalse(Configure::check('ConfigureTestCase'));
     }
 

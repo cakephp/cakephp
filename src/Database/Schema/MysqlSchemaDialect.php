@@ -571,6 +571,41 @@ class MysqlSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    public function describeCheckConstraints(string $tableName): array
+    {
+        if (!$this->_driver->supports(DriverFeatureEnum::CHECK_CONSTRAINTS)) {
+            return [];
+        }
+
+        [$schema, $name] = $this->splitTablename($tableName);
+        $sql = <<<SQL
+        SELECT
+        cc.CONSTRAINT_NAME AS name,
+        cc.CHECK_CLAUSE AS expression
+        FROM INFORMATION_SCHEMA.CHECK_CONSTRAINTS AS cc
+        INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS tc ON (
+            tc.CONSTRAINT_SCHEMA = cc.CONSTRAINT_SCHEMA
+            AND tc.CONSTRAINT_NAME = cc.CONSTRAINT_NAME
+        )
+        WHERE tc.CONSTRAINT_SCHEMA = ? AND tc.TABLE_NAME = ? AND tc.CONSTRAINT_TYPE = 'CHECK'
+SQL;
+
+        $constraints = [];
+        $statement = $this->_driver->execute($sql, [$schema, $name]);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $constraints[] = [
+                'name' => $row['name'],
+                'type' => TableSchema::CONSTRAINT_CHECK,
+                'expression' => $row['expression'],
+            ];
+        }
+
+        return $constraints;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function truncateTableSql(TableSchema $schema): array
     {
         return [sprintf('TRUNCATE TABLE `%s`', $schema->name())];
@@ -871,9 +906,10 @@ class MysqlSchemaDialect extends SchemaDialect
         $out = '';
         if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $out = 'UNIQUE KEY ';
-        }
-        if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             $out = 'CONSTRAINT ';
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_CHECK) {
+            return 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name) . ' CHECK (' . $data['expression'] . ')';
         }
         $out .= $this->_driver->quoteIdentifier($name);
 

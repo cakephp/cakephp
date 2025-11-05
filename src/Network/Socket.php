@@ -167,8 +167,8 @@ class Socket
         restore_error_handler();
 
         if ($this->connection === null && (!$errNum || !$errStr)) {
-            $this->setLastError($errNum, $errStr);
-            throw new SocketException($errStr, $errNum);
+            $this->setLastError($errNum ?? 0, $errStr ?? '');
+            throw new SocketException($errStr ?? '', $errNum ?? 0);
         }
 
         if ($this->connection === null && $this->_connectionErrors) {
@@ -201,8 +201,8 @@ class Socket
      * Create a stream socket client. Mock utility.
      *
      * @param string $remoteSocketTarget remote socket
-     * @param int $errNum error number
-     * @param string $errStr error string
+     * @param int|null $errNum error number
+     * @param string|null $errStr error string
      * @param int $timeout timeout
      * @param int<0, 7> $connectAs flags
      * @param resource $context context
@@ -210,8 +210,8 @@ class Socket
      */
     protected function _getStreamSocketClient(
         string $remoteSocketTarget,
-        int &$errNum,
-        string &$errStr,
+        ?int &$errNum,
+        ?string &$errStr,
         int $timeout,
         int $connectAs,
         $context,

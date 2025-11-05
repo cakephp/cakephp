@@ -161,7 +161,7 @@ class ConsoleOptionParser
                 'boolean' => true,
             ])->addOption('quiet', [
                 'short' => 'q',
-                'help' => 'Enable quiet output.',
+                'help' => 'Enable quiet output and non-interactive mode.',
                 'boolean' => true,
             ]);
         }

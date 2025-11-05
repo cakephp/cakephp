@@ -20,6 +20,7 @@ use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\Collection as SchemaCollection;
 use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\PostgresSchemaDialect;
@@ -97,7 +98,8 @@ CONSTRAINT "author_idx_immediate" FOREIGN KEY ("author_id")
     DEFERRABLE INITIALLY IMMEDIATE,
 CONSTRAINT "author_idx_not" FOREIGN KEY ("author_id")
     REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
-    NOT DEFERRABLE
+    NOT DEFERRABLE,
+CONSTRAINT "author_id_value_check" CHECK (author_id > 0)
 )
 SQL;
         $connection->execute($table);
@@ -784,6 +786,23 @@ SQL;
         $this->assertConstraint($constraint, 'reverse_constraint', $result);
     }
 
+    public function testDescribeTableCheckConstraints(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_articles');
+
+        $constraint = $result->getConstraint('author_id_value_check');
+        $this->assertSame('author_id > 0', $constraint['expression']);
+
+        $constraint = $result->constraint('author_id_value_check');
+        assert($constraint instanceof CheckConstraint);
+        $this->assertSame('author_id_value_check', $constraint->getName());
+        $this->assertSame('author_id > 0', $constraint->getExpression());
+    }
+
     /**
      * Test describing a table with indexes
      */
@@ -796,7 +815,7 @@ SQL;
         $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
 
-        $this->assertCount(6, $result->constraints());
+        $this->assertCount(7, $result->constraints());
         $expected = [
             'primary' => [
                 'type' => 'primary',
@@ -838,6 +857,10 @@ SQL;
                     'unique_id',
                 ],
                 'length' => [],
+            ],
+            'author_id_value_check' => [
+                'type' => 'check',
+                'expression' => 'author_id > 0',
             ],
         ];
         foreach ($expected as $name => $expectedItem) {
@@ -1418,6 +1441,11 @@ SQL;
                 ],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
                 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
+            ],
+            [
+                'author_id_check',
+                ['type' => 'check', 'expression' => 'author_id > 0'],
+                'CONSTRAINT "author_id_check" CHECK (author_id > 0)',
             ],
         ];
     }

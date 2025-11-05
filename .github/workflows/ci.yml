@@ -20,7 +20,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.2', '8.4']
+        php-version: ['8.2', '8.5']
         db-type: [sqlite, pgsql]
         dependencies: ['highest']
         include:
@@ -45,9 +45,8 @@ jobs:
             dependencies: highest
 
           - php-version: '8.5'
-            db-type: 'sqlite'
+            db-type: 'mysql'
             dependencies: highest
-            composer-options: '--ignore-platform-req=php'
 
     services:
       redis:

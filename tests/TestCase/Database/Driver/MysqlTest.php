@@ -22,6 +22,7 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use PDO;
+use Pdo\Mysql as PdoMysql;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -62,9 +63,10 @@ class MysqlTest extends TestCase
             'log' => false,
         ];
 
+        $usebufferedQueryId = PHP_VERSION_ID < 80400 ? PDO::MYSQL_ATTR_USE_BUFFERED_QUERY : PdoMysql::ATTR_USE_BUFFERED_QUERY;
         $expected['flags'] += [
             PDO::ATTR_PERSISTENT => true,
-            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+            $usebufferedQueryId => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
@@ -79,6 +81,8 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigCustom(): void
     {
+        $initCommandId = PHP_VERSION_ID < 80400 ? PDO::MYSQL_ATTR_INIT_COMMAND : PdoMysql::ATTR_INIT_COMMAND;
+        $usebufferedQueryId = PHP_VERSION_ID < 80400 ? PDO::MYSQL_ATTR_USE_BUFFERED_QUERY : PdoMysql::ATTR_USE_BUFFERED_QUERY;
         $config = [
             'persistent' => false,
             'host' => 'foo',
@@ -86,7 +90,7 @@ class MysqlTest extends TestCase
             'username' => 'user',
             'password' => 'pass',
             'port' => 3440,
-            'flags' => [PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8'],
+            'flags' => [$initCommandId => 'SET NAMES utf8'],
             'encoding' => null,
             'timezone' => 'Antarctica',
             'init' => [
@@ -103,9 +107,9 @@ class MysqlTest extends TestCase
         $expected = $config;
         $expected['init'][] = "SET time_zone = 'Antarctica'";
         $expected['flags'] += [
-            PDO::MYSQL_ATTR_INIT_COMMAND => 'SET NAMES utf8',
+            $initCommandId => 'SET NAMES utf8',
             PDO::ATTR_PERSISTENT => false,
-            PDO::MYSQL_ATTR_USE_BUFFERED_QUERY => true,
+            $usebufferedQueryId => true,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 

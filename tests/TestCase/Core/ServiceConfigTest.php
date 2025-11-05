@@ -42,7 +42,7 @@ class ServiceConfigTest extends TestCase
     {
         Configure::write('first', 'first-val');
         Configure::write('nested.path', 'nested-val');
-        Configure::write('nullval', null);
+        Configure::write('nullval');
         $config = new ServiceConfig();
 
         $this->assertFalse($config->has('nope'));

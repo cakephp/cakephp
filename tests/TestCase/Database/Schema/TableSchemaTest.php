@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
@@ -347,7 +348,6 @@ class TableSchemaTest extends TestCase
 
     /**
      * Test adding an constraint.
-     * >
      */
     public function testAddConstraint(): void
     {
@@ -370,7 +370,6 @@ class TableSchemaTest extends TestCase
 
     /**
      * Test adding an constraint with an overlapping unique index
-     * >
      */
     public function testAddConstraintOverwriteUniqueIndex(): void
     {
@@ -398,6 +397,31 @@ class TableSchemaTest extends TestCase
             'columns' => ['project_id', 'user_id'],
         ]);
         $this->assertEquals(['users_idx'], $table->constraints());
+    }
+
+    /**
+     * Test adding a check constraint.
+     */
+    public function testAddConstraintCheck(): void
+    {
+        $table = new TableSchema('articles');
+        $table->addColumn('age', [
+            'type' => 'integer',
+        ]);
+        $result = $table->addConstraint('age_check', [
+            'type' => 'check',
+            'expression' => 'age > 19',
+        ]);
+        $this->assertSame($result, $table);
+        $this->assertEquals(['age_check'], $table->constraints());
+
+        $check = $table->getConstraint('age_check');
+        $this->assertEquals('age > 19', $check['expression']);
+
+        $check = $table->constraint('age_check');
+        assert($check instanceof CheckConstraint);
+        $this->assertEquals('age_check', $check->getName());
+        $this->assertEquals('age > 19', $check->getExpression());
     }
 
     /**

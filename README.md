@@ -45,14 +45,12 @@ For details on the (minimum/maximum) PHP version see [version map](https://githu
 
 ## Running Tests
 
-Assuming you have PHPUnit installed system wide using one of the methods stated
-[here](https://phpunit.de/manual/current/en/installation.html), you can run the
-tests for CakePHP by doing the following:
+Assuming you have PHPUnit installed (`composer install`), you can run the tests for CakePHP by doing the following:
 
 1. Copy `phpunit.xml.dist` to `phpunit.xml`.
 2. Add the relevant database credentials to your `phpunit.xml` if you want to run tests against
    a non-SQLite datasource.
-3. Run `phpunit`.
+3. Run `vendor/bin/phpunit`.
 
 ## Learn More
 

@@ -116,6 +116,23 @@ class CommandCollection implements IteratorAggregate, Countable
     }
 
     /**
+     * Replace a command from the collection with another command if it exists.
+     *
+     * @param string $oldName Name of command to remove.
+     * @param string $newName The name of the command you want to map.
+     * @param \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface> $command The command to map.
+     * Can be a FQCN or CommandInterface instance.
+     * @return $this
+     */
+    public function replace(string $oldName, string $newName, CommandInterface|string $command)
+    {
+        $this->remove($oldName);
+        $this->add($newName, $command);
+
+        return $this;
+    }
+
+    /**
      * Check whether the named shell exists in the collection.
      *
      * @param string $name The named shell.

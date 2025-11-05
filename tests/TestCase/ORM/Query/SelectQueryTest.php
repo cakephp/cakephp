@@ -1612,6 +1612,29 @@ class SelectQueryTest extends TestCase
     }
 
     /**
+     * Test that rebinding parameters clears the count cache
+     */
+    public function testCountWithRebinding(): void
+    {
+        $table = $this->getTableLocator()->get('Articles');
+
+        $query = $table->find()
+            ->where('id >= :start')
+            ->where('id <= :end')
+            ->bind(':start', 1, 'integer')
+            ->bind(':end', 3, 'integer');
+
+        $firstCount = $query->count();
+        $this->assertSame(3, $firstCount);
+
+        $query->bind(':start', 2, 'integer')
+            ->bind(':end', 2, 'integer');
+
+        $secondCount = $query->count();
+        $this->assertSame(1, $secondCount, 'Count should reflect the new binding value');
+    }
+
+    /**
      * Test getting counts from queries with contain.
      */
     public function testCountWithContain(): void
@@ -2392,6 +2415,36 @@ class SelectQueryTest extends TestCase
 
         $secondResult = $query->count();
         $this->assertSame(2, $secondResult, 'The query cache should be dropped with any modification');
+
+        $thirdResult = $query->count();
+        $this->assertSame(2, $thirdResult, 'The query has not been modified, the cached value is valid');
+    }
+
+    /**
+     * Test that bind() marks the query as dirty and clears cached count
+     */
+    public function testCountCacheClearedOnBind(): void
+    {
+        $query = $this->getMockBuilder(SelectQuery::class)
+            ->disableOriginalConstructor()
+            ->onlyMethods(['_performCount'])
+            ->getMock();
+
+        $query->expects($this->exactly(2))
+            ->method('_performCount')
+            ->willReturn(1, 2);
+
+        $query->bind(':start', 'value1');
+        $query->bind(':end', 'value2');
+
+        $result = $query->count();
+        $this->assertSame(1, $result, 'The result of the first count should be returned');
+
+        $query->bind(':start', 'new_value1');
+        $query->bind(':end', 'new_value2');
+
+        $secondResult = $query->count();
+        $this->assertSame(2, $secondResult, 'The query cache should be dropped after bind()');
 
         $thirdResult = $query->count();
         $this->assertSame(2, $thirdResult, 'The query has not been modified, the cached value is valid');

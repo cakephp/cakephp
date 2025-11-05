@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Routing\Middleware;
 
 use Cake\Http\ServerRequestFactory;
+use Cake\I18n\DateTime;
 use Cake\Routing\Middleware\AssetMiddleware;
 use Cake\TestSuite\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -53,7 +54,7 @@ class AssetMiddlewareTest extends TestCase
         $modified = filemtime(TEST_APP . 'Plugin/TestPlugin/webroot/root.js');
         $request = ServerRequestFactory::fromGlobals([
             'REQUEST_URI' => '/test_plugin/root.js',
-            'HTTP_IF_MODIFIED_SINCE' => date(CAKE_DATE_RFC7231, $modified),
+            'HTTP_IF_MODIFIED_SINCE' => DateTime::parse($modified)->toRfc7231String(),
         ]);
         $handler = new TestRequestHandler();
         $middleware = new AssetMiddleware();
@@ -147,7 +148,7 @@ class AssetMiddlewareTest extends TestCase
             $res->getHeaderLine('Content-Type'),
         );
         $this->assertSame(
-            gmdate(CAKE_DATE_RFC7231, $time),
+            DateTime::parse($time)->toRfc7231String(),
             $res->getHeaderLine('Date'),
         );
         $this->assertSame(
@@ -155,11 +156,11 @@ class AssetMiddlewareTest extends TestCase
             $res->getHeaderLine('Cache-Control'),
         );
         $this->assertSame(
-            gmdate(CAKE_DATE_RFC7231, $modified),
+            DateTime::parse($modified)->toRfc7231String(),
             $res->getHeaderLine('Last-Modified'),
         );
         $this->assertSame(
-            gmdate(CAKE_DATE_RFC7231, $expires),
+            DateTime::parse($expires)->toRfc7231String(),
             $res->getHeaderLine('Expires'),
         );
     }
