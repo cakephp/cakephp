@@ -218,6 +218,10 @@ class MysqlSchemaDialectTest extends TestCase
                 ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => false],
             ],
             [
+                'DECIMAL(5,2)',
+                ['type' => 'decimal', 'length' => 5, 'precision' => 2, 'unsigned' => false],
+            ],
+            [
                 'FLOAT(11,2)',
                 ['type' => 'float', 'length' => 11, 'precision' => 2, 'unsigned' => false],
             ],
@@ -536,7 +540,11 @@ SQL;
             $expected['config']['comment'] = '';
             $expected['config']['collate'] = 'utf8mb4_bin';
         }
-        if ($driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=')) {
+        // MariaDB 10.5+ and MySQL 8.0.30+ use utf8mb3 alias instead of utf8
+        if (
+            ($driver->isMariaDb() && version_compare($driver->version(), '10.5.0', '>=')) ||
+            (!$driver->isMariaDb() && version_compare($driver->version(), '8.0.30', '>='))
+        ) {
             $expected['title']['collate'] = 'utf8mb3_general_ci';
             $expected['body']['collate'] = 'utf8mb3_general_ci';
         }
@@ -958,6 +966,50 @@ SQL;
 
         $column = $table->getColumn('other_field');
         $this->assertTrue($column['autoIncrement']);
+    }
+
+    /**
+     * Test that DECIMAL columns are correctly reflected with their precision and scale values.
+     * Regression test for issue where DECIMAL(5,2) was being read back as DECIMAL(10,2).
+     */
+    public function testDescribeDecimalPrecisionReflection(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_needsConnection();
+
+        $connection->execute('DROP TABLE IF EXISTS test_decimal_precision');
+
+        $table = <<<SQL
+            CREATE TABLE test_decimal_precision (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                amount_small DECIMAL(5,2) NOT NULL,
+                amount_medium DECIMAL(10,4) NOT NULL,
+                amount_large DECIMAL(15,6) NOT NULL
+            ) ENGINE=InnoDB
+SQL;
+        $connection->execute($table);
+
+        try {
+            $dialect = $connection->getDriver()->schemaDialect();
+            $result = $dialect->describe('test_decimal_precision');
+
+            $amountSmall = $result->getColumn('amount_small');
+            $this->assertEquals('decimal', $amountSmall['type'], 'Type should be decimal');
+            $this->assertEquals(5, $amountSmall['length'], 'Length should be 5 for DECIMAL(5,2)');
+            $this->assertEquals(2, $amountSmall['precision'], 'Precision should be 2 for DECIMAL(5,2)');
+
+            $amountMedium = $result->getColumn('amount_medium');
+            $this->assertEquals('decimal', $amountMedium['type'], 'Type should be decimal');
+            $this->assertEquals(10, $amountMedium['length'], 'Length should be 10 for DECIMAL(10,4)');
+            $this->assertEquals(4, $amountMedium['precision'], 'Precision should be 4 for DECIMAL(10,4)');
+
+            $amountLarge = $result->getColumn('amount_large');
+            $this->assertEquals('decimal', $amountLarge['type'], 'Type should be decimal');
+            $this->assertEquals(15, $amountLarge['length'], 'Length should be 15 for DECIMAL(15,6)');
+            $this->assertEquals(6, $amountLarge['precision'], 'Precision should be 6 for DECIMAL(15,6)');
+        } finally {
+            $connection->execute('DROP TABLE IF EXISTS test_decimal_precision');
+        }
     }
 
     /**
