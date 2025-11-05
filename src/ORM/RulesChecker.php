@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
+use Cake\Core\Configure;
 use Cake\Datasource\RuleInvoker;
 use Cake\Datasource\RulesChecker as BaseRulesChecker;
 use Cake\ORM\Rule\ExistsIn;
@@ -90,6 +91,9 @@ class RulesChecker extends BaseRulesChecker
      * 'message' sets a custom error message.
      * Set 'allowNullableNulls' to true to accept composite foreign keys where one or more nullable columns are null.
      *
+     * The default value for 'allowNullableNulls' can be controlled via the configuration option
+     * `ORM.allowNullableNulls`. When not explicitly set, defaults to `false` for backwards compatibility.
+     *
      * @param array<string>|string $field The field or list of fields to check for existence by
      * primary key lookup in the other table.
      * @param \Cake\ORM\Table|\Cake\ORM\Association|string $table The table name where the fields existence will be checked.
@@ -107,6 +111,10 @@ class RulesChecker extends BaseRulesChecker
             $options = $message + ['message' => null];
             $message = $options['message'];
             unset($options['message']);
+        }
+
+        if (!isset($options['allowNullableNulls'])) {
+            $options['allowNullableNulls'] = Configure::read('ORM.allowNullableNulls', false);
         }
 
         if (!$message) {

@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM;
 
 use ArrayObject;
+use Cake\Core\Configure;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\ConnectionManager;
@@ -879,7 +880,7 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
-     * Tests that allowNullableNulls is true by default
+     * Tests that allowNullableNulls is false by default (for BC)
      */
     public function testExistsInAllowNullableNullsDefaultValue(): void
     {
@@ -894,7 +895,8 @@ class RulesCheckerIntegrationTest extends TestCase
         $rules = $table->rulesChecker();
 
         $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));
-        $this->assertInstanceOf(Entity::class, $table->save($entity));
+        // Default is false, so this should fail
+        $this->assertFalse($table->save($entity));
     }
 
     /**
@@ -1081,6 +1083,55 @@ class RulesCheckerIntegrationTest extends TestCase
 
         $this->assertInstanceOf(Entity::class, $result[1]);
         $this->assertEmpty($result[1]->getErrors());
+    }
+
+    /**
+     * Tests Configure-based default for allowNullableNulls set to true
+     */
+    public function testExistsInWithConfigureDefault(): void
+    {
+        Configure::write('ORM.allowNullableNulls', true);
+
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => null,
+            'site_id' => 1,
+            'name' => 'New Site Article without Author',
+        ]);
+        $table = $this->getTableLocator()->get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors'));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
+
+        Configure::delete('ORM.allowNullableNulls');
+    }
+
+    /**
+     * Tests Configure-based default can be overridden explicitly
+     */
+    public function testExistsInWithConfigureDefaultOverride(): void
+    {
+        Configure::write('ORM.allowNullableNulls', true);
+
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => null,
+            'site_id' => 1,
+            'name' => 'New Site Article without Author',
+        ]);
+        $table = $this->getTableLocator()->get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        // Explicitly override the Configure default
+        $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', [
+            'allowNullableNulls' => false,
+        ]));
+        $this->assertFalse($table->save($entity));
+
+        Configure::delete('ORM.allowNullableNulls');
     }
 
     /**
