@@ -16,74 +16,29 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Fixture;
 
-use Cake\Database\Connection;
-use Cake\Database\Exception\DatabaseException;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Fixture strategy that wraps fixtures in a transaction that is rolled back
  * after each test.
  *
  * Any test that calls Connection::rollback(true) will break this strategy.
+ *
+ * @deprecated 5.2.10 Use {@link \Cake\TestSuite\Fixture\TransactionStrategy} instead.
+ *   Will be removed in 5.3.0.
  */
-class TransactionFixtureStrategy implements FixtureStrategyInterface
+class TransactionFixtureStrategy extends TransactionStrategy
 {
-    /**
-     * @var \Cake\TestSuite\Fixture\FixtureHelper
-     */
-    protected FixtureHelper $helper;
-
-    /**
-     * @var array<\Cake\Datasource\FixtureInterface>
-     */
-    protected array $fixtures = [];
-
     /**
      * Initialize strategy.
      */
     public function __construct()
     {
-        $this->helper = new FixtureHelper();
-    }
+        deprecationWarning(
+            '5.2.10',
+            'TransactionFixtureStrategy is deprecated. Use TransactionStrategy instead.',
+        );
 
-    /**
-     * @inheritDoc
-     */
-    public function setupTest(array $fixtureNames): void
-    {
-        $this->fixtures = $this->helper->loadFixtures($fixtureNames);
-
-        $this->helper->runPerConnection(function ($connection): void {
-            if ($connection instanceof Connection) {
-                assert(
-                    $connection->inTransaction() === false,
-                    'Cannot start transaction strategy inside a transaction. This is most likely a bug.',
-                );
-                $connection->enableSavePoints();
-                if (!$connection->isSavePointsEnabled()) {
-                    throw new DatabaseException(
-                        "Could not enable save points for the `{$connection->configName()}` connection. " .
-                            'Your database needs to support savepoints in order to use ' .
-                            'TransactionFixtureStrategy.',
-                    );
-                }
-
-                $connection->begin();
-                $connection->createSavePoint('__fixtures__');
-            }
-        }, $this->fixtures);
-
-        $this->helper->insert($this->fixtures);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function teardownTest(): void
-    {
-        $this->helper->runPerConnection(function (Connection $connection): void {
-            if ($connection->inTransaction()) {
-                $connection->rollback(true);
-            }
-        }, $this->fixtures);
+        parent::__construct();
     }
 }

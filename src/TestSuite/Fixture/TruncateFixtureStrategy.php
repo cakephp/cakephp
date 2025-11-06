@@ -16,43 +16,26 @@ declare(strict_types=1);
  */
 namespace Cake\TestSuite\Fixture;
 
+use function Cake\Core\deprecationWarning;
+
 /**
- * Fixture strategy that truncates all fixture ables at the end of test.
+ * Fixture strategy that truncates all fixture tables at the end of test.
+ *
+ * @deprecated 5.2.10 Use {@link \Cake\TestSuite\Fixture\TruncateStrategy} instead.
+ *   Will be removed in 5.3.0.
  */
-class TruncateFixtureStrategy implements FixtureStrategyInterface
+class TruncateFixtureStrategy extends TruncateStrategy
 {
-    /**
-     * @var \Cake\TestSuite\Fixture\FixtureHelper
-     */
-    protected FixtureHelper $helper;
-
-    /**
-     * @var array<\Cake\Datasource\FixtureInterface>
-     */
-    protected array $fixtures = [];
-
     /**
      * Initialize strategy.
      */
     public function __construct()
     {
-        $this->helper = new FixtureHelper();
-    }
+        deprecationWarning(
+            '5.2.10',
+            'TruncateFixtureStrategy is deprecated. Use TruncateStrategy instead.',
+        );
 
-    /**
-     * @inheritDoc
-     */
-    public function setupTest(array $fixtureNames): void
-    {
-        $this->fixtures = $this->helper->loadFixtures($fixtureNames);
-        $this->helper->insert($this->fixtures);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function teardownTest(): void
-    {
-        $this->helper->truncate($this->fixtures);
+        parent::__construct();
     }
 }

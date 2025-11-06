@@ -20,9 +20,22 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\Fixture\TransactionFixtureStrategy;
 use Cake\TestSuite\TestCase;
 
+/**
+ * @deprecated 5.2.10 Will be removed in 5.3.0
+ */
 class TransactionFixtureStrategyTest extends TestCase
 {
     protected array $fixtures = ['core.Articles'];
+
+    /**
+     * Tests that deprecation warning is triggered.
+     */
+    public function testDeprecationWarning(): void
+    {
+        $this->deprecated(function (): void {
+            new TransactionFixtureStrategy();
+        });
+    }
 
     /**
      * Tests truncation strategy.
@@ -38,7 +51,9 @@ class TransactionFixtureStrategyTest extends TestCase
         $this->assertEmpty($rows->fetchAll());
         $rows->closeCursor();
 
-        $strategy = new TransactionFixtureStrategy();
+        $this->deprecated(function () use (&$strategy): void {
+            $strategy = new TransactionFixtureStrategy();
+        });
         $strategy->setupTest(['core.Articles']);
         $rows = $connection->selectQuery()->select('*')->from('articles')->execute();
         $this->assertNotEmpty($rows->fetchAll());
