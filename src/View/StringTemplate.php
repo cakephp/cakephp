@@ -356,11 +356,11 @@ class StringTemplate
      */
     public function addClassNames(array|string $existing, array|string $new): array
     {
-        if (!is_array($existing)) {
-            $existing = $existing !== '' ? explode(' ', $existing) : [];
+        if (is_string($existing)) {
+            $existing = $existing === '' ? [] : explode(' ', $existing);
         }
-        if (!is_array($new)) {
-            $new = $new !== '' ? explode(' ', $new) : [];
+        if (is_string($new)) {
+            $new = $new === '' ? [] : explode(' ', $new);
         }
         $remove = [];
         $add = [];
