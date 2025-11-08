@@ -6,5 +6,5 @@
 
 # Remove files for archives generated using `git archive`
 .gitattributes export-ignore
-phpstan.neon.dist export-ignore
+phpstan.dist.neon export-ignore
 tests/ export-ignore

@@ -38,12 +38,12 @@ tests/TestCase export-ignore
 .stickler.yml export-ignore
 Makefile export-ignore
 phpcs.xml export-ignore
-phpstan.neon.dist export-ignore
+phpstan.dist.neon export-ignore
 phpstan-baseline.neon export-ignore
 phpunit.xml.dist export-ignore
 rector.php export-ignore
 
 # Split package files
 src/Validation/.gitattributes export-ignore
-src/Validation/phpstan.neon.dist export-ignore
+src/Validation/phpstan.dist.neon export-ignore
 src/Validation/tests/ export-ignore
