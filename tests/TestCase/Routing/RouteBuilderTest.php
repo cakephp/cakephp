@@ -1211,4 +1211,147 @@ class RouteBuilderTest extends TestCase
         $plugin = Plugin::getCollection()->get('TestPlugin');
         $this->assertFalse($plugin->isEnabled('routes'), 'Hook should be disabled preventing duplicate routes');
     }
+
+    /**
+     * Test setOptions() sets default options for routes.
+     */
+    public function testSetOptions(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->setOptions(['_host' => 'example.com']);
+
+        $routes->connect('/{controller}', ['action' => 'index']);
+        $route = $this->collection->routes()[0];
+
+        $this->assertEquals('example.com', $route->options['_host']);
+    }
+
+    /**
+     * Test setOptions() with multiple options.
+     */
+    public function testSetOptionsMultiple(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->setOptions([
+            '_host' => 'example.com',
+            '_https' => true,
+            '_port' => 8080,
+        ]);
+
+        $routes->connect('/{controller}/{action}');
+        $route = $this->collection->routes()[0];
+
+        $this->assertEquals('example.com', $route->options['_host']);
+        $this->assertTrue($route->options['_https']);
+        $this->assertEquals(8080, $route->options['_port']);
+    }
+
+    /**
+     * Test setOptions() with method routes.
+     */
+    public function testSetOptionsMethodRoutes(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->setOptions(['_host' => 'api.example.com']);
+
+        $routes->get('/posts', ['controller' => 'Posts', 'action' => 'index']);
+        $routes->post('/posts', ['controller' => 'Posts', 'action' => 'add']);
+
+        // Routes are stored in reverse order - most recent first
+        $postRoute = $this->collection->routes()[0];
+        $getRoute = $this->collection->routes()[1];
+
+        $this->assertEquals('api.example.com', $getRoute->options['_host']);
+        $this->assertEquals('api.example.com', $postRoute->options['_host']);
+    }
+
+    /**
+     * Test setOptions() can be overridden per route.
+     */
+    public function testSetOptionsOverride(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->setOptions(['_host' => 'example.com']);
+
+        $routes->connect('/admin', ['controller' => 'Admin', 'action' => 'index'], ['_host' => 'admin.example.com']);
+        $routes->connect('/user', ['controller' => 'Users', 'action' => 'index']);
+
+        // Routes are stored in reverse order - most recent first
+        $userRoute = $this->collection->routes()[0];
+        $adminRoute = $this->collection->routes()[1];
+
+        $this->assertEquals('admin.example.com', $adminRoute->options['_host']);
+        $this->assertEquals('example.com', $userRoute->options['_host']);
+    }
+
+    /**
+     * Test setOptions() inheritance in nested scopes.
+     */
+    public function testSetOptionsInheritance(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->setOptions(['_host' => 'example.com']);
+
+        $routes->scope('/api', function ($routes): void {
+            $routes->connect('/users', ['controller' => 'Users', 'action' => 'index']);
+        });
+
+        $route = $this->collection->routes()[0];
+        $this->assertEquals('example.com', $route->options['_host']);
+    }
+
+    /**
+     * Test setOptions() can be overridden in nested scopes.
+     */
+    public function testSetOptionsInheritanceOverride(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->setOptions(['_host' => 'example.com']);
+
+        $routes->scope('/api', function ($routes): void {
+            $routes->setOptions(['_host' => 'api.example.com']);
+            $routes->connect('/users', ['controller' => 'Users', 'action' => 'index']);
+        });
+
+        $routes->connect('/pages', ['controller' => 'Pages', 'action' => 'index']);
+
+        // Routes are stored in reverse order - most recent first
+        $pageRoute = $this->collection->routes()[0];
+        $apiRoute = $this->collection->routes()[1];
+
+        $this->assertEquals('api.example.com', $apiRoute->options['_host']);
+        $this->assertEquals('example.com', $pageRoute->options['_host']);
+    }
+
+    /**
+     * Test setOptions() with prefix scopes.
+     */
+    public function testSetOptionsWithPrefix(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->prefix('Admin', function ($routes): void {
+            $routes->setOptions(['_host' => 'admin.example.com']);
+            $routes->connect('/dashboard', ['controller' => 'Dashboard', 'action' => 'index']);
+        });
+
+        $route = $this->collection->routes()[0];
+        $this->assertEquals('admin.example.com', $route->options['_host']);
+        $this->assertEquals('Admin', $route->defaults['prefix']);
+    }
+
+    /**
+     * Test setOptions() with plugin scopes.
+     */
+    public function testSetOptionsWithPlugin(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $routes->plugin('MyPlugin', function ($routes): void {
+            $routes->setOptions(['_host' => 'plugin.example.com']);
+            $routes->connect('/dashboard', ['controller' => 'Dashboard', 'action' => 'index']);
+        });
+
+        $route = $this->collection->routes()[0];
+        $this->assertEquals('plugin.example.com', $route->options['_host']);
+        $this->assertEquals('MyPlugin', $route->defaults['plugin']);
+    }
 }

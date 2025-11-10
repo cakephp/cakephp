@@ -29,7 +29,6 @@ use Cake\Console\TestSuite\Constraint\ExitCode;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\TestSuite\ContainerStubTrait;
 use Cake\Error\Debugger;
-use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\After;
 
 /**
@@ -86,12 +85,8 @@ trait ConsoleIntegrationTestTrait
 
         $this->out ??= new StubConsoleOutput();
         $this->err ??= new StubConsoleOutput();
-        if ($this->in === null) {
+        if ($this->in === null || $input) {
             $this->in = new StubConsoleInput($input);
-        } elseif ($input) {
-            throw new InvalidArgumentException(
-                'You can use `$input` only if `$_in` property is null and will be reset.',
-            );
         }
         $this->out->clear();
         $this->err->clear();

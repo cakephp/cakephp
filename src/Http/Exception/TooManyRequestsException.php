@@ -11,31 +11,32 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.0.0
+ * @since         5.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Fixture;
+namespace Cake\Http\Exception;
 
-use function Cake\Core\deprecationWarning;
+use Throwable;
 
 /**
- * Fixture strategy that truncates all fixture tables at the end of test.
- *
- * @deprecated 5.2.10 Use {@link \Cake\TestSuite\Fixture\TruncateStrategy} instead.
- *   Will be removed in 5.3.0.
+ * Represents an HTTP 429 Too Many Requests error.
  */
-class TruncateFixtureStrategy extends TruncateStrategy
+class TooManyRequestsException extends HttpException
 {
     /**
-     * Initialize strategy.
+     * @inheritDoc
      */
-    public function __construct()
-    {
-        deprecationWarning(
-            '5.2.10',
-            'TruncateFixtureStrategy is deprecated. Use TruncateStrategy instead.',
-        );
+    protected int $_defaultCode = 429;
 
-        parent::__construct();
+    /**
+     * Constructor
+     *
+     * @param string $message The error message
+     * @param int|null $code The error code
+     * @param \Throwable|null $previous The previous exception
+     */
+    public function __construct(string $message = '', ?int $code = null, ?Throwable $previous = null)
+    {
+        parent::__construct($message ?: 'Too Many Requests', $code, $previous);
     }
 }

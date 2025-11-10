@@ -122,9 +122,22 @@ trait CollectionTrait
     }
 
     /**
-     * @inheritDoc
+     * Returns true if any the callback returns true for any element in the collection.
+     *
+     * The callback accepts the value and key of the element being tested.
+     *
+     * ### Example:
+     *
+     * ```
+     * $hasYoungPeople = (new Collection([24, 45, 15]))->any(function ($value, $key) {
+     *  return $value < 21;
+     * });
+     * ```
+     *
+     * @param callable $callback a callback function
+     * @return bool
      */
-    public function some(callable $callback): bool
+    public function any(callable $callback): bool
     {
         foreach ($this->optimizeUnwrap() as $key => $value) {
             if ($callback($value, $key) === true) {
@@ -133,6 +146,14 @@ trait CollectionTrait
         }
 
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function some(callable $callback): bool
+    {
+        return $this->any($callback);
     }
 
     /**

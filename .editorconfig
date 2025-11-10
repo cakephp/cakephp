@@ -27,3 +27,6 @@ indent_style = tab
 
 [*.neon]
 indent_style = tab
+
+[*.neon.dist]
+indent_style = tab

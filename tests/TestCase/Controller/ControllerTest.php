@@ -745,7 +745,7 @@ class ControllerTest extends TestCase
                 $e->getMessage(),
             );
             $this->assertEquals(
-                ['controller' => 'TestController', 'action' => 'missing'],
+                ['controller' => 'TestController', 'action' => 'missing', 'prefix' => null, 'plugin' => null],
                 $e->getAttributes(),
             );
         }

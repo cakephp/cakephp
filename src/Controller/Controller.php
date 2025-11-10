@@ -476,17 +476,13 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
         $request = $this->request;
         $action = $request->getParam('action');
         $controller = $this->name . 'Controller';
-        if ($request->getParam('prefix')) {
-            $controller = $request->getParam('prefix') . '/' . $controller;
-        }
-        if ($this->plugin) {
-            $controller = $this->plugin . '.' . $controller;
-        }
 
         if (!$this->isAction($action)) {
             throw new MissingActionException([
                 'controller' => $controller,
                 'action' => $action,
+                'prefix' => $request->getParam('prefix') ?? null,
+                'plugin' => $this->plugin ?? null,
             ]);
         }
 

@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 /**
- * Fixture strategy that truncates all fixture ables at the end of test.
+ * Fixture strategy that truncates all fixture tables at the end of test.
  */
 class TruncateStrategy implements FixtureStrategyInterface
 {

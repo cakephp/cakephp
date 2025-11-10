@@ -29,6 +29,7 @@ use Cake\View\View;
 use Cake\View\ViewBuilder;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\View\AppView;
+use TestApp\View\TestViewWithDefaultConfig;
 
 /**
  * View builder test case.
@@ -303,6 +304,7 @@ class ViewBuilderTest extends TestCase
             '_helpers' => ['Html' => []],
             '_className' => 'JsonView',
             '_autoLayout' => true,
+            '_configMergeStrategy' => 'deep',
         ];
         $this->assertEquals($expected, $result);
 
@@ -465,5 +467,76 @@ class ViewBuilderTest extends TestCase
         ];
 
         $this->assertSame($expected, $helpers);
+    }
+
+    /**
+     * Test that the default merge strategy is MERGE_DEEP for backward compatibility.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/18879
+     */
+    public function testBuildMergeOptionsDefault(): void
+    {
+        $builder = new ViewBuilder();
+
+        $this->assertSame(
+            ViewBuilder::MERGE_DEEP,
+            $builder->getConfigMergeStrategy(),
+            'Default merge strategy should be MERGE_DEEP for BC',
+        );
+    }
+
+    /**
+     * Test that options are deep merged by default (BC behavior).
+     * This tests deep merging for both associative and non-associative arrays.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/18879
+     */
+    public function testBuildWithDeepMergeOptions(): void
+    {
+        $builder = new ViewBuilder();
+        $builder->setClassName(TestViewWithDefaultConfig::class);
+        $builder->setOption('myOption', ['new' => 'value', 'non-assoc' => ['z']]);
+
+        $view = $builder->build();
+
+        // With deep merge (default for BC):
+        // - Associative arrays are recursively merged (value + new)
+        // - Non-associative arrays are appended (x, y + z)
+        $expected = [
+            'value' => ['sub' => 'val'], // From default
+            'non-assoc' => ['x', 'y', 'z'], // Default array + new value appended
+            'new' => 'value', // New key
+        ];
+        $this->assertSame(
+            $expected,
+            $view->getConfig('myOption'),
+            'Deep merge (default) recursively merges assoc arrays and appends non-assoc arrays',
+        );
+    }
+
+    /**
+     * Test that shallow merge can be explicitly enabled.
+     * This ensures that array options set via ViewBuilder replace
+     * default config arrays instead of deep merging them, for both
+     * associative and non-associative arrays.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/18879
+     */
+    public function testBuildWithShallowMergeOptions(): void
+    {
+        $builder = new ViewBuilder();
+        $builder->setClassName(TestViewWithDefaultConfig::class);
+        $builder->setOption('myOption', ['new' => 'value', 'list' => ['a', 'b']]);
+        $builder->setConfigMergeStrategy(ViewBuilder::MERGE_SHALLOW);
+
+        $view = $builder->build();
+
+        // With shallow merge, the entire myOption array is replaced
+        $expected = ['new' => 'value', 'list' => ['a', 'b']];
+        $this->assertSame(
+            $expected,
+            $view->getConfig('myOption'),
+            'Shallow merge replaces entire array, both assoc and non-assoc',
+        );
     }
 }
