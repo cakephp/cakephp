@@ -468,10 +468,15 @@ class NumericPaginator implements PaginatorInterface
             $sortDefault = key($defaults['order']);
             $directionDefault = current($defaults['order']);
         }
+        if (isset($data['options']['sortDirection'])) {
+            $direction = $data['options']['sortDirection'];
+        } else {
+            $direction = isset($data['options']['sort']) && count($order) ? current($order) : null;
+        }
 
         $this->pagingParams = [
             'sort' => $data['options']['sort'],
-            'direction' => isset($data['options']['sort']) && count($order) ? current($order) : null,
+            'direction' => $direction,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
             'completeSort' => $order,
@@ -605,6 +610,7 @@ class NumericPaginator implements PaginatorInterface
                     }
                 }
                 $options['order'] = $order;
+                $options['sortDirection'] = $sortParams['direction'];
             } else {
                 // No sortableFields configured - allow any field (default behavior)
                 $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];
