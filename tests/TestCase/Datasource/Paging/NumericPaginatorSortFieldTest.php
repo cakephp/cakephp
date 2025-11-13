@@ -338,13 +338,31 @@ class NumericPaginatorSortFieldTest extends TestCase
         $pagingParams = $result->pagingParams();
 
         $expected = [
-            'Articles.published' => 'asc', // Toggleable, uses requested 'asc'
+            'Articles.published' => 'desc', // Toggleable, uses requested 'asc'
             'Articles.author_id' => 'asc', // Locked, ignores requested direction
             'Articles.title' => 'asc', // Toggleable, uses requested 'asc'
         ];
 
         $this->assertEquals('custom', $pagingParams['sort']);
         $this->assertEquals('asc', $pagingParams['direction']);
+        $this->assertEquals($expected, $pagingParams['completeSort']);
+
+        //Reverse on desc
+        $params = [
+            'sort' => 'custom',
+            'direction' => 'desc',
+        ];
+        $result = $this->paginator->paginate($this->table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $expected = [
+            'Articles.published' => 'asc', // Reversed on desc
+            'Articles.author_id' => 'asc', // Locked, ignores requested direction
+            'Articles.title' => 'desc', // Toggleable, uses requested 'desc'
+        ];
+
+        $this->assertEquals('custom', $pagingParams['sort']);
+        $this->assertEquals('desc', $pagingParams['direction']);
         $this->assertEquals($expected, $pagingParams['completeSort']);
     }
 
@@ -424,14 +442,27 @@ class NumericPaginatorSortFieldTest extends TestCase
         $this->assertEquals('newest', $pagingParams['sort']);
         $this->assertEquals($expected, $pagingParams['completeSort']);
 
-        // Test popular sort with locked field
+        // Test popular sort with locked field and initial desc
         $params = ['sort' => 'popular', 'direction' => 'asc'];
         $result = $this->paginator->paginate($this->table, $params, $settings);
         $pagingParams = $result->pagingParams();
 
         $expected = [
             'Articles.published' => 'desc', // Locked
-            'Articles.author_id' => 'asc', // Toggleable
+            'Articles.author_id' => 'desc', // DESC is defined as defaultDirection(initial)
+        ];
+
+        $this->assertEquals('popular', $pagingParams['sort']);
+        $this->assertEquals($expected, $pagingParams['completeSort']);
+
+        // Test popular sort with locked field and reversed desc (desc direction)
+        $params = ['sort' => 'popular', 'direction' => 'desc'];
+        $result = $this->paginator->paginate($this->table, $params, $settings);
+        $pagingParams = $result->pagingParams();
+
+        $expected = [
+            'Articles.published' => 'desc',
+            'Articles.author_id' => 'asc',//Reverse on direction desc
         ];
 
         $this->assertEquals('popular', $pagingParams['sort']);
