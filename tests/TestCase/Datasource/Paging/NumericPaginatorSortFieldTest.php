@@ -639,6 +639,5 @@ class NumericPaginatorSortFieldTest extends TestCase
         $this->assertEquals('newest', $pagingParams['sort']);
         $this->assertEquals('desc', $pagingParams['direction']);
         $this->assertEquals($expected, $pagingParams['completeSort']);
-
     }
 }
