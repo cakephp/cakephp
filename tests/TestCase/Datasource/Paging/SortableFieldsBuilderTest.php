@@ -237,10 +237,14 @@ class SortableFieldsBuilderTest extends TestCase
         ];
         $this->assertSame($expected, $result);
 
-        // With direction specified - toggleable fields use it
+        // With direction specified (ASC) - toggleable fields use it
+        $result = $builder->resolve('popular', 'asc', true);
+        $this->assertSame($expected, $result);
+
+        // With direction specified (DESC) - toggleable fields use it
         $result = $builder->resolve('popular', 'desc', true);
         $expected = [
-            'score' => 'desc',
+            'score' => 'asc', //reversed defaultDirect(DESC)
             'title' => 'desc',
         ];
         $this->assertSame($expected, $result);
