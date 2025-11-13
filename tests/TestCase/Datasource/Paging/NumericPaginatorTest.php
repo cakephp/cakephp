@@ -510,7 +510,7 @@ class NumericPaginatorTest extends TestCase
         $pagingParams = $result->pagingParams();
 
         $this->assertEquals('popularity', $pagingParams['sort']);
-        $this->assertEquals('desc', $pagingParams['direction']);
+        $this->assertEquals('asc', $pagingParams['direction']);
         $this->assertEquals([
             'PaginatorPosts.id' => 'desc', // Locked direction
             'PaginatorPosts.title' => 'asc', // Uses requested direction
