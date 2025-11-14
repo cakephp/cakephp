@@ -518,7 +518,7 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Enables/disables the usage of savepoints, enables only if driver the allows it.
+     * Enables/disables the usage of savepoints, enables only if the driver allows it.
      *
      * If you are trying to enable this feature, make sure you check
      * `isSavePointsEnabled()` to verify that savepoints were enabled successfully.

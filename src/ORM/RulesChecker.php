@@ -196,7 +196,7 @@ class RulesChecker extends BaseRulesChecker
      * @param string|null $errorField The name of the property to use for setting possible errors. When absent,
      *   the name is inferred from `$association`.
      * @param string|null $message The error message to show in case the rule does not pass.
-     * @param string $linkStatus The ink status required for the check to pass.
+     * @param string $linkStatus The link status required for the check to pass.
      * @param string $ruleName The alias/name of the rule.
      * @return \Cake\Datasource\RuleInvoker
      * @throws \InvalidArgumentException In case the `$association` argument is of an invalid type.

@@ -159,7 +159,7 @@ class Response implements ResponseInterface, Stringable
 
     /**
      * Holds all the cache directives that will be converted
-     * into headers when sending the request
+     * into headers when sending the response
      *
      * @var array<string, mixed>
      */

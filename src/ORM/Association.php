@@ -547,7 +547,7 @@ abstract class Association
      * Sets the property name that should be filled with data from the target table
      * in the source table record.
      *
-     * @param string $name The name of the association property. Use null to read the current value.
+     * @param string $name The name of the association property.
      * @return $this
      */
     public function setProperty(string $name)
