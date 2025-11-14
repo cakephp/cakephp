@@ -110,7 +110,7 @@ use function Cake\Core\namespaceSplit;
  *   for the provided named validator.
  *
  * - `Model.buildRules` Allows listeners to modify the rules checker by adding more rules.
- *   Behaviors or custom listerners can subscribe to this even. For tables you don't
+ *   Behaviors or custom listeners can subscribe to this event. For tables you don't
  *   need to subscribe to this event, simply override the `Table::buildRules()` method.
  *
  * - `Model.beforeRules` Fired before an entity is validated using the rules checker.
@@ -1661,7 +1661,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find an existing record by, or a callable tha will
+     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find an existing record by, or a callable that will
      *   customize the find query.
      * @param callable|array|null $callback Data or a callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
@@ -2214,7 +2214,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * You can overwrite _newId() in your table class.
      *
      * @param array<string> $primary The primary key columns to get a new ID for.
-     * @return string|null Either null or the primary key value or a list of primary key values.
+     * @return string|null The primary key value when a single primary key is available, or null.
      */
     protected function _newId(array $primary): ?string
     {
