@@ -106,7 +106,7 @@ class FileLog extends BaseLog
             if (is_numeric($this->config['size'])) {
                 $this->_size = (int)$this->config['size'];
             } else {
-                $this->_size = Text::parseFileSize($this->config['size']);
+                $this->_size = (int)Text::parseFileSize($this->config['size']);
             }
         }
     }

@@ -1007,12 +1007,12 @@ class Text
      * Converts filesize from human readable string to bytes
      *
      * @param string $size Size in human readable string like '5MB', '5M', '500B', '50kb' etc.
-     * @param mixed $default Value to be returned when invalid size was used, for example 'Unknown type'
-     * @return mixed Number of bytes as integer on success, `$default` on failure if not false
+     * @param int|string|null $default Value to be returned when invalid size was used, for example 'Unknown type'
+     * @return int|string Number of bytes as integer on success, `$default` on failure if not null
      * @throws \InvalidArgumentException On invalid Unit type.
      * @link https://book.cakephp.org/5/en/core-libraries/text.html#Cake\Utility\Text::parseFileSize
      */
-    public static function parseFileSize(string $size, mixed $default = false): mixed
+    public static function parseFileSize(string $size, int|string|null $default = null): int|string
     {
         if (ctype_digit($size)) {
             return (int)$size;
@@ -1037,7 +1037,7 @@ class Text
             return (int)$size;
         }
 
-        if ($default !== false) {
+        if ($default !== null) {
             return $default;
         }
         throw new InvalidArgumentException('No unit type.');
