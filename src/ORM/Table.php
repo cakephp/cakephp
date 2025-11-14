@@ -1936,7 +1936,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @template TEntity of \Cake\Datasource\EntityInterface
      * @param TEntity $entity the entity to be saved
      * @param array<string, mixed> $options The options to use when saving.
-     * @return TEntity|false
+     * @return TEntity|false Returns the entity on success. Returns false when the entity has errors,
+     *   validation fails, rules checking fails, or the save operation fails. If the entity is not new
+     *   and has no dirty fields, the entity is returned without performing any database operation.
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
     public function save(

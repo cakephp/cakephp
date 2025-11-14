@@ -224,7 +224,7 @@ trait EntityTrait
      * @param array<string, mixed> $options Options to be used for setting the field. Allowed option
      * keys are `setter`, `guard` and `asOriginal`
      * @return $this
-     * @throws \InvalidArgumentException
+     * @throws \InvalidArgumentException when an empty field name is provided
      */
     public function set(array|string $field, mixed $value = null, array $options = [])
     {
@@ -380,6 +380,7 @@ trait EntityTrait
      * @param string $field the name of the field to retrieve
      * @return mixed
      * @throws \InvalidArgumentException if an empty field name is passed
+     * @throws \Cake\Datasource\Exception\MissingPropertyException when field does not exist and requireFieldPresence is enabled
      */
     public function &get(string $field): mixed
     {
@@ -441,7 +442,7 @@ trait EntityTrait
      * @param string $field the name of the field for which original value is retrieved.
      * @param bool $allowFallback whether to allow falling back to the current field value if no original exists
      * @return mixed
-     * @throws \InvalidArgumentException if an empty field name is passed.
+     * @throws \InvalidArgumentException if an empty field name is passed or if the field has no original value and $allowFallback is false
      */
     public function getOriginal(string $field, bool $allowFallback = true): mixed
     {

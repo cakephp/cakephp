@@ -1365,17 +1365,14 @@ abstract class Query implements ExpressionInterface, Stringable
     /**
      * Set the page of results you want.
      *
-     * This method provides an easier to use interface to set the limit + offset
-     * in the record set you want as results. If empty the limit will default to
-     * the existing limit clause, and if that too is empty, then `25` will be used.
-     *
-     * Pages must start at 1.
+     * This method is not implemented in the base Query class and will throw an exception.
+     * It is implemented in subclasses like SelectQuery.
      *
      * @param int $num The page number you want.
      * @param int|null $limit The number of rows you want in the page. If null
      *  the current limit clause will be used.
      * @return $this
-     * @throws \Cake\Core\Exception\CakeException If page number < 1.
+     * @throws \Cake\Core\Exception\CakeException Always thrown as this method is not implemented in the base class
      */
     public function page(int $num, ?int $limit = null)
     {
