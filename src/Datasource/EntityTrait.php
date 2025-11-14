@@ -558,6 +558,7 @@ trait EntityTrait
      * - Any object
      * - Integer, even `0`
      * - Float, even 0.0
+     * - Boolean, both `true` and `false`
      *
      * and false in all other cases.
      *
