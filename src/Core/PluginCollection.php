@@ -258,7 +258,7 @@ class PluginCollection implements Iterator, Countable
     public function create(string $name, array $config = []): PluginInterface
     {
         if ($name === '') {
-            throw new InvalidArgumentException('Cannot create a plugin with empty name');
+            throw new InvalidArgumentException('Plugin name cannot be empty.');
         }
 
         if (str_contains($name, '\\')) {
