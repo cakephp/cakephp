@@ -18,6 +18,7 @@ namespace Cake\View\Helper;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Datasource\Paging\PaginatedInterface;
+use Cake\Datasource\Paging\SortField;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
@@ -401,6 +402,27 @@ class PaginatorHelper extends Helper
             }
 
             $title = __(Inflector::humanize((string)preg_replace('/_id$/', '', $title)));
+        }
+
+        if (!isset($options['direction']) || !isset($options['lock'])) {
+            $sortableFields = $this->param('sortableFields');
+            if ($sortableFields && isset($sortableFields[$key])) {
+                $fieldConfig = $sortableFields[$key];
+
+                // Handle array of SortField objects
+                if (is_array($fieldConfig) && isset($fieldConfig[0]) && $fieldConfig[0] instanceof SortField) {
+                    /** @var \Cake\Datasource\Paging\SortField $sortField */
+                    $sortField = $fieldConfig[0];
+
+                    if (!isset($options['direction'])) {
+                        // Get the default direction (asc if not set, or the locked direction)
+                        $options['direction'] = $sortField->getDirection(SortField::ASC, false);
+                    }
+                    if (!isset($options['lock'])) {
+                        $options['lock'] = $sortField->isLocked();
+                    }
+                }
+            }
         }
 
         $defaultDir = isset($options['direction']) ? strtolower($options['direction']) : 'asc';

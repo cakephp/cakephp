@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\View\Helper;
 
 use Cake\Core\Configure;
 use Cake\Datasource\Paging\PaginatedResultSet;
+use Cake\Datasource\Paging\SortField;
 use Cake\Http\ServerRequest;
 use Cake\I18n\I18n;
 use Cake\ORM\ResultSet;
@@ -479,6 +480,121 @@ class PaginatorHelperTest extends TestCase
         $expected = [
             'a' => ['href' => '/Accounts/index/param?sort=title&amp;direction=desc'],
             'descending',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test that sort() auto-applies direction from sortableFields
+     */
+    public function testSortLinksWithSortableFieldsDirection(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Accounts',
+                'action' => 'index',
+                'pass' => [],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+
+        // Simulate sortableFields in paging params with desc default direction
+        $params = [
+            'sortableFields' => [
+                'title' => [
+                    new SortField('title', 'desc', false),
+                ],
+            ],
+        ];
+        $this->setPaginatedResult($params);
+
+        // Should use desc as default direction from sortableFields
+        $result = $this->Paginator->sort('title');
+        $expected = [
+            'a' => ['href' => '/Accounts/index?sort=title&amp;direction=desc'],
+            'Title',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test that sort() auto-applies lock from sortableFields
+     */
+    public function testSortLinksWithSortableFieldsLock(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Accounts',
+                'action' => 'index',
+                'pass' => [],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+
+        // Simulate sortableFields in paging params with locked field
+        $params = [
+            'sort' => 'newest',
+            'sortableFields' => [
+                'newest' => [
+                    new SortField('id', 'desc', true),
+                ],
+            ],
+        ];
+        $this->setPaginatedResult($params);
+
+        // Should apply locked class automatically
+        $result = $this->Paginator->sort('newest');
+        $expected = [
+            'a' => ['href' => '/Accounts/index?sort=newest&amp;direction=desc', 'class' => 'desc locked'],
+            'Newest',
+            '/a',
+        ];
+        $this->assertHtml($expected, $result);
+    }
+
+    /**
+     * Test that explicit direction/lock options override sortableFields
+     */
+    public function testSortLinksExplicitOptionsOverrideSortableFields(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Accounts',
+                'action' => 'index',
+                'pass' => [],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+
+        // Simulate sortableFields with desc default
+        $params = [
+            'sortableFields' => [
+                'title' => [
+                    new SortField('title', 'desc', true),
+                ],
+            ],
+        ];
+        $this->setPaginatedResult($params);
+
+        // Explicit direction should override sortableFields
+        $result = $this->Paginator->sort('title', options: ['direction' => 'asc', 'lock' => false]);
+        $expected = [
+            'a' => ['href' => '/Accounts/index?sort=title&amp;direction=asc'],
+            'Title',
             '/a',
         ];
         $this->assertHtml($expected, $result);

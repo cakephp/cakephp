@@ -390,6 +390,14 @@ class NumericPaginator implements PaginatorInterface
             ? $data['options']['limit']
             : null;
 
+        // Add sortableFields configuration for view helpers
+        if (isset($data['options']['sortableFields'])) {
+            $sortableFields = $data['options']['sortableFields'];
+            if ($sortableFields instanceof SortableFieldsBuilder) {
+                $this->pagingParams['sortableFields'] = $sortableFields->toArray();
+            }
+        }
+
         return $this->pagingParams;
     }
 
@@ -574,6 +582,11 @@ class NumericPaginator implements PaginatorInterface
         $builder = $sortableFields instanceof SortableFieldsBuilder
             ? $sortableFields
             : SortableFieldsBuilder::create($sortableFields);
+
+        // Store the converted builder for later use in paging params
+        if ($builder !== null) {
+            $options['sortableFields'] = $builder;
+        }
 
         $sortAllowed = $builder !== null;
 
