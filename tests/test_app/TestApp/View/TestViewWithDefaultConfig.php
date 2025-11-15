@@ -13,7 +13,7 @@ class TestViewWithDefaultConfig extends View
     /**
      * @var array<string, mixed>
      */
-    protected array $_defaultConfig = [
+    protected array $defaultConfig = [
         'myOption' => ['value' => ['sub' => 'val'], 'non-assoc' => ['x', 'y']],
     ];
 }
