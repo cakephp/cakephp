@@ -4083,4 +4083,55 @@ class SelectQueryTest extends TestCase
             preg_replace('/[`"\[\]]/', '', $function->sql($binder)),
         );
     }
+
+    public function testContainNestedAssociationsAliasingSameTable(): void
+    {
+        $comments = $this->getTableLocator()->get('Comments');
+
+        $comments
+            ->belongsTo('Article1', [
+                'className' => 'Articles',
+                'foreignKey' => 'article_id',
+            ])
+            ->getTarget()
+            ->belongsTo('Authors', [
+                'className' => 'Authors',
+                'foreignKey' => 'author_id',
+            ]);
+
+        $comments
+            ->belongsTo('Article2', [
+                'className' => 'Articles',
+                'foreignKey' => 'article_id',
+            ])
+            ->getTarget()
+            ->belongsTo('Authors', [
+                'className' => 'Authors',
+                'foreignKey' => 'author_id',
+            ]);
+
+        $comments
+            ->belongsTo('Article3', [
+                'className' => 'Articles',
+                'foreignKey' => 'article_id',
+            ])
+            ->getTarget()
+            ->belongsTo('Authors', [
+                'className' => 'Authors',
+                'foreignKey' => 'author_id',
+            ]);
+
+        $result = $comments->find()
+            ->contain(['Article1.Authors', 'Article2.Authors'])
+            ->contain('Article3', function (SelectQuery $q) {
+                return $q->contain('Authors');
+            })
+            ->where(['Comments.id' => 1])
+            ->disableHydration()
+            ->toArray();
+
+        $this->assertEquals(1, $result[0]['article1']['author']['id']);
+        $this->assertEquals(1, $result[0]['article2']['author']['id']);
+        $this->assertEquals(1, $result[0]['article3']['author']['id']);
+    }
 }
