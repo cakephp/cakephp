@@ -218,9 +218,12 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
     /**
      * Validates and returns an array of failed fields and their error messages.
      *
-     * @param array $data The data to be checked for errors
-     * @param bool $newRecord whether the data to be validated is new or to be updated.
-     * @return array<array> Array of failed fields
+     * @param array<string, mixed> $data The data to be checked for errors.
+     *   Keys are field names, values are the field values to validate.
+     * @param bool $newRecord Whether the data to be validated is new or to be updated.
+     * @return array<string, array<string, string>> Array of validation errors.
+     *   Outer keys are field names, inner keys are validation rule names,
+     *   values are error messages. Special rule names: '_required', '_empty'.
      */
     public function validate(array $data, bool $newRecord = true): array
     {

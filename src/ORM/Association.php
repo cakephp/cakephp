@@ -593,13 +593,17 @@ abstract class Association
     }
 
     /**
-     * Sets the strategy name to be used to fetch associated records. Keep in mind
-     * that some association types might not implement but a default strategy,
-     * rendering any changes to this setting void.
+     * Sets the strategy name to be used to fetch associated records.
      *
-     * @param string $name The strategy type. Use null to read the current value.
+     * Valid strategies depend on the association type and are stored in $_validStrategies.
+     * Some association types might only implement a default strategy, making this setting
+     * ineffective.
+     *
+     * @param string $name The strategy type (e.g., 'select', 'subquery', 'join').
+     *   Available strategies vary by association type.
      * @return $this
      * @throws \InvalidArgumentException When an invalid strategy is provided.
+     * @see getStrategy() to retrieve the current strategy.
      */
     public function setStrategy(string $name)
     {

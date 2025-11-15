@@ -64,7 +64,8 @@ class Marshaller
      * @param array $data The data being marshaled.
      * @param array<string, mixed> $options List of options containing the 'associated' key.
      * @throws \InvalidArgumentException When associations do not exist.
-     * @return array
+     * @return array<string, callable> Map of property names to marshaling callables.
+     *   Each callable accepts the value and entity, and returns the marshaled result.
      */
     protected function _buildPropertyMap(array $data, array $options): array
     {
