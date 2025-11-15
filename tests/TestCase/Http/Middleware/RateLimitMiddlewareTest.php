@@ -174,8 +174,8 @@ class RateLimitMiddlewareTest extends TestCase
             },
         ]);
 
-        $request1 = (new ServerRequest())->withHeader('X-API-Key', 'key1');
-        $request2 = (new ServerRequest())->withHeader('X-API-Key', 'key2');
+        $request1 = new ServerRequest()->withHeader('X-API-Key', 'key1');
+        $request2 = new ServerRequest()->withHeader('X-API-Key', 'key2');
 
         // Different API keys should have separate limits
         $middleware->process($request1, $this->handler);
@@ -259,9 +259,9 @@ class RateLimitMiddlewareTest extends TestCase
         $identity = new stdClass();
         $identity->id = '123';
 
-        $request = (new ServerRequest([
+        $request = new ServerRequest([
             'environment' => ['REMOTE_ADDR' => '127.0.0.1'],
-        ]))->withAttribute('identity', $identity);
+        ])->withAttribute('identity', $identity);
 
         $response = $middleware->process($request, $this->handler);
         $this->assertEquals('0', $response->getHeaderLine('X-RateLimit-Remaining'));
@@ -285,9 +285,9 @@ class RateLimitMiddlewareTest extends TestCase
             'cache' => 'rate_limit_test',
         ]);
 
-        $request = (new ServerRequest([
+        $request = new ServerRequest([
             'environment' => ['REMOTE_ADDR' => '127.0.0.1'],
-        ]))->withAttribute('params', [
+        ])->withAttribute('params', [
             'controller' => 'Users',
             'action' => 'login',
         ]);
@@ -296,9 +296,9 @@ class RateLimitMiddlewareTest extends TestCase
         $this->assertEquals('0', $response->getHeaderLine('X-RateLimit-Remaining'));
 
         // Different route should work
-        $request2 = (new ServerRequest([
+        $request2 = new ServerRequest([
             'environment' => ['REMOTE_ADDR' => '127.0.0.1'],
-        ]))->withAttribute('params', [
+        ])->withAttribute('params', [
             'controller' => 'Users',
             'action' => 'logout',
         ]);

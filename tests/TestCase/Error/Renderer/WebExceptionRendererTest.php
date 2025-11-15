@@ -189,7 +189,7 @@ class WebExceptionRendererTest extends TestCase
         Configure::write('debug', false);
 
         // Create a request with a prefix that doesn't have error templates
-        $request = (new ServerRequest())
+        $request = new ServerRequest()
             ->withParam('controller', 'Foo')
             ->withParam('action', 'bar')
             ->withParam('prefix', 'CustomPrefix'); // This prefix doesn't have error templates

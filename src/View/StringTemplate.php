@@ -21,7 +21,6 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\InstanceConfigTrait;
 use Cake\Utility\Hash;
 use InvalidArgumentException;
-use function Cake\Core\deprecationWarning;
 use function Cake\Core\h;
 
 /**
@@ -389,54 +388,18 @@ class StringTemplate
      * Merges the provided classes with any existing classes in the specified key
      * and returns the updated attribute array with unique class values.
      *
-     * Deprecated: Passing a non-array as first argument is deprecated.
-     *   Pass an attributes array instead.
-     * Deprecated: Returning a non-array value is deprecated.
-     *   The method will only return arrays in the future.
-     *
-     * @param array<string, mixed>|string|null $input The attribute array to add classes to.
+     * @param array<string, mixed> $input The attribute array to add classes to.
      * @param array<string>|string|false|null $newClass The class(es) to add.
      * @param string $useIndex The array key to use. Defaults to 'class'.
-     * @return array<string, string>|string|null The updated attribute array.
+     * @return array<string, string> The updated attribute array.
      */
     public function addClass(
-        mixed $input,
+        array $input,
         array|string|false|null $newClass,
         string $useIndex = 'class',
-    ): array|string|null {
-        if (!is_array($input)) {
-            deprecationWarning(
-                '5.3.0',
-                'Passing a non-array as first argument to `StringTemplate::addClass()` is deprecated. ' .
-                'Pass an attributes array instead.',
-            );
-        }
-
-        // NOOP
+    ): array {
         if (!$newClass) {
             return $input;
-        }
-
-        if (!is_array($input)) {
-            if (is_string($input) && $input !== '') {
-                $class = explode(' ', $input);
-            } else {
-                $class = [];
-            }
-
-            if (is_string($newClass)) {
-                $newClass = explode(' ', $newClass);
-            }
-
-            $class = array_unique(array_merge($class, $newClass));
-
-            deprecationWarning(
-                '5.3.0',
-                'Returning a non-array value from `StringTemplate::addClass()` is deprecated. ' .
-                'The method will only return arrays in the future.',
-            );
-
-            return Hash::insert([], $useIndex, $class);
         }
 
         $existingClasses = Hash::get($input, $useIndex, []);
