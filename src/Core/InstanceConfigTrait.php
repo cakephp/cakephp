@@ -109,7 +109,7 @@ trait InstanceConfigTrait
      *
      * @param string|null $key The key to get or null for the whole config.
      * @param mixed $default The return value when the key does not exist.
-     * @return mixed Configuration data at the named key or null if the key does not exist.
+     * @return ($key is null ? array : mixed) Configuration data at the named key or null if the key does not exist.
      */
     public function getConfig(?string $key = null, mixed $default = null): mixed
     {
@@ -202,7 +202,7 @@ trait InstanceConfigTrait
      * Reads a config key.
      *
      * @param string|null $key Key to read.
-     * @return mixed
+     * @return ($key is null ? array : mixed)
      */
     protected function _configRead(?string $key): mixed
     {
