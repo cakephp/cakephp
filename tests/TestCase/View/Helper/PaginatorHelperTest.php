@@ -737,6 +737,35 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * Test that combined format removes direction parameter
+     */
+    public function testSortLinksCombinedFormatResetsDirection(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/accounts/',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Accounts',
+                'action' => 'index',
+                'pass' => [],
+            ],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+        $this->Paginator = new PaginatorHelper($this->View);
+
+        $this->setPaginatedResult([
+            'alias' => 'Articles',
+            'direction' => 'desc',
+        ]);
+        $this->Paginator->setConfig('options.sortFormat', 'combined');
+        $result = $this->Paginator->sort('title');
+        $this->assertStringNotContainsString('direction=', $result);
+        $this->assertStringContainsString('sort=title-asc', $result);
+    }
+
+    /**
      * Test that generated URLs work without sort defined within the request
      */
     public function testDefaultSortAndNoSort(): void
