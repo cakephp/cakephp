@@ -438,7 +438,7 @@ class PaginatorHelper extends Helper
 
         $sortFormat = $this->getConfig('options.sortFormat', 'separate');
         if ($sortFormat === 'combined') {
-            $paging = ['sort' => $key . '-' . $dir, 'page' => 1];
+            $paging = ['sort' => $key . '-' . $dir, 'direction' => null, 'page' => 1];
         } else {
             $paging = ['sort' => $key, 'direction' => $dir, 'page' => 1];
         }
