@@ -20,7 +20,6 @@ use Cake\Core\Exception\CakeException;
 use Cake\TestSuite\TestCase;
 use Cake\View\StringTemplate;
 use InvalidArgumentException;
-use stdClass;
 
 class StringTemplateTest extends TestCase
 {
@@ -412,65 +411,6 @@ class StringTemplateTest extends TestCase
 
         $result = $this->template->addClassNames('one', ['new' => 'hotdog']);
         $this->assertSame(['one', 'new'], $result);
-    }
-
-    /**
-     * Test addClass method with deprecated string input
-     *
-     * @deprecated Tests deprecated addClass method with string input
-     */
-    public function testAddClassMethodDeprecatedStringInput(): void
-    {
-        $this->expectDeprecationMessageMatches(
-            '/Passing a non-array as first argument to `StringTemplate::addClass\(\)` is deprecated/',
-            function (): void {
-                $result = $this->template->addClass(null, null);
-                $this->assertNull($result);
-            },
-        );
-    }
-
-    /**
-     * Test addClass method with deprecated non-array inputs
-     *
-     * Tests null, string, false and object as first parameter
-     *
-     * @deprecated Tests deprecated addClass method with non-array input
-     */
-    public function testAddClassMethodCurrentClass(): void
-    {
-        $this->expectDeprecationMessageMatches(
-            '/Passing a non-array as first argument to `StringTemplate::addClass\(\)` is deprecated/',
-            function (): void {
-                $result = $this->template->addClass('', 'new_class');
-                $this->assertEquals($result, ['class' => ['new_class']]);
-
-                $result = $this->template->addClass(null, 'new_class');
-                $this->assertEquals($result, ['class' => ['new_class']]);
-
-                $result = $this->template->addClass(false, 'new_class');
-                $this->assertEquals($result, ['class' => ['new_class']]);
-
-                $result = $this->template->addClass(new stdClass(), 'new_class');
-                $this->assertEquals($result, ['class' => ['new_class']]);
-            },
-        );
-    }
-
-    /**
-     * Test addClass method string parameter, it should fallback to string
-     *
-     * @deprecated Tests deprecated addClass method with string input
-     */
-    public function testAddClassMethodFallbackToString(): void
-    {
-        $this->expectDeprecationMessageMatches(
-            '/Passing a non-array as first argument to `StringTemplate::addClass\(\)` is deprecated/',
-            function (): void {
-                $result = $this->template->addClass('current', 'new_class');
-                $this->assertEquals($result, ['class' => ['current', 'new_class']]);
-            },
-        );
     }
 
     /**
