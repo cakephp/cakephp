@@ -178,7 +178,7 @@ class PluginCollectionTest extends TestCase
     public function testCreateException(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Cannot create a plugin with empty name');
+        $this->expectExceptionMessage('Plugin name cannot be empty.');
 
         $plugins = new PluginCollection();
         $plugins->create('');
