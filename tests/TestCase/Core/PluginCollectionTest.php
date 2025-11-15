@@ -177,7 +177,7 @@ class PluginCollectionTest extends TestCase
 
     public function testCreateException(): void
     {
-        $this->expectException(CakeException::class);
+        $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot create a plugin with empty name');
 
         $plugins = new PluginCollection();

@@ -75,7 +75,7 @@ class EagerLoader
     /**
      * Contains a list of the association names that are to be eagerly loaded.
      *
-     * @var array
+     * @var array<string, array<string, array<int, \Cake\ORM\EagerLoadable>>>
      */
     protected array $_aliasList = [];
 
@@ -316,7 +316,7 @@ class EagerLoader
      * @param array $associations User provided containments array.
      * @param array $original The original containments array to merge
      * with the new one.
-     * @return array
+     * @return array<string, array>
      */
     protected function _reformatContain(array $associations, array $original): array
     {
@@ -375,7 +375,9 @@ class EagerLoader
             $pointer += [$table => []];
 
             if (isset($options['queryBuilder'], $pointer[$table]['queryBuilder'])) {
+                /** @var callable $first */
                 $first = $pointer[$table]['queryBuilder'];
+                /** @var callable $second */
                 $second = $options['queryBuilder'];
                 $options['queryBuilder'] = fn($query) => $second($first($query));
             }

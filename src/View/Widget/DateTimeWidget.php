@@ -204,6 +204,10 @@ class DateTimeWidget extends BasicWidget
         }
 
         if (isset($options['timezone'])) {
+            if ($dateTime instanceof ChronosDate) {
+                throw new InvalidArgumentException('Cannot change timezone of date-only value.');
+            }
+
             $timezone = $options['timezone'];
             if (!$timezone instanceof DateTimeZone) {
                 $timezone = new DateTimeZone($timezone);
