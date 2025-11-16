@@ -32,32 +32,37 @@ class TypeFactory
      * @phpstan-var array<string, class-string<\Cake\Database\TypeInterface>>
      */
     protected static array $_types = [
-        'tinyinteger' => Type\IntegerType::class,
-        'smallinteger' => Type\IntegerType::class,
-        'integer' => Type\IntegerType::class,
         'biginteger' => Type\IntegerType::class,
         'binary' => Type\BinaryType::class,
         'binaryuuid' => Type\BinaryUuidType::class,
         'boolean' => Type\BoolType::class,
+        'char' => Type\StringType::class,
+        'cidr' => Type\StringType::class,
+        'citext' => Type\StringType::class,
         'date' => Type\DateType::class,
         'datetime' => Type\DateTimeType::class,
         'datetimefractional' => Type\DateTimeFractionalType::class,
         'decimal' => Type\DecimalType::class,
         'float' => Type\FloatType::class,
+        'geometry' => Type\StringType::class,
+        'integer' => Type\IntegerType::class,
+        'inet' => Type\StringType::class,
         'json' => Type\JsonType::class,
+        'linestring' => Type\StringType::class,
+        'macaddr' => Type\StringType::class,
+        'nativeuuid' => Type\UuidType::class,
+        'point' => Type\StringType::class,
+        'polygon' => Type\StringType::class,
+        'smallinteger' => Type\IntegerType::class,
         'string' => Type\StringType::class,
-        'char' => Type\StringType::class,
         'text' => Type\StringType::class,
         'time' => Type\TimeType::class,
         'timestamp' => Type\DateTimeType::class,
         'timestampfractional' => Type\DateTimeFractionalType::class,
         'timestamptimezone' => Type\DateTimeTimezoneType::class,
+        'tinyinteger' => Type\IntegerType::class,
         'uuid' => Type\UuidType::class,
-        'nativeuuid' => Type\UuidType::class,
-        'linestring' => Type\StringType::class,
-        'geometry' => Type\StringType::class,
-        'point' => Type\StringType::class,
-        'polygon' => Type\StringType::class,
+        'year' => Type\StringType::class,
     ];
 
     /**
@@ -80,7 +85,7 @@ class TypeFactory
             return static::$_builtTypes[$name];
         }
         if (!isset(static::$_types[$name])) {
-            throw new InvalidArgumentException(sprintf('Unknown type `%s`', $name));
+            return static::$_builtTypes[$name] = new static::$_types['string']($name);
         }
 
         return static::$_builtTypes[$name] = new static::$_types[$name]($name);
