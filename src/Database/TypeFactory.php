@@ -62,7 +62,7 @@ class TypeFactory
         'timestamptimezone' => Type\DateTimeTimezoneType::class,
         'tinyinteger' => Type\IntegerType::class,
         'uuid' => Type\UuidType::class,
-        'year' => Type\StringType::class,
+        'year' => Type\IntegerType::class,
     ];
 
     /**
