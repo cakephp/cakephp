@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Database;
 
-use InvalidArgumentException;
-
 /**
  * Factory for building database type classes.
  */
@@ -76,7 +74,6 @@ class TypeFactory
      * Returns a Type object capable of converting a type identified by name.
      *
      * @param string $name type identifier
-     * @throws \InvalidArgumentException If type identifier is unknown
      * @return \Cake\Database\TypeInterface
      */
     public static function build(string $name): TypeInterface

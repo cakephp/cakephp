@@ -21,7 +21,6 @@ use Cake\Database\Type\StringType;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeInterface;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Type\BarType;
