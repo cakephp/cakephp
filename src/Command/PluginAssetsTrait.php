@@ -24,7 +24,7 @@ use Cake\Utility\Filesystem;
 use Cake\Utility\Inflector;
 
 /**
- * trait for symlinking / copying plugin assets to app's webroot.
+ * Trait for symlinking / copying plugin assets to app's webroot.
  *
  * @internal
  */

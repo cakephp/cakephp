@@ -109,8 +109,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * The callback is passed the value as the first argument and the key as the
      * second argument.
      *
-     * @param callable|null $callback the method that will receive each of the elements and
-     * returns the value used to determine uniqueness.
+     * @param callable|null $callback A callback receiving `($value, $key)` that returns
+     *   the value used to determine uniqueness. If left null, the element values themselves are used.
      * @return self
      */
     public function unique(?callable $callback = null): CollectionInterface;
@@ -132,8 +132,9 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * Empty collections always return true.
      *
-     * @param callable $callback a callback function
-     * @return bool true if for all elements in this collection the provided
+     * @param callable $callback A callback receiving `($value, $key)` that returns
+     *   true if the test passed, false otherwise.
+     * @return bool True if for all elements in this collection the provided
      *   callback returns true, false otherwise.
      */
     public function every(callable $callback): bool;
@@ -153,9 +154,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable $callback a callback function
-     * @return bool true if the provided callback returns true for any element in this
-     * collection, false otherwise
+     * @param callable $callback A callback receiving `($value, $key)` that returns
+     *   true if the test passed, false otherwise.
+     * @return bool True if the provided callback returns true for any element in this
+     *   collection, false otherwise
      */
     public function some(callable $callback): bool;
 
