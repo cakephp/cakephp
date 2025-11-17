@@ -410,8 +410,8 @@ class ExceptionTrapTest extends TestCase
             'exceptionRenderer' => TextExceptionRenderer::class,
         ]);
         $trap->increaseMemoryLimit(4 * 1024);
-        $initialBytes = Text::parseFileSize($initial, false);
-        $result = Text::parseFileSize(ini_get('memory_limit'), false);
+        $initialBytes = Text::parseFileSize($initial);
+        $result = Text::parseFileSize(ini_get('memory_limit'));
         $this->assertWithinRange($initialBytes + (4 * 1024 * 1024), $result, 1024);
     }
 

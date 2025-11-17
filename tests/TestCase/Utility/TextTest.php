@@ -1606,7 +1606,7 @@ HTML;
     public function testParseFileSizeException(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        Text::parseFileSize('bogus', false);
+        Text::parseFileSize('bogus');
     }
 
     /**
@@ -1617,21 +1617,21 @@ HTML;
     public static function filesizes(): array
     {
         return [
-            [['size' => '512B', 'default' => false], 512],
-            [['size' => '1KB', 'default' => false], 1024],
-            [['size' => '1.5KB', 'default' => false], 1536],
-            [['size' => '1MB', 'default' => false], 1048576],
-            [['size' => '1mb', 'default' => false], 1048576],
-            [['size' => '1.5MB', 'default' => false], 1572864],
-            [['size' => '1GB', 'default' => false], 1073741824],
-            [['size' => '1.5GB', 'default' => false], 1610612736],
-            [['size' => '1K', 'default' => false], 1024],
-            [['size' => '1.5K', 'default' => false], 1536],
-            [['size' => '1M', 'default' => false], 1048576],
-            [['size' => '1m', 'default' => false], 1048576],
-            [['size' => '1.5M', 'default' => false], 1572864],
-            [['size' => '1G', 'default' => false], 1073741824],
-            [['size' => '1.5G', 'default' => false], 1610612736],
+            [['size' => '512B', 'default' => null], 512],
+            [['size' => '1KB', 'default' => null], 1024],
+            [['size' => '1.5KB', 'default' => null], 1536],
+            [['size' => '1MB', 'default' => null], 1048576],
+            [['size' => '1mb', 'default' => null], 1048576],
+            [['size' => '1.5MB', 'default' => null], 1572864],
+            [['size' => '1GB', 'default' => null], 1073741824],
+            [['size' => '1.5GB', 'default' => null], 1610612736],
+            [['size' => '1K', 'default' => null], 1024],
+            [['size' => '1.5K', 'default' => null], 1536],
+            [['size' => '1M', 'default' => null], 1048576],
+            [['size' => '1m', 'default' => null], 1048576],
+            [['size' => '1.5M', 'default' => null], 1572864],
+            [['size' => '1G', 'default' => null], 1073741824],
+            [['size' => '1.5G', 'default' => null], 1610612736],
             [['size' => '512', 'default' => 'Unknown type'], 512],
             [['size' => '2VB', 'default' => 'Unknown type'], 'Unknown type'],
         ];
