@@ -845,9 +845,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $name The behavior alias to get from the registry.
      * @return \Cake\ORM\Behavior
-     * @template TName of key-of<TBehaviors>
+     * @template TName of string
      * @phpstan-param TName $name The behavior alias to get from the registry.
-     * @phpstan-return TBehaviors[TName]
+     * @phpstan-return (TName is key-of<TBehaviors> ? TBehaviors[TName] : Behavior)
      * @throws \InvalidArgumentException If the behavior does not exist.
      */
     public function getBehavior(string $name): Behavior
