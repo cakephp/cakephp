@@ -614,8 +614,8 @@ trait IntegrationTestTrait
                 $controller->getRequest()->getSession()->read('Flash'),
             );
         };
-        $events->on('Controller.beforeRedirect', ['priority' => -100], $flashCapture);
-        $events->on('Controller.beforeRender', ['priority' => -100], $flashCapture);
+        $events->on('Controller.beforeRedirect', $flashCapture, ['priority' => -100]);
+        $events->on('Controller.beforeRender', $flashCapture, ['priority' => -100]);
         $events->on('View.beforeRender', function ($event, $viewFile): void {
             if (!$this->_viewName) {
                 $this->_viewName = $viewFile;

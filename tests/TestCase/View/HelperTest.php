@@ -99,7 +99,7 @@ class HelperTest extends TestCase
     {
         $eventsManager = new class extends EventManager
         {
-            public function on(string|EventListenerInterface $eventKey, callable|array $options = [], ?callable $callable = null): never
+            public function on(string|EventListenerInterface $eventKey, ?callable $callable = null, array $options = []): never
             {
                 throw new Exception('Should not be called');
             }

@@ -130,7 +130,7 @@ class EventManagerTest extends TestCase
         ];
         $this->assertEquals($expected, $manager->listeners('my.event'));
 
-        $manager->on('my.event', ['priority' => 1], 'strpos');
+        $manager->on('my.event', 'strpos', ['priority' => 1]);
         $expected = [
             ['callable' => strpos(...)],
             ['callable' => substr(...)],
@@ -161,7 +161,7 @@ class EventManagerTest extends TestCase
         $manager = new EventManager();
         $manager->on('fake.event', 'strlen');
         $manager->on('another.event', strlen(...));
-        $manager->on('another.event', ['priority' => 1], 'substr');
+        $manager->on('another.event', 'substr', ['priority' => 1]);
 
         $manager->off('fake.event', strlen(...));
         $this->assertEquals([], $manager->listeners('fake.event'));
@@ -186,7 +186,7 @@ class EventManagerTest extends TestCase
         };
         $manager->on('fake.event', $callable);
         $manager->on('another.event', $callable);
-        $manager->on('another.event', ['priority' => 1], 'substr');
+        $manager->on('another.event', 'substr', ['priority' => 1]);
 
         $manager->off($callable);
         $expected = [
@@ -204,7 +204,7 @@ class EventManagerTest extends TestCase
         $manager = new EventManager();
         $manager->on('fake.event', 'strlen');
 
-        $manager->on('another.event', ['priority' => 1], 'substr');
+        $manager->on('another.event', 'substr', ['priority' => 1]);
 
         $manager->off('fake.event');
 
@@ -375,7 +375,7 @@ class EventManagerTest extends TestCase
         $manager = new EventManager();
         $listener = new EventTestListener();
         $manager->on('fake.event', $listener->listenerFunction(...));
-        $manager->on('fake.event', ['priority' => 5], $listener->secondListenerFunction(...));
+        $manager->on('fake.event', $listener->secondListenerFunction(...), ['priority' => 5]);
         $event = new Event('fake.event');
         $manager->dispatch($event);
 
@@ -547,8 +547,8 @@ class EventManagerTest extends TestCase
 
         EventManager::instance($generalManager);
         $manager->on('fake.event', $listener->listenerFunction(...));
-        $manager->on('fake.event', ['priority' => 8], $listener->stopListener(...));
-        $manager->on('fake.event', ['priority' => 5], $listener->secondListenerFunction(...));
+        $manager->on('fake.event', $listener->stopListener(...), ['priority' => 8]);
+        $manager->on('fake.event', $listener->secondListenerFunction(...), ['priority' => 5]);
         $event = new Event('fake.event');
         $manager->dispatch($event);
 
@@ -583,7 +583,7 @@ class EventManagerTest extends TestCase
 
         EventManager::instance($generalManager);
         $manager->on('fake.event', $listener->listenerFunction(...));
-        $manager->on('fake.event', ['priority' => 15], $listener->thirdListenerFunction(...));
+        $manager->on('fake.event', $listener->thirdListenerFunction(...), ['priority' => 15]);
 
         $manager->dispatch($event);
 
@@ -885,7 +885,7 @@ class EventManagerTest extends TestCase
         $returnValue = $eventManager->on('foo', $callable);
         $this->assertSame($eventManager, $returnValue);
 
-        $returnValue = $eventManager->on('foo', [], $callable);
+        $returnValue = $eventManager->on('foo', $callable);
         $this->assertSame($eventManager, $returnValue);
 
         $returnValue = $eventManager->off($listener);
