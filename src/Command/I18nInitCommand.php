@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\App;
 use Cake\Core\Exception\CakeException;
@@ -49,29 +47,27 @@ class I18nInitCommand extends Command
     /**
      * Execute the command
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $language = $args->getArgument('language');
+        $language = $this->args->getArgument('language');
         if (!$language) {
-            $language = $io->ask('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');
+            $language = $this->io->ask('Please specify language code, e.g. `en`, `eng`, `en_US` etc.');
         }
         if (strlen($language) < 2) {
-            $io->error('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
+            $this->io->error('Invalid language code. Valid is `en`, `eng`, `en_US` etc.');
 
             return static::CODE_ERROR;
         }
 
         $paths = array_values(App::path('locales'));
-        if ($args->hasOption('plugin')) {
-            $plugin = Inflector::camelize((string)$args->getOption('plugin'));
+        if ($this->args->hasOption('plugin')) {
+            $plugin = Inflector::camelize((string)$this->args->getOption('plugin'));
             $paths = [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR];
         }
 
-        $response = $io->ask('What folder?', rtrim($paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
+        $response = $this->io->ask('What folder?', rtrim($paths[0], DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR);
         $sourceFolder = rtrim($response, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         $targetFolder = $sourceFolder . $language . DIRECTORY_SEPARATOR;
         if (!is_dir($targetFolder)) {
@@ -92,11 +88,11 @@ class I18nInitCommand extends Command
             if ($content === false) {
                 throw new CakeException(sprintf('Cannot read file content of `%s`', $sourceFolder . $filename));
             }
-            $io->createFile($targetFolder . $newFilename, $content);
+            $this->io->createFile($targetFolder . $newFilename, $content);
             $count++;
         }
 
-        $io->out('Generated ' . $count . ' PO files in ' . $targetFolder);
+        $this->io->out('Generated ' . $count . ' PO files in ' . $targetFolder);
 
         return static::CODE_SUCCESS;
     }

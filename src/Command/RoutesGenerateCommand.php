@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
@@ -46,20 +44,18 @@ class RoutesGenerateCommand extends Command
     /**
      * Display all routes in an application
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
         try {
-            $args = $this->splitArgs($args->getArguments());
+            $args = $this->splitArgs($this->args->getArguments());
             $url = Router::url($args);
-            $io->out("> {$url}");
-            $io->out();
+            $this->io->out("> {$url}");
+            $this->io->out();
         } catch (MissingRouteException) {
-            $io->warning('The provided parameters do not match any routes.');
-            $io->out();
+            $this->io->warning('The provided parameters do not match any routes.');
+            $this->io->out();
 
             return static::CODE_ERROR;
         }

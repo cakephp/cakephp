@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -48,16 +46,11 @@ class PluginAssetsRemoveCommand extends Command
      *
      * Remove plugin assets from app's webroot.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $this->io = $io;
-        $this->args = $args;
-
-        $name = $args->getArgument('name');
+        $name = $this->args->getArgument('name');
         $plugins = $this->list($name);
 
         foreach ($plugins as $plugin => $config) {

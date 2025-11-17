@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\ServerRequest;
@@ -48,14 +46,12 @@ class RoutesCheckCommand extends Command
     /**
      * Display all routes in an application
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      * @throws \JsonException
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $url = $args->getArgument('url');
+        $url = $this->args->getArgument('url');
         try {
             $parsed = Router::parseRequest(new ServerRequest(['url' => $url]));
             $name = $parsed['_name'] ?? $parsed['_route']->getName();
@@ -67,18 +63,18 @@ class RoutesCheckCommand extends Command
                 ['Route name', 'URI template', 'Defaults'],
                 [$name, $url, json_encode($parsed, JSON_THROW_ON_ERROR)],
             ];
-            $io->helper('table')->output($output);
-            $io->out();
+            $this->io->helper('table')->output($output);
+            $this->io->out();
         } catch (RedirectException $e) {
             $output = [
                 ['URI template', 'Redirect'],
                 [$url, $e->getMessage()],
             ];
-            $io->helper('table')->output($output);
-            $io->out();
+            $this->io->helper('table')->output($output);
+            $this->io->out();
         } catch (MissingRouteException) {
-            $io->warning("'{$url}' did not match any routes.");
-            $io->out();
+            $this->io->warning("'{$url}' did not match any routes.");
+            $this->io->out();
 
             return static::CODE_ERROR;
         }

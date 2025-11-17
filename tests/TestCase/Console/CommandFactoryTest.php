@@ -16,8 +16,12 @@ namespace Cake\Test\TestCase\Console;
 
 use Cake\Console\CommandFactory;
 use Cake\Console\CommandInterface;
+use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleIoInterface;
+use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Container;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use stdClass;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\DependencyCommand;
@@ -44,5 +48,12 @@ class CommandFactoryTest extends TestCase
         $command = $factory->create(DependencyCommand::class);
         $this->assertInstanceOf(DependencyCommand::class, $command);
         $this->assertInstanceOf(stdClass::class, $command->inject);
+    }
+
+    protected function getMockIo(StubConsoleOutput $output): ConsoleIoInterface
+    {
+        return Mockery::mock(ConsoleIo::class, [$output, $output, null, null])
+            ->shouldAllowMockingMethod('in')
+            ->makePartial();
     }
 }

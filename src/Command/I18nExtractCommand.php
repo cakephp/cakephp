@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Command\Helper\ProgressHelper;
-use Cake\Console\Arguments;
 use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\App;
@@ -177,35 +176,33 @@ class I18nExtractCommand extends Command
     /**
      * Execute the command
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
         $plugin = '';
-        if ($args->getOption('exclude')) {
-            $this->exclude = explode(',', (string)$args->getOption('exclude'));
+        if ($this->args->getOption('exclude')) {
+            $this->exclude = explode(',', (string)$this->args->getOption('exclude'));
         }
-        if ($args->getOption('files')) {
-            $this->files = explode(',', (string)$args->getOption('files'));
+        if ($this->args->getOption('files')) {
+            $this->files = explode(',', (string)$this->args->getOption('files'));
         }
-        if ($args->getOption('paths')) {
-            $this->paths = explode(',', (string)$args->getOption('paths'));
+        if ($this->args->getOption('paths')) {
+            $this->paths = explode(',', (string)$this->args->getOption('paths'));
         }
-        if ($args->getOption('plugin')) {
-            $plugin = Inflector::camelize((string)$args->getOption('plugin'));
+        if ($this->args->getOption('plugin')) {
+            $plugin = Inflector::camelize((string)$this->args->getOption('plugin'));
             if ($this->paths === []) {
                 $this->paths = [Plugin::classPath($plugin), Plugin::templatePath($plugin)];
             }
-        } elseif (!$args->getOption('paths')) {
-            $this->getPaths($io);
+        } elseif (!$this->args->getOption('paths')) {
+            $this->getPaths($this->io);
         }
 
-        if ($args->hasOption('extract-core')) {
-            $this->extractCore = strtolower((string)$args->getOption('extract-core')) !== 'no';
+        if ($this->args->hasOption('extract-core')) {
+            $this->extractCore = strtolower((string)$this->args->getOption('extract-core')) !== 'no';
         } else {
-            $response = $io->askChoice(
+            $response = $this->io->askChoice(
                 'Would you like to extract the messages from the CakePHP core?',
                 ['y', 'n'],
                 'n',
@@ -213,7 +210,7 @@ class I18nExtractCommand extends Command
             $this->extractCore = strtolower($response) === 'y';
         }
 
-        if ($args->hasOption('exclude-plugins') && $this->isExtractingApp()) {
+        if ($this->args->hasOption('exclude-plugins') && $this->isExtractingApp()) {
             $this->exclude = array_merge($this->exclude, array_values(App::path('plugins')));
         }
 
@@ -221,9 +218,9 @@ class I18nExtractCommand extends Command
             $this->paths[] = CAKE;
         }
 
-        if ($args->hasOption('output')) {
-            $this->output = (string)$args->getOption('output');
-        } elseif ($args->hasOption('plugin')) {
+        if ($this->args->hasOption('output')) {
+            $this->output = (string)$this->args->getOption('output');
+        } elseif ($this->args->hasOption('plugin')) {
             $this->output = Plugin::path($plugin)
                 . 'resources' . DIRECTORY_SEPARATOR
                 . 'locales' . DIRECTORY_SEPARATOR;
@@ -236,12 +233,12 @@ class I18nExtractCommand extends Command
                     . 'locales' . DIRECTORY_SEPARATOR;
             }
             while (true) {
-                $response = $io->ask(
+                $response = $this->io->ask(
                     $message,
                     $localePaths[0],
                 );
                 if (strtoupper($response) === 'Q') {
-                    $io->error('Extract Aborted');
+                    $this->io->error('Extract Aborted');
 
                     return static::CODE_ERROR;
                 }
@@ -250,20 +247,20 @@ class I18nExtractCommand extends Command
                     break;
                 }
 
-                $io->err('');
-                $io->error(
+                $this->io->err('');
+                $this->io->error(
                     'The directory path you supplied was ' .
                     'not found. Please try again.',
                 );
-                $io->err('');
+                $this->io->err('');
             }
         }
 
-        if ($args->hasOption('merge')) {
-            $this->merge = strtolower((string)$args->getOption('merge')) !== 'no';
+        if ($this->args->hasOption('merge')) {
+            $this->merge = strtolower((string)$this->args->getOption('merge')) !== 'no';
         } else {
-            $io->out();
-            $response = $io->askChoice(
+            $this->io->out();
+            $response = $this->io->askChoice(
                 'Would you like to merge all domain strings into the default.pot file?',
                 ['y', 'n'],
                 'n',
@@ -271,7 +268,7 @@ class I18nExtractCommand extends Command
             $this->merge = strtolower($response) === 'y';
         }
 
-        $this->markerError = (bool)$args->getOption('marker-error');
+        $this->markerError = (bool)$this->args->getOption('marker-error');
 
         if (!$this->files) {
             $this->searchFiles();
@@ -279,12 +276,12 @@ class I18nExtractCommand extends Command
 
         $this->output = rtrim($this->output, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
         if (!$this->isPathUsable($this->output)) {
-            $io->error(sprintf('The output directory `%s` was not found or writable.', $this->output));
+            $this->io->error(sprintf('The output directory `%s` was not found or writable.', $this->output));
 
             return static::CODE_ERROR;
         }
 
-        $this->extract($args, $io);
+        $this->extract();
 
         return static::CODE_SUCCESS;
     }
@@ -322,37 +319,35 @@ class I18nExtractCommand extends Command
     /**
      * Extract text
      *
-     * @param \Cake\Console\Arguments $args The Arguments instance
-     * @param \Cake\Console\ConsoleIoInterface $io The io instance
      * @return void
      */
-    protected function extract(Arguments $args, ConsoleIoInterface $io): void
+    protected function extract(): void
     {
-        $io->out();
-        $io->out();
-        $io->out('Extracting...');
-        $io->hr();
-        $io->out('Paths:');
+        $this->io->out();
+        $this->io->out();
+        $this->io->out('Extracting...');
+        $this->io->hr();
+        $this->io->out('Paths:');
         foreach ($this->paths as $path) {
-            $io->out('   ' . $path);
+            $this->io->out('   ' . $path);
         }
-        $io->out('Output Directory: ' . $this->output);
-        $io->hr();
-        $this->extractTokens($args, $io);
-        $this->buildFiles($args);
-        $this->writeFiles($args, $io);
+        $this->io->out('Output Directory: ' . $this->output);
+        $this->io->hr();
+        $this->extractTokens();
+        $this->buildFiles();
+        $this->writeFiles();
         $this->paths = [];
         $this->files = [];
         $this->storage = [];
         $this->translations = [];
         $this->tokens = [];
-        $io->out();
+        $this->io->out();
         if ($this->countMarkerError) {
-            $io->error("{$this->countMarkerError} marker error(s) detected.");
-            $io->err(' => Use the --marker-error option to display errors.');
+            $this->io->error("{$this->countMarkerError} marker error(s) detected.");
+            $this->io->err(' => Use the --marker-error option to display errors.');
         }
 
-        $io->out('Done.');
+        $this->io->out('Done.');
     }
 
     /**
@@ -413,16 +408,14 @@ class I18nExtractCommand extends Command
     /**
      * Extract tokens out of all files to be processed
      *
-     * @param \Cake\Console\Arguments $args The io instance
-     * @param \Cake\Console\ConsoleIoInterface $io The io instance
      * @return void
      */
-    protected function extractTokens(Arguments $args, ConsoleIoInterface $io): void
+    protected function extractTokens(): void
     {
-        $progress = $io->helper('progress');
+        $progress = $this->io->helper('progress');
         assert($progress instanceof ProgressHelper);
         $progress->init(['total' => count($this->files)]);
-        $isVerbose = $args->getOption('verbose');
+        $isVerbose = $this->args->getOption('verbose');
 
         $functions = [
             '__' => ['singular'],
@@ -439,7 +432,7 @@ class I18nExtractCommand extends Command
         foreach ($this->files as $file) {
             $this->file = $file;
             if ($isVerbose) {
-                $io->verbose(sprintf('Processing %s...', $file));
+                $this->io->verbose(sprintf('Processing %s...', $file));
             }
 
             $code = (string)file_get_contents($file);
@@ -456,7 +449,7 @@ class I18nExtractCommand extends Command
                 unset($allTokens);
 
                 foreach ($functions as $functionName => $map) {
-                    $this->parse($io, $functionName, $map);
+                    $this->parse($this->io, $functionName, $map);
                 }
             }
 
@@ -533,10 +526,9 @@ class I18nExtractCommand extends Command
     /**
      * Build the translate template file contents out of obtained strings
      *
-     * @param \Cake\Console\Arguments $args Console arguments
      * @return void
      */
-    protected function buildFiles(Arguments $args): void
+    protected function buildFiles(): void
     {
         $paths = $this->paths;
         $paths[] = realpath(APP) . DIRECTORY_SEPARATOR;
@@ -552,7 +544,7 @@ class I18nExtractCommand extends Command
                     $files = $details['references'];
                     $header = '';
 
-                    if (!$args->getOption('no-location')) {
+                    if (!$this->args->getOption('no-location')) {
                         $occurrences = [];
                         foreach ($files as $file => $lines) {
                             $lines = array_unique($lines);
@@ -613,15 +605,13 @@ class I18nExtractCommand extends Command
     /**
      * Write the files that need to be stored
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return void
      */
-    protected function writeFiles(Arguments $args, ConsoleIoInterface $io): void
+    protected function writeFiles(): void
     {
-        $io->out();
+        $this->io->out();
         $overwriteAll = false;
-        if ($args->getOption('overwrite')) {
+        if ($this->args->getOption('overwrite')) {
             $overwriteAll = true;
         }
         foreach ($this->storage as $domain => $sentences) {
@@ -635,14 +625,14 @@ class I18nExtractCommand extends Command
             $outputPath = $this->output . $filename;
 
             if ($this->checkUnchanged($outputPath, $headerLength, $output)) {
-                $io->out($filename . ' is unchanged. Skipping.');
+                $this->io->out($filename . ' is unchanged. Skipping.');
                 continue;
             }
 
             $response = '';
             while ($overwriteAll === false && file_exists($outputPath) && strtoupper($response) !== 'Y') {
-                $io->out();
-                $response = $io->askChoice(
+                $this->io->out();
+                $response = $this->io->askChoice(
                     sprintf('Error: %s already exists in this location. Overwrite? [Y]es, [N]o, [A]ll', $filename),
                     ['y', 'n', 'a'],
                     'y',
@@ -650,7 +640,7 @@ class I18nExtractCommand extends Command
                 if (strtoupper($response) === 'N') {
                     $response = '';
                     while (!$response) {
-                        $response = $io->ask('What would you like to name this file?', 'new_' . $filename);
+                        $response = $this->io->ask('What would you like to name this file?', 'new_' . $filename);
                         $filename = $response;
                     }
                 } elseif (strtoupper($response) === 'A') {

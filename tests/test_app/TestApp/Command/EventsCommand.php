@@ -15,20 +15,20 @@ class EventsCommand extends Command
         return 'This is a command that uses events';
     }
 
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $io->out('execute run');
+        $this->io->out('execute run');
 
         return null;
     }
 
     public function beforeExecute(EventInterface $event, Arguments $args, ConsoleIoInterface $io): void
     {
-        $io->out('beforeExecute run');
+        $this->io->out('beforeExecute run');
     }
 
     public function afterExecute(EventInterface $event, Arguments $args, ConsoleIoInterface $io, mixed $result): void
     {
-        $io->out('afterExecute run');
+        $this->io->out('afterExecute run');
     }
 }

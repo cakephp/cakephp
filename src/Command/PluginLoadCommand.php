@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Brick\VarExporter\VarExporter;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
@@ -66,26 +64,24 @@ class PluginLoadCommand extends Command
     /**
      * Execute the command
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $plugin = (string)$args->getArgument('plugin');
+        $plugin = (string)$this->args->getArgument('plugin');
         $options = [];
-        if ($args->getOption('only-debug')) {
+        if ($this->args->getOption('only-debug')) {
             $options['onlyDebug'] = true;
         }
-        if ($args->getOption('only-cli')) {
+        if ($this->args->getOption('only-cli')) {
             $options['onlyCli'] = true;
         }
-        if ($args->getOption('optional')) {
+        if ($this->args->getOption('optional')) {
             $options['optional'] = true;
         }
 
         foreach (PluginInterface::VALID_HOOKS as $hook) {
-            if ($args->getOption('no-' . $hook)) {
+            if ($this->args->getOption('no-' . $hook)) {
                 $options[$hook] = false;
             }
         }
@@ -95,8 +91,8 @@ class PluginLoadCommand extends Command
             $path = Plugin::getCollection()->findPath($plugin);
         } catch (MissingPluginException $e) {
             if (empty($options['optional'])) {
-                $io->error($e->getMessage());
-                $io->error('Ensure you have the correct spelling and casing.');
+                $this->io->error($e->getMessage());
+                $this->io->error('Ensure you have the correct spelling and casing.');
 
                 return static::CODE_ERROR;
             }
@@ -111,7 +107,7 @@ class PluginLoadCommand extends Command
             $option = $name . ': ' . ($v ? 'true' : 'false');
             $question = 'Based on the plugin composer keywords, this seems to be `' . $option . '`. ';
             $question .= 'Do you want to change this?';
-            $in = $io->askChoice($question, ['y', 'n'], 'y');
+            $in = $this->io->askChoice($question, ['y', 'n'], 'y');
             if ($in !== 'y') {
                 continue;
             }
@@ -121,10 +117,10 @@ class PluginLoadCommand extends Command
 
         $result = $this->modifyConfigFile($plugin, $options);
         if ($result === static::CODE_ERROR) {
-            $io->error('Failed to update `CONFIG/plugins.php`');
+            $this->io->error('Failed to update `CONFIG/plugins.php`');
         }
 
-        $io->success('Plugin added successfully to `CONFIG/plugins.php`');
+        $this->io->success('Plugin added successfully to `CONFIG/plugins.php`');
 
         return $result;
     }

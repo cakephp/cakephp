@@ -52,8 +52,9 @@ interface CommandInterface
      * Run the command.
      *
      * @param array $argv Arguments from the CLI environment.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
+     * @param \Cake\Console\ConsoleIoInterface|null $io A custom console io
+     * instance if the default one shouldn't be used
      * @return int|null Exit code or null for success.
      */
-    public function run(array $argv, ConsoleIoInterface $io): ?int;
+    public function run(array $argv, ?ConsoleIoInterface $io = null): ?int;
 }

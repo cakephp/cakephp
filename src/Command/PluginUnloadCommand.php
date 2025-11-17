@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Brick\VarExporter\VarExporter;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Utility\Hash;
 
@@ -53,22 +51,20 @@ class PluginUnloadCommand extends Command
     /**
      * Execute the command
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $plugin = (string)$args->getArgument('plugin');
+        $plugin = (string)$this->args->getArgument('plugin');
 
         $result = $this->modifyConfigFile($plugin);
         if ($result === null) {
-            $io->success('Plugin removed from `CONFIG/plugins.php`');
+            $this->io->success('Plugin removed from `CONFIG/plugins.php`');
 
             return static::CODE_SUCCESS;
         }
 
-        $io->err($result);
+        $this->io->err($result);
 
         return static::CODE_ERROR;
     }

@@ -18,8 +18,6 @@ namespace Cake\Command;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Exception\InvalidArgumentException;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -71,24 +69,22 @@ class CacheClearGroupCommand extends Command
     /**
      * Clears the cache group
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $group = (string)$args->getArgument('group');
+        $group = (string)$this->args->getArgument('group');
         try {
             $groupConfigs = Cache::groupConfigs($group);
         } catch (InvalidArgumentException) {
-            $io->error(sprintf('Cache group "%s" not found', $group));
+            $this->io->error(sprintf('Cache group "%s" not found', $group));
 
             return static::CODE_ERROR;
         }
 
-        $config = $args->getArgument('config');
+        $config = $this->args->getArgument('config');
         if ($config !== null && Cache::getConfig($config) === null) {
-            $io->error(sprintf('Cache config "%s" not found', $config));
+            $this->io->error(sprintf('Cache config "%s" not found', $config));
 
             return static::CODE_ERROR;
         }
@@ -99,14 +95,14 @@ class CacheClearGroupCommand extends Command
             }
 
             if (!Cache::clearGroup($group, $groupConfig)) {
-                $io->error(sprintf(
+                $this->io->error(sprintf(
                     'Error encountered clearing group "%s". Was unable to clear entries for "%s".',
                     $group,
                     $groupConfig,
                 ));
                 $this->abort();
             } else {
-                $io->success(sprintf('Cache "%s" was cleared.', $groupConfig));
+                $this->io->success(sprintf('Cache "%s" was cleared.', $groupConfig));
             }
         }
 

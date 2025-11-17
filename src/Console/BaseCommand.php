@@ -61,16 +61,28 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      */
     protected string $name = 'cake unknown';
 
-    protected ?CommandFactoryInterface $factory = null;
+    /**
+     * The IO instance to interact with IO
+     *
+     * @var \Cake\Console\ConsoleIoInterface
+     */
+    protected ConsoleIoInterface $io;
+
+    /**
+     * The arguments instance which holds the parsed arguments and options
+     *
+     * @var \Cake\Console\Arguments
+     */
+    protected Arguments $args;
 
     /**
      * Constructor
      *
-     * @param \Cake\Console\CommandFactoryInterface|null $factory Command factory instance.
+     * @param \Cake\Console\CommandFactoryInterface|null $factory The factory, which is needed to invoke more commands
      */
-    public function __construct(?CommandFactoryInterface $factory = null)
-    {
-        $this->factory = $factory;
+    public function __construct(
+        protected ?CommandFactoryInterface $factory = null,
+    ) {
         $this->getEventManager()->on($this);
     }
 
@@ -118,6 +130,15 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
         [$root] = explode(' ', $this->name);
 
         return $root;
+    }
+
+    /**
+     * @param \Cake\Console\ConsoleIoInterface $io
+     * @return void
+     */
+    public function setIo(ConsoleIoInterface $io): void
+    {
+        $this->io = $io;
     }
 
     /**
@@ -198,8 +219,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * command or perform logic that needs to happen before the command runs.
      *
      * @param \Cake\Event\EventInterface<\Cake\Console\BaseCommand> $event An Event instance
-     * @param \Cake\Console\Arguments $args
-     * @param \Cake\Console\ConsoleIoInterface $io
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
      */
@@ -212,8 +231,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * perform logic that needs to happen after the command runs.
      *
      * @param \Cake\Event\EventInterface<\Cake\Console\BaseCommand> $event An Event instance
-     * @param \Cake\Console\Arguments $args
-     * @param \Cake\Console\ConsoleIoInterface $io
      * @param int|null $result
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
@@ -225,39 +242,38 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     /**
      * @inheritDoc
      */
-    public function run(array $argv, ConsoleIoInterface $io): ?int
+    public function run(array $argv, ?ConsoleIoInterface $io = null): ?int
     {
-        $this->initialize();
+        if ($io !== null) {
+            $this->io = $io;
+        }
 
         $parser = $this->getOptionParser();
         try {
-            [$options, $arguments] = $parser->parse($argv, $io);
-            $args = new Arguments(
-                $arguments,
-                $options,
-                $parser->argumentNames(),
-            );
+            $this->parseArguments($parser, $argv);
         } catch (ConsoleException $e) {
-            $io->error('Error: ' . $e->getMessage());
+            $this->io->error('Error: ' . $e->getMessage());
 
             return static::CODE_ERROR;
         }
-        $this->setOutputLevel($args, $io);
+        $this->setOutputLevel();
 
-        if ($args->getOption('help')) {
-            $this->displayHelp($parser, $args, $io);
+        if ($this->args->getOption('help')) {
+            $this->displayHelp($parser);
 
             return static::CODE_SUCCESS;
         }
 
-        if ($args->getOption('quiet')) {
-            $io->setInteractive(false);
+        if ($this->args->getOption('quiet')) {
+            $this->io->setInteractive(false);
         }
 
-        $this->dispatchEvent('Command.beforeExecute', ['args' => $args, 'io' => $io]);
+        $this->initialize();
+
+        $this->dispatchEvent('Command.beforeExecute', ['args' => $this->args, 'io' => $this->io]);
         /** @var int|null $result */
-        $result = $this->execute($args, $io);
-        $this->dispatchEvent('Command.afterExecute', ['args' => $args, 'io' => $io, 'result' => $result]);
+        $result = $this->execute();
+        $this->dispatchEvent('Command.afterExecute', ['args' => $this->args, 'io' => $this->io, 'result' => $result]);
 
         return $result;
     }
@@ -266,49 +282,61 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Output help content
      *
      * @param \Cake\Console\ConsoleOptionParser $parser The option parser.
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return void
      */
-    protected function displayHelp(ConsoleOptionParser $parser, Arguments $args, ConsoleIoInterface $io): void
+    protected function displayHelp(ConsoleOptionParser $parser): void
     {
         $format = 'text';
-        if ($args->getArgumentAt(0) === 'xml') {
+        if ($this->args->getArgumentAt(0) === 'xml') {
             $format = 'xml';
-            $io->setOutputAs(ConsoleOutput::RAW);
+            $this->io->setOutputAs(ConsoleOutput::RAW);
         }
 
-        $io->out($parser->help($format));
+        $this->io->out($parser->help($format));
     }
 
     /**
      * Set the output level based on the Arguments.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return void
      */
-    protected function setOutputLevel(Arguments $args, ConsoleIoInterface $io): void
+    protected function setOutputLevel(): void
     {
-        $io->setLoggers(ConsoleIoInterface::NORMAL);
-        if ($args->getOption('quiet')) {
-            $io->level(ConsoleIoInterface::QUIET);
-            $io->setLoggers(ConsoleIoInterface::QUIET);
+        $this->io->setLoggers(ConsoleIoInterface::NORMAL);
+        if ($this->args->getOption('quiet')) {
+            $this->io->level(ConsoleIoInterface::QUIET);
+            $this->io->setLoggers(ConsoleIoInterface::QUIET);
         }
-        if ($args->getOption('verbose')) {
-            $io->level(ConsoleIoInterface::VERBOSE);
-            $io->setLoggers(ConsoleIoInterface::VERBOSE);
+        if ($this->args->getOption('verbose')) {
+            $this->io->level(ConsoleIoInterface::VERBOSE);
+            $this->io->setLoggers(ConsoleIoInterface::VERBOSE);
         }
+    }
+
+    /**
+     * Parses the command-line arguments using the provided option parser and assigns
+     * the parsed options and arguments to the command's arguments property.
+     *
+     * @param \Cake\Console\ConsoleOptionParser $parser
+     * @param array $argv
+     * @return void
+     */
+    protected function parseArguments(ConsoleOptionParser $parser, array $argv): void
+    {
+        [$options, $arguments] = $parser->parse($argv, $this->io);
+        $this->args = new Arguments(
+            $arguments,
+            $options,
+            $parser->argumentNames(),
+        );
     }
 
     /**
      * Implement this method with your command's logic.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null|void The exit code or null for success
      */
-    abstract public function execute(Arguments $args, ConsoleIoInterface $io);
+    abstract public function execute();
 
     /**
      * Halt the current process with a StopException.
@@ -329,7 +357,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * will not be resolved with the application container. Instead you will
      * need to pass the command as an object with all of its dependencies.
      *
-     * @param \Cake\Console\CommandInterface|string $command The command class name or command instance.
+     * @param \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface> $command The command class name or command instance.
      * @param array $args The arguments to invoke the command with.
      * @param \Cake\Console\ConsoleIoInterface|null $io The ConsoleIo instance to use for the executed command.
      * @return int|null The exit code or null for success of the command.
@@ -347,10 +375,9 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
 
             $command = $this->factory?->create($command) ?? new $command();
         }
-        $io = $io ?: new ConsoleIo();
 
         try {
-            return $command->run($args, $io);
+            return $command->run($args, $io ?? $this->io);
         } catch (StopException $e) {
             return $e->getCode();
         }

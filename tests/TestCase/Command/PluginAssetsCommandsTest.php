@@ -146,6 +146,7 @@ class PluginAssetsCommandsTest extends TestCase
             ->onlyMethods(['getOptionParser', 'createSymlink', 'copyDirectory'])
             ->getMock();
         $command->method('getOptionParser')->willReturn($parser);
+        $command->setIo($io);
 
         $this->assertDirectoryExists($this->wwwRoot . 'test_theme');
 

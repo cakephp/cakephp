@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Database\Connection;
 use Cake\Database\SchemaCache;
@@ -50,29 +48,27 @@ class SchemacacheClearCommand extends Command
     /**
      * Display all routes in an application
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
         try {
-            $connection = ConnectionManager::get((string)$args->getOption('connection'));
+            $connection = ConnectionManager::get((string)$this->args->getOption('connection'));
             assert($connection instanceof Connection);
 
             $cache = new SchemaCache($connection);
         } catch (RuntimeException $e) {
-            $io->error($e->getMessage());
+            $this->io->error($e->getMessage());
 
             return static::CODE_ERROR;
         }
-        $tables = $cache->clear($args->getArgument('name'));
+        $tables = $cache->clear($this->args->getArgument('name'));
 
         foreach ($tables as $table) {
-            $io->verbose(sprintf('Cleared `%s`', $table));
+            $this->io->verbose(sprintf('Cleared `%s`', $table));
         }
 
-        $io->out('<success>Cache clear complete</success>');
+        $this->io->out('<success>Cache clear complete</success>');
 
         return static::CODE_SUCCESS;
     }

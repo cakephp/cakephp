@@ -16,8 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -49,17 +47,12 @@ class PluginAssetsCopyCommand extends Command
      * Copying plugin assets to app's webroot. For vendor namespaced plugin,
      * parent folder for vendor name are created if required.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $this->io = $io;
-        $this->args = $args;
-
-        $name = $args->getArgument('name');
-        $overwrite = (bool)$args->getOption('overwrite');
+        $name = $this->args->getArgument('name');
+        $overwrite = (bool)$this->args->getOption('overwrite');
         $this->process($this->list($name), true, $overwrite);
 
         return static::CODE_SUCCESS;

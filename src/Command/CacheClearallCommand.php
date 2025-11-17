@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Cache\Cache;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -62,14 +60,12 @@ class CacheClearallCommand extends Command
     /**
      * Implement this method with your command's logic.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIoInterface $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
         foreach (Cache::configured() as $engine) {
-            $this->executeCommand(CacheClearCommand::class, [$engine], $io);
+            $this->executeCommand(CacheClearCommand::class, [$engine]);
         }
 
         return static::CODE_SUCCESS;

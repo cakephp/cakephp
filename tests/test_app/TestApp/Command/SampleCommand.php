@@ -4,13 +4,11 @@ declare(strict_types=1);
 namespace TestApp\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 
 class SampleCommand extends Command
 {
-    public function execute(Arguments $args, ConsoleIoInterface $io)
+    public function execute()
     {
-        $io->out('This is the main method called from SampleCommand');
+        $this->io->out('This is the main method called from SampleCommand');
     }
 }

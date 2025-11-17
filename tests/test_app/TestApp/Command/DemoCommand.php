@@ -4,8 +4,6 @@ declare(strict_types=1);
 namespace TestApp\Command;
 
 use Cake\Command\Command;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIoInterface;
 
 class DemoCommand extends Command
 {
@@ -14,13 +12,13 @@ class DemoCommand extends Command
         return 'This is a demo command';
     }
 
-    public function execute(Arguments $args, ConsoleIoInterface $io): ?int
+    public function execute(): ?int
     {
-        $io->quiet('Quiet!');
-        $io->out('Demo Command!');
-        $io->verbose('Verbose!');
-        if ($args->hasArgumentAt(0)) {
-            $io->out($args->getArgumentAt(0));
+        $this->io->quiet('Quiet!');
+        $this->io->out('Demo Command!');
+        $this->io->verbose('Verbose!');
+        if ($this->args->hasArgumentAt(0)) {
+            $this->io->out($this->args->getArgumentAt(0));
         }
 
         return null;
