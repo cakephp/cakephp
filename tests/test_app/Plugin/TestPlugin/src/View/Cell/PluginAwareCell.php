@@ -25,7 +25,7 @@ class PluginAwareCell extends Cell
     public ?string $pluginFromAction = null;
 
     /**
-     * {@inheritDoc}
+     * @inheritDoc
      */
     public function initialize(): void
     {
