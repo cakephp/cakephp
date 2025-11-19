@@ -261,7 +261,8 @@ abstract class Driver implements LoggerAwareInterface
      * Execute the SQL query using the internal PDO instance.
      *
      * @param string $sql SQL query.
-     * @return int|false
+     * @return int|false Number of affected rows or false on failure
+     * @throws \Cake\Database\Exception\QueryException On database error
      */
     public function exec(string $sql): int|false
     {

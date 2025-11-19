@@ -120,6 +120,8 @@ class Connection implements ConnectionInterface
      * - `cacheKeyPrefix` Custom prefix to use when generation cache keys. Defaults to connection name.
      *
      * @param array<string, mixed> $config Configuration array.
+     * @throws \Cake\Database\Exception\MissingDriverException when the driver class cannot be found
+     * @throws \Cake\Database\Exception\MissingExtensionException when the database extension is not enabled
      */
     public function __construct(array $config)
     {
@@ -474,6 +476,7 @@ class Connection implements ConnectionInterface
      * Commits current transaction.
      *
      * @return bool true on success, false otherwise
+     * @throws \Cake\Database\Exception\NestedTransactionRollbackException when a nested transaction was rolled back
      */
     public function commit(): bool
     {
@@ -538,7 +541,7 @@ class Connection implements ConnectionInterface
     }
 
     /**
-     * Enables/disables the usage of savepoints, enables only if driver the allows it.
+     * Enables/disables the usage of savepoints, enables only if the driver allows it.
      *
      * If you are trying to enable this feature, make sure you check
      * `isSavePointsEnabled()` to verify that savepoints were enabled successfully.

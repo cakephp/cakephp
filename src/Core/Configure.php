@@ -214,7 +214,7 @@ class Configure
      * out of configure into the various other classes in CakePHP.
      *
      * @param string $var The key to read and remove.
-     * @return mixed
+     * @return mixed The value stored in Configure, or null if the key doesn't exist.
      */
     public static function consume(string $var): mixed
     {

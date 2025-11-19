@@ -18,12 +18,14 @@ namespace Cake\View\Helper;
 
 use Cake\Core\Exception\CakeException;
 use Cake\Datasource\Paging\PaginatedInterface;
+use Cake\Datasource\Paging\SortField;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Cake\View\Helper;
 use Cake\View\StringTemplate;
 use Cake\View\StringTemplateTrait;
 use Cake\View\View;
+use InvalidArgumentException;
 use function Cake\Core\h;
 use function Cake\I18n\__;
 
@@ -403,6 +405,27 @@ class PaginatorHelper extends Helper
             $content = __(Inflector::humanize((string)preg_replace('/_id$/', '', $content)));
         }
 
+        if (!isset($options['direction']) || !isset($options['lock'])) {
+            $sortableFields = $this->param('sortableFields');
+            if ($sortableFields && isset($sortableFields[$key])) {
+                $fieldConfig = $sortableFields[$key];
+
+                // Handle array of SortField objects
+                if (is_array($fieldConfig) && isset($fieldConfig[0]) && $fieldConfig[0] instanceof SortField) {
+                    /** @var \Cake\Datasource\Paging\SortField $sortField */
+                    $sortField = $fieldConfig[0];
+
+                    if (!isset($options['direction'])) {
+                        // Get the default direction (asc if not set, or the locked direction)
+                        $options['direction'] = $sortField->getDirection(SortField::ASC, false);
+                    }
+                    if (!isset($options['lock'])) {
+                        $options['lock'] = $sortField->isLocked();
+                    }
+                }
+            }
+        }
+
         $defaultDir = isset($options['direction']) ? strtolower($options['direction']) : 'asc';
         unset($options['direction']);
 
@@ -438,7 +461,7 @@ class PaginatorHelper extends Helper
 
         $sortFormat = $this->getConfig('options.sortFormat', 'separate');
         if ($sortFormat === 'combined') {
-            $paging = ['sort' => $key . '-' . $dir, 'page' => 1];
+            $paging = ['sort' => $key . '-' . $dir, 'direction' => null, 'page' => 1];
         } else {
             $paging = ['sort' => $key, 'direction' => $dir, 'page' => 1];
         }
@@ -1145,18 +1168,22 @@ class PaginatorHelper extends Helper
      * Dropdown select for pagination limit.
      * This will generate a wrapping form.
      *
+     * Options:
+     *  - `steps`: If provided as an integer, will generate limit options in multiples of this value
+     *     up to maxLimit (e.g., steps of 10 with maxLimit 50 generates [10, 20, 30, 40, 50]).
+     *
      * @param array<string, string> $limits The options array.
      * @param int|null $default Default option for pagination limit. Defaults to `$this->param('perPage')`.
-     * @param array<string, mixed> $options Options for Select tag attributes like class, id or event
+     * @param array<string, mixed> $options Options for Select tag attributes like class, id or event. Or steps.
      * @return string html output.
      */
     public function limitControl(array $limits = [], ?int $default = null, array $options = []): string
     {
-        $limits = $limits ?: [
-            '20' => '20',
-            '50' => '50',
-            '100' => '100',
-        ];
+        $steps = $options['steps'] ?? null;
+        unset($options['steps']);
+
+        $limits = $this->prepareLimitOptions($limits, $steps);
+
         $default ??= $this->paginated()->perPage();
         $scope = $this->param('scope');
         assert($scope === null || is_string($scope));
@@ -1204,6 +1231,57 @@ class PaginatorHelper extends Helper
         $out .= $this->Form->end();
 
         return $out;
+    }
+
+    /**
+     * Prepare and filter limit options for limitControl.
+     *
+     * Handles generating limits from steps, applying defaults, and filtering by maxLimit.
+     *
+     * @param array<string, string> $limits Explicit limit options
+     * @param int|null $steps If provided, generates limits in multiples of this value
+     * @return array<int|string, string> Prepared limit options
+     */
+    protected function prepareLimitOptions(array $limits, ?int $steps): array
+    {
+        // Generate limits based on steps if provided
+        if ($steps !== null) {
+            if ($limits !== []) {
+                throw new InvalidArgumentException(
+                    'Cannot use both `steps` option and explicit `$limits` array. ' .
+                    'Use one or the other.',
+                );
+            }
+
+            $maxLimit = $this->param('maxLimit');
+            $upperLimit = $maxLimit ?? 100;
+            $limits = [];
+            for ($i = $steps; $i <= $upperLimit; $i += $steps) {
+                $limits[$i] = (string)$i;
+            }
+
+            return $limits;
+        }
+
+        // Apply default limits if none provided
+        $limits = $limits ?: [
+            '20' => '20',
+            '50' => '50',
+            '100' => '100',
+        ];
+
+        // Filter out limits that exceed maxLimit
+        $maxLimit = $this->param('maxLimit');
+        if ($maxLimit !== null) {
+            $limits = array_filter($limits, function ($limit) use ($maxLimit) {
+                return (int)$limit <= $maxLimit;
+            });
+            if (!$limits) {
+                $limits[$maxLimit] = (string)$maxLimit;
+            }
+        }
+
+        return $limits;
     }
 
     /**

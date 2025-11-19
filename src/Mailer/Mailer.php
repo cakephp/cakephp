@@ -116,7 +116,7 @@ use InvalidArgumentException;
  * @method string getSubject() Gets subject. {@see \Cake\Mailer\Message::getSubject()}
  * @method $this setHeaders(array $headers) Sets headers for the message. {@see \Cake\Mailer\Message::setHeaders()}
  * @method $this addHeaders(array $headers) Add header for the message. {@see \Cake\Mailer\Message::addHeaders()}
- * @method $this getHeaders(array $include = []) Get list of headers. {@see \Cake\Mailer\Message::getHeaders()}
+ * @method array getHeaders(array $include = []) Get list of headers. {@see \Cake\Mailer\Message::getHeaders()}
  * @method $this setEmailFormat($format) Sets email format. {@see \Cake\Mailer\Message::setEmailFormat()}
  * @method string getEmailFormat() Gets email format. {@see \Cake\Mailer\Message::getEmailFormat()}
  * @method $this setMessageId($message) Sets message ID. {@see \Cake\Mailer\Message::setMessageId()}
@@ -127,7 +127,7 @@ use InvalidArgumentException;
  * @method array getAttachments() Gets attachments to the email message. {@see \Cake\Mailer\Message::getAttachments()}
  * @method $this addAttachment(\Psr\Http\Message\UploadedFileInterface|string $path, ?string $name, ?string $mimetype, ?string $contentId, ?bool $contentDisposition) Add an attachment. {@see \Cake\Mailer\Message::addAttachment()}
  * @method $this addAttachments($attachments) Add attachments. {@see \Cake\Mailer\Message::addAttachments()}
- * @method array|string getBody(?string $type = null) Get generated message body as array.
+ * @method array getBody(?string $type = null) Get generated message body as array.
  *   {@see \Cake\Mailer\Message::getBody()}
  */
 class Mailer implements EventListenerInterface

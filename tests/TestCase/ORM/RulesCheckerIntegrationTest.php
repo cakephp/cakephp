@@ -1084,6 +1084,84 @@ class RulesCheckerIntegrationTest extends TestCase
     }
 
     /**
+     * Tests existsInNullable helper method with null value
+     */
+    public function testExistsInNullableMethod(): void
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => null,
+            'site_id' => 1,
+            'name' => 'New Site Article without Author',
+        ]);
+        $table = $this->getTableLocator()->get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsInNullable(['author_id', 'site_id'], 'SiteAuthors'));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
+    }
+
+    /**
+     * Tests existsInNullable helper method with valid values
+     */
+    public function testExistsInNullableMethodWithValidValues(): void
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => 1,
+            'site_id' => 1,
+            'name' => 'New Site Article with Author',
+        ]);
+        $table = $this->getTableLocator()->get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsInNullable(['author_id', 'site_id'], 'SiteAuthors'));
+        $this->assertInstanceOf(Entity::class, $table->save($entity));
+    }
+
+    /**
+     * Tests existsInNullable helper method with invalid values
+     */
+    public function testExistsInNullableMethodWithInvalidValues(): void
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => 99999999,
+            'site_id' => 1,
+            'name' => 'New Site Article with Invalid Author',
+        ]);
+        $table = $this->getTableLocator()->get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsInNullable(['author_id', 'site_id'], 'SiteAuthors'));
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['author_id' => ['_existsIn' => 'This value does not exist']], $entity->getErrors());
+    }
+
+    /**
+     * Tests existsInNullable helper method with custom message
+     */
+    public function testExistsInNullableMethodWithCustomMessage(): void
+    {
+        $entity = new Entity([
+            'id' => 10,
+            'author_id' => 99999999,
+            'site_id' => 1,
+            'name' => 'New Site Article',
+        ]);
+        $table = $this->getTableLocator()->get('SiteArticles');
+        $table->belongsTo('SiteAuthors');
+        $rules = $table->rulesChecker();
+
+        $rules->add($rules->existsInNullable(['author_id', 'site_id'], 'SiteAuthors', 'Custom nullable message'));
+        $this->assertFalse($table->save($entity));
+        $this->assertEquals(['author_id' => ['_existsIn' => 'Custom nullable message']], $entity->getErrors());
+    }
+
+    /**
      * Tests using rules to prevent delete operations
      */
     public function testDeleteRules(): void

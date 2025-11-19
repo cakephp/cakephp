@@ -565,7 +565,7 @@ abstract class Association
      * Sets the property name that should be filled with data from the target table
      * in the source table record.
      *
-     * @param string $name The name of the association property. Use null to read the current value.
+     * @param string $name The name of the association property.
      * @return $this
      */
     public function setProperty(string $name): static
@@ -616,13 +616,17 @@ abstract class Association
     }
 
     /**
-     * Sets the strategy name to be used to fetch associated records. Keep in mind
-     * that some association types might not implement but a default strategy,
-     * rendering any changes to this setting void.
+     * Sets the strategy name to be used to fetch associated records.
      *
-     * @param string $name The strategy type. Use null to read the current value.
+     * Valid strategies depend on the association type and are stored in $_validStrategies.
+     * Some association types might only implement a default strategy, making this setting
+     * ineffective.
+     *
+     * @param string $name The strategy type (e.g., 'select', 'subquery', 'join').
+     *   Available strategies vary by association type.
      * @return $this
      * @throws \InvalidArgumentException When an invalid strategy is provided.
+     * @see getStrategy() to retrieve the current strategy.
      */
     public function setStrategy(string $name): static
     {
@@ -1118,12 +1122,10 @@ abstract class Association
         $foreignKey = (array)$options['foreignKey'];
         $bindingKey = (array)$this->getBindingKey();
 
+        $targetOwns = $this->isOwningSide($this->getTarget());
         if (count($foreignKey) !== count($bindingKey)) {
             if (!$bindingKey) {
-                $table = $this->getTarget()->getTable();
-                if ($this->isOwningSide($this->getSource())) {
-                    $table = $this->getSource()->getTable();
-                }
+                $table = $targetOwns ? $this->getTarget()->getTable() : $this->getSource()->getTable();
                 $msg = 'The `%s` table does not define a primary key, and cannot have join conditions generated.';
                 throw new DatabaseException(sprintf($msg, $table));
             }
@@ -1138,8 +1140,12 @@ abstract class Association
         }
 
         foreach ($foreignKey as $k => $f) {
-            $field = sprintf('%s.%s', $sAlias, $bindingKey[$k]);
-            $value = new IdentifierExpression(sprintf('%s.%s', $tAlias, $f));
+            // Set foreign and binding aliases based on which side has the foreign key
+            $fAlias = $targetOwns ? $sAlias : $tAlias;
+            $bAlias = $targetOwns ? $tAlias : $sAlias;
+
+            $field = sprintf('%s.%s', $bAlias, $bindingKey[$k]);
+            $value = new IdentifierExpression(sprintf('%s.%s', $fAlias, $f));
             $conditions[$field] = $value;
         }
 

@@ -98,6 +98,7 @@ class NumericPaginator implements PaginatorInterface
      */
     protected array $pagingParams = [
         'limit' => null,
+        'maxLimit' => null,
         'count' => null,
         'totalCount' => null,
         'perPage' => null,
@@ -379,6 +380,7 @@ class NumericPaginator implements PaginatorInterface
             'requestedPage' => $data['options']['page'],
             'alias' => $data['alias'],
             'scope' => $data['options']['scope'],
+            'maxLimit' => $data['options']['maxLimit'],
         ] + $this->pagingParams;
 
         $this->addPageCountParams($data);
@@ -389,6 +391,14 @@ class NumericPaginator implements PaginatorInterface
         $this->pagingParams['limit'] = $data['defaults']['limit'] != $data['options']['limit']
             ? $data['options']['limit']
             : null;
+
+        // Add sortableFields configuration for view helpers
+        if (isset($data['options']['sortableFields'])) {
+            $sortableFields = $data['options']['sortableFields'];
+            if ($sortableFields instanceof SortableFieldsBuilder) {
+                $this->pagingParams['sortableFields'] = $sortableFields->toArray();
+            }
+        }
 
         return $this->pagingParams;
     }
@@ -468,10 +478,15 @@ class NumericPaginator implements PaginatorInterface
             $sortDefault = key($defaults['order']);
             $directionDefault = current($defaults['order']);
         }
+        if (isset($data['options']['sortDirection'])) {
+            $direction = $data['options']['sortDirection'];
+        } else {
+            $direction = isset($data['options']['sort']) && count($order) ? current($order) : null;
+        }
 
         $this->pagingParams = [
             'sort' => $data['options']['sort'],
-            'direction' => isset($data['options']['sort']) && count($order) ? current($order) : null,
+            'direction' => $direction,
             'sortDefault' => $sortDefault,
             'directionDefault' => $directionDefault,
             'completeSort' => $order,
@@ -570,6 +585,11 @@ class NumericPaginator implements PaginatorInterface
             ? $sortableFields
             : SortableFieldsBuilder::create($sortableFields);
 
+        // Store the converted builder for later use in paging params
+        if ($builder !== null) {
+            $options['sortableFields'] = $builder;
+        }
+
         $sortAllowed = $builder !== null;
 
         if (isset($options['sort'])) {
@@ -605,6 +625,7 @@ class NumericPaginator implements PaginatorInterface
                     }
                 }
                 $options['order'] = $order;
+                $options['sortDirection'] = $sortParams['direction'];
             } else {
                 // No sortableFields configured - allow any field (default behavior)
                 $order = isset($options['order']) && is_array($options['order']) ? $options['order'] : [];

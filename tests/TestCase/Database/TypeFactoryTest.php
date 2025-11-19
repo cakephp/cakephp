@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
+use Cake\Database\Type\StringType;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeInterface;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Type\BarType;
@@ -77,12 +77,29 @@ class TypeFactoryTest extends TestCase
     public static function basicTypesProvider(): array
     {
         return [
+            ['biginteger'],
+            ['binary'],
+            ['boolean'],
+            ['cidr'],
+            ['date'],
+            ['datetime'],
+            ['datetimefractional'],
+            ['decimal'],
+            ['float'],
+            ['geography'],
+            ['geometry'],
+            ['inet'],
+            ['integer'],
+            ['macaddr'],
+            ['nativeuuid'],
+            ['point'],
+            ['smallinteger'],
             ['string'],
             ['text'],
-            ['smallinteger'],
+            ['time'],
             ['tinyinteger'],
-            ['integer'],
-            ['biginteger'],
+            ['uuid'],
+            ['year'],
         ];
     }
 
@@ -91,8 +108,10 @@ class TypeFactoryTest extends TestCase
      */
     public function testBuildUnknownType(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        TypeFactory::build('foo');
+        $type = TypeFactory::build('foo');
+        $this->assertSame('foo', $type->getName());
+        $this->assertSame('foo', $type->getBaseType());
+        $this->assertInstanceOf(StringType::class, $type);
     }
 
     /**

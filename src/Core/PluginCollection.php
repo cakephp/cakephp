@@ -101,6 +101,7 @@ class PluginCollection implements Iterator, Countable
         $notDebug = !Configure::read('debug');
         $notCli = PHP_SAPI !== 'cli';
 
+        /** @var array{onlyDebug?: bool, onlyCli?: bool, optional?: bool} $options */
         foreach (Hash::normalize($config, default: []) as $name => $options) {
             $onlyDebug = $options['onlyDebug'] ?? false;
             $onlyCli = $options['onlyCli'] ?? false;
@@ -144,6 +145,7 @@ class PluginCollection implements Iterator, Countable
         // wipes out all configuration including plugin paths config.
         PluginConfig::loadInstallerConfig();
 
+        /** @var string|null $path */
         $path = Configure::read('plugins.' . $name);
         if ($path) {
             return $path;
@@ -250,13 +252,13 @@ class PluginCollection implements Iterator, Countable
      * @param array<string, mixed> $config Configuration options for the plugin.
      * @return \Cake\Core\PluginInterface
      * @throws \Cake\Core\Exception\MissingPluginException When plugin instance could not be created.
-     * @throws \InvalidArgumentException When class name cannot be found.
+     * @throws \InvalidArgumentException When class name cannot be found or an empty name is provided.
      * @phpstan-param class-string<\Cake\Core\PluginInterface>|string $name
      */
     public function create(string $name, array $config = []): PluginInterface
     {
         if ($name === '') {
-            throw new CakeException('Cannot create a plugin with empty name');
+            throw new InvalidArgumentException('Plugin name cannot be empty.');
         }
 
         if (str_contains($name, '\\')) {

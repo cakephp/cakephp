@@ -1004,7 +1004,7 @@ class Text
     }
 
     /**
-     * Converts filesize from human readable string to bytes
+     * Converts filesize from human-readable string to bytes
      *
      * @param string $size Size in human readable string like '5MB', '5M', '500B', '50kb' etc.
      * @param string|int|null $default Value to be returned when invalid size was used, for example 'Unknown type'

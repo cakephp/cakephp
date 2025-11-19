@@ -69,11 +69,12 @@ class SortFieldTest extends TestCase
         $this->assertSame('created', $field->getField());
         $this->assertFalse($field->isLocked());
 
-        // Should use default direction when no direction specified
+        // Should use default direction when no direction specified or ASC
         $this->assertSame(SortField::DESC, $field->getDirection(SortField::ASC, false));
+        $this->assertSame(SortField::DESC, $field->getDirection(SortField::ASC, true));
 
-        // Should allow override when direction is specified
-        $this->assertSame(SortField::ASC, $field->getDirection(SortField::ASC, true));
+        //Should reverse direction because defaultDirection (initial) is DESC
+        $this->assertSame(SortField::ASC, $field->getDirection(SortField::DESC, true));
     }
 
     /**
@@ -125,20 +126,37 @@ class SortFieldTest extends TestCase
     }
 
     /**
-     * Test getDirection() with default direction
+     * Test getDirection() with default direction ASC
      *
      * @return void
      */
-    public function testGetDirectionWithDefault(): void
+    public function testGetDirectionWithDefaultAsc(): void
+    {
+        $field = new SortField('created', SortField::ASC, false);
+
+        // Should use default when direction not specified
+        $this->assertSame(SortField::ASC, $field->getDirection(SortField::ASC, false));
+
+        // Should use requested direction when explicitly specified
+        $this->assertSame(SortField::ASC, $field->getDirection(SortField::ASC, true));
+        $this->assertSame(SortField::DESC, $field->getDirection(SortField::DESC, true));
+    }
+
+    /**
+     * Test getDirection() with default direction DESC
+     *
+     * @return void
+     */
+    public function testGetDirectionWithDefaultDesc(): void
     {
         $field = new SortField('created', SortField::DESC, false);
 
         // Should use default when direction not specified
         $this->assertSame(SortField::DESC, $field->getDirection(SortField::ASC, false));
 
-        // Should use requested direction when explicitly specified
-        $this->assertSame(SortField::ASC, $field->getDirection(SortField::ASC, true));
-        $this->assertSame(SortField::DESC, $field->getDirection(SortField::DESC, true));
+        //Should reverse direction because defaultDirection (initial) is DESC
+        $this->assertSame(SortField::DESC, $field->getDirection(SortField::ASC, true));
+        $this->assertSame(SortField::ASC, $field->getDirection(SortField::DESC, true));
     }
 
     /**
@@ -183,7 +201,9 @@ class SortFieldTest extends TestCase
         $this->assertInstanceOf(SortField::class, $createdField);
         $this->assertSame('created', $createdField->getField());
         $this->assertSame(SortField::DESC, $createdField->getDirection(SortField::ASC, false));
-        $this->assertSame(SortField::ASC, $createdField->getDirection(SortField::ASC, true));
+        $this->assertSame(SortField::DESC, $createdField->getDirection(SortField::ASC, true));
+        //Should reverse direction because defaultDirection (initial) is DESC
+        $this->assertSame(SortField::ASC, $createdField->getDirection(SortField::DESC, true));
 
         $titleField = $newestFields[1];
         $this->assertInstanceOf(SortField::class, $titleField);

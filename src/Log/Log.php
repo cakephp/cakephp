@@ -278,7 +278,7 @@ class Log
      * Get a logging engine.
      *
      * @param string $name Key name of a configured adapter to get.
-     * @return \Psr\Log\LoggerInterface|null Instance of LoggerInterface or false if not found
+     * @return \Psr\Log\LoggerInterface|null Instance of LoggerInterface or null if not found
      */
     public static function engine(string $name): ?LoggerInterface
     {
@@ -338,7 +338,7 @@ class Log
      * @param \Stringable|string $message Message content to log
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
-     *  log engines to be used. If a string or a numerically index array is passed, it
+     *  log engines to be used. If a string or a numerically indexed array is passed, it
      *  will be treated as the `scope` key.
      *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
@@ -392,7 +392,7 @@ class Log
      * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
-     *  log engines to be used. If a string or a numerically index array is passed, it
+     *  log engines to be used. If a string or a numerically indexed array is passed, it
      *  will be treated as the `scope` key.
      *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
@@ -408,7 +408,7 @@ class Log
      * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
-     *  log engines to be used. If a string or a numerically index array is passed, it
+     *  log engines to be used. If a string or a numerically indexed array is passed, it
      *  will be treated as the `scope` key.
      *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
@@ -424,7 +424,7 @@ class Log
      * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
-     *  log engines to be used. If a string or a numerically index array is passed, it
+     *  log engines to be used. If a string or a numerically indexed array is passed, it
      *  will be treated as the `scope` key.
      *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
@@ -440,7 +440,7 @@ class Log
      * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
-     *  log engines to be used. If a string or a numerically index array is passed, it
+     *  log engines to be used. If a string or a numerically indexed array is passed, it
      *  will be treated as the `scope` key.
      *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
@@ -456,7 +456,7 @@ class Log
      * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
-     *  log engines to be used. If a string or a numerically index array is passed, it
+     *  log engines to be used. If a string or a numerically indexed array is passed, it
      *  will be treated as the `scope` key.
      *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
@@ -472,7 +472,7 @@ class Log
      * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
-     *  log engines to be used. If a string or a numerically index array is passed, it
+     *  log engines to be used. If a string or a numerically indexed array is passed, it
      *  will be treated as the `scope` key.
      *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success
@@ -488,7 +488,7 @@ class Log
      * @param \Stringable|string $message log message
      * @param array|string $context Additional data to be used for logging the message.
      *  The special `scope` key can be passed to be used for further filtering of the
-     *  log engines to be used. If a string or a numerically index array is passed, it
+     *  log engines to be used. If a string or a numerically indexed array is passed, it
      *  will be treated as the `scope` key.
      *  See {@link \Cake\Log\Log::setConfig()} for more information on logging scopes.
      * @return bool Success

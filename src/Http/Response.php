@@ -160,7 +160,7 @@ class Response implements ResponseInterface, Stringable
 
     /**
      * Holds all the cache directives that will be converted
-     * into headers when sending the request
+     * into headers when sending the response
      *
      * @var array<string, mixed>
      */
@@ -246,6 +246,9 @@ class Response implements ResponseInterface, Stringable
     /**
      * Formats the Content-Type header based on the configured contentType and charset
      * the charset will only be set in the header if the response is of type text/*
+     *
+     * Note: Content-Type header will be cleared for 304 and 204 status codes as these
+     * status codes must not have a Content-Type header.
      *
      * @param string $type The type to set.
      * @return void

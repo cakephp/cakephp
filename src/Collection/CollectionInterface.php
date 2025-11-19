@@ -45,6 +45,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ```
      *
      * @param callable $callback Callback to run for each element in collection.
+     *   Receives `($value, $key)` as parameters.
      * @return $this
      */
     public function each(callable $callback): static;
@@ -69,8 +70,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable|null $callback the method that will receive each of the elements and
-     *   returns true whether they should be in the resulting collection.
+     * @param callable|null $callback A callback receiving `($value, $key, $iterator)` that
+     *   returns true if the element should be included in the resulting collection.
      *   If left null, a callback that filters out falsey values will be used.
      * @return self
      */
@@ -95,8 +96,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable|null $callback the method that will receive each of the elements and
-     *   returns true whether they should be out of the resulting collection.
+     * @param callable|null $callback A callback receiving `($value, $key, $iterator)` that
+     *   returns true if the element should be excluded from the resulting collection.
      *   If left null, a callback that filters out truthy values will be used.
      * @return self
      */
@@ -109,8 +110,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * The callback is passed the value as the first argument and the key as the
      * second argument.
      *
-     * @param callable|null $callback the method that will receive each of the elements and
-     * returns the value used to determine uniqueness.
+     * @param callable|null $callback A callback receiving `($value, $key)` that returns
+     *   the value used to determine uniqueness. If left null, the element values themselves are used.
      * @return self
      */
     public function unique(?callable $callback = null): CollectionInterface;
@@ -132,8 +133,9 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * Empty collections always return true.
      *
-     * @param callable $callback a callback function
-     * @return bool true if for all elements in this collection the provided
+     * @param callable $callback A callback receiving `($value, $key)` that returns
+     *   true if the test passed, false otherwise.
+     * @return bool True if for all elements in this collection the provided
      *   callback returns true, false otherwise.
      */
     public function every(callable $callback): bool;
@@ -155,9 +157,10 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable $callback a callback function
-     * @return bool true if the provided callback returns true for any element in this
-     * collection, false otherwise
+     * @param callable $callback A callback receiving `($value, $key)` that returns
+     *   true if the test passed, false otherwise.
+     * @return bool True if the provided callback returns true for any element in this
+     *   collection, false otherwise
      */
     public function some(callable $callback): bool;
 
@@ -188,8 +191,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * });
      * ```
      *
-     * @param callable $callback the method that will receive each of the elements and
-     * returns the new value for the key that is being iterated
+     * @param callable $callback A callback receiving `($value, $key, $iterator)` that
+     *   returns the transformed value for each element.
      * @return self
      */
     public function map(callable $callback): CollectionInterface;
@@ -202,8 +205,9 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * If $initial is omitted the first value of the collection will be used in its place
      * and reduction will start from the second item.
      *
-     * @param callable $callback The callback function to be called
-     * @param mixed $initial The state of reduction
+     * @param callable $callback A callback receiving `($accumulator, $value, $key, $iterator)`
+     *   that returns the updated accumulator for each iteration.
+     * @param mixed $initial The initial state of reduction
      * @return mixed
      */
     public function reduce(callable $callback, mixed $initial = null): mixed;
@@ -631,9 +635,9 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * ]
      * ```
      *
-     * @param array $conditions a key-value list of conditions where
-     * the key is a property path as accepted by `Collection::extract`,
-     * and the value the condition against with each element will be matched
+     * @param array<string, mixed> $conditions A key-value list of conditions where
+     *   the key is a property path as accepted by `Collection::extract`,
+     *   and the value is the expected value to match against.
      * @return self
      */
     public function match(array $conditions): CollectionInterface;
@@ -642,9 +646,9 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * Returns the first result matching all the key-value pairs listed in
      * conditions.
      *
-     * @param array $conditions a key-value list of conditions where the key is
-     * a property path as accepted by `Collection::extract`, and the value the
-     * condition against with each element will be matched
+     * @param array<string, mixed> $conditions A key-value list of conditions where the key is
+     *   a property path as accepted by `Collection::extract`, and the value is
+     *   the expected value to match against.
      * @see \Cake\Collection\CollectionInterface::match()
      * @return TValue|null
      */
@@ -955,7 +959,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * $comments = (new Collection($comments))->stopWhen(['is_approved' => false]);
      * ```
      *
-     * @param callable|array $condition the method that will receive each of the elements and
+     * @param callable|array<string, mixed> $condition the method that will receive each of the elements and
      * returns true when the iteration should be stopped.
      * If an array, it will be interpreted as a key-value list of conditions where
      * the key is a property path as accepted by `Collection::extract`,

@@ -23,7 +23,7 @@ use Cake\Utility\Inflector;
 use InvalidArgumentException;
 
 /**
- * trait for symlinking / copying plugin assets to app's webroot.
+ * Trait for symlinking / copying plugin assets to app's webroot.
  *
  * @internal
  */

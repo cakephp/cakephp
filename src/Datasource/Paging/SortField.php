@@ -100,6 +100,10 @@ class SortField
             return $this->defaultDirection;
         }
 
+        if ($this->defaultDirection === static::DESC) {
+            return $requestedDirection === static::DESC ? static::ASC : static::DESC;
+        }
+
         return $requestedDirection;
     }
 

@@ -28,12 +28,12 @@ use DateTimeInterface;
 class RelativeTimeFormatter implements DifferenceFormatterInterface
 {
     /**
-     * Get the difference in a human readable format.
+     * Get the difference in a human-readable format.
      *
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface $first The datetime to start with.
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|null $second The datetime to compare against.
      * @param bool $absolute Removes time difference modifiers ago, after, etc.
-     * @return string The difference between the two days in a human readable format.
+     * @return string The difference between the two days in a human-readable format.
      * @see \Cake\Chronos\Chronos::diffForHumans
      */
     public function diffForHumans(

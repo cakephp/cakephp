@@ -1506,7 +1506,7 @@ class Validation
      *
      * @param mixed $check Value to check.
      * @param string $operator See `Validation::comparison()`.
-     * @param string|int $size Size in bytes or human readable string like '5MB'.
+     * @param string|int $size Size in bytes or human-readable string like '5MB'.
      * @return bool Success
      */
     public static function fileSize(mixed $check, string $operator, string|int $size): bool

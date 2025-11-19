@@ -35,6 +35,21 @@ interface RateLimiterInterface
     /**
      * Reset rate limit for an identifier
      *
+     * Clears all rate limiting data for the specified identifier, allowing
+     * fresh requests to be made. This is useful for testing or when you need
+     * to manually reset limits for specific users/IPs.
+     *
+     * Note: The identifier should be the same format as used in attempt(),
+     * typically a cache key that includes the 'rate_limit_' prefix and hashed value.
+     *
+     * Example usage:
+     * ```
+     * $cache = Cache::pool('default');
+     * $limiter = new SlidingWindowRateLimiter($cache);
+     * $key = 'rate_limit_' . hash('xxh3', '192.168.1.1');
+     * $limiter->reset($key);
+     * ```
+     *
      * @param string $identifier The identifier to reset
      * @return void
      */

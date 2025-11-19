@@ -47,10 +47,11 @@ class Hash
      * @param \ArrayAccess|array $data Array of data or object implementing
      *   \ArrayAccess interface to operate on.
      * @param array<string>|string|int|null $path The path being searched for. Either a dot
-     *   separated string, or an array of path segments.
-     * @param mixed $default The return value when the path does not exist
+     *   separated string, or an array of path segments. If null, returns $default.
+     * @param mixed $default The return value when the path does not exist or is null.
      * @throws \InvalidArgumentException
-     * @return mixed The value fetched from the array, or null.
+     * @return mixed The value fetched from the array, or $default if path doesn't exist, is null,
+     *   or $data is empty.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::get
      */
     public static function get(ArrayAccess|array $data, array|string|int|null $path, mixed $default = null): mixed
@@ -551,7 +552,8 @@ class Hash
      * @param array $data Source array from which to extract the data
      * @param array<string> $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
-     * @return array<string>|null An array of strings extracted from `$path` and formatted with `$format`
+     * @return array<string>|null An array of strings extracted from `$path` and formatted with `$format`,
+     *   or null if $paths is empty.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()

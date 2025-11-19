@@ -159,8 +159,9 @@ class Security
      *
      * You can use this method to forcibly decide between openssl/custom implementations.
      *
-     * @param \Cake\Utility\Crypto\OpenSsl|null $instance The crypto instance to use.
-     * @return \Cake\Utility\Crypto\OpenSsl Crypto instance.
+     * @param \Cake\Utility\Crypto\OpenSsl|null $instance The crypto instance to use. If provided, sets and returns this instance.
+     *   If null, returns the currently configured engine or creates a new OpenSsl instance.
+     * @return \Cake\Utility\Crypto\OpenSsl Crypto instance. By default, returns a \Cake\Utility\Crypto\OpenSsl instance.
      * @throws \InvalidArgumentException When no compatible crypto extension is available.
      */
     public static function engine(?object $instance = null): object

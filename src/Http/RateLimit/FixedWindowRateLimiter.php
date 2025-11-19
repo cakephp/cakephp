@@ -47,7 +47,7 @@ class FixedWindowRateLimiter implements RateLimiterInterface
     {
         $now = time();
         $windowStart = (int)($now / $window) * $window;
-        $key = $this->generateKey($identifier . '_' . $windowStart);
+        $key = $identifier . '_' . $windowStart;
 
         $count = (int)$this->cache->get($key, 0);
         $allowed = $count + $cost <= $limit;
@@ -74,17 +74,6 @@ class FixedWindowRateLimiter implements RateLimiterInterface
         $now = time();
         $window = 3600; // Assume max window of 1 hour for reset
         $windowStart = (int)($now / $window) * $window;
-        $this->cache->delete($this->generateKey($identifier . '_' . $windowStart));
-    }
-
-    /**
-     * Generate cache key for identifier
-     *
-     * @param string $identifier The identifier to rate limit
-     * @return string
-     */
-    protected function generateKey(string $identifier): string
-    {
-        return 'rate_limit_' . hash('xxh3', $identifier);
+        $this->cache->delete($identifier . '_' . $windowStart);
     }
 }

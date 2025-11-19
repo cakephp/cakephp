@@ -108,7 +108,7 @@ use function Cake\Core\namespaceSplit;
  *   for the provided named validator.
  *
  * - `Model.buildRules` Allows listeners to modify the rules checker by adding more rules.
- *   Behaviors or custom listerners can subscribe to this even. For tables you don't
+ *   Behaviors or custom listeners can subscribe to this event. For tables you don't
  *   need to subscribe to this event, simply override the `Table::buildRules()` method.
  *
  * - `Model.beforeRules` Fired before an entity is validated using the rules checker.
@@ -839,9 +839,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $name The behavior alias to get from the registry.
      * @return \Cake\ORM\Behavior
-     * @template TName of key-of<TBehaviors>
+     * @template TName of string
      * @phpstan-param TName $name The behavior alias to get from the registry.
-     * @phpstan-return TBehaviors[TName]
+     * @phpstan-return (TName is key-of<TBehaviors> ? TBehaviors[TName] : \Cake\ORM\Behavior)
      * @throws \InvalidArgumentException If the behavior does not exist.
      */
     public function getBehavior(string $name): Behavior
@@ -1629,7 +1629,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find an existing record by, or a callable tha will
+     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find an existing record by, or a callable that will
      *   customize the find query.
      * @param callable|array|null $callback Data or a callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
@@ -1904,7 +1904,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @template TEntity of \Cake\Datasource\EntityInterface
      * @param TEntity $entity the entity to be saved
      * @param array<string, mixed> $options The options to use when saving.
-     * @return TEntity|false
+     * @return TEntity|false Returns the entity on success. Returns false when the entity has errors,
+     *   validation fails, rules checking fails, or the save operation fails. If the entity is not new
+     *   and has no dirty fields, the entity is returned without performing any database operation.
      * @throws \Cake\ORM\Exception\RolledbackTransactionException If the transaction is aborted in the afterSave event.
      */
     public function save(
@@ -2176,7 +2178,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * You can overwrite _newId() in your table class.
      *
      * @param array<string> $primary The primary key columns to get a new ID for.
-     * @return string|null Either null or the primary key value or a list of primary key values.
+     * @return string|null The primary key value when a single primary key is available, or null.
      */
     protected function newId(array $primary): ?string
     {

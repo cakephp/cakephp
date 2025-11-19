@@ -40,8 +40,7 @@ class UrlHelper extends Helper
     /**
      * Asset URL engine class name
      *
-     * @var string
-     * @phpstan-var class-string<\Cake\Routing\Asset>
+     * @var class-string<\Cake\Routing\Asset>
      */
     protected string $_assetUrlClassName;
 
@@ -77,7 +76,7 @@ class UrlHelper extends Helper
      * @param array|string|null $url Either a relative string URL like `/products/view/23` or
      *    an array of URL parameters. Using an array for URLs will allow you to leverage
      *    the reverse routing features of CakePHP.
-     * @param array<string, mixed> $options Array of options.
+     * @param array{fullBase?: bool, escape?: bool} $options Array of options.
      * @return string Full translated URL with base path.
      */
     public function build(array|string|null $url = null, array $options = []): string
@@ -108,7 +107,7 @@ class UrlHelper extends Helper
      * @param string $path Cake-relative route path.
      * @param array $params An array specifying any additional parameters.
      *   Can be also any special parameters supported by `Router::url()`.
-     * @param array<string, mixed> $options Array of options.
+     * @param array{fullBase?: bool, escape?: bool} $options Array of options.
      * @return string Full translated URL with base path.
      * @see \Cake\Routing\Router::pathUrl()
      */

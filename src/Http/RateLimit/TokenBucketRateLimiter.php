@@ -46,9 +46,9 @@ class TokenBucketRateLimiter implements RateLimiterInterface
     public function attempt(string $identifier, int $limit, int $window, int $cost = 1): array
     {
         $now = microtime(true);
-        $key = $this->generateKey($identifier);
+        $key = $identifier;
 
-        $data = $this->cache->get($key, [
+        $data = $this->cache->get($identifier, [
             'tokens' => $limit,
             'last_update' => $now,
         ]);
@@ -87,17 +87,6 @@ class TokenBucketRateLimiter implements RateLimiterInterface
      */
     public function reset(string $identifier): void
     {
-        $this->cache->delete($this->generateKey($identifier));
-    }
-
-    /**
-     * Generate cache key for identifier
-     *
-     * @param string $identifier The identifier to rate limit
-     * @return string
-     */
-    protected function generateKey(string $identifier): string
-    {
-        return 'rate_limit_' . hash('xxh3', $identifier);
+        $this->cache->delete($identifier);
     }
 }

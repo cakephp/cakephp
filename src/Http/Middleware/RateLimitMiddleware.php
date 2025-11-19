@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Http\Middleware;
 
+use Authentication\IdentityInterface;
 use Cake\Cache\Cache;
 use Cake\Http\Exception\TooManyRequestsException;
 use Cake\Http\RateLimit\FixedWindowRateLimiter;
@@ -37,22 +38,75 @@ use Psr\Http\Server\RequestHandlerInterface;
 class RateLimitMiddleware implements MiddlewareInterface
 {
     /**
+     * Identifier type: client IP address
+     */
+    public const IDENTIFIER_IP = 'ip';
+
+    /**
+     * Identifier type: authenticated user
+     */
+    public const IDENTIFIER_USER = 'user';
+
+    /**
+     * Identifier type: route (controller/action)
+     */
+    public const IDENTIFIER_ROUTE = 'route';
+
+    /**
+     * Identifier type: API key from token headers
+     */
+    public const IDENTIFIER_API_KEY = 'api_key';
+
+    /**
+     * Identifier type: token (alias for API key)
+     */
+    public const IDENTIFIER_TOKEN = 'token';
+
+    /**
+     * Strategy: sliding window rate limiting
+     */
+    public const STRATEGY_SLIDING_WINDOW = 'sliding_window';
+
+    /**
+     * Strategy: token bucket rate limiting
+     */
+    public const STRATEGY_TOKEN_BUCKET = 'token_bucket';
+
+    /**
+     * Strategy: fixed window rate limiting
+     */
+    public const STRATEGY_FIXED_WINDOW = 'fixed_window';
+
+    /**
      * Default configuration
      *
-     * - `skipCheck`: Closure|null to determine if rate limiting should be skipped
-     * - `costCallback`: Closure|null to calculate request cost
-     * - `identifierCallback`: Closure|null to generate custom identifier
-     * - `limitCallback`: Closure|null to determine dynamic limits
-     * - `keyGenerator`: Closure|null to generate cache keys
-     * - `limiterResolver`: Closure|null to resolve named limiters
+     * - `limit`: Maximum number of requests allowed (default: 60)
+     * - `window`: Time window in seconds for rate limiting (default: 60)
+     * - `identifier`: How to identify clients - use IDENTIFIER_* constants (default: IDENTIFIER_IP)
+     * - `strategy`: Rate limiting strategy - use STRATEGY_* constants (default: STRATEGY_SLIDING_WINDOW)
+     * - `strategyClass`: Fully qualified class name of rate limiter strategy. Takes precedence over `strategy` option
+     * - `cache`: Cache configuration name to use (default: 'default')
+     * - `headers`: Whether to add rate limit headers to response (default: true)
+     * - `message`: Error message when rate limit is exceeded
+     * - `skipCheck`: Closure|null to determine if rate limiting should be skipped for a request
+     * - `costCallback`: Closure|null to calculate custom cost for requests (default: 1 per request)
+     * - `identifierCallback`: Closure|null to generate custom identifier, overrides `identifier` option
+     * - `limitCallback`: Closure|null to determine dynamic limits based on request/identifier
+     * - `ipHeader`: Header name(s) to check for client IP (default: 'x-forwarded-for')
+     * - `includeRetryAfter`: Whether to include Retry-After header (default: true)
+     * - `keyGenerator`: Closure|null to generate custom cache keys for rate limiting
+     * - `tokenHeaders`: Array of headers to check for API tokens (default: ['Authorization', 'X-API-Key'])
+     * - `limiters`: Named limiter configurations for different routes/contexts
+     * - `limiterResolver`: Closure|null to resolve which named limiter to use for a request
      *
      * @var array<string, mixed>
      */
     protected array $defaultConfig = [
         'limit' => 60,
         'window' => 60,
-        'identifier' => 'ip',
-        'strategy' => 'sliding_window',
+        'identifier' => self::IDENTIFIER_IP,
+        'strategy' => self::STRATEGY_SLIDING_WINDOW,
+        'strategyClass' => null,
         'cache' => 'default',
         'headers' => true,
         'message' => 'Rate limit exceeded. Please try again later.',
@@ -105,7 +159,7 @@ class RateLimitMiddleware implements MiddlewareInterface
         $cost = $this->getCost($request);
         $key = $this->generateKey($identifier, $request);
 
-        $rateLimiter = $this->getRateLimiter($limiterConfig['strategy'] ?? null);
+        $rateLimiter = $this->getRateLimiter($limiterConfig);
         $result = $rateLimiter->attempt($key, $limit, $window, $cost);
 
         if (!$result['allowed']) {
@@ -204,10 +258,10 @@ class RateLimitMiddleware implements MiddlewareInterface
     protected function getIdentifierByType(string $type, ServerRequestInterface $request): string
     {
         return match ($type) {
-            'ip' => $this->getClientIp($request),
-            'user' => $this->getUserIdentifier($request),
-            'route' => $this->getRouteIdentifier($request),
-            'api_key', 'token' => $this->getApiKeyIdentifier($request),
+            self::IDENTIFIER_IP => $this->getClientIp($request),
+            self::IDENTIFIER_USER => $this->getUserIdentifier($request),
+            self::IDENTIFIER_ROUTE => $this->getRouteIdentifier($request),
+            self::IDENTIFIER_API_KEY, self::IDENTIFIER_TOKEN => $this->getApiKeyIdentifier($request),
             default => $this->getClientIp($request),
         };
     }
@@ -251,10 +305,9 @@ class RateLimitMiddleware implements MiddlewareInterface
      */
     protected function getUserIdentifier(ServerRequestInterface $request): string
     {
-        /** @var object|null $user */
         $user = $request->getAttribute('identity');
         if ($user) {
-            if (method_exists($user, 'getIdentifier')) {
+            if (interface_exists(IdentityInterface::class) && $user instanceof IdentityInterface) {
                 return 'user_' . $user->getIdentifier();
             }
             if (isset($user->id)) {
@@ -365,18 +418,27 @@ class RateLimitMiddleware implements MiddlewareInterface
     /**
      * Get rate limiter instance based on strategy
      *
-     * @param string|null $strategy Optional strategy override
+     * @param array<string, mixed> $limiterConfig Optional limiter configuration override
      * @return \Cake\Http\RateLimit\RateLimiterInterface
      */
-    protected function getRateLimiter(?string $strategy = null): RateLimiterInterface
+    protected function getRateLimiter(array $limiterConfig = []): RateLimiterInterface
     {
-        $strategy ??= $this->config['strategy'];
         $cache = Cache::pool($this->config['cache']);
 
+        // Check if strategyClass is provided (takes precedence)
+        /** @var class-string<\Cake\Http\RateLimit\RateLimiterInterface>|null $strategyClass */
+        $strategyClass = $limiterConfig['strategyClass'] ?? $this->config['strategyClass'];
+        if ($strategyClass !== null && class_exists($strategyClass)) {
+            return new $strategyClass($cache);
+        }
+
+        // Fall back to strategy string mapping for backward compatibility
+        $strategy = $limiterConfig['strategy'] ?? $this->config['strategy'];
+
         return match ($strategy) {
-            'token_bucket' => new TokenBucketRateLimiter($cache),
-            'fixed_window' => new FixedWindowRateLimiter($cache),
-            'sliding_window' => new SlidingWindowRateLimiter($cache),
+            self::STRATEGY_TOKEN_BUCKET => new TokenBucketRateLimiter($cache),
+            self::STRATEGY_FIXED_WINDOW => new FixedWindowRateLimiter($cache),
+            self::STRATEGY_SLIDING_WINDOW => new SlidingWindowRateLimiter($cache),
             default => new SlidingWindowRateLimiter($cache),
         };
     }
