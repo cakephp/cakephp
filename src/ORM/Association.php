@@ -213,22 +213,35 @@ abstract class Association
     {
         $this->sourceTable = $sourceTable;
 
-        $defaults = [
-            'cascadeCallbacks',
-            'className',
-            'conditions',
-            'dependent',
-            'finder',
-            'bindingKey',
-            'foreignKey',
-            'joinType',
-            'tableLocator',
-            'targetTable',
-        ];
-        foreach ($defaults as $property) {
-            if (isset($options[$property])) {
-                $this->{$property} = $options[$property];
-            }
+        if (isset($options['cascadeCallbacks'])) {
+            $this->cascadeCallbacks = $options['cascadeCallbacks'];
+        }
+        if (isset($options['className'])) {
+            $this->className = $options['className'];
+        }
+        if (isset($options['conditions'])) {
+            $this->conditions = $options['conditions'];
+        }
+        if (isset($options['dependent'])) {
+            $this->dependent = $options['dependent'];
+        }
+        if (isset($options['finder'])) {
+            $this->finder = $options['finder'];
+        }
+        if (isset($options['bindingKey'])) {
+            $this->bindingKey = $options['bindingKey'];
+        }
+        if (isset($options['foreignKey'])) {
+            $this->foreignKey = $options['foreignKey'];
+        }
+        if (isset($options['joinType'])) {
+            $this->joinType = $options['joinType'];
+        }
+        if (isset($options['tableLocator'])) {
+            $this->tableLocator = $options['tableLocator'];
+        }
+        if (isset($options['targetTable'])) {
+            $this->targetTable = $options['targetTable'];
         }
 
         if (isset($options['propertyName'])) {
