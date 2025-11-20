@@ -34,7 +34,7 @@ use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\TestPluginThreePlugin;
 use Mockery;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
-use TestPlugin\Plugin as TestPlugin;
+use TestPlugin\TestPluginPlugin as TestPlugin;
 
 /**
  * BasePluginTest class

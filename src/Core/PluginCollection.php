@@ -273,20 +273,27 @@ class PluginCollection implements Iterator, Countable
         $config += ['name' => $name];
         $namespace = str_replace('/', '\\', $name);
 
-        $className = $namespace . '\\' . 'Plugin';
-        // Check for [Vendor/]Foo/Plugin class
+        $pos = strpos($name, '/');
+        if ($pos === false) {
+            $namePart = $name;
+        } else {
+            $namePart = substr($name, $pos + 1);
+        }
+
+        // Check for [Vendor/]Foo/FooPlugin class
+        $className = $namespace . '\\' . $namePart . 'Plugin';
+
         if (!class_exists($className)) {
-            $pos = strpos($name, '/');
-            if ($pos === false) {
-                $namePart = $name;
+            // Check for [Vendor/]Foo/Plugin class
+            $className = $namespace . '\\' . 'Plugin';
+
+            if (class_exists($className)) {
+                deprecationWarning(
+                    '5.3.0',
+                    'Loading plugins with a plugin class named `Plugin` is deprecated.'
+                    . " Rename the class to `{$namePart}Plugin` instead.",
+                );
             } else {
-                $namePart = substr($name, $pos + 1);
-            }
-
-            // Check for [Vendor/]Foo/FooPlugin
-            $className = $namespace . '\\' . $namePart . 'Plugin';
-
-            if (!class_exists($className)) {
                 $className = BasePlugin::class;
                 if (empty($config['path'])) {
                     $config['path'] = $this->findPath($name);
