@@ -274,11 +274,7 @@ class PluginCollection implements Iterator, Countable
         $namespace = str_replace('/', '\\', $name);
 
         $pos = strpos($name, '/');
-        if ($pos === false) {
-            $namePart = $name;
-        } else {
-            $namePart = substr($name, $pos + 1);
-        }
+        $namePart = $pos === false ? $name : substr($name, $pos + 1);
 
         // Check for [Vendor/]Foo/FooPlugin class
         $className = $namespace . '\\' . $namePart . 'Plugin';
