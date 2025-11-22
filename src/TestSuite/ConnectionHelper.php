@@ -23,8 +23,6 @@ use Closure;
 
 /**
  * Helper for managing test connections
- *
- * @internal
  */
 class ConnectionHelper
 {

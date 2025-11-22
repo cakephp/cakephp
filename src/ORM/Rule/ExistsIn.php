@@ -128,7 +128,6 @@ class ExistsIn
         }
 
         if ($this->options['allowNullableNulls']) {
-            /** @var \Cake\ORM\Table $source */
             $schema = $source->getSchema();
             foreach ($fields as $i => $field) {
                 if ($schema->hasColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {

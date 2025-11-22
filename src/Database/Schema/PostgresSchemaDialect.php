@@ -165,9 +165,6 @@ class PostgresSchemaDialect extends SchemaDialect
         if ($col === 'smallint') {
             return ['type' => TableSchemaInterface::TYPE_SMALLINTEGER, 'length' => 5];
         }
-        if ($col === 'inet') {
-            return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => 39];
-        }
         if ($col === 'uuid') {
             return ['type' => TableSchemaInterface::TYPE_UUID, 'length' => null];
         }

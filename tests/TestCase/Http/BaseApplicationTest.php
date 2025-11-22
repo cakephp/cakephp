@@ -33,7 +33,7 @@ use Cake\Routing\RouteCollection;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use Psr\Http\Message\ResponseInterface;
-use TestPlugin\Plugin as TestPlugin;
+use TestPlugin\TestPluginPlugin as TestPlugin;
 
 /**
  * Base application test.

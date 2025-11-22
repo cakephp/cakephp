@@ -100,9 +100,9 @@ class PaginatorHelper extends Helper
     /**
      * Paginated results
      *
-     * @var \Cake\Datasource\Paging\PaginatedInterface
+     * @var \Cake\Datasource\Paging\PaginatedInterface|null
      */
-    protected PaginatedInterface $paginated;
+    protected ?PaginatedInterface $paginated = null;
 
     /**
      * Constructor. Overridden to merge passed args with URL options.
@@ -412,7 +412,6 @@ class PaginatorHelper extends Helper
 
                 // Handle array of SortField objects
                 if (is_array($fieldConfig) && isset($fieldConfig[0]) && $fieldConfig[0] instanceof SortField) {
-                    /** @var \Cake\Datasource\Paging\SortField $sortField */
                     $sortField = $fieldConfig[0];
 
                     if (!isset($options['direction'])) {

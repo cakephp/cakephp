@@ -292,6 +292,36 @@ class CellTest extends TestCase
     }
 
     /**
+     * Tests that plugin name is accessible during initialize().
+     */
+    public function testPluginAccessibleDuringInitialize(): void
+    {
+        $cell = $this->View->cell('TestPlugin.PluginAware');
+
+        $this->assertSame('TestPlugin', $cell->pluginFromInitialize, 'Plugin should be accessible during initialize()');
+
+        $output = $cell->render();
+        $this->assertStringContainsString('Plugin from initialize: TestPlugin', $output);
+        $this->assertStringContainsString('Plugin from action: TestPlugin', $output);
+        $this->assertSame('TestPlugin', $cell->pluginFromAction, 'Plugin should be accessible during action');
+    }
+
+    /**
+     * Tests that plugin is null for non-plugin cells during initialize().
+     */
+    public function testNonPluginCellDuringInitialize(): void
+    {
+        $cell = $this->View->cell('PluginAware');
+
+        $this->assertNull($cell->pluginFromInitialize, 'Plugin should be null for non-plugin cells during initialize()');
+
+        $output = $cell->render();
+        $this->assertStringContainsString('Plugin from initialize: null', $output);
+        $this->assertStringContainsString('Plugin from action: null', $output);
+        $this->assertNull($cell->pluginFromAction, 'Plugin should be null for non-plugin cells during action');
+    }
+
+    /**
      * Tests that using an nonexistent cell throws an exception.
      */
     public function testNonExistentCell(): void

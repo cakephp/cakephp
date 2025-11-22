@@ -19,7 +19,7 @@ use Cake\Core\BasePlugin;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\MiddlewareQueue;
 
-class Plugin extends BasePlugin
+class TestPluginPlugin extends BasePlugin
 {
     public function events(EventManagerInterface $event): EventManagerInterface
     {

@@ -18,7 +18,7 @@ namespace Cake\Test\TestCase\Core;
 use Cake\Core\Exception\MissingPluginException;
 use Cake\Core\Plugin;
 use Cake\TestSuite\TestCase;
-use TestPlugin\Plugin as TestPlugin;
+use TestPlugin\TestPluginPlugin as TestPlugin;
 
 /**
  * PluginTest class

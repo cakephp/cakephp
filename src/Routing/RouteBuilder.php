@@ -1030,7 +1030,6 @@ class RouteBuilder
      */
     public function applyMiddleware(string ...$names): static
     {
-        /** @var array<string> $names */
         foreach ($names as $name) {
             if (!$this->_collection->middlewareExists($name)) {
                 $message = "Cannot apply `{$name}` middleware or middleware group. " .

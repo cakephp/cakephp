@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\TestPluginThreePlugin;
 use InvalidArgumentException;
 use Named\NamedPlugin;
-use TestPlugin\Plugin as TestPlugin;
+use TestPlugin\TestPluginPlugin as TestPlugin;
 
 /**
  * PluginCollection Test

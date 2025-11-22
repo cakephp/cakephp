@@ -232,13 +232,13 @@ jobs:
       - name: Install PHP tools with phive.
         run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
 
-      - name: Run phpcs
-        if: always()
-        run: vendor/bin/phpcs --parallel=4 --report=checkstyle | cs2pr
-
       - name: Run phpstan
         if: always()
         run: tools/phpstan analyse --error-format=github
+
+      - name: Run phpcs
+        if: always()
+        run: vendor/bin/phpcs --parallel=16 --report=checkstyle | cs2pr
 
       - name: Run phpstan for tests
         if: env.PHPSTAN_TESTS

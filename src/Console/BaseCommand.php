@@ -271,7 +271,6 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
         $this->initialize();
 
         $this->dispatchEvent('Command.beforeExecute', ['args' => $this->args, 'io' => $this->io]);
-        /** @var int|null $result */
         $result = $this->execute();
         $this->dispatchEvent('Command.afterExecute', ['args' => $this->args, 'io' => $this->io, 'result' => $result]);
 

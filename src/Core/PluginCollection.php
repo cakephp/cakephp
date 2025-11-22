@@ -274,21 +274,10 @@ class PluginCollection implements Iterator, Countable
         $namespace = str_replace('/', '\\', $name);
 
         $pos = strpos($name, '/');
-        if ($pos === false) {
-            $namePart = $name;
-        } else {
-            $namePart = substr($name, $pos + 1);
-        }
+        $namePart = $pos === false ? $name : substr($name, $pos + 1);
 
         // Check for [Vendor/]Foo/FooPlugin
         $className = $namespace . '\\' . $namePart . 'Plugin';
-        if (class_exists($className)) {
-            /** @var class-string<\Cake\Core\PluginInterface> $className */
-            return new $className($config);
-        }
-
-        // Check for [Vendor/]Foo/Plugin class
-        $className = $namespace . '\\' . 'Plugin';
         if (class_exists($className)) {
             /** @var class-string<\Cake\Core\PluginInterface> $className */
             return new $className($config);
