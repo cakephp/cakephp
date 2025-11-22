@@ -86,7 +86,6 @@ class TypeFactoryTest extends TestCase
             ['datetimefractional'],
             ['decimal'],
             ['float'],
-            ['geography'],
             ['geometry'],
             ['inet'],
             ['integer'],

@@ -112,6 +112,23 @@ class PostgresSchemaDialect extends SchemaDialect
     }
 
     /**
+     * Helper method for creating SQL to describe postgis columns in a table.
+     *
+     * @return string
+     */
+    private function describePostgisColumnQuery(string $superType): string
+    {
+        return <<<SQL
+        SELECT f_table_schema AS schema,
+            f_{$superType}_column AS name,
+            srid,
+            type
+        FROM public.{$superType}_columns
+        WHERE f_table_name = ? AND f_table_schema = ? AND table_catalog = ?
+        SQL;
+    }
+
+    /**
      * Convert a column definition to the abstract types.
      *
      * The returned type will be a type that
@@ -281,9 +298,22 @@ class PostgresSchemaDialect extends SchemaDialect
         [$schema, $name] = $this->splitTablename($tableName);
 
         $sql = $this->describeColumnQuery();
-        $statement = $this->_driver->execute($sql, [$name, $schema, $config['database']]);
+        $rows = $this->_driver->execute($sql, [$name, $schema, $config['database']])->fetchAll('assoc');
+
+        $postgis = [];
+        $udtTypes = array_column($rows, 'udt_name');
+        foreach (['geometry', 'geography'] as $superType) {
+            if (in_array($superType, $udtTypes)) {
+                $sql = $this->describePostgisColumnQuery($superType);
+                $rows = $this->_driver->execute($sql, [$name, $schema, $config['database']])->fetchAll('assoc');
+                foreach ($rows as $row) {
+                    $postgis[$row['name']] = $row;
+                }
+            }
+        }
+
         $columns = [];
-        foreach ($statement->fetchAll('assoc') as $row) {
+        foreach ($rows as $row) {
             $type = $row['type'];
             if ($type === 'USER-DEFINED') {
                 $type = $row['udt_name'];
@@ -326,6 +356,15 @@ class PostgresSchemaDialect extends SchemaDialect
             }
             if (isset($row['identity_generation']) && $row['identity_generation']) {
                 $field['generated'] = $row['identity_generation'];
+            }
+
+            $posgisColumn = $postgis[$row['name']] ?? null;
+            if ($posgisColumn) {
+                $field = [
+                    'type' => $posgisColumn['type'],
+                    'baseType' => $type,
+                    'srid' => $posgisColumn['srid'],
+                ] + $field;
             }
 
             $columns[] = $field;
