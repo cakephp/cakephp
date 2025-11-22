@@ -710,7 +710,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             'message' => $message,
         ];
 
-        if (!is_string($field)) {
+        if (is_string($field)) {
             $field = $this->convertValidatorToArray($field, $defaults);
         }
 

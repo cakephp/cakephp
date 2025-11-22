@@ -164,7 +164,7 @@ class RulesChecker extends BaseRulesChecker
         }
 
         if (!$message) {
-            if ($this->_useI18n) {
+            if ($this->useI18n) {
                 $message = __d('cake', 'This value does not exist');
             } else {
                 $message = 'This value does not exist';
@@ -173,7 +173,7 @@ class RulesChecker extends BaseRulesChecker
 
         $errorField = is_string($field) ? $field : current($field);
 
-        return $this->_addError(
+        return $this->addError(
             new ExistsInNullable($field, $table, $options),
             '_existsIn',
             compact('errorField', 'message'),
