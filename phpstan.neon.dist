@@ -5,7 +5,7 @@ parameters:
 	level: 8
 	phpVersion:
 		min: 80400
-		max: 80499
+		max: 80599
 	treatPhpDocTypesAsCertain: false
 	featureToggles:
 		internalTag: true
