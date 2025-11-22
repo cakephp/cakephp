@@ -3361,7 +3361,7 @@ class PaginatorHelperTest extends TestCase
         $out = $this->Paginator->limitControl([20 => 20, 50 => 50, 100 => 100, 200 => 200]);
         $expected = [
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
-            ['div' => ['class' => 'input select']],
+            ['div' => ['class' => 'input']],
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
@@ -3390,7 +3390,7 @@ class PaginatorHelperTest extends TestCase
         $out = $this->Paginator->limitControl();
         $expected = [
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
-            ['div' => ['class' => 'input select']],
+            ['div' => ['class' => 'input']],
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
@@ -3416,7 +3416,7 @@ class PaginatorHelperTest extends TestCase
         $out = $this->Paginator->limitControl([20 => 20, 50 => 50, 100 => 100, 200 => 200]);
         $expected = [
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
-            ['div' => ['class' => 'input select']],
+            ['div' => ['class' => 'input']],
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
@@ -3452,7 +3452,7 @@ class PaginatorHelperTest extends TestCase
         $out = $this->Paginator->limitControl();
         $expected = [
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
-            ['div' => ['class' => 'input select']],
+            ['div' => ['class' => 'input']],
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
@@ -3478,7 +3478,7 @@ class PaginatorHelperTest extends TestCase
         $out = $this->Paginator->limitControl([], null, ['steps' => 10]);
         $expected = [
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
-            ['div' => ['class' => 'input select']],
+            ['div' => ['class' => 'input']],
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
@@ -3516,7 +3516,7 @@ class PaginatorHelperTest extends TestCase
         $out = $this->Paginator->limitControl([], null, ['steps' => 25]);
         $expected = [
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/']],
-            ['div' => ['class' => 'input select']],
+            ['div' => ['class' => 'input']],
             ['label' => ['for' => 'limit']],
             'View',
             '/label',

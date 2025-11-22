@@ -625,7 +625,7 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to static method Cake\\Utility\\Hash\:\:insert\(\)$#'
+			message: '#^Unable to resolve the template type T in call to method static Cake\\Utility\\Hash\:\:insert\(\)$#'
 			identifier: argument.templateType
 			count: 1
 			path: src/Utility/Hash.php
