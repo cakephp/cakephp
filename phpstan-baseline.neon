@@ -31,24 +31,6 @@ parameters:
 			path: src/Cache/Engine/RedisEngine.php
 
 		-
-			message: '#^Call to an undefined method Redis\|RedisCluster\:\:unlink\(\)\.$#'
-			identifier: method.notFound
-			count: 2
-			path: src/Cache/Engine/RedisEngine.php
-
-		-
-			message: '#^Method RedisCluster\:\:scan\(\) invoked with 4 parameters, 1\-3 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: src/Cache/Engine/RedisEngine.php
-
-		-
-			message: '#^Parameter \#3 \$pattern of method RedisCluster\:\:scan\(\) expects int, string given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Cache/Engine/RedisEngine.php
-
-		-
 			message: '#^Parameter \#1 \$value of function count expects array\|Countable, TValue\|false given\.$#'
 			identifier: argument.type
 			count: 1
@@ -131,6 +113,12 @@ parameters:
 			identifier: notIdentical.alwaysTrue
 			count: 1
 			path: src/Database/Expression/WhenThenExpression.php
+
+		-
+			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
+			count: 1
+			path: src/Database/Type/DateTimeType.php
 
 		-
 			message: '#^Result of && is always false\.$#'
@@ -625,7 +613,7 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: '#^Unable to resolve the template type T in call to method static Cake\\Utility\\Hash\:\:insert\(\)$#'
+			message: '#^Unable to resolve the template type T in call to static method Cake\\Utility\\Hash\:\:insert\(\)$#'
 			identifier: argument.templateType
 			count: 1
 			path: src/Utility/Hash.php
