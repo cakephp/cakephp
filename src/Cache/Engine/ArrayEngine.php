@@ -68,12 +68,16 @@ class ArrayEngine extends CacheEngine
         $expires = time() + $this->duration($ttl);
 
         $this->_eventClass = CacheBeforeSetEvent::class;
-        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
+        $this->dispatchEvent(CacheBeforeSetEvent::NAME, [
+            'key' => $key, 'value' => $value, 'ttl' => $this->duration($ttl),
+        ]);
 
         $this->data[$key] = ['exp' => $expires, 'val' => $value];
 
         $this->_eventClass = CacheAfterSetEvent::class;
-        $this->dispatchEvent(CacheAfterSetEvent::NAME, ['key' => $key, 'value' => $value, 'success' => true]);
+        $this->dispatchEvent(CacheAfterSetEvent::NAME, [
+            'key' => $key, 'value' => $value, 'success' => true, 'ttl' => $this->duration($ttl),
+        ]);
 
         return true;
     }

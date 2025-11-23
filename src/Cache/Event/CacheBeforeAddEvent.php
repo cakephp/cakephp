@@ -18,6 +18,7 @@ namespace Cake\Cache\Event;
 
 use Cake\Cache\CacheEngine;
 use Cake\Event\Event;
+use DateInterval;
 
 /**
  * Class Cache BeforeAdd Event
@@ -31,6 +32,8 @@ class CacheBeforeAddEvent extends Event
     protected string $key;
 
     protected mixed $value = null;
+
+    protected DateInterval|int|null $ttl = null;
 
     /**
      * Constructor
@@ -48,6 +51,10 @@ class CacheBeforeAddEvent extends Event
         if (isset($data['value'])) {
             $this->value = $data['value'];
             unset($data['value']);
+        }
+        if (isset($data['ttl'])) {
+            $this->ttl = $data['ttl'];
+            unset($data['ttl']);
         }
 
         parent::__construct($name, $subject, $data);
@@ -67,5 +74,13 @@ class CacheBeforeAddEvent extends Event
     public function getValue(): mixed
     {
         return $this->value;
+    }
+
+    /**
+     * @return \DateInterval|int|null
+     */
+    public function getTtl(): DateInterval|int|null
+    {
+        return $this->ttl;
     }
 }

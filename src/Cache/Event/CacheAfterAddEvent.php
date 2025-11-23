@@ -19,6 +19,7 @@ namespace Cake\Cache\Event;
 use Cake\Cache\CacheEngine;
 use Cake\Cache\Exception\InvalidArgumentException;
 use Cake\Event\Event;
+use DateInterval;
 
 /**
  * Class Cache AfterAdd Event
@@ -32,6 +33,8 @@ class CacheAfterAddEvent extends Event
     protected string $key;
 
     protected mixed $value = null;
+
+    protected DateInterval|int|null $ttl = null;
 
     /**
      * Constructor
@@ -53,6 +56,10 @@ class CacheAfterAddEvent extends Event
         if (isset($data['success'])) {
             $this->result = $data['success'];
             unset($data['success']);
+        }
+        if (isset($data['ttl'])) {
+            $this->ttl = $data['ttl'];
+            unset($data['ttl']);
         }
 
         parent::__construct($name, $subject, $data);
@@ -99,5 +106,13 @@ class CacheAfterAddEvent extends Event
     public function getValue(): mixed
     {
         return $this->value;
+    }
+
+    /**
+     * @return \DateInterval|int|null
+     */
+    public function getTtl(): DateInterval|int|null
+    {
+        return $this->ttl;
     }
 }

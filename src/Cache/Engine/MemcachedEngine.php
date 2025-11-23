@@ -322,12 +322,14 @@ class MemcachedEngine extends CacheEngine
         $key = $this->_key($key);
         $duration = $this->duration($ttl);
         $this->_eventClass = CacheBeforeSetEvent::class;
-        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
+        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $duration]);
 
         $success = $this->_Memcached->set($key, $value, $duration);
 
         $this->_eventClass = CacheAfterSetEvent::class;
-        $this->dispatchEvent(CacheAfterSetEvent::NAME, ['key' => $key, 'value' => $value, 'success' => $success]);
+        $this->dispatchEvent(CacheAfterSetEvent::NAME, [
+            'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
+        ]);
 
         return $success;
     }
@@ -535,13 +537,13 @@ class MemcachedEngine extends CacheEngine
         $key = $this->_key($key);
 
         $this->_eventClass = CacheBeforeAddEvent::class;
-        $this->dispatchEvent(CacheBeforeAddEvent::NAME, ['key' => $key, 'value' => $value]);
+        $this->dispatchEvent(CacheBeforeAddEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $duration]);
 
         $success = $this->_Memcached->add($key, $value, $duration);
 
         $this->_eventClass = CacheAfterAddEvent::class;
         $this->dispatchEvent(CacheAfterAddEvent::NAME, [
-            'key' => $key, 'value' => $value, 'success' => $success,
+            'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
         ]);
 
         return $success;
