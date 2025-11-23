@@ -111,7 +111,7 @@ class EventManager implements EventManagerInterface
 
         if ($callable === null) {
             throw new InvalidArgumentException(
-                'Second argument of `EventManager::on()` must be a callable when the 1st argument is a string.',
+                '`EventManager::on()` requires `callable` to be set when `eventKey` is a string.',
             );
         }
 
