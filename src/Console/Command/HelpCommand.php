@@ -267,16 +267,71 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
 
             // Output main command with standalone subs
             if ($standaloneSubs !== []) {
-                $io->out(' - ' . $base . ' [' . implode('|', $standaloneSubs) . ']');
+                $this->outputWrappedCommand($io, ' - ' . $base . ' ', $standaloneSubs);
             }
 
             // Output nested subcommands separately
             foreach ($subGroups as $subBase => $subSubs) {
                 if ($subSubs !== []) {
-                    $io->out(' - ' . $base . ' ' . $subBase . ' [' . implode('|', $subSubs) . ']');
+                    $this->outputWrappedCommand($io, ' - ' . $base . ' ' . $subBase . ' ', $subSubs);
                 }
             }
         }
+    }
+
+    /**
+     * Output a command with its subcommands, wrapping if necessary.
+     *
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param string $prefix The command prefix (e.g., " - bake ")
+     * @param array<string> $subcommands List of subcommand names
+     * @param int $maxWidth Maximum line width (0 = auto-detect)
+     * @return void
+     */
+    protected function outputWrappedCommand(ConsoleIo $io, string $prefix, array $subcommands, int $maxWidth = 0): void
+    {
+        if ($maxWidth === 0) {
+            $maxWidth = $this->getTerminalWidth();
+        }
+
+        $indent = str_repeat(' ', strlen($prefix));
+        $line = $prefix . '[';
+        $first = true;
+
+        foreach ($subcommands as $sub) {
+            $separator = $first ? '' : '|';
+            $addition = $separator . $sub;
+
+            // Check if adding this subcommand would exceed the line width
+            // Account for closing bracket
+            if (!$first && strlen($line . $addition . ']') > $maxWidth) {
+                // Output current line and start new one
+                $io->out($line . '|');
+                $line = $indent . $sub;
+            } else {
+                $line .= $addition;
+            }
+            $first = false;
+        }
+
+        $io->out($line . ']');
+    }
+
+    /**
+     * Get terminal width for line wrapping.
+     *
+     * @return int Terminal width in columns
+     */
+    protected function getTerminalWidth(): int
+    {
+        // Check COLUMNS environment variable (commonly set by shells)
+        $columns = getenv('COLUMNS');
+        if ($columns !== false && is_numeric($columns) && (int)$columns > 0) {
+            return (int)$columns;
+        }
+
+        // Default to 100 columns
+        return 100;
     }
 
     /**
