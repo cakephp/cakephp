@@ -23,8 +23,6 @@ interface EventManagerInterface
     /**
      * Adds a new listener to an event.
      *
-     * A variadic interface to add listeners that emulates jQuery.on().
-     *
      * Binding an EventListenerInterface:
      *
      * ```
@@ -40,27 +38,24 @@ interface EventManagerInterface
      * Binding with options:
      *
      * ```
-     * $eventManager->on('Model.beforeSave', ['priority' => 90], $callable);
+     * $eventManager->on('Model.beforeSave', $callable, ['priority' => 90]);
      * ```
      *
      * @param \Cake\Event\EventListenerInterface|string $eventKey The event unique identifier name
      * with which the callback will be associated. If $eventKey is an instance of
      * Cake\Event\EventListenerInterface its events will be bound using the `implementedEvents()` methods.
-     *
-     * @param callable|array $options Either an array of options or the callable you wish to
-     * bind to $eventKey. If an array of options, the `priority` key can be used to define the order.
+     * @param callable|null $callable The callable function you want invoked.
+     * @param array $options An array of options, the `priority` key can be used to define the order.
      * Priorities are treated as queues. Lower values are called before higher ones, and multiple attachments
      * added to the same priority queue will be treated in the order of insertion.
-     *
-     * @param callable|null $callable The callable function you want invoked.
      * @return $this
      * @throws \InvalidArgumentException When event key is missing or callable is not an
      *   instance of Cake\Event\EventListenerInterface.
      */
     public function on(
         EventListenerInterface|string $eventKey,
-        callable|array $options = [],
         ?callable $callable = null,
+        array $options = [],
     ): static;
 
     /**
