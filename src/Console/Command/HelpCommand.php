@@ -69,7 +69,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             return static::CODE_SUCCESS;
         }
 
-        $verbose = (bool)$args->getOption('verbose');
+        $verbose = $io->level() >= ConsoleIo::VERBOSE;
         $this->asText($io, $commands, $verbose);
 
         return static::CODE_SUCCESS;
@@ -93,12 +93,59 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $invert[$class] ??= [];
             $invert[$class][] = $name;
         }
-        $grouped = [];
-        $plugins = Plugin::loaded();
+
+        $commandList = [];
         foreach ($invert as $class => $names) {
             preg_match('/^(.+)\\\\Command\\\\/', $class, $matches);
             // Probably not a useful class
             if (!$matches) {
+                continue;
+            }
+            $shortestName = $this->getShortestName($names);
+            if (str_contains($shortestName, '.')) {
+                [, $shortestName] = explode('.', $shortestName, 2);
+            }
+
+            $commandList[] = [
+                'name' => $shortestName,
+                'description' => is_subclass_of($class, BaseCommand::class) ? $class::getDescription() : '',
+            ];
+        }
+        sort($commandList);
+
+        if ($verbose) {
+            $this->outputPaths($io);
+            $this->outputGrouped($io, $invert);
+        } else {
+            $io->out('<info>Available Commands:</info>', 2);
+            $this->outputCompactCommands($io, $commandList);
+            $io->out('');
+        }
+
+        $root = $this->getRootName();
+        $io->out("To run a command, type <info>`{$root} command_name [args|options]`</info>");
+        $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>");
+        if (!$verbose) {
+            $io->out("To see command descriptions, use <info>`{$root} --help -verbose`</info>", 2);
+        } else {
+            $io->out('', 2);
+        }
+    }
+
+    /**
+     * Output commands grouped by plugin/namespace (verbose mode).
+     *
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param array<string, array<string>> $invert Inverted command map (class => names).
+     * @return void
+     */
+    protected function outputGrouped(ConsoleIo $io, array $invert): void
+    {
+        $grouped = [];
+        $plugins = Plugin::loaded();
+        foreach ($invert as $class => $names) {
+            preg_match('/^(.+)\\\\Command\\\\/', $class, $matches);
+            if (!$matches || $names === []) {
                 continue;
             }
             $namespace = str_replace('\\', '/', $matches[1]);
@@ -122,44 +169,23 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         ksort($grouped);
 
-        if (isset($grouped['CakePHP'])) {
-            $cakephp = $grouped['CakePHP'];
-            $grouped = ['CakePHP' => $cakephp] + $grouped;
+        if (isset($grouped['app'])) {
+            $app = $grouped['app'];
+            unset($grouped['app']);
+            $grouped = ['app' => $app] + $grouped;
         }
 
-        if (isset($grouped['App'])) {
-            $app = $grouped['App'];
-            $grouped = ['App' => $app] + $grouped;
-        }
-
-        if ($verbose) {
-            $this->outputPaths($io);
-        }
         $io->out('<info>Available Commands:</info>', 2);
-
         foreach ($grouped as $prefix => $names) {
             $io->out("<info>{$prefix}</info>:");
             sort($names);
-            if ($verbose) {
-                foreach ($names as $data) {
-                    $io->out(' - ' . $data['name']);
-                    if ($data['description']) {
-                        $io->info(str_pad(" \u{2514}", 13, "\u{2500}") . ' ' . $data['description']);
-                    }
+            foreach ($names as $data) {
+                $io->out(' - ' . $data['name']);
+                if ($data['description']) {
+                    $io->info(str_pad(" \u{2514}", 13, "\u{2500}") . ' ' . $data['description']);
                 }
-            } else {
-                $this->outputCompactCommands($io, $names);
             }
             $io->out('');
-        }
-        $root = $this->getRootName();
-
-        $io->out("To run a command, type <info>`{$root} command_name [args|options]`</info>");
-        $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>");
-        if (!$verbose) {
-            $io->out("To see command descriptions, use <info>`{$root} --help --verbose`</info>", 2);
-        } else {
-            $io->out('', 2);
         }
     }
 
@@ -172,6 +198,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      */
     protected function outputCompactCommands(ConsoleIo $io, array $commands): void
     {
+        // First pass: group by base command
         $baseCommands = [];
         foreach ($commands as $data) {
             $name = $data['name'];
@@ -185,11 +212,44 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             }
         }
 
+        // Second pass: for each base, detect nested subcommands
         foreach ($baseCommands as $base => $subs) {
             if ($subs === []) {
                 $io->out(' - ' . $base);
-            } else {
-                $io->out(' - ' . $base . ' [' . implode('|', $subs) . ']');
+                continue;
+            }
+
+            // Group subs by their first word to detect nesting
+            $subGroups = [];
+            foreach ($subs as $sub) {
+                $subParts = explode(' ', $sub, 2);
+                $subBase = $subParts[0];
+                $subSub = $subParts[1] ?? null;
+
+                $subGroups[$subBase] ??= [];
+                if ($subSub !== null) {
+                    $subGroups[$subBase][] = $subSub;
+                }
+            }
+
+            // Collect standalone subs (no nested commands)
+            $standaloneSubs = [];
+            foreach ($subGroups as $subBase => $subSubs) {
+                if ($subSubs === []) {
+                    $standaloneSubs[] = $subBase;
+                }
+            }
+
+            // Output main command with standalone subs
+            if ($standaloneSubs !== []) {
+                $io->out(' - ' . $base . ' [' . implode('|', $standaloneSubs) . ']');
+            }
+
+            // Output nested subcommands separately
+            foreach ($subGroups as $subBase => $subSubs) {
+                if ($subSubs !== []) {
+                    $io->out(' - ' . $base . ' ' . $subBase . ' [' . implode('|', $subSubs) . ']');
+                }
             }
         }
     }
@@ -274,9 +334,6 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             'Get the list of available commands for this application.',
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
-            'boolean' => true,
-        ])->addOption('verbose', [
-            'help' => 'Show expanded command list with descriptions.',
             'boolean' => true,
         ]);
 
