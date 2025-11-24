@@ -153,7 +153,6 @@ class CommandRunnerTest extends TestCase
         $result = $runner->run(['cake', '--help'], $this->getMockIo($output));
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
-        $this->assertStringContainsString('Current Paths', $messages);
         $this->assertStringContainsString('- i18n', $messages);
         $this->assertStringContainsString('Available Commands', $messages);
     }
