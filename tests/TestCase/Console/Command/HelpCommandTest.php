@@ -51,9 +51,9 @@ class HelpCommandTest extends TestCase
      */
     public function testMainNoCommandsFallback(): void
     {
-        $this->exec('help');
+        $this->exec('help --verbose');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertCommandList();
+        $this->assertCommandListVerbose();
         $this->clearPlugins();
     }
 
@@ -62,15 +62,31 @@ class HelpCommandTest extends TestCase
      */
     public function testMain(): void
     {
-        $this->exec('help');
+        $this->exec('help --verbose');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertCommandList();
+        $this->assertCommandListVerbose();
     }
 
     /**
-     * Assert the help output.
+     * Test the compact command listing (default)
      */
-    protected function assertCommandList(): void
+    public function testMainCompact(): void
+    {
+        $this->exec('help');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('<info>app</info>', 'app header should appear');
+        $this->assertOutputContains('<info>cakephp</info>', 'cakephp header should appear');
+        $this->assertOutputContains('<info>test_plugin</info>', 'plugin header should appear');
+        $this->assertOutputContains('- routes', 'core shell');
+        $this->assertOutputContains('- cache [clear|clear_all|clear_group|list]', 'subcommands grouped');
+        $this->assertOutputNotContains('This is a demo command', 'descriptions hidden in compact mode');
+        $this->assertOutputContains('To run a command', 'more info present');
+    }
+
+    /**
+     * Assert the verbose help output.
+     */
+    protected function assertCommandListVerbose(): void
     {
         $this->assertOutputContains('<info>test_plugin</info>', 'plugin header should appear');
         $this->assertOutputContains('- sample', 'plugin command should appear');

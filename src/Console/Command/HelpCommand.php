@@ -69,7 +69,8 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             return static::CODE_SUCCESS;
         }
 
-        $this->asText($io, $commands);
+        $verbose = (bool)$args->getOption('verbose');
+        $this->asText($io, $commands, $verbose);
 
         return static::CODE_SUCCESS;
     }
@@ -79,9 +80,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      *
      * @param \Cake\Console\ConsoleIo $io The console io
      * @param iterable<string, string|object> $commands The command collection to output.
+     * @param bool $verbose Whether to show verbose output with descriptions.
      * @return void
      */
-    protected function asText(ConsoleIo $io, iterable $commands): void
+    protected function asText(ConsoleIo $io, iterable $commands, bool $verbose = false): void
     {
         $invert = [];
         foreach ($commands as $name => $class) {
@@ -130,17 +132,23 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $grouped = ['App' => $app] + $grouped;
         }
 
-        $this->outputPaths($io);
+        if ($verbose) {
+            $this->outputPaths($io);
+        }
         $io->out('<info>Available Commands:</info>', 2);
 
         foreach ($grouped as $prefix => $names) {
             $io->out("<info>{$prefix}</info>:");
             sort($names);
-            foreach ($names as $data) {
-                $io->out(' - ' . $data['name']);
-                if ($data['description']) {
-                    $io->info(str_pad(" \u{2514}", 13, "\u{2500}") . ' ' . $data['description']);
+            if ($verbose) {
+                foreach ($names as $data) {
+                    $io->out(' - ' . $data['name']);
+                    if ($data['description']) {
+                        $io->info(str_pad(" \u{2514}", 13, "\u{2500}") . ' ' . $data['description']);
+                    }
                 }
+            } else {
+                $this->outputCompactCommands($io, $names);
             }
             $io->out('');
         }
@@ -148,6 +156,37 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
 
         $io->out("To run a command, type <info>`{$root} command_name [args|options]`</info>");
         $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>", 2);
+    }
+
+    /**
+     * Output commands in compact format, grouping subcommands.
+     *
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param array<array{name: string, description: string}> $commands List of commands with names and descriptions.
+     * @return void
+     */
+    protected function outputCompactCommands(ConsoleIo $io, array $commands): void
+    {
+        $baseCommands = [];
+        foreach ($commands as $data) {
+            $name = $data['name'];
+            $parts = explode(' ', $name, 2);
+            $base = $parts[0];
+            $sub = $parts[1] ?? null;
+
+            $baseCommands[$base] ??= [];
+            if ($sub !== null) {
+                $baseCommands[$base][] = $sub;
+            }
+        }
+
+        foreach ($baseCommands as $base => $subs) {
+            if ($subs === []) {
+                $io->out(' - ' . $base);
+            } else {
+                $io->out(' - ' . $base . ' [' . implode('|', $subs) . ']');
+            }
+        }
     }
 
     /**
@@ -230,6 +269,9 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             'Get the list of available commands for this application.',
         )->addOption('xml', [
             'help' => 'Get the listing as XML.',
+            'boolean' => true,
+        ])->addOption('verbose', [
+            'help' => 'Show expanded command list with descriptions.',
             'boolean' => true,
         ]);
 
