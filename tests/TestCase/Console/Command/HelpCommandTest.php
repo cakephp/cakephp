@@ -100,6 +100,32 @@ class HelpCommandTest extends TestCase
     }
 
     /**
+     * Test filtering by command prefix (compact mode)
+     */
+    public function testFilterByPrefixCompact(): void
+    {
+        $this->exec('help cache');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('Available Commands');
+        $this->assertOutputContains('cache [clear|clear_all|clear_group|list]');
+        $this->assertOutputNotContains('- routes');
+        $this->assertOutputNotContains('- sample');
+    }
+
+    /**
+     * Test filtering by command prefix with verbose mode shows descriptions
+     */
+    public function testFilterByPrefixVerbose(): void
+    {
+        $this->exec('help cache -v');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('Available Commands');
+        $this->assertOutputContains('- cache clear');
+        $this->assertOutputContains('Clear all data in a single cache engine');
+        $this->assertOutputNotContains('- routes');
+    }
+
+    /**
      * Test help --xml
      */
     public function testMainAsXml(): void

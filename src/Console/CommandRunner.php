@@ -155,21 +155,21 @@ class CommandRunner implements EventDispatcherInterface
 
         $io = $io ?: new ConsoleIo();
 
+        [$name, $argv] = $this->longestCommandName($commands, $argv);
+
+        // Check if this is a command prefix (e.g., "bake" has subcommands like "bake all")
+        // Show help for that prefix instead of running the base command
+        if ($name && !$commands->has($name) && $this->hasCommandsWithPrefix($commands, $name)) {
+            $argv = array_merge([$name], $argv);
+            $name = 'help';
+        }
+
         try {
-            [$name, $argv] = $this->longestCommandName($commands, $argv);
-            $originalName = $name;
             $name = $this->resolveName($commands, $io, $name);
         } catch (MissingOptionException $e) {
-            // Check if the unknown command is a prefix for other commands
-            if ($originalName && $this->hasCommandsWithPrefix($commands, $originalName)) {
-                // Show help for commands matching this prefix
-                $name = 'help';
-                $argv = [$originalName];
-            } else {
-                $io->error($e->getFullMessage());
+            $io->error($e->getFullMessage());
 
-                return CommandInterface::CODE_ERROR;
-            }
+            return CommandInterface::CODE_ERROR;
         }
 
         $command = $this->getCommand($io, $commands, $name);
