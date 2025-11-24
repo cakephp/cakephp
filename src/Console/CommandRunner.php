@@ -74,6 +74,8 @@ class CommandRunner implements EventDispatcherInterface
         '--version' => 'version',
         '--help' => 'help',
         '-h' => 'help',
+        '-v' => 'help',
+        '--verbose' => 'help',
     ];
 
     /**
@@ -156,6 +158,12 @@ class CommandRunner implements EventDispatcherInterface
         $io = $io ?: new ConsoleIo();
 
         [$name, $argv] = $this->longestCommandName($commands, $argv);
+
+        // If -v/--verbose is used as command, preserve it as flag for help command
+        if ($name === '-v' || $name === '--verbose') {
+            $argv = array_merge([$name], $argv);
+            $name = 'help';
+        }
 
         // Check if this is a command prefix (e.g., "bake" has subcommands like "bake all")
         // Show help for that prefix instead of running the base command

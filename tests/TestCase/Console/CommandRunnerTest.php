@@ -167,6 +167,20 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
+     * Test using `cake -v` invokes the verbose help command
+     */
+    public function testRunVerboseShortOption(): void
+    {
+        $output = new StubConsoleOutput();
+        $runner = $this->getRunner();
+        $result = $runner->run(['cake', '-v'], $this->getMockIo($output));
+        $this->assertSame(0, $result);
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString('Available Commands', $messages);
+        $this->assertStringContainsString('Current Paths', $messages, 'Verbose output should include paths');
+    }
+
+    /**
      * Test that no command outputs the command list
      */
     public function testRunNoCommand(): void
