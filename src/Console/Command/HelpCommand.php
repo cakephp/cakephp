@@ -155,7 +155,12 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $root = $this->getRootName();
 
         $io->out("To run a command, type <info>`{$root} command_name [args|options]`</info>");
-        $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>", 2);
+        $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>");
+        if (!$verbose) {
+            $io->out("To see command descriptions, use <info>`{$root} --help --verbose`</info>", 2);
+        } else {
+            $io->out('', 2);
+        }
     }
 
     /**
