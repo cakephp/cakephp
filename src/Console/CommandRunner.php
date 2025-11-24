@@ -157,11 +157,19 @@ class CommandRunner implements EventDispatcherInterface
 
         try {
             [$name, $argv] = $this->longestCommandName($commands, $argv);
+            $originalName = $name;
             $name = $this->resolveName($commands, $io, $name);
         } catch (MissingOptionException $e) {
-            $io->error($e->getFullMessage());
+            // Check if the unknown command is a prefix for other commands
+            if ($originalName && $this->hasCommandsWithPrefix($commands, $originalName)) {
+                // Show help for commands matching this prefix
+                $name = 'help';
+                $argv = [$originalName];
+            } else {
+                $io->error($e->getFullMessage());
 
-            return CommandInterface::CODE_ERROR;
+                return CommandInterface::CODE_ERROR;
+            }
         }
 
         $command = $this->getCommand($io, $commands, $name);
@@ -312,6 +320,24 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         return $name;
+    }
+
+    /**
+     * Check if there are commands that start with the given prefix.
+     *
+     * @param \Cake\Console\CommandCollection $commands The command collection.
+     * @param string $prefix The prefix to check.
+     * @return bool True if commands with this prefix exist.
+     */
+    protected function hasCommandsWithPrefix(CommandCollection $commands, string $prefix): bool
+    {
+        foreach ($commands->keys() as $name) {
+            if (str_starts_with($name, $prefix . ' ')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

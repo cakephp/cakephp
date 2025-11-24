@@ -63,6 +63,12 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $commands->ksort();
         }
 
+        // Filter by command prefix if provided
+        $filter = $args->getArgument('command');
+        if ($filter) {
+            $commands = $this->filterByPrefix($commands, $filter);
+        }
+
         if ($args->getOption('xml')) {
             $this->asXml($io, $commands);
 
@@ -73,6 +79,25 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $this->asText($io, $commands, $verbose);
 
         return static::CODE_SUCCESS;
+    }
+
+    /**
+     * Filter commands by prefix.
+     *
+     * @param iterable<string, string|object> $commands The command collection.
+     * @param string $prefix The prefix to filter by.
+     * @return array<string, string|object> Filtered commands.
+     */
+    protected function filterByPrefix(iterable $commands, string $prefix): array
+    {
+        $filtered = [];
+        foreach ($commands as $name => $class) {
+            if (str_starts_with($name, $prefix . ' ') || $name === $prefix) {
+                $filtered[$name] = $class;
+            }
+        }
+
+        return $filtered;
     }
 
     /**
@@ -126,7 +151,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $io->out("To run a command, type <info>`{$root} command_name [args|options]`</info>");
         $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>");
         if (!$verbose) {
-            $io->out("To see command descriptions, use <info>`{$root} --help -verbose`</info>", 2);
+            $io->out("To see command descriptions, use <info>`{$root} --help --verbose`</info>", 2);
         } else {
             $io->out('', 2);
         }
@@ -332,7 +357,9 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     {
         $parser->setDescription(
             'Get the list of available commands for this application.',
-        )->addOption('xml', [
+        )->addArgument('command', [
+            'help' => 'Filter commands by prefix (e.g., "bake" to show only bake commands).',
+        ])->addOption('xml', [
             'help' => 'Get the listing as XML.',
             'boolean' => true,
         ]);
