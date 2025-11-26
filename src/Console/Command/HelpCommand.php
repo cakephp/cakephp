@@ -250,18 +250,14 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             // Single command without subcommands - show inline
             if (count($cmds) === 1 && $cmds[0]['subcommand'] === null) {
                 $description = $cmds[0]['description'];
-                $line = str_pad($prefix, $nameColumnWidth);
+                $linePrefix = str_pad($prefix, $nameColumnWidth);
 
                 if ($description !== '') {
                     $description = strtok($description, "\n");
-                    $availableWidth = $maxWidth - strlen($line);
-                    if (strlen($description) > $availableWidth) {
-                        $description = substr($description, 0, $availableWidth - 3) . '...';
-                    }
-                    $line .= $description;
+                    $this->outputWrappedLine($io, $linePrefix, $description, $maxWidth);
+                } else {
+                    $io->out($linePrefix);
                 }
-
-                $io->out($line);
                 continue;
             }
 
@@ -273,19 +269,76 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                 $fullName = $cmd['subcommand'] !== null ? $prefix . ' ' . $cmd['subcommand'] : $prefix;
                 $description = $cmd['description'];
 
-                $line = '  ' . str_pad($fullName, $nameColumnWidth);
+                $linePrefix = '  ' . str_pad($fullName, $nameColumnWidth);
 
                 if ($description !== '') {
                     $description = strtok($description, "\n");
-                    $availableWidth = $maxWidth - strlen($line);
-                    if (strlen($description) > $availableWidth) {
-                        $description = substr($description, 0, $availableWidth - 3) . '...';
-                    }
-                    $line .= $description;
+                    $this->outputWrappedLine($io, $linePrefix, $description, $maxWidth);
+                } else {
+                    $io->out($linePrefix);
                 }
-
-                $io->out($line);
             }
+        }
+    }
+
+    /**
+     * Output a line with description, wrapping based on terminal width.
+     *
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param string $prefix The line prefix (command name with padding)
+     * @param string $description The description text
+     * @param int $maxWidth Maximum terminal width
+     * @param int $maxChars Maximum total description characters (0 = unlimited)
+     * @return void
+     */
+    protected function outputWrappedLine(
+        ConsoleIo $io,
+        string $prefix,
+        string $description,
+        int $maxWidth,
+        int $maxChars = 200,
+    ): void {
+        $availableWidth = $maxWidth - strlen($prefix);
+
+        if ($availableWidth <= 10) {
+            $io->out($prefix);
+
+            return;
+        }
+
+        // Truncate description to max chars if set
+        if ($maxChars > 0 && strlen($description) > $maxChars) {
+            $description = substr($description, 0, $maxChars - 3) . '...';
+        }
+
+        if (strlen($description) <= $availableWidth) {
+            $io->out($prefix . $description);
+
+            return;
+        }
+
+        // Wrap description across multiple lines
+        $indent = str_repeat(' ', strlen($prefix));
+        $remaining = $description;
+        $firstLine = true;
+
+        while ($remaining !== '') {
+            $linePrefix = $firstLine ? $prefix : $indent;
+            $firstLine = false;
+
+            if (strlen($remaining) <= $availableWidth) {
+                $io->out($linePrefix . $remaining);
+                break;
+            }
+
+            // Find word break point
+            $breakPoint = strrpos(substr($remaining, 0, $availableWidth), ' ');
+            if ($breakPoint === false || $breakPoint < $availableWidth / 2) {
+                $breakPoint = $availableWidth;
+            }
+
+            $io->out($linePrefix . substr($remaining, 0, $breakPoint));
+            $remaining = ltrim(substr($remaining, $breakPoint));
         }
     }
 
@@ -302,8 +355,23 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             return (int)$columns;
         }
 
-        // Default to 100 columns
-        return 100;
+        // Try tput cols (Unix/Linux/macOS)
+        if (str_contains(strtolower(PHP_OS), 'win') === false) {
+            $result = null;
+            $output = exec('tput cols 2>/dev/null', result_code: $result);
+            if ($result === 0 && is_numeric($output) && (int)$output > 0) {
+                return (int)$output;
+            }
+
+            // Try stty size (returns "rows cols")
+            $output = exec('stty size 2>/dev/null', result_code: $result);
+            if ($result === 0 && $output !== false && preg_match('/^\d+\s+(\d+)$/', $output, $matches)) {
+                return (int)$matches[1];
+            }
+        }
+
+        // Default to 120 columns (modern terminals)
+        return 120;
     }
 
     /**
