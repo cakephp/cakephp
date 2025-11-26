@@ -63,9 +63,9 @@ class HelpCommandTest extends TestCase
     {
         $this->exec('help');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertOutputContains('Available Commands', 'header should appear');
-        $this->assertOutputContains('<info>routes</info>', 'routes group header');
-        $this->assertOutputContains('<info>cache</info>', 'cache group header');
+        $this->assertOutputContains('<info>Available commands:</info>', 'single commands header');
+        $this->assertOutputContains('<info>routes:</info>', 'routes group header');
+        $this->assertOutputContains('<info>cache:</info>', 'cache group header');
         $this->assertOutputContains('clear', 'cache subcommand listed');
         $this->assertOutputContains('Clear all data in a single cache engine', 'inline description shown');
         $this->assertOutputNotContains('<info>app</info>:', 'no plugin group headers in compact mode');
@@ -107,8 +107,7 @@ class HelpCommandTest extends TestCase
     {
         $this->exec('help cache');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertOutputContains('Available Commands');
-        $this->assertOutputContains('<info>cache</info>');
+        $this->assertOutputContains('<info>cache:</info>');
         $this->assertOutputContains('clear');
         $this->assertOutputContains('list');
         $this->assertOutputNotContains('routes');

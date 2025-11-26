@@ -134,8 +134,7 @@ class CommandRunnerTest extends TestCase
 
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
-        $this->assertStringContainsString('Available Commands', $messages);
-        $this->assertStringContainsString('<info>cache</info>', $messages);
+        $this->assertStringContainsString('<info>cache:</info>', $messages);
         $this->assertStringContainsString('clear', $messages);
         $this->assertStringContainsString('list', $messages);
     }
@@ -150,8 +149,8 @@ class CommandRunnerTest extends TestCase
         $result = $runner->run(['cake', '--help'], $this->getMockIo($output));
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
-        $this->assertStringContainsString('<info>i18n</info>', $messages);
-        $this->assertStringContainsString('Available Commands', $messages);
+        $this->assertStringContainsString('<info>i18n:</info>', $messages);
+        $this->assertStringContainsString('Available commands:', $messages);
     }
 
     /**
@@ -164,8 +163,8 @@ class CommandRunnerTest extends TestCase
         $result = $runner->run(['cake', '-h'], $this->getMockIo($output));
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
-        $this->assertStringContainsString('<info>i18n</info>', $messages);
-        $this->assertStringContainsString('Available Commands', $messages);
+        $this->assertStringContainsString('<info>i18n:</info>', $messages);
+        $this->assertStringContainsString('Available commands:', $messages);
     }
 
     /**
@@ -194,8 +193,8 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(0, $result, 'help output is success.');
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('No command provided. Choose one of the available commands', $messages);
-        $this->assertStringContainsString('<info>i18n</info>', $messages);
-        $this->assertStringContainsString('Available Commands', $messages);
+        $this->assertStringContainsString('<info>i18n:</info>', $messages);
+        $this->assertStringContainsString('Available commands:', $messages);
     }
 
     /**
