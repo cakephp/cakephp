@@ -65,8 +65,8 @@ class HelpCommandTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('Available Commands', 'header should appear');
         $this->assertOutputContains('- routes', 'core shell');
-        $this->assertOutputContains('- cache [clear|clear_all|clear_group|list]', 'subcommands grouped');
-        $this->assertOutputNotContains('This is a demo command', 'descriptions hidden in compact mode');
+        $this->assertOutputContains('- cache clear', 'cache subcommand listed');
+        $this->assertOutputContains('Clear all data in a single cache engine', 'inline description shown');
         $this->assertOutputNotContains('<info>app</info>:', 'no group headers in compact mode');
         $this->assertOutputContains('To run a command', 'more info present');
     }
@@ -107,7 +107,8 @@ class HelpCommandTest extends TestCase
         $this->exec('help cache');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('Available Commands');
-        $this->assertOutputContains('cache [clear|clear_all|clear_group|list]');
+        $this->assertOutputContains('- cache clear');
+        $this->assertOutputContains('- cache list');
         $this->assertOutputNotContains('- routes');
         $this->assertOutputNotContains('- sample');
     }

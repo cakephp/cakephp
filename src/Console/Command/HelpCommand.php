@@ -151,7 +151,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         $io->out("To run a command, type <info>`{$root} command_name [args|options]`</info>");
         $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>");
         if (!$verbose) {
-            $io->out("To see command descriptions, use <info>`{$root} --help --verbose`</info>", 2);
+            $io->out("To see full descriptions and plugin grouping, use <info>`{$root} --help -v`</info>", 2);
         } else {
             $io->out('', 2);
         }
@@ -215,7 +215,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     }
 
     /**
-     * Output commands in compact format, grouping subcommands.
+     * Output commands with inline descriptions.
      *
      * @param \Cake\Console\ConsoleIo $io The console io
      * @param array<array{name: string, description: string}> $commands List of commands with names and descriptions.
@@ -223,98 +223,36 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      */
     protected function outputCompactCommands(ConsoleIo $io, array $commands): void
     {
-        // First pass: group by base command
-        $baseCommands = [];
+        $maxWidth = $this->getTerminalWidth();
+
+        // Find the longest command name for padding
+        $maxNameLength = 0;
+        foreach ($commands as $data) {
+            $maxNameLength = max($maxNameLength, strlen($data['name']));
+        }
+
+        // Add padding (3 spaces minimum between name and description)
+        $nameColumnWidth = $maxNameLength + 3;
+
         foreach ($commands as $data) {
             $name = $data['name'];
-            $parts = explode(' ', $name, 2);
-            $base = $parts[0];
-            $sub = $parts[1] ?? null;
+            $description = $data['description'];
 
-            $baseCommands[$base] ??= [];
-            if ($sub !== null) {
-                $baseCommands[$base][] = $sub;
-            }
-        }
+            $line = ' - ' . str_pad($name, $nameColumnWidth);
 
-        // Second pass: for each base, detect nested subcommands
-        foreach ($baseCommands as $base => $subs) {
-            if ($subs === []) {
-                $io->out(' - ' . $base);
-                continue;
-            }
+            if ($description !== '') {
+                // Calculate available space for description
+                $availableWidth = $maxWidth - strlen($line);
 
-            // Group subs by their first word to detect nesting
-            $subGroups = [];
-            foreach ($subs as $sub) {
-                $subParts = explode(' ', $sub, 2);
-                $subBase = $subParts[0];
-                $subSub = $subParts[1] ?? null;
-
-                $subGroups[$subBase] ??= [];
-                if ($subSub !== null) {
-                    $subGroups[$subBase][] = $subSub;
+                if (strlen($description) > $availableWidth) {
+                    // Truncate with ellipsis
+                    $description = substr($description, 0, $availableWidth - 3) . '...';
                 }
+                $line .= $description;
             }
 
-            // Collect standalone subs (no nested commands)
-            $standaloneSubs = [];
-            foreach ($subGroups as $subBase => $subSubs) {
-                if ($subSubs === []) {
-                    $standaloneSubs[] = $subBase;
-                }
-            }
-
-            // Output main command with standalone subs
-            if ($standaloneSubs !== []) {
-                $this->outputWrappedCommand($io, ' - ' . $base . ' ', $standaloneSubs);
-            }
-
-            // Output nested subcommands separately
-            foreach ($subGroups as $subBase => $subSubs) {
-                if ($subSubs !== []) {
-                    $this->outputWrappedCommand($io, ' - ' . $base . ' ' . $subBase . ' ', $subSubs);
-                }
-            }
+            $io->out($line);
         }
-    }
-
-    /**
-     * Output a command with its subcommands, wrapping if necessary.
-     *
-     * @param \Cake\Console\ConsoleIo $io The console io
-     * @param string $prefix The command prefix (e.g., " - bake ")
-     * @param array<string> $subcommands List of subcommand names
-     * @param int $maxWidth Maximum line width (0 = auto-detect)
-     * @return void
-     */
-    protected function outputWrappedCommand(ConsoleIo $io, string $prefix, array $subcommands, int $maxWidth = 0): void
-    {
-        if ($maxWidth === 0) {
-            $maxWidth = $this->getTerminalWidth();
-        }
-
-        $indent = str_repeat(' ', strlen($prefix));
-        $line = $prefix . '[';
-        $first = true;
-
-        foreach ($subcommands as $sub) {
-            $separator = $first ? '' : '|';
-            $addition = $separator . $sub;
-
-            // Check if adding this subcommand would exceed the line width
-            // Account for closing bracket
-            if (!$first && strlen($line . $addition . ']') > $maxWidth) {
-                // Output current line and start new one
-                $io->out($line . '|');
-                $line = $indent . $sub;
-            } else {
-                $line .= $addition;
-            }
-            $first = false;
-        }
-
-        $io->out($line . ']');
     }
 
     /**
