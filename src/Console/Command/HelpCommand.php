@@ -239,6 +239,18 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             ];
         }
 
+        // Separate single commands from grouped commands
+        $singleCommands = [];
+        $groupedCommands = [];
+
+        foreach ($groups as $prefix => $cmds) {
+            if (count($cmds) === 1 && $cmds[0]['subcommand'] === null) {
+                $singleCommands[$prefix] = $cmds[0];
+            } else {
+                $groupedCommands[$prefix] = $cmds;
+            }
+        }
+
         // Find the longest full command name for padding
         $maxNameLength = 0;
         foreach ($commands as $data) {
@@ -246,10 +258,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         $nameColumnWidth = $maxNameLength + 3;
 
-        foreach ($groups as $prefix => $cmds) {
-            // Single command without subcommands - show inline
-            if (count($cmds) === 1 && $cmds[0]['subcommand'] === null) {
-                $description = $cmds[0]['description'];
+        // Output single commands first (at the top)
+        if ($singleCommands !== []) {
+            foreach ($singleCommands as $prefix => $cmd) {
+                $description = $cmd['description'];
                 $linePrefix = str_pad($prefix, $nameColumnWidth);
 
                 if ($description !== '') {
@@ -258,18 +270,24 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                 } else {
                     $io->out($linePrefix);
                 }
-                continue;
             }
 
-            // Multi-command group - show header and indented full commands
+            // Add spacing before grouped commands if there are any
+            if ($groupedCommands !== []) {
+                $io->out('');
+            }
+        }
+
+        // Output grouped commands with headers
+        foreach ($groupedCommands as $prefix => $cmds) {
             $io->out("<info>{$prefix}</info>");
 
             foreach ($cmds as $cmd) {
-                // Show full command name (prefix + subcommand)
                 $fullName = $cmd['subcommand'] !== null ? $prefix . ' ' . $cmd['subcommand'] : $prefix;
                 $description = $cmd['description'];
 
-                $linePrefix = '  ' . str_pad($fullName, $nameColumnWidth);
+                // Indent with 2 spaces, but reduce padding to keep descriptions aligned
+                $linePrefix = '  ' . str_pad($fullName, $nameColumnWidth - 2);
 
                 if ($description !== '') {
                     $description = strtok($description, "\n");
