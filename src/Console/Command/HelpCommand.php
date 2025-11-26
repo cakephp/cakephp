@@ -142,7 +142,6 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $this->outputPaths($io);
             $this->outputGrouped($io, $invert);
         } else {
-            $io->out('<info>Available Commands:</info>', 2);
             $this->outputCompactCommands($io, $commandList);
             $io->out('');
         }
@@ -258,11 +257,13 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         $nameColumnWidth = $maxNameLength + 3;
 
-        // Output single commands first (at the top)
+        // Output single commands under "Available commands:" header
+        $isFirst = true;
         if ($singleCommands !== []) {
+            $io->out('<info>Available commands:</info>');
             foreach ($singleCommands as $prefix => $cmd) {
                 $description = $cmd['description'];
-                $linePrefix = str_pad($prefix, $nameColumnWidth);
+                $linePrefix = '  ' . str_pad($prefix, $nameColumnWidth - 2);
 
                 if ($description !== '') {
                     $description = strtok($description, "\n");
@@ -271,22 +272,20 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                     $io->out($linePrefix);
                 }
             }
-
-            // Add spacing before grouped commands if there are any
-            if ($groupedCommands !== []) {
-                $io->out('');
-            }
+            $isFirst = false;
         }
 
         // Output grouped commands with headers
         foreach ($groupedCommands as $prefix => $cmds) {
-            $io->out("<info>{$prefix}</info>");
+            if (!$isFirst) {
+                $io->out('');
+            }
+            $io->out("<info>{$prefix}:</info>");
 
             foreach ($cmds as $cmd) {
                 $fullName = $cmd['subcommand'] !== null ? $prefix . ' ' . $cmd['subcommand'] : $prefix;
                 $description = $cmd['description'];
 
-                // Indent with 2 spaces, but reduce padding to keep descriptions aligned
                 $linePrefix = '  ' . str_pad($fullName, $nameColumnWidth - 2);
 
                 if ($description !== '') {
@@ -296,6 +295,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
                     $io->out($linePrefix);
                 }
             }
+            $isFirst = false;
         }
     }
 
