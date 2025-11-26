@@ -70,9 +70,6 @@ class CompletionCommandTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = [
-            'test_plugin.example',
-            'test_plugin.sample',
-            'test_plugin_two.example',
             'unique',
             'welcome',
             'cache',
@@ -92,6 +89,35 @@ class CompletionCommandTest extends TestCase
         foreach ($expected as $value) {
             $this->assertOutputContains($value);
         }
+    }
+
+    /**
+     * test commands excludes plugin-prefixed aliases to avoid duplicates
+     */
+    public function testCommandsExcludesPluginAliases(): void
+    {
+        $this->exec('completion commands');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        // Plugin-prefixed aliases should not be in the output
+        // as they are duplicates of the short form
+        $this->assertOutputNotContains('test_plugin.example');
+        $this->assertOutputNotContains('test_plugin.sample');
+        $this->assertOutputNotContains('test_plugin_two.example');
+    }
+
+    /**
+     * test commands includes plugin-prefixed aliases in verbose mode
+     */
+    public function testCommandsIncludesPluginAliasesInVerboseMode(): void
+    {
+        $this->exec('completion commands -v');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        // Plugin-prefixed aliases should be in the output in verbose mode
+        $this->assertOutputContains('test_plugin.example');
+        $this->assertOutputContains('test_plugin.sample');
+        $this->assertOutputContains('test_plugin_two.example');
     }
 
     /**

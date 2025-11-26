@@ -123,8 +123,14 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     protected function getCommands(Arguments $args, ConsoleIo $io): int
     {
         $options = [];
+        $verbose = $io->level() >= ConsoleIo::VERBOSE;
         foreach ($this->commands as $key => $value) {
             $parts = explode(' ', $key);
+            // Skip plugin-prefixed aliases (e.g., "migrations.migrations")
+            // to avoid duplicate completions unless verbose mode is enabled
+            if (!$verbose && str_contains($parts[0], '.')) {
+                continue;
+            }
             $options[] = $parts[0];
         }
         $options = array_unique($options);
