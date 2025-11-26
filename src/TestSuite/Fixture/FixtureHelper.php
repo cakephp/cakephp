@@ -280,10 +280,7 @@ class FixtureHelper
 
         $references = [];
         foreach ($schema->constraints() as $constraintName) {
-            if (!is_string($constraintName)) {
-                throw new \RuntimeException('Expected constraint name to be a string: ' . print_r($constraintName, true) . ' ' . print_r($schema->constraints(), true));
-            }
-            $constraint = $schema->getConstraint($constraintName);
+            $constraint = $schema->getConstraint((string)$constraintName);
 
             if ($constraint && $constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $references[] = $constraint['references'][0];
