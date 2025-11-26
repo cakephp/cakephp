@@ -215,7 +215,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     }
 
     /**
-     * Output commands with inline descriptions.
+     * Output commands with inline descriptions, grouped by prefix.
      *
      * @param \Cake\Console\ConsoleIo $io The console io
      * @param array<array{name: string, description: string}> $commands List of commands with names and descriptions.
@@ -225,36 +225,56 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     {
         $maxWidth = $this->getTerminalWidth();
 
-        // Find the longest command name for padding
-        $maxNameLength = 0;
+        // Group commands by their first word (prefix)
+        $groups = [];
         foreach ($commands as $data) {
-            $maxNameLength = max($maxNameLength, strlen($data['name']));
+            $parts = explode(' ', $data['name'], 2);
+            $prefix = $parts[0];
+            $subcommand = $parts[1] ?? null;
+
+            $groups[$prefix] ??= [];
+            $groups[$prefix][] = [
+                'subcommand' => $subcommand,
+                'description' => $data['description'],
+            ];
         }
 
-        // Add padding (3 spaces minimum between name and description)
-        $nameColumnWidth = $maxNameLength + 3;
-
-        foreach ($commands as $data) {
-            $name = $data['name'];
-            $description = $data['description'];
-
-            $line = ' - ' . str_pad($name, $nameColumnWidth);
-
-            if ($description !== '') {
-                // Use only first line of description
-                $description = strtok($description, "\n");
-
-                // Calculate available space for description
-                $availableWidth = $maxWidth - strlen($line);
-
-                if (strlen($description) > $availableWidth) {
-                    // Truncate with ellipsis
-                    $description = substr($description, 0, $availableWidth - 3) . '...';
-                }
-                $line .= $description;
+        // Find the longest subcommand name for padding (within grouped display)
+        $maxSubLength = 0;
+        foreach ($groups as $prefix => $cmds) {
+            foreach ($cmds as $cmd) {
+                $displayName = $cmd['subcommand'] ?? $prefix;
+                $maxSubLength = max($maxSubLength, strlen($displayName));
             }
+        }
+        $nameColumnWidth = $maxSubLength + 3;
 
-            $io->out($line);
+        foreach ($groups as $prefix => $cmds) {
+            // Output group header
+            $io->out("<info>{$prefix}</info>");
+
+            foreach ($cmds as $cmd) {
+                $displayName = $cmd['subcommand'] ?? $prefix;
+                $description = $cmd['description'];
+
+                $line = '  ' . str_pad($displayName, $nameColumnWidth);
+
+                if ($description !== '') {
+                    // Use only first line of description
+                    $description = strtok($description, "\n");
+
+                    // Calculate available space for description
+                    $availableWidth = $maxWidth - strlen($line);
+
+                    if (strlen($description) > $availableWidth) {
+                        // Truncate with ellipsis
+                        $description = substr($description, 0, $availableWidth - 3) . '...';
+                    }
+                    $line .= $description;
+                }
+
+                $io->out($line);
+            }
         }
     }
 
