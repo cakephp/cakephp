@@ -81,7 +81,7 @@ class Application extends BaseApplication
 
         $routes->registerMiddleware('dumb', new DumbMiddleware());
         $routes->registerMiddleware('sample', new SampleMiddleware());
-        $routes->scope('/app', [], function (RouteBuilder $routes): void {
+        $routes->scope('/app', function (RouteBuilder $routes): void {
             $routes->applyMiddleware('dumb', 'sample');
             $routes->connect('/articles', ['controller' => 'Articles']);
             $routes->connect('/articles/{action}/*', ['controller' => 'Articles']);

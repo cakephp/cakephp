@@ -225,7 +225,7 @@ class RouteBuilder
      * Example:
      *
      * ```
-     * $routes->scope('/{org}', [], function ($routes) {
+     * $routes->scope('/{org}', function ($routes) {
      *     $routes->setOptions(['_host' => 'example.com']);
      *     // All routes here will have _host => 'example.com'
      * });
@@ -340,7 +340,7 @@ class RouteBuilder
      * You can create nested resources by passing a callback in:
      *
      * ```
-     * $routes->resources('Articles', [], function ($routes) {
+     * $routes->resources('Articles', function ($routes) {
      *   $routes->resources('Comments');
      * });
      * ```
@@ -349,8 +349,8 @@ class RouteBuilder
      * You can use the `map` option to connect additional resource methods:
      *
      * ```
-     * $routes->resources('Articles', [
-     *   'map' => ['deleteAll' => ['action' => 'deleteAll', 'method' => 'DELETE']]
+     * $routes->resources('Articles', null, [
+     *   'map' => ['deleteAll' => ['action' => 'deleteAll', 'method' => 'DELETE']],
      * ]);
      * ```
      *
@@ -361,7 +361,7 @@ class RouteBuilder
      * You can use the `inflect` option to change how path segments are generated:
      *
      * ```
-     * $routes->resources('PaymentTypes', ['inflect' => 'underscore']);
+     * $routes->resources('PaymentTypes', null, ['inflect' => 'underscore']);
      * ```
      *
      * Will generate routes like `/payment-types` instead of `/payment_types`
@@ -382,12 +382,12 @@ class RouteBuilder
      *   is available at `/posts`
      *
      * @param string $name A controller name to connect resource routes for.
-     * @param array<string, mixed> $options Options to use when generating REST routes.
      * @param \Closure|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
+     * @param array<string, mixed> $options Options to use when generating REST routes.
      * @return $this
      */
-    public function resources(string $name, array $options = [], ?Closure $callback = null): static
+    public function resources(string $name, ?Closure $callback = null, array $options = []): static
     {
         $options += [
             'connectOptions' => [],
@@ -429,34 +429,34 @@ class RouteBuilder
             $prefix = $this->_params['prefix'] . '/' . $prefix;
         }
 
-        foreach ($resourceMap as $method => $params) {
+        foreach ($resourceMap as $method => $defaults) {
             if (!in_array($method, $only, true)) {
                 continue;
             }
 
-            $action = $options['actions'][$method] ?? $params['action'];
+            $action = $options['actions'][$method] ?? $defaults['action'];
 
-            $url = '/' . implode('/', array_filter([$options['path'], $params['path']]));
-            $params = [
+            $url = '/' . implode('/', array_filter([$options['path'], $defaults['path']]));
+            $routeParams = [
                 'controller' => $name,
                 'action' => $action,
-                '_method' => $params['method'],
+                '_method' => $defaults['method'],
             ];
             if ($prefix) {
-                $params['prefix'] = $prefix;
+                $routeParams['prefix'] = $prefix;
             }
             $routeOptions = $connectOptions + [
                 'id' => $options['id'],
                 'pass' => ['id'],
                 '_ext' => $ext,
             ];
-            $this->connect($url, $params, $routeOptions);
+            $this->connect($url, $routeParams, $routeOptions);
         }
 
         if ($callback !== null) {
             $idName = Inflector::singularize(Inflector::underscore($name)) . '_id';
             $path = '/' . $options['path'] . '/{' . $idName . '}';
-            $this->scope($path, [], $callback);
+            $this->scope($path, $callback);
         }
 
         return $this;
@@ -852,19 +852,19 @@ class RouteBuilder
      * for $params argument:
      *
      * ```
-     * $route->prefix('Api', [], function($route) {
-     *     $route->prefix('V10', ['path' => '/v1.0'], function($route) {
+     * $route->prefix('Api', function($route) {
+     *     $route->prefix('V10', function($route) {
      *         // Translates to `Controller\Api\V10\` namespace
-     *     });
+     *     }, ['path' => '/v1.0']);
      * });
      * ```
      *
      * @param string $name The prefix name to use.
-     * @param array<string, mixed> $params An array of routing defaults to add to each connected route.
      * @param \Closure $callback The callback to invoke that builds the prefixed routes.
+     * @param array<string, mixed> $params An array of routing defaults to add to each connected route.
      * @return $this
      */
-    public function prefix(string $name, array $params, Closure $callback): static
+    public function prefix(string $name, Closure $callback, array $params = []): static
     {
         $path = '/' . Inflector::dasherize($name);
         $name = Inflector::camelize($name);
@@ -876,7 +876,7 @@ class RouteBuilder
             $name = $this->_params['prefix'] . '/' . $name;
         }
         $params = array_merge($params, ['prefix' => $name]);
-        $this->scope($path, $params, $callback);
+        $this->scope($path, $callback, $params);
 
         return $this;
     }
@@ -900,16 +900,16 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $name The plugin name to build routes for
-     * @param array<string, mixed> $options The options to use.
      * @param \Closure $callback The callback to invoke that builds the plugin routes.
+     * @param array<string, mixed> $params The params to use.
      * @return $this
      */
-    public function plugin(string $name, array $options, Closure $callback): static
+    public function plugin(string $name, Closure $callback, array $params = []): static
     {
-        $path = $options['path'] ?? '/' . Inflector::dasherize($name);
-        unset($options['path']);
-        $options = ['plugin' => $name] + $options;
-        $this->scope($path, $options, $callback);
+        $path = $params['path'] ?? '/' . Inflector::dasherize($name);
+        unset($params['path']);
+        $params = ['plugin' => $name] + $params;
+        $this->scope($path, $callback, $params);
 
         return $this;
     }
@@ -927,11 +927,11 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $path The path to create a scope for.
-     * @param array<string, mixed> $params The parameters to add to routes.
      * @param \Closure $callback The callback to invoke that builds the plugin routes.
+     * @param array<string, mixed> $params The parameters to add to routes.
      * @return $this
      */
-    public function scope(string $path, array $params, Closure $callback): static
+    public function scope(string $path, Closure $callback, array $params = []): static
     {
         if ($this->_path !== '/') {
             $path = $this->_path . $path;
