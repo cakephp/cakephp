@@ -150,7 +150,7 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('<info>i18n:</info>', $messages);
-        $this->assertStringContainsString('Available commands:', $messages);
+        $this->assertStringContainsString('Available Commands:', $messages);
     }
 
     /**
@@ -164,7 +164,7 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('<info>i18n:</info>', $messages);
-        $this->assertStringContainsString('Available commands:', $messages);
+        $this->assertStringContainsString('Available Commands:', $messages);
     }
 
     /**
@@ -177,7 +177,7 @@ class CommandRunnerTest extends TestCase
         $result = $runner->run(['cake', '-v'], $this->getMockIo($output));
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
-        $this->assertStringContainsString('Available Commands', $messages);
+        $this->assertStringContainsString('Available Commands:', $messages);
         $this->assertStringContainsString('Current Paths', $messages, 'Verbose output should include paths');
     }
 
@@ -194,7 +194,7 @@ class CommandRunnerTest extends TestCase
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('No command provided. Choose one of the available commands', $messages);
         $this->assertStringContainsString('<info>i18n:</info>', $messages);
-        $this->assertStringContainsString('Available commands:', $messages);
+        $this->assertStringContainsString('Available Commands:', $messages);
     }
 
     /**

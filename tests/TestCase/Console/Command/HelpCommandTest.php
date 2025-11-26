@@ -63,7 +63,7 @@ class HelpCommandTest extends TestCase
     {
         $this->exec('help');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertOutputContains('<info>Available commands:</info>', 'single commands header');
+        $this->assertOutputContains('<info>Available Commands:</info>', 'single commands header');
         $this->assertOutputContains('<info>routes:</info>', 'routes group header');
         $this->assertOutputContains('<info>cache:</info>', 'cache group header');
         $this->assertOutputContains('clear', 'cache subcommand listed');

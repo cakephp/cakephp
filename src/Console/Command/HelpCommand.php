@@ -139,6 +139,9 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         sort($commandList);
 
         if ($verbose) {
+            $version = Configure::version();
+            $debug = Configure::read('debug') ? 'true' : 'false';
+            $io->out("<info>CakePHP:</info> {$version} (debug: {$debug})", 2);
             $this->outputPaths($io);
             $this->outputGrouped($io, $invert);
         } else {
@@ -257,10 +260,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         $nameColumnWidth = $maxNameLength + 3;
 
-        // Output single commands under "Available commands:" header
+        // Output single commands under "Available Commands:" header
         $isFirst = true;
         if ($singleCommands !== []) {
-            $io->out('<info>Available commands:</info>');
+            $io->out('<info>Available Commands:</info>');
             foreach ($singleCommands as $prefix => $cmd) {
                 $description = $cmd['description'];
                 $linePrefix = '  ' . str_pad($prefix, $nameColumnWidth - 2);
