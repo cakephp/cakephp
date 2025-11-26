@@ -41,7 +41,7 @@ class ApplicationWithPluginRoutes extends BaseApplication
      */
     public function routes(RouteBuilder $routes): void
     {
-        $routes->scope('/app', function (RouteBuilder $routes): void {
+        $routes->scope('/app', [], function (RouteBuilder $routes): void {
             $routes->connect('/articles', ['controller' => 'Articles']);
         });
         $routes->loadPlugin('TestPlugin');

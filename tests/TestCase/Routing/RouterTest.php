@@ -105,7 +105,7 @@ class RouterTest extends TestCase
         Configure::write('App.base', '/cakephp');
         Router::fullBaseUrl('http://example.com');
         Router::createRouteBuilder('/')
-            ->scope('/', function (RouteBuilder $routes): void {
+            ->scope('/', [], function (RouteBuilder $routes): void {
                 $routes->get('/{controller}', ['action' => 'index']);
             });
 
@@ -213,7 +213,7 @@ class RouterTest extends TestCase
     public function testGenerateUrlResourceRoute(): void
     {
         Router::createRouteBuilder('/')
-            ->scope('/', function (RouteBuilder $routes): void {
+            ->scope('/', [], function (RouteBuilder $routes): void {
                 $routes->resources('Posts');
             });
 
@@ -878,8 +878,8 @@ class RouterTest extends TestCase
     public function testUrlGenerationPrefixedPlugin(): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->prefix('admin', function (RouteBuilder $routes): void {
-            $routes->plugin('MyPlugin', function (RouteBuilder $routes): void {
+        $routes->prefix('admin', [], function (RouteBuilder $routes): void {
+            $routes->plugin('MyPlugin', [], function (RouteBuilder $routes): void {
                 $routes->fallbacks('InflectedRoute');
             });
         });
@@ -900,8 +900,8 @@ class RouterTest extends TestCase
     public function testUrlGenerationMultiplePrefixes(): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->prefix('admin', function (RouteBuilder $routes): void {
-            $routes->prefix('backoffice', function (RouteBuilder $routes): void {
+        $routes->prefix('admin', [], function (RouteBuilder $routes): void {
+            $routes->prefix('backoffice', [], function (RouteBuilder $routes): void {
                 $routes->fallbacks('InflectedRoute');
             });
         });
@@ -1722,11 +1722,11 @@ class RouterTest extends TestCase
         Router::extensions(['json']);
 
         $routes = Router::createRouteBuilder('/');
-        $routes->scope('/', function (RouteBuilder $routes): void {
+        $routes->scope('/', [], function (RouteBuilder $routes): void {
             $routes->setExtensions('rss');
             $routes->connect('/', ['controller' => 'Pages', 'action' => 'index']);
 
-            $routes->scope('/api', function (RouteBuilder $routes): void {
+            $routes->scope('/api', [], function (RouteBuilder $routes): void {
                 $routes->setExtensions('xml');
                 $routes->connect('/docs', ['controller' => 'ApiDocs', 'action' => 'index']);
             });
@@ -3129,7 +3129,7 @@ class RouterTest extends TestCase
     {
         Router::extensions(['json']);
         $routes = Router::createRouteBuilder('/');
-        $routes->scope('/', function (RouteBuilder $routes): void {
+        $routes->scope('/', [], function (RouteBuilder $routes): void {
             $this->assertEquals(['json'], $routes->getExtensions(), 'Should default to global extensions.');
             $routes->setExtensions(['rss']);
 
@@ -3143,13 +3143,13 @@ class RouterTest extends TestCase
 
         $this->assertEquals(['json', 'rss'], array_values(Router::extensions()));
 
-        $routes->scope('/api', function (RouteBuilder $routes): void {
+        $routes->scope('/api', [], function (RouteBuilder $routes): void {
             $this->assertEquals(['json'], $routes->getExtensions(), 'Should default to global extensions.');
 
             $routes->setExtensions(['json', 'csv']);
             $routes->connect('/export', []);
 
-            $routes->scope('/v1', function (RouteBuilder $routes): void {
+            $routes->scope('/v1', [], function (RouteBuilder $routes): void {
                 $this->assertEquals(['json', 'csv'], $routes->getExtensions());
             });
         });
@@ -3195,7 +3195,7 @@ class RouterTest extends TestCase
     {
         $routes = Router::createRouteBuilder('/');
 
-        $routes->prefix('admin', function (RouteBuilder $routes): void {
+        $routes->prefix('admin', [], function (RouteBuilder $routes): void {
             $this->assertSame('/admin', $routes->path());
             $this->assertEquals(['prefix' => 'Admin'], $routes->params());
         });
@@ -3230,7 +3230,7 @@ class RouterTest extends TestCase
     public function testPlugin(): void
     {
         $routes = Router::createRouteBuilder('/');
-        $routes->plugin('DebugKit', function (RouteBuilder $routes): void {
+        $routes->plugin('DebugKit', [], function (RouteBuilder $routes): void {
             $this->assertSame('/debug-kit', $routes->path());
             $this->assertEquals(['plugin' => 'DebugKit'], $routes->params());
         });

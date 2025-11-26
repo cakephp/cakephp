@@ -225,7 +225,7 @@ class RouteBuilder
      * Example:
      *
      * ```
-     * $routes->scope('/{org}', function ($routes) {
+     * $routes->scope('/{org}', [], function ($routes) {
      *     $routes->setOptions(['_host' => 'example.com']);
      *     // All routes here will have _host => 'example.com'
      * });
@@ -340,7 +340,7 @@ class RouteBuilder
      * You can create nested resources by passing a callback in:
      *
      * ```
-     * $routes->resources('Articles', function ($routes) {
+     * $routes->resources('Articles', [], function ($routes) {
      *   $routes->resources('Comments');
      * });
      * ```
@@ -382,17 +382,13 @@ class RouteBuilder
      *   is available at `/posts`
      *
      * @param string $name A controller name to connect resource routes for.
-     * @param \Closure|array $options Options to use when generating REST routes, or a callback.
+     * @param array<string, mixed> $options Options to use when generating REST routes.
      * @param \Closure|null $callback An optional callback to be executed in a nested scope. Nested
      *   scopes inherit the existing path and 'id' parameter.
      * @return $this
      */
-    public function resources(string $name, Closure|array $options = [], ?Closure $callback = null): static
+    public function resources(string $name, array $options = [], ?Closure $callback = null): static
     {
-        if (!is_array($options)) {
-            $callback = $options;
-            $options = [];
-        }
         $options += [
             'connectOptions' => [],
             'inflect' => 'dasherize',
@@ -856,7 +852,7 @@ class RouteBuilder
      * for $params argument:
      *
      * ```
-     * $route->prefix('Api', function($route) {
+     * $route->prefix('Api', [], function($route) {
      *     $route->prefix('V10', ['path' => '/v1.0'], function($route) {
      *         // Translates to `Controller\Api\V10\` namespace
      *     });
@@ -864,18 +860,12 @@ class RouteBuilder
      * ```
      *
      * @param string $name The prefix name to use.
-     * @param \Closure|array $params An array of routing defaults to add to each connected route.
-     *   If you have no parameters, this argument can be a Closure.
-     * @param \Closure|null $callback The callback to invoke that builds the prefixed routes.
+     * @param array<string, mixed> $params An array of routing defaults to add to each connected route.
+     * @param \Closure $callback The callback to invoke that builds the prefixed routes.
      * @return $this
-     * @throws \InvalidArgumentException If a valid callback is not passed
      */
-    public function prefix(string $name, Closure|array $params = [], ?Closure $callback = null): static
+    public function prefix(string $name, array $params, Closure $callback): static
     {
-        if (!is_array($params)) {
-            $callback = $params;
-            $params = [];
-        }
         $path = '/' . Inflector::dasherize($name);
         $name = Inflector::camelize($name);
         if (isset($params['path'])) {
@@ -910,18 +900,12 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $name The plugin name to build routes for
-     * @param \Closure|array $options Either the options to use, or a callback to build routes.
-     * @param \Closure|null $callback The callback to invoke that builds the plugin routes
-     *   Only required when $options is defined.
+     * @param array<string, mixed> $options The options to use.
+     * @param \Closure $callback The callback to invoke that builds the plugin routes.
      * @return $this
      */
-    public function plugin(string $name, Closure|array $options = [], ?Closure $callback = null): static
+    public function plugin(string $name, array $options, Closure $callback): static
     {
-        if (!is_array($options)) {
-            $callback = $options;
-            $options = [];
-        }
-
         $path = $options['path'] ?? '/' . Inflector::dasherize($name);
         unset($options['path']);
         $options = ['plugin' => $name] + $options;
@@ -943,22 +927,12 @@ class RouteBuilder
      *   name of any route created in a scope callback.
      *
      * @param string $path The path to create a scope for.
-     * @param \Closure|array $params Either the parameters to add to routes, or a callback.
-     * @param \Closure|null $callback The callback to invoke that builds the plugin routes.
-     *   Only required when $params is defined.
+     * @param array<string, mixed> $params The parameters to add to routes.
+     * @param \Closure $callback The callback to invoke that builds the plugin routes.
      * @return $this
-     * @throws \InvalidArgumentException when there is no callable parameter.
      */
-    public function scope(string $path, Closure|array $params, ?Closure $callback = null): static
+    public function scope(string $path, array $params, Closure $callback): static
     {
-        if ($params instanceof Closure) {
-            $callback = $params;
-            $params = [];
-        }
-        if ($callback === null) {
-            throw new InvalidArgumentException('Need a valid Closure to connect routes.');
-        }
-
         if ($this->_path !== '/') {
             $path = $this->_path . $path;
         }
