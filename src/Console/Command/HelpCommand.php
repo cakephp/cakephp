@@ -241,6 +241,9 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $line = ' - ' . str_pad($name, $nameColumnWidth);
 
             if ($description !== '') {
+                // Use only first line of description
+                $description = strtok($description, "\n");
+
                 // Calculate available space for description
                 $availableWidth = $maxWidth - strlen($line);
 
