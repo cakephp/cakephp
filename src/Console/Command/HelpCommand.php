@@ -239,35 +239,46 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             ];
         }
 
-        // Find the longest subcommand name for padding (within grouped display)
-        $maxSubLength = 0;
-        foreach ($groups as $prefix => $cmds) {
-            foreach ($cmds as $cmd) {
-                $displayName = $cmd['subcommand'] ?? $prefix;
-                $maxSubLength = max($maxSubLength, strlen($displayName));
-            }
+        // Find the longest full command name for padding
+        $maxNameLength = 0;
+        foreach ($commands as $data) {
+            $maxNameLength = max($maxNameLength, strlen($data['name']));
         }
-        $nameColumnWidth = $maxSubLength + 3;
+        $nameColumnWidth = $maxNameLength + 3;
 
         foreach ($groups as $prefix => $cmds) {
-            // Output group header
+            // Single command without subcommands - show inline
+            if (count($cmds) === 1 && $cmds[0]['subcommand'] === null) {
+                $description = $cmds[0]['description'];
+                $line = str_pad($prefix, $nameColumnWidth);
+
+                if ($description !== '') {
+                    $description = strtok($description, "\n");
+                    $availableWidth = $maxWidth - strlen($line);
+                    if (strlen($description) > $availableWidth) {
+                        $description = substr($description, 0, $availableWidth - 3) . '...';
+                    }
+                    $line .= $description;
+                }
+
+                $io->out($line);
+                continue;
+            }
+
+            // Multi-command group - show header and indented full commands
             $io->out("<info>{$prefix}</info>");
 
             foreach ($cmds as $cmd) {
-                $displayName = $cmd['subcommand'] ?? $prefix;
+                // Show full command name (prefix + subcommand)
+                $fullName = $cmd['subcommand'] !== null ? $prefix . ' ' . $cmd['subcommand'] : $prefix;
                 $description = $cmd['description'];
 
-                $line = '  ' . str_pad($displayName, $nameColumnWidth);
+                $line = '  ' . str_pad($fullName, $nameColumnWidth);
 
                 if ($description !== '') {
-                    // Use only first line of description
                     $description = strtok($description, "\n");
-
-                    // Calculate available space for description
                     $availableWidth = $maxWidth - strlen($line);
-
                     if (strlen($description) > $availableWidth) {
-                        // Truncate with ellipsis
                         $description = substr($description, 0, $availableWidth - 3) . '...';
                     }
                     $line .= $description;

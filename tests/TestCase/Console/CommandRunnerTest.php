@@ -135,8 +135,9 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('Available Commands', $messages);
-        $this->assertStringContainsString('- cache clear', $messages);
-        $this->assertStringContainsString('- cache list', $messages);
+        $this->assertStringContainsString('<info>cache</info>', $messages);
+        $this->assertStringContainsString('clear', $messages);
+        $this->assertStringContainsString('list', $messages);
     }
 
     /**
