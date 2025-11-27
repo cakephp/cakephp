@@ -280,7 +280,7 @@ class FixtureHelper
 
         $references = [];
         foreach ($schema->constraints() as $constraintName) {
-            $constraint = $schema->getConstraint($constraintName);
+            $constraint = $schema->getConstraint((string)$constraintName);
 
             if ($constraint && $constraint['type'] === TableSchema::CONSTRAINT_FOREIGN) {
                 $references[] = $constraint['references'][0];
