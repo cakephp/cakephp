@@ -349,7 +349,7 @@ class RouteBuilder
      * You can use the `map` option to connect additional resource methods:
      *
      * ```
-     * $routes->resources('Articles', null, [
+     * $routes->resources('Articles', options: [
      *   'map' => ['deleteAll' => ['action' => 'deleteAll', 'method' => 'DELETE']],
      * ]);
      * ```
@@ -361,7 +361,7 @@ class RouteBuilder
      * You can use the `inflect` option to change how path segments are generated:
      *
      * ```
-     * $routes->resources('PaymentTypes', null, ['inflect' => 'underscore']);
+     * $routes->resources('PaymentTypes', options: ['inflect' => 'underscore']);
      * ```
      *
      * Will generate routes like `/payment-types` instead of `/payment_types`
