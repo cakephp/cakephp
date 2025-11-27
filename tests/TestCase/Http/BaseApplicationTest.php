@@ -273,6 +273,46 @@ class BaseApplicationTest extends TestCase
         $app->addPlugin('NonExistentPlugin');
     }
 
+    /**
+     * Tests that addPlugin() with onlyDebug config only loads plugin in debug mode
+     */
+    public function testAddPluginOnlyDebugWhenDebugEnabled(): void
+    {
+        Configure::write('debug', true);
+        $app = $this->app;
+        $app->addPlugin(TestPlugin::class, ['onlyDebug' => true]);
+
+        $this->assertCount(1, $app->getPlugins());
+        $this->assertTrue($app->getPlugins()->has('TestPlugin'));
+    }
+
+    /**
+     * Tests that addPlugin() with onlyDebug config skips plugin when debug is disabled
+     */
+    public function testAddPluginOnlyDebugWhenDebugDisabled(): void
+    {
+        Configure::write('debug', false);
+        $app = $this->app;
+        $pluginCountBefore = count($app->getPlugins());
+        $app->addPlugin(TestPlugin::class, ['onlyDebug' => true]);
+        $pluginCountAfter = count($app->getPlugins());
+
+        $this->assertSame($pluginCountBefore, $pluginCountAfter);
+    }
+
+    /**
+     * Tests that addPlugin() with onlyCli config loads plugin in CLI mode
+     */
+    public function testAddPluginOnlyCliWhenInCli(): void
+    {
+        // PHP_SAPI is 'cli' in test environment
+        $app = $this->app;
+        $app->addPlugin(TestPlugin::class, ['onlyCli' => true]);
+
+        $this->assertCount(1, $app->getPlugins());
+        $this->assertTrue($app->getPlugins()->has('TestPlugin'));
+    }
+
     public function testGetContainer(): void
     {
         $app = $this->app;

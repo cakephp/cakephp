@@ -19,6 +19,7 @@ namespace Cake\Http;
 
 use Cake\Console\CommandCollection;
 use Cake\Controller\ControllerFactory;
+use Cake\Core\Configure;
 use Cake\Core\ConsoleApplicationInterface;
 use Cake\Core\Container;
 use Cake\Core\ContainerApplicationInterface;
@@ -139,6 +140,15 @@ abstract class BaseApplication implements
     public function addPlugin($name, array $config = [])
     {
         $optional = $config['optional'] ?? false;
+        $onlyDebug = $config['onlyDebug'] ?? false;
+        $onlyCli = $config['onlyCli'] ?? false;
+
+        if (
+            ($onlyDebug && !Configure::read('debug'))
+            || ($onlyCli && PHP_SAPI !== 'cli')
+        ) {
+            return $this;
+        }
 
         try {
             if (is_string($name)) {
