@@ -138,12 +138,20 @@ abstract class BaseApplication implements
      */
     public function addPlugin($name, array $config = [])
     {
-        if (is_string($name)) {
-            $plugin = $this->plugins->create($name, $config);
-        } else {
-            $plugin = $name;
+        $optional = $config['optional'] ?? false;
+
+        try {
+            if (is_string($name)) {
+                $plugin = $this->plugins->create($name, $config);
+            } else {
+                $plugin = $name;
+            }
+            $this->plugins->add($plugin);
+        } catch (MissingPluginException $e) {
+            if (!$optional) {
+                throw $e;
+            }
         }
-        $this->plugins->add($plugin);
 
         return $this;
     }

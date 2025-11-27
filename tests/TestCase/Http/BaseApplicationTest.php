@@ -23,6 +23,7 @@ use Cake\Core\BasePlugin;
 use Cake\Core\Configure;
 use Cake\Core\Container;
 use Cake\Core\ContainerInterface;
+use Cake\Core\Exception\MissingPluginException;
 use Cake\Event\EventInterface;
 use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
@@ -248,6 +249,28 @@ class BaseApplicationTest extends TestCase
 
         $this->assertCount(1, $app->getPlugins());
         $this->assertTrue($app->getPlugins()->has('TestPlugin'));
+    }
+
+    /**
+     * Tests that addPlugin() with optional config does not throw exception for missing plugin
+     */
+    public function testAddPluginOptionalConfigMissingPlugin(): void
+    {
+        $app = $this->app;
+        $pluginCountBefore = count($app->getPlugins());
+        $app->addPlugin('NonExistentPlugin', ['optional' => true]);
+        $pluginCountAfter = count($app->getPlugins());
+        $this->assertSame($pluginCountBefore, $pluginCountAfter);
+    }
+
+    /**
+     * Tests that addPlugin() without optional config throws exception for missing plugin
+     */
+    public function testAddPluginMissingPluginThrows(): void
+    {
+        $this->expectException(MissingPluginException::class);
+        $app = $this->app;
+        $app->addPlugin('NonExistentPlugin');
     }
 
     public function testGetContainer(): void
