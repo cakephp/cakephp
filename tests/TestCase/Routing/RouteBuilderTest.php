@@ -569,7 +569,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesPrefix(): void
     {
         $routes = new RouteBuilder($this->collection, '/api');
-        $routes->resources('Articles', null, ['prefix' => 'Rest']);
+        $routes->resources('Articles', options: ['prefix' => 'Rest']);
         $all = $this->collection->routes();
         $this->assertSame('Rest', $all[0]->defaults['prefix']);
     }
