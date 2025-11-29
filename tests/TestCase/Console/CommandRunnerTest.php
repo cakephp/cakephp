@@ -27,12 +27,14 @@ use Cake\Console\ConsoleIoInterface;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Configure;
 use Cake\Event\EventManager;
+use Cake\Event\EventManagerInterface;
 use Cake\Http\BaseApplication;
 use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use stdClass;
+use TestApp\Application;
 use TestApp\Command\AbortCommand;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\DependencyCommand;
@@ -485,6 +487,49 @@ class CommandRunnerTest extends TestCase
         $runner = $this->getRunner();
         $runner->run(['cake', '--version'], $this->getMockIo($output));
         $this->assertGreaterThan(2, count(Router::getRouteCollection()->routes()));
+    }
+
+    /**
+     * Test that events registered in EventAwareApplicationInterface methods
+     * are available early during command runner execution.
+     */
+    public function testRunRegistersEventsEarly(): void
+    {
+        $output = new StubConsoleOutput();
+        $app = new class ($this->config) extends Application {
+            public bool $customEventFired = false;
+            public bool $pluginEventFired = false;
+
+            public function events(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                $eventManager->on('Test.customEvent', function (): void {
+                    $this->customEventFired = true;
+                });
+
+                return $eventManager;
+            }
+
+            public function pluginEvents(EventManagerInterface $eventManager): EventManagerInterface
+            {
+                $eventManager->on('Test.pluginEvent', function (): void {
+                    $this->pluginEventFired = true;
+                });
+
+                return $eventManager;
+            }
+        };
+
+        $runner = new CommandRunner($app);
+        $runner->getEventManager()->on('Console.buildCommands', function () use ($runner): void {
+            // Trigger the events that should have been registered by events() and pluginEvents()
+            $runner->getEventManager()->dispatch('Test.customEvent');
+            $runner->getEventManager()->dispatch('Test.pluginEvent');
+        });
+
+        $runner->run(['cake', '--version'], $this->getMockIo($output));
+
+        $this->assertTrue($app->customEventFired, 'Custom event should have been fired');
+        $this->assertTrue($app->pluginEventFired, 'Plugin event should have been fired');
     }
 
     protected function makeAppWithCommands(array $commands): BaseApplication
