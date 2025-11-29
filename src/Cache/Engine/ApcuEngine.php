@@ -82,13 +82,13 @@ class ApcuEngine extends CacheEngine
         $duration = $this->duration($ttl);
 
         $this->eventClass = CacheBeforeSetEvent::class;
-        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
+        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $duration]);
 
         $success = apcu_store($key, $value, $duration);
 
         $this->eventClass = CacheAfterSetEvent::class;
         $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-            'key' => $key, 'value' => $value, 'success' => $success,
+            'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
         ]);
 
         return $success;
@@ -234,16 +234,25 @@ class ApcuEngine extends CacheEngine
      */
     public function add(string $key, mixed $value): bool
     {
+<<<<<<< HEAD
         $key = $this->key($key);
         $duration = $this->config['duration'];
         $this->eventClass = CacheBeforeAddEvent::class;
         $this->dispatchEvent(CacheBeforeAddEvent::NAME, ['key' => $key, 'value' => $value]);
+=======
+        $key = $this->_key($key);
+        $duration = $this->_config['duration'];
+        $this->_eventClass = CacheBeforeAddEvent::class;
+        $this->dispatchEvent(CacheBeforeAddEvent::NAME, [
+            'key' => $key, 'value' => $value, 'ttl' => $duration,
+        ]);
+>>>>>>> 5.next
 
         $result = apcu_add($key, $value, $duration);
 
         $this->eventClass = CacheAfterAddEvent::class;
         $this->dispatchEvent(CacheAfterAddEvent::NAME, [
-            'key' => $key, 'value' => $value, 'success' => $result,
+            'key' => $key, 'value' => $value, 'success' => $result, 'ttl' => $duration,
         ]);
 
         return $result;

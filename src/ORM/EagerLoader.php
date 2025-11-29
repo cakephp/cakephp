@@ -352,7 +352,7 @@ class EagerLoader
             if (is_array($options)) {
                 // When options come from asContainArray(), they have 'config' and 'associations' keys
                 // We need to keep them separate to avoid config options being treated as associations
-                if (isset($options['config']) && isset($options['associations'])) {
+                if (isset($options['config'], $options['associations'])) {
                     // Process associations recursively, but keep config separate
                     $associations = $this->reformatContain(
                         $options['associations'],
@@ -545,7 +545,6 @@ class EagerLoader
                     continue;
                 }
                 foreach ($configs as $loadable) {
-                    assert($loadable instanceof EagerLoadable);
                     if (str_contains($loadable->aliasPath(), '.')) {
                         $this->correctStrategy($loadable);
                     }

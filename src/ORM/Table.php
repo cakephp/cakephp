@@ -1552,7 +1552,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     protected function executeTransaction(callable $worker, bool $atomic = true): mixed
     {
         if ($atomic) {
-            return $this->getConnection()->transactional(fn() => $worker());
+            return $this->getConnection()->transactional($worker(...));
         }
 
         return $worker();

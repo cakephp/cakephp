@@ -70,13 +70,13 @@ trait EngineEventsTrait
         $manager->on(CacheBeforeSetEvent::NAME, function (CacheBeforeSetEvent $event) use (&$beforeEventIsCalled): void {
             $this->assertSame('cake_test', $event->getKey());
             $this->assertEquals(1234, $event->getValue());
-            $this->assertNull($event->getTtl());
+            $this->assertEquals(3600, $event->getTtl());
             $beforeEventIsCalled = true;
         });
         $manager->on(CacheAfterSetEvent::NAME, function (CacheAfterSetEvent $event) use (&$afterEventIsCalled): void {
             $this->assertSame('cake_test', $event->getKey());
             $this->assertEquals(1234, $event->getValue());
-            $this->assertTrue($event->getResult());
+            $this->assertEquals(3600, $event->getTtl());
             $afterEventIsCalled = true;
         });
 
@@ -94,11 +94,13 @@ trait EngineEventsTrait
         $manager->on(CacheBeforeAddEvent::NAME, function (CacheBeforeAddEvent $event) use (&$beforeEventIsCalled): void {
             $this->assertSame('cake_test', $event->getKey());
             $this->assertEquals(1234, $event->getValue());
+            $this->assertEquals(3600, $event->getTtl());
             $beforeEventIsCalled = true;
         });
         $manager->on(CacheAfterAddEvent::NAME, function (CacheAfterAddEvent $event) use (&$afterEventIsCalled): void {
             $this->assertSame('cake_test', $event->getKey());
             $this->assertEquals(1234, $event->getValue());
+            $this->assertEquals(3600, $event->getTtl());
             $this->assertTrue($event->getResult());
             $afterEventIsCalled = true;
         });

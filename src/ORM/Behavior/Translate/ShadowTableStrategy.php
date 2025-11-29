@@ -223,9 +223,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             return true;
         }
 
-        $select = array_filter($query->clause('select'), function ($field) {
-            return is_string($field);
-        });
+        $select = array_filter($query->clause('select'), is_string(...));
 
         if (!$select) {
             return true;

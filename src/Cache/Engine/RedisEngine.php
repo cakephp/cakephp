@@ -345,15 +345,15 @@ class RedisEngine extends CacheEngine
     {
         $key = $this->key($key);
         $value = $this->serialize($value);
+        $duration = $this->duration($ttl);
         $this->eventClass = CacheBeforeSetEvent::class;
-        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
+        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $duration]);
 
         $this->eventClass = CacheAfterSetEvent::class;
-        $duration = $this->duration($ttl);
         if ($duration === 0) {
             $success = $this->Redis->set($key, $value);
             $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-                'key' => $key, 'value' => $value, 'success' => $success,
+                'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
             ]);
 
             return $success;
@@ -361,7 +361,7 @@ class RedisEngine extends CacheEngine
 
         $success = $this->Redis->setEx($key, $duration, $value);
         $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-            'key' => $key, 'value' => $value, 'success' => $success,
+            'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
         ]);
 
         return $success;
@@ -579,18 +579,20 @@ class RedisEngine extends CacheEngine
         $value = $this->serialize($value);
 
         $this->eventClass = CacheBeforeAddEvent::class;
-        $this->dispatchEvent(CacheBeforeAddEvent::NAME, ['key' => $key, 'value' => $origValue]);
+        $this->dispatchEvent(CacheBeforeAddEvent::NAME, [
+            'key' => $key, 'value' => $origValue, 'ttl' => $duration,
+        ]);
 
         $this->eventClass = CacheAfterAddEvent::class;
         if ($this->Redis->set($key, $value, ['nx', 'ex' => $duration])) {
             $this->dispatchEvent(CacheAfterAddEvent::NAME, [
-                'key' => $key, 'value' => $origValue, 'success' => true,
+                'key' => $key, 'value' => $origValue, 'success' => true, 'ttl' => $duration,
             ]);
 
             return true;
         }
         $this->dispatchEvent(CacheAfterAddEvent::NAME, [
-            'key' => $key, 'value' => $origValue, 'success' => false,
+            'key' => $key, 'value' => $origValue, 'success' => false, 'ttl' => $duration,
         ]);
 
         return false;
