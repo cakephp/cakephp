@@ -234,19 +234,12 @@ class ApcuEngine extends CacheEngine
      */
     public function add(string $key, mixed $value): bool
     {
-<<<<<<< HEAD
         $key = $this->key($key);
-        $duration = $this->config['duration'];
+        $duration = $this->getConfig('duration');
         $this->eventClass = CacheBeforeAddEvent::class;
-        $this->dispatchEvent(CacheBeforeAddEvent::NAME, ['key' => $key, 'value' => $value]);
-=======
-        $key = $this->_key($key);
-        $duration = $this->_config['duration'];
-        $this->_eventClass = CacheBeforeAddEvent::class;
         $this->dispatchEvent(CacheBeforeAddEvent::NAME, [
             'key' => $key, 'value' => $value, 'ttl' => $duration,
         ]);
->>>>>>> 5.next
 
         $result = apcu_add($key, $value, $duration);
 
