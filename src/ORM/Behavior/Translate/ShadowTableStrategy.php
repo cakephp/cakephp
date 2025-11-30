@@ -22,6 +22,7 @@ use Cake\Core\InstanceConfigTrait;
 use Cake\Database\Expression\FieldInterface;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Datasource\EntityInterface;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Marshaller;
@@ -549,10 +550,10 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * Modifies the results from a table find in order to merge full translation
      * records into each entity under the `_translations` key.
      *
-     * @param \Cake\Collection\CollectionInterface $results Results to modify.
+     * @param \Cake\Datasource\ResultSetInterface<int, \Cake\Datasource\EntityInterface|array> $results Results to modify.
      * @return \Cake\Collection\CollectionInterface
      */
-    public function groupTranslations(CollectionInterface $results): CollectionInterface
+    public function groupTranslations(ResultSetInterface $results): CollectionInterface
     {
         return $results->map(function ($row) {
             if (!$row instanceof EntityInterface) {
