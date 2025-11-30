@@ -98,6 +98,8 @@ class CompletionCommandTest extends TestCase
         foreach ($expected as $value) {
             $this->assertOutputContains($value);
         }
+
+        $this->assertOutputNotContains('hidden', 'Hidden commands should not appear in completion output');
     }
 
     /**

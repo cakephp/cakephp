@@ -20,6 +20,7 @@ use Cake\Console\Arguments;
 use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
+use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use ReflectionClass;
@@ -124,6 +125,9 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     {
         $options = [];
         foreach ($this->commands as $key => $value) {
+            if ($this->isHiddenCommand($value)) {
+                continue;
+            }
             $parts = explode(' ', $key);
             $options[] = $parts[0];
         }
@@ -149,6 +153,9 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
 
         $options = [];
         foreach ($this->commands as $key => $value) {
+            if ($this->isHiddenCommand($value)) {
+                continue;
+            }
             $parts = explode(' ', $key);
             if ($parts[0] !== $name) {
                 continue;
@@ -180,6 +187,9 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
 
         $options = [];
         foreach ($this->commands as $key => $value) {
+            if ($this->isHiddenCommand($value)) {
+                continue;
+            }
             $parts = explode(' ', $key);
             if ($parts[0] !== $name) {
                 continue;
@@ -215,5 +225,18 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         $io->out(implode(' ', $options));
 
         return static::CODE_SUCCESS;
+    }
+
+    /**
+     * Check if a command is hidden.
+     *
+     * @param \Cake\Console\CommandInterface|class-string<\Cake\Console\CommandInterface> $command The command to check.
+     * @return bool
+     */
+    protected function isHiddenCommand(CommandInterface|string $command): bool
+    {
+        $class = is_object($command) ? $command::class : $command;
+
+        return is_subclass_of($class, BaseCommand::class) && $class::getHidden();
     }
 }

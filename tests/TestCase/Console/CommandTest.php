@@ -36,6 +36,7 @@ use TestApp\Command\AutoLoadModelCommand;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\DependencyCommand;
 use TestApp\Command\EventsCommand;
+use TestApp\Command\HiddenCommand;
 use TestApp\Command\NonInteractiveCommand;
 
 /**
@@ -107,6 +108,22 @@ class CommandTest extends TestCase
         $parser = $command->getOptionParser();
         $this->assertInstanceOf(ConsoleOptionParser::class, $parser);
         $this->assertSame('routes show', $parser->getCommand());
+    }
+
+    /**
+     * Test getHidden returns false by default
+     */
+    public function testGetHiddenDefault(): void
+    {
+        $this->assertFalse(Command::getHidden());
+    }
+
+    /**
+     * Test getHidden can be overridden to return true
+     */
+    public function testGetHiddenOverride(): void
+    {
+        $this->assertTrue(HiddenCommand::getHidden());
     }
 
     /**

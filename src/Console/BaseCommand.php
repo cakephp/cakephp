@@ -109,6 +109,16 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
     }
 
     /**
+     * Determine if the command should be hidden from the help output.
+     *
+     * @return bool
+     */
+    public static function getHidden(): bool
+    {
+        return false;
+    }
+
+    /**
      * Get the root command name.
      *
      * @return string

@@ -88,6 +88,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             if (is_object($class)) {
                 $class = $class::class;
             }
+            // Skip hidden commands
+            if (is_subclass_of($class, BaseCommand::class) && $class::getHidden()) {
+                continue;
+            }
             $invert[$class] ??= [];
             $invert[$class][] = $name;
         }
@@ -207,6 +211,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         foreach ($commands as $name => $class) {
             if (is_object($class)) {
                 $class = $class::class;
+            }
+            // Skip hidden commands
+            if (is_subclass_of($class, BaseCommand::class) && $class::getHidden()) {
+                continue;
             }
             $shell = $shells->addChild('shell');
             $shell->addAttribute('name', $name);
