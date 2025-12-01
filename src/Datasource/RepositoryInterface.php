@@ -16,6 +16,8 @@ declare(strict_types=1);
  */
 namespace Cake\Datasource;
 
+use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Closure;
 use Psr\SimpleCache\CacheInterface;
 
@@ -129,12 +131,15 @@ interface RepositoryInterface
      * This method will *not* trigger beforeSave/afterSave events. If you need those,
      * first load a collection of records and update them.
      *
-     * @param \Closure|array|string $fields A hash of field => new value.
-     * @param \Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
+     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string $fields A hash of field => new value.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @return int Count Returns the affected rows.
      */
-    public function updateAll(Closure|array|string $fields, Closure|array|string|null $conditions): int;
+    public function updateAll(
+        QueryExpression|Closure|array|string $fields,
+        ExpressionInterface|Closure|array|string|null $conditions,
+    ): int;
 
     /**
      * Deletes all records matching the provided conditions.
@@ -146,21 +151,21 @@ interface RepositoryInterface
      * use database foreign keys + ON CASCADE rules if you need cascading deletes combined
      * with this method.
      *
-     * @param \Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @return int Returns the number of affected rows.
      * @see \Cake\Datasource\RepositoryInterface::delete()
      */
-    public function deleteAll(Closure|array|string|null $conditions): int;
+    public function deleteAll(ExpressionInterface|Closure|array|string|null $conditions): int;
 
     /**
      * Returns true if there is any record in this repository matching the specified
      * conditions.
      *
-     * @param \Closure|array|string|null $conditions list of conditions to pass to the query
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions list of conditions to pass to the query
      * @return bool
      */
-    public function exists(Closure|array|string|null $conditions): bool;
+    public function exists(ExpressionInterface|Closure|array|string|null $conditions): bool;
 
     /**
      * Persists an entity based on the fields that are marked as dirty and
