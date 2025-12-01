@@ -24,7 +24,7 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
 use Cake\Database\Exception\DatabaseException;
-use Cake\Database\Expression\QueryExpression;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\Schema\TableSchemaInterface;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
@@ -1798,13 +1798,13 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * This method will *not* trigger beforeSave/afterSave events. If you need those
      * first load a collection of records and update them.
      *
-     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string $fields A hash of field => new value.
-     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string $fields A hash of field => new value.
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
      * @return int Count Returns the affected rows.
      */
     public function updateAll(
-        QueryExpression|Closure|array|string $fields,
-        QueryExpression|Closure|array|string|null $conditions,
+        ExpressionInterface|Closure|array|string $fields,
+        ExpressionInterface|Closure|array|string|null $conditions,
     ): int {
         $statement = $this->updateQuery()
             ->set($fields)
@@ -1824,11 +1824,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * use database foreign keys + ON CASCADE rules if you need cascading deletes combined
      * with this method.
      *
-     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @return int Returns the number of affected rows.
      */
-    public function deleteAll(QueryExpression|Closure|array|string|null $conditions): int
+    public function deleteAll(ExpressionInterface|Closure|array|string|null $conditions): int
     {
         $statement = $this->deleteQuery()
             ->where($conditions)
@@ -1840,7 +1840,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * @inheritDoc
      */
-    public function exists(QueryExpression|Closure|array|string|null $conditions): bool
+    public function exists(ExpressionInterface|Closure|array|string|null $conditions): bool
     {
         return (bool)count(
             $this->find('all')
