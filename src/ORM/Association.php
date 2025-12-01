@@ -897,13 +897,13 @@ abstract class Association
      * Proxies the update operation to the target `Table::updateAll()` method
      *
      * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string $fields A hash of field => new value.
-     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
      * @return int Count Returns the affected rows.
      * @see \Cake\ORM\Table::updateAll()
      */
     public function updateAll(
         QueryExpression|Closure|array|string $fields,
-        QueryExpression|Closure|array|string|null $conditions,
+        ExpressionInterface|Closure|array|string|null $conditions,
     ): int {
         $expression = $this->find()
             ->where($conditions)
@@ -915,12 +915,12 @@ abstract class Association
     /**
      * Proxies the delete operation to the target `Table::deleteAll()` method
      *
-     * @param \Cake\Database\Expression\QueryExpression|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
+     * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions Conditions to be used, accepts anything Query::where()
      * can take.
      * @return int Returns the number of affected rows.
      * @see \Cake\ORM\Table::deleteAll()
      */
-    public function deleteAll(QueryExpression|Closure|array|string|null $conditions): int
+    public function deleteAll(ExpressionInterface|Closure|array|string|null $conditions): int
     {
         $expression = $this->find()
             ->where($conditions)
