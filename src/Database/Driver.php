@@ -24,7 +24,6 @@ use Cake\Database\Exception\MissingConnectionException;
 use Cake\Database\Exception\QueryException;
 use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
-use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Log\LoggedQuery;
 use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query\DeleteQuery;
@@ -815,7 +814,7 @@ abstract class Driver implements LoggerAwareInterface
         ) {
             return (string)$value;
         }
-        if ($value instanceof QueryExpression) {
+        if ($value instanceof ExpressionInterface) {
             return $value->sql(new ValueBinder());
         }
 
