@@ -70,6 +70,7 @@ class CompletionCommandTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = [
+            'example',
             'unique',
             'welcome',
             'cache',
@@ -92,18 +93,26 @@ class CompletionCommandTest extends TestCase
     }
 
     /**
-     * test commands excludes plugin-prefixed aliases to avoid duplicates
+     * test commands excludes plugin-prefixed aliases only for true duplicates
      */
-    public function testCommandsExcludesPluginAliases(): void
+    public function testCommandsExcludesPluginAliasesForDuplicates(): void
     {
         $this->exec('completion commands');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
-        // Plugin-prefixed aliases should not be in the output
-        // as they are duplicates of the short form
+        // Plugin-prefixed aliases should be excluded when they point to the
+        // same class as the short form (true duplicates)
         $this->assertOutputNotContains('test_plugin.example');
-        $this->assertOutputNotContains('test_plugin.sample');
-        $this->assertOutputNotContains('test_plugin_two.example');
+        $this->assertOutputNotContains('test_plugin_two.unique');
+        $this->assertOutputNotContains('test_plugin_two.welcome');
+
+        // Short forms should still be present
+        $this->assertOutputContains('example');
+
+        // Plugin-prefixed aliases should be included when multiple plugins
+        // have commands with the same name (different classes)
+        $this->assertOutputContains('test_plugin.sample');
+        $this->assertOutputContains('test_plugin_two.example');
     }
 
     /**
