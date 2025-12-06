@@ -162,8 +162,18 @@ class CommandRunner implements EventDispatcherInterface
 
         $io = $io ?: new ConsoleIo();
 
+        /** @var array{string|null, array} $resolved */
+        $resolved = $this->longestCommandName($commands, $argv);
+        [$name, $argv] = $resolved;
+
+        // Check if this is a command prefix (e.g., "cache" has subcommands like "cache clear")
+        // Show help for that prefix instead of running the base command
+        if ($name !== null && !$commands->has($name) && $this->hasCommandsWithPrefix($commands, $name)) {
+            $argv = array_merge([$name], $argv);
+            $name = 'help';
+        }
+
         try {
-            [$name, $argv] = $this->longestCommandName($commands, $argv);
             $name = $this->resolveName($commands, $io, $name);
         } catch (MissingOptionException $e) {
             $io->error($e->getFullMessage());
@@ -319,6 +329,24 @@ class CommandRunner implements EventDispatcherInterface
         }
 
         return $name;
+    }
+
+    /**
+     * Check if there are commands that start with the given prefix.
+     *
+     * @param \Cake\Console\CommandCollection $commands The command collection.
+     * @param string $prefix The prefix to check.
+     * @return bool True if commands with this prefix exist.
+     */
+    protected function hasCommandsWithPrefix(CommandCollection $commands, string $prefix): bool
+    {
+        foreach ($commands->keys() as $name) {
+            if (str_starts_with($name, $prefix . ' ')) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
