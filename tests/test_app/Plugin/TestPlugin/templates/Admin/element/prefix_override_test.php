@@ -1,0 +1,1 @@
+plugin - admin prefixed

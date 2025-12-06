@@ -3029,7 +3029,7 @@ class RouterTest extends TestCase
     public function testUrlFullUrlReturnFromRoute(): void
     {
         $route = new class ('/{controller}/{action}/*') extends Route {
-            public function match(array $url, array $context = []): ?string
+            public function match(array $url, array $context = []): string
             {
                 return 'http://example.com/posts/view/1';
             }

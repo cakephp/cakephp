@@ -31,6 +31,11 @@ class PostgresSchemaDialect extends SchemaDialect
     public const DEFAULT_SRID = 4326;
 
     /**
+     * @const string
+     */
+    public const GENERATED_BY_DEFAULT = 'BY DEFAULT';
+
+    /**
      * Generate the SQL to list the tables and views.
      *
      * @param array<string, mixed> $config The connection configuration to use for
@@ -139,7 +144,7 @@ class PostgresSchemaDialect extends SchemaDialect
             return $type;
         }
 
-        if (in_array($col, ['date', 'time', 'boolean'], true)) {
+        if (in_array($col, ['date', 'time', 'boolean', 'inet', 'cidr', 'macaddr', 'citext', 'interval'], true)) {
             return ['type' => $col, 'length' => null];
         }
         if (in_array($col, ['timestamptz', 'timestamp with time zone'], true)) {
@@ -159,9 +164,6 @@ class PostgresSchemaDialect extends SchemaDialect
         }
         if ($col === 'smallint') {
             return ['type' => TableSchemaInterface::TYPE_SMALLINTEGER, 'length' => 5];
-        }
-        if ($col === 'inet') {
-            return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => 39];
         }
         if ($col === 'uuid') {
             return ['type' => TableSchemaInterface::TYPE_UUID, 'length' => null];
@@ -282,7 +284,11 @@ class PostgresSchemaDialect extends SchemaDialect
         $statement = $this->_driver->execute($sql, [$name, $schema, $config['database']]);
         $columns = [];
         foreach ($statement->fetchAll('assoc') as $row) {
-            $field = $this->_convertColumn($row['type']);
+            $type = $row['type'];
+            if ($type === 'USER-DEFINED') {
+                $type = $row['udt_name'];
+            }
+            $field = $this->_convertColumn($type);
             if ($field['type'] === TableSchemaInterface::TYPE_BOOLEAN) {
                 if ($row['default'] === 'true') {
                     $row['default'] = 1;
@@ -370,7 +376,8 @@ class PostgresSchemaDialect extends SchemaDialect
         c2.relname,
         a.attname,
         i.indisprimary,
-        i.indisunique
+        i.indisunique,
+        i.indnkeyatts
         FROM pg_catalog.pg_namespace n
         INNER JOIN pg_catalog.pg_class c ON (n.oid = c.relnamespace)
         INNER JOIN pg_catalog.pg_index i ON (c.oid = i.indrelid)
@@ -437,6 +444,7 @@ class PostgresSchemaDialect extends SchemaDialect
             $type = TableSchema::INDEX_INDEX;
             $name = $row['relname'];
             $constraint = null;
+            $includeColumnIndex = $row['indnkeyatts'];
             if ($row['indisprimary']) {
                 $constraint = $name;
                 $name = TableSchema::CONSTRAINT_PRIMARY;
@@ -456,7 +464,11 @@ class PostgresSchemaDialect extends SchemaDialect
             if ($constraint) {
                 $indexes[$name]['constraint'] = $constraint;
             }
-            $indexes[$name]['columns'][] = $row['attname'];
+            if (count($indexes[$name]['columns']) < $includeColumnIndex) {
+                $indexes[$name]['columns'][] = $row['attname'];
+            } else {
+                $indexes[$name]['include'][] = $row['attname'];
+            }
         }
 
         return array_values($indexes);
@@ -506,6 +518,7 @@ class PostgresSchemaDialect extends SchemaDialect
             'references' => [$row['references_table'], $row['references_field']],
             'update' => $this->_convertOnClause($row['on_update']),
             'delete' => $this->_convertOnClause($row['on_delete']),
+            'deferrable' => $this->convertDeferrable($row),
         ];
         $schema->addConstraint($row['name'], $data);
     }
@@ -529,6 +542,7 @@ class PostgresSchemaDialect extends SchemaDialect
                     'references' => [$row['references_table'], []],
                     'update' => $this->_convertOnClause($row['on_update']),
                     'delete' => $this->_convertOnClause($row['on_delete']),
+                    'deferrable' => $this->convertDeferrable($row),
                 ];
             }
             // column indexes start at 1
@@ -567,7 +581,9 @@ class PostgresSchemaDialect extends SchemaDialect
         c.confdeltype AS on_delete,
         c.confrelid::regclass AS references_table,
         ab.attname AS references_field,
-        array_position(c.confkey, ab.attnum) AS references_field_order
+        array_position(c.confkey, ab.attnum) AS references_field_order,
+        c.condeferrable AS deferrable,
+        c.condeferred AS initially_deferred
         FROM pg_catalog.pg_namespace n
         INNER JOIN pg_catalog.pg_class cl ON (n.oid = cl.relnamespace)
         INNER JOIN pg_catalog.pg_constraint c ON (n.oid = c.connamespace)
@@ -579,6 +595,34 @@ class PostgresSchemaDialect extends SchemaDialect
         // phpcs:enable Generic.Files.LineLength
 
         return $sql;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function describeCheckConstraints(string $tableName): array
+    {
+        [$schema, $name] = $this->splitTablename($tableName);
+        $sql = 'SELECT
+        con.conname AS name,
+        pg_get_constraintdef(con.oid) AS expression
+        FROM pg_catalog.pg_constraint AS con
+        INNER JOIN pg_catalog.pg_namespace AS ns ON (ns.oid = con.connamespace)
+        INNER JOIN pg_catalog.pg_class AS cls ON (cls.oid = con.conrelid)
+        WHERE ns.nspname = ? AND cls.relname = ? AND con.contype = \'c\'';
+
+        $results = [];
+        $statement = $this->_driver->execute($sql, [$schema, $name]);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $expression = preg_replace('/^CHECK \(\((.*)\)\)$/i', '$1', $row['expression']);
+            $results[] = [
+                'name' => $row['name'],
+                'type' => TableSchema::CONSTRAINT_CHECK,
+                'expression' => $expression,
+            ];
+        }
+
+        return $results;
     }
 
     /**
@@ -605,6 +649,27 @@ class PostgresSchemaDialect extends SchemaDialect
         }
 
         return TableSchema::ACTION_SET_NULL;
+    }
+
+    /**
+     * Convert deferrable option from the postgres metadata into a string
+     *
+     * @param array $row The row to convert.
+     * @return string|null The deferrable value or null if not deferrable.
+     */
+    protected function convertDeferrable(array $row): ?string
+    {
+        if (!isset($row['deferrable'])) {
+            return null;
+        }
+        if (!$row['deferrable']) {
+            return ForeignKey::NOT_DEFERRED;
+        }
+        if (isset($row['initially_deferred']) && $row['initially_deferred']) {
+            return ForeignKey::DEFERRED;
+        }
+
+        return ForeignKey::IMMEDIATE;
     }
 
     /**
@@ -653,6 +718,7 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_SMALLINTEGER => ' SMALLINT',
             TableSchemaInterface::TYPE_INTEGER => ' INT',
             TableSchemaInterface::TYPE_BIGINTEGER => ' BIGINT',
+            TableSchemaInterface::TYPE_BINARY => ' BYTEA',
             TableSchemaInterface::TYPE_BINARY_UUID => ' UUID',
             TableSchemaInterface::TYPE_BOOLEAN => ' BOOLEAN',
             TableSchemaInterface::TYPE_FLOAT => ' FLOAT',
@@ -667,11 +733,16 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_UUID => ' UUID',
             TableSchemaInterface::TYPE_NATIVE_UUID => ' UUID',
             TableSchemaInterface::TYPE_CHAR => ' CHAR',
+            TableSchemaInterface::TYPE_CITEXT => ' CITEXT',
             TableSchemaInterface::TYPE_JSON => ' JSONB',
+            TableSchemaInterface::TYPE_INTERVAL => ' INTERVAL',
             TableSchemaInterface::TYPE_GEOMETRY => ' GEOGRAPHY(GEOMETRY, %s)',
             TableSchemaInterface::TYPE_POINT => ' GEOGRAPHY(POINT, %s)',
             TableSchemaInterface::TYPE_LINESTRING => ' GEOGRAPHY(LINESTRING, %s)',
             TableSchemaInterface::TYPE_POLYGON => ' GEOGRAPHY(POLYGON, %s)',
+            TableSchemaInterface::TYPE_CIDR => ' CIDR',
+            TableSchemaInterface::TYPE_INET => ' INET',
+            TableSchemaInterface::TYPE_MACADDR => ' MACADDR',
         ];
 
         $autoIncrementTypes = [
@@ -681,30 +752,32 @@ class PostgresSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_BIGINTEGER,
         ];
         $autoIncrement = (bool)($column['autoIncrement'] ?? false);
-        if (
+        $isAutoincrement = (
             in_array($column['type'], $autoIncrementTypes, true) &&
             $autoIncrement
-        ) {
+        );
+        $version = $this->_driver->version();
+        $identityVersion = version_compare($version, '10.0', '>=');
+
+        if ($isAutoincrement && !$identityVersion) {
             $typeMap[$column['type']] = str_replace('INT', 'SERIAL', $typeMap[$column['type']]);
             unset($column['default']);
         }
 
+        $foundType = false;
         if (isset($typeMap[$column['type']])) {
             $out .= $typeMap[$column['type']];
+            $foundType = true;
         }
 
+        $hasLength = [
+            TableSchemaInterface::TYPE_CHAR,
+            TableSchemaInterface::TYPE_STRING,
+        ];
         if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
-        }
-        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
-            $out .= ' BYTEA';
-        }
-
-        if ($column['type'] === TableSchemaInterface::TYPE_CHAR) {
-            $out .= '(' . $column['length'] . ')';
-        }
-
-        if (
+            $foundType = true;
+        } elseif (
             $column['type'] === TableSchemaInterface::TYPE_STRING ||
             (
                 $column['type'] === TableSchemaInterface::TYPE_TEXT &&
@@ -712,9 +785,17 @@ class PostgresSchemaDialect extends SchemaDialect
             )
         ) {
             $out .= ' VARCHAR';
-            if (isset($column['length']) && $column['length'] !== '') {
-                $out .= '(' . $column['length'] . ')';
-            }
+            $hasLength[] = $column['type'];
+            $foundType = true;
+        }
+
+        if (!$foundType) {
+            $out .= ' ' . strtoupper($column['type']);
+            $hasLength[] = $column['type'];
+        }
+
+        if (in_array($column['type'], $hasLength, true) && !empty($column['length'])) {
+            $out .= '(' . $column['length'] . ')';
         }
 
         $hasCollate = [
@@ -753,6 +834,11 @@ class PostgresSchemaDialect extends SchemaDialect
 
         if (isset($column['null']) && $column['null'] === false) {
             $out .= ' NOT NULL';
+        }
+
+        if ($isAutoincrement && $identityVersion) {
+            $generated = $column['generated'] ?? static::GENERATED_BY_DEFAULT;
+            $out .= ' GENERATED ' . $generated . ' AS IDENTITY';
         }
 
         $datetimeTypes = [
@@ -828,18 +914,26 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     public function indexSql(TableSchema $schema, string $name): string
     {
-        $data = $schema->getIndex($name);
-        assert($data !== null);
+        $index = $schema->index($name);
         $columns = array_map(
             $this->_driver->quoteIdentifier(...),
-            $data['columns'],
+            (array)$index->getColumns(),
         );
+        $include = '';
+        if ($index->getInclude()) {
+            $included = array_map(
+                $this->_driver->quoteIdentifier(...),
+                $index->getInclude(),
+            );
+            $include = sprintf(' INCLUDE (%s)', implode(', ', $included));
+        }
 
         return sprintf(
-            'CREATE INDEX %s ON %s (%s)',
+            'CREATE INDEX %s ON %s (%s)%s',
             $this->_driver->quoteIdentifier($name),
             $this->_driver->quoteIdentifier($schema->name()),
             implode(', ', $columns),
+            $include,
         );
     }
 
@@ -853,9 +947,10 @@ class PostgresSchemaDialect extends SchemaDialect
         $out = 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name);
         if ($data['type'] === TableSchema::CONSTRAINT_PRIMARY) {
             $out = 'PRIMARY KEY';
-        }
-        if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $out .= ' UNIQUE';
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_CHECK) {
+            return $out . ' CHECK (' . $data['expression'] . ')';
         }
 
         return $this->_keySql($out, $data);
@@ -876,12 +971,14 @@ class PostgresSchemaDialect extends SchemaDialect
         );
         if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             return $prefix . sprintf(
-                ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s DEFERRABLE INITIALLY IMMEDIATE',
+                ' FOREIGN KEY (%s) REFERENCES %s (%s) ON UPDATE %s ON DELETE %s %s',
                 implode(', ', $columns),
                 $this->_driver->quoteIdentifier($data['references'][0]),
                 $this->_convertConstraintColumns($data['references'][1]),
                 $this->_foreignOnClause($data['update']),
                 $this->_foreignOnClause($data['delete']),
+                // Historically CakePHP used 'DEFERRABLE INITIALLY IMEDIATE, and this maintains backwards compat.
+                $data['deferrable'] ?? ForeignKey::IMMEDIATE,
             );
         }
 

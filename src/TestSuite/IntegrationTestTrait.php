@@ -54,6 +54,7 @@ use Cake\TestSuite\Constraint\Response\StatusError;
 use Cake\TestSuite\Constraint\Response\StatusFailure;
 use Cake\TestSuite\Constraint\Response\StatusOk;
 use Cake\TestSuite\Constraint\Response\StatusSuccess;
+use Cake\TestSuite\Constraint\Session\FlashParamContains;
 use Cake\TestSuite\Constraint\Session\FlashParamEquals;
 use Cake\TestSuite\Constraint\Session\SessionEquals;
 use Cake\TestSuite\Constraint\Session\SessionHasKey;
@@ -731,7 +732,7 @@ trait IntegrationTestTrait
         if ($this->_securityToken === true) {
             $fields = array_diff_key($data, array_flip($this->_unlockedFields));
 
-            $keys = array_map(function ($field) {
+            $keys = array_map(function (int|string $field) {
                 return preg_replace('/(\.\d+)+$/', '', (string)$field);
             }, array_keys(Hash::flatten($fields)));
 
@@ -951,11 +952,73 @@ trait IntegrationTestTrait
     }
 
     /**
-     * Asserts that the Location header is correct.
+     * Assert whether the response is redirecting back to the previous location.
      *
-     * This method normalizes both the expected URL and Location header value to absolute URLs
-     * for comparison. This accommodates differences between authentication plugins and core
-     * framework behavior, where some parts return relative URLs and others return absolute URLs.
+     * @param int|null $code Specific status code to validate against, defaults to success (2xx-3xx) range.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertRedirectBack(?int $code = null, string $message = ''): void
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
+        if ($code !== null) {
+            $this->assertThat($code, new StatusCode($this->_response), $message);
+        } else {
+            $this->assertThat(null, new StatusSuccess($this->_response), $verboseMessage);
+        }
+
+        $url = $this->_request['url'] ?? null;
+        if (!$url) {
+            $this->fail('No `url` set in request, cannot assert header.');
+        }
+
+        $this->assertThat(
+            Router::url($url, true),
+            new HeaderEquals($this->_response, 'Location'),
+            $verboseMessage,
+        );
+    }
+
+    /**
+     * Assert whether the response is redirecting back to the referer.
+     *
+     * @param int|null $code Specific status code to validate against, defaults to success (2xx-3xx) range.
+     * @param string $message The failure message that will be appended to the generated message.
+     * @return void
+     */
+    public function assertRedirectBackToReferer(?int $code = null, string $message = ''): void
+    {
+        if (!$this->_response) {
+            $this->fail('No response set, cannot assert header.');
+        }
+
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
+        if ($code !== null) {
+            $this->assertThat($code, new StatusCode($this->_response), $message);
+        } else {
+            $this->assertThat(null, new StatusSuccess($this->_response), $verboseMessage);
+        }
+
+        $referer = $this->_request['environment']['HTTP_REFERER'] ?? null;
+        if (!$referer) {
+            $this->fail('No `HTTP_REFERER` set in request environment, cannot assert header.');
+        }
+
+        $this->assertThat(
+            Router::url($referer, true),
+            new HeaderEquals($this->_response, 'Location'),
+            $verboseMessage,
+        );
+    }
+
+    /**
+     * Asserts that the Location header is correct. Comparison is made against exactly the URL provided.
      *
      * @param array|string|null $url The URL you expected the client to go to. This
      *   can either be a string URL or an array compatible with Router::url(). Use null to
@@ -1335,6 +1398,54 @@ trait IntegrationTestTrait
         $this->assertThat(
             $expected,
             new FlashParamEquals($this->_requestSession, $key, 'message', $at),
+            $verboseMessage,
+        );
+    }
+
+    /**
+     * Asserts a flash message contains a substring
+     *
+     * @param string $expected Expected substring in message
+     * @param string $key Flash key
+     * @param string $message Assertion failure message
+     * @param bool $ignoreCase Whether to ignore case
+     * @return void
+     */
+    public function assertFlashMessageContains(
+        string $expected,
+        string $key = 'flash',
+        string $message = '',
+        bool $ignoreCase = false,
+    ): void {
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat(
+            $expected,
+            new FlashParamContains($this->_requestSession, $key, 'message', null, $ignoreCase),
+            $verboseMessage,
+        );
+    }
+
+    /**
+     * Asserts a flash message contains a substring at a certain index
+     *
+     * @param int $at Flash index
+     * @param string $expected Expected substring in message
+     * @param string $key Flash key
+     * @param string $message Assertion failure message
+     * @param bool $ignoreCase Whether to ignore case
+     * @return void
+     */
+    public function assertFlashMessageContainsAt(
+        int $at,
+        string $expected,
+        string $key = 'flash',
+        string $message = '',
+        bool $ignoreCase = false,
+    ): void {
+        $verboseMessage = $this->extractVerboseMessage($message);
+        $this->assertThat(
+            $expected,
+            new FlashParamContains($this->_requestSession, $key, 'message', $at, $ignoreCase),
             $verboseMessage,
         );
     }

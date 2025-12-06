@@ -204,7 +204,7 @@ class Client implements EventDispatcherInterface, ClientInterface
                 $adapter = Stream::class;
             }
         } else {
-            $this->setConfig('adapter', null);
+            $this->deleteConfig('adapter');
         }
 
         if (is_string($adapter)) {
@@ -215,7 +215,7 @@ class Client implements EventDispatcherInterface, ClientInterface
 
         if (!empty($this->_config['cookieJar'])) {
             $this->_cookies = $this->_config['cookieJar'];
-            $this->setConfig('cookieJar', null);
+            $this->deleteConfig('cookieJar');
         } else {
             $this->_cookies = new CookieCollection();
         }

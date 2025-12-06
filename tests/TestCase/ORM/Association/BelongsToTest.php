@@ -341,7 +341,7 @@ class BelongsToTest extends TestCase
      */
     public function testPropertyOption(): void
     {
-        $config = ['propertyName' => 'thing_placeholder'];
+        $config = ['propertyName' => 'thing_placeholder', 'sourceTable' => $this->client];
         $association = new BelongsTo('Thing', $config);
         $this->assertSame('thing_placeholder', $association->getProperty());
     }

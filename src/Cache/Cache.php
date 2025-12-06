@@ -331,7 +331,7 @@ class Cache
      * Cache::readMany(['my_data_1', 'my_data_2], 'long_term');
      * ```
      *
-     * @param iterable $keys An array or Traversable of keys to fetch from the cache
+     * @param iterable<string> $keys An array or Traversable of keys to fetch from the cache
      * @param string $config optional name of the configuration to use. Defaults to 'default'
      * @return iterable An array containing, for each of the given $keys,
      *   the cached data or false if cached data could not be retrieved.
@@ -423,7 +423,7 @@ class Cache
      * Cache::deleteMany(['my_data_1', 'my_data_2], 'long_term');
      * ```
      *
-     * @param iterable $keys Array or Traversable of cache keys to be deleted
+     * @param iterable<string> $keys Array or Traversable of cache keys to be deleted
      * @param string $config name of the configuration to use. Defaults to 'default'
      * @return bool True on success, false on failure.
      * @throws \Cake\Cache\Exception\InvalidArgumentException

@@ -37,6 +37,20 @@ use function Cake\Core\pluginSplit;
 class ViewBuilder implements JsonSerializable
 {
     /**
+     * Deep merge strategy - recursively merges nested arrays (default for BC).
+     *
+     * @var string
+     */
+    public const MERGE_DEEP = 'deep';
+
+    /**
+     * Shallow merge strategy - simple array merge, replaces array values.
+     *
+     * @var string
+     */
+    public const MERGE_SHALLOW = 'shallow';
+
+    /**
      * The subdirectory to the template.
      *
      * @var string|null
@@ -111,6 +125,14 @@ class ViewBuilder implements JsonSerializable
      * @var array<string, mixed>
      */
     protected array $_options = [];
+
+    /**
+     * The merge strategy for config options.
+     * Can be MERGE_DEEP (recursive merge, default for BC) or MERGE_SHALLOW (simple merge).
+     *
+     * @var self::MERGE_DEEP|self::MERGE_SHALLOW
+     */
+    protected string $_configMergeStrategy = self::MERGE_DEEP;
 
     /**
      * The helpers to use
@@ -501,6 +523,40 @@ class ViewBuilder implements JsonSerializable
     }
 
     /**
+     * Set the config merge strategy for view options.
+     *
+     * Can be:
+     *  - 'deep': Recursive merge (default for BC, merges nested arrays)
+     *  - 'shallow': Simple array merge (replaces array values)
+     *
+     * This controls how options set via ViewBuilder are merged with
+     * the View class's default configuration.
+     *
+     * @param self::MERGE_DEEP|self::MERGE_SHALLOW $strategy The merge strategy.
+     * @return $this
+     */
+    public function setConfigMergeStrategy(string $strategy)
+    {
+        if (!in_array($strategy, [self::MERGE_DEEP, self::MERGE_SHALLOW], true)) {
+            throw new InvalidArgumentException('Invalid merge strategy. Valid options are: `deep`, `shallow`.');
+        }
+
+        $this->_configMergeStrategy = $strategy;
+
+        return $this;
+    }
+
+    /**
+     * Get the config merge strategy.
+     *
+     * @return self::MERGE_DEEP|self::MERGE_SHALLOW
+     */
+    public function getConfigMergeStrategy(): string
+    {
+        return $this->_configMergeStrategy;
+    }
+
+    /**
      * Sets the view name.
      *
      * @param string|null $name The name of the view, or null to remove the current name.
@@ -588,6 +644,7 @@ class ViewBuilder implements JsonSerializable
             'layoutPath' => $this->_layoutPath,
             'helpers' => $this->_helpers,
             'viewVars' => $this->_vars,
+            'configMergeStrategy' => $this->_configMergeStrategy,
         ];
         $data += $this->_options;
 
@@ -612,7 +669,7 @@ class ViewBuilder implements JsonSerializable
     {
         $properties = [
             '_templatePath', '_template', '_plugin', '_theme', '_layout', '_autoLayout',
-            '_layoutPath', '_name', '_className', '_options', '_helpers', '_vars',
+            '_layoutPath', '_name', '_className', '_options', '_helpers', '_vars', '_configMergeStrategy',
         ];
 
         $array = [];
@@ -624,7 +681,7 @@ class ViewBuilder implements JsonSerializable
         /** @phpstan-ignore-next-line argument.type */
         array_walk_recursive($array['_vars'], $this->_checkViewVars(...));
 
-        return array_filter($array, function ($i) {
+        return array_filter($array, function (array|bool|string|null $i) {
             return !is_array($i) && strlen((string)$i) || !empty($i);
         });
     }

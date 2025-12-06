@@ -20,6 +20,10 @@ use Cake\Datasource\SchemaInterface;
 
 /**
  * An interface used by database TableSchema objects.
+ *
+ * @method \Cake\Database\Schema\Column column(string $name)
+ * @method \Cake\Database\Schema\Index index(string $name)
+ * @method \Cake\Database\Schema\Constraint constraint(string $name)
  */
 interface TableSchemaInterface extends SchemaInterface
 {
@@ -66,6 +70,15 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_TIME = 'time';
 
     /**
+     * Year column type
+     *
+     * Currently only implemented in MySQL
+     *
+     * @var string
+     */
+    public const TYPE_YEAR = 'year';
+
+    /**
      * Timestamp column type
      *
      * @var string
@@ -87,6 +100,13 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_TIMESTAMP_TIMEZONE = 'timestamptimezone';
 
     /**
+     * Datetime interval. Only implemented in postgres.
+     *
+     * @var string
+     */
+    public const TYPE_INTERVAL = 'interval';
+
+    /**
      * JSON column type
      *
      * @var string
@@ -106,6 +126,15 @@ interface TableSchemaInterface extends SchemaInterface
      * @var string
      */
     public const TYPE_CHAR = 'char';
+
+    /**
+     * Case-insensitive text column type.
+     *
+     * Only implemented in postgres
+     *
+     * @var string
+     */
+    public const TYPE_CITEXT = 'citext';
 
     /**
      * Text column type
@@ -206,6 +235,27 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_POLYGON = 'polygon';
 
     /**
+     * INET type. Only implemented in postgres.
+     *
+     * @var string
+     */
+    public const TYPE_INET = 'inet';
+
+    /**
+     * CIDR type. Only implemented in postgres.
+     *
+     * @var string
+     */
+    public const TYPE_CIDR = 'cidr';
+
+    /**
+     * Macaddr type. Only implemented in postgres.
+     *
+     * @var string
+     */
+    public const TYPE_MACADDR = 'macaddr';
+
+    /**
      * Geospatial column types
      *
      * @var array
@@ -285,7 +335,7 @@ interface TableSchemaInterface extends SchemaInterface
      * Add a constraint.
      *
      * Used to add constraints to a table. For example primary keys, unique
-     * keys and foreign keys.
+     * keys, check constraints and foreign keys.
      *
      * ### Attributes
      *
@@ -294,6 +344,7 @@ interface TableSchemaInterface extends SchemaInterface
      * - `references` The table, column a foreign key references.
      * - `update` The behavior on update. Options are 'restrict', 'setNull', 'cascade', 'noAction'.
      * - `delete` The behavior on delete. Options are 'restrict', 'setNull', 'cascade', 'noAction'.
+     * - `expression` The SQL expression for check constraints.
      *
      * The default for 'update' & 'delete' is 'cascade'.
      *

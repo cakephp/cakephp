@@ -20,9 +20,12 @@ use Cake\Database\Connection;
 use Cake\Database\Driver;
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Expression\QueryExpression;
+use Cake\Database\Schema\CheckConstraint;
 use Cake\Database\Schema\Collection as SchemaCollection;
+use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\PostgresSchemaDialect;
 use Cake\Database\Schema\TableSchema;
+use Cake\Database\Schema\UniqueKey;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
@@ -79,6 +82,7 @@ published BOOLEAN DEFAULT false,
 views SMALLINT DEFAULT 0,
 readingtime TIME,
 data JSONB,
+valid_period INTERVAL,
 average_note DECIMAL(4,2),
 average_income NUMERIC(10,2),
 created TIMESTAMP,
@@ -86,7 +90,16 @@ created_without_precision TIMESTAMP(0),
 created_with_precision TIMESTAMP(3),
 created_with_timezone timestamp with time zone,
 CONSTRAINT "content_idx" UNIQUE ("title", "body"),
-CONSTRAINT "author_idx" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+CONSTRAINT "author_idx" FOREIGN KEY ("author_id")
+    REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    DEFERRABLE INITIALLY DEFERRED,
+CONSTRAINT "author_idx_immediate" FOREIGN KEY ("author_id")
+    REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    DEFERRABLE INITIALLY IMMEDIATE,
+CONSTRAINT "author_idx_not" FOREIGN KEY ("author_id")
+    REFERENCES "schema_authors" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
+    NOT DEFERRABLE,
+CONSTRAINT "author_id_value_check" CHECK (author_id > 0)
 )
 SQL;
         $connection->execute($table);
@@ -99,6 +112,23 @@ CREATE VIEW schema_articles_v AS
 SELECT * FROM schema_articles
 SQL;
         $connection->execute($table);
+    }
+
+    protected function assertConstraint(array $expected, string $name, TableSchema $table): void
+    {
+        $constraint = $table->constraint($name);
+        foreach ($expected as $key => $value) {
+            if ($key == 'references') {
+                assert($constraint instanceof ForeignKey);
+                $this->assertEquals($value[0], $constraint->getReferencedTable());
+                $this->assertEquals((array)$value[1], $constraint->getReferencedColumns());
+                continue;
+            }
+            if ($key === 'constraint' || ($key === 'length' && !($constraint instanceof UniqueKey))) {
+                continue;
+            }
+            $this->assertEquals($value, $constraint->{'get' . ucfirst($key)}(), "Mismatch in {$name} constraint for {$key}");
+        }
     }
 
     /**
@@ -142,6 +172,10 @@ SQL;
             [
                 ['type' => 'TIME WITHOUT TIME ZONE'],
                 ['type' => 'time', 'length' => null],
+            ],
+            [
+                ['type' => 'INTERVAL'],
+                ['type' => 'interval', 'length' => null],
             ],
             // Integer
             [
@@ -219,10 +253,6 @@ SQL;
                 ['type' => 'UUID'],
                 ['type' => 'uuid', 'length' => null],
             ],
-            [
-                ['type' => 'INET'],
-                ['type' => 'string', 'length' => 39],
-            ],
             // Text
             [
                 ['type' => 'TEXT'],
@@ -267,6 +297,19 @@ SQL;
             [
                 ['type' => 'GEOGRAPHY(POLYGON, 4326)'],
                 ['type' => 'polygon', 'length' => null, 'srid' => 4326],
+            ],
+            // network addresses
+            [
+                ['type' => 'CIDR'],
+                ['type' => 'cidr', 'length' => null],
+            ],
+            [
+                ['type' => 'inet'],
+                ['type' => 'inet', 'length' => null],
+            ],
+            [
+                ['type' => 'macaddr'],
+                ['type' => 'macaddr', 'length' => null],
             ],
         ];
     }
@@ -361,6 +404,7 @@ SQL;
                 'unsigned' => null,
                 'comment' => null,
                 'autoIncrement' => true,
+                'generated' => 'BY DEFAULT',
             ],
             'title' => [
                 'type' => 'string',
@@ -389,6 +433,7 @@ SQL;
                 'unsigned' => null,
                 'comment' => null,
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'unique_id' => [
                 'type' => 'integer',
@@ -399,6 +444,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'published' => [
                 'type' => 'boolean',
@@ -428,6 +474,14 @@ SQL;
             ],
             'data' => [
                 'type' => 'json',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'valid_period' => [
+                'type' => 'interval',
                 'null' => true,
                 'default' => null,
                 'length' => null,
@@ -505,6 +559,33 @@ SQL;
             $expectedFields = array_intersect_key($expectedItem, $column);
             $resultFields = array_intersect_key($column, $expectedFields);
             $this->assertEquals($expectedFields, $resultFields, 'difference in ' . $column['name']);
+
+            // Integration test for column() method.
+            $col = $result->column($column['name']);
+            $this->assertEquals($column['type'], $col->getType());
+            $this->assertEquals($column['null'], $col->getNull());
+            $this->assertEquals($column['length'], $col->getLength());
+            $this->assertEquals($column['default'], $col->getDefault());
+            $this->assertEquals($column['comment'], $col->getComment());
+
+            if (isset($column['precision'])) {
+                $this->assertEquals($column['precision'], $col->getPrecision());
+            }
+            if (isset($column['onUpdate'])) {
+                $this->assertEquals($column['onUpdate'], $col->getOnUpdate());
+            } else {
+                $this->assertNull($col->getOnUpdate());
+            }
+            if (isset($column['collate'])) {
+                $this->assertEquals($column['collate'], $col->getCollate());
+            } else {
+                $this->assertNull($col->getCollate());
+            }
+            if (isset($column['autoIncrement'])) {
+                $this->assertEquals($column['autoIncrement'], $col->getIdentity());
+            } else {
+                $this->assertFalse($col->getIdentity());
+            }
         }
     }
 
@@ -530,7 +611,42 @@ SQL;
 
         $this->assertEquals(['id', 'site_id'], $result->getPrimaryKey());
         $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
-        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertFalse($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+    }
+
+    /**
+     * Test describing a table with citext columns
+     */
+    public function testDescribeTableCiText(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+
+        $sql = 'CREATE EXTENSION IF NOT EXISTS citext';
+        $connection->execute($sql);
+
+        $sql = <<<SQL
+CREATE TABLE schema_citext (
+    "id" SERIAL,
+    "slug" CITEXT NOT NULL,
+    "name" VARCHAR(255),
+    PRIMARY KEY("id")
+);
+SQL;
+        $connection->execute($sql);
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_citext');
+        $connection->execute('DROP TABLE schema_citext');
+
+        $expected = [
+            'type' => 'citext',
+            'null' => false,
+            'default' => null,
+            'comment' => null,
+            'length' => null,
+            'precision' => null,
+        ];
+        $this->assertEquals($expected, $result->getColumn('slug'));
     }
 
     /**
@@ -553,6 +669,7 @@ SQL;
                 'unsigned' => null,
                 'comment' => null,
                 'autoIncrement' => true,
+                'generated' => null,
             ],
             'name' => [
                 'type' => 'string',
@@ -580,6 +697,7 @@ SQL;
                 'comment' => null,
                 'unsigned' => null,
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'created' => [
                 'type' => 'timestampfractional',
@@ -612,7 +730,7 @@ SQL;
             'primary' => [
                 'type' => 'primary',
                 'columns' => ['id'],
-                'length' => [],
+                'constraint' => 'schema_authors_pkey',
             ],
             'unique_position' => [
                 'type' => 'unique',
@@ -622,7 +740,10 @@ SQL;
         ];
         $this->assertCount(2, $result->constraints());
         $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $this->assertConstraint($expected['primary'], 'primary', $result);
+
         $this->assertEquals($expected['unique_position'], $result->getConstraint('unique_position'));
+        $this->assertConstraint($expected['unique_position'], 'unique_position', $result);
     }
 
     public function testDescribeTableConstraintsColumnOrdering(): void
@@ -631,7 +752,8 @@ SQL;
         $connection = ConnectionManager::get('test');
 
         $queries = [
-            'CREATE TABLE ref_table (id SERIAL NOT NULL, field1 integer NOT NULL, field2 integer NOT NULL)',
+            'CREATE TABLE ref_table (id INTEGER NOT NULL GENERATED BY DEFAULT AS IDENTITY, ' .
+                'field1 integer NOT NULL, field2 integer NOT NULL)',
             'CREATE TABLE table_two (
                 id SERIAL NOT NULL, field1 INTEGER NOT NULL, field2 integer NOT NULL, ref_table_id INTEGER NOT NULL
             )',
@@ -656,10 +778,29 @@ SQL;
         $constraint = $result->getConstraint('test_constraint');
         $this->assertSame(['ref_table_id', 'field1'], $constraint['columns']);
         $this->assertSame(['ref_table', ['id', 'field1']], $constraint['references']);
+        $this->assertConstraint($constraint, 'test_constraint', $result);
 
         $constraint = $result->getConstraint('reverse_constraint');
         $this->assertSame(['field2', 'ref_table_id'], $constraint['columns']);
         $this->assertSame(['ref_table', ['field2', 'id']], $constraint['references']);
+        $this->assertConstraint($constraint, 'reverse_constraint', $result);
+    }
+
+    public function testDescribeTableCheckConstraints(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $this->_createTables($connection);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_articles');
+
+        $constraint = $result->getConstraint('author_id_value_check');
+        $this->assertSame('author_id > 0', $constraint['expression']);
+
+        $constraint = $result->constraint('author_id_value_check');
+        assert($constraint instanceof CheckConstraint);
+        $this->assertSame('author_id_value_check', $constraint->getName());
+        $this->assertSame('author_id > 0', $constraint->getExpression());
     }
 
     /**
@@ -674,12 +815,12 @@ SQL;
         $result = $dialect->describe('schema_articles');
         $this->assertInstanceOf(TableSchema::class, $result);
 
-        $this->assertCount(4, $result->constraints());
+        $this->assertCount(7, $result->constraints());
         $expected = [
             'primary' => [
                 'type' => 'primary',
                 'columns' => ['id'],
-                'length' => [],
+                'constraint' => 'schema_articles_pkey',
             ],
             'content_idx' => [
                 'type' => 'unique',
@@ -690,9 +831,25 @@ SQL;
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['schema_authors', 'id'],
-                'length' => [],
                 'update' => 'cascade',
                 'delete' => 'restrict',
+                'deferrable' => ForeignKey::DEFERRED,
+            ],
+            'author_idx_immediate' => [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['schema_authors', 'id'],
+                'update' => 'cascade',
+                'delete' => 'restrict',
+                'deferrable' => ForeignKey::IMMEDIATE,
+            ],
+            'author_idx_not' => [
+                'type' => 'foreign',
+                'columns' => ['author_id'],
+                'references' => ['schema_authors', 'id'],
+                'update' => 'cascade',
+                'delete' => 'restrict',
+                'deferrable' => ForeignKey::NOT_DEFERRED,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
@@ -701,11 +858,16 @@ SQL;
                 ],
                 'length' => [],
             ],
+            'author_id_value_check' => [
+                'type' => 'check',
+                'expression' => 'author_id > 0',
+            ],
         ];
-        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
-        $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
-        $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
-        $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
+        foreach ($expected as $name => $expectedItem) {
+            // Compare both the array API and the Schema\Constraint API.
+            $this->assertEquals($expectedItem, $result->getConstraint($name), "mismatch in {$name} constraint");
+            $this->assertConstraint($expectedItem, $name, $result);
+        }
 
         $this->assertCount(1, $result->indexes());
         $authorIdx = [
@@ -726,6 +888,7 @@ SQL;
 
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
+            $this->assertConstraint($expectedItem, $name, $result);
         }
         $expected['author_idx'] = $authorIdx;
         $expected['primary']['constraint'] = 'schema_articles_pkey';
@@ -741,6 +904,22 @@ SQL;
 
             $this->assertNotEmpty($resultFields);
             $this->assertEquals($expectedFields, $resultFields);
+            if ($index['type'] === 'index') {
+                $indexObj = $result->index($name);
+            } else {
+                $indexObj = $result->constraint($name);
+            }
+            foreach ($expectedFields as $key => $value) {
+                if ($key === 'constraint') {
+                    $this->assertEquals($value, $indexObj->getName());
+                    continue;
+                }
+                if ($key === 'length' && !($indexObj instanceof UniqueKey)) {
+                    $this->assertEquals([], $value);
+                    continue;
+                }
+                $this->assertEquals($value, $indexObj->{'get' . ucfirst($key)}());
+            }
         }
     }
 
@@ -814,6 +993,7 @@ SQL;
             'comment' => null,
             'unsigned' => null,
             'autoIncrement' => null,
+            'generated' => null,
         ];
         $this->assertEquals($expected, $result->getColumn('year'));
     }
@@ -826,6 +1006,12 @@ SQL;
     public static function columnSqlProvider(): array
     {
         return [
+            // Unknown column type is preserved.
+            [
+                'title',
+                ['type' => 'foobar', 'length' => 25, 'null' => true, 'default' => null],
+                '"title" FOOBAR(25) DEFAULT NULL',
+            ],
             // strings
             [
                 'title',
@@ -881,6 +1067,11 @@ SQL;
                 'title',
                 ['type' => 'string', 'length' => 255, 'null' => false, 'collate' => 'C'],
                 '"title" VARCHAR(255) COLLATE "C" NOT NULL',
+            ],
+            [
+                'slug',
+                ['type' => 'citext', 'length' => null],
+                '"slug" CITEXT',
             ],
             // Text
             [
@@ -943,12 +1134,22 @@ SQL;
             [
                 'post_id',
                 ['type' => 'integer', 'autoIncrement' => true, 'length' => 11],
-                '"post_id" SERIAL',
+                '"post_id" INT GENERATED BY DEFAULT AS IDENTITY',
+            ],
+            [
+                'post_id',
+                ['type' => 'integer', 'autoIncrement' => true, 'generated' => 'ALWAYS'],
+                '"post_id" INT GENERATED ALWAYS AS IDENTITY',
             ],
             [
                 'post_id',
                 ['type' => 'biginteger', 'autoIncrement' => true, 'length' => 20],
-                '"post_id" BIGSERIAL',
+                '"post_id" BIGINT GENERATED BY DEFAULT AS IDENTITY',
+            ],
+            [
+                'post_id',
+                ['type' => 'biginteger', 'autoIncrement' => true, 'length' => 20, 'generated' => 'ALWAYS'],
+                '"post_id" BIGINT GENERATED ALWAYS AS IDENTITY',
             ],
             // Decimal
             [
@@ -1124,6 +1325,22 @@ SQL;
                 ['type' => 'polygon', 'null' => false, 'srid' => 4326],
                 '"p" GEOGRAPHY(POLYGON, 4326) NOT NULL',
             ],
+            // Network address types
+            [
+                'network',
+                ['type' => 'cidr', 'null' => false],
+                '"network" CIDR NOT NULL',
+            ],
+            [
+                'network',
+                ['type' => 'inet', 'null' => false],
+                '"network" INET NOT NULL',
+            ],
+            [
+                'network',
+                ['type' => 'macaddr', 'null' => false],
+                '"network" MACADDR NOT NULL',
+            ],
         ];
     }
 
@@ -1162,7 +1379,7 @@ SQL;
             ]);
 
         $result = $schema->columnSql($table, 'id');
-        $this->assertSame('"id" SERIAL NOT NULL', $result);
+        $this->assertSame('"id" INT NOT NULL GENERATED BY DEFAULT AS IDENTITY', $result);
     }
 
     /**
@@ -1213,6 +1430,23 @@ SQL;
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
                 'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
             ],
+            [
+                'author_id_idx',
+                [
+                    'type' => 'foreign',
+                    'columns' => ['author_id'],
+                    'references' => ['authors', 'id'],
+                    'update' => 'noAction',
+                    'deferrable' => ForeignKey::DEFERRED,
+                ],
+                'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
+                'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
+            ],
+            [
+                'author_id_check',
+                ['type' => 'check', 'expression' => 'author_id > 0'],
+                'CONSTRAINT "author_id_check" CHECK (author_id > 0)',
+            ],
         ];
     }
 
@@ -1236,6 +1470,46 @@ SQL;
     }
 
     /**
+     * Provide data for testing constraintSql
+     *
+     * @return array
+     */
+    public static function indexSqlProvider(): array
+    {
+        return [
+            [
+                'title_idx',
+                ['type' => 'index', 'columns' => ['title']],
+                'CREATE INDEX "title_idx" ON "schema_articles" ("title")',
+            ],
+            [
+                'author_idx',
+                ['type' => 'index', 'columns' => ['author_id'], 'include' => ['title']],
+                'CREATE INDEX "author_idx" ON "schema_articles" ("author_id") INCLUDE ("title")',
+            ],
+        ];
+    }
+
+    /**
+     * Test the indexSql method.
+     */
+    #[DataProvider('indexSqlProvider')]
+    public function testIndexSql(string $name, array $data, string $expected): void
+    {
+        $driver = $this->_getMockedDriver();
+        $schema = new PostgresSchemaDialect($driver);
+
+        $table = (new TableSchema('schema_articles'))->addColumn('title', [
+            'type' => 'string',
+            'length' => 255,
+        ])->addColumn('author_id', [
+            'type' => 'integer',
+        ])->addIndex($name, $data);
+
+        $this->assertTextEquals($expected, $schema->indexSql($table, $name));
+    }
+
+    /**
      * Test the addConstraintSql method.
      */
     public function testAddConstraintSql(): void
@@ -1244,7 +1518,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1293,7 +1567,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1342,7 +1616,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
@@ -1377,7 +1651,7 @@ SQL;
 
         $expected = <<<SQL
 CREATE TABLE "schema_articles" (
-"id" SERIAL NOT NULL,
+"id" INT NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 "title" VARCHAR NOT NULL,
 "body" TEXT,
 "data" JSONB,
@@ -1413,7 +1687,7 @@ SQL;
             ->disableOriginalConstructor()
             ->getMock();
         $connection->expects($this->any())
-            ->method('getDriver')
+            ->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('title', [
@@ -1433,7 +1707,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
@@ -1453,7 +1727,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('articles_tags'))
@@ -1498,7 +1772,7 @@ SQL;
 
         $expected = <<<SQL
 CREATE TABLE "composite_key" (
-"id" SERIAL NOT NULL,
+"id" INT NOT NULL GENERATED BY DEFAULT AS IDENTITY,
 "account_id" INT NOT NULL,
 PRIMARY KEY ("id", "account_id")
 )
@@ -1517,7 +1791,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
@@ -1535,7 +1809,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
@@ -1561,6 +1835,37 @@ SQL;
         $this->assertEquals(['schema_name', 'table_name'], $result[1]);
     }
 
+    public function testDescribeIndexIncludedFields(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE schema_index_include (
+    "id" INT NOT NULL GENERATED ALWAYS AS IDENTITY,
+    "site_id" INTEGER NOT NULL,
+    "name" VARCHAR(255),
+    PRIMARY KEY("id")
+);
+SQL;
+        $connection->execute($sql);
+
+        $sql = 'CREATE INDEX site_id_name ON schema_index_include (site_id) INCLUDE (name)';
+        $connection->execute($sql);
+
+        $dialect = new PostgresSchemaDialect($connection->getDriver());
+        $indexExists = $dialect->hasIndex('schema_index_include', ['site_id']);
+        $indexExistsName = $dialect->hasIndex('schema_index_include', name: 'site_id_name');
+        $indexes = $dialect->describeIndexes('schema_index_include');
+        $connection->execute('DROP TABLE schema_index_include');
+
+        $this->assertTrue($indexExists);
+        $this->assertTrue($indexExistsName);
+        $this->assertCount(2, $indexes);
+        $this->assertEquals(['id'], $indexes[0]['columns']);
+        $this->assertEquals(['site_id'], $indexes[1]['columns']);
+        $this->assertEquals(['name'], $indexes[1]['include']);
+    }
+
     public function testDescribeForeignKeySql(): void
     {
         $driver = $this->getMockBuilder(Postgres::class)->getMock();
@@ -1571,6 +1876,20 @@ SQL;
 
         $result = $dialect->describeForeignKeySql('table_name', ['schema' => 'schema_name']);
         $this->assertEquals(['schema_name', 'table_name'], $result[1]);
+    }
+
+    /**
+     * Test that hasIndex considers constraint keys.
+     * This test is for postgres out of convenience, as not all databases
+     * provide names for primary keys.
+     */
+    public function testHasIndexPrimaryKeyName(): void
+    {
+        $this->_needsConnection();
+
+        $connection = ConnectionManager::get('test');
+        $dialect = new PostgresSchemaDialect($connection->getDriver());
+        $this->assertTrue($dialect->hasIndex('schema_authors', [], 'schema_authors_pkey'));
     }
 
     /**
@@ -1592,12 +1911,18 @@ SQL;
 
         $driver = $this->getMockBuilder(Postgres::class)
             ->setConstructorArgs([$config])
-            ->onlyMethods(['createPdo'])
+            ->onlyMethods(['createPdo', 'version'])
             ->getMock();
 
         $driver->expects($this->any())
             ->method('createPdo')
             ->willReturn($mock);
+
+        $driver->expects($this->any())
+            ->method('version')
+            ->willReturnCallback(function () {
+                return '10.0.0';
+            });
 
         $driver->connect();
 

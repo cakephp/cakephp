@@ -20,15 +20,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        php-version: ['8.1', '8.5']
+        php-version: ['8.2', '8.5']
         db-type: [sqlite, pgsql]
         dependencies: ['highest']
         include:
-          - php-version: '8.1'
+          - php-version: '8.2'
             db-type: 'mariadb'
             dependencies: highest
 
-          - php-version: '8.1'
+          - php-version: '8.2'
             db-type: 'mysql'
             dependencies: 'lowest'
 
@@ -57,6 +57,16 @@ jobs:
         image: memcached
         ports:
           - 11211/tcp
+      redis-cluster:
+        image: grokzen/redis-cluster:6.2.1
+        ports:
+          - 7000:7000
+          - 7001:7001
+        options: >-
+          --health-cmd "redis-cli -p 7000 ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
     - name: Setup MySQL 8.4
@@ -107,26 +117,27 @@ jobs:
         composer-options: "${{ matrix.composer-options }}"
 
     - name: Setup problem matchers for PHPUnit
-      if: matrix.php-version == '8.1' && matrix.db-type == 'mysql'
+      if: matrix.php-version == '8.2' && matrix.db-type == 'mysql'
       run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
 
     - name: Run PHPUnit
       env:
         REDIS_PORT: ${{ job.services.redis.ports['6379'] }}
         MEMCACHED_PORT: ${{ job.services.memcached.ports['11211'] }}
+        REDIS_CLUSTER_NODES: "127.0.0.1:7000,127.0.0.1:7001"
       run: |
         if [[ ${{ matrix.db-type }} == 'sqlite' ]]; then export DB_URL='sqlite:///:memory:'; fi
         if [[ ${{ matrix.db-type }} == 'mysql' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'mariadb' ]]; then export DB_URL='mysql://root:root@127.0.0.1/cakephp'; fi
         if [[ ${{ matrix.db-type }} == 'pgsql' ]]; then export DB_URL='postgres://postgres:postgres@127.0.0.1/postgres'; fi
 
-        if [[ ${{ matrix.php-version }} == '8.1' && ${{ matrix.dependencies }} == 'highest' ]]; then
+        if [[ ${{ matrix.php-version }} == '8.2' && ${{ matrix.dependencies }} == 'highest' ]]; then
           export CODECOVERAGE=1
-          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=cakephp --coverage-clover=coverage.xml
+          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-phpunit-deprecation --testsuite=cakephp --coverage-clover=coverage.xml
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database.xml
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-warning --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
-        elif [[ ${{ matrix.php-version }} == '8.1' && ${{ matrix.dependencies }} == 'lowest' ]]; then
+        elif [[ ${{ matrix.php-version }} == '8.2' && ${{ matrix.dependencies }} == 'lowest' ]]; then
           vendor/bin/phpunit
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         else
@@ -135,7 +146,7 @@ jobs:
         fi
 
     - name: Submit code coverage
-      if: matrix.php-version == '8.1'
+      if: matrix.php-version == '8.2'
       uses: codecov/codecov-action@v5
       with:
         files: coverage.xml,coverage-database.xml,coverage-functions.xml
@@ -143,11 +154,11 @@ jobs:
 
   testsuite-windows:
     runs-on: windows-2022
-    name: Windows - PHP 8.1 & SQL Server
+    name: Windows - PHP 8.2 & SQL Server
 
     env:
       EXTENSIONS: mbstring, intl, apcu, redis, pdo_sqlsrv
-      PHP_VERSION: '8.1'
+      PHP_VERSION: '8.2'
 
     steps:
     - uses: actions/checkout@v6
@@ -221,7 +232,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           extensions: mbstring, intl, pcntl
           coverage: none
           tools: phive, cs2pr
@@ -258,6 +269,24 @@ jobs:
         if: matrix.prefer-lowest == 'prefer-lowest'
         run: composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest -m
 
+      - name: Setup rector cache
+        if: always()
+        uses: actions/cache@v4
+        with:
+          path: ${{ runner.temp }}/rector
+          key: ${{ runner.os }}-rector-${{ github.run_id }}
+          restore-keys: ${{ runner.os }}-rector-
+
+      - name: Create rector cache dir
+        if: always()
+        run: mkdir -p ${{ runner.temp }}/rector
+
+      - name: Run rector
+        if: always()
+        env:
+          RECTOR_CACHE_DIR: ${{ runner.temp }}/rector
+        run: composer rector-setup && composer rector-check
+
   split-packages-stan:
     name: Static Analysis for Split Packages
     runs-on: ubuntu-24.04
@@ -273,7 +302,7 @@ jobs:
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
         with:
-          php-version: '8.1'
+          php-version: '8.2'
           extensions: mbstring, intl
           coverage: none
           tools: phive

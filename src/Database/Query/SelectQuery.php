@@ -53,9 +53,10 @@ class SelectQuery extends Query implements IteratorAggregate
      */
     protected array $_parts = [
         'comment' => null,
-        'modifier' => [],
         'with' => [],
         'select' => [],
+        'optimizerHint' => [],
+        'modifier' => [],
         'distinct' => false,
         'from' => [],
         'join' => [],
@@ -327,7 +328,7 @@ class SelectQuery extends Query implements IteratorAggregate
         bool $overwrite = false,
     ) {
         if ($overwrite) {
-            $this->_parts['having'] = $this->newExpr();
+            $this->_parts['having'] = $this->expr();
         }
         $this->_conjugate('having', $conditions, 'AND', $types);
 

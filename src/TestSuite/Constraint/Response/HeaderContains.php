@@ -27,9 +27,8 @@ class HeaderContains extends HeaderEquals
      *
      * @param mixed $other Expected content
      * @return bool
-     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
-    public function matches($other): bool
+    public function matches(mixed $other): bool
     {
         return mb_strpos($this->response->getHeaderLine($this->headerName), $other) !== false;
     }

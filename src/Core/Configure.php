@@ -274,7 +274,7 @@ class Configure
     {
         $engines = array_keys(static::$_engines);
 
-        return array_map(function ($key) {
+        return array_map(function (int|string $key) {
             return (string)$key;
         }, $engines);
     }

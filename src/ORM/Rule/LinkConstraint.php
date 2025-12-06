@@ -162,7 +162,6 @@ class LinkConstraint
     {
         $source = $association->getSource();
 
-        /** @var array<string> $primaryKey */
         $primaryKey = (array)$source->getPrimaryKey();
         if (!$entity->has($primaryKey)) {
             throw new DatabaseException(sprintf(

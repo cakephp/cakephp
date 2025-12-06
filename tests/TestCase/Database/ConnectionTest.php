@@ -1238,7 +1238,7 @@ class ConnectionTest extends TestCase
     public function testRunAndStatementIteration(): void
     {
         $query = new SelectQuery($this->connection);
-        $query->select(fields: ['field' => $query->newExpr('1')]);
+        $query->select(fields: ['field' => $query->expr('1')]);
 
         $statement = $this->connection->run($query);
         foreach ($statement as $row) {

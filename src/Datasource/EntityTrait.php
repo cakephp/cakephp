@@ -151,7 +151,7 @@ trait EntityTrait
      */
     public function &__get(string $field): mixed
     {
-        return $this->get($field);
+        return $this->getRequiredOrFail($field, $this->requireFieldPresence);
     }
 
     /**
@@ -384,6 +384,22 @@ trait EntityTrait
      */
     public function &get(string $field): mixed
     {
+        return $this->getRequiredOrFail($field, false);
+    }
+
+    /**
+     * Get field with option for requireFieldPresence.
+     *
+     * Note: The returned value might be null if the field is set to null.
+     *
+     * @param string $field the name of the field to retrieve
+     * @param bool $requireFieldPresence Whether to throw an exception if the field is not present
+     * @return mixed
+     * @throws \InvalidArgumentException if an empty field name is passed
+     * @throws \Cake\Datasource\Exception\MissingPropertyException If property does not exist and $requireFieldPresence
+     */
+    public function &getRequiredOrFail(string $field, bool $requireFieldPresence = true): mixed
+    {
         if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');
         }
@@ -403,7 +419,7 @@ trait EntityTrait
             return $result;
         }
 
-        if (!$fieldIsPresent && $this->requireFieldPresence) {
+        if (!$fieldIsPresent && $requireFieldPresence) {
             throw new MissingPropertyException([
                 'property' => $field,
                 'entity' => $this::class,
@@ -532,21 +548,13 @@ trait EntityTrait
      *
      * @param string $field The field to check.
      * @return bool
+     * @deprecated 5.3.0 Use hasValue() instead.
      */
     public function isEmpty(string $field): bool
     {
-        $value = $this->get($field);
-        if (
-            $value === null ||
-            (
-                $value === [] ||
-                $value === ''
-            )
-        ) {
-            return true;
-        }
+        deprecationWarning('5.3.0', 'isEmpty() is deprecated. Use hasValue() instead.');
 
-        return false;
+        return !$this->hasValue($field);
     }
 
     /**
@@ -568,7 +576,18 @@ trait EntityTrait
      */
     public function hasValue(string $field): bool
     {
-        return !$this->isEmpty($field);
+        $value = $this->get($field);
+        if (
+            $value === null ||
+            (
+                $value === [] ||
+                $value === ''
+            )
+        ) {
+            return false;
+        }
+
+        return true;
     }
 
     /**
@@ -1359,7 +1378,7 @@ trait EntityTrait
     public function setAccess(array|string $field, bool $set)
     {
         if ($field === '*') {
-            $this->_accessible = array_map(fn($p) => $set, $this->_accessible);
+            $this->_accessible = array_map(fn() => $set, $this->_accessible);
             $this->_accessible['*'] = $set;
 
             return $this;

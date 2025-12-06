@@ -401,8 +401,9 @@ SQL;
                 'length' => 19,
                 'precision' => null,
                 'unsigned' => null,
-                'autoIncrement' => null,
                 'comment' => null,
+                'autoIncrement' => null,
+                'generated' => null,
             ],
             'title' => [
                 'type' => 'string',
@@ -429,8 +430,9 @@ SQL;
                 'length' => 10,
                 'precision' => null,
                 'unsigned' => null,
-                'autoIncrement' => null,
                 'comment' => null,
+                'autoIncrement' => null,
+                'generated' => null,
             ],
             'unique_id' => [
                 'type' => 'integer',
@@ -441,6 +443,7 @@ SQL;
                 'precision' => null,
                 'comment' => null,
                 'autoIncrement' => null,
+                'generated' => null,
             ],
             'published' => [
                 'type' => 'boolean',
@@ -576,7 +579,7 @@ SQL;
         $connection->execute('DROP TABLE schema_composite');
 
         $this->assertEquals(['id', 'site_id'], $result->getPrimaryKey());
-        $this->assertNull($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
+        $this->assertFalse($result->getColumn('site_id')['autoIncrement'], 'site_id should not be autoincrement');
         $this->assertTrue($result->getColumn('id')['autoIncrement'], 'id should be autoincrement');
     }
 
@@ -611,7 +614,6 @@ SQL;
             'primary' => [
                 'type' => 'primary',
                 'columns' => ['id'],
-                'length' => [],
             ],
             'content_idx' => [
                 'type' => 'unique',
@@ -622,9 +624,9 @@ SQL;
                 'type' => 'foreign',
                 'columns' => ['author_id'],
                 'references' => ['schema_authors', 'id'],
-                'length' => [],
                 'update' => 'cascade',
                 'delete' => 'cascade',
+                'deferrable' => null,
             ],
             'unique_id_idx' => [
                 'type' => 'unique',
@@ -634,7 +636,11 @@ SQL;
                 'length' => [],
             ],
         ];
-        $this->assertEquals($expected['primary'], $result->getConstraint('primary'));
+        $primary = $result->getConstraint('primary');
+        $this->assertTrue(str_starts_with($primary['constraint'], 'PK__schema_a__'));
+        unset($primary['constraint']);
+        $this->assertEquals($expected['primary'], $primary);
+
         $this->assertEquals($expected['content_idx'], $result->getConstraint('content_idx'));
         $this->assertEquals($expected['author_idx'], $result->getConstraint('author_idx'));
         $this->assertEquals($expected['unique_id_idx'], $result->getConstraint('unique_id_idx'));
@@ -683,6 +689,40 @@ SQL;
     }
 
     /**
+     * Ensure that included columns are included in reflection results
+     */
+    public function testDescribeIndexIncludedFields(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE schema_index_include (
+    "id" INTEGER NOT NULL,
+    "site_id" INTEGER NOT NULL,
+    "name" VARCHAR(255),
+    PRIMARY KEY("id")
+);
+SQL;
+        $connection->execute($sql);
+
+        $sql = 'CREATE INDEX [site_id_name] ON [schema_index_include] ([site_id]) INCLUDE ([name])';
+        $connection->execute($sql);
+
+        $dialect = new SqlserverSchemaDialect($connection->getDriver());
+        $indexExists = $dialect->hasIndex('schema_index_include', ['site_id']);
+        $indexExistsName = $dialect->hasIndex('schema_index_include', name: 'site_id_name');
+        $indexes = $dialect->describeIndexes('schema_index_include');
+        $connection->execute('DROP TABLE schema_index_include');
+
+        $this->assertTrue($indexExists);
+        $this->assertTrue($indexExistsName);
+        $this->assertCount(2, $indexes);
+        $this->assertEquals(['id'], $indexes[0]['columns']);
+        $this->assertEquals(['site_id'], $indexes[1]['columns']);
+        $this->assertEquals(['name'], $indexes[1]['include']);
+    }
+
+    /**
      * Column provider for creating column sql
      *
      * @return array
@@ -690,6 +730,12 @@ SQL;
     public static function columnSqlProvider(): array
     {
         return [
+            // Unknown column type is preserved.
+            [
+                'title',
+                ['type' => 'foobar', 'length' => 25, 'null' => true, 'default' => null],
+                '[title] FOOBAR(25) DEFAULT NULL',
+            ],
             // strings
             [
                 'title',
@@ -1064,7 +1110,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1113,7 +1159,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1154,6 +1200,46 @@ SQL;
     }
 
     /**
+     * Provide data for testing constraintSql
+     *
+     * @return array
+     */
+    public static function indexSqlProvider(): array
+    {
+        return [
+            [
+                'title_idx',
+                ['type' => 'index', 'columns' => ['title']],
+                'CREATE INDEX [title_idx] ON [schema_articles] ([title])',
+            ],
+            [
+                'author_idx',
+                ['type' => 'index', 'columns' => ['author_id'], 'include' => ['title']],
+                'CREATE INDEX [author_idx] ON [schema_articles] ([author_id]) INCLUDE ([title])',
+            ],
+        ];
+    }
+
+    /**
+     * Test the indexSql method.
+     */
+    #[DataProvider('indexSqlProvider')]
+    public function testIndexSql(string $name, array $data, string $expected): void
+    {
+        $driver = $this->_getMockedDriver();
+        $schema = new SqlserverSchemaDialect($driver);
+
+        $table = (new TableSchema('schema_articles'))->addColumn('title', [
+            'type' => 'string',
+            'length' => 255,
+        ])->addColumn('author_id', [
+            'type' => 'integer',
+        ])->addIndex($name, $data);
+
+        $this->assertTextEquals($expected, $schema->indexSql($table, $name));
+    }
+
+    /**
      * Integration test for converting a Schema\Table into MySQL table creates.
      */
     public function testCreateSql(): void
@@ -1162,7 +1248,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
@@ -1236,7 +1322,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
@@ -1254,7 +1340,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getDriver')
+        $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');

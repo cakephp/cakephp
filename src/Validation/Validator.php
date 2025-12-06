@@ -221,20 +221,25 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param array<string, mixed> $data The data to be checked for errors.
      *   Keys are field names, values are the field values to validate.
      * @param bool $newRecord Whether the data to be validated is new or to be updated.
+     * @param array<string, mixed> $context Additional validation context.
      * @return array<string, array<string, string>> Array of validation errors.
      *   Outer keys are field names, inner keys are validation rule names,
      *   values are error messages. Special rule names: '_required', '_empty'.
      */
-    public function validate(array $data, bool $newRecord = true): array
+    public function validate(array $data, bool $newRecord = true, array $context = []): array
     {
         $errors = [];
 
         foreach ($this->_fields as $name => $field) {
+            if (!empty($context['fields']) && !in_array($name, $context['fields'], true)) {
+                continue;
+            }
+
             $name = (string)$name;
             $keyPresent = array_key_exists($name, $data);
 
             $providers = $this->_providers;
-            $context = compact('data', 'newRecord', 'field', 'providers');
+            $context = compact('data', 'newRecord', 'field', 'providers') + $context;
 
             if (!$keyPresent && !$this->_checkPresence($field, $context)) {
                 $errors[$name]['_required'] = $this->getRequiredMessage($name);
@@ -262,7 +267,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 continue;
             }
 
-            $result = $this->_processRules($name, $field, $data, $newRecord);
+            $result = $this->_processRules($name, $field, $data, $newRecord, $context);
             if ($result) {
                 $errors[$name] = $result;
             }
@@ -537,7 +542,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 $provider = $this->getProvider($name);
                 $validator->setProvider($name, $provider);
             }
-            $errors = $validator->validate($value, $context['newRecord']);
+            $errors = $validator->validate($value, $context['newRecord'], ['parentContext' => $context]);
 
             $message = $message ? [static::NESTED => $message] : [];
 
@@ -590,7 +595,11 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
                 if (!is_array($row)) {
                     return false;
                 }
-                $check = $validator->validate($row, $context['newRecord']);
+                $check = $validator->validate(
+                    $row,
+                    $context['newRecord'],
+                    ['parentContext' => $context, 'nestedManyIndex' => $i],
+                );
                 if ($check) {
                     $errors[$i] = $check;
                 }
@@ -655,8 +664,8 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
             'message' => $message,
         ];
 
-        if (!is_array($field)) {
-            $field = $this->_convertValidatorToArray((string)$field, $defaults);
+        if (is_string($field)) {
+            $field = $this->_convertValidatorToArray($field, $defaults);
         }
 
         foreach ($field as $fieldName => $setting) {
@@ -2085,7 +2094,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if ($message === null) {
-            $cases = array_map(fn($case) => $case->value, $enumClassName::cases());
+            $cases = array_map(fn(BackedEnum $case) => $case->value, $enumClassName::cases());
             $caseOptions = implode('`, `', $cases);
             if (!$this->_useI18n) {
                 $message = sprintf('The provided value must be one of `%s`', $caseOptions);
@@ -3171,11 +3180,18 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      * @param \Cake\Validation\ValidationSet $rules the list of rules for a field
      * @param array $data the full data passed to the validator
      * @param bool $newRecord whether is it a new record or an existing one
+     * @param array $context Additional validation context.
      * @return array<string, mixed>
      */
-    protected function _processRules(string $field, ValidationSet $rules, array $data, bool $newRecord): array
-    {
+    protected function _processRules(
+        string $field,
+        ValidationSet $rules,
+        array $data,
+        bool $newRecord,
+        array $context = [],
+    ): array {
         $errors = [];
+        $context = compact('newRecord', 'data', 'field') + $context;
 
         if (!$this->_useI18n) {
             $message = 'The provided value is invalid';
@@ -3184,7 +3200,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         foreach ($rules as $name => $rule) {
-            $result = $rule->process($data[$field], $this->_providers, compact('newRecord', 'data', 'field'));
+            $result = $rule->process($data[$field], $this->_providers, $context);
             if ($result === true) {
                 continue;
             }

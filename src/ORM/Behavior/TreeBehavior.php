@@ -393,9 +393,7 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         [$left, $right] = array_map(
-            function ($field) {
-                return $this->_table->aliasField($field);
-            },
+            $this->_table->aliasField(...),
             [$config['left'], $config['right']],
         );
 
@@ -449,9 +447,7 @@ class TreeBehavior extends Behavior
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = array_map(
-            function ($field) {
-                return $this->_table->aliasField($field);
-            },
+            $this->_table->aliasField(...),
             [$config['parent'], $config['left'], $config['right']],
         );
 
@@ -567,7 +563,7 @@ class TreeBehavior extends Behavior
         $right = $node->get($config['right']);
         $parent = $node->get($config['parent']);
 
-        $node->set($config['parent'], null);
+        $node->set($config['parent']);
 
         if ($right - $left === 1) {
             return $this->_table->save($node);
@@ -605,7 +601,7 @@ class TreeBehavior extends Behavior
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|false $node The node after being moved or false if `$number` is < 1
      */
-    public function moveUp(EntityInterface $node, int|bool $number = 1): EntityInterface|false
+    public function moveUp(EntityInterface $node, int|true $number = 1): EntityInterface|false
     {
         if ($number < 1) {
             return false;
@@ -626,7 +622,7 @@ class TreeBehavior extends Behavior
      * @return \Cake\Datasource\EntityInterface $node The node after being moved
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      */
-    protected function _moveUp(EntityInterface $node, int|bool $number): EntityInterface
+    protected function _moveUp(EntityInterface $node, int|true $number): EntityInterface
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
@@ -693,7 +689,7 @@ class TreeBehavior extends Behavior
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      * @return \Cake\Datasource\EntityInterface|false the entity after being moved or false if `$number` is < 1
      */
-    public function moveDown(EntityInterface $node, int|bool $number = 1): EntityInterface|false
+    public function moveDown(EntityInterface $node, int|true $number = 1): EntityInterface|false
     {
         if ($number < 1) {
             return false;
@@ -714,7 +710,7 @@ class TreeBehavior extends Behavior
      * @return \Cake\Datasource\EntityInterface $node The node after being moved
      * @throws \Cake\Datasource\Exception\RecordNotFoundException When node was not found
      */
-    protected function _moveDown(EntityInterface $node, int|bool $number): EntityInterface
+    protected function _moveDown(EntityInterface $node, int|true $number): EntityInterface
     {
         $config = $this->getConfig();
         [$parent, $left, $right] = [$config['parent'], $config['left'], $config['right']];
@@ -891,7 +887,7 @@ class TreeBehavior extends Behavior
         /** @var \Cake\Database\Expression\IdentifierExpression $field */
         foreach ([$config['leftField'], $config['rightField']] as $field) {
             $query = $this->_scope($this->_table->updateQuery());
-            $exp = $query->newExpr();
+            $exp = $query->expr();
 
             $movement = clone $exp;
             $movement->add($field)->add((string)$shift)->setConjunction($dir);

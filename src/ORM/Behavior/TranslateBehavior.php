@@ -354,7 +354,7 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
 
                 return $query;
             }])
-            ->formatResults($this->getStrategy()->groupTranslations(...), $query::PREPEND);
+            ->formatResults($this->getStrategy()->groupTranslations(...), SelectQuery::PREPEND);
     }
 
     /**

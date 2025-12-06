@@ -217,7 +217,6 @@ class Oauth
             rewind($resource);
             $credentials['privateKeyPassphrase'] = $passphrase;
         }
-        /** @var \OpenSSLAsymmetricKey|false $privateKey */
         $privateKey = openssl_pkey_get_private($credentials['privateKey'], $credentials['privateKeyPassphrase']);
         $this->checkSslError();
 
@@ -382,7 +381,7 @@ class Oauth
             $error .= $text;
         }
 
-        if (strlen($error) > 0) {
+        if ($error !== '') {
             throw new CakeException('openssl error: ' . $error);
         }
     }

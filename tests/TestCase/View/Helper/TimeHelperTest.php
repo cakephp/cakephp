@@ -56,7 +56,7 @@ class TimeHelperTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        DateTime::setDefaultLocale(null);
+        DateTime::setDefaultLocale();
         I18n::setLocale(I18n::getDefaultLocale());
     }
 
@@ -146,7 +146,20 @@ class TimeHelperTest extends TestCase
     public function testToQuarter(): void
     {
         $this->assertSame(4, $this->Time->toQuarter('2007-12-25'));
-        $this->assertEquals(['2007-10-01', '2007-12-31'], $this->Time->toQuarter('2007-12-25', true));
+        $this->deprecated(function (): void {
+            $this->assertEquals(['2007-10-01', '2007-12-31'], $this->Time->toQuarter('2007-12-25', true));
+        });
+    }
+
+    /**
+     * testToQuarterRange method
+     */
+    public function testToQuarterRange(): void
+    {
+        $this->assertEquals(['2007-10-01', '2007-12-31'], $this->Time->toQuarterRange('2007-12-25'));
+        $this->assertEquals(['2007-01-01', '2007-03-31'], $this->Time->toQuarterRange('2007-01-01'));
+        $this->assertEquals(['2007-04-01', '2007-06-30'], $this->Time->toQuarterRange('2007-05-15'));
+        $this->assertEquals(['2007-07-01', '2007-09-30'], $this->Time->toQuarterRange('2007-08-20'));
     }
 
     /**
@@ -189,7 +202,7 @@ class TimeHelperTest extends TestCase
     public function testToAtom(): void
     {
         $dateTime = new NativeDateTime();
-        $this->assertSame($dateTime->format($dateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
+        $this->assertSame($dateTime->format(NativeDateTime::ATOM), $this->Time->toAtom($dateTime->getTimestamp()));
     }
 
     /**

@@ -3,6 +3,9 @@ includes:
 
 parameters:
 	level: 8
+	phpVersion:
+		min: 80200
+		max: 80599
 	treatPhpDocTypesAsCertain: false
 	featureToggles:
 		internalTag: true
@@ -11,14 +14,14 @@ parameters:
 	paths:
 		- src/
 	ignoreErrors:
+		- identifier: missingType.iterableValue
+		- identifier: missingType.generics
+		- identifier: include.fileNotFound
+		- identifier: method.internalClass
+		- identifier: new.internalClass
 		-
-			identifier: missingType.iterableValue
-		-
-			identifier: missingType.generics
-		-
-			identifier: include.fileNotFound
-		-
-			identifier: method.internalClass
+			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:addMethods\(\)\.$#'
+			reportUnmatched: false
 
 services:
 	-

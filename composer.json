@@ -22,15 +22,15 @@
         }
     ],
     "require": {
-        "php": ">=8.1",
+        "php": ">=8.2",
         "ext-intl": "*",
         "ext-json": "*",
         "ext-mbstring": "*",
-        "cakephp/chronos": "^3.1",
+        "cakephp/chronos": "^3.3",
         "composer/ca-bundle": "^1.5",
-        "laminas/laminas-diactoros": "^3.3",
+        "laminas/laminas-diactoros": "^3.8",
         "laminas/laminas-httphandlerrunner": "^2.6",
-        "league/container": "^4.2",
+        "league/container": "^5.1",
         "psr/container": "^1.1 || ^2.0",
         "psr/http-client": "^1.0.2",
         "psr/http-factory": "^1.1",
@@ -58,11 +58,11 @@
     },
     "require-dev": {
         "cakephp/cakephp-codesniffer": "^5.3",
-        "http-interop/http-factory-tests": "dev-main",
-        "mikey179/vfsstream": "^1.6.10",
+        "http-interop/http-factory-tests": "^2.0",
+        "mikey179/vfsstream": "^1.6.12",
         "mockery/mockery": "^1.6",
         "paragonie/csp-builder": "^2.3 || ^3.0",
-        "phpunit/phpunit": "^10.5.5 || ^11.1.3 || ^12.0.9"
+        "phpunit/phpunit": "^11.5.3 || ^12.1.3"
     },
     "suggest": {
         "ext-curl": "To enable more efficient network calls in Http\\Client.",
@@ -112,7 +112,9 @@
             "TestPluginTwo\\": "tests/test_app/Plugin/TestPluginTwo/src/",
             "Company\\TestPluginThree\\": "tests/test_app/Plugin/Company/TestPluginThree/src/",
             "Company\\TestPluginThree\\Test\\": "tests/test_app/Plugin/Company/TestPluginThree/tests/",
-            "Named\\": "tests/test_app/Plugin/Named/src/"
+            "Named\\": "tests/test_app/Plugin/Named/src/",
+            "TestTheme\\": "tests/test_app/Plugin/TestTheme/src/",
+            "PluginJs\\": "tests/test_app/Plugin/PluginJs/src/"
         }
     },
     "scripts": {
@@ -122,18 +124,15 @@
         ],
         "cs-check": "phpcs --colors --parallel=16 -p",
         "cs-fix": "phpcbf --colors --parallel=16 -p",
-        "phpstan": "tools/phpstan analyse",
-        "psalm": "tools/psalm --show-info=false",
-        "stan": [
-            "@phpstan",
-            "@psalm"
-        ],
-        "phpstan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
-        "phpstan-baseline": "tools/phpstan --generate-baseline",
-        "psalm-baseline": "tools/psalm  --set-baseline=psalm-baseline.xml",
+        "stan": "tools/phpstan analyse",
+        "stan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
+        "stan-baseline": "tools/phpstan --generate-baseline",
         "stan-setup": "phive install",
         "lowest": "validate-prefer-lowest",
         "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",
+        "rector-setup": "cp composer.json composer.backup && composer require --dev rector/rector:\"~2.2\" && mv composer.backup composer.json",
+        "rector-check": "vendor/bin/rector process --dry-run",
+        "rector-fix": "vendor/bin/rector process",
         "test": "phpunit",
         "test-coverage": "phpunit --coverage-clover=clover.xml"
     },
@@ -144,7 +143,7 @@
     },
     "extra": {
         "branch-alias": {
-            "dev-5.next": "5.2.x-dev"
+            "dev-5.next": "5.3.x-dev"
         }
     }
 }

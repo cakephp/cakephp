@@ -73,7 +73,7 @@ class ConditionDecoratorTest extends TestCase
             },
         ]);
 
-        $listener2 = function (EventInterface $event) {
+        $listener2 = function (EventInterface $event): void {
             $event->setData('counter', $event->getData('counter') + 1);
             $event->setResult(false);
         };

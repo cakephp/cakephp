@@ -66,8 +66,8 @@ class PluginConfigTest extends TestCase
 <?php
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path',
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/',
     ]
 ];
 PHP;
@@ -118,8 +118,8 @@ PHP;
 <?php
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path',
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/',
     ]
 ];
 PHP;
@@ -159,8 +159,8 @@ PHP;
 <?php
 return [
     'plugins' => [
-        'OtherPlugin' => '/config/path',
-        'AnotherPlugin' => '/config/path'
+        'OtherPlugin' => '/config/path/',
+        'AnotherPlugin' => '/config/path/'
     ]
 ];
 PHP;
@@ -210,8 +210,8 @@ PHP;
 <?php
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path',
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/',
     ]
 ];
 PHP;
@@ -245,8 +245,8 @@ PHP;
 <?php
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path',
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/',
     ]
 ];
 PHP;

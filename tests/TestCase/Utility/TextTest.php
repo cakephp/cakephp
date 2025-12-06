@@ -15,6 +15,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Utility;
 
+use Cake\Core\Configure;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
@@ -79,6 +80,29 @@ class TextTest extends TestCase
             $this->assertNotContains($result, $check);
             $check[] = $result;
         }
+    }
+
+    /**
+     * testUuidGenerationWithClosure method
+     */
+    public function testUuidGenerationWithClosure(): void
+    {
+        $customUuid = 'custom-uuid-12345678-1234-1234-1234-123456789012';
+        Configure::write('Text.uuidGenerator', function () use ($customUuid) {
+            return $customUuid;
+        });
+
+        $result = Text::uuid();
+        $this->assertSame($customUuid, $result);
+
+        // Clean up
+        Configure::delete('Text.uuidGenerator');
+
+        // Test that it falls back to default implementation
+        $result = Text::uuid();
+        $pattern = '/^[a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12}$/';
+        $match = (bool)preg_match($pattern, $result);
+        $this->assertTrue($match);
     }
 
     /**

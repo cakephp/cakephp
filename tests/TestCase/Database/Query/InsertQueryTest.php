@@ -348,7 +348,7 @@ class InsertQueryTest extends TestCase
         $query = new InsertQuery($this->connection);
         $query->insert(['title', 'author_id'])
             ->into('articles')
-            ->values(['title' => $query->newExpr("SELECT 'jose'"), 'author_id' => 99]);
+            ->values(['title' => $query->expr("SELECT 'jose'"), 'author_id' => 99]);
 
         $result = $query->execute();
         $result->closeCursor();
@@ -443,7 +443,7 @@ class InsertQueryTest extends TestCase
         $query
             ->insert(['column'])
             ->into('table')
-            ->values(['column' => $query->newExpr('value')]);
+            ->values(['column' => $query->expr('value')]);
 
         $clause = $query->clause('values');
         $clauseClone = (clone $query)->clause('values');
@@ -485,7 +485,7 @@ class InsertQueryTest extends TestCase
         $this->assertQuotedQuery('INSERT INTO <foo> \(<bar>, <baz>\)', $sql);
 
         $query = new InsertQuery($this->connection);
-        $sql = $query->insert([$query->newExpr('bar')])
+        $sql = $query->insert([$query->expr('bar')])
             ->into('foo')
             ->sql();
         $this->assertQuotedQuery('INSERT INTO <foo> \(\(bar\)\)', $sql);

@@ -352,6 +352,46 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests any() when one of the calls return true
+     */
+    public function testAnyReturnTrue(): void
+    {
+        $collection = new Collection([]);
+        $result = $collection->any(function ($v) {
+            return true;
+        });
+        $this->assertFalse($result);
+
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+
+        $results = [];
+        $this->assertTrue($collection->some(function ($value, $key) use (&$results) {
+            $results[] = [$key => $value];
+
+            return $key === 'b';
+        }));
+        $this->assertSame([['a' => 1], ['b' => 2]], $results);
+    }
+
+    /**
+     * Tests any() when none of the calls return true
+     */
+    public function testAnyReturnFalse(): void
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+
+        $results = [];
+        $this->assertFalse($collection->any(function ($value, $key) use (&$results) {
+            $results[] = [$key => $value];
+
+            return false;
+        }));
+        $this->assertSame([['a' => 1], ['b' => 2], ['c' => 3]], $results);
+    }
+
+    /**
      * Tests some() when one of the calls return true
      */
     public function testSomeReturnTrue(): void
@@ -2025,6 +2065,7 @@ class CollectionTest extends TestCase
         $result = $collection->__debugInfo();
         $expected = [
             'count' => 3,
+            'items' => [1, 2, 3],
         ];
         $this->assertSame($expected, $result);
 
@@ -2032,6 +2073,7 @@ class CollectionTest extends TestCase
         $result = $collection->__debugInfo();
         $expected = [
             'count' => 3,
+            'items' => [1, 2, 3],
         ];
         $this->assertSame($expected, $result);
 
@@ -2040,17 +2082,11 @@ class CollectionTest extends TestCase
         $collection = new Collection($iterator);
 
         $result = $collection->__debugInfo();
-        $expected = [
-            'count' => 3,
-        ];
-        $this->assertSame($expected, $result);
+        $this->assertStringContainsString('NoRewindIterator', $result['innerIterator']::class);
 
         // Calling it again will in this case not rewind
         $result = $collection->__debugInfo();
-        $expected = [
-            'count' => 0,
-        ];
-        $this->assertSame($expected, $result);
+        $this->assertStringContainsString('NoRewindIterator', $result['innerIterator']::class);
 
         $filter = function ($value): void {
             throw new Exception('filter exception');
@@ -2059,10 +2095,7 @@ class CollectionTest extends TestCase
         $collection = new Collection($iterator);
 
         $result = $collection->__debugInfo();
-        $expected = [
-            'count' => 'An exception occurred while getting count',
-        ];
-        $this->assertSame($expected, $result);
+        $this->assertStringContainsString('CallbackFilterIterator', $result['innerIterator']::class);
     }
 
     /**

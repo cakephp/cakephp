@@ -1525,7 +1525,7 @@ class ValidatorTest extends TestCase
         $thing = new class {
             public $args = [];
 
-            public function isCool($data, $context)
+            public function isCool($data, $context): string
             {
                 $this->args = [$data, $context];
 
@@ -1576,7 +1576,7 @@ class ValidatorTest extends TestCase
         $thing = new class {
             public $args = [];
 
-            public function isCool($data, $a, $b, $context)
+            public function isCool($data, $a, $b, $context): string
             {
                 $this->args = [$data, $a, $b, $context];
 
@@ -3059,6 +3059,110 @@ class ValidatorTest extends TestCase
 
         $validator->decimal('field', 2);
         $this->assertEmpty($validator->validate(['field' => 1.23]));
+    }
+
+    /**
+     * Test that nested validators receive parent context information
+     */
+    public function testNestedValidationWithParentContext(): void
+    {
+        $contextCapture = null;
+
+        $nestedValidator = new Validator();
+        $nestedValidator->add('nested_field', 'custom', [
+            'rule' => function ($value, $context) use (&$contextCapture) {
+                $contextCapture = $context;
+                // Access parent data through context
+                if (isset($context['parentContext'])) {
+                    return $context['parentContext']['data']['parent_field'] === 'valid';
+                }
+
+                return true;
+            },
+            'message' => 'Parent field must be valid',
+        ]);
+
+        $validator = new Validator();
+        $validator->notEmptyString('parent_field');
+        $validator->addNested('nested', $nestedValidator);
+
+        $data = [
+            'parent_field' => 'invalid',
+            'nested' => [
+                'nested_field' => 'test',
+            ],
+        ];
+
+        $errors = $validator->validate($data);
+
+        // Verify parent context was passed
+        $this->assertNotNull($contextCapture);
+        $this->assertArrayHasKey('parentContext', $contextCapture);
+        $this->assertArrayHasKey('data', $contextCapture['parentContext']);
+        $this->assertEquals('invalid', $contextCapture['parentContext']['data']['parent_field']);
+
+        // Should have validation error because parent_field is 'invalid'
+        $this->assertArrayHasKey('nested', $errors);
+        $this->assertArrayHasKey('nested_field', $errors['nested']);
+
+        // Test with valid parent field
+        $data['parent_field'] = 'valid';
+        $errors = $validator->validate($data);
+        $this->assertArrayNotHasKey('nested', $errors);
+    }
+
+    /**
+     * Test that nested many validators receive parent context and index information
+     */
+    public function testNestedManyValidationWithParentContextAndIndex(): void
+    {
+        $contextCaptures = [];
+
+        $nestedValidator = new Validator();
+        $nestedValidator->add('item_name', 'custom', [
+            'rule' => function ($value, $context) use (&$contextCaptures) {
+                $contextCaptures[] = $context;
+                // Validate based on index
+                if (isset($context['nestedManyIndex']) && $context['nestedManyIndex'] === 0) {
+                    // First item must not be empty
+                    return !empty($value);
+                }
+
+                return true;
+            },
+            'message' => 'First item name cannot be empty',
+        ]);
+
+        $validator = new Validator();
+        $validator->notEmptyString('list_name');
+        $validator->addNestedMany('items', $nestedValidator);
+
+        $data = [
+            'list_name' => 'My List',
+            'items' => [
+                ['item_name' => ''], // Should fail - first item
+                ['item_name' => ''], // Should pass - not first item
+                ['item_name' => 'Third'],
+            ],
+        ];
+
+        $errors = $validator->validate($data);
+
+        // Verify context was captured for all items
+        $this->assertCount(3, $contextCaptures);
+
+        // Check each captured context has correct index
+        foreach ($contextCaptures as $i => $context) {
+            $this->assertArrayHasKey('nestedManyIndex', $context);
+            $this->assertEquals($i, $context['nestedManyIndex']);
+            $this->assertArrayHasKey('parentContext', $context);
+            $this->assertEquals('My List', $context['parentContext']['data']['list_name']);
+        }
+
+        // Should have error only for first item
+        $this->assertArrayHasKey('items', $errors);
+        $this->assertArrayHasKey(0, $errors['items']);
+        $this->assertArrayNotHasKey(1, $errors['items']);
     }
 
     /**

@@ -326,7 +326,7 @@ class MysqlSchemaDialect extends SchemaDialect
             return $type;
         }
 
-        if (in_array($col, ['date', 'time'])) {
+        if (in_array($col, ['date', 'time', 'year'])) {
             return ['type' => $col, 'length' => null];
         }
         if (in_array($col, ['datetime', 'timestamp'])) {
@@ -571,6 +571,41 @@ class MysqlSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
+    public function describeCheckConstraints(string $tableName): array
+    {
+        if (!$this->_driver->supports(DriverFeatureEnum::CHECK_CONSTRAINTS)) {
+            return [];
+        }
+
+        [$schema, $name] = $this->splitTablename($tableName);
+        $sql = <<<SQL
+        SELECT
+        cc.CONSTRAINT_NAME AS name,
+        cc.CHECK_CLAUSE AS expression
+        FROM INFORMATION_SCHEMA.CHECK_CONSTRAINTS AS cc
+        INNER JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS AS tc ON (
+            tc.CONSTRAINT_SCHEMA = cc.CONSTRAINT_SCHEMA
+            AND tc.CONSTRAINT_NAME = cc.CONSTRAINT_NAME
+        )
+        WHERE tc.CONSTRAINT_SCHEMA = ? AND tc.TABLE_NAME = ? AND tc.CONSTRAINT_TYPE = 'CHECK'
+SQL;
+
+        $constraints = [];
+        $statement = $this->_driver->execute($sql, [$schema, $name]);
+        foreach ($statement->fetchAll('assoc') as $row) {
+            $constraints[] = [
+                'name' => $row['name'],
+                'type' => TableSchema::CONSTRAINT_CHECK,
+                'expression' => $row['expression'],
+            ];
+        }
+
+        return $constraints;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function truncateTableSql(TableSchema $schema): array
     {
         return [sprintf('TRUNCATE TABLE `%s`', $schema->name())];
@@ -674,6 +709,7 @@ class MysqlSchemaDialect extends SchemaDialect
                     if ($isKnownLength) {
                         $length = array_search($column['length'], TableSchema::$columnLengths);
                         assert(is_string($length));
+                        unset($column['length']);
                         $out .= ' ' . strtoupper($length) . 'BLOB';
                         break;
                     }
@@ -684,9 +720,9 @@ class MysqlSchemaDialect extends SchemaDialect
                     }
 
                     if ($column['length'] > 2) {
-                        $out .= ' VARBINARY(' . $column['length'] . ')';
+                        $out .= ' VARBINARY';
                     } else {
-                        $out .= ' BINARY(' . $column['length'] . ')';
+                        $out .= ' BINARY';
                     }
                     break;
             }
@@ -697,7 +733,12 @@ class MysqlSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_SMALLINTEGER,
             TableSchemaInterface::TYPE_TINYINTEGER,
             TableSchemaInterface::TYPE_STRING,
+            TableSchemaInterface::TYPE_BINARY,
         ];
+        if (!isset($typeMap[$column['type']]) && !isset($specialMap[$column['type']])) {
+            $out .= ' ' . strtoupper($column['type']);
+            $hasLength[] = $column['type'];
+        }
         if (in_array($column['type'], $hasLength, true) && isset($column['length'])) {
             $out .= '(' . $column['length'] . ')';
         }
@@ -865,9 +906,10 @@ class MysqlSchemaDialect extends SchemaDialect
         $out = '';
         if ($data['type'] === TableSchema::CONSTRAINT_UNIQUE) {
             $out = 'UNIQUE KEY ';
-        }
-        if ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_FOREIGN) {
             $out = 'CONSTRAINT ';
+        } elseif ($data['type'] === TableSchema::CONSTRAINT_CHECK) {
+            return 'CONSTRAINT ' . $this->_driver->quoteIdentifier($name) . ' CHECK (' . $data['expression'] . ')';
         }
         $out .= $this->_driver->quoteIdentifier($name);
 

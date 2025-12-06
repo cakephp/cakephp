@@ -25,7 +25,7 @@ use Cake\TestSuite\TestCase;
 use Company\TestPluginThree\TestPluginThreePlugin;
 use InvalidArgumentException;
 use Named\NamedPlugin;
-use TestPlugin\Plugin as TestPlugin;
+use TestPlugin\TestPluginPlugin as TestPlugin;
 
 /**
  * PluginCollection Test
@@ -161,10 +161,24 @@ class PluginCollectionTest extends TestCase
         $this->assertSame('TestTheme', $plugin->getName());
     }
 
+    /**
+     * @deprecated
+     */
+    public function testCreateDeprecationMessage(): void
+    {
+        $this->expectDeprecationMessageMatches(
+            '#You can create the missing class using `bin/cake bake plugin TestPluginTwo --class-only`#',
+            function (): void {
+                $plugins = new PluginCollection();
+                $plugins->create('TestPluginTwo');
+            },
+        );
+    }
+
     public function testCreateException(): void
     {
-        $this->expectException(CakeException::class);
-        $this->expectExceptionMessage('Cannot create a plugin with empty name');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Plugin name cannot be empty.');
 
         $plugins = new PluginCollection();
         $plugins->create('');
@@ -261,7 +275,7 @@ class PluginCollectionTest extends TestCase
 declare(strict_types=1);
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path'
+        'TestPlugin' => '/config/path/'
     ]
 ];
 PHP;
@@ -272,7 +286,7 @@ PHP;
         $path = $plugins->findPath('TestPlugin');
         unlink($configPath);
 
-        $this->assertSame('/config/path', $path);
+        $this->assertSame('/config/path/', $path);
     }
 
     public function testFindPathConfigureData(): void

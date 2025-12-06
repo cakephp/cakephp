@@ -117,7 +117,7 @@ class ErrorTrap
         if (!(error_reporting() & $code)) {
             return false;
         }
-        if ($code === E_USER_ERROR || $code === E_ERROR || $code === E_PARSE) {
+        if (in_array($code, [E_USER_ERROR, E_ERROR, E_PARSE], true)) {
             throw new FatalErrorException($description, $code, $file, $line);
         }
 

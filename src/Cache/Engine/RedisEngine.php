@@ -18,10 +18,27 @@ declare(strict_types=1);
 namespace Cake\Cache\Engine;
 
 use Cake\Cache\CacheEngine;
+use Cake\Cache\Event\CacheAfterAddEvent;
+use Cake\Cache\Event\CacheAfterDecrementEvent;
+use Cake\Cache\Event\CacheAfterDeleteEvent;
+use Cake\Cache\Event\CacheAfterGetEvent;
+use Cake\Cache\Event\CacheAfterIncrementEvent;
+use Cake\Cache\Event\CacheAfterSetEvent;
+use Cake\Cache\Event\CacheBeforeAddEvent;
+use Cake\Cache\Event\CacheBeforeDecrementEvent;
+use Cake\Cache\Event\CacheBeforeDeleteEvent;
+use Cake\Cache\Event\CacheBeforeGetEvent;
+use Cake\Cache\Event\CacheBeforeIncrementEvent;
+use Cake\Cache\Event\CacheBeforeSetEvent;
+use Cake\Cache\Event\CacheClearedEvent;
+use Cake\Cache\Event\CacheGroupClearEvent;
 use Cake\Core\Exception\CakeException;
 use Cake\Log\Log;
 use DateInterval;
+use Generator;
 use Redis;
+use RedisCluster;
+use RedisClusterException;
 use RedisException;
 
 /**
@@ -34,11 +51,12 @@ class RedisEngine extends CacheEngine
      *
      * @var \Redis
      */
-    protected Redis $_Redis;
+    protected Redis|RedisCluster $_Redis;
 
     /**
      * The default config used unless overridden by runtime configuration
      *
+     * - `clusterName` Redis cluster name
      * - `database` database number to use for connection.
      * - `duration` Specify how long items in this cache configuration last.
      * - `groups` List of groups or 'tags' associated to every key stored in this config.
@@ -53,6 +71,16 @@ class RedisEngine extends CacheEngine
      * - `server` URL or IP to the Redis server host.
      * - `timeout` timeout in seconds (float).
      * - `unix_socket` Path to the unix socket file (default: false)
+     * - `readTimeout` Read timeout in seconds (float).
+     * - `nodes` When using redis-cluster, the URL or IP addresses of the
+     *   Redis cluster nodes.
+     *   Format: an array of strings in the form `<ip>:<port>`, like:
+     *   [
+     *       '<ip>:<port>',
+     *       '<ip>:<port>',
+     *       '<ip>:<port>',
+     *   ]
+     * - `failover` Failover mode (distribute,distribute_slaves,error,none). Cluster mode only.
      * - `clearUsesFlushDb` Enable clear() and clearBlocking() to use FLUSHDB. This will be
      *   faster than standard clear()/clearBlocking() but will ignore prefixes and will
      *   cause dataloss if other applications are sharing a redis database.
@@ -60,6 +88,7 @@ class RedisEngine extends CacheEngine
      * @var array<string, mixed>
      */
     protected array $_defaultConfig = [
+        'clusterName' => null,
         'database' => 0,
         'duration' => 3600,
         'groups' => [],
@@ -73,6 +102,9 @@ class RedisEngine extends CacheEngine
         'timeout' => 0,
         'unix_socket' => false,
         'scanCount' => 10,
+        'readTimeout' => 0,
+        'nodes' => [],
+        'failover' => null,
         'clearUsesFlushDb' => false,
     ];
 
@@ -106,6 +138,96 @@ class RedisEngine extends CacheEngine
      */
     protected function _connect(): bool
     {
+        if (!empty($this->_config['nodes']) || !empty($this->_config['clusterName'])) {
+            return $this->connectRedisCluster();
+        }
+
+        return $this->connectRedis();
+    }
+
+    /**
+     * Connects to a Redis cluster server
+     *
+     * @return bool True if Redis server was connected
+     */
+    protected function connectRedisCluster(): bool
+    {
+        $connected = false;
+
+        if (empty($this->_config['nodes'])) {
+            // @codeCoverageIgnoreStart
+            if (class_exists(Log::class)) {
+                Log::error('RedisEngine requires one or more nodes in cluster mode');
+            }
+            // @codeCoverageIgnoreEnd
+
+            return false;
+        }
+
+        // @codeCoverageIgnoreStart
+        $ssl = [];
+        if ($this->_config['tls']) {
+            $map = [
+                'ssl_ca' => 'cafile',
+                'ssl_key' => 'local_pk',
+                'ssl_cert' => 'local_cert',
+                'verify_peer' => 'verify_peer',
+                'verify_peer_name' => 'verify_peer_name',
+                'allow_self_signed' => 'allow_self_signed',
+            ];
+
+            foreach ($map as $configKey => $sslOption) {
+                if (array_key_exists($configKey, $this->_config)) {
+                    $ssl[$sslOption] = $this->_config[$configKey];
+                }
+            }
+        }
+        // @codeCoverageIgnoreEnd
+
+        try {
+            $this->_Redis = new RedisCluster(
+                $this->_config['clusterName'],
+                $this->_config['nodes'],
+                (float)$this->_config['timeout'],
+                (float)$this->_config['readTimeout'],
+                $this->_config['persistent'],
+                $this->_config['password'],
+                $this->_config['tls'] ? ['ssl' => $ssl] : null, // @codeCoverageIgnore
+            );
+
+            $connected = true;
+        } catch (RedisClusterException $e) {
+            $connected = false;
+
+            // @codeCoverageIgnoreStart
+            if (class_exists(Log::class)) {
+                Log::error('RedisEngine could not connect to the redis cluster. Got error: ' . $e->getMessage());
+            }
+            // @codeCoverageIgnoreEnd
+        }
+
+        $failover = match ($this->_config['failover']) {
+            RedisCluster::FAILOVER_DISTRIBUTE, 'distribute' => RedisCluster::FAILOVER_DISTRIBUTE,
+            RedisCluster::FAILOVER_DISTRIBUTE_SLAVES, 'distribute_slaves' => RedisCluster::FAILOVER_DISTRIBUTE_SLAVES,
+            RedisCluster::FAILOVER_ERROR, 'error' => RedisCluster::FAILOVER_ERROR,
+            RedisCluster::FAILOVER_NONE, 'none' => RedisCluster::FAILOVER_NONE,
+            default => null,
+        };
+
+        if ($failover !== null) {
+            $this->_Redis->setOption(RedisCluster::OPT_SLAVE_FAILOVER, $failover);
+        }
+
+        return $connected;
+    }
+
+    /**
+     * Connects to a Redis server
+     *
+     * @return bool True if Redis server was connected
+     */
+    protected function connectRedis(): bool
+    {
         $tls = $this->_config['tls'] === true ? 'tls://' : '';
 
         $map = [
@@ -137,6 +259,7 @@ class RedisEngine extends CacheEngine
 
             return false;
         }
+
         if ($return && $this->_config['password']) {
             $return = $this->_Redis->auth($this->_config['password']);
         }
@@ -222,13 +345,26 @@ class RedisEngine extends CacheEngine
     {
         $key = $this->_key($key);
         $value = $this->serialize($value);
-
         $duration = $this->duration($ttl);
+        $this->_eventClass = CacheBeforeSetEvent::class;
+        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $duration]);
+
+        $this->_eventClass = CacheAfterSetEvent::class;
         if ($duration === 0) {
-            return $this->_Redis->set($key, $value);
+            $success = $this->_Redis->set($key, $value);
+            $this->dispatchEvent(CacheAfterSetEvent::NAME, [
+                'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
+            ]);
+
+            return $success;
         }
 
-        return $this->_Redis->setEx($key, $duration, $value);
+        $success = $this->_Redis->setEx($key, $duration, $value);
+        $this->dispatchEvent(CacheAfterSetEvent::NAME, [
+            'key' => $key, 'value' => $value, 'success' => $success, 'ttl' => $duration,
+        ]);
+
+        return $success;
     }
 
     /**
@@ -241,12 +377,33 @@ class RedisEngine extends CacheEngine
      */
     public function get(string $key, mixed $default = null): mixed
     {
-        $value = $this->_Redis->get($this->_key($key));
+        $key = $this->_key($key);
+        $this->_eventClass = CacheBeforeGetEvent::class;
+        $this->dispatchEvent(CacheBeforeGetEvent::NAME, ['key' => $key, 'default' => $default]);
+
+        $value = $this->_Redis->get($key);
+
+        $this->_eventClass = CacheAfterGetEvent::class;
         if ($value === false) {
+            $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => null, 'success' => false]);
+
             return $default;
         }
 
-        return $this->unserialize($value);
+        $data = $this->unserialize($value);
+        $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => $value, 'success' => true]);
+
+        return $data;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function has(string $key): bool
+    {
+        $res = $this->_Redis->exists($this->_key($key));
+
+        return is_int($res) ? $res > 0 : $res === true;
     }
 
     /**
@@ -261,7 +418,15 @@ class RedisEngine extends CacheEngine
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
 
+        $this->_eventClass = CacheBeforeIncrementEvent::class;
+        $this->dispatchEvent(CacheBeforeIncrementEvent::NAME, ['key' => $key, 'offset' => $offset]);
+
         $value = $this->_Redis->incrBy($key, $offset);
+
+        $this->_eventClass = CacheAfterIncrementEvent::class;
+        $this->dispatchEvent(CacheAfterIncrementEvent::NAME, [
+            'key' => $key, 'offset' => $offset, 'success' => $value !== false, 'value' => $value,
+        ]);
         if ($duration > 0) {
             $this->_Redis->expire($key, $duration);
         }
@@ -280,8 +445,15 @@ class RedisEngine extends CacheEngine
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
+        $this->_eventClass = CacheBeforeDecrementEvent::class;
+        $this->dispatchEvent(CacheBeforeDecrementEvent::NAME, ['key' => $key, 'offset' => $offset]);
 
         $value = $this->_Redis->decrBy($key, $offset);
+
+        $this->_eventClass = CacheAfterDecrementEvent::class;
+        $this->dispatchEvent(CacheAfterDecrementEvent::NAME, [
+            'key' => $key, 'offset' => $offset, 'success' => $value !== false, 'value' => $value,
+        ]);
         if ($duration > 0) {
             $this->_Redis->expire($key, $duration);
         }
@@ -298,8 +470,15 @@ class RedisEngine extends CacheEngine
     public function delete(string $key): bool
     {
         $key = $this->_key($key);
+        $this->_eventClass = CacheBeforeDeleteEvent::class;
+        $this->dispatchEvent(CacheBeforeDeleteEvent::NAME, ['key' => $key]);
 
-        return (int)$this->_Redis->del($key) > 0;
+        $success = (int)$this->_Redis->del($key) > 0;
+
+        $this->_eventClass = CacheAfterDeleteEvent::class;
+        $this->dispatchEvent(CacheAfterDeleteEvent::NAME, ['key' => $key, 'success' => $success]);
+
+        return $success;
     }
 
     /**
@@ -313,8 +492,16 @@ class RedisEngine extends CacheEngine
     public function deleteAsync(string $key): bool
     {
         $key = $this->_key($key);
+        $this->_eventClass = CacheBeforeDeleteEvent::class;
+        $this->dispatchEvent(CacheBeforeDeleteEvent::NAME, ['key' => $key]);
 
-        return (int)$this->_Redis->unlink($key) > 0;
+        $result = $this->_Redis->unlink($key);
+        $success = is_int($result) && $result > 0;
+
+        $this->_eventClass = CacheAfterDeleteEvent::class;
+        $this->dispatchEvent(CacheAfterDeleteEvent::NAME, ['key' => $key, 'success' => $success]);
+
+        return $success;
     }
 
     /**
@@ -325,29 +512,23 @@ class RedisEngine extends CacheEngine
     public function clear(): bool
     {
         if ($this->getConfig('clearUsesFlushDb')) {
-            $this->_Redis->flushDB(false);
+            $this->flushDB(true);
+            $this->_eventClass = CacheClearedEvent::class;
+            $this->dispatchEvent(CacheClearedEvent::NAME);
 
             return true;
         }
 
-        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
-
         $isAllDeleted = true;
-        $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
 
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
-
-            if ($keys === false) {
-                break;
-            }
-
-            foreach ($keys as $key) {
-                $isDeleted = ((int)$this->_Redis->unlink($key) > 0);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
-            }
+        foreach ($this->scanKeys($pattern) as $key) {
+            $result = $this->_Redis->unlink($key);
+            $isDeleted = is_int($result) && $result > 0;
+            $isAllDeleted = $isAllDeleted && $isDeleted;
         }
+        $this->_eventClass = CacheClearedEvent::class;
+        $this->dispatchEvent(CacheClearedEvent::NAME);
 
         return $isAllDeleted;
     }
@@ -360,29 +541,23 @@ class RedisEngine extends CacheEngine
     public function clearBlocking(): bool
     {
         if ($this->getConfig('clearUsesFlushDb')) {
-            $this->_Redis->flushDB(true);
+            $this->flushDB(false);
+            $this->_eventClass = CacheClearedEvent::class;
+            $this->dispatchEvent(CacheClearedEvent::NAME);
 
             return true;
         }
 
-        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
-
         $isAllDeleted = true;
-        $iterator = null;
         $pattern = $this->_config['prefix'] . '*';
 
-        while (true) {
-            $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
-
-            if ($keys === false) {
-                break;
-            }
-
-            foreach ($keys as $key) {
-                $isDeleted = ((int)$this->_Redis->del($key) > 0);
-                $isAllDeleted = $isAllDeleted && $isDeleted;
-            }
+        foreach ($this->scanKeys($pattern) as $key) {
+            // Blocking delete
+            $isDeleted = ((int)$this->_Redis->del($key) > 0);
+            $isAllDeleted = $isAllDeleted && $isDeleted;
         }
+        $this->_eventClass = CacheClearedEvent::class;
+        $this->dispatchEvent(CacheClearedEvent::NAME);
 
         return $isAllDeleted;
     }
@@ -400,11 +575,25 @@ class RedisEngine extends CacheEngine
     {
         $duration = $this->_config['duration'];
         $key = $this->_key($key);
+        $origValue = $value;
         $value = $this->serialize($value);
 
+        $this->_eventClass = CacheBeforeAddEvent::class;
+        $this->dispatchEvent(CacheBeforeAddEvent::NAME, [
+            'key' => $key, 'value' => $origValue, 'ttl' => $duration,
+        ]);
+
+        $this->_eventClass = CacheAfterAddEvent::class;
         if ($this->_Redis->set($key, $value, ['nx', 'ex' => $duration])) {
+            $this->dispatchEvent(CacheAfterAddEvent::NAME, [
+                'key' => $key, 'value' => $origValue, 'success' => true, 'ttl' => $duration,
+            ]);
+
             return true;
         }
+        $this->dispatchEvent(CacheAfterAddEvent::NAME, [
+            'key' => $key, 'value' => $origValue, 'success' => false, 'ttl' => $duration,
+        ]);
 
         return false;
     }
@@ -440,7 +629,11 @@ class RedisEngine extends CacheEngine
      */
     public function clearGroup(string $group): bool
     {
-        return (bool)$this->_Redis->incr($this->_config['prefix'] . $group);
+        $success = (bool)$this->_Redis->incr($this->_config['prefix'] . $group);
+        $this->_eventClass = CacheGroupClearEvent::class;
+        $this->dispatchEvent(CacheGroupClearEvent::NAME, ['group' => $group]);
+
+        return $success;
     }
 
     /**
@@ -485,6 +678,65 @@ class RedisEngine extends CacheEngine
     protected function _createRedisInstance(): Redis
     {
         return new Redis();
+    }
+
+    /**
+     * Unifies Redis and RedisCluster scan() calls and simplifies its use.
+     *
+     * @param string $pattern Pattern to scan
+     * @return \Generator<string>
+     */
+    private function scanKeys(string $pattern): Generator
+    {
+        $this->_Redis->setOption(Redis::OPT_SCAN, (string)Redis::SCAN_RETRY);
+
+        if ($this->_Redis instanceof RedisCluster) {
+            foreach ($this->_Redis->_masters() as $node) {
+                $iterator = null;
+                while (true) {
+                    $keys = $this->_Redis->scan($iterator, $node, $pattern, (int)$this->_config['scanCount']);
+                    if ($keys === false) {
+                        break;
+                    }
+
+                    if (is_array($keys)) {
+                        foreach ($keys as $key) {
+                            yield $key;
+                        }
+                    }
+                }
+            }
+        } else {
+            $iterator = null;
+            while (true) {
+                $keys = $this->_Redis->scan($iterator, $pattern, (int)$this->_config['scanCount']);
+                if ($keys === false) {
+                    break;
+                }
+
+                foreach ($keys as $key) {
+                    yield $key;
+                }
+            }
+        }
+    }
+
+    /**
+     * Flushes DB
+     *
+     * @param bool $async Whether to use asynchronous mode
+     * @return void
+     */
+    private function flushDB(bool $async): void
+    {
+        if ($this->_Redis instanceof RedisCluster) {
+            foreach ($this->_Redis->_masters() as $node) {
+                // @phpstan-ignore arguments.count
+                $this->_Redis->flushDB($node, $async);
+            }
+        } else {
+            $this->_Redis->flushDB($async);
+        }
     }
 
     /**

@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Collection;
 
 use ArrayIterator;
-use Exception;
 use IteratorIterator;
+use SplFixedArray;
 
 /**
  * A collection is an immutable list of elements with a handful of functions to
@@ -34,6 +34,13 @@ class Collection extends IteratorIterator implements CollectionInterface
     use CollectionTrait;
 
     /**
+     * Whether or not the items in this collection are an array.
+     *
+     * @var bool
+     */
+    protected bool $innerIsArray = false;
+
+    /**
      * Constructor. You can provide an array or any traversable object
      *
      * @param iterable $items Items.
@@ -44,6 +51,8 @@ class Collection extends IteratorIterator implements CollectionInterface
         if (is_array($items)) {
             $items = new ArrayIterator($items);
         }
+
+        $this->innerIsArray = $items instanceof ArrayIterator || $items instanceof SplFixedArray;
 
         parent::__construct($items);
     }
@@ -77,14 +86,23 @@ class Collection extends IteratorIterator implements CollectionInterface
      */
     public function __debugInfo(): array
     {
-        try {
-            $count = $this->count();
-        } catch (Exception) {
-            $count = 'An exception occurred while getting count';
+        if ($this->innerIsArray) {
+            $index = $this->key();
+            $items = $this->toArray();
+
+            $this->rewind();
+            while ($this->key() !== $index) {
+                $this->next();
+            }
+
+            return [
+                'count' => count($items),
+                'items' => $items,
+            ];
         }
 
         return [
-            'count' => $count,
+            'innerIterator' => $this->unwrap(),
         ];
     }
 }

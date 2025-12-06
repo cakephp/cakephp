@@ -155,7 +155,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $query->formatResults(
             fn(CollectionInterface $results) => $this->rowMapper($results, $locale),
-            $query::PREPEND,
+            SelectQuery::PREPEND,
         );
     }
 
@@ -223,9 +223,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
             return true;
         }
 
-        $select = array_filter($query->clause('select'), function ($field) {
-            return is_string($field);
-        });
+        $select = array_filter($query->clause('select'), is_string(...));
 
         if (!$select) {
             return true;
@@ -369,7 +367,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
 
         $this->bundleTranslatedFields($entity);
         $bundled = $entity->has('_i18n') ? (array)$entity->get('_i18n') : [];
-        $noBundled = count($bundled) === 0;
+        $noBundled = $bundled === [];
 
         // No additional translation records need to be saved,
         // as the entity is in the default locale.

@@ -91,6 +91,8 @@ class HelpCommandTest extends TestCase
         $this->assertOutputContains('To run a command', 'more info present');
         $this->assertOutputContains('To get help', 'more info present');
         $this->assertOutputContains('This is a demo command', 'command description missing');
+        $this->assertOutputContains('<info>custom_group</info>');
+        $this->assertOutputContains('- grouped');
     }
 
     /**

@@ -526,7 +526,7 @@ class QueryRegressionTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $table->addBehavior('Translate', ['fields' => ['title', 'body']]);
-        $table->setLocale('eng');
+        $table->getBehavior('Translate')->setLocale('eng');
         $query = $table->find('translations')
             ->orderBy(['Articles.id' => 'ASC'])
             ->limit(10)
@@ -1069,11 +1069,11 @@ class QueryRegressionTest extends TestCase
         $ratio = $table->find()
             ->select(function ($query) use ($table) {
                 $allCommentsCount = $table->find()->select($query->func()->count('*'));
-                $countToFloat = $query->newExpr([$query->func()->count('*'), '1.0'])->setConjunction('*');
+                $countToFloat = $query->expr([$query->func()->count('*'), '1.0'])->setConjunction('*');
 
                 return [
                     'ratio' => $query
-                        ->newExpr($countToFloat)
+                        ->expr($countToFloat)
                         ->add($allCommentsCount)
                         ->setConjunction('/'),
                 ];
@@ -1457,7 +1457,7 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
         $query->orderByDesc(
-            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0),
+            $query->expr()->case()->when(['id' => 3])->then(1)->else(0),
         );
         $query->orderBy(['title' => 'desc']);
         // Executing the normal query before getting the count
@@ -1467,9 +1467,9 @@ class QueryRegressionTest extends TestCase
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find();
         $query->orderByDesc(
-            $query->newExpr()->case()->when(['id' => 3])->then(1)->else(0),
+            $query->expr()->case()->when(['id' => 3])->then(1)->else(0),
         );
-        $query->orderByDesc($query->newExpr()->add(['id' => 3]));
+        $query->orderByDesc($query->expr()->add(['id' => 3]));
         // Not executing the query first, just getting the count
         $this->assertSame(3, $query->count());
     }
@@ -1519,7 +1519,7 @@ class QueryRegressionTest extends TestCase
         $articles->hasMany('articlesTags');
         $tags = $articles->getAssociation('articlesTags')->getTarget()->belongsTo('tags');
 
-        $tags->getTarget()->getEventManager()->on('Model.beforeFind', function ($e, $query) {
+        $tags->getTarget()->getEventManager()->on('Model.beforeFind', function ($e, $query): void {
             $query->formatResults(function ($results) {
                 return $results->map(function (Entity $tag) {
                     $tag->name .= ' - visited';

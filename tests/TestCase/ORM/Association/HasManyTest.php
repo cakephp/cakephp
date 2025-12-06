@@ -127,6 +127,8 @@ class HasManyTest extends TestCase
         parent::tearDown();
         ConnectionManager::drop('test_read_write');
         Log::drop('queries');
+        // Clear the table locator to avoid state leaking to next tests
+        $this->getTableLocator()->clear();
     }
 
     /**
@@ -379,8 +381,8 @@ class HasManyTest extends TestCase
      */
     public function testEagerLoaderFieldsException(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('You are required to select the "Articles.author_id"');
+        // This test now verifies that missing foreign keys are automatically added
+        // instead of throwing an exception
         $config = [
             'sourceTable' => $this->author,
             'targetTable' => $this->article,
@@ -388,16 +390,58 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Articles', $config);
         $keys = [1, 2, 3, 4];
-        $query = $this->article->selectQuery();
-        $this->article->method('find')
-            ->with('all')
-            ->willReturn($query);
 
-        $association->eagerLoader([
+        // Create a query to be used as sourceQuery
+        $sourceQuery = $this->article->selectQuery();
+
+        // Setup the mock to track what happens
+        $queriesReturned = [];
+        $this->article->expects($this->once())
+            ->method('find')
+            ->with('all')
+            ->willReturnCallback(function () use (&$queriesReturned) {
+                // Preserve the current auto-quoting state (might be affected by other tests)
+                $query = $this->article->selectQuery();
+                $query->enableAutoFields(false);
+                $queriesReturned[] = $query;
+
+                return $query;
+            });
+
+        $loader = $association->eagerLoader([
             'fields' => ['id', 'title'],
             'keys' => $keys,
-            'query' => $query,
+            'query' => $sourceQuery,
         ]);
+
+        // Verify that the loader was created successfully
+        $this->assertIsCallable($loader);
+
+        // Verify that find was called and a query was returned
+        $this->assertCount(1, $queriesReturned, 'Find should have been called once');
+
+        // Check the query that was actually modified by the loader
+        $fetchQuery = $queriesReturned[0];
+        $select = $fetchQuery->clause('select');
+
+        // The foreign key should be in the select clause
+        // Handle both quoted and non-quoted identifiers
+        $hasAuthorId = false;
+        foreach ($select as $key => $field) {
+            // Check if the field contains author_id (handles both quoted and non-quoted)
+            if (
+                str_contains((string)$field, 'author_id') ||
+                str_contains((string)$key, 'author_id')
+            ) {
+                $hasAuthorId = true;
+                break;
+            }
+        }
+
+        $this->assertTrue(
+            $hasAuthorId,
+            'Foreign key author_id should be added. Select clause: ' . json_encode($select),
+        );
     }
 
     /**
@@ -663,7 +707,7 @@ class HasManyTest extends TestCase
      */
     public function testPropertyOption(): void
     {
-        $config = ['propertyName' => 'thing_placeholder'];
+        $config = ['propertyName' => 'thing_placeholder', 'sourceTable' => $this->author];
         $association = new HasMany('Thing', $config);
         $this->assertSame('thing_placeholder', $association->getProperty());
     }

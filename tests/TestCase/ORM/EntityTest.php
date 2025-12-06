@@ -311,7 +311,26 @@ class EntityTest extends TestCase
 
         $entity = new Entity();
         $entity->requireFieldPresence();
-        $entity->get('not_present');
+        $entity->{'not_present'};
+    }
+
+    public function testGetOrFailException(): void
+    {
+        $this->expectException(MissingPropertyException::class);
+        $this->expectExceptionMessage('Property `not_present` does not exist for the entity `Cake\ORM\Entity`');
+
+        $entity = new Entity();
+        $entity->getRequiredOrFail('not_present');
+    }
+
+    /**
+     * Test to ensure that requireFieldPresence does not affect get
+     */
+    public function testGetNoException(): void
+    {
+        $entity = new Entity();
+        $entity->requireFieldPresence();
+        $this->assertNull($entity->get('not_present'));
     }
 
     public function testRequirePresenceNoException(): void
@@ -1613,31 +1632,33 @@ class EntityTest extends TestCase
      */
     public function testIsEmpty(): void
     {
-        $entity = new Entity([
-            'array' => ['foo' => 'bar'],
-            'emptyArray' => [],
-            'object' => new stdClass(),
-            'string' => 'string',
-            'stringZero' => '0',
-            'emptyString' => '',
-            'intZero' => 0,
-            'intNotZero' => 1,
-            'floatZero' => 0.0,
-            'floatNonZero' => 1.5,
-            'null' => null,
-        ]);
+        $this->deprecated(function (): void {
+            $entity = new Entity([
+                'array' => ['foo' => 'bar'],
+                'emptyArray' => [],
+                'object' => new stdClass(),
+                'string' => 'string',
+                'stringZero' => '0',
+                'emptyString' => '',
+                'intZero' => 0,
+                'intNotZero' => 1,
+                'floatZero' => 0.0,
+                'floatNonZero' => 1.5,
+                'null' => null,
+            ]);
 
-        $this->assertFalse($entity->isEmpty('array'));
-        $this->assertTrue($entity->isEmpty('emptyArray'));
-        $this->assertFalse($entity->isEmpty('object'));
-        $this->assertFalse($entity->isEmpty('string'));
-        $this->assertFalse($entity->isEmpty('stringZero'));
-        $this->assertTrue($entity->isEmpty('emptyString'));
-        $this->assertFalse($entity->isEmpty('intZero'));
-        $this->assertFalse($entity->isEmpty('intNotZero'));
-        $this->assertFalse($entity->isEmpty('floatZero'));
-        $this->assertFalse($entity->isEmpty('floatNonZero'));
-        $this->assertTrue($entity->isEmpty('null'));
+            $this->assertFalse($entity->isEmpty('array'));
+            $this->assertTrue($entity->isEmpty('emptyArray'));
+            $this->assertFalse($entity->isEmpty('object'));
+            $this->assertFalse($entity->isEmpty('string'));
+            $this->assertFalse($entity->isEmpty('stringZero'));
+            $this->assertTrue($entity->isEmpty('emptyString'));
+            $this->assertFalse($entity->isEmpty('intZero'));
+            $this->assertFalse($entity->isEmpty('intNotZero'));
+            $this->assertFalse($entity->isEmpty('floatZero'));
+            $this->assertFalse($entity->isEmpty('floatNonZero'));
+            $this->assertTrue($entity->isEmpty('null'));
+        });
     }
 
     /**
@@ -1682,7 +1703,7 @@ class EntityTest extends TestCase
         $this->assertSame(true, $return);
 
         $entity = new Entity([]);
-        $entity->set('foo', null);
+        $entity->set('foo');
         $return = $entity->isOriginalField('foo');
         $this->assertSame(false, $return);
 

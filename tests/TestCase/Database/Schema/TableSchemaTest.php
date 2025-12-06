@@ -18,6 +18,8 @@ namespace Cake\Test\TestCase\Database\Schema;
 
 use Cake\Database\Driver\Postgres;
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Schema\CheckConstraint;
+use Cake\Database\Schema\ForeignKey;
 use Cake\Database\Schema\TableSchema;
 use Cake\Database\TypeFactory;
 use Cake\Datasource\ConnectionManager;
@@ -73,6 +75,23 @@ class TableSchemaTest extends TestCase
     }
 
     /**
+     * Test hasAutoincrement() method.
+     */
+    public function testHasAutoincrement(): void
+    {
+        $schema = new TableSchema('articles', [
+            'title' => 'string',
+        ]);
+        $this->assertFalse($schema->hasAutoincrement());
+
+        $schema->addColumn('id', [
+            'type' => 'integer',
+            'autoIncrement' => true,
+        ]);
+        $this->assertTrue($schema->hasAutoincrement());
+    }
+
+    /**
      * Test adding columns.
      */
     public function testAddColumn(): void
@@ -89,6 +108,12 @@ class TableSchemaTest extends TestCase
         $result = $table->addColumn('body', 'text');
         $this->assertSame($table, $result);
         $this->assertEquals(['title', 'body'], $table->columns());
+
+        $col = $table->column('title');
+        $this->assertEquals('title', $col->getName());
+        $this->assertEquals('string', $col->getType());
+        $this->assertEquals(25, $col->getLength());
+        $this->assertFalse($col->getNull());
     }
 
     /**
@@ -102,6 +127,20 @@ class TableSchemaTest extends TestCase
 
         $this->assertTrue($schema->hasColumn('title'));
         $this->assertFalse($schema->hasColumn('body'));
+    }
+
+    public function testGetColumnMissing(): void
+    {
+        $table = new TableSchema('articles');
+        $table->addColumn('title', [
+            'type' => 'string',
+            'length' => 25,
+            'null' => false,
+        ]);
+        $this->assertNull($table->getColumn('not there'));
+
+        $this->expectException(DatabaseException::class);
+        $table->column('not there');
     }
 
     /**
@@ -165,12 +204,12 @@ class TableSchemaTest extends TestCase
     {
         $table = new TableSchema('articles');
         $table->addColumn('title', [
-            'type' => 'string',
+            'type' => 'integer',
             'length' => 25,
             'null' => false,
         ]);
-        $this->assertSame('string', $table->getColumnType('title'));
-        $this->assertSame('string', $table->baseColumnType('title'));
+        $this->assertSame('integer', $table->getColumnType('title'));
+        $this->assertSame('integer', $table->baseColumnType('title'));
 
         $table->setColumnType('title', 'json');
         $this->assertSame('json', $table->getColumnType('title'));
@@ -228,6 +267,8 @@ class TableSchemaTest extends TestCase
             'collate' => null,
         ];
         $this->assertEquals($expected, $result);
+        $column = $table->column('title');
+        $this->assertSame($expected['type'], $column->getType());
 
         $table->addColumn('author_id', [
             'type' => 'integer',
@@ -239,26 +280,35 @@ class TableSchemaTest extends TestCase
             'precision' => null,
             'default' => null,
             'null' => null,
-            'unsigned' => null,
             'comment' => null,
-            'autoIncrement' => null,
+            'autoIncrement' => false,
+            'generated' => null,
+            'unsigned' => null,
         ];
         $this->assertEquals($expected, $result);
+        $column = $table->column('author_id');
+        $this->assertSame($expected['type'], $column->getType());
 
         $table->addColumn('amount', [
             'type' => 'decimal',
+            'length' => 10,
+            'precision' => 3,
         ]);
         $result = $table->getColumn('amount');
         $expected = [
             'type' => 'decimal',
-            'length' => null,
-            'precision' => null,
+            'length' => 10,
+            'precision' => 3,
             'default' => null,
             'null' => null,
-            'unsigned' => null,
             'comment' => null,
+            'unsigned' => null,
         ];
         $this->assertEquals($expected, $result);
+        $column = $table->column('amount');
+        $this->assertSame($expected['type'], $column->getType());
+        $this->assertSame($expected['length'], $column->getLength());
+        $this->assertSame($expected['precision'], $column->getPrecision());
     }
 
     /**
@@ -298,7 +348,6 @@ class TableSchemaTest extends TestCase
 
     /**
      * Test adding an constraint.
-     * >
      */
     public function testAddConstraint(): void
     {
@@ -309,14 +358,18 @@ class TableSchemaTest extends TestCase
         $result = $table->addConstraint('primary', [
             'type' => 'primary',
             'columns' => ['id'],
+            'constraint' => 'postgres_name',
         ]);
         $this->assertSame($result, $table);
         $this->assertEquals(['primary'], $table->constraints());
+
+        // TODO make the constraint name work for postgres_name too.
+        $primary = $table->constraint('primary');
+        $this->assertEquals('postgres_name', $primary->getName(), 'constraint objects should preserve the name');
     }
 
     /**
      * Test adding an constraint with an overlapping unique index
-     * >
      */
     public function testAddConstraintOverwriteUniqueIndex(): void
     {
@@ -344,6 +397,31 @@ class TableSchemaTest extends TestCase
             'columns' => ['project_id', 'user_id'],
         ]);
         $this->assertEquals(['users_idx'], $table->constraints());
+    }
+
+    /**
+     * Test adding a check constraint.
+     */
+    public function testAddConstraintCheck(): void
+    {
+        $table = new TableSchema('articles');
+        $table->addColumn('age', [
+            'type' => 'integer',
+        ]);
+        $result = $table->addConstraint('age_check', [
+            'type' => 'check',
+            'expression' => 'age > 19',
+        ]);
+        $this->assertSame($result, $table);
+        $this->assertEquals(['age_check'], $table->constraints());
+
+        $check = $table->getConstraint('age_check');
+        $this->assertEquals('age > 19', $check['expression']);
+
+        $check = $table->constraint('age_check');
+        assert($check instanceof CheckConstraint);
+        $this->assertEquals('age_check', $check->getName());
+        $this->assertEquals('age > 19', $check->getExpression());
     }
 
     /**
@@ -391,9 +469,17 @@ class TableSchemaTest extends TestCase
         $result = $table->addIndex('faster', [
             'type' => 'index',
             'columns' => ['title'],
-        ]);
+        ])->addIndex('no_columns', 'index');
         $this->assertSame($result, $table);
-        $this->assertEquals(['faster'], $table->indexes());
+        $this->assertEquals(['faster', 'no_columns'], $table->indexes());
+
+        $index = $table->index('faster');
+        $this->assertEquals('faster', $index->getName());
+        $this->assertEquals(['title'], $index->getColumns());
+        $this->assertEquals(TableSchema::INDEX_INDEX, $index->getType());
+
+        $noCols = $table->index('no_columns');
+        $this->assertEquals([], $noCols->getColumns());
     }
 
     /**
@@ -512,6 +598,7 @@ class TableSchemaTest extends TestCase
     public function testConstraintForeignKey(): void
     {
         $table = $this->getTableLocator()->get('ArticlesTags');
+        $driver = $table->getConnection()->getDriver();
 
         $name = 'tag_id_fk';
         $compositeConstraint = $table->getSchema()->getConstraint($name);
@@ -521,12 +608,30 @@ class TableSchemaTest extends TestCase
             'references' => ['tags', 'id'],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'length' => [],
+            'deferrable' => null,
         ];
+        // Postgres reflection always includes deferrable state.
+        if ($driver instanceof Postgres) {
+            $expected['deferrable'] = ForeignKey::IMMEDIATE;
+        }
         $this->assertEquals($expected, $compositeConstraint);
 
         $expectedSubstring = "CONSTRAINT <{$name}> FOREIGN KEY \\(<tag_id>\\) REFERENCES <tags> \\(<id>\\)";
         $this->assertQuotedQuery($expectedSubstring, $table->getSchema()->createSql(ConnectionManager::get('test'))[0]);
+    }
+
+    /**
+     * Test the behavior of getConstraint() and constraint() when the constraint is not defined.
+     */
+    public function testGetConstraintMissing(): void
+    {
+        $table = new TableSchema('articles');
+        $table->addColumn('author_id', 'integer');
+
+        $this->assertNull($table->getConstraint('not there'));
+
+        $this->expectException(DatabaseException::class);
+        $table->constraint('not there');
     }
 
     /**
@@ -556,7 +661,7 @@ class TableSchemaTest extends TestCase
             ],
             'update' => 'cascade',
             'delete' => 'cascade',
-            'length' => [],
+            'deferrable' => null,
         ];
         $this->assertEquals($expected, $compositeConstraint);
 
@@ -619,6 +724,37 @@ class TableSchemaTest extends TestCase
 
         $table->setTemporary(false);
         $this->assertFalse($table->isTemporary());
+    }
+
+    /**
+     * Test that unserialization handles data from previous versions of CakePHP.
+     *
+     * @return void
+     */
+    public function testUnserializeCompat(): void
+    {
+        // Serialized state from <5.3 where _columns, _indexes, and _constraints contained array data.
+        $state = <<<'STATE'
+        O:32:"Cake\Database\Schema\TableSchema":7:{s:9:" * _table";s:8:"articles";s:11:" * _columns";a:6:{s:2:"id";a:9:{s:4:"type";s:7:"integer";s:6:"length";i:10;s:13:"autoIncrement";b:1;s:7:"default";N;s:4:"null";b:0;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:8:"unsigned";N;}s:5:"title";a:9:{s:4:"type";s:6:"string";s:6:"length";i:255;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:5:"fixed";N;}s:7:"excerpt";a:8:{s:4:"type";s:4:"text";s:6:"length";N;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;}s:6:"rating";a:9:{s:4:"type";s:7:"integer";s:6:"length";i:10;s:7:"default";N;s:4:"null";b:0;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:8:"unsigned";N;s:13:"autoIncrement";N;}s:7:"content";a:8:{s:4:"type";s:4:"text";s:6:"length";N;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;}s:4:"name";a:9:{s:4:"type";s:6:"string";s:6:"length";i:255;s:7:"default";N;s:4:"null";b:0;s:7:"collate";N;s:7:"comment";N;s:8:"baseType";N;s:9:"precision";N;s:5:"fixed";N;}}s:11:" * _typeMap";a:6:{s:2:"id";s:7:"integer";s:5:"title";s:6:"string";s:7:"excerpt";s:4:"text";s:6:"rating";s:7:"integer";s:7:"content";s:4:"text";s:4:"name";s:6:"string";}s:11:" * _indexes";a:2:{s:12:"rating_index";a:3:{s:4:"type";s:5:"index";s:7:"columns";a:1:{i:0;s:6:"rating";}s:6:"length";a:0:{}}s:7:"by_name";a:3:{s:4:"type";s:5:"index";s:7:"columns";a:1:{i:0;s:4:"name";}s:6:"length";a:0:{}}}s:15:" * _constraints";a:1:{s:7:"primary";a:3:{s:4:"type";s:7:"primary";s:7:"columns";a:1:{i:0;s:2:"id";}s:6:"length";a:0:{}}}s:11:" * _options";a:0:{}s:13:" * _temporary";b:0;}
+        STATE;
+        $schema = unserialize(trim($state));
+
+        $this->assertInstanceOf(TableSchema::class, $schema);
+        $this->assertEquals('articles', $schema->name());
+        $this->assertCount(6, $schema->columns());
+        $this->assertCount(2, $schema->indexes());
+        $this->assertCount(1, $schema->constraints());
+        $this->assertEquals('string', $schema->column('title')->getType());
+        $this->assertEquals('string', $schema->getColumn('title')['type']);
+        $this->assertEquals(['id'], $schema->constraint('primary')->getColumns());
+        $this->assertEquals(['id'], $schema->getConstraint('primary')['columns']);
+        $this->assertEquals(['id'], $schema->getPrimaryKey());
+        $this->assertEquals(['name'], $schema->index('by_name')->getColumns());
+
+        // Serialize and unserialize to ensure current objects also work.
+        $serialized = serialize($schema);
+        $restored = unserialize($serialized);
+        $this->assertEquals($schema, $restored);
     }
 
     /**

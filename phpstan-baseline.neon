@@ -1,10 +1,34 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Return type \(Cake\\Event\\EventInterface\<Cake\\Cache\\CacheEngine\>\) of method Cake\\Cache\\CacheEngine\:\:dispatchEvent\(\) should be compatible with return type \(Cake\\Event\\EventInterface\<object\>\) of method Cake\\Event\\EventDispatcherInterface\<object\>\:\:dispatchEvent\(\)$#'
+			identifier: method.childReturnType
+			count: 1
+			path: src/Cache/CacheEngine.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between int and false will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: src/Cache/Engine/ApcuEngine.php
+
+		-
 			message: '#^Call to function method_exists\(\) with Memcached and ''setSaslAuthData'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
 			path: src/Cache/Engine/MemcachedEngine.php
+
+		-
+			message: '#^Call to an undefined method Redis\|RedisCluster\:\:connect\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Cache/Engine/RedisEngine.php
+
+		-
+			message: '#^Call to an undefined method Redis\|RedisCluster\:\:pconnect\(\)\.$#'
+			identifier: method.notFound
+			count: 2
+			path: src/Cache/Engine/RedisEngine.php
 
 		-
 			message: '#^Parameter \#1 \$value of function count expects array\|Countable, TValue\|false given\.$#'
@@ -61,12 +85,6 @@ parameters:
 			path: src/Console/TestSuite/ConsoleIntegrationTestTrait.php
 
 		-
-			message: '#^Call to an undefined method ReflectionType\:\:getName\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Controller/ControllerFactory.php
-
-		-
 			message: '#^Unknown parameter \$components in call to method ReflectionClass\<Cake\\Controller\\Controller\>\:\:newInstance\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
@@ -119,6 +137,12 @@ parameters:
 			identifier: trait.unused
 			count: 1
 			path: src/Datasource/ModelAwareTrait.php
+
+		-
+			message: '#^Unsafe usage of new static\(\)\.$#'
+			identifier: new.static
+			count: 2
+			path: src/Datasource/Paging/SortableFieldsBuilder.php
 
 		-
 			message: '#^Template type T of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
@@ -337,18 +361,6 @@ parameters:
 			path: src/Mailer/MailerAwareTrait.php
 
 		-
-			message: '#^Parameter &\$errNum by\-ref type of method Cake\\Network\\Socket\:\:_getStreamSocketClient\(\) expects int, int\|null given\.$#'
-			identifier: parameterByRef.type
-			count: 1
-			path: src/Network/Socket.php
-
-		-
-			message: '#^Parameter &\$errStr by\-ref type of method Cake\\Network\\Socket\:\:_getStreamSocketClient\(\) expects string, string\|null given\.$#'
-			identifier: parameterByRef.type
-			count: 1
-			path: src/Network/Socket.php
-
-		-
 			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 1
@@ -394,12 +406,6 @@ parameters:
 			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
 			identifier: function.alreadyNarrowedType
 			count: 2
-			path: src/ORM/Marshaller.php
-
-		-
-			message: '#^Method Cake\\ORM\\Marshaller\:\:mergeMany\(\) should return array\<TEntity of Cake\\Datasource\\EntityInterface\> but returns list\<Cake\\Datasource\\EntityInterface\>\.$#'
-			identifier: return.type
-			count: 1
 			path: src/ORM/Marshaller.php
 
 		-
@@ -553,34 +559,10 @@ parameters:
 			path: src/Routing/RouteBuilder.php
 
 		-
-			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
-			identifier: new.internalClass
-			count: 1
-			path: src/TestSuite/Constraint/EventFired.php
-
-		-
-			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
-			identifier: new.internalClass
-			count: 2
-			path: src/TestSuite/Constraint/EventFiredWith.php
-
-		-
-			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
-			identifier: new.internalClass
-			count: 1
-			path: src/TestSuite/Constraint/Response/ResponseBase.php
-
-		-
 			message: '#^Call to method toString\(\) of internal interface PHPUnit\\Framework\\SelfDescribing from outside its root namespace PHPUnit\.$#'
 			identifier: method.internalInterface
 			count: 1
 			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
-
-		-
-			message: '#^Instantiation of internal class PHPUnit\\Framework\\AssertionFailedError\.$#'
-			identifier: new.internalClass
-			count: 1
-			path: src/TestSuite/Constraint/Session/FlashParamEquals.php
 
 		-
 			message: '#^Trait Cake\\TestSuite\\EmailTrait is used zero times and is not analysed\.$#'
@@ -709,18 +691,6 @@ parameters:
 			path: src/View/ViewBuilder.php
 
 		-
-			message: '#^Call to an undefined method Cake\\Chronos\\ChronosDate\|DateTime\|DateTimeImmutable\:\:setTimezone\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/View/Widget/DateTimeWidget.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Cake\\I18n\\DateTime and ''toQuarterRange'' will always evaluate to true\.#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/View/Helper/TimeHelper.php
-
-		-
 			message: '#^Access to constant ATTR_SSL_KEY on an unknown class Pdo\\Mysql\.$#'
 			identifier: class.notFound
 			count: 1
@@ -743,3 +713,9 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: src/Database/Driver/Mysql.php
+
+		-
+			message: '#^Call to function assert\(\) with false and string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/ORM/EagerLoader.php

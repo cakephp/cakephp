@@ -76,9 +76,7 @@ class HtmlHelper extends Helper
             'ol' => '<ol{{attrs}}>{{content}}</ol>',
             'li' => '<li{{attrs}}>{{content}}</li>',
             'javascriptblock' => '<script{{attrs}}>{{content}}</script>',
-            'javascriptstart' => '<script>',
             'javascriptlink' => '<script src="{{url}}"{{attrs}}></script>',
-            'javascriptend' => '</script>',
             'confirmJs' => '{{confirm}}',
         ],
     ];
@@ -188,13 +186,6 @@ class HtmlHelper extends Helper
                 $options['link'] = $this->Url->build($options['link']);
             } else {
                 $options['link'] = $this->Url->assetUrl($options['link']);
-            }
-            if (isset($options['rel']) && $options['rel'] === 'icon') {
-                $out = $this->formatTemplate('metalink', [
-                    'url' => $options['link'],
-                    'attrs' => $this->templater()->formatAttributes($options, ['block', 'link']),
-                ]);
-                $options['rel'] = 'shortcut icon';
             }
             $out .= $this->formatTemplate('metalink', [
                 'url' => $options['link'],
@@ -657,6 +648,10 @@ class HtmlHelper extends Helper
     public function scriptEnd(): ?string
     {
         $buffer = (string)ob_get_clean();
+        preg_match('/\s*<script>(.*?)<\/script>\s*/s', $buffer, $matches);
+        if ($matches) {
+            $buffer = $matches[1];
+        }
         $options = $this->_scriptBlockOptions;
         $this->_scriptBlockOptions = [];
 

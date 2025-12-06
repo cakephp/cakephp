@@ -23,10 +23,12 @@ use Cake\Core\Exception\CakeException;
 use Cake\Core\ObjectRegistry;
 use Cake\Event\EventDispatcherInterface;
 use Cake\Event\EventDispatcherTrait;
+use League\Container\Argument\ArgumentReflectorTrait;
 use League\Container\Argument\ArgumentResolverTrait;
 use League\Container\Argument\LiteralArgument;
 use League\Container\Argument\ResolvableArgument;
 use League\Container\Exception\NotFoundException;
+use League\Container\ReflectionContainer;
 use ReflectionClass;
 use ReflectionFunctionAbstract;
 use ReflectionMethod;
@@ -50,6 +52,8 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
     use EventDispatcherTrait;
 
     use ArgumentResolverTrait;
+
+    use ArgumentReflectorTrait;
 
     /**
      * The controller that this collection is associated with.
@@ -274,5 +278,19 @@ class ComponentRegistry extends ObjectRegistry implements EventDispatcherInterfa
         }
 
         return $this->resolveArguments($arguments);
+    }
+
+    /**
+     * Get the mode of the container.
+     *
+     * This method is used to determine how the container should resolve
+     * dependencies and arguments.
+     *
+     * @return int The mode of the container.
+     * @internal
+     */
+    protected function getMode(): int
+    {
+        return ReflectionContainer::AUTO_WIRING;
     }
 }

@@ -160,6 +160,7 @@ class MimeType
         'xlm' => ['application/vnd.ms-excel'],
         'xls' => ['application/vnd.ms-excel'],
         'xlsx' => ['application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
+        'xlsm' => ['application/vnd.ms-excel.sheet.macroEnabled.12'],
         'xlw' => ['application/vnd.ms-excel'],
         'zip' => ['application/zip'],
         'aif' => ['audio/x-aiff'],
@@ -289,11 +290,15 @@ class MimeType
     /**
      * Get the MIME types associated with a given file extension.
      *
-     * @param string $ext The file extension to look up.
+     * @param string|null $ext The file extension to look up. Use null to return the full list.
      * @return array|null An array of MIME types if found, or null if no MIME types are associated with the extension.
      */
-    public static function getMimeTypes(string $ext): ?array
+    public static function getMimeTypes(?string $ext = null): ?array
     {
+        if ($ext === null) {
+            return static::$mimeTypes;
+        }
+
         return static::$mimeTypes[$ext] ?? null;
     }
 

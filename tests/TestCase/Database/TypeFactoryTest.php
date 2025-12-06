@@ -17,10 +17,10 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Database;
 
 use Cake\Database\Driver;
+use Cake\Database\Type\StringType;
 use Cake\Database\TypeFactory;
 use Cake\Database\TypeInterface;
 use Cake\TestSuite\TestCase;
-use InvalidArgumentException;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Type\BarType;
@@ -34,7 +34,7 @@ class TypeFactoryTest extends TestCase
     /**
      * Original type map
      *
-     * @var array
+     * @var array<string, class-string<\Cake\Database\TypeInterface>>
      */
     protected $_originalMap = [];
 
@@ -77,12 +77,29 @@ class TypeFactoryTest extends TestCase
     public static function basicTypesProvider(): array
     {
         return [
+            ['biginteger'],
+            ['binary'],
+            ['boolean'],
+            ['cidr'],
+            ['date'],
+            ['datetime'],
+            ['datetimefractional'],
+            ['decimal'],
+            ['float'],
+            ['geography'],
+            ['geometry'],
+            ['inet'],
+            ['integer'],
+            ['macaddr'],
+            ['nativeuuid'],
+            ['point'],
+            ['smallinteger'],
             ['string'],
             ['text'],
-            ['smallinteger'],
+            ['time'],
             ['tinyinteger'],
-            ['integer'],
-            ['biginteger'],
+            ['uuid'],
+            ['year'],
         ];
     }
 
@@ -91,8 +108,10 @@ class TypeFactoryTest extends TestCase
      */
     public function testBuildUnknownType(): void
     {
-        $this->expectException(InvalidArgumentException::class);
-        TypeFactory::build('foo');
+        $type = TypeFactory::build('foo');
+        $this->assertSame('foo', $type->getName());
+        $this->assertSame('foo', $type->getBaseType());
+        $this->assertInstanceOf(StringType::class, $type);
     }
 
     /**
@@ -118,15 +137,43 @@ class TypeFactoryTest extends TestCase
         TypeFactory::map('foo', $fooType);
         $map = TypeFactory::getMap();
         $this->assertSame($fooType, $map['foo']);
-        $this->assertSame($fooType, TypeFactory::getMap('foo'));
+        $this->assertSame($fooType, TypeFactory::getMapped('foo'));
 
         TypeFactory::map('foo2', $fooType);
         $map = TypeFactory::getMap();
         $this->assertSame($fooType, $map['foo2']);
-        $this->assertSame($fooType, TypeFactory::getMap('foo2'));
+        $this->assertSame($fooType, TypeFactory::getMapped('foo2'));
 
         $type = TypeFactory::build('foo2');
         $this->assertInstanceOf($fooType, $type);
+    }
+
+    /**
+     * Test that getMap() with argument triggers deprecation
+     */
+    public function testGetMapDeprecation(): void
+    {
+        $this->deprecated(function (): void {
+            TypeFactory::map('test', FooType::class);
+            $result = TypeFactory::getMap('test');
+            $this->assertSame(FooType::class, $result);
+        });
+    }
+
+    /**
+     * Tests new types set with set() are not returned by getMap()
+     * as the constructor of a Type could be arbitrary.
+     */
+    public function testSetAndGetMap(): void
+    {
+        $types = TypeFactory::buildAll();
+        $this->assertFalse(isset($types['foo']));
+
+        TypeFactory::set('foo', new FooType());
+        $this->assertNull(TypeFactory::getMapped('foo'));
+
+        $result = TypeFactory::build('foo');
+        $this->assertInstanceOf(FooType::class, $result);
     }
 
     /**

@@ -320,7 +320,7 @@ class Cookie implements CookieInterface
         $value = $data['value'];
         unset($data['name'], $data['value']);
 
-        /** @phpstan-ignore-next-line */
+        /** @phpstan-ignore return.type */
         return Cookie::create(
             $name,
             $value,

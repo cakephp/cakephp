@@ -113,7 +113,7 @@ class PostsController extends AppController
      *
      * @return \Cake\Http\Response
      */
-    public function flashWithSession()
+    public function flashWithSession(): ?Response
     {
         $this->getRequest()->getSession()->write('test', true);
         $this->Flash->error('An error message');

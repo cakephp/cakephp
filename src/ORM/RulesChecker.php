@@ -19,6 +19,7 @@ namespace Cake\ORM;
 use Cake\Datasource\RuleInvoker;
 use Cake\Datasource\RulesChecker as BaseRulesChecker;
 use Cake\ORM\Rule\ExistsIn;
+use Cake\ORM\Rule\ExistsInNullable;
 use Cake\ORM\Rule\IsUnique;
 use Cake\ORM\Rule\LinkConstraint;
 use Cake\ORM\Rule\ValidCount;
@@ -121,6 +122,62 @@ class RulesChecker extends BaseRulesChecker
         $errorField = is_string($field) ? $field : current($field);
 
         return $this->_addError(new ExistsIn($field, $table, $options), '_existsIn', compact('errorField', 'message'));
+    }
+
+    /**
+     * Returns a callable that can be used as a rule for checking that the value provided in a
+     * field exists as the primary key of another table. Accepts composite foreign keys where
+     * one or more nullable columns are null.
+     *
+     * This is a convenience wrapper around `ExistsIn` with `allowNullableNulls` set to `true` by default.
+     *
+     * ### Example:
+     *
+     * ```
+     * $rules->add($rules->existsInNullable(['author_id', 'site_id'], 'SiteAuthors'));
+     * ```
+     *
+     * This is equivalent to:
+     *
+     * ```
+     * $rules->add($rules->existsIn(['author_id', 'site_id'], 'SiteAuthors', ['allowNullableNulls' => true]));
+     * ```
+     *
+     * @param array<string>|string $field The field or fields to check existence as primary key.
+     * @param \Cake\ORM\Table|\Cake\ORM\Association|string $table The table object or association name for the table
+     *   where the fields existence will be checked.
+     * @param array<string, mixed>|string|null $message The error message to show in case the rule does not pass. Can
+     *   also be an array of options. When an array, the 'message' key can be used to provide a message.
+     * @return \Cake\Datasource\RuleInvoker
+     * @since 5.3.0
+     */
+    public function existsInNullable(
+        array|string $field,
+        Table|Association|string $table,
+        array|string|null $message = null,
+    ): RuleInvoker {
+        $options = [];
+        if (is_array($message)) {
+            $options = $message + ['message' => null];
+            $message = $options['message'];
+            unset($options['message']);
+        }
+
+        if (!$message) {
+            if ($this->_useI18n) {
+                $message = __d('cake', 'This value does not exist');
+            } else {
+                $message = 'This value does not exist';
+            }
+        }
+
+        $errorField = is_string($field) ? $field : current($field);
+
+        return $this->_addError(
+            new ExistsInNullable($field, $table, $options),
+            '_existsIn',
+            compact('errorField', 'message'),
+        );
     }
 
     /**

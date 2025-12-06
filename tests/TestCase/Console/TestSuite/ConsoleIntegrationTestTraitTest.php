@@ -247,7 +247,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
 
         $this->exec($command);
 
-        call_user_func_array($this->$assertion(...), $rest);
+        $this->$assertion(...$rest);
     }
 
     /**
@@ -288,7 +288,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $line = __LINE__ - 5;
 
         $expected = <<<TEXT
-$file on $line
+{$file} on {$line}
 ########## debugOutput() ##########
 Exit Code
 0

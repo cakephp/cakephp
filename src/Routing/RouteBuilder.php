@@ -110,6 +110,13 @@ class RouteBuilder
     protected array $middleware = [];
 
     /**
+     * Default route options to apply to all routes created in this builder.
+     *
+     * @var array<string, mixed>
+     */
+    protected array $defaultOptions = [];
+
+    /**
      * Constructor
      *
      * ### Options
@@ -202,6 +209,34 @@ class RouteBuilder
     {
         $extensions = array_merge($this->_extensions, (array)$extensions);
         $this->_extensions = array_unique($extensions);
+
+        return $this;
+    }
+
+    /**
+     * Set default options for all routes created in this builder.
+     *
+     * These options will be merged with options passed to connect() calls.
+     * Options passed to connect() will take precedence.
+     *
+     * Useful for setting options like `_host`, `_https`, `_port` that should
+     * apply to all routes within a scope.
+     *
+     * Example:
+     *
+     * ```
+     * $routes->scope('/{org}', function ($routes) {
+     *     $routes->setOptions(['_host' => 'example.com']);
+     *     // All routes here will have _host => 'example.com'
+     * });
+     * ```
+     *
+     * @param array<string, mixed> $options Default route options like _host, _https, _port, etc.
+     * @return $this
+     */
+    public function setOptions(array $options)
+    {
+        $this->defaultOptions = $options;
 
         return $this;
     }
@@ -549,7 +584,7 @@ class RouteBuilder
             '_ext' => $this->_extensions,
             '_middleware' => $this->middleware,
             'routeClass' => $this->_routeClass,
-        ];
+        ] + $this->defaultOptions;
 
         $target = $this->parseDefaults($target);
         $target['_method'] = $method;
@@ -671,6 +706,8 @@ class RouteBuilder
     public function connect(Route|string $route, array|string $defaults = [], array $options = []): Route
     {
         $defaults = $this->parseDefaults($defaults);
+        $options += $this->defaultOptions;
+
         if (empty($options['_ext'])) {
             $options['_ext'] = $this->_extensions;
         }
@@ -938,6 +975,8 @@ class RouteBuilder
             'namePrefix' => $namePrefix,
             'middleware' => $this->middleware,
         ]);
+        // Inherit default options from parent scope
+        $builder->defaultOptions = $this->defaultOptions;
         $callback($builder);
 
         return $this;
@@ -991,7 +1030,6 @@ class RouteBuilder
      */
     public function applyMiddleware(string ...$names)
     {
-        /** @var array<string> $names */
         foreach ($names as $name) {
             if (!$this->_collection->middlewareExists($name)) {
                 $message = "Cannot apply `{$name}` middleware or middleware group. " .

@@ -172,7 +172,7 @@ interface QueryInterface
      *
      * ```
      * $query->limit(10) // generates LIMIT 10
-     * $query->limit($query->newExpr()->add(['1 + 1'])); // LIMIT (1 + 1)
+     * $query->limit($query->expr()->add(['1 + 1'])); // LIMIT (1 + 1)
      * ```
      *
      * @param int|null $limit number of records to be returned
@@ -192,7 +192,7 @@ interface QueryInterface
      *
      * ```
      *  $query->offset(10) // generates OFFSET 10
-     *  $query->offset($query->newExpr()->add(['1 + 1'])); // OFFSET (1 + 1)
+     *  $query->offset($query->expr()->add(['1 + 1'])); // OFFSET (1 + 1)
      * ```
      *
      * @param int|null $offset number of records to be skipped
@@ -225,7 +225,7 @@ interface QueryInterface
      *
      * ```
      * $query
-     *     ->orderBy(['title' => $query->newExpr('DESC NULLS FIRST')])
+     *     ->orderBy(['title' => $query->expr('DESC NULLS FIRST')])
      *     ->orderBy('author_id');
      * ```
      *
@@ -234,7 +234,7 @@ interface QueryInterface
      * `ORDER BY title DESC NULLS FIRST, author_id`
      *
      * ```
-     * $expression = $query->newExpr()->add(['id % 2 = 0']);
+     * $expression = $query->expr()->add(['id % 2 = 0']);
      * $query->orderBy($expression)->orderBy(['title' => 'ASC']);
      * ```
      *
@@ -277,7 +277,7 @@ interface QueryInterface
      *
      * ```
      * $query
-     *     ->orderBy(['title' => $query->newExpr('DESC NULLS FIRST')])
+     *     ->orderBy(['title' => $query->expr('DESC NULLS FIRST')])
      *     ->orderBy('author_id');
      * ```
      *
@@ -286,7 +286,7 @@ interface QueryInterface
      * `ORDER BY title DESC NULLS FIRST, author_id`
      *
      * ```
-     * $expression = $query->newExpr()->add(['id % 2 = 0']);
+     * $expression = $query->expr()->add(['id % 2 = 0']);
      * $query->orderBy($expression)->orderBy(['title' => 'ASC']);
      * ```
      *
@@ -404,7 +404,7 @@ interface QueryInterface
      * ### Using expressions objects:
      *
      * ```
-     *  $exp = $query->newExpr()->add(['id !=' => 100, 'author_id' != 1])->tieWith('OR');
+     *  $exp = $query->expr()->add(['id !=' => 100, 'author_id' != 1])->tieWith('OR');
      *  $query->where(['published' => true], ['published' => 'boolean'])->where($exp);
      * ```
      *

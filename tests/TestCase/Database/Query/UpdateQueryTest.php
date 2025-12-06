@@ -168,7 +168,7 @@ class UpdateQueryTest extends TestCase
     {
         $query = new UpdateQuery($this->connection);
 
-        $expr = $query->newExpr()->equalFields('article_id', 'user_id');
+        $expr = $query->expr()->equalFields('article_id', 'user_id');
 
         $query->update('comments')
             ->set($expr)
@@ -310,7 +310,7 @@ class UpdateQueryTest extends TestCase
                     'AND' => [
                         'b.name NOT IN' => ['foo', 'bar'],
                         'OR' => [
-                            $query->newExpr()->eq(new IdentifierExpression('c.name'), 'zap'),
+                            $query->expr()->eq(new IdentifierExpression('c.name'), 'zap'),
                             'd.name' => 'baz',
                             (new SelectQuery($this->connection))->select(['e.name'])->where(['e.name' => 'oof']),
                         ],
@@ -408,7 +408,7 @@ class UpdateQueryTest extends TestCase
     public function testCloneUpdateExpression(): void
     {
         $query = new UpdateQuery($this->connection);
-        $query->update($query->newExpr('update'));
+        $query->update($query->expr('update'));
 
         $clause = $query->clause('update');
         $clauseClone = (clone $query)->clause('update');
@@ -426,7 +426,7 @@ class UpdateQueryTest extends TestCase
         $query = new UpdateQuery($this->connection);
         $query
             ->update('table')
-            ->set(['column' => $query->newExpr('value')]);
+            ->set(['column' => $query->expr('value')]);
 
         $clause = $query->clause('set');
         $clauseClone = (clone $query)->clause('set');
@@ -470,7 +470,7 @@ class UpdateQueryTest extends TestCase
         $result = $query
             ->update('authors')
             ->set('name', 'mark')
-            ->modifier([$query->newExpr('TOP 10 PERCENT')]);
+            ->modifier([$query->expr('TOP 10 PERCENT')]);
         $this->assertQuotedQuery(
             'UPDATE TOP 10 PERCENT <authors> SET <name> = :c0',
             $result->sql(),

@@ -1324,7 +1324,7 @@ class TableTest extends TestCase
             ->find('withIdArgument', 2)
             ->find('custom', id: [1, 2], second: false);
 
-        $this->assertSame([2, 'id' => [1, 2], 'second' => false], $query->getOptions());
+        $this->assertSame(['id' => [1, 2], 'second' => false], $query->getOptions());
 
         $query = $this->getTableLocator()->get('Authors')
             ->find('withIdArgument', id: 2)
@@ -2030,13 +2030,15 @@ class TableTest extends TestCase
      */
     public function testRemoveBehaviorMethodMapCleared(): void
     {
-        $table = new Table(['table' => 'articles']);
-        $table->addBehavior('Sluggable');
-        $this->assertTrue($table->behaviors()->hasMethod('slugify'), 'slugify should be mapped');
-        $this->assertSame('foo-bar', $table->slugify('foo bar'));
+        $this->deprecated(function (): void {
+            $table = new Table(['table' => 'articles']);
+            $table->addBehavior('Sluggable');
+            $this->assertTrue($table->behaviors()->hasMethod('slugify'), 'slugify should be mapped');
+            $this->assertSame('foo-bar', $table->slugify('foo bar'));
 
-        $table->removeBehavior('Sluggable');
-        $this->assertFalse($table->behaviors()->hasMethod('slugify'), 'slugify should not be callable');
+            $table->removeBehavior('Sluggable');
+            $this->assertFalse($table->behaviors()->hasMethod('slugify'), 'slugify should not be callable');
+        });
     }
 
     /**
@@ -2116,9 +2118,11 @@ class TableTest extends TestCase
      */
     public function testCallBehaviorMethod(): void
     {
-        $table = $this->getTableLocator()->get('article');
-        $table->addBehavior('Sluggable');
-        $this->assertSame('some-value', $table->slugify('some value'));
+        $this->deprecated(function (): void {
+            $table = $this->getTableLocator()->get('article');
+            $table->addBehavior('Sluggable');
+            $this->assertSame('some-value', $table->slugify('some value'));
+        });
     }
 
     /**
@@ -2126,9 +2130,11 @@ class TableTest extends TestCase
      */
     public function testCallBehaviorAliasedMethod(): void
     {
-        $table = $this->getTableLocator()->get('article');
-        $table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
-        $this->assertSame('some-value', $table->wednesday('some value'));
+        $this->deprecated(function (): void {
+            $table = $this->getTableLocator()->get('article');
+            $table->addBehavior('Sluggable', ['implementedMethods' => ['wednesday' => 'slugify']]);
+            $this->assertSame('some-value', $table->wednesday('some value'));
+        });
     }
 
     /**
@@ -2335,7 +2341,7 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity) {
+        $listener = function (EventInterface $event, $entity): void {
             $event->stopPropagation();
             $event->setResult($entity);
         };
@@ -2376,7 +2382,7 @@ class TableTest extends TestCase
             'created' => new DateTime('2013-10-10 00:00'),
             'updated' => new DateTime('2013-10-10 00:00'),
         ]);
-        $listener = function (EventInterface $event, $entity) {
+        $listener = function (EventInterface $event, $entity): void {
             $event->stopPropagation();
             $event->setResult(1);
         };
@@ -2726,7 +2732,7 @@ class TableTest extends TestCase
         $this->assertEquals($entity->id, self::$nextUserId);
 
         $row = $table->find('all')->where(['id' => self::$nextUserId])->first();
-        $entity->set('password', null);
+        $entity->set('password');
         $this->assertEquals($entity->toArray(), $row->toArray());
     }
 
@@ -3566,12 +3572,14 @@ class TableTest extends TestCase
      */
     public function testValidatorBehavior(): void
     {
-        $table = new Table();
-        $table->addBehavior('Validation');
+        $this->deprecated(function (): void {
+            $table = new Table();
+            $table->addBehavior('Validation');
 
-        $validator = $table->getValidator('Behavior');
-        $set = $validator->field('name');
-        $this->assertArrayHasKey('behaviorRule', $set);
+            $validator = $table->getValidator('Behavior');
+            $set = $validator->field('name');
+            $this->assertArrayHasKey('behaviorRule', $set);
+        });
     }
 
     /**
@@ -3600,6 +3608,37 @@ class TableTest extends TestCase
             ],
             $result,
         );
+    }
+
+    /**
+     * Checks that entity is passed into context.
+     *
+     * @return void
+     */
+    public function testValidatorWithEntityInContext(): void
+    {
+        $table = new class (['alias' => 'Users', 'table' => 'users', 'connection' => $this->connection]) extends Table {
+            public function validateMe(string $text, array $context): bool
+            {
+                if (!isset($context['entity'])) {
+                    throw new InvalidArgumentException('Entity not found in context');
+                }
+
+                return true;
+            }
+        };
+
+        $table->getValidator('default')->add(
+            'name',
+            'validateMe',
+            ['rule' => 'validateMe', 'provider' => 'table'],
+        );
+
+        $entity = $table->newEmptyEntity();
+        $result = $table->patchEntity($entity, [
+            'name' => 'test',
+        ]);
+        $this->assertSame('test', $result->get('name'));
     }
 
     /**

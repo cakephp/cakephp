@@ -140,7 +140,7 @@ abstract class SchemaDialect
         TableSchemaInterface $schema,
         string $column,
     ): ?string {
-        if (!TypeFactory::getMap($columnType)) {
+        if (!TypeFactory::getMapped($columnType)) {
             return null;
         }
 
@@ -158,12 +158,12 @@ abstract class SchemaDialect
      *
      * @param string $columnType The column type.
      * @param array $definition The column definition.
-     * @return array|null Array of column information, or `null` in case no corresponding type was found or the type
-     *  didn't provide custom column information.
+     * @return array<string, mixed>|null Array of column information, or `null`
+     *  in case no corresponding type was found or the type didn't provide custom column information.
      */
     protected function _applyTypeSpecificColumnConversion(string $columnType, array $definition): ?array
     {
-        if (!TypeFactory::getMap($columnType)) {
+        if (!TypeFactory::getMapped($columnType)) {
             return null;
         }
 
@@ -394,11 +394,18 @@ abstract class SchemaDialect
     /**
      * Get the list of tables and views available in the current connection.
      *
+     * @param string|null $schema The schema to get the tables for. If null the default schema is used.
      * @return array<string> The list of tables and views in the connected database/schema.
      */
-    public function listTables(): array
+    public function listTables(?string $schema = null): array
     {
-        [$sql, $params] = $this->listTablesSql($this->_driver->config());
+        $config = $this->_driver->config();
+        if ($schema !== null) {
+            $config['schema'] = $schema;
+            // Set database for MySQL
+            $config['database'] = $schema;
+        }
+        [$sql, $params] = $this->listTablesSql($config);
         $result = [];
         $statement = $this->_driver->execute($sql, $params);
         while ($row = $statement->fetch()) {
@@ -435,6 +442,9 @@ abstract class SchemaDialect
             }
         }
         foreach ($this->describeForeignKeys($name) as $key) {
+            $table->addConstraint($key['name'], $key);
+        }
+        foreach ($this->describeCheckConstraints($name) as $key) {
             $table->addConstraint($key['name'], $key);
         }
         $options = $this->describeOptions($name);
@@ -618,6 +628,22 @@ abstract class SchemaDialect
     }
 
     /**
+     * Get a list of check constraint metadata as an array.
+     *
+     * Each item in the array will contain the following keys:
+     *
+     * - name - The name of the constraint.
+     * - expression - The check constraint expression as a SQL fragment.
+     *
+     * @param string $tableName The name of the table to describe options on.
+     * @return array
+     */
+    public function describeCheckConstraints(string $tableName): array
+    {
+        return [];
+    }
+
+    /**
      * Check if a table has a column with a given name.
      *
      * @param string $tableName The name of the table
@@ -644,11 +670,12 @@ abstract class SchemaDialect
      * Check if a table exists
      *
      * @param string $tableName The name of the table
+     * @param string|null $schema The schema look for table in. If null the default schema is used.
      * @return bool
      */
-    public function hasTable(string $tableName): bool
+    public function hasTable(string $tableName, ?string $schema = null): bool
     {
-        $tables = $this->listTables();
+        $tables = $this->listTables($schema);
 
         return in_array($tableName, $tables, true);
     }
@@ -676,13 +703,19 @@ abstract class SchemaDialect
                 $found = $index;
                 break;
             }
-            if ($columns === [] && $name !== null && $index['name'] === $name) {
-                $found = $index;
-                break;
+            if ($columns === [] && $name !== null) {
+                if ($index['name'] === $name) {
+                    $found = $index;
+                    break;
+                }
+                if (isset($index['constraint']) && $index['constraint'] === $name) {
+                    $found = $index;
+                    break;
+                }
             }
         }
         // Both columns and name provided, both must match;
-        if ($found !== null && $name !== null && $found['name'] !== $name) {
+        if ($columns && $found && $name !== null && $found['name'] !== $name) {
             return false;
         }
 

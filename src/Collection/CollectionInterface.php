@@ -29,6 +29,7 @@ use const SORT_NUMERIC;
  * @template TKey
  * @template-covariant TValue
  * @template-extends \Iterator<TKey, TValue>
+ * @method bool any(callable $callback)
  */
 interface CollectionInterface extends Iterator, JsonSerializable, Countable
 {
@@ -145,6 +146,8 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *
      * The callback is passed the value and key of the element being tested and should
      * return true if the test passed.
+     *
+     * Alias of ``Collection::any()``.
      *
      * ### Example:
      *

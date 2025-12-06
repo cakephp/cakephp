@@ -128,17 +128,16 @@ class ExistsIn
         }
 
         if ($this->_options['allowNullableNulls']) {
-            /** @var \Cake\ORM\Table $source */
             $schema = $source->getSchema();
             foreach ($fields as $i => $field) {
-                if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+                if ($schema->hasColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
                     unset($bindingKey[$i], $fields[$i]);
                 }
             }
         }
 
         $primary = array_map(
-            fn($key) => $target->aliasField($key) . ' IS',
+            fn(string $key) => $target->aliasField($key) . ' IS',
             $bindingKey,
         );
         $conditions = array_combine(
@@ -161,7 +160,7 @@ class ExistsIn
         $nulls = 0;
         $schema = $source->getSchema();
         foreach ($this->_fields as $field) {
-            if ($schema->getColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
+            if ($schema->hasColumn($field) && $schema->isNullable($field) && $entity->get($field) === null) {
                 $nulls++;
             }
         }

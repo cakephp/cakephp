@@ -72,11 +72,7 @@ trait InstanceConfigTrait
      */
     public function setConfig(array|string $key, mixed $value = null, bool $merge = true)
     {
-        if (!$this->_configInitialized) {
-            $this->_config = $this->_defaultConfig;
-            $this->_configInitialized = true;
-        }
-
+        $this->initCfg();
         $this->_configWrite($key, $value, $merge);
 
         return $this;
@@ -113,14 +109,11 @@ trait InstanceConfigTrait
      *
      * @param string|null $key The key to get or null for the whole config.
      * @param mixed $default The return value when the key does not exist.
-     * @return mixed Configuration data at the named key or null if the key does not exist.
+     * @return ($key is null ? array : mixed) Configuration data at the named key or null if the key does not exist.
      */
     public function getConfig(?string $key = null, mixed $default = null): mixed
     {
-        if (!$this->_configInitialized) {
-            $this->_config = $this->_defaultConfig;
-            $this->_configInitialized = true;
-        }
+        $this->initCfg();
 
         return $this->_configRead($key) ?? $default;
     }
@@ -172,21 +165,44 @@ trait InstanceConfigTrait
      */
     public function configShallow(array|string $key, mixed $value = null)
     {
-        if (!$this->_configInitialized) {
-            $this->_config = $this->_defaultConfig;
-            $this->_configInitialized = true;
-        }
-
+        $this->initCfg();
         $this->_configWrite($key, $value, 'shallow');
 
         return $this;
     }
 
     /**
+     * Deletes a config key.
+     *
+     * @param string $key Key to delete. It can be a dot separated string to delete nested keys.
+     * @return $this
+     */
+    public function deleteConfig(string $key)
+    {
+        $this->initCfg();
+        $this->_configDelete($key);
+
+        return $this;
+    }
+
+    /**
+     * Initializes the config with the default config.
+     *
+     * @return void
+     */
+    private function initCfg(): void
+    {
+        if (!$this->_configInitialized) {
+            $this->_config = $this->_defaultConfig;
+            $this->_configInitialized = true;
+        }
+    }
+
+    /**
      * Reads a config key.
      *
      * @param string|null $key Key to read.
-     * @return mixed
+     * @return ($key is null ? array : mixed)
      */
     protected function _configRead(?string $key): mixed
     {

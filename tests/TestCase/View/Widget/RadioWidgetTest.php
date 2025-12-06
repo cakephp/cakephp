@@ -69,6 +69,7 @@ class RadioWidgetTest extends TestCase
             'name' => 'Crayons[color]',
             'label' => null,
             'options' => ['r' => 'Red', 'b' => 'Black'],
+            'nestedInput' => false,
         ];
         $result = $radio->render($data, $this->context);
         $expected = [
@@ -174,6 +175,7 @@ class RadioWidgetTest extends TestCase
             'name' => 'Crayons[color]',
             'val' => 'r',
             'options' => ['r' => 'Red', 'b' => 'Black'],
+            'nestedInput' => false,
         ];
         $result = $radio->render($data, $this->context);
         $expected = [
@@ -712,6 +714,7 @@ class RadioWidgetTest extends TestCase
                 '1x' => 'one x',
                 '2' => 'two',
             ],
+            'nestedInput' => false,
         ];
         $result = $radio->render($data, $this->context);
         $this->assertStringContainsString(

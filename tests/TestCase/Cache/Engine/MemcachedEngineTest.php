@@ -30,6 +30,8 @@ use function Cake\Core\env;
  */
 class MemcachedEngineTest extends TestCase
 {
+    use EngineEventsTrait;
+
     /**
      * @var string
      */
@@ -67,6 +69,7 @@ class MemcachedEngineTest extends TestCase
             'duration' => 3600,
             'servers' => ['127.0.0.1:' . $this->port],
         ];
+        $this->engine = 'memcached';
         Cache::drop('memcached');
         Cache::setConfig('memcached', array_merge($defaults, $config));
     }

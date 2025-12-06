@@ -83,6 +83,8 @@ class Sqlserver extends Driver
         'multiSubnetFailover' => null,
         'encrypt' => null,
         'trustServerCertificate' => null,
+        'accessToken' => null,
+        'authentication' => null,
     ];
 
     /**
@@ -157,6 +159,12 @@ class Sqlserver extends Driver
         }
         if ($config['trustServerCertificate'] !== null) {
             $dsn .= ";TrustServerCertificate={$config['trustServerCertificate']}";
+        }
+        if ($config['accessToken'] !== null) {
+            $dsn .= ";AccessToken={$config['accessToken']}";
+        }
+        if ($config['authentication'] !== null) {
+            $dsn .= ";Authentication={$config['authentication']}";
         }
 
         $this->pdo = $this->createPdo($dsn, $config);
@@ -280,6 +288,8 @@ class Sqlserver extends Driver
             DriverFeatureEnum::INTERSECT_ALL => false,
             DriverFeatureEnum::JSON => false,
             DriverFeatureEnum::SET_OPERATIONS_ORDER_BY => false,
+            DriverFeatureEnum::OPTIMIZER_HINT_COMMENT => false,
+            DriverFeatureEnum::CHECK_CONSTRAINTS => false,
         };
     }
 
@@ -314,7 +324,7 @@ class Sqlserver extends Driver
         }
 
         if ($offset !== null && !$query->clause('order')) {
-            $query->orderBy($query->newExpr()->add('(SELECT NULL)'));
+            $query->orderBy($query->expr()->add('(SELECT NULL)'));
         }
 
         if ($this->version() < 11 && $offset !== null) {
@@ -417,9 +427,9 @@ class Sqlserver extends Driver
         $order = new OrderByExpression($distinct);
         $query
             ->select(function (Query $q) use ($distinct, $order) {
-                $over = $q->newExpr('ROW_NUMBER() OVER')
+                $over = $q->expr('ROW_NUMBER() OVER')
                     ->add('(PARTITION BY')
-                    ->add($q->newExpr()->add($distinct)->setConjunction(','))
+                    ->add($q->expr()->add($distinct)->setConjunction(','))
                     ->add($order)
                     ->add(')')
                     ->setConjunction(' ');

@@ -429,6 +429,9 @@ class EagerLoaderTest extends TestCase
             'clients__company_id' => 'clients.company_id',
             'clients__telephone' => 'clients.telephone',
             'orders__total' => 'orders.total', 'orders__placed' => 'orders.placed',
+            // Primary keys are added to ensure proper entity hydration
+            'clients__id' => 'clients.id',
+            'orders__id' => 'orders.id',
         ];
         $this->assertEquals($expected, $select);
     }
@@ -457,7 +460,12 @@ class EagerLoaderTest extends TestCase
         $query = new SelectQuery($this->table);
         $query->select('foo.id')->contain($contains)->sql();
         $select = $query->clause('select');
-        $expected = ['foo__id' => 'foo.id', 'clients__name' => 'clients.name'];
+        $expected = [
+            'foo__id' => 'foo.id',
+            'clients__name' => 'clients.name',
+            // Primary key is now auto-added to ensure proper entity hydration
+            'clients__id' => 'clients.id',
+        ];
         $expected = $this->_quoteArray($expected);
         $this->assertEquals($expected, $select);
 

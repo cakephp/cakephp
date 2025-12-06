@@ -38,10 +38,7 @@ use Throwable;
 
 class ExceptionTrapTest extends TestCase
 {
-    /**
-     * @var string
-     */
-    private $memoryLimit;
+    private string $memoryLimit;
 
     private $triggered = false;
 
@@ -86,7 +83,7 @@ class ExceptionTrapTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $trap = new ExceptionTrap(['stderr' => $output]);
-        $trap->setConfig('exceptionRenderer', null);
+        $trap->deleteConfig('exceptionRenderer');
         $error = new InvalidArgumentException('nope');
         $this->assertInstanceOf(ConsoleExceptionRenderer::class, $trap->renderer($error));
     }
@@ -100,7 +97,7 @@ class ExceptionTrapTest extends TestCase
     public function testLoggerHandleUnsafeOverwrite(): void
     {
         $trap = new ExceptionTrap();
-        $trap->setConfig('logger', null);
+        $trap->deleteConfig('logger');
         $this->assertInstanceOf(ErrorLogger::class, $trap->logger());
     }
 
@@ -317,7 +314,7 @@ class ExceptionTrapTest extends TestCase
     public function testBeforeRenderEventReturnResponse(): void
     {
         $trap = new ExceptionTrap(['exceptionRenderer' => TextExceptionRenderer::class]);
-        $trap->getEventManager()->on('Exception.beforeRender', function (EventInterface $event, Throwable $error, ?ServerRequest $req) {
+        $trap->getEventManager()->on('Exception.beforeRender', function (EventInterface $event, Throwable $error, ?ServerRequest $req): void {
             $event->setResult('Here B Erroz');
         });
 

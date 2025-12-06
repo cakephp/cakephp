@@ -45,7 +45,7 @@ class PluginListCommandTest extends TestCase
         if (file_exists($this->pluginsListPath)) {
             unlink($this->pluginsListPath);
         }
-        $this->pluginsConfigPath = CONFIG . DS . 'plugins.php';
+        $this->pluginsConfigPath = CONFIG . 'plugins.php';
         if (file_exists($this->pluginsConfigPath)) {
             $this->originalPluginsConfigContent = file_get_contents($this->pluginsConfigPath);
         }
@@ -82,8 +82,8 @@ class PluginListCommandTest extends TestCase
 declare(strict_types=1);
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path'
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/'
     ]
 ];
 PHP;
@@ -122,8 +122,8 @@ PHP;
 declare(strict_types=1);
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path'
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/'
     ]
 ];
 PHP;
@@ -139,7 +139,9 @@ return [
 PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
-        $this->exec('plugin list');
+        $this->deprecated(function (): void {
+            $this->exec('plugin list');
+        });
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('TestPlugin');
         $this->assertOutputContains('OtherPlugin');
@@ -155,8 +157,8 @@ PHP;
 declare(strict_types=1);
 return [
     'plugins' => [
-        'TestPlugin' => '/config/path',
-        'OtherPlugin' => '/config/path'
+        'TestPlugin' => '/config/path/',
+        'OtherPlugin' => '/config/path/'
     ]
 ];
 PHP;
@@ -205,7 +207,9 @@ PHP;
         file_put_contents($this->pluginsConfigPath, $config);
 
         $path = ROOT . DS . 'tests' . DS . 'composer.lock';
-        $this->exec(sprintf('plugin list --composer-path="%s"', $path));
+        $this->deprecated(function () use ($path): void {
+            $this->exec(sprintf('plugin list --composer-path="%s"', $path));
+        });
         $this->assertOutputContains('| Chronos     | X         |            |          |          | 3.0.4   |');
         $this->assertOutputContains('| CodeSniffer | X         |            |          |          | 5.1.1   |');
     }
