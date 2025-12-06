@@ -138,6 +138,13 @@ class CommandRunner implements EventDispatcherInterface
 
         $this->bootstrap();
 
+        if ($this->app instanceof EventAwareApplicationInterface) {
+            $eventManager = $this->getEventManager();
+            $eventManager = $this->app->events($eventManager);
+            $eventManager = $this->app->pluginEvents($eventManager);
+            $this->setEventManager($eventManager);
+        }
+
         $commands = new CommandCollection([
             'help' => HelpCommand::class,
         ]);
@@ -157,7 +164,9 @@ class CommandRunner implements EventDispatcherInterface
 
         $io = $io ?: new ConsoleIo();
 
-        [$name, $argv] = $this->longestCommandName($commands, $argv);
+        /** @var array{string|null, array} $resolved */
+        $resolved = $this->longestCommandName($commands, $argv);
+        [$name, $argv] = $resolved;
 
         // If -v/--verbose is used as command, preserve it as flag for help command
         if ($name === '-v' || $name === '--verbose') {
@@ -165,9 +174,9 @@ class CommandRunner implements EventDispatcherInterface
             $name = 'help';
         }
 
-        // Check if this is a command prefix (e.g., "bake" has subcommands like "bake all")
+        // Check if this is a command prefix (e.g., "cache" has subcommands like "cache clear")
         // Show help for that prefix instead of running the base command
-        if ($name && !$commands->has($name) && $this->hasCommandsWithPrefix($commands, $name)) {
+        if ($name !== null && !$commands->has($name) && $this->hasCommandsWithPrefix($commands, $name)) {
             $argv = array_merge([$name], $argv);
             $name = 'help';
         }
@@ -359,12 +368,6 @@ class CommandRunner implements EventDispatcherInterface
     protected function runCommand(CommandInterface $command, array $argv, ConsoleIo $io): ?int
     {
         try {
-            $eventManager = $this->getEventManager();
-            if ($this->app instanceof EventAwareApplicationInterface) {
-                $eventManager = $this->app->events($eventManager);
-                $eventManager = $this->app->pluginEvents($eventManager);
-            }
-            $this->setEventManager($eventManager);
             if ($command instanceof EventDispatcherInterface) {
                 $command->setEventManager($this->getEventManager());
             }

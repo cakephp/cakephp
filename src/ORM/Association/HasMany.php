@@ -405,7 +405,7 @@ class HasMany extends Association
                 (new Collection($sourceEntity->get($property)))
                 ->reject(
                     function ($assoc) use ($targetEntities) {
-                        return in_array($assoc, $targetEntities);
+                        return in_array($assoc, $targetEntities, true);
                     },
                 )
                 ->toList(),
@@ -582,11 +582,10 @@ class HasMany extends Association
         return !in_array(
             false,
             array_map(
-                function ($prop) use ($table) {
-                    return $table->getSchema()->isNullable($prop);
-                },
+                $table->getSchema()->isNullable(...),
                 $properties,
             ),
+            true,
         );
     }
 

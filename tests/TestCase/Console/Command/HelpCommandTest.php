@@ -108,8 +108,8 @@ class HelpCommandTest extends TestCase
         $this->exec('help cache');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertOutputContains('<info>cache:</info>');
-        $this->assertOutputContains('clear');
-        $this->assertOutputContains('list');
+        $this->assertOutputContains('cache clear');
+        $this->assertOutputContains('cache list');
         $this->assertOutputNotContains('routes');
         $this->assertOutputNotContains('sample');
     }

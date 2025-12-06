@@ -1888,7 +1888,7 @@ class Message implements JsonSerializable
             $array[$property] = $this->{$property};
         }
 
-        array_walk($array['attachments'], function (array &$item, $key): void {
+        array_walk($array['attachments'], function (array &$item): void {
             if (!empty($item['file'])) {
                 $item['data'] = $this->readFile($item['file']);
                 unset($item['file']);
@@ -1923,7 +1923,7 @@ class Message implements JsonSerializable
     public function __serialize(): array
     {
         $array = $this->jsonSerialize();
-        array_walk_recursive($array, function (&$item, $key): void {
+        array_walk_recursive($array, function (&$item): void {
             if ($item instanceof SimpleXMLElement) {
                 $item = json_decode((string)json_encode((array)$item), true);
             }

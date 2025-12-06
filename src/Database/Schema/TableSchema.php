@@ -1004,6 +1004,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 
         $columns = $data["\0*\0_columns"] ?? [];
         foreach ($columns as $name => $column) {
+            $name = (string)$name;
             if (is_array($column)) {
                 $this->addColumn($name, $column);
             } else {
@@ -1012,6 +1013,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
         $indexes = $data["\0*\0_indexes"] ?? [];
         foreach ($indexes as $name => $index) {
+            $name = (string)$name;
             if (is_array($index)) {
                 $this->addIndex($name, $index);
             } else {
@@ -1020,6 +1022,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         }
         $constraints = $data["\0*\0_constraints"] ?? [];
         foreach ($constraints as $name => $constraint) {
+            $name = (string)$name;
             if (is_array($constraint)) {
                 $this->addConstraint($name, $constraint);
             } else {

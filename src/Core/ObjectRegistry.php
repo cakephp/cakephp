@@ -80,10 +80,9 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function load(string $name, array $config = []): object
     {
-        $plugin = null;
         if (isset($config['className'])) {
             if ($name === $config['className']) {
-                [$plugin, $objName] = pluginSplit($name);
+                [, $objName] = pluginSplit($name);
             } else {
                 $objName = $name;
             }

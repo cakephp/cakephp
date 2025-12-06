@@ -77,7 +77,7 @@ class Marshaller
             $prop = (string)$prop;
             $columnType = $schema->getColumnType($prop);
             if ($columnType) {
-                $map[$prop] = fn($value) => TypeFactory::build($columnType)->marshal($value);
+                $map[$prop] = TypeFactory::build($columnType)->marshal(...);
             }
         }
 
@@ -129,7 +129,7 @@ class Marshaller
                     );
                 };
             } else {
-                $callback = function ($value, $entity) use ($assoc, $nested): array|EntityInterface|null {
+                $callback = function ($value) use ($assoc, $nested): array|EntityInterface|null {
                     $options = $nested + ['associated' => []];
 
                     return $this->_marshalAssociation($assoc, $value, $options);
