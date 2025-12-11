@@ -9,7 +9,7 @@ use Cake\Console\ConsoleIo;
 
 class HiddenCommand extends Command
 {
-    public static function getHidden(): bool
+    public static function isHidden(): bool
     {
         return true;
     }

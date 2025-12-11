@@ -237,6 +237,6 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     {
         $class = is_object($command) ? $command::class : $command;
 
-        return is_subclass_of($class, BaseCommand::class) && $class::getHidden();
+        return is_subclass_of($class, BaseCommand::class) && $class::isHidden();
     }
 }

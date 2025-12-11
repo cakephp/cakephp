@@ -111,19 +111,19 @@ class CommandTest extends TestCase
     }
 
     /**
-     * Test getHidden returns false by default
+     * Test isHidden returns false by default
      */
-    public function testGetHiddenDefault(): void
+    public function testIsHiddenDefault(): void
     {
-        $this->assertFalse(Command::getHidden());
+        $this->assertFalse(Command::isHidden());
     }
 
     /**
-     * Test getHidden can be overridden to return true
+     * Test isHidden can be overridden to return true
      */
-    public function testGetHiddenOverride(): void
+    public function testIsHiddenOverride(): void
     {
-        $this->assertTrue(HiddenCommand::getHidden());
+        $this->assertTrue(HiddenCommand::isHidden());
     }
 
     /**

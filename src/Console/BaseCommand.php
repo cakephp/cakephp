@@ -113,7 +113,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      *
      * @return bool
      */
-    public static function getHidden(): bool
+    public static function isHidden(): bool
     {
         return false;
     }
