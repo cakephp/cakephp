@@ -126,23 +126,18 @@ class CommandRunnerTest extends TestCase
     }
 
     /**
-     * Test that running an unknown command gives suggestions.
+     * Test that running a command prefix shows help for those commands.
      */
-    public function testRunInvalidCommandSuggestion(): void
+    public function testRunCommandPrefixShowsHelp(): void
     {
         $output = new StubConsoleOutput();
         $runner = $this->getRunner();
-        $runner->run(['cake', 'cache'], $this->getMockIo($output));
+        $result = $runner->run(['cake', 'cache'], $this->getMockIo($output));
 
+        $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
-        $this->assertStringContainsString(
-            "Did you mean: `cache clear`?\n" .
-            "\n" .
-            "Other valid choices:\n" .
-            "\n" .
-            '- help',
-            $messages,
-        );
+        $this->assertStringContainsString('cache clear', $messages);
+        $this->assertStringContainsString('cache list', $messages);
     }
 
     /**

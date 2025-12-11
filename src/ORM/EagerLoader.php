@@ -587,13 +587,13 @@ class EagerLoader
         $result = [];
         foreach ($matching as $table => $loadable) {
             $result[$table] = $loadable;
-            $result += $this->_resolveJoins($loadable->associations(), []);
+            $result = $this->mergeJoins($result, $this->_resolveJoins($loadable->associations(), []));
         }
         foreach ($associations as $table => $loadable) {
             $inMatching = isset($matching[$table]);
             if (!$inMatching && $loadable->canBeJoined()) {
                 $result[$table] = $loadable;
-                $result += $this->_resolveJoins($loadable->associations(), []);
+                $result = $this->mergeJoins($result, $this->_resolveJoins($loadable->associations(), []));
                 continue;
             }
 
@@ -606,6 +606,29 @@ class EagerLoader
         }
 
         return $result;
+    }
+
+    /**
+     * Merges association joins and throws an exception if there are conflicts.
+     *
+     * @param array $a
+     * @param array $b
+     * @return array
+     */
+    private function mergeJoins(array $a, array $b): array
+    {
+        foreach ($b as $alias => $loadable) {
+            if (isset($a[$alias])) {
+                assert(false, sprintf(
+                    'You cannot join with `%s` because it conflicts with the existing `%s` join.'
+                        . ' The existing join will be lost.',
+                    $loadable->aliasPath(),
+                    $a[$alias]->aliasPath(),
+                ));
+            }
+        }
+
+        return $a + $b;
     }
 
     /**

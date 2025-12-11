@@ -713,3 +713,9 @@ parameters:
 			identifier: class.notFound
 			count: 1
 			path: src/Database/Driver/Mysql.php
+
+		-
+			message: '#^Call to function assert\(\) with false and string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/ORM/EagerLoader.php

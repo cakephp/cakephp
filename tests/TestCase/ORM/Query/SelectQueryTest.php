@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM\Query;
 
+use AssertionError;
 use Cake\Cache\CacheEngine;
 use Cake\Cache\Engine\FileEngine;
 use Cake\Database\Connection;
@@ -28,7 +29,6 @@ use Cake\Database\Expression\FunctionExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\QueryExpression;
-use Cake\Database\ExpressionInterface;
 use Cake\Database\StatementInterface;
 use Cake\Database\TypeMap;
 use Cake\Database\ValueBinder;
@@ -3196,7 +3196,7 @@ class SelectQueryTest extends TestCase
     {
         $table = $this->getTableLocator()->get('Articles');
         $query = $table->find()->where(['id >' => 1]);
-        $query->where(function (ExpressionInterface $exp) {
+        $query->where(function (QueryExpression $exp) {
             return $exp->add('author_id = :author');
         });
         $query->bind(':author', 1, 'integer');
@@ -4084,34 +4084,17 @@ class SelectQueryTest extends TestCase
         );
     }
 
-    public function testContainNestedAssociationsAliasingSameTable(): void
+    public function testContainConflictingAliases(): void
     {
         $comments = $this->getTableLocator()->get('Comments');
 
-        $comments
-            ->belongsTo('Article1', [
-                'className' => 'Articles',
-                'foreignKey' => 'article_id',
-            ])
-            ->getTarget()
-            ->belongsTo('Authors', [
-                'className' => 'Authors',
-                'foreignKey' => 'author_id',
-            ]);
+        $comments->belongsTo('Authors', [
+            'className' => 'Authors',
+            'foreignKey' => 'user_id',
+        ]);
 
         $comments
-            ->belongsTo('Article2', [
-                'className' => 'Articles',
-                'foreignKey' => 'article_id',
-            ])
-            ->getTarget()
-            ->belongsTo('Authors', [
-                'className' => 'Authors',
-                'foreignKey' => 'author_id',
-            ]);
-
-        $comments
-            ->belongsTo('Article3', [
+            ->belongsTo('Articles', [
                 'className' => 'Articles',
                 'foreignKey' => 'article_id',
             ])
@@ -4122,16 +4105,75 @@ class SelectQueryTest extends TestCase
             ]);
 
         $result = $comments->find()
-            ->contain(['Article1.Authors', 'Article2.Authors'])
-            ->contain('Article3', function (SelectQuery $q) {
+            ->contain('Authors')
+            ->contain('Articles', function (SelectQuery $q) {
                 return $q->contain('Authors');
             })
             ->where(['Comments.id' => 1])
             ->disableHydration()
             ->toArray();
 
-        $this->assertEquals(1, $result[0]['article1']['author']['id']);
-        $this->assertEquals(1, $result[0]['article2']['author']['id']);
-        $this->assertEquals(1, $result[0]['article3']['author']['id']);
+        $this->assertEquals(2, $result[0]['author']['id']);
+        $this->assertEquals(1, $result[0]['article']['author']['id']);
+    }
+
+    public function testJoinWithConflictingAliases(): void
+    {
+        $comments = $this->getTableLocator()->get('Comments');
+
+        $comments->belongsTo('Authors', [
+            'className' => 'Authors',
+            'foreignKey' => 'user_id',
+        ]);
+
+        $comments
+            ->belongsTo('Articles', [
+                'className' => 'Articles',
+                'foreignKey' => 'article_id',
+            ])
+            ->getTarget()
+            ->belongsTo('Authors', [
+                'className' => 'Authors',
+                'foreignKey' => 'author_id',
+            ]);
+
+        $this->expectException(AssertionError::class);
+        $this->expectExceptionMessage('You cannot join with `Articles.Authors` because it conflicts with the existing `Authors` join.');
+        $comments->find()
+            ->leftJoinWith('Authors')
+            ->leftJoinWith('Articles', fn(SelectQuery $q) => $q->leftJoinWith('Authors'))
+            ->where(['Comments.id' => 1])
+            ->disableHydration()
+            ->all();
+    }
+
+    public function testMatchingConflictingAliases(): void
+    {
+        $comments = $this->getTableLocator()->get('Comments');
+
+        $comments->belongsTo('Authors', [
+            'className' => 'Authors',
+            'foreignKey' => 'user_id',
+        ]);
+
+        $comments
+            ->belongsTo('Articles', [
+                'className' => 'Articles',
+                'foreignKey' => 'article_id',
+            ])
+            ->getTarget()
+            ->belongsTo('Authors', [
+                'className' => 'Authors',
+                'foreignKey' => 'author_id',
+            ]);
+
+        $this->expectException(AssertionError::class);
+        $this->expectExceptionMessage('You cannot join with `Articles.Authors` because it conflicts with the existing `Authors` join.');
+        $comments->find()
+            ->leftJoinWith('Authors')
+            ->matching('Articles', fn(SelectQuery $q) => $q->leftJoinWith('Authors'))
+            ->where(['Comments.id' => 1])
+            ->disableHydration()
+            ->all();
     }
 }

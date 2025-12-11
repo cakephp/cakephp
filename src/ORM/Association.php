@@ -1190,11 +1190,11 @@ abstract class Association
      * target table has another association with the passed name
      *
      * @param string $property the property name
-     * @return bool true if the property exists
+     * @return bool true if the association exists
      */
     public function __isset(string $property): bool
     {
-        return isset($this->getTarget()->{$property});
+        return $this->getTarget()->hasAssociation($property);
     }
 
     /**
