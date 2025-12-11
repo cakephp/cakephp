@@ -113,8 +113,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             if (is_object($class)) {
                 $class = $class::class;
             }
-            // Skip hidden commands
-            if (is_subclass_of($class, BaseCommand::class) && $class::isHidden()) {
+            if ($this->isHiddenCommand($class)) {
                 continue;
             }
             $invert[$class] ??= [];
@@ -237,8 +236,7 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             if (is_object($class)) {
                 $class = $class::class;
             }
-            // Skip hidden commands
-            if (is_subclass_of($class, BaseCommand::class) && $class::isHidden()) {
+            if ($this->isHiddenCommand($class)) {
                 continue;
             }
             $shell = $shells->addChild('shell');
@@ -249,6 +247,17 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         $io->setOutputAs(ConsoleOutput::RAW);
         $io->out((string)$shells->saveXML());
+    }
+
+    /**
+     * Check if a command class is hidden.
+     *
+     * @param string $class The command class name.
+     * @return bool
+     */
+    protected function isHiddenCommand(string $class): bool
+    {
+        return is_subclass_of($class, BaseCommand::class) && $class::isHidden();
     }
 
     /**
