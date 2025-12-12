@@ -28,6 +28,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\UniqueKey;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Exception;
 use PDO;
 use PHPUnit\Framework\Attributes\DataProvider;
 
@@ -283,20 +284,12 @@ SQL;
             ],
             // Geospatial
             [
-                ['type' => 'GEOGRAPHY(GEOMETRY, 4326)'],
-                ['type' => 'geometry', 'length' => null, 'srid' => 4326],
+                ['type' => 'GEOMETRY'],
+                ['type' => 'geometry', 'length' => null],
             ],
             [
-                ['type' => 'GEOGRAPHY(POINT, 4326)'],
-                ['type' => 'point', 'length' => null, 'srid' => 4326],
-            ],
-            [
-                ['type' => 'GEOGRAPHY(LINESTRING, 4326)'],
-                ['type' => 'linestring', 'length' => null, 'srid' => 4326],
-            ],
-            [
-                ['type' => 'GEOGRAPHY(POLYGON, 4326)'],
-                ['type' => 'polygon', 'length' => null, 'srid' => 4326],
+                ['type' => 'GEOGRAPHY'],
+                ['type' => 'geography', 'length' => null],
             ],
             // network addresses
             [
@@ -710,6 +703,97 @@ SQL;
             ],
         ];
         $this->assertEquals(['id'], $result->getPrimaryKey());
+        foreach ($expected as $field => $definition) {
+            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in {$field} column");
+        }
+    }
+
+    public function testDescribeTableGeospatialTypes(): void
+    {
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+
+        try {
+            $connection->execute('CREATE EXTENSION IF NOT EXISTS postgis');
+        } catch (Exception) {
+            $this->markTestSkipped('PostGIS extension is not available');
+        }
+
+        // GEOMETRY defaults to srid 0 while GEOGRAPHY defaults to srid 4326
+        $sql = <<<SQL
+            CREATE TABLE ref_table (
+                geometry_geometry GEOMETRY,
+                geometry_point GEOMETRY(POINT),
+                geometry_point_4236 GEOMETRY(POINT, 4236),
+                geography_geometry GEOGRAPHY,
+                geography_point GEOGRAPHY(POINT),
+                geography_point_0 GEOGRAPHY(POINT, 0)
+            );
+            SQL;
+
+        $connection->execute('DROP TABLE IF EXISTS ref_table');
+        $connection->execute($sql);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('ref_table');
+
+        $connection->execute('DROP TABLE ref_table');
+
+        $expected = [
+            'geometry_geometry' => [
+                'type' => 'geometry',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
+            ],
+            'geometry_point' => [
+                'type' => 'geometry',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
+            ],
+            'geometry_point_4236' => [
+                'type' => 'geometry',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
+            ],
+            'geography_geometry' => [
+                'type' => 'geography',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'geography_point' => [
+                'type' => 'geography',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'geography_point_0' => [
+                'type' => 'geography',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+        ];
+
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->getColumn($field), "Mismatch in {$field} column");
         }
@@ -1675,6 +1759,46 @@ SQL;
             'COMMENT ON COLUMN "schema_articles"."title" IS \'This is the title\'',
             $result[2],
         );
+    }
+
+    public function testCreateSqlGeospacialTypes(): void
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMockBuilder(Connection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getWriteDriver')
+            ->willReturn($driver);
+
+        $table = (new TableSchema('ref_table'))
+            ->addColumn('geometry', [
+                'type' => 'geometry',
+            ])
+            ->addColumn('geometry_0', [
+                'type' => 'geometry',
+                'srid' => 0,
+            ])
+            ->addColumn('point', [
+                'type' => 'point',
+            ])
+            ->addColumn('point_0', [
+                'type' => 'point',
+                'srid' => 0,
+            ]);
+
+        $expected = <<<SQL
+            CREATE TABLE "ref_table" (
+            "geometry" GEOGRAPHY(GEOMETRY, 4326),
+            "geometry_0" GEOGRAPHY(GEOMETRY, 0),
+            "point" GEOGRAPHY(POINT, 4326),
+            "point_0" GEOGRAPHY(POINT, 0)
+            )
+            SQL;
+
+        $result = $table->createSql($connection);
+
+        $this->assertCount(1, $result);
+        $this->assertTextEquals($expected, $result[0]);
     }
 
     /**
