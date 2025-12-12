@@ -391,6 +391,12 @@ parameters:
 			path: src/ORM/Behavior/Translate/TranslateTrait.php
 
 		-
+			message: '#^Call to function assert\(\) with false and string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/ORM/EagerLoader.php
+
+		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2
@@ -595,7 +601,7 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<string\> given\.$#'
+			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\TestDoubleBuilder\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/TestSuite/TestCase.php
