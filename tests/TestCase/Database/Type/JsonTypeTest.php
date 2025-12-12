@@ -22,11 +22,13 @@ use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use stdClass;
 
 /**
  * Test for the String type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class JsonTypeTest extends TestCase
 {
     /**

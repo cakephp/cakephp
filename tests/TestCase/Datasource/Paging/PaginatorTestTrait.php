@@ -24,9 +24,11 @@ use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Table\PaginatorPostsTable;
 
+#[AllowMockObjectsWithoutExpectations]
 trait PaginatorTestTrait
 {
     /**

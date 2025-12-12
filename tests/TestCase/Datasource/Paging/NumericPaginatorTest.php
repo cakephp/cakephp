@@ -20,7 +20,9 @@ use Cake\Core\Exception\CakeException;
 use Cake\Datasource\Paging\SortField;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 class NumericPaginatorTest extends TestCase
 {
     use PaginatorTestTrait;

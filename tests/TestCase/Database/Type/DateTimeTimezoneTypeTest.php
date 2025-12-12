@@ -21,11 +21,13 @@ use Cake\Database\Type\DateTimeTimezoneType;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for the DateTimeTimezone type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class DateTimeTimezoneTypeTest extends TestCase
 {
     /**

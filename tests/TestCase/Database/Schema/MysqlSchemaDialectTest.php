@@ -31,11 +31,13 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for MySQL Schema Dialect.
  */
+#[AllowMockObjectsWithoutExpectations]
 class MysqlSchemaDialectTest extends TestCase
 {
     protected PDO $pdo;

@@ -29,11 +29,13 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for Sqlite Schema Dialect.
  */
+#[AllowMockObjectsWithoutExpectations]
 class SqliteSchemaDialectTest extends TestCase
 {
     protected PDO $pdo;

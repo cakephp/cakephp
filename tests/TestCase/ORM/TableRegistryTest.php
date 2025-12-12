@@ -20,10 +20,12 @@ use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Test case for TableRegistry
  */
+#[AllowMockObjectsWithoutExpectations]
 class TableRegistryTest extends TestCase
 {
     /**

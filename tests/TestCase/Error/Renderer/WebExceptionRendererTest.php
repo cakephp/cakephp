@@ -51,6 +51,7 @@ use Exception;
 use Mockery;
 use OutOfBoundsException;
 use PDOException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use TestApp\Controller\Admin\ErrorController as PrefixErrorController;
@@ -60,6 +61,7 @@ use TestApp\Error\Renderer\TestAppsExceptionRenderer;
 use TestPlugin\Controller\ErrorController as PluginErrorController;
 use function Cake\Core\h;
 
+#[AllowMockObjectsWithoutExpectations]
 class WebExceptionRendererTest extends TestCase
 {
     /**

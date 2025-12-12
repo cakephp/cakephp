@@ -24,11 +24,13 @@ use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for the Date type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class DateTypeTest extends TestCase
 {
     /**

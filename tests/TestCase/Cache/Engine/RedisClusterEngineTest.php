@@ -8,12 +8,14 @@ use Cake\Cache\Engine\RedisEngine;
 use Cake\Log\Engine\ArrayLog;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use RedisCluster;
 use ReflectionClass;
 
 /**
  * RedisClusterEngineTest class
  */
+#[AllowMockObjectsWithoutExpectations]
 class RedisClusterEngineTest extends TestCase
 {
     private false|string|null $skipTest = null;
