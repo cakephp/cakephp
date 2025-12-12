@@ -156,6 +156,27 @@ class AssociationProxyTest extends TestCase
     }
 
     /**
+     * Tests that isset on association only returns true for associations
+     */
+    public function testAssociationIssetOnlyChecksAssociations(): void
+    {
+        $articles = $this->getTableLocator()->get('articles');
+        $authors = $this->getTableLocator()->get('authors');
+        $articles->belongsTo('authors');
+        $authors->hasMany('comments');
+
+        // Existing association returns true
+        $this->assertTrue(isset($articles->authors->comments));
+
+        // Non-existing association returns false
+        $this->assertFalse(isset($articles->authors->posts));
+
+        // Non-association properties return false (table has these but they're not associations)
+        $this->assertFalse(isset($articles->authors->_table));
+        $this->assertFalse(isset($articles->authors->entityClass));
+    }
+
+    /**
      * Tests that methods are proxied from the Association to the target table
      */
     public function testAssociationMethodProxy(): void
