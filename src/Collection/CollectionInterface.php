@@ -29,7 +29,6 @@ use const SORT_NUMERIC;
  * @template TKey
  * @template-covariant TValue
  * @template-extends \Iterator<TKey, TValue>
- * @method bool any(callable $callback)
  */
 interface CollectionInterface extends Iterator, JsonSerializable, Countable
 {
@@ -139,6 +138,26 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      *   callback returns true, false otherwise.
      */
     public function every(callable $callback): bool;
+
+    /**
+     * Returns true if any the callback returns true for any element in the collection.
+     *
+     * The callback accepts the value and key of the element being tested.
+     *
+     * ### Example:
+     *
+     * ```
+     * $hasYoungPeople = (new Collection([24, 45, 15]))->any(function ($value, $key) {
+     *  return $value < 21;
+     * });
+     * ```
+     *
+     * @param callable $callback A callback receiving `($value, $key)` that returns
+     *   true if the test passed, false otherwise.
+     * @return bool True if the provided callback returns true for any element in this
+     *   collection, false otherwise.
+     */
+    public function any(callable $callback): bool;
 
     /**
      * Returns true if any of the values in this collection pass the truth test
