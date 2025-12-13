@@ -26,6 +26,10 @@ use Iterator;
  * Creates a filtered iterator from another iterator. The filtering is done by
  * passing a callback function to each of the elements and taking them out if
  * it does not return true.
+ *
+ * @template TKey
+ * @template TValue
+ * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class FilterIterator extends Collection
 {

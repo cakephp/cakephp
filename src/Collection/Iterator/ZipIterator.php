@@ -42,6 +42,10 @@ use MultipleIterator;
  *  });
  *  $iterator->toList(); // Returns [4, 6]
  * ```
+ *
+ * @template TKey
+ * @template TValue
+ * @implements \Cake\Collection\CollectionInterface<TKey, TValue>
  */
 class ZipIterator implements CollectionInterface
 {

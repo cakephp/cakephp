@@ -23,6 +23,10 @@ use Cake\Collection\Collection;
  * The values to be inserted come out of another traversal object. This is useful
  * when you have two separate collections and want to merge them together by placing
  * each of the values from one collection into a property inside the other collection.
+ *
+ * @template TKey
+ * @template TValue
+ * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class InsertIterator extends Collection
 {

@@ -22,6 +22,10 @@ use SplDoublyLinkedList;
 /**
  * Creates an iterator from another iterator that will keep the results of the inner
  * iterator in memory, so that results don't have to be re-calculated.
+ *
+ * @template TKey
+ * @template TValue
+ * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class BufferedIterator extends Collection
 {

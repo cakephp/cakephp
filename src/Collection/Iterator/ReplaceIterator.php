@@ -25,6 +25,10 @@ use Traversable;
 /**
  * Creates an iterator from another iterator that will modify each of the values
  * by converting them using a callback function.
+ *
+ * @template TKey
+ * @template TValue
+ * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class ReplaceIterator extends Collection
 {

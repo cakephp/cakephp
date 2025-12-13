@@ -43,6 +43,10 @@ use const SORT_NUMERIC;
  * ```
  *
  * This iterator does not preserve the keys passed in the original elements.
+ *
+ * @template TKey
+ * @template TValue
+ * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class SortIterator extends Collection
 {

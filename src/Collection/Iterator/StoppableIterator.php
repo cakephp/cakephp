@@ -29,6 +29,9 @@ use Traversable;
  *
  * @internal
  * @see \Cake\Collection\Collection::stopWhen()
+ * @template TKey
+ * @template TValue
+ * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class StoppableIterator extends Collection
 {
