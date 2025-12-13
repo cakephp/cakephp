@@ -945,6 +945,7 @@ class TreeBehavior extends Behavior
         }
 
         $fresh = $this->_table->get($entity->get($this->_getPrimaryKey()));
+        // @phpstan-ignore function.alreadyNarrowedType (patch method available on EntityInterface)
         if (method_exists($entity, 'patch')) {
             $entity->patch($fresh->extract($fields), ['guard' => false]);
         } else {

@@ -228,6 +228,7 @@ class HasMany extends Association
             }
 
             if ($foreignKeyReference !== $entity->extract($foreignKey)) {
+                // @phpstan-ignore function.alreadyNarrowedType (patch method available on EntityInterface)
                 if (method_exists($entity, 'patch')) {
                     $entity->patch($foreignKeyReference, ['guard' => false]);
                 } else {
