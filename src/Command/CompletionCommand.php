@@ -142,6 +142,9 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         }
 
         foreach ($this->commands as $key => $value) {
+            if (is_subclass_of($value, CommandHiddenInterface::class)) {
+                continue;
+            }
             $parts = explode(' ', $key);
             $commandName = $parts[0];
 
