@@ -76,7 +76,7 @@ class BufferedIterator extends Collection
      * Maintains an in-memory cache of the results yielded by the internal
      * iterator.
      *
-     * @param iterable $items The items to be filtered.
+     * @param iterable<TKey, TValue> $items The items to be filtered.
      */
     public function __construct(iterable $items)
     {

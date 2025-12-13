@@ -43,12 +43,6 @@ parameters:
 			path: src/Collection/Iterator/NoChildrenIterator.php
 
 		-
-			message: '#^Parameter \#1 \$value of function count expects array\|Countable, TValue\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Collection/Iterator/ZipIterator.php
-
-		-
 			message: '#^Parameter \#1 \$args of method Cake\\Command\\RoutesGenerateCommand\:\:_splitArgs\(\) expects array\<string\>, array\<int, array\<string\>\|string\> given\.$#'
 			identifier: argument.type
 			count: 1

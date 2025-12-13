@@ -36,7 +36,7 @@ class UniqueIterator extends Collection
      * The callback is passed the value as the first argument and the key as the
      * second argument.
      *
-     * @param iterable $items The items to be filtered.
+     * @param iterable<TKey, TValue> $items The items to be filtered.
      * @param callable $callback Callback.
      */
     public function __construct(iterable $items, callable $callback)
