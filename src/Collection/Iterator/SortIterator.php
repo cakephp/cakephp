@@ -96,6 +96,7 @@ class SortIterator extends Collection
         foreach (array_keys($results) as $key) {
             $results[$key] = $items[$key];
         }
+        /** @phpstan-ignore argument.type (sorted array keys may differ from TKey) */
         parent::__construct($results);
     }
 

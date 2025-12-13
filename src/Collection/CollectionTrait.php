@@ -1102,6 +1102,7 @@ trait CollectionTrait
     public function transpose(): CollectionInterface
     {
         $arrayValue = $this->toList();
+        /** @phpstan-ignore argument.type (transpose requires array values) */
         $length = count(current($arrayValue));
         $result = [];
         foreach ($arrayValue as $row) {

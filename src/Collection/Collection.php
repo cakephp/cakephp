@@ -75,6 +75,7 @@ class Collection extends IteratorIterator implements CollectionInterface
      */
     public function __unserialize(array $data): void
     {
+        /** @phpstan-ignore argument.type (unserialize rebuilds from array) */
         $this->__construct($data);
     }
 
