@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Exception\CakeException;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use TestApp\Model\Behavior\Test2Behavior;
 use TestApp\Model\Behavior\Test3Behavior;
 use TestApp\Model\Behavior\TestBehavior;
@@ -26,6 +27,7 @@ use TestApp\Model\Behavior\TestBehavior;
 /**
  * Behavior test case
  */
+#[AllowMockObjectsWithoutExpectations]
 class BehaviorTest extends TestCase
 {
     /**

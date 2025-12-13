@@ -22,10 +22,12 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Test for the String type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class StringTypeTest extends TestCase
 {
     /**

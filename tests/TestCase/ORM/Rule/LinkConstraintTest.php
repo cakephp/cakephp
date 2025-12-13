@@ -28,6 +28,7 @@ use Cake\ORM\RulesChecker;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use stdClass;
 use TestApp\Model\Table\ArticlesTable;
@@ -35,6 +36,7 @@ use TestApp\Model\Table\ArticlesTable;
 /**
  * Tests the LinkConstraint rule.
  */
+#[AllowMockObjectsWithoutExpectations]
 class LinkConstraintTest extends TestCase
 {
     /**

@@ -21,11 +21,13 @@ use Cake\Database\Type\DateTimeFractionalType;
 use Cake\I18n\DateTime;
 use Cake\TestSuite\TestCase;
 use DateTimeZone;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for the DateTime type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class DateTimeFractionalTypeTest extends TestCase
 {
     /**

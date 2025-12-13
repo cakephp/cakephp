@@ -22,10 +22,12 @@ use Cake\Database\Type\FloatType;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Test for the Float type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class FloatTypeTest extends TestCase
 {
     /**

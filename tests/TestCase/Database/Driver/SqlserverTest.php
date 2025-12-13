@@ -29,11 +29,13 @@ use InvalidArgumentException;
 use Mockery;
 use PDO;
 use PDOStatement;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests Sqlserver driver
  */
+#[AllowMockObjectsWithoutExpectations]
 class SqlserverTest extends TestCase
 {
     /**

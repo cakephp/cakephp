@@ -25,11 +25,13 @@ use Cake\TestSuite\TestCase;
 use DateTime as NativeDateTime;
 use DateTimeImmutable;
 use DateTimeZone;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for the DateTime type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class DateTimeTypeTest extends TestCase
 {
     /**

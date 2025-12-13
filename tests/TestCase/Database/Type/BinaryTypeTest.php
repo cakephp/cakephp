@@ -21,10 +21,12 @@ use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Test for the Binary type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class BinaryTypeTest extends TestCase
 {
     /**

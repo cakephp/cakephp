@@ -33,6 +33,7 @@ use Exception;
 use PDO;
 use PDOException;
 use PDOStatement;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Driver\RetryDriver;
 use TestApp\Database\Driver\StubDriver;
@@ -40,6 +41,7 @@ use TestApp\Database\Driver\StubDriver;
 /**
  * Tests Driver class
  */
+#[AllowMockObjectsWithoutExpectations]
 class DriverTest extends TestCase
 {
     /**

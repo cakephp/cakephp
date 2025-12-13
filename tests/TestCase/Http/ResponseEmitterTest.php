@@ -21,12 +21,14 @@ use Cake\Http\Cookie\Cookie;
 use Cake\Http\Response;
 use Cake\Http\ResponseEmitter;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 require_once __DIR__ . '/server_mocks.php';
 
 /**
  * Response emitter test.
  */
+#[AllowMockObjectsWithoutExpectations]
 class ResponseEmitterTest extends TestCase
 {
     /**

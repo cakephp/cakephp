@@ -33,6 +33,7 @@ use Cake\Http\MiddlewareQueue;
 use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use stdClass;
 use TestApp\Application;
 use TestApp\Command\AbortCommand;
@@ -43,6 +44,7 @@ use TestApp\Command\SampleCommand;
 /**
  * Test case for the CommandCollection
  */
+#[AllowMockObjectsWithoutExpectations]
 class CommandRunnerTest extends TestCase
 {
     /**

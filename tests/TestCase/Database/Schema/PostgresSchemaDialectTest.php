@@ -29,11 +29,13 @@ use Cake\Database\Schema\UniqueKey;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Postgres schema test case.
  */
+#[AllowMockObjectsWithoutExpectations]
 class PostgresSchemaDialectTest extends TestCase
 {
     /**
