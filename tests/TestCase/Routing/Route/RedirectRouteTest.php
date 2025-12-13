@@ -84,7 +84,7 @@ class RedirectRouteTest extends TestCase
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/Posts');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/home', ['redirect' => ['controller' => 'Posts']]);
+        $route = new RedirectRoute('/home', ['_redirect' => ['controller' => 'Posts']]);
         $route->parse('/home');
     }
 
@@ -108,7 +108,7 @@ class RedirectRouteTest extends TestCase
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://google.com');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/google', ['redirect' => 'http://google.com']);
+        $route = new RedirectRoute('/google', ['_redirect' => 'http://google.com']);
         $route->parse('/google');
     }
 
@@ -162,7 +162,7 @@ class RedirectRouteTest extends TestCase
         $this->expectException(RedirectException::class);
         $this->expectExceptionMessage('http://localhost/test');
         $this->expectExceptionCode(301);
-        $route = new RedirectRoute('/posts/*', ['redirect' => '/test'], ['persist' => true]);
+        $route = new RedirectRoute('/posts/*', ['_redirect' => '/test'], ['persist' => true]);
         $route->parse('/posts/2');
     }
 
