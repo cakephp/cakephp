@@ -5,15 +5,11 @@ namespace TestApp\Command;
 
 use Cake\Command\Command;
 use Cake\Console\Arguments;
+use Cake\Console\CommandHiddenInterface;
 use Cake\Console\ConsoleIo;
 
-class HiddenCommand extends Command
+class HiddenCommand extends Command implements CommandHiddenInterface
 {
-    public static function isHidden(): bool
-    {
-        return true;
-    }
-
     public static function getDescription(): string
     {
         return 'This command should not appear in help';

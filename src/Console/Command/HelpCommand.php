@@ -21,6 +21,7 @@ use Cake\Console\Arguments;
 use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
+use Cake\Console\CommandHiddenInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
@@ -110,11 +111,12 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     {
         $invert = [];
         foreach ($commands as $name => $class) {
+            // Skip hidden commands
+            if (is_subclass_of($class, CommandHiddenInterface::class)) {
+                continue;
+            }
             if (is_object($class)) {
                 $class = $class::class;
-            }
-            if ($this->isHiddenCommand($class)) {
-                continue;
             }
             $invert[$class] ??= [];
             $invert[$class][] = $name;
@@ -233,11 +235,12 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     {
         $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {
+            // Skip hidden commands
+            if (is_subclass_of($class, CommandHiddenInterface::class)) {
+                continue;
+            }
             if (is_object($class)) {
                 $class = $class::class;
-            }
-            if ($this->isHiddenCommand($class)) {
-                continue;
             }
             $shell = $shells->addChild('shell');
             $shell->addAttribute('name', $name);
@@ -247,17 +250,6 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         $io->setOutputAs(ConsoleOutput::RAW);
         $io->out((string)$shells->saveXML());
-    }
-
-    /**
-     * Check if a command class is hidden.
-     *
-     * @param string $class The command class name.
-     * @return bool
-     */
-    protected function isHiddenCommand(string $class): bool
-    {
-        return is_subclass_of($class, BaseCommand::class) && $class::isHidden();
     }
 
     /**

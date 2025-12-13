@@ -20,6 +20,7 @@ use AssertionError;
 use Cake\Command\Command;
 use Cake\Console\CommandFactory;
 use Cake\Console\CommandFactoryInterface;
+use Cake\Console\CommandHiddenInterface;
 use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
@@ -111,19 +112,20 @@ class CommandTest extends TestCase
     }
 
     /**
-     * Test isHidden returns false by default
+     * Test CommandHiddenInterface is not implemented by default
      */
-    public function testIsHiddenDefault(): void
+    public function testCommandHiddenInterfaceNotImplementedByDefault(): void
     {
-        $this->assertFalse(Command::isHidden());
+        $command = new Command();
+        $this->assertNotInstanceOf(CommandHiddenInterface::class, $command);
     }
 
     /**
-     * Test isHidden can be overridden to return true
+     * Test CommandHiddenInterface can be implemented to hide commands
      */
-    public function testIsHiddenOverride(): void
+    public function testCommandHiddenInterfaceImplementation(): void
     {
-        $this->assertTrue(HiddenCommand::isHidden());
+        $this->assertInstanceOf(CommandHiddenInterface::class, new HiddenCommand());
     }
 
     /**
