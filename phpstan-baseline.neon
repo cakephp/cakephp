@@ -19,12 +19,6 @@ parameters:
 			path: src/Cache/Engine/RedisEngine.php
 
 		-
-			message: '#^Parameter \#1 \$value of function count expects array\|Countable, TValue\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Collection/Collection.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 1
