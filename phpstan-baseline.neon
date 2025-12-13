@@ -343,12 +343,6 @@ parameters:
 			path: src/I18n/DateTime.php
 
 		-
-			message: '#^Call to an undefined method Cake\\I18n\\Date\|Cake\\I18n\\DateTime\:\:setTimezone\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/I18n/RelativeTimeFormatter.php
-
-		-
 			message: '#^@readonly property cannot have a default value\.$#'
 			identifier: property.readOnlyByPhpDocDefaultValue
 			count: 4

@@ -123,9 +123,37 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
     protected function getCommands(Arguments $args, ConsoleIo $io): int
     {
         $options = [];
+        $verbose = $io->level() >= ConsoleIo::VERBOSE;
+
+        // Build a map of command base names (without subcommands) to their classes
+        // to detect true duplicates (plugin-prefixed alias pointing to same command)
+        $commandClasses = [];
         foreach ($this->commands as $key => $value) {
             $parts = explode(' ', $key);
-            $options[] = $parts[0];
+            $commandName = $parts[0];
+            // Only track base commands (no subcommands) and prefer first occurrence
+            if (count($parts) === 1 && !isset($commandClasses[$commandName])) {
+                $commandClasses[$commandName] = $value;
+            }
+        }
+
+        foreach ($this->commands as $key => $value) {
+            $parts = explode(' ', $key);
+            $commandName = $parts[0];
+
+            // Skip plugin-prefixed aliases only if they are true duplicates
+            // (i.e., a short form exists that resolves to the same command class)
+            if (!$verbose && str_contains($commandName, '.')) {
+                $shortName = explode('.', $commandName)[1];
+                if (
+                    isset($commandClasses[$shortName]) &&
+                    isset($commandClasses[$commandName]) &&
+                    $commandClasses[$shortName] === $commandClasses[$commandName]
+                ) {
+                    continue;
+                }
+            }
+            $options[] = $commandName;
         }
         $options = array_unique($options);
         $io->out(implode(' ', $options));

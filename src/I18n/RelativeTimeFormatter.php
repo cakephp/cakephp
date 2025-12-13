@@ -109,7 +109,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     public function timeAgoInWords(DateTime|Date $time, array $options = []): string
     {
         $options = $this->_options($options, DateTime::class);
-        if ($options['timezone']) {
+        if ($time instanceof DateTime && $options['timezone']) {
             $time = $time->setTimezone($options['timezone']);
         }
 
