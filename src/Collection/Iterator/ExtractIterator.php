@@ -24,10 +24,6 @@ use Iterator;
 /**
  * Creates an iterator from another iterator that extract the requested column
  * or property based on a path
- *
- * @template TKey
- * @template TValue
- * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class ExtractIterator extends Collection
 {
@@ -55,7 +51,7 @@ class ExtractIterator extends Collection
      * $extractor = new ExtractIterator($items, 'comment.user.name');
      * ```
      *
-     * @param iterable<TKey, TValue> $items The list of values to iterate
+     * @param iterable $items The list of values to iterate
      * @param callable|string $path A dot separated path of column to follow
      * so that the final one can be returned or a callable that will take care
      * of doing that.

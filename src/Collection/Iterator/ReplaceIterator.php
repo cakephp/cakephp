@@ -25,10 +25,6 @@ use Traversable;
 /**
  * Creates an iterator from another iterator that will modify each of the values
  * by converting them using a callback function.
- *
- * @template TKey
- * @template TValue
- * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class ReplaceIterator extends Collection
 {
@@ -54,7 +50,7 @@ class ReplaceIterator extends Collection
      * in the current iteration, the key of the element and the passed $items iterator
      * as arguments, in that order.
      *
-     * @param iterable<TKey, TValue> $items The items to be filtered.
+     * @param iterable $items The items to be filtered.
      * @param callable $callback Callback.
      */
     public function __construct(iterable $items, callable $callback)
