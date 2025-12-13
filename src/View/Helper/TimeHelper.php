@@ -20,6 +20,8 @@ use Cake\Chronos\ChronosDate;
 use Cake\I18n\DateTime;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
+use DateTime as NativeDateTime;
+use DateTimeImmutable;
 use DateTimeInterface;
 use DateTimeZone;
 use Exception;
@@ -313,11 +315,15 @@ class TimeHelper extends Helper
         ];
         $options['timezone'] = $this->getTimezone($options['timezone']);
         if ($options['timezone'] && $dateTime instanceof DateTimeInterface) {
-            if ($dateTime instanceof DateTime) {
-                $dateTime = clone $dateTime;
+            $timezone = $options['timezone'] instanceof DateTimeZone
+                ? $options['timezone']
+                : new DateTimeZone($options['timezone']);
+            if ($dateTime instanceof DateTimeImmutable) {
+                // Cake\I18n\DateTime and Chronos extend DateTimeImmutable
+                $dateTime = $dateTime->setTimezone($timezone);
+            } elseif ($dateTime instanceof NativeDateTime) {
+                $dateTime = (clone $dateTime)->setTimezone($timezone);
             }
-            /** @var \DateTimeImmutable|\DateTime $dateTime */
-            $dateTime = $dateTime->setTimezone($options['timezone']);
             unset($options['timezone']);
         }
 

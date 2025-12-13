@@ -734,7 +734,7 @@ class Client implements EventDispatcherInterface, ClientInterface
     {
         $auth = $options['auth'];
         /** @var \Cake\Http\Client\Auth\Basic $adapter */
-        $adapter = $this->createAuth($auth, $options);
+        $adapter = $this->createAuth($auth);
 
         return $adapter->authentication($request, $options['auth']);
     }
@@ -753,7 +753,7 @@ class Client implements EventDispatcherInterface, ClientInterface
     {
         $auth = $options['proxy'];
         /** @var \Cake\Http\Client\Auth\Basic $adapter */
-        $adapter = $this->createAuth($auth, $options);
+        $adapter = $this->createAuth($auth);
 
         return $adapter->proxyAuthentication($request, $options['proxy']);
     }
@@ -765,11 +765,10 @@ class Client implements EventDispatcherInterface, ClientInterface
      * authentication strategy handler.
      *
      * @param array $auth The authentication options to use.
-     * @param array<string, mixed> $options The overall request options to use.
      * @return object Authentication strategy instance.
      * @throws \Cake\Core\Exception\CakeException when an invalid strategy is chosen.
      */
-    protected function createAuth(array $auth, array $options): object
+    protected function createAuth(array $auth): object
     {
         if (empty($auth['type'])) {
             $auth['type'] = 'basic';
@@ -782,6 +781,6 @@ class Client implements EventDispatcherInterface, ClientInterface
             );
         }
 
-        return new $class($this, $options);
+        return new $class($this);
     }
 }
