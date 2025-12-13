@@ -7,12 +7,6 @@ parameters:
 			path: src/Cache/Engine/ApcuEngine.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Memcached and ''setSaslAuthData'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Cache/Engine/MemcachedEngine.php
-
-		-
 			message: '#^Call to an undefined method Redis\|RedisCluster\:\:connect\(\)\.$#'
 			identifier: method.notFound
 			count: 2
@@ -49,28 +43,10 @@ parameters:
 			path: src/Command/RoutesGenerateCommand.php
 
 		-
-			message: '#^Property Cake\\Console\\ConsoleInput\:\:\$_input \(resource\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 1
-			path: src/Console/ConsoleInput.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2
 			path: src/Console/ConsoleOptionParser.php
-
-		-
-			message: '#^PHPDoc tag @var with type Closure is not subtype of native type Closure\(array\<string, string\>\)\: string\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: src/Console/ConsoleOutput.php
-
-		-
-			message: '#^Property Cake\\Console\\ConsoleOutput\:\:\$_output \(resource\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: src/Console/ConsoleOutput.php
 
 		-
 			message: '#^Trait Cake\\Console\\TestSuite\\ConsoleIntegrationTestTrait is used zero times and is not analysed\.$#'
@@ -241,28 +217,10 @@ parameters:
 			path: src/Mailer/MailerAwareTrait.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ORM/Association/BelongsTo.php
-
-		-
 			message: '#^PHPDoc tag @var with type callable\(\)\: mixed is not subtype of native type Closure\(string\)\: string\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: src/ORM/Association/DependentDeleteHelper.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ORM/Association/HasMany.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ORM/Association/HasOne.php
 
 		-
 			message: '#^Trait Cake\\ORM\\Behavior\\Translate\\TranslateTrait is used zero times and is not analysed\.$#'
@@ -271,34 +229,16 @@ parameters:
 			path: src/ORM/Behavior/Translate/TranslateTrait.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ORM/Behavior/TreeBehavior.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2
 			path: src/ORM/EagerLoader.php
 
 		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 2
-			path: src/ORM/Marshaller.php
-
-		-
 			message: '#^Method Cake\\ORM\\Query\\SelectQuery\:\:find\(\) should return static\(Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\) but returns Cake\\ORM\\Query\\SelectQuery\<TSubject of array\|Cake\\Datasource\\EntityInterface\>\.$#'
 			identifier: return.type
 			count: 1
 			path: src/ORM/Query/SelectQuery.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Cake\\Datasource\\EntityInterface and ''patch'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/ORM/Table.php
 
 		-
 			message: '#^PHPDoc tag @var with type class\-string\<Cake\\Datasource\\RulesChecker\> is not subtype of native type ''Cake\\\\Datasource\\\\RulesChecker''\|class\-string\<Cake\\ORM\\RulesChecker\>\.$#'
@@ -377,6 +317,14 @@ parameters:
 			identifier: argument.type
 			count: 1
 			path: src/TestSuite/TestCase.php
+			reportUnmatched: false
+
+		-
+			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\TestDoubleBuilder\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<int\<0, max\>, non\-falsy\-string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/TestSuite/TestCase.php
+			reportUnmatched: false
 
 		-
 			message: '#^Strict comparison using \=\=\= between null and null will always evaluate to true\.$#'
@@ -401,12 +349,6 @@ parameters:
 			identifier: trait.unused
 			count: 1
 			path: src/Utility/MergeVariablesTrait.php
-
-		-
-			message: '#^Call to function is_callable\(\) with array\{object, ''toArray''\} will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 3
-			path: src/Utility/Xml.php
 
 		-
 			message: '#^Parameter \#1 \$objectOrClass of class ReflectionEnum constructor expects class\-string\<UnitEnum\>\|UnitEnum, class\-string given\.$#'

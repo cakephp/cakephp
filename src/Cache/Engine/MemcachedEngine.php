@@ -199,6 +199,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         if ($this->_config['username'] !== null && $this->_config['password'] !== null) {
+            // @phpstan-ignore function.alreadyNarrowedType (check kept for SASL support detection)
             if (!method_exists($this->_Memcached, 'setSaslAuthData')) {
                 throw new InvalidArgumentException(
                     'Memcached extension is not built with SASL support',

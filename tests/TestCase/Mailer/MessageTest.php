@@ -249,10 +249,12 @@ HTML;
     public function testHeaders(): void
     {
         $this->message->setMessageId(false);
-        $this->message->setHeaders(['X-Something' => 'nice']);
+        // Set a fixed date to avoid flaky tests due to timing
+        $date = date(DATE_RFC2822);
+        $this->message->setHeaders(['X-Something' => 'nice', 'Date' => $date]);
         $expected = [
             'X-Something' => 'nice',
-            'Date' => date(DATE_RFC2822),
+            'Date' => $date,
             'MIME-Version' => '1.0',
             'Content-Type' => 'text/plain; charset=UTF-8',
             'Content-Transfer-Encoding' => '8bit',
@@ -262,8 +264,8 @@ HTML;
         $this->message->addHeaders(['X-Something' => 'very nice', 'X-Other' => 'cool']);
         $expected = [
             'X-Something' => 'very nice',
+            'Date' => $date,
             'X-Other' => 'cool',
-            'Date' => date(DATE_RFC2822),
             'MIME-Version' => '1.0',
             'Content-Type' => 'text/plain; charset=UTF-8',
             'Content-Transfer-Encoding' => '8bit',
@@ -276,8 +278,8 @@ HTML;
         $expected = [
             'From' => 'cake@cakephp.org',
             'X-Something' => 'very nice',
+            'Date' => $date,
             'X-Other' => 'cool',
-            'Date' => date(DATE_RFC2822),
             'MIME-Version' => '1.0',
             'Content-Type' => 'text/plain; charset=UTF-8',
             'Content-Transfer-Encoding' => '8bit',
@@ -293,8 +295,8 @@ HTML;
             'From' => 'CakePHP <cake@cakephp.org>',
             'To' => 'cake@cakephp.org, CakePHP <php@cakephp.org>',
             'X-Something' => 'very nice',
+            'Date' => $date,
             'X-Other' => 'cool',
-            'Date' => date(DATE_RFC2822),
             'MIME-Version' => '1.0',
             'Content-Type' => 'text/plain; charset=UTF-8',
             'Content-Transfer-Encoding' => '8bit',
@@ -306,8 +308,8 @@ HTML;
             'From' => 'CakePHP <cake@cakephp.org>',
             'To' => 'cake@cakephp.org, CakePHP <php@cakephp.org>',
             'X-Something' => 'very nice',
+            'Date' => $date,
             'X-Other' => 'cool',
-            'Date' => date(DATE_RFC2822),
             'MIME-Version' => '1.0',
             'Content-Type' => 'text/plain; charset=ISO-2022-JP',
             'Content-Transfer-Encoding' => '7bit',
@@ -329,10 +331,12 @@ HTML;
     public function testHeadersString(): void
     {
         $this->message->setMessageId(false);
-        $this->message->setHeaders(['X-Something' => 'nice']);
+        // Set a fixed date to avoid flaky tests due to timing
+        $date = date(DATE_RFC2822);
+        $this->message->setHeaders(['X-Something' => 'nice', 'Date' => $date]);
         $expected = [
             'X-Something: nice',
-            'Date: ' . date(DATE_RFC2822),
+            'Date: ' . $date,
             'MIME-Version: 1.0',
             'Content-Type: text/plain; charset=UTF-8',
             'Content-Transfer-Encoding: 8bit',
