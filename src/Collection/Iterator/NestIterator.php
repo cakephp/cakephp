@@ -24,10 +24,7 @@ use Traversable;
  * A type of collection that is aware of nested items and exposes methods to
  * check or retrieve them
  *
- * @template TKey
- * @template TValue
- * @extends \Cake\Collection\Collection<TKey, TValue>
- * @implements \RecursiveIterator<TKey, TValue>
+ * @template-implements \RecursiveIterator<mixed, mixed>
  */
 class NestIterator extends Collection implements RecursiveIterator
 {
@@ -41,7 +38,7 @@ class NestIterator extends Collection implements RecursiveIterator
     /**
      * Constructor
      *
-     * @param iterable<TKey, TValue> $items Collection items.
+     * @param iterable $items Collection items.
      * @param callable|string $nestKey the property that contains the nested items
      * If a callable is passed, it should return the children for the passed item
      */
