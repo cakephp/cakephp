@@ -28,6 +28,7 @@ use Cake\Test\Fixture\ArticlesFixture;
 use Cake\Test\Fixture\PostsFixture;
 use Cake\Test\Fixture\SpecialPkFixture;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Inflector;
 use Mockery;
 use TestApp\Test\Fixture\FeaturedTagsFixture;
 use TestApp\Test\Fixture\LettersFixture;
@@ -60,6 +61,7 @@ class TestFixtureTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
+        Inflector::reset();
         ConnectionManager::get('test')->execute('DROP TABLE IF EXISTS letters');
         ConnectionManager::get('test')->execute('DROP TABLE IF EXISTS special_pks');
     }
@@ -96,6 +98,33 @@ class TestFixtureTest extends TestCase
         $Fixture = new SpecialPkFixture();
         $this->assertSame('special_pks', $Fixture->table);
         $this->assertSame('SpecialPks', $Fixture->tableAlias);
+    }
+
+    /**
+     * Test that uninflected rules are respected when deriving table names.
+     *
+     * This ensures the fixture uses tableize() logic (underscore then pluralize)
+     * rather than pluralizing the CamelCase name directly.
+     */
+    public function testAliasRespectsUninflectedRules(): void
+    {
+        // 'equipment' is in the default uninflected list
+        $this->assertSame('equipment', Inflector::pluralize('equipment'));
+        $this->assertSame('equipment', Inflector::tableize('Equipment'));
+
+        // Verify tableize + camelize preserves uninflected words
+        $this->assertSame('Equipment', Inflector::camelize(Inflector::tableize('Equipment')));
+
+        // Add a custom uninflected rule
+        Inflector::rules('uninflected', ['invoice_tax_information']);
+        $this->assertSame('invoice_tax_information', Inflector::pluralize('invoice_tax_information'));
+        $this->assertSame('invoice_tax_information', Inflector::tableize('InvoiceTaxInformation'));
+
+        // The alias should be derived using tableize + camelize to respect uninflected rules
+        $this->assertSame(
+            'InvoiceTaxInformation',
+            Inflector::camelize(Inflector::tableize('InvoiceTaxInformation')),
+        );
     }
 
     /**
