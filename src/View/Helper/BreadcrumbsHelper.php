@@ -71,7 +71,8 @@ class BreadcrumbsHelper extends Helper
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
      * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
-     * be rendered in (a <li> tag by default). It accepts two special keys:
+     * be rendered in (a <li> tag by default). When $title is an array, these options will be used as defaults
+     * for each crumb, with individual crumb options taking precedence. It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      *   the link)
@@ -82,7 +83,9 @@ class BreadcrumbsHelper extends Helper
     {
         if (is_array($title)) {
             foreach ($title as $crumb) {
-                $this->crumbs[] = $crumb + ['title' => '', 'url' => null, 'options' => []];
+                $crumb += ['title' => '', 'url' => null, 'options' => []];
+                $crumb['options'] += $options;
+                $this->crumbs[] = $crumb;
             }
 
             return $this;
@@ -107,7 +110,8 @@ class BreadcrumbsHelper extends Helper
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
      * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
-     * be rendered in (a <li> tag by default). It accepts two special keys:
+     * be rendered in (a <li> tag by default). When $title is an array, these options will be used as defaults
+     * for each crumb, with individual crumb options taking precedence. It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      *   the link)
@@ -119,7 +123,9 @@ class BreadcrumbsHelper extends Helper
         if (is_array($title)) {
             $crumbs = [];
             foreach ($title as $crumb) {
-                $crumbs[] = $crumb + ['title' => '', 'url' => null, 'options' => []];
+                $crumb += ['title' => '', 'url' => null, 'options' => []];
+                $crumb['options'] += $options;
+                $crumbs[] = $crumb;
             }
 
             array_splice($this->crumbs, 0, 0, $crumbs);

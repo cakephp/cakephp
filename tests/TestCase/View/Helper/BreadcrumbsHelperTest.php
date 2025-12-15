@@ -122,6 +122,72 @@ class BreadcrumbsHelperTest extends TestCase
     }
 
     /**
+     * Test adding multiple crumbs with shared options
+     */
+    public function testAddMultipleWithSharedOptions(): void
+    {
+        $this->breadcrumbs
+            ->add([
+                ['title' => 'Home', 'url' => '/'],
+                ['title' => 'Products', 'url' => '/products'],
+                ['title' => 'Widget'],
+            ], null, ['class' => 'breadcrumb-item']);
+
+        $result = $this->breadcrumbs->getCrumbs();
+        $expected = [
+            [
+                'title' => 'Home',
+                'url' => '/',
+                'options' => ['class' => 'breadcrumb-item'],
+            ],
+            [
+                'title' => 'Products',
+                'url' => '/products',
+                'options' => ['class' => 'breadcrumb-item'],
+            ],
+            [
+                'title' => 'Widget',
+                'url' => null,
+                'options' => ['class' => 'breadcrumb-item'],
+            ],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test adding multiple crumbs with shared options and individual override
+     */
+    public function testAddMultipleWithSharedOptionsAndOverride(): void
+    {
+        $this->breadcrumbs
+            ->add([
+                ['title' => 'Home', 'url' => '/', 'options' => ['class' => 'home-crumb']],
+                ['title' => 'Products', 'url' => '/products'],
+                ['title' => 'Widget', 'options' => ['data-active' => 'true']],
+            ], null, ['class' => 'breadcrumb-item', 'data-type' => 'crumb']);
+
+        $result = $this->breadcrumbs->getCrumbs();
+        $expected = [
+            [
+                'title' => 'Home',
+                'url' => '/',
+                'options' => ['class' => 'home-crumb', 'data-type' => 'crumb'],
+            ],
+            [
+                'title' => 'Products',
+                'url' => '/products',
+                'options' => ['class' => 'breadcrumb-item', 'data-type' => 'crumb'],
+            ],
+            [
+                'title' => 'Widget',
+                'url' => null,
+                'options' => ['data-active' => 'true', 'class' => 'breadcrumb-item', 'data-type' => 'crumb'],
+            ],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
      * Test adding crumbs to the trail using prepend()
      */
     public function testPrepend(): void
@@ -183,6 +249,82 @@ class BreadcrumbsHelperTest extends TestCase
                 'title' => 'The root',
                 'url' => '/root',
                 'options' => ['data-name' => 'some-name'],
+            ],
+            [
+                'title' => 'Home',
+                'url' => '/',
+                'options' => [
+                    'class' => 'first',
+                ],
+            ],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test prepending multiple crumbs with shared options
+     */
+    public function testPrependMultipleWithSharedOptions(): void
+    {
+        $this->breadcrumbs
+            ->add('Home', '/', ['class' => 'first'])
+            ->prepend([
+                ['title' => 'Some text', 'url' => ['controller' => 'Some', 'action' => 'text']],
+                ['title' => 'The root', 'url' => '/root'],
+            ], null, ['class' => 'breadcrumb-item']);
+
+        $result = $this->breadcrumbs->getCrumbs();
+        $expected = [
+            [
+                'title' => 'Some text',
+                'url' => [
+                    'controller' => 'Some',
+                    'action' => 'text',
+                ],
+                'options' => ['class' => 'breadcrumb-item'],
+            ],
+            [
+                'title' => 'The root',
+                'url' => '/root',
+                'options' => ['class' => 'breadcrumb-item'],
+            ],
+            [
+                'title' => 'Home',
+                'url' => '/',
+                'options' => [
+                    'class' => 'first',
+                ],
+            ],
+        ];
+        $this->assertEquals($expected, $result);
+    }
+
+    /**
+     * Test prepending multiple crumbs with shared options and individual override
+     */
+    public function testPrependMultipleWithSharedOptionsAndOverride(): void
+    {
+        $this->breadcrumbs
+            ->add('Home', '/', ['class' => 'first'])
+            ->prepend([
+                ['title' => 'Some text', 'url' => ['controller' => 'Some', 'action' => 'text'], 'options' => ['data-special' => 'yes']],
+                ['title' => 'The root', 'url' => '/root'],
+            ], null, ['class' => 'breadcrumb-item', 'data-type' => 'nav']);
+
+        $result = $this->breadcrumbs->getCrumbs();
+        $expected = [
+            [
+                'title' => 'Some text',
+                'url' => [
+                    'controller' => 'Some',
+                    'action' => 'text',
+                ],
+                'options' => ['data-special' => 'yes', 'class' => 'breadcrumb-item', 'data-type' => 'nav'],
+            ],
+            [
+                'title' => 'The root',
+                'url' => '/root',
+                'options' => ['class' => 'breadcrumb-item', 'data-type' => 'nav'],
             ],
             [
                 'title' => 'Home',
