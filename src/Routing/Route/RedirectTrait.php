@@ -34,24 +34,23 @@ trait RedirectTrait
     /**
      * The location to redirect to.
      *
-     * @var array
+     * @var array|string
      */
-    public array $redirect;
+    protected array|string $redirect;
 
     /**
      * Constructor
      *
      * @param string $template Template string with parameter placeholders
-     * @param array $defaults Defaults for the route. Either a redirect=>value array or a CakePHP array URL.
+     * @param array $defaults Defaults for the route. Either a CakePHP array URL
+     *   or an array with '_redirect' key containing the string URL to redirect to.
      * @param array<string, mixed> $options Array of additional options for the Route
      */
     public function __construct(string $template, array $defaults = [], array $options = [])
     {
         parent::__construct($template, $defaults, $options);
-        if (isset($defaults['redirect'])) {
-            $defaults = (array)$defaults['redirect'];
-        }
-        $this->redirect = $defaults;
+
+        $this->redirect = $defaults['_redirect'] ?? $defaults;
     }
 
     /**
@@ -70,10 +69,8 @@ trait RedirectTrait
         if (!$params) {
             return null;
         }
+
         $redirect = $this->redirect;
-        if (count($redirect) === 1 && !isset($redirect['controller'])) {
-            $redirect = $redirect[0];
-        }
         if (isset($this->options['persist']) && is_array($redirect)) {
             $redirect += ['pass' => $params['pass'], 'url' => []];
             if (is_array($this->options['persist'])) {
@@ -85,10 +82,12 @@ trait RedirectTrait
             }
             $redirect = Router::reverseToArray($redirect);
         }
+
         $status = 301;
         if (isset($this->options['status']) && ($this->options['status'] >= 300 && $this->options['status'] < 400)) {
             $status = $this->options['status'];
         }
+
         throw new RedirectException(Router::url($redirect, true), $status);
     }
 
