@@ -21,11 +21,6 @@ use Closure;
 
 /**
  * The basis for every query object
- *
- * @method $this andWhere($conditions, array $types = []) Connects any previously defined set of conditions to the
- *   provided list using the AND operator. {@see \Cake\Database\Query::andWhere()}
- * @method \Cake\Datasource\EntityInterface|array firstOrFail() Get the first result from the executing query or raise an exception.
- *   {@see \Cake\Database\Query::firstOrFail()}
  */
 interface QueryInterface
 {
@@ -154,6 +149,14 @@ interface QueryInterface
      * @return mixed the first result from the ResultSet
      */
     public function first(): mixed;
+
+    /**
+     * Get the first result from the executing query or raise an exception.
+     *
+     * @throws \Cake\Datasource\Exception\RecordNotFoundException When there is no first record.
+     * @return mixed The first result from the ResultSet.
+     */
+    public function firstOrFail(): mixed;
 
     /**
      * Returns the total amount of results for the query.
@@ -409,4 +412,18 @@ interface QueryInterface
         array $types = [],
         bool $overwrite = false,
     ): static;
+
+    /**
+     * Connects any previously defined set of conditions to the provided list
+     * using the AND operator.
+     *
+     * This method is identical to using `where()` with the third
+     * parameter set to `false` (the default).
+     *
+     * @param \Closure|array|string $conditions The conditions to add with AND.
+     * @param array<string, string> $types Associative array of type names used to bind values to query.
+     * @return $this
+     * @see \Cake\Datasource\QueryInterface::where()
+     */
+    public function andWhere(Closure|array|string $conditions, array $types = []): static;
 }
