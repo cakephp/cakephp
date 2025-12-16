@@ -27,11 +27,13 @@ use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * SQL Server schema test case.
  */
+#[AllowMockObjectsWithoutExpectations]
 class SqlserverSchemaDialectTest extends TestCase
 {
     /**

@@ -22,10 +22,12 @@ use Cake\Database\Type\BinaryUuidType;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Text;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Test for the Binary uuid type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class BinaryUuidTypeTest extends TestCase
 {
     /**

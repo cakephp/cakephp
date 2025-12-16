@@ -23,6 +23,7 @@ use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use TestApp\Model\Table\AuthorsTable;
 use TestApp\Model\Table\TestTable;
 use TestPlugin\Model\Table\CommentsTable;
@@ -30,6 +31,7 @@ use TestPlugin\Model\Table\CommentsTable;
 /**
  * Tests Association class
  */
+#[AllowMockObjectsWithoutExpectations]
 class AssociationTest extends TestCase
 {
     /**

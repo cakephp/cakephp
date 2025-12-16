@@ -24,8 +24,10 @@ use Cake\I18n\PackageLocator;
 use Cake\I18n\Translator;
 use Cake\I18n\TranslatorRegistry;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use TestApp\Cache\Engine\TestAppCacheEngine;
 
+#[AllowMockObjectsWithoutExpectations]
 class TranslatorRegistryTest extends TestCase
 {
     /**

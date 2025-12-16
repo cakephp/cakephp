@@ -29,12 +29,14 @@ use Cake\Test\Fixture\PostsFixture;
 use Cake\Test\Fixture\SpecialPkFixture;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use TestApp\Test\Fixture\FeaturedTagsFixture;
 use TestApp\Test\Fixture\LettersFixture;
 
 /**
  * Test case for TestFixture
  */
+#[AllowMockObjectsWithoutExpectations]
 class TestFixtureTest extends TestCase
 {
     /**

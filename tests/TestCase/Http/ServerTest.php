@@ -330,7 +330,7 @@ class ServerTest extends TestCase
                 return $middlewareQueue;
             }
 
-            public function handle(ServerRequestInterface $request): ResponseInterface
+            public function handle(ServerRequestInterface $request): Response
             {
                 return new Response();
             }
@@ -355,7 +355,7 @@ class ServerTest extends TestCase
                 return $middlewareQueue;
             }
 
-            public function handle(ServerRequestInterface $request): ResponseInterface
+            public function handle(ServerRequestInterface $request): Response
             {
                 return new Response();
             }
@@ -384,7 +384,7 @@ class ServerTest extends TestCase
                 return $middlewareQueue;
             }
 
-            public function handle(ServerRequestInterface $request): ResponseInterface
+            public function handle(ServerRequestInterface $request): Response
             {
                 return new Response();
             }

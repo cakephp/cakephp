@@ -25,10 +25,12 @@ use Cake\ORM\ResultSetFactory;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * ResultSetFactory test case.
  */
+#[AllowMockObjectsWithoutExpectations]
 class ResultSetFactoryTest extends TestCase
 {
     /**

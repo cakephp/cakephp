@@ -124,14 +124,15 @@ class FileEngine extends CacheEngine
             return false;
         }
 
+        $duration = $this->duration($ttl);
         $key = $this->key($key);
         $this->eventClass = CacheBeforeSetEvent::class;
-        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $ttl]);
+        $this->dispatchEvent(CacheBeforeSetEvent::NAME, ['key' => $key, 'value' => $value, 'ttl' => $duration]);
 
         $this->eventClass = CacheAfterSetEvent::class;
         if ($this->setKey($key, true) === false) {
             $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-                'key' => $key, 'value' => $value, 'success' => false,
+                'key' => $key, 'value' => $value, 'success' => false, 'ttl' => $duration,
             ]);
 
             return false;
@@ -142,7 +143,7 @@ class FileEngine extends CacheEngine
             $value = serialize($value);
         }
 
-        $expires = time() + $this->duration($ttl);
+        $expires = time() + $duration;
         $contents = implode('', [$expires, PHP_EOL, $value, PHP_EOL]);
 
         if ($this->config['lock']) {
@@ -160,7 +161,7 @@ class FileEngine extends CacheEngine
         unset($this->File);
 
         $this->dispatchEvent(CacheAfterSetEvent::NAME, [
-            'key' => $key, 'value' => $origValue, 'success' => $success,
+            'key' => $key, 'value' => $origValue, 'success' => $success, 'ttl' => $duration,
         ]);
 
         return $success;

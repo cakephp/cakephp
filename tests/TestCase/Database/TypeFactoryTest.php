@@ -22,6 +22,7 @@ use Cake\Database\TypeFactory;
 use Cake\Database\TypeInterface;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Type\BarType;
 use TestApp\Database\Type\FooType;
@@ -29,6 +30,7 @@ use TestApp\Database\Type\FooType;
 /**
  * Tests TypeFactory class
  */
+#[AllowMockObjectsWithoutExpectations]
 class TypeFactoryTest extends TestCase
 {
     /**

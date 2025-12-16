@@ -20,6 +20,7 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use TestApp\Model\Table\PaginatorPostsTable;
 use TestApp\Stub\LocatorAwareStub;
 use UnexpectedValueException;
@@ -27,6 +28,7 @@ use UnexpectedValueException;
 /**
  * LocatorAwareTrait test case
  */
+#[AllowMockObjectsWithoutExpectations]
 class LocatorAwareTraitTest extends TestCase
 {
     /**

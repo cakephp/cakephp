@@ -96,6 +96,19 @@ class HelpCommandTest extends TestCase
     }
 
     /**
+     * Test filtering by command prefix
+     */
+    public function testFilterByPrefix(): void
+    {
+        $this->exec('help cache');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('cache clear');
+        $this->assertOutputContains('cache list');
+        $this->assertOutputNotContains('routes');
+        $this->assertOutputNotContains('sample');
+    }
+
+    /**
      * Test help --xml
      */
     public function testMainAsXml(): void

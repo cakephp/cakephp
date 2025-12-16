@@ -21,10 +21,12 @@ use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Test for the Boolean type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class BoolTypeTest extends TestCase
 {
     /**

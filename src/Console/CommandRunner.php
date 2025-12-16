@@ -136,6 +136,13 @@ class CommandRunner implements EventDispatcherInterface
 
         $this->bootstrap();
 
+        if ($this->app instanceof EventAwareApplicationInterface) {
+            $eventManager = $this->getEventManager();
+            $eventManager = $this->app->events($eventManager);
+            $eventManager = $this->app->pluginEvents($eventManager);
+            $this->setEventManager($eventManager);
+        }
+
         $commands = new CommandCollection([
             'help' => HelpCommand::class,
         ]);
@@ -155,8 +162,18 @@ class CommandRunner implements EventDispatcherInterface
 
         $io = $io ?: new ConsoleIo();
 
+        /** @var array{string|null, array} $resolved */
+        $resolved = $this->longestCommandName($commands, $argv);
+        [$name, $argv] = $resolved;
+
+        // Check if this is a command prefix (e.g., "cache" has subcommands like "cache clear")
+        // Show help for that prefix instead of running the base command
+        if ($name !== null && !$commands->has($name) && $this->hasCommandsWithPrefix($commands, $name)) {
+            $argv = array_merge([$name], $argv);
+            $name = 'help';
+        }
+
         try {
-            [$name, $argv] = $this->longestCommandName($commands, $argv);
             $name = $this->resolveName($commands, $io, $name);
         } catch (MissingOptionException $e) {
             $io->error($e->getFullMessage());
@@ -317,6 +334,18 @@ class CommandRunner implements EventDispatcherInterface
     }
 
     /**
+     * Check if there are commands that start with the given prefix.
+     *
+     * @param \Cake\Console\CommandCollection $commands The command collection.
+     * @param string $prefix The prefix to check.
+     * @return bool True if commands with this prefix exist.
+     */
+    protected function hasCommandsWithPrefix(CommandCollection $commands, string $prefix): bool
+    {
+        return array_any($commands->keys(), fn($name) => str_starts_with($name, $prefix . ' '));
+    }
+
+    /**
      * Execute a Command class.
      *
      * @param \Cake\Console\CommandInterface $command The command to run.
@@ -325,12 +354,6 @@ class CommandRunner implements EventDispatcherInterface
     protected function runCommand(CommandInterface $command, array $argv): ?int
     {
         try {
-            $eventManager = $this->getEventManager();
-            if ($this->app instanceof EventAwareApplicationInterface) {
-                $eventManager = $this->app->events($eventManager);
-                $eventManager = $this->app->pluginEvents($eventManager);
-            }
-            $this->setEventManager($eventManager);
             if ($command instanceof EventDispatcherInterface) {
                 $command->setEventManager($this->getEventManager());
             }

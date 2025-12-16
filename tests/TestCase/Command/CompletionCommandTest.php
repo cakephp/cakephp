@@ -70,9 +70,7 @@ class CompletionCommandTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
         $expected = [
-            'test_plugin.example',
-            'test_plugin.sample',
-            'test_plugin_two.example',
+            'example',
             'unique',
             'welcome',
             'cache',
@@ -92,6 +90,43 @@ class CompletionCommandTest extends TestCase
         foreach ($expected as $value) {
             $this->assertOutputContains($value);
         }
+    }
+
+    /**
+     * test commands excludes plugin-prefixed aliases only for true duplicates
+     */
+    public function testCommandsExcludesPluginAliasesForDuplicates(): void
+    {
+        $this->exec('completion commands');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        // Plugin-prefixed aliases should be excluded when they point to the
+        // same class as the short form (true duplicates)
+        $this->assertOutputNotContains('test_plugin.example');
+        $this->assertOutputNotContains('test_plugin_two.unique');
+        $this->assertOutputNotContains('test_plugin_two.welcome');
+
+        // Short forms should still be present
+        $this->assertOutputContains('example');
+
+        // Plugin-prefixed aliases should be included when multiple plugins
+        // have commands with the same name (different classes)
+        $this->assertOutputContains('test_plugin.sample');
+        $this->assertOutputContains('test_plugin_two.example');
+    }
+
+    /**
+     * test commands includes plugin-prefixed aliases in verbose mode
+     */
+    public function testCommandsIncludesPluginAliasesInVerboseMode(): void
+    {
+        $this->exec('completion commands -v');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        // Plugin-prefixed aliases should be in the output in verbose mode
+        $this->assertOutputContains('test_plugin.example');
+        $this->assertOutputContains('test_plugin.sample');
+        $this->assertOutputContains('test_plugin_two.example');
     }
 
     /**

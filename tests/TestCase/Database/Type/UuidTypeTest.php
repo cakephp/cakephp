@@ -20,10 +20,12 @@ use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Test for the Uuid type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class UuidTypeTest extends TestCase
 {
     /**

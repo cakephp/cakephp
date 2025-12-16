@@ -21,11 +21,13 @@ use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test for the Integer type.
  */
+#[AllowMockObjectsWithoutExpectations]
 class IntegerTypeTest extends TestCase
 {
     /**

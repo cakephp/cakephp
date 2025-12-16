@@ -29,6 +29,7 @@ use Cake\Routing\Router;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use PHPUnit\Framework\Attributes\DataProvider;
+use ReflectionProperty;
 use TestApp\Routing\Route\DashedRoute;
 
 /**
@@ -391,7 +392,8 @@ class RouteBuilderTest extends TestCase
         $route = $this->collection->routes()[1];
 
         $this->assertInstanceOf(RedirectRoute::class, $route);
-        $this->assertSame('/forums', $route->redirect[0]);
+        $reflection = new ReflectionProperty(RedirectRoute::class, 'redirect');
+        $this->assertSame('/forums', $reflection->getValue($route));
 
         $route = $routes->redirect('/old', '/forums');
         $this->assertInstanceOf(RedirectRoute::class, $route);

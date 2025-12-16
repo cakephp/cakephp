@@ -828,7 +828,7 @@ class RouteBuilder
     {
         $options['routeClass'] ??= RedirectRoute::class;
         if (is_string($url)) {
-            $url = ['redirect' => $url];
+            $url = ['_redirect' => $url];
         }
 
         return $this->connect($route, $url, $options);

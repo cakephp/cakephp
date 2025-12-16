@@ -22,11 +22,13 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
 use Exception;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use TestApp\Http\Client\Adapter\CakeStreamWrapper;
 
 /**
  * HTTP stream adapter test.
  */
+#[AllowMockObjectsWithoutExpectations]
 class StreamTest extends TestCase
 {
     /**

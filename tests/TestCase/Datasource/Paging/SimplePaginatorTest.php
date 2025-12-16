@@ -20,7 +20,9 @@ use Cake\Core\Configure;
 use Cake\Datasource\Paging\SimplePaginator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Entity;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
+#[AllowMockObjectsWithoutExpectations]
 class SimplePaginatorTest extends NumericPaginatorTest
 {
     protected function setUp(): void

@@ -101,7 +101,7 @@ class ErrorHandlerMiddlewareTest extends TestCase
 
             return new class implements ExceptionRendererInterface
             {
-                public function render(): ResponseInterface
+                public function render(): Response
                 {
                     return new Response();
                 }

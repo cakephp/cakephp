@@ -1336,7 +1336,7 @@ trait EntityTrait
     public function setPatchable(array|string $field, bool $set): static
     {
         if ($field === '*') {
-            $this->patchable = array_map(fn($p) => $set, $this->patchable);
+            $this->patchable = array_map(fn() => $set, $this->patchable);
             $this->patchable['*'] = $set;
 
             return $this;
