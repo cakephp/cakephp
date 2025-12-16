@@ -296,10 +296,13 @@ class HasMany extends Association
                             return false;
                         }
 
-                        return array_any(
-                            $currentEntities,
-                            fn($cEntity) => $entity->extract($pkFields) === $cEntity->extract($pkFields),
-                        );
+                        foreach ($currentEntities as $cEntity) {
+                            if ($entity->extract($pkFields) === $cEntity->extract($pkFields)) {
+                                return true;
+                            }
+                        }
+
+                        return false;
                     },
                 )
                 ->toList();

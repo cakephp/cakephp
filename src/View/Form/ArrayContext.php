@@ -140,7 +140,13 @@ class ArrayContext implements ContextInterface
     {
         $primary = $this->getPrimaryKey();
 
-        return array_all($primary, fn($column) => empty($this->_context['defaults'][$column]));
+        foreach ($primary as $column) {
+            if (!empty($this->_context['defaults'][$column])) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

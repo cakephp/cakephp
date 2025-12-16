@@ -497,7 +497,13 @@ class ServerRequest implements ServerRequestInterface
     public function is(array|string $type, mixed ...$args): bool
     {
         if (is_array($type)) {
-            return array_any($type, fn($_type) => $this->is($_type));
+            foreach ($type as $_type) {
+                if ($this->is($_type)) {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         $type = strtolower($type);
@@ -663,7 +669,13 @@ class ServerRequest implements ServerRequestInterface
      */
     public function isAll(array $types): bool
     {
-        return array_all($types, fn($type) => $this->is($type));
+        foreach ($types as $type) {
+            if (!$this->is($type)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

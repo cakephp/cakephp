@@ -659,7 +659,13 @@ abstract class SchemaDialect
             return false;
         }
 
-        return array_any($columns, fn($column) => $column['name'] === $columnName);
+        foreach ($columns as $column) {
+            if ($column['name'] === $columnName) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

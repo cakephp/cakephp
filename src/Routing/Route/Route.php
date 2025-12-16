@@ -794,7 +794,13 @@ class Route
         $defaults = (array)$this->defaults['_method'];
         $methods = (array)$this->normalizeAndValidateMethods($url['_method']);
 
-        return array_any($methods, fn($value) => in_array($value, $defaults, true));
+        foreach ($methods as $value) {
+            if (in_array($value, $defaults, true)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**

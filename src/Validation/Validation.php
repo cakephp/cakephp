@@ -508,7 +508,13 @@ class Validation
 
         $format = (array)$format;
 
-        return array_any($format, fn($key) => static::check($check, $regex[$key]));
+        foreach ($format as $key) {
+            if (static::check($check, $regex[$key])) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
@@ -1062,7 +1068,13 @@ class Validation
 
         $extension = strtolower(pathinfo($check, PATHINFO_EXTENSION));
 
-        return array_any($extensions, fn($value) => $extension === strtolower($value));
+        foreach ($extensions as $value) {
+            if ($extension === strtolower($value)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
