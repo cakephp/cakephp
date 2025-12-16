@@ -1152,6 +1152,71 @@ trait CollectionTrait
     }
 
     /**
+     * @inheritDoc
+     */
+    public function keys(): CollectionInterface
+    {
+        $generator = function (): Generator {
+            foreach ($this->optimizeUnwrap() as $key => $value) {
+                yield $key;
+            }
+        };
+
+        return $this->newCollection($generator());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function values(): CollectionInterface
+    {
+        $generator = function (): Generator {
+            foreach ($this->optimizeUnwrap() as $value) {
+                yield $value;
+            }
+        };
+
+        return $this->newCollection($generator());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function implode(string $glue, callable|string|null $path = null): string
+    {
+        $items = $this;
+        if ($path !== null) {
+            $items = $items->extract($path);
+        }
+
+        return implode($glue, $items->toList());
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function when(mixed $condition, callable $callback): CollectionInterface
+    {
+        if ($condition) {
+            return $callback($this, $condition);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function unless(mixed $condition, callable $callback): CollectionInterface
+    {
+        if (!$condition) {
+            return $callback($this, $condition);
+        }
+
+        return $this;
+    }
+
+    /**
      * Unwraps this iterator and returns the simplest
      * traversable that can be used for getting the data out
      *

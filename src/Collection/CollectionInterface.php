@@ -26,6 +26,11 @@ use const SORT_NUMERIC;
  * list of elements exposing a number of traversing and extracting method for
  * generating other collections.
  *
+ * @method \Cake\Collection\CollectionInterface keys() Returns a new collection containing only the keys of the elements.
+ * @method \Cake\Collection\CollectionInterface values() Returns a new collection containing only the values, re-indexed with consecutive integers.
+ * @method string implode(string $glue, callable|string|null $path = null) Concatenates all elements into a string using the provided glue.
+ * @method \Cake\Collection\CollectionInterface when(mixed $condition, callable $callback) Applies callback if condition is truthy.
+ * @method \Cake\Collection\CollectionInterface unless(mixed $condition, callable $callback) Applies callback if condition is falsy.
  * @template TKey
  * @template-covariant TValue
  * @template-extends \Iterator<TKey, TValue>
