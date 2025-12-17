@@ -81,8 +81,8 @@ class DtoMapper
             if (isset($data[$name])) {
                 $value = $data[$name];
 
-                // Handle nested DTO (type hint is a class)
-                if ($paramInfo['dtoClass'] !== null) {
+                // Handle nested DTO (type hint is a class) - only map arrays, pass objects through
+                if ($paramInfo['dtoClass'] !== null && is_array($value)) {
                     $value = $this->map($value, $paramInfo['dtoClass']);
                 } elseif ($paramInfo['collectionOf'] !== null) {
                     // Handle collection - inline loop avoids closure creation overhead

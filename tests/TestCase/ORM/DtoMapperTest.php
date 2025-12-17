@@ -16,9 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\I18n\DateTime;
 use Cake\ORM\DtoMapper;
 use Cake\TestSuite\TestCase;
 use TestApp\Dto\ArticleDto;
+use TestApp\Dto\ArticleWithDatesDto;
 use TestApp\Dto\AuthorDto;
 use TestApp\Dto\CommentDto;
 use TestApp\Dto\SimpleArticleDto;
@@ -231,5 +233,43 @@ class DtoMapperTest extends TestCase
         $dto = $this->mapper->map($data, SimpleArticleDto::class);
 
         $this->assertInstanceOf(SimpleArticleDto::class, $dto);
+    }
+
+    public function testMapWithDateTimeObjects(): void
+    {
+        $created = new DateTime('2024-01-15 10:30:00');
+        $modified = new DateTime('2024-06-20 14:45:00');
+
+        $data = [
+            'id' => 1,
+            'title' => 'Test Article',
+            'created' => $created,
+            'modified' => $modified,
+        ];
+
+        $dto = $this->mapper->map($data, ArticleWithDatesDto::class);
+
+        $this->assertInstanceOf(ArticleWithDatesDto::class, $dto);
+        $this->assertSame(1, $dto->id);
+        $this->assertSame('Test Article', $dto->title);
+        // DateTime objects should be passed through, not mapped
+        $this->assertSame($created, $dto->created);
+        $this->assertSame($modified, $dto->modified);
+    }
+
+    public function testMapWithNullDateTime(): void
+    {
+        $data = [
+            'id' => 1,
+            'title' => 'Test Article',
+            'created' => null,
+            'modified' => null,
+        ];
+
+        $dto = $this->mapper->map($data, ArticleWithDatesDto::class);
+
+        $this->assertInstanceOf(ArticleWithDatesDto::class, $dto);
+        $this->assertNull($dto->created);
+        $this->assertNull($dto->modified);
     }
 }
