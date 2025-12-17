@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
+use Cake\ORM\Attribute\CollectionOf;
 use ReflectionClass;
 use ReflectionNamedType;
 use ReflectionParameter;

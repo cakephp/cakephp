@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TestApp\Dto;
 
-use Cake\ORM\CollectionOf;
+use Cake\ORM\Attribute\CollectionOf;
 
 /**
  * Simple readonly DTO for Article.
