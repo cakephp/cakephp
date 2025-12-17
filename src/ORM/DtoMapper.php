@@ -158,14 +158,20 @@ class DtoMapper
         if ($type instanceof ReflectionNamedType && !$type->isBuiltin()) {
             $typeName = $type->getName();
             // Exclude common non-DTO classes
-            if (!in_array($typeName, ['DateTime', 'DateTimeImmutable', 'DateTimeInterface', 'stdClass'], true)) {
+            if (
+                !in_array($typeName, ['DateTime', 'DateTimeImmutable', 'DateTimeInterface', 'stdClass'], true)
+                && class_exists($typeName)
+            ) {
+                /** @var class-string $typeName */
                 $info['dtoClass'] = $typeName;
             }
         }
 
         // Check for #[CollectionOf(SomeDto::class)] attribute
         foreach ($param->getAttributes(CollectionOf::class) as $attr) {
-            $info['collectionOf'] = $attr->getArguments()[0];
+            /** @var class-string $collectionClass */
+            $collectionClass = $attr->getArguments()[0];
+            $info['collectionOf'] = $collectionClass;
             $info['dtoClass'] = null; // Collection takes precedence
         }
 
