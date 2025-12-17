@@ -96,6 +96,13 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     protected bool $_hydrate = true;
 
     /**
+     * DTO class for projection instead of entity hydration
+     *
+     * @var class-string|null
+     */
+    protected ?string $_dtoClass = null;
+
+    /**
      * Whether aliases are generated for fields.
      *
      * @var bool
@@ -1519,6 +1526,43 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function isHydrationEnabled(): bool
     {
         return $this->_hydrate;
+    }
+
+    /**
+     * Project results into a DTO class instead of entities.
+     *
+     * When DTO projection is enabled, results will be hydrated into
+     * the specified DTO class instead of entity objects.
+     *
+     * @param class-string $dtoClass The DTO class name
+     * @return $this
+     */
+    public function projectAs(string $dtoClass)
+    {
+        $this->_dirty();
+        $this->_dtoClass = $dtoClass;
+
+        return $this;
+    }
+
+    /**
+     * Get the DTO class for projection.
+     *
+     * @return class-string|null
+     */
+    public function getDtoClass(): ?string
+    {
+        return $this->_dtoClass;
+    }
+
+    /**
+     * Check if DTO projection is enabled.
+     *
+     * @return bool
+     */
+    public function isDtoProjectionEnabled(): bool
+    {
+        return $this->_dtoClass !== null;
     }
 
     /**
