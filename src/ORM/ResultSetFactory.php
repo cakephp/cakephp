@@ -236,9 +236,9 @@ class ResultSetFactory
             $results = $results[$data['primaryAlias']];
         }
 
-        // DTO projection takes precedence over entity hydration
+        // DTO projection returns arrays - DTO mapping happens in formatter phase
         if ($data['dtoClass'] !== null) {
-            return $this->hydrateDto($results, $data['dtoClass']);
+            return $results;
         }
 
         if ($data['hydrate'] && !($results instanceof EntityInterface)) {
@@ -279,7 +279,7 @@ class ResultSetFactory
      *
      * @return \Cake\ORM\DtoMapper
      */
-    protected function getDtoMapper(): DtoMapper
+    public function getDtoMapper(): DtoMapper
     {
         if ($this->dtoMapper === null) {
             $this->dtoMapper = new DtoMapper();
