@@ -762,10 +762,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         // DTO projection runs AFTER all other formatters so behaviors see arrays/entities
         if ($this->_dtoClass !== null) {
             $dtoClass = $this->_dtoClass;
-            $mapper = $this->resultSetFactory()->getDtoMapper();
-            $result = $result->map(function ($row) use ($dtoClass, $mapper) {
+            $factory = $this->resultSetFactory();
+            $result = $result->map(function ($row) use ($dtoClass, $factory) {
                 if (is_array($row)) {
-                    return $mapper->map($row, $dtoClass);
+                    return $factory->hydrateDto($row, $dtoClass);
                 }
 
                 return $row;

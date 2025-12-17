@@ -259,11 +259,15 @@ class ResultSetFactory
     /**
      * Hydrate a row into a DTO.
      *
+     * Supports two patterns:
+     * - Static `createFromArray($data, $nested)` factory method (cakephp-dto style)
+     * - Constructor with named parameters (DtoMapper reflection)
+     *
      * @param array $row Nested array data
      * @param class-string $dtoClass DTO class name
      * @return object
      */
-    protected function hydrateDto(array $row, string $dtoClass): object
+    public function hydrateDto(array $row, string $dtoClass): object
     {
         // Check for array style static factory method
         if (method_exists($dtoClass, 'createFromArray')) {
