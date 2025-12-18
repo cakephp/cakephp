@@ -58,8 +58,9 @@ class TestFixture implements FixtureInterface
      * If set, table must initially be empty.
      * $table will be read from the ORM table loaded via the alias.
      *
-     * If both table and tableAlias are empty, the alias,
-     * will be inflected from the class name with Inflector::pluralize()
+     * If both table and tableAlias are empty, the alias will be inflected
+     * from the class name using tableize() then camelize() to respect
+     * custom Inflector rules.
      *
      * @var string
      */
@@ -141,7 +142,10 @@ class TestFixture implements FixtureInterface
     }
 
     /**
-     * Returns the table name using the fixture class
+     * Returns the ORM table alias using the fixture class.
+     *
+     * Uses tableize() then camelize() to respect custom Inflector rules
+     * like uninflected words.
      *
      * @return string
      */
@@ -149,8 +153,9 @@ class TestFixture implements FixtureInterface
     {
         [, $class] = namespaceSplit(static::class);
         preg_match('/^(.*)Fixture$/', $class, $matches);
+        $name = $matches[1] ?? $class;
 
-        return Inflector::pluralize($matches[1] ?? $class);
+        return Inflector::camelize(Inflector::tableize($name));
     }
 
     /**

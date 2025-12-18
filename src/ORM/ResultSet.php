@@ -27,8 +27,8 @@ use Cake\Datasource\ResultSetInterface;
  *
  * @template TKey
  * @template TValue
- * @template-implemements \Cake\Datasource\ResultSetInterface<TKey, TValue>
- * @template-extends \Cake\Collection\Collection<TKey, TValue>
+ * @implements \Cake\Datasource\ResultSetInterface<TKey, TValue>
+ * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class ResultSet extends Collection implements ResultSetInterface
 {

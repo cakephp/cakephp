@@ -24,7 +24,10 @@ use RecursiveIterator;
  * a RecursiveIterator but do not want children. This iterator will
  * always behave as having no nested items.
  *
- * @template-implements \RecursiveIterator<mixed, mixed>
+ * @template TKey
+ * @template TValue
+ * @extends \Cake\Collection\Collection<TKey, TValue>
+ * @implements \RecursiveIterator<TKey, TValue>
  */
 class NoChildrenIterator extends Collection implements RecursiveIterator
 {

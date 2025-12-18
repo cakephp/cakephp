@@ -21,6 +21,7 @@ use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
 use Cake\Console\ConsoleIoInterface;
+use Cake\Console\CommandHiddenInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Console\ConsoleOutput;
 use Cake\Core\Configure;
@@ -107,6 +108,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     {
         $invert = [];
         foreach ($commands as $name => $class) {
+            // Skip hidden commands
+            if (is_subclass_of($class, CommandHiddenInterface::class)) {
+                continue;
+            }
             if (is_object($class)) {
                 $class = $class::class;
             }
@@ -227,6 +232,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
     {
         $shells = new SimpleXMLElement('<shells></shells>');
         foreach ($commands as $name => $class) {
+            // Skip hidden commands
+            if (is_subclass_of($class, CommandHiddenInterface::class)) {
+                continue;
+            }
             if (is_object($class)) {
                 $class = $class::class;
             }

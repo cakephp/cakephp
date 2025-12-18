@@ -25,9 +25,11 @@ use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\Test\Fixture\AliasedArticlesFixture;
 use Cake\Test\Fixture\ArticlesFixture;
+use Cake\Test\Fixture\EquipmentFixture;
 use Cake\Test\Fixture\PostsFixture;
 use Cake\Test\Fixture\SpecialPkFixture;
 use Cake\TestSuite\TestCase;
+use Cake\Utility\Inflector;
 use Mockery;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use TestApp\Test\Fixture\FeaturedTagsFixture;
@@ -62,8 +64,10 @@ class TestFixtureTest extends TestCase
     {
         parent::tearDown();
         Log::reset();
+        Inflector::reset();
         ConnectionManager::get('test')->execute('DROP TABLE IF EXISTS letters');
         ConnectionManager::get('test')->execute('DROP TABLE IF EXISTS special_pks');
+        ConnectionManager::get('test')->execute('DROP TABLE IF EXISTS equipment');
     }
 
     /**
@@ -98,6 +102,25 @@ class TestFixtureTest extends TestCase
         $Fixture = new SpecialPkFixture();
         $this->assertSame('special_pks', $Fixture->table);
         $this->assertSame('SpecialPks', $Fixture->tableAlias);
+    }
+
+    /**
+     * Test that uninflected rules are respected when deriving table names.
+     *
+     * "equipment" is in the default uninflected list, so EquipmentFixture
+     * should use table "equipment" (not "equipments").
+     *
+     * This ensures the fixture uses tableize() logic (underscore then pluralize)
+     * rather than pluralizing the CamelCase name directly.
+     */
+    public function testAliasRespectsUninflectedRules(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $connection->execute('CREATE TABLE equipment (id INT PRIMARY KEY, name VARCHAR(50))');
+
+        $fixture = new EquipmentFixture();
+        $this->assertSame('equipment', $fixture->table);
+        $this->assertSame('Equipment', $fixture->tableAlias);
     }
 
     /**

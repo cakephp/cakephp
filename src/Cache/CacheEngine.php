@@ -29,6 +29,8 @@ use function Cake\Core\triggerWarning;
 
 /**
  * Storage engine for CakePHP caching
+ *
+ * @implements \Cake\Event\EventDispatcherInterface<\Cake\Cache\CacheEngine>
  */
 abstract class CacheEngine implements CacheInterface, CacheEngineInterface, EventDispatcherInterface
 {

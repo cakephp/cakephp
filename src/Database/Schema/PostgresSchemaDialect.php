@@ -194,11 +194,9 @@ class PostgresSchemaDialect extends SchemaDialect
         if (str_contains($col, 'json')) {
             return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
         }
-        if ($col === 'geography') {
-            $srid = (int)($matches[3] ?? self::DEFAULT_SRID);
-            $type = strtolower($matches[2] ?? 'point');
 
-            return ['type' => $type, 'length' => null, 'srid' => $srid];
+        if (in_array($col, ['geometry', 'geography'])) {
+            return ['type' => $col, 'length' => null];
         }
 
         $length = is_numeric($length) ? $length : null;

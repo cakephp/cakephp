@@ -42,7 +42,6 @@ class TypeFactory
         'datetimefractional' => Type\DateTimeFractionalType::class,
         'decimal' => Type\DecimalType::class,
         'float' => Type\FloatType::class,
-        'geography' => Type\StringType::class,
         'geometry' => Type\StringType::class,
         'integer' => Type\IntegerType::class,
         'inet' => Type\StringType::class,

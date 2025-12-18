@@ -1,30 +1,27 @@
 <?php
-declare(strict_types=1);
-
 /**
  * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
  * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  *
  * Licensed under The MIT License
  * For full copyright and license information, please see the LICENSE.txt
- * Redistributions of files must retain the above copyright notice.
+ * Redistributions of files must retain the above copyright notice
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         3.0.0
+ * @since         5.3.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Datasource;
+namespace Cake\Test\Fixture;
 
-use Cake\Collection\CollectionInterface;
+use Cake\TestSuite\Fixture\TestFixture;
 
 /**
- * Describes how a collection of datasource results should look like
+ * Fixture for testing uninflected word handling.
  *
- * @template TKey
- * @template-covariant TValue
- * @extends \Cake\Collection\CollectionInterface<TKey, TValue>
+ * "equipment" is in the default uninflected list, so the table
+ * should be "equipment" (not "equipments").
  */
-interface ResultSetInterface extends CollectionInterface
+class EquipmentFixture extends TestFixture
 {
 }

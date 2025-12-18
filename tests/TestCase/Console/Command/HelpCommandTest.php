@@ -93,6 +93,10 @@ class HelpCommandTest extends TestCase
         $this->assertOutputContains('This is a demo command', 'command description missing');
         $this->assertOutputContains('<info>custom_group</info>');
         $this->assertOutputContains('- grouped');
+        $this->assertOutputNotContains(
+            '- hidden',
+            'Hidden commands should not appear in help output.',
+        );
     }
 
     /**
@@ -126,5 +130,20 @@ class HelpCommandTest extends TestCase
 
         $find = '<shell name="test_plugin.sample" call_as="test_plugin.sample" provider="TestPlugin\Command\SampleCommand" help="test_plugin.sample -h"';
         $this->assertOutputContains($find);
+
+        $this->assertOutputNotContains(
+            'HiddenCommand',
+            'Hidden commands should not appear in XML output.',
+        );
+    }
+
+    /**
+     * Test that hidden commands are still executable
+     */
+    public function testHiddenCommandStillExecutable(): void
+    {
+        $this->exec('hidden');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('Hidden Command Executed!');
     }
 }

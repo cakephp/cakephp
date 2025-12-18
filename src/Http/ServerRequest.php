@@ -829,7 +829,7 @@ class ServerRequest implements ServerRequestInterface
      * is not present, an empty array will be returned.
      *
      * @param string $name The header you want to get (case-insensitive)
-     * @return array<string, string> An associative array of headers and their values.
+     * @return array<string> An array of all the header values for a particular case-insensitive header by name.
      *   If the header doesn't exist, an empty array will be returned.
      * @link https://www.php-fig.org/psr/psr-7/ This method is part of the PSR-7 server request interface.
      */

@@ -1050,7 +1050,9 @@ trait CollectionTrait
         $collectionArraysCounts = [];
 
         foreach ($this->toList() as $value) {
+            /** @phpstan-ignore argument.type (cartesianProduct requires array values) */
             $valueCount = count($value);
+            /** @phpstan-ignore argument.type */
             if ($valueCount !== count($value, COUNT_RECURSIVE)) {
                 throw new LogicException('Cannot find the cartesian product of a multidimensional array');
             }
@@ -1100,6 +1102,7 @@ trait CollectionTrait
     public function transpose(): CollectionInterface
     {
         $arrayValue = $this->toList();
+        /** @phpstan-ignore argument.type (transpose requires array values) */
         $length = count(current($arrayValue));
         $result = [];
         foreach ($arrayValue as $row) {

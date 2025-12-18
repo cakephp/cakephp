@@ -23,6 +23,10 @@ use Cake\Collection\Collection;
  * The values to be inserted come out of another traversal object. This is useful
  * when you have two separate collections and want to merge them together by placing
  * each of the values from one collection into a property inside the other collection.
+ *
+ * @template TKey
+ * @template TValue
+ * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class InsertIterator extends Collection
 {
@@ -59,11 +63,11 @@ class InsertIterator extends Collection
      * Constructs a new collection that will dynamically add properties to it out of
      * the values found in $values.
      *
-     * @param iterable $into The target collection to which the values will
+     * @param iterable<TKey, TValue> $into The target collection to which the values will
      * be inserted at the specified path.
      * @param string $path A dot separated list of properties that need to be traversed
      * to insert the value into the target collection.
-     * @param iterable $values The source collection from which the values will
+     * @param iterable<mixed, mixed> $values The source collection from which the values will
      * be inserted at the specified path.
      */
     public function __construct(iterable $into, string $path, iterable $values)

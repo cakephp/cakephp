@@ -236,7 +236,6 @@ class ConsoleOutput
             return $text;
         }
         if ($this->outputAs !== static::PLAIN) {
-            /** @var \Closure $replaceTags */
             $replaceTags = $this->replaceTags(...);
 
             $output = preg_replace_callback(
@@ -293,6 +292,7 @@ class ConsoleOutput
      */
     protected function writeStream(string $message): int
     {
+        // @phpstan-ignore isset.property (property may not be set if constructor throws)
         if (!isset($this->output)) {
             return 0;
         }
@@ -382,6 +382,7 @@ class ConsoleOutput
      */
     public function __destruct()
     {
+        // @phpstan-ignore isset.property (property may not be set if constructor throws)
         if (isset($this->output) && is_resource($this->output)) {
             fclose($this->output);
         }
