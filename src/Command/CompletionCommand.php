@@ -19,8 +19,8 @@ namespace Cake\Command;
 use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\CommandHiddenInterface;
+use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use ReflectionClass;
 
