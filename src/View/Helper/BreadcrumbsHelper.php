@@ -19,7 +19,6 @@ namespace Cake\View\Helper;
 use Cake\View\Helper;
 use Cake\View\StringTemplateTrait;
 use LogicException;
-use function Cake\Core\deprecationWarning;
 
 /**
  * BreadcrumbsHelper to register and display a breadcrumb trail for your views
@@ -61,36 +60,18 @@ class BreadcrumbsHelper extends Helper
     /**
      * Add a crumb to the end of the trail.
      *
-     * @param array|string $content If provided as a string, it represents the content of the crumb.
-     * Alternatively, if you want to add multiple crumbs at once, you can provide an array, with each values being a
-     * single crumb. Arrays are expected to be of this form:
-     *
-     * - *content* The content of the crumb
-     * - *link* The link of the crumb. If not provided, no link will be made
-     * - *options* Options of the crumb. See description of params option of this method.
-     *
+     * @param string $content Represents the content of the crumb.
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
      * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
-     *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
      *   the link)
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
      */
-    public function add(array|string $content, array|string|null $url = null, array $options = []): static
+    public function add(string $content, array|string|null $url = null, array $options = []): static
     {
-        if (is_array($title)) {
-            deprecationWarning(
-                '5.3.0',
-                'Passing an array as the first argument to BreadcrumbsHelper::add() is deprecated. ' .
-                'Use addMany() instead.',
-            );
-
-            return $this->addMany($title, $options);
-        }
-
         $this->crumbs[] = compact('content', 'url', 'options');
 
         return $this;
@@ -99,7 +80,11 @@ class BreadcrumbsHelper extends Helper
     /**
      * Add multiple crumbs to the end of the trail.
      *
-     * @param array<array{title?: string, url?: array|string|null, options?: array<string, mixed>}> $crumbs Array of crumbs to add.
+     * @param array<array{content?: string, url?: array|string|null, options?: array<string, mixed>}> $crumbs Array of crumbs to add.
+     * Arrays are expected to be of this form:
+     * - *content* The content of the crumb
+     * - *link* The link of the crumb. If not provided, no link will be made
+     * - *options* Options of the crumb. See description of params option of this method.
      * @param array<string, mixed> $options Shared options for all crumbs. These options will be used as defaults
      * for each crumb, with individual crumb options taking precedence. These options will be used as attributes
      * HTML attribute the crumb will be rendered in (a <li> tag by default). It accepts two special keys:
@@ -109,10 +94,10 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
      */
-    public function addMany(array $crumbs, array $options = [])
+    public function addMany(array $crumbs, array $options = []): static
     {
         foreach ($crumbs as $crumb) {
-            $crumb += ['title' => '', 'url' => null, 'options' => []];
+            $crumb += ['content' => '', 'url' => null, 'options' => []];
             $crumb['options'] += $options;
             $this->crumbs[] = $crumb;
         }
@@ -123,14 +108,7 @@ class BreadcrumbsHelper extends Helper
     /**
      * Prepend a crumb to the start of the queue.
      *
-     * @param array|string $content If provided as a string, it represents the content of the crumb.
-     * Alternatively, if you want to add multiple crumbs at once, you can provide an array, with each values being a
-     * single crumb. Arrays are expected to be of this form:
-     *
-     * - *content* The content of the crumb
-     * - *link* The link of the crumb. If not provided, no link will be made
-     * - *options* Options of the crumb. See description of params option of this method.
-     *
+     * @param string $content Represents the content of the crumb.
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
      * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
@@ -141,18 +119,8 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
      */
-    public function prepend(array|string $content, array|string|null $url = null, array $options = []): static
+    public function prepend(string $content, array|string|null $url = null, array $options = []): static
     {
-        if (is_array($title)) {
-            deprecationWarning(
-                '5.3.0',
-                'Passing an array as the first argument to BreadcrumbsHelper::prepend() is deprecated. ' .
-                'Use prependMany() instead.',
-            );
-
-            return $this->prependMany($title, $options);
-        }
-
         array_unshift($this->crumbs, compact('content', 'url', 'options'));
 
         return $this;
@@ -161,7 +129,11 @@ class BreadcrumbsHelper extends Helper
     /**
      * Prepend multiple crumbs to the start of the queue.
      *
-     * @param array<array{title?: string, url?: array|string|null, options?: array<string, mixed>}> $crumbs Array of crumbs to prepend.
+     * @param array<array{content?: string, url?: array|string|null, options?: array<string, mixed>}> $crumbs Array of crumbs to prepend.
+     * Arrays are expected to be of this form:
+     * - *content* The content of the crumb
+     * - *link* The link of the crumb. If not provided, no link will be made
+     * - *options* Options of the crumb. See description of params option of this method.
      * @param array<string, mixed> $options Shared options for all crumbs. These options will be used as defaults
      * for each crumb, with individual crumb options taking precedence. These options will be used as attributes
      * HTML attribute the crumb will be rendered in (a <li> tag by default). It accepts two special keys:
@@ -171,11 +143,11 @@ class BreadcrumbsHelper extends Helper
      * - *templateVars*: Specific template vars in case you override the templates provided.
      * @return $this
      */
-    public function prependMany(array $crumbs, array $options = [])
+    public function prependMany(array $crumbs, array $options = []): static
     {
         $prepend = [];
         foreach ($crumbs as $crumb) {
-            $crumb += ['title' => '', 'url' => null, 'options' => []];
+            $crumb += ['content' => '', 'url' => null, 'options' => []];
             $crumb['options'] += $options;
             $prepend[] = $crumb;
         }

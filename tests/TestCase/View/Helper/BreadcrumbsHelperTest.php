@@ -75,55 +75,6 @@ class BreadcrumbsHelperTest extends TestCase
     }
 
     /**
-     * Test adding multiple crumbs at once to the trail using add()
-     */
-    public function testAddMultiple(): void
-    {
-        $this->deprecated(function (): void {
-            $this->breadcrumbs
-                ->add([
-                    [
-                        'title' => 'Home',
-                        'url' => '/',
-                        'options' => ['class' => 'first'],
-                    ],
-                    [
-                        'title' => 'Some text',
-                        'url' => ['controller' => 'Some', 'action' => 'text'],
-                    ],
-                    [
-                        'title' => 'Final',
-                    ],
-                ]);
-
-            $result = $this->breadcrumbs->getCrumbs();
-            $expected = [
-                [
-                    'content' => 'Home',
-                    'url' => '/',
-                    'options' => [
-                        'class' => 'first',
-                    ],
-                ],
-                [
-                    'title' => 'Some text',
-                    'url' => [
-                        'controller' => 'Some',
-                        'action' => 'text',
-                    ],
-                    'options' => [],
-                ],
-                [
-                    'title' => 'Final',
-                    'url' => null,
-                    'options' => [],
-                ],
-            ];
-            $this->assertEquals($expected, $result);
-        });
-    }
-
-    /**
      * Test adding crumbs to the trail using prepend()
      */
     public function testPrepend(): void
@@ -157,46 +108,6 @@ class BreadcrumbsHelperTest extends TestCase
             ],
         ];
         $this->assertEquals($expected, $result);
-    }
-
-    /**
-     * Test adding crumbs to the trail using prepend()
-     */
-    public function testPrependMultiple(): void
-    {
-        $this->deprecated(function (): void {
-            $this->breadcrumbs
-                ->add('Home', '/', ['class' => 'first'])
-                ->prepend([
-                    ['title' => 'Some text', 'url' => ['controller' => 'Some', 'action' => 'text']],
-                    ['title' => 'The root', 'url' => '/root', 'options' => ['data-name' => 'some-name']],
-                ]);
-
-            $result = $this->breadcrumbs->getCrumbs();
-            $expected = [
-                [
-                    'title' => 'Some text',
-                    'url' => [
-                        'controller' => 'Some',
-                        'action' => 'text',
-                    ],
-                    'options' => [],
-                ],
-                [
-                    'title' => 'The root',
-                    'url' => '/root',
-                    'options' => ['data-name' => 'some-name'],
-                ],
-                [
-                    'title' => 'Home',
-                    'url' => '/',
-                    'options' => [
-                        'class' => 'first',
-                    ],
-                ],
-            ];
-            $this->assertEquals($expected, $result);
-        });
     }
 
     /**
@@ -524,30 +435,30 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs
             ->addMany([
                 [
-                    'title' => 'Home',
+                    'content' => 'Home',
                     'url' => '/',
                     'options' => ['class' => 'first'],
                 ],
                 [
-                    'title' => 'Some text',
+                    'content' => 'Some text',
                     'url' => ['controller' => 'Some', 'action' => 'text'],
                 ],
                 [
-                    'title' => 'Final',
+                    'content' => 'Final',
                 ],
             ]);
 
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => [
                     'class' => 'first',
                 ],
             ],
             [
-                'title' => 'Some text',
+                'content' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
                     'action' => 'text',
@@ -555,7 +466,7 @@ class BreadcrumbsHelperTest extends TestCase
                 'options' => [],
             ],
             [
-                'title' => 'Final',
+                'content' => 'Final',
                 'url' => null,
                 'options' => [],
             ],
@@ -570,25 +481,25 @@ class BreadcrumbsHelperTest extends TestCase
     {
         $this->breadcrumbs
             ->addMany([
-                ['title' => 'Home', 'url' => '/'],
-                ['title' => 'Products', 'url' => '/products'],
-                ['title' => 'Category'],
+                ['content' => 'Home', 'url' => '/'],
+                ['content' => 'Products', 'url' => '/products'],
+                ['content' => 'Category'],
             ], ['class' => 'breadcrumb-item']);
 
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => ['class' => 'breadcrumb-item'],
             ],
             [
-                'title' => 'Products',
+                'content' => 'Products',
                 'url' => '/products',
                 'options' => ['class' => 'breadcrumb-item'],
             ],
             [
-                'title' => 'Category',
+                'content' => 'Category',
                 'url' => null,
                 'options' => ['class' => 'breadcrumb-item'],
             ],
@@ -603,25 +514,25 @@ class BreadcrumbsHelperTest extends TestCase
     {
         $this->breadcrumbs
             ->addMany([
-                ['title' => 'Home', 'url' => '/', 'options' => ['class' => 'special']],
-                ['title' => 'Products', 'url' => '/products'],
-                ['title' => 'Category'],
+                ['content' => 'Home', 'url' => '/', 'options' => ['class' => 'special']],
+                ['content' => 'Products', 'url' => '/products'],
+                ['content' => 'Category'],
             ], ['class' => 'breadcrumb-item']);
 
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => ['class' => 'special'],
             ],
             [
-                'title' => 'Products',
+                'content' => 'Products',
                 'url' => '/products',
                 'options' => ['class' => 'breadcrumb-item'],
             ],
             [
-                'title' => 'Category',
+                'content' => 'Category',
                 'url' => null,
                 'options' => ['class' => 'breadcrumb-item'],
             ],
@@ -637,14 +548,14 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs
             ->add('Home', '/', ['class' => 'first'])
             ->prependMany([
-                ['title' => 'Some text', 'url' => ['controller' => 'Some', 'action' => 'text']],
-                ['title' => 'The root', 'url' => '/root', 'options' => ['data-name' => 'some-name']],
+                ['content' => 'Some text', 'url' => ['controller' => 'Some', 'action' => 'text']],
+                ['content' => 'The root', 'url' => '/root', 'options' => ['data-name' => 'some-name']],
             ]);
 
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'Some text',
+                'content' => 'Some text',
                 'url' => [
                     'controller' => 'Some',
                     'action' => 'text',
@@ -652,12 +563,12 @@ class BreadcrumbsHelperTest extends TestCase
                 'options' => [],
             ],
             [
-                'title' => 'The root',
+                'content' => 'The root',
                 'url' => '/root',
                 'options' => ['data-name' => 'some-name'],
             ],
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => [
                     'class' => 'first',
@@ -675,24 +586,24 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs
             ->add('Current', '/current')
             ->prependMany([
-                ['title' => 'Home', 'url' => '/'],
-                ['title' => 'Products', 'url' => '/products'],
+                ['content' => 'Home', 'url' => '/'],
+                ['content' => 'Products', 'url' => '/products'],
             ], ['class' => 'breadcrumb-item']);
 
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => ['class' => 'breadcrumb-item'],
             ],
             [
-                'title' => 'Products',
+                'content' => 'Products',
                 'url' => '/products',
                 'options' => ['class' => 'breadcrumb-item'],
             ],
             [
-                'title' => 'Current',
+                'content' => 'Current',
                 'url' => '/current',
                 'options' => [],
             ],
@@ -708,24 +619,24 @@ class BreadcrumbsHelperTest extends TestCase
         $this->breadcrumbs
             ->add('Current', '/current')
             ->prependMany([
-                ['title' => 'Home', 'url' => '/', 'options' => ['class' => 'special']],
-                ['title' => 'Products', 'url' => '/products'],
+                ['content' => 'Home', 'url' => '/', 'options' => ['class' => 'special']],
+                ['content' => 'Products', 'url' => '/products'],
             ], ['class' => 'breadcrumb-item']);
 
         $result = $this->breadcrumbs->getCrumbs();
         $expected = [
             [
-                'title' => 'Home',
+                'content' => 'Home',
                 'url' => '/',
                 'options' => ['class' => 'special'],
             ],
             [
-                'title' => 'Products',
+                'content' => 'Products',
                 'url' => '/products',
                 'options' => ['class' => 'breadcrumb-item'],
             ],
             [
-                'title' => 'Current',
+                'content' => 'Current',
                 'url' => '/current',
                 'options' => [],
             ],
