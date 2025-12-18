@@ -1772,7 +1772,7 @@ SQL;
         $connection->expects($this->any())->method('getWriteDriver')
             ->willReturn($driver);
 
-        $table = (new TableSchema('ref_table'))
+        $table = new TableSchema('ref_table')
             ->addColumn('geometry', [
                 'type' => 'geometry',
             ])
