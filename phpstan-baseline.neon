@@ -223,6 +223,12 @@ parameters:
 			path: src/ORM/Behavior/Translate/TranslateTrait.php
 
 		-
+			message: '#^Call to function assert\(\) with false and string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/ORM/EagerLoader.php
+
+		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2
