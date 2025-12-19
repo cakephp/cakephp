@@ -500,7 +500,6 @@ class CollectionTest extends TestCase
         $this->assertFalse($collection->containsKey('a'));
     }
 
-
     /**
      * Provider for some simple tests
      *
