@@ -229,6 +229,20 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
+    public function containsKey(mixed $key): bool
+    {
+        foreach ($this->optimizeUnwrap() as $k => $v) {
+            if ($k === $key) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function map(callable $callback): CollectionInterface
     {
         return new ReplaceIterator($this->unwrap(), $callback);

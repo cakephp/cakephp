@@ -476,6 +476,32 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests containsKey
+     */
+    public function testContainsKey(): void
+    {
+        $collection = new Collection([]);
+        $this->assertFalse($collection->containsKey('a'));
+
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+        $this->assertTrue($collection->containsKey('a'));
+        $this->assertTrue($collection->containsKey('c'));
+        $this->assertFalse($collection->containsKey(1));
+        $this->assertFalse($collection->containsKey('e'));
+
+        $items = ['a', 'b', 'c'];
+        $collection = new Collection($items);
+        $this->assertTrue($collection->containsKey(0));
+        $this->assertTrue($collection->containsKey(1));
+        $this->assertTrue($collection->containsKey(2));
+        $this->assertFalse($collection->containsKey(3));
+        $this->assertFalse($collection->containsKey('2'));
+        $this->assertFalse($collection->containsKey('a'));
+    }
+
+
+    /**
      * Provider for some simple tests
      *
      * @return array
