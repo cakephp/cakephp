@@ -367,6 +367,20 @@ class ExceptionTrapTest extends TestCase
         $this->assertStringContainsString(__FILE__, $out);
     }
 
+    public function testHandleFatalErrorWhenCompileError(): void
+    {
+        $trap = new ExceptionTrap([
+            'exceptionRenderer' => TextExceptionRenderer::class,
+        ]);
+        ob_start();
+        $trap->handleFatalError(E_COMPILE_ERROR, 'Compile error', __FILE__, __LINE__);
+        $out = ob_get_clean();
+
+        $this->assertStringContainsString('500 : Fatal Error', $out);
+        $this->assertStringContainsString('Compile error', $out);
+        $this->assertStringContainsString(__FILE__, $out);
+    }
+
     /**
      * Test integration with HTML rendering for fatal errors
      *

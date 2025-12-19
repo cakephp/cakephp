@@ -271,6 +271,7 @@ class ExceptionTrap
             E_USER_ERROR,
             E_ERROR,
             E_PARSE,
+            E_COMPILE_ERROR,
         ];
         if (!in_array($error['type'], $fatals, true)) {
             return;
