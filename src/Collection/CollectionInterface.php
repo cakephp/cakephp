@@ -32,6 +32,7 @@ use const SORT_NUMERIC;
  * @method \Cake\Collection\CollectionInterface when(mixed $condition, callable $callback) Applies callback if condition is truthy.
  * @method \Cake\Collection\CollectionInterface unless(mixed $condition, callable $callback) Applies callback if condition is falsy.
  * @method \Cake\Collection\CollectionInterface filterIndexed(callable $callback) Looks through each index, returning values where the test passes.
+ * @method \Cake\Collection\CollectionInterface eachIndexed(callable $callback) Applies a callback to the elements in this collection using index as first argument.
  * @template TKey
  * @template-covariant TValue
  * @template-extends \Iterator<TKey, TValue>

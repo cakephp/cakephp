@@ -80,6 +80,18 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
+    public function eachIndexed(callable $callback)
+    {
+        foreach ($this->optimizeUnwrap() as $k => $v) {
+            $callback($k, $v);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function filter(?callable $callback = null): CollectionInterface
     {
         $callback ??= fn($v) => (bool)$v;

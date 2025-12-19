@@ -3102,10 +3102,31 @@ class CollectionTest extends TestCase
      */
     public function testFilterIndexed(): void
     {
-        $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        $months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         $collection = new Collection($months);
-        $expected = ["February", "April", "June", "August", "October", "December"];
+        $expected = ['February', 'April', 'June', 'August', 'October', 'December'];
         $actual = $collection->filterIndexed(fn($index) => $index % 2 !== 0)->toList();
+        $this->assertSame($expected, $actual);
+    }
+
+    /**
+     * Test eachIndexed method
+     *
+     * @return void
+     */
+    public function testEachIndexed(): void
+    {
+        $months = ['Jan' => 'January', 'Feb' => 'February', 'Mar' => 'March'];
+        $collection = new Collection($months);
+        $expected = [
+            ['Jan' => 'January'],
+            ['Feb' => 'February'],
+            ['Mar' => 'March'],
+        ];
+        $actual = [];
+        $collection->eachIndexed(function($index, $value) use (&$actual): void {
+            $actual[] =  [$index => $value];
+        });
         $this->assertSame($expected, $actual);
     }
 }
