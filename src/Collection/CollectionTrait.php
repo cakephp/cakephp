@@ -90,6 +90,17 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
+    public function filterIndexed(callable $callback = null): CollectionInterface
+    {
+        return new FilterIterator(
+            $this->unwrap(),
+            fn($value, $index, $iterator) => $callback($index, $value, $iterator)
+        );
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function reject(?callable $callback = null): CollectionInterface
     {
         $callback ??= fn($v) => (bool)$v;

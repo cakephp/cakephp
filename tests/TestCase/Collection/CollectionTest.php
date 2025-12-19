@@ -3094,4 +3094,18 @@ class CollectionTest extends TestCase
 
         $this->assertSame([2, 3, 4], $result);
     }
+
+    /**
+     * Test filterIndexed method
+     *
+     * @return void
+     */
+    public function testFilterIndexed(): void
+    {
+        $months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+        $collection = new Collection($months);
+        $expected = ["February", "April", "June", "August", "October", "December"];
+        $actual = $collection->filterIndexed(fn($index) => $index % 2 !== 0)->toList();
+        $this->assertSame($expected, $actual);
+    }
 }
