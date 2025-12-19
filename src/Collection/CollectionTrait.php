@@ -102,6 +102,14 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
+    public function filterNotNull(): CollectionInterface
+    {
+        return new FilterIterator($this->unwrap(), fn($v) => $v !== null);
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function filterIndexed(callable $callback = null): CollectionInterface
     {
         return new FilterIterator(

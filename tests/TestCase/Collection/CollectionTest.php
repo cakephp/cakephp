@@ -3157,4 +3157,18 @@ class CollectionTest extends TestCase
         });
         $this->assertSame($expected, $actual);
     }
+
+    /**
+     * Test filterNotNull method
+     *
+     * @return void
+     */
+    public function testFilterNotNull(): void
+    {
+        $data = ['Jan' => [1, 2], 'Feb' => null, 'Mar' => [1, 3, 9], 'Jun' => [], 'Jul' => null];
+        $expected = ['Jan' => [1, 2], 'Mar' => [1, 3, 9], 'Jun' => []];
+        $collection = new Collection($data);
+        $actual = $collection->filterNotNull()->toArray();
+        $this->assertSame($expected, $actual);
+    }
 }

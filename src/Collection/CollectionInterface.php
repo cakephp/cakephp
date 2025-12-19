@@ -31,6 +31,7 @@ use const SORT_NUMERIC;
  * @method string implode(string $glue, callable|string|null $path = null) Concatenates all elements into a string using the provided glue.
  * @method \Cake\Collection\CollectionInterface when(mixed $condition, callable $callback) Applies callback if condition is truthy.
  * @method \Cake\Collection\CollectionInterface unless(mixed $condition, callable $callback) Applies callback if condition is falsy.
+ * @method \Cake\Collection\CollectionInterface filterNotNull() Looks through each value, returning only not null values.
  * @method \Cake\Collection\CollectionInterface filterIndexed(callable $callback) Looks through each index, returning values where the test passes.
  * @method \Cake\Collection\CollectionInterface eachIndexed(callable $callback) Applies a callback to the elements in this collection using index as first argument.
  * @method \Cake\Collection\CollectionInterface containsAll(array $elements) Returns true if all $elements is present in this collection.
