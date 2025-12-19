@@ -3152,8 +3152,8 @@ class CollectionTest extends TestCase
             ['Mar' => 'March'],
         ];
         $actual = [];
-        $collection->eachIndexed(function($index, $value) use (&$actual): void {
-            $actual[] =  [$index => $value];
+        $collection->eachIndexed(function ($index, $value) use (&$actual): void {
+            $actual[] = [$index => $value];
         });
         $this->assertSame($expected, $actual);
     }
@@ -3179,7 +3179,6 @@ class CollectionTest extends TestCase
      */
     public function testReverse(): void
     {
-
         //Don't preserve numeric keys
         $months = ['January', 'February', 'March'];
         $excepted = ['March', 'February', 'January'];
@@ -3200,6 +3199,5 @@ class CollectionTest extends TestCase
         $collection = new Collection($months);
         $actual = $collection->reverse(true)->toArray();
         $this->assertSame($excepted, $actual);
-
     }
 }

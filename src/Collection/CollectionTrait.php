@@ -110,11 +110,11 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function filterIndexed(callable $callback = null): CollectionInterface
+    public function filterIndexed(callable $callback): CollectionInterface
     {
         return new FilterIterator(
             $this->unwrap(),
-            fn($value, $index, $iterator) => $callback($index, $value, $iterator)
+            fn($value, $index, $iterator) => $callback($index, $value, $iterator),
         );
     }
 
@@ -345,6 +345,7 @@ trait CollectionTrait
 
         return $this->newCollection(array_reverse($items, $preserveKeys));
     }
+
     /**
      * @inheritDoc
      */
