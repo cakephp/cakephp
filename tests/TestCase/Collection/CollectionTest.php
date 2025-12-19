@@ -2975,6 +2975,23 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the when() method applies callback when condition is truthy and has else callback
+     */
+    public function testWhenTruthyWithElse(): void
+    {
+        $items = [1, 2, 3, 4, 5];
+        $collection = new Collection($items);
+
+        $result = $collection->when(
+            true,
+            fn(Collection $it) => $it->filter(fn($v) => $v > 2),
+            fn(Collection $it) => $it->filter(fn($v) => $v > 4), //Ignore the else
+        )->toList();
+
+        $this->assertSame([3, 4, 5], $result);
+    }
+
+    /**
      * Tests when() does not apply callback when condition is falsy
      */
     public function testWhenFalsy(): void
@@ -2987,6 +3004,23 @@ class CollectionTest extends TestCase
         })->toList();
 
         $this->assertSame([1, 2, 3, 4, 5], $result);
+    }
+
+    /**
+     * Tests when() does not apply callback when condition is falsy and has else callback
+     */
+    public function testWhenFalsyWithElse(): void
+    {
+        $items = [1, 2, 3, 4, 5];
+        $collection = new Collection($items);
+
+        $result = $collection->when(
+            false,
+            fn(Collection $it) => $it->filter(fn($v) => $v > 2), //Ignore this
+            fn(Collection $it) => $it->filter(fn($v) => $v > 4),
+        )->toList();
+
+        $this->assertSame([5], $result);
     }
 
     /**
