@@ -3079,7 +3079,7 @@ class CollectionTest extends TestCase
         $result = $collection->unless(
             false,
             fn(Collection $it) => $it->filter(fn($v) => $v > 2),
-            fn(Collection $it) => $it->filter(fn($v) => $v >= 4),//Ignore this one
+            fn(Collection $it) => $it->filter(fn($v) => $v >= 4), //Ignore this one
         )->toList();
 
         $this->assertSame([3, 4, 5], $result);
@@ -3110,7 +3110,7 @@ class CollectionTest extends TestCase
 
         $result = $collection->unless(
             true,
-            fn(Collection $it) => $it->filter(fn($v) => $v > 2),//Ignore this one
+            fn(Collection $it) => $it->filter(fn($v) => $v > 2), //Ignore this one
             fn(Collection $it) => $it->filter(fn($v) => $v >= 4),
         )->toList();
 
