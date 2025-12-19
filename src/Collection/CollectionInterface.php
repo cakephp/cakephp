@@ -33,6 +33,7 @@ use const SORT_NUMERIC;
  * @method \Cake\Collection\CollectionInterface unless(mixed $condition, callable $callback) Applies callback if condition is falsy.
  * @method \Cake\Collection\CollectionInterface filterIndexed(callable $callback) Looks through each index, returning values where the test passes.
  * @method \Cake\Collection\CollectionInterface eachIndexed(callable $callback) Applies a callback to the elements in this collection using index as first argument.
+ * @method \Cake\Collection\CollectionInterface containsAll(array $elements) Returns true if all $elements is present in this collection.
  * @template TKey
  * @template-covariant TValue
  * @template-extends \Iterator<TKey, TValue>

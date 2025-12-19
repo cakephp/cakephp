@@ -196,6 +196,31 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
+    public function containsAll(array $elements): bool
+    {
+        if ($elements === []) {
+            throw new InvalidArgumentException(
+                'Cannot check contains with an empty array of elements.',
+            );
+        }
+        foreach ($this->optimizeUnwrap() as $v) {
+            foreach ($elements as $index => $value) {
+                if ($value === $v) {
+                    unset($elements[$index]);
+                    break;
+                }
+            }
+            if ($elements === []) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
     public function map(callable $callback): CollectionInterface
     {
         return new ReplaceIterator($this->unwrap(), $callback);

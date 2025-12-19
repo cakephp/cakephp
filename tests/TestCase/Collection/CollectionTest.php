@@ -448,6 +448,34 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests containsAll
+     */
+    public function testContainsAll(): void
+    {
+        $collection = new Collection([]);
+        $this->assertFalse($collection->containsAll(['a']));
+
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+        $this->assertTrue($collection->containsAll([2, 1]));
+        $this->assertTrue($collection->containsAll([1, 2, 3]));
+        $this->assertFalse($collection->containsAll([1, 2, 10]));
+        $this->assertFalse($collection->containsAll(['2']));
+    }
+
+    /**
+     * Tests containsAll with empty elements should throw error
+     */
+    public function testContainsAllErrorElements(): void
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Cannot check contains with an empty array of elements.');
+        $this->assertTrue($collection->containsAll([]));
+    }
+
+    /**
      * Provider for some simple tests
      *
      * @return array
