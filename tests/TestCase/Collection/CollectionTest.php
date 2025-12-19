@@ -3171,4 +3171,35 @@ class CollectionTest extends TestCase
         $actual = $collection->filterNotNull()->toArray();
         $this->assertSame($expected, $actual);
     }
+
+    /**
+     * Test reverse method
+     *
+     * @return void
+     */
+    public function testReverse(): void
+    {
+
+        //Don't preserve numeric keys
+        $months = ['January', 'February', 'March'];
+        $excepted = ['March', 'February', 'January'];
+        $collection = new Collection($months);
+        $actual = $collection->reverse()->toArray();
+        $this->assertSame($excepted, $actual);
+
+        //Non-numeric keys should not change
+        $months = ['Jan' => 'January', 'Feb' => 'February', 'Mar' => 'March'];
+        $excepted = ['Mar' => 'March', 'Feb' => 'February', 'Jan' => 'January'];
+        $collection = new Collection($months);
+        $actual = $collection->reverse()->toArray();
+        $this->assertSame($excepted, $actual);
+
+        //Preserve numeric keys
+        $months = ['January', 'February', 'March'];
+        $excepted = [2 => 'March', 1 => 'February', 0 => 'January'];
+        $collection = new Collection($months);
+        $actual = $collection->reverse(true)->toArray();
+        $this->assertSame($excepted, $actual);
+
+    }
 }

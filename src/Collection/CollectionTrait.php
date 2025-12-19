@@ -339,6 +339,15 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
+    public function reverse(bool $preserveKeys = false): CollectionInterface
+    {
+        $items = $this->toArray();
+
+        return $this->newCollection(array_reverse($items, $preserveKeys));
+    }
+    /**
+     * @inheritDoc
+     */
     public function sortBy(callable|string $path, int $order = SORT_DESC, int $sort = SORT_NUMERIC): CollectionInterface
     {
         return new SortIterator($this->unwrap(), $path, $order, $sort);

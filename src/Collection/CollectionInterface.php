@@ -34,7 +34,8 @@ use const SORT_NUMERIC;
  * @method \Cake\Collection\CollectionInterface filterNotNull() Looks through each value, returning only not null values.
  * @method \Cake\Collection\CollectionInterface filterIndexed(callable $callback) Looks through each index, returning values where the test passes.
  * @method \Cake\Collection\CollectionInterface eachIndexed(callable $callback) Applies a callback to the elements in this collection using index as first argument.
- * @method \Cake\Collection\CollectionInterface containsAll(array $elements) Returns true if all $elements is present in this collection.
+ * @method bool containsAll(array $elements) Returns true if all $elements is present in this collection.
+ * @method \Cake\Collection\CollectionInterface reverse(bool $preserveKeys = false) Reverses the order of elements in the collection, keys are not preserved by default.
  * @template TKey
  * @template-covariant TValue
  * @template-extends \Iterator<TKey, TValue>
