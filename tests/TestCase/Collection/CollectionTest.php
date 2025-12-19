@@ -3069,6 +3069,23 @@ class CollectionTest extends TestCase
     }
 
     /**
+     * Tests the unless() method applies callback when condition is falsy and has else callback
+     */
+    public function testUnlessFalsyWithElse(): void
+    {
+        $items = [1, 2, 3, 4, 5];
+        $collection = new Collection($items);
+
+        $result = $collection->unless(
+            false,
+            fn(Collection $it) => $it->filter(fn($v) => $v > 2),
+            fn(Collection $it) => $it->filter(fn($v) => $v >= 4),//Ignore this one
+        )->toList();
+
+        $this->assertSame([3, 4, 5], $result);
+    }
+
+    /**
      * Tests unless() does not apply callback when condition is truthy
      */
     public function testUnlessTruthy(): void
@@ -3081,6 +3098,23 @@ class CollectionTest extends TestCase
         })->toList();
 
         $this->assertSame([1, 2, 3, 4, 5], $result);
+    }
+
+    /**
+     * Tests unless() does not apply callback when condition is truthy and has else callback
+     */
+    public function testUnlessTruthyWithElse(): void
+    {
+        $items = [1, 2, 3, 4, 5];
+        $collection = new Collection($items);
+
+        $result = $collection->unless(
+            true,
+            fn(Collection $it) => $it->filter(fn($v) => $v > 2),//Ignore this one
+            fn(Collection $it) => $it->filter(fn($v) => $v >= 4),
+        )->toList();
+
+        $this->assertSame([4, 5], $result);
     }
 
     /**

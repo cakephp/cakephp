@@ -1210,10 +1210,13 @@ trait CollectionTrait
     /**
      * @inheritDoc
      */
-    public function unless(mixed $condition, callable $callback): CollectionInterface
+    public function unless(mixed $condition, callable $callback, ?callable $else = null): CollectionInterface
     {
         if (!$condition) {
             return $callback($this, $condition);
+        }
+        if ($else) {
+            return $else($this);
         }
 
         return $this;
