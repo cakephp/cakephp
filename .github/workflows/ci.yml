@@ -110,9 +110,9 @@ jobs:
         if ${{ matrix.php-version == '8.5' }}; then
           composer update --ignore-platform-req=php
         elif ${{ matrix.prefer-lowest == 'prefer-lowest' }}; then
-          composer update --prefer-lowest --prefer-stable
+          composer update --prefer-lowest --prefer-stable --no-security-blocking
         else
-          composer update
+          composer update --no-security-blocking
         fi
 
     - name: Setup problem matchers for PHPUnit
@@ -259,7 +259,7 @@ jobs:
         key: ${{ runner.os }}-composer-${{ steps.key-date.outputs.date }}-${{ hashFiles('composer.json') }}-${{ matrix.prefer-lowest }}
 
     - name: Composer install
-      run: composer update
+      run: composer update --no-security-blocking
 
     - name: Install PHP tools with phive.
       run: phive install --trust-gpg-keys 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
