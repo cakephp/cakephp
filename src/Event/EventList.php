@@ -17,19 +17,24 @@ declare(strict_types=1);
 namespace Cake\Event;
 
 use ArrayAccess;
+use ArrayIterator;
 use Countable;
+use IteratorAggregate;
+use Traversable;
 
 /**
  * The Event List
  *
- * @template-implements \ArrayAccess<int, \Cake\Event\EventInterface>
+ * @template Tsubject of object
+ * @implements \ArrayAccess<int, \Cake\Event\EventInterface<Tsubject>>
+ * @implements \IteratorAggregate<\Cake\Event\EventInterface<Tsubject>>
  */
-class EventList implements ArrayAccess, Countable
+class EventList implements ArrayAccess, Countable, IteratorAggregate
 {
     /**
      * Events list
      *
-     * @var array<\Cake\Event\EventInterface<object>>
+     * @var array<\Cake\Event\EventInterface<Tsubject>>
      */
     protected array $_events = [];
 
@@ -46,7 +51,7 @@ class EventList implements ArrayAccess, Countable
     /**
      * Adds an event to the list when event listing is enabled.
      *
-     * @param \Cake\Event\EventInterface<object> $event An event to the list of dispatched events.
+     * @param \Cake\Event\EventInterface<Tsubject> $event An event to the list of dispatched events.
      * @return void
      */
     public function add(EventInterface $event): void
@@ -71,7 +76,7 @@ class EventList implements ArrayAccess, Countable
      *
      * @link https://secure.php.net/manual/en/arrayaccess.offsetget.php
      * @param mixed $offset The offset to retrieve.
-     * @return \Cake\Event\EventInterface<object>|null
+     * @return \Cake\Event\EventInterface<Tsubject>|null
      */
     public function offsetGet(mixed $offset): ?EventInterface
     {
@@ -105,6 +110,16 @@ class EventList implements ArrayAccess, Countable
     public function offsetUnset(mixed $offset): void
     {
         unset($this->_events[$offset]);
+    }
+
+    /**
+     * Retrieve an external iterator
+     *
+     * @return \Traversable<\Cake\Event\EventInterface<Tsubject>>
+     */
+    public function getIterator(): Traversable
+    {
+        return new ArrayIterator($this->_events);
     }
 
     /**
