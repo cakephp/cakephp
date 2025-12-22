@@ -201,6 +201,8 @@ class SelectLoader
         }
 
         if (!empty($options['queryBuilder'])) {
+            assert(is_callable($options['queryBuilder']));
+            /** @var \Cake\ORM\Query\SelectQuery $fetchQuery */
             $fetchQuery = $options['queryBuilder']($fetchQuery);
         }
 

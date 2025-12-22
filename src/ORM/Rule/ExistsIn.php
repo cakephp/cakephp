@@ -113,7 +113,10 @@ class ExistsIn
         }
 
         if (!empty($options['repository'])) {
+            /** @var \Cake\ORM\Table $source */
             $source = $options['repository'];
+        } else {
+            $source = $this->repository;
         }
         if ($source instanceof Association) {
             $source = $source->getSource();

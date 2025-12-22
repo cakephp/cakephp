@@ -1018,7 +1018,18 @@ trait CollectionTrait
     public function unwrap(): Iterator
     {
         $iterator = $this;
-        while ($iterator::class === Collection::class) {
+        // Unwrap Collection class and simple user subclasses.
+        // Internal CakePHP iterators/result sets have their own unwrap() implementations.
+        // We unwrap if the class is Collection itself, or a non-Cake subclass,
+        // or an anonymous class extending Collection.
+        while (
+            $iterator instanceof Collection &&
+            (
+                $iterator::class === Collection::class ||
+                !str_starts_with($iterator::class, 'Cake\\') ||
+                str_contains($iterator::class, '@anonymous')
+            )
+        ) {
             $iterator = $iterator->getInnerIterator();
         }
 

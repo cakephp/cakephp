@@ -476,11 +476,7 @@ class EventManager implements EventManagerInterface
             $properties['listeners'][$key] = $listenerCount . ' listener(s)';
         }
         if ($this->eventList) {
-            $count = count($this->eventList);
-            for ($i = 0; $i < $count; $i++) {
-                assert(!empty($this->eventList[$i]), 'Given event item not present');
-
-                $event = $this->eventList[$i];
+            foreach ($this->eventList as $event) {
                 $subject = $event->getSubject();
                 if ($subject) {
                     $properties['dispatchedEvents'][] = $event->getName() . ' with subject ' . $subject::class;
