@@ -127,8 +127,4 @@ return RectorConfig::configure()
         \Rector\Php73\Rector\FuncCall\ArrayKeyFirstLastRector::class,
         \Rector\Php80\Rector\FuncCall\ClassOnObjectRector::class,
         \Rector\CodeQuality\Rector\Ternary\SwitchNegatedTernaryRector::class,
-
-        // PHP 8.4+ functions - avoid until minimum PHP version is confirmed
-        \Rector\Php84\Rector\Foreach_\ForeachToArrayAnyRector::class,
-        \Rector\Php84\Rector\Foreach_\ForeachToArrayAllRector::class,
     ]);

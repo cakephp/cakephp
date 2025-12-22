@@ -141,13 +141,7 @@ trait ExtractTrait
         }
 
         return function ($value) use ($matchers) {
-            foreach ($matchers as $match) {
-                if (!$match($value)) {
-                    return false;
-                }
-            }
-
-            return true;
+            return array_all($matchers, fn($match) => $match($value));
         };
     }
 }

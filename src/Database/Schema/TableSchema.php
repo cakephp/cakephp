@@ -782,13 +782,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
      */
     public function hasAutoincrement(): bool
     {
-        foreach ($this->columns as $column) {
-            if ($column->getIdentity()) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->columns, fn($column) => $column->getIdentity());
     }
 
     /**

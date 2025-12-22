@@ -3262,13 +3262,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
         }
 
         if (is_array($data)) {
-            $allFieldsAreEmpty = true;
-            foreach ($data as $field) {
-                if ($field !== null && $field !== '') {
-                    $allFieldsAreEmpty = false;
-                    break;
-                }
-            }
+            $allFieldsAreEmpty = array_all($data, fn($field) => !($field !== null && $field !== ''));
             if ($allFieldsAreEmpty) {
                 if (($flags & self::EMPTY_DATE) && isset($data['year'])) {
                     return true;

@@ -985,13 +985,10 @@ abstract class Association
 
             $fieldsToAdd = [];
             foreach ($primaryKeyFields as $pkField) {
-                $found = false;
-                foreach ($fields as $field) {
-                    if (is_string($field) && ($field === $pkField || str_ends_with($field, '.' . $pkField))) {
-                        $found = true;
-                        break;
-                    }
-                }
+                $found = array_any(
+                    $fields,
+                    fn($field) => is_string($field) && ($field === $pkField || str_ends_with($field, '.' . $pkField)),
+                );
                 if (!$found) {
                     $fieldsToAdd[] = $pkField;
                 }

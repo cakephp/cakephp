@@ -510,13 +510,9 @@ trait EntityTrait
      */
     public function has(array|string $field): bool
     {
-        foreach ((array)$field as $prop) {
-            if (!array_key_exists($prop, $this->fields) && !static::accessor($prop, 'get')) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all((array)$field, function ($prop) {
+            return !(!array_key_exists($prop, $this->fields) && !static::accessor($prop, 'get'));
+        });
     }
 
     /**
