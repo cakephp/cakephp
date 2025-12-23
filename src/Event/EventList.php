@@ -16,21 +16,18 @@ declare(strict_types=1);
  */
 namespace Cake\Event;
 
-use ArrayAccess;
 use ArrayIterator;
 use Countable;
 use IteratorAggregate;
 use Traversable;
-use function Cake\Core\deprecationWarning;
 
 /**
  * The Event List
  *
  * @template Tsubject of object
- * @implements \ArrayAccess<int, \Cake\Event\EventInterface<Tsubject>>
  * @implements \IteratorAggregate<\Cake\Event\EventInterface<Tsubject>>
  */
-class EventList implements ArrayAccess, Countable, IteratorAggregate
+class EventList implements Countable, IteratorAggregate
 {
     /**
      * Events list
@@ -58,80 +55,6 @@ class EventList implements ArrayAccess, Countable, IteratorAggregate
     public function add(EventInterface $event): void
     {
         $this->events[] = $event;
-    }
-
-    /**
-     * Whether a offset exists
-     *
-     * @deprecated 5.3.0 Array access for `EventList` is deprecated, use `EventList::hasEvent()` instead.
-     * @link https://secure.php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset An offset to check for.
-     * @return bool True on success or false on failure.
-     */
-    public function offsetExists(mixed $offset): bool
-    {
-        deprecationWarning(
-            '5.3.0',
-            'Array access for `EventList` is deprecated, use `EventList::hasEvent()` instead.',
-        );
-
-        return isset($this->events[$offset]);
-    }
-
-    /**
-     * Offset to retrieve
-     *
-     * @deprecated 5.3.0 Array access for `EventList` is deprecated, you can iterate the instance instead.
-     * @link https://secure.php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset The offset to retrieve.
-     * @return \Cake\Event\EventInterface<Tsubject>|null
-     */
-    public function offsetGet(mixed $offset): ?EventInterface
-    {
-        deprecationWarning(
-            '5.3.0',
-            'Array access for `EventList` is deprecated, you can iterate the instance instead.',
-        );
-
-        return $this->events[$offset] ?? null;
-    }
-
-    /**
-     * Offset to set
-     *
-     * @deprecated 5.3.0 Array access for `EventList` is deprecated, use `EventList::add() instead.`.
-     * @link https://secure.php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset The offset to assign the value to.
-     * @param mixed $value The value to set.
-     * @return void
-     */
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        deprecationWarning(
-            '5.3.0',
-            'Array access for `EventList` is deprecated, use `EventList::add() instead.',
-        );
-
-        $this->events[$offset] = $value;
-    }
-
-    /**
-     * Offset to unset
-     *
-     * @deprecated 5.3.0 Array access for `EventList` is deprecated.
-     * Individual events cannot be unset anymore, use `EventList::flush()` to clear the list.
-     * @link https://secure.php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset The offset to unset.
-     * @return void
-     */
-    public function offsetUnset(mixed $offset): void
-    {
-        deprecationWarning(
-            '5.3.0',
-            'Array access for `EventList` is deprecated.'
-            . ' Individual events cannot be unset anymore, use `EventList::flush()` to clear the list.',
-        );
-        unset($this->events[$offset]);
     }
 
     /**

@@ -69,7 +69,7 @@ class EventFiredWith extends Constraint
         $eventGroup = [];
         $list = $this->_eventManager->getEventList();
         if ($list !== null) {
-            $eventGroup = (new Collection($list))
+            $eventGroup = new Collection($list)
                 ->groupBy(function (EventInterface $event): string {
                     return $event->getName();
                 })
