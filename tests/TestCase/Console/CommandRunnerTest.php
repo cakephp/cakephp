@@ -139,6 +139,7 @@ class CommandRunnerTest extends TestCase
 
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString('<info>cache:</info>', $messages);
         $this->assertStringContainsString('cache clear', $messages);
         $this->assertStringContainsString('cache list', $messages);
     }
@@ -153,9 +154,8 @@ class CommandRunnerTest extends TestCase
         $result = $runner->run(['cake', '--help'], $this->getMockIo($output));
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
-        $this->assertStringContainsString('Current Paths', $messages);
-        $this->assertStringContainsString('- i18n', $messages);
-        $this->assertStringContainsString('Available Commands', $messages);
+        $this->assertStringContainsString('<info>i18n:</info>', $messages);
+        $this->assertStringContainsString('Available Commands:', $messages);
     }
 
     /**
@@ -168,8 +168,22 @@ class CommandRunnerTest extends TestCase
         $result = $runner->run(['cake', '-h'], $this->getMockIo($output));
         $this->assertSame(0, $result);
         $messages = implode("\n", $output->messages());
-        $this->assertStringContainsString('- i18n', $messages);
-        $this->assertStringContainsString('Available Commands', $messages);
+        $this->assertStringContainsString('<info>i18n:</info>', $messages);
+        $this->assertStringContainsString('Available Commands:', $messages);
+    }
+
+    /**
+     * Test using `cake -v` invokes the verbose help command
+     */
+    public function testRunVerboseShortOption(): void
+    {
+        $output = new StubConsoleOutput();
+        $runner = $this->getRunner();
+        $result = $runner->run(['cake', '-v'], $this->getMockIo($output));
+        $this->assertSame(0, $result);
+        $messages = implode("\n", $output->messages());
+        $this->assertStringContainsString('Available Commands:', $messages);
+        $this->assertStringContainsString('Current Paths', $messages, 'Verbose output should include paths');
     }
 
     /**
@@ -184,8 +198,8 @@ class CommandRunnerTest extends TestCase
         $this->assertSame(0, $result, 'help output is success.');
         $messages = implode("\n", $output->messages());
         $this->assertStringContainsString('No command provided. Choose one of the available commands', $messages);
-        $this->assertStringContainsString('- i18n', $messages);
-        $this->assertStringContainsString('Available Commands', $messages);
+        $this->assertStringContainsString('<info>i18n:</info>', $messages);
+        $this->assertStringContainsString('Available Commands:', $messages);
     }
 
     /**

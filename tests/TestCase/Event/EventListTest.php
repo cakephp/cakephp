@@ -38,8 +38,9 @@ class EventListTest extends TestCase
         $eventList->add($event2);
         $this->assertCount(2, $eventList);
 
-        $this->assertEquals($eventList[0], $event);
-        $this->assertEquals($eventList[1], $event2);
+        $events = iterator_to_array($eventList);
+        $this->assertEquals($events[0], $event);
+        $this->assertEquals($events[1], $event2);
 
         $eventList->flush();
 
@@ -48,31 +49,35 @@ class EventListTest extends TestCase
 
     /**
      * Testing implemented \ArrayAccess and \Count methods
+     *
+     * @deprecated
      */
     public function testArrayAccess(): void
     {
-        $eventList = new EventList();
-        $event = new Event('my_event', $this);
-        $event2 = new Event('my_second_event', $this);
+        $this->deprecated(function (): void {
+            $eventList = new EventList();
+            $event = new Event('my_event', $this);
+            $event2 = new Event('my_second_event', $this);
 
-        $eventList->add($event);
-        $eventList->add($event2);
-        $this->assertCount(2, $eventList);
+            $eventList->add($event);
+            $eventList->add($event2);
+            $this->assertCount(2, $eventList);
 
-        $this->assertTrue($eventList->hasEvent('my_event'));
-        $this->assertFalse($eventList->hasEvent('does-not-exist'));
+            $this->assertTrue($eventList->hasEvent('my_event'));
+            $this->assertFalse($eventList->hasEvent('does-not-exist'));
 
-        $this->assertEquals($eventList->offsetGet(0), $event);
-        $this->assertEquals($eventList->offsetGet(1), $event2);
-        $this->assertTrue($eventList->offsetExists(0));
-        $this->assertTrue($eventList->offsetExists(1));
-        $this->assertFalse($eventList->offsetExists(2));
+            $this->assertEquals($eventList->offsetGet(0), $event);
+            $this->assertEquals($eventList->offsetGet(1), $event2);
+            $this->assertTrue($eventList->offsetExists(0));
+            $this->assertTrue($eventList->offsetExists(1));
+            $this->assertFalse($eventList->offsetExists(2));
 
-        $eventList->offsetUnset(1);
-        $this->assertCount(1, $eventList);
+            $eventList->offsetUnset(1);
+            $this->assertCount(1, $eventList);
 
-        $eventList->flush();
+            $eventList->flush();
 
-        $this->assertCount(0, $eventList);
+            $this->assertCount(0, $eventList);
+        });
     }
 }
