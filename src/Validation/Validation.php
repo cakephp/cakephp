@@ -839,7 +839,7 @@ class Validation
     }
 
     /**
-     * Checks that the value is a valid backed enum instance or value.
+     * Checks that the value is backed enum instance or value of one of the provided enum cases.
      *
      * @param mixed $check Value to check
      * @param array<\BackedEnum> $cases Array of enum cases that are valid.
@@ -862,7 +862,7 @@ class Validation
     }
 
     /**
-     * Checks that the value is a valid backed enum instance or value.
+     * Checks that the value is a valid backed enum instance or value except the cases provided.
      *
      * @param mixed $check Value to check
      * @param array<\BackedEnum> $cases Array of enum cases that are not valid.
