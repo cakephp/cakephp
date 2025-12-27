@@ -19,8 +19,10 @@ namespace Cake\Test\TestCase\Database\Type;
 use Cake\Database\Driver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Type\FloatType;
+use Cake\Datasource\EntityInterface;
 use Cake\I18n\I18n;
 use Cake\TestSuite\TestCase;
+use Cake\Validation\Validator;
 use PDO;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
@@ -30,6 +32,8 @@ use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 #[AllowMockObjectsWithoutExpectations]
 class FloatTypeTest extends TestCase
 {
+    protected array $fixtures = ['core.Datatypes'];
+
     /**
      * @var \Cake\Database\Type\FloatType
      */
@@ -193,5 +197,61 @@ class FloatTypeTest extends TestCase
     public function testToStatement(): void
     {
         $this->assertSame(PDO::PARAM_STR, $this->type->toStatement('', $this->driver));
+    }
+
+    public function testMarshalDefaultsToNull(): void
+    {
+        $table = $this->getTableLocator()->get('Datatypes');
+        $validator = new Validator()->numeric('floaty');
+        $table->setValidator('default', $validator);
+
+        // Testing a invalid patchEntity with a validator making floaty required
+        $newEntity = $table->newEmptyEntity();
+        $newEntity = $table->patchEntity($newEntity, [
+            'floaty' => null,
+        ]);
+        $this->assertFalse($table->save($newEntity));
+        $this->assertEquals([
+            'floaty' => [
+                '_empty' => 'This field cannot be left empty',
+            ],
+        ], $newEntity->getErrors());
+
+        // Saving via a direct patch should work as there is no validation or marshaling
+        $newEntity = $table->newEmptyEntity();
+        $newEntity = $newEntity->patch([
+            'floaty' => null,
+        ]);
+        $this->assertInstanceOf(EntityInterface::class, $table->save($newEntity));
+        $this->assertNull($newEntity->floaty);
+
+        // Saving via a direct patch with an invalid floaty also works as the string is cast to float
+        $newEntity = $table->newEmptyEntity();
+        $newEntity = $newEntity->patch([
+            'floaty' => 'invalid',
+        ]);
+        $newEntity = $table->save($newEntity);
+        $this->assertInstanceOf(EntityInterface::class, $newEntity);
+        $this->assertEquals('invalid', $newEntity->floaty); // which is weird but ok
+
+        // re-fetch the entity to ensure floaty is 0 - which is fine
+        $newEntity = $table->get($newEntity->id);
+        $this->assertEquals(0, $newEntity->floaty);
+
+        // BUT if a table has no validation present, the marshaling via patchEntity will set floaty to null by default - which is weird
+        $validator = new Validator();
+        $table->setValidator('default', $validator);
+        $newEntity = $table->newEmptyEntity();
+        $newEntity = $table->patchEntity($newEntity, [
+            'floaty' => 'invalid',
+        ]);
+        $newEntity = $table->save($newEntity);
+
+        $this->assertInstanceOf(EntityInterface::class, $newEntity);
+        $this->assertNull($newEntity->floaty);
+
+        // re-fetching the entity now results in 0, not null anymore as the DB value is not the same as the marshaled one
+        $newEntity = $table->get($newEntity->id);
+        $this->assertEquals(0, $newEntity->floaty);
     }
 }
