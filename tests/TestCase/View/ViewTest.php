@@ -648,6 +648,18 @@ class ViewTest extends TestCase
     }
 
     /**
+     * Test that element triggers a warning when data would overwrite existing view variables.
+     */
+    public function testElementTriggersWarningWhenDataIsOverwritten(): void
+    {
+        $someViewVar = 'original value';
+        $this->View->set(compact('someViewVar'));
+        $this->expectWarningMessageMatches('/The following keys in \$data will overwrite existing view variables: someViewVar/', function (): void {
+            $this->View->element('test_element', ['someViewVar' => 'new value']);
+        });
+    }
+
+    /**
      * Test element method with a prefix
      */
     public function testPrefixElement(): void

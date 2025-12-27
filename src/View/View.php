@@ -37,6 +37,7 @@ use InvalidArgumentException;
 use LogicException;
 use Throwable;
 use function Cake\Core\pluginSplit;
+use function Cake\Core\triggerWarning;
 
 /**
  * View, the V in the MVC triad. View interacts with Helpers and view variables passed
@@ -1697,6 +1698,14 @@ class View implements EventDispatcherInterface
 
         if ($options['callbacks']) {
             $this->dispatchEvent('View.beforeRender', [$file]);
+        }
+
+        $overlappingKeys = array_intersect(array_keys($this->viewVars), array_keys($data));
+        if ($overlappingKeys !== []) {
+            triggerWarning(
+                'The following keys in $data will overwrite existing view variables: ' .
+                implode(', ', $overlappingKeys),
+            );
         }
 
         $element = $this->_render($file, array_merge($this->viewVars, $data));
