@@ -16,16 +16,11 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Command\PluginAssetsSymlinkCommand;
 use Cake\Console\CommandInterface;
-use Cake\Console\ConsoleIo;
-use Cake\Console\ConsoleOptionParser;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
-use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
-use Mockery;
 use SplFileInfo;
 
 /**
@@ -105,29 +100,71 @@ class PluginAssetsCommandsTest extends TestCase
         $this->assertTrue(is_link($path));
     }
 
-    /**
-     * testSymlinkWhenTargetAlreadyExits
-     */
     public function testSymlinkWhenTargetAlreadyExits(): void
     {
-        $this->loadPlugins(['TestTheme']);
+        $this->loadPlugins(['TestPlugin']);
 
-        $output = new StubConsoleOutput();
-        $io = Mockery::mock(ConsoleIo::class, [$output, $output, null, null])->makePartial();
-        $parser = new ConsoleOptionParser('cake example');
-        $parser->addArgument('name', ['required' => false]);
-        $parser->addOption('overwrite', ['default' => false, 'boolean' => true]);
+        // Run once to create the symlink
+        $this->exec('plugin assets symlink');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
-        $command = $this->getMockBuilder(PluginAssetsSymlinkCommand::class)
-            ->onlyMethods(['getOptionParser', '_createSymlink', '_copyDirectory'])
-            ->getMock();
-        $command->method('getOptionParser')->willReturn($parser);
+        $path = $this->wwwRoot . 'test_plugin';
+        $this->assertTrue(is_link($path));
+        $this->assertFileExists($path . DS . 'root.js');
 
-        $this->assertDirectoryExists($this->wwwRoot . 'test_theme');
+        // Re-run the symlink command
+        $this->exec('plugin assets symlink');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
-        $command->expects($this->never())->method('_createSymlink');
-        $command->expects($this->never())->method('_copyDirectory');
-        $command->run([], $io);
+        $this->assertTrue(is_link($path));
+        $this->assertFileExists($path . DS . 'root.js');
+    }
+
+    /**
+     * Tests symlink is re-created when it points to a missing target
+     */
+    public function testSymlinkWhenSymlinkExistsButTargetMissing(): void
+    {
+        $this->loadPlugins(['TestPlugin']);
+
+        $this->exec('plugin assets symlink');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $path = $this->wwwRoot . 'test_plugin';
+        $this->assertFileExists($path . DS . 'root.js');
+        $this->assertTrue(is_link($path));
+
+        // Point the symlink to a missing target
+        $fakeTarget = $this->wwwRoot . 'target_dir';
+        mkdir($fakeTarget);
+
+        DIRECTORY_SEPARATOR === '\\' ? rmdir($path) : unlink($path);
+        symlink($fakeTarget, $path);
+        rmdir($fakeTarget);
+
+        $this->assertFileDoesNotExist($fakeTarget);
+        $this->assertTrue(is_link($path));
+
+        // Re-run the symlink command
+        $this->exec('plugin assets symlink');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $this->assertFileExists($path . DS . 'root.js');
+        $this->assertTrue(is_link($path));
+    }
+
+    public function testSymlinkWhenTargetAlreadyExitsAsDir(): void
+    {
+        $this->loadPlugins(['TestPlugin']);
+
+        $path = $this->wwwRoot . 'test_plugin';
+        mkdir($path, recursive: true);
+
+        $this->exec('plugin assets symlink');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $this->assertFileExists($path . DS . 'root.js');
+        $this->assertTrue(is_link($path));
     }
 
     /**
@@ -176,6 +213,25 @@ class PluginAssetsCommandsTest extends TestCase
         $this->assertFileExists($path . DS . 'css' . DS . 'company.css');
     }
 
+    public function testCopyWithExistingSymlink(): void
+    {
+        $this->loadPlugins(['TestPlugin']);
+
+        // Run once to create the symlink
+        $this->exec('plugin assets symlink');
+
+        $path = $this->wwwRoot . 'test_plugin';
+        $this->assertTrue(is_link($path));
+
+        // Re-run as copy
+        $this->exec('plugin assets copy');
+
+        $path = $this->wwwRoot . 'test_plugin';
+        $this->assertFalse(is_link($path));
+        $this->assertDirectoryExists($path);
+        $this->assertFileExists($path . DS . 'root.js');
+    }
+
     /**
      * testCopyOverwrite
      */
@@ -201,6 +257,25 @@ class PluginAssetsCommandsTest extends TestCase
         $this->exec('plugin assets copy --overwrite');
 
         $this->assertFileEquals($path . DS . 'root.js', $pluginPath . DS . 'root.js');
+    }
+
+    public function testCopyOverwriteWithExistingSymlink(): void
+    {
+        $this->loadPlugins(['TestPlugin']);
+
+        // Run once to create the symlink
+        $this->exec('plugin assets symlink');
+
+        $path = $this->wwwRoot . 'test_plugin';
+        $this->assertTrue(is_link($path));
+
+        // Re-run as copy
+        $this->exec('plugin assets copy --overwrite');
+
+        $path = $this->wwwRoot . 'test_plugin';
+        $this->assertFalse(is_link($path));
+        $this->assertDirectoryExists($path);
+        $this->assertFileExists($path . DS . 'root.js');
     }
 
     /**

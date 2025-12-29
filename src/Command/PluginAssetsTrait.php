@@ -118,34 +118,33 @@ trait PluginAssetsTrait
             }
 
             $dest = $config['destDir'] . $config['link'];
+            if ($copy) {
+                if (is_link($dest) || $overwrite) {
+                    if (!$this->_remove($config)) {
+                        continue;
+                    }
+                }
 
-            if (file_exists($dest)) {
-                if ($overwrite && !$this->_remove($config)) {
-                    continue;
+                if (file_exists($dest)) {
+                    $this->io->verbose($dest . ' already exists', 1);
+                } else {
+                    $this->_copyDirectory($config['srcPath'], $dest);
                 }
-                if (!$overwrite) {
-                    $this->io->verbose(
-                        $dest . ' already exists',
-                        1,
-                    );
-                    continue;
-                }
+                continue;
             }
 
-            if (!$copy) {
-                $result = $this->_createSymlink(
-                    $config['srcPath'],
-                    $dest,
-                );
-                if ($result) {
-                    continue;
-                }
+            if ($this->_isSymlinkValid($config['srcPath'], $dest)) {
+                $this->io->verbose($dest . ' already exists', 1);
+                continue;
             }
 
-            $this->_copyDirectory(
-                $config['srcPath'],
-                $dest,
-            );
+            if (!$this->_remove($config)) {
+                continue;
+            }
+
+            if (!$this->_createSymlink($config['srcPath'], $dest)) {
+                continue;
+            }
         }
 
         $this->io->out();
@@ -161,24 +160,10 @@ trait PluginAssetsTrait
     protected function _remove(array $config): bool
     {
         if ($config['namespaced'] && !is_dir($config['destDir'])) {
-            $this->io->verbose(
-                $config['destDir'] . $config['link'] . ' does not exist',
-                1,
-            );
-
-            return false;
+            return true;
         }
 
         $dest = $config['destDir'] . $config['link'];
-
-        if (!file_exists($dest)) {
-            $this->io->verbose(
-                $dest . ' does not exist',
-                1,
-            );
-
-            return false;
-        }
 
         if (is_link($dest)) {
             // phpcs:ignore
@@ -193,15 +178,20 @@ trait PluginAssetsTrait
             return false;
         }
 
-        $fs = new Filesystem();
-        if ($fs->deleteDir($dest)) {
-            $this->io->out('Deleted ' . $dest);
-
+        if (!file_exists($dest)) {
             return true;
         }
-        $this->io->err('Failed to delete ' . $dest);
 
-        return false;
+        $fs = new Filesystem();
+        if (!$fs->deleteDir($dest)) {
+            $this->io->err('Failed to delete ' . $dest);
+
+            return false;
+        }
+
+        $this->io->out('Deleted ' . $dest);
+
+        return true;
     }
 
     /**
@@ -249,6 +239,27 @@ trait PluginAssetsTrait
         }
 
         return false;
+    }
+
+    /**
+     * Checks if symlink exist and points to the correct target.
+     *
+     * @param string $target
+     * @param string $link
+     * @return bool
+     */
+    protected function _isSymlinkValid(string $target, string $link): bool
+    {
+        if (!is_link($link)) {
+            return false;
+        }
+
+        $linkedPath = readlink($link);
+        if ($linkedPath === false) {
+            return false;
+        }
+
+        return realpath($target) === realpath($linkedPath);
     }
 
     /**
