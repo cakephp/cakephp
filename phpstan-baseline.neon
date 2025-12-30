@@ -67,12 +67,6 @@ parameters:
 			path: src/Database/Expression/WhenThenExpression.php
 
 		-
-			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
-			identifier: catch.neverThrown
-			count: 1
-			path: src/Database/Type/DateTimeType.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2
@@ -161,6 +155,12 @@ parameters:
 			identifier: varTag.nativeType
 			count: 1
 			path: src/ORM/Association/DependentDeleteHelper.php
+
+		-
+			message: '#^Call to function assert\(\) with false and string will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: src/ORM/EagerLoader.php
 
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
