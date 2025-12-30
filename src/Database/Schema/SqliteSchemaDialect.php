@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Cake\Database\Schema;
 
 use Cake\Database\Exception\DatabaseException;
-use Deprecated;
-use PDO;
 
 /**
  * Schema management/reflection features for Sqlite
@@ -167,7 +165,7 @@ class SqliteSchemaDialect extends SchemaDialect
      *    getting tables from.
      * @return array An array of (sql, params) to execute.
      */
-    public function listTablesSql(array $config): array
+    protected function listTablesSql(array $config): array
     {
         return [
             'SELECT name FROM sqlite_master ' .
@@ -182,59 +180,15 @@ class SqliteSchemaDialect extends SchemaDialect
      *
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
-     * @return array<mixed> An array of (sql, params) to execute.
+     * @return array{0: string, 1: array} An array of (sql, params) to execute.
      */
-    public function listTablesWithoutViewsSql(array $config): array
+    protected function listTablesWithoutViewsSql(array $config): array
     {
         return [
             'SELECT name FROM sqlite_master WHERE type="table" ' .
             'AND name != "sqlite_sequence" ORDER BY name',
             [],
         ];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function describeColumnSql(string $tableName, array $config): array
-    {
-        $sql = $this->describeColumnQuery($tableName);
-
-        return [$sql, []];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertColumnDescription(TableSchema $schema, array $row): void
-    {
-        $field = $this->convertColumn($row['type']);
-        $field += [
-            'null' => !$row['notnull'],
-            'default' => $this->defaultValue($row['dflt_value'], $row['type']),
-        ];
-        $primary = $schema->getConstraint('primary');
-
-        if ($row['pk'] && empty($primary)) {
-            $field['null'] = false;
-            $field['autoIncrement'] = true;
-        }
-
-        // SQLite does not support autoincrement on composite keys.
-        if ($row['pk'] && !empty($primary)) {
-            $existingColumn = $primary['columns'][0];
-            $schema->addColumn($existingColumn, ['autoIncrement' => null] + $schema->getColumn($existingColumn));
-        }
-
-        $schema->addColumn($row['name'], $field);
-        if ($row['pk']) {
-            $constraint = (array)$schema->getConstraint('primary') + [
-                'type' => TableSchema::CONSTRAINT_PRIMARY,
-                'columns' => [],
-            ];
-            $constraint['columns'] = array_merge($constraint['columns'], [$row['name']]);
-            $schema->addConstraint('primary', $constraint);
-        }
     }
 
     /**
@@ -327,16 +281,6 @@ class SqliteSchemaDialect extends SchemaDialect
     }
 
     /**
-     * @inheritDoc
-     */
-    public function describeIndexSql(string $tableName, array $config): array
-    {
-        $sql = $this->describeIndexQuery($tableName);
-
-        return [$sql, []];
-    }
-
-    /**
      * Generates a regular expression to match identifiers that may or
      * may not be quoted with any of the supported quotes.
      *
@@ -378,57 +322,6 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         return $value;
-    }
-
-    /**
-     * {@inheritDoc}
-     *
-     * Since SQLite does not have a way to get metadata about all indexes at once,
-     * additional queries are done here. Sqlite constraint names are not
-     * stable, and the names for constraints will not match those used to create
-     * the table. This is a limitation in Sqlite's metadata features.
-     *
-     * @param \Cake\Database\Schema\TableSchema $schema The table object to append
-     *    an index or constraint to.
-     * @param array $row The row data from `describeIndexSql`.
-     * @return void
-     */
-    #[Deprecated(message: 'Use `describeIndexes` instead.', since: '5.2.0')]
-    public function convertIndexDescription(TableSchema $schema, array $row): void
-    {
-        // Skip auto-indexes created for non-ROWID primary keys.
-        if ($row['origin'] === 'pk') {
-            return;
-        }
-
-        $sql = sprintf(
-            'PRAGMA index_info(%s)',
-            $this->driver->quoteIdentifier($row['name']),
-        );
-        $statement = $this->driver->execute($sql);
-        $columns = [];
-        foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $column) {
-            $columns[] = $column['name'];
-        }
-        if ($row['unique']) {
-            if ($row['origin'] === 'u') {
-                $createTableSql = $this->getCreateTableSql($schema->name());
-                $name = $this->extractIndexName($createTableSql, 'UNIQUE', $columns);
-                if ($name !== null) {
-                    $row['name'] = $name;
-                }
-            }
-
-            $schema->addConstraint($row['name'], [
-                'type' => TableSchema::CONSTRAINT_UNIQUE,
-                'columns' => $columns,
-            ]);
-        } else {
-            $schema->addIndex($row['name'], [
-                'type' => TableSchema::INDEX_INDEX,
-                'columns' => $columns,
-            ]);
-        }
     }
 
     /**
@@ -587,57 +480,6 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         return array_values($indexes);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function describeForeignKeySql(string $tableName, array $config): array
-    {
-        $sql = sprintf(
-            'SELECT id FROM pragma_foreign_key_list(%s) GROUP BY id',
-            $this->driver->quoteIdentifier($tableName),
-        );
-
-        return [$sql, []];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertForeignKeyDescription(TableSchema $schema, array $row): void
-    {
-        $sql = sprintf(
-            'SELECT * FROM pragma_foreign_key_list(%s) WHERE id = %d ORDER BY seq',
-            $this->driver->quoteIdentifier($schema->name()),
-            $row['id'],
-        );
-        $statement = $this->driver->prepare($sql);
-        $statement->execute();
-
-        $data = [
-            'type' => TableSchema::CONSTRAINT_FOREIGN,
-            'columns' => [],
-            'references' => [],
-        ];
-
-        $foreignKey = null;
-        foreach ($statement->fetchAll(PDO::FETCH_ASSOC) as $foreignKey) {
-            $data['columns'][] = $foreignKey['from'];
-            $data['references'][] = $foreignKey['to'];
-        }
-
-        if (count($data['references']) === 1) {
-            $data['references'] = [$foreignKey['table'], $data['references'][0]];
-        } else {
-            $data['references'] = [$foreignKey['table'], $data['references']];
-        }
-        $data['update'] = $this->convertOnClause($foreignKey['on_update'] ?? '');
-        $data['delete'] = $this->convertOnClause($foreignKey['on_delete'] ?? '');
-
-        $name = implode('_', $data['columns']) . '_' . $row['id'] . '_fk';
-
-        $schema->addConstraint($name, $data);
     }
 
     /**

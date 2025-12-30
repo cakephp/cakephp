@@ -21,10 +21,8 @@ use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Exception\QueryException;
 use Cake\Database\Type\ColumnSchemaAwareInterface;
 use Cake\Database\TypeFactory;
-use Deprecated;
 use InvalidArgumentException;
 use PDOException;
-use function Cake\Core\deprecationWarning;
 
 /**
  * Base class for schema implementations.
@@ -36,8 +34,6 @@ use function Cake\Core\deprecationWarning;
  * will be in the form of structured arrays. The structure
  * of each result will be documented in this class. Subclasses
  * are free to include *additional* data that is not documented.
- *
- * @method array<mixed> listTablesWithoutViewsSql(array $config) Generate the SQL to list the tables, excluding all views.
  */
 abstract class SchemaDialect
 {
@@ -193,103 +189,6 @@ abstract class SchemaDialect
     }
 
     /**
-     * Generate the SQL to list the tables.
-     *
-     * @param array<string, mixed> $config The connection configuration to use for
-     *    getting tables from.
-     * @return array An array of (sql, params) to execute.
-     */
-    #[Deprecated(message: 'Use `listTables()` instead.', since: '5.2.0')]
-    abstract public function listTablesSql(array $config): array;
-
-    /**
-     * Generate the SQL to describe a table.
-     *
-     * @param string $tableName The table name to get information on.
-     * @param array<string, mixed> $config The connection configuration.
-     * @return array An array of (sql, params) to execute.
-     */
-    #[Deprecated(message: 'Use `describeColumns()` instead.', since: '5.2.0')]
-    abstract public function describeColumnSql(string $tableName, array $config): array;
-
-    /**
-     * Generate the SQL to describe the indexes in a table.
-     *
-     * @param string $tableName The table name to get information on.
-     * @param array<string, mixed> $config The connection configuration.
-     * @return array An array of (sql, params) to execute.
-     */
-    #[Deprecated(message: 'Use `describeIndexes()` instead.', since: '5.2.0')]
-    abstract public function describeIndexSql(string $tableName, array $config): array;
-
-    /**
-     * Generate the SQL to describe the foreign keys in a table.
-     *
-     * @param string $tableName The table name to get information on.
-     * @param array<string, mixed> $config The connection configuration.
-     * @return array An array of (sql, params) to execute.
-     */
-    #[Deprecated(message: 'Use `describeForeignKeys()` instead.', since: '5.2.0')]
-    abstract public function describeForeignKeySql(string $tableName, array $config): array;
-
-    /**
-     * Generate the SQL to describe table options
-     *
-     * @param string $tableName Table name.
-     * @param array<string, mixed> $config The connection configuration.
-     * @return array SQL statements to get options for a table.
-     */
-    #[Deprecated(message: 'Use `describeOptions()` instead.', since: '5.2.0')]
-    public function describeOptionsSql(string $tableName, array $config): array
-    {
-        return ['', ''];
-    }
-
-    /**
-     * Convert field description results into abstract schema fields.
-     *
-     * @param \Cake\Database\Schema\TableSchema $schema The table object to append fields to.
-     * @param array $row The row data from `describeColumnSql`.
-     * @return void
-     */
-    #[Deprecated(message: 'Use `describeColumns()` instead.', since: '5.2.0')]
-    abstract public function convertColumnDescription(TableSchema $schema, array $row): void;
-
-    /**
-     * Convert an index description results into abstract schema indexes or constraints.
-     *
-     * @param \Cake\Database\Schema\TableSchema $schema The table object to append
-     *    an index or constraint to.
-     * @param array $row The row data from `describeIndexSql`.
-     * @return void
-     */
-    #[Deprecated(message: 'Use `describeIndexes()` instead.', since: '5.2.0')]
-    abstract public function convertIndexDescription(TableSchema $schema, array $row): void;
-
-    /**
-     * Convert a foreign key description into constraints on the Table object.
-     *
-     * @param \Cake\Database\Schema\TableSchema $schema The table object to append
-     *    a constraint to.
-     * @param array $row The row data from `describeForeignKeySql`.
-     * @return void
-     */
-    #[Deprecated(message: 'Use `describeForeignKeys()` instead.', since: '5.2.0')]
-    abstract public function convertForeignKeyDescription(TableSchema $schema, array $row): void;
-
-    /**
-     * Convert options data into table options.
-     *
-     * @param \Cake\Database\Schema\TableSchema $schema Table instance.
-     * @param array $row The row of data.
-     * @return void
-     */
-    #[Deprecated(message: 'Use `describeOptions()` instead.', since: '5.2.0')]
-    public function convertOptionsDescription(TableSchema $schema, array $row): void
-    {
-    }
-
-    /**
      * Generate the SQL to create a table.
      *
      * @param \Cake\Database\Schema\TableSchema $schema Table instance.
@@ -363,17 +262,7 @@ abstract class SchemaDialect
      * @param array $column The column metadata
      * @return string Generated SQL fragment for a column
      */
-    public function columnDefinitionSql(array $column): string
-    {
-        deprecationWarning(
-            '5.2.0',
-            'SchemaDialect subclasses need to implement `columnDefinitionSql` before 6.0.0',
-        );
-        $table = new TableSchema('placeholder');
-        $table->addColumn($column['name'], $column);
-
-        return $this->columnSql($table, $column['name']);
-    }
+    abstract public function columnDefinitionSql(array $column): string;
 
     /**
      * Get the list of tables, excluding any views, available in the current connection.
@@ -391,6 +280,24 @@ abstract class SchemaDialect
 
         return $result;
     }
+
+    /**
+     * Generate the SQL to list the tables.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array{0: string, 1: array} An array of (sql, params) to execute.
+     */
+    abstract protected function listTablesSql(array $config): array;
+
+    /**
+     * Generate the SQL to list the tables, excluding all views.
+     *
+     * @param array<string, mixed> $config The connection configuration to use for
+     *    getting tables from.
+     * @return array{0: string, 1: array} An array of (sql, params) to execute.
+     */
+    abstract protected function listTablesWithoutViewsSql(array $config): array;
 
     /**
      * Get the list of tables and views available in the current connection.
@@ -476,33 +383,7 @@ abstract class SchemaDialect
      * @param string $tableName The name of the table to describe columns on.
      * @return array
      */
-    public function describeColumns(string $tableName): array
-    {
-        deprecationWarning(
-            '5.2.0',
-            'SchemaDialect subclasses need to implement `describeColumns` before 6.0.0',
-        );
-        $config = $this->driver->config();
-        if (str_contains($tableName, '.')) {
-            [$config['schema'], $tableName] = explode('.', $tableName);
-        }
-        /** @var \Cake\Database\Schema\TableSchema $table */
-        $table = $this->driver->newTableSchema($tableName);
-
-        [$sql, $params] = $this->describeColumnSql($tableName, $config);
-        $statement = $this->driver->execute($sql, $params);
-        foreach ($statement->fetchAll('assoc') as $row) {
-            $this->convertColumnDescription($table, $row);
-        }
-        $columns = [];
-        foreach ($table->columns() as $columnName) {
-            $column = $table->getColumn($columnName);
-            $column['name'] = $columnName;
-            $columns[] = $column;
-        }
-
-        return $columns;
-    }
+    abstract public function describeColumns(string $tableName): array;
 
     /**
      * Get a list of constraint metadata as a array
@@ -519,37 +400,7 @@ abstract class SchemaDialect
      * @param string $tableName The name of the table to describe foreign keys on.
      * @return array
      */
-    public function describeForeignKeys(string $tableName): array
-    {
-        deprecationWarning(
-            '5.2.0',
-            'SchemaDialect subclasses need to implement `describeForeignKeys` before 6.0.0',
-        );
-        $config = $this->driver->config();
-        if (str_contains($tableName, '.')) {
-            [$config['schema'], $tableName] = explode('.', $tableName);
-        }
-        /** @var \Cake\Database\Schema\TableSchema $table */
-        $table = $this->driver->newTableSchema($tableName);
-        // Add the columns because TableSchema needs them.
-        foreach ($this->describeColumns($tableName) as $column) {
-            $table->addColumn($column['name'], $column);
-        }
-
-        [$sql, $params] = $this->describeForeignKeySql($tableName, $config);
-        $statement = $this->driver->execute($sql, $params);
-        foreach ($statement->fetchAll('assoc') as $row) {
-            $this->convertForeignKeyDescription($table, $row);
-        }
-        $keys = [];
-        foreach ($table->constraints() as $name) {
-            $key = $table->getConstraint($name);
-            $key['name'] = $name;
-            $keys[] = $key;
-        }
-
-        return $keys;
-    }
+    abstract public function describeForeignKeys(string $tableName): array;
 
     /**
      * Get a list of index metadata as a array
@@ -564,37 +415,7 @@ abstract class SchemaDialect
      * @param string $tableName The name of the table to describe indexes on.
      * @return array
      */
-    public function describeIndexes(string $tableName): array
-    {
-        deprecationWarning(
-            '5.2.0',
-            'SchemaDialect subclasses need to implement `describeIndexes` before 6.0.0',
-        );
-        $config = $this->driver->config();
-        if (str_contains($tableName, '.')) {
-            [$config['schema'], $tableName] = explode('.', $tableName);
-        }
-        /** @var \Cake\Database\Schema\TableSchema $table */
-        $table = $this->driver->newTableSchema($tableName);
-        // Add the columns because TableSchema needs them.
-        foreach ($this->describeColumns($tableName) as $column) {
-            $table->addColumn($column['name'], $column);
-        }
-
-        [$sql, $params] = $this->describeIndexSql($tableName, $config);
-        $statement = $this->driver->execute($sql, $params);
-        foreach ($statement->fetchAll('assoc') as $row) {
-            $this->convertIndexDescription($table, $row);
-        }
-        $indexes = [];
-        foreach ($table->indexes() as $name) {
-            $index = $table->getIndex($name);
-            $index['name'] = $name;
-            $indexes[] = $index;
-        }
-
-        return $indexes;
-    }
+    abstract public function describeIndexes(string $tableName): array;
 
     /**
      * Get platform specific options
@@ -604,29 +425,7 @@ abstract class SchemaDialect
      * @param string $tableName The name of the table to describe options on.
      * @return array
      */
-    public function describeOptions(string $tableName): array
-    {
-        deprecationWarning(
-            '5.2.0',
-            'SchemaDialect subclasses need to implement `describeOptions` before 6.0.0',
-        );
-        $config = $this->driver->config();
-        if (str_contains($tableName, '.')) {
-            [$config['schema'], $tableName] = explode('.', $tableName);
-        }
-        /** @var \Cake\Database\Schema\TableSchema $table */
-        $table = $this->driver->newTableSchema($tableName);
-
-        [$sql, $params] = $this->describeOptionsSql($tableName, $config);
-        if ($sql) {
-            $statement = $this->driver->execute($sql, $params);
-            foreach ($statement->fetchAll('assoc') as $row) {
-                $this->convertOptionsDescription($table, $row);
-            }
-        }
-
-        return $table->getOptions();
-    }
+    abstract public function describeOptions(string $tableName): array;
 
     /**
      * Get a list of check constraint metadata as an array.
