@@ -25,6 +25,8 @@ use InvalidArgumentException;
 use PDO;
 use ReflectionEnum;
 use ReflectionException;
+use TypeError;
+use ValueError;
 
 /**
  * Enum type converter.
@@ -85,6 +87,7 @@ class EnumType extends BaseType
      * @param mixed $value The value to convert.
      * @param \Cake\Database\Driver $driver The driver instance to convert with.
      * @return string|int|null
+     * @throws \InvalidArgumentException When the given value is not a valid value for the associated enum
      */
     public function toDatabase(mixed $value, Driver $driver): string|int|null
     {
@@ -92,36 +95,36 @@ class EnumType extends BaseType
             return null;
         }
 
-        if ($value instanceof BackedEnum) {
-            if (!$value instanceof $this->enumClassName) {
+        if ($value instanceof $this->enumClassName) {
+            return $value->value;
+        }
+
+        if ($this->backingType === 'int' && is_string($value)) {
+            $intVal = filter_var($value, FILTER_VALIDATE_INT);
+            if ($intVal !== false) {
+                $value = $intVal;
+            }
+        }
+
+        try {
+            return $this->enumClassName::from($value)->value;
+        } catch (ValueError | TypeError $exception) {
+            if ($exception instanceof TypeError) {
                 throw new InvalidArgumentException(sprintf(
-                    'Given value type `%s` does not match associated `%s` backed enum in `%s`',
+                    'Given value `%s` of type `%s` does not match associated `%s` backed enum in `%s`',
+                    print_r($value, true),
                     get_debug_type($value),
                     $this->backingType,
                     $this->enumClassName,
                 ));
             }
 
-            return $value->value;
-        }
-
-        if (!is_string($value) && !is_int($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'Cannot convert value `%s` of type `%s` to string or int',
-                print_r($value, true),
-                get_debug_type($value),
-            ));
-        }
-
-        if ($this->enumClassName::tryFrom($value) === null) {
             throw new InvalidArgumentException(sprintf(
                 '`%s` is not a valid value for `%s`',
                 $value,
                 $this->enumClassName,
             ));
         }
-
-        return $value;
     }
 
     /**
@@ -175,15 +178,6 @@ class EnumType extends BaseType
             return $value;
         }
 
-        if (!is_string($value) && !is_int($value)) {
-            throw new InvalidArgumentException(sprintf(
-                'Unable to marshal value `%s` of type `%s` to `%s`',
-                print_r($value, true),
-                get_debug_type($value),
-                $this->enumClassName,
-            ));
-        }
-
         if ($this->backingType === 'int') {
             if ($value === '') {
                 return null;
@@ -194,30 +188,11 @@ class EnumType extends BaseType
             }
         }
 
-        if (get_debug_type($value) !== $this->backingType) {
-            throw new InvalidArgumentException(sprintf(
-                'Given value type `%s` does not match associated `%s` backed enum in `%s`',
-                get_debug_type($value),
-                $this->backingType,
-                $this->enumClassName,
-            ));
+        try {
+            return $this->enumClassName::from($value);
+        } catch (ValueError | TypeError) {
+            return null;
         }
-
-        $enumInstance = $this->enumClassName::tryFrom($value);
-        if ($enumInstance === null) {
-            if ($value === '' && $this->backingType === 'string') {
-                return null;
-            }
-
-            throw new InvalidArgumentException(sprintf(
-                'Unable to marshal value `%s` of type `%s` to `%s`',
-                print_r($value, true),
-                get_debug_type($value),
-                $this->enumClassName,
-            ));
-        }
-
-        return $enumInstance;
     }
 
     /**

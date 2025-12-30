@@ -217,7 +217,7 @@ class ConsoleOptionParserTest extends TestCase
     }
 
     /**
-     * test adding an option and using the short value for parsing throws deprecation if conflicting.
+     * test adding an option with a conflicting short value throws an exception.
      */
     public function testAddOptionShortConflict(): void
     {
@@ -226,11 +226,12 @@ class ConsoleOptionParserTest extends TestCase
             'short' => 't',
         ]);
 
-        $this->deprecated(function () use ($parser): void {
-            $parser->addOption('other', [
-                'short' => 't',
-            ]);
-        });
+        $this->expectException(LogicException::class);
+        $this->expectExceptionMessage('Short option `t` is already defined for option `test`.');
+
+        $parser->addOption('other', [
+            'short' => 't',
+        ]);
     }
 
     /**

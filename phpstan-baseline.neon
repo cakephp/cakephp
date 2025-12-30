@@ -43,12 +43,6 @@ parameters:
 			path: src/Console/ConsoleOptionParser.php
 
 		-
-			message: '#^Trait Cake\\Console\\TestSuite\\ConsoleIntegrationTestTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Console/TestSuite/ConsoleIntegrationTestTrait.php
-
-		-
 			message: '#^Unknown parameter \$components in call to method ReflectionClass\<Cake\\Controller\\Controller\>\:\:newInstance\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
@@ -59,12 +53,6 @@ parameters:
 			identifier: argument.unknown
 			count: 1
 			path: src/Controller/ControllerFactory.php
-
-		-
-			message: '#^Trait Cake\\Core\\TestSuite\\ContainerStubTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Core/TestSuite/ContainerStubTrait.php
 
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
@@ -79,40 +67,10 @@ parameters:
 			path: src/Database/Expression/WhenThenExpression.php
 
 		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
+			message: '#^Dead catch \- InvalidArgumentException is never thrown in the try block\.$#'
+			identifier: catch.neverThrown
 			count: 1
-			path: src/Database/Type/EnumType.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between \*NEVER\* and '''' will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: src/Database/Type/EnumType.php
-
-		-
-			message: '#^Trait Cake\\Datasource\\ModelAwareTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Datasource/ModelAwareTrait.php
-
-		-
-			message: '#^PHPDoc tag @return with type iterable\<TKey, TValue\> is not subtype of native type Traversable\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: src/Datasource/Paging/PaginatedInterface.php
-
-		-
-			message: '#^The @extends tag of interface Cake\\Datasource\\Paging\\PaginatedInterface describes Traversable but the interface extends\: Countable, IteratorAggregate$#'
-			identifier: generics.wrongParent
-			count: 1
-			path: src/Datasource/Paging/PaginatedInterface.php
-
-		-
-			message: '#^The @implements tag of class Cake\\Datasource\\Paging\\PaginatedResultSet describes IteratorAggregate but the class implements\: JsonSerializable, Cake\\Datasource\\Paging\\PaginatedInterface$#'
-			identifier: generics.wrongParent
-			count: 1
-			path: src/Datasource/Paging/PaginatedResultSet.php
+			path: src/Database/Type/DateTimeType.php
 
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
@@ -181,12 +139,6 @@ parameters:
 			path: src/Http/Session.php
 
 		-
-			message: '#^Trait Cake\\Http\\TestSuite\\HttpClientTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Http/TestSuite/HttpClientTrait.php
-
-		-
 			message: '#^@readonly property cannot have a default value\.$#'
 			identifier: property.readOnlyByPhpDocDefaultValue
 			count: 7
@@ -205,28 +157,10 @@ parameters:
 			path: src/I18n/Time.php
 
 		-
-			message: '#^Trait Cake\\Mailer\\MailerAwareTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Mailer/MailerAwareTrait.php
-
-		-
 			message: '#^PHPDoc tag @var with type callable\(\)\: mixed is not subtype of native type Closure\(string\)\: string\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: src/ORM/Association/DependentDeleteHelper.php
-
-		-
-			message: '#^Trait Cake\\ORM\\Behavior\\Translate\\TranslateTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/ORM/Behavior/Translate/TranslateTrait.php
-
-		-
-			message: '#^Call to function assert\(\) with false and string will always evaluate to false\.$#'
-			identifier: function.impossibleType
-			count: 1
-			path: src/ORM/EagerLoader.php
 
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
@@ -263,30 +197,6 @@ parameters:
 			identifier: method.internalInterface
 			count: 1
 			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\EmailTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/EmailTrait.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\IntegrationTestTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/IntegrationTestTrait.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\LogTestTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/LogTestTrait.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\StringCompareTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/StringCompareTrait.php
 
 		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with false and non\-falsy\-string will always evaluate to false\.$#'
@@ -343,12 +253,6 @@ parameters:
 			identifier: argument.templateType
 			count: 1
 			path: src/Utility/Hash.php
-
-		-
-			message: '#^Trait Cake\\Utility\\MergeVariablesTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Utility/MergeVariablesTrait.php
 
 		-
 			message: '#^Parameter \#1 \$objectOrClass of class ReflectionEnum constructor expects class\-string\<UnitEnum\>\|UnitEnum, class\-string given\.$#'
