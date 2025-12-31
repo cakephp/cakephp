@@ -1556,7 +1556,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function projectAs(string $dtoClass)
     {
-        $this->_dirty();
+        $this->dirty();
         $this->_dtoClass = $dtoClass;
 
         return $this;
