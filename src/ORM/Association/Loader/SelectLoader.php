@@ -173,11 +173,15 @@ class SelectLoader
         /** @var \Cake\ORM\Query\SelectQuery $selectQuery */
         $selectQuery = $options['query'];
 
+        // Disable hydration for external queries when parent has DTO projection
+        // The DTO's setFromArray() expects arrays, not entities
+        $shouldHydrate = $selectQuery->isHydrationEnabled() && !$selectQuery->isDtoProjectionEnabled();
+
         $fetchQuery = $query
             ->select($options['fields'])
             ->where($options['conditions'])
             ->eagerLoaded(true)
-            ->enableHydration($selectQuery->isHydrationEnabled())
+            ->enableHydration($shouldHydrate)
             ->setConnectionRole($selectQuery->getConnectionRole());
         if ($selectQuery->isResultsCastingEnabled()) {
             $fetchQuery->enableResultsCasting();

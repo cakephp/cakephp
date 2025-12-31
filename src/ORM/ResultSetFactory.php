@@ -84,6 +84,7 @@ class ResultSetFactory
             'hydrate' => $query->isHydrationEnabled(),
             'autoFields' => $query->isAutoFieldsEnabled(),
             'matchingColumns' => [],
+            'dtoClass' => $query->getDtoClass(),
         ];
 
         $assocMap = $query->getEagerLoader()->associationsMap($primaryTable);
@@ -130,9 +131,9 @@ class ResultSetFactory
      *
      * @param array $row Array containing columns and values.
      * @param array $data Array containing table and query metadata
-     * @return \Cake\Datasource\EntityInterface|array
+     * @return \Cake\Datasource\EntityInterface|object|array
      */
-    protected function groupResult(array $row, array $data): EntityInterface|array
+    protected function groupResult(array $row, array $data): mixed
     {
         $results = [];
         $presentAliases = [];
@@ -149,7 +150,7 @@ class ResultSetFactory
                 $keys,
                 array_intersect_key($row, $keys),
             );
-            if ($data['hydrate']) {
+            if ($data['hydrate'] && $data['dtoClass'] === null) {
                 $table = $matching['instance'];
                 assert($table instanceof Table || $table instanceof Association);
 
@@ -211,7 +212,7 @@ class ResultSetFactory
                 }
             }
 
-            if ($data['hydrate'] && $results[$alias] !== null && $assoc['canBeJoined']) {
+            if ($data['hydrate'] && $data['dtoClass'] === null && $results[$alias] !== null && $assoc['canBeJoined']) {
                 $entity = new $assoc['entityClass']($results[$alias], $options);
                 $results[$alias] = $entity;
             }
@@ -234,12 +235,61 @@ class ResultSetFactory
         if (isset($results[$data['primaryAlias']])) {
             $results = $results[$data['primaryAlias']];
         }
+
+        // DTO projection returns arrays - DTO mapping happens in formatter phase
+        if ($data['dtoClass'] !== null) {
+            return $results;
+        }
+
         if ($data['hydrate'] && !($results instanceof EntityInterface)) {
             /** @var \Cake\Datasource\EntityInterface */
             return new $data['entityClass']($results, $options);
         }
 
         return $results;
+    }
+
+    /**
+     * Cached DtoMapper instance
+     *
+     * @var \Cake\ORM\DtoMapper|null
+     */
+    protected ?DtoMapper $dtoMapper = null;
+
+    /**
+     * Hydrate a row into a DTO.
+     *
+     * Supports two patterns:
+     * - Static `createFromArray($data, $nested)` factory method (cakephp-dto style)
+     * - Constructor with named parameters (DtoMapper reflection)
+     *
+     * @param array $row Nested array data
+     * @param class-string $dtoClass DTO class name
+     * @return object
+     */
+    public function hydrateDto(array $row, string $dtoClass): object
+    {
+        // Check for array style static factory method
+        if (method_exists($dtoClass, 'createFromArray')) {
+            return $dtoClass::createFromArray($row, true);
+        }
+
+        // Use DtoMapper for plain readonly DTOs with named constructor params
+        return $this->getDtoMapper()->map($row, $dtoClass);
+    }
+
+    /**
+     * Get or create the DtoMapper instance.
+     *
+     * @return \Cake\ORM\DtoMapper
+     */
+    public function getDtoMapper(): DtoMapper
+    {
+        if ($this->dtoMapper === null) {
+            $this->dtoMapper = new DtoMapper();
+        }
+
+        return $this->dtoMapper;
     }
 
     /**
