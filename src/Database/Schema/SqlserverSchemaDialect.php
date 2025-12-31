@@ -35,7 +35,7 @@ class SqlserverSchemaDialect extends SchemaDialect
      *    getting tables from.
      * @return array An array of (sql, params) to execute.
      */
-    public function listTablesSql(array $config): array
+    protected function listTablesSql(array $config): array
     {
         $sql = "SELECT TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES
@@ -52,9 +52,9 @@ class SqlserverSchemaDialect extends SchemaDialect
      *
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
-     * @return array<mixed> An array of (sql, params) to execute.
+     * @return array{0: string, 1: array} An array of (sql, params) to execute.
      */
-    public function listTablesWithoutViewsSql(array $config): array
+    protected function listTablesWithoutViewsSql(array $config): array
     {
         $sql = "SELECT TABLE_NAME
             FROM INFORMATION_SCHEMA.TABLES
@@ -64,17 +64,6 @@ class SqlserverSchemaDialect extends SchemaDialect
         $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
 
         return [$sql, [$schema]];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function describeColumnSql(string $tableName, array $config): array
-    {
-        $sql = $this->describeColumnQuery();
-        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
-
-        return [$sql, [$tableName, $schema]];
     }
 
     /**
@@ -230,30 +219,6 @@ class SqlserverSchemaDialect extends SchemaDialect
     }
 
     /**
-     * @inheritDoc
-     */
-    public function convertColumnDescription(TableSchema $schema, array $row): void
-    {
-        $field = $this->convertColumn(
-            $row['type'],
-            $row['char_length'] !== null ? (int)$row['char_length'] : null,
-            $row['precision'] !== null ? (int)$row['precision'] : null,
-            $row['scale'] !== null ? (int)$row['scale'] : null,
-        );
-
-        if (!empty($row['autoincrement'])) {
-            $field['autoIncrement'] = true;
-        }
-
-        $field += [
-            'null' => $row['null'] === '1',
-            'default' => $this->defaultValue($field['type'], $row['default']),
-            'collate' => $row['collation_name'],
-        ];
-        $schema->addColumn($row['name'], $field);
-    }
-
-    /**
      * Split a tablename into a tuple of schema, table
      * If the table does not have a schema name included, the connection
      * schema will be used.
@@ -346,17 +311,6 @@ class SqlserverSchemaDialect extends SchemaDialect
     }
 
     /**
-     * @inheritDoc
-     */
-    public function describeIndexSql(string $tableName, array $config): array
-    {
-        $sql = $this->describeIndexQuery();
-        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
-
-        return [$sql, [$tableName, $schema]];
-    }
-
-    /**
      * Get the query to describe indexes
      *
      * @return string
@@ -377,46 +331,6 @@ class SqlserverSchemaDialect extends SchemaDialect
             INNER JOIN sys.[all_columns] AC ON T.[object_id] = AC.[object_id] AND IC.[column_id] = AC.[column_id]
             WHERE T.[is_ms_shipped] = 0 AND I.[type_desc] <> 'HEAP' AND T.[name] = ? AND S.[name] = ?
             ORDER BY I.[index_id], IC.[index_column_id]";
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertIndexDescription(TableSchema $schema, array $row): void
-    {
-        $type = TableSchema::INDEX_INDEX;
-        $name = $row['index_name'];
-        if ($row['is_primary_key']) {
-            $name = TableSchema::CONSTRAINT_PRIMARY;
-            $type = TableSchema::CONSTRAINT_PRIMARY;
-        }
-        if (($row['is_unique'] || $row['is_unique_constraint']) && $type === TableSchema::INDEX_INDEX) {
-            $type = TableSchema::CONSTRAINT_UNIQUE;
-        }
-
-        if ($type === TableSchema::INDEX_INDEX) {
-            $existing = $schema->getIndex($name);
-        } else {
-            $existing = $schema->getConstraint($name);
-        }
-
-        $columns = [$row['column_name']];
-        if ($existing) {
-            $columns = array_merge($existing['columns'], $columns);
-        }
-
-        if ($type === TableSchema::CONSTRAINT_PRIMARY || $type === TableSchema::CONSTRAINT_UNIQUE) {
-            $schema->addConstraint($name, [
-                'type' => $type,
-                'columns' => $columns,
-            ]);
-
-            return;
-        }
-        $schema->addIndex($name, [
-            'type' => $type,
-            'columns' => $columns,
-        ]);
     }
 
     /**
@@ -523,33 +437,6 @@ class SqlserverSchemaDialect extends SchemaDialect
         }
 
         return array_values($keys);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function describeForeignKeySql(string $tableName, array $config): array
-    {
-        $sql = $this->describeForeignKeyQuery();
-        $schema = $config['schema'] ?? static::DEFAULT_SCHEMA_NAME;
-
-        return [$sql, [$tableName, $schema]];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertForeignKeyDescription(TableSchema $schema, array $row): void
-    {
-        $data = [
-            'type' => TableSchema::CONSTRAINT_FOREIGN,
-            'columns' => [$row['column']],
-            'references' => [$row['reference_table'], $row['reference_column']],
-            'update' => $this->convertOnClause($row['update_type']),
-            'delete' => $this->convertOnClause($row['delete_type']),
-        ];
-        $name = $row['foreign_key_name'];
-        $schema->addConstraint($name, $data);
     }
 
     /**
