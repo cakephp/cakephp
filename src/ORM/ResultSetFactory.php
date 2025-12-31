@@ -72,7 +72,7 @@ class ResultSetFactory
      * entity hydration.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query from where to derive the data.
-     * @return array
+     * @return array{primaryAlias: string, registryAlias: string, entityClass: class-string<\Cake\Datasource\EntityInterface>, hydrate: bool, autoFields: bool|null, matchingColumns: array, dtoClass: class-string|null, matchingAssoc: array, containAssoc: array, fields: array}
      */
     protected function collectData(SelectQuery $query): array
     {
@@ -131,9 +131,9 @@ class ResultSetFactory
      *
      * @param array $row Array containing columns and values.
      * @param array $data Array containing table and query metadata
-     * @return \Cake\Datasource\EntityInterface|object|array
+     * @return \Cake\Datasource\EntityInterface|array
      */
-    protected function groupResult(array $row, array $data): mixed
+    protected function groupResult(array $row, array $data): EntityInterface|array
     {
         $results = [];
         $presentAliases = [];

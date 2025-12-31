@@ -163,7 +163,6 @@ class DtoMapper
                 !in_array($typeName, ['DateTime', 'DateTimeImmutable', 'DateTimeInterface', 'stdClass'], true)
                 && class_exists($typeName)
             ) {
-                /** @var class-string $typeName */
                 $info['dtoClass'] = $typeName;
             }
         }

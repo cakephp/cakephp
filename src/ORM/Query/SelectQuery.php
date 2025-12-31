@@ -100,7 +100,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @var class-string|null
      */
-    protected ?string $_dtoClass = null;
+    protected ?string $dtoClass = null;
 
     /**
      * Whether aliases are generated for fields.
@@ -760,8 +760,8 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         }
 
         // DTO projection runs AFTER all other formatters so behaviors see arrays/entities
-        if ($this->_dtoClass !== null) {
-            $dtoClass = $this->_dtoClass;
+        if ($this->dtoClass !== null) {
+            $dtoClass = $this->dtoClass;
             $factory = $this->resultSetFactory();
             $result = $result->map(function ($row) use ($dtoClass, $factory) {
                 if (is_array($row)) {
@@ -1554,10 +1554,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param class-string $dtoClass The DTO class name
      * @return $this
      */
-    public function projectAs(string $dtoClass)
+    public function projectAs(string $dtoClass): static
     {
         $this->dirty();
-        $this->_dtoClass = $dtoClass;
+        $this->dtoClass = $dtoClass;
 
         return $this;
     }
@@ -1569,7 +1569,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function getDtoClass(): ?string
     {
-        return $this->_dtoClass;
+        return $this->dtoClass;
     }
 
     /**
@@ -1579,7 +1579,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      */
     public function isDtoProjectionEnabled(): bool
     {
-        return $this->_dtoClass !== null;
+        return $this->dtoClass !== null;
     }
 
     /**
