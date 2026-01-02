@@ -164,7 +164,7 @@ SQL;
             ],
             [
                 'TINYINT(1) UNSIGNED',
-                ['type' => 'tinyinteger', 'length' => null],
+                ['type' => 'boolean', 'length' => null],
             ],
             [
                 'TINYINT(3)',
@@ -351,16 +351,14 @@ SQL;
 
         // Collations are a mess in MySQL
         if (isset($expected['collate'])) {
-            if ($driver->isMariaDb()) {
-                $expected['config']['collate'] = 'utf8mb4_bin';
-            }
-            // MariaDB 10.5+ and MySQL 8.0.30+ use utf8mb3 alias instead of utf8
-            if (
-                ($driver->isMariaDb() && version_compare($driver->version(), '10.5.0', '>=')) ||
-                (!$driver->isMariaDb() && version_compare($driver->version(), '8.0.30', '>='))
-            ) {
-                $expected['collate'] = 'utf8mb3_general_ci';
-            }
+            $db = $driver->config()['database'];
+            $result = $connection->execute(
+                'SELECT default_collation_name FROM information_schema.schemata WHERE schema_name = ?',
+                [$db],
+            );
+            $row = $result->fetch('assoc');
+            $result->closeCursor();
+            $expected['collate'] = $row['DEFAULT_COLLATION_NAME'];
         }
 
         $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(
