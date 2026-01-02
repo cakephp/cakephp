@@ -181,6 +181,170 @@ SQL;
     }
 
     /**
+     * Data provider for convert column testing
+     *
+     * @return array
+     */
+    public static function convertColumnProvider(): array
+    {
+        return [
+            [
+                'DATETIME',
+                ['type' => 'datetime', 'length' => null],
+            ],
+            [
+                'DATE',
+                ['type' => 'date', 'length' => null],
+            ],
+            [
+                'TIME',
+                ['type' => 'time', 'length' => null],
+            ],
+            [
+                'BOOLEAN DEFAULT 0',
+                ['type' => 'boolean', 'length' => null, 'default' => 0],
+            ],
+            [
+                'BIGINT',
+                ['type' => 'biginteger', 'length' => null, 'unsigned' => false],
+            ],
+            [
+                'UNSIGNED BIGINT',
+                ['type' => 'biginteger', 'length' => null, 'unsigned' => true],
+            ],
+            [
+                'VARCHAR(255)',
+                ['type' => 'string', 'length' => 255],
+            ],
+            [
+                'CHAR(25)',
+                ['type' => 'char', 'length' => 25],
+            ],
+            [
+                'CHAR(36)',
+                ['type' => 'uuid', 'length' => null],
+            ],
+            [
+                'BINARY(16)',
+                ['type' => 'binaryuuid', 'length' => null],
+            ],
+            [
+                'BINARY(1)',
+                ['type' => 'binary', 'length' => 1],
+            ],
+            [
+                'BLOB',
+                ['type' => 'binary', 'length' => null],
+            ],
+            [
+                'INTEGER(11)',
+                ['type' => 'integer', 'length' => 11, 'unsigned' => false],
+            ],
+            [
+                'UNSIGNED INTEGER(11)',
+                ['type' => 'integer', 'length' => 11, 'unsigned' => true],
+            ],
+            [
+                'TINYINT(3)',
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => false],
+            ],
+            [
+                'UNSIGNED TINYINT(3)',
+                ['type' => 'tinyinteger', 'length' => 3, 'unsigned' => true],
+            ],
+            [
+                'SMALLINT(5)',
+                ['type' => 'smallinteger', 'length' => 5, 'unsigned' => false],
+            ],
+            [
+                'UNSIGNED SMALLINT(5)',
+                ['type' => 'smallinteger', 'length' => 5, 'unsigned' => true],
+            ],
+            [
+                'MEDIUMINT(10)',
+                ['type' => 'integer', 'length' => 10, 'unsigned' => false],
+            ],
+            [
+                'FLOAT',
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
+            ],
+            [
+                'DOUBLE',
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
+            ],
+            [
+                'UNSIGNED DOUBLE',
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => true],
+            ],
+            [
+                'REAL',
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
+            ],
+            [
+                'DECIMAL(11,2)',
+                ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => false],
+            ],
+            [
+                'UNSIGNED DECIMAL(11,2)',
+                ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => true],
+            ],
+            [
+                'UUID_TEXT',
+                ['type' => 'uuid', 'length' => null],
+            ],
+            [
+                'UUID_BLOB',
+                ['type' => 'binaryuuid', 'length' => null],
+            ],
+            [
+                'GEOMETRY_TEXT',
+                ['type' => 'geometry', 'length' => null],
+            ],
+            [
+                'POINT_TEXT',
+                ['type' => 'point', 'length' => null],
+            ],
+            [
+                'LINESTRING_TEXT',
+                ['type' => 'linestring', 'length' => null],
+            ],
+            [
+                'POLYGON_TEXT',
+                ['type' => 'polygon', 'length' => null],
+            ],
+        ];
+    }
+
+    /**
+     * Test parsing SQLite column types from field description.
+     */
+    #[DataProvider('convertColumnProvider')]
+    public function testConvertColumn(string $type, array $expected): void
+    {
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE convert_columns (
+    reflection $type
+);
+SQL;
+        $connection->execute($sql);
+
+        $driver = $connection->getDriver();
+        $dialect = $driver->schemaDialect();
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
+
+        $data = $table->column('reflection')->toArray();
+        $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(
+            $expected,
+            $data,
+            array_keys($expected),
+        );
+    }
+
+    /**
      * Test SchemaCollection listing tables with Sqlite
      */
     public function testListTables(): void
