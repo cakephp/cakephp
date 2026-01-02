@@ -295,10 +295,6 @@ SQL;
                 ['type' => 'float', 'length' => 10, 'precision' => 4, 'unsigned' => true],
             ],
             [
-                'JSON',
-                ['type' => 'json', 'length' => null],
-            ],
-            [
                 'GEOMETRY',
                 ['type' => 'geometry', 'length' => null],
             ],
@@ -357,6 +353,35 @@ SQL;
             $data,
             array_keys($expected),
         );
+    }
+
+    /**
+     * Test parsing JSON types in mysql
+     */
+    public function testConvertColumnJson(): void
+    {
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+
+        $isMaria = $driver->isMariaDb();
+        $this->skipIf($isMaria, 'This test requires mysql');
+
+        $sql = <<<SQL
+CREATE TABLE convert_columns (
+    reflection JSON
+);
+SQL;
+        $connection->execute($sql);
+
+        $dialect = $driver->schemaDialect();
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
+
+        $column = $table->column('reflection');
+        $this->assertEquals('json', $column->getType());
+        $this->assertNull($column->getLength());
     }
 
     /**
