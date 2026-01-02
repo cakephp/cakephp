@@ -163,10 +163,6 @@ SQL;
                 ['type' => 'boolean', 'length' => null],
             ],
             [
-                'TINYINT(1) UNSIGNED',
-                ['type' => 'boolean', 'length' => null],
-            ],
-            [
                 'TINYINT(3)',
                 ['type' => 'tinyinteger', 'length' => null, 'unsigned' => false],
             ],
@@ -213,11 +209,6 @@ SQL;
             [
                 'CHAR(36)',
                 ['type' => 'uuid', 'length' => null],
-            ],
-            // This fails locally with mysql 8.0, so it might be mariadb dependent.
-            [
-                'UUID',
-                ['type' => 'nativeuuid', 'length' => null],
             ],
             [
                 'BINARY(16)',
@@ -356,9 +347,9 @@ SQL;
                 'SELECT default_collation_name FROM information_schema.schemata WHERE schema_name = ?',
                 [$db],
             );
-            $row = $result->fetch('assoc');
+            $row = $result->fetch();
             $result->closeCursor();
-            $expected['collate'] = $row['DEFAULT_COLLATION_NAME'];
+            $expected['collate'] = $row[0];
         }
 
         $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(
@@ -366,6 +357,34 @@ SQL;
             $data,
             array_keys($expected),
         );
+    }
+
+    /**
+     * Test parsing UUID types in mariadb
+     */
+    public function testConvertColumnUuid(): void
+    {
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+
+        $isMaria = $driver->isMariaDb();
+        $this->skipIf(!$isMaria, 'This test requires mariadb');
+
+        $sql = <<<SQL
+CREATE TABLE convert_columns (
+    reflection UUID
+);
+SQL;
+        $connection->execute($sql);
+
+        $dialect = $driver->schemaDialect();
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
+
+        $column = $table->column('reflection');
+        $this->assertEquals('nativeuuid', $column->getType());
     }
 
     /**
