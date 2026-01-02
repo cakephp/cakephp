@@ -337,7 +337,7 @@ SQL;
         $connection = ConnectionManager::get('test');
         $sql = <<<SQL
 CREATE TABLE convert_columns (
-    reflection $type
+    reflection {$type}
 );
 SQL;
         $connection->execute($sql);

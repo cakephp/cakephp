@@ -312,7 +312,7 @@ SQL;
         $connection = ConnectionManager::get('test');
         $sql = <<<SQL
 CREATE TABLE convert_columns (
-    reflection $field
+    reflection {$field}
 );
 SQL;
         $connection->execute($sql);
