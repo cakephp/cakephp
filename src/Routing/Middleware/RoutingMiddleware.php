@@ -16,12 +16,14 @@ declare(strict_types=1);
  */
 namespace Cake\Routing\Middleware;
 
+use Cake\Core\Configure;
 use Cake\Core\ContainerApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\Exception\RedirectException;
 use Cake\Http\MiddlewareQueue;
 use Cake\Http\Runner;
 use Cake\Http\ServerRequest;
+use Cake\Routing\Exception\MissingRouteException;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Laminas\Diactoros\Response\RedirectResponse;
@@ -112,6 +114,19 @@ class RoutingMiddleware implements MiddlewareInterface
                 $e->getCode(),
                 $e->getHeaders(),
             );
+        } catch (MissingRouteException $e) {
+            if (Configure::read('debug', false) || !Configure::read('Error.enableErrorControllerFor404')) {
+                throw $e;
+            }
+            $request = $request->withAttribute('exception', $e);
+            $params = [
+                'controller' => 'Error',
+                'action' => 'missingRoute',
+            ];
+            $request = $request->withAttribute('params', $params);
+            Router::setRequest($request);
+
+            return $handler->handle($request);
         }
         $matching = Router::getRouteCollection()->getMiddleware($middleware);
         if (!$matching) {

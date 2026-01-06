@@ -248,6 +248,37 @@ class RoutingMiddlewareTest extends TestCase
     }
 
     /**
+     * Test missing routes being passed to error controller.
+     */
+    public function testMissingRoutePassedDownToErrorController(): void
+    {
+        Configure::write('debug', false);
+        Configure::write('Error.enableErrorControllerFor404', true);
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/missing']);
+        $handler = new TestRequestHandler(function ($req) {
+            $this->assertEquals('Error', $req->getAttribute('params')['controller']);
+            $this->assertEquals('missingRoute', $req->getAttribute('params')['action']);
+            $this->assertInstanceOf(MissingRouteException::class, $req->getAttribute('exception'));
+
+            return new Response();
+        });
+        $middleware = new RoutingMiddleware($this->app());
+        $middleware->process($request, $handler);
+    }
+
+    /**
+     * Test missing routes not being caught in debug mode.
+     */
+    public function testMissingRouteNotCaughtInDebugMode(): void
+    {
+        $this->expectException(MissingRouteException::class);
+        Configure::write('debug', true);
+        $request = ServerRequestFactory::fromGlobals(['REQUEST_URI' => '/missing']);
+        $middleware = new RoutingMiddleware($this->app());
+        $middleware->process($request, new TestRequestHandler());
+    }
+
+    /**
      * Test route with _method being parsed correctly.
      */
     public function testFakedRequestMethodParsed(): void
