@@ -135,6 +135,202 @@ SQL;
     }
 
     /**
+     * Data provider for convert column testing
+     *
+     * @return array
+     */
+    public static function convertColumnProvider(): array
+    {
+        return [
+            // Timestamp
+            [
+                'TIMESTAMP(6)',
+                ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
+            ],
+            [
+                'TIMESTAMP(0)',
+                ['type' => 'timestamp', 'length' => null, 'precision' => 0],
+            ],
+            [
+                'TIMESTAMP(6) WITHOUT TIME ZONE',
+                ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
+            ],
+            [
+                'TIMESTAMP(6) WITH TIME ZONE',
+                ['type' => 'timestamptimezone', 'length' => null, 'precision' => 6],
+            ],
+            [
+                'TIMESTAMPTZ(6)',
+                ['type' => 'timestamptimezone', 'length' => null, 'precision' => 6],
+            ],
+            // Date & time
+            [
+                'DATE',
+                ['type' => 'date', 'length' => null],
+            ],
+            [
+                'TIME',
+                ['type' => 'time', 'length' => null],
+            ],
+            [
+                'TIME WITHOUT TIME ZONE',
+                ['type' => 'time', 'length' => null],
+            ],
+            [
+                'INTERVAL',
+                ['type' => 'interval', 'length' => null],
+            ],
+            // Integer
+            [
+                'SMALLINT',
+                ['type' => 'smallinteger', 'length' => 5],
+            ],
+            [
+                'INTEGER',
+                ['type' => 'integer', 'length' => 10],
+            ],
+            [
+                'SERIAL',
+                ['type' => 'integer', 'length' => 10],
+            ],
+            [
+                'BIGINT',
+                ['type' => 'biginteger', 'length' => 20],
+            ],
+            [
+                'BIGSERIAL',
+                ['type' => 'biginteger', 'length' => 20],
+            ],
+            // Decimal
+            [
+                'NUMERIC',
+                ['type' => 'decimal', 'length' => null, 'precision' => null],
+            ],
+            [
+                'NUMERIC DEFAULT NULL::numeric',
+                ['type' => 'decimal', 'length' => null, 'precision' => null, 'default' => null],
+            ],
+            [
+                'DECIMAL(10,2)',
+                ['type' => 'decimal', 'length' => 10, 'precision' => 2],
+            ],
+            // String
+            [
+                'VARCHAR',
+                ['type' => 'string', 'length' => null],
+            ],
+            [
+                'VARCHAR(10)',
+                ['type' => 'string', 'length' => 10],
+            ],
+            [
+                'CHARACTER VARYING',
+                ['type' => 'string', 'length' => null],
+            ],
+            [
+                'CHARACTER VARYING(10)',
+                ['type' => 'string', 'length' => 10],
+            ],
+            [
+                'CHARACTER VARYING(255) DEFAULT NULL::character varying',
+                ['type' => 'string', 'length' => 255, 'default' => null],
+            ],
+            [
+                'CHAR(10)',
+                ['type' => 'string', 'length' => 10],
+            ],
+            [
+                'CHAR(36)',
+                ['type' => 'string', 'length' => 36],
+            ],
+            [
+                'CHARACTER(10)',
+                ['type' => 'string', 'length' => 10],
+            ],
+            [
+                'MONEY',
+                ['type' => 'string', 'length' => null],
+            ],
+            // UUID
+            [
+                'UUID',
+                ['type' => 'uuid', 'length' => null],
+            ],
+            // Text
+            [
+                'TEXT',
+                ['type' => 'text', 'length' => null],
+            ],
+            // Blob
+            [
+                'BYTEA',
+                ['type' => 'binary', 'length' => null],
+            ],
+            // Float
+            [
+                'REAL',
+                ['type' => 'float', 'length' => null],
+            ],
+            [
+                'DOUBLE PRECISION',
+                ['type' => 'float', 'length' => null],
+            ],
+            // JSON
+            [
+                'JSON',
+                ['type' => 'json', 'length' => null],
+            ],
+            [
+                'JSONB',
+                ['type' => 'json', 'length' => null],
+            ],
+            // Geospatial - see testDescribeTableGeospatialTypes
+            // network addresses
+            [
+                'CIDR',
+                ['type' => 'cidr', 'length' => null],
+            ],
+            [
+                'inet',
+                ['type' => 'inet', 'length' => null],
+            ],
+            [
+                'macaddr',
+                ['type' => 'macaddr', 'length' => null],
+            ],
+        ];
+    }
+
+    /**
+     * Test parsing Postgres column types from field description.
+     */
+    #[DataProvider('convertColumnProvider')]
+    public function testConvertColumn(string $field, array $expected): void
+    {
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE convert_columns (
+    reflection {$field}
+);
+SQL;
+        $connection->execute($sql);
+
+        $driver = $connection->getDriver();
+        $dialect = $driver->schemaDialect();
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
+
+        $data = $table->column('reflection')->toArray();
+        $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(
+            $expected,
+            $data,
+            array_keys($expected),
+        );
+    }
+
+    /**
      * Test listing tables with Postgres
      */
     public function testListTables(): void

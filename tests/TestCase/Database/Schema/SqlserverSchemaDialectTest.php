@@ -108,6 +108,155 @@ SQL;
     }
 
     /**
+     * Data provider for convert column testing
+     *
+     * @return array
+     */
+    public static function convertColumnProvider(): array
+    {
+        return [
+            [
+                'DATETIME',
+                ['type' => 'datetime', 'length' => null],
+            ],
+            [
+                'DATETIME2',
+                ['type' => 'datetimefractional', 'length' => null, 'precision' => 7],
+            ],
+            [
+                'DATETIME2(0)',
+                ['type' => 'datetime', 'length' => null, 'precision' => 0],
+            ],
+            [
+                'DATE',
+                ['type' => 'date', 'length' => null],
+            ],
+            [
+                'TIME',
+                ['type' => 'time', 'length' => null],
+            ],
+            [
+                'TINYINT',
+                ['type' => 'tinyinteger', 'length' => 3],
+            ],
+            [
+                'SMALLINT',
+                ['type' => 'smallinteger', 'length' => 5],
+            ],
+            [
+                'INTEGER',
+                ['type' => 'integer', 'length' => 10],
+            ],
+            [
+                'BIGINT',
+                ['type' => 'biginteger', 'length' => 19],
+            ],
+            [
+                'NUMERIC',
+                ['type' => 'decimal', 'length' => 18],
+            ],
+            [
+                'DECIMAL(11,3)',
+                ['type' => 'decimal', 'length' => 11, 'precision' => 3],
+            ],
+            [
+                'MONEY',
+                ['type' => 'decimal', 'length' => 19, 'precision' => 4],
+            ],
+            [
+                'VARCHAR(255)',
+                ['type' => 'string', 'length' => 255, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
+            ],
+            [
+                'VARCHAR(10)',
+                ['type' => 'string', 'length' => 10, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
+            ],
+            [
+                'NVARCHAR(25)',
+                ['type' => 'string', 'length' => 25, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
+            ],
+            [
+                'VARCHAR(MAX)',
+                ['type' => 'text', 'length' => null, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
+            ],
+            [
+                'CHAR(10)',
+                ['type' => 'char', 'length' => 10, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
+            ],
+            [
+                'NCHAR(5)',
+                ['type' => 'char', 'length' => 5, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
+            ],
+            [
+                'UNIQUEIDENTIFIER',
+                ['type' => 'uuid'],
+            ],
+            [
+                'TEXT',
+                ['type' => 'text', 'length' => null, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
+            ],
+            [
+                'REAL',
+                ['type' => 'float', 'length' => null],
+            ],
+            [
+                'IMAGE',
+                ['type' => 'binary', 'length' => 16],
+            ],
+            [
+                'BINARY(20)',
+                ['type' => 'binary', 'length' => 20],
+            ],
+            [
+                'VARBINARY(30)',
+                ['type' => 'binary', 'length' => 30],
+            ],
+            [
+                'VARBINARY(MAX)',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
+            ],
+            // Geospatial types
+            [
+                'GEOMETRY',
+                ['type' => 'geometry', 'null' => true],
+            ],
+            [
+                'GEOGRAPHY',
+                ['type' => 'point', 'null' => true],
+            ],
+        ];
+    }
+
+    /**
+     * Test parsing sqlserver column types from field description.
+     */
+    #[DataProvider('convertColumnProvider')]
+    public function testConvertColumn(string $type, array $expected): void
+    {
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE convert_columns (
+    reflection {$type}
+);
+SQL;
+        $connection->execute($sql);
+
+        $driver = $connection->getDriver();
+        $dialect = $driver->schemaDialect();
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
+
+        $data = $table->column('reflection')->toArray();
+        $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(
+            $expected,
+            $data,
+            array_keys($expected),
+        );
+    }
+
+    /**
      * Test listing tables with Sqlserver
      */
     public function testListTables(): void
