@@ -59,6 +59,9 @@ class OpenSslTest extends TestCase
         $result = $this->crypt->encrypt($txt, $key);
 
         $key = 'Not the same key.';
-        $this->assertNull($this->crypt->decrypt($result, $key), 'Modified key will fail.');
+        $decrypted = $this->crypt->decrypt($result, $key);
+        // With unauthenticated CBC mode, wrong key decryption may return null
+        // (padding failure) or garbage data (padding accidentally valid).
+        $this->assertNotSame($txt, $decrypted, 'Modified key should not decrypt to original text.');
     }
 }

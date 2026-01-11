@@ -365,6 +365,7 @@ trait EntityTrait
 
         if (
             is_object($value)
+            && is_object($existing)
             && !($value instanceof EntityInterface)
             && $existing == $value
         ) {

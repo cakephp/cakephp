@@ -20,7 +20,6 @@ use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\MissingOptionException;
 use Cake\Utility\Inflector;
 use LogicException;
-use function Cake\Core\deprecationWarning;
 
 /**
  * Handles parsing the ARGV in the command line and provides support
@@ -411,7 +410,11 @@ class ConsoleOptionParser
         asort($this->_options);
         if ($option->short()) {
             if (isset($this->_shortOptions[$option->short()])) {
-                deprecationWarning('5.2.0', 'You cannot redefine short options. This will throw an error in 5.3.0+.');
+                throw new LogicException(sprintf(
+                    'Short option `%s` is already defined for option `%s`. You cannot redefine short options.',
+                    $option->short(),
+                    $this->_shortOptions[$option->short()],
+                ));
             }
 
             $this->_shortOptions[$option->short()] = $name;

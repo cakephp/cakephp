@@ -278,7 +278,7 @@ class HasMany extends Association
      *
      * @param \Cake\Datasource\EntityInterface $sourceEntity the row belonging to the `source` side
      * of this association
-     * @param array $targetEntities list of entities belonging to the `target` side
+     * @param array<\Cake\Datasource\EntityInterface> $targetEntities list of entities belonging to the `target` side
      * of this association
      * @param array<string, mixed> $options list of options to be passed to the internal `save` call
      * @return bool true on success, false otherwise
@@ -289,11 +289,13 @@ class HasMany extends Association
         $this->setSaveStrategy(self::SAVE_APPEND);
         $property = $this->getProperty();
 
+        /** @var array<\Cake\Datasource\EntityInterface> $currentEntities */
         $currentEntities = (array)$sourceEntity->get($property);
         if ($currentEntities === []) {
             $currentEntities = $targetEntities;
         } else {
             $pkFields = (array)$this->getTarget()->getPrimaryKey();
+            /** @var array<\Cake\Datasource\EntityInterface> $currentEntities */
             $targetEntities = (new Collection($targetEntities))
                 ->reject(
                     function (EntityInterface $entity) use ($currentEntities, $pkFields) {

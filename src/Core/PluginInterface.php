@@ -20,6 +20,8 @@ use Cake\Routing\RouteBuilder;
 
 /**
  * Plugin Interface
+ *
+ * @method \Cake\Event\EventManagerInterface events(\Cake\Event\EventManagerInterface $eventManager)
  */
 interface PluginInterface
 {

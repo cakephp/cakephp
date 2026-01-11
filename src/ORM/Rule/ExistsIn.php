@@ -98,7 +98,6 @@ class ExistsIn
         }
 
         $fields = $this->_fields;
-        $source = $this->_repository;
         $target = $this->_repository;
         if ($target instanceof Association) {
             $bindingKey = (array)$target->getBindingKey();
@@ -113,7 +112,10 @@ class ExistsIn
         }
 
         if (!empty($options['repository'])) {
+            /** @var \Cake\ORM\Table $source */
             $source = $options['repository'];
+        } else {
+            $source = $this->_repository;
         }
         if ($source instanceof Association) {
             $source = $source->getSource();

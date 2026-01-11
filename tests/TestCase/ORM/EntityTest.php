@@ -836,6 +836,74 @@ class EntityTest extends TestCase
     }
 
     /**
+     * Tests that setting an object value when existing field is scalar
+     * correctly marks field as dirty without raising PHP notices.
+     *
+     * This tests the fix for a bug where isModified() compared an object
+     * to a scalar using loose equality, causing PHP 8+ to raise notices
+     * like "Object of class X could not be converted to float".
+     */
+    public function testDirtyObjectReplacingScalar(): void
+    {
+        $entity = new Entity([
+            'amount' => 10.50,
+        ], ['markClean' => true]);
+
+        $this->assertFalse($entity->isDirty('amount'));
+
+        // Create an object that represents the same value but as object type.
+        // In real usage this would be something like BigDecimal.
+        $objectValue = new class (10.50) {
+            public function __construct(private float $value)
+            {
+            }
+
+            public function getValue(): float
+            {
+                return $this->value;
+            }
+        };
+
+        // Setting object value when existing is scalar should:
+        // 1. Not raise a PHP notice (object-to-scalar comparison)
+        // 2. Mark the field as dirty (types differ)
+        $entity->set('amount', $objectValue);
+
+        // Field should be dirty because we're changing from scalar to object
+        $this->assertTrue($entity->isDirty('amount'));
+    }
+
+    /**
+     * Tests that setting an equivalent object when existing field is also an object
+     * correctly detects no change (field remains clean).
+     */
+    public function testDirtyObjectReplacingEquivalentObject(): void
+    {
+        $objectValue = new stdClass();
+        $objectValue->value = 10.50;
+
+        $entity = new Entity([
+            'amount' => $objectValue,
+        ], ['markClean' => true]);
+
+        $this->assertFalse($entity->isDirty('amount'));
+
+        // Create an equivalent object (same properties, same values)
+        $equivalentObject = new stdClass();
+        $equivalentObject->value = 10.50;
+
+        // Setting equivalent object should NOT mark field dirty
+        $entity->set('amount', $equivalentObject);
+        $this->assertFalse($entity->isDirty('amount'));
+
+        // Setting different object SHOULD mark field dirty
+        $differentObject = new stdClass();
+        $differentObject->value = 20.00;
+        $entity->set('amount', $differentObject);
+        $this->assertTrue($entity->isDirty('amount'));
+    }
+
+    /**
      * Tests extract only dirty properties
      */
     public function testExtractDirty(): void

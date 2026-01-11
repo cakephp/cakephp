@@ -984,7 +984,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * are the aliases, and the values are association config data. If numeric
      * keys are used the values will be treated as association aliases.
      *
-     * @param array $params Set of associations to bind (indexed by association type)
+     * @param array<string, array<string|array>> $params Set of associations to bind (indexed by association type)
      * @return $this
      * @see \Cake\ORM\Table::belongsTo()
      * @see \Cake\ORM\Table::hasOne()
@@ -995,7 +995,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     {
         foreach ($params as $assocType => $tables) {
             foreach ($tables as $associated => $options) {
-                if (is_numeric($associated)) {
+                if (is_int($associated)) {
                     $associated = $options;
                     $options = [];
                 }
@@ -1370,9 +1370,9 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
 
         if (
             !$query->clause('select') &&
-            !is_object($keyField) &&
-            !is_object($valueField) &&
-            !is_object($groupField)
+            !$keyField instanceof Closure &&
+            !$valueField instanceof Closure &&
+            !$groupField instanceof Closure
         ) {
             $fields = array_merge(
                 (array)$keyField,

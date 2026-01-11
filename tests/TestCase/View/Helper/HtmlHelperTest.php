@@ -1372,9 +1372,9 @@ class HtmlHelperTest extends TestCase
         ];
         $this->assertHtml($expected, $result);
 
-        // Leading whitespace on tag is ignored.
+        // Leading/trailing whitespace is ignored.
         $this->Html->scriptStart();
-        echo '  <script>  this is some javascript </script>';
+        echo '  <script>  this is some javascript </script>  ';
         $result = $this->Html->scriptEnd();
         $expected = [
             '<script',
@@ -1457,7 +1457,7 @@ class HtmlHelperTest extends TestCase
         echo "\n\t<script>\n\tvar x = 1;\n\t</script>\n";
         $result = $this->Html->scriptEnd();
 
-        // Leading/trailing whitespace outside script tags is preserved
+        // Leading/trailing whitespace inside script tags is preserved
         $expected = "<script>\n\tvar x = 1;\n\t</script>";
         $this->assertEquals($expected, $result);
     }
@@ -1495,12 +1495,11 @@ class HtmlHelperTest extends TestCase
      */
     public function testScriptStartAndScriptEndNestedScriptStrings(): void
     {
-        // JavaScript containing script tag as string - regex stops at first </script>
-        // This is a limitation of the simple regex approach
+        // Script tags within the contained JavaScript, (ex. as a string) will not be altered
         $this->Html->scriptStart();
         echo '<script>var html = "<script>alert(1)</script>";</script>';
         $result = $this->Html->scriptEnd();
-        // The regex will match up to the first </script> it finds
+        // The regex will only match the outer <script></script> tags
         $expected = [
             '<script',
             'var html = "<script>alert(1)',
@@ -1515,6 +1514,33 @@ class HtmlHelperTest extends TestCase
         $expected = [
             '<script',
             'var template = "<\/script>";',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+
+        // Even if they are the only script tags, do not remove if there is other content before or after them
+        $this->Html->scriptStart();
+        echo 'var x = 1;<script>var y = 2;</script>';
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            '<script',
+            'var x = 1;',
+            '<script',
+            'var y = 2;',
+            '/script',
+            '/script',
+        ];
+        $this->assertHtml($expected, $result);
+
+        $this->Html->scriptStart();
+        echo '<script>var x = 1;</script>var y = 2;';
+        $result = $this->Html->scriptEnd();
+        $expected = [
+            '<script',
+            '<script',
+            'var x = 1;',
+            '/script',
+            'var y = 2;',
             '/script',
         ];
         $this->assertHtml($expected, $result);

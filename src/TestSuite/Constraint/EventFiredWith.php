@@ -66,20 +66,15 @@ class EventFiredWith extends Constraint
      */
     public function matches(mixed $other): bool
     {
-        $firedEvents = [];
+        $eventGroup = [];
         $list = $this->_eventManager->getEventList();
         if ($list !== null) {
-            $totalEvents = count($list);
-            for ($e = 0; $e < $totalEvents; $e++) {
-                $firedEvents[] = $list[$e];
-            }
+            $eventGroup = (new Collection($list))
+                ->groupBy(function (EventInterface $event): string {
+                    return $event->getName();
+                })
+                ->toArray();
         }
-
-        $eventGroup = (new Collection($firedEvents))
-            ->groupBy(function (EventInterface $event): string {
-                return $event->getName();
-            })
-            ->toArray();
 
         if (!array_key_exists($other, $eventGroup)) {
             return false;

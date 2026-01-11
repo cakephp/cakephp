@@ -21,10 +21,17 @@ use Cake\Database\StatementInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\Datasource\ResultSetInterface;
 use Cake\Log\Log;
+use Cake\ORM\DtoMapper;
 use Cake\ORM\ResultSetFactory;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use TestApp\Dto\ArticleArrayDto;
+use TestApp\Dto\ArticleDto;
+use TestApp\Dto\AuthorArrayDto;
+use TestApp\Dto\AuthorDto;
+use TestApp\Dto\CommentDto;
+use TestApp\Dto\SimpleArticleDto;
 
 /**
  * ResultSetFactory test case.
@@ -245,5 +252,225 @@ class ResultSetFactoryTest extends TestCase
         $this->assertStringContainsString('SELECT', $message);
 
         Log::reset();
+    }
+
+    /**
+     * Test projectAs() returns DTOs instead of entities.
+     */
+    public function testProjectAsSimpleDto(): void
+    {
+        DtoMapper::clearCache();
+
+        $result = $this->table->find()
+            ->where(['id' => 1])
+            ->projectAs(SimpleArticleDto::class)
+            ->first();
+
+        $this->assertInstanceOf(SimpleArticleDto::class, $result);
+        $this->assertSame(1, $result->id);
+        $this->assertSame('First Article', $result->title);
+        $this->assertSame('First Article Body', $result->body);
+    }
+
+    /**
+     * Test projectAs() with multiple results.
+     */
+    public function testProjectAsMultipleResults(): void
+    {
+        DtoMapper::clearCache();
+
+        $results = $this->table->find()
+            ->projectAs(SimpleArticleDto::class)
+            ->toArray();
+
+        $this->assertCount(3, $results);
+        foreach ($results as $result) {
+            $this->assertInstanceOf(SimpleArticleDto::class, $result);
+        }
+    }
+
+    /**
+     * Test projectAs() with BelongsTo association.
+     */
+    public function testProjectAsWithBelongsTo(): void
+    {
+        DtoMapper::clearCache();
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+
+        $result = $articles->find()
+            ->contain(['Authors'])
+            ->where(['Articles.id' => 1])
+            ->projectAs(ArticleDto::class)
+            ->first();
+
+        $this->assertInstanceOf(ArticleDto::class, $result);
+        $this->assertSame(1, $result->id);
+        $this->assertSame('First Article', $result->title);
+        $this->assertInstanceOf(AuthorDto::class, $result->author);
+        $this->assertSame('mariano', $result->author->name);
+    }
+
+    /**
+     * Test projectAs() with HasMany association.
+     */
+    public function testProjectAsWithHasMany(): void
+    {
+        DtoMapper::clearCache();
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->hasMany('Comments');
+
+        $result = $articles->find()
+            ->contain(['Comments'])
+            ->where(['Articles.id' => 1])
+            ->projectAs(ArticleDto::class)
+            ->first();
+
+        $this->assertInstanceOf(ArticleDto::class, $result);
+        $this->assertSame(1, $result->id);
+        $this->assertIsArray($result->comments);
+        $this->assertGreaterThan(0, count($result->comments));
+        foreach ($result->comments as $comment) {
+            $this->assertInstanceOf(CommentDto::class, $comment);
+        }
+    }
+
+    /**
+     * Test projectAs() with null BelongsTo association.
+     */
+    public function testProjectAsWithNullBelongsTo(): void
+    {
+        DtoMapper::clearCache();
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+
+        // Clear authors to trigger null association
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->deleteAll([]);
+
+        $result = $articles->find()
+            ->contain(['Authors'])
+            ->where(['Articles.id' => 1])
+            ->projectAs(ArticleDto::class)
+            ->first();
+
+        $this->assertInstanceOf(ArticleDto::class, $result);
+        $this->assertNull($result->author);
+    }
+
+    /**
+     * Test projectAs() with empty HasMany association.
+     */
+    public function testProjectAsWithEmptyHasMany(): void
+    {
+        DtoMapper::clearCache();
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->hasMany('Comments');
+
+        // Clear comments to trigger empty collection
+        $comments = $this->getTableLocator()->get('Comments');
+        $comments->deleteAll([]);
+
+        $result = $articles->find()
+            ->contain(['Comments'])
+            ->where(['Articles.id' => 1])
+            ->projectAs(ArticleDto::class)
+            ->first();
+
+        $this->assertInstanceOf(ArticleDto::class, $result);
+        $this->assertSame([], $result->comments);
+    }
+
+    /**
+     * Test getDtoClass() returns the DTO class.
+     */
+    public function testGetDtoClass(): void
+    {
+        $query = $this->table->find();
+        $this->assertNull($query->getDtoClass());
+
+        $query->projectAs(SimpleArticleDto::class);
+        $this->assertSame(SimpleArticleDto::class, $query->getDtoClass());
+    }
+
+    /**
+     * Test isDtoProjectionEnabled().
+     */
+    public function testIsDtoProjectionEnabled(): void
+    {
+        $query = $this->table->find();
+        $this->assertFalse($query->isDtoProjectionEnabled());
+
+        $query->projectAs(SimpleArticleDto::class);
+        $this->assertTrue($query->isDtoProjectionEnabled());
+    }
+
+    /**
+     * Test projectAs() with createFromArray factory method.
+     */
+    public function testProjectAsWithCreateFromArray(): void
+    {
+        DtoMapper::clearCache();
+
+        $result = $this->table->find()
+            ->where(['id' => 1])
+            ->projectAs(ArticleArrayDto::class)
+            ->first();
+
+        $this->assertInstanceOf(ArticleArrayDto::class, $result);
+        $this->assertSame(1, $result->id);
+        $this->assertSame('First Article', $result->title);
+        $this->assertSame('First Article Body', $result->body);
+    }
+
+    /**
+     * Test projectAs() with createFromArray and BelongsTo association.
+     */
+    public function testProjectAsCreateFromArrayWithBelongsTo(): void
+    {
+        DtoMapper::clearCache();
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+
+        $result = $articles->find()
+            ->contain(['Authors'])
+            ->where(['Articles.id' => 1])
+            ->projectAs(ArticleArrayDto::class)
+            ->first();
+
+        $this->assertInstanceOf(ArticleArrayDto::class, $result);
+        $this->assertSame(1, $result->id);
+        $this->assertSame('First Article', $result->title);
+        $this->assertInstanceOf(AuthorArrayDto::class, $result->author);
+        $this->assertSame('mariano', $result->author->name);
+    }
+
+    /**
+     * Test projectAs() with createFromArray and null association.
+     */
+    public function testProjectAsCreateFromArrayWithNullBelongsTo(): void
+    {
+        DtoMapper::clearCache();
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsTo('Authors');
+
+        // Clear authors to trigger null association
+        $authors = $this->getTableLocator()->get('Authors');
+        $authors->deleteAll([]);
+
+        $result = $articles->find()
+            ->contain(['Authors'])
+            ->where(['Articles.id' => 1])
+            ->projectAs(ArticleArrayDto::class)
+            ->first();
+
+        $this->assertInstanceOf(ArticleArrayDto::class, $result);
+        $this->assertNull($result->author);
     }
 }

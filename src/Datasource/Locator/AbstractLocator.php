@@ -21,13 +21,16 @@ use Cake\Datasource\RepositoryInterface;
 
 /**
  * Provides an abstract registry/factory for repository objects.
+ *
+ * @template TRepo of \Cake\Datasource\RepositoryInterface
+ * @implements \Cake\Datasource\Locator\LocatorInterface<TRepo>
  */
 abstract class AbstractLocator implements LocatorInterface
 {
     /**
      * Instances that belong to the registry.
      *
-     * @var array<string, \Cake\Datasource\RepositoryInterface>
+     * @var array<string, TRepo>
      */
     protected array $instances = [];
 
@@ -43,7 +46,7 @@ abstract class AbstractLocator implements LocatorInterface
      *
      * @param string $alias The alias name you want to get.
      * @param array<string, mixed> $options The options you want to build the table with.
-     * @return \Cake\Datasource\RepositoryInterface
+     * @return TRepo
      * @throws \Cake\Core\Exception\CakeException When trying to get alias for which instance
      *   has already been created with different options.
      */
@@ -73,7 +76,7 @@ abstract class AbstractLocator implements LocatorInterface
      *
      * @param string $alias Repository alias.
      * @param array<string, mixed> $options The options you want to build the instance with.
-     * @return \Cake\Datasource\RepositoryInterface
+     * @return TRepo
      */
     abstract protected function createInstance(string $alias, array $options): RepositoryInterface;
 

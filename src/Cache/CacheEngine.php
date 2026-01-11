@@ -30,12 +30,13 @@ use function Cake\Core\triggerWarning;
 /**
  * Storage engine for CakePHP caching
  *
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\Cache\CacheEngine>
+ * @template TSubject of \Cake\Cache\CacheEngine
+ * @implements \Cake\Event\EventDispatcherInterface<TSubject>
  */
 abstract class CacheEngine implements CacheInterface, CacheEngineInterface, EventDispatcherInterface
 {
     /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\Cache\CacheEngine>
+     * @use \Cake\Event\EventDispatcherTrait<TSubject>
      */
     use EventDispatcherTrait;
     use InstanceConfigTrait;

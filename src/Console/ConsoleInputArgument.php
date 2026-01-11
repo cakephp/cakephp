@@ -256,6 +256,7 @@ class ConsoleInputArgument
     public function xml(SimpleXMLElement $parent): SimpleXMLElement
     {
         $option = $parent->addChild('argument');
+        assert($option !== null);
         $option->addAttribute('name', $this->_name);
         $option->addAttribute('help', $this->_help);
         $option->addAttribute('required', (string)(int)$this->isRequired());

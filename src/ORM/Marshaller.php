@@ -443,7 +443,7 @@ class Marshaller
             }
         }
 
-        if ($conditions) {
+        if ($conditions !== []) {
             /** @var \Traversable<\Cake\Datasource\EntityInterface> $results */
             $results = $target->find()
                 ->andWhere(fn(QueryExpression $exp) => $exp->or($conditions))

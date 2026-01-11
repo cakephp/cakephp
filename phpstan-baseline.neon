@@ -43,12 +43,6 @@ parameters:
 			path: src/Console/ConsoleOptionParser.php
 
 		-
-			message: '#^Trait Cake\\Console\\TestSuite\\ConsoleIntegrationTestTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Console/TestSuite/ConsoleIntegrationTestTrait.php
-
-		-
 			message: '#^Unknown parameter \$components in call to method ReflectionClass\<Cake\\Controller\\Controller\>\:\:newInstance\(\)\.$#'
 			identifier: argument.unknown
 			count: 1
@@ -59,12 +53,6 @@ parameters:
 			identifier: argument.unknown
 			count: 1
 			path: src/Controller/ControllerFactory.php
-
-		-
-			message: '#^Trait Cake\\Core\\TestSuite\\ContainerStubTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Core/TestSuite/ContainerStubTrait.php
 
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
@@ -83,24 +71,6 @@ parameters:
 			identifier: catch.neverThrown
 			count: 1
 			path: src/Database/Type/DateTimeType.php
-
-		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Database/Type/EnumType.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between \*NEVER\* and '''' will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: src/Database/Type/EnumType.php
-
-		-
-			message: '#^Trait Cake\\Datasource\\ModelAwareTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Datasource/ModelAwareTrait.php
 
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
@@ -139,12 +109,6 @@ parameters:
 			path: src/Event/EventManager.php
 
 		-
-			message: '#^Call to an undefined method Cake\\Core\\PluginInterface\:\:events\(\)\.$#'
-			identifier: method.notFound
-			count: 1
-			path: src/Http/BaseApplication.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 1
@@ -175,12 +139,6 @@ parameters:
 			path: src/Http/Session.php
 
 		-
-			message: '#^Trait Cake\\Http\\TestSuite\\HttpClientTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Http/TestSuite/HttpClientTrait.php
-
-		-
 			message: '#^@readonly property cannot have a default value\.$#'
 			identifier: property.readOnlyByPhpDocDefaultValue
 			count: 7
@@ -199,22 +157,10 @@ parameters:
 			path: src/I18n/Time.php
 
 		-
-			message: '#^Trait Cake\\Mailer\\MailerAwareTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Mailer/MailerAwareTrait.php
-
-		-
 			message: '#^PHPDoc tag @var with type callable\(\)\: mixed is not subtype of native type Closure\(string\)\: string\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: src/ORM/Association/DependentDeleteHelper.php
-
-		-
-			message: '#^Trait Cake\\ORM\\Behavior\\Translate\\TranslateTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/ORM/Behavior/Translate/TranslateTrait.php
 
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
@@ -251,30 +197,6 @@ parameters:
 			identifier: method.internalInterface
 			count: 1
 			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\EmailTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/EmailTrait.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\IntegrationTestTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/IntegrationTestTrait.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\LogTestTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/LogTestTrait.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\StringCompareTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/StringCompareTrait.php
 
 		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with false and non\-falsy\-string will always evaluate to false\.$#'
@@ -331,12 +253,6 @@ parameters:
 			identifier: argument.templateType
 			count: 1
 			path: src/Utility/Hash.php
-
-		-
-			message: '#^Trait Cake\\Utility\\MergeVariablesTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Utility/MergeVariablesTrait.php
 
 		-
 			message: '#^Parameter \#1 \$objectOrClass of class ReflectionEnum constructor expects class\-string\<UnitEnum\>\|UnitEnum, class\-string given\.$#'

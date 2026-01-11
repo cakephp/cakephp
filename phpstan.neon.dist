@@ -19,6 +19,7 @@ parameters:
 		- identifier: include.fileNotFound
 		- identifier: method.internalClass
 		- identifier: new.internalClass
+		- identifier: trait.unused
 		-
 			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:addMethods\(\)\.$#'
 			reportUnmatched: false

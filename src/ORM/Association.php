@@ -733,6 +733,7 @@ abstract class Association
             ->eagerLoaded(true);
 
         if (!empty($options['queryBuilder'])) {
+            assert(is_callable($options['queryBuilder']));
             $dummy = $options['queryBuilder']($dummy);
             if (!($dummy instanceof SelectQuery)) {
                 throw new DatabaseException(sprintf(

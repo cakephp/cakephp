@@ -30,6 +30,8 @@ use function Cake\Core\pluginSplit;
 
 /**
  * Provides a default registry/factory for Table objects.
+ *
+ * @extends \Cake\Datasource\Locator\AbstractLocator<\Cake\ORM\Table>
  */
 class TableLocator extends AbstractLocator implements LocatorInterface
 {
@@ -48,13 +50,6 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     protected array $_config = [];
 
     /**
-     * Instances that belong to the registry.
-     *
-     * @var array<string, \Cake\ORM\Table>
-     */
-    protected array $instances = [];
-
-    /**
      * Contains a list of Table objects that were created out of the
      * built-in Table class. The list is indexed by table alias
      *
@@ -65,8 +60,7 @@ class TableLocator extends AbstractLocator implements LocatorInterface
     /**
      * Fallback class to use
      *
-     * @var string
-     * @phpstan-var class-string<\Cake\ORM\Table>
+     * @var class-string<\Cake\ORM\Table>
      */
     protected string $fallbackClassName = Table::class;
 
@@ -123,9 +117,8 @@ class TableLocator extends AbstractLocator implements LocatorInterface
      * class for alias used in `get()` could not be found. Defaults to
      * `Cake\ORM\Table`.
      *
-     * @param string $className Fallback class name
+     * @param class-string<\Cake\ORM\Table> $className Fallback class name
      * @return $this
-     * @phpstan-param class-string<\Cake\ORM\Table> $className
      */
     public function setFallbackClassName(string $className)
     {

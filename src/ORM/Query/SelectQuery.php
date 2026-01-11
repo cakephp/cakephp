@@ -96,6 +96,13 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     protected bool $_hydrate = true;
 
     /**
+     * DTO class for projection instead of entity hydration
+     *
+     * @var class-string|null
+     */
+    protected ?string $dtoClass = null;
+
+    /**
      * Whether aliases are generated for fields.
      *
      * @var bool
@@ -746,6 +753,23 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
             foreach ($this->_formatters as $formatter) {
                 $result = $formatter($result, $this);
             }
+
+            if (!($result instanceof ResultSetInterface)) {
+                $result = new $resultSetClass($result);
+            }
+        }
+
+        // DTO projection runs AFTER all other formatters so behaviors see arrays/entities
+        if ($this->dtoClass !== null) {
+            $dtoClass = $this->dtoClass;
+            $factory = $this->resultSetFactory();
+            $result = $result->map(function ($row) use ($dtoClass, $factory) {
+                if (is_array($row)) {
+                    return $factory->hydrateDto($row, $dtoClass);
+                }
+
+                return $row;
+            });
 
             if (!($result instanceof ResultSetInterface)) {
                 $result = new $resultSetClass($result);
@@ -1519,6 +1543,43 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     public function isHydrationEnabled(): bool
     {
         return $this->_hydrate;
+    }
+
+    /**
+     * Project results into a DTO class instead of entities.
+     *
+     * When DTO projection is enabled, results will be hydrated into
+     * the specified DTO class instead of entity objects.
+     *
+     * @param class-string $dtoClass The DTO class name
+     * @return $this
+     */
+    public function projectAs(string $dtoClass)
+    {
+        $this->_dirty();
+        $this->dtoClass = $dtoClass;
+
+        return $this;
+    }
+
+    /**
+     * Get the DTO class for projection.
+     *
+     * @return class-string|null
+     */
+    public function getDtoClass(): ?string
+    {
+        return $this->dtoClass;
+    }
+
+    /**
+     * Check if DTO projection is enabled.
+     *
+     * @return bool
+     */
+    public function isDtoProjectionEnabled(): bool
+    {
+        return $this->dtoClass !== null;
     }
 
     /**

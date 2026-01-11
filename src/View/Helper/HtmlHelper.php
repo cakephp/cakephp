@@ -648,7 +648,7 @@ class HtmlHelper extends Helper
     public function scriptEnd(): ?string
     {
         $buffer = (string)ob_get_clean();
-        preg_match('/\s*<script>(.*?)<\/script>\s*/s', $buffer, $matches);
+        preg_match('/^\s*<script>(.*?)<\/script>\s*$/s', $buffer, $matches);
         if ($matches) {
             $buffer = $matches[1];
         }

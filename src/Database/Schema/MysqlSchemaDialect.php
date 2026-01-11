@@ -120,13 +120,19 @@ class MysqlSchemaDialect extends SchemaDialect
     public function describeColumns(string $tableName): array
     {
         $sql = $this->describeColumnQuery($tableName);
-        $columns = [];
         try {
-            $statement = $this->_driver->execute($sql);
+            $rows = $this->_driver->execute($sql)->fetchAll('assoc');
         } catch (PDOException $e) {
             throw new DatabaseException("Could not describe columns on `{$tableName}`", null, $e);
         }
-        foreach ($statement->fetchAll('assoc') as $row) {
+
+        $geometryColumns = [];
+        if (array_intersect(array_column($rows, 'Type'), TableSchemaInterface::GEOSPATIAL_TYPES)) {
+            $geometryColumns = $this->describeGeometryColumns($tableName);
+        }
+
+        $columns = [];
+        foreach ($rows as $row) {
             $field = $this->_convertColumn($row['Type']);
             $default = $this->parseDefault($field['type'], $row);
 
@@ -146,10 +152,44 @@ class MysqlSchemaDialect extends SchemaDialect
             } elseif ($row['Extra'] === 'on update current_timestamp()') {
                 $field['onUpdate'] = 'CURRENT_TIMESTAMP';
             }
+
+            $srid = $geometryColumns[$field['name']]['srid'] ?? null;
+            if ($srid !== null) {
+                $field['srid'] = $srid;
+            }
+
             $columns[] = $field;
         }
 
         return $columns;
+    }
+
+    /**
+     * Describes geoemetry-specific column information.
+     *
+     * @return array<string, array{name: string, srid: int}> The column information.
+     */
+    private function describeGeometryColumns(string $table): array
+    {
+        /** @var \Cake\Database\Driver\Mysql $driver */
+        $driver = $this->_driver;
+
+        if (!$driver->isMariaDb() && version_compare($driver->version(), '8.0.1', '>=')) {
+            $sql = <<<SQL
+                SELECT
+                    COLUMN_NAME AS name,
+                    SRS_ID AS srid
+                FROM information_schema.ST_GEOMETRY_COLUMNS
+                WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
+                SQL;
+        } else {
+            return [];
+        }
+
+        $schema = $driver->config()['database'];
+        $columns = $this->_driver->execute($sql, [$table, $schema])->fetchAll('assoc');
+
+        return array_combine(array_column($columns, 'name'), $columns);
     }
 
     /**

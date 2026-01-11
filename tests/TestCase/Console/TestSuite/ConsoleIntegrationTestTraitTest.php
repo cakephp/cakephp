@@ -45,7 +45,7 @@ class ConsoleIntegrationTestTraitTest extends TestCase
         $this->exec('');
 
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertOutputContains('Current Paths');
+        $this->assertOutputContains('Available Commands');
         $this->assertExitSuccess();
     }
 

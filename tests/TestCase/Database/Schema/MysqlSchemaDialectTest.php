@@ -609,10 +609,6 @@ SQL;
 
     /**
      * Test that schema reflection works for geosptial columns.
-     *
-     * We currently cannot reflect the postgis types from postgres.
-     *
-     * @return void
      */
     public function testDescribeTableGeometry(): void
     {
@@ -620,15 +616,92 @@ SQL;
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
 
-        $hasGeometry = $driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=');
-        $this->skipIf(!$hasGeometry, 'This test requires geometry type support');
+        // MySQL 8.0.1 adds srid support while 8.0.13 adds default support
+        $hasGeometry = !$driver->isMariaDb() && version_compare($driver->version(), '8.0.13', '>=');
+        $this->skipIf(!$hasGeometry, 'This test requires geometry type with srid support.');
+
+        $table = <<<SQL
+CREATE TABLE schema_geometry (
+    id INTEGER,
+    geo_line LINESTRING,
+    geo_geometry GEOMETRY SRID 0,
+    geo_point POINT DEFAULT (ST_GeometryFromText('POINT(10 10)')) SRID 4236,
+    geo_polygon POLYGON SRID 4236
+)
+SQL;
+        $connection->execute($table);
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_geometry');
+        $connection->execute('DROP TABLE schema_geometry');
+
+        $expected = [
+            'id' => [
+                'type' => 'integer',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'unsigned' => false,
+                'comment' => '',
+                'autoIncrement' => null,
+                'generated' => null,
+            ],
+            'geo_line' => [
+                'type' => 'linestring',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => 0,
+            ],
+            'geo_geometry' => [
+                'type' => 'geometry',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+            'geo_point' => [
+                'type' => 'point',
+                'null' => true,
+                'default' => "st_geometryfromtext('POINT(10 10)')",
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => 4236,
+            ],
+            'geo_polygon' => [
+                'type' => 'polygon',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => 4236,
+            ],
+        ];
+        foreach ($expected as $field => $definition) {
+            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in {$field} column");
+        }
+    }
+
+    /**
+     * MariaDB does not support setting SRID on geometry types.
+     */
+    public function testDescribeTableGeometryNoSrid(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
 
         $table = <<<SQL
 CREATE TABLE schema_geometry (
     id INTEGER,
     geo_line LINESTRING,
     geo_geometry GEOMETRY,
-    geo_point POINT DEFAULT (ST_GeometryFromText('POINT(10 10)')),
+    geo_point POINT,
     geo_polygon POLYGON
 )
 SQL;
@@ -670,7 +743,7 @@ SQL;
             'geo_point' => [
                 'type' => 'point',
                 'null' => true,
-                'default' => "st_geometryfromtext('POINT(10 10)')",
+                'default' => null,
                 'precision' => null,
                 'length' => null,
                 'comment' => '',
@@ -679,7 +752,7 @@ SQL;
             'geo_polygon' => [
                 'type' => 'polygon',
                 'null' => true,
-                'default' => '',
+                'default' => null,
                 'precision' => null,
                 'length' => null,
                 'comment' => '',

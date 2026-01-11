@@ -53,6 +53,7 @@ use Cake\Http\Exception\NotImplementedException;
 use Cake\Http\Exception\ServiceUnavailableException;
 use Cake\Http\Exception\UnauthorizedException;
 use Cake\Http\Exception\UnavailableForLegalReasonsException;
+use Cake\Http\Exception\UnprocessableContentException;
 use Cake\Mailer\Exception\MissingActionException as MailerMissingActionException;
 use Cake\Mailer\Exception\MissingMailerException;
 use Cake\Network\Exception\SocketException;
@@ -214,6 +215,7 @@ class ExceptionsTest extends TestCase
             [ServiceUnavailableException::class, 503],
             [UnauthorizedException::class, 401],
             [UnavailableForLegalReasonsException::class, 451],
+            [UnprocessableContentException::class, 422],
             [SocketException::class, 0],
             [MissingBehaviorException::class, 0],
             [MissingEntityException::class, 0],

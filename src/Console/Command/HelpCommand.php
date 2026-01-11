@@ -76,7 +76,8 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             return static::CODE_SUCCESS;
         }
 
-        $this->asText($io, $commands);
+        $verbose = $io->level() >= ConsoleIo::VERBOSE;
+        $this->asText($io, $commands, $verbose);
 
         return static::CODE_SUCCESS;
     }
@@ -105,9 +106,10 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
      *
      * @param \Cake\Console\ConsoleIo $io The console io
      * @param iterable<string, string|object> $commands The command collection to output.
+     * @param bool $verbose Whether to show verbose output with descriptions.
      * @return void
      */
-    protected function asText(ConsoleIo $io, iterable $commands): void
+    protected function asText(ConsoleIo $io, iterable $commands, bool $verbose = false): void
     {
         $invert = [];
         foreach ($commands as $name => $class) {
@@ -121,12 +123,61 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             $invert[$class] ??= [];
             $invert[$class][] = $name;
         }
-        $grouped = [];
-        $plugins = Plugin::loaded();
+
+        $commandList = [];
         foreach ($invert as $class => $names) {
             preg_match('/^(.+)\\\\Command\\\\/', $class, $matches);
             // Probably not a useful class
             if (!$matches) {
+                continue;
+            }
+            $shortestName = $this->getShortestName($names);
+            if (str_contains($shortestName, '.')) {
+                [, $shortestName] = explode('.', $shortestName, 2);
+            }
+
+            $commandList[] = [
+                'name' => $shortestName,
+                'description' => is_subclass_of($class, BaseCommand::class) ? $class::getDescription() : '',
+            ];
+        }
+        sort($commandList);
+
+        if ($verbose) {
+            $version = Configure::version();
+            $debug = Configure::read('debug') ? 'true' : 'false';
+            $io->out("<info>CakePHP:</info> {$version} (debug: {$debug})", 2);
+            $this->outputPaths($io);
+            $this->outputGrouped($io, $invert);
+        } else {
+            $this->outputCompactCommands($io, $commandList);
+            $io->out('');
+        }
+
+        $root = $this->getRootName();
+        $io->out("To run a command, type <info>`{$root} command_name [args|options]`</info>");
+        $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>");
+        if (!$verbose) {
+            $io->out("To see full descriptions and plugin grouping, use <info>`{$root} --help -v`</info>", 2);
+        } else {
+            $io->out('', 2);
+        }
+    }
+
+    /**
+     * Output commands grouped by plugin/namespace (verbose mode).
+     *
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param array<string, array<string>> $invert Inverted command map (class => names).
+     * @return void
+     */
+    protected function outputGrouped(ConsoleIo $io, array $invert): void
+    {
+        $grouped = [];
+        $plugins = Plugin::loaded();
+        foreach ($invert as $class => $names) {
+            preg_match('/^(.+)\\\\Command\\\\/', $class, $matches);
+            if (!$matches || $names === []) {
                 continue;
             }
             $namespace = str_replace('\\', '/', $matches[1]);
@@ -150,19 +201,13 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
         }
         ksort($grouped);
 
-        if (isset($grouped['CakePHP'])) {
-            $cakephp = $grouped['CakePHP'];
-            $grouped = ['CakePHP' => $cakephp] + $grouped;
+        if (isset($grouped['app'])) {
+            $app = $grouped['app'];
+            unset($grouped['app']);
+            $grouped = ['app' => $app] + $grouped;
         }
 
-        if (isset($grouped['App'])) {
-            $app = $grouped['App'];
-            $grouped = ['App' => $app] + $grouped;
-        }
-
-        $this->outputPaths($io);
         $io->out('<info>Available Commands:</info>', 2);
-
         foreach ($grouped as $prefix => $names) {
             $io->out("<info>{$prefix}</info>:");
             sort($names);
@@ -174,10 +219,185 @@ class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
             }
             $io->out('');
         }
-        $root = $this->getRootName();
+    }
 
-        $io->out("To run a command, type <info>`{$root} command_name [args|options]`</info>");
-        $io->out("To get help on a specific command, type <info>`{$root} command_name --help`</info>", 2);
+    /**
+     * Output commands with inline descriptions, grouped by prefix.
+     *
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param array<array{name: string, description: string}> $commands List of commands with names and descriptions.
+     * @return void
+     */
+    protected function outputCompactCommands(ConsoleIo $io, array $commands): void
+    {
+        $maxWidth = $this->getTerminalWidth();
+
+        // Group commands by their first word (prefix)
+        $groups = [];
+        foreach ($commands as $data) {
+            $parts = explode(' ', $data['name'], 2);
+            $prefix = $parts[0];
+            $subcommand = $parts[1] ?? null;
+
+            $groups[$prefix] ??= [];
+            $groups[$prefix][] = [
+                'subcommand' => $subcommand,
+                'description' => $data['description'],
+            ];
+        }
+
+        // Separate single commands from grouped commands
+        $singleCommands = [];
+        $groupedCommands = [];
+
+        foreach ($groups as $prefix => $cmds) {
+            if (count($cmds) === 1 && $cmds[0]['subcommand'] === null) {
+                $singleCommands[$prefix] = $cmds[0];
+            } else {
+                $groupedCommands[$prefix] = $cmds;
+            }
+        }
+
+        // Find the longest full command name for padding
+        $maxNameLength = 0;
+        foreach ($commands as $data) {
+            $maxNameLength = max($maxNameLength, strlen($data['name']));
+        }
+        $nameColumnWidth = $maxNameLength + 3;
+
+        // Output single commands under "Available Commands:" header
+        $isFirst = true;
+        if ($singleCommands !== []) {
+            $io->out('<info>Available Commands:</info>');
+            foreach ($singleCommands as $prefix => $cmd) {
+                $description = $cmd['description'];
+                $linePrefix = '  ' . str_pad($prefix, $nameColumnWidth - 2);
+
+                if ($description !== '') {
+                    $description = strtok($description, "\n");
+                    $this->outputWrappedLine($io, $linePrefix, $description, $maxWidth);
+                } else {
+                    $io->out($linePrefix);
+                }
+            }
+            $isFirst = false;
+        }
+
+        // Output grouped commands with headers
+        foreach ($groupedCommands as $prefix => $cmds) {
+            if (!$isFirst) {
+                $io->out('');
+            }
+            $io->out("<info>{$prefix}:</info>");
+
+            foreach ($cmds as $cmd) {
+                $fullName = $cmd['subcommand'] !== null ? $prefix . ' ' . $cmd['subcommand'] : $prefix;
+                $description = $cmd['description'];
+
+                $linePrefix = '  ' . str_pad($fullName, $nameColumnWidth - 2);
+
+                if ($description !== '') {
+                    $description = strtok($description, "\n");
+                    $this->outputWrappedLine($io, $linePrefix, $description, $maxWidth);
+                } else {
+                    $io->out($linePrefix);
+                }
+            }
+            $isFirst = false;
+        }
+    }
+
+    /**
+     * Output a line with description, wrapping based on terminal width.
+     *
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @param string $prefix The line prefix (command name with padding)
+     * @param string $description The description text
+     * @param int $maxWidth Maximum terminal width
+     * @param int $maxChars Maximum total description characters (0 = unlimited)
+     * @return void
+     */
+    protected function outputWrappedLine(
+        ConsoleIo $io,
+        string $prefix,
+        string $description,
+        int $maxWidth,
+        int $maxChars = 200,
+    ): void {
+        $availableWidth = $maxWidth - strlen($prefix);
+
+        if ($availableWidth <= 10) {
+            $io->out($prefix);
+
+            return;
+        }
+
+        // Truncate description to max chars if set
+        if ($maxChars > 0 && strlen($description) > $maxChars) {
+            $description = substr($description, 0, $maxChars - 3) . '...';
+        }
+
+        if (strlen($description) <= $availableWidth) {
+            $io->out($prefix . $description);
+
+            return;
+        }
+
+        // Wrap description across multiple lines
+        $indent = str_repeat(' ', strlen($prefix));
+        $remaining = $description;
+        $firstLine = true;
+
+        while ($remaining !== '') {
+            $linePrefix = $firstLine ? $prefix : $indent;
+            $firstLine = false;
+
+            if (strlen($remaining) <= $availableWidth) {
+                $io->out($linePrefix . $remaining);
+                break;
+            }
+
+            // Find word break point
+            $breakPoint = strrpos(substr($remaining, 0, $availableWidth), ' ');
+            if ($breakPoint === false || $breakPoint < $availableWidth / 2) {
+                $breakPoint = $availableWidth;
+            }
+
+            $io->out($linePrefix . substr($remaining, 0, $breakPoint));
+            $remaining = ltrim(substr($remaining, $breakPoint));
+        }
+    }
+
+    /**
+     * Get terminal width for line wrapping.
+     *
+     * @return int Terminal width in columns
+     */
+    protected function getTerminalWidth(): int
+    {
+        // Check COLUMNS environment variable (commonly set by shells)
+        $columns = getenv('COLUMNS');
+        if ($columns !== false && is_numeric($columns) && (int)$columns > 0) {
+            return (int)$columns;
+        }
+
+        // Try tput cols (Unix/Linux/macOS)
+        if (str_contains(strtolower(PHP_OS), 'win') === false) {
+            $result = null;
+            $output = exec('tput cols 2>/dev/null', result_code: $result);
+            if ($result === 0 && is_numeric($output) && (int)$output > 0) {
+                return (int)$output;
+            }
+
+            // Try stty size (returns "rows cols")
+            $output = exec('stty size 2>/dev/null', result_code: $result);
+            if ($result === 0 && $output !== false && preg_match('/^\d+\s+(\d+)$/', $output, $matches)) {
+                return (int)$matches[1];
+            }
+        }
+
+        // Default to 120 columns (modern terminals)
+        return 120;
     }
 
     /**
