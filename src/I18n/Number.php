@@ -46,21 +46,21 @@ class Number
      *
      * @var array<string, array<int, mixed>>
      */
-    protected static array $_formatters = [];
+    protected static array $formatters = [];
 
     /**
      * Default currency used by Number::currency()
      *
      * @var string|null
      */
-    protected static ?string $_defaultCurrency = null;
+    protected static ?string $defaultCurrency = null;
 
     /**
      * Default currency format used by Number::currency()
      *
      * @var string|null
      */
-    protected static ?string $_defaultCurrencyFormat = null;
+    protected static ?string $defaultCurrencyFormat = null;
 
     /**
      * Formats a number with a level of precision.
@@ -254,13 +254,13 @@ class Number
      */
     public static function getDefaultCurrency(): string
     {
-        if (static::$_defaultCurrency === null) {
+        if (static::$defaultCurrency === null) {
             $locale = I18n::getLocale();
             $formatter = new NumberFormatter($locale, NumberFormatter::CURRENCY);
-            static::$_defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
+            static::$defaultCurrency = $formatter->getTextAttribute(NumberFormatter::CURRENCY_CODE);
         }
 
-        return static::$_defaultCurrency;
+        return static::$defaultCurrency;
     }
 
     /**
@@ -273,7 +273,7 @@ class Number
      */
     public static function setDefaultCurrency(?string $currency = null): void
     {
-        static::$_defaultCurrency = $currency;
+        static::$defaultCurrency = $currency;
     }
 
     /**
@@ -283,7 +283,7 @@ class Number
      */
     public static function getDefaultCurrencyFormat(): string
     {
-        return static::$_defaultCurrencyFormat ??= static::FORMAT_CURRENCY;
+        return static::$defaultCurrencyFormat ??= static::FORMAT_CURRENCY;
     }
 
     /**
@@ -296,7 +296,7 @@ class Number
      */
     public static function setDefaultCurrencyFormat(?string $currencyFormat = null): void
     {
-        static::$_defaultCurrencyFormat = $currencyFormat;
+        static::$defaultCurrencyFormat = $currencyFormat;
     }
 
     /**
@@ -336,10 +336,10 @@ class Number
             }
         }
 
-        static::$_formatters[$locale][$type] ??= new NumberFormatter($locale, $type);
+        static::$formatters[$locale][$type] ??= new NumberFormatter($locale, $type);
 
         /** @var \NumberFormatter $formatter */
-        $formatter = static::$_formatters[$locale][$type];
+        $formatter = static::$formatters[$locale][$type];
         $formatter = clone $formatter;
 
         return static::setAttributes($formatter, $options);
@@ -355,7 +355,7 @@ class Number
      */
     public static function config(string $locale, int $type = NumberFormatter::DECIMAL, array $options = []): void
     {
-        static::$_formatters[$locale][$type] = static::setAttributes(
+        static::$formatters[$locale][$type] = static::setAttributes(
             new NumberFormatter($locale, $type),
             $options,
         );

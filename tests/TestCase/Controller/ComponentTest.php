@@ -20,6 +20,7 @@ use Cake\Controller\ComponentRegistry;
 use Cake\Controller\Controller;
 use Cake\Controller\Exception\MissingComponentException;
 use Cake\Core\Exception\CakeException;
+use Cake\Event\EventListenerInterface;
 use Cake\Event\EventManager;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
@@ -79,7 +80,7 @@ class ComponentTest extends TestCase
         {
             public bool $isCalled = false;
             public bool $isCorrectType = false;
-            public function on($eventKey, $options = null, $callable = []): static
+            public function on(EventListenerInterface|string $eventKey, ?callable $callable = null, array $options = []): static
             {
                 $this->isCalled = true;
                 $this->isCorrectType = $eventKey instanceof AppleComponent;
@@ -237,7 +238,7 @@ class ComponentTest extends TestCase
         {
             public bool $isCalled = false;
             public bool $isCorrectType = false;
-            public function on($eventKey, $options = null, $callable = []): static
+            public function on(EventListenerInterface|string $eventKey, ?callable $callable = null, array $options = []): static
             {
                 $this->isCalled = true;
                 $this->isCorrectType = $eventKey instanceof AppleComponent;

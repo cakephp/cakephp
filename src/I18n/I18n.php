@@ -39,14 +39,14 @@ class I18n
      *
      * @var \Cake\I18n\TranslatorRegistry|null
      */
-    protected static ?TranslatorRegistry $_collection = null;
+    protected static ?TranslatorRegistry $collection = null;
 
     /**
      * The environment default locale
      *
      * @var string|null
      */
-    protected static ?string $_defaultLocale = null;
+    protected static ?string $defaultLocale = null;
 
     /**
      * Returns the translators collection instance. It can be used
@@ -57,11 +57,11 @@ class I18n
      */
     public static function translators(): TranslatorRegistry
     {
-        if (static::$_collection !== null) {
-            return static::$_collection;
+        if (static::$collection !== null) {
+            return static::$collection;
         }
 
-        static::$_collection = new TranslatorRegistry(
+        static::$collection = new TranslatorRegistry(
             new PackageLocator(),
             new FormatterLocator([
                 'default' => IcuFormatter::class,
@@ -71,10 +71,10 @@ class I18n
         );
 
         if (class_exists(Cache::class)) {
-            static::$_collection->setCacher(Cache::pool('_cake_translations_'));
+            static::$collection->setCacher(Cache::pool('_cake_translations_'));
         }
 
-        return static::$_collection;
+        return static::$collection;
     }
 
     /**
@@ -220,7 +220,7 @@ class I18n
     {
         static::getDefaultLocale();
         Locale::setDefault($locale);
-        if (isset(static::$_collection)) {
+        if (isset(static::$collection)) {
             static::translators()->setLocale($locale);
         }
     }
@@ -254,7 +254,7 @@ class I18n
      */
     public static function getDefaultLocale(): string
     {
-        return static::$_defaultLocale ??= Locale::getDefault() ?: static::DEFAULT_LOCALE;
+        return static::$defaultLocale ??= Locale::getDefault() ?: static::DEFAULT_LOCALE;
     }
 
     /**
@@ -299,6 +299,6 @@ class I18n
      */
     public static function clear(): void
     {
-        static::$_collection = null;
+        static::$collection = null;
     }
 }

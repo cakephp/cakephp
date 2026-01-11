@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Command\Helper\ProgressHelper;
-use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use Cake\Core\App;
 use Cake\Core\Configure;
@@ -134,10 +133,9 @@ class I18nExtractCommand extends Command
     /**
      * Method to interact with the user and get path selections.
      *
-     * @param \Cake\Console\ConsoleIoInterface $io The io instance.
      * @return void
      */
-    protected function getPaths(ConsoleIoInterface $io): void
+    protected function getPaths(): void
     {
         $defaultPaths = array_merge(
             [APP],
@@ -151,25 +149,25 @@ class I18nExtractCommand extends Command
                 "Current paths: %s\nWhat is the path you would like to extract?\n[Q]uit [D]one",
                 implode(', ', $currentPaths),
             );
-            $response = $io->ask($message, $defaultPaths[$defaultPathIndex] ?? 'D');
+            $response = $this->io->ask($message, $defaultPaths[$defaultPathIndex] ?? 'D');
             if (strtoupper($response) === 'Q') {
-                $io->error('Extract Aborted');
+                $this->io->error('Extract Aborted');
                 $this->abort();
             }
             if (strtoupper($response) === 'D' && count($this->paths)) {
-                $io->out();
+                $this->io->out();
 
                 return;
             }
             if (strtoupper($response) === 'D') {
-                $io->warning('No directories selected. Please choose a directory.');
+                $this->io->warning('No directories selected. Please choose a directory.');
             } elseif (is_dir($response)) {
                 $this->paths[] = $response;
                 $defaultPathIndex++;
             } else {
-                $io->error('The directory path you supplied was not found. Please try again.');
+                $this->io->error('The directory path you supplied was not found. Please try again.');
             }
-            $io->out();
+            $this->io->out();
         }
     }
 
@@ -196,7 +194,7 @@ class I18nExtractCommand extends Command
                 $this->paths = [Plugin::classPath($plugin), Plugin::templatePath($plugin)];
             }
         } elseif (!$this->args->getOption('paths')) {
-            $this->getPaths($this->io);
+            $this->getPaths();
         }
 
         if ($this->args->hasOption('extract-core')) {
@@ -449,7 +447,7 @@ class I18nExtractCommand extends Command
                 unset($allTokens);
 
                 foreach ($functions as $functionName => $map) {
-                    $this->parse($this->io, $functionName, $map);
+                    $this->parse($functionName, $map);
                 }
             }
 
@@ -463,12 +461,11 @@ class I18nExtractCommand extends Command
     /**
      * Parse tokens
      *
-     * @param \Cake\Console\ConsoleIoInterface $io The io instance
      * @param string $functionName Function name that indicates translatable string (e.g: '__')
      * @param array $map Array containing what variables it will find (e.g: domain, singular, plural)
      * @return void
      */
-    protected function parse(ConsoleIoInterface $io, string $functionName, array $map): void
+    protected function parse(string $functionName, array $map): void
     {
         $count = 0;
         $tokenCount = count($this->tokens);
@@ -516,7 +513,7 @@ class I18nExtractCommand extends Command
                     }
                     $this->addTranslation($domain, $singular, $details);
                 } else {
-                    $this->markerError($io, $this->file, $line, $functionName, $count);
+                    $this->markerError($this->file, $line, $functionName, $count);
                 }
             }
             $count++;
@@ -772,14 +769,13 @@ class I18nExtractCommand extends Command
     /**
      * Indicate an invalid marker on a processed file
      *
-     * @param \Cake\Console\ConsoleIoInterface $io The io instance.
      * @param string $file File where invalid marker resides
      * @param int $line Line number
      * @param string $marker Marker found
      * @param int $count Count
      * @return void
      */
-    protected function markerError(ConsoleIoInterface $io, string $file, int $line, string $marker, int $count): void
+    protected function markerError(string $file, int $line, string $marker, int $count): void
     {
         if (!str_contains($this->file, CAKE_CORE_INCLUDE_PATH)) {
             $this->countMarkerError++;
@@ -789,16 +785,16 @@ class I18nExtractCommand extends Command
             return;
         }
 
-        $io->error(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
+        $this->io->error(sprintf("Invalid marker content in %s:%s\n* %s(", $file, $line, $marker));
         $count += 2;
         $tokenCount = count($this->tokens);
         $parenthesis = 1;
 
         while (($tokenCount - $count > 0) && $parenthesis) {
             if (is_array($this->tokens[$count])) {
-                $io->err($this->tokens[$count][1], 0);
+                $this->io->err($this->tokens[$count][1], 0);
             } else {
-                $io->err($this->tokens[$count], 0);
+                $this->io->err($this->tokens[$count], 0);
                 if ($this->tokens[$count] === '(') {
                     $parenthesis++;
                 }
@@ -809,7 +805,7 @@ class I18nExtractCommand extends Command
             }
             $count++;
         }
-        $io->err("\n");
+        $this->io->err("\n");
     }
 
     /**

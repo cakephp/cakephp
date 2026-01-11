@@ -58,7 +58,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      * @var \Closure|string|int
      * @see \Cake\I18n\Date::i18nFormat()
      */
-    protected static Closure|string|int $_jsonEncodeFormat = 'yyyy-MM-dd';
+    protected static Closure|string|int $jsonEncodeFormat = 'yyyy-MM-dd';
 
     /**
      * The format to use when formatting a time using `Cake\I18n\Date::timeAgoInWords()`
@@ -137,7 +137,7 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      */
     public static function setJsonEncodeFormat(Closure|string|int $format): void
     {
-        static::$_jsonEncodeFormat = $format;
+        static::$jsonEncodeFormat = $format;
     }
 
     /**
@@ -309,11 +309,11 @@ class Date extends ChronosDate implements JsonSerializable, Stringable
      */
     public function jsonSerialize(): mixed
     {
-        if (static::$_jsonEncodeFormat instanceof Closure) {
-            return call_user_func(static::$_jsonEncodeFormat, $this);
+        if (static::$jsonEncodeFormat instanceof Closure) {
+            return call_user_func(static::$jsonEncodeFormat, $this);
         }
 
-        return $this->i18nFormat(static::$_jsonEncodeFormat);
+        return $this->i18nFormat(static::$jsonEncodeFormat);
     }
 
     /**
