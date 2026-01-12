@@ -3260,6 +3260,82 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * test the limitControl() method can skip query strings
+     */
+    public function testLimitControlPreserveQueryFalse(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/batches?owner=billy&expected=1&page=2',
+            'params' => [
+                'plugin' => null, 'controller' => 'Batches', 'action' => 'index', 'pass' => [],
+            ],
+            'query' => ['owner' => 'billy', 'expected' => 1],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+        $this->View->setRequest($request);
+        $this->setPaginatedResult(['perPage' => 10, 'currentPage' => 2]);
+
+        $out = $this->Paginator->limitControl([1 => 1], null, ['preserveQuery' => false]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Batches/index']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
+            ['option' => ['value' => '1']],
+            '1',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
+    }
+
+    /**
+     * test the limitControl() method can limit preserved query strings
+     */
+    public function testLimitControlPreserveQueryWhitelist(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/users?status=active&role=admin',
+            'params' => [
+                'plugin' => null, 'controller' => 'Users', 'action' => 'index', 'pass' => [],
+            ],
+            'query' => ['status' => 'active', 'role' => 'admin'],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+        $this->View->setRequest($request);
+        $this->setPaginatedResult(['perPage' => 20, 'currentPage' => 1]);
+
+        $out = $this->Paginator->limitControl([20 => 20, 50 => 50], null, ['preserveQuery' => ['status']]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Users/index']],
+            ['input' => ['type' => 'hidden', 'name' => 'status', 'value' => 'active']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
+            ['option' => ['value' => '20', 'selected' => 'selected']],
+            '20',
+            '/option',
+            ['option' => ['value' => '50']],
+            '50',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
+    }
+
+    /**
      * test the limitControl() method excludes pagination params but preserves other query strings
      */
     public function testLimitControlExcludesPaginationParams(): void
