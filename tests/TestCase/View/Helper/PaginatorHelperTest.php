@@ -3280,6 +3280,7 @@ class PaginatorHelperTest extends TestCase
         $out = $this->Paginator->limitControl([1 => 1], null, ['preserveQuery' => false]);
         $expected = [
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Batches/index']],
+            ['input' => ['type' => 'hidden', 'name' => 'page', 'value' => '1']],
             ['div' => ['class' => 'input select']],
             ['label' => ['for' => 'limit']],
             'View',
