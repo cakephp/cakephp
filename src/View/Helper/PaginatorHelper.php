@@ -1170,6 +1170,9 @@ class PaginatorHelper extends Helper
      * Options:
      *  - `steps`: If provided as an integer, will generate limit options in multiples of this value
      *     up to maxLimit (e.g., steps of 10 with maxLimit 50 generates [10, 20, 30, 40, 50]).
+     *  - `preserveQuery`: Controls which query params are included as hidden fields.
+     *     Use `true` to keep all (default), `false` to keep none, or an array of
+     *     keys to keep (top-level keys, including scoped ones).
      *
      * @param array<string, string> $limits The options array.
      * @param int|null $default Default option for pagination limit. Defaults to `$this->param('perPage')`.
@@ -1180,6 +1183,9 @@ class PaginatorHelper extends Helper
     {
         $steps = $options['steps'] ?? null;
         unset($options['steps']);
+
+        $preserveQuery = $options['preserveQuery'] ?? true;
+        unset($options['preserveQuery']);
 
         $limits = $this->prepareLimitOptions($limits, $steps);
 
@@ -1192,6 +1198,11 @@ class PaginatorHelper extends Helper
 
         // Prepare query params to preserve as hidden fields
         $hiddenFields = $query;
+        if ($preserveQuery === false) {
+            $hiddenFields = [];
+        } elseif (is_array($preserveQuery)) {
+            $hiddenFields = array_intersect_key($hiddenFields, array_flip($preserveQuery));
+        }
         if ($scope) {
             // Remove limit and page from scoped params
             unset($hiddenFields[$scope]['limit'], $hiddenFields[$scope]['page']);
