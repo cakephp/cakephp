@@ -125,10 +125,8 @@ trait PluginAssetsTrait
 
             $dest = $config['destDir'] . $config['link'];
             if ($copy) {
-                if (is_link($dest) || $overwrite) {
-                    if (!$this->_remove($config)) {
-                        continue;
-                    }
+                if ((is_link($dest) || $overwrite) && !$this->_remove($config)) {
+                    continue;
                 }
 
                 if (file_exists($dest)) {
@@ -139,15 +137,13 @@ trait PluginAssetsTrait
                 continue;
             }
 
-            if (!$copy) {
-                $result = $this->_createSymlink(
-                    $config['srcPath'],
-                    $dest,
-                    $relative,
-                );
-                if ($result) {
-                    continue;
-                }
+            $result = $this->_createSymlink(
+                $config['srcPath'],
+                $dest,
+                $relative,
+            );
+            if ($result) {
+                continue;
             }
 
             if ($this->_isSymlinkValid($config['srcPath'], $dest)) {
