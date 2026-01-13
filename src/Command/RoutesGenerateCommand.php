@@ -49,7 +49,7 @@ class RoutesGenerateCommand extends Command
     public function execute(): ?int
     {
         try {
-            $args = $this->splitArgs($this->args->getArguments());
+            $args = $this->splitArgs();
             $url = Router::url($args);
             $this->io->out("> {$url}");
             $this->io->out();
@@ -66,13 +66,12 @@ class RoutesGenerateCommand extends Command
     /**
      * Split the CLI arguments into a hash.
      *
-     * @param array<string> $args The arguments to split.
      * @return array<string|bool>
      */
-    protected function splitArgs(array $args): array
+    protected function splitArgs(): array
     {
         $out = [];
-        foreach ($args as $arg) {
+        foreach ($this->args->getArguments() as $arg) {
             if (str_contains($arg, ':')) {
                 [$key, $value] = explode(':', $arg, 2);
                 if (in_array($value, ['true', 'false'], true)) {

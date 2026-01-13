@@ -31,7 +31,19 @@ parameters:
 			path: src/Collection/Iterator/NoChildrenIterator.php
 
 		-
-			message: '#^Parameter \#1 \$args of method Cake\\Command\\RoutesGenerateCommand\:\:splitArgs\(\) expects array\<string\>, array\<int, array\<string\>\|string\> given\.$#'
+			message: '#^Method Cake\\Command\\RoutesGenerateCommand\:\:splitArgs\(\) should return array\<bool\|string\> but returns array\<int\|string, array\<string\>\|bool\|string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Command/RoutesGenerateCommand.php
+
+		-
+			message: '#^Parameter \#1 \$haystack of function str_contains expects string, array\<string\>\|string given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/Command/RoutesGenerateCommand.php
+
+		-
+			message: '#^Parameter \#2 \$string of function explode expects string, array\<string\>\|string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Command/RoutesGenerateCommand.php

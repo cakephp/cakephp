@@ -84,7 +84,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
      * @var \Closure|array<int>|string|int
      * @see \Cake\I18n\DateTime::i18nFormat()
      */
-    protected static Closure|array|string|int $_jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
+    protected static Closure|array|string|int $jsonEncodeFormat = "yyyy-MM-dd'T'HH':'mm':'ssxxx";
 
     /**
      * The format to use when formatting a time using `Cake\I18n\DateTime::nice()`
@@ -246,7 +246,7 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
      */
     public static function setJsonEncodeFormat(Closure|array|string|int $format): void
     {
-        static::$_jsonEncodeFormat = $format;
+        static::$jsonEncodeFormat = $format;
     }
 
     /**
@@ -589,11 +589,11 @@ class DateTime extends Chronos implements JsonSerializable, Stringable
      */
     public function jsonSerialize(): mixed
     {
-        if (static::$_jsonEncodeFormat instanceof Closure) {
-            return call_user_func(static::$_jsonEncodeFormat, $this);
+        if (static::$jsonEncodeFormat instanceof Closure) {
+            return call_user_func(static::$jsonEncodeFormat, $this);
         }
 
-        return $this->i18nFormat(static::$_jsonEncodeFormat);
+        return $this->i18nFormat(static::$jsonEncodeFormat);
     }
 
     /**

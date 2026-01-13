@@ -36,28 +36,28 @@ class MessagesFileLoader
      *
      * @var string
      */
-    protected string $_name;
+    protected string $name;
 
     /**
      * The package (domain) plugin
      *
      * @var string|null
      */
-    protected ?string $_plugin = null;
+    protected ?string $plugin = null;
 
     /**
      * The locale to load for the given package.
      *
      * @var string
      */
-    protected string $_locale;
+    protected string $locale;
 
     /**
      * The extension name.
      *
      * @var string
      */
-    protected string $_extension;
+    protected string $extension;
 
     /**
      * Creates a translation file loader. The file to be loaded corresponds to
@@ -102,16 +102,16 @@ class MessagesFileLoader
      */
     public function __construct(string $name, string $locale, string $extension = 'po')
     {
-        $this->_name = $name;
+        $this->name = $name;
         // If space is not added after slash, the character after it remains lowercased
-        $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->_name));
-        if (strpos($this->_name, '.')) {
-            [$this->_plugin, $this->_name] = pluginSplit($pluginName);
+        $pluginName = Inflector::camelize(str_replace('/', '/ ', $this->name));
+        if (strpos($this->name, '.')) {
+            [$this->plugin, $this->name] = pluginSplit($pluginName);
         } elseif (Plugin::isLoaded($pluginName)) {
-            $this->_plugin = $pluginName;
+            $this->plugin = $pluginName;
         }
-        $this->_locale = $locale;
-        $this->_extension = $extension;
+        $this->locale = $locale;
+        $this->extension = $extension;
     }
 
     /**
@@ -125,12 +125,12 @@ class MessagesFileLoader
     public function __invoke(): Package|false
     {
         $folders = $this->translationsFolders();
-        $file = $this->translationFile($folders, $this->_name, $this->_extension);
+        $file = $this->translationFile($folders, $this->name, $this->extension);
         if (!$file) {
             return false;
         }
 
-        $name = ucfirst($this->_extension);
+        $name = ucfirst($this->extension);
         $class = App::className($name, 'I18n\Parser', 'FileParser');
 
         if (!$class) {
@@ -154,7 +154,7 @@ class MessagesFileLoader
      */
     public function translationsFolders(): array
     {
-        $locale = Locale::parseLocale($this->_locale) + ['region' => null];
+        $locale = Locale::parseLocale($this->locale) + ['region' => null];
 
         $folders = [
             $locale['language'],
@@ -176,8 +176,8 @@ class MessagesFileLoader
                 . 'resources' . DIRECTORY_SEPARATOR
                 . 'locales' . DIRECTORY_SEPARATOR;
         }
-        if ($this->_plugin && Plugin::isLoaded($this->_plugin)) {
-            $localePaths[] = App::path('locales', $this->_plugin)[0];
+        if ($this->plugin && Plugin::isLoaded($this->plugin)) {
+            $localePaths[] = App::path('locales', $this->plugin)[0];
         }
         foreach ($localePaths as $path) {
             foreach ($folders as $folder) {

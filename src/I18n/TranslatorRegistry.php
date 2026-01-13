@@ -68,7 +68,7 @@ class TranslatorRegistry
      *
      * @var array<callable>
      */
-    protected array $_loaders = [];
+    protected array $loaders = [];
 
     /**
      * The name of the default formatter to use for newly created
@@ -76,14 +76,14 @@ class TranslatorRegistry
      *
      * @var string
      */
-    protected string $_defaultFormatter = 'default';
+    protected string $defaultFormatter = 'default';
 
     /**
      * Use fallback-domain for translation loaders.
      *
      * @var bool
      */
-    protected bool $_useFallback = true;
+    protected bool $useFallback = true;
 
     /**
      * A CacheEngine object that is used to remember translator across
@@ -91,7 +91,7 @@ class TranslatorRegistry
      *
      * @var (\Psr\SimpleCache\CacheInterface&\Cake\Cache\CacheEngineInterface)|null
      */
-    protected $_cacher;
+    protected $cacher;
 
     /**
      * Constructor.
@@ -115,7 +115,7 @@ class TranslatorRegistry
                 new MessagesFileLoader($name, $locale, 'po'),
             ]);
 
-            $formatter = $name === 'cake' ? 'default' : $this->_defaultFormatter;
+            $formatter = $name === 'cake' ? 'default' : $this->defaultFormatter;
             $package = $loader();
             $package->setFormatter($formatter);
 
@@ -173,7 +173,7 @@ class TranslatorRegistry
      */
     public function setCacher(CacheInterface&CacheEngineInterface $cacher): void
     {
-        $this->_cacher = $cacher;
+        $this->cacher = $cacher;
     }
 
     /**
@@ -194,7 +194,7 @@ class TranslatorRegistry
             return $this->registry[$name][$locale];
         }
 
-        if ($this->_cacher === null) {
+        if ($this->cacher === null) {
             return $this->registry[$name][$locale] = $this->getTranslator($name, $locale);
         }
 
@@ -202,11 +202,11 @@ class TranslatorRegistry
         $keyName = str_replace('/', '.', $name);
         $key = "translations.{$keyName}.{$locale}";
         /** @var \Cake\I18n\Translator|null $translator */
-        $translator = $this->_cacher->get($key);
+        $translator = $this->cacher->get($key);
 
         if (!$translator) {
             $translator = $this->getTranslator($name, $locale);
-            $this->_cacher->set($key, $translator);
+            $this->cacher->set($key, $translator);
         }
 
         return $this->registry[$name][$locale] = $translator;
@@ -226,10 +226,10 @@ class TranslatorRegistry
             return $this->createInstance($name, $locale);
         }
 
-        if (isset($this->_loaders[$name])) {
-            $package = $this->_loaders[$name]($name, $locale);
+        if (isset($this->loaders[$name])) {
+            $package = $this->loaders[$name]($name, $locale);
         } else {
-            $package = $this->_loaders[static::FALLBACK_LOADER]($name, $locale);
+            $package = $this->loaders[static::FALLBACK_LOADER]($name, $locale);
         }
 
         assert($package instanceof Package, 'Loader must return a Cake\I18n\Package instance.');
@@ -272,7 +272,7 @@ class TranslatorRegistry
      */
     public function registerLoader(string $name, callable $loader): void
     {
-        $this->_loaders[$name] = $loader;
+        $this->loaders[$name] = $loader;
     }
 
     /**
@@ -287,10 +287,10 @@ class TranslatorRegistry
     public function defaultFormatter(?string $name = null): string
     {
         if ($name === null) {
-            return $this->_defaultFormatter;
+            return $this->defaultFormatter;
         }
 
-        return $this->_defaultFormatter = $name;
+        return $this->defaultFormatter = $name;
     }
 
     /**
@@ -301,7 +301,7 @@ class TranslatorRegistry
      */
     public function useFallback(bool $enable = true): void
     {
-        $this->_useFallback = $enable;
+        $this->useFallback = $enable;
     }
 
     /**
@@ -318,7 +318,7 @@ class TranslatorRegistry
         }
 
         $fallbackDomain = null;
-        if ($this->_useFallback && $name !== 'default') {
+        if ($this->useFallback && $name !== 'default') {
             $fallbackDomain = 'default';
         }
 
@@ -337,7 +337,7 @@ class TranslatorRegistry
     public function setLoaderFallback(string $name, callable $loader): callable
     {
         $fallbackDomain = 'default';
-        if (!$this->_useFallback || $name === $fallbackDomain) {
+        if (!$this->useFallback || $name === $fallbackDomain) {
             return $loader;
         }
 

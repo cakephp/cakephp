@@ -47,7 +47,7 @@ class OrangeComponent extends Component
      */
     public function initialize(array $config): void
     {
-        $this->Controller = $this->_registry->getController();
+        $this->Controller = $this->registry->getController();
         $this->Banana->testField = 'OrangeField';
     }
 

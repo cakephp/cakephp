@@ -68,7 +68,7 @@ class Component implements EventListenerInterface
      *
      * @var \Cake\Controller\ComponentRegistry
      */
-    protected ComponentRegistry $_registry;
+    protected ComponentRegistry $registry;
 
     /**
      * Other Components this component uses.
@@ -102,7 +102,7 @@ class Component implements EventListenerInterface
      */
     public function __construct(ComponentRegistry $registry, array $config = [])
     {
-        $this->_registry = $registry;
+        $this->registry = $registry;
 
         $this->setConfig($config);
 
@@ -119,7 +119,7 @@ class Component implements EventListenerInterface
      */
     public function getController(): Controller
     {
-        return $this->_registry->getController();
+        return $this->registry->getController();
     }
 
     /**
@@ -150,7 +150,7 @@ class Component implements EventListenerInterface
         if (isset($this->components[$name])) {
             $config = $this->components[$name] + ['enabled' => false];
 
-            return $this->componentInstances[$name] = $this->_registry->load(
+            return $this->componentInstances[$name] = $this->registry->load(
                 $name,
                 $config,
             );
