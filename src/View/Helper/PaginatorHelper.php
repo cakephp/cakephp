@@ -1311,7 +1311,7 @@ class PaginatorHelper extends Helper
                 $out .= $this->generateHiddenFields($value, $fieldName);
             } else {
                 // Generate hidden field for scalar values
-                $out .= $this->Form->hidden($fieldName, ['value' => $value]);
+                $out .= $this->Form->hidden(h($fieldName), ['value' => $value]);
             }
         }
 

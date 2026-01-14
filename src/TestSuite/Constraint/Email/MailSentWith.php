@@ -33,7 +33,6 @@ class MailSentWith extends MailConstraintBase
      *
      * @param int|null $at At
      * @param string|null $method Method
-     * @return void
      */
     public function __construct(?int $at = null, ?string $method = null)
     {

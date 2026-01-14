@@ -249,8 +249,6 @@ class AggregateExpression extends FunctionExpression implements WindowInterface
 
     /**
      * Clone this object and its subtree of expressions.
-     *
-     * @return void
      */
     public function __clone()
     {

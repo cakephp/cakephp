@@ -316,8 +316,6 @@ class EagerLoadable
 
     /**
      * Handles cloning eager loadables.
-     *
-     * @return void
      */
     public function __clone()
     {

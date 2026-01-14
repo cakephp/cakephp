@@ -877,8 +877,6 @@ class EagerLoader
 
     /**
      * Handles cloning eager loaders and eager loadables.
-     *
-     * @return void
      */
     public function __clone()
     {

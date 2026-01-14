@@ -304,8 +304,6 @@ class WhenThenExpression implements ExpressionInterface
 
     /**
      * Clones the inner expression objects.
-     *
-     * @return void
      */
     public function __clone()
     {

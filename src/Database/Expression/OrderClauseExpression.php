@@ -78,8 +78,6 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
 
     /**
      * Create a deep clone of the order clause.
-     *
-     * @return void
      */
     public function __clone()
     {

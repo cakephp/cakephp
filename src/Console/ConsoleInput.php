@@ -60,8 +60,6 @@ class ConsoleInput
 
     /**
      * Destruct and free resources
-     *
-     * @return void
      */
     public function __destruct()
     {

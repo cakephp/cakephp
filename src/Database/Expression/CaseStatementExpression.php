@@ -570,8 +570,6 @@ class CaseStatementExpression implements ExpressionInterface, TypedResultInterfa
 
     /**
      * Clones the inner expression objects.
-     *
-     * @return void
      */
     public function __clone()
     {

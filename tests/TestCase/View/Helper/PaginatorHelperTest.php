@@ -3116,6 +3116,46 @@ class PaginatorHelperTest extends TestCase
     }
 
     /**
+     * test the limitControl() escapes query parameters
+     *
+     * @return void
+     */
+    public function testLimitControlUrlWithQueryEscaping(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/batches?page=2&xyz"/><script>alert(\'hi\')</script>xyz=hi',
+            'params' => [
+                'plugin' => null, 'controller' => 'Batches', 'action' => 'index', 'pass' => [],
+            ],
+            'query' => ['xyz"/><script>alert(\'hi\')</script>xyz' => 'hi'],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+        $this->View->setRequest($request);
+        $this->setPaginatedResult(['perPage' => 10, 'currentPage' => 2]);
+
+        $out = $this->Paginator->limitControl([1 => 1]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Batches/index']],
+            ['input' => ['type' => 'hidden', 'name' => 'xyz&quot;/&gt;&lt;script&gt;alert(&#039;hi&#039;)&lt;/script&gt;xyz', 'value' => 'hi']],
+            ['input' => ['type' => 'hidden', 'name' => 'page', 'value' => '1']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
+            ['option' => ['value' => '1']],
+            '1',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
+    }
+
+    /**
      * test the limitControl() method with defaults and query
      */
     public function testLimitControlQuery(): void
