@@ -1373,8 +1373,10 @@ class View implements EventDispatcherInterface
         } elseif (str_contains($name, DIRECTORY_SEPARATOR)) {
             if (str_starts_with($name, DIRECTORY_SEPARATOR) || $name[1] === ':') {
                 $name = trim($name, DIRECTORY_SEPARATOR);
-            } else {
+            } elseif (!$plugin || $this->templatePath !== $this->name) {
                 $name = $templatePath . $subDir . $name;
+            } else {
+                $name = $subDir . $name;
             }
         }
 
