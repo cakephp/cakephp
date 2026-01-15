@@ -867,7 +867,7 @@ class Text
      *
      * @param string $text String to search the phrase in
      * @param string $phrase Phrase that will be searched for
-     * @param int $radius The amount of characters that will be returned on each side of the founded phrase
+     * @param int $radius The amount of characters that will be returned on each side of the found phrase
      * @param string $ellipsis Ending that will be appended
      * @return string Modified string
      * @link https://book.cakephp.org/5/en/core-libraries/text.html#extracting-an-excerpt

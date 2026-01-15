@@ -226,7 +226,7 @@ abstract class TestCase extends BaseTestCase
         parent::assertPostConditions();
 
         if (class_exists(Mockery::class)) {
-            // @phpstan-ignore method.internal
+            // @phpstan-ignore method.internal, argument.type
             $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
         }
     }

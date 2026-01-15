@@ -99,7 +99,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     }
 
     /**
-     * Format a into a relative timestring.
+     * Format a time into a relative timestring.
      *
      * @param \Cake\I18n\DateTime|\Cake\I18n\Date $time The time instance to format.
      * @param array<string, mixed> $options Array of options.
@@ -329,7 +329,7 @@ class RelativeTimeFormatter implements DifferenceFormatterInterface
     }
 
     /**
-     * Format a into a relative date string.
+     * Format a date into a relative date string.
      *
      * @param \Cake\I18n\DateTime|\Cake\I18n\Date $date The date to format.
      * @param array<string, mixed> $options Array of options.

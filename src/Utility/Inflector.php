@@ -349,7 +349,7 @@ class Inflector
         }
 
         if (preg_match(static::$_cache['uninflected'], $word, $regs)) {
-            static::$_cache['pluralize'][$word] = $word;
+            static::$_cache['singularize'][$word] = $word;
 
             return $word;
         }

@@ -186,7 +186,7 @@ class Router
     }
 
     /**
-     * Get the routing parameters for the request is possible.
+     * Get the routing parameters for the request if possible.
      *
      * @param \Cake\Http\ServerRequest $request The request to parse request data from.
      * @return array Parsed elements from URL.

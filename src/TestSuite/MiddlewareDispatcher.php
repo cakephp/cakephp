@@ -24,6 +24,7 @@ use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Psr\Http\Message\ResponseInterface;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Dispatches a request capturing the response for integration
@@ -59,6 +60,11 @@ class MiddlewareDispatcher
      */
     public function resolveUrl(array|string $url): string
     {
+        deprecationWarning(
+            '5.1.0',
+            'MiddlewareDispatcher::resolveUrl() is deprecated. Use IntegrationTestTrait::resolveUrl() instead.',
+        );
+
         // If we need to resolve a Route URL but there are no routes, load routes.
         if (is_array($url) && Router::getRouteCollection()->routes() === []) {
             return $this->resolveRoute($url);
@@ -76,6 +82,11 @@ class MiddlewareDispatcher
      */
     protected function resolveRoute(array $url): string
     {
+        deprecationWarning(
+            '5.1.0',
+            'MiddlewareDispatcher::resolveRoute() is deprecated. Use IntegrationTestTrait::resolveRoute() instead.',
+        );
+
         // Simulate application bootstrap and route loading.
         // We need both to ensure plugins are loaded.
         $this->app->bootstrap();

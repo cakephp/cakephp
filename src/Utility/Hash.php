@@ -1273,7 +1273,7 @@ class Hash
         foreach ($return as $i => $result) {
             $id = static::get($result, $idKeys);
             $parentId = static::get($result, $parentKeys);
-            if ($id !== $root && $parentId != $root) {
+            if ($id !== $root && $parentId !== $root) {
                 unset($return[$i]);
             }
         }
