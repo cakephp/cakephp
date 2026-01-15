@@ -63,6 +63,7 @@ use Exception;
 use InvalidArgumentException;
 use Mockery;
 use PDOException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use TestApp\Model\Entity\Article;
@@ -78,6 +79,7 @@ use TestPlugin\Model\Table\CommentsTable;
 /**
  * Tests Table class
  */
+#[AllowMockObjectsWithoutExpectations]
 class TableTest extends TestCase
 {
     /**
