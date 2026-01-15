@@ -43,7 +43,7 @@ class UuidTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = TypeFactory::build('uuid');
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = $this->createStub(Driver::class);
     }
 
     /**

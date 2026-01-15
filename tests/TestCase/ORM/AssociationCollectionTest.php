@@ -27,11 +27,13 @@ use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * AssociationCollection test case.
  */
+#[AllowMockObjectsWithoutExpectations]
 class AssociationCollectionTest extends TestCase
 {
     /**

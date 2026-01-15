@@ -24,11 +24,13 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests Sqlite driver
  */
+#[AllowMockObjectsWithoutExpectations]
 class SqliteTest extends TestCase
 {
     protected function tearDown(): void

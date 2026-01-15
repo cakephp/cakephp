@@ -45,7 +45,7 @@ class IntegerTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = TypeFactory::build('integer');
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = $this->createStub(Driver::class);
     }
 
     /**
