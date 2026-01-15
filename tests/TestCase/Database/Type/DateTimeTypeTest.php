@@ -61,7 +61,7 @@ class DateTimeTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new DateTimeType();
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = $this->createStub(Driver::class);
 
         $this->originalTimeZone = date_default_timezone_get();
     }
