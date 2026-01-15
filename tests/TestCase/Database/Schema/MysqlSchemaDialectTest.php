@@ -31,11 +31,13 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for MySQL Schema Dialect.
  */
+#[AllowMockObjectsWithoutExpectations]
 class MysqlSchemaDialectTest extends TestCase
 {
     protected PDO $pdo;
@@ -279,7 +281,7 @@ class MysqlSchemaDialectTest extends TestCase
             'default' => 'Default value',
             'comment' => 'Comment section',
         ];
-        $driver = $this->getMockBuilder(Mysql::class)->getMock();
+        $driver = $this->createStub(Mysql::class);
         $dialect = new MysqlSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -301,7 +303,7 @@ class MysqlSchemaDialectTest extends TestCase
             'Collation' => 'utf8_general_ci',
             'Comment' => 'Comment section',
         ];
-        $driver = $this->getMockBuilder(Mysql::class)->getMock();
+        $driver = $this->createStub(Mysql::class);
         $dialect = new MysqlSchemaDialect($driver);
 
         $table = new TableSchema('table');

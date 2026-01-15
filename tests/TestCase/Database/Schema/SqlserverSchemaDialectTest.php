@@ -27,11 +27,13 @@ use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * SQL Server schema test case.
  */
+#[AllowMockObjectsWithoutExpectations]
 class SqlserverSchemaDialectTest extends TestCase
 {
     /**
@@ -350,7 +352,7 @@ SQL;
             'default' => 'Default value',
         ];
 
-        $driver = $this->getMockBuilder(Sqlserver::class)->getMock();
+        $driver = $this->createStub(Sqlserver::class);
         $dialect = new SqlserverSchemaDialect($driver);
 
         $table = new TableSchema('table');
