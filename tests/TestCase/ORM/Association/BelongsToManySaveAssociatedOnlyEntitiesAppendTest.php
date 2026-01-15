@@ -21,10 +21,12 @@ use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Entity;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Tests BelongsToManySaveAssociatedOnlyEntitiesAppendTest class
  */
+#[AllowMockObjectsWithoutExpectations]
 class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
 {
     /**

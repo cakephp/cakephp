@@ -31,10 +31,12 @@ use Laminas\Diactoros\Uri;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * ServerRequest Test
  */
+#[AllowMockObjectsWithoutExpectations]
 class ServerRequestTest extends TestCase
 {
     /**

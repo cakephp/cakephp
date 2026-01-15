@@ -28,11 +28,13 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\Request as LaminasRequest;
 use Mockery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * HTTP client test.
  */
+#[AllowMockObjectsWithoutExpectations]
 class ClientTest extends TestCase
 {
     protected function tearDown(): void

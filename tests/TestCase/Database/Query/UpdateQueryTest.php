@@ -33,10 +33,12 @@ use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
 use DateTime;
 use PDOStatement;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Tests UpdateQuery class
  */
+#[AllowMockObjectsWithoutExpectations]
 class UpdateQueryTest extends TestCase
 {
     use QueryAssertsTrait;

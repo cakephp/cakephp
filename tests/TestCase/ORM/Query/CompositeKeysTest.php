@@ -26,12 +26,14 @@ use Cake\ORM\Marshaller;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\OpenArticleEntity;
 
 /**
  * Integration tests for table operations involving composite keys
  */
+#[AllowMockObjectsWithoutExpectations]
 class CompositeKeysTest extends TestCase
 {
     /**

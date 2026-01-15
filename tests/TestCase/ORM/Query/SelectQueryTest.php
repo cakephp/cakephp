@@ -48,10 +48,12 @@ use ReflectionProperty;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\AuthorsTable;
 use TestApp\Model\Table\TagsTable;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Tests SelectQuery class
  */
+#[AllowMockObjectsWithoutExpectations]
 class SelectQueryTest extends TestCase
 {
     /**

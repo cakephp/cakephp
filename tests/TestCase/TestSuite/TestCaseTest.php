@@ -40,11 +40,13 @@ use TestApp\Model\Table\SecondaryPostsTable;
 use TestPlugin\Model\Entity\Author;
 use TestPlugin\Model\Table\AuthorsTable;
 use TestPlugin\Model\Table\TestPluginCommentsTable;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use function Cake\Core\deprecationWarning;
 
 /**
  * TestCaseTest
  */
+#[AllowMockObjectsWithoutExpectations]
 class TestCaseTest extends TestCase
 {
     protected function setUp(): void

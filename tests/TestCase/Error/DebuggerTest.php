@@ -32,6 +32,7 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use MyClass;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use RuntimeException;
 use SplFixedArray;
 use stdClass;
@@ -46,6 +47,7 @@ use TestApp\Utility\ThrowsDebugInfo;
  * !!! Be careful with changing code below as it may
  * !!! change line numbers which are used in the tests
  */
+#[AllowMockObjectsWithoutExpectations]
 class DebuggerTest extends TestCase
 {
     /**

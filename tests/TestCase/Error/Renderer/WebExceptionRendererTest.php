@@ -983,7 +983,7 @@ class WebExceptionRendererTest extends TestCase
         $loggedQuery = new LoggedQuery();
         $loggedQuery->setContext([
             'query' => 'SELECT * from poo_query < 5 and :seven',
-            'driver' => $this->getMockBuilder(Driver::class)->getMock(),
+            'driver' => $this->createStub(Driver::class),
             'params' => ['seven' => 7],
         ]);
         $exception = new QueryException($loggedQuery, new PDOException());

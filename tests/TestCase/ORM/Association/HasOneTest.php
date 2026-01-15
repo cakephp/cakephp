@@ -28,10 +28,12 @@ use Cake\ORM\Query;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Tests HasOne class
  */
+#[AllowMockObjectsWithoutExpectations]
 class HasOneTest extends TestCase
 {
     /**

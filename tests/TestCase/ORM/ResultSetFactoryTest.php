@@ -32,10 +32,12 @@ use TestApp\Dto\AuthorArrayDto;
 use TestApp\Dto\AuthorDto;
 use TestApp\Dto\CommentDto;
 use TestApp\Dto\SimpleArticleDto;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * ResultSetFactory test case.
  */
+#[AllowMockObjectsWithoutExpectations]
 class ResultSetFactoryTest extends TestCase
 {
     /**

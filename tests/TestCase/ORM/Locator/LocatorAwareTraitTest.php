@@ -60,7 +60,7 @@ class LocatorAwareTraitTest extends TestCase
      */
     public function testSetTableLocator(): void
     {
-        $newLocator = $this->getMockBuilder(LocatorInterface::class)->getMock();
+        $newLocator = $this->createStub(LocatorInterface::class);
         $this->subject->setTableLocator($newLocator);
         $subjectLocator = $this->subject->getTableLocator();
         $this->assertSame($newLocator, $subjectLocator);
