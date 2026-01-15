@@ -18,14 +18,13 @@ namespace Cake\TestSuite;
 use Cake\Core\HttpApplicationInterface;
 use Cake\Core\PluginApplicationInterface;
 use Cake\Http\FlashMessage;
-
-use function Cake\Core\deprecationWarning;
 use Cake\Http\Server;
 use Cake\Http\ServerRequest;
 use Cake\Http\ServerRequestFactory;
 use Cake\Routing\Router;
 use Cake\Routing\RoutingApplicationInterface;
 use Psr\Http\Message\ResponseInterface;
+use function Cake\Core\deprecationWarning;
 
 /**
  * Dispatches a request capturing the response for integration
