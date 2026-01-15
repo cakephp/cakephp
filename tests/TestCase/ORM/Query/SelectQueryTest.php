@@ -43,12 +43,12 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use TestApp\Model\Table\ArticlesTable;
 use TestApp\Model\Table\AuthorsTable;
 use TestApp\Model\Table\TagsTable;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Tests SelectQuery class

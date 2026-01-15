@@ -30,6 +30,7 @@ use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PHPUnit\Framework\AssertionFailedError;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestStatus\Skipped;
 use PHPUnit\Framework\TestStatus\Success;
@@ -40,7 +41,6 @@ use TestApp\Model\Table\SecondaryPostsTable;
 use TestPlugin\Model\Entity\Author;
 use TestPlugin\Model\Table\AuthorsTable;
 use TestPlugin\Model\Table\TestPluginCommentsTable;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use function Cake\Core\deprecationWarning;
 
 /**
