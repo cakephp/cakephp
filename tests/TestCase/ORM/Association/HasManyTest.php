@@ -35,12 +35,14 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\I18n\__;
 
 /**
  * Tests HasMany class
  */
+#[AllowMockObjectsWithoutExpectations]
 class HasManyTest extends TestCase
 {
     /**
