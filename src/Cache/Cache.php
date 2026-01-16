@@ -56,10 +56,9 @@ use RuntimeException;
  * - `FileEngine` - Uses simple files to store content. Poor performance, but good for
  *    storing large objects, or things that are not IO sensitive. Well suited to development
  *    as it is an easy cache to inspect and manually flush.
- * - `MemcacheEngine` - Uses the PECL::Memcache extension and Memcached for storage.
- *    Fast reads/writes, and benefits from memcache being distributed.
+ * - `MemcachedEngine` - Uses the PECL::Memcached extension and Memcached for storage.
+ *    Fast reads/writes, and benefits from memcached being distributed.
  * - `RedisEngine` - Uses redis and php-redis extension to store cache data.
- * - `XcacheEngine` - Uses the Xcache extension, an alternative to APCu.
  *
  * See Cache engine documentation for expected configuration keys.
  *

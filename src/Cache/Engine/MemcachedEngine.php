@@ -72,7 +72,7 @@ class MemcachedEngine extends CacheEngine
      * - `serialize` The serializer engine used to serialize data. Available engines are 'php',
      *    'igbinary' and 'json'. Besides 'php', the memcached extension must be compiled with the
      *    appropriate serializer support.
-     * - `servers` String or array of memcached servers. If an array MemcacheEngine will use
+     * - `servers` String or array of memcached servers. If an array MemcachedEngine will use
      *    them as a pool.
      * - `options` - Additional options for the memcached client. Should be an array of option => value.
      *    Use the \Memcached::OPT_* constants as keys.

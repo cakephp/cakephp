@@ -192,7 +192,7 @@ class ApcuEngine extends CacheEngine
     }
 
     /**
-     * Delete all keys from the cache. This will clear every cache config using APC.
+     * Delete all keys from the cache. This will clear every cache config using APCu.
      *
      * @return bool True Returns true.
      * @link https://secure.php.net/manual/en/function.apcu-cache-info.php
