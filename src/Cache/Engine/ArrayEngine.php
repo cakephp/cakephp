@@ -196,7 +196,7 @@ class ArrayEngine extends CacheEngine
     /**
      * Delete all keys from the cache.
      *
-     * @return bool True Returns true.
+     * @return bool True on success.
      */
     public function clear(): bool
     {
