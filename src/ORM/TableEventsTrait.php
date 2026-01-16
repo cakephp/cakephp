@@ -155,7 +155,7 @@ trait TableEventsTrait
 
     /**
      * The Model.afterDeleteCommit event is fired after the transaction in which the delete operation is wrapped has
-     * been is committed. It’s also triggered for non atomic deletes where database operations are implicitly committed.
+     * been committed. It's also triggered for non atomic deletes where database operations are implicitly committed.
      * The event is triggered only for the primary table on which delete() is directly called. The event is not
      * triggered if a transaction is started before calling delete.
      *

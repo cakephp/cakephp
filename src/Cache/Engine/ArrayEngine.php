@@ -40,6 +40,8 @@ use DateInterval;
  * or console tools where you don't want the overhead of interacting
  * with a cache servers, but want the work saving properties a cache
  * provides.
+ *
+ * @extends \Cake\Cache\CacheEngine<\Cake\Cache\Engine\ArrayEngine>
  */
 class ArrayEngine extends CacheEngine
 {

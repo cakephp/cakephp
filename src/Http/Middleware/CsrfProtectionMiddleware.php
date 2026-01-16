@@ -53,7 +53,7 @@ class CsrfProtectionMiddleware implements MiddlewareInterface
      * Config for the CSRF handling.
      *
      *  - `cookieName` The name of the cookie to send.
-     *  - `expiry` A strotime compatible value of how long the CSRF token should last.
+     *  - `expiry` A strtotime compatible value of how long the CSRF token should last.
      *    Defaults to browser session.
      *  - `secure` Whether the cookie will be set with the Secure flag. Defaults to false.
      *  - `httponly` Whether the cookie will be set with the HttpOnly flag. Defaults to false.

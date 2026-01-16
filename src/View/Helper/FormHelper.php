@@ -76,7 +76,7 @@ class FormHelper extends Helper
      */
     protected array $_defaultConfig = [
         'idPrefix' => null,
-        // Deprecated option, use templates.errorClass intead.
+        // Deprecated option, use templates.errorClass instead.
         'errorClass' => null,
         'defaultPostLinkBlock' => null,
         'typeMap' => [
@@ -1258,7 +1258,7 @@ class FormHelper extends Helper
             case 'radio':
             case 'multicheckbox':
                 $opts = $options['options'];
-                if ($opts == null) {
+                if ($opts === null) {
                     $opts = [];
                 }
                 unset($options['options']);

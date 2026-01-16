@@ -174,7 +174,7 @@ class FlashMessage
     }
 
     /**
-     * Set an success message.
+     * Set a success message.
      *
      * The `'element'` option will be set to  `'error'`.
      *

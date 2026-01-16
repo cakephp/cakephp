@@ -71,7 +71,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
-     * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * @param array<string, mixed> $options Array of options. These options will be used as HTML attributes the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
@@ -133,7 +133,7 @@ class BreadcrumbsHelper extends Helper
      *
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
-     * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * @param array<string, mixed> $options Array of options. These options will be used as HTML attributes the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
@@ -198,7 +198,7 @@ class BreadcrumbsHelper extends Helper
      * @param string $title Title of the crumb.
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
-     * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * @param array<string, mixed> $options Array of options. These options will be used as HTML attributes the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
@@ -228,7 +228,7 @@ class BreadcrumbsHelper extends Helper
      * @param string $title Title of the crumb.
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
-     * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * @param array<string, mixed> $options Array of options. These options will be used as HTML attributes the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to
@@ -262,7 +262,7 @@ class BreadcrumbsHelper extends Helper
      * @param string $title Title of the crumb.
      * @param array|string|null $url URL of the crumb. Either a string, an array of route params to pass to
      * Url::build() or null / empty if the crumb does not have a link.
-     * @param array<string, mixed> $options Array of options. These options will be used as attributes HTML attribute the crumb will
+     * @param array<string, mixed> $options Array of options. These options will be used as HTML attributes the crumb will
      * be rendered in (a <li> tag by default). It accepts two special keys:
      *
      * - *innerAttrs*: An array that allows you to define attributes for the inner element of the crumb (by default, to

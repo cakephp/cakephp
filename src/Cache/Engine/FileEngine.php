@@ -41,6 +41,8 @@ use SplFileObject;
  * engine available, or have content which is not performance sensitive.
  *
  * You can configure a FileEngine cache, using Cache::config()
+ *
+ * @extends \Cake\Cache\CacheEngine<\Cake\Cache\Engine\FileEngine>
  */
 class FileEngine extends CacheEngine
 {

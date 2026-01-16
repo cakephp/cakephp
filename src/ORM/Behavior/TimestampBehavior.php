@@ -40,7 +40,7 @@ class TimestampBehavior extends Behavior
      * the field value always, only when a new record or only when an existing record.
      *
      * refreshTimestamp - if true (the default) the timestamp used will be the current time when
-     * the code is executed, to set to an explicit date time value - set refreshTimetamp to false
+     * the code is executed, to set to an explicit date time value - set refreshTimestamp to false
      * and call setTimestamp() on the behavior class before use.
      *
      * @var array<string, mixed>

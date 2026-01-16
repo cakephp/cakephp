@@ -43,6 +43,8 @@ use RedisException;
 
 /**
  * Redis storage engine for cache.
+ *
+ * @extends \Cake\Cache\CacheEngine<\Cake\Cache\Engine\RedisEngine>
  */
 class RedisEngine extends CacheEngine
 {

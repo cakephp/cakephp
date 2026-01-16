@@ -623,7 +623,7 @@ class ServerRequest implements ServerRequestInterface
         if (isset($detect['value'])) {
             $value = $detect['value'];
 
-            return isset($this->params[$key]) && $this->params[$key] == $value;
+            return isset($this->params[$key]) && $this->params[$key] === $value;
         }
         if (isset($detect['options'])) {
             return isset($this->params[$key]) && in_array($this->params[$key], $detect['options']);
@@ -642,7 +642,7 @@ class ServerRequest implements ServerRequestInterface
     {
         if (isset($detect['env'])) {
             if (isset($detect['value'])) {
-                return $this->getEnv($detect['env']) == $detect['value'];
+                return $this->getEnv($detect['env']) === $detect['value'];
             }
             if (isset($detect['pattern'])) {
                 return (bool)preg_match($detect['pattern'], (string)$this->getEnv($detect['env']));

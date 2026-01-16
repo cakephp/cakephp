@@ -697,7 +697,7 @@ class QueryExpression implements ExpressionInterface, Countable
             }
             $operator = array_pop($parts);
             $expression = implode(' ', $parts);
-        } elseif ($spaces == 1) {
+        } elseif ($spaces === 1) {
             $parts = explode(' ', $expression, 2);
             [$expression, $operator] = $parts;
         }

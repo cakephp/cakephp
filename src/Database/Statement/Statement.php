@@ -96,7 +96,7 @@ class Statement implements StatementInterface
     }
 
     /**
-     * Converts a give value to a suitable database value based on type and
+     * Converts a given value to a suitable database value based on type and
      * return relevant internal statement type.
      *
      * @param mixed $value The value to cast.
