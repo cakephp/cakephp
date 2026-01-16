@@ -3647,7 +3647,7 @@ class TableTest extends TestCase
     public function testValidatorWithMissingMethod(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The `Cake\ORM\Table::validationMissing()` validation method does not exists.');
+        $this->expectExceptionMessage('The `Cake\ORM\Table::validationMissing()` validation method does not exist.');
         $table = new Table();
         $table->getValidator('missing');
     }
