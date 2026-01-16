@@ -594,7 +594,7 @@ class Hash
      * Determines if one array contains the exact keys and values of another.
      *
      * @param array $data The data to search through.
-     * @param array $needle The values to file in $data
+     * @param array $needle The values to find in $data
      * @return bool true If $data contains $needle, false otherwise
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::contains
      */

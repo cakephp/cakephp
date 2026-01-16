@@ -24,7 +24,7 @@ use Stringable;
 
 /**
  * Logs messages to configured Log adapters. One or more adapters
- * can be configured using Cake Logs's methods. If you don't
+ * can be configured using Cake Log's methods. If you don't
  * configure any adapters, and write to Log, the messages will be
  * ignored.
  *

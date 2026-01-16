@@ -149,7 +149,7 @@ trait CookieCryptTrait
     }
 
     /**
-     * Implode method to keep keys are multidimensional arrays
+     * Implode method to keep keys in multidimensional arrays
      *
      * @param array $array Map of key and values
      * @return string A JSON encoded string.

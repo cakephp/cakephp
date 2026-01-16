@@ -999,7 +999,7 @@ class Validation
     /**
      * Checks that value has a valid file extension.
      *
-     * Supports checking `\Psr\Http\Message\UploadedFileInterface` instances and
+     * Supports checking `\Psr\Http\Message\UploadedFileInterface` instances
      * and arrays with a `name` key.
      *
      * @param mixed $check Value to check
@@ -1492,8 +1492,8 @@ class Validation
     /**
      * Checking for upload errors
      *
-     * Supports checking `\Psr\Http\Message\UploadedFileInterface` instances and
-     * and arrays with a `error` key.
+     * Supports checking `\Psr\Http\Message\UploadedFileInterface` instances
+     * and arrays with an `error` key.
      *
      * @param mixed $check Value to check.
      * @param bool $allowNoFile Set to true to allow UPLOAD_ERR_NO_FILE as a pass.

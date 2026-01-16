@@ -44,7 +44,7 @@ function urlArray(string $path, array $params = []): array
  *
  * @param \Psr\Http\Message\UriInterface|array|string|null $url An array specifying any of the following:
  *   'controller', 'action', 'plugin' additionally, you can provide routed
- *   elements or query string parameters. If string it can be name any valid url
+ *   elements or query string parameters. If string it can be any valid url
  *   string or it can be an UriInterface instance.
  * @param bool $full If true, the full base URL will be prepended to the result.
  *   Default is false.

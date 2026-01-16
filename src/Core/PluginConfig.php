@@ -176,7 +176,7 @@ class PluginConfig
         $json = json_decode($jsonString, true);
         if (json_last_error() !== JSON_ERROR_NONE) {
             throw new CakeException(sprintf(
-                'Error parsing %ss: %s',
+                'Error parsing %s: %s',
                 $jsonPath,
                 json_last_error_msg(),
             ));

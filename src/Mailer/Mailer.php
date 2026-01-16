@@ -236,7 +236,7 @@ class Mailer implements EventListenerInterface
     /**
      * Set email renderer.
      *
-     * @param \Cake\Mailer\Renderer $renderer Render instance.
+     * @param \Cake\Mailer\Renderer $renderer Renderer instance.
      * @return $this
      */
     public function setRenderer(Renderer $renderer)

@@ -710,7 +710,7 @@ class Route
             if (($key === 'plugin' || $key === 'prefix') && $val === null && !isset($url[$key])) {
                 continue;
             }
-            if (isset($url[$key]) && $url[$key] != $val) {
+            if (isset($url[$key]) && $url[$key] !== $val) {
                 return null;
             }
             if (!isset($url[$key]) && $val !== null) {

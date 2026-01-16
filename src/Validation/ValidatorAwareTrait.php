@@ -113,7 +113,7 @@ trait ValidatorAwareTrait
     {
         $method = 'validation' . ucfirst($name);
         if (!$this->validationMethodExists($method)) {
-            $message = sprintf('The `%s::%s()` validation method does not exists.', static::class, $method);
+            $message = sprintf('The `%s::%s()` validation method does not exist.', static::class, $method);
             throw new InvalidArgumentException($message);
         }
 

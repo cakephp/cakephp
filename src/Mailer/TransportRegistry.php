@@ -42,12 +42,12 @@ class TransportRegistry extends ObjectRegistry
     }
 
     /**
-     * Throws an exception when a cache engine is missing.
+     * Throws an exception when a transport is missing.
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class The classname that is missing.
-     * @param string|null $plugin The plugin the cache is missing in.
+     * @param string|null $plugin The plugin the transport is missing in.
      * @return void
      * @throws \BadMethodCallException
      */
@@ -63,7 +63,7 @@ class TransportRegistry extends ObjectRegistry
      *
      * @param \Cake\Mailer\AbstractTransport|class-string<\Cake\Mailer\AbstractTransport> $class The classname or object to make.
      * @param string $alias The alias of the object.
-     * @param array<string, mixed> $config An array of settings to use for the cache engine.
+     * @param array<string, mixed> $config An array of settings to use for the transport.
      * @return \Cake\Mailer\AbstractTransport The constructed transport class.
      */
     protected function _create(object|string $class, string $alias, array $config): AbstractTransport
