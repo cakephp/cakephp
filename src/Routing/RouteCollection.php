@@ -39,14 +39,14 @@ class RouteCollection
      *
      * @var array<string, array<\Cake\Routing\Route\Route>>
      */
-    protected array $_routeTable = [];
+    protected array $routeTable = [];
 
     /**
      * The hash map of named routes that are in this collection.
      *
      * @var array<\Cake\Routing\Route\Route>
      */
-    protected array $_named = [];
+    protected array $named = [];
 
     /**
      * Routes indexed by static path.
@@ -60,28 +60,28 @@ class RouteCollection
      *
      * @var array<string, array<\Cake\Routing\Route\Route>>
      */
-    protected array $_paths = [];
+    protected array $paths = [];
 
     /**
      * A map of middleware names and the related objects.
      *
      * @var array
      */
-    protected array $_middleware = [];
+    protected array $middleware = [];
 
     /**
      * A map of middleware group names and the related middleware names.
      *
      * @var array
      */
-    protected array $_middlewareGroups = [];
+    protected array $middlewareGroups = [];
 
     /**
      * Route extensions
      *
      * @var array<string>
      */
-    protected array $_extensions = [];
+    protected array $extensions = [];
 
     /**
      * Add a route to the collection.
@@ -95,21 +95,21 @@ class RouteCollection
     {
         // Explicit names
         if (isset($options['_name'])) {
-            if (isset($this->_named[$options['_name']])) {
-                $matched = $this->_named[$options['_name']];
+            if (isset($this->named[$options['_name']])) {
+                $matched = $this->named[$options['_name']];
                 throw new DuplicateNamedRouteException([
                     'name' => $options['_name'],
                     'url' => $matched->template,
                     'duplicate' => $matched,
                 ]);
             }
-            $this->_named[$options['_name']] = $route;
+            $this->named[$options['_name']] = $route;
         }
 
         // Generated names.
         $name = $route->getName();
-        $this->_routeTable[$name] ??= [];
-        $this->_routeTable[$name][] = $route;
+        $this->routeTable[$name] ??= [];
+        $this->routeTable[$name][] = $route;
 
         // Index path prefixes (for parsing)
         $path = $route->staticPath();
@@ -123,7 +123,7 @@ class RouteCollection
             $this->staticPaths[$path][] = $route;
         }
 
-        $this->_paths[$path][] = $route;
+        $this->paths[$path][] = $route;
     }
 
     /**
@@ -161,9 +161,9 @@ class RouteCollection
         }
 
         // Sort path segments matching longest paths first.
-        krsort($this->_paths);
+        krsort($this->paths);
 
-        foreach ($this->_paths as $path => $routes) {
+        foreach ($this->paths as $path => $routes) {
             if (!str_starts_with($urlPath, $path)) {
                 continue;
             }
@@ -280,8 +280,8 @@ class RouteCollection
         if (isset($url['_name'])) {
             $name = $url['_name'];
             unset($url['_name']);
-            if (isset($this->_named[$name])) {
-                $route = $this->_named[$name];
+            if (isset($this->named[$name])) {
+                $route = $this->named[$name];
                 $out = $route->match($url + $route->defaults, $context);
                 if ($out) {
                     return $out;
@@ -296,10 +296,10 @@ class RouteCollection
         }
 
         foreach ($this->getNames($url) as $name) {
-            if (empty($this->_routeTable[$name])) {
+            if (empty($this->routeTable[$name])) {
                 continue;
             }
-            foreach ($this->_routeTable[$name] as $route) {
+            foreach ($this->routeTable[$name] as $route) {
                 $match = $route->match($url, $context);
                 if ($match) {
                     return $match === '/' ? $match : trim($match, '/');
@@ -318,10 +318,10 @@ class RouteCollection
      */
     public function routes(): array
     {
-        krsort($this->_paths);
+        krsort($this->paths);
 
         return array_reduce(
-            $this->_paths,
+            $this->paths,
             'array_merge',
             [],
         );
@@ -334,7 +334,7 @@ class RouteCollection
      */
     public function named(): array
     {
-        return $this->_named;
+        return $this->named;
     }
 
     /**
@@ -344,7 +344,7 @@ class RouteCollection
      */
     public function getExtensions(): array
     {
-        return $this->_extensions;
+        return $this->extensions;
     }
 
     /**
@@ -359,11 +359,11 @@ class RouteCollection
     {
         if ($merge) {
             $extensions = array_unique(array_merge(
-                $this->_extensions,
+                $this->extensions,
                 $extensions,
             ));
         }
-        $this->_extensions = $extensions;
+        $this->extensions = $extensions;
 
         return $this;
     }
@@ -380,7 +380,7 @@ class RouteCollection
      */
     public function registerMiddleware(string $name, MiddlewareInterface|Closure|string $middleware): static
     {
-        $this->_middleware[$name] = $middleware;
+        $this->middleware[$name] = $middleware;
 
         return $this;
     }
@@ -407,7 +407,7 @@ class RouteCollection
             }
         }
 
-        $this->_middlewareGroups[$name] = $middlewareNames;
+        $this->middlewareGroups[$name] = $middlewareNames;
 
         return $this;
     }
@@ -420,7 +420,7 @@ class RouteCollection
      */
     public function hasMiddlewareGroup(string $name): bool
     {
-        return array_key_exists($name, $this->_middlewareGroups);
+        return array_key_exists($name, $this->middlewareGroups);
     }
 
     /**
@@ -431,7 +431,7 @@ class RouteCollection
      */
     public function hasMiddleware(string $name): bool
     {
-        return isset($this->_middleware[$name]);
+        return isset($this->middleware[$name]);
     }
 
     /**
@@ -458,7 +458,7 @@ class RouteCollection
         $out = [];
         foreach ($names as $name) {
             if ($this->hasMiddlewareGroup($name)) {
-                $out = array_merge($out, $this->getMiddleware($this->_middlewareGroups[$name]));
+                $out = array_merge($out, $this->getMiddleware($this->middlewareGroups[$name]));
                 continue;
             }
             if (!$this->hasMiddleware($name)) {
@@ -467,7 +467,7 @@ class RouteCollection
                     $name,
                 ));
             }
-            $out[] = $this->_middleware[$name];
+            $out[] = $this->middleware[$name];
         }
 
         return $out;

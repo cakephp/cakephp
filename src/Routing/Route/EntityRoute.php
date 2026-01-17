@@ -43,7 +43,7 @@ class EntityRoute extends Route
      */
     public function match(array $url, array $context = []): ?string
     {
-        if (!$this->_compiledRoute) {
+        if (!$this->compiledRoute) {
             $this->compile();
         }
 

@@ -51,7 +51,7 @@ class RouteBuilder
      *
      * @var array<string, array>
      */
-    protected static array $_resourceMap = [
+    protected static array $resourceMap = [
         'index' => ['action' => 'index', 'method' => 'GET', 'path' => ''],
         'create' => ['action' => 'add', 'method' => 'POST', 'path' => ''],
         'view' => ['action' => 'view', 'method' => 'GET', 'path' => '{id}'],
@@ -64,42 +64,42 @@ class RouteBuilder
      *
      * @var string
      */
-    protected string $_routeClass = Route::class;
+    protected string $routeClass = Route::class;
 
     /**
      * The extensions that should be set into the routes connected.
      *
      * @var array<string>
      */
-    protected array $_extensions = [];
+    protected array $extensions = [];
 
     /**
      * The path prefix scope that this collection uses.
      *
      * @var string
      */
-    protected string $_path;
+    protected string $path;
 
     /**
      * The scope parameters if there are any.
      *
      * @var array
      */
-    protected array $_params;
+    protected array $params;
 
     /**
      * Name prefix for connected routes.
      *
      * @var string
      */
-    protected string $_namePrefix = '';
+    protected string $namePrefix = '';
 
     /**
      * The route collection routes should be added to.
      *
      * @var \Cake\Routing\RouteCollection
      */
-    protected RouteCollection $_collection;
+    protected RouteCollection $collection;
 
     /**
      * The list of middleware that routes in this builder get
@@ -133,17 +133,17 @@ class RouteBuilder
      */
     public function __construct(RouteCollection $collection, string $path, array $params = [], array $options = [])
     {
-        $this->_collection = $collection;
-        $this->_path = $path;
-        $this->_params = $params;
+        $this->collection = $collection;
+        $this->path = $path;
+        $this->params = $params;
         if (isset($options['routeClass'])) {
-            $this->_routeClass = $options['routeClass'];
+            $this->routeClass = $options['routeClass'];
         }
         if (isset($options['extensions'])) {
-            $this->_extensions = $options['extensions'];
+            $this->extensions = $options['extensions'];
         }
         if (isset($options['namePrefix'])) {
-            $this->_namePrefix = $options['namePrefix'];
+            $this->namePrefix = $options['namePrefix'];
         }
         if (isset($options['middleware'])) {
             $this->middleware = (array)$options['middleware'];
@@ -158,7 +158,7 @@ class RouteBuilder
      */
     public function setRouteClass(string $routeClass): static
     {
-        $this->_routeClass = $routeClass;
+        $this->routeClass = $routeClass;
 
         return $this;
     }
@@ -170,7 +170,7 @@ class RouteBuilder
      */
     public function getRouteClass(): string
     {
-        return $this->_routeClass;
+        return $this->routeClass;
     }
 
     /**
@@ -184,7 +184,7 @@ class RouteBuilder
      */
     public function setExtensions(array|string $extensions): static
     {
-        $this->_extensions = (array)$extensions;
+        $this->extensions = (array)$extensions;
 
         return $this;
     }
@@ -196,7 +196,7 @@ class RouteBuilder
      */
     public function getExtensions(): array
     {
-        return $this->_extensions;
+        return $this->extensions;
     }
 
     /**
@@ -207,8 +207,8 @@ class RouteBuilder
      */
     public function addExtensions(array|string $extensions): static
     {
-        $extensions = array_merge($this->_extensions, (array)$extensions);
-        $this->_extensions = array_unique($extensions);
+        $extensions = array_merge($this->extensions, (array)$extensions);
+        $this->extensions = array_unique($extensions);
 
         return $this;
     }
@@ -248,17 +248,17 @@ class RouteBuilder
      */
     public function path(): string
     {
-        $routeKey = strpos($this->_path, '{');
-        if ($routeKey !== false && str_contains($this->_path, '}')) {
-            return substr($this->_path, 0, $routeKey);
+        $routeKey = strpos($this->path, '{');
+        if ($routeKey !== false && str_contains($this->path, '}')) {
+            return substr($this->path, 0, $routeKey);
         }
 
-        $routeKey = strpos($this->_path, ':');
+        $routeKey = strpos($this->path, ':');
         if ($routeKey !== false) {
-            return substr($this->_path, 0, $routeKey);
+            return substr($this->path, 0, $routeKey);
         }
 
-        return $this->_path;
+        return $this->path;
     }
 
     /**
@@ -268,7 +268,7 @@ class RouteBuilder
      */
     public function params(): array
     {
-        return $this->_params;
+        return $this->params;
     }
 
     /**
@@ -279,7 +279,7 @@ class RouteBuilder
      */
     public function nameExists(string $name): bool
     {
-        return array_key_exists($name, $this->_collection->named());
+        return array_key_exists($name, $this->collection->named());
     }
 
     /**
@@ -294,10 +294,10 @@ class RouteBuilder
     public function namePrefix(?string $value = null): string
     {
         if ($value !== null) {
-            $this->_namePrefix = $value;
+            $this->namePrefix = $value;
         }
 
-        return $this->_namePrefix;
+        return $this->namePrefix;
     }
 
     /**
@@ -418,7 +418,7 @@ class RouteBuilder
             $method = $options['inflect'];
             $options['path'] = Inflector::$method($name);
         }
-        $resourceMap = array_merge(static::$_resourceMap, $options['map']);
+        $resourceMap = array_merge(static::$resourceMap, $options['map']);
 
         $only = (array)$options['only'];
         if (!$only) {
@@ -429,8 +429,8 @@ class RouteBuilder
         if ($options['prefix']) {
             $prefix = $options['prefix'];
         }
-        if (isset($this->_params['prefix']) && $prefix) {
-            $prefix = $this->_params['prefix'] . '/' . $prefix;
+        if (isset($this->params['prefix']) && $prefix) {
+            $prefix = $this->params['prefix'] . '/' . $prefix;
         }
 
         foreach ($resourceMap as $method => $params) {
@@ -577,20 +577,20 @@ class RouteBuilder
     protected function methodRoute(string $method, string $template, array|string $target, ?string $name): Route
     {
         if ($name !== null) {
-            $name = $this->_namePrefix . $name;
+            $name = $this->namePrefix . $name;
         }
         $options = [
             '_name' => $name,
-            '_ext' => $this->_extensions,
+            '_ext' => $this->extensions,
             '_middleware' => $this->middleware,
-            'routeClass' => $this->_routeClass,
+            'routeClass' => $this->routeClass,
         ] + $this->defaultOptions;
 
         $target = $this->parseDefaults($target);
         $target['_method'] = $method;
 
         $route = $this->makeRoute($template, $target, $options);
-        $this->_collection->add($route, $options);
+        $this->collection->add($route, $options);
 
         return $route;
     }
@@ -709,20 +709,20 @@ class RouteBuilder
         $options += $this->defaultOptions;
 
         if (empty($options['_ext'])) {
-            $options['_ext'] = $this->_extensions;
+            $options['_ext'] = $this->extensions;
         }
         if (empty($options['routeClass'])) {
-            $options['routeClass'] = $this->_routeClass;
+            $options['routeClass'] = $this->routeClass;
         }
-        if (isset($options['_name']) && $this->_namePrefix) {
-            $options['_name'] = $this->_namePrefix . $options['_name'];
+        if (isset($options['_name']) && $this->namePrefix) {
+            $options['_name'] = $this->namePrefix . $options['_name'];
         }
         if (empty($options['_middleware'])) {
             $options['_middleware'] = $this->middleware;
         }
 
         $route = $this->makeRoute($route, $defaults, $options);
-        $this->_collection->add($route, $options);
+        $this->collection->add($route, $options);
 
         return $route;
     }
@@ -764,12 +764,12 @@ class RouteBuilder
                 ));
             }
 
-            $route = str_replace('//', '/', $this->_path . $route);
+            $route = str_replace('//', '/', $this->path . $route);
             if ($route !== '/') {
                 $route = rtrim($route, '/');
             }
 
-            foreach ($this->_params as $param => $val) {
+            foreach ($this->params as $param => $val) {
                 if (isset($defaults[$param]) && $param !== 'prefix' && $defaults[$param] !== $val) {
                     $msg = 'You cannot define routes that conflict with the scope. ' .
                         'Scope had %s = %s, while route had %s = %s';
@@ -782,7 +782,7 @@ class RouteBuilder
                     ));
                 }
             }
-            $defaults += $this->_params + ['plugin' => null];
+            $defaults += $this->params + ['plugin' => null];
             if (!isset($defaults['action']) && !isset($options['action'])) {
                 $defaults['action'] = 'index';
             }
@@ -882,8 +882,8 @@ class RouteBuilder
             $path = $params['path'];
             unset($params['path']);
         }
-        if (isset($this->_params['prefix'])) {
-            $name = $this->_params['prefix'] . '/' . $name;
+        if (isset($this->params['prefix'])) {
+            $name = $this->params['prefix'] . '/' . $name;
         }
         $params = array_merge($params, ['prefix' => $name]);
         $this->scope($path, $params, $callback);
@@ -959,19 +959,19 @@ class RouteBuilder
             throw new InvalidArgumentException('Need a valid Closure to connect routes.');
         }
 
-        if ($this->_path !== '/') {
-            $path = $this->_path . $path;
+        if ($this->path !== '/') {
+            $path = $this->path . $path;
         }
-        $namePrefix = $this->_namePrefix;
+        $namePrefix = $this->namePrefix;
         if (isset($params['_namePrefix'])) {
             $namePrefix .= $params['_namePrefix'];
         }
         unset($params['_namePrefix']);
 
-        $params += $this->_params;
-        $builder = new static($this->_collection, $path, $params, [
-            'routeClass' => $this->_routeClass,
-            'extensions' => $this->_extensions,
+        $params += $this->params;
+        $builder = new static($this->collection, $path, $params, [
+            'routeClass' => $this->routeClass,
+            'extensions' => $this->extensions,
             'namePrefix' => $namePrefix,
             'middleware' => $this->middleware,
         ]);
@@ -993,7 +993,7 @@ class RouteBuilder
      */
     public function fallbacks(?string $routeClass = null): static
     {
-        $routeClass = $routeClass ?: $this->_routeClass;
+        $routeClass = $routeClass ?: $this->routeClass;
         $this->connect('/{controller}', ['action' => 'index'], compact('routeClass'));
         $this->connect('/{controller}/{action}/*', [], compact('routeClass'));
 
@@ -1013,7 +1013,7 @@ class RouteBuilder
      */
     public function registerMiddleware(string $name, MiddlewareInterface|Closure|string $middleware): static
     {
-        $this->_collection->registerMiddleware($name, $middleware);
+        $this->collection->registerMiddleware($name, $middleware);
 
         return $this;
     }
@@ -1031,7 +1031,7 @@ class RouteBuilder
     public function applyMiddleware(string ...$names): static
     {
         foreach ($names as $name) {
-            if (!$this->_collection->middlewareExists($name)) {
+            if (!$this->collection->middlewareExists($name)) {
                 $message = "Cannot apply `{$name}` middleware or middleware group. " .
                     'Use `registerMiddleware()` to register middleware.';
                 throw new InvalidArgumentException($message);
@@ -1061,7 +1061,7 @@ class RouteBuilder
      */
     public function middlewareGroup(string $name, array $middlewareNames): static
     {
-        $this->_collection->middlewareGroup($name, $middlewareNames);
+        $this->collection->middlewareGroup($name, $middlewareNames);
 
         return $this;
     }

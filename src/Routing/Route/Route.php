@@ -67,28 +67,28 @@ class Route
      *
      * @var bool
      */
-    protected bool $_greedy = false;
+    protected bool $greedy = false;
 
     /**
      * The compiled route regular expression
      *
      * @var string|null
      */
-    protected ?string $_compiledRoute = null;
+    protected ?string $compiledRoute = null;
 
     /**
      * The name for a route. Fetch with Route::getName();
      *
      * @var string|null
      */
-    protected ?string $_name = null;
+    protected ?string $name = null;
 
     /**
      * List of connected extensions for this route.
      *
      * @var array<string>
      */
-    protected array $_extensions = [];
+    protected array $extensions = [];
 
     /**
      * List of middleware that should be applied.
@@ -169,7 +169,7 @@ class Route
      */
     public function setExtensions(array $extensions): static
     {
-        $this->_extensions = array_map('strtolower', $extensions);
+        $this->extensions = array_map('strtolower', $extensions);
 
         return $this;
     }
@@ -181,7 +181,7 @@ class Route
      */
     public function getExtensions(): array
     {
-        return $this->_extensions;
+        return $this->extensions;
     }
 
     /**
@@ -296,7 +296,7 @@ class Route
      */
     public function compiled(): bool
     {
-        return $this->_compiledRoute !== null;
+        return $this->compiledRoute !== null;
     }
 
     /**
@@ -309,12 +309,12 @@ class Route
      */
     public function compile(): string
     {
-        if ($this->_compiledRoute === null) {
+        if ($this->compiledRoute === null) {
             $this->writeRoute();
         }
-        assert($this->_compiledRoute !== null);
+        assert($this->compiledRoute !== null);
 
-        return $this->_compiledRoute;
+        return $this->compiledRoute;
     }
 
     /**
@@ -328,7 +328,7 @@ class Route
     protected function writeRoute(): void
     {
         if (empty($this->template) || ($this->template === '/')) {
-            $this->_compiledRoute = '#^/*$#';
+            $this->compiledRoute = '#^/*$#';
             $this->keys = [];
 
             return;
@@ -365,16 +365,16 @@ class Route
         }
         if (preg_match('#\/\*\*$#', $route)) {
             $parsed = (string)preg_replace('#/\\\\\*\\\\\*$#', '(?:/(?P<_trailing_>.*))?', $parsed);
-            $this->_greedy = true;
+            $this->greedy = true;
         }
         if (preg_match('#\/\*$#', $route)) {
             $parsed = (string)preg_replace('#/\\\\\*$#', '(?:/(?P<_args_>.*))?', $parsed);
-            $this->_greedy = true;
+            $this->greedy = true;
         }
         $mode = empty($this->options['multibytePattern']) ? '' : 'u';
         krsort($routeParams);
         $parsed = str_replace(array_keys($routeParams), $routeParams, $parsed);
-        $this->_compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
+        $this->compiledRoute = '#^' . $parsed . '[/]*$#' . $mode;
         $this->keys = $names;
 
         // Remove defaults that are also keys. They can cause match failures
@@ -394,8 +394,8 @@ class Route
      */
     public function getName(): string
     {
-        if ($this->_name) {
-            return $this->_name;
+        if ($this->name) {
+            return $this->name;
         }
         $name = '';
         $keys = [
@@ -421,7 +421,7 @@ class Route
             $name .= $value . $glue;
         }
 
-        return $this->_name = strtolower($name);
+        return $this->name = strtolower($name);
     }
 
     /**
@@ -563,8 +563,8 @@ class Route
      */
     protected function parseExtension(string $url): array
     {
-        if (count($this->_extensions) && str_contains($url, '.')) {
-            foreach ($this->_extensions as $ext) {
+        if (count($this->extensions) && str_contains($url, '.')) {
+            foreach ($this->extensions as $ext) {
                 $len = strlen($ext) + 1;
                 if (substr($url, -$len) === '.' . $ext) {
                     return [substr($url, 0, $len * -1), $ext];
@@ -636,7 +636,7 @@ class Route
      */
     public function match(array $url, array $context = []): ?string
     {
-        if (!$this->_compiledRoute) {
+        if (!$this->compiledRoute) {
             $this->compile();
         }
         $defaults = $this->defaults;
@@ -754,7 +754,7 @@ class Route
         }
 
         // if not a greedy route, no extra params are allowed.
-        if (!$this->_greedy && $pass !== []) {
+        if (!$this->greedy && $pass !== []) {
             return null;
         }
 
