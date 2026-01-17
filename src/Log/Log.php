@@ -129,7 +129,7 @@ class Log
      *
      * @var bool
      */
-    protected static bool $_dirtyConfig = false;
+    protected static bool $dirtyConfig = false;
 
     /**
      * LogEngineRegistry class
@@ -143,7 +143,7 @@ class Log
      *
      * @var array<string>
      */
-    protected static array $_levels = [
+    protected static array $levels = [
         'emergency',
         'alert',
         'critical',
@@ -160,7 +160,7 @@ class Log
      *
      * @var array<string, int>
      */
-    protected static array $_levelMap = [
+    protected static array $levelMap = [
         'emergency' => LOG_EMERG,
         'alert' => LOG_ALERT,
         'critical' => LOG_CRIT,
@@ -181,7 +181,7 @@ class Log
     {
         static::$registry ??= new LogEngineRegistry();
 
-        if (static::$_dirtyConfig) {
+        if (static::$dirtyConfig) {
             foreach (static::$config as $name => $properties) {
                 if (isset($properties['engine'])) {
                     $properties['className'] = $properties['engine'];
@@ -191,7 +191,7 @@ class Log
                 }
             }
         }
-        static::$_dirtyConfig = false;
+        static::$dirtyConfig = false;
 
         return static::$registry;
     }
@@ -212,7 +212,7 @@ class Log
             static::$registry->reset();
         }
         static::$config = [];
-        static::$_dirtyConfig = true;
+        static::$dirtyConfig = true;
     }
 
     /**
@@ -225,7 +225,7 @@ class Log
      */
     public static function levels(): array
     {
-        return static::$_levels;
+        return static::$levels;
     }
 
     /**
@@ -271,7 +271,7 @@ class Log
     public static function setConfig(array|string $key, LoggerInterface|Closure|array|null $config = null): void
     {
         static::_setConfig($key, $config);
-        static::$_dirtyConfig = true;
+        static::$dirtyConfig = true;
     }
 
     /**
@@ -346,11 +346,11 @@ class Log
      */
     public static function write(string|int $level, Stringable|string $message, array|string $context = []): bool
     {
-        if (is_int($level) && in_array($level, static::$_levelMap, true)) {
-            $level = array_search($level, static::$_levelMap, true);
+        if (is_int($level) && in_array($level, static::$levelMap, true)) {
+            $level = array_search($level, static::$levelMap, true);
         }
 
-        if (!in_array($level, static::$_levels, true)) {
+        if (!in_array($level, static::$levels, true)) {
             throw new InvalidArgumentException(sprintf('Invalid log level `%s`', $level));
         }
 
