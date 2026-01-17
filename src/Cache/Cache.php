@@ -153,6 +153,7 @@ class Cache
             $registry->load($name, $config);
         } catch (RuntimeException $e) {
             if (!array_key_exists('fallback', $config)) {
+                // @phpstan-ignore argument.type (NullEngine is valid fallback)
                 $registry->set($name, new NullEngine());
                 trigger_error($e->getMessage(), E_USER_WARNING);
 

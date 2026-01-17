@@ -71,6 +71,7 @@ class TableRegistry
      */
     public static function setTableLocator(LocatorInterface $tableLocator): void
     {
+        // @phpstan-ignore argument.type (Table locator implements RepositoryInterface)
         FactoryLocator::add('Table', $tableLocator);
     }
 }

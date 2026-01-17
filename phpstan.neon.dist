@@ -25,12 +25,6 @@ parameters:
 				- src/Collection/Iterator/TreeIterator.php
 				- src/Collection/Iterator/TreePrinter.php
 		-
-			identifier: argument.type
-			paths:
-				- src/Cache/Cache.php
-				- src/ORM/TableRegistry.php
-				- src/ORM/bootstrap.php
-		-
 			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:addMethods\(\)\.$#'
 			reportUnmatched: false
 
