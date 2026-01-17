@@ -408,7 +408,7 @@ trait CollectionTrait
         $mapper = fn($value, $key, MapReduce $mr) => $mr->emitIntermediate($value, $callback($value));
         $reducer = fn($values, $key, MapReduce $mr) => $mr->emit(count($values), $key);
 
-        return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer));
+        return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer)); // @phpstan-ignore return.type
     }
 
     /**
@@ -438,7 +438,7 @@ trait CollectionTrait
         $items = $this->toList();
         shuffle($items);
 
-        return $this->newCollection($items);
+        return $this->newCollection($items); // @phpstan-ignore return.type
     }
 
     /**
@@ -447,7 +447,7 @@ trait CollectionTrait
      */
     public function sample(int $length = 10): CollectionInterface
     {
-        return $this->newCollection(new LimitIterator($this->shuffle(), 0, $length));
+        return $this->newCollection(new LimitIterator($this->shuffle(), 0, $length)); // @phpstan-ignore return.type
     }
 
     /**
@@ -992,6 +992,7 @@ trait CollectionTrait
      */
     public function chunk(int $chunkSize): CollectionInterface
     {
+        // @phpstan-ignore return.type
         return $this->map(function ($v, $k, Iterator $iterator) use ($chunkSize) {
             $values = [$v];
             for ($i = 1; $i < $chunkSize; $i++) {
@@ -1012,6 +1013,7 @@ trait CollectionTrait
      */
     public function chunkWithKeys(int $chunkSize, bool $keepKeys = true): CollectionInterface
     {
+        // @phpstan-ignore return.type
         return $this->map(function ($v, $k, Iterator $iterator) use ($chunkSize, $keepKeys) {
             $key = 0;
             if ($keepKeys) {
@@ -1088,7 +1090,7 @@ trait CollectionTrait
     public function cartesianProduct(?callable $operation = null, ?callable $filter = null): CollectionInterface
     {
         if ($this->isEmpty()) {
-            return $this->newCollection([]);
+            return $this->newCollection([]); // @phpstan-ignore return.type
         }
 
         $collectionArrays = [];
@@ -1103,6 +1105,7 @@ trait CollectionTrait
                 throw new LogicException('Cannot find the cartesian product of a multidimensional array');
             }
 
+            /** @phpstan-ignore argument.type (cartesianProduct requires array values) */
             $collectionArraysKeys[] = array_keys($value);
             $collectionArraysCounts[] = $valueCount;
             $collectionArrays[] = $value;
@@ -1136,7 +1139,7 @@ trait CollectionTrait
             }
         }
 
-        return $this->newCollection($result);
+        return $this->newCollection($result); // @phpstan-ignore return.type
     }
 
     /**
@@ -1152,6 +1155,7 @@ trait CollectionTrait
         $length = count(current($arrayValue));
         $result = [];
         foreach ($arrayValue as $row) {
+            /** @phpstan-ignore argument.type (transpose requires array values) */
             if (count($row) !== $length) {
                 throw new LogicException('Child arrays do not have even length');
             }
@@ -1161,7 +1165,7 @@ trait CollectionTrait
             $result[] = array_column($arrayValue, $column);
         }
 
-        return $this->newCollection($result);
+        return $this->newCollection($result); // @phpstan-ignore return.type
     }
 
     /**
