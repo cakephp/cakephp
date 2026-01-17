@@ -1690,8 +1690,8 @@ class RouteTest extends TestCase
                 'home',
             ],
             'template' => '/',
-            '_greedy' => false,
-            '_compiledRoute' => null,
+            'greedy' => false,
+            'compiledRoute' => null,
         ]);
         $this->assertInstanceOf(Route::class, $route);
         $this->assertSame('/', $route->match(['controller' => 'Pages', 'action' => 'display', 'home']));

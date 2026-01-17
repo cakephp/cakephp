@@ -32,7 +32,7 @@ class InflectedRoute extends Route
      *
      * @var array|null
      */
-    protected ?array $_inflectedDefaults = null;
+    protected ?array $inflectedDefaults = null;
 
     /**
      * Parses a string URL into an array. If it matches, it will convert the prefix, controller and
@@ -76,13 +76,13 @@ class InflectedRoute extends Route
     public function match(array $url, array $context = []): ?string
     {
         $url = $this->underscore($url);
-        if ($this->_inflectedDefaults === null) {
+        if ($this->inflectedDefaults === null) {
             $this->compile();
-            $this->_inflectedDefaults = $this->underscore($this->defaults);
+            $this->inflectedDefaults = $this->underscore($this->defaults);
         }
         $restore = $this->defaults;
         try {
-            $this->defaults = $this->_inflectedDefaults;
+            $this->defaults = $this->inflectedDefaults;
 
             return parent::match($url, $context);
         } finally {
