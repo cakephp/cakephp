@@ -39,7 +39,8 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
     /**
      * View object to use when making helpers.
      *
-     * @var \Cake\View\View<\Cake\View\View<\Cake\View\View>>
+     * @var \Cake\View\View<\Cake\View\View>
+     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     protected View $_View;
 
@@ -47,6 +48,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * Constructor
      *
      * @param \Cake\View\View<\Cake\View\View> $view View object.
+     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     public function __construct(View $view)
     {
@@ -93,6 +95,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      *
      * @param string $name Name of property to read
      * @return \Cake\View\Helper<\Cake\View\View>|null
+     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     public function __get(string $name): ?Helper
     {
@@ -111,10 +114,11 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      *
      * @param string $class Partial classname to resolve.
      * @return class-string<\Cake\View\Helper<\Cake\View\View>>|null Either the correct class name or null.
+     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     protected function _resolveClassName(string $class): ?string
     {
-        /** @var class-string<\Cake\View\Helper<\Cake\View\View>>|null */
+        /** @var class-string<\Cake\View\Helper<\Cake\View\View>>|null @phpstan-ignore missingType.generics */
         return App::className($class, 'View/Helper', 'Helper');
     }
 
@@ -147,6 +151,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      * @param string $alias The alias of the loaded helper.
      * @param array<string, mixed> $config An array of settings to use for the helper.
      * @return \Cake\View\Helper<\Cake\View\View> The constructed helper class.
+     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     protected function _create(object|string $class, string $alias, array $config): Helper
     {
