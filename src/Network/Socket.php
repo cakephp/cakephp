@@ -72,7 +72,7 @@ class Socket
      *
      * @var array<string, int>
      */
-    protected array $_encryptMethods = [
+    protected array $encryptMethods = [
         'sslv23_client' => STREAM_CRYPTO_METHOD_SSLv23_CLIENT,
         'tls_client' => STREAM_CRYPTO_METHOD_TLS_CLIENT,
         'tlsv10_client' => STREAM_CRYPTO_METHOD_TLSv1_0_CLIENT,
@@ -91,7 +91,7 @@ class Socket
      *
      * @var array<string>
      */
-    protected array $_connectionErrors = [];
+    protected array $connectionErrors = [];
 
     /**
      * Constructor.
@@ -163,8 +163,8 @@ class Socket
             throw new SocketException($errStr ?? '', $errNum ?? 0);
         }
 
-        if ($this->connection === null && $this->_connectionErrors) {
-            $message = implode("\n", $this->_connectionErrors);
+        if ($this->connection === null && $this->connectionErrors) {
+            $message = implode("\n", $this->connectionErrors);
             throw new SocketException($message, E_WARNING);
         }
 
@@ -267,7 +267,7 @@ class Socket
      */
     protected function connectionErrorHandler(int $code, string $message): void
     {
-        $this->_connectionErrors[] = $message;
+        $this->connectionErrors[] = $message;
     }
 
     /**
@@ -473,10 +473,10 @@ class Socket
      */
     public function enableCrypto(string $type, string $clientOrServer = 'client', bool $enable = true): void
     {
-        if (!array_key_exists($type . '_' . $clientOrServer, $this->_encryptMethods)) {
+        if (!array_key_exists($type . '_' . $clientOrServer, $this->encryptMethods)) {
             throw new InvalidArgumentException('Invalid encryption scheme chosen');
         }
-        $method = $this->_encryptMethods[$type . '_' . $clientOrServer];
+        $method = $this->encryptMethods[$type . '_' . $clientOrServer];
 
         if ($method === STREAM_CRYPTO_METHOD_TLS_CLIENT) {
             $method |= STREAM_CRYPTO_METHOD_TLSv1_1_CLIENT | STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
