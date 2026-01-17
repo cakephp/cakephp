@@ -32,6 +32,8 @@ use SimpleXMLElement;
 
 /**
  * Print out command list
+ *
+ * @extends \Cake\Console\BaseCommand<\Cake\Console\Command\HelpCommand>
  */
 class HelpCommand extends BaseCommand implements CommandCollectionAwareInterface
 {

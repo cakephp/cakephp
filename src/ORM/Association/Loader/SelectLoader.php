@@ -152,7 +152,7 @@ class SelectLoader
      * the source table
      *
      * @param array<string, mixed> $options options accepted by eagerLoader()
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
     protected function _buildQuery(array $options): SelectQuery
@@ -170,7 +170,7 @@ class SelectLoader
             $query = $query->find($finderName, ...$opts);
         }
 
-        /** @var \Cake\ORM\Query\SelectQuery $selectQuery */
+        /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $selectQuery */
         $selectQuery = $options['query'];
 
         // Disable hydration for external queries when parent has DTO projection
@@ -206,7 +206,7 @@ class SelectLoader
 
         if (!empty($options['queryBuilder'])) {
             assert(is_callable($options['queryBuilder']));
-            /** @var \Cake\ORM\Query\SelectQuery $fetchQuery */
+            /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $fetchQuery */
             $fetchQuery = $options['queryBuilder']($fetchQuery);
         }
 
@@ -248,7 +248,7 @@ class SelectLoader
      * If the required fields are missing, automatically adds them to ensure
      * entities can be properly identified and loaded.
      *
-     * @param \Cake\ORM\Query\SelectQuery $fetchQuery The association fetching query
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $fetchQuery The association fetching query
      * @param array<string> $key The foreign key fields to check
      * @return void
      * @throws \InvalidArgumentException
@@ -286,10 +286,10 @@ class SelectLoader
      * target table query given a filter key and some filtering values when the
      * filtering needs to be done using a subquery.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query Target table's query
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query Target table's query
      * @param array<string>|string $key the fields that should be used for filtering
-     * @param \Cake\ORM\Query\SelectQuery $subquery The Subquery to use for filtering
-     * @return \Cake\ORM\Query\SelectQuery
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $subquery The Subquery to use for filtering
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      */
     protected function _addFilteringJoin(SelectQuery $query, array|string $key, SelectQuery $subquery): SelectQuery
     {
@@ -322,10 +322,10 @@ class SelectLoader
      * Appends any conditions required to load the relevant set of records in the
      * target table query given a filter key and some filtering values.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query Target table's query
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query Target table's query
      * @param array<string>|string $key The fields that should be used for filtering
      * @param mixed $filter The value that should be used to match for $key
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      */
     protected function _addFilteringCondition(SelectQuery $query, array|string $key, mixed $filter): SelectQuery
     {
@@ -342,7 +342,7 @@ class SelectLoader
      * Returns a TupleComparison object that can be used for matching all the fields
      * from $keys with the tuple values in $filter using the provided operator.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query Target table's query
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query Target table's query
      * @param array<string> $keys the fields that should be used for filtering
      * @param mixed $filter the value that should be used to match for $key
      * @param string $operator The operator for comparing the tuples
@@ -404,8 +404,8 @@ class SelectLoader
      * target table, it is constructed by cloning the original query that was used
      * to load records in the source table.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query the original query used to load source records
-     * @return \Cake\ORM\Query\SelectQuery
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query the original query used to load source records
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      */
     protected function _buildSubquery(SelectQuery $query): SelectQuery
     {
@@ -444,7 +444,7 @@ class SelectLoader
      * those columns are also included as the fields may be calculated or constant values,
      * that need to be present to ensure the correct association data is loaded.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query The query to get fields from.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to get fields from.
      * @return array<string, array> The list of fields for the subquery.
      */
     protected function _subqueryFields(SelectQuery $query): array
@@ -477,7 +477,7 @@ class SelectLoader
      * Builds an array containing the results from fetchQuery indexed by
      * the foreignKey value corresponding to this association.
      *
-     * @param \Cake\ORM\Query\SelectQuery $fetchQuery The query to get results from
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $fetchQuery The query to get results from
      * @param array<string, mixed> $options The options passed to the eager loader
      * @return array<string, mixed>
      */
@@ -518,7 +518,7 @@ class SelectLoader
      * Returns a callable to be used for each row in a query result set
      * for injecting the eager loaded rows
      *
-     * @param \Cake\ORM\Query\SelectQuery $fetchQuery the Query used to fetch results
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $fetchQuery the Query used to fetch results
      * @param array<string, mixed> $resultMap an array with the foreignKey as keys and
      * the corresponding target table results as value.
      * @param array<string, mixed> $options The options passed to the eagerLoader method

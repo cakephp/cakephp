@@ -286,6 +286,7 @@ class FormHelper extends Helper
      *
      * @param \Cake\View\View<\Cake\View\View> $view The View this helper is being attached to.
      * @param array<string, mixed> $config Configuration settings for the helper.
+     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     public function __construct(View $view, array $config = [])
     {

@@ -223,9 +223,9 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * This allows `_translations.{locale}.field_name` type naming even for the
      * default locale in forms.
      *
-     * @param \Cake\Event\EventInterface $event
-     * @param \ArrayObject $data
-     * @param \ArrayObject $options
+     * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The event that was fired.
+     * @param \ArrayObject<string, mixed> $data The data being marshalled.
+     * @param \ArrayObject<string, mixed> $options The options for marshalling.
      * @return void
      */
     public function beforeMarshal(EventInterface $event, ArrayObject $data, ArrayObject $options): void
@@ -338,9 +338,9 @@ class TranslateBehavior extends Behavior implements PropertyMarshalInterface
      * If the `locales` array is not passed, it will bring all translations found
      * for each record.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query The original query to modify
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The original query to modify
      * @param array<string> $locales A list of locales or options with the `locales` key defined
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      */
     public function findTranslations(SelectQuery $query, array $locales = []): SelectQuery
     {

@@ -125,7 +125,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * and adding a formatter to copy the values into the main table records.
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeFind event that was fired.
-     * @param \Cake\ORM\Query\SelectQuery $query Query.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query Query.
      * @param \ArrayObject<string, mixed> $options The options for the query.
      * @return void
      */
@@ -213,7 +213,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * Only add translations for fields that are in the main table, always
      * add the locale field though.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query The query to check.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to check.
      * @param array<string, mixed> $config The config to use for adding fields.
      * @return bool Whether a join to the translation table is required.
      */
@@ -252,7 +252,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * prefixing fields with the appropriate table alias. This method currently
      * expects to receive an order clause only.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query the query to check.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query the query to check.
      * @param string $name The clause name.
      * @param array<string, mixed> $config The config to use for adding fields.
      * @return bool Whether a join to the translation table is required.
@@ -298,7 +298,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * prefixing fields with the appropriate table alias. This method currently
      * expects to receive a where clause only.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query the query to check.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query the query to check.
      * @param string $name The clause name.
      * @param array<string, mixed> $config The config to use for adding fields.
      * @return bool Whether a join to the translation table is required.
@@ -480,9 +480,9 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * Modifies the results from a table find in order to merge the translated
      * fields into each entity for a given locale.
      *
-     * @param \Cake\Collection\CollectionInterface $results Results to map.
+     * @param \Cake\Collection\CollectionInterface<mixed, mixed> $results Results to map.
      * @param string $locale Locale string
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     protected function rowMapper(CollectionInterface $results, string $locale): CollectionInterface
     {
@@ -549,8 +549,8 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      * Modifies the results from a table find in order to merge full translation
      * records into each entity under the `_translations` key.
      *
-     * @param \Cake\Collection\CollectionInterface $results Results to modify.
-     * @return \Cake\Collection\CollectionInterface
+     * @param \Cake\Collection\CollectionInterface<mixed, mixed> $results Results to modify.
+     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     public function groupTranslations(CollectionInterface $results): CollectionInterface
     {

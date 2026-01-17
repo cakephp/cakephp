@@ -78,12 +78,16 @@ trait EventDispatcherTrait
      * @param TSubject|null $subject The object that this event applies to
      * ($this by default).
      * @return \Cake\Event\EventInterface<TSubject>
+     * @phpstan-ignore missingType.generics
      */
-    public function dispatchEvent(string $name, array $data = [], ?object $subject = null): EventInterface
+    public function dispatchEvent(string $name, array $data = [], ?object $subject = null): EventInterface // @phpstan-ignore missingType.generics
     {
         $subject ??= $this;
 
-        /** @var \Cake\Event\EventInterface<TSubject> $event Coerce for psalm/phpstan */
+        /**
+         * @var \Cake\Event\EventInterface<TSubject> $event Coerce for psalm/phpstan
+         * @phpstan-ignore missingType.generics (TSubject may itself be generic)
+         */
         $event = new $this->_eventClass($name, $subject, $data);
         $this->getEventManager()->dispatch($event);
 

@@ -63,7 +63,8 @@ class Helper implements EventListenerInterface
     /**
      * Loaded helper instances.
      *
-     * @var array<string, \Cake\View\Helper<TView>>
+     * @var array<string, \Cake\View\Helper<\Cake\View\View>>
+     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     protected array $helperInstances = [];
 
@@ -96,7 +97,8 @@ class Helper implements EventListenerInterface
      * Lazy loads helpers.
      *
      * @param string $name Name of the property being accessed.
-     * @return \Cake\View\Helper<TView>|null Helper instance if helper with provided name exists
+     * @return \Cake\View\Helper<\Cake\View\View>|null Helper instance if helper with provided name exists
+     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     public function __get(string $name): ?Helper
     {

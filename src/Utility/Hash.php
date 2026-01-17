@@ -432,6 +432,7 @@ class Hash
         foreach ($data as $k => $v) {
             $match = static::_matchToken($k, $token);
             if ($match && (is_array($v) || $v instanceof ArrayAccess)) {
+                /** @var \ArrayAccess<array-key, mixed>|array $v */
                 if ($conditions) {
                     if (static::_matches($v, $conditions)) {
                         if ($nextPath !== '') {

@@ -61,7 +61,7 @@ class EventManager implements EventManagerInterface
     /**
      * The event list object.
      *
-     * @var \Cake\Event\EventList|null
+     * @var \Cake\Event\EventList<object>|null
      */
     protected ?EventList $_eventList = null;
 
@@ -424,7 +424,7 @@ class EventManager implements EventManagerInterface
     /**
      * Returns the event list.
      *
-     * @return \Cake\Event\EventList|null
+     * @return \Cake\Event\EventList<object>|null
      */
     public function getEventList(): ?EventList
     {
@@ -471,7 +471,7 @@ class EventManager implements EventManagerInterface
     /**
      * Enables the listing of dispatched events.
      *
-     * @param \Cake\Event\EventList $eventList The event list object to use.
+     * @param \Cake\Event\EventList<object> $eventList The event list object to use.
      * @return $this
      */
     public function setEventList(EventList $eventList)

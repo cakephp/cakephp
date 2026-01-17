@@ -46,7 +46,7 @@ class SelectWithPivotLoader extends SelectLoader
     /**
      * The junction association instance
      *
-     * @var \Cake\ORM\Association\HasMany
+     * @var \Cake\ORM\Association\HasMany<\Cake\ORM\Table>
      */
     protected HasMany $junctionAssoc;
 
@@ -77,7 +77,7 @@ class SelectWithPivotLoader extends SelectLoader
      * This is used for eager loading records on the target table based on conditions.
      *
      * @param array<string, mixed> $options options accepted by eagerLoader()
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      * @throws \InvalidArgumentException When a key is required for associations but not selected.
      */
     protected function _buildQuery(array $options): SelectQuery
@@ -95,7 +95,7 @@ class SelectWithPivotLoader extends SelectLoader
         $query = parent::_buildQuery($options);
 
         if ($queryBuilder) {
-            /** @var \Cake\ORM\Query\SelectQuery $query */
+            /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query */
             $query = $queryBuilder($query);
         }
 
@@ -136,7 +136,9 @@ class SelectWithPivotLoader extends SelectLoader
     }
 
     /**
-     * @inheritDoc
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $fetchQuery The association fetching query
+     * @param array<string> $key The foreign key fields to check
+     * @return void
      */
     protected function _assertFieldsPresent(SelectQuery $fetchQuery, array $key): void
     {
@@ -170,7 +172,7 @@ class SelectWithPivotLoader extends SelectLoader
      * Builds an array containing the results from fetchQuery indexed by
      * the foreignKey value corresponding to this association.
      *
-     * @param \Cake\ORM\Query\SelectQuery $fetchQuery The query to get results from
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $fetchQuery The query to get results from
      * @param array<string, mixed> $options The options passed to the eager loader
      * @return array<string, mixed>
      * @throws \Cake\Database\Exception\DatabaseException when the association property is not part of the results set.

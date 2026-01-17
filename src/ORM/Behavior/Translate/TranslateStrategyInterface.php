@@ -81,7 +81,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * into each entity under the `_translations` key
      *
      * @param \Cake\Datasource\ResultSetInterface<array-key, \Cake\Datasource\EntityInterface|array> $results Results to modify.
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     public function groupTranslations(ResultSetInterface $results): CollectionInterface;
 
@@ -91,7 +91,7 @@ interface TranslateStrategyInterface extends PropertyMarshalInterface
      * and adding a formatter to copy the values into the main table records.
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeFind event that was fired.
-     * @param \Cake\ORM\Query\SelectQuery $query Query
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query Query
      * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
      */

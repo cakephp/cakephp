@@ -45,7 +45,7 @@ use Cake\Utility\Inflector;
  * - `afterExecute(EventInterface $event)`
  *   Called immediately after the command's run method, unless an exception occurs.
  *
- * @template TSubject of \Cake\Command\Command
+ * @template TSubject of \Cake\Console\BaseCommand
  * @implements \Cake\Event\EventDispatcherInterface<TSubject>
  */
 abstract class BaseCommand implements CommandInterface, EventDispatcherInterface, EventListenerInterface
@@ -198,7 +198,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Called immediately prior to the command's run method. You can use this method to configure and customize the
      * command or perform logic that needs to happen before the command runs.
      *
-     * @param \Cake\Event\EventInterface<\Cake\Console\BaseCommand> $event An Event instance
+     * @param \Cake\Event\EventInterface<TSubject> $event An Event instance
      * @param \Cake\Console\Arguments $args
      * @param \Cake\Console\ConsoleIo $io
      * @return void
@@ -212,7 +212,7 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Called immediately after the command's run method, unless an exception occurs. You can use this method to
      * perform logic that needs to happen after the command runs.
      *
-     * @param \Cake\Event\EventInterface<\Cake\Console\BaseCommand> $event An Event instance
+     * @param \Cake\Event\EventInterface<TSubject> $event An Event instance
      * @param \Cake\Console\Arguments $args
      * @param \Cake\Console\ConsoleIo $io
      * @param int|null $result

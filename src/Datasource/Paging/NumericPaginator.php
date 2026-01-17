@@ -221,7 +221,7 @@ class NumericPaginator implements PaginatorInterface
      *   to paginate.
      * @param array $params Request params
      * @param array $settings The settings/configuration used for pagination.
-     * @return \Cake\Datasource\Paging\PaginatedInterface
+     * @return \Cake\Datasource\Paging\PaginatedInterface<int, mixed>
      * @throws \Cake\Datasource\Paging\Exception\PageOutOfBoundsException
      */
     public function paginate(
@@ -266,9 +266,9 @@ class NumericPaginator implements PaginatorInterface
     /**
      * Build paginated result set.
      *
-     * @param \Cake\Datasource\ResultSetInterface $items
+     * @param \Cake\Datasource\ResultSetInterface<int, mixed> $items
      * @param array $pagingParams
-     * @return \Cake\Datasource\Paging\PaginatedInterface
+     * @return \Cake\Datasource\Paging\PaginatedInterface<int, mixed>
      */
     protected function buildPaginated(ResultSetInterface $items, array $pagingParams): PaginatedInterface
     {
@@ -314,7 +314,7 @@ class NumericPaginator implements PaginatorInterface
      *
      * @param \Cake\Datasource\QueryInterface $query Query to fetch items.
      * @param array $data Paging data.
-     * @return \Cake\Datasource\ResultSetInterface
+     * @return \Cake\Datasource\ResultSetInterface<int, mixed>
      */
     protected function getItems(QueryInterface $query, array $data): ResultSetInterface
     {

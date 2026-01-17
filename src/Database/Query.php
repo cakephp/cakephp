@@ -693,7 +693,7 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * See `join()` for further details on conditions and types.
      *
-     * @param array<string, string|\Cake\Database\Query\SelectQuery>|string $table The table to join with
+     * @param array<string, string|\Cake\Database\Query\SelectQuery<mixed>>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -718,7 +718,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that methods description for further details.
      *
-     * @param array<string, string|\Cake\Database\Query\SelectQuery>|string $table The table to join with
+     * @param array<string, string|\Cake\Database\Query\SelectQuery<mixed>>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param array $types a list of types associated to the conditions used for converting
@@ -743,7 +743,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * The arguments of this method are identical to the `leftJoin()` shorthand, please refer
      * to that method's description for further details.
      *
-     * @param array<string, string|\Cake\Database\Query\SelectQuery>|string $table The table to join with
+     * @param array<string, string|\Cake\Database\Query\SelectQuery<mixed>>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param array<string, string> $types a list of types associated to the conditions used for converting
@@ -763,11 +763,11 @@ abstract class Query implements ExpressionInterface, Stringable
     /**
      * Returns an array that can be passed to the join method describing a single join clause
      *
-     * @param array<string, string|\Cake\Database\Query\SelectQuery>|string $table The table to join with
+     * @param array<string, string|\Cake\Database\Query\SelectQuery<mixed>>|string $table The table to join with
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string $conditions The conditions
      * to use for joining.
      * @param string $type the join type to use
-     * @return array<string, array{table: string|\Cake\Database\Query\SelectQuery, conditions: \Cake\Database\ExpressionInterface|\Closure|array|string, type: string}>
+     * @return array<string, array{table: string|\Cake\Database\Query\SelectQuery<mixed>, conditions: \Cake\Database\ExpressionInterface|\Closure|array|string, type: string}>
      */
     protected function _makeJoin(
         array|string $table,

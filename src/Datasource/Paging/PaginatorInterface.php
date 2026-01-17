@@ -27,7 +27,7 @@ interface PaginatorInterface
      * @param mixed $target Anything that needs to be paginated.
      * @param array $params Request params.
      * @param array $settings The settings/configuration used for pagination.
-     * @return \Cake\Datasource\Paging\PaginatedInterface
+     * @return \Cake\Datasource\Paging\PaginatedInterface<int, mixed>
      */
     public function paginate(
         mixed $target,
