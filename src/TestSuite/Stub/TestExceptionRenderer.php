@@ -37,7 +37,6 @@ class TestExceptionRenderer implements ExceptionRendererInterface
      * Simply rethrow the given exception
      *
      * @param \Throwable $exception Exception.
-     * @return void
      * @throws \Throwable $exception Rethrows the passed exception.
      */
     public function __construct(Throwable $exception)

@@ -47,7 +47,7 @@ class ConsoleLog extends BaseLog
      *
      * @var \Cake\Console\ConsoleOutput
      */
-    protected ConsoleOutput $_output;
+    protected ConsoleOutput $output;
 
     /**
      * Constructs a new Console Logger.
@@ -69,15 +69,15 @@ class ConsoleLog extends BaseLog
 
         $config = $this->config;
         if ($config['stream'] instanceof ConsoleOutput) {
-            $this->_output = $config['stream'];
+            $this->output = $config['stream'];
         } elseif (is_string($config['stream'])) {
-            $this->_output = new ConsoleOutput($config['stream']);
+            $this->output = new ConsoleOutput($config['stream']);
         } else {
             throw new InvalidArgumentException('`stream` not a ConsoleOutput nor string');
         }
 
         if (isset($config['outputAs'])) {
-            $this->_output->setOutputAs($config['outputAs']);
+            $this->output->setOutputAs($config['outputAs']);
         }
     }
 
@@ -94,6 +94,6 @@ class ConsoleLog extends BaseLog
     public function log($level, Stringable|string $message, array $context = []): void
     {
         $message = $this->interpolate($message, $context);
-        $this->_output->write($this->formatter->format($level, $message, $context));
+        $this->output->write($this->formatter->format($level, $message, $context));
     }
 }

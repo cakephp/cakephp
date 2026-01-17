@@ -1006,8 +1006,6 @@ class SelectQuery extends Query implements IteratorAggregate
 
     /**
      * Handles clearing iterator and cloning all expressions and value binders.
-     *
-     * @return void
      */
     public function __clone()
     {
