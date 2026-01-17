@@ -21,7 +21,8 @@ use Cake\Event\Event;
 /**
  * Class Cleared Event
  *
- * @extends \Cake\Event\Event<\Cake\Cache\CacheEngine>
+ * @template TEngine of \Cake\Cache\CacheEngine
+ * @extends \Cake\Event\Event<TEngine>
  */
 class CacheClearedEvent extends Event
 {

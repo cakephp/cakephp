@@ -67,7 +67,7 @@ class FilterIterator extends Collection
      */
     public function unwrap(): Iterator
     {
-        /** @var \IteratorIterator $filter */
+        /** @var \IteratorIterator<TKey, TValue, \Traversable<TKey, TValue>> $filter */
         $filter = $this->getInnerIterator();
         $iterator = $filter->getInnerIterator();
 

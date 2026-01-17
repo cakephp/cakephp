@@ -253,7 +253,7 @@ class SelectBoxWidget extends BasicWidget
         foreach ($options as $key => $val) {
             // Option groups
             $isIterable = is_iterable($val);
-            /** @var \ArrayAccess|array $val */
+            /** @var \ArrayAccess<string, mixed>|array $val */
             if (
                 (
                     !is_int($key) &&

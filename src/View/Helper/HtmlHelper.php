@@ -29,6 +29,7 @@ use function Cake\Core\h;
  *
  * @property \Cake\View\Helper\UrlHelper $Url
  * @link https://book.cakephp.org/5/en/views/helpers/html.html
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class HtmlHelper extends Helper
 {

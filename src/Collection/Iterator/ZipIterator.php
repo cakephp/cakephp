@@ -43,10 +43,13 @@ use MultipleIterator;
  *  $iterator->toList(); // Returns [4, 6]
  * ```
  *
- * @implements \Cake\Collection\CollectionInterface<mixed, mixed>
+ * @template TKey
+ * @template TValue
+ * @implements \Cake\Collection\CollectionInterface<TKey, TValue>
  */
 class ZipIterator implements CollectionInterface
 {
+    /** @use \Cake\Collection\CollectionTrait<TKey, TValue> */
     use CollectionTrait;
 
     /**

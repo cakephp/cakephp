@@ -1113,7 +1113,7 @@ class View implements EventDispatcherInterface
      * Magic accessor for helpers.
      *
      * @param string $name Name of the attribute to get.
-     * @return \Cake\View\Helper|null
+     * @return \Cake\View\Helper<\Cake\View\View>|null
      */
     public function __get(string $name): ?Helper
     {
@@ -1245,12 +1245,12 @@ class View implements EventDispatcherInterface
      *
      * @param string $name Name of the helper to load.
      * @param array<string, mixed> $config Settings for the helper
-     * @return \Cake\View\Helper a constructed helper object.
+     * @return \Cake\View\Helper<\Cake\View\View> a constructed helper object.
      * @see \Cake\View\HelperRegistry::load()
      */
     public function loadHelper(string $name, array $config = []): Helper
     {
-        /** @var \Cake\View\Helper */
+        /** @var \Cake\View\Helper<\Cake\View\View> */
         return $this->helpers()->load($name, $config);
     }
 

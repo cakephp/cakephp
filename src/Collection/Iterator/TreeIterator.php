@@ -25,10 +25,14 @@ use RecursiveIteratorIterator;
  * A Recursive iterator used to flatten nested structures and also exposes
  * all Collection methods
  *
- * @template-extends \RecursiveIteratorIterator<\RecursiveIterator>
+ * @template TKey
+ * @template TValue
+ * @template-extends \RecursiveIteratorIterator<\RecursiveIterator<TKey, TValue>>
+ * @implements \Cake\Collection\CollectionInterface<TKey, TValue>
  */
 class TreeIterator extends RecursiveIteratorIterator implements CollectionInterface
 {
+    /** @use \Cake\Collection\CollectionTrait<TKey, TValue> */
     use CollectionTrait;
 
     /**
@@ -93,7 +97,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
      * callable returning the key value.
      * @param string $spacer The string to use for prefixing the values according to
      * their depth in the tree
-     * @return \Cake\Collection\Iterator\TreePrinter
+     * @return \Cake\Collection\Iterator\TreePrinter<TKey, TValue>
      */
     public function printer(
         callable|string $valuePath,
@@ -107,7 +111,7 @@ class TreeIterator extends RecursiveIteratorIterator implements CollectionInterf
             };
         }
 
-        /** @var \RecursiveIterator $iterator */
+        /** @var \RecursiveIterator<TKey, TValue> $iterator */
         $iterator = $this->getInnerIterator();
 
         return new TreePrinter(

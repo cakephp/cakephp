@@ -33,7 +33,7 @@ class InsertIterator extends Collection
     /**
      * The collection from which to extract the values to be inserted
      *
-     * @var \Cake\Collection\Collection
+     * @var \Cake\Collection\Collection<mixed, mixed>
      */
     protected Collection $_values;
 

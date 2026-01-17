@@ -68,7 +68,7 @@ class LazyEagerLoader
      * @param array<\Cake\Datasource\EntityInterface> $entities The original entities
      * @param array $contain The associations to be loaded
      * @param \Cake\ORM\Table $source The table to use for fetching the top level entities
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      */
     protected function _getQuery(array $entities, array $contain, Table $source): SelectQuery
     {
@@ -132,7 +132,7 @@ class LazyEagerLoader
      * entities.
      *
      * @param array<\Cake\Datasource\EntityInterface> $entities The original list of entities
-     * @param \Cake\ORM\Query\SelectQuery $query The query to load results
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to load results
      * @param array<string> $associations The top level associations that were loaded
      * @param \Cake\ORM\Table $source The table where the entities came from
      * @return array<\Cake\Datasource\EntityInterface>

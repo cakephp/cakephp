@@ -397,7 +397,7 @@ class Marshaller
      * Builds the related entities and handles the special casing
      * for junction table entities.
      *
-     * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshal.
+     * @param \Cake\ORM\Association\BelongsToMany<\Cake\ORM\Table> $assoc The association to marshal.
      * @param array $data The data to convert into entities.
      * @param array<string, mixed> $options List of options.
      * @return array<\Cake\Datasource\EntityInterface> An array of built entities.
@@ -821,7 +821,7 @@ class Marshaller
      * association.
      *
      * @param array<\Cake\Datasource\EntityInterface> $original The original entities list.
-     * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshall
+     * @param \Cake\ORM\Association\BelongsToMany<\Cake\ORM\Table> $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array<string, mixed> $options List of options.
      * @return array<\Cake\Datasource\EntityInterface>
@@ -852,7 +852,7 @@ class Marshaller
      * Merge the special junction property (_joinData) into the entity set.
      *
      * @param array<\Cake\Datasource\EntityInterface> $original The original entities list.
-     * @param \Cake\ORM\Association\BelongsToMany $assoc The association to marshall
+     * @param \Cake\ORM\Association\BelongsToMany<\Cake\ORM\Table> $assoc The association to marshall
      * @param array $value The data to hydrate
      * @param array<string, mixed> $options List of options.
      * @return array<\Cake\Datasource\EntityInterface> An array of entities

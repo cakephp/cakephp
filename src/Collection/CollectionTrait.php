@@ -46,6 +46,9 @@ use const SORT_NUMERIC;
 
 /**
  * Offers a handful of methods to manipulate iterators
+ *
+ * @template TKey
+ * @template TValue
  */
 trait CollectionTrait
 {
@@ -58,7 +61,7 @@ trait CollectionTrait
      * type of returned collection interface
      *
      * @param mixed ...$args Constructor arguments.
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     protected function newCollection(mixed ...$args): CollectionInterface
     {
@@ -79,6 +82,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function filter(?callable $callback = null): CollectionInterface
     {
@@ -89,6 +93,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function reject(?callable $callback = null): CollectionInterface
     {
@@ -99,6 +104,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function unique(?callable $callback = null): CollectionInterface
     {
@@ -172,6 +178,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function map(callable $callback): CollectionInterface
     {
@@ -200,6 +207,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, mixed>
      */
     public function extract(callable|string $path): CollectionInterface
     {
@@ -282,6 +290,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function sortBy(callable|string $path, int $order = SORT_DESC, int $sort = SORT_NUMERIC): CollectionInterface
     {
@@ -329,7 +338,7 @@ trait CollectionTrait
      *   or a function returning the grouping key out of the provided element
      * @param bool $preserveKeys Whether to preserve the keys of the existing
      *   collection when the values are grouped. Defaults to false.
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     public function groupBy(callable|string $path, bool $preserveKeys = false): CollectionInterface
     {
@@ -362,6 +371,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<mixed, TValue>
      */
     public function indexBy(callable|string $path): CollectionInterface
     {
@@ -389,6 +399,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<mixed, int>
      */
     public function countBy(callable|string $path): CollectionInterface
     {
@@ -420,6 +431,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<int, TValue>
      */
     public function shuffle(): CollectionInterface
     {
@@ -431,6 +443,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<int, TValue>
      */
     public function sample(int $length = 10): CollectionInterface
     {
@@ -439,6 +452,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function take(int $length = 1, int $offset = 0): CollectionInterface
     {
@@ -447,6 +461,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function skip(int $length): CollectionInterface
     {
@@ -455,6 +470,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function match(array $conditions): CollectionInterface
     {
@@ -510,6 +526,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function takeLast(int $length): CollectionInterface
     {
@@ -609,6 +626,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function append(iterable $items): CollectionInterface
     {
@@ -621,6 +639,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function appendItem(mixed $item, mixed $key = null): CollectionInterface
     {
@@ -635,6 +654,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function prepend(mixed $items): CollectionInterface
     {
@@ -643,6 +663,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function prependItem(mixed $item, mixed $key = null): CollectionInterface
     {
@@ -657,6 +678,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     public function combine(
         callable|string $keyPath,
@@ -728,6 +750,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function nest(
         callable|string $idPath,
@@ -771,13 +794,14 @@ trait CollectionTrait
 
         return $this->newCollection(new MapReduce($this->unwrap(), $mapper, $reducer))
             ->map(function ($value) use ($isObject) {
-                /** @var \ArrayIterator|\ArrayObject $value */
+                /** @var \ArrayIterator<int|string, mixed>|\ArrayObject<int|string, mixed> $value */
                 return $isObject ? $value : $value->getArrayCopy();
             });
     }
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function insert(string $path, mixed $values): CollectionInterface
     {
@@ -822,6 +846,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function compile(bool $keepKeys = true): CollectionInterface
     {
@@ -830,6 +855,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function lazy(): CollectionInterface
     {
@@ -844,6 +870,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function buffered(): CollectionInterface
     {
@@ -852,6 +879,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     public function listNested(
         string|int $order = 'desc',
@@ -894,6 +922,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function stopWhen(callable|array $condition): CollectionInterface
     {
@@ -906,6 +935,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     public function unfold(?callable $callback = null): CollectionInterface
     {
@@ -921,6 +951,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
      */
     public function through(callable $callback): CollectionInterface
     {
@@ -931,6 +962,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     public function zip(iterable ...$items): CollectionInterface
     {
@@ -939,6 +971,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     public function zipWith(iterable $items, $callback): CollectionInterface
     {
@@ -955,6 +988,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, array<TValue>>
      */
     public function chunk(int $chunkSize): CollectionInterface
     {
@@ -974,6 +1008,7 @@ trait CollectionTrait
 
     /**
      * @inheritDoc
+     * @return \Cake\Collection\CollectionInterface<TKey, array<TKey, TValue>>
      */
     public function chunkWithKeys(int $chunkSize, bool $keepKeys = true): CollectionInterface
     {
@@ -1047,7 +1082,7 @@ trait CollectionTrait
      * @param callable|null $operation A callable that allows you to customize the product result.
      * @param callable|null $filter A filtering callback that must return true for a result to be part
      *   of the final results.
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\CollectionInterface<int, array<mixed>>
      * @throws \LogicException
      */
     public function cartesianProduct(?callable $operation = null, ?callable $filter = null): CollectionInterface
@@ -1107,7 +1142,7 @@ trait CollectionTrait
     /**
      * {@inheritDoc}
      *
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\CollectionInterface<int, array<mixed>>
      * @throws \LogicException
      */
     public function transpose(): CollectionInterface

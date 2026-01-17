@@ -26,7 +26,8 @@ use Cake\Core\ObjectRegistry;
  *
  * Used by {@link \Cake\Cache\Cache} to load and manage cache engines.
  *
- * @extends \Cake\Core\ObjectRegistry<\Cake\Cache\CacheEngine>
+ * @template TEngine of \Cake\Cache\CacheEngine
+ * @extends \Cake\Core\ObjectRegistry<TEngine>
  */
 class CacheRegistry extends ObjectRegistry
 {
@@ -36,11 +37,11 @@ class CacheRegistry extends ObjectRegistry
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
      * @param string $class Partial classname to resolve.
-     * @return class-string<\Cake\Cache\CacheEngine>|null Either the correct classname or null.
+     * @return class-string<TEngine>|null Either the correct classname or null.
      */
     protected function _resolveClassName(string $class): ?string
     {
-        /** @var class-string<\Cake\Cache\CacheEngine>|null */
+        /** @var class-string<TEngine>|null */
         return App::className($class, 'Cache/Engine', 'Engine');
     }
 
@@ -64,10 +65,10 @@ class CacheRegistry extends ObjectRegistry
      *
      * Part of the template method for Cake\Core\ObjectRegistry::load()
      *
-     * @param \Cake\Cache\CacheEngine|class-string<\Cake\Cache\CacheEngine> $class The classname or object to make.
+     * @param TEngine|class-string<TEngine> $class The classname or object to make.
      * @param string $alias The alias of the object.
      * @param array<string, mixed> $config An array of settings to use for the cache engine.
-     * @return \Cake\Cache\CacheEngine The constructed CacheEngine class.
+     * @return TEngine The constructed CacheEngine class.
      * @throws \Cake\Core\Exception\CakeException When the cache engine cannot be initialized.
      */
     protected function _create(object|string $class, string $alias, array $config): CacheEngine

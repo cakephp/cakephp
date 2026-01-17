@@ -20,8 +20,10 @@ namespace Cake\Collection;
 /**
  * Returns a new {@link \Cake\Collection\Collection} object wrapping the passed argument.
  *
- * @param iterable $items The items from which the collection will be built.
- * @return \Cake\Collection\Collection
+ * @template TKey
+ * @template TValue
+ * @param iterable<TKey, TValue> $items The items from which the collection will be built.
+ * @return \Cake\Collection\Collection<TKey, TValue>
  */
 function collection(iterable $items): CollectionInterface
 {

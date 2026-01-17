@@ -46,7 +46,7 @@ trait ViewVarsTrait
      * Constructs the view class instance based on the current configuration.
      *
      * @param string|null $viewClass Optional namespaced class name of the View class to instantiate.
-     * @return \Cake\View\View
+     * @return \Cake\View\View<\Cake\View\View>
      * @throws \Cake\View\Exception\MissingViewException If view class was not found.
      */
     public function createView(?string $viewClass = null): View

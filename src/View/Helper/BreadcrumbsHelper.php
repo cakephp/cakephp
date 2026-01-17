@@ -25,6 +25,7 @@ use function Cake\Core\deprecationWarning;
  * BreadcrumbsHelper to register and display a breadcrumb trail for your views
  *
  * @property \Cake\View\Helper\UrlHelper $Url
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class BreadcrumbsHelper extends Helper
 {

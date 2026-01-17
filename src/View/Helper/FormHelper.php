@@ -56,6 +56,7 @@ use function Cake\I18n\__d;
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\UrlHelper $Url
  * @link https://book.cakephp.org/5/en/views/helpers/form.html
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class FormHelper extends Helper
 {
@@ -283,7 +284,7 @@ class FormHelper extends Helper
     /**
      * Construct the widgets and binds the default context providers
      *
-     * @param \Cake\View\View $view The View this helper is being attached to.
+     * @param \Cake\View\View<\Cake\View\View> $view The View this helper is being attached to.
      * @param array<string, mixed> $config Configuration settings for the helper.
      */
     public function __construct(View $view, array $config = [])
