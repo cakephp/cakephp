@@ -16,7 +16,7 @@ class SmtpTestTransport extends SmtpTransport
      */
     public function setSocket(Socket $socket): void
     {
-        $this->_socket = $socket;
+        $this->socket = $socket;
     }
 
     /**
