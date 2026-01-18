@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\ORM;
 
-use Cake\Datasource\EntityInterface;
 use Cake\ORM\Query\SelectQuery;
 use Closure;
 use InvalidArgumentException;
