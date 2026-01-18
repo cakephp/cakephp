@@ -535,7 +535,6 @@ class ResolverTest extends TestCase
         Resolver::setConfig('default', $config);
 
         // Call withAttribute() directly on Resolver (should forward to collection)
-        /** @phpstan-ignore-next-line staticMethod.notFound */
         $filtered = Resolver::withAttribute(TestRoute::class);
 
         $this->assertInstanceOf(AttributeCollection::class, $filtered);
@@ -551,7 +550,6 @@ class ResolverTest extends TestCase
         Resolver::setConfig('default', $config);
 
         // Chain multiple collection methods
-        /** @phpstan-ignore-next-line staticMethod.notFound */
         $result = Resolver::withAttribute(TestRoute::class)
             ->first();
 

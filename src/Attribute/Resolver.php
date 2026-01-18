@@ -45,6 +45,14 @@ class Resolver
     }
 
     /**
+     * An array mapping URL schemes to fully qualified class names.
+     *
+     * @var array<string, string>
+     * @phpstan-var array<string, class-string>
+     */
+    protected static array $_dsnClassMap = [];
+
+    /**
      * In-memory cache of resolved collections per config name
      *
      * @var array<string, \Cake\Attribute\Resolver\AttributeCollection>
@@ -173,7 +181,6 @@ class Resolver
     {
         unset(static::$collections[$config]);
 
-        /** @phpstan-ignore-next-line staticClassAccess.privateMethod */
         return self::traitDrop($config);
     }
 

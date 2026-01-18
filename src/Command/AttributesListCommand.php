@@ -1,0 +1,235 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         5.2.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Command;
+
+use Cake\Attribute\Resolver;
+use Cake\Attribute\Resolver\AttributeCollection;
+use Cake\Attribute\Resolver\Enum\AttributeTargetType;
+use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
+use Cake\Console\Arguments;
+use Cake\Console\ConsoleIo;
+use Cake\Console\ConsoleOptionParser;
+
+/**
+ * Command to list discovered attributes.
+ */
+class AttributesListCommand extends Command
+{
+    /**
+     * @inheritDoc
+     */
+    public static function defaultName(): string
+    {
+        return 'attributes list';
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public static function getDescription(): string
+    {
+        return 'List discovered PHP attributes in a table format.';
+    }
+
+    /**
+     * Hook method for defining this command's option parser.
+     *
+     * @param \Cake\Console\ConsoleOptionParser $parser The parser to be defined
+     * @return \Cake\Console\ConsoleOptionParser The built parser.
+     */
+    public function buildOptionParser(ConsoleOptionParser $parser): ConsoleOptionParser
+    {
+        $parser = parent::buildOptionParser($parser);
+        $parser
+            ->setDescription(static::getDescription())
+            ->addOption('attribute', [
+                'short' => 'a',
+                'help' => 'Filter by attribute class name (partial match supported).',
+            ])
+            ->addOption('class', [
+                'short' => 'c',
+                'help' => 'Filter by target class name (partial match supported).',
+            ])
+            ->addOption('namespace', [
+                'short' => 'n',
+                'help' => 'Filter by namespace pattern (supports wildcards).',
+            ])
+            ->addOption('type', [
+                'short' => 't',
+                'help' => 'Filter by target type (class, method, property, parameter, constant).',
+            ])
+            ->addOption('plugin', [
+                'short' => 'p',
+                'help' => 'Filter by plugin name.',
+            ])
+            ->addOption('verbose', [
+                'help' => 'Display full class names without truncation.',
+                'boolean' => true,
+            ])
+            ->addOption('config', [
+                'default' => 'default',
+                'help' => 'The Resolver configuration to use.',
+            ]);
+
+        return $parser;
+    }
+
+    /**
+     * Implement this method with your command's logic.
+     *
+     * @param \Cake\Console\Arguments $args The command arguments.
+     * @param \Cake\Console\ConsoleIo $io The console io
+     * @return int|null The exit code or null for success
+     */
+    public function execute(Arguments $args, ConsoleIo $io): ?int
+    {
+        $configName = (string)$args->getOption('config');
+
+        if (!Resolver::getConfig($configName)) {
+            $io->error(sprintf('Configuration "%s" does not exist.', $configName));
+
+            return static::CODE_ERROR;
+        }
+
+        $collection = $this->getFilteredCollection($args, $configName);
+        $attributes = $collection->toList();
+
+        if ($attributes === []) {
+            $io->warning('No attributes found matching the criteria.');
+
+            return static::CODE_SUCCESS;
+        }
+
+        $io->out(sprintf('<info>Found %d attributes:</info>', count($attributes)));
+        $io->out('');
+
+        $verbose = (bool)$args->getOption('verbose');
+        $maxLength = $verbose ? PHP_INT_MAX : 40;
+
+        $tableData = [['Attribute', 'Class', 'Plugin', 'Type', 'Target']];
+        foreach ($attributes as $attr) {
+            $tableData[] = [
+                $this->truncateLeft($attr->attributeName, $maxLength),
+                $this->truncateLeft($attr->className, $maxLength),
+                $attr->pluginName ?? '-',
+                $attr->target->type->value,
+                $this->truncateLeft($this->getTargetDisplay($attr), $maxLength),
+            ];
+        }
+
+        $io->helper('Table')->output($tableData);
+
+        return static::CODE_SUCCESS;
+    }
+
+    /**
+     * Get filtered collection based on command arguments
+     *
+     * @param \Cake\Console\Arguments $args Command arguments
+     * @param string $configName Configuration name
+     * @return \Cake\Attribute\Resolver\AttributeCollection
+     */
+    protected function getFilteredCollection(Arguments $args, string $configName): AttributeCollection
+    {
+        $collection = Resolver::collection($configName);
+
+        $attr = $args->getOption('attribute');
+        if ($attr) {
+            $collection = $collection->withAttributeContains((string)$attr);
+        }
+
+        $class = $args->getOption('class');
+        if ($class) {
+            $collection = $collection->withClassNameContains((string)$class);
+        }
+
+        $namespace = $args->getOption('namespace');
+        if ($namespace) {
+            $collection = $collection->withNamespace((string)$namespace);
+        }
+
+        $type = $args->getOption('type');
+        if ($type) {
+            $targetType = AttributeTargetType::tryFrom((string)$type);
+            if ($targetType) {
+                $collection = $collection->withTargetType($targetType);
+            } else {
+                // Invalid type should return empty collection
+                return new AttributeCollection([]);
+            }
+        }
+
+        $plugin = $args->getOption('plugin');
+        if ($plugin) {
+            return $collection->withPlugin((string)$plugin);
+        }
+
+        return $collection;
+    }
+
+    /**
+     * Get short class name (without namespace)
+     *
+     * @param string $className Full class name
+     * @return string Short class name
+     */
+    protected function getShortClassName(string $className): string
+    {
+        $parts = explode('\\', $className);
+
+        return end($parts);
+    }
+
+    /**
+     * Get display value for target column
+     *
+     * For class targets, returns FQDN. For other targets (methods, properties, etc.),
+     * returns just the target name.
+     *
+     * @param \Cake\Attribute\Resolver\ValueObject\AttributeInfo $attr Attribute info
+     * @return string Target display value
+     */
+    protected function getTargetDisplay(AttributeInfo $attr): string
+    {
+        // For class targets, show FQDN. For other targets, show just the name.
+        if ($attr->target->type->value === 'class') {
+            return $attr->className;
+        }
+
+        return $attr->target->name;
+    }
+
+    /**
+     * Truncate string from the left if it exceeds max length
+     *
+     * Keeps the rightmost portion of the string and prepends '...' if truncated.
+     * This is useful for long class names, especially anonymous classes, where
+     * the end contains the most relevant information.
+     *
+     * @param string $value String to truncate
+     * @param int $maxLength Maximum length before truncation
+     * @return string Truncated string
+     */
+    protected function truncateLeft(string $value, int $maxLength = 40): string
+    {
+        if (strlen($value) <= $maxLength) {
+            return $value;
+        }
+
+        return '...' . substr($value, -(int)($maxLength - 3));
+    }
+}
