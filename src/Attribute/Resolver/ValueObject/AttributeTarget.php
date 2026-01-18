@@ -1,0 +1,97 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         5.4.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Attribute\Resolver\ValueObject;
+
+use Cake\Attribute\Resolver\Enum\AttributeTargetType;
+
+/**
+ * Represents information about where an attribute is attached.
+ *
+ * This value object encapsulates the target of an attribute, including:
+ * - The type of target (class, method, property, etc.)
+ * - The name of the target
+ * - The declaring class (if applicable)
+ *
+ * This class is readonly and immutable for safe serialization.
+ */
+readonly class AttributeTarget
+{
+    /**
+     * Constructor for AttributeTarget.
+     *
+     * @param \Cake\Attribute\Resolver\Enum\AttributeTargetType $type Target type
+     * @param string $name Target name (e.g., method name, property name)
+     * @param string|null $declaringClass Class name that declares this target
+     */
+    public function __construct(
+        public AttributeTargetType $type,
+        public string $name,
+        public ?string $declaringClass = null,
+    ) {
+    }
+
+    /**
+     * Convert to array for serialization.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(): array
+    {
+        return [
+            'type' => $this->type->value,
+            'name' => $this->name,
+            'declaringClass' => $this->declaringClass,
+        ];
+    }
+
+    /**
+     * Create from array data.
+     *
+     * @param array<string, mixed> $data Data array
+     * @return self
+     */
+    public static function fromArray(array $data): self
+    {
+        $type = $data['type'];
+        if (!$type instanceof AttributeTargetType) {
+            $type = AttributeTargetType::from((string)$type);
+        }
+
+        return new self(
+            type: $type,
+            name: (string)$data['name'],
+            declaringClass: isset($data['declaringClass']) ? (string)$data['declaringClass'] : null,
+        );
+    }
+
+    /**
+     * Magic method for var_export() compatibility.
+     *
+     * Enables VarExporter to efficiently serialize this object without reflection.
+     *
+     * @param array<string, mixed> $data Property data from var_export
+     * @return self
+     */
+    public static function __set_state(array $data): self
+    {
+        return new self(
+            type: $data['type'],
+            name: $data['name'],
+            declaringClass: $data['declaringClass'] ?? null,
+        );
+    }
+}

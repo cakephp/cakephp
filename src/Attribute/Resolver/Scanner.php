@@ -1,0 +1,173 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         5.4.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Attribute\Resolver;
+
+use Cake\Core\Plugin;
+use Cake\Utility\Fs\Finder;
+use EmptyIterator;
+use Generator;
+use Iterator;
+use Throwable;
+
+class Scanner
+{
+    /**
+     * Cache for base paths with plugin information.
+     *
+     * @var array<array{path: string, plugin: string|null}>|null
+     */
+    private ?array $basePaths = null;
+
+    /**
+     * List of files that were scanned.
+     *
+     * @var array<string>
+     */
+    private array $scannedFiles = [];
+
+    /**
+     * @param \Cake\Attribute\Resolver\Parser $parser Attribute parser
+     * @param array<string> $paths Relative glob patterns to scan (e.g., ['src/**\/*.php'])
+     * @param array<string> $excludePaths Relative patterns to exclude (e.g., ['vendor/**', 'tests/**'])
+     * @param string|null $basePath Base directory path (defaults to ROOT + all plugins)
+     */
+    public function __construct(
+        private Parser $parser,
+        private array $paths = [],
+        private array $excludePaths = [],
+        private ?string $basePath = null,
+    ) {
+    }
+
+    /**
+     * Scan all configured paths and yield discovered attributes.
+     *
+     * Expands relative paths against APP root and all loaded plugin paths.
+     *
+     * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
+     */
+    public function scanAll(): Generator
+    {
+        $this->scannedFiles = [];
+        $finder = $this->buildFinder();
+
+        foreach ($finder as $file) {
+            $filePath = $file->getRealPath();
+            $this->scannedFiles[] = $filePath;
+
+            try {
+                $pluginName = $this->identifyPluginName($filePath);
+                yield from $this->parser->parseFile($file, $pluginName);
+            } catch (Throwable) {
+                // Skip files that fail to parse
+                continue;
+            }
+        }
+    }
+
+    /**
+     * Get the list of files that were scanned.
+     *
+     * @return array<string>
+     */
+    public function getScannedFiles(): array
+    {
+        return $this->scannedFiles;
+    }
+
+    /**
+     * Resolve base paths for APP and all loaded plugins.
+     *
+     * @return array<array{path: string, plugin: string|null}>
+     */
+    private function resolveBasePaths(): array
+    {
+        if ($this->basePaths !== null) {
+            return $this->basePaths;
+        }
+
+        // Use custom basePath or default to ROOT
+        $basePaths = [
+            ['path' => $this->basePath ?? ROOT, 'plugin' => null],
+        ];
+
+        $collection = Plugin::getCollection();
+        foreach ($collection as $plugin) {
+            $basePaths[] = [
+                'path' => $plugin->getPath(),
+                'plugin' => $plugin->getName(),
+            ];
+        }
+
+        $this->basePaths = $basePaths;
+
+        return $basePaths;
+    }
+
+    /**
+     * Build a Finder instance configured with all base paths and patterns.
+     *
+     * @return \Iterator<\SplFileInfo>
+     */
+    private function buildFinder(): Iterator
+    {
+        if ($this->paths === []) {
+            return new EmptyIterator();
+        }
+
+        $basePaths = $this->resolveBasePaths();
+        $directories = array_map(fn(array $info): string => $info['path'], $basePaths);
+
+        $finder = new Finder();
+
+        // Add all base directories
+        foreach ($directories as $dir) {
+            if (is_dir($dir)) {
+                $finder->in($dir);
+            }
+        }
+
+        // Apply relative path patterns
+        foreach ($this->paths as $pattern) {
+            $finder->pattern($pattern);
+        }
+
+        // Apply exclusions
+        foreach ($this->excludePaths as $excludePattern) {
+            $finder->notPath($excludePattern);
+        }
+
+        return $finder->files();
+    }
+
+    /**
+     * Identify which plugin a file belongs to based on its path.
+     *
+     * @param string $filePath Absolute file path
+     * @return string|null Plugin name or null if file is in APP
+     */
+    private function identifyPluginName(string $filePath): ?string
+    {
+        foreach ($this->resolveBasePaths() as $baseInfo) {
+            if ($baseInfo['plugin'] !== null && str_starts_with($filePath, $baseInfo['path'])) {
+                return $baseInfo['plugin'];
+            }
+        }
+
+        return null;
+    }
+}
