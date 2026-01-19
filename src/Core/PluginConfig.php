@@ -56,12 +56,24 @@ class PluginConfig
     }
 
     /**
-     * Get the config how plugins should be loaded
+     * Get a list of all installed plugins with their configuration options.
      *
-     * @param string|null $path The absolute path to the composer.lock file to retrieve the versions from
-     * @return array
+     * Returns an array of plugin configurations with keys:
+     * - path: Plugin filesystem path
+     * - isLoaded: Whether plugin is configured to load
+     * - onlyDebug: Load only in debug mode (if isLoaded)
+     * - onlyCli: Load only in CLI mode (if isLoaded)
+     * - optional: Plugin is optional (if isLoaded)
+     * - bootstrap: Enable bootstrap hook (if isLoaded)
+     * - routes: Enable routes hook (if isLoaded)
+     * - middleware: Enable middleware hook (if isLoaded)
+     * - console: Enable console hook (if isLoaded)
+     * - services: Enable services hook (if isLoaded)
+     * - events: Enable events hook (if isLoaded)
+     *
+     * @return array<string, array<string, mixed>> Plugin name => configuration
      */
-    public static function getAppConfig(?string $path = null): array
+    public static function getInstalledPlugins(): array
     {
         self::loadInstallerConfig();
 
@@ -73,12 +85,6 @@ class PluginConfig
             $pluginLoadConfig = [];
         }
 
-        try {
-            $composerVersions = self::getVersions($path);
-        } catch (CakeException) {
-            $composerVersions = [];
-        }
-
         $result = [];
         $availablePlugins = Configure::read('plugins', []);
         if ($availablePlugins && is_array($availablePlugins)) {
@@ -87,6 +93,7 @@ class PluginConfig
                     $options = $pluginLoadConfig[$pluginName];
                     $hooks = PluginInterface::VALID_HOOKS;
                     $mainConfig = [
+                        'path' => $pluginPath,
                         'isLoaded' => true,
                         'onlyDebug' => $options['onlyDebug'] ?? false,
                         'onlyCli' => $options['onlyCli'] ?? false,
@@ -97,24 +104,10 @@ class PluginConfig
                     }
                     $result[$pluginName] = $mainConfig;
                 } else {
-                    $result[$pluginName]['isLoaded'] = false;
-                }
-
-                try {
-                    $packageName = self::getPackageNameFromPath($pluginPath);
-                    $result[$pluginName]['packagePath'] = $pluginPath;
-                    $result[$pluginName]['package'] = $packageName;
-                } catch (CakeException) {
-                    $packageName = null;
-                }
-                if ($composerVersions && $packageName) {
-                    if (array_key_exists($packageName, $composerVersions['packages'])) {
-                        $result[$pluginName]['version'] = $composerVersions['packages'][$packageName];
-                        $result[$pluginName]['isDevPackage'] = false;
-                    } elseif (array_key_exists($packageName, $composerVersions['devPackages'])) {
-                        $result[$pluginName]['version'] = $composerVersions['devPackages'][$packageName];
-                        $result[$pluginName]['isDevPackage'] = true;
-                    }
+                    $result[$pluginName] = [
+                        'path' => $pluginPath,
+                        'isLoaded' => false,
+                    ];
                 }
             }
         }
@@ -123,6 +116,55 @@ class PluginConfig
         foreach ($diff as $unknownPlugin) {
             $result[$unknownPlugin]['isLoaded'] = false;
             $result[$unknownPlugin]['isUnknown'] = true;
+        }
+
+        return $result;
+    }
+
+    /**
+     * Get the config how plugins should be loaded
+     *
+     * @param string|null $path The absolute path to the composer.lock file to retrieve the versions from
+     * @return array
+     */
+    public static function getAppConfig(?string $path = null): array
+    {
+        // Get base plugin configuration (paths and load config)
+        $result = self::getInstalledPlugins();
+
+        try {
+            $composerVersions = self::getVersions($path);
+        } catch (CakeException) {
+            $composerVersions = [];
+        }
+
+        // Enrich with package metadata and versions
+        foreach ($result as $pluginName => $config) {
+            // Skip unknown plugins (no path available)
+            if (!isset($config['path'])) {
+                continue;
+            }
+
+            try {
+                $packageName = self::getPackageNameFromPath($config['path']);
+                $result[$pluginName]['packagePath'] = $config['path'];
+                $result[$pluginName]['package'] = $packageName;
+            } catch (CakeException) {
+                $packageName = null;
+            }
+
+            if ($composerVersions && $packageName) {
+                if (array_key_exists($packageName, $composerVersions['packages'])) {
+                    $result[$pluginName]['version'] = $composerVersions['packages'][$packageName];
+                    $result[$pluginName]['isDevPackage'] = false;
+                } elseif (array_key_exists($packageName, $composerVersions['devPackages'])) {
+                    $result[$pluginName]['version'] = $composerVersions['devPackages'][$packageName];
+                    $result[$pluginName]['isDevPackage'] = true;
+                }
+            }
+
+            // Remove 'path' key to maintain BC (getAppConfig uses packagePath instead)
+            unset($result[$pluginName]['path']);
         }
 
         return $result;
