@@ -47,6 +47,7 @@ class Column
      * @param string|null $collate Collation for the column
      * @param int|null $srid SRID for geometry fields
      * @param string|null $baseType The basic schema type if the column type is a complex/custom type.
+     * @param bool|null $fixed Whether the column is fixed-length (BINARY vs VARBINARY)
      */
     public function __construct(
         protected string $name,
@@ -65,6 +66,7 @@ class Column
         protected ?string $collate = null,
         protected ?int $srid = null,
         protected ?string $baseType = null,
+        protected ?bool $fixed = null,
     ) {
     }
 
@@ -504,6 +506,41 @@ class Column
     }
 
     /**
+     * Sets whether the column is fixed-length.
+     *
+     * Used for binary columns to distinguish between BINARY and VARBINARY.
+     *
+     * @param bool $fixed Fixed
+     * @return $this
+     */
+    public function setFixed(bool $fixed)
+    {
+        $this->fixed = $fixed;
+
+        return $this;
+    }
+
+    /**
+     * Gets whether the column is fixed-length.
+     *
+     * @return bool|null
+     */
+    public function getFixed(): ?bool
+    {
+        return $this->fixed;
+    }
+
+    /**
+     * Is the column fixed-length?
+     *
+     * @return bool
+     */
+    public function isFixed(): bool
+    {
+        return $this->getFixed() === true;
+    }
+
+    /**
      * Gets all allowed options. Each option must have a corresponding `setFoo` method.
      *
      * @return array
@@ -527,6 +564,7 @@ class Column
             'srid',
             'increment',
             'generated',
+            'fixed',
         ];
     }
 
@@ -590,6 +628,7 @@ class Column
             'comment' => $this->getComment(),
             'autoIncrement' => $this->getIdentity(),
             'identity' => $this->getIdentity(),
+            'fixed' => $this->getFixed(),
         ];
     }
 }
