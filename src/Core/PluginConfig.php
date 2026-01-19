@@ -59,17 +59,18 @@ class PluginConfig
      * Get a list of all installed plugins with their configuration options.
      *
      * Returns an array of plugin configurations with keys:
-     * - path: Plugin filesystem path
-     * - isLoaded: Whether plugin is configured to load
-     * - onlyDebug: Load only in debug mode (if isLoaded)
-     * - onlyCli: Load only in CLI mode (if isLoaded)
-     * - optional: Plugin is optional (if isLoaded)
      * - bootstrap: Enable bootstrap hook (if isLoaded)
-     * - routes: Enable routes hook (if isLoaded)
-     * - middleware: Enable middleware hook (if isLoaded)
      * - console: Enable console hook (if isLoaded)
-     * - services: Enable services hook (if isLoaded)
      * - events: Enable events hook (if isLoaded)
+     * - isLoaded: Whether plugin is configured to load
+     * - isUnknown: Present and set to true when a plugin is configured but not found in the installed plugins list
+     * - middleware: Enable middleware hook (if isLoaded)
+     * - onlyCli: Load only in CLI mode (if isLoaded)
+     * - onlyDebug: Load only in debug mode (if isLoaded)
+     * - optional: Plugin is optional (if isLoaded)
+     * - path: Plugin filesystem path
+     * - routes: Enable routes hook (if isLoaded)
+     * - services: Enable services hook (if isLoaded)
      *
      * @return array<string, array<string, mixed>> Plugin name => configuration
      */
