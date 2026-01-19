@@ -56,7 +56,7 @@ class PluginConfig
     }
 
     /**
-     * Get a list of all installed plugins with their configuration options.
+     * Get an array of all installed plugins and their configuration options.
      *
      * Returns an array of plugin configurations with keys:
      * - bootstrap: Enable bootstrap hook (if isLoaded)
