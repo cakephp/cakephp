@@ -161,7 +161,15 @@ class MysqlSchemaDialectTest extends TestCase
             ],
             [
                 'BINARY(1)',
-                ['type' => 'binary', 'length' => 1],
+                ['type' => 'binary', 'length' => 1, 'fixed' => true],
+            ],
+            [
+                'BINARY(20)',
+                ['type' => 'binary', 'length' => 20, 'fixed' => true],
+            ],
+            [
+                'VARBINARY(20)',
+                ['type' => 'binary', 'length' => 20],
             ],
             [
                 'TEXT',
@@ -1248,7 +1256,13 @@ SQL;
             [
                 'bit',
                 ['type' => 'binary', 'length' => 1],
-                '`bit` BINARY(1)',
+                '`bit` VARBINARY(1)',
+            ],
+            // Fixed binary (BINARY vs VARBINARY)
+            [
+                'hash',
+                ['type' => 'binary', 'length' => 20, 'fixed' => true],
+                '`hash` BINARY(20)',
             ],
             // Integers
             [

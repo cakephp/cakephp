@@ -420,7 +420,12 @@ class MysqlSchemaDialect extends SchemaDialect
             $lengthName = substr($col, 0, -4);
             $length = TableSchema::$columnLengths[$lengthName] ?? $length;
 
-            return ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
+            $result = ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
+            if ($col === 'binary') {
+                $result['fixed'] = true;
+            }
+
+            return $result;
         }
         if (str_contains($col, 'float') || str_contains($col, 'double')) {
             return [
@@ -759,10 +764,10 @@ SQL;
                         break;
                     }
 
-                    if ($column['length'] > 2) {
-                        $out .= ' VARBINARY';
-                    } else {
+                    if (!empty($column['fixed'])) {
                         $out .= ' BINARY';
+                    } else {
+                        $out .= ' VARBINARY';
                     }
                     break;
             }
