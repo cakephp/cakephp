@@ -566,5 +566,6 @@ PHP;
         $this->assertTrue($result['TestPlugin']['isLoaded']);
         $this->assertFalse($result['UnknownPlugin']['isLoaded']);
         $this->assertTrue($result['UnknownPlugin']['isUnknown']);
+        $this->assertArrayNotHasKey('path', $result['UnknownPlugin']);
     }
 }

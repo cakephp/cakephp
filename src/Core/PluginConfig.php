@@ -68,7 +68,7 @@ class PluginConfig
      * - onlyCli: Load only in CLI mode (if isLoaded)
      * - onlyDebug: Load only in debug mode (if isLoaded)
      * - optional: Plugin is optional (if isLoaded)
-     * - path: Plugin filesystem path
+     * - path: Plugin filesystem path (only present for installed plugins, not for unknown ones)
      * - routes: Enable routes hook (if isLoaded)
      * - services: Enable services hook (if isLoaded)
      *
