@@ -53,6 +53,7 @@ class PluginConfigTest extends TestCase
     {
         parent::tearDown();
         Configure::delete('plugins');
+        PluginConfig::clearCache();
         $this->clearPlugins();
         if (file_exists($this->pluginsListPath)) {
             unlink($this->pluginsListPath);
