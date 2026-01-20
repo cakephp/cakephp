@@ -243,8 +243,8 @@ CREATE TABLE convert_columns (
 SQL;
         $connection->execute($sql);
 
-        $driver = $this->createStub(Sqlserver::class);
-        $dialect = new SqlserverSchemaDialect($driver);
+        $driver = $connection->getDriver();
+        $dialect = $driver->schemaDialect();
         $table = $dialect->describe('convert_columns');
         $connection->execute('DROP TABLE convert_columns');
 
