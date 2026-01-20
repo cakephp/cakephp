@@ -163,17 +163,24 @@ class AttributeCache
      */
     protected function isValid(array $data): bool
     {
+        // Clear stat cache once for accurate modification times
+        clearstatcache();
+
+        // Track checked files to avoid rechecking same file multiple times
+        $checked = [];
+
         foreach ($data as $item) {
             $filePath = $item->filePath;
-            $fileTime = $item->fileTime;
 
-            if ($filePath && file_exists($filePath)) {
-                clearstatcache(true, $filePath);
-                $currentTime = filemtime($filePath);
-                // If file was modified after cache was created, cache is stale
-                if ($currentTime !== false && $currentTime > $fileTime) {
-                    return false;
-                }
+            // Skip if already checked this file
+            if (isset($checked[$filePath])) {
+                continue;
+            }
+            $checked[$filePath] = true;
+
+            // If file was modified after cache was created, cache is stale
+            if (is_file($filePath) && filemtime($filePath) > $item->fileTime) {
+                return false;
             }
         }
 
