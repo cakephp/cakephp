@@ -479,52 +479,17 @@ class Parser
                 continue;
             }
 
-            yield $this->createAttributeInfo(
-                $attributeName,
-                $attribute,
-                $className,
-                $filePath,
-                $lineNumber,
-                $fileTime,
-                $target,
-                $pluginName,
+            yield new AttributeInfo(
+                className: $className,
+                attributeName: $attributeName,
+                arguments: $this->extractAttributeArguments($attribute),
+                filePath: $filePath,
+                lineNumber: $lineNumber,
+                target: $target,
+                fileTime: $fileTime,
+                pluginName: $pluginName,
             );
         }
-    }
-
-    /**
-     * Create an AttributeInfo instance from reflection data.
-     *
-     * @param string $attributeName Normalized attribute name
-     * @param \ReflectionAttribute $attribute Reflection attribute
-     * @param string $className Class name
-     * @param string $filePath File path
-     * @param int $lineNumber Line number
-     * @param int $fileTime File modification time
-     * @param \Cake\Attribute\Resolver\ValueObject\AttributeTarget $target Target information
-     * @param string|null $pluginName Plugin name
-     * @return \Cake\Attribute\Resolver\ValueObject\AttributeInfo Created AttributeInfo instance
-     */
-    private function createAttributeInfo(
-        string $attributeName,
-        ReflectionAttribute $attribute,
-        string $className,
-        string $filePath,
-        int $lineNumber,
-        int $fileTime,
-        AttributeTarget $target,
-        ?string $pluginName,
-    ): AttributeInfo {
-        return new AttributeInfo(
-            className: $className,
-            attributeName: $attributeName,
-            arguments: $this->extractAttributeArguments($attribute),
-            filePath: $filePath,
-            lineNumber: $lineNumber,
-            target: $target,
-            fileTime: $fileTime,
-            pluginName: $pluginName,
-        );
     }
 
     /**
