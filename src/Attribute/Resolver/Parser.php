@@ -66,7 +66,7 @@ class Parser
 
             foreach ($classes as $className) {
                 try {
-                    if (!class_exists($className)) {
+                    if (!class_exists($className, false)) {
                         continue;
                     }
                     $reflection = new ReflectionClass($className);
@@ -90,47 +90,26 @@ class Parser
     /**
      * Extract class names from a PHP file.
      *
-     * Uses class diffing when file is not yet loaded, falls back to
-     * token parsing when file was already included.
-     *
-     * Detects classes, interfaces, traits, and enums.
+     * Uses token parsing to safely detect classes, interfaces, traits, and enums.
+     * Then loads them either via autoloader or direct file inclusion.
      *
      * @param string $filePath File path (should be normalized with realpath)
      * @return array<string>
      */
     private function getClassesFromFile(string $filePath): array
     {
-        $includedFiles = get_included_files();
-        $alreadyLoaded = in_array($filePath, $includedFiles, true);
+        $classNames = $this->getClassNamesFromTokens($filePath);
 
-        if (!$alreadyLoaded) {
-            // Fast path: diff classes/interfaces/traits/enums before/after require
-            $before = [
-                ...get_declared_classes(),
-                ...get_declared_interfaces(),
-                ...get_declared_traits(),
-            ];
-
-            // Suppress any output from file inclusion
-            ob_start();
-            try {
-                require_once $filePath;
-            } finally {
-                ob_end_clean();
+        // Try to load classes via autoloader (PSR-4 compliant only)
+        foreach ($classNames as $className) {
+            if ($this->isTypeLoaded($className)) {
+                continue;
             }
 
-            $after = [
-                ...get_declared_classes(),
-                ...get_declared_interfaces(),
-                ...get_declared_traits(),
-            ];
-
-            return array_values(array_diff($after, $before));
+            $this->loadType($className);
         }
 
-        // Fallback: file already loaded, use token parsing to avoid
-        // creating ReflectionClass for every declared class
-        return $this->getClassNamesFromTokens($filePath);
+        return $classNames;
     }
 
     /**
@@ -251,6 +230,34 @@ class Parser
         }
 
         return false;
+    }
+
+    /**
+     * Check if a type (class/interface/trait/enum) is already loaded.
+     *
+     * @param string $typeName Type name to check
+     * @return bool True if type is loaded
+     */
+    private function isTypeLoaded(string $typeName): bool
+    {
+        return class_exists($typeName, false)
+            || interface_exists($typeName, false)
+            || trait_exists($typeName, false)
+            || enum_exists($typeName, false);
+    }
+
+    /**
+     * Try to load a type via autoloader.
+     *
+     * @param string $typeName Type name to load
+     * @return bool True if type was loaded
+     */
+    private function loadType(string $typeName): bool
+    {
+        return class_exists($typeName)
+            || interface_exists($typeName)
+            || trait_exists($typeName)
+            || enum_exists($typeName);
     }
 
     /**

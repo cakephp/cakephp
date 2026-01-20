@@ -154,53 +154,22 @@ class ParserTest extends TestCase
         unlink($filePath);
     }
 
-    public function testParseInterfaceTraitEnum(): void
+    public function testSkipsNonPsr4CompliantFiles(): void
     {
-        $filePath = $this->testDataPath . 'TestInterfaceAndTrait.php';
+        // Test multiple classes in one file
+        $filePath = $this->testDataPath . 'NonPsr4MultipleClasses.php';
         $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+        $this->assertCount(0, $results, 'Multiple classes in one file should be skipped');
 
-        // Should find attributes from interface, trait, and enum
-        $this->assertGreaterThan(0, count($results), 'Should find attributes in interface/trait/enum file');
-
-        // Verify we find attributes from enum (these always work)
-        $enumAttrs = array_filter($results, fn(AttributeInfo $attr) => str_contains($attr->target->declaringClass ?? '', 'TestEnum'));
-        $this->assertGreaterThan(0, count($enumAttrs), 'Should find enum attributes');
-
-        // Note: Interface and trait attributes may not be found if their attributes
-        // are not instantiable or if the file is loaded before parsing
-    }
-
-    public function testParseGlobalNamespaceClass(): void
-    {
-        $filePath = $this->testDataPath . 'TestGlobalNamespace.php';
+        // Test global namespace class
+        $filePath = $this->testDataPath . 'NonPsr4GlobalNamespace.php';
         $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+        $this->assertCount(0, $results, 'Global namespace classes should be skipped');
 
-        $this->assertGreaterThan(0, count($results));
-
-        foreach ($results as $result) {
-            // Class attributes have the class name in declaringClass
-            $this->assertStringContainsString(
-                'GlobalNamespaceClass',
-                $result->target->declaringClass ?? $result->target->name,
-            );
-        }
-    }
-
-    public function testParseMultipleNamespaces(): void
-    {
-        $filePath = $this->testDataPath . 'TestMultipleNamespaces.php';
+        // Test multiple namespaces in one file
+        $filePath = $this->testDataPath . 'NonPsr4MultipleNamespaces.php';
         $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
-
-        $this->assertGreaterThanOrEqual(3, count($results));
-
-        $classNames = array_unique(array_map(
-            fn(AttributeInfo $attr) => $attr->target->declaringClass ?? $attr->target->name,
-            $results,
-        ));
-
-        $this->assertContains('TestApp\\Attribute\\Resolver\\Fixture\\FirstClass', $classNames);
-        $this->assertContains('TestApp\\OtherNamespace\\SecondClass', $classNames);
-        $this->assertContains('ThirdClass', $classNames);
+        $this->assertCount(0, $results, 'Multiple namespaces in one file should be skipped');
     }
 
     public function testSkipAnonymousClasses(): void
