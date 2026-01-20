@@ -36,7 +36,7 @@ class Parser
      *
      * @var array<string, \ReflectionMethod|null>
      */
-    private static array $constructorCache = [];
+    private array $constructorCache = [];
 
     /**
      * @param array<string> $excludeAttributes
@@ -544,21 +544,21 @@ class Parser
      */
     private function getAttributeConstructor(string $attributeName): ?ReflectionMethod
     {
-        if (!array_key_exists($attributeName, self::$constructorCache)) {
+        if (!array_key_exists($attributeName, $this->constructorCache)) {
             try {
                 if (!class_exists($attributeName)) {
-                    self::$constructorCache[$attributeName] = null;
+                    $this->constructorCache[$attributeName] = null;
 
                     return null;
                 }
                 $attributeClass = new ReflectionClass($attributeName);
-                self::$constructorCache[$attributeName] = $attributeClass->getConstructor();
+                $this->constructorCache[$attributeName] = $attributeClass->getConstructor();
             } catch (Throwable) {
-                self::$constructorCache[$attributeName] = null;
+                $this->constructorCache[$attributeName] = null;
             }
         }
 
-        return self::$constructorCache[$attributeName];
+        return $this->constructorCache[$attributeName];
     }
 
     /**

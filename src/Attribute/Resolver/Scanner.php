@@ -26,6 +26,11 @@ use Throwable;
 class Scanner
 {
     /**
+     * Maximum file size in bytes (10MB).
+     */
+    private const MAX_FILE_SIZE = 10 * 1024 * 1024;
+
+    /**
      * Cache for base paths with plugin information.
      *
      * @var array<array{path: string, plugin: string|null}>|null
@@ -150,6 +155,11 @@ class Scanner
         foreach ($this->excludePaths as $excludePattern) {
             $finder->notPath($excludePattern);
         }
+
+        // Filter out files larger than 10MB
+        $finder->filter(function ($file) {
+            return $file->getSize() <= self::MAX_FILE_SIZE;
+        });
 
         return $finder->files();
     }
