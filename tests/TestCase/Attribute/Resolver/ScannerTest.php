@@ -229,4 +229,22 @@ class ScannerTest extends TestCase
             $this->assertStringEndsWith('.php', $result->filePath);
         }
     }
+
+    /**
+     * Test scanAll returns empty when no paths are configured
+     */
+    public function testScanAllWithEmptyPaths(): void
+    {
+        $parser = new Parser();
+        $scanner = new Scanner(
+            parser: $parser,
+            paths: [], // No paths configured
+            basePath: TEST_APP . 'TestApp/',
+        );
+
+        $results = iterator_to_array($scanner->scanAll(), false);
+
+        $this->assertEmpty($results, 'Should return empty when no paths are configured');
+        $this->assertSame([], $scanner->getScannedFiles());
+    }
 }

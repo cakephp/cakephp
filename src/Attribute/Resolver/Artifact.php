@@ -19,6 +19,7 @@ namespace Cake\Attribute\Resolver;
 use Brick\VarExporter\VarExporter;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
 use Cake\Log\Log;
+use Cake\Utility\Filesystem;
 use Throwable;
 
 /**
@@ -61,11 +62,6 @@ class Artifact
 
         $this->memoryCache = $attributeInfos;
 
-        $dir = dirname($this->path);
-        if (!is_dir($dir)) {
-            mkdir($dir, 0755, true);
-        }
-
         try {
             $timestamp = date('Y-m-d H:i:s');
             $count = count($attributeInfos);
@@ -91,9 +87,8 @@ declare(strict_types=1);
 
 PHP;
 
-            $tmpFile = $this->path . '.' . uniqid('tmp', true);
-            file_put_contents($tmpFile, $content);
-            rename($tmpFile, $this->path);
+            $filesystem = new Filesystem();
+            $filesystem->dumpFile($this->path, $content);
         } catch (Throwable $e) {
             Log::warning(sprintf(
                 'Failed to write artifact file: %s - %s',

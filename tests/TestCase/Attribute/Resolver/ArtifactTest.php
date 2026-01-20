@@ -23,6 +23,7 @@ use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
 use Cake\Attribute\Resolver\ValueObject\AttributeTarget;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
+use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use stdClass;
 
 class ArtifactTest extends TestCase
@@ -173,7 +174,7 @@ class ArtifactTest extends TestCase
         $artifact->set($attributeInfos);
 
         $this->assertFileExists($artifactPath);
-        $content = file_get_contents($artifactPath);
+        $content = (string)file_get_contents($artifactPath);
 
         // Verify it uses reflection syntax for readonly classes (brick/varexporter behavior)
         $this->assertStringContainsString('\\Cake\\Attribute\\Resolver\\ValueObject\\AttributeInfo', $content);
@@ -250,7 +251,7 @@ class ArtifactTest extends TestCase
                     name: 'TestClass',
                     declaringClass: 'TestClass',
                 ),
-                fileTime: $sourceTime,
+                fileTime: (int)$sourceTime,
             ),
         ];
 
@@ -476,5 +477,181 @@ class ArtifactTest extends TestCase
         $this->assertSame(42, $loaded[0]->arguments['validator']->number);
         $this->assertInstanceOf(AttributeTarget::class, $loaded[0]->arguments['nested']['target']);
         $this->assertSame('testProp', $loaded[0]->arguments['nested']['target']->name);
+    }
+
+    /**
+     * Test set() handles write failures gracefully with logging
+     */
+    #[WithoutErrorHandler]
+    public function testSetHandlesWriteFailure(): void
+    {
+        // Create a path that will fail (read-only parent directory simulation)
+        $readonlyDir = $this->tmpPath . '/readonly';
+        mkdir($readonlyDir, 0555);
+        $artifactPath = $readonlyDir . '/subdir/artifact.php';
+
+        $artifact = new Artifact($artifactPath);
+
+        $attributeInfo = new AttributeInfo(
+            className: 'TestClass',
+            attributeName: 'TestAttribute',
+            arguments: [],
+            filePath: __FILE__,
+            lineNumber: 1,
+            target: new AttributeTarget(
+                type: AttributeTargetType::CLASS_TYPE,
+                name: 'TestClass',
+                declaringClass: 'TestClass',
+            ),
+            pluginName: null,
+        );
+
+        // Should not throw, just log warning
+        $artifact->set([$attributeInfo]);
+
+        // File should not exist due to write failure
+        $this->assertFileDoesNotExist($artifactPath);
+
+        // Clean up
+        chmod($readonlyDir, 0755);
+    }
+
+    /**
+     * Test get() handles corrupted artifact with non-array data
+     */
+    public function testGetHandlesCorruptedArtifactNonArray(): void
+    {
+        $artifactPath = $this->tmpPath . '/corrupted.php';
+
+        // Create corrupted artifact that returns a string instead of array
+        file_put_contents($artifactPath, "<?php\nreturn 'not an array';");
+
+        $artifact = new Artifact($artifactPath);
+        $result = $artifact->get();
+
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test get() handles artifact with invalid item types
+     */
+    public function testGetHandlesInvalidItemTypes(): void
+    {
+        $artifactPath = $this->tmpPath . '/invalid_items.php';
+
+        // Create artifact with wrong object type
+        $content = "<?php\nreturn [new stdClass(), new stdClass()];";
+        file_put_contents($artifactPath, $content);
+
+        $artifact = new Artifact($artifactPath);
+        $result = $artifact->get();
+
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test get() handles exceptions during file load
+     */
+    public function testGetHandlesLoadException(): void
+    {
+        $artifactPath = $this->tmpPath . '/exception.php';
+
+        // Create file that throws when included
+        file_put_contents($artifactPath, "<?php\nthrow new Exception('Load error');");
+
+        $artifact = new Artifact($artifactPath);
+        $result = $artifact->get();
+
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test validation detects stale files when validateFiles is enabled
+     */
+    public function testValidationDetectsStaleFiles(): void
+    {
+        $sourceFile = $this->tmpPath . '/source.php';
+        file_put_contents($sourceFile, '<?php class TestClass {}');
+
+        $artifactPath = $this->tmpPath . '/validated.php';
+        $artifact = new Artifact($artifactPath, validateFiles: true);
+
+        $attributeInfo = new AttributeInfo(
+            className: 'TestClass',
+            attributeName: 'TestAttribute',
+            arguments: [],
+            filePath: $sourceFile,
+            lineNumber: 1,
+            target: new AttributeTarget(
+                type: AttributeTargetType::CLASS_TYPE,
+                name: 'TestClass',
+                declaringClass: 'TestClass',
+            ),
+            pluginName: null,
+            fileTime: (int)filemtime($sourceFile),
+        );
+
+        $artifact->set([$attributeInfo]);
+
+        // First get should work
+        $result = $artifact->get();
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result);
+
+        // Modify source file to make it newer
+        sleep(1);
+        touch($sourceFile);
+        clearstatcache(true, $sourceFile);
+
+        // Second get should return null due to stale artifact
+        $result = $artifact->get();
+        $this->assertNull($result);
+    }
+
+    /**
+     * Test validation works with non-existent source files
+     */
+    public function testValidationWithMissingSourceFile(): void
+    {
+        $artifactPath = $this->tmpPath . '/missing_source.php';
+        $artifact = new Artifact($artifactPath, validateFiles: true);
+
+        $attributeInfo = new AttributeInfo(
+            className: 'TestClass',
+            attributeName: 'TestAttribute',
+            arguments: [],
+            filePath: '/non/existent/file.php',
+            lineNumber: 1,
+            target: new AttributeTarget(
+                type: AttributeTargetType::CLASS_TYPE,
+                name: 'TestClass',
+                declaringClass: 'TestClass',
+            ),
+            pluginName: null,
+            fileTime: time(),
+        );
+
+        $artifact->set([$attributeInfo]);
+
+        // Should still load successfully even if source file doesn't exist
+        $result = $artifact->get();
+        $this->assertIsArray($result);
+        $this->assertCount(1, $result);
+    }
+
+    /**
+     * Test validation handles corrupted artifact file gracefully
+     */
+    public function testValidationWithCorruptedArtifact(): void
+    {
+        $artifactPath = $this->tmpPath . '/corrupted_validation.php';
+
+        // Create corrupted artifact
+        file_put_contents($artifactPath, "<?php\nreturn 'invalid';");
+
+        $artifact = new Artifact($artifactPath, validateFiles: true);
+        $result = $artifact->get();
+
+        $this->assertNull($result);
     }
 }
