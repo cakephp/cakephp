@@ -42,7 +42,7 @@ class Parser
      * @param array<string> $excludeAttributes
      */
     public function __construct(
-        private array $excludeAttributes = [],
+        protected array $excludeAttributes = [],
     ) {
     }
 
@@ -96,7 +96,7 @@ class Parser
      * @param string $filePath File path (should be normalized with realpath)
      * @return array<string>
      */
-    private function getClassesFromFile(string $filePath): array
+    protected function getClassesFromFile(string $filePath): array
     {
         $classNames = $this->getClassNamesFromTokens($filePath);
 
@@ -122,7 +122,7 @@ class Parser
      * @param string $filePath File path to parse
      * @return array<string> Fully qualified class names
      */
-    private function getClassNamesFromTokens(string $filePath): array
+    protected function getClassNamesFromTokens(string $filePath): array
     {
         $code = file_get_contents($filePath);
         if ($code === false) {
@@ -212,7 +212,7 @@ class Parser
      * @param int $currentIndex Current token index
      * @return bool True if anonymous class
      */
-    private function isAnonymousClass(array $tokens, int $currentIndex): bool
+    protected function isAnonymousClass(array $tokens, int $currentIndex): bool
     {
         // Look backward for 'new' keyword (skip whitespace/comments)
         for ($i = $currentIndex - 1; $i >= 0; $i--) {
@@ -238,7 +238,7 @@ class Parser
      * @param string $typeName Type name to check
      * @return bool True if type is loaded
      */
-    private function isTypeLoaded(string $typeName): bool
+    protected function isTypeLoaded(string $typeName): bool
     {
         return class_exists($typeName, false)
             || interface_exists($typeName, false)
@@ -252,7 +252,7 @@ class Parser
      * @param string $typeName Type name to load
      * @return bool True if type was loaded
      */
-    private function loadType(string $typeName): bool
+    protected function loadType(string $typeName): bool
     {
         return class_exists($typeName)
             || interface_exists($typeName)
@@ -269,7 +269,7 @@ class Parser
      * @param string|null $pluginName Plugin name
      * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
      */
-    private function parseClass(
+    protected function parseClass(
         ReflectionClass $reflection,
         string $filePath,
         int $fileTime,
@@ -315,7 +315,7 @@ class Parser
      * @param string|null $pluginName Plugin name
      * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
      */
-    private function parseMethod(
+    protected function parseMethod(
         ReflectionMethod $method,
         string $filePath,
         int $fileTime,
@@ -361,7 +361,7 @@ class Parser
      * @param string|null $pluginName Plugin name
      * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
      */
-    private function parseProperty(
+    protected function parseProperty(
         ReflectionProperty $property,
         string $filePath,
         int $fileTime,
@@ -396,7 +396,7 @@ class Parser
      * @param string|null $pluginName Plugin name
      * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
      */
-    private function parseParameter(
+    protected function parseParameter(
         ReflectionParameter $parameter,
         string $filePath,
         int $fileTime,
@@ -434,7 +434,7 @@ class Parser
      * @param string|null $pluginName Plugin name
      * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
      */
-    private function parseConstant(
+    protected function parseConstant(
         ReflectionClassConstant $constant,
         string $filePath,
         int $fileTime,
@@ -470,7 +470,7 @@ class Parser
      * @param string|null $pluginName Plugin name
      * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
      */
-    private function parseAttributes(
+    protected function parseAttributes(
         array $attributes,
         string $className,
         string $filePath,
@@ -505,7 +505,7 @@ class Parser
      * @param \ReflectionAttribute $attribute Reflection attribute
      * @return array<string, mixed> Named arguments array
      */
-    private function extractAttributeArguments(ReflectionAttribute $attribute): array
+    protected function extractAttributeArguments(ReflectionAttribute $attribute): array
     {
         try {
             $rawArgs = $attribute->getArguments();
@@ -542,7 +542,7 @@ class Parser
      * @param string $attributeName Attribute class name
      * @return \ReflectionMethod|null Constructor or null if none exists
      */
-    private function getAttributeConstructor(string $attributeName): ?ReflectionMethod
+    protected function getAttributeConstructor(string $attributeName): ?ReflectionMethod
     {
         if (!array_key_exists($attributeName, $this->constructorCache)) {
             try {
@@ -567,7 +567,7 @@ class Parser
      * @param string $attributeName Attribute name
      * @return bool True if should be excluded
      */
-    private function shouldExclude(string $attributeName): bool
+    protected function shouldExclude(string $attributeName): bool
     {
         foreach ($this->excludeAttributes as $pattern) {
             // Exact match

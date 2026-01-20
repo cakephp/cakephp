@@ -43,8 +43,8 @@ class Artifact
      * @param bool $validateFiles Whether to validate source file modification times
      */
     public function __construct(
-        private string $path,
-        private bool $validateFiles = false,
+        protected string $path,
+        protected bool $validateFiles = false,
     ) {
     }
 
@@ -193,7 +193,7 @@ PHP;
      *
      * @return bool True if valid, false if any source file has changed since artifact creation
      */
-    private function isValid(): bool
+    public function isValid(): bool
     {
         if (!file_exists($this->path)) {
             return false;

@@ -28,7 +28,7 @@ class Scanner
     /**
      * Maximum file size in bytes (10MB).
      */
-    private const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    protected const MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     /**
      * Cache for base paths with plugin information.
@@ -95,11 +95,11 @@ class Scanner
     }
 
     /**
-     * Resolve base paths for APP and all loaded plugins.
+     * Resolve base paths with plugin information.
      *
      * @return array<array{path: string, plugin: string|null}>
      */
-    private function resolveBasePaths(): array
+    protected function resolveBasePaths(): array
     {
         if ($this->basePaths !== null) {
             return $this->basePaths;
@@ -124,11 +124,11 @@ class Scanner
     }
 
     /**
-     * Build a Finder instance configured with all base paths and patterns.
+     * Build a Finder instance for scanning files.
      *
-     * @return \Iterator<\SplFileInfo>
+     * @return \Iterator
      */
-    private function buildFinder(): Iterator
+    protected function buildFinder(): Iterator
     {
         if ($this->paths === []) {
             return new EmptyIterator();
