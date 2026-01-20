@@ -20,8 +20,6 @@ use Cake\Attribute\Resolver;
 use Cake\Attribute\Resolver\AttributeCollection;
 use Cake\Attribute\Resolver\Enum\AttributeTargetType;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -91,33 +89,31 @@ class AttributesListCommand extends Command
     /**
      * Implement this method with your command's logic.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(): ?int
     {
-        $configName = (string)$args->getOption('config');
+        $configName = (string)$this->args->getOption('config');
 
         if (!Resolver::getConfig($configName)) {
-            $io->error(sprintf('Configuration "%s" does not exist.', $configName));
+            $this->io->error(sprintf('Configuration "%s" does not exist.', $configName));
 
             return static::CODE_ERROR;
         }
 
-        $collection = $this->getFilteredCollection($args, $configName);
+        $collection = $this->getFilteredCollection($configName);
         $attributes = $collection->toList();
 
         if ($attributes === []) {
-            $io->warning('No attributes found matching the criteria.');
+            $this->io->warning('No attributes found matching the criteria.');
 
             return static::CODE_SUCCESS;
         }
 
-        $io->out(sprintf('<info>Found %d attributes:</info>', count($attributes)));
-        $io->out('');
+        $this->io->out(sprintf('<info>Found %d attributes:</info>', count($attributes)));
+        $this->io->out('');
 
-        $verbose = (bool)$args->getOption('verbose');
+        $verbose = (bool)$this->args->getOption('verbose');
         $maxLength = $verbose ? PHP_INT_MAX : 40;
 
         $tableData = [['Attribute', 'Class', 'Plugin', 'Type', 'Target']];
@@ -131,7 +127,7 @@ class AttributesListCommand extends Command
             ];
         }
 
-        $io->helper('Table')->output($tableData);
+        $this->io->helper('Table')->output($tableData);
 
         return static::CODE_SUCCESS;
     }
@@ -139,30 +135,29 @@ class AttributesListCommand extends Command
     /**
      * Get filtered collection based on command arguments
      *
-     * @param \Cake\Console\Arguments $args Command arguments
      * @param string $configName Configuration name
      * @return \Cake\Attribute\Resolver\AttributeCollection
      */
-    protected function getFilteredCollection(Arguments $args, string $configName): AttributeCollection
+    protected function getFilteredCollection(string $configName): AttributeCollection
     {
         $collection = Resolver::collection($configName);
 
-        $attr = $args->getOption('attribute');
+        $attr = $this->args->getOption('attribute');
         if ($attr) {
             $collection = $collection->withAttributeContains((string)$attr);
         }
 
-        $class = $args->getOption('class');
+        $class = $this->args->getOption('class');
         if ($class) {
             $collection = $collection->withClassNameContains((string)$class);
         }
 
-        $namespace = $args->getOption('namespace');
+        $namespace = $this->args->getOption('namespace');
         if ($namespace) {
             $collection = $collection->withNamespace((string)$namespace);
         }
 
-        $type = $args->getOption('type');
+        $type = $this->args->getOption('type');
         if ($type) {
             $targetType = AttributeTargetType::tryFrom((string)$type);
             if ($targetType) {
@@ -173,7 +168,7 @@ class AttributesListCommand extends Command
             }
         }
 
-        $plugin = $args->getOption('plugin');
+        $plugin = $this->args->getOption('plugin');
         if ($plugin) {
             return $collection->withPlugin((string)$plugin);
         }

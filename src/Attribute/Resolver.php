@@ -43,7 +43,7 @@ class Resolver
      * @var array<string, string>
      * @phpstan-var array<string, class-string>
      */
-    protected static array $_dsnClassMap = [];
+    protected static array $dsnClassMap = [];
 
     /**
      * In-memory cache of resolved collections per config name

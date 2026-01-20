@@ -479,7 +479,7 @@ class AttributesListCommandTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         // Anonymous classes should be truncated from the left
         // The output should contain the file reference but truncated
-        if (str_contains($this->_out->output(), 'class@anonymous')) {
+        if (str_contains($this->out->output(), 'class@anonymous')) {
             $this->assertOutputContains('...');
         }
     }

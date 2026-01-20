@@ -34,14 +34,14 @@ class ArtifactTest extends TestCase
     {
         parent::setUp();
         $this->tmpPath = TMP . 'artifact_test_' . uniqid();
-        (new Filesystem())->mkdir($this->tmpPath, 0777);
+        new Filesystem()->mkdir($this->tmpPath, 0777);
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
         if (is_dir($this->tmpPath)) {
-            (new Filesystem())->deleteDir($this->tmpPath);
+            new Filesystem()->deleteDir($this->tmpPath);
         }
     }
 

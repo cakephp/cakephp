@@ -161,15 +161,7 @@ class ParserTest extends TestCase
 
         // Should find attributes on TestAnonymousClass and its methods
         $this->assertGreaterThan(0, count($results), 'Should find some attributes in file');
-
-        // Verify main class is found
-        $hasMainClass = false;
-        foreach ($results as $result) {
-            if (str_contains($result->target->declaringClass ?? '', 'TestAnonymousClass')) {
-                $hasMainClass = true;
-                break;
-            }
-        }
+        $hasMainClass = array_any($results, fn($result) => str_contains($result->target->declaringClass ?? '', 'TestAnonymousClass'));
         $this->assertTrue($hasMainClass, 'Main class TestAnonymousClass should be found');
     }
 

@@ -17,8 +17,6 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use Cake\Attribute\Resolver;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -75,16 +73,14 @@ class AttributesResolveCommand extends Command
     /**
      * Implement this method with your command's logic.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(): ?int
     {
-        $configName = (string)$args->getOption('config');
+        $configName = (string)$this->args->getOption('config');
 
         if (!Resolver::getConfig($configName)) {
-            $io->error(sprintf('Configuration "%s" does not exist.', $configName));
+            $this->io->error(sprintf('Configuration "%s" does not exist.', $configName));
 
             return static::CODE_ERROR;
         }
@@ -94,25 +90,25 @@ class AttributesResolveCommand extends Command
 
         // Check if artifacts are enabled and warn if not
         if ($artifactPath === null) {
-            $io->warning('Artifacts are disabled. Attributes will be re-discovered on every request.');
+            $this->io->warning('Artifacts are disabled. Attributes will be re-discovered on every request.');
         }
 
         // Clear artifacts by default unless --no-clear is set
-        if (!$args->getOption('no-clear')) {
-            $io->out('<info>Clearing attribute artifacts...</info>');
+        if (!$this->args->getOption('no-clear')) {
+            $this->io->out('<info>Clearing attribute artifacts...</info>');
             Resolver::clear($configName);
         }
 
         // Only resolve if --clear-only is not set
-        if (!$args->getOption('clear-only')) {
-            $io->out('<info>Resolving attributes...</info>');
+        if (!$this->args->getOption('clear-only')) {
+            $this->io->out('<info>Resolving attributes...</info>');
 
             $startTime = microtime(true);
             $collection = Resolver::collection($configName);
             $elapsed = round(microtime(true) - $startTime, 3);
 
             $count = $collection->count();
-            $io->success(sprintf(
+            $this->io->success(sprintf(
                 'Resolved %d attributes in %ss',
                 $count,
                 $elapsed,

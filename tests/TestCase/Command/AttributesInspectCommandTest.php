@@ -277,7 +277,7 @@ class AttributesInspectCommandTest extends TestCase
         $this->exec('attributes inspect TestRoute');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         // File time might be 0 in some cases, so just check format if present
-        if (str_contains($this->_out->output(), 'File Time:')) {
+        if (str_contains($this->out->output(), 'File Time:')) {
             $this->assertOutputContains('File Time:');
         }
     }
@@ -290,7 +290,7 @@ class AttributesInspectCommandTest extends TestCase
         $this->exec('attributes inspect TestRoute');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         // TestRoute has path argument
-        if (str_contains($this->_out->output(), 'Arguments:')) {
+        if (str_contains($this->out->output(), 'Arguments:')) {
             $this->assertOutputContains('Arguments:');
         }
     }
@@ -303,7 +303,7 @@ class AttributesInspectCommandTest extends TestCase
         $this->exec('attributes inspect TestRoute');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         // Check for argument display format
-        if (str_contains($this->_out->output(), 'Arguments:')) {
+        if (str_contains($this->out->output(), 'Arguments:')) {
             $this->assertOutputContains('- ');
         }
     }

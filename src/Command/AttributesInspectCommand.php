@@ -19,8 +19,6 @@ namespace Cake\Command;
 use BackedEnum;
 use Cake\Attribute\Resolver;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
-use Cake\Console\Arguments;
-use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleOptionParser;
 use UnitEnum;
 
@@ -75,25 +73,23 @@ class AttributesInspectCommand extends Command
     /**
      * Implement this method with your command's logic.
      *
-     * @param \Cake\Console\Arguments $args The command arguments.
-     * @param \Cake\Console\ConsoleIo $io The console io
      * @return int|null The exit code or null for success
      */
-    public function execute(Arguments $args, ConsoleIo $io): ?int
+    public function execute(): ?int
     {
-        $configName = (string)$args->getOption('config');
+        $configName = (string)$this->args->getOption('config');
 
         if (!Resolver::getConfig($configName)) {
-            $io->error(sprintf('Configuration "%s" does not exist.', $configName));
+            $this->io->error(sprintf('Configuration "%s" does not exist.', $configName));
 
             return static::CODE_ERROR;
         }
 
-        $attributeName = $args->getArgumentAt(0);
-        $className = $args->getOption('class');
+        $attributeName = $this->args->getArgumentAt(0);
+        $className = $this->args->getOption('class');
 
         if (!$attributeName && !$className) {
-            $io->error('Please provide an attribute name or use --class option.');
+            $this->io->error('Please provide an attribute name or use --class option.');
 
             return static::CODE_ERROR;
         }
@@ -109,17 +105,17 @@ class AttributesInspectCommand extends Command
         $attributes = $collection->toList();
 
         if ($attributes === []) {
-            $io->error('No attributes found matching the criteria.');
+            $this->io->error('No attributes found matching the criteria.');
 
             return static::CODE_ERROR;
         }
 
-        $io->out(sprintf('<info>Found %d attribute(s):</info>', count($attributes)));
-        $io->out('');
+        $this->io->out(sprintf('<info>Found %d attribute(s):</info>', count($attributes)));
+        $this->io->out('');
 
         foreach ($attributes as $index => $attr) {
-            $this->displayAttributeInfo($io, $attr, $index + 1);
-            $io->out('');
+            $this->displayAttributeInfo($attr, $index + 1);
+            $this->io->out('');
         }
 
         return static::CODE_SUCCESS;
@@ -128,30 +124,29 @@ class AttributesInspectCommand extends Command
     /**
      * Display detailed information for a single attribute.
      *
-     * @param \Cake\Console\ConsoleIo $io Console IO
      * @param \Cake\Attribute\Resolver\ValueObject\AttributeInfo $attr Attribute info
      * @param int $number Result number
      * @return void
      */
-    protected function displayAttributeInfo(ConsoleIo $io, AttributeInfo $attr, int $number): void
+    protected function displayAttributeInfo(AttributeInfo $attr, int $number): void
     {
         $shortName = $this->getShortClassName($attr->attributeName);
-        $io->out(sprintf('<comment>%d. %s</comment>', $number, $shortName));
+        $this->io->out(sprintf('<comment>%d. %s</comment>', $number, $shortName));
 
-        $io->out(sprintf('   Attribute Class: <info>%s</info>', $attr->attributeName));
-        $io->out(sprintf('   Target Class: <info>%s</info>', $attr->className));
-        $io->out(sprintf('   Plugin: <info>%s</info>', $attr->pluginName ?? '-'));
-        $io->out(sprintf('   Target: <info>%s (%s)</info>', $attr->target->name, $attr->target->type->value));
-        $io->out(sprintf('   File: <info>%s:%d</info>', $attr->filePath, $attr->lineNumber));
+        $this->io->out(sprintf('   Attribute Class: <info>%s</info>', $attr->attributeName));
+        $this->io->out(sprintf('   Target Class: <info>%s</info>', $attr->className));
+        $this->io->out(sprintf('   Plugin: <info>%s</info>', $attr->pluginName ?? '-'));
+        $this->io->out(sprintf('   Target: <info>%s (%s)</info>', $attr->target->name, $attr->target->type->value));
+        $this->io->out(sprintf('   File: <info>%s:%d</info>', $attr->filePath, $attr->lineNumber));
 
         if ($attr->fileTime > 0) {
-            $io->out(sprintf('   File Time: <info>%s</info>', date('Y-m-d H:i:s', $attr->fileTime)));
+            $this->io->out(sprintf('   File Time: <info>%s</info>', date('Y-m-d H:i:s', $attr->fileTime)));
         }
 
         if ($attr->arguments !== []) {
-            $io->out('   Arguments:');
+            $this->io->out('   Arguments:');
             foreach ($attr->arguments as $key => $value) {
-                $io->out(sprintf('     - %s: %s', $key, $this->formatValue($value)));
+                $this->io->out(sprintf('     - %s: %s', $key, $this->formatValue($value)));
             }
         }
     }

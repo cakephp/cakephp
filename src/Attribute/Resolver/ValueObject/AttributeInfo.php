@@ -126,7 +126,8 @@ readonly class AttributeInfo
      *
      * @template T of object
      * @param class-string<T>|null $expectedClass Optional expected class for type safety
-     * @return ($expectedClass is class-string<T> ? T : object) The instantiated attribute
+     * @return T|object The instantiated attribute (T if expectedClass provided, otherwise object)
+     * @phpstan-return ($expectedClass is null ? object : T)
      * @throws \RuntimeException If the attribute class does not exist
      * @throws \InvalidArgumentException If attribute doesn't match expected class
      */
