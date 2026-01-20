@@ -113,14 +113,13 @@ class Parser
     }
 
     /**
-     * Extract class names from PHP file using token parsing.
+     * Extract class name from PHP file using token parsing.
      *
-     * This is used when a file is already loaded and we can't use
-     * class diffing. Token parsing avoids creating ReflectionClass
-     * instances for every declared class in the runtime.
+     * Leverages PSR-4 constraint: one class per file. Returns immediately
+     * when the first class/interface/trait/enum is found.
      *
      * @param string $filePath File path to parse
-     * @return array<string> Fully qualified class names
+     * @return array<string> Fully qualified class name (single element array)
      */
     protected function getClassNamesFromTokens(string $filePath): array
     {
@@ -130,35 +129,12 @@ class Parser
         }
 
         $tokens = token_get_all($code);
-        $classNames = [];
         $namespace = '';
         $waitingForNamespace = false;
         $waitingForClass = false;
-        $braceLevel = 0;
-        $namespaceBraceLevel = null; // Track if namespace uses braces
 
         foreach ($tokens as $i => $token) {
             if (!is_array($token)) {
-                // Track brace nesting for namespace scopes
-                if ($token === '{') {
-                    $braceLevel++;
-                    // If we just declared a namespace and hit {, it's a braced namespace
-                    if ($waitingForNamespace) {
-                        $namespaceBraceLevel = $braceLevel;
-                        $waitingForNamespace = false;
-                    }
-                } elseif ($token === '}') {
-                    $braceLevel--;
-                    // Exit namespace block only if we're closing a braced namespace
-                    if ($namespaceBraceLevel !== null && $braceLevel < $namespaceBraceLevel) {
-                        $namespace = '';
-                        $namespaceBraceLevel = null;
-                    }
-                } elseif ($token === ';' && $waitingForNamespace) {
-                    // Namespace declaration ended with semicolon (file-level namespace)
-                    $waitingForNamespace = false;
-                    $namespaceBraceLevel = null; // Not a braced namespace
-                }
                 continue;
             }
 
@@ -171,19 +147,15 @@ class Parser
             }
 
             // Capture namespace name
-            if ($waitingForNamespace) {
-                if ($tokenType === T_NAME_QUALIFIED || $tokenType === T_STRING) {
-                    $namespace = $tokenValue;
-                    // Don't set waitingForNamespace = false yet, need to see if { or ; follows
-                } elseif (!in_array($tokenType, [T_NS_SEPARATOR, T_WHITESPACE], true)) {
-                    $waitingForNamespace = false;
-                }
+            if ($waitingForNamespace && ($tokenType === T_NAME_QUALIFIED || $tokenType === T_STRING)) {
+                $namespace = $tokenValue;
+                $waitingForNamespace = false;
                 continue;
             }
 
             // Detect class/interface/trait/enum declaration
             if (in_array($tokenType, [T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM], true)) {
-                // Skip anonymous classes (preceded by 'new')
+                // Skip anonymous classes
                 if ($tokenType === T_CLASS && $this->isAnonymousClass($tokens, $i)) {
                     continue;
                 }
@@ -191,16 +163,16 @@ class Parser
                 continue;
             }
 
-            // Capture class name
+            // Capture class name and return immediately (PSR-4: one class per file)
             if ($waitingForClass && $tokenType === T_STRING) {
                 $className = $tokenValue;
                 $fullyQualifiedName = $namespace !== '' ? $namespace . '\\' . $className : $className;
-                $classNames[] = $fullyQualifiedName;
-                $waitingForClass = false;
+
+                return [$fullyQualifiedName];
             }
         }
 
-        return array_unique($classNames);
+        return [];
     }
 
     /**
