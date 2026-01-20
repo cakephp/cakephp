@@ -102,7 +102,7 @@ class CommandScanner
 
         $classPattern = '/Command\.php$/';
         /** @var \Iterator<\SplFileInfo> $files */
-        $files = (new Finder())
+        $files = new Finder()
             ->in($path)
             ->recursive(false)
             ->name('*Command.php')

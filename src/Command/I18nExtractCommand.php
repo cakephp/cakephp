@@ -834,7 +834,7 @@ class I18nExtractCommand extends Command
                 continue;
             }
             $path .= DIRECTORY_SEPARATOR;
-            $files = (new Finder())
+            $files = new Finder()
                 ->in($path)
                 ->name('*.php')
                 ->files();
