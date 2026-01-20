@@ -102,7 +102,7 @@ Cache::setConfig([
     ],
     '_cake_attributes_' => [
         'engine' => 'File',
-        'prefix' => 'attributes_',
+        'prefix' => 'cake_attributes_',
         'serialize' => true,
     ],
 ]);
