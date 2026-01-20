@@ -24,7 +24,7 @@ class UnprocessableContentException extends HttpException
     /**
      * @inheritDoc
      */
-    protected int $_defaultCode = 422;
+    protected int $defaultCode = 422;
 
     /**
      * Constructor
