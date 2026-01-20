@@ -245,6 +245,8 @@ SQL;
 
         $driver = $this->createStub(Sqlserver::class);
         $dialect = new SqlserverSchemaDialect($driver);
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
 
         $data = $table->column('reflection')->toArray();
         $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(

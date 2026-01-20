@@ -319,6 +319,8 @@ SQL;
 
         $driver = $this->createStub(Postgres::class);
         $dialect = new PostgresSchemaDialect($driver);
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
 
         $data = $table->column('reflection')->toArray();
         $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(
