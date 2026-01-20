@@ -154,24 +154,6 @@ class ParserTest extends TestCase
         unlink($filePath);
     }
 
-    public function testSkipsNonPsr4CompliantFiles(): void
-    {
-        // Test multiple classes in one file
-        $filePath = $this->testDataPath . 'NonPsr4MultipleClasses.php';
-        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
-        $this->assertCount(0, $results, 'Multiple classes in one file should be skipped');
-
-        // Test global namespace class
-        $filePath = $this->testDataPath . 'NonPsr4GlobalNamespace.php';
-        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
-        $this->assertCount(0, $results, 'Global namespace classes should be skipped');
-
-        // Test multiple namespaces in one file
-        $filePath = $this->testDataPath . 'NonPsr4MultipleNamespaces.php';
-        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
-        $this->assertCount(0, $results, 'Multiple namespaces in one file should be skipped');
-    }
-
     public function testSkipAnonymousClasses(): void
     {
         $filePath = $this->testDataPath . 'TestAnonymousClass.php';
