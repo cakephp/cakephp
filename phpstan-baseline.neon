@@ -235,12 +235,6 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
-			message: '#^Parameter \#1 \$count of method PHPUnit\\Framework\\TestCase\:\:addToAssertionCount\(\) expects int\<0, max\>, int given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/TestSuite/TestCase.php
-
-		-
 			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\TestDoubleBuilder\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<string\> given\.$#'
 			identifier: argument.type
 			count: 1
