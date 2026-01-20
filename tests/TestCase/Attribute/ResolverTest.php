@@ -277,10 +277,10 @@ class ResolverTest extends TestCase
 
     public function testResolveReturnsEmptyCollectionForMissingConfig(): void
     {
-        $collection = Resolver::collection('nonexistent');
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('The `nonexistent` attribute resolver configuration does not exist.');
 
-        $this->assertInstanceOf(AttributeCollection::class, $collection);
-        $this->assertSame(0, $collection->count());
+        Resolver::collection('nonexistent');
     }
 
     public function testCollectionMethodReturnsAttributeCollection(): void

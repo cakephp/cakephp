@@ -21,6 +21,7 @@ use Cake\Attribute\Resolver\AttributeCollection;
 use Cake\Attribute\Resolver\Parser;
 use Cake\Attribute\Resolver\Scanner;
 use Cake\Core\StaticConfigTrait;
+use InvalidArgumentException;
 
 /**
  * Attribute Resolver
@@ -57,6 +58,7 @@ class Resolver
      *
      * @param string $name Configuration name
      * @return \Cake\Attribute\Resolver\AttributeCollection
+     * @throws \InvalidArgumentException When configuration does not exist
      */
     public static function collection(string $name = 'default'): AttributeCollection
     {
@@ -65,6 +67,12 @@ class Resolver
         }
 
         $config = static::getConfig($name);
+        if ($config === null) {
+            throw new InvalidArgumentException(
+                sprintf('The `%s` attribute resolver configuration does not exist.', $name),
+            );
+        }
+
         $artifactPath = $config['artifact'] ?? null;
 
         $artifact = null;
