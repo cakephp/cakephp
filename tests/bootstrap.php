@@ -100,6 +100,11 @@ Cache::setConfig([
         'prefix' => 'cake_model_',
         'serialize' => true,
     ],
+    '_cake_attributes_' => [
+        'engine' => 'File',
+        'prefix' => 'attributes_',
+        'serialize' => true,
+    ],
 ]);
 
 // Ensure default test connection is defined

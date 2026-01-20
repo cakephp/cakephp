@@ -19,34 +19,29 @@ namespace Cake\Test\TestCase\Attribute;
 use Cake\Attribute\Resolver;
 use Cake\Attribute\Resolver\AttributeCollection;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
+use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Attribute\Resolver\TestRoute;
 
 class ResolverTest extends TestCase
 {
-    protected string $artifactPath;
-
     public function setUp(): void
     {
         parent::setUp();
 
-        $this->artifactPath = TMP . 'tests' . DS . 'resolver_test_artifact.php';
-        // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
-        @unlink($this->artifactPath);
-
         Resolver::drop('default');
         Resolver::drop('test');
+        Cache::clear('_cake_attributes_');
     }
 
     public function tearDown(): void
     {
         parent::tearDown();
 
-        // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
-        @unlink($this->artifactPath);
         Resolver::drop('default');
         Resolver::drop('test');
+        Cache::clear('_cake_attributes_');
     }
 
     public function testSetConfigAndGetConfig(): void
@@ -54,7 +49,7 @@ class ResolverTest extends TestCase
         $config = [
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
+            'cache' => '_cake_attributes_',
         ];
 
         Resolver::setConfig('test', $config);
@@ -94,7 +89,7 @@ class ResolverTest extends TestCase
         $config = [
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
+            'cache' => '_cake_attributes_',
         ];
         Resolver::setConfig('test', $config);
 
@@ -104,20 +99,19 @@ class ResolverTest extends TestCase
         $this->assertGreaterThan(0, $collection->count());
     }
 
-    public function testResolveWithArtifactLoadsFromCache(): void
+    public function testResolveWithCacheLoadsFromCache(): void
     {
         $config = [
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
+            'cache' => '_cake_attributes_',
         ];
         Resolver::setConfig('test', $config);
 
-        // First resolve creates artifact
+        // First resolve creates cache
         $collection1 = Resolver::collection('test');
-        $this->assertFileExists($this->artifactPath);
 
-        // Second resolve should load from artifact
+        // Second resolve should load from cache
         $collection2 = Resolver::collection('test');
 
         $this->assertInstanceOf(AttributeCollection::class, $collection2);
@@ -129,7 +123,7 @@ class ResolverTest extends TestCase
         $config = [
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
+            'cache' => '_cake_attributes_',
         ];
         Resolver::setConfig('test', $config);
 
@@ -145,7 +139,7 @@ class ResolverTest extends TestCase
         $config = [
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
+            'cache' => '_cake_attributes_',
         ];
         Resolver::setConfig('test', $config);
 
@@ -160,7 +154,7 @@ class ResolverTest extends TestCase
         $config = [
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
+            'cache' => '_cake_attributes_',
         ];
         Resolver::setConfig('test', $config);
 
@@ -182,16 +176,13 @@ class ResolverTest extends TestCase
         $config = [
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
+            'cache' => '_cake_attributes_',
         ];
         Resolver::setConfig('test', $config);
-
-        $this->assertFileDoesNotExist($this->artifactPath);
 
         $result = Resolver::warm('test');
 
         $this->assertTrue($result);
-        $this->assertFileExists($this->artifactPath);
     }
 
     public function testResolveWithDefaultConfig(): void
@@ -199,7 +190,7 @@ class ResolverTest extends TestCase
         $config = [
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
+            'cache' => '_cake_attributes_',
         ];
         Resolver::setConfig('default', $config);
 
@@ -216,7 +207,7 @@ class ResolverTest extends TestCase
         $this->assertFalse($result);
     }
 
-    public function testClearReturnsFalseWhenNoArtifactExists(): void
+    public function testClearAlwaysUsesCache(): void
     {
         $config = [
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
@@ -224,9 +215,13 @@ class ResolverTest extends TestCase
         ];
         Resolver::setConfig('test', $config);
 
+        // First populate the cache by calling collection
+        Resolver::collection('test');
+
+        // Clear will delete from cache
         $result = Resolver::clear('test');
 
-        $this->assertFalse($result);
+        $this->assertTrue($result);
     }
 
     public function testResolveWithExcludeAttributes(): void
@@ -235,7 +230,7 @@ class ResolverTest extends TestCase
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
             'excludeAttributes' => [TestRoute::class],
-            'artifact' => $this->artifactPath,
+            'cache' => '_cake_attributes_',
         ];
         Resolver::setConfig('test', $config);
 
@@ -251,12 +246,12 @@ class ResolverTest extends TestCase
         $config1 = [
             'paths' => ['TestApp/Attribute/Resolver/Fixture/Controllers/*.php'],
             'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
+            'cache' => '_cake_attributes_',
         ];
         $config2 = [
             'paths' => ['TestApp/Attribute/Resolver/Fixture/Models/*.php'],
             'basePath' => TEST_APP,
-            'artifact' => TMP . 'tests' . DS . 'resolver_test_artifact2.php',
+            'cache' => '_cake_attributes_',
         ];
 
         Resolver::setConfig('controllers', $config1);
@@ -268,9 +263,6 @@ class ResolverTest extends TestCase
         $this->assertInstanceOf(AttributeCollection::class, $controllerCollection);
         $this->assertInstanceOf(AttributeCollection::class, $modelCollection);
 
-        // Cleanup second artifact
-        // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
-        @unlink(TMP . 'tests' . DS . 'resolver_test_artifact2.php');
         Resolver::drop('controllers');
         Resolver::drop('models');
     }
@@ -355,5 +347,44 @@ class ResolverTest extends TestCase
 
         $this->assertInstanceOf(AttributeCollection::class, $result);
         $this->assertGreaterThan(0, $result->count());
+    }
+
+    public function testResolveWithCacheDisabled(): void
+    {
+        $config = [
+            'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
+            'basePath' => TEST_APP,
+            'cache' => false,
+        ];
+        Resolver::setConfig('test', $config);
+
+        $collection = Resolver::collection('test');
+
+        $this->assertInstanceOf(AttributeCollection::class, $collection);
+        $this->assertGreaterThan(0, $collection->count());
+
+        // Clear should work without error when cache is disabled
+        $result = Resolver::clear('test');
+        $this->assertTrue($result);
+    }
+
+    public function testResolveWithCacheDisabledAlwaysScans(): void
+    {
+        $config = [
+            'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
+            'basePath' => TEST_APP,
+            'cache' => false,
+        ];
+        Resolver::setConfig('test', $config);
+
+        $collection1 = Resolver::collection('test');
+        Resolver::drop('test');
+        Resolver::setConfig('test', $config);
+
+        // After drop and re-config, should still get results (no cache to load from)
+        $collection2 = Resolver::collection('test');
+
+        $this->assertInstanceOf(AttributeCollection::class, $collection2);
+        $this->assertSame($collection1->count(), $collection2->count());
     }
 }

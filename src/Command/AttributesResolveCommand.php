@@ -37,7 +37,7 @@ class AttributesResolveCommand extends Command
      */
     public static function getDescription(): string
     {
-        return 'Resolve attributes and manage artifact cache.';
+        return 'Resolve attributes and manage attribute cache.';
     }
 
     /**
@@ -54,12 +54,12 @@ class AttributesResolveCommand extends Command
             ->addOption('no-clear', [
                 'boolean' => true,
                 'default' => false,
-                'help' => 'Skip clearing artifacts before resolving.',
+                'help' => 'Skip clearing cache before resolving.',
             ])
             ->addOption('clear-only', [
                 'boolean' => true,
                 'default' => false,
-                'help' => 'Only clear artifacts without resolving.',
+                'help' => 'Only clear cache without resolving.',
             ])
             ->addOption('config', [
                 'short' => 'c',
@@ -86,16 +86,16 @@ class AttributesResolveCommand extends Command
         }
 
         $config = Resolver::getConfig($configName);
-        $artifactPath = $config['artifact'] ?? null;
+        $cacheConfig = $config['cache'] ?? null;
 
-        // Check if artifacts are enabled and warn if not
-        if ($artifactPath === null) {
-            $this->io->warning('Artifacts are disabled. Attributes will be re-discovered on every request.');
+        // Check if cache is enabled and warn if not
+        if ($cacheConfig === false) {
+            $this->io->warning('Cache is disabled. Attributes will be re-discovered on every request.');
         }
 
-        // Clear artifacts by default unless --no-clear is set
+        // Clear cache by default unless --no-clear is set
         if (!$this->args->getOption('no-clear')) {
-            $this->io->out('<info>Clearing attribute artifacts...</info>');
+            $this->io->out('<info>Clearing attribute cache...</info>');
             Resolver::clear($configName);
         }
 

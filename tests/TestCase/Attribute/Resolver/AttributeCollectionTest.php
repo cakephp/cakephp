@@ -272,4 +272,74 @@ class AttributeCollectionTest extends TestCase
             ->withTargetType(AttributeTargetType::METHOD);
         $this->assertCount(0, $chained);
     }
+
+    /**
+     * Test lazy hydration with AttributeInfo objects (not arrays)
+     */
+    public function testLazyHydrationWithAttributeInfoObjects(): void
+    {
+        $attributeInfo = new AttributeInfo(
+            className: 'App\Controller\TestController',
+            attributeName: 'App\Attribute\Route',
+            arguments: ['path' => '/test'],
+            filePath: '/app/src/Controller/TestController.php',
+            lineNumber: 10,
+            target: new AttributeTarget(
+                type: AttributeTargetType::CLASS_TYPE,
+                name: 'TestController',
+                declaringClass: 'App\Controller\TestController',
+            ),
+            pluginName: null,
+        );
+
+        // Pass AttributeInfo objects directly (not arrays)
+        $collection = new AttributeCollection([$attributeInfo]);
+
+        $this->assertCount(1, $collection);
+        $first = $collection->first();
+        $this->assertInstanceOf(AttributeInfo::class, $first);
+        $this->assertSame('App\Controller\TestController', $first->className);
+    }
+
+    /**
+     * Test collection works with multiple AttributeInfo objects
+     */
+    public function testMultipleAttributeInfoObjects(): void
+    {
+        $attributeInfo1 = new AttributeInfo(
+            className: 'App\Controller\FirstController',
+            attributeName: 'App\Attribute\Route',
+            arguments: [],
+            filePath: '/app/src/Controller/FirstController.php',
+            lineNumber: 5,
+            target: new AttributeTarget(
+                type: AttributeTargetType::CLASS_TYPE,
+                name: 'FirstController',
+                declaringClass: 'App\Controller\FirstController',
+            ),
+            pluginName: null,
+        );
+
+        $attributeInfo2 = new AttributeInfo(
+            className: 'App\Controller\SecondController',
+            attributeName: 'App\Attribute\Route',
+            arguments: ['path' => '/test'],
+            filePath: '/app/src/Controller/SecondController.php',
+            lineNumber: 10,
+            target: new AttributeTarget(
+                type: AttributeTargetType::METHOD,
+                name: 'index',
+                declaringClass: 'App\Controller\SecondController',
+            ),
+            pluginName: null,
+        );
+
+        $collection = new AttributeCollection([$attributeInfo1, $attributeInfo2]);
+
+        $this->assertCount(2, $collection);
+
+        $items = $collection->toArray();
+        $this->assertSame('App\Controller\FirstController', $items[0]->className);
+        $this->assertSame('App\Controller\SecondController', $items[1]->className);
+    }
 }

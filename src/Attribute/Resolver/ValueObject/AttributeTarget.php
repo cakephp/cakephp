@@ -77,21 +77,4 @@ readonly class AttributeTarget
             declaringClass: isset($data['declaringClass']) ? (string)$data['declaringClass'] : null,
         );
     }
-
-    /**
-     * Magic method for var_export() compatibility.
-     *
-     * Enables VarExporter to efficiently serialize this object without reflection.
-     *
-     * @param array<string, mixed> $data Property data from var_export
-     * @return self
-     */
-    public static function __set_state(array $data): self
-    {
-        return new self(
-            type: $data['type'],
-            name: $data['name'],
-            declaringClass: $data['declaringClass'] ?? null,
-        );
-    }
 }

@@ -97,28 +97,6 @@ readonly class AttributeInfo
     }
 
     /**
-     * Magic method for var_export() compatibility.
-     *
-     * Enables VarExporter to efficiently serialize this object without reflection.
-     *
-     * @param array<string, mixed> $data Property data from var_export
-     * @return self
-     */
-    public static function __set_state(array $data): self
-    {
-        return new self(
-            className: $data['className'],
-            attributeName: $data['attributeName'],
-            arguments: $data['arguments'],
-            filePath: $data['filePath'],
-            lineNumber: $data['lineNumber'],
-            target: $data['target'],
-            fileTime: $data['fileTime'] ?? 0,
-            pluginName: $data['pluginName'] ?? null,
-        );
-    }
-
-    /**
      * Instantiate the actual attribute object.
      *
      * Returns the attribute instance with its arguments applied,

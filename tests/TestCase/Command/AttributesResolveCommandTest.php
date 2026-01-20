@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Command;
 
 use Cake\Attribute\Resolver;
+use Cake\Cache\Cache;
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -29,7 +30,7 @@ class AttributesResolveCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
-    protected string $artifactPath;
+    protected string $cacheConfig = '_cake_attributes_test_';
 
     /**
      * setUp method
@@ -39,7 +40,11 @@ class AttributesResolveCommandTest extends TestCase
         parent::setUp();
         $this->setAppNamespace();
 
-        $this->artifactPath = TMP . 'tests' . DS . 'attributes' . DS;
+        Cache::setConfig($this->cacheConfig, [
+            'className' => 'File',
+            'path' => TMP . 'tests' . DS . 'attributes_cache' . DS,
+            'serialize' => true,
+        ]);
 
         Resolver::setConfig('default', [
             'paths' => [
@@ -48,7 +53,7 @@ class AttributesResolveCommandTest extends TestCase
             'basePath' => APP,
             'excludePaths' => [],
             'excludeAttributes' => [],
-            'artifact' => $this->artifactPath . 'default.php',
+            'cache' => $this->cacheConfig,
             'validateFiles' => false,
         ]);
     }
@@ -60,11 +65,8 @@ class AttributesResolveCommandTest extends TestCase
     {
         parent::tearDown();
         Resolver::drop('default');
-
-        $fs = new Filesystem();
-        if (is_dir($this->artifactPath)) {
-            $fs->deleteDir($this->artifactPath);
-        }
+        Cache::clear($this->cacheConfig);
+        Cache::drop($this->cacheConfig);
     }
 
     /**
@@ -155,28 +157,25 @@ class AttributesResolveCommandTest extends TestCase
     }
 
     /**
-     * Test creates artifact file
+     * Test creates cache entry
      */
-    public function testCreatesArtifactFile(): void
+    public function testCreatesCacheEntry(): void
     {
         $this->exec('attributes resolve');
-        $this->assertDirectoryExists($this->artifactPath);
-        $files = glob($this->artifactPath . '*.php');
-        $this->assertNotEmpty($files);
+        $cached = Cache::read('attribute_resolver_default', $this->cacheConfig);
+        $this->assertNotNull($cached);
     }
 
     /**
-     * Test artifact contains attributes
+     * Test cache contains attributes
      */
-    public function testArtifactContainsAttributes(): void
+    public function testCacheContainsAttributes(): void
     {
         $this->exec('attributes resolve');
 
-        $files = glob($this->artifactPath . '*.php');
-        $this->assertNotEmpty($files);
-
-        $content = file_get_contents($files[0]);
-        $this->assertStringContainsString('return', $content);
+        $cached = Cache::read('attribute_resolver_default', $this->cacheConfig);
+        $this->assertIsArray($cached);
+        $this->assertNotEmpty($cached);
     }
 
     /**
@@ -189,26 +188,21 @@ class AttributesResolveCommandTest extends TestCase
     }
 
     /**
-     * Test no-clear preserves existing artifacts
+     * Test no-clear preserves existing cache
      */
-    public function testNoClearPreservesExistingArtifacts(): void
+    public function testNoClearPreservesExistingCache(): void
     {
-        // First resolve to create artifact
+        // First resolve to create cache
         $this->exec('attributes resolve');
-        $files = glob($this->artifactPath . '*.php');
-        $this->assertNotEmpty($files);
-        $originalTime = filemtime($files[0]);
-
-        // Wait a moment to ensure time difference
-        sleep(1);
+        $original = Cache::read('attribute_resolver_default', $this->cacheConfig);
+        $this->assertNotNull($original);
 
         // Resolve again with --no-clear
         $this->exec('attributes resolve --no-clear');
-        $newFiles = glob($this->artifactPath . '*.php');
-        $newTime = filemtime($newFiles[0]);
+        $new = Cache::read('attribute_resolver_default', $this->cacheConfig);
 
-        // File should have been updated (resolve still writes)
-        $this->assertGreaterThanOrEqual($originalTime, $newTime);
+        // Cache should still exist
+        $this->assertNotNull($new);
     }
 
     /**
@@ -216,9 +210,9 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testClearOnlyOption(): void
     {
-        // Create artifact first
+        // Create cache first
         $this->exec('attributes resolve');
-        $this->assertDirectoryExists($this->artifactPath);
+        $this->assertNotNull(Cache::read('attribute_resolver_default', $this->cacheConfig));
 
         // Clear only
         $this->exec('attributes resolve --clear-only');
@@ -236,32 +230,30 @@ class AttributesResolveCommandTest extends TestCase
     }
 
     /**
-     * Test clear-only removes artifacts
+     * Test clear-only removes cache
      */
-    public function testClearOnlyRemovesArtifacts(): void
+    public function testClearOnlyRemovesCache(): void
     {
-        // Create artifact
+        // Create cache
         $this->exec('attributes resolve');
-        $files = glob($this->artifactPath . '*.php');
-        $this->assertNotEmpty($files);
+        $this->assertNotNull(Cache::read('attribute_resolver_default', $this->cacheConfig));
 
         // Clear only
         $this->exec('attributes resolve --clear-only');
 
-        // Artifacts should be removed
-        $files = glob($this->artifactPath . '*.php');
-        $this->assertEmpty($files);
+        // Cache should be removed
+        $this->assertNull(Cache::read('attribute_resolver_default', $this->cacheConfig));
     }
 
     /**
-     * Test warning when artifacts disabled
+     * Test warning when cache disabled
      */
-    public function testWarningWhenArtifactsDisabled(): void
+    public function testWarningWhenCacheDisabled(): void
     {
         Resolver::setConfig('disabled', [
             'paths' => ['Attribute/Resolver/Fixture/*.php'],
             'basePath' => APP,
-            'artifact' => null,
+            'cache' => false,
         ]);
 
         $this->exec('attributes resolve --config disabled');
@@ -277,7 +269,7 @@ class AttributesResolveCommandTest extends TestCase
     {
         $this->exec('attributes resolve');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertDirectoryExists($this->artifactPath);
+        $this->assertNotNull(Cache::read('attribute_resolver_default', $this->cacheConfig));
     }
 
     /**
@@ -285,23 +277,26 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testConfigOption(): void
     {
-        $customPath = TMP . 'tests' . DS . 'custom_attributes' . DS;
+        $customCacheConfig = '_cake_attributes_custom_test_';
+        Cache::setConfig($customCacheConfig, [
+            'className' => 'File',
+            'path' => TMP . 'tests' . DS . 'custom_cache' . DS,
+            'serialize' => true,
+        ]);
 
         Resolver::setConfig('custom', [
             'paths' => ['Attribute/Resolver/Fixture/*.php'],
             'basePath' => APP,
-            'artifact' => $customPath . 'custom.php',
+            'cache' => $customCacheConfig,
         ]);
 
         $this->exec('attributes resolve --config custom');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertDirectoryExists($customPath);
+        $this->assertNotNull(Cache::read('attribute_resolver_custom', $customCacheConfig));
 
         Resolver::drop('custom');
-        $fs = new Filesystem();
-        if (is_dir($customPath)) {
-            $fs->deleteDir($customPath);
-        }
+        Cache::clear($customCacheConfig);
+        Cache::drop($customCacheConfig);
     }
 
     /**
@@ -322,16 +317,25 @@ class AttributesResolveCommandTest extends TestCase
         $emptyDir = TMP . 'empty_test_' . uniqid() . DS;
         mkdir($emptyDir, 0777, true);
 
+        $emptyCacheConfig = '_cake_attributes_empty_test_';
+        Cache::setConfig($emptyCacheConfig, [
+            'className' => 'File',
+            'path' => $emptyDir . 'cache' . DS,
+            'serialize' => true,
+        ]);
+
         Resolver::setConfig('empty', [
             'paths' => ['*.php'],
             'basePath' => $emptyDir,
-            'artifact' => $emptyDir . 'empty.php',
+            'cache' => $emptyCacheConfig,
         ]);
 
         $this->exec('attributes resolve --config empty');
         $this->assertOutputContains('Resolved 0 attributes');
 
         Resolver::drop('empty');
+        Cache::clear($emptyCacheConfig);
+        Cache::drop($emptyCacheConfig);
         $fs = new Filesystem();
         $fs->deleteDir($emptyDir);
     }

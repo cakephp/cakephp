@@ -150,4 +150,43 @@ class AttributeTargetTest extends TestCase
         $this->assertSame($original->name, $restored->name);
         $this->assertSame($original->declaringClass, $restored->declaringClass);
     }
+
+    /**
+     * Test serialize/unserialize round-trip via PHP serialize()
+     */
+    public function testPhpSerializeRoundTrip(): void
+    {
+        $original = new AttributeTarget(
+            type: AttributeTargetType::PROPERTY,
+            name: 'email',
+            declaringClass: 'App\Model\Entity\User',
+        );
+
+        $serialized = serialize($original);
+        $restored = unserialize($serialized);
+
+        $this->assertInstanceOf(AttributeTarget::class, $restored);
+        $this->assertSame($original->type, $restored->type);
+        $this->assertSame($original->name, $restored->name);
+        $this->assertSame($original->declaringClass, $restored->declaringClass);
+    }
+
+    /**
+     * Test serialize/unserialize with null declaringClass
+     */
+    public function testPhpSerializeWithNullDeclaringClass(): void
+    {
+        $original = new AttributeTarget(
+            type: AttributeTargetType::CLASS_TYPE,
+            name: 'MyClass',
+        );
+
+        $serialized = serialize($original);
+        $restored = unserialize($serialized);
+
+        $this->assertInstanceOf(AttributeTarget::class, $restored);
+        $this->assertSame(AttributeTargetType::CLASS_TYPE, $restored->type);
+        $this->assertSame('MyClass', $restored->name);
+        $this->assertNull($restored->declaringClass);
+    }
 }

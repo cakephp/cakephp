@@ -333,4 +333,73 @@ class AttributeInfoTest extends TestCase
         $this->assertTrue($info->isInstanceOf(TestAttribute::class));
         $this->assertFalse($info->isInstanceOf(AnotherAttribute::class));
     }
+
+    /**
+     * Test serialize/unserialize round-trip via PHP serialize()
+     */
+    public function testPhpSerializeRoundTrip(): void
+    {
+        $target = new AttributeTarget(
+            type: AttributeTargetType::METHOD,
+            name: 'view',
+            declaringClass: 'App\Controller\ArticlesController',
+        );
+
+        $original = new AttributeInfo(
+            className: 'App\Controller\ArticlesController',
+            attributeName: TestAttribute::class,
+            arguments: ['value' => 'test', 'number' => 50],
+            filePath: '/app/src/Controller/ArticlesController.php',
+            lineNumber: 100,
+            target: $target,
+            fileTime: 1111111111,
+            pluginName: 'Articles',
+        );
+
+        $serialized = serialize($original);
+        $restored = unserialize($serialized);
+
+        $this->assertInstanceOf(AttributeInfo::class, $restored);
+        $this->assertSame($original->className, $restored->className);
+        $this->assertSame($original->attributeName, $restored->attributeName);
+        $this->assertSame($original->arguments, $restored->arguments);
+        $this->assertSame($original->filePath, $restored->filePath);
+        $this->assertSame($original->lineNumber, $restored->lineNumber);
+        $this->assertSame($original->fileTime, $restored->fileTime);
+        $this->assertSame($original->pluginName, $restored->pluginName);
+
+        // Check nested AttributeTarget was also serialized correctly
+        $this->assertInstanceOf(AttributeTarget::class, $restored->target);
+        $this->assertSame($original->target->type, $restored->target->type);
+        $this->assertSame($original->target->name, $restored->target->name);
+        $this->assertSame($original->target->declaringClass, $restored->target->declaringClass);
+    }
+
+    /**
+     * Test serialize/unserialize with null pluginName
+     */
+    public function testPhpSerializeWithNullPluginName(): void
+    {
+        $target = new AttributeTarget(
+            type: AttributeTargetType::CLASS_TYPE,
+            name: 'MyClass',
+        );
+
+        $original = new AttributeInfo(
+            className: 'App\MyClass',
+            attributeName: TestAttribute::class,
+            arguments: [],
+            filePath: '/app/src/MyClass.php',
+            lineNumber: 5,
+            target: $target,
+            fileTime: 0,
+        );
+
+        $serialized = serialize($original);
+        $restored = unserialize($serialized);
+
+        $this->assertInstanceOf(AttributeInfo::class, $restored);
+        $this->assertNull($restored->pluginName);
+        $this->assertSame(0, $restored->fileTime);
+    }
 }

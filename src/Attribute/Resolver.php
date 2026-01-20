@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Attribute;
 
-use Cake\Attribute\Resolver\Artifact;
+use Cake\Attribute\Resolver\AttributeCache;
 use Cake\Attribute\Resolver\AttributeCollection;
 use Cake\Attribute\Resolver\Parser;
 use Cake\Attribute\Resolver\Scanner;
@@ -73,18 +73,14 @@ class Resolver
             );
         }
 
-        $artifactPath = $config['artifact'] ?? null;
+        $cache = static::getCache($config);
 
-        $artifact = null;
-        if ($artifactPath !== null) {
-            $artifact = new Artifact($artifactPath, $config['validateFiles'] ?? false);
-            $cached = $artifact->get();
-            if ($cached !== null) {
-                $collection = new AttributeCollection($cached);
-                static::$collections[$name] = $collection;
+        $cached = $cache?->read($name);
+        if ($cached !== null) {
+            $collection = new AttributeCollection($cached);
+            static::$collections[$name] = $collection;
 
-                return $collection;
-            }
+            return $collection;
         }
 
         $parser = new Parser($config['excludeAttributes'] ?? []);
@@ -96,11 +92,10 @@ class Resolver
         );
         // Materialize the generator to an array so we can use it multiple times
         $attributes = iterator_to_array($scanner->scanAll(), false);
-        $collection = new AttributeCollection($attributes);
 
-        if ($artifact !== null) {
-            $artifact->set($attributes);
-        }
+        // Cache and create collection
+        $cache?->write($name, $attributes);
+        $collection = new AttributeCollection($attributes);
 
         static::$collections[$name] = $collection;
 
@@ -108,7 +103,7 @@ class Resolver
     }
 
     /**
-     * Clear artifacts for a configuration
+     * Clear cached attributes for a configuration
      *
      * @param string $name Configuration name
      * @return bool Success status
@@ -116,21 +111,34 @@ class Resolver
     public static function clear(string $name = 'default'): bool
     {
         $config = static::getConfig($name);
-        $artifactPath = $config['artifact'] ?? null;
-
-        $success = false;
-        if ($artifactPath !== null) {
-            $artifact = new Artifact($artifactPath);
-            $success = $artifact->delete();
-        }
+        $cache = static::getCache($config);
 
         unset(static::$collections[$name]);
 
-        return $success;
+        return $cache?->delete($name) ?? true;
     }
 
     /**
-     * Build artifacts for a configuration
+     * Get cache instance for a configuration
+     *
+     * @param array|null $config Configuration array
+     * @return \Cake\Attribute\Resolver\AttributeCache|null Returns null when cache is disabled
+     */
+    protected static function getCache(?array $config): ?AttributeCache
+    {
+        $cacheConfig = $config['cache'] ?? '_cake_attributes_';
+        if ($cacheConfig === false) {
+            return null;
+        }
+
+        return new AttributeCache(
+            $cacheConfig,
+            $config['validateFiles'] ?? false,
+        );
+    }
+
+    /**
+     * Build cache for a configuration
      *
      * @param string $name Configuration name
      * @return bool Success status
