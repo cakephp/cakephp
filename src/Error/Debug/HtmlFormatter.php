@@ -66,7 +66,7 @@ class HtmlFormatter implements FormatterInterface
     public function formatWrapper(string $contents, array $location): string
     {
         $lineInfo = '';
-        if (isset($location['file'], $location['file'])) {
+        if (isset($location['file'], $location['line'])) {
             $lineInfo = sprintf(
                 '<span><strong>%s</strong> (line <strong>%s</strong>)</span>',
                 $location['file'],

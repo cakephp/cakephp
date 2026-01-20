@@ -40,7 +40,7 @@ class ExceptionTrap
      * Configuration options. Generally these will be defined in your config/app.php
      *
      * - `exceptionRenderer` - string - The class responsible for rendering uncaught exceptions.
-     *   The chosen class will be used for for both CLI and web environments. If  you want different
+     *   The chosen class will be used for both CLI and web environments. If you want different
      *   classes used in CLI and web environments you'll need to write that conditional logic as well.
      *   The conventional location for custom renderers is in `src/Error`. Your exception renderer needs to
      *   implement the `render()` method and return either a string or Http\Response.
@@ -187,7 +187,7 @@ class ExceptionTrap
      */
     public function unregister(): void
     {
-        if (static::$registeredTrap == $this) {
+        if (static::$registeredTrap === $this) {
             $this->disabled = true;
             static::$registeredTrap = null;
             restore_exception_handler();

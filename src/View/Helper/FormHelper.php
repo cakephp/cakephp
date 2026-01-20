@@ -1264,7 +1264,7 @@ class FormHelper extends Helper
             case 'radio':
             case 'multicheckbox':
                 $opts = $options['options'];
-                if ($opts == null) {
+                if ($opts === null) {
                     $opts = [];
                 }
                 unset($options['options']);

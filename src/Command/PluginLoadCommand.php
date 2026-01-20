@@ -231,7 +231,7 @@ class PluginLoadCommand extends Command
             ])
             ->addOption('no-middleware', [
                 'boolean' => true,
-                'help' => 'Do not run the `middleware()` hook..',
+                'help' => 'Do not run the `middleware()` hook.',
             ])
             ->addOption('no-routes', [
                 'boolean' => true,

@@ -40,7 +40,7 @@ use function Cake\I18n\__d;
  * There are external packages such as `fig/http-message-util` that provide HTTP
  * status code constants. These can be used with any method that accepts or
  * returns a status code integer. Keep in mind that these constants might
- * include status codes that are now allowed which will throw an
+ * include status codes that are not allowed which will throw an
  * `\InvalidArgumentException`.
  */
 class Response implements ResponseInterface, Stringable
@@ -363,7 +363,7 @@ class Response implements ResponseInterface, Stringable
      * There are external packages such as `fig/http-message-util` that provide HTTP
      * status code constants. These can be used with any method that accepts or
      * returns a status code integer. However, keep in mind that these constants
-     * might include status codes that are now allowed which will throw an
+     * might include status codes that are not allowed which will throw an
      * `\InvalidArgumentException`.
      *
      * @link https://tools.ietf.org/html/rfc7231#section-6
@@ -599,7 +599,7 @@ class Response implements ResponseInterface, Stringable
     }
 
     /**
-     * Create a new instace with the public/private Cache-Control directive set.
+     * Create a new instance with the public/private Cache-Control directive set.
      *
      * @param bool $public If set to true, the Cache-Control header will be set as public
      *   if set to false, the response will be set to private.
@@ -1091,7 +1091,7 @@ class Response implements ResponseInterface, Stringable
      * Get a CorsBuilder instance for defining CORS headers.
      *
      * @param \Cake\Http\ServerRequest $request Request object
-     * @return \Cake\Http\CorsBuilder A builder object the provides a fluent interface for defining
+     * @return \Cake\Http\CorsBuilder A builder object that provides a fluent interface for defining
      *   additional CORS headers.
      */
     public function cors(ServerRequest $request): CorsBuilder

@@ -128,8 +128,8 @@ jobs:
           vendor/bin/phpunit
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --testsuite=database
         else
-          vendor/bin/phpunit --display-phpunit-deprecations --display-deprecations --display-warnings
-          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-phpunit-deprecations --display-deprecations --display-warnings --testsuite=database
+          vendor/bin/phpunit --display-phpunit-notices --display-phpunit-deprecations --display-deprecations --display-warnings
+          CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-phpunit-notices --display-phpunit-deprecations --display-deprecations --display-warnings --testsuite=database
         fi
 
     - name: Submit code coverage
@@ -258,7 +258,7 @@ jobs:
 
       - name: Setup rector cache
         if: always()
-        uses: actions/cache@v4
+        uses: actions/cache@v5
         with:
           path: ${{ runner.temp }}/rector
           key: ${{ runner.os }}-rector-${{ github.run_id }}

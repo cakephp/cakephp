@@ -61,7 +61,7 @@ class TableRegistryTest extends TestCase
      */
     protected function _setMockLocator()
     {
-        $locator = $this->getMockBuilder(LocatorInterface::class)->getMock();
+        $locator = $this->createStub(LocatorInterface::class);
         TableRegistry::setTableLocator($locator);
 
         return $locator;

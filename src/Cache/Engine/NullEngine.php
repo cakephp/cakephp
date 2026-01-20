@@ -23,6 +23,8 @@ use DateInterval;
  * Null cache engine, all operations appear to work, but do nothing.
  *
  * This is used internally for when Cache::disable() has been called.
+ *
+ * @extends \Cake\Cache\CacheEngine<\Cake\Cache\Engine\NullEngine>
  */
 class NullEngine extends CacheEngine
 {

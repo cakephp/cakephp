@@ -1218,11 +1218,13 @@ class PaginatorHelper extends Helper
         $out = $this->Form->create(null, ['type' => 'get', 'url' => []]);
 
         $out .= $this->generateHiddenFields($hiddenFields);
+
+        $limit = $this->_View->getRequest()->getQuery('limit');
         $out .= $this->Form->control($scope . 'limit', $options + [
             'type' => 'select',
             'label' => __('View'),
             'default' => $default,
-            'value' => $this->_View->getRequest()->getQuery('limit'),
+            'value' => $limit !== null ? (int)$limit : null,
             'options' => $limits,
             'onChange' => 'this.form.requestSubmit()',
         ]);
@@ -1309,7 +1311,7 @@ class PaginatorHelper extends Helper
                 $out .= $this->generateHiddenFields($value, $fieldName);
             } else {
                 // Generate hidden field for scalar values
-                $out .= $this->Form->hidden($fieldName, ['value' => $value]);
+                $out .= $this->Form->hidden(h($fieldName), ['value' => $value]);
             }
         }
 

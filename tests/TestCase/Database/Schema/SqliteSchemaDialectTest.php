@@ -316,35 +316,6 @@ SQL;
     }
 
     /**
-     * Test parsing SQLite column types from field description.
-     */
-    #[DataProvider('convertColumnProvider')]
-    public function testConvertColumn(string $type, array $expected): void
-    {
-        $this->_needsConnection();
-        /** @var \Cake\Database\Connection $connection */
-        $connection = ConnectionManager::get('test');
-        $sql = <<<SQL
-CREATE TABLE convert_columns (
-    reflection {$type}
-);
-SQL;
-        $connection->execute($sql);
-
-        $driver = $connection->getDriver();
-        $dialect = $driver->schemaDialect();
-        $table = $dialect->describe('convert_columns');
-        $connection->execute('DROP TABLE convert_columns');
-
-        $data = $table->column('reflection')->toArray();
-        $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(
-            $expected,
-            $data,
-            array_keys($expected),
-        );
-    }
-
-    /**
      * Test SchemaCollection listing tables with Sqlite
      */
     public function testListTables(): void

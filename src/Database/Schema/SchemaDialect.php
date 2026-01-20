@@ -521,7 +521,7 @@ abstract class SchemaDialect
      * Check if a table has a foreign key with a given name.
      *
      * @param string $tableName The name of the table
-     * @param array<string> $columns The columns in the foriegn key. Specific
+     * @param array<string> $columns The columns in the foreign key. Specific
      *   ordering matters.
      * @param string $name The name of the foreign key to match on. Can be used alone,
      *   or with $columns to match keys more precisely.

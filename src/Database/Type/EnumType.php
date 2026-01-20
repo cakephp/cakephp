@@ -72,7 +72,7 @@ class EnumType extends BaseType
         }
 
         $namedType = $reflectionEnum->getBackingType();
-        if ($namedType == null) {
+        if ($namedType === null) {
             throw new DatabaseException(
                 sprintf('Unable to use enum `%s` for type `%s`, must be a backed enum.', $enumClassName, $name),
             );

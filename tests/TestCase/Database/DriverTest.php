@@ -45,7 +45,7 @@ use TestApp\Database\Driver\StubDriver;
 class DriverTest extends TestCase
 {
     /**
-     * @var \Cake\Database\Driver|\PHPUnit\Framework\MockObject\MockObject
+     * @var \TestApp\Database\Driver\StubDriver|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $driver;
 

@@ -293,7 +293,7 @@ class CommandRunner implements EventDispatcherInterface
             }
 
             $firstChar = $name[0] ?? '';
-            if ($firstChar == strtoupper($firstChar) && str_contains($name, '.')) {
+            if ($firstChar === strtoupper($firstChar) && str_contains($name, '.')) {
                 $underName = Inflector::underscore($name);
                 if ($commands->has($underName)) {
                     return [$underName, array_slice($argv, $i)];

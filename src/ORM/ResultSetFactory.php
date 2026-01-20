@@ -24,7 +24,7 @@ use InvalidArgumentException;
 use SplFixedArray;
 
 /**
- * Factory class for generating ResulSet instances.
+ * Factory class for generating ResultSet instances.
  *
  * It is responsible for correctly nesting result keys reported from the query
  * and hydrating entities.
@@ -68,7 +68,7 @@ class ResultSetFactory
     }
 
     /**
-     * Get repository and it's associations data for nesting results key and
+     * Get repository and its associations data for nesting results key and
      * entity hydration.
      *
      * @param \Cake\ORM\Query\SelectQuery $query The query from where to derive the data.

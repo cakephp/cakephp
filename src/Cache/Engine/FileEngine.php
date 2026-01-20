@@ -41,6 +41,8 @@ use SplFileObject;
  * engine available, or have content which is not performance sensitive.
  *
  * You can configure a FileEngine cache, using Cache::config()
+ *
+ * @extends \Cake\Cache\CacheEngine<\Cake\Cache\Engine\FileEngine>
  */
 class FileEngine extends CacheEngine
 {
@@ -284,12 +286,12 @@ class FileEngine extends CacheEngine
             $this->config['path'],
             FilesystemIterator::SKIP_DOTS,
         );
+        /** @var iterable<\SplFileInfo> $iterator */
         $iterator = new RecursiveIteratorIterator(
             $directory,
             RecursiveIteratorIterator::SELF_FIRST,
         );
         $cleared = [];
-        /** @var \SplFileInfo $fileInfo */
         foreach ($iterator as $fileInfo) {
             if ($fileInfo->isFile()) {
                 unset($fileInfo);
@@ -355,9 +357,11 @@ class FileEngine extends CacheEngine
                 $filePath = $file->getRealPath();
                 unset($file);
 
-                // phpcs:disable
-                @unlink($filePath);
-                // phpcs:enable
+                if ($filePath !== false) {
+                    // phpcs:disable
+                    @unlink($filePath);
+                    // phpcs:enable
+                }
             }
         }
 
@@ -497,6 +501,7 @@ class FileEngine extends CacheEngine
             $directoryIterator,
             RecursiveIteratorIterator::CHILD_FIRST,
         );
+        /** @var iterable<\SplFileInfo> $filtered */
         $filtered = new CallbackFilterIterator(
             $contents,
             function (SplFileInfo $current) use ($group, $prefix) {
@@ -515,7 +520,6 @@ class FileEngine extends CacheEngine
                 );
             },
         );
-        /** @var \SplFileInfo $object */
         foreach ($filtered as $object) {
             $path = $object->getPathname();
             unset($object);

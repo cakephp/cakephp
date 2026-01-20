@@ -31,7 +31,7 @@ class SimplePaginator extends NumericPaginator
     /**
      * Get paginated items.
      *
-     * Get one additional record than the limit. This helps deduce if next page exits.
+     * Get one additional record than the limit. This helps deduce if next page exists.
      *
      * @param \Cake\Datasource\QueryInterface $query Query to fetch items.
      * @param array $data Paging data.

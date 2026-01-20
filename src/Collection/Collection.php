@@ -58,7 +58,7 @@ class Collection extends IteratorIterator implements CollectionInterface
     }
 
     /**
-     * Returns an array for serializing this of this object.
+     * Returns an array for serializing this object.
      *
      * @return array
      */

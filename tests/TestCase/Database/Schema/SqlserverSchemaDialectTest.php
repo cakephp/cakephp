@@ -243,10 +243,8 @@ CREATE TABLE convert_columns (
 SQL;
         $connection->execute($sql);
 
-        $driver = $connection->getDriver();
-        $dialect = $driver->schemaDialect();
-        $table = $dialect->describe('convert_columns');
-        $connection->execute('DROP TABLE convert_columns');
+        $driver = $this->createStub(Sqlserver::class);
+        $dialect = new SqlserverSchemaDialect($driver);
 
         $data = $table->column('reflection')->toArray();
         $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(

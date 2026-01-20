@@ -265,7 +265,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Add a component to the controller's registry.
      *
-     * After loading a component it will be be accessible as a property through Controller::__get().
+     * After loading a component it will be accessible as a property through Controller::__get().
      * For example:
      *
      * ```
@@ -474,6 +474,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     public function getAction(): Closure
     {
         $request = $this->request;
+        /** @var string $action */
         $action = $request->getParam('action');
         $controller = $this->name . 'Controller';
 

@@ -196,9 +196,9 @@ class FormData implements Countable, Stringable
      */
     public function addRecursive(string $name, mixed $value): void
     {
-        foreach ($value as $key => $value) {
+        foreach ($value as $key => $item) {
             $key = $name . '[' . $key . ']';
-            $this->add($key, $value);
+            $this->add($key, $item);
         }
     }
 

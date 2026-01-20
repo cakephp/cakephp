@@ -65,7 +65,7 @@ if (!function_exists('stackTrace')) {
      *   will be displayed.
      * - `start` - The stack frame to start generating a trace from. Defaults to 1
      *
-     * @param array<string, mixed> $options Format for outputting stack trace
+     * @param array{depth?: int, args?: bool, start?: int} $options Format for outputting stack trace
      * @return void
      */
     function stackTrace(array $options = []): void

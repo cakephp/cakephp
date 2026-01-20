@@ -54,7 +54,7 @@ interface LocatorInterface
     public function exists(string $alias): bool;
 
     /**
-     * Removes an repository instance from the registry.
+     * Removes a repository instance from the registry.
      *
      * @param string $alias The alias to remove.
      * @return void

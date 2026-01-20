@@ -46,7 +46,7 @@ class BoolTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = TypeFactory::build('boolean');
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = $this->createStub(Driver::class);
     }
 
     /**

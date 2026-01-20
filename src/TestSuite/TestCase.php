@@ -190,7 +190,7 @@ abstract class TestCase extends BaseTestCase
                 &$deprecation,
                 $type,
             ): bool {
-                if ($code == $type) {
+                if ($code === $type) {
                     $deprecation = true;
 
                     return true;
@@ -225,7 +225,7 @@ abstract class TestCase extends BaseTestCase
         parent::assertPostConditions();
 
         if (class_exists(Mockery::class)) {
-            // @phpstan-ignore method.internal
+            // @phpstan-ignore method.internal, argument.type
             $this->addToAssertionCount(Mockery::getContainer()->mockery_getExpectationCount());
         }
     }

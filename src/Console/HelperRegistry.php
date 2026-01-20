@@ -36,7 +36,7 @@ class HelperRegistry extends ObjectRegistry
     protected ConsoleIoInterface $io;
 
     /**
-     * Sets The IO instance that should be passed to the shell helpers
+     * Sets the IO instance that should be passed to the shell helpers
      *
      * @param \Cake\Console\ConsoleIoInterface $io An io instance.
      * @return void

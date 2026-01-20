@@ -75,7 +75,7 @@ class Schema
     }
 
     /**
-     * Removes a field to the schema.
+     * Removes a field from the schema.
      *
      * @param string $name The field to remove.
      * @return $this

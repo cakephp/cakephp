@@ -311,7 +311,7 @@ class MimeType
      */
     public static function getMimeType(string $ext, ?string $default = null): ?string
     {
-        return isset(static::$mimeTypes[$ext]) ? static::$mimeTypes[$ext][0] : null;
+        return isset(static::$mimeTypes[$ext]) ? static::$mimeTypes[$ext][0] : $default;
     }
 
     /**

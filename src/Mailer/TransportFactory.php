@@ -73,7 +73,7 @@ class TransportFactory
      *
      * @param string $name Name of the config array that needs a transport instance built
      * @return void
-     * @throws \InvalidArgumentException When a tranport cannot be created.
+     * @throws \InvalidArgumentException When a transport cannot be created.
      */
     protected static function buildTransport(string $name): void
     {

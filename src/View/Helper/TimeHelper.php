@@ -204,7 +204,7 @@ class TimeHelper extends Helper
      *
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
-     * @return bool True if datetime string was yesterday
+     * @return bool True if datetime string is tomorrow
      */
     public function isTomorrow(
         ChronosDate|DateTimeInterface|string|int $dateString,
@@ -382,7 +382,7 @@ class TimeHelper extends Helper
      * @param \Cake\Chronos\ChronosDate|\DateTimeInterface|string|int $dateString UNIX timestamp, strtotime() valid string or DateTime object
      * @param \DateTimeZone|string|null $timezone User's timezone string or DateTimeZone object
      * @return bool
-     * @see \Cake\I18n\Time::wasWithinLast()
+     * @see \Cake\I18n\Time::isWithinNext()
      */
     public function isWithinNext(
         string $timeInterval,

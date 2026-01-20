@@ -122,7 +122,7 @@ trait CollectionTrait
     }
 
     /**
-     * Returns true if any the callback returns true for any element in the collection.
+     * Returns true if the callback returns true for any element in the collection.
      *
      * The callback accepts the value and key of the element being tested.
      *

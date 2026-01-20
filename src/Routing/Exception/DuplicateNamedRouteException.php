@@ -18,7 +18,7 @@ use Cake\Core\Exception\CakeException;
 use Throwable;
 
 /**
- * Exception raised when a route names used twice.
+ * Exception raised when a route name is used twice.
  */
 class DuplicateNamedRouteException extends CakeException
 {

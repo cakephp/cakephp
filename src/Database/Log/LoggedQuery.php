@@ -141,7 +141,7 @@ class LoggedQuery implements JsonSerializable, Stringable
     /**
      * Set logging context for this query.
      *
-     * @param array $context Context data.
+     * @param array<string, mixed> $context Context data.
      * @return void
      */
     public function setContext(array $context): void

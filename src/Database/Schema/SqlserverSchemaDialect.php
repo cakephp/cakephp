@@ -196,7 +196,7 @@ class SqlserverSchemaDialect extends SchemaDialect
 
         if ($col === 'image' || str_contains($col, 'binary')) {
             // -1 is the value for MAX which we treat as a 'long' binary
-            if ($length == -1) {
+            if ($length === -1) {
                 $length = TableSchema::LENGTH_LONG;
             }
 

@@ -41,7 +41,7 @@ use LogicException;
  * only be one letter long. Using more than one letter for a short option will raise an exception.
  *
  * Calling options can be done using syntax similar to most *nix command line tools. Long options
- * cane either include an `=` or leave it out.
+ * can either include an `=` or leave it out.
  *
  * `cake my_command --connection default --name=something`
  *
