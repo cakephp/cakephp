@@ -105,7 +105,12 @@ PHP;
      */
     public function get(): ?array
     {
-        // Check validation first if enabled
+        if (!file_exists($this->path)) {
+            // Return memory cache even if file doesn't exist (cache survives file deletion)
+            return $this->memoryCache;
+        }
+
+        // When validation is enabled, check if artifact is stale before using cache
         if ($this->validateFiles && !$this->isValid()) {
             $this->memoryCache = null;
 
@@ -117,12 +122,8 @@ PHP;
             return $this->memoryCache;
         }
 
-        if (!file_exists($this->path)) {
-            return null;
-        }
-
         try {
-            $data = require $this->path;
+            $data = $this->load();
 
             if (!is_array($data)) {
                 Log::warning(sprintf(
@@ -175,6 +176,16 @@ PHP;
     }
 
     /**
+     * Load raw data from the artifact file.
+     *
+     * @return mixed
+     */
+    private function load(): mixed
+    {
+        return require $this->path;
+    }
+
+    /**
      * Validate that the artifact is still fresh by checking source file modification times.
      *
      * Compares each source file's current modification time against the stored fileTime
@@ -189,7 +200,7 @@ PHP;
         }
 
         try {
-            $data = require $this->path;
+            $data = $this->load();
 
             if (!is_array($data)) {
                 return false;

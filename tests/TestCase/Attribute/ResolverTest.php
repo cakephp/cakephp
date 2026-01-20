@@ -18,15 +18,7 @@ namespace Cake\Test\TestCase\Attribute;
 
 use Cake\Attribute\Resolver;
 use Cake\Attribute\Resolver\AttributeCollection;
-use Cake\Attribute\Resolver\Event\AfterResolveEvent;
-use Cake\Attribute\Resolver\Event\AfterScanEvent;
-use Cake\Attribute\Resolver\Event\BeforeArtifactsClearEvent;
-use Cake\Attribute\Resolver\Event\BeforeResolveEvent;
-use Cake\Attribute\Resolver\Event\BeforeScanEvent;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
-use Cake\Event\EventInterface;
-use Cake\Event\EventList;
-use Cake\Event\EventManager;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Attribute\Resolver\TestRoute;
@@ -45,10 +37,6 @@ class ResolverTest extends TestCase
 
         Resolver::drop('default');
         Resolver::drop('test');
-
-        $eventManager = EventManager::instance();
-        $eventManager->setEventList(new EventList());
-        $eventManager->trackEvents(true);
     }
 
     public function tearDown(): void
@@ -101,30 +89,6 @@ class ResolverTest extends TestCase
         $this->assertNull(Resolver::getConfig('test'));
     }
 
-    public function testResolveWithoutArtifactDispatchesAllEvents(): void
-    {
-        $config = [
-            'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
-            'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
-        ];
-        Resolver::setConfig('test', $config);
-
-        $eventList = EventManager::instance()->getEventList();
-        $this->assertNotNull($eventList);
-        $collection = Resolver::collection('test');
-
-        $this->assertInstanceOf(AttributeCollection::class, $collection);
-
-        $events = iterator_to_array($eventList);
-        $eventNames = array_map(fn(EventInterface $e) => $e->getName(), $events);
-
-        $this->assertContains(BeforeResolveEvent::NAME, $eventNames);
-        $this->assertContains(BeforeScanEvent::NAME, $eventNames);
-        $this->assertContains(AfterScanEvent::NAME, $eventNames);
-        $this->assertContains(AfterResolveEvent::NAME, $eventNames);
-    }
-
     public function testResolveReturnsAttributeCollection(): void
     {
         $config = [
@@ -153,25 +117,11 @@ class ResolverTest extends TestCase
         $collection1 = Resolver::collection('test');
         $this->assertFileExists($this->artifactPath);
 
-        // Clear event list
-        $eventList = EventManager::instance()->getEventList();
-        $this->assertNotNull($eventList);
-        $eventList->flush();
-
         // Second resolve should load from artifact
         $collection2 = Resolver::collection('test');
 
         $this->assertInstanceOf(AttributeCollection::class, $collection2);
         $this->assertSame($collection1->count(), $collection2->count());
-
-        // Verify BeforeScan and AfterScan were NOT dispatched
-        $events = iterator_to_array($eventList);
-        $eventNames = array_map(fn(EventInterface $e) => $e->getName(), $events);
-
-        $this->assertContains(BeforeResolveEvent::NAME, $eventNames);
-        $this->assertNotContains(BeforeScanEvent::NAME, $eventNames);
-        $this->assertNotContains(AfterScanEvent::NAME, $eventNames);
-        $this->assertContains(AfterResolveEvent::NAME, $eventNames);
     }
 
     public function testResolveUsesInMemoryCache(): void
@@ -205,35 +155,6 @@ class ResolverTest extends TestCase
         $this->assertGreaterThan(0, $routes->count());
     }
 
-    public function testClearDispatchesEvents(): void
-    {
-        $config = [
-            'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
-            'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
-        ];
-        Resolver::setConfig('test', $config);
-
-        // Create artifact first
-        Resolver::collection('test');
-        $this->assertFileExists($this->artifactPath);
-
-        $eventList = EventManager::instance()->getEventList();
-        $this->assertNotNull($eventList);
-        $eventList->flush();
-
-        $result = Resolver::clear('test');
-
-        $this->assertTrue($result);
-        $this->assertFileDoesNotExist($this->artifactPath);
-
-        $events = iterator_to_array($eventList);
-        $eventNames = array_map(fn(EventInterface $e) => $e->getName(), $events);
-
-        $this->assertContains(BeforeArtifactsClearEvent::NAME, $eventNames);
-        $this->assertContains('Attribute.Resolver.afterArtifactsClear', $eventNames);
-    }
-
     public function testClearClearsInMemoryCache(): void
     {
         $config = [
@@ -243,22 +164,17 @@ class ResolverTest extends TestCase
         ];
         Resolver::setConfig('test', $config);
 
-        Resolver::collection('test');
+        $collection1 = Resolver::collection('test');
+        $collection2 = Resolver::collection('test');
+
+        // Should be the same instance due to in-memory cache
+        $this->assertSame($collection1, $collection2);
+
         Resolver::clear('test');
 
-        // After clearing, resolve should scan again
-        $eventList = EventManager::instance()->getEventList();
-        $this->assertNotNull($eventList);
-        $eventList->flush();
-
-        Resolver::collection('test');
-
-        $events = iterator_to_array($eventList);
-        $eventNames = array_map(fn(EventInterface $e) => $e->getName(), $events);
-
-        // Should have scan events since cache was cleared
-        $this->assertContains(BeforeScanEvent::NAME, $eventNames);
-        $this->assertContains(AfterScanEvent::NAME, $eventNames);
+        // After clearing, should get a new collection instance
+        $collection3 = Resolver::collection('test');
+        $this->assertNotSame($collection1, $collection3);
     }
 
     public function testWarmBuildsCache(): void
@@ -278,69 +194,6 @@ class ResolverTest extends TestCase
         $this->assertFileExists($this->artifactPath);
     }
 
-    public function testBeforeResolveEventCanStopResolution(): void
-    {
-        $config = [
-            'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
-            'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
-        ];
-        Resolver::setConfig('test', $config);
-
-        EventManager::instance()->on(BeforeResolveEvent::NAME, function ($event): void {
-            $event->stopPropagation();
-        });
-
-        $collection = Resolver::collection('test');
-
-        // Should return empty collection when stopped
-        $this->assertInstanceOf(AttributeCollection::class, $collection);
-        $this->assertSame(0, $collection->count());
-    }
-
-    public function testBeforeScanEventCanStopScanning(): void
-    {
-        $config = [
-            'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
-            'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
-        ];
-        Resolver::setConfig('test', $config);
-
-        EventManager::instance()->on(BeforeScanEvent::NAME, function ($event): void {
-            $event->stopPropagation();
-        });
-
-        $collection = Resolver::collection('test');
-
-        // Should return empty collection when scanning is stopped
-        $this->assertInstanceOf(AttributeCollection::class, $collection);
-        $this->assertSame(0, $collection->count());
-    }
-
-    public function testBeforeArtifactsClearEventCanStopClearing(): void
-    {
-        $config = [
-            'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
-            'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
-        ];
-        Resolver::setConfig('test', $config);
-
-        // Create artifact first
-        Resolver::collection('test');
-        $this->assertFileExists($this->artifactPath);
-
-        EventManager::instance()->on(BeforeArtifactsClearEvent::NAME, function ($event): void {
-            $event->stopPropagation();
-        });
-
-        $result = Resolver::clear('test');
-
-        $this->assertFalse($result);
-        $this->assertFileExists($this->artifactPath);
-    }
-
     public function testResolveWithDefaultConfig(): void
     {
         $config = [
@@ -354,51 +207,6 @@ class ResolverTest extends TestCase
 
         $this->assertInstanceOf(AttributeCollection::class, $collection);
         $this->assertGreaterThan(0, $collection->count());
-    }
-
-    public function testAfterResolveEventContainsCollection(): void
-    {
-        $config = [
-            'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
-            'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
-        ];
-        Resolver::setConfig('test', $config);
-
-        $capturedCollection = null;
-        EventManager::instance()->on(AfterResolveEvent::NAME, function ($event) use (&$capturedCollection): void {
-            $capturedCollection = $event->getCollection();
-        });
-
-        $collection = Resolver::collection('test');
-
-        $this->assertNotNull($capturedCollection);
-        $this->assertInstanceOf(AttributeCollection::class, $capturedCollection);
-        $this->assertSame($collection->count(), $capturedCollection->count());
-    }
-
-    public function testAfterScanEventContainsCounts(): void
-    {
-        $config = [
-            'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
-            'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
-        ];
-        Resolver::setConfig('test', $config);
-
-        $capturedFileCount = null;
-        $capturedAttributeCount = null;
-        EventManager::instance()->on(AfterScanEvent::NAME, function ($event) use (&$capturedFileCount, &$capturedAttributeCount): void {
-            $capturedFileCount = $event->getFileCount();
-            $capturedAttributeCount = $event->getAttributeCount();
-        });
-
-        Resolver::collection('test');
-
-        $this->assertNotNull($capturedFileCount);
-        $this->assertNotNull($capturedAttributeCount);
-        $this->assertGreaterThan(0, $capturedFileCount);
-        $this->assertGreaterThan(0, $capturedAttributeCount);
     }
 
     public function testDropReturnsFalseForNonexistentConfig(): void
@@ -465,29 +273,6 @@ class ResolverTest extends TestCase
         @unlink(TMP . 'tests' . DS . 'resolver_test_artifact2.php');
         Resolver::drop('controllers');
         Resolver::drop('models');
-    }
-
-    public function testAfterArtifactsClearEventContainsSuccess(): void
-    {
-        $config = [
-            'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
-            'basePath' => TEST_APP,
-            'artifact' => $this->artifactPath,
-        ];
-        Resolver::setConfig('test', $config);
-
-        // Create artifact first
-        Resolver::collection('test');
-
-        $capturedSuccess = null;
-        EventManager::instance()->on('Attribute.Resolver.afterArtifactsClear', function ($event) use (&$capturedSuccess): void {
-            $capturedSuccess = $event->isSuccess();
-        });
-
-        Resolver::clear('test');
-
-        $this->assertNotNull($capturedSuccess);
-        $this->assertTrue($capturedSuccess);
     }
 
     public function testResolveReturnsEmptyCollectionForMissingConfig(): void

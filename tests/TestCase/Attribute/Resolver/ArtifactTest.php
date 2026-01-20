@@ -485,6 +485,8 @@ class ArtifactTest extends TestCase
     #[WithoutErrorHandler]
     public function testSetHandlesWriteFailure(): void
     {
+        $this->skipIf(DS === '\\', 'Cant perform operations using permissions on windows.');
+
         // Create a path that will fail (read-only parent directory simulation)
         $readonlyDir = $this->tmpPath . '/readonly';
         mkdir($readonlyDir, 0555);
@@ -587,7 +589,6 @@ class ArtifactTest extends TestCase
                 name: 'TestClass',
                 declaringClass: 'TestClass',
             ),
-            pluginName: null,
             fileTime: (int)filemtime($sourceFile),
         );
 
@@ -627,7 +628,6 @@ class ArtifactTest extends TestCase
                 name: 'TestClass',
                 declaringClass: 'TestClass',
             ),
-            pluginName: null,
             fileTime: time(),
         );
 

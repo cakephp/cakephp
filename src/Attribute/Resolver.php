@@ -18,16 +18,9 @@ namespace Cake\Attribute;
 
 use Cake\Attribute\Resolver\Artifact;
 use Cake\Attribute\Resolver\AttributeCollection;
-use Cake\Attribute\Resolver\Event\AfterArtifactsClearEvent;
-use Cake\Attribute\Resolver\Event\AfterResolveEvent;
-use Cake\Attribute\Resolver\Event\AfterScanEvent;
-use Cake\Attribute\Resolver\Event\BeforeArtifactsClearEvent;
-use Cake\Attribute\Resolver\Event\BeforeResolveEvent;
-use Cake\Attribute\Resolver\Event\BeforeScanEvent;
 use Cake\Attribute\Resolver\Parser;
 use Cake\Attribute\Resolver\Scanner;
 use Cake\Core\StaticConfigTrait;
-use Cake\Event\EventManager;
 
 /**
  * Attribute Resolver
@@ -67,16 +60,7 @@ class Resolver
      */
     public static function collection(string $name = 'default'): AttributeCollection
     {
-        // Check in-memory cache first, but allow BeforeResolve to prevent even cached results
-        $instance = new self();
-        $event = EventManager::instance()->dispatch(new BeforeResolveEvent($instance));
-        if ($event->isStopped()) {
-            return new AttributeCollection([]);
-        }
-
         if (isset(static::$collections[$name])) {
-            EventManager::instance()->dispatch(new AfterResolveEvent($instance, static::$collections[$name]));
-
             return static::$collections[$name];
         }
 
@@ -91,15 +75,8 @@ class Resolver
                 $collection = new AttributeCollection($cached);
                 static::$collections[$name] = $collection;
 
-                EventManager::instance()->dispatch(new AfterResolveEvent($instance, $collection));
-
                 return $collection;
             }
-        }
-
-        $scanEvent = EventManager::instance()->dispatch(new BeforeScanEvent($instance));
-        if ($scanEvent->isStopped()) {
-            return new AttributeCollection([]);
         }
 
         $parser = new Parser($config['excludeAttributes'] ?? []);
@@ -113,15 +90,11 @@ class Resolver
         $attributes = iterator_to_array($scanner->scanAll(), false);
         $collection = new AttributeCollection($attributes);
 
-        EventManager::instance()->dispatch(new AfterScanEvent($instance, $collection, $scanner->getScannedFiles()));
-
         if ($artifact !== null) {
             $artifact->set($attributes);
         }
 
         static::$collections[$name] = $collection;
-
-        EventManager::instance()->dispatch(new AfterResolveEvent($instance, $collection));
 
         return $collection;
     }
@@ -134,13 +107,6 @@ class Resolver
      */
     public static function clear(string $name = 'default'): bool
     {
-        $instance = new self();
-
-        $event = EventManager::instance()->dispatch(new BeforeArtifactsClearEvent($instance));
-        if ($event->isStopped()) {
-            return false;
-        }
-
         $config = static::getConfig($name);
         $artifactPath = $config['artifact'] ?? null;
 
@@ -151,8 +117,6 @@ class Resolver
         }
 
         unset(static::$collections[$name]);
-
-        EventManager::instance()->dispatch(new AfterArtifactsClearEvent($instance, $success));
 
         return $success;
     }
