@@ -21,6 +21,8 @@ use Cake\Attribute\Resolver\Parser;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
 use Cake\TestSuite\TestCase;
 use SplFileInfo;
+use TestApp\Attribute\Resolver\TestPriority;
+use TestApp\Attribute\Resolver\ValueObject\TestConfig;
 
 class ParserTest extends TestCase
 {
@@ -181,5 +183,120 @@ class ParserTest extends TestCase
             $this->assertSame(AttributeTargetType::PROPERTY, $result->target->type);
             $this->assertSame('TestApp\\Attribute\\Resolver\\TestColumn', $result->attributeName);
         }
+    }
+
+    public function testComplexArgumentsWithObjects(): void
+    {
+        $filePath = $this->testDataPath . 'TestComplexArguments.php';
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        // Should find multiple attributes with complex arguments
+        $this->assertGreaterThan(0, count($results));
+
+        // Find the method with object argument
+        $methodWithObject = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->name === 'methodWithComplexAttributes',
+        );
+        $this->assertCount(1, $methodWithObject);
+
+        $attr = array_values($methodWithObject)[0];
+        $this->assertSame('TestApp\\Attribute\\Resolver\\TestComplexArgument', $attr->attributeName);
+        $this->assertArrayHasKey('value', $attr->arguments);
+        $this->assertArrayHasKey('object', $attr->arguments);
+        $this->assertArrayHasKey('enum', $attr->arguments);
+        $this->assertArrayHasKey('constant', $attr->arguments);
+
+        // Verify object argument is captured
+        $this->assertInstanceOf(TestConfig::class, $attr->arguments['object']);
+        $this->assertSame('database', $attr->arguments['object']->name);
+        $this->assertSame(['host' => 'localhost', 'port' => 3306], $attr->arguments['object']->options);
+    }
+
+    public function testComplexArgumentsWithEnums(): void
+    {
+        $filePath = $this->testDataPath . 'TestComplexArguments.php';
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        // Find attribute with enum argument
+        $withEnum = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->name === 'methodWithComplexAttributes',
+        );
+        $this->assertCount(1, $withEnum);
+
+        $attr = array_values($withEnum)[0];
+        $this->assertArrayHasKey('enum', $attr->arguments);
+        $this->assertInstanceOf(TestPriority::class, $attr->arguments['enum']);
+        $this->assertSame(TestPriority::HIGH, $attr->arguments['enum']);
+    }
+
+    public function testComplexArgumentsWithConstants(): void
+    {
+        $filePath = $this->testDataPath . 'TestComplexArguments.php';
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        // Find attribute with constant argument
+        $withConstant = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->name === 'methodWithComplexAttributes',
+        );
+        $this->assertCount(1, $withConstant);
+
+        $attr = array_values($withConstant)[0];
+        $this->assertArrayHasKey('constant', $attr->arguments);
+        $this->assertSame(30, $attr->arguments['constant']); // DEFAULT_TIMEOUT value
+    }
+
+    public function testNestedObjectArguments(): void
+    {
+        $filePath = $this->testDataPath . 'TestComplexArguments.php';
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        // Find the method with nested objects
+        $nestedObjects = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->name === 'nestedObjects',
+        );
+        $this->assertCount(1, $nestedObjects);
+
+        $attr = array_values($nestedObjects)[0];
+        $this->assertArrayHasKey('object', $attr->arguments);
+        $this->assertInstanceOf(TestConfig::class, $attr->arguments['object']);
+
+        // Verify nested object structure
+        $config = $attr->arguments['object'];
+        $this->assertSame('nested_config', $config->name);
+        $this->assertArrayHasKey('nested', $config->options);
+        $this->assertInstanceOf(TestConfig::class, $config->options['nested']);
+        $this->assertSame('deep', $config->options['nested']->name);
+    }
+
+    public function testMultipleComplexAttributes(): void
+    {
+        $filePath = $this->testDataPath . 'TestComplexArguments.php';
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        // Find method with multiple attributes
+        $multipleAttrs = array_filter(
+            $results,
+            fn(AttributeInfo $attr) => $attr->target->name === 'multipleAttributes',
+        );
+        $this->assertCount(3, $multipleAttrs);
+
+        // Verify each attribute type
+        $attrArray = array_values($multipleAttrs);
+
+        // One should have constant
+        $hasConstant = array_any($attrArray, fn($attr) => isset($attr->arguments['constant']));
+        $this->assertTrue($hasConstant);
+
+        // One should have enum
+        $hasEnum = array_any($attrArray, fn($attr) => isset($attr->arguments['enum']));
+        $this->assertTrue($hasEnum);
+
+        // One should have object
+        $hasObject = array_any($attrArray, fn($attr) => isset($attr->arguments['object']));
+        $this->assertTrue($hasObject);
     }
 }

@@ -24,6 +24,8 @@ use Cake\Attribute\Resolver\ValueObject\AttributeTarget;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use stdClass;
+use TestApp\Attribute\Resolver\TestPriority;
+use TestApp\Attribute\Resolver\ValueObject\TestConfig;
 
 class AttributeCacheTest extends TestCase
 {
@@ -610,5 +612,134 @@ class AttributeCacheTest extends TestCase
         $this->assertArrayHasKey('byAttribute', $rawData['indexes']);
         $this->assertArrayHasKey('byClassName', $rawData['indexes']);
         $this->assertArrayHasKey('byTargetType', $rawData['indexes']);
+    }
+
+    /**
+     * Test caching attributes with object arguments
+     */
+    public function testCacheWithObjectArguments(): void
+    {
+        $cache = new AttributeCache('attribute_test', false);
+
+        $config = new TestConfig('database', ['host' => 'localhost']);
+
+        $attributeInfo = new AttributeInfo(
+            className: 'App\\Controller\\UsersController',
+            attributeName: 'App\\Attribute\\TestComplexArgument',
+            arguments: [
+                'value' => 'test',
+                'object' => $config,
+            ],
+            filePath: '/app/src/Controller/UsersController.php',
+            lineNumber: 10,
+            target: new AttributeTarget(
+                type: AttributeTargetType::METHOD,
+                name: 'index',
+                declaringClass: 'App\\Controller\\UsersController',
+            ),
+            pluginName: null,
+        );
+
+        $cache->write('test_with_objects', [$attributeInfo]);
+        $result = $cache->read('test_with_objects');
+
+        $this->assertInstanceOf(AttributeCollection::class, $result);
+        $first = $result->first();
+        $this->assertNotNull($first);
+
+        // Verify object argument is preserved
+        $this->assertArrayHasKey('object', $first->arguments);
+        $this->assertInstanceOf(TestConfig::class, $first->arguments['object']);
+        $this->assertSame('database', $first->arguments['object']->name);
+        $this->assertSame(['host' => 'localhost'], $first->arguments['object']->options);
+    }
+
+    /**
+     * Test caching attributes with enum arguments
+     */
+    public function testCacheWithEnumArguments(): void
+    {
+        $cache = new AttributeCache('attribute_test', false);
+
+        $attributeInfo = new AttributeInfo(
+            className: 'App\\Service\\TaskService',
+            attributeName: 'App\\Attribute\\TestComplexArgument',
+            arguments: [
+                'priority' => TestPriority::HIGH,
+                'status' => TestPriority::CRITICAL,
+            ],
+            filePath: '/app/src/Service/TaskService.php',
+            lineNumber: 15,
+            target: new AttributeTarget(
+                type: AttributeTargetType::METHOD,
+                name: 'execute',
+                declaringClass: 'App\\Service\\TaskService',
+            ),
+            pluginName: null,
+        );
+
+        $cache->write('test_with_enums', [$attributeInfo]);
+        $result = $cache->read('test_with_enums');
+
+        $this->assertInstanceOf(AttributeCollection::class, $result);
+        $first = $result->first();
+        $this->assertNotNull($first);
+
+        // Verify enum arguments are preserved
+        $this->assertArrayHasKey('priority', $first->arguments);
+        $this->assertArrayHasKey('status', $first->arguments);
+        $this->assertInstanceOf(TestPriority::class, $first->arguments['priority']);
+        $this->assertInstanceOf(TestPriority::class, $first->arguments['status']);
+        $this->assertSame(TestPriority::HIGH, $first->arguments['priority']);
+        $this->assertSame(TestPriority::CRITICAL, $first->arguments['status']);
+    }
+
+    /**
+     * Test caching attributes with nested objects
+     */
+    public function testCacheWithNestedObjects(): void
+    {
+        $cache = new AttributeCache('attribute_test', false);
+
+        $nestedConfig = new TestConfig('nested', ['level' => 2]);
+        $mainConfig = new TestConfig(
+            'main',
+            ['nested' => $nestedConfig, 'timeout' => 30],
+        );
+
+        $attributeInfo = new AttributeInfo(
+            className: 'App\\Model\\Entity\\User',
+            attributeName: 'App\\Attribute\\TestComplexArgument',
+            arguments: [
+                'config' => $mainConfig,
+            ],
+            filePath: '/app/src/Model/Entity/User.php',
+            lineNumber: 20,
+            target: new AttributeTarget(
+                type: AttributeTargetType::PROPERTY,
+                name: 'settings',
+                declaringClass: 'App\\Model\\Entity\\User',
+            ),
+            pluginName: null,
+        );
+
+        $cache->write('test_with_nested', [$attributeInfo]);
+        $result = $cache->read('test_with_nested');
+
+        $this->assertInstanceOf(AttributeCollection::class, $result);
+        $first = $result->first();
+        $this->assertNotNull($first);
+
+        // Verify nested object structure is preserved
+        $this->assertArrayHasKey('config', $first->arguments);
+        $config = $first->arguments['config'];
+        $this->assertInstanceOf(TestConfig::class, $config);
+        $this->assertSame('main', $config->name);
+
+        // Verify nested level
+        $this->assertArrayHasKey('nested', $config->options);
+        $this->assertInstanceOf(TestConfig::class, $config->options['nested']);
+        $this->assertSame('nested', $config->options['nested']->name);
+        $this->assertSame(['level' => 2], $config->options['nested']->options);
     }
 }

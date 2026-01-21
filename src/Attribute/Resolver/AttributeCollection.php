@@ -164,6 +164,21 @@ class AttributeCollection implements IteratorAggregate, Countable
     }
 
     /**
+     * Intersect matching IDs with currently active IDs.
+     *
+     * @param array<int> $matchingIds Matching item IDs from index
+     * @return static
+     */
+    protected function intersectWithActive(array $matchingIds): static
+    {
+        $activeIds = $this->activeIds !== null
+            ? array_values(array_intersect($this->getActiveIds(), $matchingIds))
+            : $matchingIds;
+
+        return $this->withActiveIds($activeIds);
+    }
+
+    /**
      * @inheritDoc
      */
     public function getIterator(): Traversable
@@ -251,12 +266,7 @@ class AttributeCollection implements IteratorAggregate, Countable
             }
         }
 
-        // Intersect with currently active IDs
-        $activeIds = $this->activeIds !== null
-            ? array_values(array_intersect($this->getActiveIds(), $matchingIds))
-            : $matchingIds;
-
-        return $this->withActiveIds($activeIds);
+        return $this->intersectWithActive($matchingIds);
     }
 
     /**
@@ -297,12 +307,7 @@ class AttributeCollection implements IteratorAggregate, Countable
             }
         }
 
-        // Intersect with currently active IDs
-        $activeIds = $this->activeIds !== null
-            ? array_values(array_intersect($this->getActiveIds(), $matchingIds))
-            : $matchingIds;
-
-        return $this->withActiveIds($activeIds);
+        return $this->intersectWithActive($matchingIds);
     }
 
     /**
@@ -322,12 +327,7 @@ class AttributeCollection implements IteratorAggregate, Countable
             }
         }
 
-        // Intersect with currently active IDs
-        $activeIds = $this->activeIds !== null
-            ? array_values(array_intersect($this->getActiveIds(), $matchingIds))
-            : $matchingIds;
-
-        return $this->withActiveIds($activeIds);
+        return $this->intersectWithActive($matchingIds);
     }
 
     /**

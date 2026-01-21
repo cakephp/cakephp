@@ -103,7 +103,6 @@ Cache::setConfig([
     '_cake_attributes_' => [
         'engine' => 'Php',
         'prefix' => 'cake_attributes_',
-        'serialize' => true,
     ],
 ]);
 

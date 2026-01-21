@@ -45,6 +45,10 @@ use Throwable;
  *
  * Not recommended for frequently changing data due to slower writes.
  *
+ * Note: When caching complex objects (custom classes, closures, resources),
+ * consult https://github.com/brick/varexporter for supported types and limitations.
+ * Most common data structures (arrays, scalars, stdClass, enums) are fully supported.
+ *
  * @extends \Cake\Cache\CacheEngine<\Cake\Cache\Engine\PhpEngine>
  */
 class PhpEngine extends CacheEngine
