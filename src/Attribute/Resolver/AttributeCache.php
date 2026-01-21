@@ -16,7 +16,6 @@ declare(strict_types=1);
  */
 namespace Cake\Attribute\Resolver;
 
-use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
 use Cake\Cache\Cache;
 use Cake\Log\Log;
 use Psr\SimpleCache\CacheInterface;
@@ -65,9 +64,9 @@ class AttributeCache
      * Read attribute data from cache.
      *
      * @param string $name Resolver configuration name
-     * @return array<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>|null Array of AttributeInfo objects or null if not found/invalid
+     * @return \Cake\Attribute\Resolver\AttributeCollection|null AttributeCollection or null if not found/invalid
      */
-    public function read(string $name): ?array
+    public function read(string $name): ?AttributeCollection
     {
         try {
             $data = $this->cache->get($this->cacheKey($name));
@@ -76,9 +75,8 @@ class AttributeCache
                 return null;
             }
 
-            // Validate first item to ensure proper unserialization occurred.
-            // If the cache contains invalid data, reject it gracefully.
-            if ($data !== [] && !reset($data) instanceof AttributeInfo) {
+            // Validate structure contains expected keys
+            if (!isset($data['data']) || !isset($data['indexes'])) {
                 Log::warning(sprintf(
                     'Invalid cached attribute data structure for key: %s',
                     $name,
@@ -88,13 +86,13 @@ class AttributeCache
             }
 
             // Validate file modification times if enabled
-            if ($this->validateFiles && !$this->isValid($data)) {
+            if ($this->validateFiles && !$this->isValid($data['data'])) {
                 $this->delete($name);
 
                 return null;
             }
 
-            return $data;
+            return new AttributeCollection($data['data'], $data['indexes']);
         } catch (Throwable $e) {
             Log::warning(sprintf(
                 'Failed to read cached attributes for key %s: %s',
@@ -109,17 +107,21 @@ class AttributeCache
     /**
      * Write attribute data to cache.
      *
-     * Stores AttributeInfo objects directly. The cache engine handles
-     * serialization using the objects' __serialize() methods.
+     * Stores as raw arrays with pre-built indexes for optimal cache performance.
+     * Uses AttributeCollection::getCacheData() to convert objects to arrays.
      *
      * @param string $name Resolver configuration name
-     * @param array<\Cake\Attribute\Resolver\ValueObject\AttributeInfo> $data AttributeInfo objects to cache
+     * @param \Cake\Attribute\Resolver\AttributeCollection|array<\Cake\Attribute\Resolver\ValueObject\AttributeInfo> $data AttributeInfo objects to cache
      * @return bool Success
      */
-    public function write(string $name, array $data): bool
+    public function write(string $name, array|AttributeCollection $data): bool
     {
         try {
-            return $this->cache->set($this->cacheKey($name), $data);
+            if (!$data instanceof AttributeCollection) {
+                $data = new AttributeCollection($data);
+            }
+
+            return $this->cache->set($this->cacheKey($name), $data->getCacheData());
         } catch (Throwable $e) {
             Log::warning(sprintf(
                 'Failed to write cached attributes for key %s: %s',
@@ -158,7 +160,7 @@ class AttributeCache
      * Compares each source file's current modification time against the stored fileTime
      * from when the cache was created. If any source file is newer, the cache is stale.
      *
-     * @param array<\Cake\Attribute\Resolver\ValueObject\AttributeInfo> $data Cached AttributeInfo objects
+     * @param array<array<string, mixed>> $data Cached raw array data
      * @return bool True if valid, false if any source file has changed
      */
     protected function isValid(array $data): bool
@@ -170,7 +172,7 @@ class AttributeCache
         $checked = [];
 
         foreach ($data as $item) {
-            $filePath = $item->filePath;
+            $filePath = $item['filePath'];
 
             // Skip if already checked this file
             if (isset($checked[$filePath])) {
@@ -179,7 +181,7 @@ class AttributeCache
             $checked[$filePath] = true;
 
             // If file was modified after cache was created, cache is stale
-            if (is_file($filePath) && filemtime($filePath) > $item->fileTime) {
+            if (is_file($filePath) && filemtime($filePath) > $item['fileTime']) {
                 return false;
             }
         }

@@ -57,6 +57,7 @@
         "cakephp/validation": "self.version"
     },
     "require-dev": {
+        "brick/varexporter": "^0.7.0",
         "cakephp/cakephp-codesniffer": "^5.3",
         "http-interop/http-factory-tests": "^2.0",
         "mikey179/vfsstream": "^1.6.12",

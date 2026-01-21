@@ -75,27 +75,19 @@ class Resolver
 
         $cache = static::getCache($config);
 
-        $cached = $cache?->read($name);
-        if ($cached !== null) {
-            $collection = new AttributeCollection($cached);
-            static::$collections[$name] = $collection;
+        $collection = $cache?->read($name);
+        if ($collection === null) {
+            $parser = new Parser($config['excludeAttributes'] ?? []);
+            $scanner = new Scanner(
+                $parser,
+                $config['paths'] ?? [],
+                $config['excludePaths'] ?? [],
+                $config['basePath'] ?? null,
+            );
 
-            return $collection;
+            $collection = new AttributeCollection(iterator_to_array($scanner->scanAll(), false));
+            $cache?->write($name, $collection);
         }
-
-        $parser = new Parser($config['excludeAttributes'] ?? []);
-        $scanner = new Scanner(
-            $parser,
-            $config['paths'] ?? [],
-            $config['excludePaths'] ?? [],
-            $config['basePath'] ?? null,
-        );
-        // Materialize the generator to an array so we can use it multiple times
-        $attributes = iterator_to_array($scanner->scanAll(), false);
-
-        // Cache and create collection
-        $cache?->write($name, $attributes);
-        $collection = new AttributeCollection($attributes);
 
         static::$collections[$name] = $collection;
 

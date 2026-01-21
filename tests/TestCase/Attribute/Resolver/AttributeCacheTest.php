@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Attribute\Resolver;
 
 use Cake\Attribute\Resolver\AttributeCache;
+use Cake\Attribute\Resolver\AttributeCollection;
 use Cake\Attribute\Resolver\Enum\AttributeTargetType;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
 use Cake\Attribute\Resolver\ValueObject\AttributeTarget;
@@ -59,7 +60,7 @@ class AttributeCacheTest extends TestCase
     }
 
     /**
-     * Test write() stores AttributeInfo objects and read() retrieves them
+     * Test write() stores AttributeInfo objects and read() retrieves them as AttributeCollection
      */
     public function testWriteAndReadWithAttributeInfo(): void
     {
@@ -85,14 +86,15 @@ class AttributeCacheTest extends TestCase
         $this->assertTrue($success);
 
         $result = $cache->read('test_config');
-        $this->assertIsArray($result);
+        $this->assertInstanceOf(AttributeCollection::class, $result);
         $this->assertCount(1, $result);
 
-        // Data should be returned as AttributeInfo objects after unserialization
-        $this->assertInstanceOf(AttributeInfo::class, $result[0]);
-        $this->assertSame('App\\TestClass', $result[0]->className);
-        $this->assertSame(stdClass::class, $result[0]->attributeName);
-        $this->assertSame('/app/src/TestClass.php', $result[0]->filePath);
+        // Data should be returned as AttributeInfo objects via lazy hydration
+        $first = $result->first();
+        $this->assertInstanceOf(AttributeInfo::class, $first);
+        $this->assertSame('App\\TestClass', $first->className);
+        $this->assertSame(stdClass::class, $first->attributeName);
+        $this->assertSame('/app/src/TestClass.php', $first->filePath);
     }
 
     /**
@@ -135,12 +137,14 @@ class AttributeCacheTest extends TestCase
         $this->assertTrue($success);
 
         $result = $cache->read('test_multiple');
-        $this->assertIsArray($result);
+        $this->assertInstanceOf(AttributeCollection::class, $result);
         $this->assertCount(2, $result);
-        $this->assertInstanceOf(AttributeInfo::class, $result[0]);
-        $this->assertInstanceOf(AttributeInfo::class, $result[1]);
-        $this->assertSame('TestClass1', $result[0]->className);
-        $this->assertSame('TestClass2', $result[1]->className);
+
+        $items = $result->toList();
+        $this->assertInstanceOf(AttributeInfo::class, $items[0]);
+        $this->assertInstanceOf(AttributeInfo::class, $items[1]);
+        $this->assertSame('TestClass1', $items[0]->className);
+        $this->assertSame('TestClass2', $items[1]->className);
     }
 
     /**
@@ -178,7 +182,7 @@ class AttributeCacheTest extends TestCase
         ];
 
         $cache->write('test_delete', $data);
-        $this->assertIsArray($cache->read('test_delete'));
+        $this->assertInstanceOf(AttributeCollection::class, $cache->read('test_delete'));
 
         $deleted = $cache->delete('test_delete');
         $this->assertTrue($deleted);
@@ -215,7 +219,7 @@ class AttributeCacheTest extends TestCase
 
             // First read should work
             $result = $cache->read('test_validation');
-            $this->assertIsArray($result);
+            $this->assertInstanceOf(AttributeCollection::class, $result);
             $this->assertCount(1, $result);
 
             // Touch source file to make it newer
@@ -262,7 +266,7 @@ class AttributeCacheTest extends TestCase
 
             // First read should work
             $result = $cache->read('test_no_validation');
-            $this->assertIsArray($result);
+            $this->assertInstanceOf(AttributeCollection::class, $result);
             $this->assertCount(1, $result);
 
             // Touch source file to make it newer
@@ -272,7 +276,7 @@ class AttributeCacheTest extends TestCase
 
             // Should still return cached data because validation is disabled
             $result2 = $cache->read('test_no_validation');
-            $this->assertIsArray($result2, 'Second read should return array because validateFiles=false');
+            $this->assertInstanceOf(AttributeCollection::class, $result2, 'Second read should return collection because validateFiles=false');
             $this->assertCount(1, $result2);
         } finally {
             if (file_exists($sourceFile)) {
@@ -332,14 +336,16 @@ class AttributeCacheTest extends TestCase
         $cache->write('test_complex', [$attributeInfo]);
         $result = $cache->read('test_complex');
 
-        $this->assertIsArray($result);
+        $this->assertInstanceOf(AttributeCollection::class, $result);
         $this->assertCount(1, $result);
-        $this->assertInstanceOf(AttributeInfo::class, $result[0]);
-        $this->assertSame('App\\Controller\\UsersController', $result[0]->className);
-        $this->assertSame('/users/{id}', $result[0]->arguments['path']);
-        $this->assertSame(['GET', 'POST'], $result[0]->arguments['methods']);
-        $this->assertTrue($result[0]->arguments['options']['auth']);
-        $this->assertSame(100, $result[0]->arguments['options']['limit']);
+
+        $first = $result->first();
+        $this->assertInstanceOf(AttributeInfo::class, $first);
+        $this->assertSame('App\\Controller\\UsersController', $first->className);
+        $this->assertSame('/users/{id}', $first->arguments['path']);
+        $this->assertSame(['GET', 'POST'], $first->arguments['methods']);
+        $this->assertTrue($first->arguments['options']['auth']);
+        $this->assertSame(100, $first->arguments['options']['limit']);
     }
 
     /**
@@ -370,7 +376,7 @@ class AttributeCacheTest extends TestCase
         $cache->write('same_key', $data);
 
         $result = $cache->read('same_key');
-        $this->assertIsArray($result);
+        $this->assertInstanceOf(AttributeCollection::class, $result);
         $this->assertCount(1, $result);
     }
 
@@ -399,7 +405,7 @@ class AttributeCacheTest extends TestCase
 
         // Should still load successfully even if source file doesn't exist
         $result = $cache->read('test_missing');
-        $this->assertIsArray($result);
+        $this->assertInstanceOf(AttributeCollection::class, $result);
         $this->assertCount(1, $result);
     }
 
@@ -442,14 +448,16 @@ class AttributeCacheTest extends TestCase
         $cache->write('test_targets', $data);
         $result = $cache->read('test_targets');
 
-        $this->assertIsArray($result);
+        $this->assertInstanceOf(AttributeCollection::class, $result);
         $this->assertCount(2, $result);
-        $this->assertInstanceOf(AttributeInfo::class, $result[0]);
-        $this->assertInstanceOf(AttributeInfo::class, $result[1]);
-        $this->assertSame('Class1', $result[0]->className);
-        $this->assertSame('Class2', $result[1]->className);
-        $this->assertSame(AttributeTargetType::CLASS_TYPE, $result[0]->target->type);
-        $this->assertSame(AttributeTargetType::METHOD, $result[1]->target->type);
+
+        $items = $result->toList();
+        $this->assertInstanceOf(AttributeInfo::class, $items[0]);
+        $this->assertInstanceOf(AttributeInfo::class, $items[1]);
+        $this->assertSame('Class1', $items[0]->className);
+        $this->assertSame('Class2', $items[1]->className);
+        $this->assertSame(AttributeTargetType::CLASS_TYPE, $items[0]->target->type);
+        $this->assertSame(AttributeTargetType::METHOD, $items[1]->target->type);
     }
 
     /**
@@ -527,7 +535,7 @@ class AttributeCacheTest extends TestCase
 
             // First read should work
             $result = $cache->read('test_multi_files');
-            $this->assertIsArray($result);
+            $this->assertInstanceOf(AttributeCollection::class, $result);
             $this->assertCount(2, $result);
 
             // Touch only the second file
@@ -558,7 +566,49 @@ class AttributeCacheTest extends TestCase
         $this->assertTrue($success);
 
         $result = $cache->read('test_empty');
-        $this->assertIsArray($result);
+        $this->assertInstanceOf(AttributeCollection::class, $result);
         $this->assertCount(0, $result);
+    }
+
+    /**
+     * Test that cache stores data as arrays (not objects) for performance
+     */
+    public function testCacheStoresArraysNotObjects(): void
+    {
+        $cache = new AttributeCache('attribute_test', false);
+
+        $data = [
+            new AttributeInfo(
+                className: 'TestClass',
+                attributeName: 'TestAttribute',
+                arguments: ['key' => 'value'],
+                filePath: '/test.php',
+                lineNumber: 1,
+                target: new AttributeTarget(
+                    type: AttributeTargetType::METHOD,
+                    name: 'testMethod',
+                    declaringClass: 'TestClass',
+                ),
+                fileTime: time(),
+            ),
+        ];
+
+        $cache->write('test_array_storage', $data);
+
+        // Verify raw cache contains arrays, not objects
+        $rawData = Cache::read('attribute_resolver_test_array_storage', 'attribute_test');
+        $this->assertIsArray($rawData);
+        $this->assertArrayHasKey('data', $rawData);
+        $this->assertArrayHasKey('indexes', $rawData);
+
+        // data should be arrays
+        $this->assertIsArray($rawData['data'][0]);
+        $this->assertArrayHasKey('className', $rawData['data'][0]);
+        $this->assertArrayHasKey('attributeName', $rawData['data'][0]);
+
+        // indexes should exist
+        $this->assertArrayHasKey('byAttribute', $rawData['indexes']);
+        $this->assertArrayHasKey('byClassName', $rawData['indexes']);
+        $this->assertArrayHasKey('byTargetType', $rawData['indexes']);
     }
 }
