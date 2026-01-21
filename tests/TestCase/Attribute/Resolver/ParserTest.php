@@ -299,4 +299,94 @@ class ParserTest extends TestCase
         $hasObject = array_any($attrArray, fn($attr) => isset($attr->arguments['object']));
         $this->assertTrue($hasObject);
     }
+
+    public function testParseInterface(): void
+    {
+        $filePath = $this->testDataPath . 'TestInterface.php';
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        // Should find interface-level and method attributes
+        $this->assertGreaterThan(0, count($results));
+
+        $interfaceAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $this->assertCount(1, $interfaceAttrs);
+
+        $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
+        $this->assertCount(1, $methodAttrs);
+    }
+
+    public function testParseTrait(): void
+    {
+        $filePath = $this->testDataPath . 'TestTrait.php';
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        // Should find trait-level and method attributes
+        $this->assertGreaterThan(0, count($results));
+
+        $traitAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $this->assertCount(1, $traitAttrs);
+
+        $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
+        $this->assertCount(1, $methodAttrs);
+    }
+
+    public function testParseEnum(): void
+    {
+        $filePath = $this->testDataPath . 'TestEnum.php';
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        // Should find enum-level and case attributes
+        $this->assertGreaterThan(0, count($results));
+
+        $enumAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $this->assertCount(1, $enumAttrs);
+
+        // Enum cases are treated as class constants
+        $caseAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_CONSTANT);
+        $this->assertCount(2, $caseAttrs);
+    }
+
+    public function testAttributeWithoutConstructor(): void
+    {
+        $filePath = $this->testDataPath . 'TestClassWithNoConstructorAttribute.php';
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        // Should handle attributes without constructors
+        $this->assertCount(2, $results);
+
+        foreach ($results as $result) {
+            $this->assertSame('TestApp\\Attribute\\Resolver\\TestAttributeWithoutConstructor', $result->attributeName);
+            $this->assertEmpty($result->arguments);
+        }
+    }
+
+    public function testNonExistentAttributeClass(): void
+    {
+        // Create a temporary file with an attribute that doesn't exist
+        $filePath = tempnam(sys_get_temp_dir(), 'parser_test_') . '.php';
+        $content = <<<'PHP'
+<?php
+namespace TestApp\Temp;
+
+use NonExistent\AttributeClass;
+
+#[AttributeClass('test')]
+class TempClass {
+}
+PHP;
+        file_put_contents($filePath, $content);
+
+        // Manually include the file to load the class
+        include $filePath;
+
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        // Should still parse but with raw arguments (fallback)
+        $this->assertCount(1, $results);
+        $this->assertSame('NonExistent\\AttributeClass', $results[0]->attributeName);
+        // Arguments are in positional form when constructor doesn't exist
+        $this->assertEquals(['test'], array_values($results[0]->arguments));
+
+        unlink($filePath);
+    }
 }

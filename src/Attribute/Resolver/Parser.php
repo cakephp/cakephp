@@ -66,9 +66,13 @@ class Parser
 
             foreach ($classes as $className) {
                 try {
-                    if (!class_exists($className, false)) {
+                    if (!$this->isTypeLoaded($className)) {
                         continue;
                     }
+                    assert(
+                        class_exists($className) || interface_exists($className) ||
+                        trait_exists($className) || enum_exists($className),
+                    );
                     $reflection = new ReflectionClass($className);
 
                     // Skip classes not from this file
