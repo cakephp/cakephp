@@ -20,16 +20,16 @@ use Cake\Attribute\Resolver;
 use Cake\Console\ConsoleOptionParser;
 
 /**
- * Command to resolve and cache attributes.
+ * Command to warm the attribute cache.
  */
-class AttributesResolveCommand extends Command
+class AttributesWarmCommand extends Command
 {
     /**
      * @inheritDoc
      */
     public static function defaultName(): string
     {
-        return 'attributes resolve';
+        return 'attributes warm';
     }
 
     /**
@@ -37,7 +37,7 @@ class AttributesResolveCommand extends Command
      */
     public static function getDescription(): string
     {
-        return 'Resolve attributes and manage attribute cache.';
+        return 'Warm the attribute cache by discovering and caching all attributes.';
     }
 
     /**
@@ -51,16 +51,6 @@ class AttributesResolveCommand extends Command
         $parser = parent::buildOptionParser($parser);
         $parser
             ->setDescription(static::getDescription())
-            ->addOption('no-clear', [
-                'boolean' => true,
-                'default' => false,
-                'help' => 'Skip clearing cache before resolving.',
-            ])
-            ->addOption('clear-only', [
-                'boolean' => true,
-                'default' => false,
-                'help' => 'Only clear cache without resolving.',
-            ])
             ->addOption('config', [
                 'short' => 'c',
                 'default' => 'default',
@@ -91,29 +81,26 @@ class AttributesResolveCommand extends Command
         // Check if cache is enabled and warn if not
         if ($cacheConfig === false) {
             $this->io->warning('Cache is disabled. Attributes will be re-discovered on every request.');
+            $this->io->out('To enable caching, configure a cache in your Resolver configuration.');
+
+            return static::CODE_ERROR;
         }
 
-        // Clear cache by default unless --no-clear is set
-        if (!$this->args->getOption('no-clear')) {
-            $this->io->out('<info>Clearing attribute cache...</info>');
-            Resolver::clear($configName);
-        }
+        // Clear existing cache before warming
+        Resolver::clear($configName);
 
-        // Only resolve if --clear-only is not set
-        if (!$this->args->getOption('clear-only')) {
-            $this->io->out('<info>Resolving attributes...</info>');
+        $this->io->out('<info>Warming attribute cache...</info>');
 
-            $startTime = microtime(true);
-            $collection = Resolver::collection($configName);
-            $elapsed = round(microtime(true) - $startTime, 3);
+        $startTime = microtime(true);
+        $collection = Resolver::collection($configName);
+        $elapsed = round(microtime(true) - $startTime, 3);
 
-            $count = $collection->count();
-            $this->io->success(sprintf(
-                'Resolved %d attributes in %ss',
-                $count,
-                $elapsed,
-            ));
-        }
+        $count = $collection->count();
+        $this->io->success(sprintf(
+            'Cached %d attributes in %ss',
+            $count,
+            $elapsed,
+        ));
 
         return static::CODE_SUCCESS;
     }

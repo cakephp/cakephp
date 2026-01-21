@@ -24,9 +24,9 @@ use Cake\TestSuite\TestCase;
 use Cake\Utility\Filesystem;
 
 /**
- * AttributesResolveCommandTest class
+ * AttributesWarmCommandTest class
  */
-class AttributesResolveCommandTest extends TestCase
+class AttributesWarmCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
 
@@ -74,9 +74,9 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testDefaultName(): void
     {
-        $this->exec('attributes resolve --help');
+        $this->exec('attributes warm --help');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertOutputContains('attributes resolve');
+        $this->assertOutputContains('attributes warm');
     }
 
     /**
@@ -84,9 +84,9 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testGetDescription(): void
     {
-        $this->exec('attributes resolve --help');
+        $this->exec('attributes warm --help');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertOutputContains('Resolve');
+        $this->assertOutputContains('Warm');
     }
 
     /**
@@ -94,11 +94,10 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testHelp(): void
     {
-        $this->exec('attributes resolve --help');
+        $this->exec('attributes warm --help');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertOutputContains('attributes resolve');
-        $this->assertOutputContains('no-clear');
-        $this->assertOutputContains('clear-only');
+        $this->assertOutputContains('attributes warm');
+        $this->assertOutputContains('config');
     }
 
     /**
@@ -106,26 +105,17 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testBasicExecution(): void
     {
-        $this->exec('attributes resolve');
+        $this->exec('attributes warm');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
     }
 
     /**
-     * Test outputs resolve message
+     * Test outputs warming message
      */
-    public function testOutputsResolveMessage(): void
+    public function testOutputsWarmingMessage(): void
     {
-        $this->exec('attributes resolve');
-        $this->assertOutputContains('Resolving attributes');
-    }
-
-    /**
-     * Test outputs clear message
-     */
-    public function testOutputsClearMessage(): void
-    {
-        $this->exec('attributes resolve');
-        $this->assertOutputContains('Clearing');
+        $this->exec('attributes warm');
+        $this->assertOutputContains('Warming attribute cache');
     }
 
     /**
@@ -133,8 +123,8 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testOutputsSuccessWithCount(): void
     {
-        $this->exec('attributes resolve');
-        $this->assertOutputContains('Resolved');
+        $this->exec('attributes warm');
+        $this->assertOutputContains('Cached');
         $this->assertOutputContains('attributes');
     }
 
@@ -143,7 +133,7 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testOutputsElapsedTime(): void
     {
-        $this->exec('attributes resolve');
+        $this->exec('attributes warm');
         $this->assertOutputRegExp('/\d+\.?\d*s/');
     }
 
@@ -152,7 +142,7 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testReturnsSuccessCode(): void
     {
-        $this->exec('attributes resolve');
+        $this->exec('attributes warm');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
     }
 
@@ -161,7 +151,7 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testCreatesCacheEntry(): void
     {
-        $this->exec('attributes resolve');
+        $this->exec('attributes warm');
         $cached = Cache::read('attribute_resolver_default', $this->cacheConfig);
         $this->assertNotNull($cached);
     }
@@ -171,7 +161,7 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testCacheContainsAttributes(): void
     {
-        $this->exec('attributes resolve');
+        $this->exec('attributes warm');
 
         $cached = Cache::read('attribute_resolver_default', $this->cacheConfig);
         $this->assertIsArray($cached);
@@ -179,76 +169,9 @@ class AttributesResolveCommandTest extends TestCase
     }
 
     /**
-     * Test no-clear option
+     * Test error when cache disabled
      */
-    public function testNoClearOption(): void
-    {
-        $this->exec('attributes resolve --no-clear');
-        $this->assertOutputNotContains('Clearing');
-    }
-
-    /**
-     * Test no-clear preserves existing cache
-     */
-    public function testNoClearPreservesExistingCache(): void
-    {
-        // First resolve to create cache
-        $this->exec('attributes resolve');
-        $original = Cache::read('attribute_resolver_default', $this->cacheConfig);
-        $this->assertNotNull($original);
-
-        // Resolve again with --no-clear
-        $this->exec('attributes resolve --no-clear');
-        $new = Cache::read('attribute_resolver_default', $this->cacheConfig);
-
-        // Cache should still exist
-        $this->assertNotNull($new);
-    }
-
-    /**
-     * Test clear-only option
-     */
-    public function testClearOnlyOption(): void
-    {
-        // Create cache first
-        $this->exec('attributes resolve');
-        $this->assertNotNull(Cache::read('attribute_resolver_default', $this->cacheConfig));
-
-        // Clear only
-        $this->exec('attributes resolve --clear-only');
-        $this->assertOutputContains('Clearing');
-        $this->assertOutputNotContains('Resolving');
-    }
-
-    /**
-     * Test clear-only no resolve message
-     */
-    public function testClearOnlyNoResolveMessage(): void
-    {
-        $this->exec('attributes resolve --clear-only');
-        $this->assertOutputNotContains('Resolved');
-    }
-
-    /**
-     * Test clear-only removes cache
-     */
-    public function testClearOnlyRemovesCache(): void
-    {
-        // Create cache
-        $this->exec('attributes resolve');
-        $this->assertNotNull(Cache::read('attribute_resolver_default', $this->cacheConfig));
-
-        // Clear only
-        $this->exec('attributes resolve --clear-only');
-
-        // Cache should be removed
-        $this->assertNull(Cache::read('attribute_resolver_default', $this->cacheConfig));
-    }
-
-    /**
-     * Test warning when cache disabled
-     */
-    public function testWarningWhenCacheDisabled(): void
+    public function testErrorWhenCacheDisabled(): void
     {
         Resolver::setConfig('disabled', [
             'paths' => ['Attribute/Resolver/Fixture/*.php'],
@@ -256,7 +179,8 @@ class AttributesResolveCommandTest extends TestCase
             'cache' => false,
         ]);
 
-        $this->exec('attributes resolve --config disabled');
+        $this->exec('attributes warm --config disabled');
+        $this->assertExitCode(CommandInterface::CODE_ERROR);
         $this->assertErrorContains('disabled');
 
         Resolver::drop('disabled');
@@ -267,7 +191,7 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testUsesDefaultConfig(): void
     {
-        $this->exec('attributes resolve');
+        $this->exec('attributes warm');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertNotNull(Cache::read('attribute_resolver_default', $this->cacheConfig));
     }
@@ -290,7 +214,7 @@ class AttributesResolveCommandTest extends TestCase
             'cache' => $customCacheConfig,
         ]);
 
-        $this->exec('attributes resolve --config custom');
+        $this->exec('attributes warm --config custom');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertNotNull(Cache::read('attribute_resolver_custom', $customCacheConfig));
 
@@ -304,7 +228,7 @@ class AttributesResolveCommandTest extends TestCase
      */
     public function testInvalidConfigShowsError(): void
     {
-        $this->exec('attributes resolve --config nonexistent');
+        $this->exec('attributes warm --config nonexistent');
         $this->assertExitCode(CommandInterface::CODE_ERROR);
         $this->assertErrorContains('Configuration');
     }
@@ -330,8 +254,8 @@ class AttributesResolveCommandTest extends TestCase
             'cache' => $emptyCacheConfig,
         ]);
 
-        $this->exec('attributes resolve --config empty');
-        $this->assertOutputContains('Resolved 0 attributes');
+        $this->exec('attributes warm --config empty');
+        $this->assertOutputContains('Cached 0 attributes');
 
         Resolver::drop('empty');
         Cache::clear($emptyCacheConfig);
@@ -341,13 +265,11 @@ class AttributesResolveCommandTest extends TestCase
     }
 
     /**
-     * Test option parser has all options
+     * Test option parser has config option
      */
-    public function testOptionParserHasAllOptions(): void
+    public function testOptionParserHasConfigOption(): void
     {
-        $this->exec('attributes resolve --help');
-        $this->assertOutputContains('no-clear');
-        $this->assertOutputContains('clear-only');
+        $this->exec('attributes warm --help');
         $this->assertOutputContains('config');
     }
 }
