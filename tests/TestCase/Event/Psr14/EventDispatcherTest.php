@@ -47,9 +47,12 @@ class EventDispatcherTest extends TestCase
     {
         $called = false;
         $provider = new ListenerProvider();
-        $provider->addListener(stdClass::class, function (stdClass $event) use (&$called) {
-            $called = true;
-        });
+        $provider->addListener(
+            stdClass::class,
+            function (stdClass $event) use (&$called) {
+                $called = true;
+            },
+        );
 
         $dispatcher = new EventDispatcher($provider);
         $event = new stdClass();
@@ -80,15 +83,27 @@ class EventDispatcherTest extends TestCase
     {
         $order = [];
         $provider = new ListenerProvider();
-        $provider->addListener(stdClass::class, function () use (&$order) {
-            $order[] = 'first';
-        }, 10);
-        $provider->addListener(stdClass::class, function () use (&$order) {
-            $order[] = 'second';
-        }, 5);
-        $provider->addListener(stdClass::class, function () use (&$order) {
-            $order[] = 'third';
-        }, 15);
+        $provider->addListener(
+            stdClass::class,
+            function () use (&$order) {
+                $order[] = 'first';
+            },
+            10,
+        );
+        $provider->addListener(
+            stdClass::class,
+            function () use (&$order) {
+                $order[] = 'second';
+            },
+            5,
+        );
+        $provider->addListener(
+            stdClass::class,
+            function () use (&$order) {
+                $order[] = 'third';
+            },
+            15,
+        );
 
         $dispatcher = new EventDispatcher($provider);
         $dispatcher->dispatch(new stdClass());
@@ -111,13 +126,21 @@ class EventDispatcherTest extends TestCase
         $eventClass = $event::class;
 
         $provider = new ListenerProvider();
-        $provider->addListener($eventClass, function (StoppableEventInterface $event) use (&$order) {
-            $order[] = 'first';
-            $event->stopPropagation();
-        }, 10);
-        $provider->addListener($eventClass, function () use (&$order) {
-            $order[] = 'second';
-        }, 5);
+        $provider->addListener(
+            $eventClass,
+            function (StoppableEventInterface $event) use (&$order) {
+                $order[] = 'first';
+                $event->stopPropagation();
+            },
+            10,
+        );
+        $provider->addListener(
+            $eventClass,
+            function () use (&$order) {
+                $order[] = 'second';
+            },
+            5,
+        );
 
         $dispatcher = new EventDispatcher($provider);
         $dispatcher->dispatch($event);
