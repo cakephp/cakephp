@@ -37,6 +37,7 @@
         "psr/http-message": "^1.1 || ^2.0",
         "psr/http-server-handler": "^1.0.2",
         "psr/http-server-middleware": "^1.0.2",
+        "psr/cache": "^3.0",
         "psr/log": "^3.0",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
@@ -70,6 +71,7 @@
         "paragonie/csp-builder": "CSP builder, to use the CSP Middleware"
     },
     "provide": {
+        "psr/cache-implementation": "^3.0",
         "psr/container-implementation": "^2.0",
         "psr/http-client-implementation": "^1.0",
         "psr/http-factory-implementation": "^1.0",
