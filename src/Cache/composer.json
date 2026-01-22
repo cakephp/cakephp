@@ -1,11 +1,13 @@
 {
     "name": "cakephp/cache",
-    "description": "Easy to use Caching library with support for multiple caching backends",
+    "description": "Easy to use Caching library with support for multiple caching backends, PSR-6 and PSR-16 compliant",
     "type": "library",
     "keywords": [
         "cakephp",
         "caching",
-        "cache"
+        "cache",
+        "PSR-6",
+        "PSR-16"
     ],
     "homepage": "https://cakephp.org",
     "license": "MIT",
@@ -25,9 +27,11 @@
         "php": ">=8.2",
         "cakephp/core": "^5.3.0",
         "cakephp/event": "^5.3.0",
+        "psr/cache": "^3.0",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
     "provide": {
+        "psr/cache-implementation": "^3.0",
         "psr/simple-cache-implementation": "^3.0"
     },
     "autoload": {
