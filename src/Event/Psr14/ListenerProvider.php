@@ -54,7 +54,6 @@ class ListenerProvider implements ListenerProviderInterface
      */
     public function getListenersForEvent(object $event): iterable
     {
-        $eventClass = $event::class;
         $matchedListeners = [];
 
         foreach ($this->listeners as $listenedClass => $listeners) {
@@ -66,7 +65,7 @@ class ListenerProvider implements ListenerProviderInterface
         }
 
         // Sort by priority (higher = earlier)
-        usort($matchedListeners, fn (array $a, array $b): int => $b[1] <=> $a[1]);
+        usort($matchedListeners, fn(array $a, array $b): int => $b[1] <=> $a[1]);
 
         foreach ($matchedListeners as [$listener, $priority]) {
             yield $listener;
@@ -107,7 +106,7 @@ class ListenerProvider implements ListenerProviderInterface
 
         $this->listeners[$eventClass] = array_values(array_filter(
             $this->listeners[$eventClass],
-            fn (array $entry): bool => $entry[0] !== $listener
+            fn(array $entry): bool => $entry[0] !== $listener,
         ));
 
         if (empty($this->listeners[$eventClass])) {

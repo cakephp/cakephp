@@ -104,17 +104,21 @@ class EventDispatcherTest extends TestCase
     {
         $order = [];
 
+        $event = new class implements StoppableEventInterface {
+            use StoppableEventTrait;
+        };
+        $eventClass = $event::class;
+
         $provider = new ListenerProvider();
-        $provider->addListener(TestStoppableEvent::class, function (TestStoppableEvent $event) use (&$order) {
+        $provider->addListener($eventClass, function (StoppableEventInterface $event) use (&$order) {
             $order[] = 'first';
             $event->stopPropagation();
         }, 10);
-        $provider->addListener(TestStoppableEvent::class, function () use (&$order) {
+        $provider->addListener($eventClass, function () use (&$order) {
             $order[] = 'second';
         }, 5);
 
         $dispatcher = new EventDispatcher($provider);
-        $event = new TestStoppableEvent();
         $dispatcher->dispatch($event);
 
         $this->assertSame(['first'], $order);
@@ -131,12 +135,4 @@ class EventDispatcherTest extends TestCase
 
         $this->assertSame($provider, $dispatcher->getListenerProvider());
     }
-}
-
-/**
- * Test event class that implements StoppableEventInterface.
- */
-class TestStoppableEvent implements StoppableEventInterface
-{
-    use StoppableEventTrait;
 }

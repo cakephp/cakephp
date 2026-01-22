@@ -142,14 +142,17 @@ class ListenerProviderTest extends TestCase
      */
     public function testClearListenersForEvent(): void
     {
+        $testEvent = new class {};
+        $testEventClass = $testEvent::class;
+
         $provider = new ListenerProvider();
         $provider->addListener(stdClass::class, function () {});
-        $provider->addListener(TestEvent::class, function () {});
+        $provider->addListener($testEventClass, function () {});
 
         $provider->clearListeners(stdClass::class);
 
         $this->assertFalse($provider->hasListeners(stdClass::class));
-        $this->assertTrue($provider->hasListeners(TestEvent::class));
+        $this->assertTrue($provider->hasListeners($testEventClass));
     }
 
     /**
@@ -157,14 +160,17 @@ class ListenerProviderTest extends TestCase
      */
     public function testClearListenersAll(): void
     {
+        $testEvent = new class {};
+        $testEventClass = $testEvent::class;
+
         $provider = new ListenerProvider();
         $provider->addListener(stdClass::class, function () {});
-        $provider->addListener(TestEvent::class, function () {});
+        $provider->addListener($testEventClass, function () {});
 
         $provider->clearListeners();
 
         $this->assertFalse($provider->hasListeners(stdClass::class));
-        $this->assertFalse($provider->hasListeners(TestEvent::class));
+        $this->assertFalse($provider->hasListeners($testEventClass));
     }
 
     /**
@@ -196,11 +202,4 @@ class ListenerProviderTest extends TestCase
 
         $this->assertSame($provider, $result);
     }
-}
-
-/**
- * Test event class.
- */
-class TestEvent
-{
 }
