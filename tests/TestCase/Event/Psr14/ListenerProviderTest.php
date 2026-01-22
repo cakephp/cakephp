@@ -150,8 +150,16 @@ class ListenerProviderTest extends TestCase
         $testEventClass = $testEvent::class;
 
         $provider = new ListenerProvider();
-        $provider->addListener(stdClass::class, function () {});
-        $provider->addListener($testEventClass, function () {});
+        $provider->addListener(
+            stdClass::class,
+            function () {
+            },
+        );
+        $provider->addListener(
+            $testEventClass,
+            function () {
+            },
+        );
 
         $provider->clearListeners(stdClass::class);
 
@@ -170,8 +178,16 @@ class ListenerProviderTest extends TestCase
         $testEventClass = $testEvent::class;
 
         $provider = new ListenerProvider();
-        $provider->addListener(stdClass::class, function () {});
-        $provider->addListener($testEventClass, function () {});
+        $provider->addListener(
+            stdClass::class,
+            function () {
+            },
+        );
+        $provider->addListener(
+            $testEventClass,
+            function () {
+            },
+        );
 
         $provider->clearListeners();
 
@@ -188,7 +204,11 @@ class ListenerProviderTest extends TestCase
 
         $this->assertFalse($provider->hasListeners(stdClass::class));
 
-        $provider->addListener(stdClass::class, function () {});
+        $provider->addListener(
+            stdClass::class,
+            function () {
+            },
+        );
 
         $this->assertTrue($provider->hasListeners(stdClass::class));
     }
