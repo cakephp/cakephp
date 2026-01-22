@@ -57,8 +57,7 @@ class WidgetLocator
     /**
      * View instance.
      *
-     * @var \Cake\View\View<\Cake\View\View>
-     * @phpstan-ignore missingType.generics (self-referential generic)
+     * @var \Cake\View\View
      */
     protected View $_view;
 
@@ -66,9 +65,8 @@ class WidgetLocator
      * Constructor
      *
      * @param \Cake\View\StringTemplate $templates Templates instance to use.
-     * @param \Cake\View\View<\Cake\View\View> $view The view instance to set as a widget.
+     * @param \Cake\View\View $view The view instance to set as a widget.
      * @param array $widgets See add() method for more information.
-     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     public function __construct(StringTemplate $templates, View $view, array $widgets = [])
     {
