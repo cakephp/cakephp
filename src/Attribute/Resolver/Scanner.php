@@ -16,7 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Attribute\Resolver;
 
+use Cake\Core\Configure;
 use Cake\Core\Plugin;
+use Cake\Core\PluginConfig;
 use Cake\Utility\Fs\Finder;
 use EmptyIterator;
 use Generator;
@@ -110,17 +112,67 @@ class Scanner
             ['path' => $this->basePath ?? ROOT, 'plugin' => null],
         ];
 
-        $collection = Plugin::getCollection();
-        foreach ($collection as $plugin) {
-            $basePaths[] = [
-                'path' => $plugin->getPath(),
-                'plugin' => $plugin->getName(),
-            ];
+        foreach ($this->getLoadedPlugins() as $pluginInfo) {
+            $basePaths[] = $pluginInfo;
         }
 
         $this->basePaths = $basePaths;
 
         return $basePaths;
+    }
+
+    /**
+     * Get loaded plugins that should be scanned.
+     *
+     * Returns a consistent list of all loaded plugins regardless of execution context
+     * (CLI vs web). This ensures attribute discovery is atomic and cache is consistent.
+     *
+     * Excludes only:
+     * - Unknown plugins (configured but not installed)
+     * - Debug-only plugins when debug mode is disabled
+     *
+     * Includes CLI-only plugins even in web context to maintain cache consistency.
+     * Also includes plugins loaded dynamically via the Plugin class
+     * that may not be in the static configuration.
+     *
+     * @return array<array{path: string, plugin: string}>
+     */
+    protected function getLoadedPlugins(): array
+    {
+        $installedPlugins = PluginConfig::getInstalledPlugins();
+        $debugMode = Configure::read('debug', false);
+        $result = [];
+
+        // Process plugins from PluginConfig
+        foreach ($installedPlugins as $pluginName => $config) {
+            // Skip plugins that shouldn't be included
+            if (
+                ($config['isUnknown'] ?? false) ||
+                (($config['onlyDebug'] ?? false) && !$debugMode) ||
+                !isset($config['path'])
+            ) {
+                continue;
+            }
+
+            $result[$pluginName] = [
+                'path' => $config['path'],
+                'plugin' => $pluginName,
+            ];
+        }
+
+        // Merge dynamically loaded plugins not in PluginConfig
+        $collection = Plugin::getCollection();
+        foreach ($collection as $plugin) {
+            $pluginName = $plugin->getName();
+            if (!isset($result[$pluginName])) {
+                $result[$pluginName] = [
+                    'path' => $plugin->getPath(),
+                    'plugin' => $pluginName,
+                ];
+            }
+        }
+
+        return array_values($result);
     }
 
     /**

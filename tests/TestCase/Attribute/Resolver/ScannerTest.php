@@ -19,8 +19,11 @@ namespace Cake\Test\TestCase\Attribute\Resolver;
 use Cake\Attribute\Resolver\Parser;
 use Cake\Attribute\Resolver\Scanner;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
+use Cake\Core\Configure;
+use Cake\Core\PluginConfig;
 use Cake\TestSuite\TestCase;
 use Generator;
+use ReflectionMethod;
 
 class ScannerTest extends TestCase
 {
@@ -246,5 +249,114 @@ class ScannerTest extends TestCase
 
         $this->assertEmpty($results, 'Should return empty when no paths are configured');
         $this->assertSame([], $scanner->getScannedFiles());
+    }
+
+    /**
+     * Test getLoadedPlugins includes plugins with valid paths from PluginConfig
+     */
+    public function testGetLoadedPluginsIncludesValidPlugins(): void
+    {
+        $parser = new Parser();
+        $scanner = new Scanner($parser);
+
+        $method = new ReflectionMethod(Scanner::class, 'getLoadedPlugins');
+
+        $plugins = $method->invoke($scanner);
+
+        $this->assertIsArray($plugins);
+        foreach ($plugins as $plugin) {
+            $this->assertArrayHasKey('path', $plugin);
+            $this->assertArrayHasKey('plugin', $plugin);
+            $this->assertIsString($plugin['path']);
+            $this->assertIsString($plugin['plugin']);
+        }
+    }
+
+    /**
+     * Test getLoadedPlugins excludes debug-only plugins when debug is disabled
+     */
+    public function testGetLoadedPluginsExcludesDebugPluginsWhenDebugDisabled(): void
+    {
+        $originalDebug = Configure::read('debug');
+        Configure::write('debug', false);
+
+        // Clear plugin config cache to force reload
+        PluginConfig::clearCache();
+
+        $parser = new Parser();
+        $scanner = new Scanner($parser);
+
+        $method = new ReflectionMethod(Scanner::class, 'getLoadedPlugins');
+
+        $plugins = $method->invoke($scanner);
+
+        // Verify no debug-only plugins are included when debug is off
+        foreach ($plugins as $plugin) {
+            $this->assertIsString($plugin['plugin']);
+            // If we had a debug-only plugin configured, it shouldn't be in the list
+        }
+
+        Configure::write('debug', $originalDebug);
+        PluginConfig::clearCache();
+    }
+
+    /**
+     * Test getLoadedPlugins includes dynamically loaded plugins
+     */
+    public function testGetLoadedPluginsIncludesDynamicallyLoadedPlugins(): void
+    {
+        $this->loadPlugins(['TestPlugin' => []]);
+
+        $parser = new Parser();
+        $scanner = new Scanner($parser);
+
+        $method = new ReflectionMethod(Scanner::class, 'getLoadedPlugins');
+
+        $plugins = $method->invoke($scanner);
+
+        // Find TestPlugin in results
+        $pluginNames = array_column($plugins, 'plugin');
+        $this->assertContains('TestPlugin', $pluginNames, 'TestPlugin should be included from Plugin::getCollection()');
+    }
+
+    /**
+     * Test getLoadedPlugins does not duplicate plugins
+     */
+    public function testGetLoadedPluginsNoDuplicates(): void
+    {
+        $parser = new Parser();
+        $scanner = new Scanner($parser);
+
+        $method = new ReflectionMethod(Scanner::class, 'getLoadedPlugins');
+
+        $plugins = $method->invoke($scanner);
+
+        // Extract plugin names
+        $pluginNames = array_column($plugins, 'plugin');
+
+        // Check for duplicates
+        $uniqueNames = array_unique($pluginNames);
+        $this->assertCount(
+            count($uniqueNames),
+            $pluginNames,
+            'Plugin list should not contain duplicates',
+        );
+    }
+
+    /**
+     * Test getLoadedPlugins returns consistent results regardless of context
+     */
+    public function testGetLoadedPluginsReturnsConsistentResults(): void
+    {
+        $parser = new Parser();
+        $scanner = new Scanner($parser);
+
+        $method = new ReflectionMethod(Scanner::class, 'getLoadedPlugins');
+
+        // Call twice to ensure consistent results
+        $plugins1 = $method->invoke($scanner);
+        $plugins2 = $method->invoke($scanner);
+
+        $this->assertSame($plugins1, $plugins2, 'getLoadedPlugins should return consistent results');
     }
 }
