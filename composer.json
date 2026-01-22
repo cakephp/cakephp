@@ -37,6 +37,7 @@
         "psr/http-message": "^1.1 || ^2.0",
         "psr/http-server-handler": "^1.0.2",
         "psr/http-server-middleware": "^1.0.2",
+        "psr/link": "^2.0",
         "psr/log": "^3.0",
         "psr/simple-cache": "^2.0 || ^3.0"
     },
@@ -75,6 +76,7 @@
         "psr/http-factory-implementation": "^1.0",
         "psr/http-server-handler-implementation": "^1.0",
         "psr/http-server-middleware-implementation": "^1.0",
+        "psr/link-implementation": "^2.0",
         "psr/log-implementation": "^3.0",
         "psr/simple-cache-implementation": "^3.0"
     },
