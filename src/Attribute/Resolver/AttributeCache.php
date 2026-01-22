@@ -171,21 +171,18 @@ class AttributeCache
         // Track checked files to avoid rechecking same file multiple times
         $checked = [];
 
-        foreach ($data as $item) {
+        // Return false if any file has been modified (cache is stale)
+        return !array_any($data, function (array $item) use (&$checked): bool {
             $filePath = $item['filePath'];
 
             // Skip if already checked this file
             if (isset($checked[$filePath])) {
-                continue;
+                return false;
             }
             $checked[$filePath] = true;
 
-            // If file was modified after cache was created, cache is stale
-            if (is_file($filePath) && filemtime($filePath) > $item['fileTime']) {
-                return false;
-            }
-        }
-
-        return true;
+            // File was modified after cache was created = cache is stale
+            return is_file($filePath) && filemtime($filePath) > $item['fileTime'];
+        });
     }
 }

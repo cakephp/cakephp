@@ -545,7 +545,7 @@ class Parser
      */
     protected function shouldExclude(string $attributeName): bool
     {
-        foreach ($this->excludeAttributes as $pattern) {
+        return array_any($this->excludeAttributes, function (string $pattern) use ($attributeName): bool {
             // Exact match
             if ($pattern === $attributeName) {
                 return true;
@@ -558,8 +558,8 @@ class Parser
                     return true;
                 }
             }
-        }
 
-        return false;
+            return false;
+        });
     }
 }

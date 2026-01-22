@@ -30,7 +30,7 @@ class Scanner
     /**
      * Maximum file size in bytes (10MB).
      */
-    protected const MAX_FILE_SIZE = 10 * 1024 * 1024;
+    protected const int MAX_FILE_SIZE = 10 * 1024 * 1024;
 
     /**
      * Cache for base paths with plugin information.
