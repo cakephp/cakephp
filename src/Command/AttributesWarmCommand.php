@@ -69,13 +69,12 @@ class AttributesWarmCommand extends Command
     {
         $configName = (string)$this->args->getOption('config');
 
-        if (!Resolver::getConfig($configName)) {
+        $config = Resolver::getConfig($configName);
+        if ($config === null) {
             $this->io->error(sprintf('Configuration "%s" does not exist.', $configName));
 
             return static::CODE_ERROR;
         }
-
-        $config = Resolver::getConfig($configName);
         $cacheConfig = $config['cache'] ?? null;
 
         // Check if cache is enabled and warn if not

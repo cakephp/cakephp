@@ -3,13 +3,13 @@ declare(strict_types=1);
 
 namespace TestPlugin\Model;
 
-use TestApp\Attribute\TestValidation;
+use TestApp\Attribute\Resolver\TestColumn;
 
 class AttributeTestEntity
 {
-    #[TestValidation('required')]
+    #[TestColumn('name')]
     public string $name;
 
-    #[TestValidation('email')]
+    #[TestColumn('email')]
     public string $email;
 }

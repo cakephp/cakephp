@@ -20,6 +20,7 @@ use BackedEnum;
 use Cake\Attribute\Resolver;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
 use Cake\Console\ConsoleOptionParser;
+use JsonException;
 use UnitEnum;
 
 /**
@@ -79,7 +80,8 @@ class AttributesInspectCommand extends Command
     {
         $configName = (string)$this->args->getOption('config');
 
-        if (!Resolver::getConfig($configName)) {
+        $config = Resolver::getConfig($configName);
+        if ($config === null) {
             $this->io->error(sprintf('Configuration "%s" does not exist.', $configName));
 
             return static::CODE_ERROR;
@@ -173,7 +175,7 @@ class AttributesInspectCommand extends Command
     protected function formatValue(mixed $value): string
     {
         return match (true) {
-            is_array($value) => json_encode($value, JSON_THROW_ON_ERROR),
+            is_array($value) => $this->formatArray($value),
             is_bool($value) => $value ? 'true' : 'false',
             is_null($value) => 'null',
             $value instanceof BackedEnum => (string)$value->value,
@@ -181,5 +183,21 @@ class AttributesInspectCommand extends Command
             is_object($value) => $value::class,
             default => (string)$value,
         };
+    }
+
+    /**
+     * Format array value with safe JSON encoding.
+     *
+     * @param array<mixed> $value Array to format
+     * @return string Formatted array string
+     */
+    protected function formatArray(array $value): string
+    {
+        try {
+            return json_encode($value, JSON_THROW_ON_ERROR);
+        } catch (JsonException) {
+            // Fallback for arrays with unserializable values
+            return '[' . implode(', ', array_map($this->formatValue(...), $value)) . ']';
+        }
     }
 }

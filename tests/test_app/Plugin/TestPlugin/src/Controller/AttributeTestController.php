@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace TestPlugin\Controller;
 
-use TestApp\Attribute\TestRoute;
+use TestApp\Attribute\Resolver\TestRoute;
 
 #[TestRoute('/plugin')]
 class AttributeTestController

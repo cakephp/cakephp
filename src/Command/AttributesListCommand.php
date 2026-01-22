@@ -177,19 +177,6 @@ class AttributesListCommand extends Command
     }
 
     /**
-     * Get short class name (without namespace)
-     *
-     * @param string $className Full class name
-     * @return string Short class name
-     */
-    protected function getShortClassName(string $className): string
-    {
-        $parts = explode('\\', $className);
-
-        return end($parts);
-    }
-
-    /**
      * Get display value for target column
      *
      * For class targets, returns FQDN. For other targets (methods, properties, etc.),

@@ -90,7 +90,7 @@ class ScannerTest extends TestCase
         $results = iterator_to_array($scanner->scanAll(), false);
 
         foreach ($results as $result) {
-            $this->assertNotSame('TestApp\\Attribute\\TestRoute', $result->attributeName);
+            $this->assertNotSame('TestApp\\Attribute\\Resolver\\TestRoute', $result->attributeName);
         }
     }
 

@@ -103,6 +103,12 @@ class Resolver
     public static function clear(string $name = 'default'): bool
     {
         $config = static::getConfig($name);
+        if ($config === null) {
+            throw new InvalidArgumentException(sprintf(
+                'Attribute resolver configuration "%s" does not exist.',
+                $name,
+            ));
+        }
         $cache = static::getCache($config);
 
         unset(static::$collections[$name]);
@@ -138,9 +144,9 @@ class Resolver
     public static function warm(string $name = 'default'): bool
     {
         static::clear($name);
-        $collection = static::collection($name);
+        static::collection($name);
 
-        return $collection->count() >= 0;
+        return true;
     }
 
     /**
