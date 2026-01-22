@@ -74,7 +74,7 @@ class LinkProvider implements EvolvableLinkProviderInterface
     {
         return array_filter(
             $this->links,
-            fn (LinkInterface $link): bool => in_array($rel, $link->getRels(), true)
+            fn(LinkInterface $link): bool => in_array($rel, $link->getRels(), true),
         );
     }
 
@@ -105,7 +105,7 @@ class LinkProvider implements EvolvableLinkProviderInterface
         $new = clone $this;
         $new->links = array_values(array_filter(
             $new->links,
-            fn (LinkInterface $l): bool => $l !== $link
+            fn(LinkInterface $l): bool => $l !== $link,
         ));
 
         return $new;

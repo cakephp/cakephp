@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Http\Link;
 
 use Psr\Link\EvolvableLinkInterface;
+use Stringable;
 
 /**
  * PSR-13 Link implementation.
@@ -98,7 +99,7 @@ class Link implements EvolvableLinkInterface
     /**
      * @inheritDoc
      */
-    public function withHref(string|\Stringable $href): static
+    public function withHref(string|Stringable $href): static
     {
         $new = clone $this;
         $new->href = (string)$href;
@@ -127,7 +128,7 @@ class Link implements EvolvableLinkInterface
         $new = clone $this;
         $new->rels = array_values(array_filter(
             $new->rels,
-            fn (string $r): bool => $r !== $rel
+            fn(string $r): bool => $r !== $rel,
         ));
 
         return $new;
@@ -136,10 +137,10 @@ class Link implements EvolvableLinkInterface
     /**
      * @inheritDoc
      */
-    public function withAttribute(string $attribute, string|\Stringable|int|float|bool|array $value): static
+    public function withAttribute(string $attribute, string|Stringable|int|float|bool|array $value): static
     {
         $new = clone $this;
-        $new->attributes[$attribute] = $value instanceof \Stringable ? (string)$value : $value;
+        $new->attributes[$attribute] = $value instanceof Stringable ? (string)$value : $value;
 
         return $new;
     }
