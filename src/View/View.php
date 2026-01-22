@@ -71,8 +71,7 @@ use function Cake\Core\pluginSplit;
  * @property \Cake\View\Helper\TimeHelper $Time
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\ViewBlock $Blocks
- * @template TSubject of \Cake\View\View
- * @implements \Cake\Event\EventDispatcherInterface<TSubject>
+ * @implements \Cake\Event\EventDispatcherInterface<static>
  */
 class View implements EventDispatcherInterface
 {
@@ -80,7 +79,7 @@ class View implements EventDispatcherInterface
         cell as public;
     }
     /**
-     * @use \Cake\Event\EventDispatcherTrait<TSubject>
+     * @use \Cake\Event\EventDispatcherTrait<static>
      */
     use EventDispatcherTrait;
     use InstanceConfigTrait;
@@ -1114,7 +1113,6 @@ class View implements EventDispatcherInterface
      *
      * @param string $name Name of the attribute to get.
      * @return \Cake\View\Helper<\Cake\View\View>|null
-     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     public function __get(string $name): ?Helper
     {
@@ -1248,11 +1246,10 @@ class View implements EventDispatcherInterface
      * @param array<string, mixed> $config Settings for the helper
      * @return \Cake\View\Helper<\Cake\View\View> a constructed helper object.
      * @see \Cake\View\HelperRegistry::load()
-     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     public function loadHelper(string $name, array $config = []): Helper
     {
-        /** @var \Cake\View\Helper<\Cake\View\View> @phpstan-ignore missingType.generics */
+        /** @var \Cake\View\Helper<\Cake\View\View> */
         return $this->helpers()->load($name, $config);
     }
 

@@ -73,7 +73,7 @@ interface CollectionInterface extends Iterator, JsonSerializable, Countable
      * @param callable|null $callback A callback receiving `($value, $key, $iterator)` that
      *   returns true if the element should be included in the resulting collection.
      *   If left null, a callback that filters out falsey values will be used.
-     * @return \Cake\Collection\CollectionInterface<TKey, TValue>
+     * @return self
      */
     public function filter(?callable $callback = null): CollectionInterface;
 
