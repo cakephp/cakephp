@@ -61,9 +61,9 @@ class CacheItemPool implements CacheItemPoolInterface
     /**
      * Constructor.
      *
-     * @param \Cake\Cache\CacheEngineInterface&\Psr\SimpleCache\CacheInterface|string $cache Cache config name or engine instance.
+     * @param (\Cake\Cache\CacheEngineInterface&\Psr\SimpleCache\CacheInterface)|string $cache Cache config name or engine instance.
      */
-    public function __construct(CacheEngineInterface&CacheInterface|string $cache = 'default')
+    public function __construct((CacheEngineInterface&CacheInterface)|string $cache = 'default')
     {
         if (is_string($cache)) {
             $this->engine = Cache::pool($cache);
