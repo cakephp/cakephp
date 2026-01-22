@@ -17,11 +17,9 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\Cache\Psr6;
 
 use Cake\Cache\Cache;
-use Cake\Cache\Psr6\CacheItem;
 use Cake\Cache\Psr6\CacheItemPool;
 use Cake\Cache\Psr6\InvalidArgumentException;
 use Cake\TestSuite\TestCase;
-use DateInterval;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
 
@@ -96,7 +94,7 @@ class CacheItemPoolTest extends TestCase
         $items = $pool->getItems(['key1', 'key2', 'key3']);
 
         $this->assertCount(3, $items);
-        foreach ($items as $key => $item) {
+        foreach ($items as $item) {
             $this->assertInstanceOf(CacheItemInterface::class, $item);
             $this->assertFalse($item->isHit());
         }

@@ -21,6 +21,7 @@ use Cake\TestSuite\TestCase;
 use DateInterval;
 use DateTimeImmutable;
 use Psr\Cache\CacheItemInterface;
+use stdClass;
 
 /**
  * CacheItemTest class
@@ -92,7 +93,7 @@ class CacheItemTest extends TestCase
         $item->set(null);
         $this->assertNull($item->get());
 
-        $obj = new \stdClass();
+        $obj = new stdClass();
         $item->set($obj);
         $this->assertSame($obj, $item->get());
     }
@@ -126,7 +127,6 @@ class CacheItemTest extends TestCase
     public function testExpiresAfterInt(): void
     {
         $item = new CacheItem('key');
-        $before = time();
 
         $result = $item->expiresAfter(3600);
         $this->assertSame($item, $result);

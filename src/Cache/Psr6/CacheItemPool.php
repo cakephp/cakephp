@@ -17,9 +17,10 @@ declare(strict_types=1);
 namespace Cake\Cache\Psr6;
 
 use Cake\Cache\Cache;
-use Cake\Cache\CacheEngine;
+use Cake\Cache\CacheEngineInterface;
 use Psr\Cache\CacheItemInterface;
 use Psr\Cache\CacheItemPoolInterface;
+use Psr\SimpleCache\CacheInterface;
 
 /**
  * PSR-6 CacheItemPool implementation.
@@ -45,8 +46,10 @@ class CacheItemPool implements CacheItemPoolInterface
 {
     /**
      * The underlying cache engine.
+     *
+     * @var \Cake\Cache\CacheEngineInterface&\Psr\SimpleCache\CacheInterface
      */
-    private CacheEngine $engine;
+    private CacheEngineInterface&CacheInterface $engine;
 
     /**
      * Deferred cache items waiting to be committed.
@@ -58,9 +61,9 @@ class CacheItemPool implements CacheItemPoolInterface
     /**
      * Constructor.
      *
-     * @param string|\Cake\Cache\CacheEngine $cache Cache config name or engine instance.
+     * @param \Cake\Cache\CacheEngineInterface&\Psr\SimpleCache\CacheInterface|string $cache Cache config name or engine instance.
      */
-    public function __construct(string|CacheEngine $cache = 'default')
+    public function __construct(CacheEngineInterface&CacheInterface|string $cache = 'default')
     {
         if (is_string($cache)) {
             $this->engine = Cache::pool($cache);
