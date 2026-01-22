@@ -73,7 +73,9 @@ class ListenerProviderTest extends TestCase
         $provider->addListener(stdClass::class, $listener);
 
         // ExtendedClass extends stdClass
-        $event = new class extends stdClass {};
+        $event = new class extends stdClass
+        {
+        };
 
         $listeners = iterator_to_array($provider->getListenersForEvent($event));
 
@@ -142,7 +144,9 @@ class ListenerProviderTest extends TestCase
      */
     public function testClearListenersForEvent(): void
     {
-        $testEvent = new class {};
+        $testEvent = new class
+        {
+        };
         $testEventClass = $testEvent::class;
 
         $provider = new ListenerProvider();
@@ -160,7 +164,9 @@ class ListenerProviderTest extends TestCase
      */
     public function testClearListenersAll(): void
     {
-        $testEvent = new class {};
+        $testEvent = new class
+        {
+        };
         $testEventClass = $testEvent::class;
 
         $provider = new ListenerProvider();

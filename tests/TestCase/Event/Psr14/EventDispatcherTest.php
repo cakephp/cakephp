@@ -104,7 +104,8 @@ class EventDispatcherTest extends TestCase
     {
         $order = [];
 
-        $event = new class implements StoppableEventInterface {
+        $event = new class implements StoppableEventInterface
+        {
             use StoppableEventTrait;
         };
         $eventClass = $event::class;
