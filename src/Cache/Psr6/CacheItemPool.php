@@ -221,7 +221,7 @@ class CacheItemPool implements CacheItemPoolInterface
         // PSR-6 reserved characters
         if (preg_match('/[{}()\/\\\\@:]/', $key)) {
             throw new InvalidArgumentException(
-                'Cache key contains reserved characters: {}()/\\@:'
+                'Cache key contains reserved characters: {}()/\\@:',
             );
         }
     }

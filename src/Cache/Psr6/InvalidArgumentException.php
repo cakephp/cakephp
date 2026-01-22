@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Cache\Psr6;
 
+use InvalidArgumentException as BaseInvalidArgumentException;
 use Psr\Cache\InvalidArgumentException as Psr6InvalidArgumentException;
 
 /**
@@ -23,6 +24,6 @@ use Psr\Cache\InvalidArgumentException as Psr6InvalidArgumentException;
  *
  * Thrown when an invalid cache key is provided.
  */
-class InvalidArgumentException extends \InvalidArgumentException implements Psr6InvalidArgumentException
+class InvalidArgumentException extends BaseInvalidArgumentException implements Psr6InvalidArgumentException
 {
 }
