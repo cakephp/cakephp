@@ -615,9 +615,8 @@ class ViewBuilder implements JsonSerializable
      * @param \Cake\Http\ServerRequest|null $request The request to use.
      * @param \Cake\Http\Response|null $response The response to use.
      * @param \Cake\Event\EventManagerInterface|null $events The event manager to use.
-     * @return \Cake\View\View<\Cake\View\View>
+     * @return \Cake\View\View
      * @throws \Cake\View\Exception\MissingViewException
-     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     public function build(
         ?ServerRequest $request = null,
@@ -649,7 +648,7 @@ class ViewBuilder implements JsonSerializable
         ];
         $data += $this->_options;
 
-        /** @var \Cake\View\View<\Cake\View\View> @phpstan-ignore missingType.generics */
+        /** @var \Cake\View\View */
         return new $className($request, $response, $events, $data);
     }
 

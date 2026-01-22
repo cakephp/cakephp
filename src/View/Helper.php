@@ -64,21 +64,20 @@ class Helper implements EventListenerInterface
      * Loaded helper instances.
      *
      * @var array<string, \Cake\View\Helper<\Cake\View\View>>
-     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     protected array $helperInstances = [];
 
     /**
      * The View instance this helper is attached to
      *
-     * @var \Cake\View\View<TView>
+     * @var TView
      */
     protected View $_View;
 
     /**
      * Default Constructor
      *
-     * @param \Cake\View\View<TView> $view The View this helper is being attached to.
+     * @param TView $view The View this helper is being attached to.
      * @param array<string, mixed> $config Configuration settings for the helper.
      */
     public function __construct(View $view, array $config = [])
@@ -98,7 +97,6 @@ class Helper implements EventListenerInterface
      *
      * @param string $name Name of the property being accessed.
      * @return \Cake\View\Helper<\Cake\View\View>|null Helper instance if helper with provided name exists
-     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     public function __get(string $name): ?Helper
     {
@@ -118,7 +116,7 @@ class Helper implements EventListenerInterface
     /**
      * Get the view instance this helper is bound to.
      *
-     * @return \Cake\View\View<TView> The bound view instance.
+     * @return TView The bound view instance.
      */
     public function getView(): View
     {
