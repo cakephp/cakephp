@@ -52,7 +52,7 @@ class Link implements EvolvableLinkInterface
      * Constructor.
      *
      * @param string $href The link URI.
-     * @param string|array<string> $rels The link relation(s).
+     * @param array<string>|string $rels The link relation(s).
      * @param array<string, string|bool|int|float|array<string>> $attributes Additional attributes.
      */
     public function __construct(
