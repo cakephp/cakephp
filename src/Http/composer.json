@@ -1,11 +1,12 @@
 {
     "name": "cakephp/http",
-    "description": "CakePHP HTTP client and PSR-7, PSR-15, PSR-17, PSR-18 compliant libraries",
+    "description": "CakePHP HTTP client and PSR-7, PSR-13, PSR-15, PSR-17, PSR-18 compliant libraries",
     "type": "library",
     "keywords": [
         "cakephp",
         "http",
         "PSR-7",
+        "PSR-13",
         "PSR-15",
         "PSR-17",
         "PSR-18"
@@ -35,6 +36,7 @@
         "psr/http-message": "^1.1 || ^2.0",
         "psr/http-server-handler": "^1.0.2",
         "psr/http-server-middleware": "^1.0.2",
+        "psr/link": "^2.0",
         "laminas/laminas-diactoros": "^3.8",
         "laminas/laminas-httphandlerrunner": "^2.6"
     },
@@ -54,7 +56,8 @@
         "psr/http-client-implementation": "^1.0",
         "psr/http-factory-implementation": "^1.1",
         "psr/http-server-handler-implementation": "^1.0",
-        "psr/http-server-middleware-implementation": "^1.0"
+        "psr/http-server-middleware-implementation": "^1.0",
+        "psr/link-implementation": "^2.0"
     },
     "suggest": {
         "cakephp/cache": "To use cache session storage",
