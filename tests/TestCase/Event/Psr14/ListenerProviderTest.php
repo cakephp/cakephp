@@ -51,7 +51,7 @@ class ListenerProviderTest extends TestCase
      */
     public function testAddListenerAndGetListeners(): void
     {
-        $listener = function (stdClass $event) {
+        $listener = function (stdClass $event): void {
         };
 
         $provider = new ListenerProvider();
@@ -68,7 +68,7 @@ class ListenerProviderTest extends TestCase
      */
     public function testListenersMatchParentClasses(): void
     {
-        $listener = function (object $event) {
+        $listener = function (object $event): void {
         };
 
         $provider = new ListenerProvider();
@@ -89,11 +89,11 @@ class ListenerProviderTest extends TestCase
      */
     public function testPriorityOrdering(): void
     {
-        $listener1 = function () {
+        $listener1 = function (): void {
         };
-        $listener2 = function () {
+        $listener2 = function (): void {
         };
-        $listener3 = function () {
+        $listener3 = function (): void {
         };
 
         $provider = new ListenerProvider();
@@ -113,9 +113,9 @@ class ListenerProviderTest extends TestCase
      */
     public function testRemoveListener(): void
     {
-        $listener1 = function () {
+        $listener1 = function (): void {
         };
-        $listener2 = function () {
+        $listener2 = function (): void {
         };
 
         $provider = new ListenerProvider();
@@ -134,9 +134,9 @@ class ListenerProviderTest extends TestCase
      */
     public function testRemoveListenerNotFound(): void
     {
-        $listener1 = function () {
+        $listener1 = function (): void {
         };
-        $listener2 = function () {
+        $listener2 = function (): void {
         };
 
         $provider = new ListenerProvider();
@@ -161,12 +161,12 @@ class ListenerProviderTest extends TestCase
         $provider = new ListenerProvider();
         $provider->addListener(
             stdClass::class,
-            function () {
+            function (): void {
             },
         );
         $provider->addListener(
             $testEventClass,
-            function () {
+            function (): void {
             },
         );
 
@@ -189,12 +189,12 @@ class ListenerProviderTest extends TestCase
         $provider = new ListenerProvider();
         $provider->addListener(
             stdClass::class,
-            function () {
+            function (): void {
             },
         );
         $provider->addListener(
             $testEventClass,
-            function () {
+            function (): void {
             },
         );
 
@@ -215,7 +215,7 @@ class ListenerProviderTest extends TestCase
 
         $provider->addListener(
             stdClass::class,
-            function () {
+            function (): void {
             },
         );
 
@@ -228,7 +228,7 @@ class ListenerProviderTest extends TestCase
     public function testFluentInterface(): void
     {
         $provider = new ListenerProvider();
-        $listener = function () {
+        $listener = function (): void {
         };
 
         $result = $provider

@@ -49,7 +49,7 @@ class EventDispatcherTest extends TestCase
         $provider = new ListenerProvider();
         $provider->addListener(
             stdClass::class,
-            function (stdClass $event) use (&$called) {
+            function (stdClass $event) use (&$called): void {
                 $called = true;
             },
         );
@@ -85,21 +85,21 @@ class EventDispatcherTest extends TestCase
         $provider = new ListenerProvider();
         $provider->addListener(
             stdClass::class,
-            function () use (&$order) {
+            function () use (&$order): void {
                 $order[] = 'first';
             },
             10,
         );
         $provider->addListener(
             stdClass::class,
-            function () use (&$order) {
+            function () use (&$order): void {
                 $order[] = 'second';
             },
             5,
         );
         $provider->addListener(
             stdClass::class,
-            function () use (&$order) {
+            function () use (&$order): void {
                 $order[] = 'third';
             },
             15,
@@ -128,7 +128,7 @@ class EventDispatcherTest extends TestCase
         $provider = new ListenerProvider();
         $provider->addListener(
             $eventClass,
-            function (StoppableEventInterface $event) use (&$order) {
+            function (StoppableEventInterface $event) use (&$order): void {
                 $order[] = 'first';
                 $event->stopPropagation();
             },
@@ -136,7 +136,7 @@ class EventDispatcherTest extends TestCase
         );
         $provider->addListener(
             $eventClass,
-            function () use (&$order) {
+            function () use (&$order): void {
                 $order[] = 'second';
             },
             5,
