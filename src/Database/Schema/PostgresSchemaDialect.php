@@ -696,7 +696,10 @@ class PostgresSchemaDialect extends SchemaDialect
         if ($column['type'] === TableSchemaInterface::TYPE_TEXT && $column['length'] !== TableSchema::LENGTH_TINY) {
             $out .= ' TEXT';
         }
-        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
+        if (
+            $column['type'] === TableSchemaInterface::TYPE_BINARY ||
+            $column['type'] === TableSchemaInterface::TYPE_VARBINARY
+        ) {
             $out .= ' BYTEA';
         }
 

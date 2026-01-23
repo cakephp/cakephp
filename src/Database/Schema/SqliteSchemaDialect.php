@@ -795,7 +795,10 @@ class SqliteSchemaDialect extends SchemaDialect
             }
         }
 
-        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
+        if (
+            $column['type'] === TableSchemaInterface::TYPE_BINARY ||
+            $column['type'] === TableSchemaInterface::TYPE_VARBINARY
+        ) {
             if (isset($column['length'])) {
                 $out .= ' BLOB(' . $column['length'] . ')';
             } else {

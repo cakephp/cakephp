@@ -37,6 +37,7 @@ class TypeFactory
         'integer' => Type\IntegerType::class,
         'biginteger' => Type\IntegerType::class,
         'binary' => Type\BinaryType::class,
+        'varbinary' => Type\BinaryType::class,
         'binaryuuid' => Type\BinaryUuidType::class,
         'boolean' => Type\BoolType::class,
         'date' => Type\DateType::class,

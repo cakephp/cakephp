@@ -376,11 +376,14 @@ class MysqlSchemaDialect extends SchemaDialect
         if ($col === 'uuid') {
             return ['type' => TableSchemaInterface::TYPE_NATIVE_UUID, 'length' => null];
         }
-        if (str_contains($col, 'blob') || in_array($col, ['binary', 'varbinary'])) {
+        if (str_contains($col, 'blob') || $col === 'binary') {
             $lengthName = substr($col, 0, -4);
             $length = TableSchema::$columnLengths[$lengthName] ?? $length;
 
             return ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
+        }
+        if ($col === 'varbinary') {
+            return ['type' => TableSchemaInterface::TYPE_VARBINARY, 'length' => $length];
         }
         if (str_contains($col, 'float') || str_contains($col, 'double')) {
             return [
@@ -645,6 +648,7 @@ class MysqlSchemaDialect extends SchemaDialect
             'text' => true,
             'char' => true,
             'binary' => true,
+            'varbinary' => true,
         ];
         if (isset($typeMap[$column['type']])) {
             $out .= $typeMap[$column['type']];
@@ -683,11 +687,15 @@ class MysqlSchemaDialect extends SchemaDialect
                         break;
                     }
 
-                    if ($column['length'] > 2) {
-                        $out .= ' VARBINARY(' . $column['length'] . ')';
-                    } else {
-                        $out .= ' BINARY(' . $column['length'] . ')';
+                    $out .= ' BINARY(' . $column['length'] . ')';
+                    break;
+                case TableSchemaInterface::TYPE_VARBINARY:
+                    if (empty($column['length'])) {
+                        $out .= ' BLOB';
+                        break;
                     }
+
+                    $out .= ' VARBINARY(' . $column['length'] . ')';
                     break;
             }
         }
@@ -771,7 +779,12 @@ class MysqlSchemaDialect extends SchemaDialect
 
         $defaultExpressionTypes = array_merge(
             TableSchemaInterface::GEOSPATIAL_TYPES,
-            [TableSchemaInterface::TYPE_BINARY, TableSchemaInterface::TYPE_TEXT, TableSchemaInterface::TYPE_JSON],
+            [
+                TableSchemaInterface::TYPE_BINARY,
+                TableSchemaInterface::TYPE_VARBINARY,
+                TableSchemaInterface::TYPE_TEXT,
+                TableSchemaInterface::TYPE_JSON,
+            ],
         );
         if (in_array($column['type'], $defaultExpressionTypes) && isset($column['default'])) {
             // Geospatial, blob and text types need to be wrapped in () to create an expression.

@@ -155,6 +155,14 @@ class MysqlSchemaDialectTest extends TestCase
                 ['type' => 'binary', 'length' => 1],
             ],
             [
+                'BINARY(20)',
+                ['type' => 'binary', 'length' => 20],
+            ],
+            [
+                'VARBINARY(20)',
+                ['type' => 'varbinary', 'length' => 20],
+            ],
+            [
                 'TEXT',
                 ['type' => 'text', 'length' => null, 'collate' => 'utf8_general_ci'],
             ],
@@ -976,12 +984,17 @@ SQL;
             [
                 'bytes',
                 ['type' => 'binary', 'length' => 5],
+                '`bytes` BINARY(5)',
+            ],
+            [
+                'bytes',
+                ['type' => 'varbinary', 'length' => 5],
                 '`bytes` VARBINARY(5)',
             ],
             [
-                'bit',
-                ['type' => 'binary', 'length' => 1],
-                '`bit` BINARY(1)',
+                'bytes',
+                ['type' => 'varbinary'],
+                '`bytes` BLOB',
             ],
             // Integers
             [

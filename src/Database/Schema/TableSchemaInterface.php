@@ -24,11 +24,18 @@ use Cake\Datasource\SchemaInterface;
 interface TableSchemaInterface extends SchemaInterface
 {
     /**
-     * Binary column type
+     * Binary column type (fixed-length)
      *
      * @var string
      */
     public const TYPE_BINARY = 'binary';
+
+    /**
+     * Variable binary column type
+     *
+     * @var string
+     */
+    public const TYPE_VARBINARY = 'varbinary';
 
     /**
      * Binary UUID column type

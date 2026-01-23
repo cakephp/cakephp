@@ -674,7 +674,10 @@ class SqlserverSchemaDialect extends SchemaDialect
             $out .= '(' . $column['length'] . ')';
         }
 
-        if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
+        if (
+            $column['type'] === TableSchemaInterface::TYPE_BINARY ||
+            $column['type'] === TableSchemaInterface::TYPE_VARBINARY
+        ) {
             if (
                 !isset($column['length'])
                 || in_array($column['length'], [TableSchema::LENGTH_MEDIUM, TableSchema::LENGTH_LONG], true)
@@ -682,12 +685,10 @@ class SqlserverSchemaDialect extends SchemaDialect
                 $column['length'] = 'MAX';
             }
 
-            if ($column['length'] === 1) {
-                $out .= ' BINARY(1)';
+            if ($column['type'] === TableSchemaInterface::TYPE_BINARY && $column['length'] !== 'MAX') {
+                $out .= sprintf(' BINARY(%s)', $column['length']);
             } else {
-                $out .= ' VARBINARY';
-
-                $out .= sprintf('(%s)', $column['length']);
+                $out .= sprintf(' VARBINARY(%s)', $column['length']);
             }
         }
 
