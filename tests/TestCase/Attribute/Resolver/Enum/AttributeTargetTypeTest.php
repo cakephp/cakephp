@@ -36,7 +36,7 @@ class AttributeTargetTypeTest extends TestCase
         $this->assertContains(AttributeTargetType::METHOD, $cases);
         $this->assertContains(AttributeTargetType::PROPERTY, $cases);
         $this->assertContains(AttributeTargetType::PARAMETER, $cases);
-        $this->assertContains(AttributeTargetType::CLASS_CONSTANT, $cases);
+        $this->assertContains(AttributeTargetType::CONSTANT, $cases);
     }
 
     /**
@@ -48,7 +48,7 @@ class AttributeTargetTypeTest extends TestCase
         $this->assertSame('method', AttributeTargetType::METHOD->value);
         $this->assertSame('property', AttributeTargetType::PROPERTY->value);
         $this->assertSame('parameter', AttributeTargetType::PARAMETER->value);
-        $this->assertSame('class_constant', AttributeTargetType::CLASS_CONSTANT->value);
+        $this->assertSame('constant', AttributeTargetType::CONSTANT->value);
     }
 
     /**
@@ -60,7 +60,7 @@ class AttributeTargetTypeTest extends TestCase
         $this->assertSame(AttributeTargetType::METHOD, AttributeTargetType::from('method'));
         $this->assertSame(AttributeTargetType::PROPERTY, AttributeTargetType::from('property'));
         $this->assertSame(AttributeTargetType::PARAMETER, AttributeTargetType::from('parameter'));
-        $this->assertSame(AttributeTargetType::CLASS_CONSTANT, AttributeTargetType::from('class_constant'));
+        $this->assertSame(AttributeTargetType::CONSTANT, AttributeTargetType::from('constant'));
     }
 
     /**

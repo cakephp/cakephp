@@ -100,7 +100,7 @@ class ParserTest extends TestCase
         $this->assertCount(2, $results);
 
         foreach ($results as $result) {
-            $this->assertSame(AttributeTargetType::CLASS_CONSTANT, $result->target->type);
+            $this->assertSame(AttributeTargetType::CONSTANT, $result->target->type);
             $this->assertSame('TestApp\\Attribute\\Resolver\\TestStatus', $result->attributeName);
         }
     }
@@ -342,7 +342,7 @@ class ParserTest extends TestCase
         $this->assertCount(1, $enumAttrs);
 
         // Enum cases are treated as class constants
-        $caseAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_CONSTANT);
+        $caseAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CONSTANT);
         $this->assertCount(2, $caseAttrs);
     }
 

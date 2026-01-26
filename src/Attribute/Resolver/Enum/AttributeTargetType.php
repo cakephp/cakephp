@@ -51,5 +51,5 @@ enum AttributeTargetType: string
     /**
      * Attribute attached to a class constant
      */
-    case CLASS_CONSTANT = 'class_constant';
+    case CONSTANT = 'constant';
 }

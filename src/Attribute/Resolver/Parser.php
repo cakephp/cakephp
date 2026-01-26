@@ -418,7 +418,7 @@ class Parser
         ?string $pluginName,
     ): Generator {
         $target = new AttributeTarget(
-            AttributeTargetType::CLASS_CONSTANT,
+            AttributeTargetType::CONSTANT,
             $constant->getName(),
             $className,
         );
