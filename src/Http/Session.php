@@ -381,18 +381,18 @@ class Session
     /**
      * Write data and close the session
      *
-     * @return true
+     * @return void
      */
-    public function close(): bool
+    public function close(): void
     {
         if (!$this->started) {
-            return true;
+            return;
         }
 
         if ($this->isCLI) {
             $this->started = false;
 
-            return true;
+            return;
         }
 
         if (!session_write_close()) {
@@ -400,8 +400,6 @@ class Session
         }
 
         $this->started = false;
-
-        return true;
     }
 
     /**
