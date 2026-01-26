@@ -43,7 +43,6 @@ class AttributesListCommandTest extends TestCase
             'basePath' => APP,
             'excludePaths' => [],
             'excludeAttributes' => [],
-            'artifact' => null,
         ]);
     }
 
@@ -153,7 +152,6 @@ class AttributesListCommandTest extends TestCase
         Resolver::setConfig('emptylist', [
             'paths' => ['*.php'],
             'basePath' => $emptyDir,
-            'artifact' => null,
         ]);
 
         $this->exec('attributes list --config emptylist');
@@ -178,7 +176,6 @@ class AttributesListCommandTest extends TestCase
         Resolver::setConfig('emptylist2', [
             'paths' => ['*.php'],
             'basePath' => $emptyDir,
-            'artifact' => null,
         ]);
 
         $this->exec('attributes list --config emptylist2');
@@ -353,7 +350,6 @@ class AttributesListCommandTest extends TestCase
         Resolver::setConfig('custom', [
             'paths' => ['Attribute/Resolver/Fixture/*.php'],
             'basePath' => APP,
-            'artifact' => null,
         ]);
 
         $this->exec('attributes list --config custom');

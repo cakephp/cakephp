@@ -43,7 +43,6 @@ class AttributesInspectCommandTest extends TestCase
             'basePath' => APP,
             'excludePaths' => [],
             'excludeAttributes' => [],
-            'artifact' => null,
         ]);
     }
 
@@ -336,7 +335,6 @@ class AttributesInspectCommandTest extends TestCase
         Resolver::setConfig('custom', [
             'paths' => ['Attribute/Resolver/Fixture/*.php'],
             'basePath' => APP,
-            'artifact' => null,
         ]);
 
         $this->exec('attributes inspect TestRoute --config custom');
