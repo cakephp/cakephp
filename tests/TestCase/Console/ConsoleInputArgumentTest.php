@@ -151,7 +151,7 @@ class ConsoleInputArgumentTest extends TestCase
     /**
      * Test valid choice empty.
      */
-    public function testValiddateChoiceFail(): void
+    public function testValidateChoiceFail(): void
     {
         $input = new ConsoleInputArgument(
             'color',
