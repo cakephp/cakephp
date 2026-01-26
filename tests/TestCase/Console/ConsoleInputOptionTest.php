@@ -178,10 +178,11 @@ class ConsoleInputOptionTest extends TestCase
     }
 
     /**
-     * Test valid choice empty.
+     * Test validate choice empty.
      */
-    public function testValidChoiceEmpty(): void
+    public function testValidateChoiceEmpty(): void
     {
+        $this->expectNotToPerformAssertions();
         $input = new ConsoleInputOption(
             'color',
             '',
@@ -190,13 +191,13 @@ class ConsoleInputOptionTest extends TestCase
             '',
             [],
         );
-        $this->assertTrue($input->validChoice('yellow'));
+        $input->validateChoice('yellow');
     }
 
     /**
-     * Test valid choice empty.
+     * Test validate choice empty.
      */
-    public function testValidChoiceFail(): void
+    public function testValidateChoiceFail(): void
     {
         $input = new ConsoleInputOption(
             'color',
@@ -208,14 +209,15 @@ class ConsoleInputOptionTest extends TestCase
         );
         $this->expectException(ConsoleException::class);
         $this->expectExceptionMessage('`yellow` is not a valid value for `--color`. Please use one of `red|blue`');
-        $input->validChoice('yellow');
+        $input->validateChoice('yellow');
     }
 
     /**
-     * Test valid choice.
+     * Test validate choice.
      */
-    public function testValidChoiceSuccess(): void
+    public function testValidateChoiceSuccess(): void
     {
+        $this->expectNotToPerformAssertions();
         $input = new ConsoleInputOption(
             'color',
             '',
@@ -224,13 +226,13 @@ class ConsoleInputOptionTest extends TestCase
             '',
             ['red', 'blue'],
         );
-        $this->assertTrue($input->validChoice('red'));
+        $input->validateChoice('red');
     }
 
     /**
-     * Test valid choice strict.
+     * Test validate choice strict.
      */
-    public function testValidChoiceStrict(): void
+    public function testValidateChoiceStrict(): void
     {
         $input = new ConsoleInputOption(
             'color',
@@ -241,13 +243,13 @@ class ConsoleInputOptionTest extends TestCase
             ['1', '0'],
         );
         $this->expectException(ConsoleException::class);
-        $input->validChoice(true);
+        $input->validateChoice(true);
     }
 
     /**
      * @return array
      */
-    public static function dataValidChoiceSeparatorSuccess(): array
+    public static function dataValidateChoiceSeparatorSuccess(): array
     {
         return [
             [['red', 'blue', 'green'], null, false, 'blue'],
@@ -266,9 +268,11 @@ class ConsoleInputOptionTest extends TestCase
      * @param bool $isBoolean
      * @param string $value
      */
-    #[DataProvider('dataValidChoiceSeparatorSuccess')]
-    public function testValidChoiceSeparatorSuccess(array $choices, ?string $separator, bool $isBoolean, string $value): void
+    #[DataProvider('dataValidateChoiceSeparatorSuccess')]
+    public function testValidateChoiceSeparatorSuccess(array $choices, ?string $separator, bool $isBoolean, string $value): void
     {
+        $this->expectNotToPerformAssertions();
+
         $input = new ConsoleInputOption(
             'colors',
             '',
@@ -282,11 +286,10 @@ class ConsoleInputOptionTest extends TestCase
             $separator,
         );
 
-        $success = $input->validChoice($value);
-        $this->assertTrue($success);
+        $input->validateChoice($value);
     }
 
-    public static function dataValidChoiceSeparatorFail(): array
+    public static function dataValidateChoiceSeparatorFail(): array
     {
         return [
             [['red', 'blue', 'green'], null, false, 'blue,yellow'],
@@ -303,8 +306,8 @@ class ConsoleInputOptionTest extends TestCase
      * @param bool $isBoolean
      * @param string $value
      */
-    #[DataProvider('dataValidChoiceSeparatorFail')]
-    public function testValidChoiceSeparatorFail(array $choices, ?string $separator, bool $isBoolean, string $value): void
+    #[DataProvider('dataValidateChoiceSeparatorFail')]
+    public function testValidateChoiceSeparatorFail(array $choices, ?string $separator, bool $isBoolean, string $value): void
     {
         $input = new ConsoleInputOption(
             'colors',
@@ -320,7 +323,7 @@ class ConsoleInputOptionTest extends TestCase
         );
 
         $this->expectException(ConsoleException::class);
-        $input->validChoice($value);
+        $input->validateChoice($value);
     }
 
     /**

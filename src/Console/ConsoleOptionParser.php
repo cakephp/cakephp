@@ -784,7 +784,7 @@ class ConsoleOptionParser
             $value = (string)$option->defaultValue();
         }
 
-        $option->validChoice($value);
+        $option->validateChoice($value);
         if ($option->acceptsMultiple()) {
             $values = [$value];
             if (is_string($value) && $option->separator()) {
@@ -844,7 +844,7 @@ class ConsoleOptionParser
 
         $arg = $this->args[$next];
 
-        $arg->validChoice($argument);
+        $arg->validateChoice($argument);
         if ($arg->separator()) {
             $args[] = explode($arg->separator(), $argument);
         } else {

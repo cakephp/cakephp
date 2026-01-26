@@ -136,21 +136,22 @@ class ConsoleInputArgumentTest extends TestCase
     /**
      * Test valid choice empty.
      */
-    public function testValidChoiceEmpty(): void
+    public function testValidateChoiceEmpty(): void
     {
+        $this->expectNotToPerformAssertions();
         $input = new ConsoleInputArgument(
             'color',
             '',
             false,
             [],
         );
-        $this->assertTrue($input->validChoice('yellow'));
+        $input->validateChoice('yellow');
     }
 
     /**
      * Test valid choice empty.
      */
-    public function testValidChoiceFail(): void
+    public function testValiddateChoiceFail(): void
     {
         $input = new ConsoleInputArgument(
             'color',
@@ -160,27 +161,28 @@ class ConsoleInputArgumentTest extends TestCase
         );
         $this->expectException(ConsoleException::class);
         $this->expectExceptionMessage('`yellow` is not a valid value for `color`. Please use one of `red|blue`');
-        $input->validChoice('yellow');
+        $input->validateChoice('yellow');
     }
 
     /**
      * Test valid choice.
      */
-    public function testValidChoiceSuccess(): void
+    public function testValidateChoiceSuccess(): void
     {
+        $this->expectNotToPerformAssertions();
         $input = new ConsoleInputArgument(
             'color',
             '',
             false,
             ['red', 'blue'],
         );
-        $this->assertTrue($input->validChoice('red'));
+        $input->validateChoice('red');
     }
 
     /**
      * @return array
      */
-    public static function dataValidChoiceSeparatorSuccess(): array
+    public static function dataValidateChoiceSeparatorSuccess(): array
     {
         return [
             [['red', 'blue', 'green'], null, 'blue'],
@@ -196,9 +198,10 @@ class ConsoleInputArgumentTest extends TestCase
      * @param string|null $separator
      * @param string $value
      */
-    #[DataProvider('dataValidChoiceSeparatorSuccess')]
-    public function testValidChoiceSeparatorSuccess(array $choices, ?string $separator, string $value): void
+    #[DataProvider('dataValidateChoiceSeparatorSuccess')]
+    public function testValidateChoiceSeparatorSuccess(array $choices, ?string $separator, string $value): void
     {
+        $this->expectNotToPerformAssertions();
         $input = new ConsoleInputArgument(
             'colors',
             '',
@@ -208,11 +211,10 @@ class ConsoleInputArgumentTest extends TestCase
             $separator,
         );
 
-        $success = $input->validChoice($value);
-        $this->assertTrue($success);
+        $input->validateChoice($value);
     }
 
-    public static function dataValidChoiceSeparatorFail(): array
+    public static function dataValidateChoiceSeparatorFail(): array
     {
         return [
             [['red', 'blue', 'green'], null, 'blue,yellow'],
@@ -227,8 +229,8 @@ class ConsoleInputArgumentTest extends TestCase
      * @param string|null $separator
      * @param string $value
      */
-    #[DataProvider('dataValidChoiceSeparatorFail')]
-    public function testValidChoiceSeparatorFail(array $choices, ?string $separator, string $value): void
+    #[DataProvider('dataValidateChoiceSeparatorFail')]
+    public function testValidateChoiceSeparatorFail(array $choices, ?string $separator, string $value): void
     {
         $input = new ConsoleInputArgument(
             'colors',
@@ -240,7 +242,7 @@ class ConsoleInputArgumentTest extends TestCase
         );
 
         $this->expectException(ConsoleException::class);
-        $input->validChoice($value);
+        $input->validateChoice($value);
     }
 
     /**
