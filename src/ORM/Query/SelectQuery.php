@@ -761,15 +761,9 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
 
         // DTO projection runs AFTER all other formatters so behaviors see arrays/entities
         if ($this->dtoClass !== null) {
-            $dtoClass = $this->dtoClass;
-            $factory = $this->resultSetFactory();
-            $result = $result->map(function ($row) use ($dtoClass, $factory) {
-                if (is_array($row)) {
-                    return $factory->hydrateDto($row, $dtoClass);
-                }
-
-                return $row;
-            });
+            // Get the cached hydrator once, avoiding method_exists() check on every row
+            $hydrator = $this->resultSetFactory()->getDtoHydrator($this->dtoClass);
+            $result = $result->map($hydrator);
 
             if (!($result instanceof ResultSetInterface)) {
                 $result = new $resultSetClass($result);

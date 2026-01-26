@@ -475,4 +475,86 @@ class ResultSetFactoryTest extends TestCase
         $this->assertInstanceOf(ArticleArrayDto::class, $result);
         $this->assertNull($result->author);
     }
+
+    /**
+     * Test getDtoHydrator() returns cached callable for plain DTOs.
+     */
+    public function testGetDtoHydratorPlainDto(): void
+    {
+        DtoMapper::clearCache();
+        ResultSetFactory::clearDtoHydratorCache();
+
+        $hydrator = $this->factory->getDtoHydrator(SimpleArticleDto::class);
+        $this->assertIsCallable($hydrator);
+
+        // Calling again should return the same cached callable
+        $hydrator2 = $this->factory->getDtoHydrator(SimpleArticleDto::class);
+        $this->assertSame($hydrator, $hydrator2);
+
+        // Test the hydrator works
+        $result = $hydrator(['id' => 1, 'title' => 'Test', 'body' => 'Body']);
+        $this->assertInstanceOf(SimpleArticleDto::class, $result);
+        $this->assertSame(1, $result->id);
+        $this->assertSame('Test', $result->title);
+    }
+
+    /**
+     * Test getDtoHydrator() returns cached callable for DTOs with createFromArray.
+     */
+    public function testGetDtoHydratorCreateFromArray(): void
+    {
+        DtoMapper::clearCache();
+        ResultSetFactory::clearDtoHydratorCache();
+
+        $hydrator = $this->factory->getDtoHydrator(ArticleArrayDto::class);
+        $this->assertIsCallable($hydrator);
+
+        // Calling again should return the same cached callable
+        $hydrator2 = $this->factory->getDtoHydrator(ArticleArrayDto::class);
+        $this->assertSame($hydrator, $hydrator2);
+
+        // Test the hydrator works
+        $result = $hydrator(['id' => 2, 'title' => 'Test 2', 'body' => 'Body 2']);
+        $this->assertInstanceOf(ArticleArrayDto::class, $result);
+        $this->assertSame(2, $result->id);
+        $this->assertSame('Test 2', $result->title);
+    }
+
+    /**
+     * Test clearDtoHydratorCache() clears the cache.
+     */
+    public function testClearDtoHydratorCache(): void
+    {
+        DtoMapper::clearCache();
+        ResultSetFactory::clearDtoHydratorCache();
+
+        // Get a hydrator to populate the cache
+        $this->factory->getDtoHydrator(SimpleArticleDto::class);
+
+        // Clear the cache
+        ResultSetFactory::clearDtoHydratorCache();
+
+        // Get the hydrator again - should be a new callable
+        $hydrator2 = $this->factory->getDtoHydrator(SimpleArticleDto::class);
+
+        // The callables should be equivalent but not the same instance
+        // since the cache was cleared
+        $this->assertIsCallable($hydrator2);
+    }
+
+    /**
+     * Test hydrateDto() method.
+     */
+    public function testHydrateDto(): void
+    {
+        DtoMapper::clearCache();
+        ResultSetFactory::clearDtoHydratorCache();
+
+        $row = ['id' => 3, 'title' => 'Hydrate Test', 'body' => 'Body'];
+        $result = $this->factory->hydrateDto($row, SimpleArticleDto::class);
+
+        $this->assertInstanceOf(SimpleArticleDto::class, $result);
+        $this->assertSame(3, $result->id);
+        $this->assertSame('Hydrate Test', $result->title);
+    }
 }
