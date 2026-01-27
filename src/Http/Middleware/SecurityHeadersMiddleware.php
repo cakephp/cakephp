@@ -25,7 +25,7 @@ use Psr\Http\Server\RequestHandlerInterface;
 /**
  * Handles common security headers in a convenient way
  *
- * @link https://book.cakephp.org/5/en/controllers/middleware.html#security-header-middleware
+ * @link https://book.cakephp.org/5/en/security/security-headers.html
  */
 class SecurityHeadersMiddleware implements MiddlewareInterface
 {
