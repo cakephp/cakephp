@@ -384,7 +384,7 @@ class FormHelper extends Helper
      *   array of meta data. You can use `null` to make a context-less form.
      * @param array<string, mixed> $options An array of html attributes and options.
      * @return string An formatted opening FORM tag.
-     * @link https://book.cakephp.org/5/en/views/helpers/form.html#Cake\View\Helper\FormHelper::create
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#starting-a-form
      */
     public function create(mixed $context = null, array $options = []): string
     {

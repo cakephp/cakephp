@@ -636,7 +636,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Psr\Http\Message\UriInterface|array|string $url A string, array-based URL or UriInterface instance.
      * @param int $status HTTP status code. Defaults to `302`.
      * @return \Cake\Http\Response|null
-     * @link https://book.cakephp.org/5/en/controllers.html#Controller::redirect
+     * @link https://book.cakephp.org/5/en/controllers.html#redirecting-to-other-pages
      */
     public function redirect(UriInterface|array|string $url, int $status = 302): ?Response
     {

@@ -673,7 +673,7 @@ class HtmlHelper extends Helper
      * @param array<string, string> $data Style data array, keys will be used as property names, values as property values.
      * @param bool $oneLine Whether the style block should be displayed on one line.
      * @return string CSS styling data
-     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-css-programmatically
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-css-programatically
      */
     public function style(array $data, bool $oneLine = true): string
     {
