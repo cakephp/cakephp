@@ -1023,7 +1023,7 @@ class Text
      * @return mixed Number of bytes as integer on success, or $default value on failure
      *   (if $default is not false).
      * @throws \InvalidArgumentException On invalid unit type when $default is false.
-     * @link https://book.cakephp.org/5/en/core-libraries/text.html#Cake\Utility\Text::parseFileSize
+     * @link https://book.cakephp.org/5/en/core-libraries/text.html#text-parsefilesize
      */
     public static function parseFileSize(string $size, mixed $default = false): mixed
     {
