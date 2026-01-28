@@ -382,6 +382,10 @@ class MysqlSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_BOOLEAN, 'length' => null];
         }
 
+        if ($col === 'bit') {
+            return ['type' => TableSchemaInterface::TYPE_BIT, 'length' => $length];
+        }
+
         $unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
         if (str_contains($col, 'bigint')) {
             return ['type' => TableSchemaInterface::TYPE_BIGINTEGER, 'length' => null, 'unsigned' => $unsigned];
@@ -714,6 +718,7 @@ SQL;
             TableSchemaInterface::TYPE_POINT => ' POINT',
             TableSchemaInterface::TYPE_LINESTRING => ' LINESTRING',
             TableSchemaInterface::TYPE_POLYGON => ' POLYGON',
+            TableSchemaInterface::TYPE_BIT => ' BIT',
         ];
         $specialMap = [
             'string' => true,
@@ -774,6 +779,7 @@ SQL;
             TableSchemaInterface::TYPE_TINYINTEGER,
             TableSchemaInterface::TYPE_STRING,
             TableSchemaInterface::TYPE_BINARY,
+            TableSchemaInterface::TYPE_BIT,
         ];
         if (!isset($typeMap[$column['type']]) && !isset($specialMap[$column['type']])) {
             $out .= ' ' . strtoupper($column['type']);

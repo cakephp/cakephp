@@ -256,6 +256,15 @@ interface TableSchemaInterface extends SchemaInterface
     public const TYPE_MACADDR = 'macaddr';
 
     /**
+     * Bit type.
+     *
+     * Currently only implemented in MySQL.
+     *
+     * @var string
+     */
+    public const TYPE_BIT = 'bit';
+
+    /**
      * Geospatial column types
      *
      * @var array

@@ -259,6 +259,18 @@ class MysqlSchemaDialectTest extends TestCase
                 'POLYGON',
                 ['type' => 'polygon', 'length' => null],
             ],
+            [
+                'BIT(1)',
+                ['type' => 'bit', 'length' => 1],
+            ],
+            [
+                'BIT(8)',
+                ['type' => 'bit', 'length' => 8],
+            ],
+            [
+                'BIT(64)',
+                ['type' => 'bit', 'length' => 64],
+            ],
         ];
     }
 
@@ -1493,6 +1505,22 @@ SQL;
                 'p',
                 ['type' => 'polygon', 'null' => false, 'srid' => 4326],
                 '`p` POLYGON NOT NULL SRID 4326',
+            ],
+            // Bit
+            [
+                'active',
+                ['type' => 'bit', 'length' => 1],
+                '`active` BIT(1)',
+            ],
+            [
+                'flags',
+                ['type' => 'bit', 'length' => 8, 'null' => false],
+                '`flags` BIT(8) NOT NULL',
+            ],
+            [
+                'permissions',
+                ['type' => 'bit', 'length' => 64],
+                '`permissions` BIT(64)',
             ],
         ];
     }
