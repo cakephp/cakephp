@@ -774,7 +774,7 @@ class ConsoleOptionParser
         $option = $this->_options[$name];
         $isBoolean = $option->isBoolean();
         $nextValue = $this->_nextToken();
-        $emptyNextValue = (empty($nextValue) && $nextValue !== '0');
+        $emptyNextValue = (!$nextValue && $nextValue !== '0');
         if (!$isBoolean && !$emptyNextValue && !$this->_optionExists($nextValue)) {
             array_shift($this->_tokens);
             $value = $nextValue;

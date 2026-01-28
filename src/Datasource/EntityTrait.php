@@ -797,7 +797,7 @@ trait EntityTrait
             return static::$_accessors[$class][$type][$property];
         }
 
-        if (!empty(static::$_accessors[$class])) {
+        if (isset(static::$_accessors[$class])) {
             return static::$_accessors[$class][$type][$property] = '';
         }
 
