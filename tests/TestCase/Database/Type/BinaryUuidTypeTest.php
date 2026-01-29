@@ -47,7 +47,7 @@ class BinaryUuidTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new BinaryUuidType();
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = $this->createStub(Driver::class);
     }
 
     /**

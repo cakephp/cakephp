@@ -47,30 +47,35 @@ class HelpCommandTest extends TestCase
     }
 
     /**
-     * Test the command listing fallback when no commands are set
+     * Test the verbose command listing
      */
-    public function testMainNoCommandsFallback(): void
+    public function testMainVerbose(): void
     {
-        $this->exec('help');
+        $this->exec('help -v');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertCommandList();
-        $this->clearPlugins();
+        $this->assertCommandListVerbose();
     }
 
     /**
-     * Test the command listing
+     * Test the compact command listing (default)
      */
-    public function testMain(): void
+    public function testMainCompact(): void
     {
         $this->exec('help');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
-        $this->assertCommandList();
+        $this->assertOutputContains('<info>Available Commands:</info>', 'single commands header');
+        $this->assertOutputContains('<info>routes:</info>', 'routes group header');
+        $this->assertOutputContains('<info>cache:</info>', 'cache group header');
+        $this->assertOutputContains('clear', 'cache subcommand listed');
+        $this->assertOutputContains('Clear all data in a single cache engine', 'inline description shown');
+        $this->assertOutputNotContains('<info>app</info>:', 'no plugin group headers in compact mode');
+        $this->assertOutputContains('To run a command', 'more info present');
     }
 
     /**
-     * Assert the help output.
+     * Assert the verbose help output.
      */
-    protected function assertCommandList(): void
+    protected function assertCommandListVerbose(): void
     {
         $this->assertOutputContains('<info>test_plugin</info>', 'plugin header should appear');
         $this->assertOutputContains('- sample', 'plugin command should appear');
@@ -93,19 +98,37 @@ class HelpCommandTest extends TestCase
         $this->assertOutputContains('This is a demo command', 'command description missing');
         $this->assertOutputContains('<info>custom_group</info>');
         $this->assertOutputContains('- grouped');
+        $this->assertOutputNotContains(
+            '- hidden',
+            'Hidden commands should not appear in help output.',
+        );
     }
 
     /**
-     * Test filtering by command prefix
+     * Test filtering by command prefix (compact mode)
      */
-    public function testFilterByPrefix(): void
+    public function testFilterByPrefixCompact(): void
     {
         $this->exec('help cache');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('<info>cache:</info>');
         $this->assertOutputContains('cache clear');
         $this->assertOutputContains('cache list');
         $this->assertOutputNotContains('routes');
         $this->assertOutputNotContains('sample');
+    }
+
+    /**
+     * Test filtering by command prefix with verbose mode shows descriptions
+     */
+    public function testFilterByPrefixVerbose(): void
+    {
+        $this->exec('help cache -v');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('Available Commands');
+        $this->assertOutputContains('- cache clear');
+        $this->assertOutputContains('Clear all data in a single cache engine');
+        $this->assertOutputNotContains('- routes');
     }
 
     /**
@@ -126,5 +149,20 @@ class HelpCommandTest extends TestCase
 
         $find = '<shell name="test_plugin.sample" call_as="test_plugin.sample" provider="TestPlugin\Command\SampleCommand" help="test_plugin.sample -h"';
         $this->assertOutputContains($find);
+
+        $this->assertOutputNotContains(
+            'HiddenCommand',
+            'Hidden commands should not appear in XML output.',
+        );
+    }
+
+    /**
+     * Test that hidden commands are still executable
+     */
+    public function testHiddenCommandStillExecutable(): void
+    {
+        $this->exec('hidden');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('Hidden Command Executed!');
     }
 }

@@ -42,6 +42,8 @@ use MultipleIterator;
  *  });
  *  $iterator->toList(); // Returns [4, 6]
  * ```
+ *
+ * @implements \Cake\Collection\CollectionInterface<mixed, mixed>
  */
 class ZipIterator implements CollectionInterface
 {

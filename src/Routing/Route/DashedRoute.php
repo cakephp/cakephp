@@ -33,7 +33,7 @@ class DashedRoute extends Route
      *
      * @var array|null
      */
-    protected ?array $_inflectedDefaults = null;
+    protected ?array $inflectedDefaults = null;
 
     /**
      * Camelizes the previously dashed plugin route taking into account plugin vendors
@@ -97,13 +97,13 @@ class DashedRoute extends Route
     public function match(array $url, array $context = []): ?string
     {
         $url = $this->dasherize($url);
-        if ($this->_inflectedDefaults === null) {
+        if ($this->inflectedDefaults === null) {
             $this->compile();
-            $this->_inflectedDefaults = $this->dasherize($this->defaults);
+            $this->inflectedDefaults = $this->dasherize($this->defaults);
         }
         $restore = $this->defaults;
         try {
-            $this->defaults = $this->_inflectedDefaults;
+            $this->defaults = $this->inflectedDefaults;
 
             return parent::match($url, $context);
         } finally {

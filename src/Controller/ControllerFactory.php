@@ -101,7 +101,7 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                 if (
                     $parameter->getName() === 'components' &&
                     $paramType instanceof ReflectionNamedType &&
-                    $paramType->getName() == ComponentRegistry::class
+                    $paramType->getName() === ComponentRegistry::class
                 ) {
                     $hasComponents = true;
                     break;

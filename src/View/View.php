@@ -71,7 +71,8 @@ use function Cake\Core\pluginSplit;
  * @property \Cake\View\Helper\TimeHelper $Time
  * @property \Cake\View\Helper\UrlHelper $Url
  * @property \Cake\View\ViewBlock $Blocks
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\View\View>
+ * @template TSubject of \Cake\View\View
+ * @implements \Cake\Event\EventDispatcherInterface<TSubject>
  */
 class View implements EventDispatcherInterface
 {
@@ -79,7 +80,7 @@ class View implements EventDispatcherInterface
         cell as public;
     }
     /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\View\View>
+     * @use \Cake\Event\EventDispatcherTrait<TSubject>
      */
     use EventDispatcherTrait;
     use InstanceConfigTrait;
@@ -1372,8 +1373,10 @@ class View implements EventDispatcherInterface
         } elseif (str_contains($name, DIRECTORY_SEPARATOR)) {
             if (str_starts_with($name, DIRECTORY_SEPARATOR) || $name[1] === ':') {
                 $name = trim($name, DIRECTORY_SEPARATOR);
-            } else {
+            } elseif (!$plugin || $this->templatePath !== $this->name) {
                 $name = $templatePath . $subDir . $name;
+            } else {
+                $name = $subDir . $name;
             }
         }
 

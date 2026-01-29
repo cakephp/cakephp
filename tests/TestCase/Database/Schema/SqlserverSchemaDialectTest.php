@@ -117,251 +117,143 @@ SQL;
         return [
             [
                 'DATETIME',
-                null,
-                null,
-                3,
-                ['type' => 'datetime', 'length' => null, 'precision' => null],
+                ['type' => 'datetime', 'length' => null],
             ],
             [
                 'DATETIME2',
-                null,
-                null,
-                7,
                 ['type' => 'datetimefractional', 'length' => null, 'precision' => 7],
             ],
             [
-                'DATETIME2',
-                null,
-                null,
-                0,
+                'DATETIME2(0)',
                 ['type' => 'datetime', 'length' => null, 'precision' => 0],
             ],
             [
                 'DATE',
-                null,
-                null,
-                null,
                 ['type' => 'date', 'length' => null],
             ],
             [
                 'TIME',
-                null,
-                null,
-                null,
                 ['type' => 'time', 'length' => null],
             ],
             [
                 'TINYINT',
-                null,
-                2,
-                null,
-                ['type' => 'tinyinteger', 'length' => 2],
-            ],
-            [
-                'TINYINT',
-                null,
-                null,
-                null,
                 ['type' => 'tinyinteger', 'length' => 3],
             ],
             [
                 'SMALLINT',
-                null,
-                3,
-                null,
-                ['type' => 'smallinteger', 'length' => 3],
-            ],
-            [
-                'SMALLINT',
-                null,
-                null,
-                null,
                 ['type' => 'smallinteger', 'length' => 5],
             ],
             [
                 'INTEGER',
-                null,
-                null,
-                null,
                 ['type' => 'integer', 'length' => 10],
             ],
             [
-                'INTEGER',
-                null,
-                8,
-                null,
-                ['type' => 'integer', 'length' => 8],
-            ],
-            [
                 'BIGINT',
-                null,
-                null,
-                null,
-                ['type' => 'biginteger', 'length' => 20],
+                ['type' => 'biginteger', 'length' => 19],
             ],
             [
                 'NUMERIC',
-                null,
-                15,
-                5,
-                ['type' => 'decimal', 'length' => 15, 'precision' => 5],
+                ['type' => 'decimal', 'length' => 18],
             ],
             [
-                'DECIMAL',
-                null,
-                11,
-                3,
+                'DECIMAL(11,3)',
                 ['type' => 'decimal', 'length' => 11, 'precision' => 3],
             ],
             [
                 'MONEY',
-                null,
-                null,
-                null,
-                ['type' => 'decimal', 'length' => null, 'precision' => null],
+                ['type' => 'decimal', 'length' => 19, 'precision' => 4],
             ],
             [
-                'VARCHAR',
-                null,
-                null,
-                null,
-                ['type' => 'string', 'length' => 255, 'collate' => 'Japanese_Unicode_CI_AI'],
+                'VARCHAR(255)',
+                ['type' => 'string', 'length' => 255, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
             ],
             [
-                'VARCHAR',
-                10,
-                null,
-                null,
-                ['type' => 'string', 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI'],
+                'VARCHAR(10)',
+                ['type' => 'string', 'length' => 10, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
             ],
             [
-                'NVARCHAR',
-                50,
-                null,
-                null,
-                // Sqlserver returns double lengths for unicode columns
-                ['type' => 'string', 'length' => 25, 'collate' => 'Japanese_Unicode_CI_AI'],
+                'NVARCHAR(25)',
+                ['type' => 'string', 'length' => 25, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
             ],
             [
-                'CHAR',
-                10,
-                null,
-                null,
-                ['type' => 'char', 'length' => 10, 'collate' => 'Japanese_Unicode_CI_AI'],
+                'VARCHAR(MAX)',
+                ['type' => 'text', 'length' => null, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
             ],
             [
-                'NCHAR',
-                10,
-                null,
-                null,
-                // SQLServer returns double length for unicode columns.
-                ['type' => 'char', 'length' => 5, 'collate' => 'Japanese_Unicode_CI_AI'],
+                'CHAR(10)',
+                ['type' => 'char', 'length' => 10, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
+            ],
+            [
+                'NCHAR(5)',
+                ['type' => 'char', 'length' => 5, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
             ],
             [
                 'UNIQUEIDENTIFIER',
-                null,
-                null,
-                null,
                 ['type' => 'uuid'],
             ],
             [
                 'TEXT',
-                null,
-                null,
-                null,
-                ['type' => 'text', 'length' => null, 'collate' => 'Japanese_Unicode_CI_AI'],
+                ['type' => 'text', 'length' => null, 'collate' => 'SQL_Latin1_General_CP1_CI_AS'],
             ],
             [
                 'REAL',
-                null,
-                null,
-                null,
                 ['type' => 'float', 'length' => null],
             ],
             [
-                'VARCHAR',
-                -1,
-                null,
-                null,
-                ['type' => 'text', 'length' => null, 'collate' => 'Japanese_Unicode_CI_AI'],
-            ],
-            [
                 'IMAGE',
-                10,
-                null,
-                null,
-                ['type' => 'binary', 'length' => 10],
+                ['type' => 'binary', 'length' => 16],
             ],
             [
-                'BINARY',
-                20,
-                null,
-                null,
+                'BINARY(20)',
                 ['type' => 'binary', 'length' => 20],
             ],
             [
-                'VARBINARY',
-                30,
-                null,
-                null,
+                'VARBINARY(30)',
                 ['type' => 'binary', 'length' => 30],
             ],
             [
-                'VARBINARY',
-                -1,
-                null,
-                null,
+                'VARBINARY(MAX)',
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
             ],
             // Geospatial types
             [
                 'GEOMETRY',
-                null,
-                null,
-                null,
                 ['type' => 'geometry', 'null' => true],
             ],
             [
                 'GEOGRAPHY',
-                null,
-                null,
-                null,
                 ['type' => 'point', 'null' => true],
             ],
         ];
     }
 
     /**
-     * Test parsing Sqlserver column types from field description.
+     * Test parsing sqlserver column types from field description.
      */
     #[DataProvider('convertColumnProvider')]
-    public function testConvertColumn(string $type, ?int $length, ?int $precision, ?int $scale, array $expected): void
+    public function testConvertColumn(string $type, array $expected): void
     {
-        $field = [
-            'name' => 'field',
-            'type' => $type,
-            'null' => '1',
-            'default' => 'Default value',
-            'char_length' => $length,
-            'precision' => $precision,
-            'scale' => $scale,
-            'collation_name' => 'Japanese_Unicode_CI_AI',
-        ];
-        $expected += [
-            'null' => true,
-            'default' => 'Default value',
-        ];
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE convert_columns (
+    reflection {$type}
+);
+SQL;
+        $connection->execute($sql);
 
-        $driver = $this->getMockBuilder(Sqlserver::class)->getMock();
-        $dialect = new SqlserverSchemaDialect($driver);
+        $driver = $connection->getDriver();
+        $dialect = $driver->schemaDialect();
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
 
-        $table = new TableSchema('table');
-        $dialect->convertColumnDescription($table, $field);
-
-        $actual = array_intersect_key($table->getColumn('field'), $expected);
-        ksort($expected);
-        ksort($actual);
-        $this->assertSame($expected, $actual);
+        $data = $table->column('reflection')->toArray();
+        $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(
+            $expected,
+            $data,
+            array_keys($expected),
+        );
     }
 
     /**

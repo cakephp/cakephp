@@ -11,31 +11,30 @@ declare(strict_types=1);
  *
  * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
  * @link          https://cakephp.org CakePHP(tm) Project
- * @since         5.0.0
+ * @since         5.4.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\TestSuite\Fixture;
-
-use function Cake\Core\deprecationWarning;
+namespace Cake\Utility\Fs\Enum;
 
 /**
- * Fixture strategy that truncates all fixture tables at the end of test.
+ * Enum for Finder iteration modes
  *
- * @deprecated 5.2.10 Use {@link \Cake\TestSuite\Fixture\TruncateStrategy} instead.
- *   Will be removed in 5.3.0.
+ * Defines what type of filesystem items to iterate over.
  */
-class TruncateFixtureStrategy extends TruncateStrategy
+enum FinderMode
 {
     /**
-     * Initialize strategy.
+     * Iterate only files
      */
-    public function __construct()
-    {
-        deprecationWarning(
-            '5.2.10',
-            'TruncateFixtureStrategy is deprecated. Use TruncateStrategy instead.',
-        );
+    case FILES;
 
-        parent::__construct();
-    }
+    /**
+     * Iterate only directories
+     */
+    case DIRECTORIES;
+
+    /**
+     * Iterate both files and directories
+     */
+    case ALL;
 }

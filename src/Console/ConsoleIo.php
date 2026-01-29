@@ -272,7 +272,7 @@ class ConsoleIo implements ConsoleIoInterface
     }
 
     /**
-     * Halts the the current process with a StopException.
+     * Halts the current process with a StopException.
      *
      * @param string $message Error message.
      * @param int $code Error code.

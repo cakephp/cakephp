@@ -34,7 +34,7 @@ class MysqlSchemaDialect extends SchemaDialect
      *    getting tables from.
      * @return array<mixed> An array of (sql, params) to execute.
      */
-    public function listTablesSql(array $config): array
+    protected function listTablesSql(array $config): array
     {
         return [
             'SHOW FULL TABLES FROM ' . $this->driver->quoteIdentifier($config['database'])
@@ -47,24 +47,14 @@ class MysqlSchemaDialect extends SchemaDialect
      *
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
-     * @return array<mixed> An array of (sql, params) to execute.
+     * @return array{0: string, 1: array} An array of (sql, params) to execute.
      */
-    public function listTablesWithoutViewsSql(array $config): array
+    protected function listTablesWithoutViewsSql(array $config): array
     {
         return [
             'SHOW FULL TABLES FROM ' . $this->driver->quoteIdentifier($config['database'])
             . ' WHERE TABLE_TYPE = "BASE TABLE"'
         , []];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function describeColumnSql(string $tableName, array $config): array
-    {
-        $sql = $this->describeColumnQuery($tableName);
-
-        return [$sql, []];
     }
 
     /**
@@ -120,13 +110,19 @@ class MysqlSchemaDialect extends SchemaDialect
     public function describeColumns(string $tableName): array
     {
         $sql = $this->describeColumnQuery($tableName);
-        $columns = [];
         try {
-            $statement = $this->driver->execute($sql);
+            $rows = $this->driver->execute($sql)->fetchAll('assoc');
         } catch (PDOException $e) {
             throw new DatabaseException("Could not describe columns on `{$tableName}`", null, $e);
         }
-        foreach ($statement->fetchAll('assoc') as $row) {
+
+        $geometryColumns = [];
+        if (array_intersect(array_column($rows, 'Type'), TableSchemaInterface::GEOSPATIAL_TYPES)) {
+            $geometryColumns = $this->describeGeometryColumns($tableName);
+        }
+
+        $columns = [];
+        foreach ($rows as $row) {
             $field = $this->convertColumn($row['Type']);
             $default = $this->parseDefault($field['type'], $row);
 
@@ -138,18 +134,52 @@ class MysqlSchemaDialect extends SchemaDialect
                 'comment' => $row['Comment'],
                 'length' => null,
             ];
-            if (isset($row['Extra']) && $row['Extra'] === 'auto_increment') {
+            $extra = $row['Extra'] ?? '';
+            if ($extra === 'auto_increment') {
                 $field['autoIncrement'] = true;
             }
-            if ($row['Extra'] === 'on update CURRENT_TIMESTAMP') {
-                $field['onUpdate'] = 'CURRENT_TIMESTAMP';
-            } elseif ($row['Extra'] === 'on update current_timestamp()') {
+            if ($extra === 'on update CURRENT_TIMESTAMP' || $extra === 'on update current_timestamp()') {
                 $field['onUpdate'] = 'CURRENT_TIMESTAMP';
             }
+
+            $srid = $geometryColumns[$field['name']]['srid'] ?? null;
+            if ($srid !== null) {
+                $field['srid'] = $srid;
+            }
+
             $columns[] = $field;
         }
 
         return $columns;
+    }
+
+    /**
+     * Describes geometry-specific column information.
+     *
+     * @param string $table The table name.
+     * @return array<string, array{name: string, srid: int}> The column information.
+     */
+    private function describeGeometryColumns(string $table): array
+    {
+        /** @var \Cake\Database\Driver\Mysql $driver */
+        $driver = $this->driver;
+
+        if (!$driver->isMariaDb() && version_compare($driver->version(), '8.0.1', '>=')) {
+            $sql = <<<SQL
+                SELECT
+                    COLUMN_NAME AS name,
+                    SRS_ID AS srid
+                FROM information_schema.ST_GEOMETRY_COLUMNS
+                WHERE TABLE_NAME = ? AND TABLE_SCHEMA = ?
+                SQL;
+        } else {
+            return [];
+        }
+
+        $schema = $driver->config()['database'];
+        $columns = $driver->execute($sql, [$table, $schema])->fetchAll('assoc');
+
+        return array_combine(array_column($columns, 'name'), $columns);
     }
 
     /**
@@ -188,16 +218,6 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         return $default;
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function describeIndexSql(string $tableName, array $config): array
-    {
-        $sql = $this->describeIndexQuery($tableName);
-
-        return [$sql, []];
     }
 
     /**
@@ -252,25 +272,6 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         return array_values($indexes);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function describeOptionsSql(string $tableName, array $config): array
-    {
-        return ['SHOW TABLE STATUS WHERE Name = ?', [$tableName]];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertOptionsDescription(TableSchema $schema, array $row): void
-    {
-        $schema->setOptions([
-            'engine' => $row['Engine'],
-            'collation' => $row['Collation'],
-        ]);
     }
 
     /**
@@ -343,7 +344,7 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         $unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
-        if (str_contains($col, 'bigint') || $col === 'bigint') {
+        if (str_contains($col, 'bigint')) {
             return ['type' => TableSchemaInterface::TYPE_BIGINTEGER, 'length' => null, 'unsigned' => $unsigned];
         }
         if ($col === 'tinyint') {
@@ -412,118 +413,6 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => null];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertColumnDescription(TableSchema $schema, array $row): void
-    {
-        $field = $this->convertColumn($row['Type']);
-        $default = $this->parseDefault($field['type'], $row);
-        $field += [
-            'null' => $row['Null'] === 'YES',
-            'default' => $default,
-            'collate' => $row['Collation'],
-            'comment' => $row['Comment'],
-        ];
-        if (isset($row['Extra']) && $row['Extra'] === 'auto_increment') {
-            $field['autoIncrement'] = true;
-        }
-        $schema->addColumn($row['Field'], $field);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertIndexDescription(TableSchema $schema, array $row): void
-    {
-        $type = null;
-        $columns = [];
-        $length = [];
-
-        $name = $row['Key_name'];
-        if ($name === 'PRIMARY') {
-            $name = TableSchema::CONSTRAINT_PRIMARY;
-            $type = TableSchema::CONSTRAINT_PRIMARY;
-        }
-
-        if (!empty($row['Column_name'])) {
-            $columns[] = $row['Column_name'];
-        }
-
-        if ($row['Index_type'] === 'FULLTEXT') {
-            $type = TableSchema::INDEX_FULLTEXT;
-        } elseif ((int)$row['Non_unique'] === 0 && $type !== 'primary') {
-            $type = TableSchema::CONSTRAINT_UNIQUE;
-        } elseif ($type !== 'primary') {
-            $type = TableSchema::INDEX_INDEX;
-        }
-
-        if (!empty($row['Sub_part'])) {
-            $length[$row['Column_name']] = $row['Sub_part'];
-        }
-        $isIndex = (
-            $type === TableSchema::INDEX_INDEX ||
-            $type === TableSchema::INDEX_FULLTEXT
-        );
-        if ($isIndex) {
-            $existing = $schema->getIndex($name);
-        } else {
-            $existing = $schema->getConstraint($name);
-        }
-
-        // MySQL multi column indexes come back as multiple rows.
-        if ($existing) {
-            $columns = array_merge($existing['columns'], $columns);
-            $length = array_merge($existing['length'], $length);
-        }
-        if ($isIndex) {
-            $schema->addIndex($name, [
-                'type' => $type,
-                'columns' => $columns,
-                'length' => $length,
-            ]);
-        } else {
-            $schema->addConstraint($name, [
-                'type' => $type,
-                'columns' => $columns,
-                'length' => $length,
-            ]);
-        }
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function describeForeignKeySql(string $tableName, array $config): array
-    {
-        $sql = 'SELECT * FROM information_schema.key_column_usage AS kcu
-            INNER JOIN information_schema.referential_constraints AS rc
-            ON (
-                kcu.CONSTRAINT_NAME = rc.CONSTRAINT_NAME
-                AND kcu.CONSTRAINT_SCHEMA = rc.CONSTRAINT_SCHEMA
-            )
-            WHERE kcu.TABLE_SCHEMA = ? AND kcu.TABLE_NAME = ? AND rc.TABLE_NAME = ?
-            ORDER BY kcu.ORDINAL_POSITION ASC';
-
-        return [$sql, [$config['database'], $tableName, $tableName]];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertForeignKeyDescription(TableSchema $schema, array $row): void
-    {
-        $data = [
-            'type' => TableSchema::CONSTRAINT_FOREIGN,
-            'columns' => [$row['COLUMN_NAME']],
-            'references' => [$row['REFERENCED_TABLE_NAME'], $row['REFERENCED_COLUMN_NAME']],
-            'update' => $this->convertOnClause($row['UPDATE_RULE']),
-            'delete' => $this->convertOnClause($row['DELETE_RULE']),
-        ];
-        $name = $row['CONSTRAINT_NAME'];
-        $schema->addConstraint($name, $data);
     }
 
     /**

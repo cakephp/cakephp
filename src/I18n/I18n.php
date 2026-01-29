@@ -39,29 +39,29 @@ class I18n
      *
      * @var \Cake\I18n\TranslatorRegistry|null
      */
-    protected static ?TranslatorRegistry $_collection = null;
+    protected static ?TranslatorRegistry $collection = null;
 
     /**
      * The environment default locale
      *
      * @var string|null
      */
-    protected static ?string $_defaultLocale = null;
+    protected static ?string $defaultLocale = null;
 
     /**
      * Returns the translators collection instance. It can be used
-     * for getting specific translators based of their name and locale
+     * for getting specific translators based on their name and locale
      * or to configure some aspect of future translations that are not yet constructed.
      *
      * @return \Cake\I18n\TranslatorRegistry The translator collection.
      */
     public static function translators(): TranslatorRegistry
     {
-        if (static::$_collection !== null) {
-            return static::$_collection;
+        if (static::$collection !== null) {
+            return static::$collection;
         }
 
-        static::$_collection = new TranslatorRegistry(
+        static::$collection = new TranslatorRegistry(
             new PackageLocator(),
             new FormatterLocator([
                 'default' => IcuFormatter::class,
@@ -71,10 +71,10 @@ class I18n
         );
 
         if (class_exists(Cache::class)) {
-            static::$_collection->setCacher(Cache::pool('_cake_translations_'));
+            static::$collection->setCacher(Cache::pool('_cake_translations_'));
         }
 
-        return static::$_collection;
+        return static::$collection;
     }
 
     /**
@@ -169,7 +169,7 @@ class I18n
      *
      * Registering loaders is useful when you need to lazily use translations in multiple
      * different locales for the same domain, and don't want to use the built-in
-     * translation service based of `gettext` files.
+     * translation service based on `gettext` files.
      *
      * Loader objects will receive two arguments: The domain name that needs to be
      * built, and the locale that is requested. These objects can assemble the messages
@@ -220,13 +220,13 @@ class I18n
     {
         static::getDefaultLocale();
         Locale::setDefault($locale);
-        if (isset(static::$_collection)) {
+        if (isset(static::$collection)) {
             static::translators()->setLocale($locale);
         }
     }
 
     /**
-     * Will return the currently configure locale as stored in the
+     * Will return the currently configured locale as stored in the
      * `intl.default_locale` PHP setting.
      *
      * @return string The name of the default locale.
@@ -254,7 +254,7 @@ class I18n
      */
     public static function getDefaultLocale(): string
     {
-        return static::$_defaultLocale ??= Locale::getDefault() ?: static::DEFAULT_LOCALE;
+        return static::$defaultLocale ??= Locale::getDefault() ?: static::DEFAULT_LOCALE;
     }
 
     /**
@@ -299,6 +299,6 @@ class I18n
      */
     public static function clear(): void
     {
-        static::$_collection = null;
+        static::$collection = null;
     }
 }

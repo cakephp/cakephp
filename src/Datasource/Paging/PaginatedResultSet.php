@@ -25,7 +25,6 @@ use Traversable;
  *
  * @template TKey
  * @template TValue
- * @implements \IteratorAggregate<TKey, TValue>
  * @implements \Cake\Datasource\Paging\PaginatedInterface<TKey, TValue>
  */
 class PaginatedResultSet implements JsonSerializable, PaginatedInterface

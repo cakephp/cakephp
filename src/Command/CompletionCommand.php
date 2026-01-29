@@ -19,6 +19,7 @@ namespace Cake\Command;
 use Cake\Console\BaseCommand;
 use Cake\Console\CommandCollection;
 use Cake\Console\CommandCollectionAwareInterface;
+use Cake\Console\CommandHiddenInterface;
 use Cake\Console\ConsoleIoInterface;
 use Cake\Console\ConsoleOptionParser;
 use ReflectionClass;
@@ -124,6 +125,9 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         // to detect true duplicates (plugin-prefixed alias pointing to same command)
         $commandClasses = [];
         foreach ($this->commands as $key => $value) {
+            if (is_subclass_of($value, CommandHiddenInterface::class)) {
+                continue;
+            }
             $parts = explode(' ', $key);
             $commandName = $parts[0];
             // Only track base commands (no subcommands) and prefer first occurrence
@@ -133,6 +137,9 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
         }
 
         foreach ($this->commands as $key => $value) {
+            if (is_subclass_of($value, CommandHiddenInterface::class)) {
+                continue;
+            }
             $parts = explode(' ', $key);
             $commandName = $parts[0];
 
@@ -170,6 +177,9 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
 
         $options = [];
         foreach ($this->commands as $key => $value) {
+            if (is_subclass_of($value, CommandHiddenInterface::class)) {
+                continue;
+            }
             $parts = explode(' ', $key);
             if ($parts[0] !== $name) {
                 continue;
@@ -199,6 +209,9 @@ class CompletionCommand extends Command implements CommandCollectionAwareInterfa
 
         $options = [];
         foreach ($this->commands as $key => $value) {
+            if (is_subclass_of($value, CommandHiddenInterface::class)) {
+                continue;
+            }
             $parts = explode(' ', $key);
             if ($parts[0] !== $name) {
                 continue;

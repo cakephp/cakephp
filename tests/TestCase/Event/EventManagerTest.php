@@ -685,7 +685,7 @@ class EventManagerTest extends TestCase
 
         $result = $manager->getEventList();
         $this->assertInstanceOf(EventList::class, $result);
-        $this->assertCount(2, $result);
+        $result = iterator_to_array($result);
         $this->assertEquals($result[0], $event);
         $this->assertEquals($result[1], $event2);
 

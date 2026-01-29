@@ -44,6 +44,8 @@ use Memcached;
  * Memcached engine supports binary protocol and igbinary
  * serialization (if memcached extension is compiled with --enable-igbinary).
  * Compressed keys can also be incremented/decremented.
+ *
+ * @extends \Cake\Cache\CacheEngine<\Cake\Cache\Engine\MemcachedEngine>
  */
 class MemcachedEngine extends CacheEngine
 {
@@ -70,7 +72,7 @@ class MemcachedEngine extends CacheEngine
      * - `serialize` The serializer engine used to serialize data. Available engines are 'php',
      *    'igbinary' and 'json'. Besides 'php', the memcached extension must be compiled with the
      *    appropriate serializer support.
-     * - `servers` String or array of memcached servers. If an array MemcacheEngine will use
+     * - `servers` String or array of memcached servers. If an array MemcachedEngine will use
      *    them as a pool.
      * - `options` - Additional options for the memcached client. Should be an array of option => value.
      *    Use the \Memcached::OPT_* constants as keys.
@@ -199,6 +201,7 @@ class MemcachedEngine extends CacheEngine
         }
 
         if ($this->config['username'] !== null && $this->config['password'] !== null) {
+            // @phpstan-ignore function.alreadyNarrowedType (check kept for SASL support detection)
             if (!method_exists($this->Memcached, 'setSaslAuthData')) {
                 throw new InvalidArgumentException(
                     'Memcached extension is not built with SASL support',
@@ -215,7 +218,7 @@ class MemcachedEngine extends CacheEngine
     }
 
     /**
-     * Settings the memcached instance
+     * Set the memcached instance options
      *
      * @return void
      * @throws \Cake\Cache\Exception\InvalidArgumentException When the Memcached extension is not built
@@ -371,7 +374,7 @@ class MemcachedEngine extends CacheEngine
         $value = $this->Memcached->get($key);
 
         $this->eventClass = CacheAfterGetEvent::class;
-        if ($this->Memcached->getResultCode() == Memcached::RES_NOTFOUND) {
+        if ($this->Memcached->getResultCode() === Memcached::RES_NOTFOUND) {
             $this->dispatchEvent(CacheAfterGetEvent::NAME, ['key' => $key, 'value' => null, 'success' => false]);
 
             return $default;

@@ -1680,8 +1680,6 @@ abstract class Query implements ExpressionInterface, Stringable
 
     /**
      * Handles clearing iterator and cloning all expressions and value binders.
-     *
-     * @return void
      */
     public function __clone()
     {

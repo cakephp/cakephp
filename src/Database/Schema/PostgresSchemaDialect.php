@@ -42,7 +42,7 @@ class PostgresSchemaDialect extends SchemaDialect
      *    getting tables from.
      * @return array An array of (sql, params) to execute.
      */
-    public function listTablesSql(array $config): array
+    protected function listTablesSql(array $config): array
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables
                 WHERE table_schema = ? ORDER BY name';
@@ -56,26 +56,15 @@ class PostgresSchemaDialect extends SchemaDialect
      *
      * @param array<string, mixed> $config The connection configuration to use for
      *    getting tables from.
-     * @return array<mixed> An array of (sql, params) to execute.
+     * @return array{0: string, 1: array} An array of (sql, params) to execute.
      */
-    public function listTablesWithoutViewsSql(array $config): array
+    protected function listTablesWithoutViewsSql(array $config): array
     {
         $sql = 'SELECT table_name as name FROM information_schema.tables
                 WHERE table_schema = ? AND table_type = \'BASE TABLE\' ORDER BY name';
         $schema = $config['schema'] ?? 'public';
 
         return [$sql, [$schema]];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function describeColumnSql(string $tableName, array $config): array
-    {
-        $sql = $this->describeColumnQuery();
-        $schema = $config['schema'] ?? 'public';
-
-        return [$sql, [$tableName, $schema, $config['database']]];
     }
 
     /**
@@ -123,7 +112,7 @@ class PostgresSchemaDialect extends SchemaDialect
      */
     protected function convertColumn(string $column): array
     {
-        preg_match('/([a-z\s]+)(?:\(([a-z0-9,]+)(?:,\s*([0-9]+))?\))?/i', $column, $matches);
+        preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
         if (!$matches) {
             throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
         }
@@ -194,62 +183,14 @@ class PostgresSchemaDialect extends SchemaDialect
         if (str_contains($col, 'json')) {
             return ['type' => TableSchemaInterface::TYPE_JSON, 'length' => null];
         }
-        if ($col === 'geography') {
-            $srid = (int)($matches[3] ?? self::DEFAULT_SRID);
-            $type = strtolower($matches[2] ?? 'point');
 
-            return ['type' => $type, 'length' => null, 'srid' => $srid];
+        if (in_array($col, ['geometry', 'geography'])) {
+            return ['type' => $col, 'length' => null];
         }
 
         $length = is_numeric($length) ? $length : null;
 
         return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => $length];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertColumnDescription(TableSchema $schema, array $row): void
-    {
-        $field = $this->convertColumn($row['type']);
-
-        if ($field['type'] === TableSchemaInterface::TYPE_BOOLEAN) {
-            if ($row['default'] === 'true') {
-                $row['default'] = 1;
-            }
-            if ($row['default'] === 'false') {
-                $row['default'] = 0;
-            }
-        }
-        if (!empty($row['has_serial'])) {
-            $field['autoIncrement'] = true;
-        }
-
-        $field += [
-            'default' => $this->defaultValue($row['default']),
-            'null' => $row['null'] === 'YES',
-            'collate' => $row['collation_name'],
-            'comment' => $row['comment'],
-        ];
-        $field['length'] = $row['char_length'] ?: $field['length'];
-
-        if ($field['type'] === 'numeric' || $field['type'] === 'decimal') {
-            $field['length'] = $row['column_precision'];
-            $field['precision'] = $row['column_scale'] ?: null;
-        }
-
-        if ($field['type'] === TableSchemaInterface::TYPE_TIMESTAMP_FRACTIONAL) {
-            $field['precision'] = $row['datetime_precision'];
-            if ($field['precision'] === 0) {
-                $field['type'] = TableSchemaInterface::TYPE_TIMESTAMP;
-            }
-        }
-
-        if ($field['type'] === TableSchemaInterface::TYPE_TIMESTAMP_TIMEZONE) {
-            $field['precision'] = $row['datetime_precision'];
-        }
-
-        $schema->addColumn($row['name'], $field);
     }
 
     /**
@@ -392,47 +333,6 @@ class PostgresSchemaDialect extends SchemaDialect
     /**
      * @inheritDoc
      */
-    public function describeIndexSql(string $tableName, array $config): array
-    {
-        $sql = $this->describeIndexQuery();
-        [$schema, $name] = $this->splitTablename($tableName, $config);
-
-        return [$sql, [$schema, $name]];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertIndexDescription(TableSchema $schema, array $row): void
-    {
-        $type = TableSchema::INDEX_INDEX;
-        $name = $row['relname'];
-        if ($row['indisprimary']) {
-            $name = TableSchema::CONSTRAINT_PRIMARY;
-            $type = TableSchema::CONSTRAINT_PRIMARY;
-        }
-        if ($row['indisunique'] && $type === TableSchema::INDEX_INDEX) {
-            $type = TableSchema::CONSTRAINT_UNIQUE;
-        }
-        if ($type === TableSchema::CONSTRAINT_PRIMARY || $type === TableSchema::CONSTRAINT_UNIQUE) {
-            $this->convertConstraint($schema, $name, $type, $row);
-
-            return;
-        }
-        $index = $schema->getIndex($name);
-        if (!$index) {
-            $index = [
-                'type' => $type,
-                'columns' => [],
-            ];
-        }
-        $index['columns'][] = $row['attname'];
-        $schema->addIndex($name, $index);
-    }
-
-    /**
-     * @inheritDoc
-     */
     public function describeIndexes(string $tableName): array
     {
         [$schema, $name] = $this->splitTablename($tableName);
@@ -494,33 +394,6 @@ class PostgresSchemaDialect extends SchemaDialect
         }
         $constraint['columns'][] = $row['attname'];
         $schema->addConstraint($name, $constraint);
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function describeForeignKeySql(string $tableName, array $config): array
-    {
-        $sql = $this->describeForeignKeyQuery();
-        [$schema, $name] = $this->splitTablename($tableName, $config);
-
-        return [$sql, [$schema, $name]];
-    }
-
-    /**
-     * @inheritDoc
-     */
-    public function convertForeignKeyDescription(TableSchema $schema, array $row): void
-    {
-        $data = [
-            'type' => TableSchema::CONSTRAINT_FOREIGN,
-            'columns' => $row['column_name'],
-            'references' => [$row['references_table'], $row['references_field']],
-            'update' => $this->convertOnClause($row['on_update']),
-            'delete' => $this->convertOnClause($row['on_delete']),
-            'deferrable' => $this->convertDeferrable($row),
-        ];
-        $schema->addConstraint($row['name'], $data);
     }
 
     /**

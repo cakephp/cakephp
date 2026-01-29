@@ -27,7 +27,7 @@ use RuntimeException;
 /**
  * Cache provides a consistent interface to Caching in your application. It allows you
  * to use several different Cache engines, without coupling your application to a specific
- * implementation. It also allows you to change out cache storage or configuration without effecting
+ * implementation. It also allows you to change out cache storage or configuration without affecting
  * the rest of your application.
  *
  * ### Configuring Cache engines
@@ -56,10 +56,9 @@ use RuntimeException;
  * - `FileEngine` - Uses simple files to store content. Poor performance, but good for
  *    storing large objects, or things that are not IO sensitive. Well suited to development
  *    as it is an easy cache to inspect and manually flush.
- * - `MemcacheEngine` - Uses the PECL::Memcache extension and Memcached for storage.
- *    Fast reads/writes, and benefits from memcache being distributed.
+ * - `MemcachedEngine` - Uses the PECL::Memcached extension and Memcached for storage.
+ *    Fast reads/writes, and benefits from memcached being distributed.
  * - `RedisEngine` - Uses redis and php-redis extension to store cache data.
- * - `XcacheEngine` - Uses the Xcache extension, an alternative to APCu.
  *
  * See Cache engine documentation for expected configuration keys.
  *
@@ -561,7 +560,7 @@ class Cache
      * @param string $config The cache configuration to use for this operation.
      *   Defaults to default.
      * @return mixed If the key is found: the cached data.
-     *   If the key is not found the value returned by the the default callback.
+     *   If the key is not found the value returned by the default callback.
      */
     public static function remember(string $key, Closure $default, string $config = 'default'): mixed
     {

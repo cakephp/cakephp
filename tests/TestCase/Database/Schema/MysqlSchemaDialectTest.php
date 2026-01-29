@@ -52,268 +52,6 @@ class MysqlSchemaDialectTest extends TestCase
     }
 
     /**
-     * Data provider for convert column testing
-     *
-     * @return array
-     */
-    public static function convertColumnProvider(): array
-    {
-        return [
-            [
-                'DATETIME',
-                ['type' => 'datetime', 'length' => null],
-            ],
-            [
-                'DATETIME(0)',
-                ['type' => 'datetime', 'length' => null],
-            ],
-            [
-                'DATETIME(6)',
-                ['type' => 'datetimefractional', 'length' => null, 'precision' => 6],
-            ],
-            [
-                'DATE',
-                ['type' => 'date', 'length' => null],
-            ],
-            [
-                'TIME',
-                ['type' => 'time', 'length' => null],
-            ],
-            [
-                'YEAR',
-                ['type' => 'year', 'length' => null],
-            ],
-            [
-                'TIMESTAMP',
-                ['type' => 'timestamp', 'length' => null],
-            ],
-            [
-                'TIMESTAMP(0)',
-                ['type' => 'timestamp', 'length' => null],
-            ],
-            [
-                'TIMESTAMP(6)',
-                ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
-            ],
-            [
-                'TINYINT(1)',
-                ['type' => 'boolean', 'length' => null],
-            ],
-            [
-                'TINYINT(1) UNSIGNED',
-                ['type' => 'boolean', 'length' => null],
-            ],
-            [
-                'TINYINT(3)',
-                ['type' => 'tinyinteger', 'length' => null, 'unsigned' => false],
-            ],
-            [
-                'TINYINT(3) UNSIGNED',
-                ['type' => 'tinyinteger', 'length' => null, 'unsigned' => true],
-            ],
-            [
-                'SMALLINT(4)',
-                ['type' => 'smallinteger', 'length' => null, 'unsigned' => false],
-            ],
-            [
-                'SMALLINT(4) UNSIGNED',
-                ['type' => 'smallinteger', 'length' => null, 'unsigned' => true],
-            ],
-            [
-                'INTEGER(11)',
-                ['type' => 'integer', 'length' => null, 'unsigned' => false],
-            ],
-            [
-                'MEDIUMINT(11)',
-                ['type' => 'integer', 'length' => null, 'unsigned' => false],
-            ],
-            [
-                'INTEGER(11) UNSIGNED',
-                ['type' => 'integer', 'length' => null, 'unsigned' => true],
-            ],
-            [
-                'BIGINT',
-                ['type' => 'biginteger', 'length' => null, 'unsigned' => false],
-            ],
-            [
-                'BIGINT UNSIGNED',
-                ['type' => 'biginteger', 'length' => null, 'unsigned' => true],
-            ],
-            [
-                'VARCHAR(255)',
-                ['type' => 'string', 'length' => 255, 'collate' => 'utf8_general_ci'],
-            ],
-            [
-                'CHAR(25)',
-                ['type' => 'char', 'length' => 25],
-            ],
-            [
-                'CHAR(36)',
-                ['type' => 'uuid', 'length' => null],
-            ],
-            [
-                'UUID',
-                ['type' => 'nativeuuid', 'length' => null],
-            ],
-            [
-                'BINARY(16)',
-                ['type' => 'binaryuuid', 'length' => null],
-            ],
-            [
-                'BINARY(1)',
-                ['type' => 'binary', 'length' => 1],
-            ],
-            [
-                'TEXT',
-                ['type' => 'text', 'length' => null, 'collate' => 'utf8_general_ci'],
-            ],
-            [
-                'TINYTEXT',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'collate' => 'utf8_general_ci'],
-            ],
-            [
-                'MEDIUMTEXT',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'collate' => 'utf8_general_ci'],
-            ],
-            [
-                'LONGTEXT',
-                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'collate' => 'utf8_general_ci'],
-            ],
-            [
-                'TINYBLOB',
-                ['type' => 'binary', 'length' => TableSchema::LENGTH_TINY],
-            ],
-            [
-                'BLOB',
-                ['type' => 'binary', 'length' => null],
-            ],
-            [
-                'MEDIUMBLOB',
-                ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM],
-            ],
-            [
-                'LONGBLOB',
-                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
-            ],
-            [
-                'FLOAT',
-                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
-            ],
-            [
-                'FLOAT(24)',
-                ['type' => 'float', 'length' => 24, 'precision' => 0, 'unsigned' => false],
-            ],
-            [
-                'DOUBLE',
-                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
-            ],
-            [
-                'DOUBLE UNSIGNED',
-                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => true],
-            ],
-            [
-                'DECIMAL(11,2) UNSIGNED',
-                ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => true],
-            ],
-            [
-                'DECIMAL(11,2)',
-                ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => false],
-            ],
-            [
-                'DECIMAL(5,2)',
-                ['type' => 'decimal', 'length' => 5, 'precision' => 2, 'unsigned' => false],
-            ],
-            [
-                'FLOAT(11,2)',
-                ['type' => 'float', 'length' => 11, 'precision' => 2, 'unsigned' => false],
-            ],
-            [
-                'FLOAT(11,2) UNSIGNED',
-                ['type' => 'float', 'length' => 11, 'precision' => 2, 'unsigned' => true],
-            ],
-            [
-                'DOUBLE(10,4)',
-                ['type' => 'float', 'length' => 10, 'precision' => 4, 'unsigned' => false],
-            ],
-            [
-                'DOUBLE(10,4) UNSIGNED',
-                ['type' => 'float', 'length' => 10, 'precision' => 4, 'unsigned' => true],
-            ],
-            [
-                'JSON',
-                ['type' => 'json', 'length' => null],
-            ],
-            [
-                'GEOMETRY',
-                ['type' => 'geometry', 'length' => null],
-            ],
-            [
-                'POINT',
-                ['type' => 'point', 'length' => null],
-            ],
-            [
-                'LINESTRING',
-                ['type' => 'linestring', 'length' => null],
-            ],
-            [
-                'POLYGON',
-                ['type' => 'polygon', 'length' => null],
-            ],
-        ];
-    }
-
-    /**
-     * Test parsing MySQL column types from field description.
-     */
-    #[DataProvider('convertColumnProvider')]
-    public function testConvertColumn(string $type, array $expected): void
-    {
-        $field = [
-            'Field' => 'field',
-            'Type' => $type,
-            'Null' => 'YES',
-            'Default' => 'Default value',
-            'Collation' => 'utf8_general_ci',
-            'Comment' => 'Comment section',
-        ];
-        $expected += [
-            'null' => true,
-            'default' => 'Default value',
-            'comment' => 'Comment section',
-        ];
-        $driver = $this->getMockBuilder(Mysql::class)->getMock();
-        $dialect = new MysqlSchemaDialect($driver);
-
-        $table = new TableSchema('table');
-        $dialect->convertColumnDescription($table, $field);
-
-        $actual = array_intersect_key($table->getColumn('field'), $expected);
-        ksort($expected);
-        ksort($actual);
-        $this->assertSame($expected, $actual);
-    }
-
-    public function testConvertColumnBlobDefault(): void
-    {
-        $field = [
-            'Field' => 'field',
-            'Type' => 'binary',
-            'Null' => 'YES',
-            'Default' => "_utf8mb4\\'abc\\'",
-            'Collation' => 'utf8_general_ci',
-            'Comment' => 'Comment section',
-        ];
-        $driver = $this->getMockBuilder(Mysql::class)->getMock();
-        $dialect = new MysqlSchemaDialect($driver);
-
-        $table = new TableSchema('table');
-        $dialect->convertColumnDescription($table, $field);
-
-        $actual = $table->getColumn('field');
-        $this->assertSame('abc', $actual['default']);
-    }
-
-    /**
      * Helper method for testing methods.
      *
      * @param \Cake\Datasource\ConnectionInterface $connection
@@ -374,6 +112,304 @@ SQL;
 SQL;
             $connection->execute($table);
         }
+    }
+
+    /**
+     * Data provider for convert column testing
+     *
+     * @return array
+     */
+    public static function convertColumnProvider(): array
+    {
+        return [
+            [
+                'DATETIME',
+                ['type' => 'datetime', 'length' => null],
+            ],
+            [
+                'DATETIME(0)',
+                ['type' => 'datetime', 'length' => null],
+            ],
+            [
+                'DATETIME(6)',
+                ['type' => 'datetimefractional', 'length' => null, 'precision' => 6],
+            ],
+            [
+                'DATE',
+                ['type' => 'date', 'length' => null],
+            ],
+            [
+                'TIME',
+                ['type' => 'time', 'length' => null],
+            ],
+            [
+                'YEAR',
+                ['type' => 'year', 'length' => null],
+            ],
+            [
+                'TIMESTAMP',
+                ['type' => 'timestamp', 'length' => null],
+            ],
+            [
+                'TIMESTAMP(0)',
+                ['type' => 'timestamp', 'length' => null],
+            ],
+            [
+                'TIMESTAMP(6)',
+                ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
+            ],
+            [
+                'TINYINT(1)',
+                ['type' => 'boolean', 'length' => null],
+            ],
+            [
+                'TINYINT(3)',
+                ['type' => 'tinyinteger', 'length' => null, 'unsigned' => false],
+            ],
+            [
+                'TINYINT(3) UNSIGNED',
+                ['type' => 'tinyinteger', 'length' => null, 'unsigned' => true],
+            ],
+            [
+                'SMALLINT(4)',
+                ['type' => 'smallinteger', 'length' => null, 'unsigned' => false],
+            ],
+            [
+                'SMALLINT(4) UNSIGNED',
+                ['type' => 'smallinteger', 'length' => null, 'unsigned' => true],
+            ],
+            [
+                'INTEGER(11)',
+                ['type' => 'integer', 'length' => null, 'unsigned' => false],
+            ],
+            [
+                'MEDIUMINT(11)',
+                ['type' => 'integer', 'length' => null, 'unsigned' => false],
+            ],
+            [
+                'INTEGER(11) UNSIGNED',
+                ['type' => 'integer', 'length' => null, 'unsigned' => true],
+            ],
+            [
+                'BIGINT',
+                ['type' => 'biginteger', 'length' => null, 'unsigned' => false],
+            ],
+            [
+                'BIGINT UNSIGNED',
+                ['type' => 'biginteger', 'length' => null, 'unsigned' => true],
+            ],
+            [
+                'VARCHAR(255)',
+                ['type' => 'string', 'length' => 255, 'collate' => 'utf8_general_ci'],
+            ],
+            [
+                'CHAR(25)',
+                ['type' => 'char', 'length' => 25],
+            ],
+            [
+                'CHAR(36)',
+                ['type' => 'uuid', 'length' => null],
+            ],
+            [
+                'BINARY(16)',
+                ['type' => 'binaryuuid', 'length' => null],
+            ],
+            [
+                'BINARY(1)',
+                ['type' => 'binary', 'length' => 1],
+            ],
+            [
+                'TEXT',
+                ['type' => 'text', 'length' => null, 'collate' => 'utf8_general_ci'],
+            ],
+            [
+                'TINYTEXT',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_TINY, 'collate' => 'utf8_general_ci'],
+            ],
+            [
+                'MEDIUMTEXT',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_MEDIUM, 'collate' => 'utf8_general_ci'],
+            ],
+            [
+                'LONGTEXT',
+                ['type' => 'text', 'length' => TableSchema::LENGTH_LONG, 'collate' => 'utf8_general_ci'],
+            ],
+            [
+                'TINYBLOB',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_TINY],
+            ],
+            [
+                'BLOB',
+                ['type' => 'binary', 'length' => null],
+            ],
+            [
+                'MEDIUMBLOB',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM],
+            ],
+            [
+                'LONGBLOB',
+                ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
+            ],
+            [
+                'FLOAT',
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
+            ],
+            [
+                'FLOAT(24)',
+                ['type' => 'float', 'unsigned' => false],
+            ],
+            [
+                'DOUBLE',
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => false],
+            ],
+            [
+                'DOUBLE UNSIGNED',
+                ['type' => 'float', 'length' => null, 'precision' => null, 'unsigned' => true],
+            ],
+            [
+                'DECIMAL(11,2) UNSIGNED',
+                ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => true],
+            ],
+            [
+                'DECIMAL(11,2)',
+                ['type' => 'decimal', 'length' => 11, 'precision' => 2, 'unsigned' => false],
+            ],
+            [
+                'DECIMAL(5,2)',
+                ['type' => 'decimal', 'length' => 5, 'precision' => 2, 'unsigned' => false],
+            ],
+            [
+                'FLOAT(11,2)',
+                ['type' => 'float', 'length' => 11, 'precision' => 2, 'unsigned' => false],
+            ],
+            [
+                'FLOAT(11,2) UNSIGNED',
+                ['type' => 'float', 'length' => 11, 'precision' => 2, 'unsigned' => true],
+            ],
+            [
+                'DOUBLE(10,4)',
+                ['type' => 'float', 'length' => 10, 'precision' => 4, 'unsigned' => false],
+            ],
+            [
+                'DOUBLE(10,4) UNSIGNED',
+                ['type' => 'float', 'length' => 10, 'precision' => 4, 'unsigned' => true],
+            ],
+            [
+                'GEOMETRY',
+                ['type' => 'geometry', 'length' => null],
+            ],
+            [
+                'POINT',
+                ['type' => 'point', 'length' => null],
+            ],
+            [
+                'LINESTRING',
+                ['type' => 'linestring', 'length' => null],
+            ],
+            [
+                'POLYGON',
+                ['type' => 'polygon', 'length' => null],
+            ],
+        ];
+    }
+
+    /**
+     * Test parsing MySQL column types from field description.
+     */
+    #[DataProvider('convertColumnProvider')]
+    public function testConvertColumn(string $type, array $expected): void
+    {
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE convert_columns (
+    reflection {$type}
+);
+SQL;
+        $connection->execute($sql);
+
+        $driver = $connection->getDriver();
+        $dialect = $driver->schemaDialect();
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
+
+        $data = $table->column('reflection')->toArray();
+
+        // Collations are a mess in MySQL
+        if (isset($expected['collate'])) {
+            $db = $driver->config()['database'];
+            $result = $connection->execute(
+                'SELECT default_collation_name FROM information_schema.schemata WHERE schema_name = ?',
+                [$db],
+            );
+            $row = $result->fetch();
+            $result->closeCursor();
+            $expected['collate'] = $row[0];
+        }
+
+        $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(
+            $expected,
+            $data,
+            array_keys($expected),
+        );
+    }
+
+    /**
+     * Test parsing JSON types in mysql
+     */
+    public function testConvertColumnJson(): void
+    {
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+
+        $isMaria = $driver->isMariaDb();
+        $this->skipIf($isMaria, 'This test requires mysql');
+
+        $sql = <<<SQL
+CREATE TABLE convert_columns (
+    reflection JSON
+);
+SQL;
+        $connection->execute($sql);
+
+        $dialect = $driver->schemaDialect();
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
+
+        $column = $table->column('reflection');
+        $this->assertEquals('json', $column->getType());
+        $this->assertNull($column->getLength());
+    }
+
+    /**
+     * Test parsing UUID types in mariadb
+     */
+    public function testConvertColumnUuid(): void
+    {
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        $driver = $connection->getDriver();
+
+        $isMaria = $driver->isMariaDb();
+        $this->skipIf(!$isMaria, 'This test requires mariadb');
+
+        $sql = <<<SQL
+CREATE TABLE convert_columns (
+    reflection UUID
+);
+SQL;
+        $connection->execute($sql);
+
+        $dialect = $driver->schemaDialect();
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
+
+        $column = $table->column('reflection');
+        $this->assertEquals('nativeuuid', $column->getType());
     }
 
     /**
@@ -611,10 +647,6 @@ SQL;
 
     /**
      * Test that schema reflection works for geosptial columns.
-     *
-     * We currently cannot reflect the postgis types from postgres.
-     *
-     * @return void
      */
     public function testDescribeTableGeometry(): void
     {
@@ -622,15 +654,92 @@ SQL;
         $connection = ConnectionManager::get('test');
         $driver = $connection->getDriver();
 
-        $hasGeometry = $driver->isMariaDb() || version_compare($driver->version(), '8.0.30', '>=');
-        $this->skipIf(!$hasGeometry, 'This test requires geometry type support');
+        // MySQL 8.0.1 adds srid support while 8.0.13 adds default support
+        $hasGeometry = !$driver->isMariaDb() && version_compare($driver->version(), '8.0.13', '>=');
+        $this->skipIf(!$hasGeometry, 'This test requires geometry type with srid support.');
+
+        $table = <<<SQL
+CREATE TABLE schema_geometry (
+    id INTEGER,
+    geo_line LINESTRING,
+    geo_geometry GEOMETRY SRID 0,
+    geo_point POINT DEFAULT (ST_GeometryFromText('POINT(10 10)')) SRID 4236,
+    geo_polygon POLYGON SRID 4236
+)
+SQL;
+        $connection->execute($table);
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('schema_geometry');
+        $connection->execute('DROP TABLE schema_geometry');
+
+        $expected = [
+            'id' => [
+                'type' => 'integer',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'unsigned' => false,
+                'comment' => '',
+                'autoIncrement' => null,
+                'generated' => null,
+            ],
+            'geo_line' => [
+                'type' => 'linestring',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => 0,
+            ],
+            'geo_geometry' => [
+                'type' => 'geometry',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => null,
+            ],
+            'geo_point' => [
+                'type' => 'point',
+                'null' => true,
+                'default' => "st_geometryfromtext('POINT(10 10)')",
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => 4236,
+            ],
+            'geo_polygon' => [
+                'type' => 'polygon',
+                'null' => true,
+                'default' => null,
+                'precision' => null,
+                'length' => null,
+                'comment' => '',
+                'srid' => 4236,
+            ],
+        ];
+        foreach ($expected as $field => $definition) {
+            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in {$field} column");
+        }
+    }
+
+    /**
+     * MariaDB does not support setting SRID on geometry types.
+     */
+    public function testDescribeTableGeometryNoSrid(): void
+    {
+        $this->_needsConnection();
+        $connection = ConnectionManager::get('test');
 
         $table = <<<SQL
 CREATE TABLE schema_geometry (
     id INTEGER,
     geo_line LINESTRING,
     geo_geometry GEOMETRY,
-    geo_point POINT DEFAULT (ST_GeometryFromText('POINT(10 10)')),
+    geo_point POINT,
     geo_polygon POLYGON
 )
 SQL;
@@ -672,7 +781,7 @@ SQL;
             'geo_point' => [
                 'type' => 'point',
                 'null' => true,
-                'default' => "st_geometryfromtext('POINT(10 10)')",
+                'default' => null,
                 'precision' => null,
                 'length' => null,
                 'comment' => '',
@@ -681,7 +790,7 @@ SQL;
             'geo_polygon' => [
                 'type' => 'polygon',
                 'null' => true,
-                'default' => '',
+                'default' => null,
                 'precision' => null,
                 'length' => null,
                 'comment' => '',

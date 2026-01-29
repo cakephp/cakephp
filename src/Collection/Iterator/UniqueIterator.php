@@ -22,6 +22,10 @@ use Cake\Collection\Collection;
  * Creates a filtered iterator from another iterator. The filtering is done by
  * passing a callback function to each of the elements and taking them out if
  * the value returned is not unique.
+ *
+ * @template TKey
+ * @template TValue
+ * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class UniqueIterator extends Collection
 {
@@ -32,7 +36,7 @@ class UniqueIterator extends Collection
      * The callback is passed the value as the first argument and the key as the
      * second argument.
      *
-     * @param iterable $items The items to be filtered.
+     * @param iterable<TKey, TValue> $items The items to be filtered.
      * @param callable $callback Callback.
      */
     public function __construct(iterable $items, callable $callback)

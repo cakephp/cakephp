@@ -554,7 +554,17 @@ class Client implements EventDispatcherInterface, ClientInterface
      *
      * ### Matching Requests
      *
-     * TODO finish this.
+     * Request matching is done on the HTTP method and URL. If the URL is
+     * an exact match, the response will be returned. You can use `*` as
+     * a wildcard to match any suffix:
+     *
+     * ```
+     * // Match any URL starting with https://example.com/api/
+     * Client::addMockResponse('GET', 'https://example.com/api/*', $response);
+     * ```
+     *
+     * For more complex matching, use the `match` option with a closure
+     * that receives the request and returns a boolean.
      *
      * ### Options
      *

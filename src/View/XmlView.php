@@ -99,7 +99,7 @@ class XmlView extends SerializedView
     /**
      * Mime-type this view class renders as.
      *
-     * @return string The JSON content type.
+     * @return string The XML content type.
      */
     public static function contentType(): string
     {

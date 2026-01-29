@@ -21,7 +21,6 @@ use Cake\Database\Driver\Sqlite;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
-use TestApp\Database\Schema\CompatDialect;
 
 /**
  * Test case for SchemaDialect methods
@@ -237,23 +236,5 @@ class SchemaDialectTest extends TestCase
 
         $this->assertTrue($this->dialect->hasForeignKey('orders', ['product_category', 'product_id'], 'product_category_fk'));
         $this->assertTrue($this->dialect->hasForeignKey('orders', [], 'product_category_fk'));
-    }
-
-    /**
-     * Test that SchemaDialect implementations without describeColumns etc
-     * implemented still work with describe().
-     */
-    public function testBackwardsCompatibility(): void
-    {
-        $this->deprecated(function (): void {
-            /** @var \Cake\Database\Driver $driver */
-            $driver = ConnectionManager::get('test')->getDriver();
-            $this->skipIf(!($driver instanceof Sqlite), 'requires sqlite connection');
-            $dialect = new CompatDialect($driver);
-            $table = $dialect->describe('orders');
-            $this->assertNotEmpty($table->columns());
-            $this->assertNotEmpty($table->indexes());
-            $this->assertNotEmpty($table->constraints());
-        });
     }
 }

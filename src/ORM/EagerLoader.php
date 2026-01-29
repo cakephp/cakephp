@@ -375,9 +375,9 @@ class EagerLoader
             $pointer += [$table => []];
 
             if (isset($options['queryBuilder'], $pointer[$table]['queryBuilder'])) {
-                /** @var callable $first */
+                assert(is_callable($pointer[$table]['queryBuilder']));
                 $first = $pointer[$table]['queryBuilder'];
-                /** @var callable $second */
+                assert(is_callable($options['queryBuilder']));
                 $second = $options['queryBuilder'];
                 $options['queryBuilder'] = fn($query) => $second($first($query));
             }
@@ -611,9 +611,9 @@ class EagerLoader
     /**
      * Merges association joins and throws an exception if there are conflicts.
      *
-     * @param array $a
-     * @param array $b
-     * @return array
+     * @param array<string, \Cake\ORM\EagerLoadable> $a
+     * @param array<string, \Cake\ORM\EagerLoadable> $b
+     * @return array<string, \Cake\ORM\EagerLoadable>
      */
     private function mergeJoins(array $a, array $b): array
     {
@@ -877,8 +877,6 @@ class EagerLoader
 
     /**
      * Handles cloning eager loaders and eager loadables.
-     *
-     * @return void
      */
     public function __clone()
     {

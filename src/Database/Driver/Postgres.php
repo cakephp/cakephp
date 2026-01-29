@@ -253,7 +253,7 @@ class Postgres extends Driver
     }
 
     /**
-     * Changes identifer expression into postgresql format.
+     * Changes identifier expression into postgresql format.
      *
      * @param \Cake\Database\Expression\IdentifierExpression $expression The expression to transform.
      * @return void

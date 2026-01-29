@@ -28,6 +28,7 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Database\Schema\UniqueKey;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use Exception;
 use PDO;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -143,174 +144,158 @@ SQL;
         return [
             // Timestamp
             [
-                ['type' => 'TIMESTAMP', 'datetime_precision' => 6],
+                'TIMESTAMP(6)',
                 ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
             ],
             [
-                ['type' => 'TIMESTAMP', 'datetime_precision' => 0],
+                'TIMESTAMP(0)',
                 ['type' => 'timestamp', 'length' => null, 'precision' => 0],
             ],
             [
-                ['type' => 'TIMESTAMP WITHOUT TIME ZONE', 'datetime_precision' => 6],
+                'TIMESTAMP(6) WITHOUT TIME ZONE',
                 ['type' => 'timestampfractional', 'length' => null, 'precision' => 6],
             ],
             [
-                ['type' => 'TIMESTAMP WITH TIME ZONE', 'datetime_precision' => 6],
+                'TIMESTAMP(6) WITH TIME ZONE',
                 ['type' => 'timestamptimezone', 'length' => null, 'precision' => 6],
             ],
             [
-                ['type' => 'TIMESTAMPTZ', 'datetime_precision' => 6],
+                'TIMESTAMPTZ(6)',
                 ['type' => 'timestamptimezone', 'length' => null, 'precision' => 6],
             ],
             // Date & time
             [
-                ['type' => 'DATE'],
+                'DATE',
                 ['type' => 'date', 'length' => null],
             ],
             [
-                ['type' => 'TIME'],
+                'TIME',
                 ['type' => 'time', 'length' => null],
             ],
             [
-                ['type' => 'TIME WITHOUT TIME ZONE'],
+                'TIME WITHOUT TIME ZONE',
                 ['type' => 'time', 'length' => null],
             ],
             [
-                ['type' => 'INTERVAL'],
+                'INTERVAL',
                 ['type' => 'interval', 'length' => null],
             ],
             // Integer
             [
-                ['type' => 'SMALLINT'],
+                'SMALLINT',
                 ['type' => 'smallinteger', 'length' => 5],
             ],
             [
-                ['type' => 'INTEGER'],
+                'INTEGER',
                 ['type' => 'integer', 'length' => 10],
             ],
             [
-                ['type' => 'SERIAL'],
+                'SERIAL',
                 ['type' => 'integer', 'length' => 10],
             ],
             [
-                ['type' => 'BIGINT'],
+                'BIGINT',
                 ['type' => 'biginteger', 'length' => 20],
             ],
             [
-                ['type' => 'BIGSERIAL'],
+                'BIGSERIAL',
                 ['type' => 'biginteger', 'length' => 20],
             ],
             // Decimal
             [
-                ['type' => 'NUMERIC'],
+                'NUMERIC',
                 ['type' => 'decimal', 'length' => null, 'precision' => null],
             ],
             [
-                ['type' => 'NUMERIC', 'default' => 'NULL::numeric'],
+                'NUMERIC DEFAULT NULL::numeric',
                 ['type' => 'decimal', 'length' => null, 'precision' => null, 'default' => null],
             ],
             [
-                ['type' => 'DECIMAL(10,2)', 'column_precision' => 10, 'column_scale' => 2],
+                'DECIMAL(10,2)',
                 ['type' => 'decimal', 'length' => 10, 'precision' => 2],
             ],
             // String
             [
-                ['type' => 'VARCHAR'],
-                ['type' => 'string', 'length' => null, 'collate' => 'ja_JP.utf8'],
+                'VARCHAR',
+                ['type' => 'string', 'length' => null],
             ],
             [
-                ['type' => 'VARCHAR(10)'],
-                ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8'],
+                'VARCHAR(10)',
+                ['type' => 'string', 'length' => 10],
             ],
             [
-                ['type' => 'CHARACTER VARYING'],
-                ['type' => 'string', 'length' => null, 'collate' => 'ja_JP.utf8'],
+                'CHARACTER VARYING',
+                ['type' => 'string', 'length' => null],
             ],
             [
-                ['type' => 'CHARACTER VARYING(10)'],
-                ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8'],
+                'CHARACTER VARYING(10)',
+                ['type' => 'string', 'length' => 10],
             ],
             [
-                ['type' => 'CHARACTER VARYING(255)', 'default' => 'NULL::character varying'],
-                ['type' => 'string', 'length' => 255, 'default' => null, 'collate' => 'ja_JP.utf8'],
+                'CHARACTER VARYING(255) DEFAULT NULL::character varying',
+                ['type' => 'string', 'length' => 255, 'default' => null],
             ],
             [
-                ['type' => 'CHAR(10)'],
-                ['type' => 'char', 'length' => 10, 'collate' => 'ja_JP.utf8'],
+                'CHAR(10)',
+                ['type' => 'string', 'length' => 10],
             ],
             [
-                ['type' => 'CHAR(36)'],
-                ['type' => 'char', 'length' => 36, 'collate' => 'ja_JP.utf8'],
+                'CHAR(36)',
+                ['type' => 'string', 'length' => 36],
             ],
             [
-                ['type' => 'CHARACTER(10)'],
-                ['type' => 'string', 'length' => 10, 'collate' => 'ja_JP.utf8'],
+                'CHARACTER(10)',
+                ['type' => 'string', 'length' => 10],
             ],
             [
-                ['type' => 'MONEY'],
+                'MONEY',
                 ['type' => 'string', 'length' => null],
             ],
             // UUID
             [
-                ['type' => 'UUID'],
+                'UUID',
                 ['type' => 'uuid', 'length' => null],
             ],
             // Text
             [
-                ['type' => 'TEXT'],
-                ['type' => 'text', 'length' => null, 'collate' => 'ja_JP.utf8'],
+                'TEXT',
+                ['type' => 'text', 'length' => null],
             ],
             // Blob
             [
-                ['type' => 'BYTEA'],
+                'BYTEA',
                 ['type' => 'binary', 'length' => null],
             ],
             // Float
             [
-                ['type' => 'REAL'],
+                'REAL',
                 ['type' => 'float', 'length' => null],
             ],
             [
-                ['type' => 'DOUBLE PRECISION'],
+                'DOUBLE PRECISION',
                 ['type' => 'float', 'length' => null],
             ],
             // JSON
             [
-                ['type' => 'JSON'],
+                'JSON',
                 ['type' => 'json', 'length' => null],
             ],
             [
-                ['type' => 'JSONB'],
+                'JSONB',
                 ['type' => 'json', 'length' => null],
             ],
-            // Geospatial
-            [
-                ['type' => 'GEOGRAPHY(GEOMETRY, 4326)'],
-                ['type' => 'geometry', 'length' => null, 'srid' => 4326],
-            ],
-            [
-                ['type' => 'GEOGRAPHY(POINT, 4326)'],
-                ['type' => 'point', 'length' => null, 'srid' => 4326],
-            ],
-            [
-                ['type' => 'GEOGRAPHY(LINESTRING, 4326)'],
-                ['type' => 'linestring', 'length' => null, 'srid' => 4326],
-            ],
-            [
-                ['type' => 'GEOGRAPHY(POLYGON, 4326)'],
-                ['type' => 'polygon', 'length' => null, 'srid' => 4326],
-            ],
+            // Geospatial - see testDescribeTableGeospatialTypes
             // network addresses
             [
-                ['type' => 'CIDR'],
+                'CIDR',
                 ['type' => 'cidr', 'length' => null],
             ],
             [
-                ['type' => 'inet'],
+                'inet',
                 ['type' => 'inet', 'length' => null],
             ],
             [
-                ['type' => 'macaddr'],
+                'macaddr',
                 ['type' => 'macaddr', 'length' => null],
             ],
         ];
@@ -320,34 +305,29 @@ SQL;
      * Test parsing Postgres column types from field description.
      */
     #[DataProvider('convertColumnProvider')]
-    public function testConvertColumn(array $field, array $expected): void
+    public function testConvertColumn(string $field, array $expected): void
     {
-        $field += [
-            'name' => 'field',
-            'null' => 'YES',
-            'default' => 'Default value',
-            'comment' => 'Comment section',
-            'char_length' => null,
-            'column_precision' => null,
-            'column_scale' => null,
-            'collation_name' => 'ja_JP.utf8',
-        ];
-        $expected += [
-            'null' => true,
-            'default' => 'Default value',
-            'comment' => 'Comment section',
-        ];
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+        $sql = <<<SQL
+CREATE TABLE convert_columns (
+    reflection {$field}
+);
+SQL;
+        $connection->execute($sql);
 
-        $driver = $this->getMockBuilder(Postgres::class)->getMock();
-        $dialect = new PostgresSchemaDialect($driver);
+        $driver = $connection->getDriver();
+        $dialect = $driver->schemaDialect();
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
 
-        $table = new TableSchema('table');
-        $dialect->convertColumnDescription($table, $field);
-
-        $actual = array_intersect_key($table->getColumn('field'), $expected);
-        ksort($expected);
-        ksort($actual);
-        $this->assertSame($expected, $actual);
+        $data = $table->column('reflection')->toArray();
+        $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(
+            $expected,
+            $data,
+            array_keys($expected),
+        );
     }
 
     /**
@@ -712,6 +692,97 @@ SQL;
             ],
         ];
         $this->assertEquals(['id'], $result->getPrimaryKey());
+        foreach ($expected as $field => $definition) {
+            $this->assertEquals($definition, $result->getColumn($field), "Mismatch in {$field} column");
+        }
+    }
+
+    public function testDescribeTableGeospatialTypes(): void
+    {
+        $this->_needsConnection();
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
+
+        try {
+            $connection->execute('CREATE EXTENSION IF NOT EXISTS postgis');
+        } catch (Exception) {
+            $this->markTestSkipped('PostGIS extension is not available');
+        }
+
+        // GEOMETRY defaults to srid 0 while GEOGRAPHY defaults to srid 4326
+        $sql = <<<SQL
+            CREATE TABLE ref_table (
+                geometry_geometry GEOMETRY,
+                geometry_point GEOMETRY(POINT),
+                geometry_point_4236 GEOMETRY(POINT, 4236),
+                geography_geometry GEOGRAPHY,
+                geography_point GEOGRAPHY(POINT),
+                geography_point_0 GEOGRAPHY(POINT, 0)
+            );
+            SQL;
+
+        $connection->execute('DROP TABLE IF EXISTS ref_table');
+        $connection->execute($sql);
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->describe('ref_table');
+
+        $connection->execute('DROP TABLE ref_table');
+
+        $expected = [
+            'geometry_geometry' => [
+                'type' => 'geometry',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
+            ],
+            'geometry_point' => [
+                'type' => 'geometry',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
+            ],
+            'geometry_point_4236' => [
+                'type' => 'geometry',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+                'srid' => null,
+            ],
+            'geography_geometry' => [
+                'type' => 'geography',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'geography_point' => [
+                'type' => 'geography',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+            'geography_point_0' => [
+                'type' => 'geography',
+                'null' => true,
+                'default' => null,
+                'length' => null,
+                'precision' => null,
+                'comment' => null,
+            ],
+        ];
+
         foreach ($expected as $field => $definition) {
             $this->assertEquals($definition, $result->getColumn($field), "Mismatch in {$field} column");
         }
@@ -1372,9 +1443,9 @@ SQL;
 
         $table = new TableSchema('schema_articles');
         $table->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addConstraint('primary', [
                 'type' => 'primary',
                 'columns' => ['id'],
@@ -1406,31 +1477,31 @@ SQL;
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id']],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
+                    'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'cascade'],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
+                    'REFERENCES "authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'restrict'],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
+                    'REFERENCES "authors" ("id") ON UPDATE RESTRICT ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'setNull'],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
+                    'REFERENCES "authors" ("id") ON UPDATE SET NULL ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
             ],
             [
                 'author_id_idx',
                 ['type' => 'foreign', 'columns' => ['author_id'], 'references' => ['authors', 'id'], 'update' => 'noAction'],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
+                    'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY IMMEDIATE',
             ],
             [
                 'author_id_idx',
@@ -1442,7 +1513,7 @@ SQL;
                     'deferrable' => ForeignKey::DEFERRED,
                 ],
                 'CONSTRAINT "author_id_idx" FOREIGN KEY ("author_id") ' .
-                'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
+                    'REFERENCES "authors" ("id") ON UPDATE NO ACTION ON DELETE RESTRICT DEFERRABLE INITIALLY DEFERRED',
             ],
             [
                 'author_id_check',
@@ -1622,9 +1693,9 @@ SQL;
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles')->addColumn('id', [
-                'type' => 'integer',
-                'null' => false,
-            ])
+            'type' => 'integer',
+            'null' => false,
+        ])
             ->addColumn('title', [
                 'type' => 'string',
                 'null' => false,
@@ -1677,6 +1748,46 @@ SQL;
             'COMMENT ON COLUMN "schema_articles"."title" IS \'This is the title\'',
             $result[2],
         );
+    }
+
+    public function testCreateSqlGeospacialTypes(): void
+    {
+        $driver = $this->_getMockedDriver();
+        $connection = $this->getMockBuilder(Connection::class)
+            ->disableOriginalConstructor()
+            ->getMock();
+        $connection->expects($this->any())->method('getWriteDriver')
+            ->willReturn($driver);
+
+        $table = new TableSchema('ref_table')
+            ->addColumn('geometry', [
+                'type' => 'geometry',
+            ])
+            ->addColumn('geometry_0', [
+                'type' => 'geometry',
+                'srid' => 0,
+            ])
+            ->addColumn('point', [
+                'type' => 'point',
+            ])
+            ->addColumn('point_0', [
+                'type' => 'point',
+                'srid' => 0,
+            ]);
+
+        $expected = <<<SQL
+            CREATE TABLE "ref_table" (
+            "geometry" GEOGRAPHY(GEOMETRY, 4326),
+            "geometry_0" GEOGRAPHY(GEOMETRY, 0),
+            "point" GEOGRAPHY(POINT, 4326),
+            "point_0" GEOGRAPHY(POINT, 0)
+            )
+            SQL;
+
+        $result = $table->createSql($connection);
+
+        $this->assertCount(1, $result);
+        $this->assertTextEquals($expected, $result[0]);
     }
 
     /**
@@ -1825,18 +1936,6 @@ SQL;
         $this->assertSame('TRUNCATE "schema_articles" RESTART IDENTITY CASCADE', $result[0]);
     }
 
-    public function testDescribeIndexSql(): void
-    {
-        $driver = $this->getMockBuilder(Postgres::class)->getMock();
-        $dialect = new PostgresSchemaDialect($driver);
-
-        $result = $dialect->describeIndexSql('schema_name.table_name', []);
-        $this->assertEquals(['schema_name', 'table_name'], $result[1]);
-
-        $result = $dialect->describeIndexSql('table_name', ['schema' => 'schema_name']);
-        $this->assertEquals(['schema_name', 'table_name'], $result[1]);
-    }
-
     public function testDescribeIndexIncludedFields(): void
     {
         $this->_needsConnection();
@@ -1866,18 +1965,6 @@ SQL;
         $this->assertEquals(['id'], $indexes[0]['columns']);
         $this->assertEquals(['site_id'], $indexes[1]['columns']);
         $this->assertEquals(['name'], $indexes[1]['include']);
-    }
-
-    public function testDescribeForeignKeySql(): void
-    {
-        $driver = $this->getMockBuilder(Postgres::class)->getMock();
-        $dialect = new PostgresSchemaDialect($driver);
-
-        $result = $dialect->describeForeignKeySql('schema_name.table_name', []);
-        $this->assertEquals(['schema_name', 'table_name'], $result[1]);
-
-        $result = $dialect->describeForeignKeySql('table_name', ['schema' => 'schema_name']);
-        $this->assertEquals(['schema_name', 'table_name'], $result[1]);
     }
 
     /**

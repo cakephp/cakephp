@@ -71,8 +71,9 @@ class Mock implements AdapterInterface
      * Find a response if one exists.
      *
      * @param \Psr\Http\Message\RequestInterface $request The request to match
-     * @param array<string, mixed> $options Unused.
-     * @return array<\Cake\Http\Client\Response> The matched response or an empty array for no matches.
+     * @param array<string, mixed> $options The options are passed to match callbacks.
+     * @return array<\Cake\Http\Client\Response> The matched response.
+     * @throws \Cake\Http\Client\Exception\MissingResponseException When no mock response matches.
      */
     public function send(RequestInterface $request, array $options): array
     {
@@ -81,12 +82,12 @@ class Mock implements AdapterInterface
         $requestUri = (string)$request->getUri();
 
         foreach ($this->responses as $index => $mock) {
-            /** @var \Psr\Http\Message\RequestInterface $request */
-            $request = $mock['request'];
-            if ($method !== $request->getMethod()) {
+            /** @var \Psr\Http\Message\RequestInterface $mockRequest */
+            $mockRequest = $mock['request'];
+            if ($method !== $mockRequest->getMethod()) {
                 continue;
             }
-            if (!$this->urlMatches($requestUri, $mock['request'])) {
+            if (!$this->urlMatches($requestUri, $mockRequest)) {
                 continue;
             }
             if (isset($mock['options']['match'])) {

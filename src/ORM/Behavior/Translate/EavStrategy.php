@@ -479,6 +479,7 @@ class EavStrategy implements TranslateStrategyInterface
             $key = $entity->get((string)current($primaryKey));
         }
         $find = [];
+        /** @var array<\Cake\Datasource\EntityInterface> $contents */
         $contents = [];
         $entityClass = $this->translationTable->getEntityClass();
 

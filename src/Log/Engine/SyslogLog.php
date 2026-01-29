@@ -84,7 +84,7 @@ class SyslogLog extends BaseLog
      *
      * @var bool
      */
-    protected bool $_open = false;
+    protected bool $open = false;
 
     /**
      * Writes a message to syslog
@@ -101,10 +101,10 @@ class SyslogLog extends BaseLog
      */
     public function log($level, Stringable|string $message, array $context = []): void
     {
-        if (!$this->_open) {
+        if (!$this->open) {
             $config = $this->config;
             $this->open($config['prefix'], $config['flag'], $config['facility']);
-            $this->_open = true;
+            $this->open = true;
         }
 
         $priority = LOG_DEBUG;

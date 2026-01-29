@@ -520,6 +520,8 @@ class BelongsToMany extends Association
             ->where($options['conditions']);
 
         if (!empty($options['queryBuilder'])) {
+            assert(is_callable($options['queryBuilder']));
+            /** @var \Cake\ORM\Query\SelectQuery $subquery */
             $subquery = $options['queryBuilder']($subquery);
         }
 

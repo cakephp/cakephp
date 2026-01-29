@@ -65,21 +65,21 @@ class FileLog extends BaseLog
      *
      * @var string
      */
-    protected string $_path;
+    protected string $path;
 
     /**
      * The name of the file to save logs into.
      *
      * @var string|null
      */
-    protected ?string $_file = null;
+    protected ?string $file = null;
 
     /**
      * Max file size, used for log file rotation.
      *
      * @var int|null
      */
-    protected ?int $_size = null;
+    protected ?int $size = null;
 
     /**
      * Sets protected properties based on config provided
@@ -90,23 +90,23 @@ class FileLog extends BaseLog
     {
         parent::__construct($config);
 
-        $this->_path = $this->getConfig('path', sys_get_temp_dir() . DIRECTORY_SEPARATOR);
-        if (!is_dir($this->_path)) {
-            mkdir($this->_path, $this->config['dirMask'] ^ umask(), true);
+        $this->path = $this->getConfig('path', sys_get_temp_dir() . DIRECTORY_SEPARATOR);
+        if (!is_dir($this->path)) {
+            mkdir($this->path, $this->config['dirMask'] ^ umask(), true);
         }
 
         if (!empty($this->config['file'])) {
-            $this->_file = $this->config['file'];
-            if (!str_ends_with($this->_file, '.log')) {
-                $this->_file .= '.log';
+            $this->file = $this->config['file'];
+            if (!str_ends_with($this->file, '.log')) {
+                $this->file .= '.log';
             }
         }
 
         if (!empty($this->config['size'])) {
             if (is_numeric($this->config['size'])) {
-                $this->_size = (int)$this->config['size'];
+                $this->size = (int)$this->config['size'];
             } else {
-                $this->_size = Text::parseFileSize($this->config['size']);
+                $this->size = Text::parseFileSize($this->config['size']);
             }
         }
     }
@@ -127,11 +127,11 @@ class FileLog extends BaseLog
         $message = $this->formatter->format($level, $message, $context);
 
         $filename = $this->getFilename($level);
-        if ($this->_size) {
+        if ($this->size) {
             $this->rotateFile($filename);
         }
 
-        $pathname = $this->_path . $filename;
+        $pathname = $this->path . $filename;
         $mask = $this->config['mask'];
         if (!$mask) {
             file_put_contents($pathname, $message . "\n", FILE_APPEND);
@@ -163,8 +163,8 @@ class FileLog extends BaseLog
     {
         $debugTypes = ['notice', 'info', 'debug'];
 
-        if ($this->_file) {
-            $filename = $this->_file;
+        if ($this->file) {
+            $filename = $this->file;
         } elseif ($level === 'error' || $level === 'warning') {
             $filename = 'error.log';
         } elseif (in_array($level, $debugTypes, true)) {
@@ -186,12 +186,12 @@ class FileLog extends BaseLog
      */
     protected function rotateFile(string $filename): ?bool
     {
-        $filePath = $this->_path . $filename;
+        $filePath = $this->path . $filename;
         clearstatcache(true, $filePath);
 
         if (
             !is_file($filePath) ||
-            filesize($filePath) < $this->_size
+            filesize($filePath) < $this->size
         ) {
             return null;
         }

@@ -21,7 +21,7 @@ namespace Cake\Event;
  * payload. The name can be any string that uniquely identifies the event across the application, while the subject
  * represents the object that the event applies to.
  *
- * @template TSubject of object
+ * @template-covariant TSubject of object
  */
 interface EventInterface
 {
@@ -35,8 +35,7 @@ interface EventInterface
     /**
      * Returns the subject of this event.
      *
-     * @return object|null
-     * @phpstan-return TSubject|null
+     * @return TSubject|null
      */
     public function getSubject(): ?object;
 

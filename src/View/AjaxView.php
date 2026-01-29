@@ -20,6 +20,8 @@ namespace Cake\View;
  * A view class that is used for AJAX responses.
  * Currently, only switches the default layout and sets the response type - which just maps to
  * text/html by default.
+ *
+ * @extends \Cake\View\View<\Cake\View\AjaxView>
  */
 class AjaxView extends View
 {

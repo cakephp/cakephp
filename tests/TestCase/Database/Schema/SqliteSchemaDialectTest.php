@@ -67,6 +67,120 @@ class SqliteSchemaDialectTest extends TestCase
     }
 
     /**
+     * Creates tables for testing listTables/describe()
+     *
+     * @param \Cake\Database\Connection $connection
+     */
+    protected function _createTables($connection): void
+    {
+        $this->_needsConnection();
+
+        $schema = new SchemaCollection($connection);
+        $result = $schema->listTables();
+        if (
+            in_array('schema_articles', $result) &&
+            in_array('schema_authors', $result)
+        ) {
+            return;
+        }
+
+        $table = <<<SQL
+CREATE TABLE schema_authors (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+name VARCHAR(50),
+bio TEXT,
+created DATETIME
+)
+SQL;
+        $connection->execute($table);
+
+        $table = <<<SQL
+CREATE TABLE schema_articles (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+title VARCHAR(20) DEFAULT 'Let ''em eat cake',
+body TEXT,
+author_id INT(11) NOT NULL,
+unique_id UNSIGNED INTEGER NOT NULL,
+published BOOLEAN DEFAULT 0,
+reviewed BOOLEAN DEFAULT TRUE,
+created DATETIME,
+field1 VARCHAR(10) DEFAULT NULL,
+field2 VARCHAR(10) DEFAULT 'NULL',
+location POINT_TEXT,
+CONSTRAINT "title_idx" UNIQUE ("title", "body")
+CONSTRAINT "author_fk" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
+CONSTRAINT "author_value_chk" CHECK (author_id > 0)
+);
+SQL;
+        $connection->execute($table);
+        $connection->execute('CREATE INDEX "created_idx" ON "schema_articles" ("created")');
+        $connection->execute('CREATE UNIQUE INDEX "unique_id_idx" ON "schema_articles" ("unique_id")');
+
+        $table = <<<SQL
+CREATE TABLE schema_no_rowid_pk (
+id INT PRIMARY KEY
+);
+SQL;
+        $connection->execute($table);
+
+        $table = <<<SQL
+CREATE TABLE schema_unique_constraint_variations (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+no_quotes INTEGER,
+'single_''quotes' INTEGER,
+"double_""quotes" INTEGER,
+`tick_``quotes` INTEGER,
+[bracket_[quotes] INTEGER,
+foo INTEGER,
+bar INTEGER,
+baz INTEGER,
+zap INTEGER,
+CONSTRAINT no_quotes_idx UNIQUE (no_quotes)
+CONSTRAINT duplicate_idx UNIQUE (no_quotes)
+CONSTRAINT 'single_''quotes_idx' UNIQUE ('single_''quotes')
+CONSTRAINT "double_""quotes_idx" UNIQUE ("double_""quotes")
+CONSTRAINT `tick_``quotes_idx` UNIQUE (`tick_``quotes`)
+CONSTRAINT [bracket_[quotes_idx] UNIQUE ([bracket_[quotes])
+CONSTraint
+    a_cat_walked_over_my_keyboard_idx     UNIque
+        (    id  ,'foo',
+            	    "bar",     `baz`,
+    [zap])
+);
+SQL;
+        $connection->execute($table);
+
+        $table = <<<SQL
+CREATE TABLE schema_foreign_key_variations (
+id INTEGER PRIMARY KEY AUTOINCREMENT,
+author_id INT(11),
+author_name VARCHAR(50),
+CONSTRAINT author_fk FOREIGN KEY (author_id) REFERENCES schema_authors (id) ON UPDATE CASCADE ON DELETE RESTRICT
+CONSTRAINT multi_col_author_fk FOREIGN KEY (author_id, author_name) REFERENCES schema_authors (id, name) ON UPDATE CASCADE
+);
+SQL;
+        $connection->execute($table);
+
+        $sql = <<<SQL
+CREATE TABLE schema_composite (
+    "id" INTEGER NOT NULL,
+    "site_id" INTEGER NOT NULL,
+    "name" VARCHAR(255),
+    PRIMARY KEY("id", "site_id")
+);
+SQL;
+
+        $connection->execute($sql);
+
+        $view = <<<SQL
+CREATE VIEW view_schema_articles AS
+    SELECT count(*) as total FROM schema_articles
+SQL;
+
+        $connection->execute($view);
+    }
+
+    /**
      * Data provider for convert column testing
      *
      * @return array
@@ -87,7 +201,7 @@ class SqliteSchemaDialectTest extends TestCase
                 ['type' => 'time', 'length' => null],
             ],
             [
-                'BOOLEAN',
+                'BOOLEAN DEFAULT 0',
                 ['type' => 'boolean', 'length' => null, 'default' => 0],
             ],
             [
@@ -207,173 +321,27 @@ class SqliteSchemaDialectTest extends TestCase
     #[DataProvider('convertColumnProvider')]
     public function testConvertColumn(string $type, array $expected): void
     {
-        $field = [
-            'pk' => false,
-            'name' => 'field',
-            'type' => $type,
-            'notnull' => false,
-            'dflt_value' => 'Default value',
-        ];
-        $expected += [
-            'null' => true,
-            'default' => 'Default value',
-            'comment' => null,
-        ];
-
-        $driver = $this->getMockBuilder(Sqlite::class)->getMock();
-        $dialect = new SqliteSchemaDialect($driver);
-
-        $table = new TableSchema('table');
-        $dialect->convertColumnDescription($table, $field);
-
-        $actual = array_intersect_key($table->getColumn('field'), $expected);
-        ksort($expected);
-        ksort($actual);
-        $this->assertSame($expected, $actual);
-    }
-
-    /**
-     * Tests converting multiple rows into a primary constraint with multiple
-     * columns
-     */
-    public function testConvertCompositePrimaryKey(): void
-    {
-        $driver = $this->getMockBuilder(Sqlite::class)->getMock();
-        $dialect = new SqliteSchemaDialect($driver);
-
-        $field1 = [
-            'pk' => true,
-            'name' => 'field1',
-            'type' => 'INTEGER(11)',
-            'notnull' => false,
-            'dflt_value' => 0,
-        ];
-        $field2 = [
-            'pk' => true,
-            'name' => 'field2',
-            'type' => 'INTEGER(11)',
-            'notnull' => false,
-            'dflt_value' => 1,
-        ];
-
-        $table = new TableSchema('table');
-        $dialect->convertColumnDescription($table, $field1);
-        $dialect->convertColumnDescription($table, $field2);
-        $this->assertEquals(['field1', 'field2'], $table->getPrimaryKey());
-    }
-
-    /**
-     * Creates tables for testing listTables/describe()
-     *
-     * @param \Cake\Database\Connection $connection
-     */
-    protected function _createTables($connection): void
-    {
         $this->_needsConnection();
-
-        $schema = new SchemaCollection($connection);
-        $result = $schema->listTables();
-        if (
-            in_array('schema_articles', $result) &&
-            in_array('schema_authors', $result)
-        ) {
-            return;
-        }
-
-        $table = <<<SQL
-CREATE TABLE schema_authors (
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-name VARCHAR(50),
-bio TEXT,
-created DATETIME
-)
-SQL;
-        $connection->execute($table);
-
-        $table = <<<SQL
-CREATE TABLE schema_articles (
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-title VARCHAR(20) DEFAULT 'Let ''em eat cake',
-body TEXT,
-author_id INT(11) NOT NULL,
-unique_id UNSIGNED INTEGER NOT NULL,
-published BOOLEAN DEFAULT 0,
-reviewed BOOLEAN DEFAULT TRUE,
-created DATETIME,
-field1 VARCHAR(10) DEFAULT NULL,
-field2 VARCHAR(10) DEFAULT 'NULL',
-location POINT_TEXT,
-CONSTRAINT "title_idx" UNIQUE ("title", "body")
-CONSTRAINT "author_fk" FOREIGN KEY ("author_id") REFERENCES "schema_authors" ("id") ON UPDATE CASCADE ON DELETE RESTRICT
-CONSTRAINT "author_value_chk" CHECK (author_id > 0)
-);
-SQL;
-        $connection->execute($table);
-        $connection->execute('CREATE INDEX "created_idx" ON "schema_articles" ("created")');
-        $connection->execute('CREATE UNIQUE INDEX "unique_id_idx" ON "schema_articles" ("unique_id")');
-
-        $table = <<<SQL
-CREATE TABLE schema_no_rowid_pk (
-id INT PRIMARY KEY
-);
-SQL;
-        $connection->execute($table);
-
-        $table = <<<SQL
-CREATE TABLE schema_unique_constraint_variations (
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-no_quotes INTEGER,
-'single_''quotes' INTEGER,
-"double_""quotes" INTEGER,
-`tick_``quotes` INTEGER,
-[bracket_[quotes] INTEGER,
-foo INTEGER,
-bar INTEGER,
-baz INTEGER,
-zap INTEGER,
-CONSTRAINT no_quotes_idx UNIQUE (no_quotes)
-CONSTRAINT duplicate_idx UNIQUE (no_quotes)
-CONSTRAINT 'single_''quotes_idx' UNIQUE ('single_''quotes')
-CONSTRAINT "double_""quotes_idx" UNIQUE ("double_""quotes")
-CONSTRAINT `tick_``quotes_idx` UNIQUE (`tick_``quotes`)
-CONSTRAINT [bracket_[quotes_idx] UNIQUE ([bracket_[quotes])
-CONSTraint
-    a_cat_walked_over_my_keyboard_idx     UNIque
-        (    id  ,'foo',
-            	    "bar",     `baz`,
-    [zap])
-);
-SQL;
-        $connection->execute($table);
-
-        $table = <<<SQL
-CREATE TABLE schema_foreign_key_variations (
-id INTEGER PRIMARY KEY AUTOINCREMENT,
-author_id INT(11),
-author_name VARCHAR(50),
-CONSTRAINT author_fk FOREIGN KEY (author_id) REFERENCES schema_authors (id) ON UPDATE CASCADE ON DELETE RESTRICT
-CONSTRAINT multi_col_author_fk FOREIGN KEY (author_id, author_name) REFERENCES schema_authors (id, name) ON UPDATE CASCADE
-);
-SQL;
-        $connection->execute($table);
-
+        /** @var \Cake\Database\Connection $connection */
+        $connection = ConnectionManager::get('test');
         $sql = <<<SQL
-CREATE TABLE schema_composite (
-    "id" INTEGER NOT NULL,
-    "site_id" INTEGER NOT NULL,
-    "name" VARCHAR(255),
-    PRIMARY KEY("id", "site_id")
+CREATE TABLE convert_columns (
+    reflection {$type}
 );
 SQL;
-
         $connection->execute($sql);
 
-        $view = <<<SQL
-CREATE VIEW view_schema_articles AS
-    SELECT count(*) as total FROM schema_articles
-SQL;
+        $driver = $connection->getDriver();
+        $dialect = $driver->schemaDialect();
+        $table = $dialect->describe('convert_columns');
+        $connection->execute('DROP TABLE convert_columns');
 
-        $connection->execute($view);
+        $data = $table->column('reflection')->toArray();
+        $this->assertArrayIsEqualToArrayOnlyConsideringListOfKeys(
+            $expected,
+            $data,
+            array_keys($expected),
+        );
     }
 
     /**

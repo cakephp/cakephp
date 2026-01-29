@@ -202,8 +202,8 @@ class RedisClusterEngineTest extends TestCase
             }
         };
 
-        // Use a mocked RedisCluster to avoid triggering constructor logic
-        $redisMock = $this->createMock(RedisCluster::class);
+        // Use a stubbed RedisCluster to avoid triggering constructor logic
+        $redisMock = $this->createStub(RedisCluster::class);
 
         // Set $Redis manually using Reflection
         $reflection = new ReflectionClass($mock);

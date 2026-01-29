@@ -60,11 +60,10 @@ class ConsoleInput
 
     /**
      * Destruct and free resources
-     *
-     * @return void
      */
     public function __destruct()
     {
+        // @phpstan-ignore isset.property (property may not be set if constructor throws)
         if (isset($this->input) && is_resource($this->input)) {
             fclose($this->input);
         }

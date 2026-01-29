@@ -43,6 +43,10 @@ use const SORT_NUMERIC;
  * ```
  *
  * This iterator does not preserve the keys passed in the original elements.
+ *
+ * @template TKey
+ * @template TValue
+ * @extends \Cake\Collection\Collection<TKey, TValue>
  */
 class SortIterator extends Collection
 {
@@ -55,7 +59,7 @@ class SortIterator extends Collection
      * element. Please note that the callback function could be called more than once
      * per element.
      *
-     * @param iterable $items The values to sort
+     * @param iterable<TKey, TValue> $items The values to sort
      * @param callable|string $callback A function used to return the actual value to
      * be compared. It can also be a string representing the path to use to fetch a
      * column or property in each element
@@ -92,6 +96,7 @@ class SortIterator extends Collection
         foreach (array_keys($results) as $key) {
             $results[$key] = $items[$key];
         }
+        /** @phpstan-ignore argument.type (sorted array keys may differ from TKey) */
         parent::__construct($results);
     }
 

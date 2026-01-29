@@ -16,20 +16,23 @@ declare(strict_types=1);
  */
 namespace Cake\Event;
 
-use ArrayAccess;
+use ArrayIterator;
 use Countable;
+use IteratorAggregate;
+use Traversable;
 
 /**
  * The Event List
  *
- * @template-implements \ArrayAccess<int, \Cake\Event\EventInterface>
+ * @template Tsubject of object
+ * @implements \IteratorAggregate<\Cake\Event\EventInterface<Tsubject>>
  */
-class EventList implements ArrayAccess, Countable
+class EventList implements Countable, IteratorAggregate
 {
     /**
      * Events list
      *
-     * @var array<\Cake\Event\EventInterface<object>>
+     * @var array<\Cake\Event\EventInterface<Tsubject>>
      */
     protected array $events = [];
 
@@ -46,7 +49,7 @@ class EventList implements ArrayAccess, Countable
     /**
      * Adds an event to the list when event listing is enabled.
      *
-     * @param \Cake\Event\EventInterface<object> $event An event to the list of dispatched events.
+     * @param \Cake\Event\EventInterface<Tsubject> $event An event to the list of dispatched events.
      * @return void
      */
     public function add(EventInterface $event): void
@@ -55,56 +58,13 @@ class EventList implements ArrayAccess, Countable
     }
 
     /**
-     * Whether a offset exists
+     * Retrieve an external iterator
      *
-     * @link https://secure.php.net/manual/en/arrayaccess.offsetexists.php
-     * @param mixed $offset An offset to check for.
-     * @return bool True on success or false on failure.
+     * @return \Traversable<\Cake\Event\EventInterface<Tsubject>>
      */
-    public function offsetExists(mixed $offset): bool
+    public function getIterator(): Traversable
     {
-        return isset($this->events[$offset]);
-    }
-
-    /**
-     * Offset to retrieve
-     *
-     * @link https://secure.php.net/manual/en/arrayaccess.offsetget.php
-     * @param mixed $offset The offset to retrieve.
-     * @return \Cake\Event\EventInterface<object>|null
-     */
-    public function offsetGet(mixed $offset): ?EventInterface
-    {
-        if (!$this->offsetExists($offset)) {
-            return null;
-        }
-
-        return $this->events[$offset];
-    }
-
-    /**
-     * Offset to set
-     *
-     * @link https://secure.php.net/manual/en/arrayaccess.offsetset.php
-     * @param mixed $offset The offset to assign the value to.
-     * @param mixed $value The value to set.
-     * @return void
-     */
-    public function offsetSet(mixed $offset, mixed $value): void
-    {
-        $this->events[$offset] = $value;
-    }
-
-    /**
-     * Offset to unset
-     *
-     * @link https://secure.php.net/manual/en/arrayaccess.offsetunset.php
-     * @param mixed $offset The offset to unset.
-     * @return void
-     */
-    public function offsetUnset(mixed $offset): void
-    {
-        unset($this->events[$offset]);
+        return new ArrayIterator($this->events);
     }
 
     /**

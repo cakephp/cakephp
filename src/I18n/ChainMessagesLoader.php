@@ -29,7 +29,7 @@ class ChainMessagesLoader
      *
      * @var array<callable>
      */
-    protected array $_loaders = [];
+    protected array $loaders = [];
 
     /**
      * Receives a list of callable functions or objects that will be executed
@@ -39,7 +39,7 @@ class ChainMessagesLoader
      */
     public function __construct(array $loaders)
     {
-        $this->_loaders = $loaders;
+        $this->loaders = $loaders;
     }
 
     /**
@@ -51,7 +51,7 @@ class ChainMessagesLoader
      */
     public function __invoke(): Package
     {
-        foreach ($this->_loaders as $k => $loader) {
+        foreach ($this->loaders as $k => $loader) {
             if (!is_callable($loader)) {
                 throw new CakeException(sprintf(
                     'Loader `%s` in the chain is not a valid callable.',

@@ -162,7 +162,7 @@ class MapReduce implements IteratorAggregate
      * for this record.
      *
      * @param mixed $val The value to be appended to the final list of results
-     * @param mixed $key and optional key to assign to the value
+     * @param mixed $key An optional key to assign to the value
      * @return void
      */
     public function emit(mixed $val, mixed $key = null): void
@@ -172,8 +172,8 @@ class MapReduce implements IteratorAggregate
     }
 
     /**
-     * Runs the actual Map-Reduce algorithm. This is iterate the original data
-     * and call the mapper function for each , then for each intermediate
+     * Runs the actual Map-Reduce algorithm. This iterates the original data
+     * and calls the mapper function for each record, then for each intermediate
      * bucket created during the Map phase call the reduce function.
      *
      * @return void

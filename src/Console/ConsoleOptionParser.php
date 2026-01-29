@@ -20,7 +20,6 @@ use Cake\Console\Exception\ConsoleException;
 use Cake\Console\Exception\MissingOptionException;
 use Cake\Utility\Inflector;
 use LogicException;
-use function Cake\Core\deprecationWarning;
 
 /**
  * Handles parsing the ARGV in the command line and provides support
@@ -42,7 +41,7 @@ use function Cake\Core\deprecationWarning;
  * only be one letter long. Using more than one letter for a short option will raise an exception.
  *
  * Calling options can be done using syntax similar to most *nix command line tools. Long options
- * cane either include an `=` or leave it out.
+ * can either include an `=` or leave it out.
  *
  * `cake my_command --connection default --name=something`
  *
@@ -411,7 +410,11 @@ class ConsoleOptionParser
         asort($this->options);
         if ($option->short()) {
             if (isset($this->shortOptions[$option->short()])) {
-                deprecationWarning('5.2.0', 'You cannot redefine short options. This will throw an error in 5.3.0+.');
+                throw new LogicException(sprintf(
+                    'Short option `%s` is already defined for option `%s`. You cannot redefine short options.',
+                    $option->short(),
+                    $this->shortOptions[$option->short()],
+                ));
             }
 
             $this->shortOptions[$option->short()] = $name;

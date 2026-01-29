@@ -2794,4 +2794,32 @@ class CollectionTest extends TestCase
         $collection->filter($callable)->filter($callable);
         $this->assertTrue(true);
     }
+
+    /**
+     * Tests that extending Collection does not cause infinite loops
+     * when iterating and calling methods like every() inside the loop.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/17483
+     */
+    public function testExtendedCollectionNoInfiniteLoop(): void
+    {
+        $items = [
+            ['id' => 1, 'name' => 'foo'],
+            ['id' => 2, 'name' => 'bar'],
+            ['id' => 3, 'name' => 'baz'],
+        ];
+
+        $collection = new class ($items) extends Collection {
+        };
+
+        $count = 0;
+        foreach ($collection as $item) {
+            $count++;
+            // Calling every() inside foreach should not cause infinite loop
+            $result = $collection->every(fn($i) => isset($i['id']));
+            $this->assertTrue($result);
+        }
+
+        $this->assertSame(3, $count);
+    }
 }

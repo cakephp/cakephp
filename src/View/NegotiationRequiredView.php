@@ -24,6 +24,8 @@ namespace Cake\View;
  * in your controller. Add this View at the end of the acceptable View classes
  * to require clients to pick an available content-type and that you have no
  * default type.
+ *
+ * @extends \Cake\View\View<\Cake\View\NegotiationRequiredView>
  */
 class NegotiationRequiredView extends View
 {

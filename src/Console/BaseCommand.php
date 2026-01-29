@@ -45,12 +45,13 @@ use Cake\Utility\Inflector;
  * - `afterExecute(EventInterface $event)`
  *   Called immediately after the command's run method, unless an exception occurs.
  *
- * @implements \Cake\Event\EventDispatcherInterface<\Cake\Command\Command>
+ * @template TSubject of \Cake\Command\Command
+ * @implements \Cake\Event\EventDispatcherInterface<TSubject>
  */
 abstract class BaseCommand implements CommandInterface, EventDispatcherInterface, EventListenerInterface
 {
     /**
-     * @use \Cake\Event\EventDispatcherTrait<\Cake\Command\Command>
+     * @use \Cake\Event\EventDispatcherTrait<TSubject>
      */
     use EventDispatcherTrait;
 

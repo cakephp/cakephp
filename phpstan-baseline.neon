@@ -1,22 +1,10 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Return type \(Cake\\Event\\EventInterface\<Cake\\Cache\\CacheEngine\>\) of method Cake\\Cache\\CacheEngine\:\:dispatchEvent\(\) should be compatible with return type \(Cake\\Event\\EventInterface\<object\>\) of method Cake\\Event\\EventDispatcherInterface\<object\>\:\:dispatchEvent\(\)$#'
-			identifier: method.childReturnType
-			count: 1
-			path: src/Cache/CacheEngine.php
-
-		-
 			message: '#^Strict comparison using \!\=\= between int and false will always evaluate to true\.$#'
 			identifier: notIdentical.alwaysTrue
 			count: 2
 			path: src/Cache/Engine/ApcuEngine.php
-
-		-
-			message: '#^Call to function method_exists\(\) with Memcached and ''setSaslAuthData'' will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 1
-			path: src/Cache/Engine/MemcachedEngine.php
 
 		-
 			message: '#^Call to an undefined method Redis\|RedisCluster\:\:connect\(\)\.$#'
@@ -31,12 +19,6 @@ parameters:
 			path: src/Cache/Engine/RedisEngine.php
 
 		-
-			message: '#^Parameter \#1 \$value of function count expects array\|Countable, TValue\|false given\.$#'
-			identifier: argument.type
-			count: 1
-			path: src/Collection/Collection.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 1
@@ -49,40 +31,28 @@ parameters:
 			path: src/Collection/Iterator/NoChildrenIterator.php
 
 		-
-			message: '#^Parameter \#1 \$args of method Cake\\Command\\RoutesGenerateCommand\:\:splitArgs\(\) expects array\<string\>, array\<int, array\<string\>\|string\> given\.$#'
+			message: '#^Method Cake\\Command\\RoutesGenerateCommand\:\:splitArgs\(\) should return array\<bool\|string\> but returns array\<int\|string, array\<string\>\|bool\|string\>\.$#'
+			identifier: return.type
+			count: 1
+			path: src/Command/RoutesGenerateCommand.php
+
+		-
+			message: '#^Parameter \#1 \$haystack of function str_contains expects string, array\<string\>\|string given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/Command/RoutesGenerateCommand.php
 
 		-
-			message: '#^Property Cake\\Console\\ConsoleInput\:\:\$input \(resource\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
+			message: '#^Parameter \#2 \$string of function explode expects string, array\<string\>\|string given\.$#'
+			identifier: argument.type
 			count: 1
-			path: src/Console/ConsoleInput.php
+			path: src/Command/RoutesGenerateCommand.php
 
 		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2
 			path: src/Console/ConsoleOptionParser.php
-
-		-
-			message: '#^PHPDoc tag @var with type Closure is not subtype of native type Closure\(array\<string, string\>\)\: string\.$#'
-			identifier: varTag.nativeType
-			count: 1
-			path: src/Console/ConsoleOutput.php
-
-		-
-			message: '#^Property Cake\\Console\\ConsoleOutput\:\:\$output \(resource\) in isset\(\) is not nullable\.$#'
-			identifier: isset.property
-			count: 2
-			path: src/Console/ConsoleOutput.php
-
-		-
-			message: '#^Trait Cake\\Console\\TestSuite\\ConsoleIntegrationTestTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Console/TestSuite/ConsoleIntegrationTestTrait.php
 
 		-
 			message: '#^Unknown parameter \$components in call to method ReflectionClass\<Cake\\Controller\\Controller\>\:\:newInstance\(\)\.$#'
@@ -97,12 +67,6 @@ parameters:
 			path: src/Controller/ControllerFactory.php
 
 		-
-			message: '#^Trait Cake\\Core\\TestSuite\\ContainerStubTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Core/TestSuite/ContainerStubTrait.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 8
@@ -115,172 +79,22 @@ parameters:
 			path: src/Database/Expression/WhenThenExpression.php
 
 		-
-			message: '#^Result of && is always false\.$#'
-			identifier: booleanAnd.alwaysFalse
-			count: 1
-			path: src/Database/Type/EnumType.php
-
-		-
-			message: '#^Strict comparison using \=\=\= between \*NEVER\* and '''' will always evaluate to false\.$#'
-			identifier: identical.alwaysFalse
-			count: 1
-			path: src/Database/Type/EnumType.php
-
-		-
-			message: '#^Trait Cake\\Datasource\\ModelAwareTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Datasource/ModelAwareTrait.php
-
-		-
-			message: '#^PHPDoc tag @return with type iterable\<TKey, TValue\> is not subtype of native type Traversable\.$#'
-			identifier: return.phpDocType
-			count: 1
-			path: src/Datasource/Paging/PaginatedInterface.php
-
-		-
-			message: '#^The @extends tag of interface Cake\\Datasource\\Paging\\PaginatedInterface describes Traversable but the interface extends\: Countable, IteratorAggregate$#'
-			identifier: generics.wrongParent
-			count: 1
-			path: src/Datasource/Paging/PaginatedInterface.php
-
-		-
-			message: '#^The @implements tag of class Cake\\Datasource\\Paging\\PaginatedResultSet describes IteratorAggregate but the class implements\: JsonSerializable, Cake\\Datasource\\Paging\\PaginatedInterface$#'
-			identifier: generics.wrongParent
-			count: 1
-			path: src/Datasource/Paging/PaginatedResultSet.php
-
-		-
 			message: '#^Unsafe usage of new static\(\)\.$#'
 			identifier: new.static
 			count: 2
 			path: src/Datasource/Paging/SortableFieldsBuilder.php
 
 		-
-			message: '#^Template type T of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
+			message: '#^Template type TKey of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
 			identifier: method.templateTypeNotInParameter
 			count: 1
 			path: src/Datasource/QueryInterface.php
 
 		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TKey of interface Cake\\Collection\\CollectionInterface as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
+			message: '#^Template type TValue of method Cake\\Datasource\\QueryInterface\:\:all\(\) is not referenced in a parameter\.$#'
+			identifier: method.templateTypeNotInParameter
 			count: 1
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TKey of interface Iterator as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TKey of interface Traversable as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TValue of interface Cake\\Collection\\CollectionInterface as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TValue of interface Iterator as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TValue of interface Traversable as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Class IteratorIterator specifies template type TKey of interface Iterator as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 2
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Class IteratorIterator specifies template type TKey of interface Traversable as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 2
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Class IteratorIterator specifies template type TValue of interface Iterator as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 2
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Class IteratorIterator specifies template type TValue of interface Traversable as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 2
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Interface Cake\\Collection\\CollectionInterface specifies template type TKey of interface Iterator as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Interface Cake\\Collection\\CollectionInterface specifies template type TKey of interface Traversable as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Interface Cake\\Collection\\CollectionInterface specifies template type TValue of interface Iterator as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Interface Cake\\Collection\\CollectionInterface specifies template type TValue of interface Traversable as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Interface Iterator specifies template type TKey of interface Traversable as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 7
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Interface Iterator specifies template type TValue of interface Traversable as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 7
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Interface OuterIterator specifies template type TKey of interface Iterator as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 3
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Interface OuterIterator specifies template type TKey of interface Traversable as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 3
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Interface OuterIterator specifies template type TValue of interface Iterator as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 3
-			path: src/Datasource/ResultSetDecorator.php
-
-		-
-			message: '#^Interface OuterIterator specifies template type TValue of interface Traversable as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 3
-			path: src/Datasource/ResultSetDecorator.php
+			path: src/Datasource/QueryInterface.php
 
 		-
 			message: '#^Constructor of class Cake\\Error\\Renderer\\ConsoleExceptionRenderer has an unused parameter \$request\.$#'
@@ -331,12 +145,6 @@ parameters:
 			path: src/Http/Session.php
 
 		-
-			message: '#^Trait Cake\\Http\\TestSuite\\HttpClientTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Http/TestSuite/HttpClientTrait.php
-
-		-
 			message: '#^@readonly property cannot have a default value\.$#'
 			identifier: property.readOnlyByPhpDocDefaultValue
 			count: 7
@@ -355,22 +163,10 @@ parameters:
 			path: src/I18n/Time.php
 
 		-
-			message: '#^Trait Cake\\Mailer\\MailerAwareTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Mailer/MailerAwareTrait.php
-
-		-
 			message: '#^PHPDoc tag @var with type callable\(\)\: mixed is not subtype of native type Closure\(string\)\: string\.$#'
 			identifier: varTag.nativeType
 			count: 1
 			path: src/ORM/Association/DependentDeleteHelper.php
-
-		-
-			message: '#^Trait Cake\\ORM\\Behavior\\Translate\\TranslateTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/ORM/Behavior/Translate/TranslateTrait.php
 
 		-
 			message: '#^Call to function assert\(\) with false and string will always evaluate to false\.$#'
@@ -389,126 +185,6 @@ parameters:
 			identifier: return.type
 			count: 1
 			path: src/ORM/Query/SelectQuery.php
-
-		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TKey of interface Cake\\Collection\\CollectionInterface as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TKey of interface Iterator as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TKey of interface Traversable as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TValue of interface Cake\\Collection\\CollectionInterface as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TValue of interface Iterator as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Class Cake\\Collection\\Collection specifies template type TValue of interface Traversable as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Class IteratorIterator specifies template type TKey of interface Iterator as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 2
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Class IteratorIterator specifies template type TKey of interface Traversable as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 2
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Class IteratorIterator specifies template type TValue of interface Iterator as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 2
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Class IteratorIterator specifies template type TValue of interface Traversable as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 2
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Interface Cake\\Collection\\CollectionInterface specifies template type TKey of interface Iterator as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Interface Cake\\Collection\\CollectionInterface specifies template type TKey of interface Traversable as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Interface Cake\\Collection\\CollectionInterface specifies template type TValue of interface Iterator as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Interface Cake\\Collection\\CollectionInterface specifies template type TValue of interface Traversable as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 1
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Interface Iterator specifies template type TKey of interface Traversable as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 7
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Interface Iterator specifies template type TValue of interface Traversable as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 7
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Interface OuterIterator specifies template type TKey of interface Iterator as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 3
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Interface OuterIterator specifies template type TKey of interface Traversable as TKey but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 3
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Interface OuterIterator specifies template type TValue of interface Iterator as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 3
-			path: src/ORM/ResultSet.php
-
-		-
-			message: '#^Interface OuterIterator specifies template type TValue of interface Traversable as TValue but it''s already specified as mixed\.$#'
-			identifier: generics.interfaceConflict
-			count: 3
-			path: src/ORM/ResultSet.php
 
 		-
 			message: '#^PHPDoc tag @var with type class\-string\<Cake\\Datasource\\RulesChecker\> is not subtype of native type ''Cake\\\\Datasource\\\\RulesChecker''\|class\-string\<Cake\\ORM\\RulesChecker\>\.$#'
@@ -533,30 +209,6 @@ parameters:
 			identifier: method.internalInterface
 			count: 1
 			path: src/TestSuite/Constraint/Response/StatusCodeBase.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\EmailTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/EmailTrait.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\IntegrationTestTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/IntegrationTestTrait.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\LogTestTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/LogTestTrait.php
-
-		-
-			message: '#^Trait Cake\\TestSuite\\StringCompareTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/TestSuite/StringCompareTrait.php
 
 		-
 			message: '#^Call to method PHPUnit\\Framework\\Assert\:\:assertTrue\(\) with false and non\-falsy\-string will always evaluate to false\.$#'
@@ -605,18 +257,6 @@ parameters:
 			identifier: argument.templateType
 			count: 1
 			path: src/Utility/Hash.php
-
-		-
-			message: '#^Trait Cake\\Utility\\MergeVariablesTrait is used zero times and is not analysed\.$#'
-			identifier: trait.unused
-			count: 1
-			path: src/Utility/MergeVariablesTrait.php
-
-		-
-			message: '#^Call to function is_callable\(\) with array\{object, ''toArray''\} will always evaluate to true\.$#'
-			identifier: function.alreadyNarrowedType
-			count: 3
-			path: src/Utility/Xml.php
 
 		-
 			message: '#^Parameter \#1 \$objectOrClass of class ReflectionEnum constructor expects class\-string\<UnitEnum\>\|UnitEnum, class\-string given\.$#'

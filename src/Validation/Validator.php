@@ -222,9 +222,10 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      *   Keys are field names, values are the field values to validate.
      * @param bool $newRecord Whether the data to be validated is new or to be updated.
      * @param array<string, mixed> $context Additional validation context.
-     * @return array<string, array<string, string>> Array of validation errors.
+     * @return array<string, array<string, string|array>> Array of validation errors.
      *   Outer keys are field names, inner keys are validation rule names,
-     *   values are error messages. Special rule names: '_required', '_empty'.
+     *   values are error messages. When using `addNested()` or `addNestedMany()`,
+     *   values may be nested error arrays. Special rule names: '_required', '_empty'.
      */
     public function validate(array $data, bool $newRecord = true, array $context = []): array
     {

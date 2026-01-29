@@ -61,21 +61,21 @@ class SmtpTransport extends AbstractTransport
      *
      * @var \Cake\Network\Socket
      */
-    protected Socket $_socket;
+    protected Socket $socket;
 
     /**
      * Content of email to return
      *
      * @var array<string, string>
      */
-    protected array $_content = [];
+    protected array $content = [];
 
     /**
      * The response of the last sent SMTP command.
      *
      * @var array
      */
-    protected array $_lastResponse = [];
+    protected array $lastResponse = [];
 
     /**
      * Authentication type.
@@ -106,7 +106,7 @@ class SmtpTransport extends AbstractTransport
      */
     public function __serialize(): array
     {
-        return array_diff_key(get_object_vars($this), ['_socket' => null]);
+        return array_diff_key(get_object_vars($this), ['socket' => null]);
     }
 
     /**
@@ -148,7 +148,7 @@ class SmtpTransport extends AbstractTransport
      */
     public function connected(): bool
     {
-        return isset($this->_socket) && $this->_socket->isConnected();
+        return isset($this->socket) && $this->socket->isConnected();
     }
 
     /**
@@ -195,7 +195,7 @@ class SmtpTransport extends AbstractTransport
      */
     public function getLastResponse(): array
     {
-        return $this->_lastResponse;
+        return $this->lastResponse;
     }
 
     /**
@@ -225,7 +225,7 @@ class SmtpTransport extends AbstractTransport
         }
 
         /** @var array{headers: string, message: string} */
-        return $this->_content;
+        return $this->content;
     }
 
     /**
@@ -245,7 +245,7 @@ class SmtpTransport extends AbstractTransport
                 ];
             }
         }
-        $this->_lastResponse = array_merge($this->_lastResponse, $response);
+        $this->lastResponse = array_merge($this->lastResponse, $response);
     }
 
     /**
@@ -273,7 +273,7 @@ class SmtpTransport extends AbstractTransport
         }
 
         $auth = '';
-        foreach ($this->_lastResponse as $line) {
+        foreach ($this->lastResponse as $line) {
             if ($line['message'] === '' || str_starts_with($line['message'], 'AUTH ')) {
                 $auth = $line['message'];
                 break;
@@ -304,7 +304,7 @@ class SmtpTransport extends AbstractTransport
     protected function connectSmtp(): void
     {
         $this->generateSocket();
-        if (!$this->_socket->connect()) {
+        if (!$this->socket->connect()) {
             throw new SocketException('Unable to connect to SMTP server.');
         }
         $this->smtpSend(null, '220');
@@ -328,7 +328,7 @@ class SmtpTransport extends AbstractTransport
             $this->smtpSend("EHLO {$host}", '250');
             if ($config['tls']) {
                 $this->smtpSend('STARTTLS', '220');
-                $this->_socket->enableCrypto('tls');
+                $this->socket->enableCrypto('tls');
                 $this->smtpSend("EHLO {$host}", '250');
             }
         } catch (SocketException $e) {
@@ -571,7 +571,7 @@ class SmtpTransport extends AbstractTransport
         $message = $this->prepareMessage($message);
 
         $this->smtpSend($headers . "\r\n\r\n" . $message . "\r\n\r\n\r\n.");
-        $this->_content = ['headers' => $headers, 'message' => $message];
+        $this->content = ['headers' => $headers, 'message' => $message];
     }
 
     /**
@@ -583,7 +583,7 @@ class SmtpTransport extends AbstractTransport
     protected function disconnectSmtp(): void
     {
         $this->smtpSend('QUIT', false);
-        $this->_socket->disconnect();
+        $this->socket->disconnect();
         $this->authType = null;
     }
 
@@ -595,7 +595,7 @@ class SmtpTransport extends AbstractTransport
      */
     protected function generateSocket(): void
     {
-        $this->_socket = new Socket($this->config);
+        $this->socket = new Socket($this->config);
     }
 
     /**
@@ -608,10 +608,10 @@ class SmtpTransport extends AbstractTransport
      */
     protected function smtpSend(?string $data, string|false $checkCode = '250'): ?string
     {
-        $this->_lastResponse = [];
+        $this->lastResponse = [];
 
         if ($data !== null) {
-            $this->_socket->write($data . "\r\n");
+            $this->socket->write($data . "\r\n");
         }
 
         $timeout = $this->config['timeout'];
@@ -620,7 +620,7 @@ class SmtpTransport extends AbstractTransport
             $response = '';
             $startTime = time();
             while (!str_ends_with($response, "\r\n") && (time() - $startTime < $timeout)) {
-                $bytes = $this->_socket->read();
+                $bytes = $this->socket->read();
                 if ($bytes === null) {
                     break;
                 }

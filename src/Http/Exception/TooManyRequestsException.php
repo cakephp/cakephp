@@ -26,7 +26,7 @@ class TooManyRequestsException extends HttpException
     /**
      * @inheritDoc
      */
-    protected int $_defaultCode = 429;
+    protected int $defaultCode = 429;
 
     /**
      * Constructor

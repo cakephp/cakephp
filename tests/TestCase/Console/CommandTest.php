@@ -20,6 +20,7 @@ use AssertionError;
 use Cake\Command\Command;
 use Cake\Console\CommandFactory;
 use Cake\Console\CommandFactoryInterface;
+use Cake\Console\CommandHiddenInterface;
 use Cake\Console\CommandInterface;
 use Cake\Console\ConsoleIo;
 use Cake\Console\ConsoleIoInterface;
@@ -38,6 +39,7 @@ use TestApp\Command\AutoLoadModelCommand;
 use TestApp\Command\DemoCommand;
 use TestApp\Command\DependencyCommand;
 use TestApp\Command\EventsCommand;
+use TestApp\Command\HiddenCommand;
 use TestApp\Command\NonInteractiveCommand;
 
 /**
@@ -117,6 +119,23 @@ class CommandTest extends TestCase
         $parser = $command->getOptionParser();
         $this->assertInstanceOf(ConsoleOptionParser::class, $parser);
         $this->assertSame('routes show', $parser->getCommand());
+    }
+
+    /**
+     * Test CommandHiddenInterface is not implemented by default
+     */
+    public function testCommandHiddenInterfaceNotImplementedByDefault(): void
+    {
+        $command = new Command();
+        $this->assertNotInstanceOf(CommandHiddenInterface::class, $command);
+    }
+
+    /**
+     * Test CommandHiddenInterface can be implemented to hide commands
+     */
+    public function testCommandHiddenInterfaceImplementation(): void
+    {
+        $this->assertInstanceOf(CommandHiddenInterface::class, new HiddenCommand());
     }
 
     /**

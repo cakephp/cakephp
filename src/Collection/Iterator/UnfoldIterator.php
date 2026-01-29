@@ -22,7 +22,7 @@ use Traversable;
 
 /**
  * An iterator that can be used to generate nested iterators out of a collection
- * of items by applying an function to each of the elements in this iterator.
+ * of items by applying a function to each of the elements in this iterator.
  *
  * @internal
  * @see \Cake\Collection\Collection::unfold()

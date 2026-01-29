@@ -954,7 +954,7 @@ class SmtpTransportTest extends TestCase
         $smtpTransport->connect();
 
         $result = unserialize(serialize($smtpTransport));
-        $this->assertStringContainsString('[protected] _socket => [uninitialized]', Debugger::exportVar($result));
+        $this->assertStringContainsString('[protected] socket => [uninitialized]', Debugger::exportVar($result));
         $this->assertFalse($result->connected());
     }
 }

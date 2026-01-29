@@ -84,7 +84,7 @@ class ConsoleFormatter implements FormatterInterface
     public function formatWrapper(string $contents, array $location): string
     {
         $lineInfo = '';
-        if (isset($location['file'], $location['file'])) {
+        if (isset($location['file'], $location['line'])) {
             $lineInfo = sprintf('%s (line %s)', $location['file'], $location['line']);
         }
         $parts = [

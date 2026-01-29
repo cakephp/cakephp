@@ -155,6 +155,7 @@ class EnumTypeTest extends TestCase
     {
         $this->assertSame('Y', $this->stringType->toDatabase(ArticleStatus::Published->value, $this->driver));
         $this->assertSame(3, $this->intType->toDatabase(Priority::High->value, $this->driver));
+        $this->assertSame(3, $this->intType->toDatabase('3', $this->driver));
     }
 
     public function testToDatabaseInValidValue(): void
@@ -162,6 +163,13 @@ class EnumTypeTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('`invalid` is not a valid value for `TestApp\Model\Enum\ArticleStatus`');
         $this->stringType->toDatabase('invalid', $this->driver);
+    }
+
+    public function testToDatabaseInValidValueType(): void
+    {
+        $this->expectException(InvalidArgumentException::class);
+        $this->expectExceptionMessage('Given value `1` of type `int` does not match associated `string` backed enum in `TestApp\Model\Enum\ArticleStatus`');
+        $this->stringType->toDatabase(1, $this->driver);
     }
 
     /**
@@ -211,8 +219,9 @@ class EnumTypeTest extends TestCase
         $genderType = TypeFactory::build(EnumType::from(Gender::class));
         $this->assertSame(Gender::NoSelection, $genderType->marshal(''));
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->stringType->marshal(1);
+        // Invalid value returns null
+        $this->assertNull($this->stringType->marshal('X'));
+        $this->assertNull($this->stringType->marshal(1));
     }
 
     /**
@@ -226,8 +235,9 @@ class EnumTypeTest extends TestCase
         $this->assertSame(Priority::Low, $this->intType->marshal('1'));
         $this->assertSame(Priority::Medium, $this->intType->marshal(Priority::Medium));
 
-        $this->expectException(InvalidArgumentException::class);
-        $this->intType->marshal('Y');
+        // Invalid value returns null
+        $this->assertNull($this->intType->marshal(10));
+        $this->assertNull($this->intType->marshal('Y'));
     }
 
     /**
@@ -269,20 +279,6 @@ class EnumTypeTest extends TestCase
     }
 
     /**
-     * Check adding entity fields with invalid scalar value sets error on field
-     */
-    public function testStringEnumFieldWithBackingTypeInvalid(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->Articles->newEntity([
-            'author_id' => 1,
-            'title' => 'My Title',
-            'body' => 'My post',
-            'published' => 'P',
-        ]);
-    }
-
-    /**
      * Check adding entity fields with an integer backed enum instance
      */
     public function testIntEnumField(): void
@@ -314,18 +310,6 @@ class EnumTypeTest extends TestCase
         $this->assertSame(Priority::Medium, $entity->priority);
 
         $this->assertSame(Priority::Medium, $this->FeaturedTags->get(4)->priority);
-    }
-
-    /**
-     * Check adding entity fields with invalid scalar value sets error on field
-     */
-    public function testIntEnumFieldWithBackingTypeInvalid(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->FeaturedTags->newEntity([
-            'tag_id' => 4,
-            'priority' => -1,
-        ]);
     }
 
     /**

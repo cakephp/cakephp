@@ -20,10 +20,6 @@ use Cake\Datasource\SchemaInterface;
 
 /**
  * An interface used by database TableSchema objects.
- *
- * @method \Cake\Database\Schema\Column column(string $name)
- * @method \Cake\Database\Schema\Index index(string $name)
- * @method \Cake\Database\Schema\Constraint constraint(string $name)
  */
 interface TableSchemaInterface extends SchemaInterface
 {
@@ -378,4 +374,28 @@ interface TableSchemaInterface extends SchemaInterface
      * @return array<string>
      */
     public function constraints(): array;
+
+    /**
+     * Get a Column object representing a column in the table.
+     *
+     * @param string $name The name of the column.
+     * @return \Cake\Database\Schema\Column
+     */
+    public function column(string $name): Column;
+
+    /**
+     * Get an Index object representing an index in the table.
+     *
+     * @param string $name The name of the index.
+     * @return \Cake\Database\Schema\Index
+     */
+    public function index(string $name): Index;
+
+    /**
+     * Get a Constraint object representing a constraint in the table.
+     *
+     * @param string $name The name of the constraint.
+     * @return \Cake\Database\Schema\Constraint
+     */
+    public function constraint(string $name): Constraint;
 }
