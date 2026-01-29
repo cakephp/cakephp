@@ -22,8 +22,6 @@ use InvalidArgumentException;
  * Cookie Crypt Trait.
  *
  * Provides the encrypt/decrypt logic for the CookieComponent.
- *
- * @link https://book.cakephp.org/5/en/controllers/components/cookie.html
  */
 trait CookieCryptTrait
 {

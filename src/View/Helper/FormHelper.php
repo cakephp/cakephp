@@ -2300,7 +2300,7 @@ class FormHelper extends Helper
      * @param string $fieldName The field name.
      * @param array<string, mixed> $options Options & attributes for the select elements.
      * @return string Completed year select input
-     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-year-inputs
+     * @link https://book.cakephp.org/5/en/views/helpers/form.html#creating-year-controls
      */
     public function year(string $fieldName, array $options = []): string
     {

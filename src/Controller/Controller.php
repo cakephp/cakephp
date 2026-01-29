@@ -278,6 +278,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param array<string, mixed> $config The config for the component.
      * @return \Cake\Controller\Component
      * @throws \Exception
+     * @link https://book.cakephp.org/5/en/controllers.html#configuring-components-to-load
      */
     public function loadComponent(string $name, array $config = []): Component
     {
