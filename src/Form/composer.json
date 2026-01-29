@@ -22,8 +22,8 @@
     },
     "require": {
         "php": ">=8.2",
-        "cakephp/event": "^5.3.0",
-        "cakephp/validation":"^5.3.0"
+        "cakephp/event": "5.4.*@dev",
+        "cakephp/validation":"5.4.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -34,7 +34,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-5.next": "5.3.x-dev"
+            "dev-5.next": "5.4.x-dev"
         }
     }
 }

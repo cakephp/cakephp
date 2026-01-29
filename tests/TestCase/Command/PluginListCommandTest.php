@@ -17,7 +17,9 @@ namespace Cake\Test\TestCase\Command;
 
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Core\Configure;
 use Cake\Core\Exception\MissingPluginException;
+use Cake\Core\PluginConfig;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -54,6 +56,8 @@ class PluginListCommandTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
+        Configure::delete('plugins');
+        PluginConfig::clearCache();
         if (file_exists($this->pluginsListPath)) {
             unlink($this->pluginsListPath);
         }

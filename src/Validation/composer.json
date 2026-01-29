@@ -23,12 +23,12 @@
     },
     "require": {
         "php": ">=8.2",
-        "cakephp/core": "^5.3.0",
-        "cakephp/utility": "^5.3.0",
+        "cakephp/core": "5.4.*@dev",
+        "cakephp/utility": "5.4.*@dev",
         "psr/http-message": "^1.1 || ^2.0"
     },
     "require-dev": {
-        "cakephp/i18n": "^5.3.0"
+        "cakephp/i18n": "5.4.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -42,7 +42,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-5.next": "5.3.x-dev"
+            "dev-5.next": "5.4.x-dev"
         }
     }
 }

@@ -25,14 +25,14 @@
     },
     "require": {
         "php": ">=8.2",
-        "cakephp/core": "^5.3.0",
+        "cakephp/core": "5.4.*@dev",
         "cakephp/chronos": "^3.3",
-        "cakephp/datasource": "^5.3.0",
+        "cakephp/datasource": "5.4.*@dev",
         "psr/log": "^3.0"
     },
     "require-dev": {
-        "cakephp/i18n": "^5.3.0",
-        "cakephp/log": "^5.3.0"
+        "cakephp/i18n": "5.4.*@dev",
+        "cakephp/log": "5.4.*@dev"
     },
     "autoload": {
         "psr-4": {
@@ -47,7 +47,7 @@
     "prefer-stable": true,
     "extra": {
         "branch-alias": {
-            "dev-5.next": "5.3.x-dev"
+            "dev-5.next": "5.4.x-dev"
         }
     }
 }

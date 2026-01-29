@@ -257,6 +257,14 @@ class ResultSetFactory
     protected ?DtoMapper $dtoMapper = null;
 
     /**
+     * Cached DTO hydrator callables by class name.
+     * Avoids method_exists() check on every row.
+     *
+     * @var array<class-string, callable(array): object>
+     */
+    protected static array $dtoHydrators = [];
+
+    /**
      * Hydrate a row into a DTO.
      *
      * Supports two patterns:
@@ -269,13 +277,48 @@ class ResultSetFactory
      */
     public function hydrateDto(array $row, string $dtoClass): object
     {
-        // Check for array style static factory method
-        if (method_exists($dtoClass, 'createFromArray')) {
-            return $dtoClass::createFromArray($row, true);
+        return $this->getDtoHydrator($dtoClass)($row);
+    }
+
+    /**
+     * Get a cached hydrator callable for a DTO class.
+     *
+     * The hydrator is determined once per class and cached to avoid
+     * method_exists() checks on every row.
+     *
+     * @param class-string $dtoClass DTO class name
+     * @return callable(array): object
+     */
+    public function getDtoHydrator(string $dtoClass): callable
+    {
+        if (!isset(static::$dtoHydrators[$dtoClass])) {
+            // Check for array style static factory method (cakephp-dto style)
+            if (method_exists($dtoClass, 'createFromArray')) {
+                static::$dtoHydrators[$dtoClass] = static function (array $row) use ($dtoClass): object {
+                    return $dtoClass::createFromArray($row, true);
+                };
+            } else {
+                // Use DtoMapper for plain readonly DTOs with named constructor params
+                $mapper = $this->getDtoMapper();
+                static::$dtoHydrators[$dtoClass] = static function (array $row) use ($mapper, $dtoClass): object {
+                    return $mapper->map($row, $dtoClass);
+                };
+            }
         }
 
-        // Use DtoMapper for plain readonly DTOs with named constructor params
-        return $this->getDtoMapper()->map($row, $dtoClass);
+        return static::$dtoHydrators[$dtoClass];
+    }
+
+    /**
+     * Clear the DTO hydrator cache.
+     *
+     * Useful for testing or when classes are reloaded.
+     *
+     * @return void
+     */
+    public static function clearDtoHydratorCache(): void
+    {
+        static::$dtoHydrators = [];
     }
 
     /**

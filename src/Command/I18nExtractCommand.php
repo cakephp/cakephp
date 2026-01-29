@@ -25,6 +25,7 @@ use Cake\Core\Configure;
 use Cake\Core\Exception\CakeException;
 use Cake\Core\Plugin;
 use Cake\Utility\Filesystem;
+use Cake\Utility\Fs\Finder;
 use Cake\Utility\Inflector;
 
 /**
@@ -847,15 +848,19 @@ class I18nExtractCommand extends Command
                 continue;
             }
             $path .= DIRECTORY_SEPARATOR;
-            $fs = new Filesystem();
-            $files = $fs->findRecursive($path, '/\.php$/');
-            $files = array_keys(iterator_to_array($files));
-            sort($files);
-            if ($pattern) {
-                $files = preg_grep($pattern, $files, PREG_GREP_INVERT) ?: [];
-                $files = array_values($files);
+            $files = (new Finder())
+                ->in($path)
+                ->name('*.php')
+                ->files();
+            foreach ($files as $file) {
+                $this->_files[] = $file->getPathname();
             }
-            $this->_files = array_merge($this->_files, $files);
+        }
+        $this->_files = array_unique($this->_files);
+        sort($this->_files);
+        if ($pattern) {
+            $this->_files = preg_grep($pattern, $this->_files, PREG_GREP_INVERT) ?: [];
+            $this->_files = array_values($this->_files);
         }
         $this->_files = array_unique($this->_files);
     }

@@ -6,6 +6,13 @@
 
     <rule ref="CakePHP"/>
 
+    <!-- Disable standalone true/false/null type hints for BC -->
+    <rule ref="SlevomatCodingStandard.TypeHints.ReturnTypeHint">
+        <properties>
+            <property name="enableStandaloneNullTrueFalseTypeHints" value="false"/>
+        </properties>
+    </rule>
+
     <arg value="s"/>
     <!-- pretty sure this is a bug in slevomat -->
     <rule ref="Internal.Exception">
