@@ -24,6 +24,7 @@ use Cake\Core\Exception\CakeException;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlserver;
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Expression\ComparisonExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Schema\TableSchema;
@@ -1170,6 +1171,20 @@ class TableTest extends TestCase
     }
 
     /**
+     * Test updateAll with ExpressionInterface conditions.
+     */
+    public function testUpdateAllWithExpressionConditions(): void
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $conditions = new ComparisonExpression('id', 1, 'integer', '<');
+        $result = $table->updateAll(['username' => 'changed'], $conditions);
+        $this->assertSame(0, $result);
+    }
+
+    /**
      * Test that exceptions from the Query bubble up.
      */
     public function testUpdateAllFailure(): void
@@ -1222,6 +1237,24 @@ class TableTest extends TestCase
             'connection' => $this->connection,
         ]);
         $result = $table->deleteAll(['Managers.id <' => 4]);
+        $this->assertSame(3, $result);
+
+        $result = $table->find('all')->toArray();
+        $this->assertCount(1, $result, 'Only one record should remain');
+        $this->assertSame(4, $result[0]['id']);
+    }
+
+    /**
+     * Test deleteAll with ExpressionInterface conditions.
+     */
+    public function testDeleteAllWithExpressionConditions(): void
+    {
+        $table = new Table([
+            'table' => 'users',
+            'connection' => $this->connection,
+        ]);
+        $conditions = new ComparisonExpression('id', 4, 'integer', '<');
+        $result = $table->deleteAll($conditions);
         $this->assertSame(3, $result);
 
         $result = $table->find('all')->toArray();
@@ -1862,6 +1895,19 @@ class TableTest extends TestCase
         $this->assertTrue($table->exists(['id' => 1]));
         $this->assertFalse($table->exists(['id' => 501]));
         $this->assertTrue($table->exists(['id' => 3, 'username' => 'larry']));
+    }
+
+    /**
+     * Test exists with ExpressionInterface conditions.
+     */
+    public function testExistsWithExpressionConditions(): void
+    {
+        $table = $this->getTableLocator()->get('users');
+        $conditions = new ComparisonExpression('id', 1, 'integer', '=');
+        $this->assertTrue($table->exists($conditions));
+
+        $conditions = new ComparisonExpression('id', 501, 'integer', '=');
+        $this->assertFalse($table->exists($conditions));
     }
 
     /**
