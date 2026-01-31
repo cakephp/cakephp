@@ -101,7 +101,7 @@ class MysqlSchemaDialectTest extends TestCase
             ],
             [
                 'TINYINT(1) UNSIGNED',
-                ['type' => 'tinyinteger', 'length' => null],
+                ['type' => 'boolean', 'length' => null],
             ],
             [
                 'TINYINT(3)',
@@ -300,6 +300,20 @@ SQL;
         $connection->execute('DROP TABLE convert_columns');
 
         $data = $table->column('reflection')->toArray();
+
+        /** @var \Cake\Database\Driver\Mysql $driver */
+        // MySQL 8.0.17+ strips display width from integer types, so
+        // TINYINT(1) UNSIGNED becomes TINYINT UNSIGNED and maps to tinyinteger.
+        // MariaDB and older MySQL preserve the display width, mapping to boolean.
+        if ($type === 'TINYINT(1) UNSIGNED' && !$driver->isMariadb() && version_compare($driver->version(), '8.0.17', '>=')) {
+            $expected = ['type' => 'tinyinteger', 'length' => null, 'unsigned' => true];
+        }
+
+        // MariaDB aliases JSON to LONGTEXT
+        // https://mariadb.com/kb/en/json/
+        if ($type === 'JSON' && $driver->isMariadb()) {
+            $expected = ['type' => 'text', 'length' => 4294967295];
+        }
 
         // Collations are a mess in MySQL
         if (isset($expected['collate'])) {
