@@ -3616,7 +3616,7 @@ class PaginatorHelperTest extends TestCase
         $expected = [
             ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/users/details/517']],
             ['input' => ['type' => 'hidden', 'name' => 'param1', 'value' => 'test']],
-            ['div' => ['class' => 'input select']],
+            ['div' => ['class' => 'input']],
             ['label' => ['for' => 'limit']],
             'View',
             '/label',
