@@ -513,7 +513,7 @@ class NumericPaginator implements PaginatorInterface
     {
         if (!empty($settings['scope'])) {
             $scope = $settings['scope'];
-            $params = !empty($params[$scope]) ? (array)$params[$scope] : [];
+            $params = (array)($params[$scope] ?? []);
         }
         $params = array_intersect_key($params, array_flip($this->getConfig('allowedParameters')));
 

@@ -272,6 +272,9 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         'timestamptimezone' => [
             'onUpdate' => null,
         ],
+        'binary' => [
+            'fixed' => null,
+        ],
     ];
 
     /**

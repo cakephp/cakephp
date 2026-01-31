@@ -52,69 +52,6 @@ class MysqlSchemaDialectTest extends TestCase
     }
 
     /**
-     * Helper method for testing methods.
-     *
-     * @param \Cake\Datasource\ConnectionInterface $connection
-     */
-    protected function _createTables($connection): void
-    {
-        $this->_needsConnection();
-        $connection->execute('DROP TABLE IF EXISTS schema_articles');
-        $connection->execute('DROP TABLE IF EXISTS schema_authors');
-        $connection->execute('DROP TABLE IF EXISTS schema_json');
-        $connection->execute('DROP VIEW IF EXISTS schema_articles_v');
-
-        $table = <<<SQL
-            CREATE TABLE schema_authors (
-                id INT PRIMARY KEY AUTO_INCREMENT,
-                name VARCHAR(50),
-                bio TEXT,
-                created DATETIME
-            )ENGINE=InnoDB
-SQL;
-        $connection->execute($table);
-
-        $table = <<<SQL
-            CREATE TABLE schema_articles (
-                id BIGINT PRIMARY KEY AUTO_INCREMENT,
-                title VARCHAR(20) COMMENT 'A title',
-                body TEXT,
-                author_id INT NOT NULL,
-                unique_id INT NOT NULL,
-                published BOOLEAN DEFAULT 0,
-                allow_comments TINYINT(1) DEFAULT 0,
-                location POINT,
-                year_type YEAR,
-                config JSON,
-                created DATETIME,
-                created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
-                updated DATETIME ON UPDATE CURRENT_TIMESTAMP,
-                KEY `author_idx` (`author_id`),
-                CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
-                FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
-                UNIQUE INDEX `unique_id_idx` (`unique_id`)
-            ) ENGINE=InnoDB COLLATE=utf8_general_ci
-SQL;
-        $connection->execute($table);
-
-        $table = <<<SQL
-            CREATE OR REPLACE VIEW schema_articles_v
-                AS SELECT 1
-SQL;
-        $connection->execute($table);
-
-        if ($connection->getDriver()->supports(DriverFeatureEnum::JSON)) {
-            $table = <<<SQL
-                CREATE TABLE schema_json (
-                    id INT PRIMARY KEY AUTO_INCREMENT,
-                    data JSON NOT NULL
-                )
-SQL;
-            $connection->execute($table);
-        }
-    }
-
-    /**
      * Data provider for convert column testing
      *
      * @return array
@@ -161,6 +98,10 @@ SQL;
             [
                 'TINYINT(1)',
                 ['type' => 'boolean', 'length' => null],
+            ],
+            [
+                'TINYINT(1) UNSIGNED',
+                ['type' => 'tinyinteger', 'length' => null],
             ],
             [
                 'TINYINT(3)',
@@ -216,7 +157,15 @@ SQL;
             ],
             [
                 'BINARY(1)',
-                ['type' => 'binary', 'length' => 1],
+                ['type' => 'binary', 'length' => 1, 'fixed' => true],
+            ],
+            [
+                'BINARY(20)',
+                ['type' => 'binary', 'length' => 20, 'fixed' => true],
+            ],
+            [
+                'VARBINARY(20)',
+                ['type' => 'binary', 'length' => 20],
             ],
             [
                 'TEXT',
@@ -295,6 +244,10 @@ SQL;
                 ['type' => 'float', 'length' => 10, 'precision' => 4, 'unsigned' => true],
             ],
             [
+                'JSON',
+                ['type' => 'json', 'length' => null],
+            ],
+            [
                 'GEOMETRY',
                 ['type' => 'geometry', 'length' => null],
             ],
@@ -309,6 +262,18 @@ SQL;
             [
                 'POLYGON',
                 ['type' => 'polygon', 'length' => null],
+            ],
+            [
+                'BIT(1)',
+                ['type' => 'bit', 'length' => 1],
+            ],
+            [
+                'BIT(8)',
+                ['type' => 'bit', 'length' => 8],
+            ],
+            [
+                'BIT(64)',
+                ['type' => 'bit', 'length' => 64],
             ],
         ];
     }
@@ -353,6 +318,69 @@ SQL;
             $data,
             array_keys($expected),
         );
+    }
+
+    /**
+     * Helper method for testing methods.
+     *
+     * @param \Cake\Datasource\ConnectionInterface $connection
+     */
+    protected function _createTables($connection): void
+    {
+        $this->_needsConnection();
+        $connection->execute('DROP TABLE IF EXISTS schema_articles');
+        $connection->execute('DROP TABLE IF EXISTS schema_authors');
+        $connection->execute('DROP TABLE IF EXISTS schema_json');
+        $connection->execute('DROP VIEW IF EXISTS schema_articles_v');
+
+        $table = <<<SQL
+            CREATE TABLE schema_authors (
+                id INT PRIMARY KEY AUTO_INCREMENT,
+                name VARCHAR(50),
+                bio TEXT,
+                created DATETIME
+            )ENGINE=InnoDB
+SQL;
+        $connection->execute($table);
+
+        $table = <<<SQL
+            CREATE TABLE schema_articles (
+                id BIGINT PRIMARY KEY AUTO_INCREMENT,
+                title VARCHAR(20) COMMENT 'A title',
+                body TEXT,
+                author_id INT NOT NULL,
+                unique_id INT NOT NULL,
+                published BOOLEAN DEFAULT 0,
+                allow_comments TINYINT(1) DEFAULT 0,
+                location POINT,
+                year_type YEAR,
+                config JSON,
+                created DATETIME,
+                created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
+                updated DATETIME ON UPDATE CURRENT_TIMESTAMP,
+                KEY `author_idx` (`author_id`),
+                CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
+                FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
+                UNIQUE INDEX `unique_id_idx` (`unique_id`)
+            ) ENGINE=InnoDB COLLATE=utf8_general_ci
+SQL;
+        $connection->execute($table);
+
+        $table = <<<SQL
+            CREATE OR REPLACE VIEW schema_articles_v
+                AS SELECT 1
+SQL;
+        $connection->execute($table);
+
+        if ($connection->getDriver()->supports(DriverFeatureEnum::JSON)) {
+            $table = <<<SQL
+                CREATE TABLE schema_json (
+                    id INT PRIMARY KEY AUTO_INCREMENT,
+                    data JSON NOT NULL
+                )
+SQL;
+            $connection->execute($table);
+        }
     }
 
     /**
@@ -1284,7 +1312,13 @@ SQL;
             [
                 'bit',
                 ['type' => 'binary', 'length' => 1],
-                '`bit` BINARY(1)',
+                '`bit` VARBINARY(1)',
+            ],
+            // Fixed binary (BINARY vs VARBINARY)
+            [
+                'hash',
+                ['type' => 'binary', 'length' => 20, 'fixed' => true],
+                '`hash` BINARY(20)',
             ],
             // Integers
             [
@@ -1529,6 +1563,22 @@ SQL;
                 'p',
                 ['type' => 'polygon', 'null' => false, 'srid' => 4326],
                 '`p` POLYGON NOT NULL SRID 4326',
+            ],
+            // Bit
+            [
+                'active',
+                ['type' => 'bit', 'length' => 1],
+                '`active` BIT(1)',
+            ],
+            [
+                'flags',
+                ['type' => 'bit', 'length' => 8, 'null' => false],
+                '`flags` BIT(8) NOT NULL',
+            ],
+            [
+                'permissions',
+                ['type' => 'bit', 'length' => 64],
+                '`permissions` BIT(64)',
             ],
         ];
     }
