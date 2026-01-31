@@ -76,16 +76,16 @@ class IntegrationTestTraitTest extends TestCase
             $routes->options('/options/{controller}/{action}', []);
             $routes->connect('/{controller}/{action}/*', []);
 
-            $routes->scope('/cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+            $routes->scope('/cookie-csrf/', function (RouteBuilder $routes): void {
                 $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware());
                 $routes->applyMiddleware('cookieCsrf');
                 $routes->connect('/posts/{action}', ['controller' => 'Posts']);
-            });
-            $routes->scope('/session-csrf/', ['csrf' => 'session'], function (RouteBuilder $routes): void {
+            }, ['csrf' => 'cookie']);
+            $routes->scope('/session-csrf/', function (RouteBuilder $routes): void {
                 $routes->registerMiddleware('sessionCsrf', new SessionCsrfProtectionMiddleware());
                 $routes->applyMiddleware('sessionCsrf');
                 $routes->connect('/posts/{action}/', ['controller' => 'Posts']);
-            });
+            }, ['csrf' => 'session']);
         };
         $routesClosure(Router::createRouteBuilder('/'));
         Configure::write('TestApp.routes', $routesClosure);
@@ -1075,7 +1075,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testPostSessionCsrfSuccessWithSetCookieName(): void
     {
         Configure::write('TestApp.routes', function (RouteBuilder $routes): void {
-            $routes->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+            $routes->scope('/custom-cookie-csrf/', function (RouteBuilder $routes): void {
                 $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                     [
                         'cookieName' => 'customCsrfToken',
@@ -1083,7 +1083,7 @@ class IntegrationTestTraitTest extends TestCase
                 ));
                 $routes->applyMiddleware('cookieCsrf');
                 $routes->connect('/posts/{action}', ['controller' => 'Posts']);
-            });
+            }, ['csrf' => 'cookie']);
         });
 
         $this->enableCsrfToken('customCsrfToken');
@@ -1101,7 +1101,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testPostSessionCsrfFailureWithSetCookieName(): void
     {
         Configure::write('TestApp.routes', function (RouteBuilder $routes): void {
-            $routes->scope('/custom-cookie-csrf/', ['csrf' => 'cookie'], function (RouteBuilder $routes): void {
+            $routes->scope('/custom-cookie-csrf/', function (RouteBuilder $routes): void {
                 $routes->registerMiddleware('cookieCsrf', new CsrfProtectionMiddleware(
                     [
                         'cookieName' => 'customCsrfToken',
@@ -1109,7 +1109,7 @@ class IntegrationTestTraitTest extends TestCase
                 ));
                 $routes->applyMiddleware('cookieCsrf');
                 $routes->connect('/posts/{action}', ['controller' => 'Posts']);
-            });
+            }, ['csrf' => 'cookie']);
         });
 
         $this->enableCsrfToken('customCsrfToken');

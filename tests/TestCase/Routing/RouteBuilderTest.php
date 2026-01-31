@@ -419,12 +419,12 @@ class RouteBuilderTest extends TestCase
     public function testPrefix(): void
     {
         $routes = new RouteBuilder($this->collection, '/path', ['key' => 'value']);
-        $res = $routes->prefix('admin', ['param' => 'value'], function (RouteBuilder $r): void {
+        $res = $routes->prefix('admin', function (RouteBuilder $r): void {
             $this->assertInstanceOf(RouteBuilder::class, $r);
             $this->assertCount(0, $this->collection->routes());
             $this->assertSame('/path/admin', $r->path());
             $this->assertEquals(['prefix' => 'Admin', 'key' => 'value', 'param' => 'value'], $r->params());
-        });
+        }, ['param' => 'value']);
         $this->assertSame($routes, $res);
     }
 
@@ -449,11 +449,11 @@ class RouteBuilderTest extends TestCase
     public function testNestedPrefix(): void
     {
         $routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'Admin']);
-        $res = $routes->prefix('api', ['_namePrefix' => 'api:'], function (RouteBuilder $r): void {
+        $res = $routes->prefix('api', function (RouteBuilder $r): void {
             $this->assertSame('/admin/api', $r->path());
             $this->assertEquals(['prefix' => 'Admin/Api'], $r->params());
             $this->assertSame('api:', $r->namePrefix());
-        });
+        }, ['_namePrefix' => 'api:']);
         $this->assertSame($routes, $res);
     }
 
@@ -464,14 +464,14 @@ class RouteBuilderTest extends TestCase
     {
         $routes = new RouteBuilder($this->collection, '/admin', ['prefix' => 'Admin']);
         $res = $routes->prefix('Api', function (RouteBuilder $r): void {
-            $r->prefix('v10', ['path' => '/v1.0'], function (RouteBuilder $r2): void {
+            $r->prefix('v10', function (RouteBuilder $r2): void {
                 $this->assertSame('/admin/api/v1.0', $r2->path());
                 $this->assertEquals(['prefix' => 'Admin/Api/V10'], $r2->params());
-                $r2->prefix('b1', ['path' => '/beta.1'], function (RouteBuilder $r3): void {
+                $r2->prefix('b1', function (RouteBuilder $r3): void {
                     $this->assertSame('/admin/api/v1.0/beta.1', $r3->path());
                     $this->assertEquals(['prefix' => 'Admin/Api/V10/B1'], $r3->params());
-                });
-            });
+                }, ['path' => '/beta.1']);
+            }, ['path' => '/v1.0']);
         });
         $this->assertSame($routes, $res);
     }
@@ -502,10 +502,10 @@ class RouteBuilderTest extends TestCase
     public function testPluginPathOption(): void
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
-        $routes->plugin('Contacts', ['path' => '/people'], function (RouteBuilder $r): void {
+        $routes->plugin('Contacts', function (RouteBuilder $r): void {
             $this->assertSame('/b/people', $r->path());
             $this->assertEquals(['plugin' => 'Contacts', 'key' => 'value'], $r->params());
-        });
+        }, ['path' => '/people']);
     }
 
     /**
@@ -514,15 +514,15 @@ class RouteBuilderTest extends TestCase
     public function testPluginNamePrefix(): void
     {
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
-        $routes->plugin('Contacts', ['_namePrefix' => 'contacts.'], function (RouteBuilder $r): void {
+        $routes->plugin('Contacts', function (RouteBuilder $r): void {
             $this->assertEquals('contacts.', $r->namePrefix());
-        });
+        }, ['_namePrefix' => 'contacts.']);
 
         $routes = new RouteBuilder($this->collection, '/b', ['key' => 'value']);
         $routes->namePrefix('default.');
-        $routes->plugin('Blog', ['_namePrefix' => 'blog.'], function (RouteBuilder $r): void {
+        $routes->plugin('Blog', function (RouteBuilder $r): void {
             $this->assertEquals('default.blog.', $r->namePrefix(), 'Should combine nameprefix');
-        });
+        }, ['_namePrefix' => 'blog.']);
     }
 
     /**
@@ -531,7 +531,7 @@ class RouteBuilderTest extends TestCase
     public function testResources(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->resources('Articles', ['_ext' => 'json']);
+        $routes->resources('Articles', null, ['_ext' => 'json']);
 
         $all = $this->collection->routes();
         $this->assertCount(5, $all);
@@ -551,9 +551,9 @@ class RouteBuilderTest extends TestCase
     public function testResourcesPathOption(): void
     {
         $routes = new RouteBuilder($this->collection, '/api');
-        $routes->resources('Articles', ['path' => 'posts'], function (RouteBuilder $routes): void {
+        $routes->resources('Articles', function (RouteBuilder $routes): void {
             $routes->resources('Comments');
-        });
+        }, ['path' => 'posts']);
         $all = $this->collection->routes();
         $this->assertSame('Articles', $all[8]->defaults['controller']);
         $this->assertSame('/api/posts', $all[8]->template);
@@ -571,7 +571,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesPrefix(): void
     {
         $routes = new RouteBuilder($this->collection, '/api');
-        $routes->resources('Articles', ['prefix' => 'Rest']);
+        $routes->resources('Articles', options: ['prefix' => 'Rest']);
         $all = $this->collection->routes();
         $this->assertSame('Rest', $all[0]->defaults['prefix']);
     }
@@ -582,7 +582,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesNestedPrefix(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->resources('Articles', ['prefix' => 'Rest']);
+        $routes->resources('Articles', null, ['prefix' => 'Rest']);
 
         $all = $this->collection->routes();
         $this->assertCount(5, $all);
@@ -600,7 +600,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesInflection(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->resources('BlogPosts', ['_ext' => 'json', 'inflect' => 'dasherize']);
+        $routes->resources('BlogPosts', null, ['_ext' => 'json', 'inflect' => 'dasherize']);
 
         $all = $this->collection->routes();
         $this->assertCount(5, $all);
@@ -621,10 +621,10 @@ class RouteBuilderTest extends TestCase
         $routes = new RouteBuilder($this->collection, '/api');
         $routes->resources(
             'NetworkObjects',
-            ['inflect' => 'dasherize'],
             function (RouteBuilder $routes): void {
                 $routes->resources('Attributes');
             },
+            ['inflect' => 'dasherize'],
         );
 
         $all = $this->collection->routes();
@@ -641,7 +641,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesMappings(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->resources('Articles', [
+        $routes->resources('Articles', null, [
             '_ext' => 'json',
             'map' => [
                 'delete_all' => ['action' => 'deleteAll', 'method' => 'DELETE'],
@@ -675,7 +675,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesWithMapOnly(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->resources('Articles', [
+        $routes->resources('Articles', null, [
             'map' => [
                 'conditions' => ['action' => 'conditions', 'method' => 'DeLeTe'],
             ],
@@ -703,10 +703,10 @@ class RouteBuilderTest extends TestCase
     public function testResourcesInScope(): void
     {
         $builder = Router::createRouteBuilder('/');
-        $builder->scope('/api', ['prefix' => 'Api'], function (RouteBuilder $routes): void {
+        $builder->scope('/api', function (RouteBuilder $routes): void {
             $routes->setExtensions(['json']);
             $routes->resources('Articles');
-        });
+        }, ['prefix' => 'Api']);
         $url = Router::url([
             'prefix' => 'Api',
             'controller' => 'Articles',
@@ -792,7 +792,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesOnlyString(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->resources('Articles', ['only' => 'index']);
+        $routes->resources('Articles', null, ['only' => 'index']);
 
         $result = $this->collection->routes();
         $this->assertCount(1, $result);
@@ -805,7 +805,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesOnlyArray(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->resources('Articles', ['only' => ['index', 'delete']]);
+        $routes->resources('Articles', null, ['only' => ['index', 'delete']]);
 
         $result = $this->collection->routes();
         $this->assertCount(2, $result);
@@ -824,7 +824,7 @@ class RouteBuilderTest extends TestCase
     public function testResourcesActions(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->resources('Articles', [
+        $routes->resources('Articles', null, [
             'only' => ['index', 'delete'],
             'actions' => ['index' => 'showList'],
         ]);
@@ -901,10 +901,10 @@ class RouteBuilderTest extends TestCase
     public function testScope(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->scope('/v1', ['version' => 1], function (RouteBuilder $routes): void {
+        $routes->scope('/v1', function (RouteBuilder $routes): void {
             $this->assertSame('/api/v1', $routes->path());
             $this->assertEquals(['prefix' => 'Api', 'version' => 1], $routes->params());
-        });
+        }, ['version' => 1]);
     }
 
     /**
@@ -913,10 +913,10 @@ class RouteBuilderTest extends TestCase
     public function testScopeWithAction(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->scope('/prices', ['controller' => 'Prices', 'action' => 'view'], function (RouteBuilder $routes): void {
+        $routes->scope('/prices', function (RouteBuilder $routes): void {
             $routes->connect('/shared', ['shared' => true]);
             $routes->get('/exclusive', ['exclusive' => true]);
-        });
+        }, ['controller' => 'Prices', 'action' => 'view']);
         $all = $this->collection->routes();
         $this->assertCount(2, $all);
         $this->assertSame('view', $all[0]->defaults['action']);
@@ -924,18 +924,6 @@ class RouteBuilderTest extends TestCase
 
         $this->assertSame('view', $all[1]->defaults['action']);
         $this->assertArrayHasKey('exclusive', $all[1]->defaults);
-    }
-
-    /**
-     * Test that exception is thrown if callback is not a valid callable.
-     */
-    public function testScopeException(): void
-    {
-        $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('Need a valid Closure to connect routes.');
-
-        $routes = new RouteBuilder($this->collection, '/api', ['prefix' => 'Api']);
-        $routes->scope('/v1', ['fail']);
     }
 
     /**
@@ -962,13 +950,13 @@ class RouteBuilderTest extends TestCase
     public function testNamePrefixes(): void
     {
         $routes = new RouteBuilder($this->collection, '/api', [], ['namePrefix' => 'api:']);
-        $routes->scope('/v1', ['version' => 1, '_namePrefix' => 'v1:'], function (RouteBuilder $routes): void {
+        $routes->scope('/v1', function (RouteBuilder $routes): void {
             $this->assertSame('api:v1:', $routes->namePrefix());
             $routes->connect('/ping', ['controller' => 'Pings'], ['_name' => 'ping']);
 
             $routes->namePrefix('web:');
             $routes->connect('/pong', ['controller' => 'Pongs'], ['_name' => 'pong']);
-        });
+        }, ['version' => 1, '_namePrefix' => 'v1:']);
 
         $all = $this->collection->named();
         $this->assertArrayHasKey('api:v1:ping', $all);
