@@ -101,7 +101,7 @@ class MysqlSchemaDialectTest extends TestCase
             ],
             [
                 'TINYINT(1) UNSIGNED',
-                ['type' => 'boolean', 'length' => null],
+                ['type' => 'tinyinteger', 'length' => null, 'unsigned' => true],
             ],
             [
                 'TINYINT(3)',

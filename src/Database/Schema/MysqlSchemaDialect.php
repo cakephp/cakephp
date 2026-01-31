@@ -378,15 +378,15 @@ class MysqlSchemaDialect extends SchemaDialect
             return ['type' => $typeName, 'length' => null, 'precision' => $length];
         }
 
-        if (($col === 'tinyint' && $length === 1) || $col === 'boolean') {
+        $unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
+
+        if (($col === 'tinyint' && $length === 1 && !$unsigned) || $col === 'boolean') {
             return ['type' => TableSchemaInterface::TYPE_BOOLEAN, 'length' => null];
         }
 
         if ($col === 'bit') {
             return ['type' => TableSchemaInterface::TYPE_BIT, 'length' => $length];
         }
-
-        $unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
         if (str_contains($col, 'bigint')) {
             return ['type' => TableSchemaInterface::TYPE_BIGINTEGER, 'length' => null, 'unsigned' => $unsigned];
         }
