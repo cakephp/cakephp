@@ -301,6 +301,13 @@ SQL;
 
         $data = $table->column('reflection')->toArray();
 
+        // MariaDB aliases JSON to LONGTEXT
+        // https://mariadb.com/kb/en/json/
+        /** @var \Cake\Database\Driver\Mysql $driver */
+        if ($type === 'JSON' && $driver->isMariadb()) {
+            $expected = ['type' => 'text', 'length' => 4294967295];
+        }
+
         // Collations are a mess in MySQL
         if (isset($expected['collate'])) {
             $db = $driver->config()['database'];
