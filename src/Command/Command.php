@@ -28,8 +28,6 @@ use Cake\ORM\Locator\LocatorAwareTrait;
  *
  * Includes traits that integrate logging
  * and ORM models to console commands.
- *
- * @extends \Cake\Console\BaseCommand<\Cake\Command\Command>
  */
 class Command extends BaseCommand
 {
