@@ -321,7 +321,7 @@ class Configure
      * @param bool $merge if config files should be merged instead of simply overridden
      * @return bool True if load successful.
      * @throws \Cake\Core\Exception\CakeException if the $config engine is not found
-     * @link https://book.cakephp.org/5/en/development/configuration.html#reading-writing-configuration-files
+     * @link https://book.cakephp.org/5/en/development/configuration.html#reading-and-writing-configuration-files
      */
     public static function load(string $key, string $config = 'default', bool $merge = true): bool
     {
