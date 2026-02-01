@@ -48,7 +48,6 @@ trait ViewVarsTrait
      * @param string|null $viewClass Optional namespaced class name of the View class to instantiate.
      * @return \Cake\View\View
      * @throws \Cake\View\Exception\MissingViewException If view class was not found.
-     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     public function createView(?string $viewClass = null): View
     {

@@ -55,7 +55,6 @@ trait CellTrait
      * @param array<string, mixed> $options Options for Cell's constructor
      * @return \Cake\View\Cell<\Cake\View\View> The cell instance
      * @throws \Cake\View\Exception\MissingCellException If Cell class was not found.
-     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     protected function cell(string $cell, array $data = [], array $options = []): Cell
     {
@@ -87,7 +86,6 @@ trait CellTrait
      * @param string|null $plugin The plugin name.
      * @param array<string, mixed> $options The constructor options for the cell.
      * @return \Cake\View\Cell<\Cake\View\View>
-     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     protected function _createCell(string $className, string $action, ?string $plugin, array $options): Cell
     {
@@ -95,7 +93,7 @@ trait CellTrait
             $options['plugin'] = $plugin;
         }
 
-        /** @var \Cake\View\Cell<\Cake\View\View> $instance @phpstan-ignore missingType.generics */
+        /** @var \Cake\View\Cell<\Cake\View\View> $instance */
         $instance = new $className($this->request, $this->response, $this->getEventManager(), $options);
 
         $builder = $instance->viewBuilder();
