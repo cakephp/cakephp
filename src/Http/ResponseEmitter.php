@@ -54,9 +54,9 @@ class ResponseEmitter
      * according to the environment.
      *
      * @param \Psr\Http\Message\ResponseInterface $response The response to emit.
-     * @return bool
+     * @return void
      */
-    public function emit(ResponseInterface $response): bool
+    public function emit(ResponseInterface $response): void
     {
         $file = '';
         $line = 0;
@@ -78,8 +78,6 @@ class ResponseEmitter
         if (function_exists('fastcgi_finish_request')) {
             fastcgi_finish_request();
         }
-
-        return true;
     }
 
     /**
