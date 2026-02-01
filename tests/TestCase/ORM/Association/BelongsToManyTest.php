@@ -817,6 +817,34 @@ class BelongsToManyTest extends TestCase
     }
 
     /**
+     * Tests that unlink returns false when junction table deleteMany fails
+     */
+    public function testUnlinkFailure(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $joint = $this->getMockBuilder(Table::class)
+            ->onlyMethods(['deleteMany'])
+            ->setConstructorArgs([['alias' => 'SpecialTags', 'table' => 'special_tags', 'connection' => $connection]])
+            ->getMock();
+
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $assoc = $articles->belongsToMany('Tags', [
+            'through' => $joint,
+        ]);
+
+        $entity = $articles->get(2, contain: ['Tags']);
+        $this->assertCount(1, $entity->tags);
+
+        $joint->expects($this->once())
+            ->method('deleteMany')
+            ->willReturn(false);
+
+        $this->assertFalse($assoc->unlink($entity, $entity->tags));
+        $this->assertCount(1, $entity->tags);
+    }
+
+    /**
      * Tests that replaceLink requires the sourceEntity to have primaryKey values
      * for the source entity
      */
