@@ -286,13 +286,11 @@ class ConfigureTest extends TestCase
     {
         Configure::config('test', new PhpConfig(CONFIG));
 
-        $result = Configure::load('var_test', 'test');
-        $this->assertTrue($result);
+        Configure::load('var_test', 'test');
 
         $this->assertSame('value', Configure::read('Read'));
 
-        $result = Configure::load('var_test2', 'test', true);
-        $this->assertTrue($result);
+        Configure::load('var_test2', 'test', true);
 
         $this->assertSame('value2', Configure::read('Read'));
         $this->assertSame('buried2', Configure::read('Deep.Second.SecondDeepest'));
@@ -308,13 +306,11 @@ class ConfigureTest extends TestCase
     {
         Configure::config('test', new PhpConfig(CONFIG));
 
-        $result = Configure::load('var_test', 'test');
-        $this->assertTrue($result);
+        Configure::load('var_test', 'test');
 
         $this->assertSame('value', Configure::read('Read'));
 
-        $result = Configure::load('var_test2', 'test', false);
-        $this->assertTrue($result);
+        Configure::load('var_test2', 'test', false);
 
         $this->assertSame('value2', Configure::read('Read'));
         $this->assertSame('buried2', Configure::read('Deep.Second.SecondDeepest'));
@@ -360,14 +356,12 @@ class ConfigureTest extends TestCase
     {
         Configure::config('test', new PhpConfig());
         $this->loadPlugins(['TestPlugin']);
-        $result = Configure::load('TestPlugin.load', 'test');
-        $this->assertTrue($result);
+        Configure::load('TestPlugin.load', 'test');
         $expected = '/test_app/Plugin/TestPlugin/Config/load.php';
         $config = Configure::read('plugin_load');
         $this->assertSame($expected, $config);
 
-        $result = Configure::load('TestPlugin.more.load', 'test');
-        $this->assertTrue($result);
+        Configure::load('TestPlugin.more.load', 'test');
         $expected = '/test_app/Plugin/TestPlugin/Config/more.load.php';
         $config = Configure::read('plugin_more_load');
         $this->assertSame($expected, $config);
