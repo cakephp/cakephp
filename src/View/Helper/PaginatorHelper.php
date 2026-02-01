@@ -108,9 +108,8 @@ class PaginatorHelper extends Helper
     /**
      * Constructor. Overridden to merge passed args with URL options.
      *
-     * @param \Cake\View\View<\Cake\View\View> $view The View this helper is being attached to.
+     * @param \Cake\View\View $view The View this helper is being attached to.
      * @param array<string, mixed> $config Configuration settings for the helper.
-     * @phpstan-ignore missingType.generics (self-referential generic)
      */
     public function __construct(View $view, array $config = [])
     {
