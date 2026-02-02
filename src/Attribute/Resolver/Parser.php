@@ -20,6 +20,7 @@ use Cake\Attribute\Resolver\Enum\AttributeTargetType;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
 use Cake\Attribute\Resolver\ValueObject\AttributeTarget;
 use Generator;
+use PhpToken;
 use ReflectionAttribute;
 use ReflectionClass;
 use ReflectionClassConstant;
@@ -132,35 +133,29 @@ class Parser
             return [];
         }
 
-        $tokens = token_get_all($code);
+        $tokens = PhpToken::tokenize($code);
         $namespace = '';
         $waitingForNamespace = false;
         $waitingForClass = false;
 
         foreach ($tokens as $i => $token) {
-            if (!is_array($token)) {
-                continue;
-            }
-
-            [$tokenType, $tokenValue] = $token;
-
             // Detect namespace declaration
-            if ($tokenType === T_NAMESPACE) {
+            if ($token->id === T_NAMESPACE) {
                 $waitingForNamespace = true;
                 continue;
             }
 
             // Capture namespace name
-            if ($waitingForNamespace && ($tokenType === T_NAME_QUALIFIED || $tokenType === T_STRING)) {
-                $namespace = $tokenValue;
+            if ($waitingForNamespace && ($token->id === T_NAME_QUALIFIED || $token->id === T_STRING)) {
+                $namespace = $token->text;
                 $waitingForNamespace = false;
                 continue;
             }
 
             // Detect class/interface/trait/enum declaration
-            if (in_array($tokenType, [T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM], true)) {
+            if (in_array($token->id, [T_CLASS, T_INTERFACE, T_TRAIT, T_ENUM], true)) {
                 // Skip anonymous classes
-                if ($tokenType === T_CLASS && $this->isAnonymousClass($tokens, $i)) {
+                if ($token->id === T_CLASS && $this->isAnonymousClass($tokens, $i)) {
                     continue;
                 }
                 $waitingForClass = true;
@@ -168,8 +163,8 @@ class Parser
             }
 
             // Capture class name and return immediately (PSR-4: one class per file)
-            if ($waitingForClass && $tokenType === T_STRING) {
-                $className = $tokenValue;
+            if ($waitingForClass && $token->id === T_STRING) {
+                $className = $token->text;
                 $fullyQualifiedName = $namespace !== '' ? $namespace . '\\' . $className : $className;
 
                 return [$fullyQualifiedName];
@@ -184,7 +179,7 @@ class Parser
      *
      * Anonymous classes are preceded by the 'new' keyword.
      *
-     * @param array $tokens All tokens from token_get_all
+     * @param array<\PhpToken> $tokens All tokens from PhpToken::tokenize()
      * @param int $currentIndex Current token index
      * @return bool True if anonymous class
      */
@@ -193,14 +188,11 @@ class Parser
         // Look backward for 'new' keyword (skip whitespace/comments)
         for ($i = $currentIndex - 1; $i >= 0; $i--) {
             $token = $tokens[$i];
-            if (!is_array($token)) {
-                continue;
-            }
 
-            if ($token[0] === T_NEW) {
+            if ($token->id === T_NEW) {
                 return true;
             }
-            if (!in_array($token[0], [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT], true)) {
+            if (!in_array($token->id, [T_WHITESPACE, T_COMMENT, T_DOC_COMMENT], true)) {
                 return false;
             }
         }
