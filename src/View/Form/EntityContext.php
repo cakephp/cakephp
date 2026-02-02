@@ -234,7 +234,7 @@ class EntityContext implements ContextInterface
             'schemaDefault' => true,
         ];
 
-        if (empty($this->_context['entity'])) {
+        if (!$this->_context['entity']) {
             return $options['default'];
         }
         $parts = explode('.', $field);

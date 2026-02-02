@@ -287,7 +287,7 @@ class Validator implements ArrayAccess, IteratorAggregate, Countable
      */
     public function field(string $name, ?ValidationSet $set = null): ValidationSet
     {
-        if (empty($this->fields[$name])) {
+        if (!isset($this->fields[$name])) {
             $set = $set ?: new ValidationSet();
             $this->fields[$name] = $set;
         }
