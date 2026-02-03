@@ -950,14 +950,11 @@ class BelongsToMany extends Association
         $this->checkPersistenceStatus($sourceEntity, $targetEntities);
         $property = $this->getProperty();
 
-        $this->junction()->getConnection()->transactional(
-            function () use ($sourceEntity, $targetEntities, $options): void {
-                $links = $this->collectJointEntities($sourceEntity, $targetEntities);
-                foreach ($links as $entity) {
-                    $this->junctionTable->delete($entity, $options);
-                }
-            },
-        );
+        $links = $this->_collectJointEntities($sourceEntity, $targetEntities);
+        $return = $this->junctionTable->deleteMany($links, $options);
+        if ($return === false) {
+            return false;
+        }
 
         /** @var array<\Cake\Datasource\EntityInterface> $existing */
         $existing = $sourceEntity->get($property) ?: [];

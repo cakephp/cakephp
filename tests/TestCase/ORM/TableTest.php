@@ -4523,7 +4523,7 @@ class TableTest extends TestCase
     public function testReplaceHasManyOnErrorDependentCascadeCallbacks(): void
     {
         $articles = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['delete'])
+            ->onlyMethods(['deleteMany'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'alias' => 'Articles',
@@ -4531,7 +4531,7 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $articles->method('delete')->willReturn(false);
+        $articles->method('deleteMany')->willReturn(false);
 
         $associations = new AssociationCollection();
 
