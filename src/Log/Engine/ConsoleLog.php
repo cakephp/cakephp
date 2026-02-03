@@ -87,7 +87,7 @@ class ConsoleLog extends BaseLog
      * @param mixed $level The severity level of log you are making.
      * @param \Stringable|string $message The message you want to log.
      * @param array $context Additional information about the logged message
-     * @return void success of write.
+     * @return void
      * @see \Cake\Log\Log::$_levels
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */

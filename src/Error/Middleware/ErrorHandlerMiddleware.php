@@ -53,7 +53,7 @@ class ErrorHandlerMiddleware implements MiddlewareInterface
     /**
      * Default configuration values.
      *
-     * Ignored if contructor is passed an ExceptionTrap instance.
+     * Ignored if constructor is passed an ExceptionTrap instance.
      *
      * Configuration keys and values are shared with `ExceptionTrap`.
      * This class will pass its configuration onto the ExceptionTrap

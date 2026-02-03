@@ -50,7 +50,7 @@ class FloatTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new FloatType();
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = $this->createStub(Driver::class);
         $this->numberClass = FloatType::$numberClass;
     }
 

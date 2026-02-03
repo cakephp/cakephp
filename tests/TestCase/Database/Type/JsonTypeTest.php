@@ -46,7 +46,7 @@ class JsonTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = TypeFactory::build('json');
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = $this->createStub(Driver::class);
     }
 
     /**

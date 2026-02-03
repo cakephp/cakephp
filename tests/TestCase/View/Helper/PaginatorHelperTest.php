@@ -3096,7 +3096,7 @@ class PaginatorHelperTest extends TestCase
 
         $out = $this->Paginator->limitControl([1 => 1]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Batches/index']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/batches']],
             ['input' => ['type' => 'hidden', 'name' => 'owner', 'value' => 'billy']],
             ['input' => ['type' => 'hidden', 'name' => 'expected', 'value' => '1']],
             ['input' => ['type' => 'hidden', 'name' => 'page', 'value' => '1']],
@@ -3137,7 +3137,7 @@ class PaginatorHelperTest extends TestCase
 
         $out = $this->Paginator->limitControl([1 => 1]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Batches/index']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/batches']],
             ['input' => ['type' => 'hidden', 'name' => 'xyz&quot;/&gt;&lt;script&gt;alert(&#039;hi&#039;)&lt;/script&gt;xyz', 'value' => 'hi']],
             ['input' => ['type' => 'hidden', 'name' => 'page', 'value' => '1']],
             ['div' => ['class' => 'input select']],
@@ -3278,7 +3278,7 @@ class PaginatorHelperTest extends TestCase
 
         $out = $this->Paginator->limitControl([20 => 20, 50 => 50]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Users/index']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/users']],
             ['input' => ['type' => 'hidden', 'name' => 'status', 'value' => 'active']],
             ['input' => ['type' => 'hidden', 'name' => 'role', 'value' => 'admin']],
             ['div' => ['class' => 'input select']],
@@ -3320,7 +3320,7 @@ class PaginatorHelperTest extends TestCase
         $out = $this->Paginator->limitControl([25 => 25, 100 => 100]);
         $expected = [
             // Should only have category as hidden field, not sort/direction/page/limit
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Posts/index']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/posts']],
             ['input' => ['type' => 'hidden', 'name' => 'category', 'value' => 'tech']],
             ['div' => ['class' => 'input select']],
             ['label' => ['for' => 'limit']],
@@ -3369,7 +3369,7 @@ class PaginatorHelperTest extends TestCase
 
         $out = $this->Paginator->limitControl([20 => 20, 50 => 50]);
         $expected = [
-            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/Posts/index']],
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/posts']],
             ['input' => ['type' => 'hidden', 'name' => 'filter[date][start]', 'value' => '2024-01-01']],
             ['input' => ['type' => 'hidden', 'name' => 'filter[date][end]', 'value' => '2024-12-31']],
             ['input' => ['type' => 'hidden', 'name' => 'filter[status]', 'value' => 'active']],
@@ -3592,6 +3592,43 @@ class PaginatorHelperTest extends TestCase
 
         // Should throw exception when using both steps and explicit limits
         $this->Paginator->limitControl([20 => 20, 50 => 50], null, ['steps' => 10]);
+    }
+
+    /**
+     * test limitControl() preserves passed params in form action
+     */
+    public function testLimitControlWithPassedParams(): void
+    {
+        $request = new ServerRequest([
+            'url' => '/users/details/517?param1=test',
+            'params' => [
+                'plugin' => null, 'controller' => 'Users', 'action' => 'details', 'pass' => ['517'],
+            ],
+            'query' => ['param1' => 'test'],
+            'base' => '',
+            'webroot' => '/',
+        ]);
+        Router::setRequest($request);
+        $this->View->setRequest($request);
+        $this->setPaginatedResult(['perPage' => 10, 'currentPage' => 1]);
+
+        $out = $this->Paginator->limitControl([10 => 10]);
+        $expected = [
+            ['form' => ['method' => 'get', 'accept-charset' => 'utf-8', 'action' => '/users/details/517']],
+            ['input' => ['type' => 'hidden', 'name' => 'param1', 'value' => 'test']],
+            ['div' => ['class' => 'input select']],
+            ['label' => ['for' => 'limit']],
+            'View',
+            '/label',
+            ['select' => ['name' => 'limit', 'id' => 'limit', 'onChange' => 'this.form.requestSubmit()']],
+            ['option' => ['value' => '10', 'selected' => 'selected']],
+            '10',
+            '/option',
+            '/select',
+            '/div',
+            '/form',
+        ];
+        $this->assertHtml($expected, $out);
     }
 
     /**

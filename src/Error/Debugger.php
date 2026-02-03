@@ -50,7 +50,7 @@ use function Cake\Core\pr;
  * Debugger extends PHP's default error handling and gives
  * simpler to use more powerful interfaces.
  *
- * @link https://book.cakephp.org/5/en/development/debugging.html#namespace-Cake\Error
+ * @link https://book.cakephp.org/5/en/development/debugging.html#using-the-debugger-class
  */
 class Debugger
 {

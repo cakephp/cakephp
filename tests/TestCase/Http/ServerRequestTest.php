@@ -28,6 +28,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UriInterface;
@@ -35,6 +36,7 @@ use Psr\Http\Message\UriInterface;
 /**
  * ServerRequest Test
  */
+#[AllowMockObjectsWithoutExpectations]
 class ServerRequestTest extends TestCase
 {
     /**

@@ -343,7 +343,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * ### Example
      *
      * ```
-     * $query->select(['title'])->from('articles')->traverse(function ($value, $clause) {
+     * $query->select(['title'])->from('articles')->traverseParts(function ($value, $clause) {
      *     if ($clause === 'select') {
      *         var_dump($value);
      *     }

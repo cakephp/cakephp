@@ -382,6 +382,10 @@ class MysqlSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_BOOLEAN, 'length' => null];
         }
 
+        if ($col === 'bit') {
+            return ['type' => TableSchemaInterface::TYPE_BIT, 'length' => $length];
+        }
+
         $unsigned = (isset($matches[3]) && strtolower($matches[3]) === 'unsigned');
         if (str_contains($col, 'bigint')) {
             return ['type' => TableSchemaInterface::TYPE_BIGINTEGER, 'length' => null, 'unsigned' => $unsigned];
@@ -420,7 +424,12 @@ class MysqlSchemaDialect extends SchemaDialect
             $lengthName = substr($col, 0, -4);
             $length = TableSchema::$columnLengths[$lengthName] ?? $length;
 
-            return ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
+            $result = ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
+            if ($col === 'binary') {
+                $result['fixed'] = true;
+            }
+
+            return $result;
         }
         if (str_contains($col, 'float') || str_contains($col, 'double')) {
             return [
@@ -714,6 +723,7 @@ SQL;
             TableSchemaInterface::TYPE_POINT => ' POINT',
             TableSchemaInterface::TYPE_LINESTRING => ' LINESTRING',
             TableSchemaInterface::TYPE_POLYGON => ' POLYGON',
+            TableSchemaInterface::TYPE_BIT => ' BIT',
         ];
         $specialMap = [
             'string' => true,
@@ -759,10 +769,10 @@ SQL;
                         break;
                     }
 
-                    if ($column['length'] > 2) {
-                        $out .= ' VARBINARY';
-                    } else {
+                    if (!empty($column['fixed'])) {
                         $out .= ' BINARY';
+                    } else {
+                        $out .= ' VARBINARY';
                     }
                     break;
             }
@@ -774,6 +784,7 @@ SQL;
             TableSchemaInterface::TYPE_TINYINTEGER,
             TableSchemaInterface::TYPE_STRING,
             TableSchemaInterface::TYPE_BINARY,
+            TableSchemaInterface::TYPE_BIT,
         ];
         if (!isset($typeMap[$column['type']]) && !isset($specialMap[$column['type']])) {
             $out .= ' ' . strtoupper($column['type']);

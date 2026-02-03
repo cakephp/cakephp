@@ -1,6 +1,11 @@
 parameters:
 	ignoreErrors:
 		-
+			message: '#^Attribute class PHPUnit\\Framework\\Attributes\\AllowMockObjectsWithoutExpectations does not exist\.$#'
+			identifier: attribute.notFound
+			reportUnmatched: false
+
+		-
 			message: '#^Access to constant ATTR_INIT_COMMAND on an unknown class Pdo\\Mysql\.$#'
 			identifier: class.notFound
 			count: 1

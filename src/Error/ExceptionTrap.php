@@ -187,7 +187,7 @@ class ExceptionTrap
      */
     public function unregister(): void
     {
-        if (static::$registeredTrap == $this) {
+        if (static::$registeredTrap === $this) {
             $this->disabled = true;
             static::$registeredTrap = null;
             restore_exception_handler();

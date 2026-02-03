@@ -22,10 +22,12 @@ use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\Database\Schema\CachedCollection;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * SchemaCacheCommands test.
  */
+#[AllowMockObjectsWithoutExpectations]
 class SchemaCacheCommandsTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;

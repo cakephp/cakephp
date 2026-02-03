@@ -21,10 +21,12 @@ namespace Cake\Test\TestCase\Console;
 use Cake\Console\ConsoleOutput;
 use Cake\Console\TestSuite\StubConsoleOutput;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * ConsoleOutputTest
  */
+#[AllowMockObjectsWithoutExpectations]
 class ConsoleOutputTest extends TestCase
 {
     /**

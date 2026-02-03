@@ -45,7 +45,7 @@ trait FileConfigTrait
     protected function _getFilePath(string $key, bool $checkExists = false): string
     {
         if (str_contains($key, '..')) {
-            throw new CakeException('Cannot load/dump configuration files with ../ in them.');
+            throw new CakeException('Cannot load/dump configuration files with .. in them.');
         }
 
         [$plugin, $key] = pluginSplit($key);

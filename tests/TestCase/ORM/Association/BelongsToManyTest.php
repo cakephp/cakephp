@@ -38,6 +38,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\ArticlesTag;
 use function Cake\Collection\collection;
@@ -45,6 +46,7 @@ use function Cake\Collection\collection;
 /**
  * Tests BelongsToMany class
  */
+#[AllowMockObjectsWithoutExpectations]
 class BelongsToManyTest extends TestCase
 {
     /**
@@ -812,6 +814,34 @@ class BelongsToManyTest extends TestCase
 
         $new = $articles->get(2, ...['contain' => 'Tags']);
         $this->assertCount(0, $new->tags, 'DB should be clean');
+    }
+
+    /**
+     * Tests that unlink returns false when junction table deleteMany fails
+     */
+    public function testUnlinkFailure(): void
+    {
+        $connection = ConnectionManager::get('test');
+        $joint = $this->getMockBuilder(Table::class)
+            ->onlyMethods(['deleteMany'])
+            ->setConstructorArgs([['alias' => 'SpecialTags', 'table' => 'special_tags', 'connection' => $connection]])
+            ->getMock();
+
+        $articles = $this->getTableLocator()->get('Articles');
+
+        $assoc = $articles->belongsToMany('Tags', [
+            'through' => $joint,
+        ]);
+
+        $entity = $articles->get(2, contain: ['Tags']);
+        $this->assertCount(1, $entity->tags);
+
+        $joint->expects($this->once())
+            ->method('deleteMany')
+            ->willReturn(false);
+
+        $this->assertFalse($assoc->unlink($entity, $entity->tags));
+        $this->assertCount(1, $entity->tags);
     }
 
     /**

@@ -50,7 +50,7 @@ class TimeTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new TimeType();
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = $this->createStub(Driver::class);
     }
 
     /**

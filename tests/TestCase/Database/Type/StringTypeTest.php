@@ -45,7 +45,7 @@ class StringTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = TypeFactory::build('string');
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = $this->createStub(Driver::class);
     }
 
     /**

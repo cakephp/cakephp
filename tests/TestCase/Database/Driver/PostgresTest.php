@@ -24,10 +24,12 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Tests Postgres driver
  */
+#[AllowMockObjectsWithoutExpectations]
 class PostgresTest extends TestCase
 {
     /**

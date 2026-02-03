@@ -63,6 +63,7 @@ use Exception;
 use InvalidArgumentException;
 use Mockery;
 use PDOException;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use RuntimeException;
 use TestApp\Model\Entity\Article;
@@ -78,6 +79,7 @@ use TestPlugin\Model\Table\CommentsTable;
 /**
  * Tests Table class
  */
+#[AllowMockObjectsWithoutExpectations]
 class TableTest extends TestCase
 {
     /**
@@ -3647,7 +3649,7 @@ class TableTest extends TestCase
     public function testValidatorWithMissingMethod(): void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->expectExceptionMessage('The `Cake\ORM\Table::validationMissing()` validation method does not exists.');
+        $this->expectExceptionMessage('The `Cake\ORM\Table::validationMissing()` validation method does not exist.');
         $table = new Table();
         $table->getValidator('missing');
     }
@@ -4681,7 +4683,7 @@ class TableTest extends TestCase
     public function testReplaceHasManyOnErrorDependentCascadeCallbacks(): void
     {
         $articles = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['delete'])
+            ->onlyMethods(['deleteMany'])
             ->setConstructorArgs([[
                 'connection' => $this->connection,
                 'alias' => 'Articles',
@@ -4689,7 +4691,7 @@ class TableTest extends TestCase
             ]])
             ->getMock();
 
-        $articles->method('delete')->willReturn(false);
+        $articles->method('deleteMany')->willReturn(false);
 
         $associations = new AssociationCollection();
 

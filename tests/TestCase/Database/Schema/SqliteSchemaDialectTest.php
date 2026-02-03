@@ -29,11 +29,13 @@ use Cake\Database\Schema\TableSchema;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for Sqlite Schema Dialect.
  */
+#[AllowMockObjectsWithoutExpectations]
 class SqliteSchemaDialectTest extends TestCase
 {
     protected PDO $pdo;
@@ -218,7 +220,7 @@ class SqliteSchemaDialectTest extends TestCase
             'comment' => null,
         ];
 
-        $driver = $this->getMockBuilder(Sqlite::class)->getMock();
+        $driver = $this->createStub(Sqlite::class);
         $dialect = new SqliteSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -236,7 +238,7 @@ class SqliteSchemaDialectTest extends TestCase
      */
     public function testConvertCompositePrimaryKey(): void
     {
-        $driver = $this->getMockBuilder(Sqlite::class)->getMock();
+        $driver = $this->createStub(Sqlite::class);
         $dialect = new SqliteSchemaDialect($driver);
 
         $field1 = [

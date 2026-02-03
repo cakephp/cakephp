@@ -30,11 +30,13 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Postgres schema test case.
  */
+#[AllowMockObjectsWithoutExpectations]
 class PostgresSchemaDialectTest extends TestCase
 {
     /**
@@ -329,7 +331,7 @@ SQL;
             'comment' => 'Comment section',
         ];
 
-        $driver = $this->getMockBuilder(Postgres::class)->getMock();
+        $driver = $this->createStub(Postgres::class);
         $dialect = new PostgresSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -1949,7 +1951,7 @@ SQL;
 
     public function testDescribeIndexSql(): void
     {
-        $driver = $this->getMockBuilder(Postgres::class)->getMock();
+        $driver = $this->createStub(Postgres::class);
         $dialect = new PostgresSchemaDialect($driver);
 
         $result = $dialect->describeIndexSql('schema_name.table_name', []);
@@ -1992,7 +1994,7 @@ SQL;
 
     public function testDescribeForeignKeySql(): void
     {
-        $driver = $this->getMockBuilder(Postgres::class)->getMock();
+        $driver = $this->createStub(Postgres::class);
         $dialect = new PostgresSchemaDialect($driver);
 
         $result = $dialect->describeForeignKeySql('schema_name.table_name', []);

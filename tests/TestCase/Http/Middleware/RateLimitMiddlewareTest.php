@@ -22,12 +22,14 @@ use Cake\Http\Middleware\RateLimitMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use Psr\Http\Server\RequestHandlerInterface;
 use stdClass;
 
 /**
  * RateLimitMiddleware test case
  */
+#[AllowMockObjectsWithoutExpectations]
 class RateLimitMiddlewareTest extends TestCase
 {
     /**

@@ -22,10 +22,12 @@ use Cake\Core\Exception\CakeException;
 use Cake\Mailer\Message;
 use Cake\Mailer\Transport\MailTransport;
 use Cake\TestSuite\TestCase;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Test case
  */
+#[AllowMockObjectsWithoutExpectations]
 class MailTransportTest extends TestCase
 {
     /**

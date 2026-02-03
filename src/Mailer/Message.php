@@ -38,14 +38,14 @@ use function Cake\Core\env;
 class Message implements JsonSerializable
 {
     /**
-     * Line length - no should more - RFC 2822 - 2.1.1
+     * Line length - should not exceed - RFC 2822 - 2.1.1
      *
      * @var int
      */
     public const LINE_LENGTH_SHOULD = 78;
 
     /**
-     * Line length - no must more - RFC 2822 - 2.1.1
+     * Line length - must not exceed - RFC 2822 - 2.1.1
      *
      * @var int
      */

@@ -31,11 +31,13 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PDO;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Test case for MySQL Schema Dialect.
  */
+#[AllowMockObjectsWithoutExpectations]
 class MysqlSchemaDialectTest extends TestCase
 {
     protected PDO $pdo;
@@ -159,7 +161,15 @@ class MysqlSchemaDialectTest extends TestCase
             ],
             [
                 'BINARY(1)',
-                ['type' => 'binary', 'length' => 1],
+                ['type' => 'binary', 'length' => 1, 'fixed' => true],
+            ],
+            [
+                'BINARY(20)',
+                ['type' => 'binary', 'length' => 20, 'fixed' => true],
+            ],
+            [
+                'VARBINARY(20)',
+                ['type' => 'binary', 'length' => 20],
             ],
             [
                 'TEXT',
@@ -257,6 +267,18 @@ class MysqlSchemaDialectTest extends TestCase
                 'POLYGON',
                 ['type' => 'polygon', 'length' => null],
             ],
+            [
+                'BIT(1)',
+                ['type' => 'bit', 'length' => 1],
+            ],
+            [
+                'BIT(8)',
+                ['type' => 'bit', 'length' => 8],
+            ],
+            [
+                'BIT(64)',
+                ['type' => 'bit', 'length' => 64],
+            ],
         ];
     }
 
@@ -279,7 +301,7 @@ class MysqlSchemaDialectTest extends TestCase
             'default' => 'Default value',
             'comment' => 'Comment section',
         ];
-        $driver = $this->getMockBuilder(Mysql::class)->getMock();
+        $driver = $this->createStub(Mysql::class);
         $dialect = new MysqlSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -301,7 +323,7 @@ class MysqlSchemaDialectTest extends TestCase
             'Collation' => 'utf8_general_ci',
             'Comment' => 'Comment section',
         ];
-        $driver = $this->getMockBuilder(Mysql::class)->getMock();
+        $driver = $this->createStub(Mysql::class);
         $dialect = new MysqlSchemaDialect($driver);
 
         $table = new TableSchema('table');
@@ -1246,7 +1268,13 @@ SQL;
             [
                 'bit',
                 ['type' => 'binary', 'length' => 1],
-                '`bit` BINARY(1)',
+                '`bit` VARBINARY(1)',
+            ],
+            // Fixed binary (BINARY vs VARBINARY)
+            [
+                'hash',
+                ['type' => 'binary', 'length' => 20, 'fixed' => true],
+                '`hash` BINARY(20)',
             ],
             // Integers
             [
@@ -1491,6 +1519,22 @@ SQL;
                 'p',
                 ['type' => 'polygon', 'null' => false, 'srid' => 4326],
                 '`p` POLYGON NOT NULL SRID 4326',
+            ],
+            // Bit
+            [
+                'active',
+                ['type' => 'bit', 'length' => 1],
+                '`active` BIT(1)',
+            ],
+            [
+                'flags',
+                ['type' => 'bit', 'length' => 8, 'null' => false],
+                '`flags` BIT(8) NOT NULL',
+            ],
+            [
+                'permissions',
+                ['type' => 'bit', 'length' => 64],
+                '`permissions` BIT(64)',
             ],
         ];
     }

@@ -52,7 +52,7 @@ class I18n
 
     /**
      * Returns the translators collection instance. It can be used
-     * for getting specific translators based of their name and locale
+     * for getting specific translators based on their name and locale
      * or to configure some aspect of future translations that are not yet constructed.
      *
      * @return \Cake\I18n\TranslatorRegistry The translator collection.
@@ -180,7 +180,7 @@ class I18n
      *
      * Registering loaders is useful when you need to lazily use translations in multiple
      * different locales for the same domain, and don't want to use the built-in
-     * translation service based of `gettext` files.
+     * translation service based on `gettext` files.
      *
      * Loader objects will receive two arguments: The domain name that needs to be
      * built, and the locale that is requested. These objects can assemble the messages
@@ -237,7 +237,7 @@ class I18n
     }
 
     /**
-     * Will return the currently configure locale as stored in the
+     * Will return the currently configured locale as stored in the
      * `intl.default_locale` PHP setting.
      *
      * @return string The name of the default locale.

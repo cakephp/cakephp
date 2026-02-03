@@ -37,8 +37,8 @@ class QueryCompiler
     protected array $_templates = [
         'delete' => 'DELETE',
         'where' => ' WHERE %s',
-        'group' => ' GROUP BY %s ',
-        'having' => ' HAVING %s ',
+        'group' => ' GROUP BY %s',
+        'having' => ' HAVING %s',
         'order' => ' %s',
         'limit' => ' LIMIT %s',
         'offset' => ' OFFSET %s',

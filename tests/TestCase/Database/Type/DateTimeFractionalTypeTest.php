@@ -45,7 +45,7 @@ class DateTimeFractionalTypeTest extends TestCase
     {
         parent::setUp();
         $this->type = new DateTimeFractionalType();
-        $this->driver = $this->getMockBuilder(Driver::class)->getMock();
+        $this->driver = $this->createStub(Driver::class);
     }
 
     /**

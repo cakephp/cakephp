@@ -22,8 +22,6 @@ use InvalidArgumentException;
  * Cookie Crypt Trait.
  *
  * Provides the encrypt/decrypt logic for the CookieComponent.
- *
- * @link https://book.cakephp.org/5/en/controllers/components/cookie.html
  */
 trait CookieCryptTrait
 {
@@ -149,7 +147,7 @@ trait CookieCryptTrait
     }
 
     /**
-     * Implode method to keep keys are multidimensional arrays
+     * Implode method to keep keys in multidimensional arrays
      *
      * @param array $array Map of key and values
      * @return string A JSON encoded string.

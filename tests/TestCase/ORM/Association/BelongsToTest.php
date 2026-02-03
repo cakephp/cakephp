@@ -29,10 +29,12 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Tests BelongsTo class
  */
+#[AllowMockObjectsWithoutExpectations]
 class BelongsToTest extends TestCase
 {
     /**
