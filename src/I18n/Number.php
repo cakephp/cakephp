@@ -72,7 +72,7 @@ class Number
     /**
      * Default byte units used by Number::toReadableSize()
      *
-     * @var bool
+     * @var string|null
      */
     protected static bool $useIecUnits = false;
 
@@ -119,10 +119,11 @@ class Number
         return match (true) {
             $size < $divisor => __dn('cake', '{0,number,integer} Byte', '{0,number,integer} Bytes', $size, $size),
             round($size / $divisor) < $divisor => __d('cake', '{0,number,#,###.##}' . $units[0], $size / $divisor),
-            round($size / $divisor / $divisor, 2) < $divisor => __d('cake', '{0,number,#,###.##}' . $units[1], $size / $divisor / $divisor),
-            round($size / $divisor / $divisor / $divisor, 2) < $divisor =>
-            __d('cake', '{0,number,#,###.##}' . $units[2], $size / $divisor / $divisor / $divisor),
-            default => __d('cake', '{0,number,#,###.##}' . $units[3], $size / $divisor / $divisor / $divisor / $divisor),
+            round($size / pow($divisor, 2), 2) < $divisor =>
+            __d('cake', '{0,number,#,###.##}' . $units[1], $size / pow($divisor, 2)),
+            round($size / pow($divisor, 3), 2) < $divisor =>
+            __d('cake', '{0,number,#,###.##}' . $units[2], $size / pow($divisor, 3)),
+            default => __d('cake', '{0,number,#,###.##}' . $units[3], $size / pow($divisor, 4)),
         };
     }
 
@@ -395,7 +396,7 @@ class Number
     {
         static::$_formatters[$locale][$type] = static::_setAttributes(
             new NumberFormatter($locale, $type),
-            $options,
+                                                                      $options,
         );
     }
 
