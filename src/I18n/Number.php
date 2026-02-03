@@ -102,11 +102,11 @@ class Number
 
         return match (true) {
             $size < 1024 => __dn('cake', '{0,number,integer} Byte', '{0,number,integer} Bytes', $size, $size),
-            round($size / 1024) < 1024 => __d('cake', '{0,number,#,###.##} KB', $size / 1024),
-            round($size / 1024 / 1024, 2) < 1024 => __d('cake', '{0,number,#,###.##} MB', $size / 1024 / 1024),
+            round($size / 1024) < 1024 => __d('cake', '{0,number,#,###.##} KiB', $size / 1024),
+            round($size / 1024 / 1024, 2) < 1024 => __d('cake', '{0,number,#,###.##} MiB', $size / 1024 / 1024),
             round($size / 1024 / 1024 / 1024, 2) < 1024 =>
-                __d('cake', '{0,number,#,###.##} GB', $size / 1024 / 1024 / 1024),
-            default => __d('cake', '{0,number,#,###.##} TB', $size / 1024 / 1024 / 1024 / 1024),
+                __d('cake', '{0,number,#,###.##} GiB', $size / 1024 / 1024 / 1024),
+            default => __d('cake', '{0,number,#,###.##} TiB', $size / 1024 / 1024 / 1024 / 1024),
         };
     }
 
