@@ -72,7 +72,7 @@ class Number
     /**
      * Default byte units used by Number::toReadableSize()
      *
-     * @var string|null
+     * @var bool
      */
     protected static bool $useIecUnits = false;
 
