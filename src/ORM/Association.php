@@ -847,7 +847,7 @@ abstract class Association
      *   it will be interpreted as the `$args` parameter
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @see \Cake\ORM\Table::find()
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface>
      */
     public function find(array|string|null $type = null, mixed ...$args): SelectQuery
     {

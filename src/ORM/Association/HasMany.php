@@ -560,7 +560,6 @@ class HasMany extends Association
                 });
                 $query = $this->find()->where($conditions);
 
-                /** @phpstan-ignore argument.type, argument.templateType */
                 $return = $target->deleteMany($query->all(), $options);
                 if ($return === false) {
                     return false;
