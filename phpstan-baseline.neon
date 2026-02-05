@@ -223,10 +223,18 @@ parameters:
 			path: src/TestSuite/TestCase.php
 
 		-
+			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<int\<0, max\>, non\-falsy\-string\> given\.$#'
+			identifier: argument.type
+			count: 1
+			path: src/TestSuite/TestCase.php
+			reportUnmatched: false
+
+		-
 			message: '#^Parameter \#1 \$methods of method PHPUnit\\Framework\\MockObject\\TestDoubleBuilder\:\:onlyMethods\(\) expects list\<non\-empty\-string\>, array\<int\<0, max\>, non\-falsy\-string\> given\.$#'
 			identifier: argument.type
 			count: 1
 			path: src/TestSuite/TestCase.php
+			reportUnmatched: false
 
 		-
 			message: '#^Strict comparison using \=\=\= between null and null will always evaluate to true\.$#'
