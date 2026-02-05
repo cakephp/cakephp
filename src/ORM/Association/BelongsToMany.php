@@ -1373,10 +1373,10 @@ class BelongsToMany extends Association
      *   of this association
      * @param array<\Cake\Datasource\EntityInterface> $targetEntities list of entities belonging to the `target` side
      *   of this association
-     * @return bool
+     * @return void
      * @throws \InvalidArgumentException
      */
-    protected function checkPersistenceStatus(EntityInterface $sourceEntity, array $targetEntities): bool
+    protected function checkPersistenceStatus(EntityInterface $sourceEntity, array $targetEntities): void
     {
         if ($sourceEntity->isNew()) {
             $error = 'Source entity needs to be persisted before links can be created or removed.';
@@ -1389,8 +1389,6 @@ class BelongsToMany extends Association
                 throw new InvalidArgumentException($error);
             }
         }
-
-        return true;
     }
 
     /**
