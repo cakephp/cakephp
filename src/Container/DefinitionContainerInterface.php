@@ -18,6 +18,19 @@ interface DefinitionContainerInterface extends ContainerInterface
     public function add(string $id, mixed $concrete = null): DefinitionInterface;
 
     /**
+     * Add multiple definitions at once.
+     *
+     * Supports multiple formats:
+     * - `[Foo::class]` - class name as value, registers as itself
+     * - `['alias' => Foo::class]` - alias as key, class as value
+     * - `[Foo::class => [Bar::class]]` - class with constructor arguments
+     *
+     * @param array<int|string, array<class-string>|class-string> $definitions
+     * @return self
+     */
+    public function addDefinitions(array $definitions): self;
+
+    /**
      * @param \Cake\Container\ServiceProvider\ServiceProviderInterface $provider
      * @return self
      */
