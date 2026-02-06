@@ -103,7 +103,7 @@ class Number
      * 1 KB  = 1000 Bytes
      *
      * @param string|float|int $size Size in bytes
-     * @param bool $useIecUnits Whether to use exponent of two or ten for units (KiB, MiB, etc. or KB, MB, etc.)
+     * @param bool|null $useIecUnits Whether to use exponent of two or ten for units (KiB, MiB, etc. or KB, MB, etc.)
      * @return string Human readable size
      * @link https://book.cakephp.org/5/en/core-libraries/number.html#interacting-with-human-readable-values
      */
