@@ -11,6 +11,7 @@ use Cake\Container\Exception\NotFoundException;
 use Cake\Container\ReflectionContainer;
 use Cake\Container\ServiceProvider\AbstractServiceProvider;
 use Cake\Test\TestCase\Container\Asset\Bar;
+use Cake\Test\TestCase\Container\Asset\BarInterface;
 use Cake\Test\TestCase\Container\Asset\Foo;
 use PHPUnit\Framework\TestCase;
 
