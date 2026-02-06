@@ -28,17 +28,17 @@ interface FixtureInterface
      *
      * @param \Cake\Datasource\ConnectionInterface $connection An instance of the connection
      *   into which the records will be inserted.
-     * @return bool
+     * @return void
      */
-    public function insert(ConnectionInterface $connection): bool;
+    public function insert(ConnectionInterface $connection): void;
 
     /**
      * Truncates the current fixture.
      *
      * @param \Cake\Datasource\ConnectionInterface $connection A reference to a db instance
-     * @return bool
+     * @return void
      */
-    public function truncate(ConnectionInterface $connection): bool;
+    public function truncate(ConnectionInterface $connection): void;
 
     /**
      * Get the connection name this fixture should be inserted into.

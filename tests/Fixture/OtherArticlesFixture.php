@@ -36,9 +36,8 @@ class OtherArticlesFixture implements FixtureInterface
         return true;
     }
 
-    public function insert(ConnectionInterface $connection): bool
+    public function insert(ConnectionInterface $connection): void
     {
-        return true;
     }
 
     public function createConstraints(ConnectionInterface $connection): bool
@@ -51,9 +50,8 @@ class OtherArticlesFixture implements FixtureInterface
         return true;
     }
 
-    public function truncate(ConnectionInterface $connection): bool
+    public function truncate(ConnectionInterface $connection): void
     {
-        return true;
     }
 
     public function connection(): string
