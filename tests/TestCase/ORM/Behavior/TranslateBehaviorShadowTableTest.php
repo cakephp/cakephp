@@ -97,7 +97,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
         ];
         $this->assertEquals($expected, $config, 'Used aliases should match the main table object');
 
-        $this->_testFind();
+        $this->testFind();
     }
 
     /**
@@ -134,7 +134,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             'It should be a different object to the one in the no-plugin prefix',
         );
 
-        $this->_testFind('SomeRandomPlugin.Articles');
+        $this->testFind('SomeRandomPlugin.Articles');
     }
 
     /**
@@ -709,7 +709,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             ],
         ];
 
-        $translations = $this->_extractTranslations($results);
+        $translations = $this->extractTranslations($results);
         $this->assertEquals($expected, $translations->toArray());
         $expected = [
             1 => ['First Article' => 'First Article Body'],
@@ -725,7 +725,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
 
         $expected = [[]];
         $result = $table->find('translations')->where(['Articles.id' => $entity->id])->all();
-        $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+        $this->assertEquals($expected, $this->extractTranslations($result)->toArray());
 
         $entity = $result->first();
         $this->assertSame('Fourth Title', $entity->title);
@@ -900,7 +900,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
 
         $this->assertNotFalse($table->save($article));
 
-        $results = $this->_extractTranslations(
+        $results = $this->extractTranslations(
             $table->find('translations')->where(['id' => 1]),
         )->first();
 
@@ -971,7 +971,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
             ],
         ];
         $result = $table->find('translations')->where(['Articles.id' => $result->id])->all();
-        $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+        $this->assertEquals($expected, $this->extractTranslations($result)->toArray());
 
         $entity = $result->first();
         $this->assertSame('Title EN', $entity->title);
@@ -1192,7 +1192,7 @@ class TranslateBehaviorShadowTableTest extends TranslateBehaviorEavTest
      *
      * @param string $tableAlias
      */
-    protected function _testFind($tableAlias = 'Articles'): void
+    protected function testFind($tableAlias = 'Articles'): void
     {
         $table = $this->getTableLocator()->get($tableAlias);
         $table->getBehavior('Translate')->setLocale('eng');

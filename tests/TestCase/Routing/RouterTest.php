@@ -3540,7 +3540,7 @@ class RouterTest extends TestCase
     /**
      * Connect some fallback routes for testing router behavior.
      */
-    protected function _connectDefaultRoutes(): void
+    protected function connectDefaultRoutes(): void
     {
         Router::scope('/', function (RouteBuilder $routes): void {
             $routes->fallbacks('InflectedRoute');

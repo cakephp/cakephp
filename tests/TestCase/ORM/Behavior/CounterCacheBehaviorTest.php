@@ -139,10 +139,10 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $before = $this->_getUser();
-        $entity = $this->_getEntity();
+        $before = $this->getUser();
+        $entity = $this->getEntity();
         $this->post->save($entity);
-        $after = $this->_getUser();
+        $after = $this->getUser();
 
         $this->assertSame(2, $before->get('post_count'));
         $this->assertSame(3, $after->get('post_count'));
@@ -161,10 +161,10 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $before = $this->_getUser();
-        $entity = $this->_getEntity();
+        $before = $this->getUser();
+        $entity = $this->getEntity();
         $this->post->save($entity, ['ignoreCounterCache' => true]);
-        $after = $this->_getUser();
+        $after = $this->getUser();
 
         $this->assertSame(2, $before->get('post_count'));
         $this->assertSame(2, $after->get('post_count'));
@@ -187,10 +187,10 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $before = $this->_getUser();
-        $entity = $this->_getEntity()->set('published', true);
+        $before = $this->getUser();
+        $entity = $this->getEntity()->set('published', true);
         $this->post->save($entity);
-        $after = $this->_getUser();
+        $after = $this->getUser();
 
         $this->assertSame(1, $before->get('posts_published'));
         $this->assertSame(2, $after->get('posts_published'));
@@ -227,10 +227,10 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $before = $this->_getUser();
+        $before = $this->getUser();
         $post = $this->post->find('all')->first();
         $this->post->delete($post);
-        $after = $this->_getUser();
+        $after = $this->getUser();
 
         $this->assertSame(2, $before->get('post_count'));
         $this->assertSame(1, $after->get('post_count'));
@@ -249,11 +249,11 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $before = $this->_getUser();
+        $before = $this->getUser();
         $post = $this->post->find('all')
             ->first();
         $this->post->delete($post, ['ignoreCounterCache' => true]);
-        $after = $this->_getUser();
+        $after = $this->getUser();
 
         $this->assertSame(2, $before->get('post_count'));
         $this->assertSame(2, $after->get('post_count'));
@@ -276,10 +276,10 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $user1 = $this->_getUser(1);
-        $user2 = $this->_getUser(2);
-        $category1 = $this->_getCategory(1);
-        $category2 = $this->_getCategory(2);
+        $user1 = $this->getUser(1);
+        $user2 = $this->getUser(2);
+        $category1 = $this->getCategory(1);
+        $category2 = $this->getCategory(2);
         $post = $this->post->find('all')->first();
         $this->assertSame(2, $user1->get('post_count'));
         $this->assertSame(1, $user2->get('post_count'));
@@ -289,10 +289,10 @@ class CounterCacheBehaviorTest extends TestCase
         $entity = $this->post->patchEntity($post, ['user_id' => 2, 'category_id' => 2]);
         $this->post->save($entity);
 
-        $user1 = $this->_getUser(1);
-        $user2 = $this->_getUser(2);
-        $category1 = $this->_getCategory(1);
-        $category2 = $this->_getCategory(2);
+        $user1 = $this->getUser(1);
+        $user2 = $this->getUser(2);
+        $category1 = $this->getCategory(1);
+        $category2 = $this->getCategory(2);
         $this->assertSame(1, $user1->get('post_count'));
         $this->assertSame(2, $user2->get('post_count'));
         $this->assertSame(0, $category1->get('post_count'));
@@ -301,16 +301,16 @@ class CounterCacheBehaviorTest extends TestCase
         $entity = $this->post->patchEntity($post, ['user_id' => null, 'category_id' => null]);
         $this->post->save($entity);
 
-        $user2 = $this->_getUser(2);
-        $category2 = $this->_getCategory(2);
+        $user2 = $this->getUser(2);
+        $category2 = $this->getCategory(2);
         $this->assertSame(1, $user2->get('post_count'));
         $this->assertSame(2, $category2->get('post_count'));
 
         $entity = $this->post->patchEntity($post, ['user_id' => 2, 'category_id' => 2]);
         $this->post->save($entity);
 
-        $user2 = $this->_getUser(2);
-        $category2 = $this->_getCategory(2);
+        $user2 = $this->getUser(2);
+        $category2 = $this->getCategory(2);
         $this->assertSame(2, $user2->get('post_count'));
         $this->assertSame(3, $category2->get('post_count'));
     }
@@ -330,10 +330,10 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $before = $this->_getUser();
-        $entity = $this->_getEntity()->set('published', true);
+        $before = $this->getUser();
+        $entity = $this->getEntity()->set('published', true);
         $this->post->save($entity);
-        $after = $this->_getUser();
+        $after = $this->getUser();
 
         $this->assertSame(1, $before->get('posts_published'));
         $this->assertSame(2, $after->get('posts_published'));
@@ -352,10 +352,10 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $before = $this->_getUser();
-        $entity = $this->_getEntity()->set('published', true);
+        $before = $this->getUser();
+        $entity = $this->getEntity()->set('published', true);
         $this->post->save($entity);
-        $after = $this->_getUser();
+        $after = $this->getUser();
 
         $this->assertSame(1, $before->get('posts_published'));
         $this->assertSame(2, $after->get('posts_published'));
@@ -369,7 +369,7 @@ class CounterCacheBehaviorTest extends TestCase
         $this->post->belongsTo('Users');
 
         $table = $this->post;
-        $entity = $this->_getEntity();
+        $entity = $this->getEntity();
 
         $this->post->addBehavior('CounterCache', [
             'Users' => [
@@ -382,9 +382,9 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $before = $this->_getUser();
+        $before = $this->getUser();
         $this->post->save($entity);
-        $after = $this->_getUser();
+        $after = $this->getUser();
 
         $this->assertSame(1, $before->get('posts_published'));
         $this->assertSame(2, $after->get('posts_published'));
@@ -398,7 +398,7 @@ class CounterCacheBehaviorTest extends TestCase
         $this->post->belongsTo('Users');
 
         $table = $this->post;
-        $entity = $this->_getEntity();
+        $entity = $this->getEntity();
 
         $this->post->addBehavior('CounterCache', [
             'Users' => [
@@ -411,9 +411,9 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $before = $this->_getUser();
+        $before = $this->getUser();
         $this->post->save($entity);
-        $after = $this->_getUser();
+        $after = $this->getUser();
 
         $this->assertSame(1, $before->get('posts_published'));
         $this->assertSame(1, $after->get('posts_published'));
@@ -427,7 +427,7 @@ class CounterCacheBehaviorTest extends TestCase
         $this->post->belongsTo('Users');
 
         $table = $this->post;
-        $entity = $this->_getEntity();
+        $entity = $this->getEntity();
 
         $this->post->addBehavior('CounterCache', [
             'Users' => [
@@ -445,11 +445,11 @@ class CounterCacheBehaviorTest extends TestCase
         ]);
 
         $this->post->save($entity);
-        $between = $this->_getUser();
+        $between = $this->getUser();
         $entity->user_id = 2;
         $this->post->save($entity);
-        $afterUser1 = $this->_getUser(1);
-        $afterUser2 = $this->_getUser(2);
+        $afterUser1 = $this->getUser(1);
+        $afterUser2 = $this->getUser(2);
 
         $this->assertSame(2, $between->get('posts_published'));
         $this->assertSame(1, $afterUser1->get('posts_published'));
@@ -471,10 +471,10 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $before = $this->_getUser();
-        $entity = $this->_getEntity();
+        $before = $this->getUser();
+        $entity = $this->getEntity();
         $this->post->save($entity);
-        $after = $this->_getUser();
+        $after = $this->getUser();
 
         $this->assertSame(1, $before->get('posts_published'));
         $this->assertSame(4, $after->get('posts_published'));
@@ -498,10 +498,10 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $before = $this->_getUser();
-        $entity = $this->_getEntity()->set('published', true);
+        $before = $this->getUser();
+        $entity = $this->getEntity()->set('published', true);
         $this->post->save($entity);
-        $after = $this->_getUser();
+        $after = $this->getUser();
 
         $this->assertSame(1, $before->get('posts_published'));
         $this->assertSame(2, $after->get('posts_published'));
@@ -527,7 +527,7 @@ class CounterCacheBehaviorTest extends TestCase
         $before = $this->userCategoryPosts->find()
             ->where(['user_id' => 1, 'category_id' => 2])
             ->first();
-        $entity = $this->_getEntity()->set('category_id', 2);
+        $entity = $this->getEntity()->set('category_id', 2);
         $this->post->save($entity);
         $after = $this->userCategoryPosts->find()
             ->where(['user_id' => 1, 'category_id' => 2])
@@ -556,7 +556,7 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $user = $this->_getUser(1);
+        $user = $this->getUser(1);
         $this->assertSame(2, $user->get('post_count'));
         $this->assertSame(2, $user->get('comment_count'));
         $this->assertSame(1, $user->get('posts_published'));
@@ -575,7 +575,7 @@ class CounterCacheBehaviorTest extends TestCase
         ]);
         $this->post->save($post);
 
-        $user = $this->_getUser(1);
+        $user = $this->getUser(1);
         $this->assertSame(10, $user->get('post_count'));
         $this->assertSame(10, $user->get('comment_count'));
         $this->assertSame(1, $user->get('posts_published'));
@@ -597,7 +597,7 @@ class CounterCacheBehaviorTest extends TestCase
             ],
         ]);
 
-        $user = $this->_getUser(1);
+        $user = $this->getUser(1);
         $this->assertSame(2, $user->get('post_count'));
         $this->assertSame(2, $user->get('comment_count'));
         $this->assertSame(1, $user->get('posts_published'));
@@ -615,7 +615,7 @@ class CounterCacheBehaviorTest extends TestCase
         ]);
         $this->post->save($post);
 
-        $user = $this->_getUser(1);
+        $user = $this->getUser(1);
         $this->assertSame(10, $user->get('post_count'));
         $this->assertSame(2, $user->get('comment_count'));
         $this->assertSame(1, $user->get('posts_published'));
@@ -635,30 +635,30 @@ class CounterCacheBehaviorTest extends TestCase
 
         $this->user->updateAll(['post_count' => 0], []);
 
-        $user = $this->_getUser(1);
+        $user = $this->getUser(1);
         $this->assertSame(0, $user->get('post_count'));
 
         $this->post->getBehavior('CounterCache')->updateCounterCache('Users');
 
-        $user = $this->_getUser(1);
+        $user = $this->getUser(1);
         $this->assertSame(2, $user->get('post_count'));
-        $user = $this->_getUser(2);
+        $user = $this->getUser(2);
         $this->assertSame(1, $user->get('post_count'));
 
         $this->user->updateAll(['post_count' => 0], []);
 
         $this->post->getBehavior('CounterCache')->updateCounterCache(limit: 1, page: 2);
 
-        $user = $this->_getUser(1);
+        $user = $this->getUser(1);
         $this->assertSame(0, $user->get('post_count'));
-        $user = $this->_getUser(2);
+        $user = $this->getUser(2);
         $this->assertSame(1, $user->get('post_count'));
     }
 
     /**
      * Get a new Entity
      */
-    protected function _getEntity(): Entity
+    protected function getEntity(): Entity
     {
         return new Entity([
             'title' => 'Test 123',
@@ -669,7 +669,7 @@ class CounterCacheBehaviorTest extends TestCase
     /**
      * Returns entity for user
      */
-    protected function _getUser(int $id = 1): Entity
+    protected function getUser(int $id = 1): Entity
     {
         return $this->user->get($id);
     }
@@ -677,7 +677,7 @@ class CounterCacheBehaviorTest extends TestCase
     /**
      * Returns entity for category
      */
-    protected function _getCategory(int $id = 1): Entity
+    protected function getCategory(int $id = 1): Entity
     {
         return $this->category->find('all')->where(['id' => $id])->first();
     }

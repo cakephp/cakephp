@@ -59,7 +59,7 @@ class TableRegistryTest extends TestCase
      *
      * @return \Cake\ORM\Locator\LocatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function _setMockLocator()
+    protected function setMockLocator()
     {
         $locator = $this->createStub(LocatorInterface::class);
         TableRegistry::setTableLocator($locator);
@@ -72,7 +72,7 @@ class TableRegistryTest extends TestCase
      */
     public function testSetLocator(): void
     {
-        $locator = $this->_setMockLocator();
+        $locator = $this->setMockLocator();
 
         $this->assertSame($locator, TableRegistry::getTableLocator());
     }

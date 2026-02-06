@@ -47,7 +47,7 @@ class EntityContextTest extends TestCase
      */
     public function testGetRequiredMessage(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $context = new EntityContext([
             'entity' => new Article(),
@@ -88,7 +88,7 @@ class EntityContextTest extends TestCase
      */
     public function testIsPrimaryKey(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article();
         $context = new EntityContext([
@@ -361,7 +361,7 @@ class EntityContextTest extends TestCase
     #[DataProvider('collectionProvider')]
     public function testSchemaOnCollections($collection): void
     {
-        $this->_setupTables();
+        $this->setupTables();
         $context = new EntityContext([
             'entity' => $collection,
             'table' => 'Articles',
@@ -389,7 +389,7 @@ class EntityContextTest extends TestCase
     #[DataProvider('collectionProvider')]
     public function testValidatorsOnCollections($collection): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $context = new EntityContext([
             'entity' => $collection,
@@ -616,7 +616,7 @@ class EntityContextTest extends TestCase
      */
     public function testValAssociatedCustomIds(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'title' => 'First post',
@@ -707,7 +707,7 @@ class EntityContextTest extends TestCase
      */
     public function testIsRequiredBooleanField(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $context = new EntityContext([
             'entity' => new Entity(),
@@ -732,7 +732,7 @@ class EntityContextTest extends TestCase
      */
     public function testIsRequiredStringValidator(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $context = new EntityContext([
             'entity' => new Entity(),
@@ -753,7 +753,7 @@ class EntityContextTest extends TestCase
      */
     public function testIsRequiredAssociatedHasMany(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $comments = $this->getTableLocator()->get('Comments');
         $validator = $comments->getValidator();
@@ -785,7 +785,7 @@ class EntityContextTest extends TestCase
      */
     public function testIsRequiredAssociatedHasManyBoolean(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $comments = $this->getTableLocator()->get('Comments');
         $comments->getSchema()->addColumn('starred', 'boolean');
@@ -814,7 +814,7 @@ class EntityContextTest extends TestCase
      */
     public function testIsRequiredAssociatedCustomValidator(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
         $articles = $this->getTableLocator()->get('Articles');
 
         $validator = $articles->getValidator();
@@ -840,7 +840,7 @@ class EntityContextTest extends TestCase
      */
     public function testIsRequiredAssociatedHasManyMissingObject(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $comments = $this->getTableLocator()->get('Comments');
         $validator = $comments->getValidator();
@@ -875,7 +875,7 @@ class EntityContextTest extends TestCase
      */
     public function testIsRequiredAssociatedValidator(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'title' => 'My title',
@@ -904,7 +904,7 @@ class EntityContextTest extends TestCase
      */
     public function testIsRequiredAssociatedBelongsTo(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'title' => 'My title',
@@ -928,7 +928,7 @@ class EntityContextTest extends TestCase
      */
     public function testIsRequiredAssociatedJoinTable(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'tags' => [
@@ -954,7 +954,7 @@ class EntityContextTest extends TestCase
      */
     public function testType(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'title' => 'My title',
@@ -976,7 +976,7 @@ class EntityContextTest extends TestCase
      */
     public function testTypeAssociated(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'title' => 'My title',
@@ -997,7 +997,7 @@ class EntityContextTest extends TestCase
      */
     public function testTypeAssociatedJoinData(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'tags' => [
@@ -1029,7 +1029,7 @@ class EntityContextTest extends TestCase
      */
     public function testAttributes(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'title' => 'My title',
@@ -1078,7 +1078,7 @@ class EntityContextTest extends TestCase
      */
     public function testHasError(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'title' => 'My title',
@@ -1103,7 +1103,7 @@ class EntityContextTest extends TestCase
      */
     public function testHasErrorAssociated(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'title' => 'My title',
@@ -1127,7 +1127,7 @@ class EntityContextTest extends TestCase
      */
     public function testError(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'title' => 'My title',
@@ -1158,7 +1158,7 @@ class EntityContextTest extends TestCase
      */
     public function testErrorAssociatedHasMany(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'title' => 'My title',
@@ -1191,7 +1191,7 @@ class EntityContextTest extends TestCase
      */
     public function testErrorAssociatedJoinTable(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'tags' => [
@@ -1218,7 +1218,7 @@ class EntityContextTest extends TestCase
      */
     public function testErrorNestedValidator(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $row = new Article([
             'title' => 'My title',
@@ -1239,7 +1239,7 @@ class EntityContextTest extends TestCase
      */
     public function testErrorAssociatedNestedValidator(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $tagOne = new Tag(['name' => 'first-post']);
         $tagTwo = new Tag(['name' => 'second-post']);
@@ -1268,7 +1268,7 @@ class EntityContextTest extends TestCase
     /**
      * Setup tables for tests.
      */
-    protected function _setupTables(): void
+    protected function setupTables(): void
     {
         $articles = $this->getTableLocator()->get('Articles');
         $articles->belongsTo('Users');

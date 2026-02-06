@@ -61,7 +61,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
     /**
      * Provides the request handler
      */
-    protected function _getRequestHandler(): RequestHandlerInterface
+    protected function getRequestHandler(): RequestHandlerInterface
     {
         return new TestRequestHandler(function () {
             return new Response();
@@ -115,7 +115,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
 
         // No exception means the test is valid
         $middleware = new SessionCsrfProtectionMiddleware();
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }
 
@@ -140,7 +140,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         // No exception means the test is valid
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }
 
@@ -164,7 +164,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         // No exception means the test is valid
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }
 
@@ -186,7 +186,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $middleware = new SessionCsrfProtectionMiddleware();
 
         try {
-            $middleware->process($request, $this->_getRequestHandler());
+            $middleware->process($request, $this->getRequestHandler());
 
             $this->fail();
         } catch (InvalidCsrfTokenException) {
@@ -273,7 +273,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $middleware = new SessionCsrfProtectionMiddleware();
 
         $this->expectException(InvalidCsrfTokenException::class);
-        $middleware->process($request, $this->_getRequestHandler());
+        $middleware->process($request, $this->getRequestHandler());
     }
 
     /**
@@ -291,7 +291,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
 
         $middleware = new SessionCsrfProtectionMiddleware();
         $this->expectException(InvalidCsrfTokenException::class);
-        $middleware->process($request, $this->_getRequestHandler());
+        $middleware->process($request, $this->getRequestHandler());
     }
 
     /**
@@ -311,7 +311,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $middleware = new SessionCsrfProtectionMiddleware();
 
         try {
-            $middleware->process($request, $this->_getRequestHandler());
+            $middleware->process($request, $this->getRequestHandler());
 
             $this->fail();
         } catch (InvalidCsrfTokenException) {
@@ -333,7 +333,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         $middleware = new SessionCsrfProtectionMiddleware([
             'key' => 'csrf',
         ]);
-        $middleware->process($request, $this->_getRequestHandler());
+        $middleware->process($request, $this->getRequestHandler());
 
         $session = $request->getSession();
         $this->assertEmpty($session->read('csrfToken'));
@@ -360,7 +360,7 @@ class SessionCsrfProtectionMiddlewareTest extends TestCase
         ]);
         $request->getSession()->write('csrf', $token);
 
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }
 

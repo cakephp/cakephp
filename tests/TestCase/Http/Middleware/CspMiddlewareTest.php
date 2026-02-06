@@ -33,7 +33,7 @@ class CspMiddlewareTest extends TestCase
     /**
      * Provides the request handler
      */
-    protected function _getRequestHandler(): RequestHandlerInterface
+    protected function getRequestHandler(): RequestHandlerInterface
     {
         return new TestRequestHandler(function ($request) {
             return new Response();
@@ -58,7 +58,7 @@ class CspMiddlewareTest extends TestCase
             ],
         ]);
 
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
         $policy = $response->getHeaderLine('Content-Security-Policy');
 
         $expected = "script-src 'self' https://www.google-analytics.com";
@@ -131,7 +131,7 @@ class CspMiddlewareTest extends TestCase
         $cspBuilder = new CSPBuilder($config);
         $middleware = new CspMiddleware($cspBuilder);
 
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
         $policy = $response->getHeaderLine('Content-Security-Policy');
         $expected = "script-src 'self' https://www.google-analytics.com";
 
