@@ -22,19 +22,19 @@ use Cake\View\Widget\WidgetInterface;
 
 class TestUsingViewWidget implements WidgetInterface
 {
-    protected $_templates;
+    protected $templates;
 
-    protected $_view;
+    protected $view;
 
     public function __construct(StringTemplate $templates, View $view)
     {
-        $this->_templates = $templates;
-        $this->_view = $view;
+        $this->templates = $templates;
+        $this->view = $view;
     }
 
     public function getView(): View
     {
-        return $this->_view;
+        return $this->view;
     }
 
     /**
