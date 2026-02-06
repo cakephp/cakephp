@@ -1112,7 +1112,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1161,7 +1161,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('posts'))
@@ -1250,7 +1250,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
@@ -1324,7 +1324,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
@@ -1342,7 +1342,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
@@ -1413,8 +1413,7 @@ SQL;
             ->onlyMethods(['quote'])
             ->disableOriginalConstructor()
             ->getMock();
-        $mock->expects($this->any())
-            ->method('quote')
+        $mock->method('quote')
             ->willReturnCallback(function ($value) {
                 return "'{$value}'";
             });
@@ -1423,8 +1422,7 @@ SQL;
             ->onlyMethods(['createPdo'])
             ->getMock();
 
-        $driver->expects($this->any())
-            ->method('createPdo')
+        $driver->method('createPdo')
             ->willReturn($mock);
 
         $driver->connect();

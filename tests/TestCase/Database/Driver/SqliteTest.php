@@ -183,8 +183,7 @@ class SqliteTest extends TestCase
             ->onlyMethods(['createPdo'])
             ->getMock();
 
-        $driver->expects($this->any())
-            ->method('createPdo')
+        $driver->method('createPdo')
             ->willReturn($mock);
 
         $this->assertEquals($expected, $driver->schemaValue($input));
