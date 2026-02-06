@@ -86,14 +86,14 @@ class HtmlHelper extends Helper
      *
      * @var array<string, array>
      */
-    protected array $_includedAssets = [];
+    protected array $includedAssets = [];
 
     /**
      * Options for the currently opened script block buffer if any.
      *
      * @var array<string, mixed>
      */
-    protected array $_scriptBlockOptions = [];
+    protected array $scriptBlockOptions = [];
 
     /**
      * Creates a link to an external resource and handles basic meta tags
@@ -159,7 +159,7 @@ class HtmlHelper extends Helper
             }
 
             if ($type === 'csrf-token') {
-                $types['csrf-token']['content'] = $this->_View->getRequest()->getAttribute('csrfToken');
+                $types['csrf-token']['content'] = $this->View->getRequest()->getAttribute('csrfToken');
             }
 
             if (isset($types[$type])) {
@@ -203,7 +203,7 @@ class HtmlHelper extends Helper
         if ($options['block'] === true) {
             $options['block'] = __FUNCTION__;
         }
-        $this->_View->append($options['block'], $out);
+        $this->View->append($options['block'], $out);
 
         return null;
     }
@@ -378,7 +378,7 @@ class HtmlHelper extends Helper
             'once' => true,
             'block' => $this->getConfig('defaultCssBlock'),
             'rel' => 'stylesheet',
-            'nonce' => $this->_View->getRequest()->getAttribute('cspStyleNonce'),
+            'nonce' => $this->View->getRequest()->getAttribute('cspStyleNonce'),
         ];
 
         if (is_array($path)) {
@@ -396,11 +396,11 @@ class HtmlHelper extends Helper
         $url = $this->Url->css($path, $options);
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
-        if ($options['once'] && isset($this->_includedAssets[__METHOD__][$path])) {
+        if ($options['once'] && isset($this->includedAssets[__METHOD__][$path])) {
             return null;
         }
         unset($options['once']);
-        $this->_includedAssets[__METHOD__][$path] = true;
+        $this->includedAssets[__METHOD__][$path] = true;
 
         $templater = $this->templater();
         if ($options['rel'] === 'import') {
@@ -422,7 +422,7 @@ class HtmlHelper extends Helper
         if ($options['block'] === true) {
             $options['block'] = __FUNCTION__;
         }
-        $this->_View->append($options['block'], $out);
+        $this->View->append($options['block'], $out);
 
         return null;
     }
@@ -477,7 +477,7 @@ class HtmlHelper extends Helper
         $defaults = [
             'block' => $this->getConfig('defaultScriptBlock'),
             'once' => true,
-            'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
+            'nonce' => $this->View->getRequest()->getAttribute('cspScriptNonce'),
         ];
         $options += $defaults;
 
@@ -496,10 +496,10 @@ class HtmlHelper extends Helper
         $url = $this->Url->script($url, $options);
         $options = array_diff_key($options, ['fullBase' => null, 'pathPrefix' => null]);
 
-        if ($options['once'] && isset($this->_includedAssets[__METHOD__][$url])) {
+        if ($options['once'] && isset($this->includedAssets[__METHOD__][$url])) {
             return null;
         }
-        $this->_includedAssets[__METHOD__][$url] = true;
+        $this->includedAssets[__METHOD__][$url] = true;
 
         $out = $this->formatTemplate('javascriptlink', [
             'url' => $url,
@@ -512,7 +512,7 @@ class HtmlHelper extends Helper
         if ($options['block'] === true) {
             $options['block'] = __FUNCTION__;
         }
-        $this->_View->append($options['block'], $out);
+        $this->View->append($options['block'], $out);
 
         return null;
     }
@@ -596,7 +596,7 @@ class HtmlHelper extends Helper
     {
         $options += [
             'block' => $this->getConfig('defaultScriptBlock'),
-            'nonce' => $this->_View->getRequest()->getAttribute('cspScriptNonce'),
+            'nonce' => $this->View->getRequest()->getAttribute('cspScriptNonce'),
         ];
 
         $out = $this->formatTemplate('javascriptblock', [
@@ -610,7 +610,7 @@ class HtmlHelper extends Helper
         if ($options['block'] === true) {
             $options['block'] = 'script';
         }
-        $this->_View->append($options['block'], $out);
+        $this->View->append($options['block'], $out);
 
         return null;
     }
@@ -631,7 +631,7 @@ class HtmlHelper extends Helper
      */
     public function scriptStart(array $options = []): void
     {
-        $this->_scriptBlockOptions = $options;
+        $this->scriptBlockOptions = $options;
         ob_start();
     }
 
@@ -650,8 +650,8 @@ class HtmlHelper extends Helper
         if ($matches) {
             $buffer = $matches[1];
         }
-        $options = $this->_scriptBlockOptions;
-        $this->_scriptBlockOptions = [];
+        $options = $this->scriptBlockOptions;
+        $this->scriptBlockOptions = [];
 
         return $this->scriptBlock($buffer, $options);
     }

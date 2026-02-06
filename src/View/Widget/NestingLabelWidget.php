@@ -29,5 +29,5 @@ class NestingLabelWidget extends LabelWidget
      *
      * @var string
      */
-    protected string $_labelTemplate = 'nestingLabel';
+    protected string $labelTemplate = 'nestingLabel';
 }

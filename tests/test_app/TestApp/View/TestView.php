@@ -51,6 +51,6 @@ class TestView extends AppView
      */
     public function ext(string $ext): void
     {
-        $this->_ext = $ext;
+        $this->ext = $ext;
     }
 }

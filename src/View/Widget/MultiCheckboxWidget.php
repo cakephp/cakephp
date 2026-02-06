@@ -53,7 +53,7 @@ class MultiCheckboxWidget extends BasicWidget
      *
      * @var \Cake\View\Widget\LabelWidget
      */
-    protected LabelWidget $_label;
+    protected LabelWidget $label;
 
     /**
      * Render multi-checkbox widget.
@@ -76,7 +76,7 @@ class MultiCheckboxWidget extends BasicWidget
         parent::__construct($templates);
 
         $this->defaults['nestedInput'] = $label instanceof NestingLabelWidget;
-        $this->_label = $label;
+        $this->label = $label;
     }
 
     /**
@@ -125,7 +125,7 @@ class MultiCheckboxWidget extends BasicWidget
     {
         $data += $this->mergeDefaults($data, $context);
 
-        $this->_idPrefix = $data['idPrefix'];
+        $this->idPrefix = $data['idPrefix'];
         $this->clearIds();
 
         return implode('', $this->renderInputs($data, $context));
@@ -145,8 +145,8 @@ class MultiCheckboxWidget extends BasicWidget
             // Grouped inputs in a fieldset.
             if (is_string($key) && is_array($val) && !isset($val['text'], $val['value'])) {
                 $inputs = $this->renderInputs(['options' => $val] + $data, $context);
-                $label = $this->_templates->format('multicheckboxLabel', ['text' => $key]);
-                $out[] = $this->_templates->format('multicheckboxWrapper', [
+                $label = $this->templates->format('multicheckboxLabel', ['text' => $key]);
+                $out[] = $this->templates->format('multicheckboxWrapper', [
                     'content' => $label . implode('', $inputs),
                 ]);
                 continue;
@@ -198,11 +198,11 @@ class MultiCheckboxWidget extends BasicWidget
         $nestedInput = $checkbox['nestedInput'];
         unset($checkbox['nestedInput']);
 
-        $input = $this->_templates->format('checkbox', [
+        $input = $this->templates->format('checkbox', [
             'name' => $checkbox['name'] . '[]',
             'value' => $checkbox['escape'] ? h($checkbox['value']) : $checkbox['value'],
             'templateVars' => $checkbox['templateVars'],
-            'attrs' => $this->_templates->formatAttributes(
+            'attrs' => $this->templates->formatAttributes(
                 $checkbox,
                 ['name', 'value', 'text', 'options', 'label', 'val', 'type'],
             ),
@@ -210,7 +210,7 @@ class MultiCheckboxWidget extends BasicWidget
 
         if (
             $checkbox['label'] === false
-            && ($nestedInput || !str_contains($this->_templates->get('checkboxWrapper'), '{{input}}'))
+            && ($nestedInput || !str_contains($this->templates->get('checkboxWrapper'), '{{input}}'))
         ) {
             $label = $input;
             $input = '';
@@ -233,14 +233,14 @@ class MultiCheckboxWidget extends BasicWidget
             }
 
             if ($checkbox['checked']) {
-                $selectedClass = $this->_templates->format('selectedClass', []);
-                $labelAttrs = (array)$this->_templates->addClass($labelAttrs, $selectedClass);
+                $selectedClass = $this->templates->format('selectedClass', []);
+                $labelAttrs = (array)$this->templates->addClass($labelAttrs, $selectedClass);
             }
 
-            $label = $this->_label->render($labelAttrs, $context);
+            $label = $this->label->render($labelAttrs, $context);
         }
 
-        return $this->_templates->format('checkboxWrapper', [
+        return $this->templates->format('checkboxWrapper', [
             'templateVars' => $checkbox['templateVars'],
             'label' => $label,
             'input' => $input,

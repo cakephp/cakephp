@@ -32,14 +32,14 @@ class FormContext implements ContextInterface
      *
      * @var \Cake\Form\Form
      */
-    protected Form $_form;
+    protected Form $form;
 
     /**
      * Validator name.
      *
      * @var string|null
      */
-    protected ?string $_validator = null;
+    protected ?string $validator = null;
 
     /**
      * Constructor.
@@ -58,8 +58,8 @@ class FormContext implements ContextInterface
             "`\$context['entity']` must be an instance of " . Form::class,
         );
 
-        $this->_form = $context['entity'];
-        $this->_validator = $context['validator'] ?? null;
+        $this->form = $context['entity'];
+        $this->validator = $context['validator'] ?? null;
     }
 
     /**
@@ -96,7 +96,7 @@ class FormContext implements ContextInterface
             'schemaDefault' => true,
         ];
 
-        $val = $this->_form->getData($field);
+        $val = $this->form->getData($field);
         if ($val !== null) {
             return $val;
         }
@@ -116,7 +116,7 @@ class FormContext implements ContextInterface
      */
     protected function schemaDefault(string $field): mixed
     {
-        $field = $this->_form->getSchema()->field($field);
+        $field = $this->form->getSchema()->field($field);
         if (!$field) {
             return null;
         }
@@ -129,7 +129,7 @@ class FormContext implements ContextInterface
      */
     public function isRequired(string $field): ?bool
     {
-        $validator = $this->_form->getValidator($this->_validator);
+        $validator = $this->form->getValidator($this->validator);
         if (!$validator->hasField($field)) {
             return null;
         }
@@ -147,7 +147,7 @@ class FormContext implements ContextInterface
     {
         $parts = explode('.', $field);
 
-        $validator = $this->_form->getValidator($this->_validator);
+        $validator = $this->form->getValidator($this->validator);
         $fieldName = array_pop($parts);
         if (!$validator->hasField($fieldName)) {
             return null;
@@ -166,7 +166,7 @@ class FormContext implements ContextInterface
      */
     public function getMaxLength(string $field): ?int
     {
-        $validator = $this->_form->getValidator($this->_validator);
+        $validator = $this->form->getValidator($this->validator);
         if (!$validator->hasField($field)) {
             return null;
         }
@@ -189,7 +189,7 @@ class FormContext implements ContextInterface
      */
     public function fieldNames(): array
     {
-        return $this->_form->getSchema()->fields();
+        return $this->form->getSchema()->fields();
     }
 
     /**
@@ -197,7 +197,7 @@ class FormContext implements ContextInterface
      */
     public function type(string $field): ?string
     {
-        return $this->_form->getSchema()->fieldType($field);
+        return $this->form->getSchema()->fieldType($field);
     }
 
     /**
@@ -206,7 +206,7 @@ class FormContext implements ContextInterface
     public function attributes(string $field): array
     {
         return array_intersect_key(
-            (array)$this->_form->getSchema()->field($field),
+            (array)$this->form->getSchema()->field($field),
             array_flip(static::VALID_ATTRIBUTES),
         );
     }
@@ -226,6 +226,6 @@ class FormContext implements ContextInterface
      */
     public function error(string $field): array
     {
-        return (array)Hash::get($this->_form->getErrors(), $field, []);
+        return (array)Hash::get($this->form->getErrors(), $field, []);
     }
 }

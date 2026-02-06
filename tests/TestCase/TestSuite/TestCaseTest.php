@@ -261,7 +261,7 @@ class TestCaseTest extends TestCase
      */
     public function testSetupBackUpValues(): void
     {
-        $this->assertArrayHasKey('debug', $this->_configure);
+        $this->assertArrayHasKey('debug', $this->configure);
     }
 
     /**

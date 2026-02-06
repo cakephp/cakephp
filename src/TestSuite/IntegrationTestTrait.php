@@ -90,63 +90,63 @@ trait IntegrationTestTrait
      *
      * @var array
      */
-    protected array $_request = [];
+    protected array $request = [];
 
     /**
      * The response for the most recent request.
      *
      * @var \Psr\Http\Message\ResponseInterface|null
      */
-    protected ?ResponseInterface $_response = null;
+    protected ?ResponseInterface $response = null;
 
     /**
      * The exception being thrown if the case.
      *
      * @var \Throwable|null
      */
-    protected ?Throwable $_exception = null;
+    protected ?Throwable $exception = null;
 
     /**
      * Session data to use in the next request.
      *
      * @var array
      */
-    protected array $_session = [];
+    protected array $session = [];
 
     /**
      * Cookie data to use in the next request.
      *
      * @var array
      */
-    protected array $_cookie = [];
+    protected array $cookie = [];
 
     /**
      * The controller used in the last request.
      *
      * @var \Cake\Controller\Controller|null
      */
-    protected ?Controller $_controller = null;
+    protected ?Controller $controller = null;
 
     /**
      * The last rendered view
      *
      * @var string|null
      */
-    protected ?string $_viewName = null;
+    protected ?string $viewName = null;
 
     /**
      * The last rendered layout
      *
      * @var string|null
      */
-    protected ?string $_layoutName = null;
+    protected ?string $layoutName = null;
 
     /**
      * The session instance from the last request
      *
      * @var \Cake\Http\Session|null
      */
-    protected ?Session $_requestSession = null;
+    protected ?Session $requestSession = null;
 
     /**
      * Boolean flag for whether the request should have
@@ -154,7 +154,7 @@ trait IntegrationTestTrait
      *
      * @var bool
      */
-    protected bool $_securityToken = false;
+    protected bool $securityToken = false;
 
     /**
      * Boolean flag for whether the request should have
@@ -162,7 +162,7 @@ trait IntegrationTestTrait
      *
      * @var bool
      */
-    protected bool $_csrfToken = false;
+    protected bool $csrfToken = false;
 
     /**
      * Boolean flag for whether the request should re-store
@@ -170,33 +170,33 @@ trait IntegrationTestTrait
      *
      * @var bool
      */
-    protected bool $_retainFlashMessages = false;
+    protected bool $retainFlashMessages = false;
 
     /**
      * Stored flash messages before render
      *
      * @var array
      */
-    protected array $_flashMessages = [];
+    protected array $flashMessages = [];
 
     /**
      * @var string|null
      */
-    protected ?string $_cookieEncryptionKey = null;
+    protected ?string $cookieEncryptionKey = null;
 
     /**
      * List of fields that are excluded from field validation.
      *
      * @var array<string>
      */
-    protected array $_unlockedFields = [];
+    protected array $unlockedFields = [];
 
     /**
      * The name that will be used when retrieving the csrf token.
      *
      * @var string
      */
-    protected string $_csrfKeyName = 'csrfToken';
+    protected string $csrfKeyName = 'csrfToken';
 
     /**
      * Clears the state used for requests.
@@ -206,19 +206,19 @@ trait IntegrationTestTrait
     #[After]
     public function cleanup(): void
     {
-        $this->_request = [];
-        $this->_session = [];
-        $this->_cookie = [];
-        $this->_response = null;
-        $this->_exception = null;
-        $this->_controller = null;
-        $this->_viewName = null;
-        $this->_layoutName = null;
-        $this->_requestSession = null;
-        $this->_securityToken = false;
-        $this->_csrfToken = false;
-        $this->_retainFlashMessages = false;
-        $this->_flashMessages = [];
+        $this->request = [];
+        $this->session = [];
+        $this->cookie = [];
+        $this->response = null;
+        $this->exception = null;
+        $this->controller = null;
+        $this->viewName = null;
+        $this->layoutName = null;
+        $this->requestSession = null;
+        $this->securityToken = false;
+        $this->csrfToken = false;
+        $this->retainFlashMessages = false;
+        $this->flashMessages = [];
     }
 
     /**
@@ -230,7 +230,7 @@ trait IntegrationTestTrait
      */
     public function enableSecurityToken(): void
     {
-        $this->_securityToken = true;
+        $this->securityToken = true;
     }
 
     /**
@@ -241,7 +241,7 @@ trait IntegrationTestTrait
      */
     public function setUnlockedFields(array $unlockedFields = []): void
     {
-        $this->_unlockedFields = $unlockedFields;
+        $this->unlockedFields = $unlockedFields;
     }
 
     /**
@@ -255,8 +255,8 @@ trait IntegrationTestTrait
      */
     public function enableCsrfToken(string $cookieName = 'csrfToken'): void
     {
-        $this->_csrfToken = true;
-        $this->_csrfKeyName = $cookieName;
+        $this->csrfToken = true;
+        $this->csrfKeyName = $cookieName;
     }
 
     /**
@@ -267,7 +267,7 @@ trait IntegrationTestTrait
      */
     public function enableRetainFlashMessages(): void
     {
-        $this->_retainFlashMessages = true;
+        $this->retainFlashMessages = true;
     }
 
     /**
@@ -284,7 +284,7 @@ trait IntegrationTestTrait
      */
     public function configRequest(array $data): void
     {
-        $this->_request = array_merge_recursive($data, $this->_request);
+        $this->request = array_merge_recursive($data, $this->request);
     }
 
     /**
@@ -295,7 +295,7 @@ trait IntegrationTestTrait
      */
     public function replaceRequest(array $data): void
     {
-        $this->_request = $data;
+        $this->request = $data;
     }
 
     /**
@@ -328,7 +328,7 @@ trait IntegrationTestTrait
      */
     public function session(array $data): void
     {
-        $this->_session = $data + $this->_session;
+        $this->session = $data + $this->session;
     }
 
     /**
@@ -347,7 +347,7 @@ trait IntegrationTestTrait
      */
     public function cookie(string $name, string $value): void
     {
-        $this->_cookie[$name] = $value;
+        $this->cookie[$name] = $value;
     }
 
     /**
@@ -357,7 +357,7 @@ trait IntegrationTestTrait
      */
     protected function getCookieEncryptionKey(): string
     {
-        return $this->_cookieEncryptionKey ?? Security::getSalt();
+        return $this->cookieEncryptionKey ?? Security::getSalt();
     }
 
     /**
@@ -380,8 +380,8 @@ trait IntegrationTestTrait
         string|false $encrypt = 'aes',
         ?string $key = null,
     ): void {
-        $this->_cookieEncryptionKey = $key;
-        $this->_cookie[$name] = $this->encrypt($value, $encrypt);
+        $this->cookieEncryptionKey = $key;
+        $this->cookie[$name] = $this->encrypt($value, $encrypt);
     }
 
     /**
@@ -511,16 +511,16 @@ trait IntegrationTestTrait
         try {
             $request = $this->buildRequest($url, $method, $data);
             $response = $dispatcher->execute($request);
-            $this->_requestSession = $request['session'];
-            if ($this->_retainFlashMessages && $this->_flashMessages) {
-                $_SESSION['Flash'] = $this->_flashMessages;
-                $this->_requestSession->write($_SESSION);
+            $this->requestSession = $request['session'];
+            if ($this->retainFlashMessages && $this->flashMessages) {
+                $_SESSION['Flash'] = $this->flashMessages;
+                $this->requestSession->write($_SESSION);
             }
-            $this->_response = $response;
+            $this->response = $response;
         } catch (PHPUnitException | DatabaseException $e) {
             throw $e;
         } catch (Throwable $e) {
-            $this->_exception = $e;
+            $this->exception = $e;
             // Simulate the global exception handler being invoked.
             $this->handleError($e);
         }
@@ -602,27 +602,27 @@ trait IntegrationTestTrait
             $controller = $event->getSubject();
             assert($controller instanceof Controller);
         }
-        $this->_controller = $controller;
+        $this->controller = $controller;
         $events = $controller->getEventManager();
         $flashCapture = function (EventInterface $event): void {
-            if (!$this->_retainFlashMessages) {
+            if (!$this->retainFlashMessages) {
                 return;
             }
             $controller = $event->getSubject();
-            $this->_flashMessages = Hash::merge(
-                $this->_flashMessages,
+            $this->flashMessages = Hash::merge(
+                $this->flashMessages,
                 $controller->getRequest()->getSession()->read('Flash'),
             );
         };
         $events->on('Controller.beforeRedirect', $flashCapture, ['priority' => -100]);
         $events->on('Controller.beforeRender', $flashCapture, ['priority' => -100]);
         $events->on('View.beforeRender', function ($event, $viewFile): void {
-            if (!$this->_viewName) {
-                $this->_viewName = $viewFile;
+            if (!$this->viewName) {
+                $this->viewName = $viewFile;
             }
         });
         $events->on('View.beforeLayout', function ($event, $viewFile): void {
-            $this->_layoutName = $viewFile;
+            $this->layoutName = $viewFile;
         });
     }
 
@@ -643,7 +643,7 @@ trait IntegrationTestTrait
         }
         /** @var \Cake\Error\Renderer\WebExceptionRenderer $instance */
         $instance = new $class($exception);
-        $this->_response = $instance->render();
+        $this->response = $instance->render();
     }
 
     /**
@@ -680,15 +680,15 @@ trait IntegrationTestTrait
         if (isset($hostInfo['host'])) {
             $env['HTTP_HOST'] = $hostInfo['host'];
         }
-        if (isset($this->_request['headers'])) {
-            foreach ($this->_request['headers'] as $k => $v) {
+        if (isset($this->request['headers'])) {
+            foreach ($this->request['headers'] as $k => $v) {
                 $name = strtoupper(str_replace('-', '_', $k));
                 if (!in_array($name, ['CONTENT_LENGTH', 'CONTENT_TYPE'], true)) {
                     $name = 'HTTP_' . $name;
                 }
                 $env[$name] = $v;
             }
-            unset($this->_request['headers']);
+            unset($this->request['headers']);
         }
         $props = [
             'url' => $url,
@@ -713,10 +713,10 @@ trait IntegrationTestTrait
             $props['post'] = $this->castToString($data);
         }
 
-        $props['cookies'] = $this->_cookie;
-        $session->write($this->_session);
+        $props['cookies'] = $this->cookie;
+        $session->write($this->session);
 
-        return Hash::merge($props, $this->_request);
+        return Hash::merge($props, $this->request);
     }
 
     /**
@@ -729,14 +729,14 @@ trait IntegrationTestTrait
      */
     protected function addTokens(string $url, array $data, string $method): array
     {
-        if ($this->_securityToken === true) {
-            $fields = array_diff_key($data, array_flip($this->_unlockedFields));
+        if ($this->securityToken === true) {
+            $fields = array_diff_key($data, array_flip($this->unlockedFields));
 
             $keys = array_map(function (int|string $field) {
                 return preg_replace('/(\.\d+)+$/', '', (string)$field);
             }, array_keys(Hash::flatten($fields)));
 
-            $formProtector = new FormProtector(['unlockedFields' => $this->_unlockedFields]);
+            $formProtector = new FormProtector(['unlockedFields' => $this->unlockedFields]);
             foreach ($keys as $field) {
                 $formProtector->addField($field);
             }
@@ -752,22 +752,22 @@ trait IntegrationTestTrait
             }
         }
 
-        if ($this->_csrfToken === true) {
+        if ($this->csrfToken === true) {
             $middleware = new CsrfProtectionMiddleware();
-            if (!isset($this->_cookie[$this->_csrfKeyName]) && !isset($this->_session[$this->_csrfKeyName])) {
+            if (!isset($this->cookie[$this->csrfKeyName]) && !isset($this->session[$this->csrfKeyName])) {
                 $token = $middleware->createToken();
-            } elseif (isset($this->_cookie[$this->_csrfKeyName])) {
-                $token = $this->_cookie[$this->_csrfKeyName];
+            } elseif (isset($this->cookie[$this->csrfKeyName])) {
+                $token = $this->cookie[$this->csrfKeyName];
             } else {
-                $token = $this->_session[$this->_csrfKeyName];
+                $token = $this->session[$this->csrfKeyName];
             }
 
             // Add the token to both the session and cookie to cover
             // both types of CSRF tokens. We generate the token with the cookie
             // middleware as cookie tokens will be accepted by session csrf, but not
             // the inverse.
-            $this->_session[$this->_csrfKeyName] = $token;
-            $this->_cookie[$this->_csrfKeyName] = $token;
+            $this->session[$this->csrfKeyName] = $token;
+            $this->cookie[$this->csrfKeyName] = $token;
             if (!isset($data['_csrfToken']) && !in_array($method, ['GET', 'OPTIONS'])) {
                 $data['_csrfToken'] = $token;
             }
@@ -835,11 +835,11 @@ trait IntegrationTestTrait
      */
     protected function getBodyAsString(): string
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert content.');
         }
 
-        return (string)$this->_response->getBody();
+        return (string)$this->response->getBody();
     }
 
     /**
@@ -852,7 +852,7 @@ trait IntegrationTestTrait
      */
     public function viewVariable(string $name): mixed
     {
-        return $this->_controller?->viewBuilder()->getVar($name);
+        return $this->controller?->viewBuilder()->getVar($name);
     }
 
     /**
@@ -864,7 +864,7 @@ trait IntegrationTestTrait
     public function assertResponseOk(string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new StatusOk($this->_response), $verboseMessage);
+        $this->assertThat(null, new StatusOk($this->response), $verboseMessage);
     }
 
     /**
@@ -876,7 +876,7 @@ trait IntegrationTestTrait
     public function assertResponseSuccess(string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new StatusSuccess($this->_response), $verboseMessage);
+        $this->assertThat(null, new StatusSuccess($this->response), $verboseMessage);
     }
 
     /**
@@ -887,7 +887,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseError(string $message = ''): void
     {
-        $this->assertThat(null, new StatusError($this->_response), $message);
+        $this->assertThat(null, new StatusError($this->response), $message);
     }
 
     /**
@@ -898,7 +898,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseFailure(string $message = ''): void
     {
-        $this->assertThat(null, new StatusFailure($this->_response), $message);
+        $this->assertThat(null, new StatusFailure($this->response), $message);
     }
 
     /**
@@ -910,7 +910,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseCode(int $code, string $message = ''): void
     {
-        $this->assertThat($code, new StatusCode($this->_response), $message);
+        $this->assertThat($code, new StatusCode($this->response), $message);
     }
 
     /**
@@ -928,20 +928,20 @@ trait IntegrationTestTrait
      */
     public function assertRedirect(array|string|null $url = null, string $message = ''): void
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert header.');
         }
 
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
+        $this->assertThat(null, new HeaderSet($this->response, 'Location'), $verboseMessage);
 
         if ($url) {
             // Normalize both URLs to absolute for comparison
             $expectedUrl = Router::url($url, true);
-            $actualUrl = Router::url($this->_response->getHeaderLine('Location'), true);
+            $actualUrl = Router::url($this->response->getHeaderLine('Location'), true);
 
             // Create a response with the normalized URL for proper error messages
-            $tempResponse = $this->_response->withHeader('Location', $actualUrl);
+            $tempResponse = $this->response->withHeader('Location', $actualUrl);
 
             $this->assertThat(
                 $expectedUrl,
@@ -960,26 +960,26 @@ trait IntegrationTestTrait
      */
     public function assertRedirectBack(?int $code = null, string $message = ''): void
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert header.');
         }
 
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
+        $this->assertThat(null, new HeaderSet($this->response, 'Location'), $verboseMessage);
         if ($code !== null) {
-            $this->assertThat($code, new StatusCode($this->_response), $message);
+            $this->assertThat($code, new StatusCode($this->response), $message);
         } else {
-            $this->assertThat(null, new StatusSuccess($this->_response), $verboseMessage);
+            $this->assertThat(null, new StatusSuccess($this->response), $verboseMessage);
         }
 
-        $url = $this->_request['url'] ?? null;
+        $url = $this->request['url'] ?? null;
         if (!$url) {
             $this->fail('No `url` set in request, cannot assert header.');
         }
 
         $this->assertThat(
             Router::url($url, true),
-            new HeaderEquals($this->_response, 'Location'),
+            new HeaderEquals($this->response, 'Location'),
             $verboseMessage,
         );
     }
@@ -993,26 +993,26 @@ trait IntegrationTestTrait
      */
     public function assertRedirectBackToReferer(?int $code = null, string $message = ''): void
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert header.');
         }
 
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
+        $this->assertThat(null, new HeaderSet($this->response, 'Location'), $verboseMessage);
         if ($code !== null) {
-            $this->assertThat($code, new StatusCode($this->_response), $message);
+            $this->assertThat($code, new StatusCode($this->response), $message);
         } else {
-            $this->assertThat(null, new StatusSuccess($this->_response), $verboseMessage);
+            $this->assertThat(null, new StatusSuccess($this->response), $verboseMessage);
         }
 
-        $referer = $this->_request['environment']['HTTP_REFERER'] ?? null;
+        $referer = $this->request['environment']['HTTP_REFERER'] ?? null;
         if (!$referer) {
             $this->fail('No `HTTP_REFERER` set in request environment, cannot assert header.');
         }
 
         $this->assertThat(
             Router::url($referer, true),
-            new HeaderEquals($this->_response, 'Location'),
+            new HeaderEquals($this->response, 'Location'),
             $verboseMessage,
         );
     }
@@ -1028,20 +1028,20 @@ trait IntegrationTestTrait
      */
     public function assertRedirectEquals(array|string|null $url = null, string $message = ''): void
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert header.');
         }
 
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
+        $this->assertThat(null, new HeaderSet($this->response, 'Location'), $verboseMessage);
 
         if ($url) {
             // Normalize both URLs to absolute for comparison
             $expectedUrl = Router::url($url, true);
-            $actualUrl = Router::url($this->_response->getHeaderLine('Location'), true);
+            $actualUrl = Router::url($this->response->getHeaderLine('Location'), true);
 
             // Create a response with the normalized URL for proper error messages
-            $tempResponse = $this->_response->withHeader('Location', $actualUrl);
+            $tempResponse = $this->response->withHeader('Location', $actualUrl);
 
             $this->assertThat(
                 $expectedUrl,
@@ -1060,13 +1060,13 @@ trait IntegrationTestTrait
      */
     public function assertRedirectContains(string $url, string $message = ''): void
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert header.');
         }
 
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
-        $this->assertThat($url, new HeaderContains($this->_response, 'Location'), $verboseMessage);
+        $this->assertThat(null, new HeaderSet($this->response, 'Location'), $verboseMessage);
+        $this->assertThat($url, new HeaderContains($this->response, 'Location'), $verboseMessage);
     }
 
     /**
@@ -1078,13 +1078,13 @@ trait IntegrationTestTrait
      */
     public function assertRedirectNotContains(string $url, string $message = ''): void
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert header.');
         }
 
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new HeaderSet($this->_response, 'Location'), $verboseMessage);
-        $this->assertThat($url, new HeaderNotContains($this->_response, 'Location'), $verboseMessage);
+        $this->assertThat(null, new HeaderSet($this->response, 'Location'), $verboseMessage);
+        $this->assertThat($url, new HeaderNotContains($this->response, 'Location'), $verboseMessage);
     }
 
     /**
@@ -1096,7 +1096,7 @@ trait IntegrationTestTrait
     public function assertNoRedirect(string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new HeaderNotSet($this->_response, 'Location'), $verboseMessage);
+        $this->assertThat(null, new HeaderNotSet($this->response, 'Location'), $verboseMessage);
     }
 
     /**
@@ -1109,13 +1109,13 @@ trait IntegrationTestTrait
      */
     public function assertHeader(string $header, string $content, string $message = ''): void
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert header.');
         }
 
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new HeaderSet($this->_response, $header), $verboseMessage);
-        $this->assertThat($content, new HeaderEquals($this->_response, $header), $verboseMessage);
+        $this->assertThat(null, new HeaderSet($this->response, $header), $verboseMessage);
+        $this->assertThat($content, new HeaderEquals($this->response, $header), $verboseMessage);
     }
 
     /**
@@ -1128,13 +1128,13 @@ trait IntegrationTestTrait
      */
     public function assertHeaderContains(string $header, string $content, string $message = ''): void
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert header.');
         }
 
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new HeaderSet($this->_response, $header), $verboseMessage);
-        $this->assertThat($content, new HeaderContains($this->_response, $header), $verboseMessage);
+        $this->assertThat(null, new HeaderSet($this->response, $header), $verboseMessage);
+        $this->assertThat($content, new HeaderContains($this->response, $header), $verboseMessage);
     }
 
     /**
@@ -1147,13 +1147,13 @@ trait IntegrationTestTrait
      */
     public function assertHeaderNotContains(string $header, string $content, string $message = ''): void
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert header.');
         }
 
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new HeaderSet($this->_response, $header), $verboseMessage);
-        $this->assertThat($content, new HeaderNotContains($this->_response, $header), $verboseMessage);
+        $this->assertThat(null, new HeaderSet($this->response, $header), $verboseMessage);
+        $this->assertThat($content, new HeaderNotContains($this->response, $header), $verboseMessage);
     }
 
     /**
@@ -1166,7 +1166,7 @@ trait IntegrationTestTrait
     public function assertContentType(string $type, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($type, new ContentType($this->_response), $verboseMessage);
+        $this->assertThat($type, new ContentType($this->response), $verboseMessage);
     }
 
     /**
@@ -1182,7 +1182,7 @@ trait IntegrationTestTrait
         if ($this->isDebug()) {
             $verboseMessage .= $this->responseBody();
         }
-        $this->assertThat($content, new BodyEquals($this->_response), $verboseMessage);
+        $this->assertThat($content, new BodyEquals($this->response), $verboseMessage);
     }
 
     /**
@@ -1198,7 +1198,7 @@ trait IntegrationTestTrait
         if ($this->isDebug()) {
             $verboseMessage .= $this->responseBody();
         }
-        $this->assertThat($content, new BodyNotEquals($this->_response), $verboseMessage);
+        $this->assertThat($content, new BodyNotEquals($this->response), $verboseMessage);
     }
 
     /**
@@ -1211,7 +1211,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseContains(string $content, string $message = '', bool $ignoreCase = false): void
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert content.');
         }
 
@@ -1219,7 +1219,7 @@ trait IntegrationTestTrait
         if ($this->isDebug()) {
             $verboseMessage .= $this->responseBody();
         }
-        $this->assertThat($content, new BodyContains($this->_response, $ignoreCase), $verboseMessage);
+        $this->assertThat($content, new BodyContains($this->response, $ignoreCase), $verboseMessage);
     }
 
     /**
@@ -1232,7 +1232,7 @@ trait IntegrationTestTrait
      */
     public function assertResponseNotContains(string $content, string $message = '', bool $ignoreCase = false): void
     {
-        if (!$this->_response) {
+        if (!$this->response) {
             $this->fail('No response set, cannot assert content.');
         }
 
@@ -1240,7 +1240,7 @@ trait IntegrationTestTrait
         if ($this->isDebug()) {
             $verboseMessage .= $this->responseBody();
         }
-        $this->assertThat($content, new BodyNotContains($this->_response, $ignoreCase), $verboseMessage);
+        $this->assertThat($content, new BodyNotContains($this->response, $ignoreCase), $verboseMessage);
     }
 
     /**
@@ -1256,7 +1256,7 @@ trait IntegrationTestTrait
         if ($this->isDebug()) {
             $verboseMessage .= $this->responseBody();
         }
-        $this->assertThat($pattern, new BodyRegExp($this->_response), $verboseMessage);
+        $this->assertThat($pattern, new BodyRegExp($this->response), $verboseMessage);
     }
 
     /**
@@ -1272,7 +1272,7 @@ trait IntegrationTestTrait
         if ($this->isDebug()) {
             $verboseMessage .= $this->responseBody();
         }
-        $this->assertThat($pattern, new BodyNotRegExp($this->_response), $verboseMessage);
+        $this->assertThat($pattern, new BodyNotRegExp($this->response), $verboseMessage);
     }
 
     /**
@@ -1286,7 +1286,7 @@ trait IntegrationTestTrait
         if ($this->isDebug()) {
             $message .= $this->responseBody();
         }
-        $this->assertThat(null, new BodyNotEmpty($this->_response), $message);
+        $this->assertThat(null, new BodyNotEmpty($this->response), $message);
     }
 
     /**
@@ -1300,7 +1300,7 @@ trait IntegrationTestTrait
         if ($this->isDebug()) {
             $message .= $this->responseBody();
         }
-        $this->assertThat(null, new BodyEmpty($this->_response), $message);
+        $this->assertThat(null, new BodyEmpty($this->response), $message);
     }
 
     /**
@@ -1313,7 +1313,7 @@ trait IntegrationTestTrait
     public function assertTemplate(string $content, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($content, new TemplateFileEquals($this->_viewName), $verboseMessage);
+        $this->assertThat($content, new TemplateFileEquals($this->viewName), $verboseMessage);
     }
 
     /**
@@ -1326,7 +1326,7 @@ trait IntegrationTestTrait
     public function assertLayout(string $content, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($content, new LayoutFileEquals($this->_layoutName), $verboseMessage);
+        $this->assertThat($content, new LayoutFileEquals($this->layoutName), $verboseMessage);
     }
 
     /**
@@ -1380,7 +1380,7 @@ trait IntegrationTestTrait
     public function assertFlashMessage(string $expected, string $key = 'flash', string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($expected, new FlashParamEquals($this->_requestSession, $key, 'message'), $verboseMessage);
+        $this->assertThat($expected, new FlashParamEquals($this->requestSession, $key, 'message'), $verboseMessage);
     }
 
     /**
@@ -1397,7 +1397,7 @@ trait IntegrationTestTrait
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,
-            new FlashParamEquals($this->_requestSession, $key, 'message', $at),
+            new FlashParamEquals($this->requestSession, $key, 'message', $at),
             $verboseMessage,
         );
     }
@@ -1420,7 +1420,7 @@ trait IntegrationTestTrait
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,
-            new FlashParamContains($this->_requestSession, $key, 'message', null, $ignoreCase),
+            new FlashParamContains($this->requestSession, $key, 'message', null, $ignoreCase),
             $verboseMessage,
         );
     }
@@ -1445,7 +1445,7 @@ trait IntegrationTestTrait
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,
-            new FlashParamContains($this->_requestSession, $key, 'message', $at, $ignoreCase),
+            new FlashParamContains($this->requestSession, $key, 'message', $at, $ignoreCase),
             $verboseMessage,
         );
     }
@@ -1463,7 +1463,7 @@ trait IntegrationTestTrait
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,
-            new FlashParamEquals($this->_requestSession, $key, 'element'),
+            new FlashParamEquals($this->requestSession, $key, 'element'),
             $verboseMessage,
         );
     }
@@ -1482,7 +1482,7 @@ trait IntegrationTestTrait
         $verboseMessage = $this->extractVerboseMessage($message);
         $this->assertThat(
             $expected,
-            new FlashParamEquals($this->_requestSession, $key, 'element', $at),
+            new FlashParamEquals($this->requestSession, $key, 'element', $at),
             $verboseMessage,
         );
     }
@@ -1498,8 +1498,8 @@ trait IntegrationTestTrait
     public function assertCookie(mixed $expected, string $name, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($name, new CookieSet($this->_response), $verboseMessage);
-        $this->assertThat($expected, new CookieEquals($this->_response, $name), $verboseMessage);
+        $this->assertThat($name, new CookieSet($this->response), $verboseMessage);
+        $this->assertThat($expected, new CookieEquals($this->response, $name), $verboseMessage);
     }
 
     /**
@@ -1515,7 +1515,7 @@ trait IntegrationTestTrait
     public function assertCookieIsSet(string $name, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($name, new CookieSet($this->_response), $verboseMessage);
+        $this->assertThat($name, new CookieSet($this->response), $verboseMessage);
     }
 
     /**
@@ -1528,7 +1528,7 @@ trait IntegrationTestTrait
     public function assertCookieNotSet(string $cookie, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($cookie, new CookieNotSet($this->_response), $verboseMessage);
+        $this->assertThat($cookie, new CookieNotSet($this->response), $verboseMessage);
     }
 
     /**
@@ -1569,12 +1569,12 @@ trait IntegrationTestTrait
         string $message = '',
     ): void {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat($name, new CookieSet($this->_response), $verboseMessage);
+        $this->assertThat($name, new CookieSet($this->response), $verboseMessage);
 
-        $this->_cookieEncryptionKey = $key;
+        $this->cookieEncryptionKey = $key;
         $this->assertThat(
             $expected,
-            new CookieEncryptedEquals($this->_response, $name, $encrypt, $this->getCookieEncryptionKey()),
+            new CookieEncryptedEquals($this->response, $name, $encrypt, $this->getCookieEncryptionKey()),
         );
     }
 
@@ -1588,13 +1588,13 @@ trait IntegrationTestTrait
     public function assertFileResponse(string $expected, string $message = ''): void
     {
         $verboseMessage = $this->extractVerboseMessage($message);
-        $this->assertThat(null, new FileSent($this->_response), $verboseMessage);
-        $this->assertThat($expected, new FileSentAs($this->_response), $verboseMessage);
+        $this->assertThat(null, new FileSent($this->response), $verboseMessage);
+        $this->assertThat($expected, new FileSentAs($this->response), $verboseMessage);
 
-        if (!$this->_response) {
+        if (!$this->response) {
             return;
         }
-        $this->_response->getBody()->close();
+        $this->response->getBody()->close();
     }
 
     /**
@@ -1605,13 +1605,13 @@ trait IntegrationTestTrait
      */
     protected function extractVerboseMessage(string $message): string
     {
-        if ($this->_exception instanceof Exception) {
-            $message .= $this->extractExceptionMessage($this->_exception);
+        if ($this->exception instanceof Exception) {
+            $message .= $this->extractExceptionMessage($this->exception);
         }
-        if ($this->_controller === null) {
+        if ($this->controller === null) {
             return $message;
         }
-        $error = $this->_controller->viewBuilder()->getVar('error');
+        $error = $this->controller->viewBuilder()->getVar('error');
         if ($error instanceof Exception) {
             $message .= $this->extractExceptionMessage($this->viewVariable('error'));
         }
@@ -1677,6 +1677,6 @@ trait IntegrationTestTrait
      */
     protected function responseBody(): string
     {
-        return PHP_EOL . '------' . PHP_EOL . $this->_response->getBody() . PHP_EOL . '------' . PHP_EOL;
+        return PHP_EOL . '------' . PHP_EOL . $this->response->getBody() . PHP_EOL . '------' . PHP_EOL;
     }
 }

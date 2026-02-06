@@ -41,7 +41,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      *
      * @var \Cake\View\View
      */
-    protected View $_View;
+    protected View $View;
 
     /**
      * Constructor
@@ -50,7 +50,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
      */
     public function __construct(View $view)
     {
-        $this->_View = $view;
+        $this->View = $view;
         $this->setEventManager($view->getEventManager());
     }
 
@@ -73,7 +73,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
         try {
             $this->load($name);
         } catch (MissingHelperException $exception) {
-            $plugin = $this->_View->getPlugin();
+            $plugin = $this->View->getPlugin();
             if ($plugin) {
                 $this->load($name, ['className' => $plugin . '.' . $name]);
 
@@ -154,7 +154,7 @@ class HelperRegistry extends ObjectRegistry implements EventDispatcherInterface
             return $class;
         }
 
-        $instance = new $class($this->_View, $config);
+        $instance = new $class($this->View, $config);
 
         if ($config['enabled'] ?? true) {
             $this->getEventManager()->on($instance);
