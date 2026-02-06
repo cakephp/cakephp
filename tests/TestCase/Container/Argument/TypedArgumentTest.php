@@ -15,7 +15,7 @@ class TypedArgumentTest extends TestCase
         $arguments = [
             Literal\ArrayArgument::class => [],
             Literal\BooleanArgument::class => true,
-            Literal\CallableArgument::class => function () {
+            Literal\CallableArgument::class => function (): void {
             },
             Literal\FloatArgument::class => 1.23,
             Literal\IntegerArgument::class => 1,

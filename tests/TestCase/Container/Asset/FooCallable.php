@@ -5,7 +5,7 @@ namespace Cake\Test\TestCase\Container\Asset;
 
 class FooCallable
 {
-    public function __invoke(Bar $bar)
+    public function __invoke(Bar $bar): Foo
     {
         return new Foo($bar);
     }

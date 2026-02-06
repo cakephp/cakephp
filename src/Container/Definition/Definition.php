@@ -64,7 +64,7 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
     {
         $id = static::normaliseAlias($id);
 
-        $concrete = $concrete ?? $id;
+        $concrete ??= $id;
         $this->alias = $id;
         $this->concrete = $concrete;
     }

@@ -24,21 +24,6 @@ class Container implements DefinitionContainerInterface
     protected bool $defaultToShared = false;
 
     /**
-     * @var \Cake\Container\Definition\DefinitionAggregateInterface
-     */
-    protected DefinitionAggregateInterface $definitions;
-
-    /**
-     * @var \Cake\Container\ServiceProvider\ServiceProviderAggregateInterface
-     */
-    protected ServiceProviderAggregateInterface $providers;
-
-    /**
-     * @var \Cake\Container\Inflector\InflectorAggregateInterface
-     */
-    protected InflectorAggregateInterface $inflectors;
-
-    /**
      * @var array<\Psr\Container\ContainerInterface>
      */
     protected array $delegates = [];
@@ -49,14 +34,10 @@ class Container implements DefinitionContainerInterface
      * @param \Cake\Container\Inflector\InflectorAggregateInterface|null $inflectors
      */
     public function __construct(
-        ?DefinitionAggregateInterface $definitions = null,
-        ?ServiceProviderAggregateInterface $providers = null,
-        ?InflectorAggregateInterface $inflectors = null,
+        protected ?DefinitionAggregateInterface $definitions = new DefinitionAggregate(),
+        protected ?ServiceProviderAggregateInterface $providers = new ServiceProviderAggregate(),
+        protected ?InflectorAggregateInterface $inflectors = new InflectorAggregate(),
     ) {
-        $this->definitions = $definitions ?? new DefinitionAggregate();
-        $this->providers = $providers ?? new ServiceProviderAggregate();
-        $this->inflectors = $inflectors ?? new InflectorAggregate();
-
         $this->definitions->setContainer($this);
         $this->providers->setContainer($this);
         $this->inflectors->setContainer($this);
@@ -69,9 +50,9 @@ class Container implements DefinitionContainerInterface
      */
     public function add(string $id, $concrete = null): DefinitionInterface
     {
-        $concrete = $concrete ?? $id;
+        $concrete ??= $id;
 
-        if ($this->defaultToShared === true) {
+        if ($this->defaultToShared) {
             return $this->addShared($id, $concrete);
         }
 
@@ -83,7 +64,7 @@ class Container implements DefinitionContainerInterface
      */
     public function addShared(string $id, $concrete = null): DefinitionInterface
     {
-        $concrete = $concrete ?? $id;
+        $concrete ??= $id;
 
         return $this->definitions->addShared($id, $concrete);
     }
@@ -305,13 +286,13 @@ class Container implements DefinitionContainerInterface
     protected function resolve(mixed $id, bool $new = false, array $args = []): mixed
     {
         if ($this->definitions->has($id)) {
-            $resolved = $new === true ? $this->definitions->resolveNew($id) : $this->definitions->resolve($id);
+            $resolved = $new ? $this->definitions->resolveNew($id) : $this->definitions->resolve($id);
 
             return $this->inflectors->inflect($resolved);
         }
 
         if ($this->definitions->hasTag($id)) {
-            $arrayOf = $new === true
+            $arrayOf = $new
                 ? $this->definitions->resolveTaggedNew($id)
                 : $this->definitions->resolveTagged($id);
 

@@ -24,7 +24,6 @@ class InflectorTest extends TestCase
         ]);
 
         $methods = (new ReflectionClass($inflector))->getProperty('methods');
-        $methods->setAccessible(true);
 
         self::assertSame($methods->getValue($inflector), [
             'method1' => ['arg1'],
@@ -46,7 +45,6 @@ class InflectorTest extends TestCase
         ]);
 
         $properties = (new ReflectionClass($inflector))->getProperty('properties');
-        $properties->setAccessible(true);
 
         self::assertSame($properties->getValue($inflector), [
             'property1' => 'value',
@@ -135,7 +133,7 @@ class InflectorTest extends TestCase
         $bar = new class {
         };
 
-        $inflector = new Inflector('Type', function ($object) use ($bar) {
+        $inflector = new Inflector('Type', function ($object) use ($bar): void {
             $object->setBar($bar);
         });
 

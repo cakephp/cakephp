@@ -20,7 +20,7 @@ trait ArgumentResolverTrait
     {
         try {
             $container = $this->getContainer();
-        } catch (ContainerException $e) {
+        } catch (ContainerException) {
             $container = $this instanceof ReflectionContainer ? $this : null;
         }
 
@@ -52,7 +52,7 @@ trait ArgumentResolverTrait
                     }
 
                     continue;
-                } catch (NotFoundException $e) {
+                } catch (NotFoundException) {
                 }
             }
 

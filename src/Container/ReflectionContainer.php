@@ -41,7 +41,7 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
     public function get(string $id, array $args = [])
     {
         // Only use cache when no custom args are provided
-        if ($this->cacheResolutions === true && $args === [] && array_key_exists($id, $this->cache)) {
+        if ($this->cacheResolutions && $args === [] && array_key_exists($id, $this->cache)) {
             return $this->cache[$id];
         }
 
@@ -66,7 +66,7 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
             : $reflector->newInstanceArgs($this->reflectArguments($construct, $args));
 
         // Only cache when no custom args are provided
-        if ($this->cacheResolutions === true && $args === []) {
+        if ($this->cacheResolutions && $args === []) {
             $this->cache[$id] = $resolution;
         }
 
@@ -130,7 +130,7 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
                 // if we have a definition container, try that first, otherwise, reflect
                 try {
                     $callable[0] = $this->getContainer()->get($callable[0]);
-                } catch (ContainerException $e) {
+                } catch (ContainerException) {
                     $callable[0] = $this->get($callable[0]);
                 }
             }

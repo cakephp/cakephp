@@ -151,7 +151,7 @@ class DefinitionTest extends TestCase
 
     public function testDefinitionCanSetConcrete(): void
     {
-        $definition = new Definition('class', null);
+        $definition = new Definition('class');
         $concrete = new Literal\StringArgument(Foo::class);
         $definition->setConcrete($concrete);
         self::assertSame($concrete, $definition->getConcrete());
