@@ -131,7 +131,7 @@ class Number
     }
 
     /**
-     * Setter for units to use in toReadableSize(). If set to true, it will use IEC units, as defined in ISO/IEC 80000-13 
+     * Setter for units to use in toReadableSize(). If set to true, it will use IEC units, as defined in ISO/IEC 80000-13
      * (KiB, MiB, etc.). Else it will use natural units (MB, KB, etc).
      *
      * @param bool $useIec Whether to use exponents of two or ten for units (KiB, MiB, etc. or KB, MB, etc.)  {@link toReadableSize()}
