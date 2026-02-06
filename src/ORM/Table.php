@@ -2509,18 +2509,16 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param \Cake\Datasource\EntityInterface $entity The entity to remove.
      * @param array<string, mixed> $options The options for the delete.
-     * @return true
+     * @return void
      * @throws \Cake\ORM\Exception\PersistenceFailedException
      * @see \Cake\ORM\Table::delete()
      */
-    public function deleteOrFail(EntityInterface $entity, array $options = []): bool
+    public function deleteOrFail(EntityInterface $entity, array $options = []): void
     {
         $deleted = $this->delete($entity, $options);
         if ($deleted === false) {
             throw new PersistenceFailedException($entity, ['delete']);
         }
-
-        return true;
     }
 
     /**

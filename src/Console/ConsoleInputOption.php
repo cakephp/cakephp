@@ -283,13 +283,13 @@ class ConsoleInputOption
      * Check that a value is a valid choice for this option.
      *
      * @param string|bool $value The choice to validate.
-     * @return true
+     * @return void
      * @throws \Cake\Console\Exception\ConsoleException
      */
-    public function validChoice(string|bool $value): bool
+    public function validateChoice(string|bool $value): void
     {
         if ($this->choices === []) {
-            return true;
+            return;
         }
         if (is_string($value) && $this->separator) {
             $values = explode($this->separator, $value);
@@ -311,8 +311,6 @@ class ConsoleInputOption
                 ),
             );
         }
-
-        return true;
     }
 
     /**
