@@ -8,9 +8,7 @@ use Cake\Container\Argument\ArgumentResolverInterface;
 use Cake\Container\Argument\ArgumentResolverTrait;
 use Cake\Container\Argument\LiteralArgumentInterface;
 use Cake\Container\ContainerAwareTrait;
-use Cake\Container\DefinitionContainerInterface;
 use Cake\Container\Exception\ContainerException;
-use Psr\Container\ContainerInterface;
 use ReflectionClass;
 
 class Definition implements ArgumentResolverInterface, DefinitionInterface
@@ -243,7 +241,12 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
             $container = null;
         }
 
-        if (is_string($concrete) && $concrete !== $this->alias && $container !== null && $container->hasDefinition($concrete)) {
+        if (
+            is_string($concrete)
+            && $concrete !== $this->alias
+            && $container !== null
+            && $container->hasDefinition($concrete)
+        ) {
             $this->recursiveCheck[] = $concrete;
             $concrete = $container->get($concrete);
             $this->resolved = $concrete;
