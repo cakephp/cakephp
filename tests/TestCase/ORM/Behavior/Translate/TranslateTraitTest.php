@@ -85,4 +85,35 @@ class TranslateTraitTest extends TestCase
         $this->assertSame('My Title', $entity->translation('eng')->get('title'));
         $this->assertTrue($entity->isDirty('_translations'));
     }
+
+    /**
+     * Tests hasTranslation() method
+     */
+    public function testHasTranslation(): void
+    {
+        $entity = new TranslateTestEntity();
+        $this->assertFalse($entity->hasTranslation('eng'));
+
+        $entity->set('_translations', [
+            'eng' => new Entity(['title' => 'My Title']),
+            'spa' => new Entity(['title' => 'Titulo']),
+        ]);
+        $this->assertTrue($entity->hasTranslation('eng'));
+        $this->assertTrue($entity->hasTranslation('spa'));
+        $this->assertFalse($entity->hasTranslation('fra'));
+    }
+
+    /**
+     * Tests that translation() always returns a distinct entity, never $this
+     */
+    public function testTranslationReturnsDistinctEntity(): void
+    {
+        $entity = new TranslateTestEntity();
+        $entity->set('_locale', 'eng');
+        $entity->set('title', 'Original Title');
+
+        $translation = $entity->translation('eng');
+        $this->assertNotSame($entity, $translation);
+        $this->assertNull($translation->get('title'));
+    }
 }

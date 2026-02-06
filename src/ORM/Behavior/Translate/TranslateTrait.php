@@ -19,11 +19,24 @@ namespace Cake\ORM\Behavior\Translate;
 use Cake\Datasource\EntityInterface;
 
 /**
- * Contains a translation method aimed to help managing multiple translations
+ * Contains translation methods aimed to help managing multiple translations
  * for an entity.
  */
 trait TranslateTrait
 {
+    /**
+     * Checks whether a translation exists for the given language.
+     *
+     * @param string $language Language to check.
+     * @return bool
+     */
+    public function hasTranslation(string $language): bool
+    {
+        $i18n = $this->get('_translations');
+
+        return isset($i18n[$language]) && $i18n[$language] instanceof EntityInterface;
+    }
+
     /**
      * Returns the entity containing the translated fields for this object and for
      * the specified language. If the translation for the passed language is not
@@ -31,26 +44,15 @@ trait TranslateTrait
      * it.
      *
      * @param string $language Language to return entity for.
-     * @return \Cake\Datasource\EntityInterface|$this
+     * @return \Cake\Datasource\EntityInterface
      */
-    public function translation(string $language)
+    public function translation(string $language): EntityInterface
     {
-        if ($language === $this->get('_locale')) {
-            return $this;
-        }
-
-        $i18n = $this->has('_translations') ? $this->get('_translations') : null;
+        $i18n = $this->get('_translations') ?? [];
         $created = false;
 
-        if (!$i18n) {
-            $i18n = [];
-            $created = true;
-        }
-
-        if ($created || empty($i18n[$language]) || !($i18n[$language] instanceof EntityInterface)) {
-            $className = static::class;
-
-            $i18n[$language] = new $className();
+        if (!isset($i18n[$language]) || !($i18n[$language] instanceof EntityInterface)) {
+            $i18n[$language] = new static();
             $created = true;
         }
 
