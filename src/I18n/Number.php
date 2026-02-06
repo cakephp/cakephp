@@ -70,7 +70,7 @@ class Number
     protected static ?string $_defaultCurrencyFormat = null;
 
     /**
-     * Default byte units used by Number::toReadableSize()
+     * Default units used by Number::toReadableSize()
      *
      * @var bool
      */
@@ -97,10 +97,13 @@ class Number
     }
 
     /**
-     * Returns a formatted-for-humans file size. By default, the units are exponent of ten KB, MB, etc.
+     * Returns a formatted-for-humans file size. By default, the units are exponents of ten (KB, MB, etc.).
+     * setUseIecUnits() can be used to swap to ISO/IEC 80000-13 units (KiB, MiB, etc).
+     * 1 KiB = 1024 Bytes
+     * 1 KB  = 1000 Bytes
      *
      * @param string|float|int $size Size in bytes
-     * @param bool $useIecUnits Wether to use exponent of two (ISO/IEC 80000-13) or ten for units (KiB, MiB, etc. or KB, MB, etc.)
+     * @param bool $useIecUnits Whether to use exponent of two or ten for units (KiB, MiB, etc. or KB, MB, etc.)
      * @return string Human readable size
      * @link https://book.cakephp.org/5/en/core-libraries/number.html#interacting-with-human-readable-values
      */
@@ -128,9 +131,10 @@ class Number
     }
 
     /**
-     * Setter for default byte units
+     * Setter for units to use in toReadableSize(). If set to true, it will use IEC units, as defined in ISO/IEC 80000-13 
+     * (KiB, MiB, etc.). Else it will use natural units (MB, KB, etc).
      *
-     * @param bool $useIec Wether to use exponent of two or ten for units (KiB, MiB, etc. or KB, MB, etc.)  {@link toReadableSize()}
+     * @param bool $useIec Whether to use exponents of two or ten for units (KiB, MiB, etc. or KB, MB, etc.)  {@link toReadableSize()}
      * @return void
      */
     public static function setUseIecUnits(bool $useIec): void
