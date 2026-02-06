@@ -950,7 +950,7 @@ class BelongsToMany extends Association
         $this->checkPersistenceStatus($sourceEntity, $targetEntities);
         $property = $this->getProperty();
 
-        $links = $this->_collectJointEntities($sourceEntity, $targetEntities);
+        $links = $this->collectJointEntities($sourceEntity, $targetEntities);
         $return = $this->junctionTable->deleteMany($links, $options);
         if ($return === false) {
             return false;
