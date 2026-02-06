@@ -109,6 +109,7 @@ class Inflector implements ArgumentResolverInterface, InflectorInterface
 
         foreach ($this->methods as $method => $args) {
             $args = $this->resolveArguments($args);
+            /** @var callable $callable */
             $callable = [$object, $method];
             call_user_func_array($callable, $args);
         }

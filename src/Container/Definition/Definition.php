@@ -9,7 +9,6 @@ use Cake\Container\Argument\ArgumentResolverTrait;
 use Cake\Container\Argument\LiteralArgumentInterface;
 use Cake\Container\ContainerAwareTrait;
 use Cake\Container\Exception\ContainerException;
-use Psr\Container\ContainerInterface;
 use ReflectionClass;
 
 class Definition implements ArgumentResolverInterface, DefinitionInterface
@@ -65,7 +64,7 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
     {
         $id = static::normaliseAlias($id);
 
-        $concrete = $concrete ?? $id;
+        $concrete ??= $id;
         $this->alias = $id;
         $this->concrete = $concrete;
     }
@@ -233,18 +232,34 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
             $concrete = $concrete->getValue();
         }
 
+        // Check if the container has a registered definition for this concrete class
+        // before attempting to instantiate it directly. This ensures interface -> concrete
+        // bindings respect existing definitions for the concrete class (fixes #275, #278).
+        try {
+            $container = $this->getContainer();
+        } catch (ContainerException) {
+            $container = null;
+        }
+
+        if (
+            is_string($concrete)
+            && $concrete !== $this->alias
+            && $container !== null
+            && $container->hasDefinition($concrete)
+        ) {
+            $this->recursiveCheck[] = $concrete;
+            $concrete = $container->get($concrete);
+            $this->resolved = $concrete;
+
+            return $concrete;
+        }
+
         if (is_string($concrete) && class_exists($concrete)) {
             $concrete = $this->resolveClass($concrete);
         }
 
         if (is_object($concrete)) {
             $concrete = $this->invokeMethods($concrete);
-        }
-
-        try {
-            $container = $this->getContainer();
-        } catch (ContainerException $e) {
-            $container = null;
         }
 
         // stop recursive resolving
@@ -256,7 +271,7 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
 
         // if we still have a string, try to pull it from the container
         // this allows for `alias -> alias -> ... -> concrete
-        if (is_string($concrete) && $container instanceof ContainerInterface && $container->has($concrete)) {
+        if (is_string($concrete) && $container !== null && $container->has($concrete)) {
             $this->recursiveCheck[] = $concrete;
             $concrete = $container->get($concrete);
         }
@@ -278,28 +293,12 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
     }
 
     /**
-     * @param string $concrete
+     * @param class-string $concrete
      * @return object
      * @throws \ReflectionException
      */
     protected function resolveClass(string $concrete): object
     {
-//        $reflector = new ReflectionClass($concrete);
-//        $construct = $reflector->getConstructor();
-//        $params = $construct->getParameters();
-//        if (count($params) !== count($this->arguments)) {
-//            // This indicates, that certain arguments need to be auto wired
-//            $tmpArgs = $this->arguments;
-//            $this->arguments = [];
-//            foreach($params as $param) {
-//                if (!array_key_exists($param->getName(), $tmpArgs)) {
-//                    $this->addArgument($param->getType()->getName(), $param->getName());
-//                } else {
-//                    $this->addArgument($tmpArgs[$param->getName()], $param->getName());
-//                }
-//            }
-//        }
-
         $resolved = $this->resolveArguments($this->arguments);
         $reflection = new ReflectionClass($concrete);
 
@@ -314,6 +313,7 @@ class Definition implements ArgumentResolverInterface, DefinitionInterface
     {
         foreach ($this->methods as $method) {
             $args = $this->resolveArguments($method['arguments']);
+            /** @var callable $callable */
             $callable = [$instance, $method['method']];
             call_user_func_array($callable, $args);
         }

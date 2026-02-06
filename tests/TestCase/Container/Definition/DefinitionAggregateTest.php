@@ -22,7 +22,7 @@ class DefinitionAggregateTest extends TestCase
             ->expects(self::once())
             ->method('setAlias')
             ->with(self::equalTo('alias'))
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $aggregate = (new DefinitionAggregate())->setContainer($container);
         $definition = $aggregate->add('alias', $definition);
@@ -79,7 +79,7 @@ class DefinitionAggregateTest extends TestCase
             ->expects(self::once())
             ->method('setAlias')
             ->with(self::equalTo('alias1'))
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $definition2
             ->expects(self::once())
@@ -90,24 +90,24 @@ class DefinitionAggregateTest extends TestCase
             ->expects(self::once())
             ->method('setContainer')
             ->with(self::equalTo($container))
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $definition2
             ->expects(self::once())
             ->method('setShared')
             ->with(self::equalTo(true))
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $definition2
             ->expects(self::once())
             ->method('setAlias')
             ->with(self::equalTo('alias2'))
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $definition2
             ->expects(self::once())
             ->method('resolve')
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $aggregate->setContainer($container);
 
@@ -128,7 +128,7 @@ class DefinitionAggregateTest extends TestCase
             ->expects(self::once())
             ->method('setContainer')
             ->with(self::equalTo($container))
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $definition1
             ->expects(self::exactly(2))
@@ -145,7 +145,7 @@ class DefinitionAggregateTest extends TestCase
             ->expects(self::once())
             ->method('setContainer')
             ->with(self::equalTo($container))
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $definition2
             ->expects(self::once())
@@ -184,7 +184,7 @@ class DefinitionAggregateTest extends TestCase
             ->expects(self::once())
             ->method('setAlias')
             ->with(self::equalTo('alias1'))
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $definition2
             ->expects(self::once())
@@ -195,13 +195,13 @@ class DefinitionAggregateTest extends TestCase
             ->expects(self::once())
             ->method('setShared')
             ->with(self::equalTo(true))
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $definition2
             ->expects(self::once())
             ->method('setAlias')
             ->with(self::equalTo('alias2'))
-            ->will(self::returnSelf());
+            ->willReturnSelf();
 
         $aggregate->setContainer($container);
 

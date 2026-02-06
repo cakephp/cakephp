@@ -84,7 +84,7 @@ class ServiceProviderAggregateTest extends TestCase
         // was only aggregated and booted once
         self::assertSame(
             [$provider],
-            iterator_to_array($aggregate->getIterator())
+            iterator_to_array($aggregate->getIterator()),
         );
 
         self::assertSame(1, $provider->booted);

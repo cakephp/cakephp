@@ -40,22 +40,24 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
      */
     public function get(string $id, array $args = [])
     {
-        if ($this->cacheResolutions === true && array_key_exists($id, $this->cache)) {
+        // Only use cache when no custom args are provided
+        if ($this->cacheResolutions && $args === [] && array_key_exists($id, $this->cache)) {
             return $this->cache[$id];
         }
 
         if (!$this->has($id)) {
             throw new NotFoundException(
-                sprintf('Alias (%s) is not an existing class and therefore cannot be resolved', $id)
+                sprintf('Alias (%s) is not an existing class and therefore cannot be resolved', $id),
             );
         }
 
+        /** @var class-string $id */
         $reflector = new ReflectionClass($id);
         $construct = $reflector->getConstructor();
 
         if ($construct && !$construct->isPublic()) {
             throw new NotFoundException(
-                sprintf('Alias (%s) has a non-public constructor and therefore cannot be instantiated', $id)
+                sprintf('Alias (%s) has a non-public constructor and therefore cannot be instantiated', $id),
             );
         }
 
@@ -63,7 +65,8 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
             ? new $id()
             : $reflector->newInstanceArgs($this->reflectArguments($construct, $args));
 
-        if ($this->cacheResolutions === true) {
+        // Only cache when no custom args are provided
+        if ($this->cacheResolutions && $args === []) {
             $this->cache[$id] = $resolution;
         }
 
@@ -76,6 +79,36 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
     public function has($id): bool
     {
         return class_exists($id);
+    }
+
+    /**
+     * Get a new instance, bypassing the cache.
+     *
+     * @param string $id
+     * @param array<string, mixed> $args
+     * @return mixed
+     */
+    public function getNew(string $id, array $args = []): mixed
+    {
+        if (!$this->has($id)) {
+            throw new NotFoundException(
+                sprintf('Alias (%s) is not an existing class and therefore cannot be resolved', $id),
+            );
+        }
+
+        /** @var class-string $id */
+        $reflector = new ReflectionClass($id);
+        $construct = $reflector->getConstructor();
+
+        if ($construct && !$construct->isPublic()) {
+            throw new NotFoundException(
+                sprintf('Alias (%s) has a non-public constructor and therefore cannot be instantiated', $id),
+            );
+        }
+
+        return $construct === null
+            ? new $id()
+            : $reflector->newInstanceArgs($this->reflectArguments($construct, $args));
     }
 
     /**
@@ -97,7 +130,7 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
                 // if we have a definition container, try that first, otherwise, reflect
                 try {
                     $callable[0] = $this->getContainer()->get($callable[0]);
-                } catch (ContainerException $e) {
+                } catch (ContainerException) {
                     $callable[0] = $this->get($callable[0]);
                 }
             }
@@ -125,7 +158,7 @@ class ReflectionContainer implements ArgumentResolverInterface, ContainerInterfa
 
         throw new NotFoundException(sprintf(
             'Callable (%s) is not a valid callable',
-            $callable
+            $callable,
         ));
     }
 }

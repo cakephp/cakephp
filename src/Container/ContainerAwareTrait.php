@@ -27,7 +27,7 @@ trait ContainerAwareTrait
         throw new BadMethodCallException(sprintf(
             'Attempt to use (%s) while not implementing (%s)',
             ContainerAwareTrait::class,
-            ContainerAwareInterface::class
+            ContainerAwareInterface::class,
         ));
     }
 

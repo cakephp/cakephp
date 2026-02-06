@@ -24,39 +24,20 @@ class Container implements DefinitionContainerInterface
     protected bool $defaultToShared = false;
 
     /**
-     * @var \Cake\Container\Definition\DefinitionAggregateInterface
-     */
-    protected DefinitionAggregateInterface $definitions;
-
-    /**
-     * @var \Cake\Container\ServiceProvider\ServiceProviderAggregateInterface
-     */
-    protected ServiceProviderAggregateInterface $providers;
-
-    /**
-     * @var \Cake\Container\Inflector\InflectorAggregateInterface
-     */
-    protected InflectorAggregateInterface $inflectors;
-
-    /**
      * @var array<\Psr\Container\ContainerInterface>
      */
     protected array $delegates = [];
 
     /**
-     * @param \Cake\Container\Definition\DefinitionAggregateInterface|null $definitions
-     * @param \Cake\Container\ServiceProvider\ServiceProviderAggregateInterface|null $providers
-     * @param \Cake\Container\Inflector\InflectorAggregateInterface|null $inflectors
+     * @param \Cake\Container\Definition\DefinitionAggregateInterface $definitions
+     * @param \Cake\Container\ServiceProvider\ServiceProviderAggregateInterface $providers
+     * @param \Cake\Container\Inflector\InflectorAggregateInterface $inflectors
      */
     public function __construct(
-        ?DefinitionAggregateInterface $definitions = null,
-        ?ServiceProviderAggregateInterface $providers = null,
-        ?InflectorAggregateInterface $inflectors = null
+        protected DefinitionAggregateInterface $definitions = new DefinitionAggregate(),
+        protected ServiceProviderAggregateInterface $providers = new ServiceProviderAggregate(),
+        protected InflectorAggregateInterface $inflectors = new InflectorAggregate(),
     ) {
-        $this->definitions = $definitions ?? new DefinitionAggregate();
-        $this->providers = $providers ?? new ServiceProviderAggregate();
-        $this->inflectors = $inflectors ?? new InflectorAggregate();
-
         $this->definitions->setContainer($this);
         $this->providers->setContainer($this);
         $this->inflectors->setContainer($this);
@@ -69,9 +50,9 @@ class Container implements DefinitionContainerInterface
      */
     public function add(string $id, $concrete = null): DefinitionInterface
     {
-        $concrete = $concrete ?? $id;
+        $concrete ??= $id;
 
-        if ($this->defaultToShared === true) {
+        if ($this->defaultToShared) {
             return $this->addShared($id, $concrete);
         }
 
@@ -83,7 +64,7 @@ class Container implements DefinitionContainerInterface
      */
     public function addShared(string $id, $concrete = null): DefinitionInterface
     {
-        $concrete = $concrete ?? $id;
+        $concrete ??= $id;
 
         return $this->definitions->addShared($id, $concrete);
     }
@@ -159,7 +140,7 @@ class Container implements DefinitionContainerInterface
 
         throw new NotFoundException(sprintf(
             'Unable to extend alias (%s) as it is not being managed as a definition',
-            $id
+            $id,
         ));
     }
 
@@ -198,6 +179,29 @@ class Container implements DefinitionContainerInterface
     }
 
     /**
+     * Resolve an entry with specific constructor arguments.
+     *
+     * Unlike `get()`, this method allows passing specific constructor arguments
+     * that will be used during autowiring. Arguments can be passed by name.
+     *
+     * Example:
+     * ```
+     * $container->make(MyService::class, ['configValue' => 'foo']);
+     * ```
+     *
+     * @template RequestedType
+     * @param class-string<RequestedType>|string $id
+     * @param array<string, mixed> $args Named arguments to pass to the constructor
+     * @return RequestedType|mixed
+     * @throws \Psr\Container\ContainerExceptionInterface
+     * @throws \Psr\Container\NotFoundExceptionInterface
+     */
+    public function make(string $id, array $args = []): mixed
+    {
+        return $this->resolve($id, true, $args);
+    }
+
+    /**
      * @inheritDoc
      */
     public function has($id): bool
@@ -221,6 +225,14 @@ class Container implements DefinitionContainerInterface
         }
 
         return false;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function hasDefinition(string $id): bool
+    {
+        return $this->definitions->has($id);
     }
 
     /**
@@ -266,20 +278,21 @@ class Container implements DefinitionContainerInterface
     /**
      * @param mixed $id
      * @param bool $new
+     * @param array<string, mixed> $args
      * @return mixed|object|array|null|void
      * @throws \Psr\Container\ContainerExceptionInterface
      * @throws \Psr\Container\NotFoundExceptionInterface
      */
-    protected function resolve(mixed $id, bool $new = false): mixed
+    protected function resolve(mixed $id, bool $new = false, array $args = []): mixed
     {
         if ($this->definitions->has($id)) {
-            $resolved = $new === true ? $this->definitions->resolveNew($id) : $this->definitions->resolve($id);
+            $resolved = $new ? $this->definitions->resolveNew($id) : $this->definitions->resolve($id);
 
             return $this->inflectors->inflect($resolved);
         }
 
         if ($this->definitions->hasTag($id)) {
-            $arrayOf = $new === true
+            $arrayOf = $new
                 ? $this->definitions->resolveTaggedNew($id)
                 : $this->definitions->resolveTagged($id);
 
@@ -297,12 +310,19 @@ class Container implements DefinitionContainerInterface
                 throw new ContainerException(sprintf('Service provider lied about providing (%s) service', $id));
             }
 
-            return $this->resolve($id, $new);
+            return $this->resolve($id, $new, $args);
         }
 
         foreach ($this->delegates as $delegate) {
             if ($delegate->has($id)) {
-                $resolved = $delegate->get($id);
+                // Use getNew() for ReflectionContainer when $new is true or args are provided
+                if ($delegate instanceof ReflectionContainer) {
+                    $resolved = $new || $args !== []
+                        ? $delegate->getNew($id, $args)
+                        : $delegate->get($id, $args);
+                } else {
+                    $resolved = $delegate->get($id);
+                }
 
                 return $this->inflectors->inflect($resolved);
             }

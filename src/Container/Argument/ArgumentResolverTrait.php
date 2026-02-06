@@ -20,7 +20,7 @@ trait ArgumentResolverTrait
     {
         try {
             $container = $this->getContainer();
-        } catch (ContainerException $e) {
+        } catch (ContainerException) {
             $container = $this instanceof ReflectionContainer ? $this : null;
         }
 
@@ -52,7 +52,7 @@ trait ArgumentResolverTrait
                     }
 
                     continue;
-                } catch (NotFoundException $e) {
+                } catch (NotFoundException) {
                 }
             }
 
@@ -106,7 +106,7 @@ trait ArgumentResolverTrait
             throw new NotFoundException(sprintf(
                 'Unable to resolve a value for parameter (%s) in the function/method (%s)',
                 $name,
-                $method->getName()
+                $method->getName(),
             ));
         }
 
