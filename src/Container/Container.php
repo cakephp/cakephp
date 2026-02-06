@@ -29,14 +29,14 @@ class Container implements DefinitionContainerInterface
     protected array $delegates = [];
 
     /**
-     * @param \Cake\Container\Definition\DefinitionAggregateInterface|null $definitions
-     * @param \Cake\Container\ServiceProvider\ServiceProviderAggregateInterface|null $providers
-     * @param \Cake\Container\Inflector\InflectorAggregateInterface|null $inflectors
+     * @param \Cake\Container\Definition\DefinitionAggregateInterface $definitions
+     * @param \Cake\Container\ServiceProvider\ServiceProviderAggregateInterface $providers
+     * @param \Cake\Container\Inflector\InflectorAggregateInterface $inflectors
      */
     public function __construct(
-        protected ?DefinitionAggregateInterface $definitions = new DefinitionAggregate(),
-        protected ?ServiceProviderAggregateInterface $providers = new ServiceProviderAggregate(),
-        protected ?InflectorAggregateInterface $inflectors = new InflectorAggregate(),
+        protected DefinitionAggregateInterface $definitions = new DefinitionAggregate(),
+        protected ServiceProviderAggregateInterface $providers = new ServiceProviderAggregate(),
+        protected InflectorAggregateInterface $inflectors = new InflectorAggregate(),
     ) {
         $this->definitions->setContainer($this);
         $this->providers->setContainer($this);
