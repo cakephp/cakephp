@@ -281,15 +281,72 @@ class ContainerTest extends TestCase
         self::assertSame(NonExistent::class, $container->get(NonExistent::class));
     }
 
-//    public function testContainerResolvesWithNamedArgument(): void
-//    {
-//        $container = new Container();
-//        $container->add(Foo::class)
-//            ->addArgument('something', 'myString');
-//        self::assertTrue($container->has(Foo::class));
-//        $foo = $container->get(Foo::class);
-//        self::assertInstanceOf(Foo::class, $foo);
-//        self::assertInstanceOf(Bar::class, $foo->bar);
-//        self::assertSame('something', $foo->myString);
-//    }
+    /**
+     * Test that named arguments work when all required arguments are provided.
+     *
+     * Note: Partial autowiring (where some args are named and others are auto-wired)
+     * is not yet supported in Definition. For that use case, use Container::make().
+     */
+    public function testContainerResolvesWithNamedArgument(): void
+    {
+        $container = new Container();
+        $container->add(Foo::class)
+            ->addArgument(Bar::class, 'bar')
+            ->addArgument('something', 'myString');
+        self::assertTrue($container->has(Foo::class));
+        $foo = $container->get(Foo::class);
+        self::assertInstanceOf(Foo::class, $foo);
+        self::assertInstanceOf(Bar::class, $foo->bar);
+        self::assertSame('something', $foo->myString);
+    }
+
+    public function testContainerMakeWithArgs(): void
+    {
+        $container = new Container();
+        $foo = $container->make(Foo::class, ['myString' => 'hello world']);
+        self::assertInstanceOf(Foo::class, $foo);
+        self::assertInstanceOf(Bar::class, $foo->bar);
+        self::assertSame('hello world', $foo->myString);
+    }
+
+    public function testContainerMakeAlwaysReturnsNewInstance(): void
+    {
+        $container = new Container();
+        $fooOne = $container->make(Foo::class);
+        $fooTwo = $container->make(Foo::class);
+        self::assertNotSame($fooOne, $fooTwo);
+    }
+
+    public function testInterfaceToImplementationUsesExistingDefinition(): void
+    {
+        $container = new Container();
+        // Register Bar with specific configuration
+        $container->addShared(Bar::class);
+
+        // Map interface to the concrete class
+        $container->add(BarInterface::class, Bar::class);
+
+        // Get via interface should use the existing Bar definition
+        $barFromInterface = $container->get(BarInterface::class);
+        $barDirect = $container->get(Bar::class);
+
+        self::assertInstanceOf(Bar::class, $barFromInterface);
+        // Should be the same instance because Bar is shared
+        self::assertSame($barDirect, $barFromInterface);
+    }
+
+    public function testHasDefinitionOnlyChecksExplicitDefinitions(): void
+    {
+        $container = new Container();
+        $container->add(Foo::class);
+
+        // hasDefinition should return true for explicitly added definitions
+        self::assertTrue($container->hasDefinition(Foo::class));
+
+        // hasDefinition should return false for autowirable classes not explicitly added
+        self::assertFalse($container->hasDefinition(Bar::class));
+
+        // but has() should return true because autowiring can resolve it
+        self::assertTrue($container->has(Bar::class));
+    }
 }

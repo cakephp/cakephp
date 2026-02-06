@@ -43,6 +43,17 @@ interface DefinitionContainerInterface extends ContainerInterface
     public function getNew(mixed $id): mixed;
 
     /**
+     * Check if the container has a registered definition for the given id.
+     *
+     * Unlike `has()`, this only checks explicit definitions, not service providers
+     * or delegate containers.
+     *
+     * @param string $id
+     * @return bool
+     */
+    public function hasDefinition(string $id): bool;
+
+    /**
      * @param string $type
      * @param callable|null $callback
      * @return \Cake\Container\Inflector\InflectorInterface
