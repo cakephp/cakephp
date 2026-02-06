@@ -276,10 +276,11 @@ class ContainerTest extends TestCase
     public function testNonExistentClassCausesException(): void
     {
         $container = new Container();
-        $container->add(NonExistent::class);
+        $nonExistent = 'Cake\Test\TestCase\Container\NonExistent';
+        $container->add($nonExistent);
 
-        self::assertTrue($container->has(NonExistent::class));
-        self::assertSame(NonExistent::class, $container->get(NonExistent::class));
+        self::assertTrue($container->has($nonExistent));
+        self::assertSame($nonExistent, $container->get($nonExistent));
     }
 
     /**
