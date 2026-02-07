@@ -69,7 +69,7 @@ class ApcuEngineTest extends TestCase
         }
 
         Cache::enable();
-        $this->_configCache();
+        $this->configCache();
         Cache::clearAll();
     }
 
@@ -88,7 +88,7 @@ class ApcuEngineTest extends TestCase
      *
      * @param array $config
      */
-    protected function _configCache(array $config = []): void
+    protected function configCache(array $config = []): void
     {
         $defaults = [
             'className' => 'Apcu',
@@ -105,7 +105,7 @@ class ApcuEngineTest extends TestCase
      */
     public function testReadAndWriteCache(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'apcu');
         $this->assertNull($result);
@@ -155,7 +155,7 @@ class ApcuEngineTest extends TestCase
      */
     public function testExpiry(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'apcu');
         $this->assertNull($result);
@@ -175,7 +175,7 @@ class ApcuEngineTest extends TestCase
      */
     public function testSetWithTtl(): void
     {
-        $this->_configCache(['duration' => 99]);
+        $this->configCache(['duration' => 99]);
         $engine = Cache::pool('apcu');
         $this->assertNull($engine->get('test'));
 

@@ -1239,10 +1239,10 @@ HTML;
 
         // Header Charset : null (used by default UTF-8)
         //   Body Charset : ISO-2022-JP
-        $oldStyleEmail = $this->_getEmailByOldStyleCharset('iso-2022-jp', null);
+        $oldStyleEmail = $this->getEmailByOldStyleCharset('iso-2022-jp', null);
         $oldStyleHeaders = $oldStyleEmail->getHeaders($checkHeaders);
 
-        $newStyleEmail = $this->_getEmailByNewStyleCharset('iso-2022-jp', null);
+        $newStyleEmail = $this->getEmailByNewStyleCharset('iso-2022-jp', null);
         $newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
 
         $this->assertSame($oldStyleHeaders['From'], $newStyleHeaders['From']);
@@ -1252,10 +1252,10 @@ HTML;
 
         // Header Charset : UTF-8
         //   Boby Charset : ISO-2022-JP
-        $oldStyleEmail = $this->_getEmailByOldStyleCharset('iso-2022-jp', 'utf-8');
+        $oldStyleEmail = $this->getEmailByOldStyleCharset('iso-2022-jp', 'utf-8');
         $oldStyleHeaders = $oldStyleEmail->getHeaders($checkHeaders);
 
-        $newStyleEmail = $this->_getEmailByNewStyleCharset('iso-2022-jp', 'utf-8');
+        $newStyleEmail = $this->getEmailByNewStyleCharset('iso-2022-jp', 'utf-8');
         $newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
 
         $this->assertSame($oldStyleHeaders['From'], $newStyleHeaders['From']);
@@ -1265,10 +1265,10 @@ HTML;
 
         // Header Charset : ISO-2022-JP
         //   Boby Charset : UTF-8
-        $oldStyleEmail = $this->_getEmailByOldStyleCharset('utf-8', 'iso-2022-jp');
+        $oldStyleEmail = $this->getEmailByOldStyleCharset('utf-8', 'iso-2022-jp');
         $oldStyleHeaders = $oldStyleEmail->getHeaders($checkHeaders);
 
-        $newStyleEmail = $this->_getEmailByNewStyleCharset('utf-8', 'iso-2022-jp');
+        $newStyleEmail = $this->getEmailByNewStyleCharset('utf-8', 'iso-2022-jp');
         $newStyleHeaders = $newStyleEmail->getHeaders($checkHeaders);
 
         $this->assertSame($oldStyleHeaders['From'], $newStyleHeaders['From']);
@@ -1281,7 +1281,7 @@ HTML;
      * @param mixed $charset
      * @param mixed $headerCharset
      */
-    protected function _getEmailByOldStyleCharset($charset, $headerCharset): Message
+    protected function getEmailByOldStyleCharset($charset, $headerCharset): Message
     {
         $message = new Message(['transport' => 'debug']);
 
@@ -1305,7 +1305,7 @@ HTML;
      * @param mixed $charset
      * @param mixed $headerCharset
      */
-    protected function _getEmailByNewStyleCharset($charset, $headerCharset): Message
+    protected function getEmailByNewStyleCharset($charset, $headerCharset): Message
     {
         $message = new Message();
 

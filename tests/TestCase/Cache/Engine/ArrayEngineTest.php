@@ -34,7 +34,7 @@ class ArrayEngineTest extends TestCase
         parent::setUp();
 
         Cache::enable();
-        $this->_configCache();
+        $this->configCache();
         Cache::clearAll();
     }
 
@@ -53,7 +53,7 @@ class ArrayEngineTest extends TestCase
      *
      * @param array $config
      */
-    protected function _configCache($config = []): void
+    protected function configCache($config = []): void
     {
         $defaults = [
             'className' => 'Array',
@@ -70,7 +70,7 @@ class ArrayEngineTest extends TestCase
      */
     public function testReadAndWriteCache(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'array');
         $this->assertNull($result);
@@ -91,7 +91,7 @@ class ArrayEngineTest extends TestCase
      */
     public function testExpiry(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'array');
         $this->assertNull($result);

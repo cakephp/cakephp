@@ -52,7 +52,7 @@ class SomePagesController extends Controller
         return $this->response->withStringBody('new response');
     }
 
-    protected function _fail()
+    protected function fail()
     {
     }
 }

@@ -1147,7 +1147,7 @@ class MailerTest extends TestCase
         $this->assertContains('Content-Type: text/html; charset=UTF-8', $message);
 
         // UTF-8 is 8bit
-        $this->assertTrue($this->_checkContentTransferEncoding($message, '8bit'));
+        $this->assertTrue($this->checkContentTransferEncoding($message, '8bit'));
 
         $this->mailer->setCharset('ISO-2022-JP');
         $this->mailer->send();
@@ -1156,7 +1156,7 @@ class MailerTest extends TestCase
         $this->assertContains('Content-Type: text/html; charset=ISO-2022-JP', $message);
 
         // ISO-2022-JP is 7bit
-        $this->assertTrue($this->_checkContentTransferEncoding($message, '7bit'));
+        $this->assertTrue($this->checkContentTransferEncoding($message, '7bit'));
     }
 
     /**
@@ -1320,7 +1320,7 @@ class MailerTest extends TestCase
     /**
      * @param array|string $message
      */
-    protected function _checkContentTransferEncoding($message, string $charset): bool
+    protected function checkContentTransferEncoding($message, string $charset): bool
     {
         $boundary = '--' . $this->mailer->getBoundary();
         $result['text'] = false;

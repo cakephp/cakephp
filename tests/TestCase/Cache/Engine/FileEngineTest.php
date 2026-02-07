@@ -36,7 +36,7 @@ class FileEngineTest extends TestCase
     {
         parent::setUp();
         Cache::enable();
-        $this->_configCache();
+        $this->configCache();
         Cache::clear('file_test');
     }
 
@@ -57,7 +57,7 @@ class FileEngineTest extends TestCase
      *
      * @param array $config
      */
-    protected function _configCache($config = []): void
+    protected function configCache($config = []): void
     {
         $defaults = [
             'className' => 'File',
@@ -88,7 +88,7 @@ class FileEngineTest extends TestCase
      */
     public function testReadAndWriteCacheExpired(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'file_test');
         $this->assertNull($result);
@@ -134,7 +134,7 @@ class FileEngineTest extends TestCase
      */
     public function testExpiry(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'file_test');
         $this->assertNull($result);
@@ -148,7 +148,7 @@ class FileEngineTest extends TestCase
         $this->assertNull($result, 'Expired key no result.');
         $this->assertSame(0, Cache::pool('file_test')->get('other_test', 0), 'expired values get default.');
 
-        $this->_configCache(['duration' => '+1 second']);
+        $this->configCache(['duration' => '+1 second']);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('other_test', $data, 'file_test');
@@ -164,7 +164,7 @@ class FileEngineTest extends TestCase
      */
     public function testSetWithTtl(): void
     {
-        $this->_configCache(['duration' => 99]);
+        $this->configCache(['duration' => 99]);
         $engine = Cache::pool('file_test');
         $this->assertNull($engine->get('test'));
 
@@ -215,12 +215,12 @@ class FileEngineTest extends TestCase
      */
     public function testSerialize(): void
     {
-        $this->_configCache(['serialize' => true]);
+        $this->configCache(['serialize' => true]);
         $data = 'this is a test of the emergency broadcasting system';
         $write = Cache::write('serialize_test', $data, 'file_test');
         $this->assertTrue($write);
 
-        $this->_configCache(['serialize' => false]);
+        $this->configCache(['serialize' => false]);
         $read = Cache::read('serialize_test', 'file_test');
 
         Cache::delete('serialize_test', 'file_test');
@@ -233,7 +233,7 @@ class FileEngineTest extends TestCase
      */
     public function testClear(): void
     {
-        $this->_configCache(['duration' => 0]);
+        $this->configCache(['duration' => 0]);
 
         $data = 'this is a test of the emergency broadcasting system';
         Cache::write('serialize_test1', $data, 'file_test');
@@ -636,7 +636,7 @@ class FileEngineTest extends TestCase
      */
     public function testClearIsRestrictedToConfiguredPath(): void
     {
-        $this->_configCache([
+        $this->configCache([
             'prefix' => '',
             'path' => TMP . 'tests',
         ]);

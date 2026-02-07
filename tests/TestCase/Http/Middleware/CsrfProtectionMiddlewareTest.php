@@ -75,7 +75,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
     /**
      * Provides the request handler
      */
-    protected function _getRequestHandler(): RequestHandlerInterface
+    protected function getRequestHandler(): RequestHandlerInterface
     {
         return new TestRequestHandler(function () {
             return new Response();
@@ -190,7 +190,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         // No exception means the test is valid
         $middleware = new CsrfProtectionMiddleware();
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }
 
@@ -210,7 +210,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $middleware = new CsrfProtectionMiddleware();
         /** @var \Cake\Http\Response $response */
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
         $this->assertGreaterThan(32, strlen($response->getCookie('csrfToken')['value']));
     }
@@ -286,7 +286,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         // No exception means the test is valid
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }
 
@@ -310,7 +310,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $response = new Response();
 
         // No exception means the test is valid
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }
 
@@ -332,7 +332,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $middleware = new CsrfProtectionMiddleware();
 
         try {
-            $middleware->process($request, $this->_getRequestHandler());
+            $middleware->process($request, $this->getRequestHandler());
 
             $this->fail();
         } catch (InvalidCsrfTokenException $exception) {
@@ -417,7 +417,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'cookies' => ['csrfToken' => ["\x20\x26"]],
         ]);
         $middleware = new CsrfProtectionMiddleware();
-        $middleware->process($request, $this->_getRequestHandler());
+        $middleware->process($request, $this->getRequestHandler());
     }
 
     /**
@@ -437,7 +437,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'cookies' => ['csrfToken' => '*(&'],
         ]);
         $middleware = new CsrfProtectionMiddleware();
-        $middleware->process($request, $this->_getRequestHandler());
+        $middleware->process($request, $this->getRequestHandler());
     }
 
     /**
@@ -454,7 +454,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'cookies' => ['csrfToken' => ['nope']],
         ]);
         $middleware = new CsrfProtectionMiddleware();
-        $middleware->process($request, $this->_getRequestHandler());
+        $middleware->process($request, $this->getRequestHandler());
     }
 
     /**
@@ -474,7 +474,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $middleware = new CsrfProtectionMiddleware();
 
         try {
-            $middleware->process($request, $this->_getRequestHandler());
+            $middleware->process($request, $this->getRequestHandler());
 
             $this->fail();
         } catch (InvalidCsrfTokenException $exception) {
@@ -503,7 +503,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $middleware = new CsrfProtectionMiddleware();
 
         $this->expectException(InvalidCsrfTokenException::class);
-        $middleware->process($request, $this->_getRequestHandler());
+        $middleware->process($request, $this->getRequestHandler());
     }
 
     /**
@@ -521,7 +521,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
 
         $middleware = new CsrfProtectionMiddleware();
         $this->expectException(InvalidCsrfTokenException::class);
-        $middleware->process($request, $this->_getRequestHandler());
+        $middleware->process($request, $this->getRequestHandler());
     }
 
     /**
@@ -541,7 +541,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         $middleware = new CsrfProtectionMiddleware();
 
         try {
-            $middleware->process($request, $this->_getRequestHandler());
+            $middleware->process($request, $this->getRequestHandler());
 
             $this->fail();
         } catch (InvalidCsrfTokenException $exception) {
@@ -567,7 +567,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
             'httponly' => true,
             'samesite' => CookieInterface::SAMESITE_STRICT,
         ]);
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
 
         $this->assertEmpty($response->getCookie('csrfToken'));
         $cookie = $response->getCookie('token');
@@ -600,7 +600,7 @@ class CsrfProtectionMiddlewareTest extends TestCase
         ]);
         $response = new Response();
 
-        $response = $middleware->process($request, $this->_getRequestHandler());
+        $response = $middleware->process($request, $this->getRequestHandler());
         $this->assertInstanceOf(Response::class, $response);
     }
 

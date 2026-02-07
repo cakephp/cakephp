@@ -334,7 +334,7 @@ class SocketTest extends TestCase
     /**
      * _connectSocketToSslTls
      */
-    protected function _connectSocketToSslTls(): void
+    protected function connectSocketToSslTls(): void
     {
         $this->skipIf(!extension_loaded('openssl'), 'OpenSSL is not enabled cannot test SSL.');
         $configSslTls = ['host' => 'smtp.gmail.com', 'port' => 465, 'timeout' => 5];
@@ -353,7 +353,7 @@ class SocketTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         // testing wrong encryption mode
-        $this->_connectSocketToSslTls();
+        $this->connectSocketToSslTls();
         $this->Socket->enableCrypto('doesntExistMode', 'server');
         $this->Socket->disconnect();
     }
@@ -363,7 +363,7 @@ class SocketTest extends TestCase
      */
     public function testEnableCrypto(): void
     {
-        $this->_connectSocketToSslTls();
+        $this->connectSocketToSslTls();
         $this->Socket->enableCrypto('tls', 'client');
         $result = $this->Socket->disconnect();
         $this->assertTrue($result);
@@ -376,7 +376,7 @@ class SocketTest extends TestCase
     {
         $this->expectException(SocketException::class);
         // testing on tls server
-        $this->_connectSocketToSslTls();
+        $this->connectSocketToSslTls();
         $this->Socket->enableCrypto('tls', 'client');
         $this->expectWarningMessageMatches('/^Unable to perform enableCrypto operation on the current socket$/', function (): void {
             $this->Socket->enableCrypto('tls', 'client');
@@ -389,7 +389,7 @@ class SocketTest extends TestCase
     public function testEnableCryptoExceptionDisableTwice(): void
     {
         $this->expectException(SocketException::class);
-        $this->_connectSocketToSslTls();
+        $this->connectSocketToSslTls();
         $this->Socket->enableCrypto('tls', 'client', false);
     }
 
@@ -398,7 +398,7 @@ class SocketTest extends TestCase
      */
     public function testEnableCryptoEnableTls12(): void
     {
-        $this->_connectSocketToSslTls();
+        $this->connectSocketToSslTls();
         $this->assertFalse($this->Socket->isEncrypted());
         $this->Socket->enableCrypto('tlsv12', 'client', true);
         $this->assertTrue($this->Socket->isEncrypted());
@@ -409,7 +409,7 @@ class SocketTest extends TestCase
      */
     public function testEnableCryptoEnableStatus(): void
     {
-        $this->_connectSocketToSslTls();
+        $this->connectSocketToSslTls();
         $this->assertFalse($this->Socket->isEncrypted());
         $this->Socket->enableCrypto('tls', 'client', true);
         $this->assertTrue($this->Socket->isEncrypted());

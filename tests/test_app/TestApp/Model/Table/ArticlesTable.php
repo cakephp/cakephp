@@ -84,7 +84,7 @@ class ArticlesTable extends Table
     /**
      * Example protected method
      */
-    protected function _innerMethod(): void
+    protected function innerMethod(): void
     {
     }
 }

@@ -85,7 +85,7 @@ class TranslateBehaviorEavTest extends TestCase
      *
      * @param \Traversable|array $data
      */
-    protected function _extractTranslations($data): CollectionInterface
+    protected function extractTranslations($data): CollectionInterface
     {
         return new Collection($data)->map(function (EntityInterface $row) {
             $translations = $row->get('_translations');
@@ -497,7 +497,7 @@ class TranslateBehaviorEavTest extends TestCase
             ],
         ];
 
-        $translations = $this->_extractTranslations($results);
+        $translations = $this->extractTranslations($results);
         $this->assertEquals($expected, $translations->toArray());
         $expected = [
             1 => ['First Article' => 'First Article Body'],
@@ -513,7 +513,7 @@ class TranslateBehaviorEavTest extends TestCase
 
         $expected = [[]];
         $result = $table->find('translations')->where(['Articles.id' => $entity->id])->all();
-        $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+        $this->assertEquals($expected, $this->extractTranslations($result)->toArray());
 
         $entity = $result->first();
         $this->assertSame('Fourth Title', $entity->title);
@@ -542,7 +542,7 @@ class TranslateBehaviorEavTest extends TestCase
             ],
         ];
 
-        $translations = $this->_extractTranslations($results);
+        $translations = $this->extractTranslations($results);
         $this->assertEquals($expected, $translations->toArray());
 
         $expected = [
@@ -603,7 +603,7 @@ class TranslateBehaviorEavTest extends TestCase
             ],
         ];
 
-        $translations = $this->_extractTranslations($results);
+        $translations = $this->extractTranslations($results);
         $this->assertEquals($expected, $translations->toArray());
 
         $expected = [
@@ -686,7 +686,7 @@ class TranslateBehaviorEavTest extends TestCase
             ],
         ];
 
-        $translations = $this->_extractTranslations($comments);
+        $translations = $this->extractTranslations($comments);
         $this->assertEquals($expected, $translations->toArray());
     }
 
@@ -735,7 +735,7 @@ class TranslateBehaviorEavTest extends TestCase
                 'spa' => ['comment' => 'Comentario #4', 'locale' => 'spa'],
             ],
         ];
-        $translations = $this->_extractTranslations($comments);
+        $translations = $this->extractTranslations($comments);
         $this->assertEquals($expected, $translations->toArray());
 
         $this->assertSame('Titulek #1', $results->first()->title);
@@ -1488,7 +1488,7 @@ class TranslateBehaviorEavTest extends TestCase
             ],
         ];
         $result = $table->find('translations')->where(['Articles.id' => $result->id])->all();
-        $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+        $this->assertEquals($expected, $this->extractTranslations($result)->toArray());
 
         $entity = $result->first();
         $this->assertSame('Title EN', $entity->title);
@@ -1539,7 +1539,7 @@ class TranslateBehaviorEavTest extends TestCase
             ],
         ];
         $result = $table->find('translations')->where(['id' => $result->id]);
-        $this->assertEquals($expected, $this->_extractTranslations($result)->toArray());
+        $this->assertEquals($expected, $this->extractTranslations($result)->toArray());
     }
 
     /**
@@ -1565,7 +1565,7 @@ class TranslateBehaviorEavTest extends TestCase
 
         $this->assertNotFalse($table->save($article));
 
-        $results = $this->_extractTranslations(
+        $results = $this->extractTranslations(
             $table->find('translations')->where(['id' => 1]),
         )->first();
 
@@ -1603,7 +1603,7 @@ class TranslateBehaviorEavTest extends TestCase
 
         $this->assertNotFalse($table->save($article));
 
-        $results = $this->_extractTranslations(
+        $results = $this->extractTranslations(
             $table->find('translations')->where(['id' => 1]),
         )->first();
 
