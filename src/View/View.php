@@ -340,7 +340,7 @@ class View implements EventDispatcherInterface
      * @param \Cake\Http\ServerRequest|null $request Request instance.
      * @param \Cake\Http\Response|null $response Response instance.
      * @param \Cake\Event\EventManagerInterface|null $eventManager Event manager instance.
-     * @param array<string, mixed> $viewOptions View options. See {@link View::$_passedVars} for list of
+     * @param array<string, mixed> $viewOptions View options. See {@link View::$passedVars} for list of
      *   options which get set as class properties.
      */
     public function __construct(
