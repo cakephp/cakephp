@@ -32,6 +32,6 @@ class TestBeforeAfterHelper extends Helper
      */
     public function afterLayout(EventInterface $event, string $layoutFile): void
     {
-        $this->_View->append('content', 'modified in the afterlife');
+        $this->View->append('content', 'modified in the afterlife');
     }
 }

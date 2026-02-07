@@ -189,8 +189,8 @@ class IntegrationTestTraitTest extends TestCase
                 'X-CSRF-Token' => 'test321',
             ],
         ]);
-        $this->assertSame('test321', $this->_request['headers']['X-CSRF-Token']);
-        $this->assertArrayNotHasKey('webroot', $this->_request);
+        $this->assertSame('test321', $this->request['headers']['X-CSRF-Token']);
+        $this->assertArrayNotHasKey('webroot', $this->request);
     }
 
     /**
@@ -330,7 +330,7 @@ class IntegrationTestTraitTest extends TestCase
 
         $this->configApplication(Configure::read('App.namespace') . '\ApplicationWithExceptionsInMiddleware', null);
 
-        $this->_request['headers'] = ['Accept' => 'application/json'];
+        $this->request['headers'] = ['Accept' => 'application/json'];
         $this->get('/json_response/api_get_data');
         $this->assertResponseCode(403);
         $this->assertHeader('Content-Type', 'application/json');
@@ -343,11 +343,11 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testHead(): void
     {
-        $this->assertNull($this->_response);
+        $this->assertNull($this->response);
 
         $this->head('/request_action/test_request_action');
-        $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf(Response::class, $this->_response);
+        $this->assertNotEmpty($this->response);
+        $this->assertInstanceOf(Response::class, $this->response);
         $this->assertResponseSuccess();
     }
 
@@ -365,11 +365,11 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testOptions(): void
     {
-        $this->assertNull($this->_response);
+        $this->assertNull($this->response);
 
         $this->options('/request_action/test_request_action');
-        $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf(Response::class, $this->_response);
+        $this->assertNotEmpty($this->response);
+        $this->assertInstanceOf(Response::class, $this->response);
         $this->assertResponseSuccess();
     }
 
@@ -389,7 +389,7 @@ class IntegrationTestTraitTest extends TestCase
     {
         $this->get('/get/request_action/test_request_action');
         $this->assertResponseOk();
-        $this->assertSame('This is a test', (string)$this->_response->getBody());
+        $this->assertSame('This is a test', (string)$this->response->getBody());
     }
 
     /**
@@ -408,12 +408,12 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testGetHttpServer(): void
     {
-        $this->assertNull($this->_response);
+        $this->assertNull($this->response);
 
         $this->get('/request_action/test_request_action');
-        $this->assertNotEmpty($this->_response);
-        $this->assertInstanceOf(Response::class, $this->_response);
-        $this->assertSame('This is a test', (string)$this->_response->getBody());
+        $this->assertNotEmpty($this->response);
+        $this->assertInstanceOf(Response::class, $this->response);
+        $this->assertSame('This is a test', (string)$this->response->getBody());
         $this->assertHeader('X-Middleware', 'true');
     }
 
@@ -429,7 +429,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertResponseContains('"contentType":"text\/plain"');
         $this->assertHeader('X-Middleware', 'true');
 
-        $request = $this->_controller->getRequest();
+        $request = $this->controller->getRequest();
         $this->assertStringContainsString('/request_action/params_pass?q=query', $request->getRequestTarget());
     }
 
@@ -445,7 +445,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertResponseContains('"contentType":"text\/plain"');
         $this->assertHeader('X-Middleware', 'true');
 
-        $request = $this->_controller->getRequest();
+        $request = $this->controller->getRequest();
         $this->assertStringContainsString('/request_action/params_pass?q=query', $request->getRequestTarget());
         $this->assertStringContainsString('/request_action/params_pass', $request->getAttribute('here'));
     }
@@ -468,7 +468,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testPostDataHttpServer(): void
     {
         $this->post('/request_action/post_pass', ['title' => 'value']);
-        $data = json_decode('' . $this->_response->getBody());
+        $data = json_decode('' . $this->response->getBody());
         $this->assertSame('value', $data->title);
         $this->assertHeader('X-Middleware', 'true');
     }
@@ -485,7 +485,7 @@ class IntegrationTestTraitTest extends TestCase
         ]);
         $this->put('/request_action/post_pass', ['title' => 'value']);
         $this->assertResponseOk();
-        $data = json_decode('' . $this->_response->getBody());
+        $data = json_decode('' . $this->response->getBody());
         $this->assertSame('value', $data->title);
     }
 
@@ -530,7 +530,7 @@ class IntegrationTestTraitTest extends TestCase
         ]);
         $this->post('/request_action/uploaded_files');
         $this->assertHeader('X-Middleware', 'true');
-        $data = json_decode((string)$this->_response->getBody(), true);
+        $data = json_decode((string)$this->response->getBody(), true);
 
         $this->assertSame([
             'file' => 'Uploaded file',
@@ -546,10 +546,10 @@ class IntegrationTestTraitTest extends TestCase
     public function testInputDataHttpServer(): void
     {
         $this->post('/request_action/input_test', '{"hello":"world"}');
-        if ($this->_response->getBody()->isSeekable()) {
-            $this->_response->getBody()->rewind();
+        if ($this->response->getBody()->isSeekable()) {
+            $this->response->getBody()->rewind();
         }
-        $this->assertSame('world', $this->_response->getBody()->getContents());
+        $this->assertSame('world', $this->response->getBody()->getContents());
         $this->assertHeader('X-Middleware', 'true');
     }
 
@@ -561,7 +561,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->enableSecurityToken();
 
         $this->post('/request_action/input_test', '{"hello":"world"}');
-        $this->assertSame('world', '' . $this->_response->getBody());
+        $this->assertSame('world', '' . $this->response->getBody());
         $this->assertHeader('X-Middleware', 'true');
     }
 
@@ -583,11 +583,11 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsProperties(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf(Controller::class, $this->_controller);
-        $this->assertNotEmpty($this->_viewName, 'View name not set');
-        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
-        $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
-        $this->assertStringContainsString('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
+        $this->assertInstanceOf(Controller::class, $this->controller);
+        $this->assertNotEmpty($this->viewName, 'View name not set');
+        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->viewName);
+        $this->assertNotEmpty($this->layoutName, 'Layout name not set');
+        $this->assertStringContainsString('templates' . DS . 'layout' . DS . 'default.php', $this->layoutName);
 
         $this->assertTemplate('index');
         $this->assertLayout('default');
@@ -600,11 +600,11 @@ class IntegrationTestTraitTest extends TestCase
     public function testRequestSetsPropertiesHttpServer(): void
     {
         $this->post('/posts/index');
-        $this->assertInstanceOf(Controller::class, $this->_controller);
-        $this->assertNotEmpty($this->_viewName, 'View name not set');
-        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->_viewName);
-        $this->assertNotEmpty($this->_layoutName, 'Layout name not set');
-        $this->assertStringContainsString('templates' . DS . 'layout' . DS . 'default.php', $this->_layoutName);
+        $this->assertInstanceOf(Controller::class, $this->controller);
+        $this->assertNotEmpty($this->viewName, 'View name not set');
+        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'index.php', $this->viewName);
+        $this->assertNotEmpty($this->layoutName, 'Layout name not set');
+        $this->assertStringContainsString('templates' . DS . 'layout' . DS . 'default.php', $this->layoutName);
 
         $this->assertTemplate('index');
         $this->assertLayout('default');
@@ -627,7 +627,7 @@ class IntegrationTestTraitTest extends TestCase
     public function testAssertTemplateAfterCellRender(): void
     {
         $this->get('/posts/get');
-        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'get.php', $this->_viewName);
+        $this->assertStringContainsString('templates' . DS . 'Posts' . DS . 'get.php', $this->viewName);
         $this->assertTemplate('get');
         $this->assertResponseContains('cellcontent');
     }
@@ -734,7 +734,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->assertFlashElement('flash/error');
         $this->assertSession(true, 'test');
 
-        $result = $this->_requestSession->read('Flash.flash');
+        $result = $this->requestSession->read('Flash.flash');
         $this->assertSame(['flash/error'], Hash::extract($result, '{n}.element'));
     }
 
@@ -1185,36 +1185,36 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertResponseStatusCodes(): void
     {
-        $this->_response = new Response();
+        $this->response = new Response();
 
-        $this->_response = $this->_response->withStatus(200);
+        $this->response = $this->response->withStatus(200);
         $this->assertResponseOk();
 
-        $this->_response = $this->_response->withStatus(201);
+        $this->response = $this->response->withStatus(201);
         $this->assertResponseOk();
 
-        $this->_response = $this->_response->withStatus(204);
+        $this->response = $this->response->withStatus(204);
         $this->assertResponseOk();
 
-        $this->_response = $this->_response->withStatus(202);
+        $this->response = $this->response->withStatus(202);
         $this->assertResponseSuccess();
 
-        $this->_response = $this->_response->withStatus(302);
+        $this->response = $this->response->withStatus(302);
         $this->assertResponseSuccess();
 
-        $this->_response = $this->_response->withStatus(400);
+        $this->response = $this->response->withStatus(400);
         $this->assertResponseError();
 
-        $this->_response = $this->_response->withStatus(417);
+        $this->response = $this->response->withStatus(417);
         $this->assertResponseError();
 
-        $this->_response = $this->_response->withStatus(500);
+        $this->response = $this->response->withStatus(500);
         $this->assertResponseFailure();
 
-        $this->_response = $this->_response->withStatus(505);
+        $this->response = $this->response->withStatus(505);
         $this->assertResponseFailure();
 
-        $this->_response = $this->_response->withStatus(301);
+        $this->response = $this->response->withStatus(301);
         $this->assertResponseCode(301);
     }
 
@@ -1223,8 +1223,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirect(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withHeader('Location', 'http://localhost/get/tasks/index');
+        $this->response = new Response();
+        $this->response = $this->response->withHeader('Location', 'http://localhost/get/tasks/index');
 
         $this->assertRedirect();
         $this->assertRedirect('/get/tasks/index');
@@ -1238,11 +1238,11 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectBack(): void
     {
-        $this->_response = new Response();
-        $this->_request = [
+        $this->response = new Response();
+        $this->request = [
             'url' => '/get/tasks/index',
         ];
-        $this->_response = $this->_response
+        $this->response = $this->response
             ->withStatus(302)
             ->withHeader('Location', 'http://localhost/get/tasks/index');
 
@@ -1254,11 +1254,11 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectBackSpecificCode(): void
     {
-        $this->_response = new Response();
-        $this->_request = [
+        $this->response = new Response();
+        $this->request = [
             'url' => '/get/tasks/index',
         ];
-        $this->_response = $this->_response
+        $this->response = $this->response
             ->withStatus(301)
             ->withHeader('Location', 'http://localhost/get/tasks/index');
 
@@ -1270,11 +1270,11 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectBackInvalid(): void
     {
-        $this->_response = new Response();
-        $this->_request = [
+        $this->response = new Response();
+        $this->request = [
             'url' => '/get/tasks/edit',
         ];
-        $this->_response = $this->_response
+        $this->response = $this->response
             ->withStatus(302)
             ->withHeader('Location', 'http://localhost/get/tasks/index');
 
@@ -1288,13 +1288,13 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectBackToReferer(): void
     {
-        $this->_response = new Response();
-        $this->_request = [
+        $this->response = new Response();
+        $this->request = [
             'environment' => [
                 'HTTP_REFERER' => 'http://localhost/get/tasks/index',
             ],
         ];
-        $this->_response = $this->_response
+        $this->response = $this->response
             ->withStatus(302)
             ->withHeader('Location', 'http://localhost/get/tasks/index');
 
@@ -1306,13 +1306,13 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectBackToRefererSpecificCode(): void
     {
-        $this->_response = new Response();
-        $this->_request = [
+        $this->response = new Response();
+        $this->request = [
             'environment' => [
                 'HTTP_REFERER' => 'http://localhost/get/tasks/index',
             ],
         ];
-        $this->_response = $this->_response
+        $this->response = $this->response
             ->withStatus(301)
             ->withHeader('Location', 'http://localhost/get/tasks/index');
 
@@ -1324,13 +1324,13 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectBackToRefererInvalid(): void
     {
-        $this->_response = new Response();
-        $this->_request = [
+        $this->response = new Response();
+        $this->request = [
             'environment' => [
                 'HTTP_REFERER' => 'http://localhost/get/tasks/index',
             ],
         ];
-        $this->_response = $this->_response
+        $this->response = $this->response
             ->withStatus(302)
             ->withHeader('Location', 'http://localhost/get/tasks/view/1');
 
@@ -1344,8 +1344,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectEquals(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withHeader('Location', '/get/tasks/index');
+        $this->response = new Response();
+        $this->response = $this->response->withHeader('Location', '/get/tasks/index');
 
         $this->assertRedirect();
         $this->assertRedirectEquals('/get/tasks/index');
@@ -1359,8 +1359,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectNotContains(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withHeader('Location', 'http://localhost/tasks/index');
+        $this->response = new Response();
+        $this->response = $this->response->withHeader('Location', 'http://localhost/tasks/index');
         $this->assertRedirectNotContains('test');
     }
 
@@ -1369,7 +1369,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertNoRedirect(): void
     {
-        $this->_response = new Response();
+        $this->response = new Response();
 
         $this->assertNoRedirect();
     }
@@ -1379,8 +1379,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectContains(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withHeader('Location', 'http://localhost/tasks/index');
+        $this->response = new Response();
+        $this->response = $this->response->withHeader('Location', 'http://localhost/tasks/index');
 
         $this->assertRedirectContains('/tasks/index');
     }
@@ -1390,9 +1390,9 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectWithRelativeUrl(): void
     {
-        $this->_response = new Response();
+        $this->response = new Response();
         // Simulate authentication plugin returning relative URL
-        $this->_response = $this->_response->withHeader('Location', '/get/users/login');
+        $this->response = $this->response->withHeader('Location', '/get/users/login');
 
         // Should work with string URL
         $this->assertRedirect('/get/users/login');
@@ -1406,9 +1406,9 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectEqualsWithRelativeUrl(): void
     {
-        $this->_response = new Response();
+        $this->response = new Response();
         // Simulate authentication plugin returning relative URL
-        $this->_response = $this->_response->withHeader('Location', '/get/users/login');
+        $this->response = $this->response->withHeader('Location', '/get/users/login');
 
         // Should work with string URL
         $this->assertRedirectEquals('/get/users/login');
@@ -1428,9 +1428,9 @@ class IntegrationTestTraitTest extends TestCase
             ['_name' => 'login:form'],
         );
 
-        $this->_response = new Response();
+        $this->response = new Response();
         // Simulate authentication plugin returning relative URL
-        $this->_response = $this->_response->withHeader('Location', '/user/signin');
+        $this->response = $this->response->withHeader('Location', '/user/signin');
 
         // Should work with named route
         $this->assertRedirect(['_name' => 'login:form']);
@@ -1442,15 +1442,15 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertRedirectMixedUrlFormats(): void
     {
-        $this->_response = new Response();
+        $this->response = new Response();
 
         // Test with absolute URL in header, checking with relative path
-        $this->_response = $this->_response->withHeader('Location', 'http://localhost/get/tasks/view/1');
+        $this->response = $this->response->withHeader('Location', 'http://localhost/get/tasks/view/1');
         $this->assertRedirect('/get/tasks/view/1');
         $this->assertRedirectEquals('/get/tasks/view/1');
 
         // Test with relative URL in header, checking with absolute URL
-        $this->_response = $this->_response->withHeader('Location', '/get/tasks/edit/2');
+        $this->response = $this->response->withHeader('Location', '/get/tasks/edit/2');
         $this->assertRedirect('http://localhost/get/tasks/edit/2');
         $this->assertRedirectEquals('http://localhost/get/tasks/edit/2');
     }
@@ -1460,8 +1460,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertHeader(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withHeader('Etag', 'abc123');
+        $this->response = new Response();
+        $this->response = $this->response->withHeader('Etag', 'abc123');
 
         $this->assertHeader('Etag', 'abc123');
     }
@@ -1471,8 +1471,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertHeaderContains(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withHeader('Etag', 'abc123');
+        $this->response = new Response();
+        $this->response = $this->response->withHeader('Etag', 'abc123');
 
         $this->assertHeaderContains('Etag', 'abc');
     }
@@ -1482,8 +1482,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertHeaderNotContains(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withHeader('Etag', 'abc123');
+        $this->response = new Response();
+        $this->response = $this->response->withHeader('Etag', 'abc123');
 
         $this->assertHeaderNotContains('Etag', 'xyz');
     }
@@ -1493,8 +1493,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertContentType(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withType('json');
+        $this->response = new Response();
+        $this->response = $this->response->withType('json');
 
         $this->assertContentType('json');
         $this->assertContentType('application/json');
@@ -1516,8 +1516,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertResponseEquals(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withStringBody('Some content');
+        $this->response = new Response();
+        $this->response = $this->response->withStringBody('Some content');
 
         $this->assertResponseEquals('Some content');
     }
@@ -1527,8 +1527,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertResponseNotEquals(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withStringBody('Some content');
+        $this->response = new Response();
+        $this->response = $this->response->withStringBody('Some content');
 
         $this->assertResponseNotEquals('Some Content');
     }
@@ -1538,8 +1538,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertResponseContains(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withStringBody('Some content');
+        $this->response = new Response();
+        $this->response = $this->response->withStringBody('Some content');
 
         $this->assertResponseContains('content');
     }
@@ -1549,8 +1549,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertResponseContainsWithIgnoreCaseFlag(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withStringBody('Some content');
+        $this->response = new Response();
+        $this->response = $this->response->withStringBody('Some content');
 
         $this->assertResponseContains('some', 'Failed asserting that the body contains given content', true);
     }
@@ -1560,8 +1560,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertResponseNotContains(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withStringBody('Some content');
+        $this->response = new Response();
+        $this->response = $this->response->withStringBody('Some content');
 
         $this->assertResponseNotContains('contents');
     }
@@ -1571,8 +1571,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertResponseRegExp(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withStringBody('Some content');
+        $this->response = new Response();
+        $this->response = $this->response->withStringBody('Some content');
 
         $this->assertResponseRegExp('/cont/');
     }
@@ -1592,8 +1592,8 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testAssertResponseNotRegExp(): void
     {
-        $this->_response = new Response();
-        $this->_response = $this->_response->withStringBody('Some content');
+        $this->response = new Response();
+        $this->response = $this->response->withStringBody('Some content');
 
         $this->assertResponseNotRegExp('/cant/');
     }
@@ -1932,7 +1932,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."');
         $this->get('/notfound');
-        $this->_response = $this->_response->withCookie(new Cookie('cookie', 'value'));
+        $this->response = $this->response->withCookie(new Cookie('cookie', 'value'));
         $this->assertCookieNotSet('cookie');
     }
 
@@ -1944,7 +1944,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."');
         $this->get('/notfound');
-        $this->_response = $this->_response->withHeader('Location', '/redirect');
+        $this->response = $this->response->withHeader('Location', '/redirect');
         $this->assertNoRedirect();
     }
 
@@ -1967,7 +1967,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."');
         $this->get('/notfound');
-        $this->_response = $this->_response->withStringBody('body');
+        $this->response = $this->response->withStringBody('body');
         $this->assertResponseNotEquals('body');
     }
 
@@ -1979,7 +1979,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to `Cake\Routing\Exception\MissingRouteException`: "A route matching `/notfound` could not be found."');
         $this->get('/notfound');
-        $this->_response = $this->_response->withStringBody('body');
+        $this->response = $this->response->withStringBody('body');
         $this->assertResponseRegExp('/patternNotFound/');
     }
 
@@ -1994,7 +1994,7 @@ class IntegrationTestTraitTest extends TestCase
         $this->expectException(AssertionFailedError::class);
         $this->expectExceptionMessage('Possibly related to `OutOfBoundsException`: "oh no!"');
         $this->get('/posts/throw_exception');
-        $this->_requestSession = new Session();
+        $this->requestSession = new Session();
         $this->$assertMethod(...$rest);
     }
 
@@ -2018,7 +2018,7 @@ class IntegrationTestTraitTest extends TestCase
      */
     public function testViewVariableNotFoundShouldReturnNull(): void
     {
-        $this->_controller = new Controller(new ServerRequest());
+        $this->controller = new Controller(new ServerRequest());
         $this->assertNull($this->viewVariable('notFound'));
     }
 

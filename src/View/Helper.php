@@ -70,7 +70,7 @@ class Helper implements EventListenerInterface
      *
      * @var \Cake\View\View
      */
-    protected View $_View;
+    protected View $View;
 
     /**
      * Default Constructor
@@ -80,7 +80,7 @@ class Helper implements EventListenerInterface
      */
     public function __construct(View $view, array $config = [])
     {
-        $this->_View = $view;
+        $this->View = $view;
         $this->setConfig($config);
 
         if ($this->helpers) {
@@ -105,7 +105,7 @@ class Helper implements EventListenerInterface
         if (isset($this->helpers[$name])) {
             $config = ['enabled' => false] + $this->helpers[$name];
 
-            return $this->helperInstances[$name] = $this->_View->loadHelper($name, $config);
+            return $this->helperInstances[$name] = $this->View->loadHelper($name, $config);
         }
 
         return null;
@@ -118,7 +118,7 @@ class Helper implements EventListenerInterface
      */
     public function getView(): View
     {
-        return $this->_View;
+        return $this->View;
     }
 
     /**

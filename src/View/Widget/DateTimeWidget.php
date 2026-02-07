@@ -41,7 +41,7 @@ class DateTimeWidget extends BasicWidget
      *
      * @var \Cake\View\StringTemplate
      */
-    protected StringTemplate $_templates;
+    protected StringTemplate $templates;
 
     /**
      * Data defaults.
@@ -125,11 +125,11 @@ class DateTimeWidget extends BasicWidget
         $data['value'] = $this->formatDateTime($data['val'] === true ? new DateTimeImmutable() : $data['val'], $data);
         unset($data['val'], $data['timezone'], $data['format']);
 
-        return $this->_templates->format('input', [
+        return $this->templates->format('input', [
             'name' => $data['name'],
             'type' => $data['type'],
             'templateVars' => $data['templateVars'],
-            'attrs' => $this->_templates->formatAttributes(
+            'attrs' => $this->templates->formatAttributes(
                 $data,
                 ['name', 'type'],
             ),

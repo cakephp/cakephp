@@ -51,7 +51,7 @@ class TextHelper extends Helper
      *
      * @var array<string, array>
      */
-    protected array $_placeholders = [];
+    protected array $placeholders = [];
 
     /**
      * Call methods from String utility class
@@ -83,7 +83,7 @@ class TextHelper extends Helper
      */
     public function autoLinkUrls(string $text, array $options = []): string
     {
-        $this->_placeholders = [];
+        $this->placeholders = [];
         $options += ['escape' => true];
 
         // phpcs:disable Generic.Files.LineLength
@@ -141,7 +141,7 @@ class TextHelper extends Helper
             $match = $matches['url_bare'];
         }
         $key = hash_hmac('sha1', $match, Security::getSalt());
-        $this->_placeholders[$key] = [
+        $this->placeholders[$key] = [
             'content' => $match,
             'envelope' => $envelope,
         ];
@@ -159,7 +159,7 @@ class TextHelper extends Helper
     protected function linkUrls(string $text, array $htmlOptions): string
     {
         $replace = [];
-        foreach ($this->_placeholders as $hash => $content) {
+        foreach ($this->placeholders as $hash => $content) {
             $link = $content['content'];
             $url = $content['content'];
             $envelope = $content['envelope'];
@@ -212,7 +212,7 @@ class TextHelper extends Helper
     protected function linkEmails(string $text, array $options): string
     {
         $replace = [];
-        foreach ($this->_placeholders as $hash => $content) {
+        foreach ($this->placeholders as $hash => $content) {
             $url = $content['content'];
             $envelope = $content['envelope'];
             $replace[$hash] = $envelope[0] . $this->Html->link($url, 'mailto:' . $url, $options) . $envelope[1];
@@ -236,7 +236,7 @@ class TextHelper extends Helper
     public function autoLinkEmails(string $text, array $options = []): string
     {
         $options += ['escape' => true];
-        $this->_placeholders = [];
+        $this->placeholders = [];
 
         $atom = '[\p{L}0-9!#$%&\'*+\/=?^_`{|}~-]';
         $text = preg_replace_callback(

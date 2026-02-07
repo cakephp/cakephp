@@ -34,7 +34,7 @@ class ButtonWidget implements WidgetInterface
      *
      * @var \Cake\View\StringTemplate
      */
-    protected StringTemplate $_templates;
+    protected StringTemplate $templates;
 
     /**
      * Constructor.
@@ -43,7 +43,7 @@ class ButtonWidget implements WidgetInterface
      */
     public function __construct(StringTemplate $templates)
     {
-        $this->_templates = $templates;
+        $this->templates = $templates;
     }
 
     /**
@@ -73,10 +73,10 @@ class ButtonWidget implements WidgetInterface
             'templateVars' => [],
         ];
 
-        return $this->_templates->format('button', [
+        return $this->templates->format('button', [
             'text' => $data['escape'] ? h($data['text']) : $data['text'],
             'templateVars' => $data['templateVars'],
-            'attrs' => $this->_templates->formatAttributes($data, ['text', 'escapeAttributes']),
+            'attrs' => $this->templates->formatAttributes($data, ['text', 'escapeAttributes']),
         ]);
     }
 

@@ -52,14 +52,14 @@ class ViewBlock
      *
      * @var array<string, string>
      */
-    protected array $_blocks = [];
+    protected array $blocks = [];
 
     /**
      * The active blocks being captured.
      *
      * @var array<string, string>
      */
-    protected array $_active = [];
+    protected array $active = [];
 
     /**
      * Should the currently captured content be discarded on ViewBlock::end()
@@ -67,7 +67,7 @@ class ViewBlock
      * @see \Cake\View\ViewBlock::end()
      * @var bool
      */
-    protected bool $_discardActiveBufferOnEnd = false;
+    protected bool $discardActiveBufferOnEnd = false;
 
     /**
      * Start capturing output for a 'block'
@@ -87,10 +87,10 @@ class ViewBlock
      */
     public function start(string $name, string $mode = ViewBlock::OVERRIDE): void
     {
-        if (array_key_exists($name, $this->_active)) {
+        if (array_key_exists($name, $this->active)) {
             throw new CakeException(sprintf('A view block with the name `%s` is already/still open.', $name));
         }
-        $this->_active[$name] = $mode;
+        $this->active[$name] = $mode;
         ob_start();
     }
 
@@ -102,26 +102,26 @@ class ViewBlock
      */
     public function end(): void
     {
-        if ($this->_discardActiveBufferOnEnd) {
-            $this->_discardActiveBufferOnEnd = false;
+        if ($this->discardActiveBufferOnEnd) {
+            $this->discardActiveBufferOnEnd = false;
             ob_end_clean();
 
             return;
         }
 
-        if (!$this->_active) {
+        if (!$this->active) {
             return;
         }
 
-        $mode = end($this->_active);
-        $active = key($this->_active);
+        $mode = end($this->active);
+        $active = key($this->active);
         $content = (string)ob_get_clean();
         if ($mode === ViewBlock::OVERRIDE) {
-            $this->_blocks[$active] = $content;
+            $this->blocks[$active] = $content;
         } else {
             $this->concat($active, $content, $mode);
         }
-        array_pop($this->_active);
+        array_pop($this->active);
     }
 
     /**
@@ -147,13 +147,13 @@ class ViewBlock
             return;
         }
 
-        if (!isset($this->_blocks[$name])) {
-            $this->_blocks[$name] = '';
+        if (!isset($this->blocks[$name])) {
+            $this->blocks[$name] = '';
         }
         if ($mode === ViewBlock::PREPEND) {
-            $this->_blocks[$name] = $value . $this->_blocks[$name];
+            $this->blocks[$name] = $value . $this->blocks[$name];
         } else {
-            $this->_blocks[$name] .= $value;
+            $this->blocks[$name] .= $value;
         }
     }
 
@@ -168,7 +168,7 @@ class ViewBlock
      */
     public function set(string $name, mixed $value): void
     {
-        $this->_blocks[$name] = (string)$value;
+        $this->blocks[$name] = (string)$value;
     }
 
     /**
@@ -180,7 +180,7 @@ class ViewBlock
      */
     public function get(string $name, string $default = ''): string
     {
-        return $this->_blocks[$name] ?? $default;
+        return $this->blocks[$name] ?? $default;
     }
 
     /**
@@ -191,7 +191,7 @@ class ViewBlock
      */
     public function exists(string $name): bool
     {
-        return isset($this->_blocks[$name]);
+        return isset($this->blocks[$name]);
     }
 
     /**
@@ -201,7 +201,7 @@ class ViewBlock
      */
     public function keys(): array
     {
-        return array_keys($this->_blocks);
+        return array_keys($this->blocks);
     }
 
     /**
@@ -212,7 +212,7 @@ class ViewBlock
     public function active(): ?string
     {
         /** @var string|null */
-        return array_key_last($this->_active);
+        return array_key_last($this->active);
     }
 
     /**
@@ -222,6 +222,6 @@ class ViewBlock
      */
     public function unclosed(): array
     {
-        return $this->_active;
+        return $this->active;
     }
 }

@@ -169,7 +169,7 @@ TEXT;
         $result = Debugger::exportVar($View);
         $expected = <<<TEXT
 object(Cake\View\View) id:0 {
-  [protected] _helpers => object(Cake\View\HelperRegistry) id:1 {}
+  [protected] helperRegistry => object(Cake\View\HelperRegistry) id:1 {}
   [protected] Blocks => object(Cake\View\ViewBlock) id:2 {}
   [protected] plugin => null
   [protected] name => ''
@@ -187,14 +187,14 @@ object(Cake\View\View) id:0 {
   [protected] layoutPath => ''
   [protected] autoLayout => true
   [protected] viewVars => []
-  [protected] _ext => '.php'
+  [protected] ext => '.php'
   [protected] subDir => ''
   [protected] theme => null
   [protected] request => object(Cake\Http\ServerRequest) id:3 {}
   [protected] response => object(Cake\Http\Response) id:4 {}
   [protected] elementCache => 'default'
   [protected] configMergeStrategy => 'deep'
-  [protected] _passedVars => [
+  [protected] passedVars => [
     (int) 0 => 'viewVars',
     (int) 1 => 'autoLayout',
     (int) 2 => 'helpers',
@@ -208,13 +208,13 @@ object(Cake\View\View) id:0 {
     (int) 10 => 'configMergeStrategy'
   ]
   [protected] defaultConfig => []
-  [protected] _paths => []
-  [protected] _pathsForPlugin => []
-  [protected] _parents => []
-  [protected] _current => ''
-  [protected] _currentType => ''
-  [protected] _stack => []
-  [protected] _viewBlockClass => 'Cake\View\ViewBlock'
+  [protected] paths => []
+  [protected] pathsForPlugin => []
+  [protected] parents => []
+  [protected] current => ''
+  [protected] currentType => ''
+  [protected] stack => []
+  [protected] viewBlockClass => 'Cake\View\ViewBlock'
   [protected] eventManager => object(Cake\Event\EventManager) id:5 {}
   [protected] eventClass => 'Cake\Event\Event'
   [protected] config => []

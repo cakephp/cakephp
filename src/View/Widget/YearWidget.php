@@ -49,7 +49,7 @@ class YearWidget extends BasicWidget
      *
      * @var \Cake\View\Widget\SelectBoxWidget
      */
-    protected SelectBoxWidget $_select;
+    protected SelectBoxWidget $select;
 
     /**
      * Constructor
@@ -61,7 +61,7 @@ class YearWidget extends BasicWidget
     {
         parent::__construct($templates);
 
-        $this->_select = $selectBox;
+        $this->select = $selectBox;
     }
 
     /**
@@ -111,6 +111,6 @@ class YearWidget extends BasicWidget
 
         unset($data['order'], $data['min'], $data['max']);
 
-        return $this->_select->render($data, $context);
+        return $this->select->render($data, $context);
     }
 }

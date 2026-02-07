@@ -41,7 +41,7 @@ class StringTemplate
      *
      * @var array<string, bool>
      */
-    protected array $_compactAttributes = [
+    protected array $compactAttributes = [
         'allowfullscreen' => true,
         'async' => true,
         'autofocus' => true,
@@ -98,14 +98,14 @@ class StringTemplate
      *
      * @var array
      */
-    protected array $_configStack = [];
+    protected array $configStack = [];
 
     /**
      * Contains the list of compiled templates
      *
      * @var array<string, array>
      */
-    protected array $_compiled = [];
+    protected array $compiled = [];
 
     /**
      * Constructor.
@@ -124,9 +124,9 @@ class StringTemplate
      */
     public function push(): void
     {
-        $this->_configStack[] = [
+        $this->configStack[] = [
             $this->config,
-            $this->_compiled,
+            $this->compiled,
         ];
     }
 
@@ -137,10 +137,10 @@ class StringTemplate
      */
     public function pop(): void
     {
-        if (!$this->_configStack) {
+        if (!$this->configStack) {
             return;
         }
-        [$this->config, $this->_compiled] = array_pop($this->_configStack);
+        [$this->config, $this->compiled] = array_pop($this->configStack);
     }
 
     /**
@@ -190,7 +190,7 @@ class StringTemplate
 
             $template = str_replace('%', '%%', $template);
             preg_match_all('#\{\{([\w\.]+)\}\}#', $template, $matches);
-            $this->_compiled[$name] = [
+            $this->compiled[$name] = [
                 str_replace($matches[0], '%s', $template),
                 $matches[1],
             ];
@@ -227,7 +227,7 @@ class StringTemplate
     public function remove(string $name): void
     {
         $this->deleteConfig($name);
-        unset($this->_compiled[$name]);
+        unset($this->compiled[$name]);
     }
 
     /**
@@ -240,10 +240,10 @@ class StringTemplate
      */
     public function format(string $name, array $data): string
     {
-        if (!isset($this->_compiled[$name])) {
+        if (!isset($this->compiled[$name])) {
             throw new InvalidArgumentException(sprintf('Cannot find template named `%s`.', $name));
         }
-        [$template, $placeholders] = $this->_compiled[$name];
+        [$template, $placeholders] = $this->compiled[$name];
 
         if (isset($data['templateVars'])) {
             $data += $data['templateVars'];
@@ -330,7 +330,7 @@ class StringTemplate
             return "{$value}=\"{$value}\"";
         }
         $truthy = [1, '1', true, 'true', $key];
-        $isMinimized = isset($this->_compactAttributes[$key]);
+        $isMinimized = isset($this->compactAttributes[$key]);
         if (!preg_match('/\A(\w|[.-])+\z/', $key)) {
             $key = h($key);
         }

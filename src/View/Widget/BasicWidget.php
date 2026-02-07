@@ -33,7 +33,7 @@ class BasicWidget implements WidgetInterface
      *
      * @var \Cake\View\StringTemplate
      */
-    protected StringTemplate $_templates;
+    protected StringTemplate $templates;
 
     /**
      * Data defaults.
@@ -55,7 +55,7 @@ class BasicWidget implements WidgetInterface
      */
     public function __construct(StringTemplate $templates)
     {
-        $this->_templates = $templates;
+        $this->templates = $templates;
     }
 
     /**
@@ -99,11 +99,11 @@ class BasicWidget implements WidgetInterface
             }
         }
 
-        return $this->_templates->format('input', [
+        return $this->templates->format('input', [
             'name' => $data['name'],
             'type' => $data['type'],
             'templateVars' => $data['templateVars'],
-            'attrs' => $this->_templates->formatAttributes(
+            'attrs' => $this->templates->formatAttributes(
                 $data,
                 ['name', 'type'],
             ),

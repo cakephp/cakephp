@@ -70,7 +70,7 @@ abstract class TestCase extends BaseTestCase
      *
      * @var array
      */
-    protected array $_configure = [];
+    protected array $configure = [];
 
     /**
      * Plugins to be loaded after app instance is created ContainerStubTrait::creatApp()
@@ -82,7 +82,7 @@ abstract class TestCase extends BaseTestCase
     /**
      * @var \Cake\Error\PhpError|null
      */
-    private ?PhpError $_capturedError = null;
+    private ?PhpError $capturedError = null;
 
     /**
      * Overrides SimpleTestCase::skipIf to provide a boolean return value
@@ -132,12 +132,12 @@ abstract class TestCase extends BaseTestCase
         $default = error_reporting();
         error_reporting($errorLevel);
 
-        $this->_capturedError = null;
+        $this->capturedError = null;
         set_error_handler(
             function (int $code, string $description, string $file, int $line) {
                 $trace = Debugger::trace(['start' => 1, 'format' => 'points']);
                 assert(is_array($trace));
-                $this->_capturedError = new PhpError($code, $description, $file, $line, $trace);
+                $this->capturedError = new PhpError($code, $description, $file, $line, $trace);
 
                 return true;
             },
@@ -150,11 +150,11 @@ abstract class TestCase extends BaseTestCase
             restore_error_handler();
             error_reporting($default);
         }
-        if ($this->_capturedError === null) {
+        if ($this->capturedError === null) {
             $this->fail('No error was captured');
         }
-        /** @var \Cake\Error\PhpError $this->_capturedError */
-        return $this->_capturedError;
+
+        return $this->capturedError;
     }
 
     /**
@@ -242,8 +242,8 @@ abstract class TestCase extends BaseTestCase
         parent::setUp();
         $this->setupFixtures();
 
-        if (!$this->_configure) {
-            $this->_configure = Configure::read();
+        if (!$this->configure) {
+            $this->configure = Configure::read();
         }
         if (class_exists(Router::class, false)) {
             Router::reload();
@@ -268,12 +268,12 @@ abstract class TestCase extends BaseTestCase
         parent::tearDown();
         $this->teardownFixtures();
 
-        if ($this->_configure) {
+        if ($this->configure) {
             Configure::clear();
-            Configure::write($this->_configure);
+            Configure::write($this->configure);
         }
         $this->getTableLocator()->clear();
-        $this->_configure = [];
+        $this->configure = [];
         $this->tableLocator = null;
         if (class_exists(Mockery::class)) {
             Mockery::close();
