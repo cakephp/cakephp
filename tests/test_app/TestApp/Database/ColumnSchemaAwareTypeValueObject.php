@@ -5,15 +5,15 @@ namespace TestApp\Database;
 
 class ColumnSchemaAwareTypeValueObject
 {
-    protected $_value;
+    protected $value;
 
     public function __construct(string $value)
     {
-        $this->_value = $value;
+        $this->value = $value;
     }
 
     public function value(): string
     {
-        return $this->_value;
+        return $this->value;
     }
 }

@@ -8,11 +8,11 @@ use Exception;
 
 class CakeStreamWrapper implements ArrayAccess
 {
-    private $_stream;
+    private $stream;
 
-    private $_query = [];
+    private $query = [];
 
-    private $_data = [
+    private $data = [
         'headers' => [
             'HTTP/1.1 200 OK',
         ],
@@ -28,33 +28,33 @@ class CakeStreamWrapper implements ArrayAccess
 
         $query = parse_url($path, PHP_URL_QUERY);
         if ($query) {
-            parse_str($query, $this->_query);
+            parse_str($query, $this->query);
         }
 
-        $this->_stream = fopen('php://memory', 'rb+');
-        fwrite($this->_stream, str_repeat('x', 20000));
-        rewind($this->_stream);
+        $this->stream = fopen('php://memory', 'rb+');
+        fwrite($this->stream, str_repeat('x', 20000));
+        rewind($this->stream);
 
         return true;
     }
 
     public function stream_close(): bool
     {
-        return fclose($this->_stream);
+        return fclose($this->stream);
     }
 
     public function stream_read(int $count): string
     {
-        if (isset($this->_query['sleep'])) {
+        if (isset($this->query['sleep'])) {
             sleep(1);
         }
 
-        return fread($this->_stream, $count);
+        return fread($this->stream, $count);
     }
 
     public function stream_eof(): bool
     {
-        return feof($this->_stream);
+        return feof($this->stream);
     }
 
     public function stream_set_option(int $option, int $arg1, int $arg2): bool
@@ -67,7 +67,7 @@ class CakeStreamWrapper implements ArrayAccess
      */
     public function offsetExists(mixed $offset): bool
     {
-        return isset($this->_data[$offset]);
+        return isset($this->data[$offset]);
     }
 
     /**
@@ -75,7 +75,7 @@ class CakeStreamWrapper implements ArrayAccess
      */
     public function offsetGet(mixed $offset): mixed
     {
-        return $this->_data[$offset];
+        return $this->data[$offset];
     }
 
     /**
@@ -83,7 +83,7 @@ class CakeStreamWrapper implements ArrayAccess
      */
     public function offsetSet(mixed $offset, mixed $value): void
     {
-        $this->_data[$offset] = $value;
+        $this->data[$offset] = $value;
     }
 
     /**
@@ -91,6 +91,6 @@ class CakeStreamWrapper implements ArrayAccess
      */
     public function offsetUnset(mixed $offset): void
     {
-        unset($this->_data[$offset]);
+        unset($this->data[$offset]);
     }
 }
