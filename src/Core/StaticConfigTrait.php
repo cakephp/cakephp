@@ -146,7 +146,7 @@ trait StaticConfigTrait
      * If you wish to modify an existing configuration, you should drop it,
      * change configuration and then re-add it.
      *
-     * If the implementing objects supports a `$_registry` object the named configuration
+     * If the implementing objects supports a `$registry` object the named configuration
      * will also be unloaded from the registry.
      *
      * @param string $config An existing configuration you wish to remove.

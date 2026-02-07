@@ -34,7 +34,7 @@ class PluralRules
      *
      * @var array<string, int>
      */
-    protected static array $_rulesMap = [
+    protected static array $rulesMap = [
         'af' => 1,
         'am' => 2,
         'ar' => 13,
@@ -149,15 +149,15 @@ class PluralRules
             throw new InvalidArgumentException('Invalid locale provided');
         }
 
-        if (!isset(static::$_rulesMap[$locale])) {
+        if (!isset(static::$rulesMap[$locale])) {
             $locale = explode('_', $locale)[0];
         }
 
-        if (!isset(static::$_rulesMap[$locale])) {
+        if (!isset(static::$rulesMap[$locale])) {
             return 0;
         }
 
-        return match (static::$_rulesMap[$locale]) {
+        return match (static::$rulesMap[$locale]) {
             0 => 0,
             1 => $n === 1 ? 0 : 1,
             2 => $n > 1 ? 1 : 0,

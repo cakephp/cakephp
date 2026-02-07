@@ -51,7 +51,7 @@ class CakeException extends RuntimeException
      * when debug mode is off.
      *
      * @param array|string $message Either the string of the error message, or an array of attributes
-     *   that are made available in the view, and sprintf()'d into Exception::$_messageTemplate
+     *   that are made available in the view, and sprintf()'d into Exception::$messageTemplate
      * @param int|null $code The error code
      * @param \Throwable|null $previous the previous exception.
      */
