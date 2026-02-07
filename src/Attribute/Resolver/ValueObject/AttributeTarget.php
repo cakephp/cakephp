@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Attribute\Resolver\ValueObject;
 
 use Cake\Attribute\Resolver\Enum\AttributeTargetType;
+use JsonSerializable;
 
 /**
  * Represents information about where an attribute is attached.
@@ -28,7 +29,7 @@ use Cake\Attribute\Resolver\Enum\AttributeTargetType;
  *
  * This class is readonly and immutable for safe serialization.
  */
-readonly class AttributeTarget
+readonly class AttributeTarget implements JsonSerializable
 {
     /**
      * Constructor for AttributeTarget.
@@ -76,5 +77,15 @@ readonly class AttributeTarget
             name: (string)$data['name'],
             declaringClass: isset($data['declaringClass']) ? (string)$data['declaringClass'] : null,
         );
+    }
+
+    /**
+     * Specify data which should be serialized to JSON.
+     *
+     * @return array<string, mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

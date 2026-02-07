@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Attribute\Resolver\ValueObject;
 
 use InvalidArgumentException;
+use JsonSerializable;
 use RuntimeException;
 
 /**
@@ -31,7 +32,7 @@ use RuntimeException;
  *
  * This class is readonly and immutable for safe serialization and caching.
  */
-readonly class AttributeInfo
+readonly class AttributeInfo implements JsonSerializable
 {
     /**
      * Constructor for AttributeInfo.
@@ -142,5 +143,15 @@ readonly class AttributeInfo
     public function isInstanceOf(string $className): bool
     {
         return is_a($this->attributeName, $className, true);
+    }
+
+    /**
+     * Specify data which should be serialized to JSON.
+     *
+     * @return array<string, mixed>
+     */
+    public function jsonSerialize(): array
+    {
+        return $this->toArray();
     }
 }

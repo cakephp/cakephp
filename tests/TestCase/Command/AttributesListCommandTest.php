@@ -490,4 +490,172 @@ class AttributesListCommandTest extends TestCase
         $this->assertOutputContains('verbose');
         $this->assertOutputContains('truncation');
     }
+
+    /**
+     * Test format option appears in help
+     */
+    public function testFormatOptionInHelp(): void
+    {
+        $this->exec('attributes list --help');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        $this->assertOutputContains('format');
+        $this->assertOutputContains('json');
+    }
+
+    /**
+     * Test default format is text
+     */
+    public function testDefaultFormatIsText(): void
+    {
+        $this->exec('attributes list');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+        // Text format should show table headers
+        $this->assertOutputContains('Attribute');
+        $this->assertOutputContains('Class');
+        $this->assertOutputContains('Plugin');
+    }
+
+    /**
+     * Test JSON format output
+     */
+    public function testJsonFormatOutput(): void
+    {
+        $this->exec('attributes list --format json');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $output = $this->out->output();
+        $decoded = json_decode($output, true);
+
+        $this->assertIsArray($decoded);
+        $this->assertNotEmpty($decoded);
+    }
+
+    /**
+     * Test JSON format output structure
+     */
+    public function testJsonFormatOutputStructure(): void
+    {
+        $this->exec('attributes list --format json');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $output = $this->out->output();
+        $decoded = json_decode($output, true);
+
+        $this->assertIsArray($decoded);
+
+        // Check first item has required fields
+        if ($decoded !== []) {
+            $first = $decoded[0];
+            $this->assertArrayHasKey('className', $first);
+            $this->assertArrayHasKey('attributeName', $first);
+            $this->assertArrayHasKey('arguments', $first);
+            $this->assertArrayHasKey('filePath', $first);
+            $this->assertArrayHasKey('lineNumber', $first);
+            $this->assertArrayHasKey('target', $first);
+            $this->assertArrayHasKey('fileTime', $first);
+            $this->assertArrayHasKey('pluginName', $first);
+
+            // Check target structure
+            $this->assertArrayHasKey('type', $first['target']);
+            $this->assertArrayHasKey('name', $first['target']);
+            $this->assertArrayHasKey('declaringClass', $first['target']);
+        }
+    }
+
+    /**
+     * Test JSON format with short option
+     */
+    public function testJsonFormatWithShortOption(): void
+    {
+        $this->exec('attributes list -f json');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $output = $this->out->output();
+        $decoded = json_decode($output, true);
+
+        $this->assertIsArray($decoded);
+    }
+
+    /**
+     * Test JSON format with filter options
+     */
+    public function testJsonFormatWithFilters(): void
+    {
+        $this->exec('attributes list --format json --attribute TestRoute');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $output = $this->out->output();
+        $decoded = json_decode($output, true);
+
+        $this->assertIsArray($decoded);
+        // All items should have TestRoute in attribute name
+        foreach ($decoded as $item) {
+            $this->assertStringContainsString('TestRoute', $item['attributeName']);
+        }
+    }
+
+    /**
+     * Test JSON format does not include text headers
+     */
+    public function testJsonFormatNoTextHeaders(): void
+    {
+        $this->exec('attributes list --format json');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        // Should not contain text format headers
+        $this->assertOutputNotContains('Found');
+        $this->assertOutputNotContains('attributes:');
+    }
+
+    /**
+     * Test JSON format with empty results
+     */
+    public function testJsonFormatEmptyResults(): void
+    {
+        $emptyDir = TMP . 'empty_json_test_' . uniqid() . DS;
+        mkdir($emptyDir, 0777, true);
+
+        Resolver::drop('emptyjson');
+        Resolver::setConfig('emptyjson', [
+            'paths' => ['*.php'],
+            'basePath' => $emptyDir,
+        ]);
+
+        $this->exec('attributes list --config emptyjson --format json');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $output = $this->out->output();
+        $decoded = json_decode($output, true);
+
+        $this->assertIsArray($decoded);
+        $this->assertEmpty($decoded);
+
+        Resolver::drop('emptyjson');
+        rmdir($emptyDir);
+    }
+
+    /**
+     * Test JSON output is valid JSON
+     */
+    public function testJsonFormatValidJson(): void
+    {
+        $this->exec('attributes list --format json');
+        $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+
+        $output = $this->out->output();
+
+        // Should be valid JSON
+        json_decode($output);
+        $this->assertSame(JSON_ERROR_NONE, json_last_error());
+    }
+
+    /**
+     * Test invalid format option
+     */
+    public function testInvalidFormatOption(): void
+    {
+        $this->exec('attributes list --format invalid');
+        $this->assertExitCode(CommandInterface::CODE_ERROR);
+        $this->assertErrorContains('format');
+    }
 }

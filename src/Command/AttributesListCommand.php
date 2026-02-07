@@ -78,6 +78,12 @@ class AttributesListCommand extends Command
                 'help' => 'Display full class names without truncation.',
                 'boolean' => true,
             ])
+            ->addOption('format', [
+                'short' => 'f',
+                'help' => 'Output format (text, json).',
+                'default' => 'text',
+                'choices' => ['text', 'json'],
+            ])
             ->addOption('config', [
                 'default' => 'default',
                 'help' => 'The Resolver configuration to use.',
@@ -104,32 +110,19 @@ class AttributesListCommand extends Command
         $collection = $this->getFilteredCollection($configName);
         $attributes = $collection->toList();
 
+        $format = (string)$this->args->getOption('format');
+
         if ($attributes === []) {
-            $this->io->warning('No attributes found matching the criteria.');
-
-            return static::CODE_SUCCESS;
+            return match ($format) {
+                'json' => $this->outputJson($attributes),
+                default => $this->outputTextEmpty(),
+            };
         }
 
-        $this->io->out(sprintf('<info>Found %d attributes:</info>', count($attributes)));
-        $this->io->out('');
-
-        $verbose = (bool)$this->args->getOption('verbose');
-        $maxLength = $verbose ? PHP_INT_MAX : 40;
-
-        $tableData = [['Attribute', 'Class', 'Plugin', 'Type', 'Target']];
-        foreach ($attributes as $attr) {
-            $tableData[] = [
-                $this->truncateLeft($attr->attributeName, $maxLength),
-                $this->truncateLeft($attr->className, $maxLength),
-                $attr->pluginName ?? '-',
-                $attr->target->type->value,
-                $this->truncateLeft($this->getTargetDisplay($attr), $maxLength),
-            ];
-        }
-
-        $this->io->helper('Table')->output($tableData);
-
-        return static::CODE_SUCCESS;
+        return match ($format) {
+            'json' => $this->outputJson($attributes),
+            default => $this->outputText($attributes),
+        };
     }
 
     /**
@@ -193,6 +186,62 @@ class AttributesListCommand extends Command
         }
 
         return $attr->target->name;
+    }
+
+    /**
+     * Output attributes in text format.
+     *
+     * @param array<\Cake\Attribute\Resolver\ValueObject\AttributeInfo> $attributes List of attributes
+     * @return int Exit code
+     */
+    protected function outputText(array $attributes): int
+    {
+        $this->io->out(sprintf('<info>Found %d attributes:</info>', count($attributes)));
+        $this->io->out('');
+
+        $verbose = (bool)$this->args->getOption('verbose');
+        $maxLength = $verbose ? PHP_INT_MAX : 40;
+
+        $tableData = [['Attribute', 'Class', 'Plugin', 'Type', 'Target']];
+        foreach ($attributes as $attr) {
+            $tableData[] = [
+                $this->truncateLeft($attr->attributeName, $maxLength),
+                $this->truncateLeft($attr->className, $maxLength),
+                $attr->pluginName ?? '-',
+                $attr->target->type->value,
+                $this->truncateLeft($this->getTargetDisplay($attr), $maxLength),
+            ];
+        }
+
+        $this->io->helper('Table')->output($tableData);
+
+        return static::CODE_SUCCESS;
+    }
+
+    /**
+     * Output empty result message for text format.
+     *
+     * @return int Exit code
+     */
+    protected function outputTextEmpty(): int
+    {
+        $this->io->warning('No attributes found matching the criteria.');
+
+        return static::CODE_SUCCESS;
+    }
+
+    /**
+     * Output attributes in JSON format.
+     *
+     * @param array<\Cake\Attribute\Resolver\ValueObject\AttributeInfo> $attributes List of attributes
+     * @return int Exit code
+     * @throws \JsonException
+     */
+    protected function outputJson(array $attributes): int
+    {
+        $this->io->out(json_encode($attributes, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_THROW_ON_ERROR));
+
+        return static::CODE_SUCCESS;
     }
 
     /**

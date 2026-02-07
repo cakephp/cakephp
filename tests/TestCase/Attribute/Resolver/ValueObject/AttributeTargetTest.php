@@ -189,4 +189,21 @@ class AttributeTargetTest extends TestCase
         $this->assertSame('MyClass', $restored->name);
         $this->assertNull($restored->declaringClass);
     }
+
+    /**
+     * Test json_encode integration
+     */
+    public function testJsonEncode(): void
+    {
+        $target = new AttributeTarget(
+            type: AttributeTargetType::METHOD,
+            name: 'index',
+            declaringClass: 'App\Controller\UsersController',
+        );
+
+        $json = json_encode($target);
+        $decoded = json_decode($json, true);
+
+        $this->assertSame($target->toArray(), $decoded);
+    }
 }

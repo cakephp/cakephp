@@ -402,4 +402,32 @@ class AttributeInfoTest extends TestCase
         $this->assertNull($restored->pluginName);
         $this->assertSame(0, $restored->fileTime);
     }
+
+    /**
+     * Test json_encode integration
+     */
+    public function testJsonEncode(): void
+    {
+        $target = new AttributeTarget(
+            type: AttributeTargetType::METHOD,
+            name: 'index',
+            declaringClass: 'App\Controller\UsersController',
+        );
+
+        $info = new AttributeInfo(
+            className: 'App\Controller\UsersController',
+            attributeName: TestAttribute::class,
+            arguments: ['value' => 'test', 'number' => 42],
+            filePath: '/app/src/Controller/UsersController.php',
+            lineNumber: 50,
+            target: $target,
+            fileTime: 1234567890,
+            pluginName: 'MyPlugin',
+        );
+
+        $json = json_encode($info);
+        $decoded = json_decode($json, true);
+
+        $this->assertSame($info->toArray(), $decoded);
+    }
 }
