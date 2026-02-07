@@ -21,7 +21,7 @@ use function Cake\Core\env;
 /**
  * Compare a string to the contents of a file
  *
- * Implementing objects are expected to modify the `$_compareBasePath` property
+ * Implementing objects are expected to modify the `$compareBasePath` property
  * before use.
  */
 trait StringCompareTrait

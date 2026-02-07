@@ -264,7 +264,7 @@ class StringTemplate
     /**
      * Returns a space-delimited string with items of the $options array. If a key
      * of $options array happens to be one of those listed
-     * in `StringTemplate::$_compactAttributes` and its value is one of:
+     * in `StringTemplate::$compactAttributes` and its value is one of:
      *
      * - '1' (string)
      * - 1 (integer)
