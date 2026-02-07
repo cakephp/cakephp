@@ -618,7 +618,7 @@ abstract class Association
     /**
      * Sets the strategy name to be used to fetch associated records.
      *
-     * Valid strategies depend on the association type and are stored in $_validStrategies.
+     * Valid strategies depend on the association type and are stored in $validStrategies.
      * Some association types might only implement a default strategy, making this setting
      * ineffective.
      *

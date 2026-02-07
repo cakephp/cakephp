@@ -178,7 +178,7 @@ class Router
      * Gets the named route patterns for use in config/routes.php
      *
      * @return array<string, string> Named route elements
-     * @see \Cake\Routing\Router::$_namedExpressions
+     * @see \Cake\Routing\Router::$namedExpressions
      */
     public static function getNamedExpressions(): array
     {

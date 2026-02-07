@@ -56,7 +56,7 @@ class ArrayLog extends BaseLog
      * @param \Stringable|string $message The message you want to log.
      * @param array $context Additional information about the logged message
      * @return void
-     * @see \Cake\Log\Log::$_levels
+     * @see \Cake\Log\Log::$levels
      * @phpcsSuppress SlevomatCodingStandard.TypeHints.ParameterTypeHint.MissingNativeTypeHint
      */
     public function log($level, Stringable|string $message, array $context = []): void
