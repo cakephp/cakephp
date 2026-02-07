@@ -1591,7 +1591,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('posts')
@@ -1640,7 +1640,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('posts')
@@ -1689,7 +1689,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles')->addColumn('id', [
@@ -1756,7 +1756,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('ref_table')
@@ -1799,8 +1799,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())
-            ->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles')->addColumn('title', [
@@ -1820,7 +1819,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
         $table = new TableSchema('schema_articles')->addColumn('id', [
             'type' => 'integer',
@@ -1840,7 +1839,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('articles_tags')
@@ -1904,7 +1903,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
@@ -1922,7 +1921,7 @@ SQL;
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $connection->expects($this->any())->method('getWriteDriver')
+        $connection->method('getWriteDriver')
             ->willReturn($driver);
 
         $table = new TableSchema('schema_articles');
@@ -1996,8 +1995,7 @@ SQL;
             ->onlyMethods(['quote', 'exec'])
             ->disableOriginalConstructor()
             ->getMock();
-        $mock->expects($this->any())
-            ->method('quote')
+        $mock->method('quote')
             ->willReturnCallback(function ($value) {
                 return "'{$value}'";
             });
@@ -2007,12 +2005,10 @@ SQL;
             ->onlyMethods(['createPdo', 'version'])
             ->getMock();
 
-        $driver->expects($this->any())
-            ->method('createPdo')
+        $driver->method('createPdo')
             ->willReturn($mock);
 
-        $driver->expects($this->any())
-            ->method('version')
+        $driver->method('version')
             ->willReturnCallback(function () {
                 return '10.0.0';
             });

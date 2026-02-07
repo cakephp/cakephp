@@ -132,8 +132,7 @@ class DriverTest extends TestCase
             ->with($value, PDO::PARAM_STR)
             ->willReturn('string');
 
-        $this->driver->expects($this->any())
-            ->method('createPdo')
+        $this->driver->method('createPdo')
             ->willReturn($connection);
 
         $this->driver->schemaValue($value);
@@ -154,8 +153,7 @@ class DriverTest extends TestCase
             ->method('lastInsertId')
             ->willReturn('all-the-bears');
 
-        $this->driver->expects($this->any())
-            ->method('createPdo')
+        $this->driver->method('createPdo')
             ->willReturn($connection);
 
         $this->assertSame('all-the-bears', $this->driver->lastInsertId());
@@ -178,8 +176,7 @@ class DriverTest extends TestCase
             ->method('query')
             ->willReturn(new PDOStatement());
 
-        $this->driver->expects($this->any())
-            ->method('createPdo')
+        $this->driver->method('createPdo')
             ->willReturn($connection);
 
         $this->driver->connect();
@@ -310,12 +307,11 @@ class DriverTest extends TestCase
             ->setConstructorArgs([$inner, $this->driver])
             ->onlyMethods(['queryString','rowCount','execute'])
             ->getMock();
-        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo');
+        $statement->method('queryString')->willReturn('SELECT bar FROM foo');
         $statement->method('rowCount')->willReturn(3);
         $statement->method('execute')->willReturn(true);
 
-        $this->driver->expects($this->any())
-            ->method('prepare')
+        $this->driver->method('prepare')
             ->willReturn($statement);
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
 
@@ -339,11 +335,10 @@ class DriverTest extends TestCase
             ->getMock();
         $statement->method('rowCount')->willReturn(3);
         $statement->method('execute')->willReturn(true);
-        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo WHERE a=:a AND b=:b');
+        $statement->method('queryString')->willReturn('SELECT bar FROM foo WHERE a=:a AND b=:b');
 
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
-        $this->driver->expects($this->any())
-            ->method('prepare')
+        $this->driver->method('prepare')
             ->willReturn($statement);
 
         $this->driver->execute(
@@ -371,13 +366,12 @@ class DriverTest extends TestCase
             ->setConstructorArgs([$inner, $this->driver])
             ->onlyMethods(['queryString','rowCount','execute'])
             ->getMock();
-        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo');
+        $statement->method('queryString')->willReturn('SELECT bar FROM foo');
         $statement->method('rowCount')->willReturn(0);
         $statement->method('execute')->will($this->throwException(new PDOException()));
 
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
-        $this->driver->expects($this->any())
-            ->method('prepare')
+        $this->driver->method('prepare')
             ->willReturn($statement);
 
         try {
@@ -420,15 +414,12 @@ class DriverTest extends TestCase
             ->onlyMethods(['beginTransaction', 'commit', 'rollback', 'inTransaction'])
             ->getMock();
         $pdo
-            ->expects($this->any())
             ->method('beginTransaction')
             ->willReturn(true);
         $pdo
-            ->expects($this->any())
             ->method('commit')
             ->willReturn(true);
         $pdo
-            ->expects($this->any())
             ->method('rollBack')
             ->willReturn(true);
         $pdo->expects($this->exactly(5))
@@ -446,8 +437,7 @@ class DriverTest extends TestCase
             ->onlyMethods(['getPdo'])
             ->getMock();
 
-        $driver->expects($this->any())
-            ->method('getPdo')
+        $driver->method('getPdo')
             ->willReturn($pdo);
 
         $driver->beginTransaction();
@@ -491,12 +481,11 @@ class DriverTest extends TestCase
             ->setConstructorArgs([$inner, $this->driver])
             ->onlyMethods(['queryString','rowCount','execute'])
             ->getMock();
-        $statement->expects($this->any())->method('queryString')->willReturn('SELECT bar FROM foo');
+        $statement->method('queryString')->willReturn('SELECT bar FROM foo');
         $statement->method('rowCount')->willReturn(3);
         $statement->method('execute')->willReturn(true);
 
-        $this->driver->expects($this->any())
-            ->method('prepare')
+        $this->driver->method('prepare')
             ->willReturn($statement);
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
 

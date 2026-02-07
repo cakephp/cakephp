@@ -50,8 +50,7 @@ class ResponseEmitterTest extends TestCase
             ->onlyMethods(['setCookie'])
             ->getMock();
 
-        $this->emitter->expects($this->any())
-            ->method('setCookie')
+        $this->emitter->method('setCookie')
             ->willReturnCallback(function ($cookie) {
                 if (is_string($cookie)) {
                     $cookie = Cookie::createFromHeaderString($cookie, ['path' => '']);
