@@ -53,7 +53,7 @@ class MemcachedEngineTest extends TestCase
         $this->skipIf(!$socket, 'Memcached is not running.');
         fclose($socket);
 
-        $this->_configCache();
+        $this->configCache();
     }
 
     /**
@@ -61,7 +61,7 @@ class MemcachedEngineTest extends TestCase
      *
      * @param array $config
      */
-    protected function _configCache($config = []): void
+    protected function configCache($config = []): void
     {
         $defaults = [
             'className' => 'Memcached',
@@ -458,7 +458,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testReadAndWriteCache(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'memcached');
         $this->assertNull($result);
@@ -494,7 +494,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testReadMany(): void
     {
-        $this->_configCache(['duration' => 2]);
+        $this->configCache(['duration' => 2]);
         $data = [
             'App.falseTest' => false,
             'App.trueTest' => true,
@@ -523,7 +523,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testReadManyTreatNullAsValidCacheValue(): void
     {
-        $this->_configCache(['duration' => 2]);
+        $this->configCache(['duration' => 2]);
         $data = [
             'App.falseTest' => false,
             'App.trueTest' => true,
@@ -551,7 +551,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testWriteMany(): void
     {
-        $this->_configCache(['duration' => 2]);
+        $this->configCache(['duration' => 2]);
         $data = [
             'App.falseTest' => false,
             'App.trueTest' => true,
@@ -573,7 +573,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testExpiry(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'memcached');
         $this->assertNull($result);
@@ -586,7 +586,7 @@ class MemcachedEngineTest extends TestCase
         $result = Cache::read('other_test', 'memcached');
         $this->assertNull($result);
 
-        $this->_configCache(['duration' => '+1 second']);
+        $this->configCache(['duration' => '+1 second']);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('other_test', $data, 'memcached');
@@ -599,7 +599,7 @@ class MemcachedEngineTest extends TestCase
         $result = Cache::read('other_test', 'memcached');
         $this->assertNull($result);
 
-        $this->_configCache(['duration' => '+29 days']);
+        $this->configCache(['duration' => '+29 days']);
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('long_expiry_test', $data, 'memcached');
         $this->assertTrue($result);
@@ -615,7 +615,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testSetWithTtl(): void
     {
-        $this->_configCache(['duration' => 99]);
+        $this->configCache(['duration' => 99]);
         $engine = Cache::pool('memcached');
         $this->assertNull($engine->get('test'));
 
@@ -648,7 +648,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testDeleteMany(): void
     {
-        $this->_configCache();
+        $this->configCache();
         $data = [
             'App.falseTest' => false,
             'App.trueTest' => true,
@@ -752,7 +752,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testIncrementDecrementExpiring(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
         Cache::write('test_increment', 1, 'memcached');
         Cache::write('test_decrement', 1, 'memcached');
 
@@ -856,7 +856,7 @@ class MemcachedEngineTest extends TestCase
      */
     public function testZeroDuration(): void
     {
-        $this->_configCache(['duration' => 0]);
+        $this->configCache(['duration' => 0]);
         $result = Cache::write('test_key', 'written!', 'memcached');
 
         $this->assertTrue($result);

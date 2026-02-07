@@ -362,9 +362,9 @@ class HasMany extends Association
      *   If boolean it will be used a value for "cleanProperty" option.
      * @throws \InvalidArgumentException if non persisted entities are passed or if
      * any of them is lacking a primary key value
-     * @return void
+     * @return bool
      */
-    public function unlink(EntityInterface $sourceEntity, array $targetEntities, array|bool $options = []): void
+    public function unlink(EntityInterface $sourceEntity, array $targetEntities, array|bool $options = []): bool
     {
         if (is_bool($options)) {
             $options = [
@@ -374,7 +374,7 @@ class HasMany extends Association
             $options += ['cleanProperty' => true];
         }
         if ($targetEntities === []) {
-            return;
+            return true;
         }
 
         $foreignKey = (array)$this->getForeignKey();
@@ -391,7 +391,10 @@ class HasMany extends Association
                 ->toList(),
         ];
 
-        $this->doUnlink($foreignKey, $target, $conditions, $options);
+        $return = $this->doUnlink($foreignKey, $target, $conditions, $options);
+        if (!$return) {
+            return false;
+        }
 
         $result = $sourceEntity->get($property);
         if ($options['cleanProperty'] && $result !== null) {
@@ -408,6 +411,8 @@ class HasMany extends Association
         }
 
         $sourceEntity->setDirty($property, false);
+
+        return true;
     }
 
     /**
@@ -546,12 +551,14 @@ class HasMany extends Association
                     }
                 });
                 $query = $this->find()->where($conditions);
-                $ok = true;
-                foreach ($query->all() as $assoc) {
-                    $ok = $ok && $target->delete($assoc, $options);
+
+                /** @phpstan-ignore argument.templateType */
+                $return = $target->deleteMany($query->all(), $options);
+                if ($return === false) {
+                    return false;
                 }
 
-                return $ok;
+                return true;
             }
 
             $this->deleteAll($conditions);

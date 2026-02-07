@@ -62,7 +62,7 @@ class RedisEngineTest extends TestCase
         $this->skipIf($this->skipTest, 'Redis is not running.');
 
         Cache::enable();
-        $this->_configCache();
+        $this->configCache();
     }
 
     /**
@@ -84,7 +84,7 @@ class RedisEngineTest extends TestCase
      *
      * @param array $config
      */
-    protected function _configCache($config = []): void
+    protected function configCache($config = []): void
     {
         $defaults = [
             'className' => 'Redis',
@@ -495,7 +495,7 @@ class RedisEngineTest extends TestCase
      */
     public function testReadAndWriteCache(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'redis');
         $this->assertNull($result);
@@ -558,7 +558,7 @@ class RedisEngineTest extends TestCase
      */
     public function testExpiry(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
 
         $result = Cache::read('test', 'redis');
         $this->assertNull($result);
@@ -571,7 +571,7 @@ class RedisEngineTest extends TestCase
         $result = Cache::read('other_test', 'redis');
         $this->assertNull($result);
 
-        $this->_configCache(['duration' => '+1 second']);
+        $this->configCache(['duration' => '+1 second']);
 
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('other_test', $data, 'redis');
@@ -586,7 +586,7 @@ class RedisEngineTest extends TestCase
         $result = Cache::read('other_test', 'redis');
         $this->assertNull($result);
 
-        $this->_configCache(['duration' => '+29 days']);
+        $this->configCache(['duration' => '+29 days']);
         $data = 'this is a test of the emergency broadcasting system';
         $result = Cache::write('long_expiry_test', $data, 'redis');
         $this->assertTrue($result);
@@ -602,7 +602,7 @@ class RedisEngineTest extends TestCase
      */
     public function testSetWithTtl(): void
     {
-        $this->_configCache(['duration' => 99]);
+        $this->configCache(['duration' => 99]);
         $engine = Cache::pool('redis');
         $this->assertNull($engine->get('test'));
 
@@ -708,7 +708,7 @@ class RedisEngineTest extends TestCase
      */
     public function testIncrementDecrementForvever(): void
     {
-        $this->_configCache(['duration' => 0]);
+        $this->configCache(['duration' => 0]);
         Cache::delete('test_increment', 'redis');
         Cache::delete('test_decrement', 'redis');
 
@@ -727,7 +727,7 @@ class RedisEngineTest extends TestCase
      */
     public function testIncrementDecrementExpiring(): void
     {
-        $this->_configCache(['duration' => 1]);
+        $this->configCache(['duration' => 1]);
         Cache::delete('test_increment', 'redis');
         Cache::delete('test_decrement', 'redis');
 
@@ -849,7 +849,7 @@ class RedisEngineTest extends TestCase
      */
     public function testZeroDuration(): void
     {
-        $this->_configCache(['duration' => 0]);
+        $this->configCache(['duration' => 0]);
         $result = Cache::write('test_key', 'written!', 'redis');
 
         $this->assertTrue($result);

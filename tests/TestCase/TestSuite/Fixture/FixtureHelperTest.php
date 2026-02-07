@@ -175,7 +175,7 @@ class FixtureHelperTest extends TestCase
             {
             }
 
-            public function insert(ConnectionInterface $connection): bool
+            public function insert(ConnectionInterface $connection): void
             {
                 throw new PDOException('Missing key');
             }
@@ -194,7 +194,7 @@ class FixtureHelperTest extends TestCase
                     {
                     }
 
-                    public function insert(ConnectionInterface $connection): bool
+                    public function insert(ConnectionInterface $connection): void
                     {
                         throw new PDOException('Missing key');
                     }
@@ -242,7 +242,7 @@ class FixtureHelperTest extends TestCase
             {
             }
 
-            public function truncate(ConnectionInterface $connection): bool
+            public function truncate(ConnectionInterface $connection): void
             {
                 throw new PDOException('Missing key');
             }
@@ -261,7 +261,7 @@ class FixtureHelperTest extends TestCase
                     {
                     }
 
-                    public function truncate(ConnectionInterface $connection): bool
+                    public function truncate(ConnectionInterface $connection): void
                     {
                         throw new PDOException('Missing key');
                     }

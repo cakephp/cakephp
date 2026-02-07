@@ -314,7 +314,7 @@ class HtmlHelper extends Helper
      * @param array<string, mixed> $options Array of options and HTML attributes.
      * @return string An `<a>` element.
      * @see \Cake\Routing\Router::pathUrl()
-     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-links
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-links-from-route-paths
      */
     public function linkFromPath(string $content, string $path, array $params = [], array $options = []): string
     {
@@ -671,7 +671,7 @@ class HtmlHelper extends Helper
      * @param array<string, string> $data Style data array, keys will be used as property names, values as property values.
      * @param bool $oneLine Whether the style block should be displayed on one line.
      * @return string CSS styling data
-     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-css-programmatically
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#creating-css-programatically
      */
     public function style(array $data, bool $oneLine = true): string
     {
@@ -1052,6 +1052,7 @@ class HtmlHelper extends Helper
      *  Or an array where each item itself can be a path string or an associate array containing keys `src` and `type`
      * @param array<string, mixed> $options Array of HTML attributes, and special options above.
      * @return string Generated media element
+     * @link https://book.cakephp.org/5/en/views/helpers/html.html#linking-to-videos-and-audio-files
      */
     public function media(array|string|null $path, array $options = []): string
     {

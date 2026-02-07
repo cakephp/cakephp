@@ -33,7 +33,7 @@ class TableRegistryTest extends TestCase
      *
      * @var \Cake\ORM\Locator\LocatorInterface
      */
-    protected $_originalLocator;
+    protected $originalLocator;
 
     /**
      * Remember original instance to set it back on tearDown() just to make sure
@@ -42,7 +42,7 @@ class TableRegistryTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->_originalLocator = TableRegistry::getTableLocator();
+        $this->originalLocator = TableRegistry::getTableLocator();
     }
 
     /**
@@ -51,7 +51,7 @@ class TableRegistryTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        TableRegistry::setTableLocator($this->_originalLocator);
+        TableRegistry::setTableLocator($this->originalLocator);
     }
 
     /**
@@ -59,7 +59,7 @@ class TableRegistryTest extends TestCase
      *
      * @return \Cake\ORM\Locator\LocatorInterface|\PHPUnit\Framework\MockObject\MockObject
      */
-    protected function _setMockLocator()
+    protected function setMockLocator()
     {
         $locator = $this->createStub(LocatorInterface::class);
         TableRegistry::setTableLocator($locator);
@@ -72,7 +72,7 @@ class TableRegistryTest extends TestCase
      */
     public function testSetLocator(): void
     {
-        $locator = $this->_setMockLocator();
+        $locator = $this->setMockLocator();
 
         $this->assertSame($locator, TableRegistry::getTableLocator());
     }

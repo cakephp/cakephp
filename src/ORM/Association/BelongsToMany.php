@@ -950,14 +950,11 @@ class BelongsToMany extends Association
         $this->checkPersistenceStatus($sourceEntity, $targetEntities);
         $property = $this->getProperty();
 
-        $this->junction()->getConnection()->transactional(
-            function () use ($sourceEntity, $targetEntities, $options): void {
-                $links = $this->collectJointEntities($sourceEntity, $targetEntities);
-                foreach ($links as $entity) {
-                    $this->junctionTable->delete($entity, $options);
-                }
-            },
-        );
+        $links = $this->collectJointEntities($sourceEntity, $targetEntities);
+        $return = $this->junctionTable->deleteMany($links, $options);
+        if ($return === false) {
+            return false;
+        }
 
         /** @var array<\Cake\Datasource\EntityInterface> $existing */
         $existing = $sourceEntity->get($property) ?: [];
@@ -1376,10 +1373,10 @@ class BelongsToMany extends Association
      *   of this association
      * @param array<\Cake\Datasource\EntityInterface> $targetEntities list of entities belonging to the `target` side
      *   of this association
-     * @return bool
+     * @return void
      * @throws \InvalidArgumentException
      */
-    protected function checkPersistenceStatus(EntityInterface $sourceEntity, array $targetEntities): bool
+    protected function checkPersistenceStatus(EntityInterface $sourceEntity, array $targetEntities): void
     {
         if ($sourceEntity->isNew()) {
             $error = 'Source entity needs to be persisted before links can be created or removed.';
@@ -1392,8 +1389,6 @@ class BelongsToMany extends Association
                 throw new InvalidArgumentException($error);
             }
         }
-
-        return true;
     }
 
     /**

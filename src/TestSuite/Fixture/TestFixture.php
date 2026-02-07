@@ -197,7 +197,7 @@ class TestFixture implements FixtureInterface
     /**
      * @inheritDoc
      */
-    public function insert(ConnectionInterface $connection): bool
+    public function insert(ConnectionInterface $connection): void
     {
         assert($connection instanceof Connection);
         if ($this->records) {
@@ -211,8 +211,6 @@ class TestFixture implements FixtureInterface
             }
             $query->execute();
         }
-
-        return true;
     }
 
     /**
@@ -263,15 +261,13 @@ class TestFixture implements FixtureInterface
     /**
      * @inheritDoc
      */
-    public function truncate(ConnectionInterface $connection): bool
+    public function truncate(ConnectionInterface $connection): void
     {
         assert($connection instanceof Connection);
         $sql = $this->_schema->truncateSql($connection);
         foreach ($sql as $stmt) {
             $connection->execute($stmt);
         }
-
-        return true;
     }
 
     /**

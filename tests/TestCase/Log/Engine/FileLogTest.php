@@ -31,7 +31,7 @@ class FileLogTest extends TestCase
      */
     public function testLogFileWriting(): void
     {
-        $this->_deleteLogs(LOGS);
+        $this->deleteLogs(LOGS);
 
         $log = new FileLog(['path' => LOGS]);
         $log->log('warning', 'Test warning');
@@ -59,7 +59,7 @@ class FileLogTest extends TestCase
     public function testPathSetting(): void
     {
         $path = TMP . 'tests' . DS;
-        $this->_deleteLogs($path);
+        $this->deleteLogs($path);
 
         $log = new FileLog(compact('path'));
         $log->log('warning', 'Test warning');
@@ -72,7 +72,7 @@ class FileLogTest extends TestCase
     public function testRotation(): void
     {
         $path = TMP . 'tests' . DS;
-        $this->_deleteLogs($path);
+        $this->deleteLogs($path);
 
         file_put_contents($path . 'error.log', "this text is under 35 bytes\n");
         $log = new FileLog([
@@ -155,7 +155,7 @@ class FileLogTest extends TestCase
         }
 
         $path = TMP . 'tests' . DS;
-        $this->_deleteLogs($path);
+        $this->deleteLogs($path);
 
         $log = new FileLog(['path' => $path, 'mask' => 0666]);
         $log->log('warning', 'Test warning one');
@@ -184,7 +184,7 @@ class FileLogTest extends TestCase
      *
      * @param string $dir
      */
-    protected function _deleteLogs($dir): void
+    protected function deleteLogs($dir): void
     {
         $files = array_merge(glob($dir . '*.log'), glob($dir . '*.log.*'));
         foreach ($files as $file) {
@@ -197,7 +197,7 @@ class FileLogTest extends TestCase
      */
     public function testDateFormat(): void
     {
-        $this->_deleteLogs(LOGS);
+        $this->deleteLogs(LOGS);
 
         // 'c': ISO 8601 date (added in PHP 5)
         $log = new FileLog(['path' => LOGS, 'formatter.dateFormat' => 'c']);

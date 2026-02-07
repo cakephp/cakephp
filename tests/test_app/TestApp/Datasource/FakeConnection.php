@@ -10,7 +10,7 @@ use RuntimeException;
 
 class FakeConnection implements ConnectionInterface
 {
-    protected $_config = [];
+    protected $config = [];
 
     /**
      * Constructor.
@@ -19,7 +19,7 @@ class FakeConnection implements ConnectionInterface
      */
     public function __construct($config = [])
     {
-        $this->_config = $config;
+        $this->config = $config;
     }
 
     /**
@@ -29,7 +29,7 @@ class FakeConnection implements ConnectionInterface
      */
     public function config(): array
     {
-        return $this->_config;
+        return $this->config;
     }
 
     /**
@@ -37,11 +37,11 @@ class FakeConnection implements ConnectionInterface
      */
     public function configName(): string
     {
-        if (empty($this->_config['name'])) {
+        if (empty($this->config['name'])) {
             return '';
         }
 
-        return $this->_config['name'];
+        return $this->config['name'];
     }
 
     public function getDriver(string $role = self::ROLE_WRITE): object

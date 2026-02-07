@@ -130,7 +130,7 @@ trait PluginAssetsTrait
                 continue;
             }
 
-            if ($this->_isSymlinkValid($config['srcPath'], $dest)) {
+            if ($this->isSymlinkValid($config['srcPath'], $dest)) {
                 $this->io->verbose($dest . ' already exists', 1);
                 continue;
             }
@@ -282,7 +282,7 @@ trait PluginAssetsTrait
      * @param string $link
      * @return bool
      */
-    protected function _isSymlinkValid(string $target, string $link): bool
+    protected function isSymlinkValid(string $target, string $link): bool
     {
         if (!is_link($link)) {
             return false;

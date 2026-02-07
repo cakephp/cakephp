@@ -413,9 +413,8 @@ class ServerTest extends TestCase
         );
 
         $emitter = new class extends ResponseEmitter {
-            public function emit(ResponseInterface $response, $stream = null): bool
+            public function emit(ResponseInterface $response, $stream = null): void
             {
-                return true;
             }
         };
         $server->emit(new Response(), $emitter);

@@ -214,7 +214,7 @@ class LogTest extends TestCase
      */
     public function testLogFileWriting(): void
     {
-        $this->_resetLogConfig();
+        $this->resetLogConfig();
         if (file_exists(LOGS . 'error.log')) {
             unlink(LOGS . 'error.log');
         }
@@ -323,7 +323,7 @@ class LogTest extends TestCase
         }
     }
 
-    protected function _resetLogConfig(): void
+    protected function resetLogConfig(): void
     {
         Log::setConfig('debug', [
             'engine' => 'File',
@@ -339,7 +339,7 @@ class LogTest extends TestCase
         ]);
     }
 
-    protected function _deleteLogs(): void
+    protected function deleteLogs(): void
     {
         if (file_exists(LOGS . 'shops.log')) {
             unlink(LOGS . 'shops.log');
@@ -366,8 +366,8 @@ class LogTest extends TestCase
      */
     public function testScopedLogging(): void
     {
-        $this->_deleteLogs();
-        $this->_resetLogConfig();
+        $this->deleteLogs();
+        $this->resetLogConfig();
         Log::setConfig('shops', [
             'engine' => 'File',
             'path' => LOGS,
@@ -381,21 +381,21 @@ class LogTest extends TestCase
         $this->assertFileExists(LOGS . 'shops.log');
         $this->assertFileExists(LOGS . 'debug.log');
 
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::write('warning', 'warning message', 'orders');
         $this->assertFileExists(LOGS . 'error.log');
         $this->assertFileExists(LOGS . 'shops.log');
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
 
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::write('error', 'error message', ['scope' => 'orders']);
         $this->assertFileExists(LOGS . 'error.log');
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->assertFileDoesNotExist(LOGS . 'shops.log');
 
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::drop('shops');
     }
@@ -405,7 +405,7 @@ class LogTest extends TestCase
      */
     public function testScopedLoggingStrict(): void
     {
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::setConfig('debug', [
             'engine' => 'File',
@@ -426,13 +426,13 @@ class LogTest extends TestCase
         $this->assertFileDoesNotExist(LOGS . 'shops.log');
         $this->assertFileExists(LOGS . 'debug.log');
 
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::write('debug', 'debug message', 'orders');
         $this->assertFileExists(LOGS . 'shops.log');
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
 
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::drop('shops');
     }
@@ -452,7 +452,7 @@ class LogTest extends TestCase
             unlink(LOGS . 'debug.log');
         }
 
-        $this->_resetLogConfig();
+        $this->resetLogConfig();
         Log::setConfig('shops', [
             'engine' => 'File',
             'path' => LOGS,
@@ -466,21 +466,21 @@ class LogTest extends TestCase
         $this->assertFileExists(LOGS . 'shops.log');
         $this->assertFileExists(LOGS . 'debug.log');
 
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::error('error message', 'orders');
         $this->assertFileExists(LOGS . 'error.log');
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
         $this->assertFileDoesNotExist(LOGS . 'shops.log');
 
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::warning('warning message', 'orders');
         $this->assertFileExists(LOGS . 'error.log');
         $this->assertFileExists(LOGS . 'shops.log');
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
 
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::drop('shops');
     }
@@ -490,7 +490,7 @@ class LogTest extends TestCase
      */
     public function testScopedLoggingExclusive(): void
     {
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::setConfig('shops', [
             'engine' => 'File',
@@ -511,7 +511,7 @@ class LogTest extends TestCase
         $this->assertFileDoesNotExist(LOGS . 'eggs.log');
         $this->assertFileExists(LOGS . 'shops.log');
 
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::write('debug', 'eggs message', ['scope' => ['eggs']]);
         $this->assertFileExists(LOGS . 'eggs.log');
@@ -553,7 +553,7 @@ class LogTest extends TestCase
      */
     public function testConvenienceMethods(): void
     {
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         Log::setConfig('debug', [
             'engine' => 'File',
@@ -573,56 +573,56 @@ class LogTest extends TestCase
         $contents = file_get_contents(LOGS . 'error.log');
         $this->assertMatchesRegularExpression('/(emergency|critical): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         $testMessage = 'alert message';
         Log::alert($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
         $this->assertMatchesRegularExpression('/(alert|critical): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         $testMessage = 'critical message';
         Log::critical($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
         $this->assertStringContainsString('critical: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         $testMessage = 'error message';
         Log::error($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
         $this->assertStringContainsString('error: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         $testMessage = 'warning message';
         Log::warning($testMessage);
         $contents = file_get_contents(LOGS . 'error.log');
         $this->assertStringContainsString('warning: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'debug.log');
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         $testMessage = 'notice message';
         Log::notice($testMessage);
         $contents = file_get_contents(LOGS . 'debug.log');
         $this->assertMatchesRegularExpression('/(notice|debug): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'error.log');
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         $testMessage = 'info message';
         Log::info($testMessage);
         $contents = file_get_contents(LOGS . 'debug.log');
         $this->assertMatchesRegularExpression('/(info|debug): ' . $testMessage . '/', $contents);
         $this->assertFileDoesNotExist(LOGS . 'error.log');
-        $this->_deleteLogs();
+        $this->deleteLogs();
 
         $testMessage = 'debug message';
         Log::debug($testMessage);
         $contents = file_get_contents(LOGS . 'debug.log');
         $this->assertStringContainsString('debug: ' . $testMessage, $contents);
         $this->assertFileDoesNotExist(LOGS . 'error.log');
-        $this->_deleteLogs();
+        $this->deleteLogs();
     }
 
     /**

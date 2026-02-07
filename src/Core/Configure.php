@@ -319,11 +319,11 @@ class Configure
      * @param string $key name of configuration resource to load.
      * @param string $config Name of the configured engine to use to read the resource identified by $key.
      * @param bool $merge if config files should be merged instead of simply overridden
-     * @return bool True if load successful.
+     * @return void
      * @throws \Cake\Core\Exception\CakeException if the $config engine is not found
      * @link https://book.cakephp.org/5/en/development/configuration.html#reading-and-writing-configuration-files
      */
-    public static function load(string $key, string $config = 'default', bool $merge = true): bool
+    public static function load(string $key, string $config = 'default', bool $merge = true): void
     {
         $engine = static::getEngine($config);
         if (!$engine) {
@@ -343,8 +343,6 @@ class Configure
         }
 
         static::write($values);
-
-        return true;
     }
 
     /**

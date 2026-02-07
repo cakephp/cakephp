@@ -61,7 +61,7 @@ class CacheTest extends TestCase
     /**
      * Configure cache settings for test
      */
-    protected function _configCache(): void
+    protected function configCache(): void
     {
         Cache::setConfig('tests', [
             'engine' => 'File',
@@ -229,7 +229,7 @@ class CacheTest extends TestCase
     public function testNonFatalErrorsWithCacheDisable(): void
     {
         Cache::disable();
-        $this->_configCache();
+        $this->configCache();
 
         $this->assertTrue(Cache::write('no_save', 'Noooo!', 'tests'));
         $this->assertNull(Cache::read('no_save', 'tests'));
@@ -241,7 +241,7 @@ class CacheTest extends TestCase
      */
     public function testNullEngineWhenCacheDisable(): void
     {
-        $this->_configCache();
+        $this->configCache();
         Cache::disable();
 
         $result = Cache::pool('tests');
@@ -618,7 +618,7 @@ class CacheTest extends TestCase
      */
     public function testWriteEmptyValues(): void
     {
-        $this->_configCache();
+        $this->configCache();
         Cache::write('App.falseTest', false, 'tests');
         $this->assertFalse(Cache::read('App.falseTest', 'tests'));
 
@@ -640,7 +640,7 @@ class CacheTest extends TestCase
      */
     public function testWriteEmptyKey(): void
     {
-        $this->_configCache();
+        $this->configCache();
 
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('A cache key must be a non-empty string');
@@ -653,7 +653,7 @@ class CacheTest extends TestCase
      */
     public function testReadWriteMany(): void
     {
-        $this->_configCache();
+        $this->configCache();
         $data = [
             'App.falseTest' => false,
             'App.trueTest' => true,
@@ -677,7 +677,7 @@ class CacheTest extends TestCase
      */
     public function testDeleteMany(): void
     {
-        $this->_configCache();
+        $this->configCache();
         $data = [
             'App.falseTest' => false,
             'App.trueTest' => true,
@@ -703,7 +703,7 @@ class CacheTest extends TestCase
      */
     public function testDeleteManyPartialFailure(): void
     {
-        $this->_configCache();
+        $this->configCache();
         $data = [
             'App.exists' => 'yes',
             'App.exists2' => 'yes',
@@ -829,7 +829,7 @@ class CacheTest extends TestCase
      */
     public function testRemember(): void
     {
-        $this->_configCache();
+        $this->configCache();
         $counter = 0;
         $cacher = function () use ($counter) {
             return 'This is some data ' . $counter;
@@ -848,7 +848,7 @@ class CacheTest extends TestCase
      */
     public function testAdd(): void
     {
-        $this->_configCache();
+        $this->configCache();
         Cache::delete('test_add_key', 'tests');
 
         $result = Cache::add('test_add_key', 'test data', 'tests');
@@ -886,7 +886,7 @@ class CacheTest extends TestCase
      */
     public function testPool(): void
     {
-        $this->_configCache();
+        $this->configCache();
 
         $pool = Cache::pool('tests');
         $this->assertInstanceOf(SimpleCacheInterface::class, $pool);

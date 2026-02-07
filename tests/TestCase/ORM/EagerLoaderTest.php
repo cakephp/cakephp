@@ -453,7 +453,7 @@ class EagerLoaderTest extends TestCase
             'orders__id' => 'orders.id', 'orders__total' => 'orders.total',
             'orders__placed' => 'orders.placed',
         ];
-        $expected = $this->_quoteArray($expected);
+        $expected = $this->quoteArray($expected);
         $this->assertEquals($expected, $select);
 
         $contains['clients']['fields'] = ['name'];
@@ -466,7 +466,7 @@ class EagerLoaderTest extends TestCase
             // Primary key is now auto-added to ensure proper entity hydration
             'clients__id' => 'clients.id',
         ];
-        $expected = $this->_quoteArray($expected);
+        $expected = $this->quoteArray($expected);
         $this->assertEquals($expected, $select);
 
         $contains['clients']['fields'] = [];
@@ -480,7 +480,7 @@ class EagerLoaderTest extends TestCase
             'clients__name' => 'clients.name',
             'clients__phone' => 'clients.phone',
         ];
-        $expected = $this->_quoteArray($expected);
+        $expected = $this->quoteArray($expected);
         $this->assertEquals($expected, $select);
     }
 
@@ -604,7 +604,7 @@ class EagerLoaderTest extends TestCase
      * @param array $elements
      * @return array
      */
-    protected function _quoteArray($elements): array
+    protected function quoteArray($elements): array
     {
         if ($this->connection->getDriver()->isAutoQuotingEnabled()) {
             $quoter = function ($e) {

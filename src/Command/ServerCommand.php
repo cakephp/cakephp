@@ -88,7 +88,7 @@ class ServerCommand extends Command
      * Allows for checking and configuring prior to command or main execution
      *
      * @return void
-     * @link https://book.cakephp.org/5/en/console-and-shells.html#hook-methods
+     * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
      */
     protected function startup(): void
     {

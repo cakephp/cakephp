@@ -608,7 +608,7 @@ TEXT;
         );
     }
 
-    protected function _makeException(): RuntimeException
+    protected function makeException(): RuntimeException
     {
         return new RuntimeException('testing');
     }
@@ -619,7 +619,7 @@ TEXT;
     public function testGetUniqueFrames(): void
     {
         $parent = new RuntimeException('parent');
-        $child = $this->_makeException();
+        $child = $this->makeException();
 
         $result = Debugger::getUniqueFrames($child, $parent);
         $this->assertCount(1, $result);

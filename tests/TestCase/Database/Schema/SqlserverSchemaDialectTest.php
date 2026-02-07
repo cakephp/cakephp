@@ -39,7 +39,7 @@ class SqlserverSchemaDialectTest extends TestCase
     /**
      * Helper method for skipping tests that need a real connection.
      */
-    protected function _needsConnection(): void
+    protected function needsConnection(): void
     {
         $config = ConnectionManager::getConfig('test');
         $this->skipIf(!str_contains($config['driver'], 'Sqlserver'), 'Not using Sqlserver for test config');
@@ -48,9 +48,9 @@ class SqlserverSchemaDialectTest extends TestCase
     /**
      * Helper method for testing methods.
      */
-    protected function _createTables(ConnectionInterface $connection): void
+    protected function createTables(ConnectionInterface $connection): void
     {
-        $this->_needsConnection();
+        $this->needsConnection();
 
         $connection->execute("IF OBJECT_ID('schema_articles_v', 'V') IS NOT NULL DROP VIEW schema_articles_v");
         $connection->execute("IF OBJECT_ID('schema_articles', 'U') IS NOT NULL DROP TABLE schema_articles");
@@ -233,7 +233,7 @@ SQL;
     #[DataProvider('convertColumnProvider')]
     public function testConvertColumn(string $type, array $expected): void
     {
-        $this->_needsConnection();
+        $this->needsConnection();
         /** @var \Cake\Database\Connection $connection */
         $connection = ConnectionManager::get('test');
         $sql = <<<SQL
@@ -262,7 +262,7 @@ SQL;
     public function testListTables(): void
     {
         $connection = ConnectionManager::get('test');
-        $this->_createTables($connection);
+        $this->createTables($connection);
         $schema = new SchemaCollection($connection);
 
         $result = $schema->listTables();
@@ -283,7 +283,7 @@ SQL;
     public function testDescribeTable(): void
     {
         $connection = ConnectionManager::get('test');
-        $this->_createTables($connection);
+        $this->createTables($connection);
 
         $dialect = $connection->getDriver()->schemaDialect();
         $result = $dialect->describe('schema_articles');
@@ -457,7 +457,7 @@ SQL;
      */
     public function testDescribeTableCompositeKey(): void
     {
-        $this->_needsConnection();
+        $this->needsConnection();
         $connection = ConnectionManager::get('test');
         $sql = <<<SQL
 CREATE TABLE schema_composite (
@@ -483,7 +483,7 @@ SQL;
     public function testDescribeWithSchemaName(): void
     {
         $connection = ConnectionManager::get('test');
-        $this->_createTables($connection);
+        $this->createTables($connection);
 
         $schema = new SchemaCollection($connection);
         $result = $schema->describe('dbo.schema_articles');
@@ -497,7 +497,7 @@ SQL;
     public function testDescribeTableIndexes(): void
     {
         $connection = ConnectionManager::get('test');
-        $this->_createTables($connection);
+        $this->createTables($connection);
 
         $dialect = $connection->getDriver()->schemaDialect();
         $result = $dialect->describe('schema_articles');
@@ -587,7 +587,7 @@ SQL;
      */
     public function testDescribeIndexIncludedFields(): void
     {
-        $this->_needsConnection();
+        $this->needsConnection();
         $connection = ConnectionManager::get('test');
         $sql = <<<SQL
 CREATE TABLE schema_index_include (
@@ -915,7 +915,7 @@ SQL;
     #[DataProvider('columnSqlProvider')]
     public function testColumnSql(string $name, array $data, string $expected): void
     {
-        $driver = $this->_getMockedDriver();
+        $driver = $this->getMockedDriver();
         $schema = new SqlserverSchemaDialect($driver);
 
         $table = new TableSchema('schema_articles')->addColumn($name, $data);
@@ -982,7 +982,7 @@ SQL;
     #[DataProvider('constraintSqlProvider')]
     public function testConstraintSql(string $name, array $data, string $expected): void
     {
-        $driver = $this->_getMockedDriver();
+        $driver = $this->getMockedDriver();
         $schema = new SqlserverSchemaDialect($driver);
 
         $table = new TableSchema('schema_articles')->addColumn('title', [
@@ -1000,7 +1000,7 @@ SQL;
      */
     public function testAddConstraintSql(): void
     {
-        $driver = $this->_getMockedDriver();
+        $driver = $this->getMockedDriver();
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -1049,7 +1049,7 @@ SQL;
      */
     public function testDropConstraintSql(): void
     {
-        $driver = $this->_getMockedDriver();
+        $driver = $this->getMockedDriver();
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -1120,7 +1120,7 @@ SQL;
     #[DataProvider('indexSqlProvider')]
     public function testIndexSql(string $name, array $data, string $expected): void
     {
-        $driver = $this->_getMockedDriver();
+        $driver = $this->getMockedDriver();
         $schema = new SqlserverSchemaDialect($driver);
 
         $table = new TableSchema('schema_articles')->addColumn('title', [
@@ -1138,7 +1138,7 @@ SQL;
      */
     public function testCreateSql(): void
     {
-        $driver = $this->_getMockedDriver();
+        $driver = $this->getMockedDriver();
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -1212,7 +1212,7 @@ SQL;
      */
     public function testDropSql(): void
     {
-        $driver = $this->_getMockedDriver();
+        $driver = $this->getMockedDriver();
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -1230,7 +1230,7 @@ SQL;
      */
     public function testTruncateSql(): void
     {
-        $driver = $this->_getMockedDriver();
+        $driver = $this->getMockedDriver();
         $connection = $this->getMockBuilder(Connection::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -1255,7 +1255,7 @@ SQL;
 
     public function testCreateTableColumnComment(): void
     {
-        $this->_needsConnection();
+        $this->needsConnection();
 
         $columns = [
             'id' => [
@@ -1297,9 +1297,9 @@ SQL;
     /**
      * Get a schema instance with a mocked driver/pdo instances
      */
-    protected function _getMockedDriver(): Driver
+    protected function getMockedDriver(): Driver
     {
-        $this->_needsConnection();
+        $this->needsConnection();
 
         $mock = $this->getMockBuilder(PDO::class)
             ->onlyMethods(['quote'])
