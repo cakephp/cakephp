@@ -182,7 +182,7 @@ class ResolverTest extends TestCase
 
         $result = Resolver::warm('test');
 
-        $this->assertTrue($result);
+        $this->assertInstanceOf(AttributeCollection::class, $result);
     }
 
     public function testResolveWithDefaultConfig(): void

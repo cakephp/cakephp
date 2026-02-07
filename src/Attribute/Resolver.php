@@ -139,14 +139,13 @@ class Resolver
      * Build cache for a configuration
      *
      * @param string $name Configuration name
-     * @return bool Success status
+     * @return \Cake\Attribute\Resolver\AttributeCollection The warmed collection
      */
-    public static function warm(string $name = 'default'): bool
+    public static function warm(string $name = 'default'): AttributeCollection
     {
         static::clear($name);
-        static::collection($name);
 
-        return true;
+        return static::collection($name);
     }
 
     /**
