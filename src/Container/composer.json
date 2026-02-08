@@ -37,9 +37,6 @@
     "provide": {
         "psr/container-implementation": "^1.0"
     },
-    "replace": {
-        "orno/di": "~2.0"
-    },
     "autoload": {
         "psr-4": {
             "Cake\\Container\\": "."
