@@ -130,12 +130,33 @@ class LoggedQuery implements JsonSerializable, Stringable
      */
     public function getContext(): array
     {
-        return [
+        $context = [
             'query' => $this->query,
             'numRows' => $this->numRows,
             'took' => $this->took,
             'role' => $this->driver ? $this->driver->getRole() : '',
         ];
+
+        $connectionName = $this->getConnectionName();
+        if ($connectionName !== '') {
+            $context['connection'] = $connectionName;
+        }
+
+        return $context;
+    }
+
+    /**
+     * Get the connection name from the driver config.
+     *
+     * @return string
+     */
+    public function getConnectionName(): string
+    {
+        if ($this->driver === null) {
+            return '';
+        }
+
+        return $this->driver->config()['name'] ?? '';
     }
 
     /**

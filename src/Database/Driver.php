@@ -269,7 +269,12 @@ abstract class Driver implements LoggerAwareInterface
         try {
             return $this->getPdo()->exec($sql);
         } catch (PDOException $e) {
-            throw new QueryException($sql, $e);
+            $loggedQuery = new LoggedQuery();
+            $loggedQuery->setContext([
+                'query' => $sql,
+                'driver' => $this,
+            ]);
+            throw new QueryException($loggedQuery, $e);
         }
     }
 

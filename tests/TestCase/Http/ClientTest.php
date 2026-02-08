@@ -626,8 +626,7 @@ class ClientTest extends TestCase
         $mock = $this->getMockBuilder(Stream::class)
             ->onlyMethods(['send'])
             ->getMock();
-        $mock->expects($this->any())
-            ->method('send')
+        $mock->method('send')
             ->with($this->callback(function ($request) use ($data) {
                 $this->assertSame($data, '' . $request->getBody());
                 $this->assertSame('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));

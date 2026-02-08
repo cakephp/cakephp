@@ -180,6 +180,23 @@ class LoggedQueryTest extends TestCase
         $this->assertSame($expected, $query->getContext());
     }
 
+    public function testGetContextWithDriver(): void
+    {
+        $query = new LoggedQuery();
+        $query->setContext([
+            'query' => 'SELECT a FROM b where a = :p1',
+            'numRows' => 10,
+            'took' => 15,
+            'driver' => $this->driver,
+        ]);
+
+        $context = $query->getContext();
+        $this->assertSame('SELECT a FROM b where a = :p1', $context['query']);
+        $this->assertSame(10, $context['numRows']);
+        $this->assertSame(15.0, $context['took']);
+        $this->assertSame('test', $context['connection']);
+    }
+
     public function testSetContext(): void
     {
         $query = new LoggedQuery();
@@ -196,6 +213,17 @@ class LoggedQueryTest extends TestCase
             'role' => '',
         ];
         $this->assertSame($expected, $query->getContext());
+    }
+
+    public function testGetConnectionName(): void
+    {
+        $query = new LoggedQuery();
+        $this->assertSame('', $query->getConnectionName());
+
+        $query->setContext([
+            'driver' => $this->driver,
+        ]);
+        $this->assertSame('test', $query->getConnectionName());
     }
 
     public function testJsonSerialize(): void

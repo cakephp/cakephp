@@ -336,8 +336,7 @@ class SqlserverTest extends TestCase
             ->onlyMethods(['createPdo', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $driver->expects($this->any())
-            ->method('version')
+        $driver->method('version')
             ->willReturn('8');
         $driver->method('enabled')
             ->willReturn(true);
@@ -479,8 +478,7 @@ class SqlserverTest extends TestCase
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $driver->expects($this->any())
-            ->method('version')
+        $driver->method('version')
             ->willReturn('8');
         $driver->method('enabled')
             ->willReturn(true);
@@ -510,8 +508,7 @@ class SqlserverTest extends TestCase
             ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
             ->setConstructorArgs([[]])
             ->getMock();
-        $driver->expects($this->any())
-            ->method('version')
+        $driver->method('version')
             ->willReturn('8');
         $driver->method('enabled')
             ->willReturn(true);

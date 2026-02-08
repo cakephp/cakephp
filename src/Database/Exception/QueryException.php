@@ -29,9 +29,31 @@ class QueryException extends PDOException
      */
     public function __construct(protected LoggedQuery|string $query, PDOException $previous)
     {
-        $message = $previous->getMessage() . "\nQuery: " . $this->getQueryString();
+        $message = $previous->getMessage();
+
+        // Prefix with connection name if available
+        $connectionName = $this->getConnectionName();
+        if ($connectionName !== '') {
+            $message = "[{$connectionName}] " . $message;
+        }
+
+        $message .= "\nQuery: " . $this->getQueryString();
 
         parent::__construct($message, (int)$previous->getCode(), $previous);
+    }
+
+    /**
+     * Get the connection name that caused this exception.
+     *
+     * @return string
+     */
+    public function getConnectionName(): string
+    {
+        if ($this->query instanceof LoggedQuery) {
+            return $this->query->getConnectionName();
+        }
+
+        return '';
     }
 
     /**

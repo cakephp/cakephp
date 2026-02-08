@@ -156,7 +156,6 @@ class Connection implements ConnectionInterface
         }
 
         $sharedConfig = array_diff_key($config, array_flip([
-            'name',
             'className',
             'driver',
             'cacheMetaData',

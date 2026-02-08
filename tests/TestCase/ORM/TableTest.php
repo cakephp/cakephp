@@ -1291,8 +1291,7 @@ class TableTest extends TestCase
             ->willReturn($query);
 
         $options = ['fields' => ['a', 'b']];
-        $query->expects($this->any())
-            ->method('select')
+        $query->method('select')
             ->willReturnSelf();
 
         $query->expects($this->once())->method('getOptions')
@@ -2618,7 +2617,7 @@ class TableTest extends TestCase
 
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('commit');
-        $connection->expects($this->any())->method('inTransaction')->willReturn(true);
+        $connection->method('inTransaction')->willReturn(true);
         $data = new Entity([
             'username' => 'superuser',
             'created' => new DateTime('2013-10-10 00:00'),
@@ -2648,7 +2647,7 @@ class TableTest extends TestCase
             ->onlyMethods(['execute', 'addDefaultTypes'])
             ->setConstructorArgs([$table])
             ->getMock();
-        $table->expects($this->any())->method('getConnection')
+        $table->method('getConnection')
             ->willReturn($connection);
 
         $table->expects($this->once())->method('insertQuery')
@@ -2688,7 +2687,7 @@ class TableTest extends TestCase
             ->setConstructorArgs([$table])
             ->getMock();
 
-        $table->expects($this->any())->method('getConnection')
+        $table->method('getConnection')
             ->willReturn($connection);
 
         $table->expects($this->once())->method('insertQuery')
@@ -3456,8 +3455,7 @@ class TableTest extends TestCase
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
 
         $mock = $this->getMockBuilder(EventManager::class)->getMock();
-        $mock->expects($this->any())
-            ->method('dispatch')
+        $mock->method('dispatch')
             ->willReturnCallback(function (EventInterface $event) {
                 $event->stopPropagation();
 
@@ -3478,8 +3476,7 @@ class TableTest extends TestCase
         $entity = new Entity(['id' => 1, 'name' => 'mark']);
 
         $mock = $this->getMockBuilder(EventManager::class)->getMock();
-        $mock->expects($this->any())
-            ->method('dispatch')
+        $mock->method('dispatch')
             ->willReturnCallback(function (EventInterface $event) {
                 $event->stopPropagation();
                 $event->setResult('got stopped');

@@ -372,7 +372,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * ResultSetDecorator is a traversable object that implements the methods found
      * on Cake\Collection\Collection.
      *
-     * @return \Cake\Datasource\ResultSetInterface<array-key, mixed>
+     * @return \Cake\Datasource\ResultSetInterface<array-key, TSubject>
      */
     public function all(): ResultSetInterface
     {

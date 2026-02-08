@@ -67,7 +67,7 @@ class TableGetWithCustomFinderTest extends TestCase
 
         $table->expects($this->once())->method('selectQuery')
             ->willReturn($query);
-        $table->expects($this->any())->method('findCustom')
+        $table->method('findCustom')
             ->willReturn($query);
 
         $entity = new Entity();
