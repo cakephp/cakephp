@@ -60,7 +60,7 @@ class Link implements EvolvableLinkInterface
         string|array $rels = [],
         array $attributes = [],
     ) {
-        $this->rels = is_string($rels) ? [$rels] : array_values($rels);
+        $this->rels = is_string($rels) ? [$rels] : $rels;
         $this->attributes = $attributes;
     }
 

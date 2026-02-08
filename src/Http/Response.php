@@ -181,7 +181,7 @@ class Response implements ResponseInterface, Stringable
      *
      * @var \Psr\Link\EvolvableLinkProviderInterface
      */
-    protected EvolvableLinkProviderInterface $_links;
+    protected EvolvableLinkProviderInterface $links;
 
     /**
      * Reason Phrase
@@ -241,7 +241,7 @@ class Response implements ResponseInterface, Stringable
         }
         $this->_setContentType($type);
         $this->_cookies = new CookieCollection();
-        $this->_links = new LinkProvider();
+        $this->links = new LinkProvider();
     }
 
     /**
@@ -1120,7 +1120,7 @@ class Response implements ResponseInterface, Stringable
     public function withLink(LinkInterface $link): static
     {
         $new = clone $this;
-        $new->_links = $new->_links->withLink($link);
+        $new->links = $new->links->withLink($link);
 
         return $new;
     }
@@ -1134,7 +1134,7 @@ class Response implements ResponseInterface, Stringable
     public function withoutLink(LinkInterface $link): static
     {
         $new = clone $this;
-        $new->_links = $new->_links->withoutLink($link);
+        $new->links = $new->links->withoutLink($link);
 
         return $new;
     }
@@ -1146,7 +1146,7 @@ class Response implements ResponseInterface, Stringable
      */
     public function getLinks(): EvolvableLinkProviderInterface
     {
-        return $this->_links;
+        return $this->links;
     }
 
     /**
@@ -1158,7 +1158,7 @@ class Response implements ResponseInterface, Stringable
     public function withLinkProvider(EvolvableLinkProviderInterface $links): static
     {
         $new = clone $this;
-        $new->_links = $links;
+        $new->links = $links;
 
         return $new;
     }
@@ -1348,7 +1348,7 @@ class Response implements ResponseInterface, Stringable
             'file' => $this->_file,
             'fileRange' => $this->_fileRange,
             'cookies' => $this->_cookies,
-            'links' => $this->_links,
+            'links' => $this->links,
             'cacheDirectives' => $this->_cacheDirectives,
             'body' => (string)$this->getBody(),
         ];
