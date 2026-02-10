@@ -26,25 +26,19 @@ use TestApp\Model\Entity\TranslateTestEntity;
 class TranslateTraitTest extends TestCase
 {
     /**
-     * Tests that missing translation entries are created automatically
+     * Tests that translation() returns null for non-existent translations
      */
-    public function testTranslationCreate(): void
+    public function testTranslationReturnsNull(): void
     {
         $entity = new TranslateTestEntity();
-        $entity->translation('eng')->set('title', 'My Title');
-        $this->assertSame('My Title', $entity->translation('eng')->get('title'));
-
-        $this->assertTrue($entity->isDirty('_translations'));
-
-        $entity->translation('spa')->set('body', 'Contenido');
-        $this->assertSame('My Title', $entity->translation('eng')->get('title'));
-        $this->assertSame('Contenido', $entity->translation('spa')->get('body'));
+        $this->assertNull($entity->translation('eng'));
+        $this->assertNull($entity->translation('spa'));
     }
 
     /**
-     * Tests that modifying existing translation entries work
+     * Tests that translation() returns existing translations
      */
-    public function testTranslationModify(): void
+    public function testTranslationReturnsExisting(): void
     {
         $entity = new TranslateTestEntity();
         $entity->set('_translations', [
@@ -53,36 +47,50 @@ class TranslateTraitTest extends TestCase
         ]);
         $this->assertSame('My Title', $entity->translation('eng')->get('title'));
         $this->assertSame('Titulo', $entity->translation('spa')->get('title'));
+        $this->assertNull($entity->translation('fra'));
     }
 
     /**
-     * Tests empty translations.
+     * Tests that getOrCreateTranslation() creates missing translations
      */
-    public function testTranslationEmpty(): void
+    public function testGetOrCreateTranslation(): void
+    {
+        $entity = new TranslateTestEntity();
+        $entity->getOrCreateTranslation('eng')->set('title', 'My Title');
+        $this->assertSame('My Title', $entity->translation('eng')->get('title'));
+
+        $this->assertTrue($entity->isDirty('_translations'));
+
+        $entity->getOrCreateTranslation('spa')->set('body', 'Contenido');
+        $this->assertSame('My Title', $entity->translation('eng')->get('title'));
+        $this->assertSame('Contenido', $entity->translation('spa')->get('body'));
+    }
+
+    /**
+     * Tests that getOrCreateTranslation() returns correct entity type
+     */
+    public function testGetOrCreateTranslationEntityType(): void
     {
         $entity = new TranslateTestEntity();
         $entity->set('_translations', [
             'eng' => new Entity(['title' => 'My Title']),
-            'spa' => new Entity(['title' => 'Titulo']),
         ]);
-        $this->assertTrue($entity->translation('pol')->isNew());
-        $this->assertInstanceOf(TranslateTestEntity::class, $entity->translation('pol'));
+        $translation = $entity->getOrCreateTranslation('pol');
+        $this->assertTrue($translation->isNew());
+        $this->assertInstanceOf(TranslateTestEntity::class, $translation);
     }
 
     /**
-     * Tests that just accessing the translation will mark the property as dirty, this
-     * is to facilitate the saving process by not having to remember to mark the property
-     * manually
+     * Tests that getOrCreateTranslation() marks _translations as dirty
      */
-    public function testTranslationDirty(): void
+    public function testGetOrCreateTranslationDirty(): void
     {
         $entity = new TranslateTestEntity();
         $entity->set('_translations', [
             'eng' => new Entity(['title' => 'My Title']),
-            'spa' => new Entity(['title' => 'Titulo']),
         ]);
         $entity->clean();
-        $this->assertSame('My Title', $entity->translation('eng')->get('title'));
+        $entity->getOrCreateTranslation('eng');
         $this->assertTrue($entity->isDirty('_translations'));
     }
 
@@ -101,19 +109,5 @@ class TranslateTraitTest extends TestCase
         $this->assertTrue($entity->hasTranslation('eng'));
         $this->assertTrue($entity->hasTranslation('spa'));
         $this->assertFalse($entity->hasTranslation('fra'));
-    }
-
-    /**
-     * Tests that translation() always returns a distinct entity, never $this
-     */
-    public function testTranslationReturnsDistinctEntity(): void
-    {
-        $entity = new TranslateTestEntity();
-        $entity->set('_locale', 'eng');
-        $entity->set('title', 'Original Title');
-
-        $translation = $entity->translation('eng');
-        $this->assertNotSame($entity, $translation);
-        $this->assertNull($translation->get('title'));
     }
 }

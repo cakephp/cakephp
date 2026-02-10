@@ -39,28 +39,41 @@ trait TranslateTrait
 
     /**
      * Returns the entity containing the translated fields for this object and for
-     * the specified language. If the translation for the passed language is not
-     * present, a new empty entity will be created so that values can be added to
-     * it.
+     * the specified language, or null if the translation does not exist.
+     *
+     * @param string $language Language to return entity for.
+     * @return \Cake\Datasource\EntityInterface|null
+     */
+    public function translation(string $language): ?EntityInterface
+    {
+        $i18n = $this->get('_translations');
+
+        if (isset($i18n[$language]) && $i18n[$language] instanceof EntityInterface) {
+            return $i18n[$language];
+        }
+
+        return null;
+    }
+
+    /**
+     * Returns the entity containing the translated fields for this object and for
+     * the specified language. If the translation for the passed language does not
+     * exist, a new empty entity will be created.
+     *
+     * This method marks `_translations` as dirty to facilitate saving.
      *
      * @param string $language Language to return entity for.
      * @return \Cake\Datasource\EntityInterface
      */
-    public function translation(string $language): EntityInterface
+    public function getOrCreateTranslation(string $language): EntityInterface
     {
         $i18n = $this->get('_translations') ?? [];
-        $created = false;
 
         if (!isset($i18n[$language]) || !($i18n[$language] instanceof EntityInterface)) {
             $i18n[$language] = new static();
-            $created = true;
-        }
-
-        if ($created) {
             $this->set('_translations', $i18n);
         }
 
-        // Assume the user will modify any of the internal translations, helps with saving
         $this->setDirty('_translations', true);
 
         return $i18n[$language];

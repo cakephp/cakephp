@@ -1260,7 +1260,7 @@ class TranslateBehaviorEavTest extends TestCase
 
         $article = $table->get(1);
         foreach ($translations as $lang => $data) {
-            $article->translation($lang)->patch($data, ['guard' => false]);
+            $article->getOrCreateTranslation($lang)->patch($data, ['guard' => false]);
         }
 
         $table->save($article);
