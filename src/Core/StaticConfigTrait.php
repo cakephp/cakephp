@@ -162,8 +162,9 @@ trait StaticConfigTrait
         if (!isset(static::$config[$config])) {
             return false;
         }
-        /** @phpstan-ignore property.notFound */
+        /** @phpstan-ignore staticProperty.notFound */
         if (isset(static::$registry)) {
+            /** @phpstan-ignore staticProperty.notFound */
             static::$registry->unload($config);
         }
         unset(static::$config[$config]);
