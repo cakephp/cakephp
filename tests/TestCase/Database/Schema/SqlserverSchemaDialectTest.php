@@ -750,11 +750,11 @@ SQL;
                 ['type' => 'float', 'length' => 11, 'precision' => 3],
                 '[value] FLOAT(3)',
             ],
-            // Binary (fixed-length)
+            // Binary (fixed-length, but MAX lengths fall back to VARBINARY)
             [
                 'img',
                 ['type' => 'binary', 'length' => null],
-                '[img] BINARY(MAX)',
+                '[img] VARBINARY(MAX)',
             ],
             [
                 'img',
@@ -764,12 +764,12 @@ SQL;
             [
                 'img',
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_MEDIUM],
-                '[img] BINARY(MAX)',
+                '[img] VARBINARY(MAX)',
             ],
             [
                 'img',
                 ['type' => 'binary', 'length' => TableSchema::LENGTH_LONG],
-                '[img] BINARY(MAX)',
+                '[img] VARBINARY(MAX)',
             ],
             [
                 'bytes',

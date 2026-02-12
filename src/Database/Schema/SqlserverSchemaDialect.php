@@ -584,14 +584,16 @@ class SqlserverSchemaDialect extends SchemaDialect
         }
 
         if ($column['type'] === TableSchemaInterface::TYPE_BINARY) {
+            // SQL Server BINARY only supports lengths up to 8000, use VARBINARY for MAX
             if (
                 !isset($column['length'])
                 || in_array($column['length'], [TableSchema::LENGTH_MEDIUM, TableSchema::LENGTH_LONG], true)
             ) {
                 $column['length'] = 'MAX';
+                $out .= ' VARBINARY';
+            } else {
+                $out .= ' BINARY';
             }
-
-            $out .= ' BINARY';
             $foundType = true;
         }
         if ($column['type'] === TableSchemaInterface::TYPE_VARBINARY) {
