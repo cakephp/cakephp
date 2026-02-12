@@ -194,13 +194,21 @@ class SqlserverSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_TEXT, 'length' => null];
         }
 
-        if ($col === 'image' || str_contains($col, 'binary')) {
+        if ($col === 'image' || $col === 'binary') {
             // -1 is the value for MAX which we treat as a 'long' binary
             if ($length === -1) {
                 $length = TableSchema::LENGTH_LONG;
             }
 
             return ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
+        }
+        if ($col === 'varbinary') {
+            // -1 is the value for MAX which we treat as a 'long' binary
+            if ($length === -1) {
+                $length = TableSchema::LENGTH_LONG;
+            }
+
+            return ['type' => TableSchemaInterface::TYPE_VARBINARY, 'length' => $length];
         }
 
         if ($col === 'uniqueidentifier') {
@@ -550,6 +558,7 @@ class SqlserverSchemaDialect extends SchemaDialect
             TableSchemaInterface::TYPE_CHAR,
             TableSchemaInterface::TYPE_STRING,
             TableSchemaInterface::TYPE_BINARY,
+            TableSchemaInterface::TYPE_VARBINARY,
         ];
         $autoIncrementTypes = [
             TableSchemaInterface::TYPE_TINYINTEGER,
@@ -582,11 +591,18 @@ class SqlserverSchemaDialect extends SchemaDialect
                 $column['length'] = 'MAX';
             }
 
-            if ($column['length'] === 1) {
-                $out .= ' BINARY';
-            } else {
-                $out .= ' VARBINARY';
+            $out .= ' BINARY';
+            $foundType = true;
+        }
+        if ($column['type'] === TableSchemaInterface::TYPE_VARBINARY) {
+            if (
+                !isset($column['length'])
+                || in_array($column['length'], [TableSchema::LENGTH_MEDIUM, TableSchema::LENGTH_LONG], true)
+            ) {
+                $column['length'] = 'MAX';
             }
+
+            $out .= ' VARBINARY';
             $foundType = true;
         }
 
