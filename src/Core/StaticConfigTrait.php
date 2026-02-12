@@ -24,8 +24,6 @@ use LogicException;
  * A trait that provides a set of static methods to manage configuration
  * for classes that provide an adapter facade or need to have sets of
  * configuration data registered and manipulated.
- *
- * Implementing objects are expected to declare a static `$dsnClassMap` property.
  */
 trait StaticConfigTrait
 {
@@ -35,6 +33,13 @@ trait StaticConfigTrait
      * @var array<string|int, array<string, mixed>>
      */
     protected static array $config = [];
+
+    /**
+     * Map of short class name to fully qualified class name for DSN parsing.
+     *
+     * @var array<string, class-string>|null
+     */
+    protected static ?array $dsnClassMap = null;
 
     /**
      * This method can be used to define configuration adapters for an application.
@@ -146,7 +151,7 @@ trait StaticConfigTrait
      * If you wish to modify an existing configuration, you should drop it,
      * change configuration and then re-add it.
      *
-     * If the implementing objects supports a `$registry` object the named configuration
+     * If the implementing class defines a `$registry` property, the named configuration
      * will also be unloaded from the registry.
      *
      * @param string $config An existing configuration you wish to remove.
@@ -157,7 +162,7 @@ trait StaticConfigTrait
         if (!isset(static::$config[$config])) {
             return false;
         }
-        /** @phpstan-ignore-next-line */
+        /** @phpstan-ignore property.notFound */
         if (isset(static::$registry)) {
             static::$registry->unload($config);
         }
@@ -318,7 +323,7 @@ REGEXP;
      */
     public static function setDsnClassMap(array $map): void
     {
-        static::$dsnClassMap = $map + static::$dsnClassMap;
+        static::$dsnClassMap = $map + static::getDsnClassMap();
     }
 
     /**
@@ -328,6 +333,18 @@ REGEXP;
      */
     public static function getDsnClassMap(): array
     {
-        return static::$dsnClassMap;
+        return static::$dsnClassMap ??= static::buildDsnClassMap();
+    }
+
+    /**
+     * Returns the default DSN class map.
+     *
+     * Override this method in implementing classes to provide a class-specific map.
+     *
+     * @return array<string, class-string>
+     */
+    protected static function buildDsnClassMap(): array
+    {
+        return [];
     }
 }

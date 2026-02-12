@@ -69,22 +69,6 @@ class Cache
     use StaticConfigTrait;
 
     /**
-     * An array mapping URL schemes to fully qualified caching engine
-     * class names.
-     *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
-     */
-    protected static array $dsnClassMap = [
-        'array' => Engine\ArrayEngine::class,
-        'apcu' => Engine\ApcuEngine::class,
-        'file' => Engine\FileEngine::class,
-        'memcached' => Engine\MemcachedEngine::class,
-        'null' => Engine\NullEngine::class,
-        'redis' => Engine\RedisEngine::class,
-    ];
-
-    /**
      * Flag for tracking whether caching is enabled.
      *
      * @var bool
@@ -126,6 +110,23 @@ class Cache
     public static function setRegistry(CacheRegistry $registry): void
     {
         static::$registry = $registry;
+    }
+
+    /**
+     * Returns the default DSN class map.
+     *
+     * @return array<string, class-string>
+     */
+    protected static function buildDsnClassMap(): array
+    {
+        return [
+            'array' => Engine\ArrayEngine::class,
+            'apcu' => Engine\ApcuEngine::class,
+            'file' => Engine\FileEngine::class,
+            'memcached' => Engine\MemcachedEngine::class,
+            'null' => Engine\NullEngine::class,
+            'redis' => Engine\RedisEngine::class,
+        ];
     }
 
     /**

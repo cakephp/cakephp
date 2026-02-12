@@ -12,13 +12,16 @@ class TestEmailStaticConfig
     use StaticConfigTrait;
 
     /**
-     * Email driver class map.
+     * Returns the default DSN class map.
      *
-     * @var array
+     * @return array<string, class-string>
      */
-    protected static $dsnClassMap = [
-        'debug' => DebugTransport::class,
-        'mail' => MailTransport::class,
-        'smtp' => SmtpTransport::class,
-    ];
+    protected static function buildDsnClassMap(): array
+    {
+        return [
+            'debug' => DebugTransport::class,
+            'mail' => MailTransport::class,
+            'smtp' => SmtpTransport::class,
+        ];
+    }
 }

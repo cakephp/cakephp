@@ -34,16 +34,18 @@ class TransportFactory
     protected static TransportRegistry $registry;
 
     /**
-     * An array mapping url schemes to fully qualified Transport class names
+     * Returns the default DSN class map.
      *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
+     * @return array<string, class-string>
      */
-    protected static array $dsnClassMap = [
-        'debug' => Transport\DebugTransport::class,
-        'mail' => Transport\MailTransport::class,
-        'smtp' => Transport\SmtpTransport::class,
-    ];
+    protected static function buildDsnClassMap(): array
+    {
+        return [
+            'debug' => Transport\DebugTransport::class,
+            'mail' => Transport\MailTransport::class,
+            'smtp' => Transport\SmtpTransport::class,
+        ];
+    }
 
     /**
      * Returns the Transport Registry used for creating and using transport instances.
