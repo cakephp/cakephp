@@ -141,7 +141,7 @@ class RoutesCommandTest extends TestCase
     public function testRouteListSorted(): void
     {
         Configure::write('TestApp.routes', function ($routes): void {
-            $routes->connect(
+            $routes->add(
                 new Route('/a/route/sorted', [], ['_name' => '_aRoute']),
             );
         });
@@ -329,24 +329,24 @@ class RoutesCommandTest extends TestCase
     public function testRouteDuplicateWarning(): void
     {
         Configure::write('TestApp.routes', function ($builder): void {
-            $builder->connect(
+            $builder->add(
                 new Route('/unique-path', [], ['_name' => '_aRoute']),
             );
-            $builder->connect(
+            $builder->add(
                 new Route('/unique-path', [], ['_name' => '_bRoute']),
             );
 
-            $builder->connect(
+            $builder->add(
                 new Route('/blog', ['_method' => 'GET'], ['_name' => 'blog-get']),
             );
-            $builder->connect(
+            $builder->add(
                 new Route('/blog', [], ['_name' => 'blog-all']),
             );
 
-            $builder->connect(
+            $builder->add(
                 new Route('/events', ['_method' => ['POST', 'PUT']], ['_name' => 'events-post']),
             );
-            $builder->connect(
+            $builder->add(
                 new Route('/events', ['_method' => 'GET'], ['_name' => 'events-get']),
             );
         });
