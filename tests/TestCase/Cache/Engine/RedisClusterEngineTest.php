@@ -189,14 +189,6 @@ class RedisClusterEngineTest extends TestCase
             }
         };
 
-        // Use a Mockery mock for RedisCluster to avoid triggering constructor logic
-        $redisMock = Mockery::mock(RedisCluster::class);
-
-        // Set $_Redis manually using Reflection
-        $reflection = new ReflectionClass($mock);
-        $property = $reflection->getProperty('_Redis');
-        $property->setValue($mock, $redisMock);
-
         $this->setupLog('error');
         $result = $mock->init([
             'nodes' => ['127.0.0.1:7000'],
