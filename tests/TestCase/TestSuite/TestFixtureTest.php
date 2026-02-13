@@ -238,7 +238,7 @@ class TestFixtureTest extends TestCase
                 ->once();
         }
 
-        $statement = $this->createMock(StatementInterface::class);
+        $statement = Mockery::mock(StatementInterface::class);
 
         $query->shouldReceive('execute')
             ->andReturn($statement)
