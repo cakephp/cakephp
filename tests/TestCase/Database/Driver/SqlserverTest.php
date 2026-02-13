@@ -252,7 +252,7 @@ class SqlserverTest extends TestCase
             ->shouldAllowMockingProtectedMethods();
         $driver->__construct();
 
-        $pdo = Mockery::mock(PDO::class);
+        $pdo = Mockery::mock(PDO::class)->makePartial();
 
         $statement = Mockery::mock(PDOStatement::class);
         $connection = new Connection(['driver' => $driver, 'log' => false]);
@@ -271,6 +271,11 @@ class SqlserverTest extends TestCase
         $pdo->shouldReceive('prepare')
             ->with('', [])
             ->andReturn($statement)
+            ->once();
+
+        $pdo->shouldReceive('getAttribute')
+            ->with(PDO::ATTR_SERVER_VERSION)
+            ->andReturn('12')
             ->once();
 
         $query = new SelectQuery($connection);
