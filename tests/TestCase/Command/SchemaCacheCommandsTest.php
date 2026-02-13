@@ -58,7 +58,6 @@ class SchemaCacheCommandsTest extends TestCase
 
         $this->cache = Mockery::mock(NullEngine::class)->makePartial();
 
-        Cache::drop('orm_cache');
         Cache::setConfig('orm_cache', $this->cache);
 
         $this->connection = ConnectionManager::get('test');
@@ -74,6 +73,7 @@ class SchemaCacheCommandsTest extends TestCase
         parent::tearDown();
 
         unset($this->connection);
+        Cache::drop('orm_cache');
     }
 
     /**
