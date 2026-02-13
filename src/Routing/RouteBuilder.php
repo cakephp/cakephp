@@ -636,12 +636,8 @@ class RouteBuilder
     {
         $options += $this->defaultOptions;
 
-        if (empty($options['_ext'])) {
-            $options['_ext'] = $this->extensions;
-        }
-        if (empty($options['_middleware'])) {
-            $options['_middleware'] = $this->middleware;
-        }
+        $options['_ext'] ??= $this->extensions;
+        $options['_middleware'] ??= $this->middleware;
 
         $this->collection->add($route, $options);
 
