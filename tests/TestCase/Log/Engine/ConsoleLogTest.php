@@ -19,6 +19,7 @@ use Cake\Console\ConsoleOutput;
 use Cake\Log\Engine\ConsoleLog;
 use Cake\Log\Formatter\JsonFormatter;
 use Cake\TestSuite\TestCase;
+use Mockery;
 
 /**
  * ConsoleLogTest class
@@ -30,12 +31,14 @@ class ConsoleLogTest extends TestCase
      */
     public function testConsoleOutputlogs(): void
     {
-        $output = $this->getMockBuilder(ConsoleOutput::class)->getMock();
+        $output = Mockery::mock(ConsoleOutput::class);
 
-        $message = ' Error: oh noes</error>';
-        $output->expects($this->once())
-            ->method('write')
-            ->with($this->stringContains($message));
+        $message = ' error: oh noes</error>';
+        $output->shouldReceive('write')
+            ->with(Mockery::on(static function ($content) use ($message): bool {
+                return is_string($content) && str_contains($content, $message);
+            }))
+            ->once();
 
         $log = new ConsoleLog([
             'stream' => $output,
@@ -64,11 +67,11 @@ class ConsoleLogTest extends TestCase
      */
     public function testDefaultOutputAs(): void
     {
-        $output = $this->getMockBuilder(ConsoleOutput::class)->getMock();
+        $output = Mockery::mock(ConsoleOutput::class);
 
-        $output->expects($this->once())
-            ->method('setOutputAs')
-            ->with(ConsoleOutput::RAW);
+        $output->shouldReceive('setOutputAs')
+            ->with(ConsoleOutput::RAW)
+            ->once();
 
         $log = new ConsoleLog([
             'stream' => $output,
