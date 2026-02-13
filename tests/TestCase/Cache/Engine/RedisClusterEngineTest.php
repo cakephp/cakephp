@@ -214,10 +214,10 @@ class RedisClusterEngineTest extends TestCase
     public function testConnectRedisClusterWithTlsConfig(): void
     {
         $mock = Mockery::mock(RedisEngine::class)
-            ->shouldAllowMockingProtectedMethods()
             ->makePartial();
 
-        $mock->shouldReceive('connectRedisCluster')
+        $mock->shouldAllowMockingProtectedMethods()
+            ->shouldReceive('connectRedisCluster')
             ->once()
             ->andReturn(true);
 
