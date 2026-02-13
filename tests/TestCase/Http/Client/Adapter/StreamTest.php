@@ -41,7 +41,8 @@ class StreamTest extends TestCase
         $this->stream = Mockery::mock(Stream::class)->makePartial();
         $this->stream
             ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('_send');
+            ->shouldReceive('_send')
+            ->andReturn([]);
         stream_wrapper_unregister('http');
         stream_wrapper_register('http', CakeStreamWrapper::class);
     }
