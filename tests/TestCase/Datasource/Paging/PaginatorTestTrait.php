@@ -24,6 +24,7 @@ use Cake\Datasource\Paging\NumericPaginator;
 use Cake\Datasource\RepositoryInterface;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
+use Mockery;
 use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Table\PaginatorPostsTable;
@@ -115,8 +116,8 @@ trait PaginatorTestTrait
             ->method('selectQuery')
             ->willReturn($query);
 
-        $query->expects($this->once())
-            ->method('applyOptions')
+        $query->shouldReceive('applyOptions')
+            ->once()
             ->with([
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
@@ -190,8 +191,8 @@ trait PaginatorTestTrait
             ->method('selectQuery')
             ->willReturn($query);
 
-        $query->expects($this->once())
-            ->method('applyOptions')
+        $query->shouldReceive('applyOptions')
+            ->once()
             ->with([
                 'limit' => 10,
                 'page' => 1,
@@ -220,8 +221,8 @@ trait PaginatorTestTrait
             ->method('selectQuery')
             ->willReturn($query);
 
-        $query->expects($this->once())
-            ->method('applyOptions')
+        $query->shouldReceive('applyOptions')
+            ->once()
             ->with([
                 'limit' => 20,
                 'page' => 1,
@@ -252,8 +253,8 @@ trait PaginatorTestTrait
             ->method('selectQuery')
             ->willReturn($query);
 
-        $query->expects($this->once())
-            ->method('applyOptions')
+        $query->shouldReceive('applyOptions')
+            ->once()
             ->with([
                 'limit' => 10,
                 'page' => 1,
@@ -610,7 +611,8 @@ trait PaginatorTestTrait
             ->method('selectQuery')
             ->willReturn($query);
 
-        $query->expects($this->once())->method('applyOptions')
+        $query->shouldReceive('applyOptions')
+            ->once()
             ->with([
                 'limit' => 20,
                 'page' => 1,
@@ -656,7 +658,8 @@ trait PaginatorTestTrait
             ->method('selectQuery')
             ->willReturn($query);
 
-        $query->expects($this->once())->method('applyOptions')
+        $query->shouldReceive('applyOptions')
+            ->once()
             ->with([
                 'limit' => 20,
                 'page' => 1,
@@ -689,7 +692,8 @@ trait PaginatorTestTrait
             ->method('selectQuery')
             ->willReturn($query);
 
-        $query->expects($this->once())->method('applyOptions')
+        $query->shouldReceive('applyOptions')
+            ->once()
             ->with([
                 'limit' => 20,
                 'page' => 1,
@@ -731,7 +735,8 @@ trait PaginatorTestTrait
             ->method('selectQuery')
             ->willReturn($query);
 
-        $query->expects($this->once())->method('applyOptions')
+        $query->shouldReceive('applyOptions')
+            ->once()
             ->with([
                 'limit' => 20,
                 'page' => 1,
@@ -853,10 +858,9 @@ trait PaginatorTestTrait
      */
     public function testValidateAllowedSortNotInSchema(): void
     {
-        $model = $this->getMockRepository();
-        $model->method('getAlias')->willReturn('model');
-        $model->expects($this->once())->method('hasField')
-            ->willReturn(false);
+        $model = Mockery::mock(RepositoryInterface::class);
+        $model->shouldReceive('getAlias')->andReturn('model');
+        $model->shouldReceive('hasField')->andReturn(false);
 
         $options = [
             'sort' => 'score',
@@ -897,25 +901,14 @@ trait PaginatorTestTrait
     }
 
     /**
-     * @return \Cake\Datasource\RepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected function getMockRepository()
-    {
-        $model = $this->getMockBuilder(RepositoryInterface::class)
-            ->getMock();
-
-        return $model;
-    }
-
-    /**
      * @param string $modelAlias Model alias to use.
-     * @return \Cake\Datasource\RepositoryInterface|\PHPUnit\Framework\MockObject\Stub
+     * @return \Cake\Datasource\RepositoryInterface
      */
     protected function mockAliasHasFieldModel($modelAlias = 'model')
     {
-        $model = $this->createStub(RepositoryInterface::class);
-        $model->method('getAlias')->willReturn($modelAlias);
-        $model->method('hasField')->willReturn(true);
+        $model = Mockery::mock(RepositoryInterface::class);
+        $model->shouldReceive('getAlias')->andReturn($modelAlias);
+        $model->shouldReceive('hasField')->andReturn(true);
 
         return $model;
     }
@@ -1149,8 +1142,8 @@ trait PaginatorTestTrait
         $table = $this->_getMockPosts(['find']);
         $query = $this->_getMockFindQuery($table);
         $table->expects($this->never())->method('find');
-        $query->expects($this->once())
-            ->method('applyOptions')
+        $query->shouldReceive('applyOptions')
+            ->once()
             ->with([
                 'limit' => 10,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
@@ -1197,8 +1190,8 @@ trait PaginatorTestTrait
         $query = $this->_getMockFindQuery($table);
         $query->limit(2);
         $table->expects($this->never())->method('find');
-        $query->expects($this->once())
-            ->method('applyOptions')
+        $query->shouldReceive('applyOptions')
+            ->once()
             ->with([
                 'limit' => 5,
                 'order' => ['PaginatorPosts.id' => 'ASC'],
@@ -1235,21 +1228,19 @@ trait PaginatorTestTrait
     /**
      * Helper method for mocking queries.
      *
-     * @param string|null $table
-     * @return \Cake\ORM\Query\SelectQuery|\PHPUnit\Framework\MockObject\MockObject
+     * @param RepositoryInterface|null $table
+     * @return \Cake\ORM\Query\SelectQuery|\Mockery\MockInterface
+     * @throws \PHPUnit\Framework\MockObject\Exception
      */
     protected function _getMockFindQuery($table = null)
     {
-        /** @var \Cake\ORM\Query\SelectQuery|\PHPUnit\Framework\MockObject\MockObject $query */
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['all', 'count', 'applyOptions'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $query = Mockery::mock(SelectQuery::class)
+            ->makePartial();
 
         $results = $this->createStub(ResultSet::class);
 
-        $query->method('count')->willReturn(2);
-        $query->method('all')->willReturn($results);
+        $query->shouldReceive('count')->andReturn(2);
+        $query->shouldReceive('all')->andReturn($results);
 
         if ($table) {
             $query->setRepository($table);
