@@ -9,8 +9,6 @@ use Cake\Log\Log;
 use Cake\TestSuite\LogTestTrait;
 use Cake\TestSuite\TestCase;
 use Mockery;
-use RedisCluster;
-use ReflectionClass;
 
 /**
  * RedisClusterEngineTest class
