@@ -284,13 +284,13 @@ class EntityTest extends TestCase
      */
     public function testConstructorWithGuard(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['patch'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->once())
-            ->method('patch')
-            ->with(['foo' => 'bar'], ['setter' => true, 'guard' => true, 'asOriginal' => true]);
+        $entity = Mockery::mock(Entity::class)->makePartial();
+
+        $entity
+            ->shouldReceive('patch')
+            ->with(['foo' => 'bar'], ['setter' => true, 'guard' => true, 'asOriginal' => true])
+            ->once();
+
         $entity->__construct(['foo' => 'bar'], ['guard' => true]);
     }
 
@@ -577,13 +577,11 @@ class EntityTest extends TestCase
      */
     public function testMagicUnset(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['unset'])
-            ->getMock();
-        $entity->expects($this->once())
-            ->method('unset')
-            ->with('foo');
+        $entity = new Entity(['foo' => 'bar']);
+
         unset($entity->foo);
+
+        $this->assertFalse($entity->has('foo'));
     }
 
     /**
@@ -642,14 +640,11 @@ class EntityTest extends TestCase
      */
     public function testUnsetArrayAccess(): void
     {
-        /** @var \Cake\ORM\Entity|\PHPUnit\Framework\MockObject\MockObject $entity */
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['unset'])
-            ->getMock();
-        $entity->expects($this->once())
-            ->method('unset')
-            ->with('foo');
+        $entity = new Entity(['foo' => 'bar']);
+
         unset($entity['foo']);
+
+        $this->assertFalse($entity->has('foo'));
     }
 
     /**
@@ -731,13 +726,10 @@ class EntityTest extends TestCase
      */
     public function testJsonSerializeRecursive(): void
     {
-        $phone = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['jsonSerialize'])
-            ->getMock();
-        $phone->expects($this->once())->method('jsonSerialize')->willReturn(['something']);
+        $phone = new Entity(['something' => true]);
         $data = ['name' => 'James', 'age' => 20, 'phone' => $phone];
         $entity = new Entity($data);
-        $expected = ['name' => 'James', 'age' => 20, 'phone' => ['something']];
+        $expected = ['name' => 'James', 'age' => 20, 'phone' => ['something' => true]];
         $this->assertEquals(json_encode($expected), json_encode($entity));
     }
 
@@ -984,19 +976,13 @@ class EntityTest extends TestCase
      */
     public function testConstructorWithClean(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['clean'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->never())->method('clean');
-        $entity->__construct(['a' => 'b', 'c' => 'd']);
+        $entity = new Entity(['a' => 'b', 'c' => 'd']);
+        $this->assertTrue($entity->isDirty('a'));
+        $this->assertTrue($entity->isDirty('c'));
 
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['clean'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->once())->method('clean');
-        $entity->__construct(['a' => 'b', 'c' => 'd'], ['markClean' => true]);
+        $entity = new Entity(['a' => 'b', 'c' => 'd'], ['markClean' => true]);
+        $this->assertFalse($entity->isDirty('a'));
+        $this->assertFalse($entity->isDirty('c'));
     }
 
     /**
@@ -1004,19 +990,14 @@ class EntityTest extends TestCase
      */
     public function testConstructorWithMarkNew(): void
     {
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['setNew', 'clean'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->never())->method('clean');
-        $entity->__construct(['a' => 'b', 'c' => 'd']);
+        $entity = new Entity(['a' => 'b', 'c' => 'd']);
+        $this->assertTrue($entity->isNew());
 
-        $entity = $this->getMockBuilder(Entity::class)
-            ->onlyMethods(['setNew'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $entity->expects($this->once())->method('setNew');
-        $entity->__construct(['a' => 'b', 'c' => 'd'], ['markNew' => true]);
+        $entity = new Entity(['a' => 'b', 'c' => 'd'], ['markNew' => false]);
+        $this->assertFalse($entity->isNew());
+
+        $entity = new Entity(['a' => 'b', 'c' => 'd'], ['markNew' => true]);
+        $this->assertTrue($entity->isNew());
     }
 
     /**

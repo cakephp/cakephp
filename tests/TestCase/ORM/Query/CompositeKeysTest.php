@@ -26,14 +26,12 @@ use Cake\ORM\Marshaller;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\OpenArticleEntity;
 
 /**
  * Integration tests for table operations involving composite keys
  */
-#[AllowMockObjectsWithoutExpectations]
 class CompositeKeysTest extends TestCase
 {
     /**
@@ -556,10 +554,7 @@ class CompositeKeysTest extends TestCase
     public function testFindThreadedCompositeKeys(): void
     {
         $table = $this->getTableLocator()->get('SiteAuthors');
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['_addDefaultFields', 'execute'])
-            ->setConstructorArgs([$table])
-            ->getMock();
+        $query = new SelectQuery($table);
 
         $items = new ResultSetDecorator([
             ['id' => 1, 'name' => 'a', 'site_id' => 1, 'parent_id' => null],

@@ -26,7 +26,6 @@ use Cake\ORM\ResultSetFactory;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Mockery;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use TestApp\Dto\ArticleArrayDto;
 use TestApp\Dto\ArticleDto;
 use TestApp\Dto\AuthorArrayDto;
@@ -37,7 +36,6 @@ use TestApp\Dto\SimpleArticleDto;
 /**
  * ResultSetFactory test case.
  */
-#[AllowMockObjectsWithoutExpectations]
 class ResultSetFactoryTest extends TestCase
 {
     /**
