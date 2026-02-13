@@ -87,11 +87,28 @@ jobs:
       if: matrix.db-type == 'pgsql'
       run: docker run --rm --name=postgres -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=cakephp -p 5432:5432 -d postgis/postgis:18-3.6
 
-    - uses: getong/mariadb-action@v1.11
+    - name: Setup MariaDB 11.8
       if: matrix.db-type == 'mariadb'
-      with:
-        mysql database: 'cakephp'
-        mysql root password: 'root'
+      run: |
+        docker run -d --name=mariadb \
+          -e MARIADB_ROOT_PASSWORD=root \
+          -e MARIADB_DATABASE=cakephp \
+          -p 3306:3306 \
+          --health-cmd="mariadb-admin ping -h 127.0.0.1 -proot || exit 1" \
+          --health-interval=10s \
+          --health-timeout=5s \
+          --health-retries=10 \
+          mariadb:11.8
+
+        echo "Waiting for MariaDB to be ready..."
+        for i in {1..60}; do
+          if docker exec mariadb mariadb-admin ping -h 127.0.0.1 -proot >/dev/null 2>&1; then
+            echo "MariaDB is responding."
+            break
+          fi
+
+          sleep 2
+        done
 
     - uses: actions/checkout@v6
       with:
