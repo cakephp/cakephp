@@ -2010,6 +2010,9 @@ SQL;
             ->andReturnUsing(function ($value) {
                 return "'{$value}'";
             });
+        $mock->shouldReceive('exec')
+            ->zeroOrMoreTimes()
+            ->andReturn(0);
 
         $driver = Mockery::mock(Postgres::class)
             ->makePartial()
