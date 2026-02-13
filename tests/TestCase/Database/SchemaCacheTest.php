@@ -53,6 +53,7 @@ class SchemaCacheTest extends TestCase
     {
         parent::setUp();
 
+        Cache::drop('orm_cache');
         Cache::setConfig('orm_cache', ['className' => 'Array']);
         $this->cache = Cache::pool('orm_cache');
 
@@ -69,7 +70,6 @@ class SchemaCacheTest extends TestCase
         parent::tearDown();
 
         unset($this->connection);
-        Cache::drop('orm_cache');
     }
 
     /**

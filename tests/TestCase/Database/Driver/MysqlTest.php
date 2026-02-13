@@ -45,9 +45,10 @@ class MysqlTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['createPdo'])
-            ->getMock();
+        $driver = Mockery::mock(Mysql::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct();
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
         $expected = [
             'persistent' => true,
@@ -70,8 +71,10 @@ class MysqlTest extends TestCase
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
 
-        $driver->expects($this->once())->method('createPdo')
-            ->with($dsn, $expected);
+        $driver->shouldReceive('createPdo')
+            ->with($dsn, $expected)
+            ->once()
+            ->andReturn(Mockery::mock(PDO::class));
 
         $driver->connect();
     }
@@ -99,10 +102,10 @@ class MysqlTest extends TestCase
             ],
             'log' => false,
         ];
-        $driver = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['createPdo'])
-            ->setConstructorArgs([$config])
-            ->getMock();
+        $driver = Mockery::mock(Mysql::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct($config);
         $dsn = 'mysql:host=foo;port=3440;dbname=bar';
         $expected = $config;
         $expected['init'][] = "SET time_zone = 'Antarctica'";
@@ -118,9 +121,10 @@ class MysqlTest extends TestCase
         $connection->shouldReceive('exec')->with('this too')->once();
         $connection->shouldReceive('exec')->with("SET time_zone = 'Antarctica'")->once();
 
-        $driver->expects($this->once())->method('createPdo')
+        $driver->shouldReceive('createPdo')
             ->with($dsn, $expected)
-            ->willReturn($connection);
+            ->once()
+            ->andReturn($connection);
         $driver->connect();
     }
 
@@ -173,24 +177,20 @@ class MysqlTest extends TestCase
     #[DataProvider('versionStringProvider')]
     public function testVersion($dbVersion, $expectedVersion): void
     {
-        /** @var \PHPUnit\Framework\MockObject\MockObject&\PDO $connection */
-        $connection = $this->getMockBuilder(PDO::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['getAttribute'])
-            ->getMock();
-        $connection->expects($this->once())
-            ->method('getAttribute')
+        $connection = Mockery::mock(PDO::class);
+        $connection->shouldReceive('getAttribute')
             ->with(PDO::ATTR_SERVER_VERSION)
-            ->willReturn($dbVersion);
+            ->once()
+            ->andReturn($dbVersion);
 
-        /** @var \PHPUnit\Framework\MockObject\MockObject&\Cake\Database\Driver\Mysql $driver */
-        $driver = $this->getMockBuilder(Mysql::class)
-            ->onlyMethods(['createPdo'])
-            ->getMock();
+        $driver = Mockery::mock(Mysql::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct();
 
-        $driver->expects($this->once())
-            ->method('createPdo')
-            ->willReturn($connection);
+        $driver->shouldReceive('createPdo')
+            ->once()
+            ->andReturn($connection);
 
         $result = $driver->version();
         $this->assertSame($expectedVersion, $result);
