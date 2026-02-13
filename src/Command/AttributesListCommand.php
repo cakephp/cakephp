@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Attribute\Resolver;
+use Cake\Attribute\AttributeResolver;
 use Cake\Attribute\Resolver\AttributeCollection;
 use Cake\Attribute\Resolver\Enum\AttributeTargetType;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
@@ -101,7 +101,7 @@ class AttributesListCommand extends Command
     {
         $configName = (string)$this->args->getOption('config');
 
-        if (!Resolver::getConfig($configName)) {
+        if (!AttributeResolver::getConfig($configName)) {
             $this->io->error(sprintf('Configuration "%s" does not exist.', $configName));
 
             return static::CODE_ERROR;
@@ -133,7 +133,7 @@ class AttributesListCommand extends Command
      */
     protected function getFilteredCollection(string $configName): AttributeCollection
     {
-        $collection = Resolver::collection($configName);
+        $collection = AttributeResolver::collection($configName);
 
         $attr = $this->args->getOption('attribute');
         if ($attr) {

@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Attribute\Resolver;
+use Cake\Attribute\AttributeResolver;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -69,7 +69,7 @@ class AttributesWarmCommand extends Command
     {
         $configName = (string)$this->args->getOption('config');
 
-        $config = Resolver::getConfig($configName);
+        $config = AttributeResolver::getConfig($configName);
         if ($config === null) {
             $this->io->error(sprintf('Configuration "%s" does not exist.', $configName));
 
@@ -86,12 +86,12 @@ class AttributesWarmCommand extends Command
         }
 
         // Clear existing cache before warming
-        Resolver::clear($configName);
+        AttributeResolver::clear($configName);
 
         $this->io->out('<info>Warming attribute cache...</info>');
 
         $startTime = microtime(true);
-        $collection = Resolver::collection($configName);
+        $collection = AttributeResolver::collection($configName);
         $elapsed = round(microtime(true) - $startTime, 3);
 
         $count = $collection->count();

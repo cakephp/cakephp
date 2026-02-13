@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Attribute;
 
-use Cake\Attribute\Resolver;
+use Cake\Attribute\AttributeResolver;
 use Cake\Attribute\Resolver\AttributeCollection;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
 use Cake\Cache\Cache;
@@ -24,14 +24,14 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use TestApp\Attribute\Resolver\TestRoute;
 
-class ResolverTest extends TestCase
+class AttributeResolverTest extends TestCase
 {
     public function setUp(): void
     {
         parent::setUp();
 
-        Resolver::drop('default');
-        Resolver::drop('test');
+        AttributeResolver::drop('default');
+        AttributeResolver::drop('test');
         Cache::clear('_cake_attributes_');
     }
 
@@ -39,8 +39,8 @@ class ResolverTest extends TestCase
     {
         parent::tearDown();
 
-        Resolver::drop('default');
-        Resolver::drop('test');
+        AttributeResolver::drop('default');
+        AttributeResolver::drop('test');
         Cache::clear('_cake_attributes_');
     }
 
@@ -52,8 +52,8 @@ class ResolverTest extends TestCase
             'cache' => '_cake_attributes_',
         ];
 
-        Resolver::setConfig('test', $config);
-        $result = Resolver::getConfig('test');
+        AttributeResolver::setConfig('test', $config);
+        $result = AttributeResolver::getConfig('test');
 
         $this->assertSame($config, $result);
     }
@@ -61,9 +61,9 @@ class ResolverTest extends TestCase
     public function testGetConfigOrFail(): void
     {
         $config = ['paths' => [TEST_APP]];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
-        $result = Resolver::getConfigOrFail('test');
+        $result = AttributeResolver::getConfigOrFail('test');
         $this->assertSame($config, $result);
     }
 
@@ -72,16 +72,16 @@ class ResolverTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Expected configuration `nonexistent` not found');
 
-        Resolver::getConfigOrFail('nonexistent');
+        AttributeResolver::getConfigOrFail('nonexistent');
     }
 
     public function testDrop(): void
     {
-        Resolver::setConfig('test', ['paths' => []]);
-        $this->assertNotNull(Resolver::getConfig('test'));
+        AttributeResolver::setConfig('test', ['paths' => []]);
+        $this->assertNotNull(AttributeResolver::getConfig('test'));
 
-        Resolver::drop('test');
-        $this->assertNull(Resolver::getConfig('test'));
+        AttributeResolver::drop('test');
+        $this->assertNull(AttributeResolver::getConfig('test'));
     }
 
     public function testResolveReturnsAttributeCollection(): void
@@ -91,9 +91,9 @@ class ResolverTest extends TestCase
             'basePath' => TEST_APP,
             'cache' => '_cake_attributes_',
         ];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
-        $collection = Resolver::collection('test');
+        $collection = AttributeResolver::collection('test');
 
         $this->assertInstanceOf(AttributeCollection::class, $collection);
         $this->assertGreaterThan(0, $collection->count());
@@ -106,13 +106,13 @@ class ResolverTest extends TestCase
             'basePath' => TEST_APP,
             'cache' => '_cake_attributes_',
         ];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
         // First resolve creates cache
-        $collection1 = Resolver::collection('test');
+        $collection1 = AttributeResolver::collection('test');
 
         // Second resolve should load from cache
-        $collection2 = Resolver::collection('test');
+        $collection2 = AttributeResolver::collection('test');
 
         $this->assertInstanceOf(AttributeCollection::class, $collection2);
         $this->assertSame($collection1->count(), $collection2->count());
@@ -125,10 +125,10 @@ class ResolverTest extends TestCase
             'basePath' => TEST_APP,
             'cache' => '_cake_attributes_',
         ];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
-        $collection1 = Resolver::collection('test');
-        $collection2 = Resolver::collection('test');
+        $collection1 = AttributeResolver::collection('test');
+        $collection2 = AttributeResolver::collection('test');
 
         // Should be the exact same instance due to in-memory cache
         $this->assertSame($collection1, $collection2);
@@ -141,9 +141,9 @@ class ResolverTest extends TestCase
             'basePath' => TEST_APP,
             'cache' => '_cake_attributes_',
         ];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
-        $routes = Resolver::collection('test')->withAttribute(TestRoute::class);
+        $routes = AttributeResolver::collection('test')->withAttribute(TestRoute::class);
 
         $this->assertInstanceOf(AttributeCollection::class, $routes);
         $this->assertGreaterThan(0, $routes->count());
@@ -156,18 +156,18 @@ class ResolverTest extends TestCase
             'basePath' => TEST_APP,
             'cache' => '_cake_attributes_',
         ];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
-        $collection1 = Resolver::collection('test');
-        $collection2 = Resolver::collection('test');
+        $collection1 = AttributeResolver::collection('test');
+        $collection2 = AttributeResolver::collection('test');
 
         // Should be the same instance due to in-memory cache
         $this->assertSame($collection1, $collection2);
 
-        Resolver::clear('test');
+        AttributeResolver::clear('test');
 
         // After clearing, should get a new collection instance
-        $collection3 = Resolver::collection('test');
+        $collection3 = AttributeResolver::collection('test');
         $this->assertNotSame($collection1, $collection3);
     }
 
@@ -178,9 +178,9 @@ class ResolverTest extends TestCase
             'basePath' => TEST_APP,
             'cache' => '_cake_attributes_',
         ];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
-        $result = Resolver::warm('test');
+        $result = AttributeResolver::warm('test');
 
         $this->assertInstanceOf(AttributeCollection::class, $result);
     }
@@ -192,9 +192,9 @@ class ResolverTest extends TestCase
             'basePath' => TEST_APP,
             'cache' => '_cake_attributes_',
         ];
-        Resolver::setConfig('default', $config);
+        AttributeResolver::setConfig('default', $config);
 
-        $collection = Resolver::collection();
+        $collection = AttributeResolver::collection();
 
         $this->assertInstanceOf(AttributeCollection::class, $collection);
         $this->assertGreaterThan(0, $collection->count());
@@ -202,7 +202,7 @@ class ResolverTest extends TestCase
 
     public function testDropReturnsFalseForNonexistentConfig(): void
     {
-        $result = Resolver::drop('nonexistent');
+        $result = AttributeResolver::drop('nonexistent');
 
         $this->assertFalse($result);
     }
@@ -213,13 +213,13 @@ class ResolverTest extends TestCase
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
         ];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
         // First populate the cache by calling collection
-        Resolver::collection('test');
+        AttributeResolver::collection('test');
 
         // Clear will delete from cache
-        $result = Resolver::clear('test');
+        $result = AttributeResolver::clear('test');
 
         $this->assertTrue($result);
     }
@@ -232,9 +232,9 @@ class ResolverTest extends TestCase
             'excludeAttributes' => [TestRoute::class],
             'cache' => '_cake_attributes_',
         ];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
-        $collection = Resolver::collection('test');
+        $collection = AttributeResolver::collection('test');
 
         // Should not contain any TestRoute attributes
         $routes = $collection->withAttribute(TestRoute::class);
@@ -254,17 +254,17 @@ class ResolverTest extends TestCase
             'cache' => '_cake_attributes_',
         ];
 
-        Resolver::setConfig('controllers', $config1);
-        Resolver::setConfig('models', $config2);
+        AttributeResolver::setConfig('controllers', $config1);
+        AttributeResolver::setConfig('models', $config2);
 
-        $controllerCollection = Resolver::collection('controllers');
-        $modelCollection = Resolver::collection('models');
+        $controllerCollection = AttributeResolver::collection('controllers');
+        $modelCollection = AttributeResolver::collection('models');
 
         $this->assertInstanceOf(AttributeCollection::class, $controllerCollection);
         $this->assertInstanceOf(AttributeCollection::class, $modelCollection);
 
-        Resolver::drop('controllers');
-        Resolver::drop('models');
+        AttributeResolver::drop('controllers');
+        AttributeResolver::drop('models');
     }
 
     public function testResolveReturnsEmptyCollectionForMissingConfig(): void
@@ -272,7 +272,7 @@ class ResolverTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('The `nonexistent` attribute resolver configuration does not exist.');
 
-        Resolver::collection('nonexistent');
+        AttributeResolver::collection('nonexistent');
     }
 
     public function testCollectionMethodReturnsAttributeCollection(): void
@@ -281,9 +281,9 @@ class ResolverTest extends TestCase
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
         ];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
-        $collection = Resolver::collection('test');
+        $collection = AttributeResolver::collection('test');
 
         $this->assertInstanceOf(AttributeCollection::class, $collection);
         $this->assertGreaterThan(0, $collection->count());
@@ -295,9 +295,9 @@ class ResolverTest extends TestCase
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
         ];
-        Resolver::setConfig('default', $config);
+        AttributeResolver::setConfig('default', $config);
 
-        $collection = Resolver::collection();
+        $collection = AttributeResolver::collection();
 
         $this->assertInstanceOf(AttributeCollection::class, $collection);
         $this->assertGreaterThan(0, $collection->count());
@@ -309,10 +309,10 @@ class ResolverTest extends TestCase
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
         ];
-        Resolver::setConfig('default', $config);
+        AttributeResolver::setConfig('default', $config);
 
         // Call withAttribute() directly on Resolver (should forward to collection)
-        $filtered = Resolver::withAttribute(TestRoute::class);
+        $filtered = AttributeResolver::withAttribute(TestRoute::class);
 
         $this->assertInstanceOf(AttributeCollection::class, $filtered);
         $this->assertGreaterThan(0, $filtered->count());
@@ -324,10 +324,10 @@ class ResolverTest extends TestCase
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
         ];
-        Resolver::setConfig('default', $config);
+        AttributeResolver::setConfig('default', $config);
 
         // Chain multiple collection methods
-        $result = Resolver::withAttribute(TestRoute::class)
+        $result = AttributeResolver::withAttribute(TestRoute::class)
             ->first();
 
         $this->assertInstanceOf(AttributeInfo::class, $result);
@@ -339,10 +339,10 @@ class ResolverTest extends TestCase
             'paths' => ['TestApp/Attribute/Resolver/Fixture/*.php'],
             'basePath' => TEST_APP,
         ];
-        Resolver::setConfig('plugins', $config);
+        AttributeResolver::setConfig('plugins', $config);
 
         // Named config chaining
-        $result = Resolver::collection('plugins')
+        $result = AttributeResolver::collection('plugins')
             ->withAttribute(TestRoute::class);
 
         $this->assertInstanceOf(AttributeCollection::class, $result);
@@ -356,15 +356,15 @@ class ResolverTest extends TestCase
             'basePath' => TEST_APP,
             'cache' => false,
         ];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
-        $collection = Resolver::collection('test');
+        $collection = AttributeResolver::collection('test');
 
         $this->assertInstanceOf(AttributeCollection::class, $collection);
         $this->assertGreaterThan(0, $collection->count());
 
         // Clear should work without error when cache is disabled
-        $result = Resolver::clear('test');
+        $result = AttributeResolver::clear('test');
         $this->assertTrue($result);
     }
 
@@ -375,14 +375,14 @@ class ResolverTest extends TestCase
             'basePath' => TEST_APP,
             'cache' => false,
         ];
-        Resolver::setConfig('test', $config);
+        AttributeResolver::setConfig('test', $config);
 
-        $collection1 = Resolver::collection('test');
-        Resolver::drop('test');
-        Resolver::setConfig('test', $config);
+        $collection1 = AttributeResolver::collection('test');
+        AttributeResolver::drop('test');
+        AttributeResolver::setConfig('test', $config);
 
         // After drop and re-config, should still get results (no cache to load from)
-        $collection2 = Resolver::collection('test');
+        $collection2 = AttributeResolver::collection('test');
 
         $this->assertInstanceOf(AttributeCollection::class, $collection2);
         $this->assertSame($collection1->count(), $collection2->count());

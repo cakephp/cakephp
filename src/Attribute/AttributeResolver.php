@@ -32,7 +32,7 @@ use InvalidArgumentException;
  *
  * @mixin \Cake\Attribute\Resolver\AttributeCollection
  */
-class Resolver
+class AttributeResolver
 {
     use StaticConfigTrait {
         drop as private traitDrop;
@@ -165,9 +165,7 @@ class Resolver
      * Forward method calls to the default collection
      *
      * Enables convenient access to collection methods on the default config:
-     * ```
-     * $routes = Resolver::withAttribute(Route::class);
-     * ```
+     * `$routes = AttributeResolver::withAttribute(Route::class);`
      *
      * @param string $method Method name
      * @param array $arguments Method arguments

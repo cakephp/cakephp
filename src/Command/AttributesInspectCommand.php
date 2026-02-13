@@ -17,7 +17,7 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use BackedEnum;
-use Cake\Attribute\Resolver;
+use Cake\Attribute\AttributeResolver;
 use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
 use Cake\Console\ConsoleOptionParser;
 use JsonException;
@@ -80,7 +80,7 @@ class AttributesInspectCommand extends Command
     {
         $configName = (string)$this->args->getOption('config');
 
-        $config = Resolver::getConfig($configName);
+        $config = AttributeResolver::getConfig($configName);
         if ($config === null) {
             $this->io->error(sprintf('Configuration "%s" does not exist.', $configName));
 
@@ -96,7 +96,7 @@ class AttributesInspectCommand extends Command
             return static::CODE_ERROR;
         }
 
-        $collection = Resolver::collection($configName);
+        $collection = AttributeResolver::collection($configName);
 
         if ($attributeName) {
             $collection = $collection->withAttributeContains((string)$attributeName);

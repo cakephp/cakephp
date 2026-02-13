@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Attribute\Resolver;
+use Cake\Attribute\AttributeResolver;
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -36,7 +36,7 @@ class AttributesListCommandTest extends TestCase
         parent::setUp();
         $this->setAppNamespace();
 
-        Resolver::setConfig('default', [
+        AttributeResolver::setConfig('default', [
             'paths' => [
                 'Attribute/Resolver/Fixture/*.php',
             ],
@@ -52,7 +52,7 @@ class AttributesListCommandTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        Resolver::drop('default');
+        AttributeResolver::drop('default');
     }
 
     /**
@@ -147,9 +147,9 @@ class AttributesListCommandTest extends TestCase
         mkdir($emptyDir, 0777, true);
 
         // Drop first to ensure fresh config
-        Resolver::drop('emptylist');
+        AttributeResolver::drop('emptylist');
 
-        Resolver::setConfig('emptylist', [
+        AttributeResolver::setConfig('emptylist', [
             'paths' => ['*.php'],
             'basePath' => $emptyDir,
         ]);
@@ -158,7 +158,7 @@ class AttributesListCommandTest extends TestCase
         // When empty, warning should be shown (it's in stderr, not stdout)
         $this->assertErrorContains('No attributes found');
 
-        Resolver::drop('emptylist');
+        AttributeResolver::drop('emptylist');
         rmdir($emptyDir);
     }
 
@@ -171,9 +171,9 @@ class AttributesListCommandTest extends TestCase
         mkdir($emptyDir, 0777, true);
 
         // Drop first to ensure fresh config
-        Resolver::drop('emptylist2');
+        AttributeResolver::drop('emptylist2');
 
-        Resolver::setConfig('emptylist2', [
+        AttributeResolver::setConfig('emptylist2', [
             'paths' => ['*.php'],
             'basePath' => $emptyDir,
         ]);
@@ -181,7 +181,7 @@ class AttributesListCommandTest extends TestCase
         $this->exec('attributes list --config emptylist2');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
-        Resolver::drop('emptylist2');
+        AttributeResolver::drop('emptylist2');
         rmdir($emptyDir);
     }
 
@@ -347,7 +347,7 @@ class AttributesListCommandTest extends TestCase
      */
     public function testConfigOption(): void
     {
-        Resolver::setConfig('custom', [
+        AttributeResolver::setConfig('custom', [
             'paths' => ['Attribute/Resolver/Fixture/*.php'],
             'basePath' => APP,
         ]);
@@ -355,7 +355,7 @@ class AttributesListCommandTest extends TestCase
         $this->exec('attributes list --config custom');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
-        Resolver::drop('custom');
+        AttributeResolver::drop('custom');
     }
 
     /**
@@ -615,8 +615,8 @@ class AttributesListCommandTest extends TestCase
         $emptyDir = TMP . 'empty_json_test_' . uniqid() . DS;
         mkdir($emptyDir, 0777, true);
 
-        Resolver::drop('emptyjson');
-        Resolver::setConfig('emptyjson', [
+        AttributeResolver::drop('emptyjson');
+        AttributeResolver::setConfig('emptyjson', [
             'paths' => ['*.php'],
             'basePath' => $emptyDir,
         ]);
@@ -630,7 +630,7 @@ class AttributesListCommandTest extends TestCase
         $this->assertIsArray($decoded);
         $this->assertEmpty($decoded);
 
-        Resolver::drop('emptyjson');
+        AttributeResolver::drop('emptyjson');
         rmdir($emptyDir);
     }
 

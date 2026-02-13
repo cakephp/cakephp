@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Attribute\Resolver;
+use Cake\Attribute\AttributeResolver;
 use Cake\Cache\Cache;
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
@@ -46,7 +46,7 @@ class AttributesWarmCommandTest extends TestCase
             'serialize' => true,
         ]);
 
-        Resolver::setConfig('default', [
+        AttributeResolver::setConfig('default', [
             'paths' => [
                 'Attribute/Resolver/Fixture/*.php',
             ],
@@ -64,7 +64,7 @@ class AttributesWarmCommandTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        Resolver::drop('default');
+        AttributeResolver::drop('default');
         Cache::clear($this->cacheConfig);
         Cache::drop($this->cacheConfig);
     }
@@ -173,7 +173,7 @@ class AttributesWarmCommandTest extends TestCase
      */
     public function testErrorWhenCacheDisabled(): void
     {
-        Resolver::setConfig('disabled', [
+        AttributeResolver::setConfig('disabled', [
             'paths' => ['Attribute/Resolver/Fixture/*.php'],
             'basePath' => APP,
             'cache' => false,
@@ -183,7 +183,7 @@ class AttributesWarmCommandTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_ERROR);
         $this->assertErrorContains('disabled');
 
-        Resolver::drop('disabled');
+        AttributeResolver::drop('disabled');
     }
 
     /**
@@ -208,7 +208,7 @@ class AttributesWarmCommandTest extends TestCase
             'serialize' => true,
         ]);
 
-        Resolver::setConfig('custom', [
+        AttributeResolver::setConfig('custom', [
             'paths' => ['Attribute/Resolver/Fixture/*.php'],
             'basePath' => APP,
             'cache' => $customCacheConfig,
@@ -218,7 +218,7 @@ class AttributesWarmCommandTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         $this->assertNotNull(Cache::read('attribute_resolver_custom', $customCacheConfig));
 
-        Resolver::drop('custom');
+        AttributeResolver::drop('custom');
         Cache::clear($customCacheConfig);
         Cache::drop($customCacheConfig);
     }
@@ -248,7 +248,7 @@ class AttributesWarmCommandTest extends TestCase
             'serialize' => true,
         ]);
 
-        Resolver::setConfig('empty', [
+        AttributeResolver::setConfig('empty', [
             'paths' => ['*.php'],
             'basePath' => $emptyDir,
             'cache' => $emptyCacheConfig,
@@ -257,7 +257,7 @@ class AttributesWarmCommandTest extends TestCase
         $this->exec('attributes warm --config empty');
         $this->assertOutputContains('Cached 0 attributes');
 
-        Resolver::drop('empty');
+        AttributeResolver::drop('empty');
         Cache::clear($emptyCacheConfig);
         Cache::drop($emptyCacheConfig);
         $fs = new Filesystem();

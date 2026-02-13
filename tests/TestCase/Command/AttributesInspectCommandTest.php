@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use Cake\Attribute\Resolver;
+use Cake\Attribute\AttributeResolver;
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
 use Cake\TestSuite\TestCase;
@@ -36,7 +36,7 @@ class AttributesInspectCommandTest extends TestCase
         parent::setUp();
         $this->setAppNamespace();
 
-        Resolver::setConfig('default', [
+        AttributeResolver::setConfig('default', [
             'paths' => [
                 'Attribute/Resolver/Fixture/*.php',
             ],
@@ -52,7 +52,7 @@ class AttributesInspectCommandTest extends TestCase
     protected function tearDown(): void
     {
         parent::tearDown();
-        Resolver::drop('default');
+        AttributeResolver::drop('default');
     }
 
     /**
@@ -332,7 +332,7 @@ class AttributesInspectCommandTest extends TestCase
      */
     public function testConfigOption(): void
     {
-        Resolver::setConfig('custom', [
+        AttributeResolver::setConfig('custom', [
             'paths' => ['Attribute/Resolver/Fixture/*.php'],
             'basePath' => APP,
         ]);
@@ -340,7 +340,7 @@ class AttributesInspectCommandTest extends TestCase
         $this->exec('attributes inspect TestRoute --config custom');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
-        Resolver::drop('custom');
+        AttributeResolver::drop('custom');
     }
 
     /**
