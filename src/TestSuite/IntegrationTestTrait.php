@@ -455,11 +455,12 @@ trait IntegrationTestTrait
      * response.
      *
      * @param array|string $url The URL to request.
+     * @param array|string $data The data for the request.
      * @return void
      */
-    public function delete(array|string $url): void
+    public function delete(array|string $url, array|string $data = []): void
     {
-        $this->sendRequest($url, 'DELETE');
+        $this->sendRequest($url, 'DELETE', $data);
     }
 
     /**

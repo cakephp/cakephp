@@ -490,6 +490,22 @@ class IntegrationTestTraitTest extends TestCase
     }
 
     /**
+     * Test that the PSR7 requests receive delete data
+     */
+    public function testDeleteDataFormUrlEncoded(): void
+    {
+        $this->configRequest([
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+            ],
+        ]);
+        $this->delete('/request_action/delete_pass', ['title' => 'value']);
+        $this->assertResponseOk();
+        $data = json_decode('' . $this->response->getBody());
+        $this->assertSame('value', $data->title);
+    }
+
+    /**
      * Test that the uploaded files are passed correctly to the request
      */
     public function testUploadedFiles(): void

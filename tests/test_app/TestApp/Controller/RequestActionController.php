@@ -85,6 +85,16 @@ class RequestActionController extends AppController
     }
 
     /**
+     * delete pass, testing delete data passing
+     *
+     * @return \Cake\Http\Response
+     */
+    public function delete_pass()
+    {
+        return $this->response->withStringBody(json_encode($this->request->getData()));
+    }
+
+    /**
      * query pass, testing query passing
      *
      * @return \Cake\Http\Response
