@@ -33,6 +33,7 @@ use Exception;
 use Mockery;
 use PDO;
 use PDOException;
+use PDOStatement;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Driver\RetryDriver;
 use TestApp\Database\Driver\StubDriver;
@@ -160,7 +161,7 @@ class DriverTest extends TestCase
         $connection = Mockery::mock(PDO::class);
         $connection->shouldReceive('query')
             ->once()
-            ->andReturn(Mockery::mock(\PDOStatement::class));
+            ->andReturn(Mockery::mock(PDOStatement::class));
 
         $this->driver->shouldReceive('createPdo')
             ->once()

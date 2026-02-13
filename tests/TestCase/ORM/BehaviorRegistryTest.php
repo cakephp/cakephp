@@ -416,9 +416,9 @@ class BehaviorRegistryTest extends TestCase
      */
     public function testSetTable(): void
     {
-        $table = $this->getMockBuilder(Table::class)->getMock();
-        $table->expects($this->once())->method('getEventManager');
+        $table = new Table(['table' => 'users']);
 
         $this->Behaviors->setTable($table);
+        $this->assertSame($table->getEventManager(), $this->Behaviors->getEventManager());
     }
 }

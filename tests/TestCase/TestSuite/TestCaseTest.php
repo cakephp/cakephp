@@ -30,7 +30,6 @@ use Cake\Test\Fixture\FixturizedTestCase;
 use Cake\TestSuite\TestCase;
 use Exception;
 use PHPUnit\Framework\AssertionFailedError;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\WithoutErrorHandler;
 use PHPUnit\Framework\TestStatus\Skipped;
 use PHPUnit\Framework\TestStatus\Success;
@@ -46,7 +45,6 @@ use function Cake\Core\deprecationWarning;
 /**
  * TestCaseTest
  */
-#[AllowMockObjectsWithoutExpectations]
 class TestCaseTest extends TestCase
 {
     protected function setUp(): void
