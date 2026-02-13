@@ -46,19 +46,19 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
         parent::setUp();
         $this->tag = new Table(['alias' => 'Tags', 'table' => 'tags']);
         $this->tag->setSchema([
-        'id' => ['type' => 'integer'],
-        'name' => ['type' => 'string'],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']],
-        ],
+            'id' => ['type' => 'integer'],
+            'name' => ['type' => 'string'],
+            '_constraints' => [
+                'primary' => ['type' => 'primary', 'columns' => ['id']],
+            ],
         ]);
         $this->article = new Table(['alias' => 'Articles', 'table' => 'articles']);
         $this->article->setSchema([
-        'id' => ['type' => 'integer'],
-        'name' => ['type' => 'string'],
-        '_constraints' => [
-            'primary' => ['type' => 'primary', 'columns' => ['id']],
-        ],
+            'id' => ['type' => 'integer'],
+            'name' => ['type' => 'string'],
+            '_constraints' => [
+                'primary' => ['type' => 'primary', 'columns' => ['id']],
+            ],
         ]);
     }
 

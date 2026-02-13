@@ -307,7 +307,7 @@ class HasManyTest extends TestCase
         $keys = [1, 2, 3, 4];
 
         $query = $this->article->selectQuery();
-        $association->shouldReceive('find')
+        $this->article->shouldReceive('find')
             ->andReturn($query);
 
         $association->eagerLoader(compact('keys', 'query'));
