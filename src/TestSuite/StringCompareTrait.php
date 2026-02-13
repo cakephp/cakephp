@@ -21,7 +21,7 @@ use function Cake\Core\env;
 /**
  * Compare a string to the contents of a file
  *
- * Implementing objects are expected to modify the `$_compareBasePath` property
+ * Implementing objects are expected to modify the `$compareBasePath` property
  * before use.
  */
 trait StringCompareTrait
@@ -33,7 +33,7 @@ trait StringCompareTrait
      *
      * @var string
      */
-    protected string $_compareBasePath = '';
+    protected string $compareBasePath = '';
 
     /**
      * Update comparisons to match test changes
@@ -42,7 +42,7 @@ trait StringCompareTrait
      *
      * @var bool
      */
-    protected bool $_updateComparisons;
+    protected bool $updateComparisons;
 
     /**
      * Compare the result to the contents of the file
@@ -59,12 +59,12 @@ trait StringCompareTrait
     public function assertSameAsFile(string $path, string $result): void
     {
         if (!file_exists($path)) {
-            $path = $this->_compareBasePath . $path;
+            $path = $this->compareBasePath . $path;
         }
 
-        $this->_updateComparisons ??= (bool)env('UPDATE_TEST_COMPARISON_FILES');
+        $this->updateComparisons ??= (bool)env('UPDATE_TEST_COMPARISON_FILES');
 
-        if ($this->_updateComparisons) {
+        if ($this->updateComparisons) {
             file_put_contents($path, $result);
         }
 

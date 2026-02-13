@@ -135,9 +135,9 @@ class SelectBoxWidget extends BasicWidget
             $template = 'selectMultiple';
             unset($data['multiple']);
         }
-        $attrs = $this->_templates->formatAttributes($data);
+        $attrs = $this->templates->formatAttributes($data);
 
-        return $this->_templates->format($template, [
+        return $this->templates->format($template, [
             'name' => $name,
             'templateVars' => $data['templateVars'],
             'attrs' => $attrs,
@@ -222,11 +222,11 @@ class SelectBoxWidget extends BasicWidget
         }
         $groupOptions = $this->renderOptions($opts, $disabled, $selected, $templateVars, $escape);
 
-        return $this->_templates->format('optgroup', [
+        return $this->templates->format('optgroup', [
             'label' => $escape ? h($label) : $label,
             'content' => implode('', $groupOptions),
             'templateVars' => $templateVars,
-            'attrs' => $this->_templates->formatAttributes($attrs, ['text', 'options']),
+            'attrs' => $this->templates->formatAttributes($attrs, ['text', 'options']),
         ]);
     }
 
@@ -296,11 +296,11 @@ class SelectBoxWidget extends BasicWidget
             }
             $optAttrs['escape'] = $escape;
 
-            $out[] = $this->_templates->format('option', [
+            $out[] = $this->templates->format('option', [
                 'value' => $escape ? h($optAttrs['value']) : $optAttrs['value'],
                 'text' => $escape ? h($optAttrs['text']) : $optAttrs['text'],
                 'templateVars' => $optAttrs['templateVars'],
-                'attrs' => $this->_templates->formatAttributes($optAttrs, ['text', 'value']),
+                'attrs' => $this->templates->formatAttributes($optAttrs, ['text', 'value']),
             ]);
         }
 

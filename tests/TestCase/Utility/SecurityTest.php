@@ -45,7 +45,7 @@ class SecurityTest extends TestCase
      */
     public function testHash(): void
     {
-        $_hashType = Security::$hashType;
+        $originalHashType = Security::$hashType;
 
         $key = 'someKey';
         $hash = 'someHash';
@@ -79,7 +79,7 @@ class SecurityTest extends TestCase
         $this->assertSame(64, strlen(Security::hash($key, 'sha256', false)));
         $this->assertSame(64, strlen(Security::hash($key, 'sha256', true)));
 
-        Security::setHash($_hashType);
+        Security::setHash($originalHashType);
     }
 
     /**

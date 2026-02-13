@@ -299,12 +299,12 @@ class ViewBuilderTest extends TestCase
         $result = json_decode(json_encode($builder), true);
 
         $expected = [
-            '_template' => 'default',
-            '_layout' => 'test',
-            '_helpers' => ['Html' => []],
-            '_className' => 'JsonView',
-            '_autoLayout' => true,
-            '_configMergeStrategy' => 'deep',
+            'template' => 'default',
+            'layout' => 'test',
+            'autoLayout' => true,
+            'className' => 'JsonView',
+            'helpers' => ['Html' => []],
+            'configMergeStrategy' => 'deep',
         ];
         $this->assertEquals($expected, $result);
 

@@ -107,14 +107,14 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      *
      * @var array<string>
      */
-    protected array $_validCellOptions = [];
+    protected array $validCellOptions = [];
 
     /**
      * Caching setup.
      *
      * @var array|bool
      */
-    protected array|bool $_cache = false;
+    protected array|bool $cache = false;
 
     /**
      * Constructor.
@@ -136,14 +136,14 @@ abstract class Cell implements EventDispatcherInterface, Stringable
         $this->request = $request;
         $this->response = $response;
 
-        $this->_validCellOptions = array_merge(['action', 'args', 'plugin'], $this->_validCellOptions);
-        foreach ($this->_validCellOptions as $var) {
+        $this->validCellOptions = array_merge(['action', 'args', 'plugin'], $this->validCellOptions);
+        foreach ($this->validCellOptions as $var) {
             if (isset($cellOptions[$var])) {
                 $this->{$var} = $cellOptions[$var];
             }
         }
         if (!empty($cellOptions['cache'])) {
-            $this->_cache = $cellOptions['cache'];
+            $this->cache = $cellOptions['cache'];
         }
 
         $this->initialize();
@@ -168,14 +168,14 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      */
     public function viewBuilder(): ViewBuilder
     {
-        if ($this->_viewBuilder === null) {
-            $this->_viewBuilder = new ViewBuilder();
+        if ($this->viewBuilder === null) {
+            $this->viewBuilder = new ViewBuilder();
             if ($this->plugin !== null) {
-                $this->_viewBuilder->setPlugin($this->plugin);
+                $this->viewBuilder->setPlugin($this->plugin);
             }
         }
 
-        return $this->_viewBuilder;
+        return $this->viewBuilder;
     }
 
     /**
@@ -189,7 +189,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
     public function render(?string $template = null): string
     {
         $cache = [];
-        if ($this->_cache) {
+        if ($this->cache) {
             $cache = $this->cacheConfig($this->action, $template);
         }
 
@@ -257,7 +257,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      */
     protected function cacheConfig(string $action, ?string $template = null): array
     {
-        if (!$this->_cache) {
+        if (!$this->cache) {
             return [];
         }
         $template = $template ?: 'default';
@@ -267,11 +267,11 @@ abstract class Cell implements EventDispatcherInterface, Stringable
             'config' => 'default',
             'key' => $key,
         ];
-        if ($this->_cache === true) {
+        if ($this->cache === true) {
             return $default;
         }
 
-        return $this->_cache + $default;
+        return $this->cache + $default;
     }
 
     /**

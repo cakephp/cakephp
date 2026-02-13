@@ -97,7 +97,7 @@ class Renderer
      */
     public function reset(): static
     {
-        $this->_viewBuilder = null;
+        $this->viewBuilder = null;
 
         $this->viewBuilder()
             ->setClassName(View::class)
@@ -112,8 +112,8 @@ class Renderer
      */
     public function __clone()
     {
-        if ($this->_viewBuilder !== null) {
-            $this->_viewBuilder = clone $this->_viewBuilder;
+        if ($this->viewBuilder !== null) {
+            $this->viewBuilder = clone $this->viewBuilder;
         }
     }
 }

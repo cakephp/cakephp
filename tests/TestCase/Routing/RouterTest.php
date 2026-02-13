@@ -312,14 +312,14 @@ class RouterTest extends TestCase
         $this->assertSame('/users/logout', $result);
 
         Router::reload();
-        $_back = Configure::read('App.fullBaseUrl');
+        $back = Configure::read('App.fullBaseUrl');
         Configure::write('App.fullBaseUrl', '/');
 
         $request = new ServerRequest();
         Router::setRequest($request);
         $result = Router::normalize('users/login');
         $this->assertSame('/users/login', $result);
-        Configure::write('App.fullBaseUrl', $_back);
+        Configure::write('App.fullBaseUrl', $back);
 
         Router::reload();
         $request = new ServerRequest(['base' => 'beer']);

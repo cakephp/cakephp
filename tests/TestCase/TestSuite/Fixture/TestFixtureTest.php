@@ -42,7 +42,7 @@ class TestFixtureTest extends TestCase
 
             protected function schemaFromReflection(): void
             {
-                $this->_schema = new TableSchema(
+                $this->schema = new TableSchema(
                     'my_table',
                     [],
                 );

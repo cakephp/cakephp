@@ -45,21 +45,21 @@ class WidgetLocator
      *
      * @var array
      */
-    protected array $_widgets = [];
+    protected array $widgets = [];
 
     /**
      * Templates to use.
      *
      * @var \Cake\View\StringTemplate
      */
-    protected StringTemplate $_templates;
+    protected StringTemplate $templates;
 
     /**
      * View instance.
      *
      * @var \Cake\View\View
      */
-    protected View $_view;
+    protected View $view;
 
     /**
      * Constructor
@@ -70,8 +70,8 @@ class WidgetLocator
      */
     public function __construct(StringTemplate $templates, View $view, array $widgets = [])
     {
-        $this->_templates = $templates;
-        $this->_view = $view;
+        $this->templates = $templates;
+        $this->view = $view;
 
         $this->add($widgets);
     }
@@ -133,7 +133,7 @@ class WidgetLocator
                 );
             }
 
-            $this->_widgets[$key] = $widget;
+            $this->widgets[$key] = $widget;
         }
 
         foreach ($files as $file) {
@@ -155,19 +155,19 @@ class WidgetLocator
      */
     public function get(string $name): WidgetInterface
     {
-        if (!isset($this->_widgets[$name])) {
-            if (empty($this->_widgets['_default'])) {
+        if (!isset($this->widgets[$name])) {
+            if (empty($this->widgets['_default'])) {
                 throw new InvalidArgumentException(sprintf('Unknown widget `%s`', $name));
             }
 
             $name = '_default';
         }
 
-        if ($this->_widgets[$name] instanceof WidgetInterface) {
-            return $this->_widgets[$name];
+        if ($this->widgets[$name] instanceof WidgetInterface) {
+            return $this->widgets[$name];
         }
 
-        return $this->_widgets[$name] = $this->resolveWidget($this->_widgets[$name]);
+        return $this->widgets[$name] = $this->resolveWidget($this->widgets[$name]);
     }
 
     /**
@@ -177,7 +177,7 @@ class WidgetLocator
      */
     public function clear(): void
     {
-        $this->_widgets = [];
+        $this->widgets = [];
     }
 
     /**
@@ -200,10 +200,10 @@ class WidgetLocator
         }
         if ($config !== []) {
             $reflection = new ReflectionClass($className);
-            $arguments = [$this->_templates];
+            $arguments = [$this->templates];
             foreach ($config as $requirement) {
                 if ($requirement === '_view') {
-                    $arguments[] = $this->_view;
+                    $arguments[] = $this->view;
                 } else {
                     $arguments[] = $this->get($requirement);
                 }
@@ -214,6 +214,6 @@ class WidgetLocator
         }
 
         /** @var \Cake\View\Widget\WidgetInterface */
-        return new $className($this->_templates);
+        return new $className($this->templates);
     }
 }

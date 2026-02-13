@@ -114,11 +114,11 @@ class PaginatorHelper extends Helper
     {
         parent::__construct($view, $config);
 
-        $query = $this->_View->getRequest()->getQueryParams();
+        $query = $this->View->getRequest()->getQueryParams();
         unset($query['page'], $query['limit'], $query['sort'], $query['direction']);
         $this->setConfig(
             'options.url',
-            array_merge($this->_View->getRequest()->getParam('pass', []), ['?' => $query]),
+            array_merge($this->View->getRequest()->getParam('pass', []), ['?' => $query]),
         );
     }
 
@@ -143,8 +143,8 @@ class PaginatorHelper extends Helper
     protected function paginated(): PaginatedInterface
     {
         if (!isset($this->paginated)) {
-            foreach ($this->_View->getVars() as $name) {
-                $value = $this->_View->get($name);
+            foreach ($this->View->getVars() as $name) {
+                $value = $this->View->get($name);
                 if ($value instanceof PaginatedInterface) {
                     $this->paginated = $value;
                 }
@@ -1145,7 +1145,7 @@ class PaginatorHelper extends Helper
         }
 
         if ($options['block']) {
-            $this->_View->append($options['block'], $out);
+            $this->View->append($options['block'], $out);
 
             return null;
         }
@@ -1188,7 +1188,7 @@ class PaginatorHelper extends Helper
         assert($scope === null || is_string($scope));
 
         $currentPage = $this->paginated()->currentPage();
-        $query = $this->_View->getRequest()->getQueryParams();
+        $query = $this->View->getRequest()->getQueryParams();
 
         // Prepare query params to preserve as hidden fields
         $hiddenFields = $query;
@@ -1215,11 +1215,11 @@ class PaginatorHelper extends Helper
             $scope .= '.';
         }
 
-        $out = $this->Form->create(null, ['type' => 'get', 'url' => $this->_View->getRequest()->getPath()]);
+        $out = $this->Form->create(null, ['type' => 'get', 'url' => $this->View->getRequest()->getPath()]);
 
         $out .= $this->generateHiddenFields($hiddenFields);
 
-        $limit = $this->_View->getRequest()->getQuery('limit');
+        $limit = $this->View->getRequest()->getQuery('limit');
         $out .= $this->Form->control($scope . 'limit', $options + [
             'type' => 'select',
             'label' => __('View'),

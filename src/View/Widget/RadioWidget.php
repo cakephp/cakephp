@@ -55,7 +55,7 @@ class RadioWidget extends BasicWidget
      *
      * @var \Cake\View\Widget\LabelWidget
      */
-    protected LabelWidget $_label;
+    protected LabelWidget $label;
 
     /**
      * Constructor
@@ -76,7 +76,7 @@ class RadioWidget extends BasicWidget
         parent::__construct($templates);
 
         $this->defaults['nestedInput'] = $label instanceof NestingLabelWidget;
-        $this->_label = $label;
+        $this->label = $label;
     }
 
     /**
@@ -115,7 +115,7 @@ class RadioWidget extends BasicWidget
         }
         unset($data['empty']);
 
-        $this->_idPrefix = $data['idPrefix'];
+        $this->idPrefix = $data['idPrefix'];
         $this->clearIds();
         $opts = [];
         foreach ($options as $val => $text) {
@@ -192,8 +192,8 @@ class RadioWidget extends BasicWidget
         }
 
         if (!is_bool($data['label']) && isset($radio['checked']) && $radio['checked']) {
-            $selectedClass = $this->_templates->format('selectedClass', []);
-            $data['label'] = $this->_templates->addClass((array)$data['label'], $selectedClass);
+            $selectedClass = $this->templates->format('selectedClass', []);
+            $data['label'] = $this->templates->addClass((array)$data['label'], $selectedClass);
         }
 
         $radio['disabled'] = $this->isDisabled($radio, $data['disabled']);
@@ -207,11 +207,11 @@ class RadioWidget extends BasicWidget
         $nestedInput = $data['nestedInput'];
         unset($data['nestedInput']);
 
-        $input = $this->_templates->format('radio', [
+        $input = $this->templates->format('radio', [
             'name' => $radio['name'],
             'value' => $escape ? h($radio['value']) : $radio['value'],
             'templateVars' => $radio['templateVars'],
-            'attrs' => $this->_templates->formatAttributes(
+            'attrs' => $this->templates->formatAttributes(
                 $radio + $data,
                 ['name', 'value', 'text', 'options', 'label', 'val', 'type'],
             ),
@@ -219,7 +219,7 @@ class RadioWidget extends BasicWidget
 
         if (
             $data['label'] === false &&
-            ($nestedInput || !str_contains($this->_templates->get('radioWrapper'), '{{input}}'))
+            ($nestedInput || !str_contains($this->templates->get('radioWrapper'), '{{input}}'))
         ) {
             $label = $input;
             $input = '';
@@ -240,7 +240,7 @@ class RadioWidget extends BasicWidget
             );
         }
 
-        return $this->_templates->format('radioWrapper', [
+        return $this->templates->format('radioWrapper', [
             'input' => $input,
             'label' => $label,
             'templateVars' => $data['templateVars'],
@@ -281,6 +281,6 @@ class RadioWidget extends BasicWidget
             'input' => $input,
         ];
 
-        return $this->_label->render($labelAttrs, $context);
+        return $this->label->render($labelAttrs, $context);
     }
 }

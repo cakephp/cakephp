@@ -69,7 +69,7 @@ class FlashHelper extends Helper
      */
     public function render(string $key = 'flash', array $options = []): ?string
     {
-        $messages = $this->_View->getRequest()->getFlash()->consume($key);
+        $messages = $this->View->getRequest()->getFlash()->consume($key);
         if ($messages === null) {
             return null;
         }
@@ -77,7 +77,7 @@ class FlashHelper extends Helper
         $out = '';
         foreach ($messages as $message) {
             $message = $options + $message;
-            $out .= $this->_View->element($message['element'], $message);
+            $out .= $this->View->element($message['element'], $message);
         }
 
         return $out;

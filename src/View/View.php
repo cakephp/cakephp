@@ -91,7 +91,7 @@ class View implements EventDispatcherInterface
      *
      * @var \Cake\View\HelperRegistry|null
      */
-    protected ?HelperRegistry $_helpers = null;
+    protected ?HelperRegistry $helperRegistry = null;
 
     /**
      * ViewBlock instance.
@@ -172,7 +172,7 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected string $_ext = '.php';
+    protected string $ext = '.php';
 
     /**
      * Sub-directory for this template file. This is often used for extension based routing.
@@ -228,7 +228,7 @@ class View implements EventDispatcherInterface
      *
      * @var array<string>
      */
-    protected array $_passedVars = [
+    protected array $passedVars = [
         'viewVars', 'autoLayout', 'helpers', 'template', 'layout', 'name', 'theme',
         'layoutPath', 'templatePath', 'plugin', 'configMergeStrategy',
     ];
@@ -245,28 +245,28 @@ class View implements EventDispatcherInterface
      *
      * @var array<string>
      */
-    protected array $_paths = [];
+    protected array $paths = [];
 
     /**
      * Holds an array of plugin paths.
      *
      * @var array<string, array<string>>
      */
-    protected array $_pathsForPlugin = [];
+    protected array $pathsForPlugin = [];
 
     /**
      * The names of views and their parents used with View::extend();
      *
      * @var array<string, string>
      */
-    protected array $_parents = [];
+    protected array $parents = [];
 
     /**
      * The currently rendering view file. Used for resolving parent files.
      *
      * @var string
      */
-    protected string $_current = '';
+    protected string $current = '';
 
     /**
      * Currently rendering an element. Used for finding parent fragments
@@ -274,14 +274,14 @@ class View implements EventDispatcherInterface
      *
      * @var string
      */
-    protected string $_currentType = '';
+    protected string $currentType = '';
 
     /**
      * Content stack, used for nested templates that all use View::extend();
      *
      * @var array<string>
      */
-    protected array $_stack = [];
+    protected array $stack = [];
 
     /**
      * ViewBlock class.
@@ -289,7 +289,7 @@ class View implements EventDispatcherInterface
      * @var string
      * @phpstan-var class-string<\Cake\View\ViewBlock>
      */
-    protected string $_viewBlockClass = ViewBlock::class;
+    protected string $viewBlockClass = ViewBlock::class;
 
     /**
      * Constant for view file type 'template'.
@@ -340,7 +340,7 @@ class View implements EventDispatcherInterface
      * @param \Cake\Http\ServerRequest|null $request Request instance.
      * @param \Cake\Http\Response|null $response Response instance.
      * @param \Cake\Event\EventManagerInterface|null $eventManager Event manager instance.
-     * @param array<string, mixed> $viewOptions View options. See {@link View::$_passedVars} for list of
+     * @param array<string, mixed> $viewOptions View options. See {@link View::$passedVars} for list of
      *   options which get set as class properties.
      */
     public function __construct(
@@ -355,7 +355,7 @@ class View implements EventDispatcherInterface
             $this->setEventManager($eventManager);
         }
 
-        foreach ($this->_passedVars as $var) {
+        foreach ($this->passedVars as $var) {
             if (isset($viewOptions[$var])) {
                 $this->{$var} = $viewOptions[$var];
             }
@@ -366,7 +366,7 @@ class View implements EventDispatcherInterface
 
         $config = array_diff_key(
             $viewOptions,
-            array_flip($this->_passedVars),
+            array_flip($this->passedVars),
         );
 
         if ($this->configMergeStrategy === ViewBuilder::MERGE_SHALLOW) {
@@ -378,7 +378,7 @@ class View implements EventDispatcherInterface
         $request ??= Router::getRequest() ?: new ServerRequest(['base' => '', 'url' => '', 'webroot' => '/']);
         $this->request = $request;
         $this->response = $response ?: new Response();
-        $this->Blocks = new $this->_viewBlockClass();
+        $this->Blocks = new $this->viewBlockClass();
         $this->initialize();
         $this->loadHelpers();
     }
@@ -697,7 +697,7 @@ class View implements EventDispatcherInterface
 
         [$plugin, $elementName] = $this->pluginSplit($name, $pluginCheck);
         $paths = iterator_to_array($this->getElementPaths($plugin));
-        throw new MissingElementException([$name . $this->_ext, $elementName . $this->_ext], $paths);
+        throw new MissingElementException([$name . $this->ext, $elementName . $this->ext], $paths);
     }
 
     /**
@@ -795,7 +795,7 @@ class View implements EventDispatcherInterface
         }
 
         $templateFileName = $this->getTemplateFileName($template);
-        $this->_currentType = static::TYPE_TEMPLATE;
+        $this->currentType = static::TYPE_TEMPLATE;
         $this->dispatchEvent('View.beforeRender', [$templateFileName]);
         $this->Blocks->set('content', $this->renderFile($templateFileName));
         $this->dispatchEvent('View.afterRender', [$templateFileName]);
@@ -848,7 +848,7 @@ class View implements EventDispatcherInterface
             $this->Blocks->set('title', $title);
         }
 
-        $this->_currentType = static::TYPE_LAYOUT;
+        $this->currentType = static::TYPE_LAYOUT;
         $this->Blocks->set('content', $this->renderFile($layoutFileName));
 
         $this->dispatchEvent('View.afterLayout', [$layoutFileName]);
@@ -1067,7 +1067,7 @@ class View implements EventDispatcherInterface
      */
     public function extend(string $name): static
     {
-        $type = str_starts_with($name, '/') ? static::TYPE_TEMPLATE : $this->_currentType;
+        $type = str_starts_with($name, '/') ? static::TYPE_TEMPLATE : $this->currentType;
         switch ($type) {
             case static::TYPE_ELEMENT:
                 $parent = $this->getElementFileName($name);
@@ -1077,7 +1077,7 @@ class View implements EventDispatcherInterface
                     $defaultPath = $paths[0] . static::TYPE_ELEMENT . DIRECTORY_SEPARATOR;
                     throw new LogicException(sprintf(
                         'You cannot extend an element which does not exist (%s).',
-                        $defaultPath . $name . $this->_ext,
+                        $defaultPath . $name . $this->ext,
                     ));
                 }
                 break;
@@ -1088,13 +1088,13 @@ class View implements EventDispatcherInterface
                 $parent = $this->getTemplateFileName($name);
         }
 
-        if ($parent === $this->_current) {
+        if ($parent === $this->current) {
             throw new LogicException('You cannot have templates extend themselves.');
         }
-        if (isset($this->_parents[$parent]) && $this->_parents[$parent] === $this->_current) {
+        if (isset($this->parents[$parent]) && $this->parents[$parent] === $this->current) {
             throw new LogicException('You cannot have templates extend in a loop.');
         }
-        $this->_parents[$this->_current] = $parent;
+        $this->parents[$this->current] = $parent;
 
         return $this;
     }
@@ -1106,7 +1106,7 @@ class View implements EventDispatcherInterface
      */
     public function getCurrentType(): string
     {
-        return $this->_currentType;
+        return $this->currentType;
     }
 
     /**
@@ -1151,7 +1151,7 @@ class View implements EventDispatcherInterface
         if (!$data) {
             $data = $this->viewVars;
         }
-        $this->_current = $templateFile;
+        $this->current = $templateFile;
         $initialBlocks = count($this->Blocks->unclosed());
 
         $this->dispatchEvent('View.beforeRenderFile', [$templateFile]);
@@ -1163,12 +1163,12 @@ class View implements EventDispatcherInterface
             $content = $afterEvent->getResult();
         }
 
-        if (isset($this->_parents[$templateFile])) {
-            $this->_stack[] = $this->fetch('content');
+        if (isset($this->parents[$templateFile])) {
+            $this->stack[] = $this->fetch('content');
             $this->assign('content', $content);
 
-            $content = $this->renderFile($this->_parents[$templateFile]);
-            $this->assign('content', array_pop($this->_stack));
+            $content = $this->renderFile($this->parents[$templateFile]);
+            $this->assign('content', array_pop($this->stack));
         }
 
         $remainingBlocks = count($this->Blocks->unclosed());
@@ -1218,7 +1218,7 @@ class View implements EventDispatcherInterface
      */
     public function helpers(): HelperRegistry
     {
-        return $this->_helpers ??= new HelperRegistry($this);
+        return $this->helperRegistry ??= new HelperRegistry($this);
     }
 
     /**
@@ -1380,7 +1380,7 @@ class View implements EventDispatcherInterface
             }
         }
 
-        $name .= $this->_ext;
+        $name .= $this->ext;
         $paths = $this->paths($plugin);
         foreach ($paths as $path) {
             if (is_file($path . $name)) {
@@ -1474,7 +1474,7 @@ class View implements EventDispatcherInterface
             $name = $this->layout;
         }
         [$plugin, $name] = $this->pluginSplit($name);
-        $name .= $this->_ext;
+        $name .= $this->ext;
 
         foreach ($this->getLayoutPaths($plugin) as $path) {
             if (is_file($path . $name)) {
@@ -1518,7 +1518,7 @@ class View implements EventDispatcherInterface
     {
         [$plugin, $name] = $this->pluginSplit($name, $pluginCheck);
 
-        $name .= $this->_ext;
+        $name .= $this->ext;
         foreach ($this->getElementPaths($plugin) as $path) {
             if (is_file($path . $name)) {
                 return $path . $name;
@@ -1584,11 +1584,11 @@ class View implements EventDispatcherInterface
     protected function paths(?string $plugin = null, bool $cached = true): array
     {
         if ($cached) {
-            if ($plugin === null && $this->_paths !== []) {
-                return $this->_paths;
+            if ($plugin === null && $this->paths !== []) {
+                return $this->paths;
             }
-            if ($plugin !== null && isset($this->_pathsForPlugin[$plugin])) {
-                return $this->_pathsForPlugin[$plugin];
+            if ($plugin !== null && isset($this->pathsForPlugin[$plugin])) {
+                return $this->pathsForPlugin[$plugin];
             }
         }
         $templatePaths = array_values(App::path(static::NAME_TEMPLATE));
@@ -1627,10 +1627,10 @@ class View implements EventDispatcherInterface
         );
 
         if ($plugin !== null) {
-            return $this->_pathsForPlugin[$plugin] = $paths;
+            return $this->pathsForPlugin[$plugin] = $paths;
         }
 
-        return $this->_paths = $paths;
+        return $this->paths = $paths;
     }
 
     /**
@@ -1693,9 +1693,9 @@ class View implements EventDispatcherInterface
      */
     protected function renderElement(string $file, array $data, array $options): string
     {
-        $current = $this->_current;
-        $restore = $this->_currentType;
-        $this->_currentType = static::TYPE_ELEMENT;
+        $current = $this->current;
+        $restore = $this->currentType;
+        $this->currentType = static::TYPE_ELEMENT;
 
         if ($options['callbacks']) {
             $this->dispatchEvent('View.beforeRender', [$file]);
@@ -1707,8 +1707,8 @@ class View implements EventDispatcherInterface
             $this->dispatchEvent('View.afterRender', [$file, $element]);
         }
 
-        $this->_currentType = $restore;
-        $this->_current = $current;
+        $this->currentType = $restore;
+        $this->current = $current;
 
         return $element;
     }

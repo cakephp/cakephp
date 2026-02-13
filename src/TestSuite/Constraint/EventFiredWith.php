@@ -21,21 +21,21 @@ class EventFiredWith extends Constraint
      *
      * @var \Cake\Event\EventManager
      */
-    protected EventManager $_eventManager;
+    protected EventManager $eventManager;
 
     /**
      * Event data key
      *
      * @var string
      */
-    protected string $_dataKey;
+    protected string $dataKey;
 
     /**
      * Event data value
      *
      * @var mixed
      */
-    protected mixed $_dataValue;
+    protected mixed $dataValue;
 
     /**
      * Constructor
@@ -46,11 +46,11 @@ class EventFiredWith extends Constraint
      */
     public function __construct(EventManager $eventManager, string $dataKey, mixed $dataValue)
     {
-        $this->_eventManager = $eventManager;
-        $this->_dataKey = $dataKey;
-        $this->_dataValue = $dataValue;
+        $this->eventManager = $eventManager;
+        $this->dataKey = $dataKey;
+        $this->dataValue = $dataValue;
 
-        if ($this->_eventManager->getEventList() === null) {
+        if ($this->eventManager->getEventList() === null) {
             throw new AssertionFailedError(
                 'The event manager you are asserting against is not configured to track events.',
             );
@@ -67,7 +67,7 @@ class EventFiredWith extends Constraint
     public function matches(mixed $other): bool
     {
         $eventGroup = [];
-        $list = $this->_eventManager->getEventList();
+        $list = $this->eventManager->getEventList();
         if ($list !== null) {
             $eventGroup = new Collection($list)
                 ->groupBy(function (EventInterface $event): string {
@@ -93,11 +93,11 @@ class EventFiredWith extends Constraint
 
         $event = $events[0];
 
-        if (array_key_exists($this->_dataKey, (array)$event->getData()) === false) {
+        if (array_key_exists($this->dataKey, (array)$event->getData()) === false) {
             return false;
         }
 
-        return $event->getData($this->_dataKey) === $this->_dataValue;
+        return $event->getData($this->dataKey) === $this->dataValue;
     }
 
     /**
@@ -107,6 +107,6 @@ class EventFiredWith extends Constraint
      */
     public function toString(): string
     {
-        return "was fired with `{$this->_dataKey}` matching `" . json_encode($this->_dataValue) . '`';
+        return "was fired with `{$this->dataKey}` matching `" . json_encode($this->dataValue) . '`';
     }
 }

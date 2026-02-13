@@ -78,7 +78,7 @@ class TestFixture implements FixtureInterface
      *
      * @var \Cake\Database\Schema\TableSchemaInterface&\Cake\Database\Schema\SqlGeneratorInterface
      */
-    protected TableSchemaInterface&SqlGeneratorInterface $_schema;
+    protected TableSchemaInterface&SqlGeneratorInterface $schema;
 
     /**
      * Whether to be strict about invalid fields.
@@ -181,7 +181,7 @@ class TestFixture implements FixtureInterface
 
             $schema = $ormTable->getSchema();
             assert($schema instanceof TableSchema);
-            $this->_schema = $schema;
+            $this->schema = $schema;
 
             $this->getTableLocator()->clear();
         } catch (CakeException $e) {
@@ -223,7 +223,7 @@ class TestFixture implements FixtureInterface
         $fields = [];
         $values = [];
         $types = [];
-        $columns = $this->_schema->columns();
+        $columns = $this->schema->columns();
         foreach ($this->records as $index => $record) {
             $recordFields = array_keys($record);
             if ($this->strictFields) {
@@ -246,7 +246,7 @@ class TestFixture implements FixtureInterface
         /** @var list<string> $fields */
         $fields = array_values($fields);
         foreach ($fields as $field) {
-            $column = $this->_schema->getColumn($field);
+            $column = $this->schema->getColumn($field);
             assert($column !== null);
             $types[$field] = $column['type'];
         }
@@ -264,7 +264,7 @@ class TestFixture implements FixtureInterface
     public function truncate(ConnectionInterface $connection): void
     {
         assert($connection instanceof Connection);
-        $sql = $this->_schema->truncateSql($connection);
+        $sql = $this->schema->truncateSql($connection);
         foreach ($sql as $stmt) {
             $connection->execute($stmt);
         }
@@ -277,6 +277,6 @@ class TestFixture implements FixtureInterface
      */
     public function getTableSchema(): TableSchemaInterface&SqlGeneratorInterface
     {
-        return $this->_schema;
+        return $this->schema;
     }
 }

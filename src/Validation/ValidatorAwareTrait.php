@@ -44,14 +44,14 @@ trait ValidatorAwareTrait
      *
      * @var string
      */
-    protected string $_validatorClass = Validator::class;
+    protected string $validatorClass = Validator::class;
 
     /**
      * A list of validation objects indexed by name
      *
      * @var array<\Cake\Validation\Validator>
      */
-    protected array $_validators = [];
+    protected array $validators = [];
 
     /**
      * Returns the validation rules tagged with $name. It is possible to have
@@ -90,11 +90,11 @@ trait ValidatorAwareTrait
     public function getValidator(?string $name = null): Validator
     {
         $name = $name ?: static::DEFAULT_VALIDATOR;
-        if (!isset($this->_validators[$name])) {
+        if (!isset($this->validators[$name])) {
             $this->setValidator($name, $this->createValidator($name));
         }
 
-        return $this->_validators[$name];
+        return $this->validators[$name];
     }
 
     /**
@@ -116,7 +116,7 @@ trait ValidatorAwareTrait
             throw new InvalidArgumentException($message);
         }
 
-        $validator = new $this->_validatorClass();
+        $validator = new $this->validatorClass();
         $validator = $this->$method($validator);
         if ($this instanceof EventDispatcherInterface) {
             $event = defined(static::class . '::BUILD_VALIDATOR_EVENT')
@@ -162,7 +162,7 @@ trait ValidatorAwareTrait
             $validator->setProvider(static::VALIDATOR_PROVIDER_NAME, $this);
         }
 
-        $this->_validators[$name] = $validator;
+        $this->validators[$name] = $validator;
 
         return $this;
     }
@@ -180,7 +180,7 @@ trait ValidatorAwareTrait
             return true;
         }
 
-        return isset($this->_validators[$name]);
+        return isset($this->validators[$name]);
     }
 
     /**

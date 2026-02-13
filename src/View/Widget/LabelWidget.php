@@ -33,14 +33,14 @@ class LabelWidget implements WidgetInterface
      *
      * @var \Cake\View\StringTemplate
      */
-    protected StringTemplate $_templates;
+    protected StringTemplate $templates;
 
     /**
      * The template to use.
      *
      * @var string
      */
-    protected string $_labelTemplate = 'label';
+    protected string $labelTemplate = 'label';
 
     /**
      * Constructor.
@@ -54,7 +54,7 @@ class LabelWidget implements WidgetInterface
      */
     public function __construct(StringTemplate $templates)
     {
-        $this->_templates = $templates;
+        $this->templates = $templates;
     }
 
     /**
@@ -82,12 +82,12 @@ class LabelWidget implements WidgetInterface
             'templateVars' => [],
         ];
 
-        return $this->_templates->format($this->_labelTemplate, [
+        return $this->templates->format($this->labelTemplate, [
             'text' => $data['escape'] ? h($data['text']) : $data['text'],
             'input' => $data['input'],
             'hidden' => $data['hidden'],
             'templateVars' => $data['templateVars'],
-            'attrs' => $this->_templates->formatAttributes($data, ['text', 'input', 'hidden']),
+            'attrs' => $this->templates->formatAttributes($data, ['text', 'input', 'hidden']),
         ]);
     }
 

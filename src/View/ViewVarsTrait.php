@@ -30,7 +30,7 @@ trait ViewVarsTrait
      *
      * @var \Cake\View\ViewBuilder|null
      */
-    protected ?ViewBuilder $_viewBuilder = null;
+    protected ?ViewBuilder $viewBuilder = null;
 
     /**
      * Get the view builder being used.
@@ -39,7 +39,7 @@ trait ViewVarsTrait
      */
     public function viewBuilder(): ViewBuilder
     {
-        return $this->_viewBuilder ??= new ViewBuilder();
+        return $this->viewBuilder ??= new ViewBuilder();
     }
 
     /**
