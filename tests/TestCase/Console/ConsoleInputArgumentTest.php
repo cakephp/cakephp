@@ -27,11 +27,6 @@ use SimpleXMLElement;
  */
 class ConsoleInputArgumentTest extends TestCase
 {
-    /**
-     * @var \Cake\Console\ConsoleInputArgument|\PHPUnit\Framework\MockObject\MockObject
-     */
-    protected $input;
-
     public static function dataProperties(): array
     {
         return [
