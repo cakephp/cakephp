@@ -22,6 +22,7 @@ use Cake\Http\Middleware\RateLimitMiddleware;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use Psr\Http\Server\RequestHandlerInterface;
 use stdClass;
 
@@ -48,9 +49,9 @@ class RateLimitMiddlewareTest extends TestCase
             'className' => 'Array',
         ]);
 
-        $this->handler = $this->createMock(RequestHandlerInterface::class);
-        $this->handler->method('handle')
-            ->willReturn(new Response());
+        $this->handler = Mockery::mock(RequestHandlerInterface::class);
+        $this->handler->shouldReceive('handle')
+            ->andReturn(new Response());
     }
 
     /**
