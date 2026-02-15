@@ -36,7 +36,7 @@ class SyslogLogTest extends TestCase
             ->shouldAllowMockingProtectedMethods()
             ->shouldIgnoreMissing();
         $log->__construct();
-        $log->shouldReceive('_open')->once()->with('', LOG_ODELAY, LOG_USER);
+        $log->shouldReceive('open')->once()->with('', LOG_ODELAY, LOG_USER);
         $log->log('debug', 'message');
 
         $log = Mockery::mock(SyslogLog::class)
@@ -49,7 +49,7 @@ class SyslogLogTest extends TestCase
             'flag' => LOG_NDELAY,
             'facility' => LOG_MAIL,
         ]);
-        $log->shouldReceive('_open')
+        $log->shouldReceive('open')
             ->once()
             ->with('thing', LOG_NDELAY, LOG_MAIL);
         $log->log('debug', 'message');
@@ -66,7 +66,7 @@ class SyslogLogTest extends TestCase
             ->shouldAllowMockingProtectedMethods()
             ->shouldIgnoreMissing();
         $log->__construct();
-        $log->shouldReceive('_write')->once()->with($expected, $type . ': Foo');
+        $log->shouldReceive('write')->once()->with($expected, $type . ': Foo');
         $log->log($type, 'Foo');
     }
 
