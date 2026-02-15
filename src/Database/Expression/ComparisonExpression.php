@@ -195,7 +195,7 @@ class ComparisonExpression implements ExpressionInterface, FieldInterface, Typed
      *
      * Clones the field and value if they are expression objects.
      */
-    public function __clone(): void
+    public function __clone()
     {
         foreach (['value', 'field'] as $prop) {
             if ($this->{$prop} instanceof ExpressionInterface) {

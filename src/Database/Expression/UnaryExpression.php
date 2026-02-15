@@ -107,7 +107,7 @@ class UnaryExpression implements ExpressionInterface
     /**
      * Perform a deep clone of the inner expression.
      */
-    public function __clone(): void
+    public function __clone()
     {
         if ($this->value instanceof ExpressionInterface) {
             $this->value = clone $this->value;

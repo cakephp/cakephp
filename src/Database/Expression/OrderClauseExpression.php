@@ -79,7 +79,7 @@ class OrderClauseExpression implements ExpressionInterface, FieldInterface
     /**
      * Create a deep clone of the order clause.
      */
-    public function __clone(): void
+    public function __clone()
     {
         if ($this->field instanceof ExpressionInterface) {
             $this->field = clone $this->field;

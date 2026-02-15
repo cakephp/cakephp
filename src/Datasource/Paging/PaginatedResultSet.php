@@ -46,7 +46,7 @@ class PaginatedResultSet implements JsonSerializable, PaginatedInterface
     /**
      * Constructor
      *
-     * @param \Traversable<TKey, TValue> $results Resultset instance.
+     * @param iterable<TKey, TValue> $results Resultset instance.
      * @param array $params Paging params.
      */
     public function __construct(iterable $results, array $params)

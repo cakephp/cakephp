@@ -296,7 +296,7 @@ class WhenThenExpression implements ExpressionInterface
     /**
      * Clones the inner expression objects.
      */
-    public function __clone(): void
+    public function __clone()
     {
         if ($this->when instanceof ExpressionInterface) {
             $this->when = clone $this->when;
