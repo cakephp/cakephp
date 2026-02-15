@@ -197,9 +197,9 @@ class ResultSetFactoryTest extends TestCase
         $query->disableAutoFields();
 
         $row = ['Other__field' => 'test'];
-        $statement = $this->createMock(StatementInterface::class);
-        $statement->method('fetchAll')
-            ->willReturn([$row]);
+        $statement = Mockery::mock(StatementInterface::class);
+        $statement->shouldReceive('fetchAll')
+            ->andReturn([$row]);
 
         $results = $this->factory->createResultSet($statement->fetchAll(), $query);
         $this->assertNotEmpty($results);
