@@ -45,12 +45,15 @@ class StreamTest extends TestCase
             ->andReturn([]);
         stream_wrapper_unregister('http');
         stream_wrapper_register('http', CakeStreamWrapper::class);
+        stream_wrapper_unregister('https');
+        stream_wrapper_register('https', CakeStreamWrapper::class);
     }
 
     protected function tearDown(): void
     {
         parent::tearDown();
         stream_wrapper_restore('http');
+        stream_wrapper_restore('https');
     }
 
     /**

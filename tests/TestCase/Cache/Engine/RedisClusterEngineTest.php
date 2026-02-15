@@ -9,6 +9,7 @@ use Cake\Log\Log;
 use Cake\TestSuite\LogTestTrait;
 use Cake\TestSuite\TestCase;
 use Mockery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * RedisClusterEngineTest class
@@ -160,7 +161,7 @@ class RedisClusterEngineTest extends TestCase
     public function testConnectNamedClusterWithoutNodes(): void
     {
         $this->setupLog('error');
-        $this->assertFalse((new RedisEngine())->init([
+        $this->assertFalse(new RedisEngine()->init([
             'className' => 'Redis',
             'clusterName' => 'mycluster',
         ]));
