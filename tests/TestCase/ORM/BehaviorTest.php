@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Core\Exception\CakeException;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use TestApp\Model\Behavior\Test2Behavior;
 use TestApp\Model\Behavior\Test3Behavior;
 use TestApp\Model\Behavior\TestBehavior;
@@ -33,7 +34,7 @@ class BehaviorTest extends TestCase
      */
     public function testConstructor(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $config = ['key' => 'value'];
         $behavior = new TestBehavior($table, $config);
         $this->assertEquals($config, $behavior->getConfig());
@@ -44,7 +45,7 @@ class BehaviorTest extends TestCase
      */
     public function testGetTable(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
 
         $behavior = new TestBehavior($table);
         $this->assertSame($table, $behavior->table());
@@ -52,7 +53,7 @@ class BehaviorTest extends TestCase
 
     public function testReflectionCache(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test3Behavior($table);
         $expected = [
             'finders' => [
@@ -71,7 +72,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedEvents(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new TestBehavior($table);
         $expected = [
             'Model.beforeFind' => 'beforeFind',
@@ -89,7 +90,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedEventsWithPriority(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new TestBehavior($table, ['priority' => 10]);
         $expected = [
             'Model.beforeFind' => [
@@ -125,7 +126,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedMethods(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table);
         $expected = [
             'doSomething' => 'doSomething',
@@ -138,7 +139,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedMethodsAliased(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [
                 'aliased' => 'doSomething',
@@ -155,7 +156,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedMethodsDisabled(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [],
         ]);
@@ -168,7 +169,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedFinders(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table);
         $expected = [
             'foo' => 'findFoo',
@@ -181,7 +182,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedFindersAliased(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [
                 'aliased' => 'findFoo',
@@ -198,7 +199,7 @@ class BehaviorTest extends TestCase
      */
     public function testImplementedFindersDisabled(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [],
         ]);
@@ -212,7 +213,7 @@ class BehaviorTest extends TestCase
      */
     public function testVerifyConfig(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table);
         $behavior->verifyConfig();
         $this->assertTrue(true, 'No exception thrown');
@@ -225,7 +226,7 @@ class BehaviorTest extends TestCase
      */
     public function testVerifyConfigImplementedFindersOverridden(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [
                 'aliased' => 'findFoo',
@@ -242,7 +243,7 @@ class BehaviorTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The method `findNotDefined` is not callable on class `' . Test2Behavior::class . '`');
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table, [
             'implementedFinders' => [
                 'aliased' => 'findNotDefined',
@@ -258,7 +259,7 @@ class BehaviorTest extends TestCase
      */
     public function testVerifyConfigImplementedMethodsOverridden(): void
     {
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table);
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [
@@ -276,7 +277,7 @@ class BehaviorTest extends TestCase
     {
         $this->expectException(CakeException::class);
         $this->expectExceptionMessage('The method `iDoNotExist` is not callable on class `' . Test2Behavior::class . '`');
-        $table = $this->createStub(Table::class);
+        $table = Mockery::mock(Table::class);
         $behavior = new Test2Behavior($table, [
             'implementedMethods' => [
                 'aliased' => 'iDoNotExist',

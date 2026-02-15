@@ -102,7 +102,7 @@ class HasManyTest extends TestCase
             'alias' => 'Articles',
             'table' => 'articles',
             'connection' => $connection,
-        ]))->makePartial()->shouldIgnoreMissing();
+        ]))->makePartial();
         $this->article->setSchema([
             'id' => ['type' => 'integer'],
             'title' => ['type' => 'string'],

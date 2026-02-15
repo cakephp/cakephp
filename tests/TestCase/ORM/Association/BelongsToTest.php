@@ -295,7 +295,7 @@ class BelongsToTest extends TestCase
     public function testCascadeDelete(): void
     {
         /** @var \Cake\ORM\Table&\Mockery\MockInterface $mock */
-        $mock = Mockery::mock(Table::class)->shouldIgnoreMissing();
+        $mock = Mockery::mock(Table::class);
         $config = [
             'sourceTable' => $this->client,
             'targetTable' => $mock,
