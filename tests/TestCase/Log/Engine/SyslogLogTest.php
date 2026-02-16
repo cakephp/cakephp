@@ -31,22 +31,26 @@ class SyslogLogTest extends TestCase
      */
     public function testOpenLog(): void
     {
-        /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
-        $log = $this->getMockBuilder(SyslogLog::class)
-            ->onlyMethods(['open', 'write'])
-            ->getMock();
-        $log->expects($this->once())->method('open')->with('', LOG_ODELAY, LOG_USER);
+        $log = Mockery::mock(SyslogLog::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods()
+            ->shouldIgnoreMissing();
+        $log->__construct();
+        $log->shouldReceive('open')->once()->with('', LOG_ODELAY, LOG_USER);
         $log->log('debug', 'message');
 
-        $log = $this->getMockBuilder(SyslogLog::class)
-            ->onlyMethods(['open', 'write'])
-            ->getMock();
+        $log = Mockery::mock(SyslogLog::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods()
+            ->shouldIgnoreMissing();
+        $log->__construct();
         $log->setConfig([
             'prefix' => 'thing',
             'flag' => LOG_NDELAY,
             'facility' => LOG_MAIL,
         ]);
-        $log->expects($this->once())->method('open')
+        $log->shouldReceive('open')
+            ->once()
             ->with('thing', LOG_NDELAY, LOG_MAIL);
         $log->log('debug', 'message');
     }
@@ -57,11 +61,12 @@ class SyslogLogTest extends TestCase
     #[DataProvider('typesProvider')]
     public function testWriteOneLine(string $type, int $expected): void
     {
-        /** @var \Cake\Log\Engine\SyslogLog|\PHPUnit\Framework\MockObject\MockObject $log */
-        $log = $this->getMockBuilder(SyslogLog::class)
-            ->onlyMethods(['open', 'write'])
-            ->getMock();
-        $log->expects($this->once())->method('write')->with($expected, $type . ': Foo');
+        $log = Mockery::mock(SyslogLog::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods()
+            ->shouldIgnoreMissing();
+        $log->__construct();
+        $log->shouldReceive('write')->once()->with($expected, $type . ': Foo');
         $log->log($type, 'Foo');
     }
 

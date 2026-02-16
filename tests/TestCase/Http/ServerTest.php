@@ -189,10 +189,9 @@ class ServerTest extends TestCase
      */
     public function testRunClosesSessionIfServerRequestUsed(): void
     {
-        $sessionMock = $this->createMock(Session::class);
-
-        $sessionMock->expects($this->once())
-            ->method('close');
+        $sessionMock = Mockery::mock(Session::class);
+        $sessionMock->shouldReceive('close')
+            ->once();
 
         $app = new MiddlewareApplication($this->config);
         $server = new Server($app);
@@ -248,9 +247,9 @@ class ServerTest extends TestCase
             ->withHeader('X-First', 'first')
             ->withHeader('X-Second', 'second');
 
-        $emitter = $this->getMockBuilder(ResponseEmitter::class)->getMock();
-        $emitter->expects($this->once())
-            ->method('emit')
+        $emitter = Mockery::mock(ResponseEmitter::class);
+        $emitter->shouldReceive('emit')
+            ->once()
             ->with($final);
 
         $server->emit($final, $emitter);

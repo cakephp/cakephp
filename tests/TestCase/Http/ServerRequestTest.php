@@ -28,7 +28,7 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\UploadedFile;
 use Laminas\Diactoros\Uri;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
 use Psr\Http\Message\StreamInterface;
@@ -37,7 +37,6 @@ use Psr\Http\Message\UriInterface;
 /**
  * ServerRequest Test
  */
-#[AllowMockObjectsWithoutExpectations]
 class ServerRequestTest extends TestCase
 {
     /**
@@ -1409,7 +1408,7 @@ class ServerRequestTest extends TestCase
         $request = new ServerRequest([
             'input' => 'key=val&some=data',
         ]);
-        $body = $this->getMockBuilder(StreamInterface::class)->getMock();
+        $body = Mockery::mock(StreamInterface::class);
         $new = $request->withBody($body);
         $this->assertNotSame($new, $request);
         $this->assertNotSame($body, $request->getBody());
@@ -1438,7 +1437,7 @@ class ServerRequestTest extends TestCase
             ],
             'url' => 'articles/view/3',
         ]);
-        $uri = $this->getMockBuilder(UriInterface::class)->getMock();
+        $uri = Mockery::mock(UriInterface::class)->shouldIgnoreMissing();
         $new = $request->withUri($uri);
         $this->assertNotSame($new, $request);
         $this->assertNotSame($uri, $request->getUri());

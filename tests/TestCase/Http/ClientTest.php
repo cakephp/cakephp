@@ -28,13 +28,11 @@ use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Laminas\Diactoros\Request as LaminasRequest;
 use Mockery;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * HTTP client test.
  */
-#[AllowMockObjectsWithoutExpectations]
 class ClientTest extends TestCase
 {
     protected function tearDown(): void
@@ -232,12 +230,10 @@ class ClientTest extends TestCase
             'split' => 'value',
         ];
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) use ($headers) {
                 $this->assertInstanceOf(Request::class, $request);
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('2', $request->getProtocolVersion());
@@ -247,8 +243,8 @@ class ClientTest extends TestCase
                 $this->assertSame($headers['Connection'], $request->getHeaderLine('connection'));
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client(['adapter' => $mock, 'protocolVersion' => '2']);
         $result = $http->get('http://cakephp.org/test.html', [], [
@@ -265,12 +261,10 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertEmpty($request->getHeaderLine('Content-Type'), 'Should have no content-type set');
                 $this->assertSame(
@@ -279,8 +273,8 @@ class ClientTest extends TestCase
                 );
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -297,12 +291,10 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame(
                     'http://cakephp.org/search?q=hi%20there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
@@ -310,8 +302,8 @@ class ClientTest extends TestCase
                 );
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -331,20 +323,18 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) {
                 $this->assertSame(
                     'http://cakephp.org/search?q=hi+there&Category%5Bid%5D%5B0%5D=2&Category%5Bid%5D%5B1%5D=3',
                     $request->getUri() . '',
                 );
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -366,19 +356,17 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/search', '' . $request->getUri());
                 $this->assertSame('some data', '' . $request->getBody());
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -396,11 +384,8 @@ class ClientTest extends TestCase
     public function testInvalidAuthenticationType(): void
     {
         $this->expectException(CakeException::class);
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->never())
-            ->method('send');
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')->never();
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -418,24 +403,22 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
+        $mock = Mockery::mock(Stream::class);
         $headers = [
             'Authorization' => 'Basic ' . base64_encode('mark:secret'),
             'Proxy-Authorization' => 'Basic ' . base64_encode('mark:pass'),
         ];
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) use ($headers) {
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/', '' . $request->getUri());
                 $this->assertSame($headers['Authorization'], $request->getHeaderLine('Authorization'));
                 $this->assertSame($headers['Proxy-Authorization'], $request->getHeaderLine('Proxy-Authorization'));
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -474,19 +457,17 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) use ($method) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) use ($method) {
                 $this->assertInstanceOf(Request::class, $request);
                 $this->assertEquals($method, $request->getMethod());
                 $this->assertSame('http://cakephp.org/projects/add', '' . $request->getUri());
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -524,19 +505,17 @@ class ClientTest extends TestCase
             'Accept' => $mime,
         ];
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) use ($headers) {
                 $this->assertSame(Request::METHOD_POST, $request->getMethod());
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
                 $this->assertEquals($headers['Accept'], $request->getHeaderLine('Accept'));
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -552,19 +531,17 @@ class ClientTest extends TestCase
             'Content-Type' => 'application/octet-stream',
         ];
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) use ($headers) {
                 $this->assertSame(Request::METHOD_POST, $request->getMethod());
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
                 $this->assertEquals('', (string)$request->getBody());
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client([
             'adapter' => $mock,
@@ -587,19 +564,17 @@ class ClientTest extends TestCase
             'Content-Type' => 'application/octet-stream',
         ];
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) use ($headers) {
                 $this->assertSame(Request::METHOD_POST, $request->getMethod());
                 $this->assertEquals($headers['Content-Type'], $request->getHeaderLine('Content-Type'));
                 $this->assertEquals('0', (string)$request->getBody());
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client([
             'adapter' => $mock,
@@ -623,17 +598,16 @@ class ClientTest extends TestCase
         $response = new Response();
         $data = 'some=value&more=data';
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->method('send')
-            ->with($this->callback(function ($request) use ($data) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->times(3)
+            ->withArgs(function ($request) use ($data) {
                 $this->assertSame($data, '' . $request->getBody());
                 $this->assertSame('application/x-www-form-urlencoded', $request->getHeaderLine('content-type'));
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -650,11 +624,8 @@ class ClientTest extends TestCase
     public function testExceptionOnUnknownType(): void
     {
         $this->expectException(CakeException::class);
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->never())
-            ->method('send');
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')->never();
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -668,9 +639,7 @@ class ClientTest extends TestCase
      */
     public function testCookieStorage(): void
     {
-        $adapter = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
+        $adapter = Mockery::mock(Stream::class);
 
         $headers = [
             'HTTP/1.0 200 Ok',
@@ -678,9 +647,9 @@ class ClientTest extends TestCase
             'Set-Cookie: expiring=now; Expires=Wed, 09-Jun-1999 10:18:14 GMT',
         ];
         $response = new Response($headers, '');
-        $adapter->expects($this->once())
-            ->method('send')
-            ->willReturn([$response]);
+        $adapter->shouldReceive('send')
+            ->once()
+            ->andReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -760,19 +729,17 @@ class ClientTest extends TestCase
     {
         $response = new Response();
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) {
                 $this->assertInstanceOf(Request::class, $request);
                 $this->assertSame(Request::METHOD_HEAD, $request->getMethod());
                 $this->assertSame('http://cakephp.org/search?q=hi%20there', '' . $request->getUri());
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client([
             'host' => 'cakephp.org',
@@ -868,12 +835,10 @@ class ClientTest extends TestCase
             'Content-Type' => 'application/x-www-form-urlencoded',
         ];
 
-        $mock = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['send'])
-            ->getMock();
-        $mock->expects($this->once())
-            ->method('send')
-            ->with($this->callback(function ($request) use ($headers) {
+        $mock = Mockery::mock(Stream::class);
+        $mock->shouldReceive('send')
+            ->once()
+            ->withArgs(function ($request) use ($headers) {
                 $this->assertInstanceOf(LaminasRequest::class, $request);
                 $this->assertSame(Request::METHOD_GET, $request->getMethod());
                 $this->assertSame('http://cakephp.org/test.html', $request->getUri() . '');
@@ -881,8 +846,8 @@ class ClientTest extends TestCase
                 $this->assertSame($headers['Connection'], $request->getHeaderLine('connection'));
 
                 return true;
-            }))
-            ->willReturn([$response]);
+            })
+            ->andReturn([$response]);
 
         $http = new Client(['adapter' => $mock]);
         $request = new LaminasRequest(

@@ -53,7 +53,6 @@ class DependentDeleteHelper
         $conditions = array_combine($foreignKey, $bindingValue);
 
         if ($association->getCascadeCallbacks()) {
-            /** @var \Cake\Datasource\EntityInterface $related */
             foreach ($association->find()->where($conditions)->all()->toList() as $related) {
                 $success = $table->delete($related, $options);
                 if (!$success) {
