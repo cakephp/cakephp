@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\Command;
 
-use AttributeResolver\AttributeResolver;
+use Cake\AttributeResolver\AttributeResolver;
 use Cake\Cache\Cache;
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;

@@ -129,7 +129,7 @@ class AttributesListCommand extends Command
      * Get filtered collection based on command arguments
      *
      * @param string $configName Configuration name
-    * @return \Cake\AttributeResolver\AttributeCollection
+     * @return \Cake\AttributeResolver\AttributeCollection
      */
     protected function getFilteredCollection(string $configName): AttributeCollection
     {
@@ -175,7 +175,7 @@ class AttributesListCommand extends Command
      * For class targets, returns FQDN. For other targets (methods, properties, etc.),
      * returns just the target name.
      *
-    * @param \Cake\AttributeResolver\ValueObject\AttributeInfo $attr Attribute info
+     * @param \Cake\AttributeResolver\ValueObject\AttributeInfo $attr Attribute info
      * @return string Target display value
      */
     protected function getTargetDisplay(AttributeInfo $attr): string
@@ -191,7 +191,7 @@ class AttributesListCommand extends Command
     /**
      * Output attributes in text format.
      *
-    * @param array<\Cake\AttributeResolver\ValueObject\AttributeInfo> $attributes List of attributes
+     * @param array<\Cake\AttributeResolver\ValueObject\AttributeInfo> $attributes List of attributes
      * @return int Exit code
      */
     protected function outputText(array $attributes): int
@@ -233,7 +233,7 @@ class AttributesListCommand extends Command
     /**
      * Output attributes in JSON format.
      *
-    * @param array<\Cake\AttributeResolver\ValueObject\AttributeInfo> $attributes List of attributes
+     * @param array<\Cake\AttributeResolver\ValueObject\AttributeInfo> $attributes List of attributes
      * @return int Exit code
      * @throws \JsonException
      */
