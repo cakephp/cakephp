@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\AttributeResolver;
 
-use AttributeResolver\AttributeCollection;
-use AttributeResolver\Enum\AttributeTargetType;
-use AttributeResolver\ValueObject\AttributeInfo;
-use AttributeResolver\ValueObject\AttributeTarget;
+use Cake\AttributeResolver\AttributeCollection;
+use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\ValueObject\AttributeInfo;
+use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Cake\TestSuite\TestCase;
 use Countable;
 use IteratorAggregate;

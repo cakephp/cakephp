@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\AttributeResolver\Enum;
 
-use AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\AttributeTargetType;
 use Cake\TestSuite\TestCase;
 
 /**

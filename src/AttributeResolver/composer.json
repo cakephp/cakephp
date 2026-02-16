@@ -1,0 +1,45 @@
+{
+    "name": "cakephp/attribute-resolver",
+    "description": "PHP Attribute discovery and resolution library for CakePHP applications",
+    "type": "library",
+    "keywords": [
+        "cakephp",
+        "attributes",
+        "php8",
+        "metadata",
+        "reflection"
+    ],
+    "homepage": "https://cakephp.org",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "CakePHP Community",
+            "homepage": "https://github.com/cakephp/attribute-resolver/graphs/contributors"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/cakephp/cakephp/issues",
+        "forum": "https://stackoverflow.com/tags/cakephp",
+        "irc": "irc://irc.freenode.org/cakephp",
+        "source": "https://github.com/cakephp/attribute-resolver"
+    },
+    "require": {
+        "php": ">=8.4",
+        "brick/varexporter": "^0.7.0",
+        "cakephp/core": "6.0.*@dev",
+        "cakephp/cache": "6.0.*@dev",
+        "cakephp/log": "6.0.*@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\AttributeResolver\\": "."
+        }
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "extra": {
+        "branch-alias": {
+            "dev-6.x": "6.0.x-dev"
+        }
+    }
+}

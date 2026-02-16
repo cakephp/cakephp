@@ -14,12 +14,8 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace AttributeResolver;
+namespace Cake\AttributeResolver;
 
-use AttributeResolver\AttributeCache;
-use AttributeResolver\AttributeCollection;
-use AttributeResolver\Parser;
-use AttributeResolver\Scanner;
 use Cake\Core\StaticConfigTrait;
 use InvalidArgumentException;
 
@@ -30,7 +26,7 @@ use InvalidArgumentException;
  * Scans source files for PHP attributes and provides a fluent collection interface
  * for filtering and querying discovered attributes.
  *
- * @mixin \AttributeResolver\AttributeCollection
+ * @mixin \Cake\AttributeResolver\AttributeCollection
  */
 class AttributeResolver
 {
@@ -49,7 +45,7 @@ class AttributeResolver
     /**
      * In-memory cache of resolved collections per config name
      *
-     * @var array<string, \AttributeResolver\AttributeCollection>
+     * @var array<string, \Cake\AttributeResolver\AttributeCollection>
      */
     protected static array $collections = [];
 
@@ -57,7 +53,7 @@ class AttributeResolver
      * Get attribute collection for configured paths
      *
      * @param string $name Configuration name
-     * @return \AttributeResolver\AttributeCollection
+     * @return \Cake\AttributeResolver\AttributeCollection
      * @throws \InvalidArgumentException When configuration does not exist
      */
     public static function collection(string $name = 'default'): AttributeCollection
@@ -120,7 +116,7 @@ class AttributeResolver
      * Get cache instance for a configuration
      *
      * @param array|null $config Configuration array
-     * @return \AttributeResolver\AttributeCache|null Returns null when cache is disabled
+     * @return \Cake\AttributeResolver\AttributeCache|null Returns null when cache is disabled
      */
     protected static function getCache(?array $config): ?AttributeCache
     {
@@ -139,7 +135,7 @@ class AttributeResolver
      * Build cache for a configuration
      *
      * @param string $name Configuration name
-     * @return \AttributeResolver\AttributeCollection The warmed collection
+     * @return \Cake\AttributeResolver\AttributeCollection The warmed collection
      */
     public static function warm(string $name = 'default'): AttributeCollection
     {

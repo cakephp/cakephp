@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\AttributeResolver;
 
-use AttributeResolver\Enum\AttributeTargetType;
-use AttributeResolver\Parser;
-use AttributeResolver\ValueObject\AttributeInfo;
+use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Parser;
+use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\TestSuite\TestCase;
 use SplFileInfo;
 use TestApp\Attribute\Resolver\TestPriority;

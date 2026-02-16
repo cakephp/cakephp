@@ -42,6 +42,7 @@
         "psr/simple-cache": "^2.0 || ^3.0"
     },
     "replace": {
+        "cakephp/attribute-resolver": "self.version",
         "cakephp/cache": "self.version",
         "cakephp/collection": "self.version",
         "cakephp/console": "self.version",

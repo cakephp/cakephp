@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use AttributeResolver\AttributeResolver;
+use Cake\AttributeResolver\AttributeResolver;
 use Cake\Console\ConsoleOptionParser;
 
 /**

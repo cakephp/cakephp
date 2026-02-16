@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\AttributeResolver;
 
-use AttributeResolver\Parser;
-use AttributeResolver\Scanner;
-use AttributeResolver\ValueObject\AttributeInfo;
+use Cake\AttributeResolver\Parser;
+use Cake\AttributeResolver\Scanner;
+use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\Core\Configure;
 use Cake\Core\PluginConfig;
 use Cake\TestSuite\TestCase;

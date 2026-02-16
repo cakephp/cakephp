@@ -16,9 +16,9 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\AttributeResolver;
 
-use AttributeResolver\AttributeResolver;
-use AttributeResolver\AttributeCollection;
-use AttributeResolver\ValueObject\AttributeInfo;
+use Cake\AttributeResolver\AttributeCollection;
+use Cake\AttributeResolver\AttributeResolver;
+use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;

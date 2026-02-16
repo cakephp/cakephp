@@ -14,10 +14,10 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace AttributeResolver;
+namespace Cake\AttributeResolver;
 
-use AttributeResolver\Enum\AttributeTargetType;
-use AttributeResolver\ValueObject\AttributeInfo;
+use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Countable;
 use IteratorAggregate;
 use Traversable;
@@ -58,14 +58,14 @@ class AttributeCollection implements IteratorAggregate, Countable
     /**
      * Cache of hydrated AttributeInfo objects
      *
-     * @var array<int, \AttributeResolver\ValueObject\AttributeInfo>
+     * @var array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>
      */
     protected array $hydrated = [];
 
     /**
      * Constructor.
      *
-     * @param iterable<\AttributeResolver\ValueObject\AttributeInfo|array> $items Items to populate the collection
+     * @param iterable<\Cake\AttributeResolver\ValueObject\AttributeInfo|array> $items Items to populate the collection
      * @param array<string, array<string, array<int>>>|null $indexes Pre-built indexes (from cache)
      */
     public function __construct(iterable $items, ?array $indexes = null)
@@ -138,7 +138,7 @@ class AttributeCollection implements IteratorAggregate, Countable
      * Hydrate a single item by ID.
      *
      * @param int $id Item ID
-     * @return \AttributeResolver\ValueObject\AttributeInfo
+     * @return \Cake\AttributeResolver\ValueObject\AttributeInfo
      */
     protected function hydrate(int $id): AttributeInfo
     {
@@ -199,7 +199,7 @@ class AttributeCollection implements IteratorAggregate, Countable
     /**
      * Get first item or null if empty.
      *
-     * @return \AttributeResolver\ValueObject\AttributeInfo|null
+     * @return \Cake\AttributeResolver\ValueObject\AttributeInfo|null
      */
     public function first(): ?AttributeInfo
     {
@@ -214,7 +214,7 @@ class AttributeCollection implements IteratorAggregate, Countable
     /**
      * Convert collection to array of AttributeInfo objects.
      *
-     * @return array<int, \AttributeResolver\ValueObject\AttributeInfo>
+     * @return array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>
      */
     public function toArray(): array
     {
@@ -224,7 +224,7 @@ class AttributeCollection implements IteratorAggregate, Countable
     /**
      * Convert collection to list of AttributeInfo objects.
      *
-     * @return array<int, \AttributeResolver\ValueObject\AttributeInfo>
+     * @return array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>
      */
     public function toList(): array
     {
@@ -292,7 +292,7 @@ class AttributeCollection implements IteratorAggregate, Countable
     /**
      * Filter by target type(s). Uses index for fast lookup.
      *
-     * @param \AttributeResolver\Enum\AttributeTargetType|array<\AttributeResolver\Enum\AttributeTargetType> $types Target type(s) to filter by
+     * @param \Cake\AttributeResolver\Enum\AttributeTargetType|array<\Cake\AttributeResolver\Enum\AttributeTargetType> $types Target type(s) to filter by
      * @return static
      */
     public function withTargetType(AttributeTargetType|array $types): static
