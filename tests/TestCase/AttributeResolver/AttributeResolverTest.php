@@ -14,11 +14,11 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Attribute;
+namespace Cake\Test\TestCase\AttributeResolver;
 
-use Cake\Attribute\AttributeResolver;
-use Cake\Attribute\Resolver\AttributeCollection;
-use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
+use AttributeResolver\AttributeResolver;
+use AttributeResolver\AttributeCollection;
+use AttributeResolver\ValueObject\AttributeInfo;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;

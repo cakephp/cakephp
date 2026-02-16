@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Attribute\Resolver;
+namespace AttributeResolver;
 
 use Cake\Core\Configure;
 use Cake\Core\Plugin;
@@ -47,7 +47,7 @@ class Scanner
     private array $scannedFiles = [];
 
     /**
-     * @param \Cake\Attribute\Resolver\Parser $parser Attribute parser
+     * @param \AttributeResolver\Parser $parser Attribute parser
      * @param array<string> $paths Relative glob patterns to scan (e.g., ['src/**\/*.php'])
      * @param array<string> $excludePaths Relative patterns to exclude (e.g., ['vendor/**', 'tests/**'])
      * @param string|null $basePath Base directory path (defaults to ROOT + all plugins)
@@ -65,7 +65,7 @@ class Scanner
      *
      * Expands relative paths against APP root and all loaded plugin paths.
      *
-     * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
+     * @return \Generator<\AttributeResolver\ValueObject\AttributeInfo>
      */
     public function scanAll(): Generator
     {

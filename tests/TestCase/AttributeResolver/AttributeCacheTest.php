@@ -14,13 +14,13 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Attribute\Resolver;
+namespace Cake\Test\TestCase\AttributeResolver;
 
-use Cake\Attribute\Resolver\AttributeCache;
-use Cake\Attribute\Resolver\AttributeCollection;
-use Cake\Attribute\Resolver\Enum\AttributeTargetType;
-use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
-use Cake\Attribute\Resolver\ValueObject\AttributeTarget;
+use AttributeResolver\AttributeCache;
+use AttributeResolver\AttributeCollection;
+use AttributeResolver\Enum\AttributeTargetType;
+use AttributeResolver\ValueObject\AttributeInfo;
+use AttributeResolver\ValueObject\AttributeTarget;
 use Cake\Cache\Cache;
 use Cake\TestSuite\TestCase;
 use stdClass;

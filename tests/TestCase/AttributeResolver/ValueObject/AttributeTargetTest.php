@@ -14,10 +14,10 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Attribute\Resolver\ValueObject;
+namespace Cake\Test\TestCase\AttributeResolver\ValueObject;
 
-use Cake\Attribute\Resolver\Enum\AttributeTargetType;
-use Cake\Attribute\Resolver\ValueObject\AttributeTarget;
+use AttributeResolver\Enum\AttributeTargetType;
+use AttributeResolver\ValueObject\AttributeTarget;
 use Cake\TestSuite\TestCase;
 
 /**

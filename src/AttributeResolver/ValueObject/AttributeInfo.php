@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Attribute\Resolver\ValueObject;
+namespace AttributeResolver\ValueObject;
 
 use InvalidArgumentException;
 use JsonSerializable;
@@ -42,7 +42,7 @@ readonly class AttributeInfo implements JsonSerializable
      * @param array<string, mixed> $arguments Attribute constructor arguments
      * @param string $filePath Absolute path to file where attribute was found
      * @param int $lineNumber Line number where attribute appears in file
-     * @param \Cake\Attribute\Resolver\ValueObject\AttributeTarget $target Target information (what the attribute is attached to)
+     * @param \AttributeResolver\ValueObject\AttributeTarget $target Target information (what the attribute is attached to)
      * @param int $fileTime File modification time (Unix timestamp) for cache validation
      * @param string|null $pluginName Plugin name or null for App namespace
      */

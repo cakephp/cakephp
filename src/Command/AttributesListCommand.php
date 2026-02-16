@@ -16,10 +16,10 @@ declare(strict_types=1);
  */
 namespace Cake\Command;
 
-use Cake\Attribute\AttributeResolver;
-use Cake\Attribute\Resolver\AttributeCollection;
-use Cake\Attribute\Resolver\Enum\AttributeTargetType;
-use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
+use AttributeResolver\AttributeResolver;
+use AttributeResolver\AttributeCollection;
+use AttributeResolver\Enum\AttributeTargetType;
+use AttributeResolver\ValueObject\AttributeInfo;
 use Cake\Console\ConsoleOptionParser;
 
 /**
@@ -129,7 +129,7 @@ class AttributesListCommand extends Command
      * Get filtered collection based on command arguments
      *
      * @param string $configName Configuration name
-     * @return \Cake\Attribute\Resolver\AttributeCollection
+     * @return \AttributeResolver\AttributeCollection
      */
     protected function getFilteredCollection(string $configName): AttributeCollection
     {
@@ -175,7 +175,7 @@ class AttributesListCommand extends Command
      * For class targets, returns FQDN. For other targets (methods, properties, etc.),
      * returns just the target name.
      *
-     * @param \Cake\Attribute\Resolver\ValueObject\AttributeInfo $attr Attribute info
+     * @param \AttributeResolver\ValueObject\AttributeInfo $attr Attribute info
      * @return string Target display value
      */
     protected function getTargetDisplay(AttributeInfo $attr): string
@@ -191,7 +191,7 @@ class AttributesListCommand extends Command
     /**
      * Output attributes in text format.
      *
-     * @param array<\Cake\Attribute\Resolver\ValueObject\AttributeInfo> $attributes List of attributes
+     * @param array<\AttributeResolver\ValueObject\AttributeInfo> $attributes List of attributes
      * @return int Exit code
      */
     protected function outputText(array $attributes): int
@@ -233,7 +233,7 @@ class AttributesListCommand extends Command
     /**
      * Output attributes in JSON format.
      *
-     * @param array<\Cake\Attribute\Resolver\ValueObject\AttributeInfo> $attributes List of attributes
+     * @param array<\AttributeResolver\ValueObject\AttributeInfo> $attributes List of attributes
      * @return int Exit code
      * @throws \JsonException
      */

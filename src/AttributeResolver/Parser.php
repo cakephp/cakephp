@@ -14,11 +14,11 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Attribute\Resolver;
+namespace AttributeResolver;
 
-use Cake\Attribute\Resolver\Enum\AttributeTargetType;
-use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
-use Cake\Attribute\Resolver\ValueObject\AttributeTarget;
+use AttributeResolver\Enum\AttributeTargetType;
+use AttributeResolver\ValueObject\AttributeInfo;
+use AttributeResolver\ValueObject\AttributeTarget;
 use Generator;
 use PhpToken;
 use ReflectionAttribute;
@@ -52,7 +52,7 @@ class Parser
      *
      * @param \SplFileInfo $file File object to parse
      * @param string|null $pluginName Plugin name if file belongs to a plugin
-     * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
+     * @return \Generator<\AttributeResolver\ValueObject\AttributeInfo>
      */
     public function parseFile(SplFileInfo $file, ?string $pluginName = null): Generator
     {
@@ -235,7 +235,7 @@ class Parser
      * @param string $filePath File path
      * @param int $fileTime File modification time
      * @param string|null $pluginName Plugin name
-     * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
+     * @return \Generator<\AttributeResolver\ValueObject\AttributeInfo>
      */
     protected function parseClass(
         ReflectionClass $reflection,
@@ -281,7 +281,7 @@ class Parser
      * @param int $fileTime File modification time
      * @param string $className Declaring class name
      * @param string|null $pluginName Plugin name
-     * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
+     * @return \Generator<\AttributeResolver\ValueObject\AttributeInfo>
      */
     protected function parseMethod(
         ReflectionMethod $method,
@@ -327,7 +327,7 @@ class Parser
      * @param int $fileTime File modification time
      * @param string $className Declaring class name
      * @param string|null $pluginName Plugin name
-     * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
+     * @return \Generator<\AttributeResolver\ValueObject\AttributeInfo>
      */
     protected function parseProperty(
         ReflectionProperty $property,
@@ -362,7 +362,7 @@ class Parser
      * @param string $className Declaring class name
      * @param string $methodName Method name
      * @param string|null $pluginName Plugin name
-     * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
+     * @return \Generator<\AttributeResolver\ValueObject\AttributeInfo>
      */
     protected function parseParameter(
         ReflectionParameter $parameter,
@@ -400,7 +400,7 @@ class Parser
      * @param int $fileTime File modification time
      * @param string $className Declaring class name
      * @param string|null $pluginName Plugin name
-     * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
+     * @return \Generator<\AttributeResolver\ValueObject\AttributeInfo>
      */
     protected function parseConstant(
         ReflectionClassConstant $constant,
@@ -434,9 +434,9 @@ class Parser
      * @param string $filePath File path
      * @param int $lineNumber Line number
      * @param int $fileTime File modification time
-     * @param \Cake\Attribute\Resolver\ValueObject\AttributeTarget $target Attribute target
+     * @param \AttributeResolver\ValueObject\AttributeTarget $target Attribute target
      * @param string|null $pluginName Plugin name
-     * @return \Generator<\Cake\Attribute\Resolver\ValueObject\AttributeInfo>
+     * @return \Generator<\AttributeResolver\ValueObject\AttributeInfo>
      */
     protected function parseAttributes(
         array $attributes,

@@ -17,8 +17,8 @@ declare(strict_types=1);
 namespace Cake\Command;
 
 use BackedEnum;
-use Cake\Attribute\AttributeResolver;
-use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
+use AttributeResolver\AttributeResolver;
+use AttributeResolver\ValueObject\AttributeInfo;
 use Cake\Console\ConsoleOptionParser;
 use JsonException;
 use UnitEnum;
@@ -126,7 +126,7 @@ class AttributesInspectCommand extends Command
     /**
      * Display detailed information for a single attribute.
      *
-     * @param \Cake\Attribute\Resolver\ValueObject\AttributeInfo $attr Attribute info
+     * @param \AttributeResolver\ValueObject\AttributeInfo $attr Attribute info
      * @param int $number Result number
      * @return void
      */

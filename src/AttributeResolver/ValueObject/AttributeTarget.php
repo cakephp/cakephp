@@ -14,9 +14,9 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Attribute\Resolver\ValueObject;
+namespace AttributeResolver\ValueObject;
 
-use Cake\Attribute\Resolver\Enum\AttributeTargetType;
+use AttributeResolver\Enum\AttributeTargetType;
 use JsonSerializable;
 
 /**
@@ -34,7 +34,7 @@ readonly class AttributeTarget implements JsonSerializable
     /**
      * Constructor for AttributeTarget.
      *
-     * @param \Cake\Attribute\Resolver\Enum\AttributeTargetType $type Target type
+     * @param \AttributeResolver\Enum\AttributeTargetType $type Target type
      * @param string $name Target name (e.g., method name, property name)
      * @param string|null $declaringClass Class name that declares this target
      */

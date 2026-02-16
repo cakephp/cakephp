@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Attribute\Resolver;
+namespace AttributeResolver;
 
 use Cake\Cache\Cache;
 use Cake\Log\Log;
@@ -64,7 +64,7 @@ class AttributeCache
      * Read attribute data from cache.
      *
      * @param string $name Resolver configuration name
-     * @return \Cake\Attribute\Resolver\AttributeCollection|null AttributeCollection or null if not found/invalid
+     * @return \AttributeResolver\AttributeCollection|null AttributeCollection or null if not found/invalid
      */
     public function read(string $name): ?AttributeCollection
     {
@@ -111,7 +111,7 @@ class AttributeCache
      * Uses AttributeCollection::getCacheData() to convert objects to arrays.
      *
      * @param string $name Resolver configuration name
-     * @param \Cake\Attribute\Resolver\AttributeCollection|array<\Cake\Attribute\Resolver\ValueObject\AttributeInfo> $data AttributeInfo objects to cache
+     * @param \AttributeResolver\AttributeCollection|array<\AttributeResolver\ValueObject\AttributeInfo> $data AttributeInfo objects to cache
      * @return bool Success
      */
     public function write(string $name, array|AttributeCollection $data): bool

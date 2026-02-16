@@ -14,11 +14,11 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Attribute\Resolver;
+namespace Cake\Test\TestCase\AttributeResolver;
 
-use Cake\Attribute\Resolver\Parser;
-use Cake\Attribute\Resolver\Scanner;
-use Cake\Attribute\Resolver\ValueObject\AttributeInfo;
+use AttributeResolver\Parser;
+use AttributeResolver\Scanner;
+use AttributeResolver\ValueObject\AttributeInfo;
 use Cake\Core\Configure;
 use Cake\Core\PluginConfig;
 use Cake\TestSuite\TestCase;

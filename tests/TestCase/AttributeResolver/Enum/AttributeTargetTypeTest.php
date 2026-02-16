@@ -14,9 +14,9 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Test\TestCase\Attribute\Resolver\Enum;
+namespace Cake\Test\TestCase\AttributeResolver\Enum;
 
-use Cake\Attribute\Resolver\Enum\AttributeTargetType;
+use AttributeResolver\Enum\AttributeTargetType;
 use Cake\TestSuite\TestCase;
 
 /**

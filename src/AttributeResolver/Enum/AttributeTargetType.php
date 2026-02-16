@@ -14,7 +14,7 @@ declare(strict_types=1);
  * @since         6.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
-namespace Cake\Attribute\Resolver\Enum;
+namespace AttributeResolver\Enum;
 
 /**
  * Enum representing the different types of targets that can have attributes.
