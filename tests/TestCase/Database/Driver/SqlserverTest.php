@@ -29,13 +29,11 @@ use InvalidArgumentException;
 use Mockery;
 use PDO;
 use PDOStatement;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests Sqlserver driver
  */
-#[AllowMockObjectsWithoutExpectations]
 class SqlserverTest extends TestCase
 {
     /**
@@ -126,17 +124,19 @@ class SqlserverTest extends TestCase
     public function testDnsString($constructorArgs, $dnsString): void
     {
         $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
-        $driver = $this->getMockBuilder(Sqlserver::class)
-            ->onlyMethods(['createPdo'])
-            ->setConstructorArgs([$constructorArgs])
-            ->getMock();
+        $driver = Mockery::mock(Sqlserver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct($constructorArgs);
 
-        $driver->method('createPdo')
-            ->with($this->callback(function ($dns) use ($dnsString) {
+        $driver->shouldReceive('createPdo')
+            ->withArgs(function ($dns) use ($dnsString) {
                 $this->assertSame($dns, $dnsString);
 
                 return true;
-            }));
+            })
+            ->once()
+            ->andReturn(Mockery::mock(PDO::class));
 
         $driver->connect();
     }
@@ -157,10 +157,10 @@ class SqlserverTest extends TestCase
             'init' => ['Execute this', 'this too'],
             'settings' => ['config1' => 'value1', 'config2' => 'value2'],
         ];
-        $driver = $this->getMockBuilder(Sqlserver::class)
-            ->onlyMethods(['createPdo', 'getPdo'])
-            ->setConstructorArgs([$config])
-            ->getMock();
+        $driver = Mockery::mock(Sqlserver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct($config);
         $dsn = 'sqlsrv:Server=foo;Database=bar;MultipleActiveResultSets=false';
 
         $expected = $config;
@@ -191,9 +191,10 @@ class SqlserverTest extends TestCase
         $connection->shouldReceive('exec')->with('SET config1 value1')->once();
         $connection->shouldReceive('exec')->with('SET config2 value2')->once();
 
-        $driver->expects($this->once())->method('createPdo')
+        $driver->shouldReceive('createPdo')
             ->with($dsn, $expected)
-            ->willReturn($connection);
+            ->once()
+            ->andReturn($connection);
 
         $driver->connect();
     }
@@ -252,22 +253,18 @@ class SqlserverTest extends TestCase
     {
         $this->skipIf($this->missingExtension, 'pdo_sqlsrv is not installed.');
 
-        $driver = $this->getMockBuilder(Sqlserver::class)
-            ->onlyMethods(['getPdo'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $driver = Mockery::mock(Sqlserver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct();
 
-        $pdo = Mockery::mock(PDO::class);
+        $pdo = Mockery::mock(PDO::class)->makePartial();
 
-        $statement = $this->getMockBuilder(PDOStatement::class)
-            ->getMock();
+        $statement = Mockery::mock(PDOStatement::class);
+        $connection = new Connection(['driver' => $driver, 'log' => false]);
 
-        $connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-
-        $driver->method('getPdo')
-            ->willReturn($pdo);
+        $driver->shouldReceive('getPdo')
+            ->andReturn($pdo);
 
         $pdo->shouldReceive('prepare')
             ->with('', [
@@ -282,6 +279,11 @@ class SqlserverTest extends TestCase
             ->andReturn($statement)
             ->once();
 
+        $pdo->shouldReceive('getAttribute')
+            ->with(PDO::ATTR_SERVER_VERSION)
+            ->andReturn('12')
+            ->once();
+
         $query = new SelectQuery($connection);
         $driver->prepare($query);
 
@@ -294,14 +296,14 @@ class SqlserverTest extends TestCase
      */
     public function testSelectLimitVersion12(): void
     {
-        $driver = $this->getMockBuilder(Sqlserver::class)
-            ->onlyMethods(['createPdo', 'getPdo', 'version', 'enabled'])
-            ->setConstructorArgs([[]])
-            ->getMock();
-        $driver->method('version')
-            ->willReturn('12');
-        $driver->method('enabled')
-            ->willReturn(true);
+        $driver = Mockery::mock(Sqlserver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('version')->andReturn('12');
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
@@ -338,14 +340,14 @@ class SqlserverTest extends TestCase
      */
     public function testSelectLimitOldServer(): void
     {
-        $driver = $this->getMockBuilder(Sqlserver::class)
-            ->onlyMethods(['createPdo', 'getPdo', 'version', 'enabled'])
-            ->setConstructorArgs([[]])
-            ->getMock();
-        $driver->method('version')
-            ->willReturn('8');
-        $driver->method('enabled')
-            ->willReturn(true);
+        $driver = Mockery::mock(Sqlserver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('version')->andReturn('8');
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
@@ -460,12 +462,13 @@ class SqlserverTest extends TestCase
      */
     public function testInsertUsesOutput(): void
     {
-        $driver = $this->getMockBuilder(Sqlserver::class)
-            ->onlyMethods(['createPdo', 'getPdo', 'enabled'])
-            ->setConstructorArgs([[]])
-            ->getMock();
-        $driver->method('enabled')
-            ->willReturn(true);
+        $driver = Mockery::mock(Sqlserver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
         $connection = new Connection(['driver' => $driver, 'log' => false]);
         $query = new InsertQuery($connection);
         $query->insert(['title'])
@@ -480,14 +483,14 @@ class SqlserverTest extends TestCase
      */
     public function testHavingReplacesAlias(): void
     {
-        $driver = $this->getMockBuilder(Sqlserver::class)
-            ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
-            ->setConstructorArgs([[]])
-            ->getMock();
-        $driver->method('version')
-            ->willReturn('8');
-        $driver->method('enabled')
-            ->willReturn(true);
+        $driver = Mockery::mock(Sqlserver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('version')->andReturn('8');
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
@@ -510,14 +513,14 @@ class SqlserverTest extends TestCase
      */
     public function testHavingWhenNoAliasIsUsed(): void
     {
-        $driver = $this->getMockBuilder(Sqlserver::class)
-            ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
-            ->setConstructorArgs([[]])
-            ->getMock();
-        $driver->method('version')
-            ->willReturn('8');
-        $driver->method('enabled')
-            ->willReturn(true);
+        $driver = Mockery::mock(Sqlserver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('version')->andReturn('8');
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 

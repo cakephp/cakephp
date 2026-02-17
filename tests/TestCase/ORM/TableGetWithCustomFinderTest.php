@@ -17,9 +17,11 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Datasource\ConnectionInterface;
 use Cake\Datasource\ConnectionManager;
 use Cake\ORM\Entity;
+use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 class TableGetWithCustomFinderTest extends TestCase
@@ -48,37 +50,33 @@ class TableGetWithCustomFinderTest extends TestCase
     #[DataProvider('providerForTestGetWithCustomFinder')]
     public function testGetWithCustomFinder($options): void
     {
-        $table = $this->getMockBuilder(GetWithCustomFinderTable::class)
-            ->onlyMethods(['selectQuery', 'findCustom'])
-            ->setConstructorArgs([[
-                'connection' => $this->connection,
-                'schema' => [
-                    'id' => ['type' => 'integer'],
-                    'bar' => ['type' => 'integer'],
-                    '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]],
-                ],
-            ]])
-            ->getMock();
+        $queryFactory = Mockery::mock(QueryFactory::class);
+        $table = new GetWithCustomFinderTable([
+            'connection' => $this->connection,
+            'schema' => [
+                'id' => ['type' => 'integer'],
+                'bar' => ['type' => 'integer'],
+                '_constraints' => ['primary' => ['type' => 'primary', 'columns' => ['bar']]],
+            ],
+            'queryFactory' => $queryFactory,
+        ]);
 
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['addDefaultTypes', 'firstOrFail', 'where', 'cache', 'applyOptions'])
-            ->setConstructorArgs([$table])
-            ->getMock();
-
-        $table->expects($this->once())->method('selectQuery')
-            ->willReturn($query);
-        $table->method('findCustom')
-            ->willReturn($query);
+        $query = Mockery::mock(new SelectQuery($table))->makePartial();
+        $queryFactory->shouldReceive('select')->once()->with($table)->andReturn($query);
 
         $entity = new Entity();
-        $query->expects($this->once())->method('applyOptions')
-            ->with(['fields' => ['id']]);
-        $query->expects($this->once())->method('where')
+        $query->shouldReceive('applyOptions')
+            ->once()
+            ->with(['fields' => ['id']])
+            ->andReturnSelf();
+        $query->shouldReceive('where')
+            ->once()
             ->with([$table->getAlias() . '.bar' => 10])
-            ->willReturnSelf();
-        $query->expects($this->never())->method('cache');
-        $query->expects($this->once())->method('firstOrFail')
-            ->willReturn($entity);
+            ->andReturnSelf();
+        $query->shouldReceive('cache')->never();
+        $query->shouldReceive('firstOrFail')
+            ->once()
+            ->andReturn($entity);
 
         $result = $table->get(10, ...$options);
         $this->assertSame($entity, $result);

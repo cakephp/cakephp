@@ -28,12 +28,10 @@ use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Mockery;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Tests HasOne class
  */
-#[AllowMockObjectsWithoutExpectations]
 class HasOneTest extends TestCase
 {
     /**
@@ -44,12 +42,12 @@ class HasOneTest extends TestCase
     protected array $fixtures = ['core.Articles', 'core.Authors', 'core.NullableAuthors', 'core.Users', 'core.Profiles'];
 
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Table
      */
     protected $user;
 
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Table
      */
     protected $profile;
 
@@ -180,13 +178,10 @@ class HasOneTest extends TestCase
         $this->user->setPrimaryKey(['id', 'site_id']);
         $association = new HasOne('Profiles', $this->user, $config);
 
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['join'])
-            ->disableOriginalConstructor()
-            ->getMock();
+        $query = new SelectQuery($this->user);
         $field1 = new IdentifierExpression('Profiles.user_id');
         $field2 = new IdentifierExpression('Profiles.user_site_id');
-        $query->expects($this->once())->method('join')->with([
+        $expected = [
             'Profiles' => [
                 'conditions' => new QueryExpression([
                     'Profiles.is_active' => true,
@@ -194,9 +189,11 @@ class HasOneTest extends TestCase
                 ], $selectTypeMap),
                 'type' => 'LEFT',
                 'table' => 'profiles',
+                'alias' => 'Profiles',
             ],
-        ]);
+        ];
         $association->attachTo($query);
+        $this->assertEquals($expected, $query->clause('join'));
     }
 
     /**
@@ -207,10 +204,7 @@ class HasOneTest extends TestCase
     {
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for `Profiles`, got `(user_id)` but expected foreign key for `(id, site_id)`');
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['join', 'select'])
-            ->setConstructorArgs([$this->user])
-            ->getMock();
+        $query = new SelectQuery($this->user);
         $config = [
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],

@@ -23,13 +23,11 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use PDO;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Tests Sqlite driver
  */
-#[AllowMockObjectsWithoutExpectations]
 class SqliteTest extends TestCase
 {
     protected function tearDown(): void
@@ -44,9 +42,10 @@ class SqliteTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder(Sqlite::class)
-            ->onlyMethods(['createPdo'])
-            ->getMock();
+        $driver = Mockery::mock(Sqlite::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct();
         $dsn = 'sqlite::memory:';
         $expected = [
             'persistent' => false,
@@ -67,8 +66,10 @@ class SqliteTest extends TestCase
             PDO::ATTR_EMULATE_PREPARES => false,
             PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
         ];
-        $driver->expects($this->once())->method('createPdo')
-            ->with($dsn, $expected);
+        $driver->shouldReceive('createPdo')
+            ->with($dsn, $expected)
+            ->once()
+            ->andReturn(Mockery::mock(PDO::class));
         $driver->connect();
     }
 
@@ -86,10 +87,10 @@ class SqliteTest extends TestCase
             'init' => ['Execute this', 'this too'],
             'mask' => 0666,
         ];
-        $driver = $this->getMockBuilder(Sqlite::class)
-            ->onlyMethods(['createPdo'])
-            ->setConstructorArgs([$config])
-            ->getMock();
+        $driver = Mockery::mock(Sqlite::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct($config);
         $dsn = 'sqlite:bar.db';
 
         $expected = $config;
@@ -104,9 +105,10 @@ class SqliteTest extends TestCase
         $connection->shouldReceive('exec')->with('Execute this')->once();
         $connection->shouldReceive('exec')->with('this too')->once();
 
-        $driver->expects($this->once())->method('createPdo')
+        $driver->shouldReceive('createPdo')
             ->with($dsn, $expected)
-            ->willReturn($connection);
+            ->once()
+            ->andReturn($connection);
 
         $driver->connect();
     }
@@ -178,12 +180,13 @@ class SqliteTest extends TestCase
                 return '"' . $value . '"';
             });
 
-        $driver = $this->getMockBuilder(Sqlite::class)
-            ->onlyMethods(['createPdo'])
-            ->getMock();
+        $driver = Mockery::mock(Sqlite::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct();
 
-        $driver->method('createPdo')
-            ->willReturn($mock);
+        $driver->shouldReceive('createPdo')
+            ->andReturn($mock);
 
         $this->assertEquals($expected, $driver->schemaValue($input));
     }

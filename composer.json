@@ -60,7 +60,7 @@
         "cakephp/cakephp-codesniffer": "^5.3",
         "http-interop/http-factory-tests": "^2.0",
         "mikey179/vfsstream": "^1.6.12",
-        "mockery/mockery": "^1.6.10",
+        "mockery/mockery": "^1.6.12",
         "paragonie/csp-builder": "^3.0.2",
         "phpunit/phpunit": "^12.1.3 || ^13.0"
     },

@@ -440,7 +440,7 @@ class SqliteSchemaDialect extends SchemaDialect
             if ($row['unique']) {
                 $indexType = TableSchema::CONSTRAINT_UNIQUE;
             }
-            if ($row['origin'] === 'pk') {
+            if (($row['origin'] ?? null) === 'pk') {
                 $indexType = TableSchema::CONSTRAINT_PRIMARY;
                 $foundPrimary = true;
             }

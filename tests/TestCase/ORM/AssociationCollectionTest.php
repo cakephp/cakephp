@@ -27,13 +27,12 @@ use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * AssociationCollection test case.
  */
-#[AllowMockObjectsWithoutExpectations]
 class AssociationCollectionTest extends TestCase
 {
     /**
@@ -57,7 +56,7 @@ class AssociationCollectionTest extends TestCase
     {
         $this->assertSame($this->getTableLocator(), $this->associations->getTableLocator());
 
-        $tableLocator = $this->createMock(LocatorInterface::class);
+        $tableLocator = Mockery::mock(LocatorInterface::class);
         $associations = new AssociationCollection($tableLocator);
         $this->assertSame($tableLocator, $associations->getTableLocator());
     }
@@ -102,8 +101,9 @@ class AssociationCollectionTest extends TestCase
      */
     public function testLoadCustomLocator(): void
     {
-        $locator = $this->createMock(LocatorInterface::class);
-        $this->associations->load(BelongsTo::class, 'Users', new Table(), [
+        $locator = Mockery::mock(LocatorInterface::class);
+        $table = new Table(['alias' => 'Users', 'table' => 'users']);
+        $this->associations->load(BelongsTo::class, 'Users', $table, [
             'tableLocator' => $locator,
         ]);
         $this->assertTrue($this->associations->has('Users'));
@@ -132,8 +132,7 @@ class AssociationCollectionTest extends TestCase
      */
     public function testGetByProperty(): void
     {
-        $table = $this->getMockBuilder(Table::class)
-            ->getMock();
+        $table = new Table(['alias' => 'Clients', 'table' => 'clients']);
         $table->setSchema([]);
         $belongsTo = new BelongsTo('Users', $table);
         $this->assertSame('user', $belongsTo->getProperty());
@@ -218,27 +217,24 @@ class AssociationCollectionTest extends TestCase
      */
     public function testCascadeDelete(): void
     {
-        $mockOne = $this->getMockBuilder(BelongsTo::class)
-            ->setConstructorArgs(['', new Table()])
-            ->getMock();
-        $mockTwo = $this->getMockBuilder(HasMany::class)
-            ->setConstructorArgs(['', new Table()])
-            ->getMock();
+        $table = new Table(['alias' => 'Users', 'table' => 'users']);
+        $mockOne = Mockery::mock(new BelongsTo('', $table))->makePartial();
+        $mockTwo = Mockery::mock(new HasMany('', $table))->makePartial();
 
         $entity = new Entity();
         $options = ['option' => 'value'];
         $this->associations->add('One', $mockOne);
         $this->associations->add('Two', $mockTwo);
 
-        $mockOne->expects($this->once())
-            ->method('cascadeDelete')
+        $mockOne->shouldReceive('cascadeDelete')
+            ->once()
             ->with($entity, $options)
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $mockTwo->expects($this->once())
-            ->method('cascadeDelete')
+        $mockTwo->shouldReceive('cascadeDelete')
+            ->once()
             ->with($entity, $options)
-            ->willReturn(true);
+            ->andReturn(true);
 
         $result = $this->associations->cascadeDelete($entity, $options);
         $this->assertTrue($result);
@@ -249,17 +245,10 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveParents(): void
     {
-        $table = $this->getMockBuilder(Table::class)
-            ->getMock();
+        $table = new Table(['alias' => 'Users', 'table' => 'users']);
         $table->setSchema([]);
-        $mockOne = $this->getMockBuilder(BelongsTo::class)
-            ->onlyMethods(['saveAssociated'])
-            ->setConstructorArgs(['Parent', $table])
-            ->getMock();
-        $mockTwo = $this->getMockBuilder(HasMany::class)
-            ->onlyMethods(['saveAssociated'])
-            ->setConstructorArgs(['Child', $table])
-            ->getMock();
+        $mockOne = Mockery::mock(new BelongsTo('Parent', $table))->makePartial();
+        $mockTwo = Mockery::mock(new HasMany('Child', $table))->makePartial();
 
         $this->associations->add('Parent', $mockOne);
         $this->associations->add('Child', $mockTwo);
@@ -270,13 +259,12 @@ class AssociationCollectionTest extends TestCase
 
         $options = ['option' => 'value'];
 
-        $mockOne->expects($this->once())
-            ->method('saveAssociated')
+        $mockOne->shouldReceive('saveAssociated')
+            ->once()
             ->with($entity, $options)
-            ->willReturn($entity);
+            ->andReturn($entity);
 
-        $mockTwo->expects($this->never())
-            ->method('saveAssociated');
+        $mockTwo->shouldReceive('saveAssociated')->never();
 
         $result = $this->associations->saveParents(
             $table,
@@ -292,17 +280,10 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveParentsFiltered(): void
     {
-        $table = $this->getMockBuilder(Table::class)
-            ->getMock();
+        $table = new Table(['alias' => 'Users', 'table' => 'users']);
         $table->setSchema([]);
-        $mockOne = $this->getMockBuilder(BelongsTo::class)
-            ->onlyMethods(['saveAssociated'])
-            ->setConstructorArgs(['Parents', $table])
-            ->getMock();
-        $mockTwo = $this->getMockBuilder(BelongsTo::class)
-            ->onlyMethods(['saveAssociated'])
-            ->setConstructorArgs(['Categories', $table])
-            ->getMock();
+        $mockOne = Mockery::mock(new BelongsTo('Parents', $table))->makePartial();
+        $mockTwo = Mockery::mock(new BelongsTo('Categories', $table))->makePartial();
 
         $this->associations->add('Parents', $mockOne);
         $this->associations->add('Categories', $mockTwo);
@@ -313,13 +294,12 @@ class AssociationCollectionTest extends TestCase
 
         $options = ['atomic' => true];
 
-        $mockOne->expects($this->once())
-            ->method('saveAssociated')
+        $mockOne->shouldReceive('saveAssociated')
+            ->once()
             ->with($entity, ['atomic' => true, 'associated' => ['Others']])
-            ->willReturn($entity);
+            ->andReturn($entity);
 
-        $mockTwo->expects($this->never())
-            ->method('saveAssociated');
+        $mockTwo->shouldReceive('saveAssociated')->never();
 
         $result = $this->associations->saveParents(
             $table,
@@ -335,17 +315,10 @@ class AssociationCollectionTest extends TestCase
      */
     public function testSaveChildrenFiltered(): void
     {
-        $table = $this->getMockBuilder(Table::class)
-            ->getMock();
+        $table = new Table(['alias' => 'Users', 'table' => 'users']);
         $table->setSchema([]);
-        $mockOne = $this->getMockBuilder(HasMany::class)
-            ->onlyMethods(['saveAssociated'])
-            ->setConstructorArgs(['Comments', $table])
-            ->getMock();
-        $mockTwo = $this->getMockBuilder(HasOne::class)
-            ->onlyMethods(['saveAssociated'])
-            ->setConstructorArgs(['Profiles', $table])
-            ->getMock();
+        $mockOne = Mockery::mock(new HasMany('Comments', $table))->makePartial();
+        $mockTwo = Mockery::mock(new HasOne('Profiles', $table))->makePartial();
 
         $this->associations->add('Comments', $mockOne);
         $this->associations->add('Profiles', $mockTwo);
@@ -356,13 +329,12 @@ class AssociationCollectionTest extends TestCase
 
         $options = ['atomic' => true];
 
-        $mockOne->expects($this->once())
-            ->method('saveAssociated')
+        $mockOne->shouldReceive('saveAssociated')
+            ->once()
             ->with($entity, $options + ['associated' => ['Other']])
-            ->willReturn($entity);
+            ->andReturn($entity);
 
-        $mockTwo->expects($this->never())
-            ->method('saveAssociated');
+        $mockTwo->shouldReceive('saveAssociated')->never();
 
         $result = $this->associations->saveChildren(
             $table,
@@ -380,10 +352,7 @@ class AssociationCollectionTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
         $this->expectExceptionMessage('Cannot save `Profiles`, it is not associated to `Users`');
-        $table = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['save'])
-            ->setConstructorArgs([['alias' => 'Users']])
-            ->getMock();
+        $table = new Table(['alias' => 'Users', 'table' => 'users']);
 
         $entity = new Entity();
         $entity->set('profile', ['key' => 'value']);
