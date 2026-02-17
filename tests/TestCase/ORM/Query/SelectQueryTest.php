@@ -38,11 +38,12 @@ use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
+use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use TestApp\Model\Table\ArticlesTable;
@@ -52,7 +53,6 @@ use TestApp\Model\Table\TagsTable;
 /**
  * Tests SelectQuery class
  */
-#[AllowMockObjectsWithoutExpectations]
 class SelectQueryTest extends TestCase
 {
     /**
@@ -1866,10 +1866,7 @@ class SelectQueryTest extends TestCase
      */
     public function testClearContain(): void
     {
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['all'])
-            ->setConstructorArgs([$this->table])
-            ->getMock();
+        $query = new SelectQuery($this->table);
 
         $query->contain([
             'Articles',
@@ -1892,20 +1889,17 @@ class SelectQueryTest extends TestCase
      */
     public function testCacheReadIntegration(): void
     {
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->onlyMethods(['execute'])
-            ->setConstructorArgs([$this->table])
-            ->getMock();
+        $query = Mockery::mock(new Query($this->table))->makePartial();
         $resultSet = new ResultSet([]);
 
-        $query->expects($this->never())
-            ->method('execute');
+        $query->shouldReceive('execute')->never();
 
-        $cacher = $this->getMockBuilder(CacheEngine::class)->getMock();
-        $cacher->expects($this->once())
-            ->method('get')
+        $cacher = Mockery::mock(CacheEngine::class);
+        $cacher->shouldReceive('get')
             ->with('my_key')
-            ->willReturn($resultSet);
+            ->once()
+            ->andReturn($resultSet);
+        $cacher->shouldReceive('set')->never();
 
         $query->cache('my_key', $cacher)
             ->where(['id' => 1]);
@@ -1924,13 +1918,17 @@ class SelectQueryTest extends TestCase
 
         $query->select(['id', 'title']);
 
-        $cacher = $this->getMockBuilder(CacheEngine::class)->getMock();
-        $cacher->expects($this->once())
-            ->method('set')
-            ->with(
-                'my_key',
-                $this->isInstanceOf(ResultSetInterface::class),
-            );
+        $cacher = Mockery::mock(CacheEngine::class);
+        $cacher->shouldReceive('get')
+            ->with('my_key')
+            ->once()
+            ->andReturn(null);
+        $cacher->shouldReceive('set')
+            ->withArgs(function (string $key, mixed $value): bool {
+                return $key === 'my_key' && $value instanceof ResultSetInterface;
+            })
+            ->once()
+            ->andReturn(true);
 
         $query->cache('my_key', $cacher)
             ->where(['id' => 1]);
@@ -2377,14 +2375,12 @@ class SelectQueryTest extends TestCase
      */
     public function testCountCache(): void
     {
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['performCount'])
-            ->getMock();
-
-        $query->expects($this->once())
-            ->method('performCount')
-            ->willReturn(1);
+        $query = Mockery::mock(Query::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $query->shouldReceive('_performCount')
+            ->once()
+            ->andReturn(1);
 
         $result = $query->count();
         $this->assertSame(1, $result, 'The result of the sql query should be returned');
@@ -2399,14 +2395,12 @@ class SelectQueryTest extends TestCase
      */
     public function testCountCacheDirty(): void
     {
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['performCount'])
-            ->getMock();
-
-        $query->expects($this->exactly(2))
-            ->method('performCount')
-            ->willReturn(1, 2);
+        $query = Mockery::mock(Query::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $query->shouldReceive('_performCount')
+            ->twice()
+            ->andReturn(1, 2);
 
         $result = $query->count();
         $this->assertSame(1, $result, 'The result of the sql query should be returned');
@@ -2425,14 +2419,12 @@ class SelectQueryTest extends TestCase
      */
     public function testCountCacheClearedOnBind(): void
     {
-        $query = $this->getMockBuilder(SelectQuery::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['performCount'])
-            ->getMock();
-
-        $query->expects($this->exactly(2))
-            ->method('performCount')
-            ->willReturn(1, 2);
+        $query = Mockery::mock(SelectQuery::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $query->shouldReceive('_performCount')
+            ->twice()
+            ->andReturn(1, 2);
 
         $query->bind(':start', 'value1');
         $query->bind(':end', 'value2');

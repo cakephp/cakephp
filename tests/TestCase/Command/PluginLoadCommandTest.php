@@ -27,6 +27,7 @@ use Cake\TestSuite\TestCase;
 class PluginLoadCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
+    use PluginConfigFileTrait;
 
     /**
      * @var string
@@ -58,7 +59,7 @@ class PluginLoadCommandTest extends TestCase
     {
         parent::tearDown();
 
-        file_put_contents($this->configFile, $this->originalContent);
+        $this->writePhpFile($this->configFile, $this->originalContent);
     }
 
     /**
@@ -92,7 +93,7 @@ class PluginLoadCommandTest extends TestCase
 
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
 
-        $config = include $this->configFile;
+        $config = $this->includePhpConfig($this->configFile);
         $this->assertTrue(isset($config['TestPlugin']));
         $this->assertTrue(isset($config['TestPluginTwo']));
         $this->assertTrue(isset($config['Company/TestPluginThree']));
@@ -112,7 +113,7 @@ class PluginLoadCommandTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
         Plugin::getCollection()->remove('TestPluginFour');
 
-        $config = include $this->configFile;
+        $config = $this->includePhpConfig($this->configFile);
         $expected = [
             'onlyDebug' => true,
             'onlyCli' => true,
@@ -130,7 +131,7 @@ class PluginLoadCommandTest extends TestCase
         $this->assertExitCode(CommandInterface::CODE_ERROR);
         $this->assertErrorContains('Plugin `NopeNotThere` could not be found');
 
-        $config = include $this->configFile;
+        $config = $this->includePhpConfig($this->configFile);
         $this->assertFalse(isset($config['NopeNotThere']));
     }
 
@@ -141,7 +142,7 @@ class PluginLoadCommandTest extends TestCase
     {
         $this->exec('plugin load NopeNotThere --optional');
 
-        $config = include $this->configFile;
+        $config = $this->includePhpConfig($this->configFile);
         $this->assertTrue(isset($config['NopeNotThere']));
         $this->assertSame(['optional' => true], $config['NopeNotThere']);
     }

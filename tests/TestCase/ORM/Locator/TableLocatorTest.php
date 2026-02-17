@@ -25,7 +25,7 @@ use Cake\ORM\Query\QueryFactory;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use Mockery;
 use ReflectionProperty;
 use TestApp\Infrastructure\Table\AddressesTable;
 use TestApp\Model\Entity\Article;
@@ -41,7 +41,6 @@ use TestPluginTwo\Model\Table\CommentsTable as PluginTwoCommentsTable;
 /**
  * Test case for TableLocator
  */
-#[AllowMockObjectsWithoutExpectations]
 class TableLocatorTest extends TestCase
 {
     /**
@@ -487,7 +486,7 @@ class TableLocatorTest extends TestCase
      */
     public function testSet(): void
     {
-        $mock = $this->createStub(Table::class);
+        $mock = Mockery::mock(Table::class);
         $this->assertSame($mock, $this->locator->set('Articles', $mock));
         $this->assertSame($mock, $this->locator->get('Articles'));
     }
@@ -499,7 +498,7 @@ class TableLocatorTest extends TestCase
     {
         $this->loadPlugins(['TestPlugin']);
 
-        $mock = $this->createStub(CommentsTable::class);
+        $mock = Mockery::mock(CommentsTable::class);
 
         $this->assertSame($mock, $this->locator->set('TestPlugin.Comments', $mock));
         $this->assertSame($mock, $this->locator->get('TestPlugin.Comments'));

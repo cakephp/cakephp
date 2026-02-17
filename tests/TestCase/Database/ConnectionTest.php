@@ -37,6 +37,7 @@ use DateTime;
 use Error;
 use Exception;
 use InvalidArgumentException;
+use Mockery;
 use PDO;
 use Psr\Log\AbstractLogger;
 use ReflectionMethod;
@@ -670,10 +671,14 @@ class ConnectionTest extends TestCase
         $connection->begin();
         $this->assertTrue($connection->inTransaction());
 
-        $logger = $this->createMock(AbstractLogger::class);
-        $logger->expects($this->once())
-            ->method('log')
-            ->with('warning', $this->stringContains('The connection is going to be closed'));
+        $logger = Mockery::mock(AbstractLogger::class);
+        $logger->shouldReceive('log')
+            ->once()
+            ->withArgs(function (...$args): bool {
+                return isset($args[0], $args[1])
+                    && $args[0] === 'warning'
+                    && str_contains((string)$args[1], 'The connection is going to be closed');
+            });
 
         Log::setConfig('error', $logger);
 

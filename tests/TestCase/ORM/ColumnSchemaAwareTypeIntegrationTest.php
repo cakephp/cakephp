@@ -6,6 +6,7 @@ namespace Cake\Test\TestCase\ORM;
 use Cake\Database\Driver;
 use Cake\Database\TypeFactory;
 use Cake\TestSuite\TestCase;
+use Mockery;
 use TestApp\Database\Type\ColumnSchemaAwareType;
 
 class ColumnSchemaAwareTypeIntegrationTest extends TestCase
@@ -59,16 +60,10 @@ class ColumnSchemaAwareTypeIntegrationTest extends TestCase
     {
         $table = $this->getTableLocator()->get('ColumnSchemaAwareTypeValues');
 
-        $type = $this
-            ->getMockBuilder(ColumnSchemaAwareType::class)
-            ->setConstructorArgs(['char'])
-            ->onlyMethods(['convertColumnDefinition'])
-            ->getMock();
-
-        $type
-            ->expects($this->once())
-            ->method('convertColumnDefinition')
-            ->willReturnCallback(function (array $definition, Driver $driver) {
+        $type = Mockery::mock(new ColumnSchemaAwareType('char'))->makePartial();
+        $type->shouldReceive('convertColumnDefinition')
+            ->once()
+            ->andReturnUsing(function (array $definition, Driver $driver) {
                 $this->assertEquals(
                     [
                         'length',

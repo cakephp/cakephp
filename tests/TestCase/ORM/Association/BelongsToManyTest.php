@@ -17,7 +17,6 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Connection;
-use Cake\Database\Driver;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\OrderClauseExpression;
@@ -38,7 +37,7 @@ use Cake\ORM\RulesChecker;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Model\Entity\ArticlesTag;
 use function Cake\Collection\collection;
@@ -46,7 +45,6 @@ use function Cake\Collection\collection;
 /**
  * Tests BelongsToMany class
  */
-#[AllowMockObjectsWithoutExpectations]
 class BelongsToManyTest extends TestCase
 {
     /**
@@ -68,12 +66,12 @@ class BelongsToManyTest extends TestCase
     ];
 
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Table
      */
     protected $tag;
 
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Table
      */
     protected $article;
 
@@ -83,10 +81,7 @@ class BelongsToManyTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->tag = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['find', 'delete'])
-            ->setConstructorArgs([['alias' => 'Tags', 'table' => 'tags']])
-            ->getMock();
+        $this->tag = new Table(['alias' => 'Tags', 'table' => 'tags']);
         $this->tag->setSchema([
             'id' => ['type' => 'integer'],
             'name' => ['type' => 'string'],
@@ -94,10 +89,7 @@ class BelongsToManyTest extends TestCase
                 'primary' => ['type' => 'primary', 'columns' => ['id']],
             ],
         ]);
-        $this->article = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['find', 'delete'])
-            ->setConstructorArgs([['alias' => 'Articles', 'table' => 'articles']])
-            ->getMock();
+        $this->article = new Table(['alias' => 'Articles', 'table' => 'articles']);
         $this->article->setSchema([
             'id' => ['type' => 'integer'],
             'name' => ['type' => 'string'],
@@ -278,22 +270,16 @@ class BelongsToManyTest extends TestCase
      */
     public function testJunctionConnection(): void
     {
-        $driver = $this->getMockBuilder(Driver::class)->getMock();
-        $driver->expects($this->once())
-            ->method('enabled')
-            ->willReturn(true);
-
-        $mock = $this->getMockBuilder(Connection::class)
-            ->setConstructorArgs([['name' => 'other_source', 'driver' => $driver]])
-            ->getMock();
-        ConnectionManager::setConfig('other_source', $mock);
-        $this->article->setConnection(ConnectionManager::get('other_source'));
+        $config = ConnectionManager::getConfig('test');
+        ConnectionManager::setConfig('other_source', $config);
+        $otherConnection = ConnectionManager::get('other_source');
+        $this->article->setConnection($otherConnection);
 
         $assoc = new BelongsToMany('Test', $this->article, [
             'targetTable' => $this->tag,
         ]);
         $junction = $assoc->junction();
-        $this->assertSame($mock, $junction->getConnection());
+        $this->assertSame($otherConnection, $junction->getConnection());
         ConnectionManager::drop('other_source');
     }
 
@@ -428,9 +414,9 @@ class BelongsToManyTest extends TestCase
      */
     public function testCascadeDelete(): void
     {
-        $articleTag = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['deleteAll'])
-            ->getMock();
+        /** @var \Cake\ORM\Table&\Mockery\MockInterface $articleTag */
+        $articleTag = Mockery::mock(new Table(['alias' => 'ArticlesTags', 'table' => 'articles_tags']))
+            ->makePartial();
         $config = [
             'sort' => ['id' => 'ASC'],
         ];
@@ -440,8 +426,8 @@ class BelongsToManyTest extends TestCase
             ->getAssociation($articleTag->getAlias())
             ->setConditions(['click_count' => 3]);
 
-        $articleTag->expects($this->once())
-            ->method('deleteAll')
+        $articleTag->shouldReceive('deleteAll')
+            ->once()
             ->with([
                 'click_count' => 3,
                 'article_id' => 1,
@@ -456,9 +442,9 @@ class BelongsToManyTest extends TestCase
      */
     public function testCascadeDeleteDependent(): void
     {
-        $articleTag = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['delete', 'deleteAll'])
-            ->getMock();
+        /** @var \Cake\ORM\Table&\Mockery\MockInterface $articleTag */
+        $articleTag = Mockery::mock(new Table(['alias' => 'ArticlesTags', 'table' => 'articles_tags']))
+            ->makePartial();
         $config = [
             'targetTable' => $this->tag,
             'dependent' => false,
@@ -470,10 +456,8 @@ class BelongsToManyTest extends TestCase
             ->getAssociation($articleTag->getAlias())
             ->setConditions(['click_count' => 3]);
 
-        $articleTag->expects($this->never())
-            ->method('deleteAll');
-        $articleTag->expects($this->never())
-            ->method('delete');
+        $articleTag->shouldReceive('deleteAll')->never();
+        $articleTag->shouldReceive('delete')->never();
 
         $entity = new Entity(['id' => 1, 'name' => 'PHP']);
         $association->cascadeDelete($entity);
@@ -639,10 +623,9 @@ class BelongsToManyTest extends TestCase
     public function testLinkSuccessWithMocks(): void
     {
         $connection = ConnectionManager::get('test');
-        $joint = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['save', 'getPrimaryKey'])
-            ->setConstructorArgs([['alias' => 'ArticlesTags', 'connection' => $connection]])
-            ->getMock();
+        /** @var \Cake\ORM\Table&\Mockery\MockInterface $joint */
+        $joint = Mockery::mock(new Table(['alias' => 'ArticlesTags', 'connection' => $connection]))
+            ->makePartial();
 
         $config = [
             'targetTable' => $this->tag,
@@ -656,12 +639,12 @@ class BelongsToManyTest extends TestCase
         $tags = [new Entity(['id' => 2], $opts), new Entity(['id' => 3], $opts)];
         $saveOptions = ['foo' => 'bar'];
 
-        $joint->method('getPrimaryKey')
-            ->willReturn(['article_id', 'tag_id']);
+        $joint->shouldReceive('getPrimaryKey')
+            ->andReturn(['article_id', 'tag_id']);
 
-        $joint->expects($this->exactly(2))
-            ->method('save')
-            ->willReturnOnConsecutiveCalls($entity, $entity);
+        $joint->shouldReceive('save')
+            ->twice()
+            ->andReturn($entity, $entity);
 
         $this->assertTrue($assoc->link($entity, $tags, $saveOptions));
         $this->assertSame($entity->test, $tags);
@@ -673,11 +656,9 @@ class BelongsToManyTest extends TestCase
     public function testLinkSetSourceToJunctionEntities(): void
     {
         $connection = ConnectionManager::get('test');
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $joint */
-        $joint = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['save', 'getPrimaryKey'])
-            ->setConstructorArgs([['alias' => 'ArticlesTags', 'connection' => $connection]])
-            ->getMock();
+        /** @var \Cake\ORM\Table&\Mockery\MockInterface $joint */
+        $joint = Mockery::mock(new Table(['alias' => 'ArticlesTags', 'connection' => $connection]))
+            ->makePartial();
         $joint->setRegistryAlias('Plugin.ArticlesTags');
 
         $config = [
@@ -690,12 +671,12 @@ class BelongsToManyTest extends TestCase
         $entity = new Entity(['id' => 1], $opts);
         $tags = [new Entity(['id' => 2], $opts)];
 
-        $joint->method('getPrimaryKey')
-            ->willReturn(['article_id', 'tag_id']);
+        $joint->shouldReceive('getPrimaryKey')
+            ->andReturn(['article_id', 'tag_id']);
 
-        $joint->expects($this->once())
-            ->method('save')
-            ->willReturnCallback(function (EntityInterface $e) {
+        $joint->shouldReceive('save')
+            ->once()
+            ->andReturnUsing(function (EntityInterface $e) {
                 $this->assertSame('Plugin.ArticlesTags', $e->getSource());
 
                 return $e;
@@ -800,10 +781,9 @@ class BelongsToManyTest extends TestCase
     public function testUnlinkFailure(): void
     {
         $connection = ConnectionManager::get('test');
-        $joint = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['deleteMany'])
-            ->setConstructorArgs([['alias' => 'SpecialTags', 'table' => 'special_tags', 'connection' => $connection]])
-            ->getMock();
+        /** @var \Cake\ORM\Table&\Mockery\MockInterface $joint */
+        $joint = Mockery::mock(new Table(['alias' => 'SpecialTags', 'table' => 'special_tags', 'connection' => $connection]))
+            ->makePartial();
 
         $articles = $this->getTableLocator()->get('Articles');
 
@@ -814,9 +794,9 @@ class BelongsToManyTest extends TestCase
         $entity = $articles->get(2, contain: ['Tags']);
         $this->assertCount(1, $entity->tags);
 
-        $joint->expects($this->once())
-            ->method('deleteMany')
-            ->willReturn(false);
+        $joint->shouldReceive('deleteMany')
+            ->once()
+            ->andReturn(false);
 
         $this->assertFalse($assoc->unlink($entity, $entity->tags));
         $this->assertCount(1, $entity->tags);
@@ -1206,25 +1186,19 @@ class BelongsToManyTest extends TestCase
     #[DataProvider('emptyProvider')]
     public function testSaveAssociatedEmptySetSuccess($value): void
     {
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->getMock();
+        $table = new Table(['alias' => 'Articles', 'table' => 'articles']);
         $table->setSchema([]);
-        /** @var \Cake\ORM\Association\BelongsToMany|\PHPUnit\Framework\MockObject\MockObject $assoc */
-        $assoc = $this->getMockBuilder(BelongsToMany::class)
-            ->onlyMethods(['saveTarget', 'replaceLinks'])
-            ->setConstructorArgs(['tags', $table])
-            ->getMock();
+        $assoc = Mockery::mock(BelongsToMany::class, ['tags', ['sourceTable' => $table]])
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
         $entity = new Entity([
             'id' => 1,
             'tags' => $value,
         ], ['markNew' => true]);
 
         $assoc->setSaveStrategy(BelongsToMany::SAVE_REPLACE);
-        $assoc->expects($this->never())
-            ->method('replaceLinks');
-        $assoc->expects($this->never())
-            ->method('saveTarget');
+        $assoc->shouldReceive('replaceLinks')->never();
+        $assoc->shouldReceive('_saveTarget')->never();
         $this->assertSame($entity, $assoc->saveAssociated($entity));
     }
 
@@ -1236,28 +1210,22 @@ class BelongsToManyTest extends TestCase
     #[DataProvider('emptyProvider')]
     public function testSaveAssociatedEmptySetUpdateSuccess($value): void
     {
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockBuilder $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->getMock();
+        $table = new Table(['alias' => 'Articles', 'table' => 'articles']);
         $table->setSchema([]);
-        /** @var \Cake\ORM\Association\BelongsToMany|\PHPUnit\Framework\MockObject\MockObject $assoc */
-        $assoc = $this->getMockBuilder(BelongsToMany::class)
-            ->onlyMethods(['saveTarget', 'replaceLinks'])
-            ->setConstructorArgs(['tags', $table])
-            ->getMock();
+        $assoc = Mockery::mock(BelongsToMany::class, ['tags', ['sourceTable' => $table]])
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
         $entity = new Entity([
             'id' => 1,
             'tags' => $value,
         ], ['markNew' => false]);
 
         $assoc->setSaveStrategy(BelongsToMany::SAVE_REPLACE);
-        $assoc->expects($this->once())
-            ->method('replaceLinks')
-            ->with($entity, [])
-            ->willReturn(true);
+        $assoc->shouldReceive('replaceLinks')
+            ->once()
+            ->andReturn(true);
 
-        $assoc->expects($this->never())
-            ->method('saveTarget');
+        $assoc->shouldReceive('_saveTarget')->never();
 
         $this->assertSame($entity, $assoc->saveAssociated($entity));
     }
@@ -1267,14 +1235,10 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedWithReplace(): void
     {
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->getMock();
+        $table = new Table(['alias' => 'Articles', 'table' => 'articles']);
         $table->setSchema([]);
-        $assoc = $this->getMockBuilder(BelongsToMany::class)
-            ->onlyMethods(['replaceLinks'])
-            ->setConstructorArgs(['tags', $table])
-            ->getMock();
+        $assoc = Mockery::mock(BelongsToMany::class, ['tags', ['sourceTable' => $table]])
+            ->makePartial();
         $entity = new Entity([
             'id' => 1,
             'tags' => [
@@ -1284,9 +1248,10 @@ class BelongsToManyTest extends TestCase
 
         $options = ['foo' => 'bar'];
         $assoc->setSaveStrategy(BelongsToMany::SAVE_REPLACE);
-        $assoc->expects($this->once())->method('replaceLinks')
+        $assoc->shouldReceive('replaceLinks')
+            ->once()
             ->with($entity, $entity->tags, $options)
-            ->willReturn(true);
+            ->andReturn(true);
         $this->assertSame($entity, $assoc->saveAssociated($entity, $options));
     }
 
@@ -1295,14 +1260,10 @@ class BelongsToManyTest extends TestCase
      */
     public function testSaveAssociatedWithReplaceReturnFalse(): void
     {
-        /** @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject $table */
-        $table = $this->getMockBuilder(Table::class)
-            ->getMock();
+        $table = new Table(['alias' => 'Articles', 'table' => 'articles']);
         $table->setSchema([]);
-        $assoc = $this->getMockBuilder(BelongsToMany::class)
-            ->onlyMethods(['replaceLinks'])
-            ->setConstructorArgs(['tags', $table])
-            ->getMock();
+        $assoc = Mockery::mock(BelongsToMany::class, ['tags', ['sourceTable' => $table]])
+            ->makePartial();
         $entity = new Entity([
             'id' => 1,
             'tags' => [
@@ -1312,9 +1273,10 @@ class BelongsToManyTest extends TestCase
 
         $options = ['foo' => 'bar'];
         $assoc->setSaveStrategy(BelongsToMany::SAVE_REPLACE);
-        $assoc->expects($this->once())->method('replaceLinks')
+        $assoc->shouldReceive('replaceLinks')
+            ->once()
             ->with($entity, $entity->tags, $options)
-            ->willReturn(false);
+            ->andReturn(false);
         $this->assertFalse($assoc->saveAssociated($entity, $options));
     }
 
@@ -1405,11 +1367,9 @@ class BelongsToManyTest extends TestCase
      */
     public function testPropertyNoPlugin(): void
     {
-        $mock = $this->getMockBuilder(Table::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $config = [
-            'targetTable' => $mock,
+            'sourceTable' => $this->article,
+            'targetTable' => $this->tag,
         ];
         $association = new BelongsToMany('Contacts.Tags', $this->article, $config);
         $this->assertSame('tags', $association->getProperty());

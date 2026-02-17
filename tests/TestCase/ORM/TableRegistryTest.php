@@ -20,12 +20,11 @@ use Cake\ORM\Locator\LocatorInterface;
 use Cake\ORM\Locator\TableLocator;
 use Cake\ORM\TableRegistry;
 use Cake\TestSuite\TestCase;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use Mockery;
 
 /**
  * Test case for TableRegistry
  */
-#[AllowMockObjectsWithoutExpectations]
 class TableRegistryTest extends TestCase
 {
     /**
@@ -57,11 +56,11 @@ class TableRegistryTest extends TestCase
     /**
      * Sets and returns mock LocatorInterface instance.
      *
-     * @return \Cake\ORM\Locator\LocatorInterface|\PHPUnit\Framework\MockObject\MockObject
+     * @return \Cake\ORM\Locator\LocatorInterface
      */
     protected function setMockLocator()
     {
-        $locator = $this->createStub(LocatorInterface::class);
+        $locator = Mockery::mock(LocatorInterface::class)->shouldIgnoreMissing();
         TableRegistry::setTableLocator($locator);
 
         return $locator;

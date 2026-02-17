@@ -23,17 +23,17 @@ use Cake\Database\Log\QueryLogger;
 use Cake\Database\Query;
 use Cake\Database\QueryCompiler;
 use Cake\Database\Schema\TableSchema;
-use Cake\Database\Statement\Statement;
+use Cake\Database\StatementInterface;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\Log\Log;
 use Cake\TestSuite\TestCase;
 use DateTime;
 use Exception;
+use Mockery;
 use PDO;
 use PDOException;
 use PDOStatement;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use TestApp\Database\Driver\RetryDriver;
 use TestApp\Database\Driver\StubDriver;
@@ -41,11 +41,10 @@ use TestApp\Database\Driver\StubDriver;
 /**
  * Tests Driver class
  */
-#[AllowMockObjectsWithoutExpectations]
 class DriverTest extends TestCase
 {
     /**
-     * @var \TestApp\Database\Driver\StubDriver|\PHPUnit\Framework\MockObject\MockObject
+     * @var \TestApp\Database\Driver\StubDriver
      */
     protected $driver;
 
@@ -61,9 +60,10 @@ class DriverTest extends TestCase
             'scopes' => ['queriesLog'],
         ]);
 
-        $this->driver = $this->getMockBuilder(StubDriver::class)
-            ->onlyMethods(['createPdo', 'prepare'])
-            ->getMock();
+        $this->driver = Mockery::mock(StubDriver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $this->driver->__construct();
     }
 
     protected function tearDown(): void
@@ -121,19 +121,15 @@ class DriverTest extends TestCase
     {
         $value = 'string';
 
-        $connection = $this->getMockBuilder(PDO::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['quote'])
-            ->getMock();
-
-        $connection
-            ->expects($this->once())
-            ->method('quote')
+        $connection = Mockery::mock(PDO::class);
+        $connection->shouldReceive('quote')
             ->with($value, PDO::PARAM_STR)
-            ->willReturn('string');
+            ->once()
+            ->andReturn('string');
 
-        $this->driver->method('createPdo')
-            ->willReturn($connection);
+        $this->driver->shouldReceive('createPdo')
+            ->once()
+            ->andReturn($connection);
 
         $this->driver->schemaValue($value);
     }
@@ -143,18 +139,14 @@ class DriverTest extends TestCase
      */
     public function testLastInsertId(): void
     {
-        $connection = $this->getMockBuilder(PDO::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['lastInsertId'])
-            ->getMock();
+        $connection = Mockery::mock(PDO::class);
+        $connection->shouldReceive('lastInsertId')
+            ->once()
+            ->andReturn('all-the-bears');
 
-        $connection
-            ->expects($this->once())
-            ->method('lastInsertId')
-            ->willReturn('all-the-bears');
-
-        $this->driver->method('createPdo')
-            ->willReturn($connection);
+        $this->driver->shouldReceive('createPdo')
+            ->once()
+            ->andReturn($connection);
 
         $this->assertSame('all-the-bears', $this->driver->lastInsertId());
     }
@@ -166,18 +158,14 @@ class DriverTest extends TestCase
     {
         $this->assertFalse($this->driver->isConnected());
 
-        $connection = $this->getMockBuilder(PDO::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['query'])
-            ->getMock();
+        $connection = Mockery::mock(PDO::class);
+        $connection->shouldReceive('query')
+            ->once()
+            ->andReturn(Mockery::mock(PDOStatement::class));
 
-        $connection
-            ->expects($this->once())
-            ->method('query')
-            ->willReturn(new PDOStatement());
-
-        $this->driver->method('createPdo')
-            ->willReturn($connection);
+        $this->driver->shouldReceive('createPdo')
+            ->once()
+            ->andReturn($connection);
 
         $this->driver->connect();
 
@@ -203,33 +191,25 @@ class DriverTest extends TestCase
      */
     public function testCompileQuery(): void
     {
-        $compiler = $this->getMockBuilder(QueryCompiler::class)
-            ->onlyMethods(['compile'])
-            ->getMock();
+        $compiler = Mockery::mock(QueryCompiler::class);
+        $compiler->shouldReceive('compile')
+            ->once()
+            ->andReturn('1');
 
-        $compiler
-            ->expects($this->once())
-            ->method('compile')
-            ->willReturn('1');
+        $driver = Mockery::mock(StubDriver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct();
+        $driver->shouldReceive('newCompiler')
+            ->once()
+            ->andReturn($compiler);
 
-        $driver = $this->getMockBuilder(StubDriver::class)
-            ->onlyMethods(['newCompiler', 'transformQuery'])
-            ->getMock();
+        $query = Mockery::mock(Query::class)->shouldIgnoreMissing();
+        $query->shouldReceive('type')->andReturn('select');
 
-        $driver
-            ->expects($this->once())
-            ->method('newCompiler')
-            ->willReturn($compiler);
-
-        $query = $this->getMockBuilder(Query::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $query->method('type')->willReturn('select');
-
-        $driver
-            ->expects($this->once())
-            ->method('transformQuery')
-            ->willReturn($query);
+        $driver->shouldReceive('transformQuery')
+            ->once()
+            ->andReturn($query);
 
         $result = $driver->compileQuery($query, new ValueBinder());
 
@@ -301,18 +281,15 @@ class DriverTest extends TestCase
      */
     public function testExecuteNoParams(): void
     {
-        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+        $statement = Mockery::mock(StatementInterface::class);
+        $statement->shouldReceive('queryString')->andReturn('SELECT bar FROM foo');
+        $statement->shouldReceive('rowCount')->andReturn(3);
+        $statement->shouldReceive('execute')->andReturn(true);
+        $statement->shouldReceive('getBoundParams')->andReturn([]);
 
-        $statement = $this->getMockBuilder(Statement::class)
-            ->setConstructorArgs([$inner, $this->driver])
-            ->onlyMethods(['queryString','rowCount','execute'])
-            ->getMock();
-        $statement->method('queryString')->willReturn('SELECT bar FROM foo');
-        $statement->method('rowCount')->willReturn(3);
-        $statement->method('execute')->willReturn(true);
-
-        $this->driver->method('prepare')
-            ->willReturn($statement);
+        $this->driver->shouldReceive('prepare')
+            ->once()
+            ->andReturn($statement);
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
 
         $this->driver->execute('SELECT bar FROM foo');
@@ -327,19 +304,28 @@ class DriverTest extends TestCase
      */
     public function testExecuteWithBinding(): void
     {
-        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
-
-        $statement = $this->getMockBuilder(Statement::class)
-            ->setConstructorArgs([$inner, $this->driver])
-            ->onlyMethods(['queryString','rowCount','execute'])
-            ->getMock();
-        $statement->method('rowCount')->willReturn(3);
-        $statement->method('execute')->willReturn(true);
-        $statement->method('queryString')->willReturn('SELECT bar FROM foo WHERE a=:a AND b=:b');
+        $boundParams = [];
+        $statement = Mockery::mock(StatementInterface::class);
+        $statement->shouldReceive('rowCount')->andReturn(3);
+        $statement->shouldReceive('execute')->andReturn(true);
+        $statement->shouldReceive('queryString')->andReturn('SELECT bar FROM foo WHERE a=:a AND b=:b');
+        $statement->shouldReceive('bind')
+            ->once()
+            ->andReturnUsing(function (array $params, array $types) use (&$boundParams): void {
+                $boundParams = [
+                    'a' => (string)$params['a'],
+                    'b' => $params['b']->format('Y-m-d'),
+                ];
+            });
+        $statement->shouldReceive('getBoundParams')
+            ->andReturnUsing(function () use (&$boundParams): array {
+                return $boundParams;
+            });
 
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
-        $this->driver->method('prepare')
-            ->willReturn($statement);
+        $this->driver->shouldReceive('prepare')
+            ->once()
+            ->andReturn($statement);
 
         $this->driver->execute(
             'SELECT bar FROM foo WHERE a=:a AND b=:b',
@@ -360,19 +346,16 @@ class DriverTest extends TestCase
      */
     public function testExecuteWithError(): void
     {
-        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
-
-        $statement = $this->getMockBuilder(Statement::class)
-            ->setConstructorArgs([$inner, $this->driver])
-            ->onlyMethods(['queryString','rowCount','execute'])
-            ->getMock();
-        $statement->method('queryString')->willReturn('SELECT bar FROM foo');
-        $statement->method('rowCount')->willReturn(0);
-        $statement->method('execute')->will($this->throwException(new PDOException()));
+        $statement = Mockery::mock(StatementInterface::class);
+        $statement->shouldReceive('queryString')->andReturn('SELECT bar FROM foo');
+        $statement->shouldReceive('rowCount')->andReturn(0);
+        $statement->shouldReceive('execute')->andThrow(new PDOException());
+        $statement->shouldReceive('getBoundParams')->andReturn([]);
 
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
-        $this->driver->method('prepare')
-            ->willReturn($statement);
+        $this->driver->shouldReceive('prepare')
+            ->once()
+            ->andReturn($statement);
 
         try {
             $this->driver->execute('SELECT foo FROM bar');
@@ -386,15 +369,16 @@ class DriverTest extends TestCase
 
     public function testGetLoggerDefault(): void
     {
-        $driver = $this->getMockBuilder(StubDriver::class)
-            ->onlyMethods(['createPdo', 'prepare'])
-            ->getMock();
+        $driver = Mockery::mock(StubDriver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct();
         $this->assertNull($driver->getLogger());
 
-        $driver = $this->getMockBuilder(StubDriver::class)
-            ->setConstructorArgs([['log' => true]])
-            ->onlyMethods(['createPdo'])
-            ->getMock();
+        $driver = Mockery::mock(StubDriver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct(['log' => true]);
 
         $logger = $driver->getLogger();
         $this->assertInstanceOf(QueryLogger::class, $logger);
@@ -409,36 +393,20 @@ class DriverTest extends TestCase
 
     public function testLogTransaction(): void
     {
-        $pdo = $this->getMockBuilder(PDO::class)
-            ->disableOriginalConstructor()
-            ->onlyMethods(['beginTransaction', 'commit', 'rollback', 'inTransaction'])
-            ->getMock();
-        $pdo
-            ->method('beginTransaction')
-            ->willReturn(true);
-        $pdo
-            ->method('commit')
-            ->willReturn(true);
-        $pdo
-            ->method('rollBack')
-            ->willReturn(true);
-        $pdo->expects($this->exactly(5))
-            ->method('inTransaction')
-            ->willReturn(
-                false,
-                true,
-                true,
-                false,
-                true,
-            );
+        $pdo = Mockery::mock(PDO::class);
+        $pdo->shouldReceive('beginTransaction')->andReturn(true);
+        $pdo->shouldReceive('commit')->andReturn(true);
+        $pdo->shouldReceive('rollBack')->andReturn(true);
+        $pdo->shouldReceive('inTransaction')
+            ->times(5)
+            ->andReturn(false, true, true, false, true);
 
-        $driver = $this->getMockBuilder(StubDriver::class)
-            ->setConstructorArgs([['log' => true]])
-            ->onlyMethods(['getPdo'])
-            ->getMock();
-
-        $driver->method('getPdo')
-            ->willReturn($pdo);
+        $driver = Mockery::mock(StubDriver::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct(['log' => true]);
+        $driver->shouldReceive('getPdo')
+            ->andReturn($pdo);
 
         $driver->beginTransaction();
         $driver->beginTransaction(); //This one will not be logged
@@ -475,18 +443,15 @@ class DriverTest extends TestCase
      */
     public function testDisableQueryLogging(): void
     {
-        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+        $statement = Mockery::mock(StatementInterface::class);
+        $statement->shouldReceive('queryString')->andReturn('SELECT bar FROM foo');
+        $statement->shouldReceive('rowCount')->andReturn(3);
+        $statement->shouldReceive('execute')->andReturn(true);
+        $statement->shouldReceive('getBoundParams')->andReturn([]);
 
-        $statement = $this->getMockBuilder(Statement::class)
-            ->setConstructorArgs([$inner, $this->driver])
-            ->onlyMethods(['queryString','rowCount','execute'])
-            ->getMock();
-        $statement->method('queryString')->willReturn('SELECT bar FROM foo');
-        $statement->method('rowCount')->willReturn(3);
-        $statement->method('execute')->willReturn(true);
-
-        $this->driver->method('prepare')
-            ->willReturn($statement);
+        $this->driver->shouldReceive('prepare')
+            ->twice()
+            ->andReturn($statement);
         $this->driver->setLogger(new QueryLogger(['connection' => 'test']));
 
         $this->driver->execute('SELECT bar FROM foo');
