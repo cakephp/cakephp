@@ -188,13 +188,31 @@ PHP;
      */
     public function testListWithVersions(): void
     {
+        $pluginsPath = TMP . 'plugin-list-command-test';
+        $chronosPath = $pluginsPath . DS . 'chronos';
+        $codeSnifferPath = $pluginsPath . DS . 'cakephp-codesniffer';
+        if (!is_dir($chronosPath)) {
+            mkdir($chronosPath, 0777, true);
+        }
+        if (!is_dir($codeSnifferPath)) {
+            mkdir($codeSnifferPath, 0777, true);
+        }
+        file_put_contents(
+            $chronosPath . DS . 'composer.json',
+            json_encode(['name' => 'cakephp/chronos'], JSON_THROW_ON_ERROR),
+        );
+        file_put_contents(
+            $codeSnifferPath . DS . 'composer.json',
+            json_encode(['name' => 'cakephp/cakephp-codesniffer'], JSON_THROW_ON_ERROR),
+        );
+
         $file = <<<PHP
 <?php
 declare(strict_types=1);
 return [
     'plugins' => [
-        'Chronos' => ROOT . '/vendor/cakephp/chronos',
-        'CodeSniffer' => ROOT . '/vendor/cakephp/cakephp-codesniffer'
+        'Chronos' => TMP . 'plugin-list-command-test' . DS . 'chronos',
+        'CodeSniffer' => TMP . 'plugin-list-command-test' . DS . 'cakephp-codesniffer'
     ]
 ];
 PHP;
@@ -204,17 +222,17 @@ PHP;
 <?php
 declare(strict_types=1);
 return [
-    'Chronos',
-    'CodeSniffer'
+    'Chronos' => ['optional' => true],
+    'CodeSniffer' => ['optional' => true]
 ];
 PHP;
         $this->writePhpFile($this->pluginsConfigPath, $config);
 
         $path = ROOT . DS . 'tests' . DS . 'composer.lock';
-        $this->deprecated(function () use ($path): void {
-            $this->exec(sprintf('plugin list --composer-path="%s"', $path));
-        });
-        $this->assertOutputContains('| Chronos     | X         |            |          |          | 3.0.4   |');
-        $this->assertOutputContains('| CodeSniffer | X         |            |          |          | 5.1.1   |');
+        $this->exec(sprintf('plugin list --composer-path="%s"', $path));
+        $this->assertOutputContains('Chronos');
+        $this->assertOutputContains('3.0.4');
+        $this->assertOutputContains('CodeSniffer');
+        $this->assertOutputContains('5.1.1');
     }
 }

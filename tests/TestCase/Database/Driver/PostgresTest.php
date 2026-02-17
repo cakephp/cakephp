@@ -38,7 +38,7 @@ class PostgresTest extends TestCase
         $driver = Mockery::mock(Postgres::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
-        $driver->__construct();
+        $driver->__construct(['database' => 'cake', 'username' => 'root', 'password' => '']);
         $dsn = 'pgsql:host=localhost;port=5432;dbname=cake';
         $expected = [
             'persistent' => true,

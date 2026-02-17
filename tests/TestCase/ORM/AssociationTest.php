@@ -59,8 +59,8 @@ class AssociationTest extends TestCase
             'propertyName' => 'associated',
         ];
         $this->association = Mockery::mock(
-            Association::class . '[_options,attachTo,_joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
-            ['Foo', $config],
+            Association::class . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
+            ['Foo', $this->source, $config],
         )
             ->makePartial()
             ->shouldAllowMockingProtectedMethods()
@@ -68,14 +68,14 @@ class AssociationTest extends TestCase
     }
 
     /**
-     * Tests that _options acts as a callback where subclasses can add their own
+     * Tests that options acts as a callback where subclasses can add their own
      * initialization code based on the passed configuration array
      */
     public function testOptionsIsCalled(): void
     {
         $options = ['foo' => 'bar'];
-        $this->association->shouldReceive('_options')->once()->with($options);
-        $this->association->__construct('Name', $options);
+        $this->association->shouldReceive('options')->once()->with($options);
+        $this->association->__construct('Name', $this->source, $options);
     }
 
     /**
@@ -87,7 +87,7 @@ class AssociationTest extends TestCase
         /** @var \Cake\ORM\Association&\Mockery\MockInterface $association */
         $association = Mockery::mock(
             Association::class . '[type,eagerLoader,cascadeDelete,isOwningSide,saveAssociated]',
-            ['Foo'],
+            ['Foo', $this->source],
         )
             ->makePartial()
             ->shouldIgnoreMissing();
@@ -163,8 +163,8 @@ class AssociationTest extends TestCase
             'className' => 'Test',
         ];
         $this->association = Mockery::mock(
-            Association::class . '[_options,attachTo,_joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
-            ['Foo', $config],
+            Association::class . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
+            ['Foo', $this->source, $config],
         )
             ->makePartial()
             ->shouldAllowMockingProtectedMethods()
@@ -188,8 +188,8 @@ class AssociationTest extends TestCase
             'className' => TestTable::class,
         ];
         $this->association = Mockery::mock(
-            Association::class . '[_options,attachTo,_joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
-            ['Test', $config],
+            Association::class . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
+            ['Test', $this->source, $config],
         )
             ->makePartial()
             ->shouldAllowMockingProtectedMethods()
@@ -216,8 +216,8 @@ class AssociationTest extends TestCase
             'className' => $className,
         ];
         $this->association = Mockery::mock(
-            Association::class . '[_options,attachTo,_joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
-            ['Test', $config],
+            Association::class . '[options,attachTo,joinCondition,cascadeDelete,isOwningSide,saveAssociated,eagerLoader,type]',
+            ['Test', $this->source, $config],
         )
             ->makePartial()
             ->shouldAllowMockingProtectedMethods()
@@ -339,7 +339,7 @@ class AssociationTest extends TestCase
 
         $this->association = Mockery::mock(
             Association::class . '[type,eagerLoader,cascadeDelete,isOwningSide,saveAssociated]',
-            ['ThisAssociationName', $config],
+            ['ThisAssociationName', $this->source, $config],
         )
             ->makePartial()
             ->shouldIgnoreMissing();
@@ -458,7 +458,7 @@ class AssociationTest extends TestCase
         ];
         $assoc = Mockery::mock(
             Association::class . '[type,eagerLoader,cascadeDelete,isOwningSide,saveAssociated]',
-            ['Foo', $config],
+            ['Foo', $this->source, $config],
         )
             ->makePartial()
             ->shouldIgnoreMissing();
@@ -497,7 +497,7 @@ class AssociationTest extends TestCase
         ];
         $assoc = Mockery::mock(
             Association::class . '[type,eagerLoader,cascadeDelete,isOwningSide,saveAssociated]',
-            ['Foo', $config],
+            ['Foo', $this->source, $config],
         )
             ->makePartial()
             ->shouldIgnoreMissing();

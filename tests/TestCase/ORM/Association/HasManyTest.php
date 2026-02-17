@@ -98,12 +98,12 @@ class HasManyTest extends TestCase
             ],
         ]);
         $connection = ConnectionManager::get('test');
-        $this->article = Mockery::mock(new Table([
+        $article = new Table([
             'alias' => 'Articles',
             'table' => 'articles',
             'connection' => $connection,
-        ]))->makePartial();
-        $this->article->setSchema([
+        ]);
+        $article->setSchema([
             'id' => ['type' => 'integer'],
             'title' => ['type' => 'string'],
             'author_id' => ['type' => 'integer'],
@@ -111,6 +111,7 @@ class HasManyTest extends TestCase
                 'primary' => ['type' => 'primary', 'columns' => ['id']],
             ],
         ]);
+        $this->article = Mockery::mock($article)->makePartial();
 
         $this->articlesTypeMap = new TypeMap([
             'Articles.id' => 'integer',
@@ -521,10 +522,9 @@ class HasManyTest extends TestCase
             }
 
             public function andWhere(
-                ExpressionInterface|Closure|array|string|null $conditions = null,
+                ExpressionInterface|Closure|array|string $conditions,
                 array $types = [],
-                bool $overwrite = false,
-            ) {
+            ): static {
                 if ($conditions == $this->expectedTuple) {
                     $this->andWhereCalled = true;
                 }
@@ -739,7 +739,6 @@ class HasManyTest extends TestCase
     public function testPropertyNoPlugin(): void
     {
         $config = [
-            'sourceTable' => $this->author,
             'targetTable' => $this->article,
         ];
         $association = new HasMany('Contacts.Addresses', $this->author, $config);

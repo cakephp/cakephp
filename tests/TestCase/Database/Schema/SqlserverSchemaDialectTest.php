@@ -1289,6 +1289,7 @@ SQL;
     protected function getMockedDriver(): Driver
     {
         $this->needsConnection();
+        $connectionConfig = ConnectionManager::getConfig('test');
 
         $mock = Mockery::mock(PDO::class);
         $mock->shouldReceive('quote')
@@ -1299,7 +1300,7 @@ SQL;
         $driver = Mockery::mock(Sqlserver::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
-        $driver->__construct();
+        $driver->__construct($connectionConfig);
 
         $driver->shouldReceive('createPdo')
             ->andReturn($mock);

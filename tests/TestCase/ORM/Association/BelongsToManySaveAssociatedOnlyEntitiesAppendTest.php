@@ -69,9 +69,9 @@ class BelongsToManySaveAssociatedOnlyEntitiesAppendTest extends TestCase
     {
         $connection = ConnectionManager::get('test');
         /** @var \Cake\Test\TestCase\ORM\Association\MockedTable&\Mockery\MockInterface $table */
-        $table = Mockery::mock(new MockedTable(['table' => 'tags', 'connection' => $connection]))
-            ->makePartial();
-        $table->setPrimaryKey('id');
+        $targetTable = new MockedTable(['table' => 'tags', 'connection' => $connection]);
+        $targetTable->setPrimaryKey('id');
+        $table = Mockery::mock($targetTable)->makePartial();
 
         $config = [
             'targetTable' => $table,

@@ -102,7 +102,8 @@ class AssociationCollectionTest extends TestCase
     public function testLoadCustomLocator(): void
     {
         $locator = Mockery::mock(LocatorInterface::class);
-        $this->associations->load(BelongsTo::class, 'Users', [
+        $table = new Table(['alias' => 'Users', 'table' => 'users']);
+        $this->associations->load(BelongsTo::class, 'Users', $table, [
             'tableLocator' => $locator,
         ]);
         $this->assertTrue($this->associations->has('Users'));
@@ -216,8 +217,9 @@ class AssociationCollectionTest extends TestCase
      */
     public function testCascadeDelete(): void
     {
-        $mockOne = Mockery::mock(new BelongsTo(''))->makePartial();
-        $mockTwo = Mockery::mock(new HasMany(''))->makePartial();
+        $table = new Table(['alias' => 'Users', 'table' => 'users']);
+        $mockOne = Mockery::mock(new BelongsTo('', $table))->makePartial();
+        $mockTwo = Mockery::mock(new HasMany('', $table))->makePartial();
 
         $entity = new Entity();
         $options = ['option' => 'value'];
@@ -245,12 +247,8 @@ class AssociationCollectionTest extends TestCase
     {
         $table = new Table(['alias' => 'Users', 'table' => 'users']);
         $table->setSchema([]);
-        $mockOne = Mockery::mock(new BelongsTo('Parent', [
-            'sourceTable' => $table,
-        ]))->makePartial();
-        $mockTwo = Mockery::mock(new HasMany('Child', [
-            'sourceTable' => $table,
-        ]))->makePartial();
+        $mockOne = Mockery::mock(new BelongsTo('Parent', $table))->makePartial();
+        $mockTwo = Mockery::mock(new HasMany('Child', $table))->makePartial();
 
         $this->associations->add('Parent', $mockOne);
         $this->associations->add('Child', $mockTwo);
@@ -284,12 +282,8 @@ class AssociationCollectionTest extends TestCase
     {
         $table = new Table(['alias' => 'Users', 'table' => 'users']);
         $table->setSchema([]);
-        $mockOne = Mockery::mock(new BelongsTo('Parents', [
-            'sourceTable' => $table,
-        ]))->makePartial();
-        $mockTwo = Mockery::mock(new BelongsTo('Categories', [
-            'sourceTable' => $table,
-        ]))->makePartial();
+        $mockOne = Mockery::mock(new BelongsTo('Parents', $table))->makePartial();
+        $mockTwo = Mockery::mock(new BelongsTo('Categories', $table))->makePartial();
 
         $this->associations->add('Parents', $mockOne);
         $this->associations->add('Categories', $mockTwo);
@@ -323,12 +317,8 @@ class AssociationCollectionTest extends TestCase
     {
         $table = new Table(['alias' => 'Users', 'table' => 'users']);
         $table->setSchema([]);
-        $mockOne = Mockery::mock(new HasMany('Comments', [
-            'sourceTable' => $table,
-        ]))->makePartial();
-        $mockTwo = Mockery::mock(new HasOne('Profiles', [
-            'sourceTable' => $table,
-        ]))->makePartial();
+        $mockOne = Mockery::mock(new HasMany('Comments', $table))->makePartial();
+        $mockTwo = Mockery::mock(new HasOne('Profiles', $table))->makePartial();
 
         $this->associations->add('Comments', $mockOne);
         $this->associations->add('Profiles', $mockTwo);

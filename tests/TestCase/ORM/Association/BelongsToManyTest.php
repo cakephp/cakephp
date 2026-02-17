@@ -657,9 +657,9 @@ class BelongsToManyTest extends TestCase
     {
         $connection = ConnectionManager::get('test');
         /** @var \Cake\ORM\Table&\Mockery\MockInterface $joint */
-        $joint = Mockery::mock(new Table(['alias' => 'ArticlesTags', 'connection' => $connection]))
-            ->makePartial();
-        $joint->setRegistryAlias('Plugin.ArticlesTags');
+        $junctionTable = new Table(['alias' => 'ArticlesTags', 'connection' => $connection]);
+        $junctionTable->setRegistryAlias('Plugin.ArticlesTags');
+        $joint = Mockery::mock($junctionTable)->makePartial();
 
         $config = [
             'targetTable' => $this->tag,
@@ -1188,7 +1188,7 @@ class BelongsToManyTest extends TestCase
     {
         $table = new Table(['alias' => 'Articles', 'table' => 'articles']);
         $table->setSchema([]);
-        $assoc = Mockery::mock(BelongsToMany::class, ['tags', ['sourceTable' => $table]])
+        $assoc = Mockery::mock(BelongsToMany::class, ['tags', $table])
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         $entity = new Entity([
@@ -1198,7 +1198,7 @@ class BelongsToManyTest extends TestCase
 
         $assoc->setSaveStrategy(BelongsToMany::SAVE_REPLACE);
         $assoc->shouldReceive('replaceLinks')->never();
-        $assoc->shouldReceive('_saveTarget')->never();
+        $assoc->shouldReceive('saveTarget')->never();
         $this->assertSame($entity, $assoc->saveAssociated($entity));
     }
 
@@ -1212,7 +1212,7 @@ class BelongsToManyTest extends TestCase
     {
         $table = new Table(['alias' => 'Articles', 'table' => 'articles']);
         $table->setSchema([]);
-        $assoc = Mockery::mock(BelongsToMany::class, ['tags', ['sourceTable' => $table]])
+        $assoc = Mockery::mock(BelongsToMany::class, ['tags', $table])
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
         $entity = new Entity([
@@ -1237,7 +1237,7 @@ class BelongsToManyTest extends TestCase
     {
         $table = new Table(['alias' => 'Articles', 'table' => 'articles']);
         $table->setSchema([]);
-        $assoc = Mockery::mock(BelongsToMany::class, ['tags', ['sourceTable' => $table]])
+        $assoc = Mockery::mock(BelongsToMany::class, ['tags', $table])
             ->makePartial();
         $entity = new Entity([
             'id' => 1,
@@ -1262,7 +1262,7 @@ class BelongsToManyTest extends TestCase
     {
         $table = new Table(['alias' => 'Articles', 'table' => 'articles']);
         $table->setSchema([]);
-        $assoc = Mockery::mock(BelongsToMany::class, ['tags', ['sourceTable' => $table]])
+        $assoc = Mockery::mock(BelongsToMany::class, ['tags', $table])
             ->makePartial();
         $entity = new Entity([
             'id' => 1,
@@ -1368,7 +1368,6 @@ class BelongsToManyTest extends TestCase
     public function testPropertyNoPlugin(): void
     {
         $config = [
-            'sourceTable' => $this->article,
             'targetTable' => $this->tag,
         ];
         $association = new BelongsToMany('Contacts.Tags', $this->article, $config);

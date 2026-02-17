@@ -156,7 +156,7 @@ class LinkConstraintTest extends TestCase
             ->makePartial();
         $ruleMock
             ->shouldAllowMockingProtectedMethods()
-            ->shouldReceive('_aliasFields')
+            ->shouldReceive('aliasFields')
             ->once()
             ->andReturn([]);
 

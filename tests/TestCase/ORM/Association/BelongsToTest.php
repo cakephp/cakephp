@@ -341,7 +341,6 @@ class BelongsToTest extends TestCase
     public function testPropertyNoPlugin(): void
     {
         $config = [
-            'sourceTable' => $this->client,
             'targetTable' => $this->company,
         ];
         $association = new BelongsTo('Contacts.Companies', $this->client, $config);

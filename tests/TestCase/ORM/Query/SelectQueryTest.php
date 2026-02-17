@@ -38,7 +38,6 @@ use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
@@ -1889,7 +1888,7 @@ class SelectQueryTest extends TestCase
      */
     public function testCacheReadIntegration(): void
     {
-        $query = Mockery::mock(new Query($this->table))->makePartial();
+        $query = Mockery::mock(SelectQuery::class)->makePartial();
         $resultSet = new ResultSet([]);
 
         $query->shouldReceive('execute')->never();
@@ -2375,10 +2374,10 @@ class SelectQueryTest extends TestCase
      */
     public function testCountCache(): void
     {
-        $query = Mockery::mock(Query::class)
+        $query = Mockery::mock(SelectQuery::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
-        $query->shouldReceive('_performCount')
+        $query->shouldReceive('performCount')
             ->once()
             ->andReturn(1);
 
@@ -2395,10 +2394,10 @@ class SelectQueryTest extends TestCase
      */
     public function testCountCacheDirty(): void
     {
-        $query = Mockery::mock(Query::class)
+        $query = Mockery::mock(SelectQuery::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
-        $query->shouldReceive('_performCount')
+        $query->shouldReceive('performCount')
             ->twice()
             ->andReturn(1, 2);
 
@@ -2422,7 +2421,7 @@ class SelectQueryTest extends TestCase
         $query = Mockery::mock(SelectQuery::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
-        $query->shouldReceive('_performCount')
+        $query->shouldReceive('performCount')
             ->twice()
             ->andReturn(1, 2);
 

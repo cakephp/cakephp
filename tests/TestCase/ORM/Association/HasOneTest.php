@@ -178,7 +178,7 @@ class HasOneTest extends TestCase
         $this->user->setPrimaryKey(['id', 'site_id']);
         $association = new HasOne('Profiles', $this->user, $config);
 
-        $query = new Query($this->user);
+        $query = new SelectQuery($this->user);
         $field1 = new IdentifierExpression('Profiles.user_id');
         $field2 = new IdentifierExpression('Profiles.user_site_id');
         $expected = [
@@ -204,7 +204,7 @@ class HasOneTest extends TestCase
     {
         $this->expectException(DatabaseException::class);
         $this->expectExceptionMessage('Cannot match provided foreignKey for `Profiles`, got `(user_id)` but expected foreign key for `(id, site_id)`');
-        $query = new Query($this->user);
+        $query = new SelectQuery($this->user);
         $config = [
             'targetTable' => $this->profile,
             'conditions' => ['Profiles.is_active' => true],

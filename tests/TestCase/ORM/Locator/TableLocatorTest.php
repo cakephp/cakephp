@@ -26,6 +26,7 @@ use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
 use Cake\Validation\Validator;
 use Mockery;
+use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use ReflectionProperty;
 use TestApp\Infrastructure\Table\AddressesTable;
 use TestApp\Model\Entity\Article;
@@ -41,6 +42,7 @@ use TestPluginTwo\Model\Table\CommentsTable as PluginTwoCommentsTable;
 /**
  * Test case for TableLocator
  */
+#[AllowMockObjectsWithoutExpectations]
 class TableLocatorTest extends TestCase
 {
     /**

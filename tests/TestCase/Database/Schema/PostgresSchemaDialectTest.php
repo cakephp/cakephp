@@ -1808,7 +1808,7 @@ SQL;
         $connection = Mockery::mock(Connection::class)->makePartial();
         $connection->shouldReceive('getWriteDriver')
             ->andReturn($driver);
-        $table = (new TableSchema('schema_articles'))->addColumn('id', [
+        $table = new TableSchema('schema_articles')->addColumn('id', [
             'type' => 'integer',
             'null' => false,
         ]);
@@ -1967,7 +1967,9 @@ SQL;
     protected function getMockedDriver(array $config = []): Driver
     {
         $this->needsConnection();
+        $connectionConfig = ConnectionManager::getConfig('test');
 
+        $config = array_merge($connectionConfig, $config);
         $config += [
             'database' => 'cake',
         ];

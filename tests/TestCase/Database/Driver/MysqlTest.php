@@ -48,7 +48,7 @@ class MysqlTest extends TestCase
         $driver = Mockery::mock(Mysql::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
-        $driver->__construct();
+        $driver->__construct(['database' => 'cake']);
         $dsn = 'mysql:host=localhost;port=3306;dbname=cake;charset=utf8mb4';
         $expected = [
             'persistent' => true,
@@ -183,7 +183,7 @@ class MysqlTest extends TestCase
         $driver = Mockery::mock(Mysql::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
-        $driver->__construct();
+        $driver->__construct(['database' => 'test']);
 
         $driver->shouldReceive('createPdo')
             ->once()

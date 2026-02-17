@@ -1489,7 +1489,7 @@ SQL;
         $connection = Mockery::mock(Connection::class)->makePartial();
         $connection->shouldReceive('getWriteDriver')
             ->andReturn($driver);
-        $table = (new TableSchema('schema_articles'))->addColumn('id', [
+        $table = new TableSchema('schema_articles')->addColumn('id', [
             'type' => 'integer',
             'null' => false,
         ]);

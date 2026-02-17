@@ -1974,7 +1974,7 @@ SQL;
         $connection = Mockery::mock(Connection::class)->makePartial();
         $connection->shouldReceive('getWriteDriver')
             ->andReturn($driver);
-        $table = (new TableSchema('schema_articles'))->addColumn('id', [
+        $table = new TableSchema('schema_articles')->addColumn('id', [
             'type' => 'integer',
             'null' => false,
         ]);
@@ -2121,6 +2121,7 @@ SQL;
     protected function getMockedDriver($version = '8.0.7'): Driver
     {
         $this->needsConnection();
+        $connectionConfig = ConnectionManager::getConfig('test');
 
         $this->pdo = Mockery::mock(PDOMocked::class);
         $this->pdo->shouldReceive('quote')
@@ -2131,7 +2132,7 @@ SQL;
         $driver = Mockery::mock(Mysql::class)
             ->makePartial()
             ->shouldAllowMockingProtectedMethods();
-        $driver->__construct();
+        $driver->__construct($connectionConfig);
 
         $driver->shouldReceive('createPdo')
             ->andReturn($this->pdo);
