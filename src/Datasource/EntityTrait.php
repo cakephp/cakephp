@@ -27,6 +27,8 @@ use function Cake\Core\deprecationWarning;
 /**
  * An entity represents a single result row from a repository. It exposes the
  * methods for retrieving and storing fields associated in this row.
+ *
+ * @require-implements \Cake\Datasource\EntityInterface
  */
 trait EntityTrait
 {

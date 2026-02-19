@@ -46,6 +46,8 @@ use const SORT_NUMERIC;
 
 /**
  * Offers a handful of methods to manipulate iterators
+ *
+ * @require-implements \Cake\Collection\CollectionInterface
  */
 trait CollectionTrait
 {
