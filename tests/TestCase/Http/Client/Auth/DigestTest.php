@@ -21,6 +21,7 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
+use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
@@ -29,7 +30,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class DigestTest extends TestCase
 {
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|\Cake\Http\Client
+     * @var \Cake\Http\Client
      */
     protected $client;
 
@@ -64,13 +65,16 @@ class DigestTest extends TestCase
     }
 
     /**
-     * @return \PHPUnit\Framework\MockObject\MockObject|\Cake\Http\Client
+     * @return \Cake\Http\Client
      */
     protected function getClientMock()
     {
-        return $this->getMockBuilder(Client::class)
-            ->onlyMethods(['send'])
-            ->getMock();
+        $client = Mockery::mock(Client::class)
+            ->makePartial()
+            ->shouldIgnoreMissing();
+        $client->__construct();
+
+        return $client;
     }
 
     /**
@@ -83,9 +87,9 @@ class DigestTest extends TestCase
         ];
 
         $response = new Response($headers, '');
-        $this->client->expects($this->once())
-            ->method('send')
-            ->willReturn($response);
+        $this->client->shouldReceive('send')
+            ->once()
+            ->andReturn($response);
 
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);
@@ -111,9 +115,9 @@ class DigestTest extends TestCase
         ];
 
         $response = new Response($headers, '');
-        $this->client->expects($this->once())
-            ->method('send')
-            ->willReturn($response);
+        $this->client->shouldReceive('send')
+            ->once()
+            ->andReturn($response);
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);
         $request = $this->auth->authentication($request, $auth);
@@ -134,9 +138,9 @@ class DigestTest extends TestCase
         ];
 
         $response = new Response($headers, '');
-        $this->client->expects($this->once())
-            ->method('send')
-            ->willReturn($response);
+        $this->client->shouldReceive('send')
+            ->once()
+            ->andReturn($response);
 
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);
@@ -157,9 +161,9 @@ class DigestTest extends TestCase
         ];
 
         $response = new Response($headers, '');
-        $this->client->expects($this->once())
-            ->method('send')
-            ->willReturn($response);
+        $this->client->shouldReceive('send')
+            ->once()
+            ->andReturn($response);
 
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);
@@ -178,9 +182,9 @@ class DigestTest extends TestCase
         ];
 
         $response = new Response($headers, '');
-        $this->client->expects($this->once())
-            ->method('send')
-            ->willReturn($response);
+        $this->client->shouldReceive('send')
+            ->once()
+            ->andReturn($response);
 
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);
@@ -336,9 +340,9 @@ class DigestTest extends TestCase
     public function testAlgorithms($message, $headers, $method, $data, $expected): void
     {
         $response = new Response($headers, '');
-        $this->client->expects($this->once())
-            ->method('send')
-            ->willReturn($response);
+        $this->client->shouldReceive('send')
+            ->once()
+            ->andReturn($response);
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', $method, [], $data);
         $request = $this->auth->authentication($request, $auth);
@@ -354,9 +358,9 @@ class DigestTest extends TestCase
         ];
 
         $response = new Response($headers, '');
-        $this->client->expects($this->once())
-            ->method('send')
-            ->willReturn($response);
+        $this->client->shouldReceive('send')
+            ->once()
+            ->andReturn($response);
 
         $auth = ['username' => 'admin', 'password' => '1234'];
         $request = new Request('http://example.com/some/path', Request::METHOD_GET);

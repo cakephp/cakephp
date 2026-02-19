@@ -403,7 +403,7 @@ class SqliteSchemaDialect extends SchemaDialect
     public function convertIndexDescription(TableSchema $schema, array $row): void
     {
         // Skip auto-indexes created for non-ROWID primary keys.
-        if ($row['origin'] === 'pk') {
+        if (($row['origin'] ?? null) === 'pk') {
             return;
         }
 
@@ -417,7 +417,7 @@ class SqliteSchemaDialect extends SchemaDialect
             $columns[] = $column['name'];
         }
         if ($row['unique']) {
-            if ($row['origin'] === 'u') {
+            if (($row['origin'] ?? null) === 'u') {
                 $createTableSql = $this->getCreateTableSql($schema->name());
                 $name = $this->extractIndexName($createTableSql, 'UNIQUE', $columns);
                 if ($name !== null) {
@@ -553,7 +553,7 @@ class SqliteSchemaDialect extends SchemaDialect
             if ($row['unique']) {
                 $indexType = TableSchema::CONSTRAINT_UNIQUE;
             }
-            if ($row['origin'] === 'pk') {
+            if (($row['origin'] ?? null) === 'pk') {
                 $indexType = TableSchema::CONSTRAINT_PRIMARY;
                 $foundPrimary = true;
             }

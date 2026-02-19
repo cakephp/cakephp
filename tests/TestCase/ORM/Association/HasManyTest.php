@@ -23,26 +23,27 @@ use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
 use Cake\Database\Expression\TupleComparison;
+use Cake\Database\ExpressionInterface;
 use Cake\Database\TypeMap;
 use Cake\Datasource\ConnectionManager;
+use Cake\Datasource\ResultSetInterface;
 use Cake\Log\Log;
 use Cake\ORM\Association;
 use Cake\ORM\Association\HasMany;
 use Cake\ORM\Entity;
-use Cake\ORM\Query;
+use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\ORM\Table;
 use Cake\TestSuite\TestCase;
+use Closure;
 use InvalidArgumentException;
 use Mockery;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 use function Cake\I18n\__;
 
 /**
  * Tests HasMany class
  */
-#[AllowMockObjectsWithoutExpectations]
 class HasManyTest extends TestCase
 {
     /**
@@ -60,12 +61,12 @@ class HasManyTest extends TestCase
     ];
 
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Table
      */
     protected $author;
 
     /**
-     * @var \Cake\ORM\Table|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\ORM\Table&\Mockery\MockInterface
      */
     protected $article;
 
@@ -97,10 +98,11 @@ class HasManyTest extends TestCase
             ],
         ]);
         $connection = ConnectionManager::get('test');
-        $this->article = $this->getMockBuilder(Table::class)
-            ->onlyMethods(['find', 'deleteAll', 'delete'])
-            ->setConstructorArgs([['alias' => 'Articles', 'table' => 'articles', 'connection' => $connection]])
-            ->getMock();
+        $this->article = Mockery::mock(new Table([
+            'alias' => 'Articles',
+            'table' => 'articles',
+            'connection' => $connection,
+        ]))->makePartial();
         $this->article->setSchema([
             'id' => ['type' => 'integer'],
             'title' => ['type' => 'string'],
@@ -263,9 +265,8 @@ class HasManyTest extends TestCase
         ];
         $association = new HasMany('Articles', $config);
         $query = $this->article->selectQuery();
-        $this->article->method('find')
-            ->with('all')
-            ->willReturn($query);
+        $this->article->shouldReceive('find')
+            ->andReturn($query);
         $keys = [1, 2, 3, 4];
 
         $callable = $association->eagerLoader(compact('keys', 'query'));
@@ -306,9 +307,8 @@ class HasManyTest extends TestCase
         $keys = [1, 2, 3, 4];
 
         $query = $this->article->selectQuery();
-        $this->article->method('find')
-            ->with('all')
-            ->willReturn($query);
+        $this->article->shouldReceive('find')
+            ->andReturn($query);
 
         $association->eagerLoader(compact('keys', 'query'));
 
@@ -341,11 +341,10 @@ class HasManyTest extends TestCase
 
         /** @var \Cake\ORM\Query\SelectQuery $query */
         $query = $this->article->query();
-        $query->addDefaultTypes($this->article->Comments->getSource());
+        $query->addDefaultTypes($this->article);
 
-        $this->article->method('find')
-            ->with('all')
-            ->willReturn($query);
+        $this->article->shouldReceive('find')
+            ->andReturn($query);
 
         $association->eagerLoader([
             'conditions' => ['Articles.id !=' => 3],
@@ -398,10 +397,10 @@ class HasManyTest extends TestCase
 
         // Setup the mock to track what happens
         $queriesReturned = [];
-        $this->article->expects($this->once())
-            ->method('find')
+        $this->article->shouldReceive('find')
+            ->once()
             ->with('all')
-            ->willReturnCallback(function () use (&$queriesReturned) {
+            ->andReturnUsing(function () use (&$queriesReturned) {
                 // Preserve the current auto-quoting state (might be affected by other tests)
                 $query = $this->article->selectQuery();
                 $query->enableAutoFields(false);
@@ -461,9 +460,9 @@ class HasManyTest extends TestCase
 
         /** @var \Cake\ORM\Query\SelectQuery $query */
         $query = $this->article->query();
-        $this->article->method('find')
+        $this->article->shouldReceive('find')
             ->with('all')
-            ->willReturn($query);
+            ->andReturn($query);
 
         $queryBuilder = function ($query) {
             return $query->select(['author_id'])->join('comments')->where(['comments.id' => 1]);
@@ -510,34 +509,50 @@ class HasManyTest extends TestCase
         $this->author->setPrimaryKey(['id', 'site_id']);
         $association = new HasMany('Articles', $config);
         $keys = [[1, 10], [2, 20], [3, 30], [4, 40]];
-        $query = $this->getMockBuilder(Query::class)
-            ->onlyMethods(['all', 'andWhere', 'getRepository'])
-            ->setConstructorArgs([$this->article])
-            ->getMock();
-        $query->method('getRepository')
-            ->willReturn($this->article);
-        $this->article->method('find')
-            ->with('all')
-            ->willReturn($query);
-
         $results = new ResultSet([
             ['id' => 1, 'title' => 'article 1', 'author_id' => 2, 'site_id' => 10],
             ['id' => 2, 'title' => 'article 2', 'author_id' => 1, 'site_id' => 20],
         ]);
-        $query->method('all')
-            ->willReturn($results);
-
         $tuple = new TupleComparison(
             ['Articles.author_id', 'Articles.site_id'],
             $keys,
             ['integer'],
             'IN',
         );
-        $query->expects($this->once())->method('andWhere')
-            ->with($tuple)
-            ->willReturnSelf();
+        $query = new class ($this->article, $results, $tuple) extends SelectQuery {
+            public bool $andWhereCalled = false;
+
+            public function __construct(
+                Table $table,
+                protected ResultSet $resultSet,
+                protected TupleComparison $expectedTuple,
+            ) {
+                parent::__construct($table);
+            }
+
+            public function andWhere(
+                ExpressionInterface|Closure|array|string|null $conditions = null,
+                array $types = [],
+                bool $overwrite = false,
+            ) {
+                if ($conditions == $this->expectedTuple) {
+                    $this->andWhereCalled = true;
+                }
+
+                return $this;
+            }
+
+            public function all(): ResultSetInterface
+            {
+                return $this->resultSet;
+            }
+        };
+        $this->article->shouldReceive('find')
+            ->with('all')
+            ->andReturn($query);
 
         $callable = $association->eagerLoader(compact('keys', 'query'));
+        $this->assertTrue($query->andWhereCalled);
         $row = ['Authors__id' => 2, 'Authors__site_id' => 10, 'username' => 'author 1'];
         $result = $callable($row);
         $row['Articles'] = [
@@ -738,12 +753,9 @@ class HasManyTest extends TestCase
      */
     public function testPropertyNoPlugin(): void
     {
-        $mock = $this->getMockBuilder(Table::class)
-            ->disableOriginalConstructor()
-            ->getMock();
         $config = [
             'sourceTable' => $this->author,
-            'targetTable' => $mock,
+            'targetTable' => $this->article,
         ];
         $association = new HasMany('Contacts.Addresses', $config);
         $this->assertSame('addresses', $association->getProperty());

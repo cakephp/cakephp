@@ -24,10 +24,8 @@ use Cake\I18n\PackageLocator;
 use Cake\I18n\Translator;
 use Cake\I18n\TranslatorRegistry;
 use Cake\TestSuite\TestCase;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use TestApp\Cache\Engine\TestAppCacheEngine;
 
-#[AllowMockObjectsWithoutExpectations]
 class TranslatorRegistryTest extends TestCase
 {
     /**
@@ -35,36 +33,31 @@ class TranslatorRegistryTest extends TestCase
      */
     public function testGetNullPackageInitializationFromCache(): void
     {
-        $packageLocator = $this->getMockBuilder(PackageLocator::class)->getMock();
-        $package = $this->getMockBuilder(Package::class)->getMock();
-        $formatter = $this->getMockBuilder(SprintfFormatter::class)->getMock();
-        $formatterLocator = $this->getMockBuilder(FormatterLocator::class)->getMock();
-        $cacheEngineNullPackage = $this->getMockBuilder(TestAppCacheEngine::class)->getMock();
-        $translatorNullPackage = $this->getMockBuilder(Translator::class)->disableOriginalConstructor()->getMock();
+        $package = new Package('default');
+        $packageLocator = new PackageLocator([
+            'default' => [
+                'en_CA' => $package,
+            ],
+        ]);
+        $formatterLocator = new FormatterLocator([
+            'default' => SprintfFormatter::class,
+        ]);
 
-        $translatorNonNullPackage = $this->getMockBuilder(Translator::class)->disableOriginalConstructor()->getMock();
-        $translatorNonNullPackage
-            ->method('getPackage')
-            ->willReturn($package);
+        $cachedTranslator = new Translator('en_CA', $package, new SprintfFormatter());
+        $cacheEngineNullPackage = new class ($cachedTranslator) extends TestAppCacheEngine {
+            public function __construct(protected Translator $translator)
+            {
+            }
 
-        $formatterLocator
-            ->method('get')
-            ->willReturn($formatter);
-
-        $package
-            ->method('getFormatter')
-            ->willReturn('basic');
-
-        $packageLocator->method('get')
-            ->willReturn($package);
-
-        $cacheEngineNullPackage
-            ->method('get')
-            ->willReturn($translatorNullPackage);
+            public function get($key, $default = null): mixed
+            {
+                return $this->translator;
+            }
+        };
 
         $registry = new TranslatorRegistry($packageLocator, $formatterLocator, 'en_CA');
         $registry->setCacher($cacheEngineNullPackage);
 
-        $this->assertNotNull($registry->get('default')->getPackage());
+        $this->assertSame($package, $registry->get('default')->getPackage());
     }
 }

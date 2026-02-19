@@ -49,6 +49,7 @@ use const SORT_NUMERIC;
  *
  * @template TKey
  * @template TValue
+ * @require-implements \Cake\Collection\CollectionInterface
  */
 trait CollectionTrait
 {

@@ -22,26 +22,27 @@ use Cake\Http\Client\Request;
 use Cake\Http\Client\Response;
 use Cake\TestSuite\TestCase;
 use Exception;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use Mockery;
 use TestApp\Http\Client\Adapter\CakeStreamWrapper;
 
 /**
  * HTTP stream adapter test.
  */
-#[AllowMockObjectsWithoutExpectations]
 class StreamTest extends TestCase
 {
     /**
-     * @var \Cake\Http\Client\Adapter\Stream|\PHPUnit\Framework\MockObject\MockObject
+     * @var \Cake\Http\Client\Adapter\Stream
      */
     protected $stream;
 
     protected function setUp(): void
     {
         parent::setUp();
-        $this->stream = $this->getMockBuilder(Stream::class)
-            ->onlyMethods(['_send'])
-            ->getMock();
+        $this->stream = Mockery::mock(Stream::class)->makePartial();
+        $this->stream
+            ->shouldAllowMockingProtectedMethods()
+            ->shouldReceive('_send')
+            ->andReturn([]);
         stream_wrapper_unregister('http');
         stream_wrapper_register('http', CakeStreamWrapper::class);
     }

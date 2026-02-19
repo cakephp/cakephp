@@ -27,6 +27,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 class PluginUnloadCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
+    use PluginConfigFileTrait;
 
     /**
      * @var string
@@ -59,7 +60,7 @@ class PluginUnloadCommandTest extends TestCase
         ];
         CONTENTS;
 
-        file_put_contents($this->configFile, $contents);
+        $this->writePhpFile($this->configFile, $contents);
 
         $this->setAppNamespace();
     }
@@ -72,7 +73,7 @@ class PluginUnloadCommandTest extends TestCase
         parent::tearDown();
 
         Plugin::getCollection()->clear();
-        file_put_contents($this->configFile, $this->originalContent);
+        $this->writePhpFile($this->configFile, $this->originalContent);
     }
 
     /**
@@ -103,7 +104,7 @@ class PluginUnloadCommandTest extends TestCase
 
     public function testUnloadNoConfigFile(): void
     {
-        unlink($this->configFile);
+        $this->deletePhpFile($this->configFile);
 
         $this->exec('plugin unload TestPlugin');
         $this->assertExitCode(CommandInterface::CODE_ERROR);

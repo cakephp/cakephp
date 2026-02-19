@@ -26,19 +26,17 @@ use Cake\Database\Expression\QueryExpression;
 use Cake\Database\ExpressionInterface;
 use Cake\Database\Query\SelectQuery;
 use Cake\Database\Query\UpdateQuery;
-use Cake\Database\Statement\Statement;
+use Cake\Database\StatementInterface;
 use Cake\Database\ValueBinder;
 use Cake\Datasource\ConnectionManager;
 use Cake\Test\TestCase\Database\QueryAssertsTrait;
 use Cake\TestSuite\TestCase;
 use DateTime;
-use PDOStatement;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
+use Mockery;
 
 /**
  * Tests UpdateQuery class
  */
-#[AllowMockObjectsWithoutExpectations]
 class UpdateQueryTest extends TestCase
 {
     use QueryAssertsTrait;
@@ -376,28 +374,20 @@ class UpdateQueryTest extends TestCase
      */
     public function testRowCountAndClose(): void
     {
-        $inner = $this->getMockBuilder(PDOStatement::class)->getMock();
+        $statementMock = Mockery::mock(StatementInterface::class);
+        $statementMock->shouldReceive('rowCount')
+            ->once()
+            ->andReturn(500);
+        $statementMock->shouldReceive('closeCursor')
+            ->once();
 
-        $statementMock = $this->getMockBuilder(Statement::class)
-            ->setConstructorArgs([$inner, $this->connection->getDriver()])
-            ->onlyMethods(['rowCount', 'closeCursor'])
-            ->getMock();
-
-        $statementMock->expects($this->once())
-            ->method('rowCount')
-            ->willReturn(500);
-
-        $statementMock->expects($this->once())
-            ->method('closeCursor');
-
-        $queryMock = $this->getMockBuilder(UpdateQuery::class)
-            ->onlyMethods(['execute'])
-            ->setConstructorArgs([$this->connection])
-            ->getMock();
-
-        $queryMock->expects($this->once())
-            ->method('execute')
-            ->willReturn($statementMock);
+        $queryMock = Mockery::mock(UpdateQuery::class)
+            ->makePartial()
+            ->shouldIgnoreMissing();
+        $queryMock->__construct($this->connection);
+        $queryMock->shouldReceive('execute')
+            ->once()
+            ->andReturn($statementMock);
 
         $rowCount = $queryMock->update('authors')
             ->set('name', 'mark')

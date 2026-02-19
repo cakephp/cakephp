@@ -26,6 +26,7 @@ use Cake\TestSuite\TestCase;
 class PluginListCommandTest extends TestCase
 {
     use ConsoleIntegrationTestTrait;
+    use PluginConfigFileTrait;
 
     protected string $pluginsListPath;
 
@@ -43,7 +44,7 @@ class PluginListCommandTest extends TestCase
         $this->setAppNamespace();
         $this->pluginsListPath = ROOT . DS . 'cakephp-plugins.php';
         if (file_exists($this->pluginsListPath)) {
-            unlink($this->pluginsListPath);
+            $this->deletePhpFile($this->pluginsListPath);
         }
         $this->pluginsConfigPath = CONFIG . 'plugins.php';
         if (file_exists($this->pluginsConfigPath)) {
@@ -55,10 +56,10 @@ class PluginListCommandTest extends TestCase
     {
         parent::tearDown();
         if (file_exists($this->pluginsListPath)) {
-            unlink($this->pluginsListPath);
+            $this->deletePhpFile($this->pluginsListPath);
         }
         if (file_exists($this->pluginsConfigPath)) {
-            file_put_contents($this->pluginsConfigPath, $this->originalPluginsConfigContent);
+            $this->writePhpFile($this->pluginsConfigPath, $this->originalPluginsConfigContent);
         }
     }
 
@@ -87,7 +88,7 @@ return [
     ]
 ];
 PHP;
-        file_put_contents($this->pluginsListPath, $file);
+        $this->writePhpFile($this->pluginsListPath, $file);
 
         $this->exec('plugin list');
         $this->assertExitCode(CommandInterface::CODE_SUCCESS);
@@ -105,7 +106,7 @@ PHP;
 declare(strict_types=1);
 return [];
 PHP;
-        file_put_contents($this->pluginsListPath, $file);
+        $this->writePhpFile($this->pluginsListPath, $file);
 
         $this->exec('plugin list');
         $this->assertExitCode(CommandInterface::CODE_ERROR);
@@ -127,7 +128,7 @@ return [
     ]
 ];
 PHP;
-        file_put_contents($this->pluginsListPath, $file);
+        $this->writePhpFile($this->pluginsListPath, $file);
 
         $config = <<<PHP
 <?php
@@ -137,7 +138,7 @@ return [
     'OtherPlugin' => ['onlyDebug' => true, 'onlyCli' => true, 'optional' => true]
 ];
 PHP;
-        file_put_contents($this->pluginsConfigPath, $config);
+        $this->writePhpFile($this->pluginsConfigPath, $config);
 
         $this->deprecated(function (): void {
             $this->exec('plugin list');
@@ -162,7 +163,7 @@ return [
     ]
 ];
 PHP;
-        file_put_contents($this->pluginsListPath, $file);
+        $this->writePhpFile($this->pluginsListPath, $file);
 
         $config = <<<PHP
 <?php
@@ -171,7 +172,7 @@ return [
     'Unknown'
 ];
 PHP;
-        file_put_contents($this->pluginsConfigPath, $config);
+        $this->writePhpFile($this->pluginsConfigPath, $config);
 
         $this->expectException(MissingPluginException::class);
         $this->expectExceptionMessage('Plugin `Unknown` could not be found.');
@@ -194,7 +195,7 @@ return [
     ]
 ];
 PHP;
-        file_put_contents($this->pluginsListPath, $file);
+        $this->writePhpFile($this->pluginsListPath, $file);
 
         $config = <<<PHP
 <?php
@@ -204,7 +205,7 @@ return [
     'CodeSniffer'
 ];
 PHP;
-        file_put_contents($this->pluginsConfigPath, $config);
+        $this->writePhpFile($this->pluginsConfigPath, $config);
 
         $path = ROOT . DS . 'tests' . DS . 'composer.lock';
         $this->deprecated(function () use ($path): void {

@@ -149,16 +149,14 @@ class LinkConstraintTest extends TestCase
         $Articles = $this->getTableLocator()->get('Articles');
         $Articles->hasMany('Comments')->setForeignKey(['id', 'article_id']);
 
-        /** @var \Cake\ORM\Rule\LinkConstraint|\PHPUnit\Framework\MockObject\MockObject $ruleMock */
-        $ruleMock = $this
-            ->getMockBuilder(LinkConstraint::class)
-            ->setConstructorArgs(['Comments', LinkConstraint::STATUS_NOT_LINKED])
-            ->onlyMethods(['_aliasFields'])
-            ->getMock();
+        /** @var \Cake\ORM\Rule\LinkConstraint&\Mockery\MockInterface $ruleMock */
+        $ruleMock = Mockery::mock(LinkConstraint::class, ['Comments', LinkConstraint::STATUS_NOT_LINKED])
+            ->makePartial();
         $ruleMock
-            ->expects($this->once())
-            ->method('_aliasFields')
-            ->willReturn([]);
+            ->shouldAllowMockingProtectedMethods()
+            ->shouldReceive('_aliasFields')
+            ->once()
+            ->andReturn([]);
 
         $rulesChecker = $Articles->rulesChecker();
         $rulesChecker->addDelete($ruleMock);

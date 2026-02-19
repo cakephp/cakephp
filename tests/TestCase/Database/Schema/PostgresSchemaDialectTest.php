@@ -29,14 +29,13 @@ use Cake\Database\Schema\UniqueKey;
 use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Exception;
+use Mockery;
 use PDO;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use PHPUnit\Framework\Attributes\DataProvider;
 
 /**
  * Postgres schema test case.
  */
-#[AllowMockObjectsWithoutExpectations]
 class PostgresSchemaDialectTest extends TestCase
 {
     /**
@@ -1601,11 +1600,9 @@ SQL;
     public function testAddConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->method('getWriteDriver')
-            ->willReturn($driver);
+        $connection = Mockery::mock(Connection::class)->makePartial();
+        $connection->shouldReceive('getWriteDriver')
+            ->andReturn($driver);
 
         $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
@@ -1650,11 +1647,9 @@ SQL;
     public function testDropConstraintSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->method('getWriteDriver')
-            ->willReturn($driver);
+        $connection = Mockery::mock(Connection::class)->makePartial();
+        $connection->shouldReceive('getWriteDriver')
+            ->andReturn($driver);
 
         $table = (new TableSchema('posts'))
             ->addColumn('author_id', [
@@ -1699,11 +1694,9 @@ SQL;
     public function testCreateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->method('getWriteDriver')
-            ->willReturn($driver);
+        $connection = Mockery::mock(Connection::class)->makePartial();
+        $connection->shouldReceive('getWriteDriver')
+            ->andReturn($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
                 'type' => 'integer',
@@ -1766,11 +1759,9 @@ SQL;
     public function testCreateSqlGeospacialTypes(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->method('getWriteDriver')
-            ->willReturn($driver);
+        $connection = Mockery::mock(Connection::class)->makePartial();
+        $connection->shouldReceive('getWriteDriver')
+            ->andReturn($driver);
 
         $table = (new TableSchema('ref_table'))
             ->addColumn('geometry', [
@@ -1809,11 +1800,9 @@ SQL;
     public function testCreateInSchema(): void
     {
         $driver = $this->_getMockedDriver(['schema' => 'notpublic']);
-        $connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->method('getWriteDriver')
-            ->willReturn($driver);
+        $connection = Mockery::mock(Connection::class)->makePartial();
+        $connection->shouldReceive('getWriteDriver')
+            ->andReturn($driver);
 
         $table = (new TableSchema('schema_articles'))->addColumn('title', [
             'type' => 'string',
@@ -1829,11 +1818,9 @@ SQL;
     public function testCreateTemporary(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->method('getWriteDriver')
-            ->willReturn($driver);
+        $connection = Mockery::mock(Connection::class)->makePartial();
+        $connection->shouldReceive('getWriteDriver')
+            ->andReturn($driver);
         $table = (new TableSchema('schema_articles'))->addColumn('id', [
             'type' => 'integer',
             'null' => false,
@@ -1849,11 +1836,9 @@ SQL;
     public function testCreateSqlCompositeIntegerKey(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->method('getWriteDriver')
-            ->willReturn($driver);
+        $connection = Mockery::mock(Connection::class)->makePartial();
+        $connection->shouldReceive('getWriteDriver')
+            ->andReturn($driver);
 
         $table = (new TableSchema('articles_tags'))
             ->addColumn('article_id', [
@@ -1913,11 +1898,9 @@ SQL;
     public function testDropSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->method('getWriteDriver')
-            ->willReturn($driver);
+        $connection = Mockery::mock(Connection::class)->makePartial();
+        $connection->shouldReceive('getWriteDriver')
+            ->andReturn($driver);
 
         $table = new TableSchema('schema_articles');
         $result = $table->dropSql($connection);
@@ -1931,11 +1914,9 @@ SQL;
     public function testTruncateSql(): void
     {
         $driver = $this->_getMockedDriver();
-        $connection = $this->getMockBuilder(Connection::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $connection->method('getWriteDriver')
-            ->willReturn($driver);
+        $connection = Mockery::mock(Connection::class)->makePartial();
+        $connection->shouldReceive('getWriteDriver')
+            ->andReturn($driver);
 
         $table = new TableSchema('schema_articles');
         $table->addColumn('id', 'integer')
@@ -2024,25 +2005,25 @@ SQL;
     {
         $this->_needsConnection();
 
-        $mock = $this->getMockBuilder(PDO::class)
-            ->onlyMethods(['quote', 'exec'])
-            ->disableOriginalConstructor()
-            ->getMock();
-        $mock->method('quote')
-            ->willReturnCallback(function ($value) {
+        $mock = Mockery::mock(PDO::class);
+        $mock->shouldReceive('quote')
+            ->andReturnUsing(function ($value) {
                 return "'{$value}'";
             });
+        $mock->shouldReceive('exec')
+            ->zeroOrMoreTimes()
+            ->andReturn(0);
 
-        $driver = $this->getMockBuilder(Postgres::class)
-            ->setConstructorArgs([$config])
-            ->onlyMethods(['createPdo', 'version'])
-            ->getMock();
+        $driver = Mockery::mock(Postgres::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct($config);
 
-        $driver->method('createPdo')
-            ->willReturn($mock);
+        $driver->shouldReceive('createPdo')
+            ->andReturn($mock);
 
-        $driver->method('version')
-            ->willReturnCallback(function () {
+        $driver->shouldReceive('version')
+            ->andReturnUsing(function () {
                 return '10.0.0';
             });
 

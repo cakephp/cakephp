@@ -1767,7 +1767,7 @@ class TableTest extends TestCase
      */
     public function testTableClassInApp(): void
     {
-        $class = $this->createMock(Entity::class)::class;
+        $class = Mockery::mock(Entity::class)::class;
 
         if (!class_exists('TestApp\Model\Entity\TestUser')) {
             class_alias($class, 'TestApp\Model\Entity\TestUser');
@@ -1783,7 +1783,7 @@ class TableTest extends TestCase
      */
     public function testEntityClassInflection(): void
     {
-        $class = $this->createMock(Entity::class)::class;
+        $class = Mockery::mock(Entity::class)::class;
 
         if (!class_exists('TestApp\Model\Entity\CustomCookie')) {
             class_alias($class, 'TestApp\Model\Entity\CustomCookie');
@@ -1806,7 +1806,7 @@ class TableTest extends TestCase
      */
     public function testTableClassInPlugin(): void
     {
-        $class = $this->createMock(Entity::class)::class;
+        $class = Mockery::mock(Entity::class)::class;
 
         if (!class_exists('MyPlugin\Model\Entity\SuperUser')) {
             class_alias($class, 'MyPlugin\Model\Entity\SuperUser');
@@ -1848,7 +1848,7 @@ class TableTest extends TestCase
     public function testSetEntityClass(): void
     {
         $table = new Table();
-        $class = '\\' . $this->createMock(Entity::class)::class;
+        $class = '\\' . Mockery::mock(Entity::class)::class;
         $this->assertSame($table, $table->setEntityClass($class));
         $this->assertSame($class, $table->getEntityClass());
     }
@@ -2516,7 +2516,7 @@ class TableTest extends TestCase
             ->onlyMethods(['execute', 'addDefaultTypes'])
             ->setConstructorArgs([$table])
             ->getMock();
-        $statement = $this->createMock(StatementInterface::class);
+        $statement = Mockery::mock(StatementInterface::class);
         $data = new Entity([
             'username' => 'superuser',
             'created' => new DateTime('2013-10-10 00:00'),
@@ -2529,8 +2529,9 @@ class TableTest extends TestCase
         $query->expects($this->once())->method('execute')
             ->willReturn($statement);
 
-        $statement->expects($this->once())->method('rowCount')
-            ->willReturn(0);
+        $statement->shouldReceive('rowCount')
+            ->once()
+            ->andReturn(0);
 
         $called = false;
         $listener = function ($e, $entity, $options) use (&$called): void {
@@ -2693,10 +2694,10 @@ class TableTest extends TestCase
         $table->expects($this->once())->method('insertQuery')
             ->willReturn($query);
 
-        $statement = $this->createMock(StatementInterface::class);
-        $statement->expects($this->once())
-            ->method('rowCount')
-            ->willReturn(0);
+        $statement = Mockery::mock(StatementInterface::class);
+        $statement->shouldReceive('rowCount')
+            ->once()
+            ->andReturn(0);
         $connection->expects($this->once())->method('begin');
         $connection->expects($this->once())->method('rollback');
         $query->expects($this->once())

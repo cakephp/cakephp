@@ -31,14 +31,12 @@ use Cake\Test\Fixture\SpecialPkFixture;
 use Cake\TestSuite\TestCase;
 use Cake\Utility\Inflector;
 use Mockery;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 use TestApp\Test\Fixture\FeaturedTagsFixture;
 use TestApp\Test\Fixture\LettersFixture;
 
 /**
  * Test case for TestFixture
  */
-#[AllowMockObjectsWithoutExpectations]
 class TestFixtureTest extends TestCase
 {
     /**
@@ -240,7 +238,7 @@ class TestFixtureTest extends TestCase
                 ->once();
         }
 
-        $statement = $this->createMock(StatementInterface::class);
+        $statement = Mockery::mock(StatementInterface::class);
 
         $query->shouldReceive('execute')
             ->andReturn($statement)

@@ -782,13 +782,10 @@ class SmtpTransportTest extends TestCase
     {
         $this->SmtpTransport->setConfig(['keepAlive' => true]);
 
-        /** @var \Cake\Mailer\Message $message */
-        $message = $this->getMockBuilder(Message::class)
-            ->onlyMethods(['getBody'])
-            ->getMock();
+        $message = Mockery::mock(Message::class)->makePartial();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
-        $message->expects($this->exactly(2))->method('getBody')->willReturn(['First Line']);
+        $message->shouldReceive('getBody')->twice()->andReturn(['First Line']);
 
         $this->socket->shouldNotReceive('disconnect');
 
@@ -847,13 +844,10 @@ class SmtpTransportTest extends TestCase
      */
     public function testSendDefaults(): void
     {
-        /** @var \Cake\Mailer\Message $message */
-        $message = $this->getMockBuilder(Message::class)
-            ->onlyMethods(['getBody'])
-            ->getMock();
+        $message = Mockery::mock(Message::class)->makePartial();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
-        $message->expects($this->once())->method('getBody')->willReturn(['First Line']);
+        $message->shouldReceive('getBody')->once()->andReturn(['First Line']);
 
         $this->socket->shouldReceive('connect')->andReturnTrue()->once();
 
@@ -893,13 +887,10 @@ class SmtpTransportTest extends TestCase
      */
     public function testSendMessageTooBigOnWindows(): void
     {
-        /** @var \Cake\Mailer\Message $message */
-        $message = $this->getMockBuilder(Message::class)
-            ->onlyMethods(['getBody'])
-            ->getMock();
+        $message = Mockery::mock(Message::class)->makePartial();
         $message->setFrom('noreply@cakephp.org', 'CakePHP Test');
         $message->setTo('cake@cakephp.org', 'CakePHP');
-        $message->expects($this->once())->method('getBody')->willReturn(['First Line']);
+        $message->shouldReceive('getBody')->once()->andReturn(['First Line']);
 
         $this->socket->shouldReceive('connect')->andReturnTrue()->once();
 

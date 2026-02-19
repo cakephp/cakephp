@@ -358,11 +358,11 @@ class CommandRunnerTest extends TestCase
     {
         $output = new StubConsoleOutput();
         $io = $this->getMockIo($output);
-        $factory = $this->createMock(CommandFactoryInterface::class);
-        $factory->expects($this->once())
-            ->method('create')
+        $factory = Mockery::mock(CommandFactoryInterface::class);
+        $factory->shouldReceive('create')
+            ->once()
             ->with(DemoCommand::class)
-            ->willReturn(new DemoCommand());
+            ->andReturn(new DemoCommand());
 
         $app = $this->makeAppWithCommands(['ex' => DemoCommand::class]);
 

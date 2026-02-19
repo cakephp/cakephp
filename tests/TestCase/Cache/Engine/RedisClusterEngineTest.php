@@ -5,17 +5,18 @@ namespace Cake\Test\TestCase\Cache\Engine;
 
 use Cake\Cache\Cache;
 use Cake\Cache\Engine\RedisEngine;
-use Cake\Log\Engine\ArrayLog;
 use Cake\Log\Log;
+use Cake\TestSuite\LogTestTrait;
 use Cake\TestSuite\TestCase;
-use RedisCluster;
-use ReflectionClass;
+use Mockery;
 
 /**
  * RedisClusterEngineTest class
  */
 class RedisClusterEngineTest extends TestCase
 {
+    use LogTestTrait;
+
     private false|string|null $skipTest = null;
 
     /**
@@ -157,26 +158,12 @@ class RedisClusterEngineTest extends TestCase
      */
     public function testConnectNamedClusterWithoutNodes(): void
     {
-        // Mock logger
-        $logger = $this->getMockBuilder(ArrayLog::class)
-            ->onlyMethods(['log'])
-            ->getMock();
-
-        $logger->expects($this->once())
-            ->method('log')
-            ->with(
-                $this->equalTo('error'),
-                $this->stringContains('RedisEngine requires one or more nodes in cluster mode'),
-                $this->anything(),
-            );
-
-        Log::reset();
-        Log::setConfig('default', ['className' => $logger]);
-
+        $this->setupLog('error');
         $this->assertFalse((new RedisEngine())->init([
             'className' => 'Redis',
             'clusterName' => 'mycluster',
         ]));
+        $this->assertLogMessageContains('error', 'RedisEngine requires one or more nodes in cluster mode');
     }
 
     /**
@@ -200,35 +187,12 @@ class RedisClusterEngineTest extends TestCase
             }
         };
 
-        // Use a stubbed RedisCluster to avoid triggering constructor logic
-        $redisMock = $this->createStub(RedisCluster::class);
-
-        // Set $_Redis manually using Reflection
-        $reflection = new ReflectionClass($mock);
-        $property = $reflection->getProperty('_Redis');
-        $property->setValue($mock, $redisMock);
-
-        // Mock logger
-        $logger = $this->getMockBuilder(ArrayLog::class)
-            ->onlyMethods(['log'])
-            ->getMock();
-
-        $logger->expects($this->once())
-            ->method('log')
-            ->with(
-                $this->equalTo('error'),
-                $this->stringContains('RedisClusterEngine could not connect. Got error: Mocked cluster failure'),
-                $this->anything(),
-            );
-
-        Log::reset();
-        Log::setConfig('default', ['className' => $logger]);
-
+        $this->setupLog('error');
         $result = $mock->init([
             'nodes' => ['127.0.0.1:7000'],
             'persistent' => true,
         ]);
-
+        $this->assertLogMessageContains('error', 'RedisClusterEngine could not connect. Got error: Mocked cluster failure');
         $this->assertFalse($result);
     }
 
@@ -239,13 +203,13 @@ class RedisClusterEngineTest extends TestCase
      */
     public function testConnectRedisClusterWithTlsConfig(): void
     {
-        $mock = $this->getMockBuilder(RedisEngine::class)
-            ->onlyMethods(['connectRedisCluster'])
-            ->getMock();
+        $mock = Mockery::mock(RedisEngine::class)
+            ->makePartial();
 
-        $mock->expects($this->once())
-            ->method('connectRedisCluster')
-            ->willReturn(true);
+        $mock->shouldAllowMockingProtectedMethods()
+            ->shouldReceive('connectRedisCluster')
+            ->once()
+            ->andReturn(true);
 
         $config = [
             'nodes' => $this->redisClusterNodes(),

@@ -20,6 +20,7 @@ use Cake\Cache\Cache;
 use Cake\Cache\Engine\RedisEngine;
 use Cake\TestSuite\TestCase;
 use DateInterval;
+use Mockery;
 use Redis;
 use function Cake\Core\env;
 
@@ -215,26 +216,28 @@ class RedisEngineTest extends TestCase
      */
     public function testConnectTransient(): void
     {
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
-        $phpredis = $this->createMock(Redis::class);
+        $Redis = Mockery::mock(RedisEngine::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $phpredis = Mockery::mock(Redis::class);
 
-        $phpredis->expects($this->once())
-            ->method('select')
+        $phpredis->shouldReceive('select')
+            ->once()
             ->with((int)$Redis->getConfig('database'))
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $phpredis->expects($this->once())
-            ->method('connect')
+        $phpredis->shouldReceive('connect')
+            ->once()
             ->with(
                 $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
             )
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $Redis->expects($this->once())
-            ->method('_createRedisInstance')
-            ->willReturn($phpredis);
+        $Redis->shouldReceive('_createRedisInstance')
+            ->once()
+            ->andReturn($phpredis);
 
         $config = [
             'port' => $this->port,
@@ -242,26 +245,28 @@ class RedisEngineTest extends TestCase
         ];
         $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
 
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
-        $phpredis = $this->createMock(Redis::class);
+        $Redis = Mockery::mock(RedisEngine::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $phpredis = Mockery::mock(Redis::class);
 
-        $phpredis->expects($this->once())
-            ->method('select')
+        $phpredis->shouldReceive('select')
+            ->once()
             ->with((int)$Redis->getConfig('database'))
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $phpredis->expects($this->once())
-            ->method('connect')
+        $phpredis->shouldReceive('connect')
+            ->once()
             ->with(
                 'tls://' . $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
             )
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $Redis->expects($this->once())
-            ->method('_createRedisInstance')
-            ->willReturn($phpredis);
+        $Redis->shouldReceive('_createRedisInstance')
+            ->once()
+            ->andReturn($phpredis);
 
         $config = [
             'port' => $this->port,
@@ -276,8 +281,10 @@ class RedisEngineTest extends TestCase
      */
     public function testConnectTransientContext(): void
     {
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
-        $phpredis = $this->createMock(Redis::class);
+        $Redis = Mockery::mock(RedisEngine::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $phpredis = Mockery::mock(Redis::class);
 
         $cafile = ROOT . DS . 'vendor' . DS . 'composer' . DS . 'ca-bundle' . DS . 'res' . DS . 'cacert.pem';
 
@@ -287,13 +294,13 @@ class RedisEngineTest extends TestCase
             ],
         ];
 
-        $phpredis->expects($this->once())
-            ->method('select')
+        $phpredis->shouldReceive('select')
+            ->once()
             ->with((int)$Redis->getConfig('database'))
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $phpredis->expects($this->once())
-            ->method('connect')
+        $phpredis->shouldReceive('connect')
+            ->once()
             ->with(
                 $Redis->getConfig('server'),
                 (int)$this->port,
@@ -303,11 +310,11 @@ class RedisEngineTest extends TestCase
                 0.0,
                 $context,
             )
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $Redis->expects($this->once())
-            ->method('_createRedisInstance')
-            ->willReturn($phpredis);
+        $Redis->shouldReceive('_createRedisInstance')
+            ->once()
+            ->andReturn($phpredis);
 
         $config = [
             'port' => $this->port,
@@ -323,56 +330,60 @@ class RedisEngineTest extends TestCase
      */
     public function testConnectPersistent(): void
     {
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
-        $phpredis = $this->createMock(Redis::class);
+        $Redis = Mockery::mock(RedisEngine::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $phpredis = Mockery::mock(Redis::class);
 
         $expectedPersistentId = $this->port . $Redis->getConfig('timeout') . $Redis->getConfig('database');
 
-        $phpredis->expects($this->once())
-            ->method('select')
+        $phpredis->shouldReceive('select')
+            ->once()
             ->with((int)$Redis->getConfig('database'))
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $phpredis->expects($this->once())
-            ->method('pconnect')
+        $phpredis->shouldReceive('pconnect')
+            ->once()
             ->with(
                 $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
                 $expectedPersistentId,
             )
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $Redis->expects($this->once())
-            ->method('_createRedisInstance')
-            ->willReturn($phpredis);
+        $Redis->shouldReceive('_createRedisInstance')
+            ->once()
+            ->andReturn($phpredis);
 
         $config = [
             'port' => $this->port,
         ];
         $this->assertTrue($Redis->init($config + Cache::pool('redis')->getConfig()));
 
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
-        $phpredis = $this->createMock(Redis::class);
+        $Redis = Mockery::mock(RedisEngine::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $phpredis = Mockery::mock(Redis::class);
 
-        $phpredis->expects($this->once())
-            ->method('select')
+        $phpredis->shouldReceive('select')
+            ->once()
             ->with((int)$Redis->getConfig('database'))
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $phpredis->expects($this->once())
-            ->method('pconnect')
+        $phpredis->shouldReceive('pconnect')
+            ->once()
             ->with(
                 'tls://' . $Redis->getConfig('server'),
                 (int)$this->port,
                 (int)$Redis->getConfig('timeout'),
                 $expectedPersistentId,
             )
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $Redis->expects($this->once())
-            ->method('_createRedisInstance')
-            ->willReturn($phpredis);
+        $Redis->shouldReceive('_createRedisInstance')
+            ->once()
+            ->andReturn($phpredis);
 
         $config = [
             'port' => $this->port,
@@ -386,8 +397,10 @@ class RedisEngineTest extends TestCase
      */
     public function testConnectPersistentContext(): void
     {
-        $Redis = $this->createPartialMock(RedisEngine::class, ['_createRedisInstance']);
-        $phpredis = $this->createMock(Redis::class);
+        $Redis = Mockery::mock(RedisEngine::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $phpredis = Mockery::mock(Redis::class);
 
         $expectedPersistentId = $this->port . $Redis->getConfig('timeout') . $Redis->getConfig('database');
 
@@ -399,13 +412,13 @@ class RedisEngineTest extends TestCase
             ],
         ];
 
-        $phpredis->expects($this->once())
-            ->method('select')
+        $phpredis->shouldReceive('select')
+            ->once()
             ->with((int)$Redis->getConfig('database'))
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $phpredis->expects($this->once())
-            ->method('pconnect')
+        $phpredis->shouldReceive('pconnect')
+            ->once()
             ->with(
                 $Redis->getConfig('server'),
                 (int)$this->port,
@@ -415,11 +428,11 @@ class RedisEngineTest extends TestCase
                 0.0,
                 $context,
             )
-            ->willReturn(true);
+            ->andReturn(true);
 
-        $Redis->expects($this->once())
-            ->method('_createRedisInstance')
-            ->willReturn($phpredis);
+        $Redis->shouldReceive('_createRedisInstance')
+            ->once()
+            ->andReturn($phpredis);
 
         $config = [
             'port' => $this->port,

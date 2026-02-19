@@ -24,12 +24,10 @@ use Cake\Datasource\ConnectionManager;
 use Cake\TestSuite\TestCase;
 use Mockery;
 use PDO;
-use PHPUnit\Framework\Attributes\AllowMockObjectsWithoutExpectations;
 
 /**
  * Tests Postgres driver
  */
-#[AllowMockObjectsWithoutExpectations]
 class PostgresTest extends TestCase
 {
     /**
@@ -37,9 +35,10 @@ class PostgresTest extends TestCase
      */
     public function testConnectionConfigDefault(): void
     {
-        $driver = $this->getMockBuilder(Postgres::class)
-            ->onlyMethods(['createPdo'])
-            ->getMock();
+        $driver = Mockery::mock(Postgres::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct();
         $dsn = 'pgsql:host=localhost;port=5432;dbname=cake';
         $expected = [
             'persistent' => true,
@@ -76,9 +75,10 @@ class PostgresTest extends TestCase
         $connection->shouldReceive('exec')->with('SET NAMES utf8')->once();
         $connection->shouldReceive('exec')->with('SET search_path TO public')->once();
 
-        $driver->expects($this->once())->method('createPdo')
+        $driver->shouldReceive('createPdo')
             ->with($dsn, $expected)
-            ->willReturn($connection);
+            ->once()
+            ->andReturn($connection);
 
         $driver->connect();
     }
@@ -107,10 +107,10 @@ class PostgresTest extends TestCase
             'ssl' => true,
             'ssl_mode' => 'verify-ca',
         ];
-        $driver = $this->getMockBuilder(Postgres::class)
-            ->onlyMethods(['createPdo'])
-            ->setConstructorArgs([$config])
-            ->getMock();
+        $driver = Mockery::mock(Postgres::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct($config);
         $dsn = 'pgsql:host=foo;port=3440;dbname=bar;sslmode=verify-ca;sslkey=/path/to/key;sslcert=/path/to/crt;sslrootcert=/path/to/ca';
 
         $expected = $config;
@@ -132,9 +132,10 @@ class PostgresTest extends TestCase
         $connection->shouldReceive('exec')->with('this too')->once();
         $connection->shouldReceive('exec')->with('SET timezone = Antarctica')->once();
 
-        $driver->expects($this->once())->method('createPdo')
+        $driver->shouldReceive('createPdo')
             ->with($dsn, $expected)
-            ->willReturn($connection);
+            ->once()
+            ->andReturn($connection);
 
         $driver->connect();
     }
@@ -144,11 +145,13 @@ class PostgresTest extends TestCase
      */
     public function testInsertReturning(): void
     {
-        $driver = $this->getMockBuilder(Postgres::class)
-            ->onlyMethods(['createPdo', 'getPdo', 'connect', 'enabled'])
-            ->setConstructorArgs([[]])
-            ->getMock();
-        $driver->method('enabled')->willReturn(true);
+        $driver = Mockery::mock(Postgres::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
         $query = $connection->insertQuery('articles', ['id' => 1, 'title' => 'foo']);
@@ -164,12 +167,14 @@ class PostgresTest extends TestCase
      */
     public function testHavingReplacesAlias(): void
     {
-        $driver = $this->getMockBuilder(Postgres::class)
-            ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
-            ->setConstructorArgs([[]])
-            ->getMock();
-        $driver->method('enabled')
-            ->willReturn(true);
+        $driver = Mockery::mock(Postgres::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
+        $driver->shouldReceive('version')->andReturn('16.0');
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
@@ -192,12 +197,14 @@ class PostgresTest extends TestCase
      */
     public function testHavingWhenNoAliasIsUsed(): void
     {
-        $driver = $this->getMockBuilder(Postgres::class)
-            ->onlyMethods(['connect', 'getPdo', 'version', 'enabled'])
-            ->setConstructorArgs([[]])
-            ->getMock();
-        $driver->method('enabled')
-            ->willReturn(true);
+        $driver = Mockery::mock(Postgres::class)
+            ->makePartial()
+            ->shouldAllowMockingProtectedMethods();
+        $driver->__construct([]);
+        $driver->shouldReceive('enabled')->andReturn(true);
+        $driver->shouldReceive('connect')->andReturnNull();
+        $driver->shouldReceive('getPdo')->andReturn(Mockery::mock(PDO::class));
+        $driver->shouldReceive('version')->andReturn('16.0');
 
         $connection = new Connection(['driver' => $driver, 'log' => false]);
 
