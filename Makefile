@@ -5,7 +5,7 @@
 # Use the version number to figure out if the release
 # is a pre-release
 PRERELEASE=$(shell echo $(VERSION) | grep -E 'dev|rc|alpha|beta' --quiet && echo 'true' || echo 'false')
-COMPONENTS=cache console core collection database datasource event filesystem form http i18n log ORM utility validation
+COMPONENTS=attribute-resolver cache console core collection database datasource event filesystem form http i18n log ORM utility validation
 CURRENT_BRANCH=$(shell git branch | grep '*' | tr -d '* ')
 
 # Github settings
@@ -182,7 +182,7 @@ component-%:
 	- (git remote add $* git@github.com:$(OWNER)/$*.git -f 2> /dev/null)
 	- (git branch -D $* 2> /dev/null)
 	git checkout -b $*
-	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo ucfirst('$*');") -f $*
+	git filter-branch --prune-empty --subdirectory-filter src/$(shell php -r "echo '$*' === 'ORM' ? 'ORM' : str_replace(' ', '', ucwords(str_replace('-', ' ', '$*')));") -f $*
 	git push -f $* $*:$(CURRENT_BRANCH)
 	git checkout $(CURRENT_BRANCH) > /dev/null
 

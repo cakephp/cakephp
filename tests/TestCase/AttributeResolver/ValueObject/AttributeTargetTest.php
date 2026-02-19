@@ -1,0 +1,209 @@
+<?php
+declare(strict_types=1);
+
+/**
+ * CakePHP(tm) : Rapid Development Framework (https://cakephp.org)
+ * Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ *
+ * Licensed under The MIT License
+ * For full copyright and license information, please see the LICENSE.txt
+ * Redistributions of files must retain the above copyright notice.
+ *
+ * @copyright     Copyright (c) Cake Software Foundation, Inc. (https://cakefoundation.org)
+ * @link          https://cakephp.org CakePHP(tm) Project
+ * @since         6.0.0
+ * @license       https://opensource.org/licenses/mit-license.php MIT License
+ */
+namespace Cake\Test\TestCase\AttributeResolver\ValueObject;
+
+use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\ValueObject\AttributeTarget;
+use Cake\TestSuite\TestCase;
+
+/**
+ * AttributeTarget Value Object Test
+ */
+class AttributeTargetTest extends TestCase
+{
+    /**
+     * Test constructor and properties
+     */
+    public function testConstructor(): void
+    {
+        $target = new AttributeTarget(
+            type: AttributeTargetType::METHOD,
+            name: 'myMethod',
+            declaringClass: 'App\Controller\UsersController',
+        );
+
+        $this->assertSame(AttributeTargetType::METHOD, $target->type);
+        $this->assertSame('myMethod', $target->name);
+        $this->assertSame('App\Controller\UsersController', $target->declaringClass);
+    }
+
+    /**
+     * Test constructor with null declaring class
+     */
+    public function testConstructorNullDeclaringClass(): void
+    {
+        $target = new AttributeTarget(
+            type: AttributeTargetType::CLASS_TYPE,
+            name: 'MyClass',
+        );
+
+        $this->assertSame(AttributeTargetType::CLASS_TYPE, $target->type);
+        $this->assertSame('MyClass', $target->name);
+        $this->assertNull($target->declaringClass);
+    }
+
+    /**
+     * Test toArray serialization
+     */
+    public function testToArray(): void
+    {
+        $target = new AttributeTarget(
+            type: AttributeTargetType::PROPERTY,
+            name: 'title',
+            declaringClass: 'App\Model\Entity\Article',
+        );
+
+        $expected = [
+            'type' => 'property',
+            'name' => 'title',
+            'declaringClass' => 'App\Model\Entity\Article',
+        ];
+
+        $this->assertSame($expected, $target->toArray());
+    }
+
+    /**
+     * Test toArray with null declaring class
+     */
+    public function testToArrayNullDeclaringClass(): void
+    {
+        $target = new AttributeTarget(
+            type: AttributeTargetType::CLASS_TYPE,
+            name: 'TestClass',
+        );
+
+        $expected = [
+            'type' => 'class',
+            'name' => 'TestClass',
+            'declaringClass' => null,
+        ];
+
+        $this->assertSame($expected, $target->toArray());
+    }
+
+    /**
+     * Test fromArray deserialization
+     */
+    public function testFromArray(): void
+    {
+        $data = [
+            'type' => 'method',
+            'name' => 'index',
+            'declaringClass' => 'App\Controller\ArticlesController',
+        ];
+
+        $target = AttributeTarget::fromArray($data);
+
+        $this->assertSame(AttributeTargetType::METHOD, $target->type);
+        $this->assertSame('index', $target->name);
+        $this->assertSame('App\Controller\ArticlesController', $target->declaringClass);
+    }
+
+    /**
+     * Test fromArray with null declaring class
+     */
+    public function testFromArrayNullDeclaringClass(): void
+    {
+        $data = [
+            'type' => 'parameter',
+            'name' => 'userId',
+            'declaringClass' => null,
+        ];
+
+        $target = AttributeTarget::fromArray($data);
+
+        $this->assertSame(AttributeTargetType::PARAMETER, $target->type);
+        $this->assertSame('userId', $target->name);
+        $this->assertNull($target->declaringClass);
+    }
+
+    /**
+     * Test round-trip serialization
+     */
+    public function testRoundTripSerialization(): void
+    {
+        $original = new AttributeTarget(
+            type: AttributeTargetType::METHOD,
+            name: 'save',
+            declaringClass: 'App\Model\Table\ArticlesTable',
+        );
+
+        $array = $original->toArray();
+        $restored = AttributeTarget::fromArray($array);
+
+        $this->assertEquals($original, $restored);
+        $this->assertSame($original->type, $restored->type);
+        $this->assertSame($original->name, $restored->name);
+        $this->assertSame($original->declaringClass, $restored->declaringClass);
+    }
+
+    /**
+     * Test serialize/unserialize round-trip via PHP serialize()
+     */
+    public function testPhpSerializeRoundTrip(): void
+    {
+        $original = new AttributeTarget(
+            type: AttributeTargetType::PROPERTY,
+            name: 'email',
+            declaringClass: 'App\Model\Entity\User',
+        );
+
+        $serialized = serialize($original);
+        $restored = unserialize($serialized);
+
+        $this->assertInstanceOf(AttributeTarget::class, $restored);
+        $this->assertSame($original->type, $restored->type);
+        $this->assertSame($original->name, $restored->name);
+        $this->assertSame($original->declaringClass, $restored->declaringClass);
+    }
+
+    /**
+     * Test serialize/unserialize with null declaringClass
+     */
+    public function testPhpSerializeWithNullDeclaringClass(): void
+    {
+        $original = new AttributeTarget(
+            type: AttributeTargetType::CLASS_TYPE,
+            name: 'MyClass',
+        );
+
+        $serialized = serialize($original);
+        $restored = unserialize($serialized);
+
+        $this->assertInstanceOf(AttributeTarget::class, $restored);
+        $this->assertSame(AttributeTargetType::CLASS_TYPE, $restored->type);
+        $this->assertSame('MyClass', $restored->name);
+        $this->assertNull($restored->declaringClass);
+    }
+
+    /**
+     * Test json_encode integration
+     */
+    public function testJsonEncode(): void
+    {
+        $target = new AttributeTarget(
+            type: AttributeTargetType::METHOD,
+            name: 'index',
+            declaringClass: 'App\Controller\UsersController',
+        );
+
+        $json = json_encode($target);
+        $decoded = json_decode($json, true);
+
+        $this->assertSame($target->toArray(), $decoded);
+    }
+}
