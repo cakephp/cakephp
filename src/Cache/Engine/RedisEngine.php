@@ -733,7 +733,6 @@ class RedisEngine extends CacheEngine
     {
         if ($this->_Redis instanceof RedisCluster) {
             foreach ($this->_Redis->_masters() as $node) {
-                // @phpstan-ignore arguments.count
                 $this->_Redis->flushDB($node, $async);
             }
         } else {
