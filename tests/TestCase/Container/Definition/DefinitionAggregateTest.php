@@ -24,7 +24,7 @@ class DefinitionAggregateTest extends TestCase
             ->with(self::equalTo('alias'))
             ->willReturnSelf();
 
-        $aggregate = (new DefinitionAggregate())->setContainer($container);
+        $aggregate = new DefinitionAggregate()->setContainer($container);
         $definition = $aggregate->add('alias', $definition);
 
         self::assertInstanceOf(DefinitionInterface::class, $definition);
@@ -33,7 +33,7 @@ class DefinitionAggregateTest extends TestCase
     public function testAggregateCreatesDefinition(): void
     {
         $container = $this->getMockBuilder(Container::class)->getMock();
-        $aggregate = (new DefinitionAggregate())->setContainer($container);
+        $aggregate = new DefinitionAggregate()->setContainer($container);
         $definition = $aggregate->add('alias', Foo::class);
         self::assertSame('alias', $definition->getAlias());
     }
@@ -41,7 +41,7 @@ class DefinitionAggregateTest extends TestCase
     public function testAggregateHasDefinition(): void
     {
         $container = $this->getMockBuilder(Container::class)->getMock();
-        $aggregate = (new DefinitionAggregate())->setContainer($container);
+        $aggregate = new DefinitionAggregate()->setContainer($container);
         $aggregate->add('alias', Foo::class);
         self::assertTrue($aggregate->has('alias'));
         self::assertFalse($aggregate->has('nope'));
@@ -50,7 +50,7 @@ class DefinitionAggregateTest extends TestCase
     public function testAggregateAddsAndIteratesMultipleDefinitions(): void
     {
         $container = $this->getMockBuilder(Container::class)->getMock();
-        $aggregate = (new DefinitionAggregate())->setContainer($container);
+        $aggregate = new DefinitionAggregate()->setContainer($container);
 
         $definitions = [];
 

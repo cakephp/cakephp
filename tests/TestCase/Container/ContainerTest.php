@@ -98,7 +98,7 @@ class ContainerTest extends TestCase
 
     public function testContainerAddsAndGetsSharedByDefault(): void
     {
-        $container = (new Container())->defaultToShared();
+        $container = new Container()->defaultToShared();
         $container->add(Foo::class);
         self::assertTrue($container->has(Foo::class));
 

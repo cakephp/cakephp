@@ -218,13 +218,7 @@ class Container implements DefinitionContainerInterface
             return true;
         }
 
-        foreach ($this->delegates as $delegate) {
-            if ($delegate->has($id)) {
-                return true;
-            }
-        }
-
-        return false;
+        return array_any($this->delegates, fn($delegate) => $delegate->has($id));
     }
 
     /**

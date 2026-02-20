@@ -57,14 +57,14 @@ class ServiceProviderAggregateTest extends TestCase
     {
         $this->expectException(ContainerException::class);
         $container = $this->getMockBuilder(Container::class)->getMock();
-        $aggregate = (new ServiceProviderAggregate())->setContainer($container);
+        $aggregate = new ServiceProviderAggregate()->setContainer($container);
         $aggregate->register('SomeService');
     }
 
     public function testAggregateInvokesCorrectRegisterMethodOnlyOnce(): void
     {
         $container = $this->getMockBuilder(Container::class)->getMock();
-        $aggregate = (new ServiceProviderAggregate())->setContainer($container);
+        $aggregate = new ServiceProviderAggregate()->setContainer($container);
         $provider = $this->getServiceProvider();
         $aggregate->add($provider);
         $aggregate->register('SomeService');
@@ -75,7 +75,7 @@ class ServiceProviderAggregateTest extends TestCase
     public function testAggregateSkipsExistingProviders(): void
     {
         $container = $this->getMockBuilder(Container::class)->getMock();
-        $aggregate = (new ServiceProviderAggregate())->setContainer($container);
+        $aggregate = new ServiceProviderAggregate()->setContainer($container);
         $provider = $this->getServiceProvider();
         $aggregate->add($provider);
         $aggregate->add($provider);

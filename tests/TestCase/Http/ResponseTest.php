@@ -1595,7 +1595,7 @@ class ResponseTest extends TestCase
     public function testWithoutLink(): void
     {
         $link = new Link('/api/users', 'self');
-        $response = (new Response())->withLink($link);
+        $response = new Response()->withLink($link);
 
         $new = $response->withoutLink($link);
 
