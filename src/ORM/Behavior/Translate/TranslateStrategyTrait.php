@@ -24,6 +24,8 @@ use Cake\ORM\Table;
 
 /**
  * Contains common code needed by TranslateBehavior strategy classes.
+ *
+ * @require-implements \Cake\ORM\Behavior\Translate\TranslateStrategyInterface
  */
 trait TranslateStrategyTrait
 {

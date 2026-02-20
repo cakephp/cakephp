@@ -253,9 +253,17 @@ jobs:
         if: always()
         run: tools/phpstan analyse --error-format=github
 
+      - name: Setup phpcs cache
+        if: always()
+        uses: actions/cache@v5
+        with:
+          path: ${{ runner.temp }}/phpcs.cache
+          key: ${{ runner.os }}-phpcs-${{ hashFiles('phpcs.xml', 'composer.lock') }}
+          restore-keys: ${{ runner.os }}-phpcs-
+
       - name: Run phpcs
         if: always()
-        run: vendor/bin/phpcs --parallel=16 --report=checkstyle | cs2pr
+        run: vendor/bin/phpcs --parallel=8 --cache=${{ runner.temp }}/phpcs.cache --report=checkstyle | cs2pr
 
       - name: Run phpstan for tests
         if: env.PHPSTAN_TESTS
@@ -278,7 +286,7 @@ jobs:
         uses: actions/cache@v5
         with:
           path: ${{ runner.temp }}/rector
-          key: ${{ runner.os }}-rector-${{ github.run_id }}
+          key: ${{ runner.os }}-rector-${{ hashFiles('rector.php', 'composer.lock') }}
           restore-keys: ${{ runner.os }}-rector-
 
       - name: Create rector cache dir

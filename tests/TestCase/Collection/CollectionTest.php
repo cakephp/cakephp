@@ -2822,4 +2822,276 @@ class CollectionTest extends TestCase
 
         $this->assertSame(3, $count);
     }
+
+    /**
+     * Tests the keys() method returns collection of keys
+     */
+    public function testKeys(): void
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+        $keys = $collection->keys()->toList();
+
+        $this->assertSame(['a', 'b', 'c'], $keys);
+    }
+
+    /**
+     * Tests keys() with numeric keys
+     */
+    public function testKeysNumeric(): void
+    {
+        $items = [10 => 'a', 20 => 'b', 30 => 'c'];
+        $collection = new Collection($items);
+        $keys = $collection->keys()->toList();
+
+        $this->assertSame([10, 20, 30], $keys);
+    }
+
+    /**
+     * Tests keys() on empty collection
+     */
+    public function testKeysEmpty(): void
+    {
+        $collection = new Collection([]);
+        $keys = $collection->keys()->toList();
+
+        $this->assertSame([], $keys);
+    }
+
+    /**
+     * Tests the values() method returns re-indexed collection
+     */
+    public function testValues(): void
+    {
+        $items = ['a' => 1, 'b' => 2, 'c' => 3];
+        $collection = new Collection($items);
+        $values = $collection->values()->toArray();
+
+        $this->assertSame([0 => 1, 1 => 2, 2 => 3], $values);
+    }
+
+    /**
+     * Tests values() maintains order
+     */
+    public function testValuesOrder(): void
+    {
+        $items = ['z' => 3, 'a' => 1, 'm' => 2];
+        $collection = new Collection($items);
+        $values = $collection->values()->toList();
+
+        $this->assertSame([3, 1, 2], $values);
+    }
+
+    /**
+     * Tests values() on empty collection
+     */
+    public function testValuesEmpty(): void
+    {
+        $collection = new Collection([]);
+        $values = $collection->values()->toList();
+
+        $this->assertSame([], $values);
+    }
+
+    /**
+     * Tests the implode() method
+     */
+    public function testImplode(): void
+    {
+        $items = ['a', 'b', 'c'];
+        $collection = new Collection($items);
+        $result = $collection->implode(', ');
+
+        $this->assertSame('a, b, c', $result);
+    }
+
+    /**
+     * Tests implode() with path extraction
+     */
+    public function testImplodeWithPath(): void
+    {
+        $items = [
+            ['name' => 'foo'],
+            ['name' => 'bar'],
+            ['name' => 'baz'],
+        ];
+        $collection = new Collection($items);
+        $result = $collection->implode(', ', 'name');
+
+        $this->assertSame('foo, bar, baz', $result);
+    }
+
+    /**
+     * Tests implode() with nested path
+     */
+    public function testImplodeWithNestedPath(): void
+    {
+        $items = [
+            ['user' => ['name' => 'foo']],
+            ['user' => ['name' => 'bar']],
+        ];
+        $collection = new Collection($items);
+        $result = $collection->implode(' - ', 'user.name');
+
+        $this->assertSame('foo - bar', $result);
+    }
+
+    /**
+     * Tests implode() with callable
+     */
+    public function testImplodeWithCallable(): void
+    {
+        $items = [1, 2, 3];
+        $collection = new Collection($items);
+        $result = $collection->implode(', ', fn($v) => $v * 2);
+
+        $this->assertSame('2, 4, 6', $result);
+    }
+
+    /**
+     * Tests implode() with empty collection
+     */
+    public function testImplodeEmpty(): void
+    {
+        $collection = new Collection([]);
+        $result = $collection->implode(', ');
+
+        $this->assertSame('', $result);
+    }
+
+    /**
+     * Tests the when() method applies callback when condition is truthy
+     */
+    public function testWhenTruthy(): void
+    {
+        $items = [1, 2, 3, 4, 5];
+        $collection = new Collection($items);
+
+        $result = $collection->when(true, function ($collection) {
+            return $collection->filter(fn($v) => $v > 2);
+        })->toList();
+
+        $this->assertSame([3, 4, 5], $result);
+    }
+
+    /**
+     * Tests when() does not apply callback when condition is falsy
+     */
+    public function testWhenFalsy(): void
+    {
+        $items = [1, 2, 3, 4, 5];
+        $collection = new Collection($items);
+
+        $result = $collection->when(false, function ($collection) {
+            return $collection->filter(fn($v) => $v > 2);
+        })->toList();
+
+        $this->assertSame([1, 2, 3, 4, 5], $result);
+    }
+
+    /**
+     * Tests when() passes condition value to callback
+     */
+    public function testWhenPassesCondition(): void
+    {
+        $items = [1, 2, 3, 4, 5];
+        $collection = new Collection($items);
+
+        $result = $collection->when(3, function ($collection, $threshold) {
+            return $collection->filter(fn($v) => $v > $threshold);
+        })->toList();
+
+        $this->assertSame([4, 5], $result);
+    }
+
+    /**
+     * Tests when() with zero as falsy condition
+     */
+    public function testWhenZero(): void
+    {
+        $items = [1, 2, 3];
+        $collection = new Collection($items);
+
+        $result = $collection->when(0, function ($collection) {
+            return $collection->filter(fn($v) => $v > 1);
+        })->toList();
+
+        $this->assertSame([1, 2, 3], $result);
+    }
+
+    /**
+     * Tests the unless() method applies callback when condition is falsy
+     */
+    public function testUnlessFalsy(): void
+    {
+        $items = [1, 2, 3, 4, 5];
+        $collection = new Collection($items);
+
+        $result = $collection->unless(false, function ($collection) {
+            return $collection->filter(fn($v) => $v > 2);
+        })->toList();
+
+        $this->assertSame([3, 4, 5], $result);
+    }
+
+    /**
+     * Tests unless() does not apply callback when condition is truthy
+     */
+    public function testUnlessTruthy(): void
+    {
+        $items = [1, 2, 3, 4, 5];
+        $collection = new Collection($items);
+
+        $result = $collection->unless(true, function ($collection) {
+            return $collection->filter(fn($v) => $v > 2);
+        })->toList();
+
+        $this->assertSame([1, 2, 3, 4, 5], $result);
+    }
+
+    /**
+     * Tests unless() with null as falsy condition
+     */
+    public function testUnlessNull(): void
+    {
+        $items = [1, 2, 3];
+        $collection = new Collection($items);
+
+        $result = $collection->unless(null, function ($collection) {
+            return $collection->filter(fn($v) => $v > 1);
+        })->toList();
+
+        $this->assertSame([2, 3], $result);
+    }
+
+    /**
+     * Tests unless() with empty string as falsy condition
+     */
+    public function testUnlessEmptyString(): void
+    {
+        $items = [1, 2, 3];
+        $collection = new Collection($items);
+
+        $result = $collection->unless('', function ($collection) {
+            return $collection->filter(fn($v) => $v > 1);
+        })->toList();
+
+        $this->assertSame([2, 3], $result);
+    }
+
+    /**
+     * Tests chaining when() and unless() together
+     */
+    public function testWhenUnlessChaining(): void
+    {
+        $items = [1, 2, 3, 4, 5];
+        $collection = new Collection($items);
+
+        $result = $collection
+            ->when(true, fn($c) => $c->filter(fn($v) => $v > 1))
+            ->unless(false, fn($c) => $c->filter(fn($v) => $v < 5))
+            ->toList();
+
+        $this->assertSame([2, 3, 4], $result);
+    }
 }

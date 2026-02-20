@@ -512,53 +512,117 @@ class NumberTest extends TestCase
         $expected = '45 Bytes';
         $this->assertSame($expected, $result);
 
+        $result = $this->Number->toReadableSize(1000);
+        $expected = '1 KB';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(1024);
+        $expected = '1.02 KB';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(1024 + 123);
+        $expected = '1.15 KB';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(1024 * 512);
+        $expected = '524.29 KB';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(1024 * 1024 - 1);
+        $expected = '1.05 MB';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(512.05 * 1024 * 1024);
+        $expected = '536.92 MB';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 - 1);
+        $expected = '1.07 GB';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 512);
+        $expected = '549.76 GB';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 - 1);
+        $expected = '1.1 TB';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 512);
+        $expected = '562.95 TB';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 1024 - 1);
+        $expected = '1,125.9 TB';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 1024 * 1024);
+        $expected = '1,152,921.5 TB';
+        $this->assertSame($expected, $result);
+
+        $this->Number->setUseIecUnits(true);
+
+        $result = $this->Number->toReadableSize(0);
+        $expected = '0 Bytes';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(1);
+        $expected = '1 Byte';
+        $this->assertSame($expected, $result);
+
+        $result = $this->Number->toReadableSize(45);
+        $expected = '45 Bytes';
+        $this->assertSame($expected, $result);
+
         $result = $this->Number->toReadableSize(1023);
         $expected = '1,023 Bytes';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->toReadableSize(1024);
-        $expected = '1 KB';
+        $expected = '1 KiB';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->toReadableSize(1024 + 123);
-        $expected = '1.12 KB';
+        $expected = '1.12 KiB';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->toReadableSize(1024 * 512);
-        $expected = '512 KB';
+        $expected = '512 KiB';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->toReadableSize(1024 * 1024 - 1);
-        $expected = '1 MB';
+        $expected = '1 MiB';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->toReadableSize(512.05 * 1024 * 1024);
-        $expected = '512.05 MB';
+        $expected = '512.05 MiB';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->toReadableSize(1024 * 1024 * 1024 - 1);
-        $expected = '1 GB';
+        $expected = '1 GiB';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 512);
-        $expected = '512 GB';
+        $expected = '512 GiB';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 - 1);
-        $expected = '1 TB';
+        $expected = '1 TiB';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 512);
-        $expected = '512 TB';
+        $expected = '512 TiB';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 1024 - 1);
-        $expected = '1,024 TB';
+        $expected = '1,024 TiB';
         $this->assertSame($expected, $result);
 
         $result = $this->Number->toReadableSize(1024 * 1024 * 1024 * 1024 * 1024 * 1024);
-        $expected = '1,048,576 TB';
+        $expected = '1,048,576 TiB';
         $this->assertSame($expected, $result);
+
+        $this->Number->setUseIecUnits(false);
     }
 
     /**
@@ -568,10 +632,18 @@ class NumberTest extends TestCase
     {
         I18n::setLocale('fr_FR');
         $result = $this->Number->toReadableSize(1321205);
-        $this->assertSame('1,26 MB', $result);
+        $this->assertSame('1,32 MB', $result);
 
         $result = $this->Number->toReadableSize(512.05 * 1024 * 1024 * 1024);
-        $this->assertSame('512,05 GB', $result);
+        $this->assertSame('549,81 GB', $result);
+
+        $this->Number->setUseIecUnits(true);
+
+        $result = $this->Number->toReadableSize(1321205);
+        $this->assertSame('1,26 MiB', $result);
+
+        $result = $this->Number->toReadableSize(512.05 * 1024 * 1024 * 1024);
+        $this->assertSame('512,05 GiB', $result);
     }
 
     /**

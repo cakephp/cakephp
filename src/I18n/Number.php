@@ -63,6 +63,13 @@ class Number
     protected static ?string $defaultCurrencyFormat = null;
 
     /**
+     * Default units used by Number::toReadableSize()
+     *
+     * @var bool
+     */
+    protected static bool $useIecUnits = false;
+
+    /**
      * Formats a number with a level of precision.
      *
      * Options:
@@ -83,24 +90,49 @@ class Number
     }
 
     /**
-     * Returns a formatted-for-humans file size.
+     * Returns a formatted-for-humans file size. By default, the units are exponents of ten (KB, MB, etc.).
+     * setUseIecUnits() can be used to swap to ISO/IEC 80000-13 units (KiB, MiB, etc).
+     * 1 KiB = 1024 Bytes
+     * 1 KB  = 1000 Bytes
      *
      * @param string|float|int $size Size in bytes
+     * @param bool|null $useIecUnits Whether to use exponent of two or ten for units (KiB, MiB, etc. or KB, MB, etc.)
      * @return string Human readable size
      * @link https://book.cakephp.org/5/en/core-libraries/number.html#interacting-with-human-readable-values
      */
-    public static function toReadableSize(string|float|int $size): string
+    public static function toReadableSize(string|float|int $size, ?bool $useIecUnits = null): string
     {
+        $useIec = $useIecUnits ?? static::$useIecUnits;
+
+        $units = $useIec
+        ? ['KiB', 'MiB', 'GiB', 'TiB']
+        : ['KB', 'MB', 'GB', 'TB'];
+
+        $divisor = $useIec ? 1024 : 1000;
+
         $size = (int)$size;
 
         return match (true) {
-            $size < 1024 => __dn('cake', '{0,number,integer} Byte', '{0,number,integer} Bytes', $size, $size),
-            round($size / 1024) < 1024 => __d('cake', '{0,number,#,###.##} KB', $size / 1024),
-            round($size / 1024 / 1024, 2) < 1024 => __d('cake', '{0,number,#,###.##} MB', $size / 1024 / 1024),
-            round($size / 1024 / 1024 / 1024, 2) < 1024 =>
-                __d('cake', '{0,number,#,###.##} GB', $size / 1024 / 1024 / 1024),
-            default => __d('cake', '{0,number,#,###.##} TB', $size / 1024 / 1024 / 1024 / 1024),
+            $size < $divisor => __dn('cake', '{0,number,integer} Byte', '{0,number,integer} Bytes', $size, $size),
+            round($size / $divisor) < $divisor => __d('cake', '{0,number,#,###.##} {1}', $size / $divisor, $units[0]),
+            round($size / pow($divisor, 2), 2) < $divisor =>
+            __d('cake', '{0,number,#,###.##} {1}', $size / pow($divisor, 2), $units[1]),
+            round($size / pow($divisor, 3), 2) < $divisor =>
+            __d('cake', '{0,number,#,###.##} {1}', $size / pow($divisor, 3), $units[2]),
+            default => __d('cake', '{0,number,#,###.##} {1}', $size / pow($divisor, 4), $units[3]),
         };
+    }
+
+    /**
+     * Setter for units to use in toReadableSize(). If set to true, it will use IEC units, as defined in ISO/IEC 80000-13
+     * (KiB, MiB, etc.). Else it will use natural units (MB, KB, etc).
+     *
+     * @param bool $useIec Whether to use exponents of two or ten for units (KiB, MiB, etc. or KB, MB, etc.)  {@link toReadableSize()}
+     * @return void
+     */
+    public static function setUseIecUnits(bool $useIec): void
+    {
+        static::$useIecUnits = $useIec;
     }
 
     /**

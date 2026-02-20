@@ -21,6 +21,7 @@ parameters:
 		- identifier: new.internalClass
 		- identifier: unset.possiblyHookedProperty
 		- identifier: trait.unused
+		- identifier: method.templateTypeNotInParameter
 		-
 			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:addMethods\(\)\.$#'
 			reportUnmatched: false

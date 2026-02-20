@@ -23,6 +23,8 @@ use Cake\Http\Cookie\Cookie;
 use Cake\Http\Cookie\CookieCollection;
 use Cake\Http\CorsBuilder;
 use Cake\Http\Exception\NotFoundException;
+use Cake\Http\Link\Link;
+use Cake\Http\Link\LinkProvider;
 use Cake\Http\Response;
 use Cake\Http\ServerRequest;
 use Cake\I18n\DateTime;
@@ -1550,6 +1552,90 @@ class ResponseTest extends TestCase
     }
 
     /**
+     * Test withLink adds a link to the response.
+     */
+    public function testWithLink(): void
+    {
+        $response = new Response();
+        $link = new Link('/api/users', 'self');
+
+        $new = $response->withLink($link);
+
+        $this->assertNotSame($response, $new);
+        $this->assertCount(0, iterator_to_array($response->getLinks()->getLinks()));
+        $this->assertCount(1, iterator_to_array($new->getLinks()->getLinks()));
+
+        $links = iterator_to_array($new->getLinks()->getLinks());
+        $this->assertSame('/api/users', $links[0]->getHref());
+        $this->assertSame(['self'], $links[0]->getRels());
+    }
+
+    /**
+     * Test withLink can add multiple links.
+     */
+    public function testWithLinkMultiple(): void
+    {
+        $response = new Response();
+        $self = new Link('/api/users/1', 'self');
+        $next = new Link('/api/users?page=2', 'next');
+
+        $new = $response
+            ->withLink($self)
+            ->withLink($next);
+
+        $links = iterator_to_array($new->getLinks()->getLinks());
+        $this->assertCount(2, $links);
+        $this->assertSame('/api/users/1', $links[0]->getHref());
+        $this->assertSame('/api/users?page=2', $links[1]->getHref());
+    }
+
+    /**
+     * Test withoutLink removes a link from the response.
+     */
+    public function testWithoutLink(): void
+    {
+        $link = new Link('/api/users', 'self');
+        $response = (new Response())->withLink($link);
+
+        $new = $response->withoutLink($link);
+
+        $this->assertNotSame($response, $new);
+        $this->assertCount(1, iterator_to_array($response->getLinks()->getLinks()));
+        $this->assertCount(0, iterator_to_array($new->getLinks()->getLinks()));
+    }
+
+    /**
+     * Test getLinks returns the link provider.
+     */
+    public function testGetLinks(): void
+    {
+        $response = new Response();
+        $links = $response->getLinks();
+
+        $this->assertInstanceOf(LinkProvider::class, $links);
+        $this->assertCount(0, iterator_to_array($links->getLinks()));
+    }
+
+    /**
+     * Test withLinkProvider replaces the link provider.
+     */
+    public function testWithLinkProvider(): void
+    {
+        $response = new Response();
+        $provider = new LinkProvider([
+            new Link('/api/users', 'self'),
+            new Link('/api/users?page=2', 'next'),
+        ]);
+
+        $new = $response->withLinkProvider($provider);
+
+        $this->assertNotSame($response, $new);
+        $this->assertCount(0, iterator_to_array($response->getLinks()->getLinks()));
+        $this->assertSame($provider, $new->getLinks());
+        $this->assertCount(2, iterator_to_array($new->getLinks()->getLinks()));
+    }
+
+    /**
      * Tests __debugInfo
      */
     public function testDebugInfo(): void
@@ -1567,6 +1653,7 @@ class ResponseTest extends TestCase
             'file' => null,
             'fileRange' => [],
             'cookies' => new CookieCollection(),
+            'links' => new LinkProvider(),
             'cacheDirectives' => [],
             'body' => 'Foo',
         ];
