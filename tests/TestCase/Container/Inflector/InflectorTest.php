@@ -14,7 +14,7 @@ class InflectorTest extends TestCase
     public function testInflectorSetsExpectedMethodCalls(): void
     {
         $container = $this->getMockBuilder(Container::class)->getMock();
-        $inflector = (new Inflector('Type'))->setContainer($container);
+        $inflector = new Inflector('Type')->setContainer($container);
 
         $inflector->invokeMethod('method1', ['arg1']);
 
@@ -35,7 +35,7 @@ class InflectorTest extends TestCase
     public function testInflectorSetsExpectedProperties(): void
     {
         $container = $this->getMockBuilder(Container::class)->getMock();
-        $inflector = (new Inflector('Type'))->setContainer($container);
+        $inflector = new Inflector('Type')->setContainer($container);
 
         $inflector->setProperty('property1', 'value');
 

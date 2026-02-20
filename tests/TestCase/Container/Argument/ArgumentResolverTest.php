@@ -129,7 +129,7 @@ class ArgumentResolverTest extends TestCase
             use ContainerAwareTrait;
         };
 
-        $result = $resolver->reflectArguments((new ReflectionClass(Baz::class))->getConstructor());
+        $result = $resolver->reflectArguments(new ReflectionClass(Baz::class)->getConstructor());
         self::assertSame([null], $result);
     }
 

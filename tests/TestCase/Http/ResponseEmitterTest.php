@@ -373,7 +373,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseLinks(): void
     {
-        $response = (new Response())
+        $response = new Response()
             ->withHeader('Content-Type', 'text/html')
             ->withLink(new Link('/api/users', 'self'))
             ->withLink(new Link('/api/users?page=2', 'next'));
@@ -401,7 +401,7 @@ class ResponseEmitterTest extends TestCase
             ->withRel('preload')
             ->withAttribute('as', 'style')
             ->withAttribute('crossorigin', 'anonymous');
-        $response = (new Response())
+        $response = new Response()
             ->withLink($link);
         $response->getBody()->write('ok');
 
@@ -427,7 +427,7 @@ class ResponseEmitterTest extends TestCase
             ->withAttribute('as', 'script')
             ->withAttribute('nopush', true)
             ->withAttribute('disabled', false);
-        $response = (new Response())
+        $response = new Response()
             ->withLink($link);
         $response->getBody()->write('ok');
 
@@ -451,7 +451,7 @@ class ResponseEmitterTest extends TestCase
         $link = (new Link('/api/resource'))
             ->withRel('self')
             ->withAttribute('hreflang', ['en', 'de']);
-        $response = (new Response())
+        $response = new Response()
             ->withLink($link);
         $response->getBody()->write('ok');
 
@@ -475,7 +475,7 @@ class ResponseEmitterTest extends TestCase
         $link = (new Link('/api/users'))
             ->withRel('self')
             ->withAttribute('title', 'A "quoted" value');
-        $response = (new Response())
+        $response = new Response()
             ->withLink($link);
         $response->getBody()->write('ok');
 
@@ -496,7 +496,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseNoLinks(): void
     {
-        $response = (new Response())
+        $response = new Response()
             ->withHeader('Content-Type', 'text/html');
         $response->getBody()->write('ok');
 
