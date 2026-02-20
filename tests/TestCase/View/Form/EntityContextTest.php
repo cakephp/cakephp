@@ -728,6 +728,33 @@ class EntityContextTest extends TestCase
     }
 
     /**
+     * Test that isRequired() returns null when allowEmptyString() is given a callable condition.
+     *
+     * The callable cannot be evaluated at render time (no submitted data available),
+     * so FormHelper must not add required="required" to the input.
+     */
+    public function testIsRequiredWithCallableAllowEmpty(): void
+    {
+        $this->_setupTables();
+
+        $articles = $this->getTableLocator()->get('Articles');
+        $validator = new Validator();
+        $validator->notEmptyString('title', 'Title is required', function ($context) {
+            // Condition depends on submitted data — cannot be evaluated at render time
+            return $context['newRecord'];
+        });
+        $articles->setValidator('default', $validator);
+
+        $context = new EntityContext([
+            'entity' => new Article(),
+            'table' => 'Articles',
+        ]);
+
+        // Must return null so FormHelper skips required="required" on the input
+        $this->assertNull($context->isRequired('title'));
+    }
+
+    /**
      * Test validator as a string.
      */
     public function testIsRequiredStringValidator(): void
@@ -832,7 +859,8 @@ class EntityContextTest extends TestCase
             'validator' => 'default',
         ]);
 
-        $this->assertTrue($context->isRequired('articles.0.title'));
+        // Callable conditions cannot be evaluated at render time, so null is returned
+        $this->assertNull($context->isRequired('articles.0.title'));
     }
 
     /**
@@ -860,14 +888,10 @@ class EntityContextTest extends TestCase
             'validator' => 'default',
         ]);
 
-        $this->assertTrue(
-            $context->isRequired('comments.0.comment'),
-            'comment is required as object is not new',
-        );
-        $this->assertFalse(
-            $context->isRequired('comments.1.comment'),
-            'comment is not required as missing object is "new"',
-        );
+        // Callable conditions cannot be evaluated at render time, so null is returned
+        // regardless of entity state — FormHelper will not add required="required"
+        $this->assertNull($context->isRequired('comments.0.comment'));
+        $this->assertNull($context->isRequired('comments.1.comment'));
     }
 
     /**
