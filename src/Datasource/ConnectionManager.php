@@ -60,7 +60,7 @@ class ConnectionManager
      *
      * @return array<string, class-string>
      */
-    protected static function buildDsnClassMap(): array
+    protected static function initDsnClassMap(): array
     {
         return [
             'mysql' => Mysql::class,

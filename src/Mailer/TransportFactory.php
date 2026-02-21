@@ -38,7 +38,7 @@ class TransportFactory
      *
      * @return array<string, class-string>
      */
-    protected static function buildDsnClassMap(): array
+    protected static function initDsnClassMap(): array
     {
         return [
             'debug' => Transport\DebugTransport::class,

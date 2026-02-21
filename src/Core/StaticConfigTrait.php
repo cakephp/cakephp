@@ -334,7 +334,7 @@ REGEXP;
      */
     public static function getDsnClassMap(): array
     {
-        return static::$dsnClassMap ??= static::buildDsnClassMap();
+        return static::$dsnClassMap ??= static::initDsnClassMap();
     }
 
     /**
@@ -344,7 +344,7 @@ REGEXP;
      *
      * @return array<string, class-string>
      */
-    protected static function buildDsnClassMap(): array
+    protected static function initDsnClassMap(): array
     {
         return [];
     }
