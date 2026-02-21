@@ -49,24 +49,26 @@ class ConnectionManager
     protected static array $aliasMap = [];
 
     /**
-     * An array mapping url schemes to fully qualified driver class names
-     *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
-     */
-    protected static array $dsnClassMap = [
-        'mysql' => Mysql::class,
-        'postgres' => Postgres::class,
-        'sqlite' => Sqlite::class,
-        'sqlserver' => Sqlserver::class,
-    ];
-
-    /**
      * The ConnectionRegistry used by the manager.
      *
      * @var \Cake\Datasource\ConnectionRegistry
      */
     protected static ConnectionRegistry $registry;
+
+    /**
+     * Returns the default DSN class map.
+     *
+     * @return array<string, class-string>
+     */
+    protected static function initDsnClassMap(): array
+    {
+        return [
+            'mysql' => Mysql::class,
+            'postgres' => Postgres::class,
+            'sqlite' => Sqlite::class,
+            'sqlserver' => Sqlserver::class,
+        ];
+    }
 
     /**
      * Configure a new connection object.

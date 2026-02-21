@@ -184,14 +184,6 @@ class Mailer implements EventListenerInterface
     ];
 
     /**
-     * Mailer driver class map.
-     *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
-     */
-    protected static array $dsnClassMap = [];
-
-    /**
      * @var array|null
      */
     protected ?array $logConfig = null;
