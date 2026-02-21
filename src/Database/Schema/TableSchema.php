@@ -221,6 +221,9 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
         'text' => [
             'collate' => null,
         ],
+        'uuid' => [
+            'collate' => null,
+        ],
         'tinyinteger' => [
             'unsigned' => null,
             'autoIncrement' => null,

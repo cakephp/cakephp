@@ -269,7 +269,7 @@ class ContainerTest extends TestCase
             use ContainerAwareTrait;
         };
 
-        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container = new Container();
         $class->setContainer($container);
     }
 

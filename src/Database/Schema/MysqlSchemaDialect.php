@@ -683,6 +683,7 @@ SQL;
             TableSchemaInterface::TYPE_TEXT,
             TableSchemaInterface::TYPE_CHAR,
             TableSchemaInterface::TYPE_STRING,
+            TableSchemaInterface::TYPE_UUID,
         ];
         if (in_array($column['type'], $hasCollate, true) && isset($column['collate']) && $column['collate'] !== '') {
             $out .= ' COLLATE ' . $column['collate'];

@@ -192,8 +192,9 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Hook method invoked by CakePHP when a command is about to be executed.
      *
      * Override this method and implement expensive/important setup steps that
-     * should not run on every command run. This method will be called *before*
-     * the options and arguments are validated and processed.
+     * should not run on every command run. This method will be called *after*
+     * the options and arguments are validated and processed, so `$this->args`
+     * and `$this->io` are both available.
      *
      * @return void
      */

@@ -13,7 +13,7 @@ class InflectorTest extends TestCase
 {
     public function testInflectorSetsExpectedMethodCalls(): void
     {
-        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container = new Container();
         $inflector = new Inflector('Type')->setContainer($container);
 
         $inflector->invokeMethod('method1', ['arg1']);
@@ -34,7 +34,7 @@ class InflectorTest extends TestCase
 
     public function testInflectorSetsExpectedProperties(): void
     {
-        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container = new Container();
         $inflector = new Inflector('Type')->setContainer($container);
 
         $inflector->setProperty('property1', 'value');
@@ -55,22 +55,12 @@ class InflectorTest extends TestCase
 
     public function testInflectorInflectsWithProperties(): void
     {
-        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container = new Container();
 
         $bar = new class {
         };
 
-        $container
-            ->expects(self::once())
-            ->method('has')
-            ->with(self::equalTo(Bar::class))
-            ->willReturn(true);
-
-        $container
-            ->expects(self::once())
-            ->method('get')
-            ->with(self::equalTo(Bar::class))
-            ->willReturn($bar);
+        $container->add(Bar::class, $bar);
 
         $inflector = (new Inflector('Type'))
             ->setContainer($container)
@@ -87,22 +77,12 @@ class InflectorTest extends TestCase
 
     public function testInflectorInflectsWithMethodCall(): void
     {
-        $container = $this->getMockBuilder(Container::class)->getMock();
+        $container = new Container();
 
         $bar = new class {
         };
 
-        $container
-            ->expects(self::once())
-            ->method('has')
-            ->with(self::equalTo(Bar::class))
-            ->willReturn(true);
-
-        $container
-            ->expects(self::once())
-            ->method('get')
-            ->with(self::equalTo(Bar::class))
-            ->willReturn($bar);
+        $container->add(Bar::class, $bar);
 
         $inflector = (new Inflector('Type'))
             ->setContainer($container)

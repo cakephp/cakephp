@@ -16,23 +16,13 @@ use stdClass;
 
 class ReflectionContainerTest extends TestCase
 {
-    private function getContainerMock(array $items = []): Container
+    private function getContainer(array $items = []): Container
     {
-        $container = $this->getMockBuilder(Container::class)->getMock();
-
-        $container
-            ->method('has')
-            ->willReturnCallback(function ($alias) use ($items) {
-                return array_key_exists($alias, $items);
-            });
-
-        $container
-            ->method('get')
-            ->willReturnCallback(function ($alias) use ($items) {
-                if (array_key_exists($alias, $items)) {
-                    return $items[$alias];
-                }
-            });
+        $container = new Container();
+        $container->disableAutoWiring();
+        foreach ($items as $alias => $item) {
+            $container->addShared($alias, $item);
+        }
 
         return $container;
     }
@@ -109,7 +99,7 @@ class ReflectionContainerTest extends TestCase
         $dependency = new $dependencyClass();
         $container = new ReflectionContainer();
 
-        $container->setContainer($this->getContainerMock([
+        $container->setContainer($this->getContainer([
             $dependencyClass => $dependency,
         ]));
 

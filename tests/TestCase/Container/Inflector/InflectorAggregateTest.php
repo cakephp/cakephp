@@ -5,6 +5,7 @@ namespace Cake\Test\TestCase\Container\Inflector;
 
 use Cake\Container\Container;
 use Cake\Container\ContainerAwareInterface;
+use Cake\Container\DefinitionContainerInterface;
 use Cake\Container\Inflector\InflectorAggregate;
 use DateTimeZone;
 use PHPUnit\Framework\TestCase;
@@ -35,13 +36,27 @@ class InflectorAggregateTest extends TestCase
     public function testAggregateIteratesAndInflectsOnObject(): void
     {
         $aggregate = new InflectorAggregate();
-        $containerAware = $this->getMockBuilder(ContainerAwareInterface::class)->getMock();
-        $container = $this->getMockBuilder(Container::class)->getMock();
-        $containerAware->expects(self::once())->method('setContainer')->with(self::equalTo($container));
+        $containerAware = new class implements ContainerAwareInterface {
+            public ?DefinitionContainerInterface $container = null;
+
+            public function getContainer(): DefinitionContainerInterface
+            {
+                return $this->container;
+            }
+
+            public function setContainer(DefinitionContainerInterface $container): ContainerAwareInterface
+            {
+                $this->container = $container;
+
+                return $this;
+            }
+        };
+        $container = new Container();
         $aggregate->add(ContainerAwareInterface::class)->invokeMethod('setContainer', [$container]);
         $aggregate->add('Ignored\Type');
         $aggregate->setContainer($container);
         $aggregate->inflect($containerAware);
+        self::assertSame($container, $containerAware->container);
     }
 
     public function testNoInflectionIsAttemptedOnNonObjects(): void

@@ -1226,6 +1226,11 @@ SQL;
             ],
             [
                 'id',
+                ['type' => 'uuid', 'collate' => 'ascii_general_ci'],
+                '`id` CHAR(36) COLLATE ascii_general_ci',
+            ],
+            [
+                'id',
                 ['type' => 'nativeuuid'],
                 '`id` UUID',
             ],
