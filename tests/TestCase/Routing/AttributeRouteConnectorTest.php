@@ -30,7 +30,7 @@ use Cake\Routing\Attribute\Resource;
 use Cake\Routing\Attribute\Route;
 use Cake\Routing\Attribute\RouteClass;
 use Cake\Routing\Attribute\Scope;
-use Cake\Routing\AttributeRouteBuilderHelper;
+use Cake\Routing\AttributeRouteConnector;
 use Cake\Routing\Route\InflectedRoute;
 use Cake\Routing\RouteBuilder;
 use Cake\Routing\RouteCollection;
@@ -38,9 +38,9 @@ use Cake\TestSuite\TestCase;
 use ReflectionProperty;
 
 /**
- * Tests for attribute route parsing and connection helper.
+ * Tests for attribute route parsing and connection connector.
  */
-class AttributeRouteBuilderHelperTest extends TestCase
+class AttributeRouteConnectorTest extends TestCase
 {
     /**
      * @var \Cake\Routing\RouteCollection
@@ -89,7 +89,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testConnectInheritsParentMethodRoutes(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new AttributeRouteBuilderHelper($routes);
+        $helper = new AttributeRouteConnector($routes);
         $helper->connect();
 
         $request = new ServerRequest([
@@ -110,7 +110,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testConnectDerivesPrefixFromControllerNamespace(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new AttributeRouteBuilderHelper($routes);
+        $helper = new AttributeRouteConnector($routes);
         $helper->connect();
 
         $request = new ServerRequest([
@@ -132,7 +132,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testConnectUsesMethodExtensionsOverride(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new AttributeRouteBuilderHelper($routes);
+        $helper = new AttributeRouteConnector($routes);
         $helper->connect();
 
         $request = new ServerRequest([
@@ -153,7 +153,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testConnectSkipsNonExistingAndNonControllerClasses(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new AttributeRouteBuilderHelper($routes);
+        $helper = new AttributeRouteConnector($routes);
 
         $attributes = [
             new AttributeInfo(
@@ -189,7 +189,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testConnectAppliesPrefixRouteClassMiddlewareAndPersistOptions(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new AttributeRouteBuilderHelper($routes);
+        $helper = new AttributeRouteConnector($routes);
 
         $className = 'TestApp\\Controller\\AttributeRoutingController';
         $attributes = [
@@ -275,7 +275,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testConnectUsesPlaceholderNamesAsDefaultPassList(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new AttributeRouteBuilderHelper($routes);
+        $helper = new AttributeRouteConnector($routes);
 
         $className = 'TestApp\\Controller\\AttributeRoutingController';
         $baseClassName = 'TestApp\\Controller\\AttributeRoutingBaseController';
@@ -332,7 +332,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testConnectHonorsExplicitEmptyPassList(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new AttributeRouteBuilderHelper($routes);
+        $helper = new AttributeRouteConnector($routes);
 
         $className = 'TestApp\\Controller\\AttributeRoutingController';
         $baseClassName = 'TestApp\\Controller\\AttributeRoutingBaseController';
@@ -388,7 +388,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testConnectBuildsResourceRoutesFromAttribute(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new AttributeRouteBuilderHelper($routes);
+        $helper = new AttributeRouteConnector($routes);
 
         $className = 'TestApp\\Controller\\AttributeRoutingController';
         $attributes = [
@@ -438,7 +438,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testConnectBuildsPluginResourceRoutes(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new AttributeRouteBuilderHelper($routes);
+        $helper = new AttributeRouteConnector($routes);
 
         $className = 'TestPlugin\\Controller\\AttributeTestController';
         $attributes = [
@@ -475,7 +475,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testConnectBuildsResourceRoutesWithPrefixHostAndExtensions(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new AttributeRouteBuilderHelper($routes);
+        $helper = new AttributeRouteConnector($routes);
 
         $className = 'TestApp\\Controller\\AttributeRoutingController';
         $attributes = [
@@ -536,7 +536,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testExtractControllerMetadata(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteBuilderHelper {
+        $helper = new class ($routes) extends AttributeRouteConnector {
             /**
              * @param string $className Controller class name.
              * @param string|null $pluginName Plugin name.
@@ -565,7 +565,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testConnectControllerClassWithoutAttributes(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteBuilderHelper {
+        $helper = new class ($routes) extends AttributeRouteConnector {
             /**
              * @param string $className Controller class name.
              * @param array<string, array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>> $classAttributes Attributes grouped by class.
@@ -590,7 +590,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testGetMethodAttributeGroupsSkipsMagicAndEmptyDeclaringClass(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteBuilderHelper {
+        $helper = new class ($routes) extends AttributeRouteConnector {
             /**
              * @param string $className Controller class name.
              * @param list<string> $hierarchy Parent-to-child class hierarchy.
@@ -636,7 +636,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testBuildArgsByNameMapWithNamedKeys(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteBuilderHelper {
+        $helper = new class ($routes) extends AttributeRouteConnector {
             /**
              * @param array<int|string, string> $pass Route pass definitions.
              * @return array<string, int>
@@ -660,7 +660,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testNormalizePath(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteBuilderHelper {
+        $helper = new class ($routes) extends AttributeRouteConnector {
             /**
              * @param string $path Raw route path.
              * @return string
@@ -684,7 +684,7 @@ class AttributeRouteBuilderHelperTest extends TestCase
     public function testExtractSpecialDefaults(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $helper = new class ($routes) extends AttributeRouteBuilderHelper {
+        $helper = new class ($routes) extends AttributeRouteConnector {
             /**
              * @param array<string, mixed> $defaults Route defaults.
              * @param array<string, mixed> $options Route options.

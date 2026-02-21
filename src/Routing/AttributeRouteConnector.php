@@ -36,9 +36,9 @@ use Cake\Routing\Attribute\Scope;
 use Cake\Utility\Inflector;
 
 /**
- * Helper class that resolves and connects routes declared via PHP attributes.
+ * Connector class that resolves and connects routes declared via PHP attributes.
  */
-class AttributeRouteBuilderHelper
+class AttributeRouteConnector
 {
     /**
      * Supported routing attributes recognized by the resolver.

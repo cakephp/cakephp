@@ -12,13 +12,16 @@ class TestLogStaticConfig
     use StaticConfigTrait;
 
     /**
-     * Log engine class map.
+     * Returns the default DSN class map.
      *
-     * @var array
+     * @return array<string, class-string>
      */
-    protected static $dsnClassMap = [
-        'console' => ConsoleLog::class,
-        'file' => FileLog::class,
-        'syslog' => SyslogLog::class,
-    ];
+    protected static function initDsnClassMap(): array
+    {
+        return [
+            'console' => ConsoleLog::class,
+            'file' => FileLog::class,
+            'syslog' => SyslogLog::class,
+        ];
+    }
 }

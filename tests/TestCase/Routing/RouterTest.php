@@ -3030,7 +3030,7 @@ class RouterTest extends TestCase
             }
         };
 
-        Router::createRouteBuilder('/')->connect($route);
+        Router::createRouteBuilder('/')->add($route);
 
         $result = Router::url(['controller' => 'Posts', 'action' => 'view', 1]);
         $this->assertSame('http://example.com/posts/view/1', $result);

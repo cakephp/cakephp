@@ -35,14 +35,6 @@ class AttributeResolver
     }
 
     /**
-     * An array mapping URL schemes to fully qualified class names.
-     *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
-     */
-    protected static array $dsnClassMap = [];
-
-    /**
      * In-memory cache of resolved collections per config name
      *
      * @var array<string, \Cake\AttributeResolver\AttributeCollection>

@@ -113,18 +113,6 @@ class Log
     }
 
     /**
-     * An array mapping url schemes to fully qualified Log engine class names
-     *
-     * @var array<string, string>
-     * @phpstan-var array<string, class-string>
-     */
-    protected static array $dsnClassMap = [
-        'console' => Engine\ConsoleLog::class,
-        'file' => Engine\FileLog::class,
-        'syslog' => Engine\SyslogLog::class,
-    ];
-
-    /**
      * Internal flag for tracking whether configuration has been changed.
      *
      * @var bool
@@ -170,6 +158,20 @@ class Log
         'info' => LOG_INFO,
         'debug' => LOG_DEBUG,
     ];
+
+    /**
+     * Returns the default DSN class map.
+     *
+     * @return array<string, class-string>
+     */
+    protected static function initDsnClassMap(): array
+    {
+        return [
+            'console' => Engine\ConsoleLog::class,
+            'file' => Engine\FileLog::class,
+            'syslog' => Engine\SyslogLog::class,
+        ];
+    }
 
     /**
      * Creates registry if doesn't exist and creates all defined logging
