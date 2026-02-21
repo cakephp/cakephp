@@ -23,7 +23,7 @@ class InflectorTest extends TestCase
             'method3' => ['arg1'],
         ]);
 
-        $methods = (new ReflectionClass($inflector))->getProperty('methods');
+        $methods = new ReflectionClass($inflector)->getProperty('methods');
 
         self::assertSame($methods->getValue($inflector), [
             'method1' => ['arg1'],
@@ -44,7 +44,7 @@ class InflectorTest extends TestCase
             'property3' => 'value',
         ]);
 
-        $properties = (new ReflectionClass($inflector))->getProperty('properties');
+        $properties = new ReflectionClass($inflector)->getProperty('properties');
 
         self::assertSame($properties->getValue($inflector), [
             'property1' => 'value',
@@ -62,7 +62,7 @@ class InflectorTest extends TestCase
 
         $container->add(Bar::class, $bar);
 
-        $inflector = (new Inflector('Type'))
+        $inflector = new Inflector('Type')
             ->setContainer($container)
             ->setProperty('bar', Bar::class);
 
@@ -84,7 +84,7 @@ class InflectorTest extends TestCase
 
         $container->add(Bar::class, $bar);
 
-        $inflector = (new Inflector('Type'))
+        $inflector = new Inflector('Type')
             ->setContainer($container)
             ->invokeMethod('setBar', [Bar::class]);
 

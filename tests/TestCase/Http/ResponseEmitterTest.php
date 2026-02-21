@@ -397,7 +397,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseLinksWithAttributes(): void
     {
-        $link = (new Link('/css/app.css'))
+        $link = new Link('/css/app.css')
             ->withRel('preload')
             ->withAttribute('as', 'style')
             ->withAttribute('crossorigin', 'anonymous');
@@ -422,7 +422,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseLinksWithBooleanAttributes(): void
     {
-        $link = (new Link('/script.js'))
+        $link = new Link('/script.js')
             ->withRel('preload')
             ->withAttribute('as', 'script')
             ->withAttribute('nopush', true)
@@ -448,7 +448,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseLinksWithArrayAttributes(): void
     {
-        $link = (new Link('/api/resource'))
+        $link = new Link('/api/resource')
             ->withRel('self')
             ->withAttribute('hreflang', ['en', 'de']);
         $response = new Response()
@@ -472,7 +472,7 @@ class ResponseEmitterTest extends TestCase
      */
     public function testEmitResponseLinksEscapesValues(): void
     {
-        $link = (new Link('/api/users'))
+        $link = new Link('/api/users')
             ->withRel('self')
             ->withAttribute('title', 'A "quoted" value');
         $response = new Response()
