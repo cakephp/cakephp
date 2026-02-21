@@ -36,7 +36,7 @@ class BaseCommandTest extends TestCase
         $command = new class extends Command {
             public ?Arguments $capturedArgs = null;
 
-            public function execute(Arguments $args, ConsoleIo $io): int
+            public function execute(): int
             {
                 $this->capturedArgs = $this->args;
 
@@ -60,7 +60,7 @@ class BaseCommandTest extends TestCase
         $command = new class extends Command {
             public ?ConsoleIo $capturedIo = null;
 
-            public function execute(Arguments $args, ConsoleIo $io): int
+            public function execute(): int
             {
                 $this->capturedIo = $this->io;
 
@@ -77,30 +77,6 @@ class BaseCommandTest extends TestCase
     }
 
     /**
-     * Test that $this->args matches the Arguments passed to execute()
-     */
-    public function testRunHydratedArgsMatchExecuteArgs(): void
-    {
-        $command = new class extends Command {
-            public bool $argsMatch = false;
-
-            public function execute(Arguments $args, ConsoleIo $io): int
-            {
-                $this->argsMatch = ($this->args === $args);
-
-                return static::CODE_SUCCESS;
-            }
-        };
-        $command->setName('cake test');
-        $output = new StubConsoleOutput();
-        $io = Mockery::mock(ConsoleIo::class, [$output, $output, null, null])->makePartial();
-
-        $command->run([], $io);
-
-        $this->assertTrue($command->argsMatch);
-    }
-
-    /**
      * Test that $this->args and $this->io are hydrated before execute(),
      * so traits/parent classes can rely on them without manual assignment.
      */
@@ -109,7 +85,7 @@ class BaseCommandTest extends TestCase
         $command = new class extends Command {
             public bool $propsAvailable = false;
 
-            public function execute(Arguments $args, ConsoleIo $io): int
+            public function execute(): int
             {
                 $this->propsAvailable = isset($this->args) && isset($this->io);
 
@@ -138,7 +114,7 @@ class BaseCommandTest extends TestCase
                 $this->ioAccessible = isset($this->io);
             }
 
-            public function execute(Arguments $args, ConsoleIo $io): int
+            public function execute(): int
             {
                 return static::CODE_SUCCESS;
             }
@@ -165,7 +141,7 @@ class BaseCommandTest extends TestCase
                 $this->argsAccessible = isset($this->args);
             }
 
-            public function execute(Arguments $args, ConsoleIo $io): int
+            public function execute(): int
             {
                 return static::CODE_SUCCESS;
             }
@@ -194,7 +170,7 @@ class BaseCommandTest extends TestCase
                 return $parser;
             }
 
-            public function execute(Arguments $args, ConsoleIo $io): int
+            public function execute(): int
             {
                 $this->capturedName = $this->args->getArgument('name');
 
