@@ -131,14 +131,14 @@ class RouteBuilderTest extends TestCase
     }
 
     /**
-     * Test connecting an instance routes.
+     * Test adding a route instance.
      */
-    public function testConnectInstance(): void
+    public function testAddInstance(): void
     {
         $routes = new RouteBuilder($this->collection, '/l', ['prefix' => 'Api']);
 
         $route = new Route('/{controller}');
-        $this->assertSame($route, $routes->connect($route));
+        $this->assertSame($route, $routes->add($route));
 
         $result = $this->collection->routes()[0];
         $this->assertSame($route, $result);

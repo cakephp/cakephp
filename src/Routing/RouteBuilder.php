@@ -618,6 +618,33 @@ class RouteBuilder
     }
 
     /**
+     * Add a route object to the collection.
+     *
+     * Use this method when you have a pre-built Route object that you want to add
+     * to the route collection. The Route object's settings will be used as-is.
+     *
+     * ### Options:
+     *
+     * - `_ext` is an array of filename extensions that will be parsed out of the url if present.
+     * - `_middleware` is an array of middleware names to apply to the route.
+     *
+     * @param \Cake\Routing\Route\Route $route The route object to add.
+     * @param array<string, mixed> $options An array of additional options for the route.
+     * @return \Cake\Routing\Route\Route
+     */
+    public function add(Route $route, array $options = []): Route
+    {
+        $options += $this->defaultOptions;
+
+        $options['_ext'] ??= $this->extensions;
+        $options['_middleware'] ??= $this->middleware;
+
+        $this->collection->add($route, $options);
+
+        return $route;
+    }
+
+    /**
      * Connects a new Route.
      *
      * Routes are a way of connecting request URLs to objects in your application.
@@ -688,7 +715,7 @@ class RouteBuilder
      *
      * The above route will only be matched for GET requests. POST requests will fail to match this route.
      *
-     * @param \Cake\Routing\Route\Route|string $route A string describing the template of the route
+     * @param string $template The URL template for the route.
      * @param array|string $defaults An array describing the default route parameters.
      *   These parameters will be used by default and can supply routing parameters that are not dynamic. See above.
      * @param array<string, mixed> $options An array matching the named elements in the route to regular expressions which that
@@ -699,7 +726,7 @@ class RouteBuilder
      * @throws \InvalidArgumentException
      * @throws \BadMethodCallException
      */
-    public function connect(Route|string $route, array|string $defaults = [], array $options = []): Route
+    public function connect(string $template, array|string $defaults = [], array $options = []): Route
     {
         $defaults = $this->parseDefaults($defaults);
         $options += $this->defaultOptions;
@@ -717,7 +744,7 @@ class RouteBuilder
             $options['_middleware'] = $this->middleware;
         }
 
-        $route = $this->makeRoute($route, $defaults, $options);
+        $route = $this->makeRoute($template, $defaults, $options);
         $this->collection->add($route, $options);
 
         return $route;
@@ -739,54 +766,50 @@ class RouteBuilder
     }
 
     /**
-     * Create a route object, or return the provided object.
+     * Create a route object from a template string.
      *
-     * @param \Cake\Routing\Route\Route|string $route The route template or route object.
+     * @param string $template The route template.
      * @param array $defaults Default parameters.
      * @param array<string, mixed> $options Additional options parameters.
      * @return \Cake\Routing\Route\Route
-     * @throws \InvalidArgumentException when route class or route object is invalid.
+     * @throws \InvalidArgumentException when route class is invalid.
      * @throws \BadMethodCallException when the route to make conflicts with the current scope
      */
-    protected function makeRoute(Route|string $route, array $defaults, array $options): Route
+    protected function makeRoute(string $template, array $defaults, array $options): Route
     {
-        if (is_string($route)) {
-            /** @var class-string<\Cake\Routing\Route\Route>|null $routeClass */
-            $routeClass = App::className($options['routeClass'], 'Routing/Route');
-            if ($routeClass === null) {
-                throw new InvalidArgumentException(sprintf(
-                    'Cannot find route class %s',
-                    $options['routeClass'],
-                ));
-            }
-
-            $route = str_replace('//', '/', $this->path . $route);
-            if ($route !== '/') {
-                $route = rtrim($route, '/');
-            }
-
-            foreach ($this->params as $param => $val) {
-                if (isset($defaults[$param]) && $param !== 'prefix' && $defaults[$param] !== $val) {
-                    $msg = 'You cannot define routes that conflict with the scope. ' .
-                        'Scope had %s = %s, while route had %s = %s';
-                    throw new BadMethodCallException(sprintf(
-                        $msg,
-                        $param,
-                        $val,
-                        $param,
-                        $defaults[$param],
-                    ));
-                }
-            }
-            $defaults += $this->params + ['plugin' => null];
-            if (!isset($defaults['action']) && !isset($options['action'])) {
-                $defaults['action'] = 'index';
-            }
-
-            $route = new $routeClass($route, $defaults, $options);
+        /** @var class-string<\Cake\Routing\Route\Route>|null $routeClass */
+        $routeClass = App::className($options['routeClass'], 'Routing/Route');
+        if ($routeClass === null) {
+            throw new InvalidArgumentException(sprintf(
+                'Cannot find route class %s',
+                $options['routeClass'],
+            ));
         }
 
-        return $route;
+        $template = str_replace('//', '/', $this->path . $template);
+        if ($template !== '/') {
+            $template = rtrim($template, '/');
+        }
+
+        foreach ($this->params as $param => $val) {
+            if (isset($defaults[$param]) && $param !== 'prefix' && $defaults[$param] !== $val) {
+                $msg = 'You cannot define routes that conflict with the scope. ' .
+                    'Scope had %s = %s, while route had %s = %s';
+                throw new BadMethodCallException(sprintf(
+                    $msg,
+                    $param,
+                    $val,
+                    $param,
+                    $defaults[$param],
+                ));
+            }
+        }
+        $defaults += $this->params + ['plugin' => null];
+        if (!isset($defaults['action']) && !isset($options['action'])) {
+            $defaults['action'] = 'index';
+        }
+
+        return new $routeClass($template, $defaults, $options);
     }
 
     /**
@@ -817,21 +840,21 @@ class RouteBuilder
      * - `persist` Passes the params to the redirected route, if it can. This is useful with greedy routes,
      *   routes that end in `*` are greedy. As you can remap URLs and not lose any passed args.
      *
-     * @param string $route A string describing the template of the route
+     * @param string $template The URL template for the route.
      * @param array|string $url A URL to redirect to. Can be a string or a Cake array-based URL
      * @param array<string, mixed> $options An array matching the named elements in the route to regular expressions which that
      *   element should match. Also contains additional parameters such as which routed parameters should be
      *   shifted into the passed arguments. As well as supplying patterns for routing parameters.
      * @return \Cake\Routing\Route\Route
      */
-    public function redirect(string $route, array|string $url, array $options = []): Route
+    public function redirect(string $template, array|string $url, array $options = []): Route
     {
         $options['routeClass'] ??= RedirectRoute::class;
         if (is_string($url)) {
             $url = ['_redirect' => $url];
         }
 
-        return $this->connect($route, $url, $options);
+        return $this->connect($template, $url, $options);
     }
 
     /**
