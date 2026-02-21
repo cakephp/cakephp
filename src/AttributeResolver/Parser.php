@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\AttributeResolver;
 
 use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\DeclaringClassType;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Generator;
@@ -245,6 +246,8 @@ class Parser
     ): Generator {
         $className = $reflection->getName();
         $startLine = $reflection->getStartLine();
+        $isDeclaringClassAbstract = $reflection->isAbstract();
+        $declaringClassType = $this->getDeclaringClassType($reflection);
 
         // Parse class-level attributes
         yield from $this->parseAttributes(
@@ -253,24 +256,75 @@ class Parser
             $filePath,
             $startLine === false ? 0 : $startLine,
             $fileTime,
-            new AttributeTarget(AttributeTargetType::CLASS_TYPE, $className),
+            new AttributeTarget(
+                AttributeTargetType::CLASS_TYPE,
+                $className,
+                null,
+                $isDeclaringClassAbstract,
+                $declaringClassType,
+            ),
             $pluginName,
         );
 
         // Parse method attributes
         foreach ($reflection->getMethods() as $method) {
-            yield from $this->parseMethod($method, $filePath, $fileTime, $className, $pluginName);
+            yield from $this->parseMethod(
+                $method,
+                $filePath,
+                $fileTime,
+                $className,
+                $isDeclaringClassAbstract,
+                $declaringClassType,
+                $pluginName,
+            );
         }
 
         // Parse property attributes
         foreach ($reflection->getProperties() as $property) {
-            yield from $this->parseProperty($property, $filePath, $fileTime, $className, $pluginName);
+            yield from $this->parseProperty(
+                $property,
+                $filePath,
+                $fileTime,
+                $className,
+                $isDeclaringClassAbstract,
+                $declaringClassType,
+                $pluginName,
+            );
         }
 
         // Parse constant attributes
         foreach ($reflection->getReflectionConstants() as $constant) {
-            yield from $this->parseConstant($constant, $filePath, $fileTime, $className, $pluginName);
+            yield from $this->parseConstant(
+                $constant,
+                $filePath,
+                $fileTime,
+                $className,
+                $isDeclaringClassAbstract,
+                $declaringClassType,
+                $pluginName,
+            );
         }
+    }
+
+    /**
+     * Detect declaring class kind from reflection.
+     *
+     * @param \ReflectionClass $reflection Class reflection
+     * @return \Cake\AttributeResolver\Enum\DeclaringClassType
+     */
+    protected function getDeclaringClassType(ReflectionClass $reflection): DeclaringClassType
+    {
+        if ($reflection->isInterface()) {
+            return DeclaringClassType::INTERFACE;
+        }
+        if ($reflection->isTrait()) {
+            return DeclaringClassType::TRAIT;
+        }
+        if ($reflection->isEnum()) {
+            return DeclaringClassType::ENUM;
+        }
+
+        return DeclaringClassType::CLASS_TYPE;
     }
 
     /**
@@ -280,6 +334,8 @@ class Parser
      * @param string $filePath File path
      * @param int $fileTime File modification time
      * @param string $className Declaring class name
+     * @param bool $isDeclaringClassAbstract Whether the declaring class is abstract
+     * @param \Cake\AttributeResolver\Enum\DeclaringClassType $declaringClassType Declaring class kind
      * @param string|null $pluginName Plugin name
      * @return \Generator<\Cake\AttributeResolver\ValueObject\AttributeInfo>
      */
@@ -288,6 +344,8 @@ class Parser
         string $filePath,
         int $fileTime,
         string $className,
+        bool $isDeclaringClassAbstract,
+        DeclaringClassType $declaringClassType,
         ?string $pluginName,
     ): Generator {
         $startLine = $method->getStartLine();
@@ -295,6 +353,8 @@ class Parser
             AttributeTargetType::METHOD,
             $method->getName(),
             $className,
+            $isDeclaringClassAbstract,
+            $declaringClassType,
         );
 
         yield from $this->parseAttributes(
@@ -314,6 +374,8 @@ class Parser
                 $fileTime,
                 $className,
                 $method->getName(),
+                $isDeclaringClassAbstract,
+                $declaringClassType,
                 $pluginName,
             );
         }
@@ -326,6 +388,8 @@ class Parser
      * @param string $filePath File path
      * @param int $fileTime File modification time
      * @param string $className Declaring class name
+     * @param bool $isDeclaringClassAbstract Whether the declaring class is abstract
+     * @param \Cake\AttributeResolver\Enum\DeclaringClassType $declaringClassType Declaring class kind
      * @param string|null $pluginName Plugin name
      * @return \Generator<\Cake\AttributeResolver\ValueObject\AttributeInfo>
      */
@@ -334,12 +398,16 @@ class Parser
         string $filePath,
         int $fileTime,
         string $className,
+        bool $isDeclaringClassAbstract,
+        DeclaringClassType $declaringClassType,
         ?string $pluginName,
     ): Generator {
         $target = new AttributeTarget(
             AttributeTargetType::PROPERTY,
             $property->getName(),
             $className,
+            $isDeclaringClassAbstract,
+            $declaringClassType,
         );
 
         yield from $this->parseAttributes(
@@ -361,6 +429,8 @@ class Parser
      * @param int $fileTime File modification time
      * @param string $className Declaring class name
      * @param string $methodName Method name
+     * @param bool $isDeclaringClassAbstract Whether the declaring class is abstract
+     * @param \Cake\AttributeResolver\Enum\DeclaringClassType $declaringClassType Declaring class kind
      * @param string|null $pluginName Plugin name
      * @return \Generator<\Cake\AttributeResolver\ValueObject\AttributeInfo>
      */
@@ -370,6 +440,8 @@ class Parser
         int $fileTime,
         string $className,
         string $methodName,
+        bool $isDeclaringClassAbstract,
+        DeclaringClassType $declaringClassType,
         ?string $pluginName,
     ): Generator {
         $declaringFunction = $parameter->getDeclaringFunction();
@@ -379,6 +451,8 @@ class Parser
             AttributeTargetType::PARAMETER,
             $parameter->getName(),
             $className . '::' . $methodName,
+            $isDeclaringClassAbstract,
+            $declaringClassType,
         );
 
         yield from $this->parseAttributes(
@@ -399,6 +473,8 @@ class Parser
      * @param string $filePath File path
      * @param int $fileTime File modification time
      * @param string $className Declaring class name
+     * @param bool $isDeclaringClassAbstract Whether the declaring class is abstract
+     * @param \Cake\AttributeResolver\Enum\DeclaringClassType $declaringClassType Declaring class kind
      * @param string|null $pluginName Plugin name
      * @return \Generator<\Cake\AttributeResolver\ValueObject\AttributeInfo>
      */
@@ -407,12 +483,16 @@ class Parser
         string $filePath,
         int $fileTime,
         string $className,
+        bool $isDeclaringClassAbstract,
+        DeclaringClassType $declaringClassType,
         ?string $pluginName,
     ): Generator {
         $target = new AttributeTarget(
             AttributeTargetType::CONSTANT,
             $constant->getName(),
             $className,
+            $isDeclaringClassAbstract,
+            $declaringClassType,
         );
 
         yield from $this->parseAttributes(

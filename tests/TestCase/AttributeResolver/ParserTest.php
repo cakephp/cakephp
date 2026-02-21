@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\AttributeResolver;
 
 use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\DeclaringClassType;
 use Cake\AttributeResolver\Parser;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\TestSuite\TestCase;
@@ -50,6 +51,18 @@ class ParserTest extends TestCase
         $classAttr = array_values($classAttrs)[0];
         $this->assertSame('TestApp\\Attribute\\Resolver\\TestRoute', $classAttr->attributeName);
         $this->assertSame(['path' => '/test'], $classAttr->arguments);
+    }
+
+    public function testParseFileCapturesAbstractClassMetadata(): void
+    {
+        $filePath = TEST_APP . 'TestApp/Controller/AttributeRoutingBaseController.php';
+        $results = iterator_to_array($this->parser->parseFile(new SplFileInfo($filePath)), false);
+
+        $this->assertNotEmpty($results);
+        foreach ($results as $result) {
+            $this->assertTrue($result->target->isDeclaringClassAbstract);
+            $this->assertSame(DeclaringClassType::CLASS_TYPE, $result->target->declaringClassType);
+        }
     }
 
     public function testParseMethodAttributes(): void
@@ -310,6 +323,10 @@ class ParserTest extends TestCase
 
         $interfaceAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
         $this->assertCount(1, $interfaceAttrs);
+        $this->assertSame(
+            DeclaringClassType::INTERFACE,
+            array_values($interfaceAttrs)[0]->target->declaringClassType,
+        );
 
         $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
         $this->assertCount(1, $methodAttrs);
@@ -325,6 +342,10 @@ class ParserTest extends TestCase
 
         $traitAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
         $this->assertCount(1, $traitAttrs);
+        $this->assertSame(
+            DeclaringClassType::TRAIT,
+            array_values($traitAttrs)[0]->target->declaringClassType,
+        );
 
         $methodAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::METHOD);
         $this->assertCount(1, $methodAttrs);
@@ -340,6 +361,10 @@ class ParserTest extends TestCase
 
         $enumAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
         $this->assertCount(1, $enumAttrs);
+        $this->assertSame(
+            DeclaringClassType::ENUM,
+            array_values($enumAttrs)[0]->target->declaringClassType,
+        );
 
         // Enum cases are treated as class constants
         $caseAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CONSTANT);

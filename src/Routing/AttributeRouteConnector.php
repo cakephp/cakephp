@@ -65,7 +65,7 @@ class AttributeRouteConnector
     /**
      * @param \Cake\Routing\RouteBuilder $routeBuilder Route builder instance.
      */
-    public function __construct(protected RouteBuilder $routeBuilder)
+    public function __construct(protected readonly RouteBuilder $routeBuilder)
     {
     }
 
@@ -101,6 +101,11 @@ class AttributeRouteConnector
             $classAttributes[$attributeInfo->className][] = $attributeInfo;
         }
 
+        foreach ($classAttributes as &$infos) {
+            usort($infos, fn(AttributeInfo $a, AttributeInfo $b): int => $a->lineNumber <=> $b->lineNumber);
+        }
+        unset($infos);
+
         return $classAttributes;
     }
 
@@ -119,13 +124,17 @@ class AttributeRouteConnector
         if (!isset($classAttributes[$className][0])) {
             return;
         }
+        $controllerTarget = $classAttributes[$className][0]->target;
+        if (!$controllerTarget->isInstantiableDeclaringType()) {
+            return;
+        }
 
         $classMetadata = $this->extractControllerMetadata($className, $classAttributes[$className][0]->pluginName);
         if ($classMetadata === null) {
             return;
         }
 
-        $hierarchy = array_values(class_parents($className));
+        $hierarchy = array_reverse(array_values(class_parents($className)));
         $hierarchy[] = $className;
 
         $classState = $this->buildClassRouteState($className, $hierarchy, $classAttributes, $classMetadata);
@@ -179,7 +188,6 @@ class AttributeRouteConnector
                 continue;
             }
             $infos = $classAttributes[$hierarchyClass];
-            usort($infos, fn(AttributeInfo $a, AttributeInfo $b): int => $a->lineNumber <=> $b->lineNumber);
 
             foreach ($infos as $info) {
                 if ($info->target->type !== AttributeTargetType::CLASS_TYPE) {
@@ -241,10 +249,7 @@ class AttributeRouteConnector
             return;
         }
         if ($instance instanceof Middleware) {
-            $state['classMiddleware'] = array_values(array_unique(array_merge(
-                $state['classMiddleware'],
-                $instance->names,
-            )));
+            $state['classMiddleware'] = $this->mergeUniqueStrings($state['classMiddleware'], $instance->names);
 
             return;
         }
@@ -297,10 +302,10 @@ class AttributeRouteConnector
             if ($classState['routeClass'] !== '' && !isset($connectOptions['routeClass'])) {
                 $connectOptions['routeClass'] = $classState['routeClass'];
             }
-            $resourceMiddleware = array_values(array_unique(array_merge(
+            $resourceMiddleware = $this->mergeUniqueStrings(
                 $this->routeBuilder->getMiddleware(),
                 $classState['classMiddleware'],
-            )));
+            );
             if ($resourceMiddleware !== [] && !isset($connectOptions['_middleware'])) {
                 $connectOptions['_middleware'] = $resourceMiddleware;
             }
@@ -394,7 +399,6 @@ class AttributeRouteConnector
                 continue;
             }
             $infos = $classAttributes[$hierarchyClass];
-            usort($infos, fn(AttributeInfo $a, AttributeInfo $b): int => $a->lineNumber <=> $b->lineNumber);
             foreach ($infos as $info) {
                 if ($info->target->type !== AttributeTargetType::METHOD) {
                     continue;
@@ -408,11 +412,7 @@ class AttributeRouteConnector
                     continue;
                 }
                 $methodKey = $declaringClass . '::' . $methodName;
-                $attributeKey = implode(':', [
-                    $methodName,
-                    $info->attributeName,
-                    serialize($info->arguments),
-                ]);
+                $attributeKey = $methodName . ':' . $info->attributeName . ':' . $info->lineNumber;
                 if (isset($seenAttributes[$attributeKey])) {
                     continue;
                 }
@@ -450,10 +450,7 @@ class AttributeRouteConnector
                 continue;
             }
             if ($instance instanceof Middleware) {
-                $methodMiddleware = array_values(array_unique(array_merge(
-                    $methodMiddleware,
-                    $instance->names,
-                )));
+                $methodMiddleware = $this->mergeUniqueStrings($methodMiddleware, $instance->names);
 
                 continue;
             }
@@ -549,11 +546,11 @@ class AttributeRouteConnector
             $options['_ext'] = $effectiveExtensions;
         }
 
-        $middleware = array_values(array_unique(array_merge(
+        $middleware = $this->mergeUniqueStrings(
             $this->routeBuilder->getMiddleware(),
             $classState['classMiddleware'],
             $methodState['methodMiddleware'],
-        )));
+        );
         if ($middleware !== []) {
             $options['_middleware'] = $middleware;
         }
@@ -658,7 +655,7 @@ class AttributeRouteConnector
             $path = '/' . $path;
         }
 
-        return str_replace('//', '/', $path);
+        return (string)preg_replace('#/+#', '/', $path);
     }
 
     /**
@@ -679,5 +676,29 @@ class AttributeRouteConnector
         }
 
         return $defaults;
+    }
+
+    /**
+     * Merge multiple string lists while preserving order and uniqueness.
+     *
+     * @param array<int, string> ...$lists Input lists.
+     * @return array<int, string>
+     */
+    protected function mergeUniqueStrings(array ...$lists): array
+    {
+        $seen = [];
+        $result = [];
+
+        foreach ($lists as $list) {
+            foreach ($list as $value) {
+                if (isset($seen[$value])) {
+                    continue;
+                }
+                $seen[$value] = true;
+                $result[] = $value;
+            }
+        }
+
+        return $result;
     }
 }

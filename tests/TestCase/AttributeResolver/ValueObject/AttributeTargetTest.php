@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\Test\TestCase\AttributeResolver\ValueObject;
 
 use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\DeclaringClassType;
 use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Cake\TestSuite\TestCase;
 
@@ -39,6 +40,8 @@ class AttributeTargetTest extends TestCase
         $this->assertSame(AttributeTargetType::METHOD, $target->type);
         $this->assertSame('myMethod', $target->name);
         $this->assertSame('App\Controller\UsersController', $target->declaringClass);
+        $this->assertFalse($target->isDeclaringClassAbstract);
+        $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
     }
 
     /**
@@ -54,6 +57,8 @@ class AttributeTargetTest extends TestCase
         $this->assertSame(AttributeTargetType::CLASS_TYPE, $target->type);
         $this->assertSame('MyClass', $target->name);
         $this->assertNull($target->declaringClass);
+        $this->assertFalse($target->isDeclaringClassAbstract);
+        $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
     }
 
     /**
@@ -71,6 +76,8 @@ class AttributeTargetTest extends TestCase
             'type' => 'property',
             'name' => 'title',
             'declaringClass' => 'App\Model\Entity\Article',
+            'isDeclaringClassAbstract' => false,
+            'declaringClassType' => 'class',
         ];
 
         $this->assertSame($expected, $target->toArray());
@@ -90,6 +97,8 @@ class AttributeTargetTest extends TestCase
             'type' => 'class',
             'name' => 'TestClass',
             'declaringClass' => null,
+            'isDeclaringClassAbstract' => false,
+            'declaringClassType' => 'class',
         ];
 
         $this->assertSame($expected, $target->toArray());
@@ -104,6 +113,8 @@ class AttributeTargetTest extends TestCase
             'type' => 'method',
             'name' => 'index',
             'declaringClass' => 'App\Controller\ArticlesController',
+            'isDeclaringClassAbstract' => true,
+            'declaringClassType' => 'interface',
         ];
 
         $target = AttributeTarget::fromArray($data);
@@ -111,6 +122,8 @@ class AttributeTargetTest extends TestCase
         $this->assertSame(AttributeTargetType::METHOD, $target->type);
         $this->assertSame('index', $target->name);
         $this->assertSame('App\Controller\ArticlesController', $target->declaringClass);
+        $this->assertTrue($target->isDeclaringClassAbstract);
+        $this->assertSame(DeclaringClassType::INTERFACE, $target->declaringClassType);
     }
 
     /**
@@ -122,6 +135,8 @@ class AttributeTargetTest extends TestCase
             'type' => 'parameter',
             'name' => 'userId',
             'declaringClass' => null,
+            'isDeclaringClassAbstract' => false,
+            'declaringClassType' => 'class',
         ];
 
         $target = AttributeTarget::fromArray($data);
@@ -129,6 +144,8 @@ class AttributeTargetTest extends TestCase
         $this->assertSame(AttributeTargetType::PARAMETER, $target->type);
         $this->assertSame('userId', $target->name);
         $this->assertNull($target->declaringClass);
+        $this->assertFalse($target->isDeclaringClassAbstract);
+        $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
     }
 
     /**
@@ -205,5 +222,45 @@ class AttributeTargetTest extends TestCase
         $decoded = json_decode($json, true);
 
         $this->assertSame($target->toArray(), $decoded);
+    }
+
+    /**
+     * Test concrete class target is instantiable.
+     */
+    public function testIsInstantiableDeclaringTypeTrue(): void
+    {
+        $target = new AttributeTarget(
+            type: AttributeTargetType::CLASS_TYPE,
+            name: 'UsersController',
+            declaringClass: 'App\Controller\UsersController',
+            isDeclaringClassAbstract: false,
+            declaringClassType: DeclaringClassType::CLASS_TYPE,
+        );
+
+        $this->assertTrue($target->isInstantiableDeclaringType());
+    }
+
+    /**
+     * Test non-concrete declaring types are not instantiable.
+     */
+    public function testIsInstantiableDeclaringTypeFalseForAbstractOrNonClass(): void
+    {
+        $abstractTarget = new AttributeTarget(
+            type: AttributeTargetType::CLASS_TYPE,
+            name: 'BaseController',
+            declaringClass: 'App\Controller\BaseController',
+            isDeclaringClassAbstract: true,
+            declaringClassType: DeclaringClassType::CLASS_TYPE,
+        );
+        $interfaceTarget = new AttributeTarget(
+            type: AttributeTargetType::CLASS_TYPE,
+            name: 'Contract',
+            declaringClass: 'App\Controller\Contract',
+            isDeclaringClassAbstract: false,
+            declaringClassType: DeclaringClassType::INTERFACE,
+        );
+
+        $this->assertFalse($abstractTarget->isInstantiableDeclaringType());
+        $this->assertFalse($interfaceTarget->isInstantiableDeclaringType());
     }
 }

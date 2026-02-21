@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\AttributeResolver\ValueObject;
 
 use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\DeclaringClassType;
 use JsonSerializable;
 
 /**
@@ -26,6 +27,8 @@ use JsonSerializable;
  * - The type of target (class, method, property, etc.)
  * - The name of the target
  * - The declaring class (if applicable)
+ * - The declaring class kind (class, interface, trait, enum)
+ * - Whether the declaring class is abstract
  *
  * This class is readonly and immutable for safe serialization.
  */
@@ -37,11 +40,15 @@ readonly class AttributeTarget implements JsonSerializable
      * @param \Cake\AttributeResolver\Enum\AttributeTargetType $type Target type
      * @param string $name Target name (e.g., method name, property name)
      * @param string|null $declaringClass Class name that declares this target
+     * @param bool $isDeclaringClassAbstract Whether the declaring class is abstract
+     * @param \Cake\AttributeResolver\Enum\DeclaringClassType $declaringClassType Declaring class kind
      */
     public function __construct(
         public AttributeTargetType $type,
         public string $name,
         public ?string $declaringClass = null,
+        public bool $isDeclaringClassAbstract = false,
+        public DeclaringClassType $declaringClassType = DeclaringClassType::CLASS_TYPE,
     ) {
     }
 
@@ -56,6 +63,8 @@ readonly class AttributeTarget implements JsonSerializable
             'type' => $this->type->value,
             'name' => $this->name,
             'declaringClass' => $this->declaringClass,
+            'isDeclaringClassAbstract' => $this->isDeclaringClassAbstract,
+            'declaringClassType' => $this->declaringClassType->value,
         ];
     }
 
@@ -71,11 +80,17 @@ readonly class AttributeTarget implements JsonSerializable
         if (!$type instanceof AttributeTargetType) {
             $type = AttributeTargetType::from((string)$type);
         }
+        $declaringClassType = $data['declaringClassType'] ?? DeclaringClassType::CLASS_TYPE->value;
+        if (!$declaringClassType instanceof DeclaringClassType) {
+            $declaringClassType = DeclaringClassType::from((string)$declaringClassType);
+        }
 
         return new self(
             type: $type,
             name: (string)$data['name'],
             declaringClass: isset($data['declaringClass']) ? (string)$data['declaringClass'] : null,
+            isDeclaringClassAbstract: (bool)($data['isDeclaringClassAbstract'] ?? false),
+            declaringClassType: $declaringClassType,
         );
     }
 
@@ -87,5 +102,16 @@ readonly class AttributeTarget implements JsonSerializable
     public function jsonSerialize(): array
     {
         return $this->toArray();
+    }
+
+    /**
+     * Check whether the declaring type can be instantiated as a concrete class.
+     *
+     * @return bool
+     */
+    public function isInstantiableDeclaringType(): bool
+    {
+        return $this->declaringClassType === DeclaringClassType::CLASS_TYPE
+            && $this->isDeclaringClassAbstract === false;
     }
 }

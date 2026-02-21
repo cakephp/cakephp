@@ -182,6 +182,43 @@ class AttributeRouteConnectorTest extends TestCase
     }
 
     /**
+     * Tests branch handling for abstract controller classes.
+     *
+     * @return void
+     */
+    public function testConnectSkipsAbstractControllerClasses(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $helper = new AttributeRouteConnector($routes);
+
+        $className = 'TestApp\\Controller\\AttributeRoutingBaseController';
+        $attributes = [
+            new AttributeInfo(
+                className: $className,
+                attributeName: Scope::class,
+                arguments: ['/base', 'base:', [], [], null],
+                filePath: __FILE__,
+                lineNumber: 3,
+                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingBaseController', $className, true),
+            ),
+            new AttributeInfo(
+                className: $className,
+                attributeName: Route::class,
+                arguments: ['/parent', 'parent', ['GET']],
+                filePath: __FILE__,
+                lineNumber: 4,
+                target: new AttributeTarget(AttributeTargetType::METHOD, 'parentRoute', $className, true),
+            ),
+        ];
+
+        $this->injectResolverCollection('injected-abstract-skip', new AttributeCollection($attributes));
+
+        $helper->connect('injected-abstract-skip');
+
+        $this->assertCount(0, $this->collection->routes());
+    }
+
+    /**
      * Tests helper support for prefix, route class, middleware and persist/host options.
      *
      * @return void
@@ -674,6 +711,7 @@ class AttributeRouteConnectorTest extends TestCase
         $this->assertSame('/', $helper->callNormalizePath(''));
         $this->assertSame('/abc', $helper->callNormalizePath('abc'));
         $this->assertSame('/a/b', $helper->callNormalizePath('/a//b'));
+        $this->assertSame('/a/b', $helper->callNormalizePath('///a///b'));
     }
 
     /**

@@ -142,6 +142,8 @@ class AttributeInfoTest extends TestCase
                 'type' => 'property',
                 'name' => 'title',
                 'declaringClass' => 'App\Model\Entity\Article',
+                'isDeclaringClassAbstract' => false,
+                'declaringClassType' => 'class',
             ],
             'fileTime' => 9876543210,
             'pluginName' => 'Blog',
