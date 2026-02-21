@@ -161,7 +161,8 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
         $action = $controller->getAction();
         $args = $this->getActionArgs(
             $action,
-            array_values((array)$controller->getRequest()->getParam('pass')),
+            (array)$controller->getRequest()->getParam('pass'),
+            (array)$controller->getRequest()->getParam('_argsByName'),
         );
         $controller->invokeAction($action, $args);
 
@@ -177,12 +178,18 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
      * Get the arguments for the controller action invocation.
      *
      * @param \Closure $action Controller action.
-     * @param array $passedParams Params passed by the router.
-     * @return array
+     * @param array<int|string, mixed> $passedParams Params passed by the router.
+     * @param array<string, int> $argsByName Parameter-name to positional-index map.
+     * @return array<int, mixed>
      */
-    protected function getActionArgs(Closure $action, array $passedParams): array
+    protected function getActionArgs(Closure $action, array $passedParams, array $argsByName = []): array
     {
+        if ($argsByName !== [] && array_is_list($passedParams)) {
+            $passedParams = $this->applyArgsByNameMap($passedParams, $argsByName);
+        }
+
         $resolved = [];
+        $namedPass = !array_is_list($passedParams);
         $function = new ReflectionFunction($action);
         foreach ($function->getParameters() as $parameter) {
             $type = $parameter->getType();
@@ -195,10 +202,24 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
                     continue;
                 }
 
+                if ($namedPass && array_key_exists($parameter->getName(), $passedParams)) {
+                    $argument = $passedParams[$parameter->getName()];
+                    if ($argument instanceof $typeName) {
+                        unset($passedParams[$parameter->getName()]);
+                        $resolved[] = $argument;
+
+                        continue;
+                    }
+                }
+
+                $firstPositionalKey = $this->getFirstPositionalParamKey($passedParams);
+
                 // Use passedParams as a source of typed dependencies.
                 // The accepted types for passedParams was never defined and userland code relies on that.
-                if ($passedParams && $passedParams[0] instanceof $typeName) {
-                    $resolved[] = array_shift($passedParams);
+                if ($firstPositionalKey !== null && $passedParams[$firstPositionalKey] instanceof $typeName) {
+                    $resolved[] = $passedParams[$firstPositionalKey];
+                    unset($passedParams[$firstPositionalKey]);
+
                     continue;
                 }
 
@@ -221,8 +242,21 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             }
 
             // Use any passed params as positional arguments
-            if ($passedParams) {
-                $argument = array_shift($passedParams);
+            $hasArgument = false;
+            $argument = null;
+            if ($namedPass && array_key_exists($parameter->getName(), $passedParams)) {
+                $argument = $passedParams[$parameter->getName()];
+                unset($passedParams[$parameter->getName()]);
+                $hasArgument = true;
+            } else {
+                $firstPositionalKey = $this->getFirstPositionalParamKey($passedParams);
+                if ($firstPositionalKey !== null) {
+                    $argument = $passedParams[$firstPositionalKey];
+                    unset($passedParams[$firstPositionalKey]);
+                    $hasArgument = true;
+                }
+            }
+            if ($hasArgument) {
                 if (is_string($argument) && $type instanceof ReflectionNamedType) {
                     $typedArgument = $this->coerceStringToType($argument, $type);
 
@@ -266,7 +300,45 @@ class ControllerFactory implements ControllerFactoryInterface, RequestHandlerInt
             ]);
         }
 
-        return array_merge($resolved, $passedParams);
+        return array_merge($resolved, array_values($passedParams));
+    }
+
+    /**
+     * Applies named argument mapping to positional route parameters.
+     *
+     * @param array<int, mixed> $passedParams Positional route parameters.
+     * @param array<string, int> $argsByName Parameter-name to index map.
+     * @return array<int|string, mixed>
+     */
+    protected function applyArgsByNameMap(array $passedParams, array $argsByName): array
+    {
+        $mapped = [];
+        foreach ($argsByName as $name => $index) {
+            if (!array_key_exists($index, $passedParams)) {
+                continue;
+            }
+            $mapped[$name] = $passedParams[$index];
+            unset($passedParams[$index]);
+        }
+
+        return array_replace($mapped, $passedParams);
+    }
+
+    /**
+     * Returns the first positional argument key from route params.
+     *
+     * @param array<int|string, mixed> $passedParams Passed route parameters.
+     * @return int|null
+     */
+    protected function getFirstPositionalParamKey(array $passedParams): ?int
+    {
+        foreach ($passedParams as $key => $_value) {
+            if (is_int($key)) {
+                return $key;
+            }
+        }
+
+        return null;
     }
 
     /**

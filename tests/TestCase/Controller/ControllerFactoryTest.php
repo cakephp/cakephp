@@ -471,6 +471,147 @@ class ControllerFactoryTest extends TestCase
     }
 
     /**
+     * Test invoke passing named data from pass parameters.
+     *
+     * @return void
+     */
+    public function testInvokeInjectParametersOptionalWithNamedPassedParameters(): void
+    {
+        $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/optionalDep',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'optionalDep',
+                'pass' => ['str' => 'two', 'any' => 'one'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertNotNull($data);
+        $this->assertSame('one', $data->any);
+        $this->assertSame('two', $data->str);
+        $this->assertSame('value', $data->dep->key);
+    }
+
+    /**
+     * Test invoke coercing named pass parameters for scalar typed arguments.
+     *
+     * @return void
+     */
+    public function testInvokeInjectParametersRequiredTypedWithNamedPassedParameters(): void
+    {
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/required_typed',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredTyped',
+                'pass' => [
+                    'three' => '0',
+                    'one' => '1.1',
+                    'four' => 'foo,bar',
+                    'two' => '2',
+                ],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $response = $this->factory->invoke($controller);
+
+        $expected = ['one' => 1.1, 'two' => 2, 'three' => false, 'four' => ['foo', 'bar']];
+        $data = json_decode((string)$response->getBody(), true);
+        $this->assertSame($expected, $data);
+    }
+
+    /**
+     * Test invoke applying args-by-name metadata to positional pass parameters.
+     *
+     * @return void
+     */
+    public function testInvokeInjectParametersOptionalWithArgsByNameMap(): void
+    {
+        $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/optionalDep',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'optionalDep',
+                'pass' => ['two', 'one'],
+                '_argsByName' => ['str' => 0, 'any' => 1],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertNotNull($data);
+        $this->assertSame('one', $data->any);
+        $this->assertSame('two', $data->str);
+        $this->assertSame('value', $data->dep->key);
+    }
+
+    /**
+     * Test invoke applying args-by-name metadata when a mapped index is missing.
+     *
+     * @return void
+     */
+    public function testInvokeInjectParametersOptionalWithSparseArgsByNameMap(): void
+    {
+        $this->container->add(stdClass::class, json_decode('{"key":"value"}'));
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/optionalDep',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'optionalDep',
+                'pass' => ['two', 'one'],
+                '_argsByName' => ['str' => 0, 'missing' => 2, 'any' => 1],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $result = $this->factory->invoke($controller);
+        $data = json_decode((string)$result->getBody());
+
+        $this->assertNotNull($data);
+        $this->assertSame('one', $data->any);
+        $this->assertSame('two', $data->str);
+        $this->assertSame('value', $data->dep->key);
+    }
+
+    /**
+     * Test invoke injecting typed dependencies from named pass parameters.
+     *
+     * @return void
+     */
+    public function testInvokeInjectParametersRequiredWithNamedObjectPassedParameter(): void
+    {
+        $inject = new stdClass();
+        $inject->id = uniqid();
+
+        $request = new ServerRequest([
+            'url' => 'test_plugin_three/dependencies/requiredDep',
+            'params' => [
+                'plugin' => null,
+                'controller' => 'Dependencies',
+                'action' => 'requiredDep',
+                'pass' => ['dep' => $inject, 'str' => 'two', 'any' => 'one'],
+            ],
+        ]);
+        $controller = $this->factory->create($request);
+        $response = $this->factory->invoke($controller);
+
+        $data = json_decode((string)$response->getBody());
+        $this->assertNotNull($data);
+        $this->assertSame($inject->id, $data->dep->id);
+        $this->assertSame('one', $data->any);
+        $this->assertSame('two', $data->str);
+    }
+
+    /**
      * Test invoke() injecting dependencies that exist in passed params as objects.
      * The accepted types of `params.pass` was never enforced and userland code has
      * creative uses of this previously unspecified behavior.
