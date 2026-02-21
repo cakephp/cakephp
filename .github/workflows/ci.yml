@@ -150,7 +150,7 @@ jobs:
 
         if [[ ${{ matrix.php-version }} == '8.2' && ${{ matrix.dependencies }} == 'highest' ]]; then
           export CODECOVERAGE=1
-          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-phpunit-deprecation --testsuite=cakephp --coverage-clover=coverage.xml
+          vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=cakephp --coverage-clover=coverage.xml
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database --coverage-clover=coverage-database.xml
           CAKE_TEST_AUTOQUOTE=1 vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --testsuite=database
           vendor/bin/phpunit --display-all-issues --fail-on-all-issues --do-not-fail-on-skipped --do-not-fail-on-incomplete --do-not-fail-on-warning --testsuite=globalfunctions --coverage-clover=coverage-functions.xml
@@ -259,7 +259,18 @@ jobs:
       - name: Composer install
         uses: ramsey/composer-install@v3
 
+      - name: Cache phive tools
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.phive
+            tools
+          key: ${{ runner.os }}-phive-${{ hashFiles('.phive/phars.xml') }}
+          restore-keys: ${{ runner.os }}-phive-
+
       - name: Install PHP tools with phive.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
 
       - name: Run phpstan
@@ -336,6 +347,15 @@ jobs:
 
       - name: Composer install
         uses: ramsey/composer-install@v3
+
+      - name: Cache phive tools
+        uses: actions/cache@v5
+        with:
+          path: |
+            ~/.phive
+            tools
+          key: ${{ runner.os }}-phive-${{ hashFiles('.phive/phars.xml') }}
+          restore-keys: ${{ runner.os }}-phive-
 
       - name: Install PHP tools with phive.
         env:

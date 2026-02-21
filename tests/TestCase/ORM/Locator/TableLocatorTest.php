@@ -686,8 +686,11 @@ class TableLocatorTest extends TestCase
     public function testInstanceSetButNotOptions(): void
     {
         $this->setTableLocator($this->_locator);
-        $mock = $this->getMockForModel('Articles', ['findPublished']);
+        $mock = $this->getMockForModel('Articles', ['setAlias']);
         $table = $this->_locator->get('Articles', ['className' => ArticlesTable::class]);
+
+        // This is just to avoid phpunit's deprecation notice.
+        $mock->expects($this->never())->method('setAlias');
 
         $this->assertSame($table, $mock);
     }
