@@ -369,7 +369,7 @@ SQL;
                 config JSON,
                 created DATETIME,
                 created_with_precision DATETIME(3) DEFAULT CURRENT_TIMESTAMP(3),
-                updated DATETIME ON UPDATE CURRENT_TIMESTAMP,
+                updated DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
                 KEY `author_idx` (`author_id`),
                 CONSTRAINT `length_idx` UNIQUE KEY(`title`(4)),
                 FOREIGN KEY `author_idx` (`author_id`) REFERENCES `schema_authors`(`id`) ON UPDATE CASCADE ON DELETE RESTRICT,
@@ -541,10 +541,10 @@ SQL;
             'updated' => [
                 'type' => 'datetime',
                 'null' => true,
-                'default' => null,
+                'default' => 'CURRENT_TIMESTAMP',
                 'length' => null,
                 'precision' => null,
-                'comment' => null,
+                'comment' => '',
                 'onUpdate' => 'CURRENT_TIMESTAMP',
             ],
         ];
