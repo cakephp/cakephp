@@ -18,6 +18,7 @@ namespace Cake\Routing;
 
 use Cake\AttributeResolver\AttributeResolver;
 use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\MethodVisibility;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\Routing\Attribute\Delete;
 use Cake\Routing\Attribute\Extensions;
@@ -401,6 +402,12 @@ class AttributeRouteConnector
             $infos = $classAttributes[$hierarchyClass];
             foreach ($infos as $info) {
                 if ($info->target->type !== AttributeTargetType::METHOD) {
+                    continue;
+                }
+                if (
+                    $info->target->methodVisibility !== null
+                    && $info->target->methodVisibility !== MethodVisibility::PUBLIC
+                ) {
                     continue;
                 }
                 $methodName = $info->target->name;

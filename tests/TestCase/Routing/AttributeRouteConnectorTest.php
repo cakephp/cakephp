@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\Routing;
 use Cake\AttributeResolver\AttributeCollection;
 use Cake\AttributeResolver\AttributeResolver;
 use Cake\AttributeResolver\Enum\AttributeTargetType;
+use Cake\AttributeResolver\Enum\MethodVisibility;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Cake\Cache\Cache;
@@ -663,6 +664,63 @@ class AttributeRouteConnectorTest extends TestCase
         ]);
 
         $this->assertSame([], $groups);
+    }
+
+    /**
+     * Tests method grouping skips non-public method targets.
+     *
+     * @return void
+     */
+    public function testGetMethodAttributeGroupsSkipsNonPublicMethods(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $helper = new class ($routes) extends AttributeRouteConnector {
+            /**
+             * @param string $className Controller class name.
+             * @param list<string> $hierarchy Parent-to-child class hierarchy.
+             * @param array<string, array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>> $classAttributes Attributes grouped by class.
+             * @return array<int, array{methodName: string, infos: array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>}>
+             */
+            public function callGetMethodAttributeGroups(string $className, array $hierarchy, array $classAttributes): array
+            {
+                return $this->getMethodAttributeGroups($className, $hierarchy, $classAttributes);
+            }
+        };
+
+        $className = 'TestApp\\Controller\\AttributeRoutingController';
+        $groups = $helper->callGetMethodAttributeGroups($className, [$className], [
+            $className => [
+                new AttributeInfo(
+                    className: $className,
+                    attributeName: Route::class,
+                    arguments: ['/public', 'public'],
+                    filePath: __FILE__,
+                    lineNumber: 1,
+                    target: new AttributeTarget(
+                        AttributeTargetType::METHOD,
+                        'publicMethod',
+                        $className,
+                        methodVisibility: MethodVisibility::PUBLIC,
+                    ),
+                ),
+                new AttributeInfo(
+                    className: $className,
+                    attributeName: Route::class,
+                    arguments: ['/private', 'private'],
+                    filePath: __FILE__,
+                    lineNumber: 2,
+                    target: new AttributeTarget(
+                        AttributeTargetType::METHOD,
+                        'privateMethod',
+                        $className,
+                        methodVisibility: MethodVisibility::PRIVATE,
+                    ),
+                ),
+            ],
+        ]);
+
+        $this->assertCount(1, $groups);
+        $this->assertSame('publicMethod', $groups[0]['methodName']);
     }
 
     /**

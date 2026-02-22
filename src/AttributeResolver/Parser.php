@@ -18,6 +18,7 @@ namespace Cake\AttributeResolver;
 
 use Cake\AttributeResolver\Enum\AttributeTargetType;
 use Cake\AttributeResolver\Enum\DeclaringClassType;
+use Cake\AttributeResolver\Enum\MethodVisibility;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Generator;
@@ -349,12 +350,14 @@ class Parser
         ?string $pluginName,
     ): Generator {
         $startLine = $method->getStartLine();
+        $methodVisibility = $this->getMethodVisibility($method);
         $target = new AttributeTarget(
             AttributeTargetType::METHOD,
             $method->getName(),
             $className,
             $isDeclaringClassAbstract,
             $declaringClassType,
+            $methodVisibility,
         );
 
         yield from $this->parseAttributes(
@@ -376,9 +379,28 @@ class Parser
                 $method->getName(),
                 $isDeclaringClassAbstract,
                 $declaringClassType,
+                $methodVisibility,
                 $pluginName,
             );
         }
+    }
+
+    /**
+     * Detect method visibility from reflection metadata.
+     *
+     * @param \ReflectionMethod $method Method reflection
+     * @return \Cake\AttributeResolver\Enum\MethodVisibility
+     */
+    protected function getMethodVisibility(ReflectionMethod $method): MethodVisibility
+    {
+        if ($method->isPrivate()) {
+            return MethodVisibility::PRIVATE;
+        }
+        if ($method->isProtected()) {
+            return MethodVisibility::PROTECTED;
+        }
+
+        return MethodVisibility::PUBLIC;
     }
 
     /**
@@ -431,6 +453,7 @@ class Parser
      * @param string $methodName Method name
      * @param bool $isDeclaringClassAbstract Whether the declaring class is abstract
      * @param \Cake\AttributeResolver\Enum\DeclaringClassType $declaringClassType Declaring class kind
+     * @param \Cake\AttributeResolver\Enum\MethodVisibility $methodVisibility Method visibility
      * @param string|null $pluginName Plugin name
      * @return \Generator<\Cake\AttributeResolver\ValueObject\AttributeInfo>
      */
@@ -442,6 +465,7 @@ class Parser
         string $methodName,
         bool $isDeclaringClassAbstract,
         DeclaringClassType $declaringClassType,
+        MethodVisibility $methodVisibility,
         ?string $pluginName,
     ): Generator {
         $declaringFunction = $parameter->getDeclaringFunction();
@@ -453,6 +477,7 @@ class Parser
             $className . '::' . $methodName,
             $isDeclaringClassAbstract,
             $declaringClassType,
+            $methodVisibility,
         );
 
         yield from $this->parseAttributes(

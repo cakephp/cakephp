@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\AttributeResolver;
 
 use Cake\AttributeResolver\Enum\AttributeTargetType;
 use Cake\AttributeResolver\Enum\DeclaringClassType;
+use Cake\AttributeResolver\Enum\MethodVisibility;
 use Cake\AttributeResolver\Parser;
 use Cake\AttributeResolver\ValueObject\AttributeInfo;
 use Cake\TestSuite\TestCase;
@@ -77,6 +78,15 @@ class ParserTest extends TestCase
             $this->assertSame(AttributeTargetType::METHOD, $attr->target->type);
             $this->assertSame('TestApp\\Attribute\\Resolver\\TestRoute', $attr->attributeName);
         }
+
+        $visibilityByMethod = [];
+        foreach ($methodAttrs as $methodAttr) {
+            $visibilityByMethod[$methodAttr->target->name] = $methodAttr->target->methodVisibility;
+        }
+        $this->assertSame(MethodVisibility::PUBLIC, $visibilityByMethod['publicMethod']);
+        $this->assertSame(MethodVisibility::PROTECTED, $visibilityByMethod['protectedMethod']);
+        $this->assertSame(MethodVisibility::PRIVATE, $visibilityByMethod['privateMethod']);
+        $this->assertSame(MethodVisibility::PUBLIC, $visibilityByMethod['staticMethod']);
     }
 
     public function testParsePropertyAttributes(): void

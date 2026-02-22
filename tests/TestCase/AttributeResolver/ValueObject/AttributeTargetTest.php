@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\AttributeResolver\ValueObject;
 
 use Cake\AttributeResolver\Enum\AttributeTargetType;
 use Cake\AttributeResolver\Enum\DeclaringClassType;
+use Cake\AttributeResolver\Enum\MethodVisibility;
 use Cake\AttributeResolver\ValueObject\AttributeTarget;
 use Cake\TestSuite\TestCase;
 
@@ -42,6 +43,7 @@ class AttributeTargetTest extends TestCase
         $this->assertSame('App\Controller\UsersController', $target->declaringClass);
         $this->assertFalse($target->isDeclaringClassAbstract);
         $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
+        $this->assertNull($target->methodVisibility);
     }
 
     /**
@@ -59,6 +61,7 @@ class AttributeTargetTest extends TestCase
         $this->assertNull($target->declaringClass);
         $this->assertFalse($target->isDeclaringClassAbstract);
         $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
+        $this->assertNull($target->methodVisibility);
     }
 
     /**
@@ -78,6 +81,7 @@ class AttributeTargetTest extends TestCase
             'declaringClass' => 'App\Model\Entity\Article',
             'isDeclaringClassAbstract' => false,
             'declaringClassType' => 'class',
+            'methodVisibility' => null,
         ];
 
         $this->assertSame($expected, $target->toArray());
@@ -99,6 +103,7 @@ class AttributeTargetTest extends TestCase
             'declaringClass' => null,
             'isDeclaringClassAbstract' => false,
             'declaringClassType' => 'class',
+            'methodVisibility' => null,
         ];
 
         $this->assertSame($expected, $target->toArray());
@@ -115,6 +120,7 @@ class AttributeTargetTest extends TestCase
             'declaringClass' => 'App\Controller\ArticlesController',
             'isDeclaringClassAbstract' => true,
             'declaringClassType' => 'interface',
+            'methodVisibility' => 'protected',
         ];
 
         $target = AttributeTarget::fromArray($data);
@@ -124,6 +130,7 @@ class AttributeTargetTest extends TestCase
         $this->assertSame('App\Controller\ArticlesController', $target->declaringClass);
         $this->assertTrue($target->isDeclaringClassAbstract);
         $this->assertSame(DeclaringClassType::INTERFACE, $target->declaringClassType);
+        $this->assertSame(MethodVisibility::PROTECTED, $target->methodVisibility);
     }
 
     /**
@@ -137,6 +144,7 @@ class AttributeTargetTest extends TestCase
             'declaringClass' => null,
             'isDeclaringClassAbstract' => false,
             'declaringClassType' => 'class',
+            'methodVisibility' => null,
         ];
 
         $target = AttributeTarget::fromArray($data);
@@ -146,6 +154,7 @@ class AttributeTargetTest extends TestCase
         $this->assertNull($target->declaringClass);
         $this->assertFalse($target->isDeclaringClassAbstract);
         $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
+        $this->assertNull($target->methodVisibility);
     }
 
     /**
@@ -262,5 +271,27 @@ class AttributeTargetTest extends TestCase
 
         $this->assertFalse($abstractTarget->isInstantiableDeclaringType());
         $this->assertFalse($interfaceTarget->isInstantiableDeclaringType());
+    }
+
+    /**
+     * Test public method target helper.
+     */
+    public function testIsPublicMethodTarget(): void
+    {
+        $publicMethodTarget = new AttributeTarget(
+            type: AttributeTargetType::METHOD,
+            name: 'index',
+            declaringClass: 'App\Controller\UsersController',
+            methodVisibility: MethodVisibility::PUBLIC,
+        );
+        $protectedMethodTarget = new AttributeTarget(
+            type: AttributeTargetType::METHOD,
+            name: 'index',
+            declaringClass: 'App\Controller\UsersController',
+            methodVisibility: MethodVisibility::PROTECTED,
+        );
+
+        $this->assertTrue($publicMethodTarget->isPublicMethodTarget());
+        $this->assertFalse($protectedMethodTarget->isPublicMethodTarget());
     }
 }
