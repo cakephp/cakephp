@@ -724,6 +724,55 @@ class AttributeRouteConnectorTest extends TestCase
     }
 
     /**
+     * Tests method grouping does not deduplicate distinct declarations from different files.
+     *
+     * @return void
+     */
+    public function testGetMethodAttributeGroupsDoesNotCollideAcrossFiles(): void
+    {
+        $routes = new RouteBuilder($this->collection, '/');
+        $helper = new class ($routes) extends AttributeRouteConnector {
+            /**
+             * @param string $className Controller class name.
+             * @param list<string> $hierarchy Parent-to-child class hierarchy.
+             * @param array<string, array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>> $classAttributes Attributes grouped by class.
+             * @return array<int, array{methodName: string, infos: array<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>}>
+             */
+            public function callGetMethodAttributeGroups(string $className, array $hierarchy, array $classAttributes): array
+            {
+                return $this->getMethodAttributeGroups($className, $hierarchy, $classAttributes);
+            }
+        };
+
+        $parentClass = 'TestApp\\Controller\\ParentController';
+        $childClass = 'TestApp\\Controller\\ChildController';
+        $groups = $helper->callGetMethodAttributeGroups($childClass, [$parentClass, $childClass], [
+            $parentClass => [
+                new AttributeInfo(
+                    className: $parentClass,
+                    attributeName: Route::class,
+                    arguments: ['/same', 'same-parent'],
+                    filePath: '/tmp/ParentController.php',
+                    lineNumber: 10,
+                    target: new AttributeTarget(AttributeTargetType::METHOD, 'same', $parentClass),
+                ),
+            ],
+            $childClass => [
+                new AttributeInfo(
+                    className: $childClass,
+                    attributeName: Route::class,
+                    arguments: ['/same', 'same-child'],
+                    filePath: '/tmp/ChildController.php',
+                    lineNumber: 10,
+                    target: new AttributeTarget(AttributeTargetType::METHOD, 'same', $childClass),
+                ),
+            ],
+        ]);
+
+        $this->assertCount(2, $groups);
+    }
+
+    /**
      * Tests args-by-name map includes explicit string keys and values.
      *
      * @return void
@@ -795,14 +844,15 @@ class AttributeRouteConnectorTest extends TestCase
         };
 
         $result = $helper->callExtractSpecialDefaults(
-            ['action' => 'index', '_host' => 'example.com', '_https' => true, '_scheme' => 'https'],
+            ['action' => 'index', '_host' => 'example.com', '_https' => true, '_scheme' => 'https', '_ext' => 'rss'],
             [],
         );
 
-        $this->assertSame(['action' => 'index'], $result['defaults']);
+        $this->assertSame(['action' => 'index', '_ext' => 'rss'], $result['defaults']);
         $this->assertSame('example.com', $result['options']['_host']);
         $this->assertTrue($result['options']['_https']);
         $this->assertSame('https', $result['options']['_scheme']);
+        $this->assertArrayNotHasKey('_ext', $result['options']);
     }
 
     /**

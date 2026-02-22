@@ -350,11 +350,12 @@ class Parser
         ?string $pluginName,
     ): Generator {
         $startLine = $method->getStartLine();
+        $methodDeclaringClass = $method->getDeclaringClass()->getName();
         $methodVisibility = $this->getMethodVisibility($method);
         $target = new AttributeTarget(
             AttributeTargetType::METHOD,
             $method->getName(),
-            $className,
+            $methodDeclaringClass,
             $isDeclaringClassAbstract,
             $declaringClassType,
             $methodVisibility,
@@ -375,7 +376,7 @@ class Parser
                 $parameter,
                 $filePath,
                 $fileTime,
-                $className,
+                $methodDeclaringClass,
                 $method->getName(),
                 $isDeclaringClassAbstract,
                 $declaringClassType,

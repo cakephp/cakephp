@@ -419,7 +419,10 @@ class AttributeRouteConnector
                     continue;
                 }
                 $methodKey = $declaringClass . '::' . $methodName;
-                $attributeKey = $methodName . ':' . $info->attributeName . ':' . $info->lineNumber;
+                $attributeKey = $declaringClass
+                    . ':' . $methodName
+                    . ':' . $info->attributeName
+                    . ':' . $info->lineNumber;
                 if (isset($seenAttributes[$attributeKey])) {
                     continue;
                 }
@@ -674,7 +677,7 @@ class AttributeRouteConnector
      */
     protected function extractSpecialDefaults(array $defaults, array &$options): array
     {
-        foreach (['_host', '_port', '_https', '_scheme', '_ext'] as $key) {
+        foreach (['_host', '_port', '_https', '_scheme'] as $key) {
             if (!array_key_exists($key, $defaults)) {
                 continue;
             }
