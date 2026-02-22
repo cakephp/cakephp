@@ -378,6 +378,15 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
             }
             $attrs[$key] = $value;
         }
+
+        // Cast numeric values that may come as floats from database drivers.
+        // PHP 8.4 is stricter about implicit float-to-int conversions.
+        foreach (['length', 'precision', 'srid'] as $key) {
+            if (isset($attrs[$key])) {
+                $attrs[$key] = (int)$attrs[$key];
+            }
+        }
+
         $column = new Column(...$attrs);
 
         $this->_columns[$name] = $column;

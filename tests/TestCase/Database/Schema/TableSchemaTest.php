@@ -758,6 +758,27 @@ class TableSchemaTest extends TestCase
     }
 
     /**
+     * Test that float values for length and precision are cast to int.
+     *
+     * Some database drivers return numeric metadata as floats (e.g., SQLite).
+     * PHP 8.4 is stricter about implicit float-to-int conversions, so we need
+     * to explicitly cast these values.
+     */
+    public function testAddColumnWithFloatLengthAndPrecision(): void
+    {
+        $table = new TableSchema('articles');
+        $table->addColumn('amount', [
+            'type' => 'decimal',
+            'length' => 10.0,
+            'precision' => 2.0,
+        ]);
+
+        $column = $table->column('amount');
+        $this->assertSame(10, $column->getLength());
+        $this->assertSame(2, $column->getPrecision());
+    }
+
+    /**
      * Assertion for comparing a regex pattern against a query having its identifiers
      * quoted. It accepts queries quoted with the characters `<` and `>`. If the third
      * parameter is set to true, it will alter the pattern to both accept quoted and
