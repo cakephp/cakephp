@@ -381,6 +381,7 @@ class TableSchema implements TableSchemaInterface, SqlGeneratorInterface
 
         // Cast numeric values that may come as floats from database drivers.
         // PHP 8.4 is stricter about implicit float-to-int conversions.
+        // Known to affect SQLite on Windows x86.
         foreach (['length', 'precision', 'srid'] as $key) {
             if (isset($attrs[$key])) {
                 $attrs[$key] = (int)$attrs[$key];
