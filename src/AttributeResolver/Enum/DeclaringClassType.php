@@ -24,7 +24,7 @@ enum DeclaringClassType: string
     /**
      * Declaring type is a class.
      */
-    case CLASS_TYPE = 'class';
+    case CLASS_DECL = 'class';
 
     /**
      * Declaring type is an interface.

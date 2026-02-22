@@ -42,7 +42,7 @@ class AttributeTargetTest extends TestCase
         $this->assertSame('myMethod', $target->name);
         $this->assertSame('App\Controller\UsersController', $target->declaringClass);
         $this->assertFalse($target->isDeclaringClassAbstract);
-        $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
+        $this->assertSame(DeclaringClassType::CLASS_DECL, $target->declaringClassType);
         $this->assertNull($target->methodVisibility);
     }
 
@@ -60,7 +60,7 @@ class AttributeTargetTest extends TestCase
         $this->assertSame('MyClass', $target->name);
         $this->assertNull($target->declaringClass);
         $this->assertFalse($target->isDeclaringClassAbstract);
-        $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
+        $this->assertSame(DeclaringClassType::CLASS_DECL, $target->declaringClassType);
         $this->assertNull($target->methodVisibility);
     }
 
@@ -153,7 +153,7 @@ class AttributeTargetTest extends TestCase
         $this->assertSame('userId', $target->name);
         $this->assertNull($target->declaringClass);
         $this->assertFalse($target->isDeclaringClassAbstract);
-        $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
+        $this->assertSame(DeclaringClassType::CLASS_DECL, $target->declaringClassType);
         $this->assertNull($target->methodVisibility);
     }
 
@@ -243,7 +243,7 @@ class AttributeTargetTest extends TestCase
             name: 'UsersController',
             declaringClass: 'App\Controller\UsersController',
             isDeclaringClassAbstract: false,
-            declaringClassType: DeclaringClassType::CLASS_TYPE,
+            declaringClassType: DeclaringClassType::CLASS_DECL,
         );
 
         $this->assertTrue($target->isInstantiableDeclaringType());
@@ -259,7 +259,7 @@ class AttributeTargetTest extends TestCase
             name: 'BaseController',
             declaringClass: 'App\Controller\BaseController',
             isDeclaringClassAbstract: true,
-            declaringClassType: DeclaringClassType::CLASS_TYPE,
+            declaringClassType: DeclaringClassType::CLASS_DECL,
         );
         $interfaceTarget = new AttributeTarget(
             type: AttributeTargetType::CLASS_TYPE,

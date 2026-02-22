@@ -51,7 +51,7 @@ readonly class AttributeTarget implements JsonSerializable
         public string $name,
         public ?string $declaringClass = null,
         public bool $isDeclaringClassAbstract = false,
-        public DeclaringClassType $declaringClassType = DeclaringClassType::CLASS_TYPE,
+        public DeclaringClassType $declaringClassType = DeclaringClassType::CLASS_DECL,
         public ?MethodVisibility $methodVisibility = null,
     ) {
     }
@@ -85,7 +85,7 @@ readonly class AttributeTarget implements JsonSerializable
         if (!$type instanceof AttributeTargetType) {
             $type = AttributeTargetType::from((string)$type);
         }
-        $declaringClassType = $data['declaringClassType'] ?? DeclaringClassType::CLASS_TYPE->value;
+        $declaringClassType = $data['declaringClassType'] ?? DeclaringClassType::CLASS_DECL->value;
         if (!$declaringClassType instanceof DeclaringClassType) {
             $declaringClassType = DeclaringClassType::from((string)$declaringClassType);
         }
@@ -121,7 +121,7 @@ readonly class AttributeTarget implements JsonSerializable
      */
     public function isInstantiableDeclaringType(): bool
     {
-        return $this->declaringClassType === DeclaringClassType::CLASS_TYPE
+        return $this->declaringClassType === DeclaringClassType::CLASS_DECL
             && $this->isDeclaringClassAbstract === false;
     }
 

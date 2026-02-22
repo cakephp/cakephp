@@ -325,7 +325,7 @@ class Parser
             return DeclaringClassType::ENUM;
         }
 
-        return DeclaringClassType::CLASS_TYPE;
+        return DeclaringClassType::CLASS_DECL;
     }
 
     /**

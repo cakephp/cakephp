@@ -62,7 +62,7 @@ class ParserTest extends TestCase
         $this->assertNotEmpty($results);
         foreach ($results as $result) {
             $this->assertTrue($result->target->isDeclaringClassAbstract);
-            $this->assertSame(DeclaringClassType::CLASS_TYPE, $result->target->declaringClassType);
+            $this->assertSame(DeclaringClassType::CLASS_DECL, $result->target->declaringClassType);
         }
     }
 
