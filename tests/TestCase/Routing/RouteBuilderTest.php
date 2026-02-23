@@ -65,6 +65,9 @@ class RouteBuilderTest extends TestCase
      */
     public function testPath(): void
     {
+        $routes = new RouteBuilder($this->collection);
+        $this->assertSame('/', $routes->path());
+
         $routes = new RouteBuilder($this->collection, '/some/path');
         $this->assertSame('/some/path', $routes->path());
 

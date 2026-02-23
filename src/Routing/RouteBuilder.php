@@ -127,12 +127,16 @@ class RouteBuilder
      * - `middleware` - The names of the middleware routes should have applied.
      *
      * @param \Cake\Routing\RouteCollection $collection The route collection to append routes into.
-     * @param string $path The path prefix the scope is for.
+     * @param string $path The path prefix the scope is for. Defaults to '/'.
      * @param array $params The scope's routing parameters.
      * @param array<string, mixed> $options Options list.
      */
-    public function __construct(RouteCollection $collection, string $path, array $params = [], array $options = [])
-    {
+    public function __construct(
+        RouteCollection $collection,
+        string $path = '/',
+        array $params = [],
+        array $options = [],
+    ) {
         $this->collection = $collection;
         $this->path = $path;
         $this->params = $params;
