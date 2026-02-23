@@ -1380,10 +1380,10 @@ class RouteBuilderTest extends TestCase
      *
      * @return void
      */
-    public function testAttributesConnectsControllerMethodRoutes(): void
+    public function testConnectAttributesConnectsControllerMethodRoutes(): void
     {
         $routes = new RouteBuilder($this->collection, '/');
-        $routes->attributes();
+        $routes->connectAttributes();
 
         $request = new ServerRequest([
             'url' => '/base/attr/index',

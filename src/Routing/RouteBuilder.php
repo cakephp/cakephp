@@ -597,7 +597,7 @@ class RouteBuilder
      * @param string $config Attribute resolver config name.
      * @return $this
      */
-    public function attributes(string $config = 'default'): static
+    public function connectAttributes(string $config = 'default'): static
     {
         $connector = new AttributeRouteConnector($this);
         $connector->connect($config);
