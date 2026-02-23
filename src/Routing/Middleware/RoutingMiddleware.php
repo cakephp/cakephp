@@ -68,7 +68,7 @@ class RoutingMiddleware implements MiddlewareInterface
      */
     protected function loadRoutes(): void
     {
-        $builder = Router::createRouteBuilder('/');
+        $builder = Router::createRouteBuilder();
         $this->app->routes($builder);
         if ($this->app instanceof PluginApplicationInterface) {
             $this->app->pluginRoutes($builder);

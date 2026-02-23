@@ -732,11 +732,11 @@ class Router
     /**
      * Create a RouteBuilder for the provided path.
      *
-     * @param string $path The path to set the builder to.
+     * @param string $path The path to set the builder to. Defaults to '/'.
      * @param array<string, mixed> $options The options for the builder
      * @return \Cake\Routing\RouteBuilder
      */
-    public static function createRouteBuilder(string $path, array $options = []): RouteBuilder
+    public static function createRouteBuilder(string $path = '/', array $options = []): RouteBuilder
     {
         $defaults = [
             'routeClass' => static::defaultRouteClass(),
