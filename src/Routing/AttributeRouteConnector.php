@@ -191,7 +191,7 @@ class AttributeRouteConnector
             $infos = $classAttributes[$hierarchyClass];
 
             foreach ($infos as $info) {
-                if ($info->target->type !== AttributeTargetType::CLASS_TYPE) {
+                if ($info->target->type !== AttributeTargetType::CLASS_) {
                     continue;
                 }
                 $this->applyClassAttributeState($className, $hierarchyClass, $info, $state);

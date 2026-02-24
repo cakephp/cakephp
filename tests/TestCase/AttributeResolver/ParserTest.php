@@ -46,7 +46,7 @@ class ParserTest extends TestCase
         // Should find 1 class attribute + 4 method attributes
         $this->assertCount(5, $results);
 
-        $classAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $classAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
         $this->assertCount(1, $classAttrs);
 
         $classAttr = array_values($classAttrs)[0];
@@ -62,7 +62,7 @@ class ParserTest extends TestCase
         $this->assertNotEmpty($results);
         foreach ($results as $result) {
             $this->assertTrue($result->target->isDeclaringClassAbstract);
-            $this->assertSame(DeclaringClassType::CLASS_TYPE, $result->target->declaringClassType);
+            $this->assertSame(DeclaringClassType::CLASS_, $result->target->declaringClassType);
         }
     }
 
@@ -331,7 +331,7 @@ class ParserTest extends TestCase
         // Should find interface-level and method attributes
         $this->assertGreaterThan(0, count($results));
 
-        $interfaceAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $interfaceAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
         $this->assertCount(1, $interfaceAttrs);
         $this->assertSame(
             DeclaringClassType::INTERFACE,
@@ -350,7 +350,7 @@ class ParserTest extends TestCase
         // Should find trait-level and method attributes
         $this->assertGreaterThan(0, count($results));
 
-        $traitAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $traitAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
         $this->assertCount(1, $traitAttrs);
         $this->assertSame(
             DeclaringClassType::TRAIT,
@@ -369,7 +369,7 @@ class ParserTest extends TestCase
         // Should find enum-level and case attributes
         $this->assertGreaterThan(0, count($results));
 
-        $enumAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_TYPE);
+        $enumAttrs = array_filter($results, fn(AttributeInfo $attr) => $attr->target->type === AttributeTargetType::CLASS_);
         $this->assertCount(1, $enumAttrs);
         $this->assertSame(
             DeclaringClassType::ENUM,

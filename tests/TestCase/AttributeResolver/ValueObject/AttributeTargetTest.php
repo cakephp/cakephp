@@ -42,7 +42,7 @@ class AttributeTargetTest extends TestCase
         $this->assertSame('myMethod', $target->name);
         $this->assertSame('App\Controller\UsersController', $target->declaringClass);
         $this->assertFalse($target->isDeclaringClassAbstract);
-        $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
+        $this->assertSame(DeclaringClassType::CLASS_, $target->declaringClassType);
         $this->assertNull($target->methodVisibility);
     }
 
@@ -52,15 +52,15 @@ class AttributeTargetTest extends TestCase
     public function testConstructorNullDeclaringClass(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'MyClass',
         );
 
-        $this->assertSame(AttributeTargetType::CLASS_TYPE, $target->type);
+        $this->assertSame(AttributeTargetType::CLASS_, $target->type);
         $this->assertSame('MyClass', $target->name);
         $this->assertNull($target->declaringClass);
         $this->assertFalse($target->isDeclaringClassAbstract);
-        $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
+        $this->assertSame(DeclaringClassType::CLASS_, $target->declaringClassType);
         $this->assertNull($target->methodVisibility);
     }
 
@@ -93,7 +93,7 @@ class AttributeTargetTest extends TestCase
     public function testToArrayNullDeclaringClass(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'TestClass',
         );
 
@@ -153,7 +153,7 @@ class AttributeTargetTest extends TestCase
         $this->assertSame('userId', $target->name);
         $this->assertNull($target->declaringClass);
         $this->assertFalse($target->isDeclaringClassAbstract);
-        $this->assertSame(DeclaringClassType::CLASS_TYPE, $target->declaringClassType);
+        $this->assertSame(DeclaringClassType::CLASS_, $target->declaringClassType);
         $this->assertNull($target->methodVisibility);
     }
 
@@ -203,7 +203,7 @@ class AttributeTargetTest extends TestCase
     public function testPhpSerializeWithNullDeclaringClass(): void
     {
         $original = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'MyClass',
         );
 
@@ -211,7 +211,7 @@ class AttributeTargetTest extends TestCase
         $restored = unserialize($serialized);
 
         $this->assertInstanceOf(AttributeTarget::class, $restored);
-        $this->assertSame(AttributeTargetType::CLASS_TYPE, $restored->type);
+        $this->assertSame(AttributeTargetType::CLASS_, $restored->type);
         $this->assertSame('MyClass', $restored->name);
         $this->assertNull($restored->declaringClass);
     }
@@ -239,11 +239,11 @@ class AttributeTargetTest extends TestCase
     public function testIsInstantiableDeclaringTypeTrue(): void
     {
         $target = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'UsersController',
             declaringClass: 'App\Controller\UsersController',
             isDeclaringClassAbstract: false,
-            declaringClassType: DeclaringClassType::CLASS_TYPE,
+            declaringClassType: DeclaringClassType::CLASS_,
         );
 
         $this->assertTrue($target->isInstantiableDeclaringType());
@@ -255,14 +255,14 @@ class AttributeTargetTest extends TestCase
     public function testIsInstantiableDeclaringTypeFalseForAbstractOrNonClass(): void
     {
         $abstractTarget = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'BaseController',
             declaringClass: 'App\Controller\BaseController',
             isDeclaringClassAbstract: true,
-            declaringClassType: DeclaringClassType::CLASS_TYPE,
+            declaringClassType: DeclaringClassType::CLASS_,
         );
         $interfaceTarget = new AttributeTarget(
-            type: AttributeTargetType::CLASS_TYPE,
+            type: AttributeTargetType::CLASS_,
             name: 'Contract',
             declaringClass: 'App\Controller\Contract',
             isDeclaringClassAbstract: false,

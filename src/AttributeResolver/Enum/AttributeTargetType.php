@@ -31,7 +31,7 @@ enum AttributeTargetType: string
     /**
      * Attribute attached to a class
      */
-    case CLASS_TYPE = 'class';
+    case CLASS_ = 'class';
 
     /**
      * Attribute attached to a method

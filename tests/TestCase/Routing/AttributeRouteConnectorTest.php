@@ -200,7 +200,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['/base', 'base:', [], [], null],
                 filePath: __FILE__,
                 lineNumber: 3,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingBaseController', $className, true),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingBaseController', $className, true),
             ),
             new AttributeInfo(
                 className: $className,
@@ -237,7 +237,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['Admin', '/custom-admin'],
                 filePath: __FILE__,
                 lineNumber: 10,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
             ),
             new AttributeInfo(
                 className: $className,
@@ -245,7 +245,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: [InflectedRoute::class],
                 filePath: __FILE__,
                 lineNumber: 11,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
             ),
             new AttributeInfo(
                 className: $className,
@@ -253,7 +253,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['sample'],
                 filePath: __FILE__,
                 lineNumber: 12,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
             ),
             new AttributeInfo(
                 className: $className,
@@ -324,7 +324,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['/base', 'base:', [], [], null],
                 filePath: __FILE__,
                 lineNumber: 13,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingBaseController', $baseClassName),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingBaseController', $baseClassName),
             ),
             new AttributeInfo(
                 className: $className,
@@ -332,7 +332,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['/attr', 'attr:', [], [], null],
                 filePath: __FILE__,
                 lineNumber: 14,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
             ),
             new AttributeInfo(
                 className: $className,
@@ -381,7 +381,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['/base', 'base:', [], [], null],
                 filePath: __FILE__,
                 lineNumber: 13,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingBaseController', $baseClassName),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingBaseController', $baseClassName),
             ),
             new AttributeInfo(
                 className: $className,
@@ -389,7 +389,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['/attr', 'attr:', [], [], null],
                 filePath: __FILE__,
                 lineNumber: 14,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
             ),
             new AttributeInfo(
                 className: $className,
@@ -436,7 +436,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['sample'],
                 filePath: __FILE__,
                 lineNumber: 20,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
             ),
             new AttributeInfo(
                 className: $className,
@@ -444,7 +444,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['articles', ['index', 'view'], [], [], null, '\\d+', 'dasherize', []],
                 filePath: __FILE__,
                 lineNumber: 21,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
             ),
         ];
 
@@ -486,7 +486,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: [null, ['index'], [], [], null, '', 'dasherize', []],
                 filePath: __FILE__,
                 lineNumber: 30,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeTestController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeTestController', $className),
                 pluginName: 'TestPlugin',
             ),
         ];
@@ -523,7 +523,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['Admin', '/custom-admin'],
                 filePath: __FILE__,
                 lineNumber: 40,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
             ),
             new AttributeInfo(
                 className: $className,
@@ -531,7 +531,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: ['', '', [], [], 'api.example.com'],
                 filePath: __FILE__,
                 lineNumber: 41,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
             ),
             new AttributeInfo(
                 className: $className,
@@ -539,7 +539,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: [['json']],
                 filePath: __FILE__,
                 lineNumber: 42,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
             ),
             new AttributeInfo(
                 className: $className,
@@ -547,7 +547,7 @@ class AttributeRouteConnectorTest extends TestCase
                 arguments: [null, ['index'], [], [], null, '', 'dasherize', []],
                 filePath: __FILE__,
                 lineNumber: 43,
-                target: new AttributeTarget(AttributeTargetType::CLASS_TYPE, 'AttributeRoutingController', $className),
+                target: new AttributeTarget(AttributeTargetType::CLASS_, 'AttributeRoutingController', $className),
             ),
         ];
 

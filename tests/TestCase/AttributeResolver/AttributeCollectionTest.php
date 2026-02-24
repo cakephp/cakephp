@@ -348,7 +348,7 @@ class AttributeCollectionTest extends TestCase
             filePath: '/app/src/Controller/TestController.php',
             lineNumber: 10,
             target: new AttributeTarget(
-                type: AttributeTargetType::CLASS_TYPE,
+                type: AttributeTargetType::CLASS_,
                 name: 'TestController',
                 declaringClass: 'App\Controller\TestController',
             ),
@@ -376,7 +376,7 @@ class AttributeCollectionTest extends TestCase
             filePath: '/app/src/Controller/FirstController.php',
             lineNumber: 5,
             target: new AttributeTarget(
-                type: AttributeTargetType::CLASS_TYPE,
+                type: AttributeTargetType::CLASS_,
                 name: 'FirstController',
                 declaringClass: 'App\Controller\FirstController',
             ),

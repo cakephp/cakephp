@@ -258,7 +258,7 @@ class Parser
             $startLine === false ? 0 : $startLine,
             $fileTime,
             new AttributeTarget(
-                AttributeTargetType::CLASS_TYPE,
+                AttributeTargetType::CLASS_,
                 $className,
                 null,
                 $isDeclaringClassAbstract,
@@ -325,7 +325,7 @@ class Parser
             return DeclaringClassType::ENUM;
         }
 
-        return DeclaringClassType::CLASS_TYPE;
+        return DeclaringClassType::CLASS_;
     }
 
     /**

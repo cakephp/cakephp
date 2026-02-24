@@ -76,7 +76,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/app/src/TestClass.php',
                 lineNumber: 10,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetType::CLASS_,
                     name: 'TestClass',
                     declaringClass: 'App\\TestClass',
                 ),
@@ -114,7 +114,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/test1.php',
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetType::CLASS_,
                     name: 'TestClass1',
                     declaringClass: 'TestClass1',
                 ),
@@ -175,7 +175,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/test.php',
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetType::CLASS_,
                     name: 'Test',
                     declaringClass: 'Test',
                 ),
@@ -210,7 +210,7 @@ class AttributeCacheTest extends TestCase
                 filePath: $sourceFile,
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetType::CLASS_,
                     name: 'TestClass',
                     declaringClass: 'TestClass',
                 ),
@@ -257,7 +257,7 @@ class AttributeCacheTest extends TestCase
                 filePath: $sourceFile,
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetType::CLASS_,
                     name: 'TestClass',
                     declaringClass: 'TestClass',
                 ),
@@ -365,7 +365,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/test.php',
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetType::CLASS_,
                     name: 'TestClass',
                     declaringClass: 'TestClass',
                 ),
@@ -396,7 +396,7 @@ class AttributeCacheTest extends TestCase
             filePath: '/non/existent/file.php',
             lineNumber: 1,
             target: new AttributeTarget(
-                type: AttributeTargetType::CLASS_TYPE,
+                type: AttributeTargetType::CLASS_,
                 name: 'TestClass',
                 declaringClass: 'TestClass',
             ),
@@ -426,7 +426,7 @@ class AttributeCacheTest extends TestCase
                 filePath: '/test1.php',
                 lineNumber: 1,
                 target: new AttributeTarget(
-                    type: AttributeTargetType::CLASS_TYPE,
+                    type: AttributeTargetType::CLASS_,
                     name: 'Class1',
                     declaringClass: 'Class1',
                 ),
@@ -458,7 +458,7 @@ class AttributeCacheTest extends TestCase
         $this->assertInstanceOf(AttributeInfo::class, $items[1]);
         $this->assertSame('Class1', $items[0]->className);
         $this->assertSame('Class2', $items[1]->className);
-        $this->assertSame(AttributeTargetType::CLASS_TYPE, $items[0]->target->type);
+        $this->assertSame(AttributeTargetType::CLASS_, $items[0]->target->type);
         $this->assertSame(AttributeTargetType::METHOD, $items[1]->target->type);
     }
 
@@ -512,7 +512,7 @@ class AttributeCacheTest extends TestCase
                     filePath: $sourceFile1,
                     lineNumber: 1,
                     target: new AttributeTarget(
-                        type: AttributeTargetType::CLASS_TYPE,
+                        type: AttributeTargetType::CLASS_,
                         name: 'Test1',
                         declaringClass: 'Test1',
                     ),
@@ -525,7 +525,7 @@ class AttributeCacheTest extends TestCase
                     filePath: $sourceFile2,
                     lineNumber: 1,
                     target: new AttributeTarget(
-                        type: AttributeTargetType::CLASS_TYPE,
+                        type: AttributeTargetType::CLASS_,
                         name: 'Test2',
                         declaringClass: 'Test2',
                     ),
