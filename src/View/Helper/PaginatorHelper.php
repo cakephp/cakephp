@@ -39,6 +39,7 @@ use function Cake\I18n\__;
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\FormHelper $Form
  * @link https://book.cakephp.org/5/en/views/helpers/paginator.html
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class PaginatorHelper extends Helper
 {
@@ -100,7 +101,7 @@ class PaginatorHelper extends Helper
     /**
      * Paginated results
      *
-     * @var \Cake\Datasource\Paging\PaginatedInterface|null
+     * @var \Cake\Datasource\Paging\PaginatedInterface<array-key, mixed>|null
      */
     protected ?PaginatedInterface $paginated = null;
 
@@ -125,7 +126,7 @@ class PaginatorHelper extends Helper
     /**
      * Set paginated results.
      *
-     * @param \Cake\Datasource\Paging\PaginatedInterface $paginated Instance to use.
+     * @param \Cake\Datasource\Paging\PaginatedInterface<array-key, mixed> $paginated Instance to use.
      * @param array<string, mixed> $options Options array.
      * @return void
      */
@@ -138,7 +139,7 @@ class PaginatorHelper extends Helper
     /**
      * Get pagination instance.
      *
-     * @return \Cake\Datasource\Paging\PaginatedInterface
+     * @return \Cake\Datasource\Paging\PaginatedInterface<array-key, mixed>
      */
     protected function paginated(): PaginatedInterface
     {

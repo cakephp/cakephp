@@ -275,7 +275,9 @@ class BasePlugin implements PluginInterface
     }
 
     /**
-     * @inheritDoc
+     * {@inheritDoc}
+     *
+     * @param \Cake\Core\PluginApplicationInterface<mixed> $app The host application
      */
     public function bootstrap(PluginApplicationInterface $app): void
     {

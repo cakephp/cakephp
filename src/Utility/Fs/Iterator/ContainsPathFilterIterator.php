@@ -51,7 +51,7 @@ final class ContainsPathFilterIterator extends RecursiveFilterIterator
     protected array $regexPatterns;
 
     /**
-     * @param \RecursiveIterator $iterator The iterator to filter
+     * @param \RecursiveIterator<string, \SplFileInfo> $iterator The iterator to filter
      * @param array<string> $patterns Path patterns to match (string or regex)
      * @param bool $negate When true, inverts the filter (excludes matching paths)
      */
@@ -128,7 +128,7 @@ final class ContainsPathFilterIterator extends RecursiveFilterIterator
      */
     public function getChildren(): self
     {
-        /** @var \RecursiveIterator $inner */
+        /** @var \RecursiveIterator<string, \SplFileInfo> $inner */
         $inner = $this->getInnerIterator();
 
         // Pass all original patterns through (constructor will separate them again)

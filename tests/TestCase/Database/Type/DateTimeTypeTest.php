@@ -332,9 +332,8 @@ class DateTimeTypeTest extends TestCase
     {
         date_default_timezone_set('Europe/Vienna');
         $value = DateTime::now();
-        $expected = DateTime::now();
         $result = $this->type->marshal($value);
-        $this->assertEquals($expected, $result);
+        $this->assertEquals($value, $result);
     }
 
     /**

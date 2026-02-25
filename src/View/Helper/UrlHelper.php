@@ -25,6 +25,8 @@ use function Cake\Core\h;
 
 /**
  * UrlHelper class for generating URLs.
+ *
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class UrlHelper extends Helper
 {

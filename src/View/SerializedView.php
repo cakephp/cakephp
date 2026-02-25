@@ -22,8 +22,6 @@ use TypeError;
 
 /**
  * Parent class for view classes generating serialized outputs like JsonView and XmlView.
- *
- * @extends \Cake\View\View<\Cake\View\SerializedView>
  */
 abstract class SerializedView extends View
 {

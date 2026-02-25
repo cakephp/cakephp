@@ -31,6 +31,8 @@ use Iterator;
  * Can be used to include or exclude files based on the $negate parameter:
  * - When $negate is false (default): includes files matching patterns
  * - When $negate is true: excludes files matching patterns
+ *
+ * @extends \FilterIterator<string, \SplFileInfo, \Iterator<string, \SplFileInfo>>
  */
 final class FilenameFilterIterator extends FilterIterator
 {

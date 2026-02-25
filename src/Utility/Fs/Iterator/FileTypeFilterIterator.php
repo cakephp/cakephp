@@ -24,6 +24,7 @@ use Iterator;
  * Filters files by type (files only, directories only, or all).
  *
  * @internal
+ * @extends \FilterIterator<string, \SplFileInfo, \Iterator<string, \SplFileInfo>>
  */
 class FileTypeFilterIterator extends FilterIterator
 {

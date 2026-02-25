@@ -18,4 +18,5 @@ declare(strict_types=1);
 use Cake\Datasource\FactoryLocator;
 use Cake\ORM\Locator\TableLocator;
 
+// @phpstan-ignore argument.type (Table extends RepositoryInterface)
 FactoryLocator::add('Table', new TableLocator());

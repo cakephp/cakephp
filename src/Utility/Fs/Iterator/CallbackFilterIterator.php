@@ -23,6 +23,8 @@ use Iterator;
 
 /**
  * Filters files using a custom callback function.
+ *
+ * @extends \FilterIterator<string, \SplFileInfo, \Iterator<string, \SplFileInfo>>
  */
 final class CallbackFilterIterator extends FilterIterator
 {

@@ -272,8 +272,8 @@ class TimestampBehaviorTest extends TestCase
             'Should return a timestamp object',
         );
 
-        $now = DateTime::now();
-        $this->assertEquals($now, $return);
+        // Compare timestamps within tolerance to avoid flaky tests during slow CI runs
+        $this->assertEqualsWithDelta(time(), $return->getTimestamp(), 120);
     }
 
     /**

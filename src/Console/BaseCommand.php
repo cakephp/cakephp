@@ -45,13 +45,12 @@ use Cake\Utility\Inflector;
  * - `afterExecute(EventInterface $event)`
  *   Called immediately after the command's run method, unless an exception occurs.
  *
- * @template TSubject of \Cake\Command\Command
- * @implements \Cake\Event\EventDispatcherInterface<TSubject>
+ * @implements \Cake\Event\EventDispatcherInterface<static>
  */
 abstract class BaseCommand implements CommandInterface, EventDispatcherInterface, EventListenerInterface
 {
     /**
-     * @use \Cake\Event\EventDispatcherTrait<TSubject>
+     * @use \Cake\Event\EventDispatcherTrait<static>
      */
     use EventDispatcherTrait;
 
@@ -220,7 +219,9 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Called immediately prior to the command's run method. You can use this method to configure and customize the
      * command or perform logic that needs to happen before the command runs.
      *
-     * @param \Cake\Event\EventInterface<\Cake\Console\BaseCommand> $event An Event instance
+     * @param \Cake\Event\EventInterface<static> $event An Event instance
+     * @param \Cake\Console\Arguments $args
+     * @param \Cake\Console\ConsoleIo $io
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks
      */
@@ -232,7 +233,9 @@ abstract class BaseCommand implements CommandInterface, EventDispatcherInterface
      * Called immediately after the command's run method, unless an exception occurs. You can use this method to
      * perform logic that needs to happen after the command runs.
      *
-     * @param \Cake\Event\EventInterface<\Cake\Console\BaseCommand> $event An Event instance
+     * @param \Cake\Event\EventInterface<static> $event An Event instance
+     * @param \Cake\Console\Arguments $args
+     * @param \Cake\Console\ConsoleIo $io
      * @param int|null $result
      * @return void
      * @link https://book.cakephp.org/5/en/console-commands/commands.html#lifecycle-callbacks

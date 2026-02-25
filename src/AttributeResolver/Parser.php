@@ -231,7 +231,7 @@ class Parser
     /**
      * Parse attributes from a class and its members.
      *
-     * @param \ReflectionClass $reflection Class reflection
+     * @param \ReflectionClass<object> $reflection Class reflection
      * @param string $filePath File path
      * @param int $fileTime File modification time
      * @param string|null $pluginName Plugin name
@@ -429,7 +429,7 @@ class Parser
     /**
      * Parse reflection attributes and convert to AttributeInfo.
      *
-     * @param array<\ReflectionAttribute> $attributes Reflection attributes
+     * @param array<\ReflectionAttribute<object>> $attributes Reflection attributes
      * @param string $className Class name
      * @param string $filePath File path
      * @param int $lineNumber Line number
@@ -470,7 +470,7 @@ class Parser
     /**
      * Extract named arguments from a reflection attribute.
      *
-     * @param \ReflectionAttribute $attribute Reflection attribute
+     * @param \ReflectionAttribute<object> $attribute Reflection attribute
      * @return array<string, mixed> Named arguments array
      */
     protected function extractAttributeArguments(ReflectionAttribute $attribute): array

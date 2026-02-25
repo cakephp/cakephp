@@ -15,13 +15,17 @@ parameters:
 		- src/
 	ignoreErrors:
 		- identifier: missingType.iterableValue
-		- identifier: missingType.generics
 		- identifier: include.fileNotFound
 		- identifier: method.internalClass
 		- identifier: new.internalClass
 		- identifier: unset.possiblyHookedProperty
 		- identifier: trait.unused
 		- identifier: method.templateTypeNotInParameter
+		-
+			identifier: generics.interfaceConflict
+			paths:
+				- src/Collection/Iterator/TreeIterator.php
+				- src/Collection/Iterator/TreePrinter.php
 		-
 			message: '#^Call to an undefined method PHPUnit\\Framework\\MockObject\\MockBuilder\<Cake\\ORM\\Table\>\:\:addMethods\(\)\.$#'
 			reportUnmatched: false

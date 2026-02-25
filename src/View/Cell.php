@@ -59,7 +59,7 @@ abstract class Cell implements EventDispatcherInterface, Stringable
      * Instance of the View created during rendering. Won't be set until after
      * Cell::__toString()/render() is called.
      *
-     * @var \Cake\View\View
+     * @var TSubject
      */
     protected View $View;
 

@@ -23,7 +23,8 @@ use DateInterval;
 /**
  * Class Cache BeforeSet Event
  *
- * @extends \Cake\Event\Event<\Cake\Cache\CacheEngine>
+ * @template TEngine of \Cake\Cache\CacheEngine
+ * @extends \Cake\Event\Event<TEngine>
  */
 class CacheBeforeSetEvent extends Event
 {
@@ -39,7 +40,7 @@ class CacheBeforeSetEvent extends Event
      * Constructor
      *
      * @param string $name Name of the event
-     * @param \Cake\Cache\CacheEngine $subject The Cache engine instance this event applies to.
+     * @param TEngine $subject The Cache engine instance this event applies to.
      * @param array $data Any value you wish to be transported with this event to it can be read by listeners.
      */
     public function __construct(string $name, CacheEngine $subject, array $data = [])

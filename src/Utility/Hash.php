@@ -44,7 +44,7 @@ class Hash
      * Does not support the full dot notation feature set,
      * but is faster for simple read operations.
      *
-     * @param \ArrayAccess|array $data Array of data or object implementing
+     * @param \ArrayAccess<array-key, mixed>|array $data Array of data or object implementing
      *   \ArrayAccess interface to operate on.
      * @param array<string>|string|int|null $path The path being searched for. Either a dot
      *   separated string, or an array of path segments. If null, returns $default.
@@ -111,12 +111,12 @@ class Hash
      * - `{n}.User[username=/^paul/]` Get User elements with username matching `^paul`.
      * - `{n}.User[id=1].name` Get the Users name with id matching `1`.
      *
-     * @param \ArrayAccess|array $data The data to extract from.
+     * @param \ArrayAccess<array-key, mixed>|array $data The data to extract from.
      * @param string $path The path to extract.
-     * @return \ArrayAccess|array An array of the extracted values. Returns an empty array
+     * @return \ArrayAccess<array-key, mixed>|array An array of the extracted values. Returns an empty array
      *   if there are no matches.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-extract
-     * @phpstan-return ($path is non-empty-string ? array : \ArrayAccess|array)
+     * @phpstan-return ($path is non-empty-string ? array : \ArrayAccess<array-key, mixed>|array)
      */
     public static function extract(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
@@ -221,7 +221,7 @@ class Hash
     /**
      * Checks whether $data matches the attribute patterns
      *
-     * @param \ArrayAccess|array $data Array of data to match.
+     * @param \ArrayAccess<array-key, mixed>|array $data Array of data to match.
      * @param string $selector The patterns to match.
      * @return bool Fitness of expression.
      */
@@ -290,12 +290,12 @@ class Hash
      * Insert $values into an array with the given $path. You can use
      * `{n}` and `{s}` elements to insert $data multiple times.
      *
-     * @template T of \ArrayAccess|array
+     * @template T of \ArrayAccess<array-key, mixed>|array
      * @param T $data The data to insert into.
      * @param string $path The path to insert at.
      * @param mixed $values The values to insert.
-     * @return \ArrayAccess|array The data with $values inserted.
-     * @phpstan-return (T is array ? array : \ArrayAccess)
+     * @return \ArrayAccess<array-key, mixed>|array The data with $values inserted.
+     * @phpstan-return (T is array ? array : \ArrayAccess<array-key, mixed>)
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-insert
      */
     public static function insert(ArrayAccess|array $data, string $path, mixed $values = null): ArrayAccess|array
@@ -345,10 +345,10 @@ class Hash
      * Perform a simple insert/remove operation.
      *
      * @param string $op The operation to do.
-     * @param \ArrayAccess|array $data The data to operate on.
+     * @param \ArrayAccess<array-key, mixed>|array $data The data to operate on.
      * @param array<string> $path The path to work on.
      * @param mixed $values The values to insert when doing inserts.
-     * @return \ArrayAccess|array
+     * @return \ArrayAccess<array-key, mixed>|array
      */
     protected static function simpleOp(
         string $op,
@@ -395,11 +395,11 @@ class Hash
      * You can use `{n}` and `{s}` to remove multiple elements
      * from $data.
      *
-     * @template T of \ArrayAccess|array
+     * @template T of \ArrayAccess<array-key, mixed>|array
      * @param T $data The data to operate on
      * @param string $path A path expression to use to remove.
-     * @return \ArrayAccess|array The modified array.
-     * @phpstan-return (T is array ? array : \ArrayAccess)
+     * @return \ArrayAccess<array-key, mixed>|array The modified array.
+     * @phpstan-return (T is array ? array : \ArrayAccess<array-key, mixed>)
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#hash-remove
      */
     public static function remove(ArrayAccess|array $data, string $path): ArrayAccess|array
@@ -432,6 +432,7 @@ class Hash
         foreach ($data as $k => $v) {
             $match = static::matchToken($k, $token);
             if ($match && (is_array($v) || $v instanceof ArrayAccess)) {
+                /** @var \ArrayAccess<array-key, mixed>|array $v */
                 if ($conditions) {
                     if (static::matches($v, $conditions)) {
                         if ($nextPath !== '') {

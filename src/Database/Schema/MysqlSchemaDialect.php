@@ -16,6 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Schema;
 
+use Cake\Database\Driver\Mysql;
 use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
 use PDOException;
@@ -134,11 +135,15 @@ class MysqlSchemaDialect extends SchemaDialect
                 'comment' => $row['Comment'],
                 'length' => null,
             ];
-            $extra = $row['Extra'] ?? '';
+            $extra = trim($row['Extra'] ?? '');
             if ($extra === 'auto_increment') {
                 $field['autoIncrement'] = true;
             }
-            if ($extra === 'on update CURRENT_TIMESTAMP' || $extra === 'on update current_timestamp()') {
+            // Depending on the MySQL Version the extra column can contain/start with DEFAULT_GENERATED as well
+            if (
+                str_ends_with($extra, 'on update CURRENT_TIMESTAMP') ||
+                str_ends_with($extra, 'on update current_timestamp()')
+            ) {
                 $field['onUpdate'] = 'CURRENT_TIMESTAMP';
             }
 
@@ -215,6 +220,14 @@ class MysqlSchemaDialect extends SchemaDialect
                 "\\1'\\3')",
                 $default,
             );
+        }
+
+        if (
+            $this->driver instanceof Mysql &&
+            $this->driver->isMariaDb() &&
+            $default === 'current_timestamp()'
+        ) {
+            return 'CURRENT_TIMESTAMP';
         }
 
         return $default;

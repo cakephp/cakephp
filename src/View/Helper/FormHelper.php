@@ -55,6 +55,7 @@ use function Cake\I18n\__d;
  * @property \Cake\View\Helper\HtmlHelper $Html
  * @property \Cake\View\Helper\UrlHelper $Url
  * @link https://book.cakephp.org/5/en/views/helpers/form.html
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class FormHelper extends Helper
 {

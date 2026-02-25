@@ -32,7 +32,7 @@ final class ExcludeDirectoryFilterIterator extends RecursiveFilterIterator
     /**
      * Constructor.
      *
-     * @param \RecursiveIterator $iterator The iterator to filter
+     * @param \RecursiveIterator<string, \SplFileInfo> $iterator The iterator to filter
      * @param array<string> $excludeDirs Array of directory names to exclude
      */
     public function __construct(
@@ -66,7 +66,7 @@ final class ExcludeDirectoryFilterIterator extends RecursiveFilterIterator
      */
     public function getChildren(): self
     {
-        /** @var \RecursiveIterator $inner */
+        /** @var \RecursiveIterator<string, \SplFileInfo> $inner */
         $inner = $this->getInnerIterator();
 
         return new self($inner->getChildren(), $this->excludeDirs);

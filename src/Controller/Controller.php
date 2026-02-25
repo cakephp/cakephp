@@ -161,7 +161,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Instance of ComponentRegistry used to create Components
      *
-     * @var \Cake\Controller\ComponentRegistry|null
+     * @var \Cake\Controller\ComponentRegistry<\Cake\Controller\Controller>|null
      */
     protected ?ComponentRegistry $components = null;
 
@@ -197,7 +197,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      *   but expect that features that use the request parameters will not work.
      * @param string|null $name Override the name useful in testing when using mocks.
      * @param \Cake\Event\EventManagerInterface|null $eventManager The event manager. Defaults to a new instance.
-     * @param \Cake\Controller\ComponentRegistry|null $components ComponentRegistry to use. Defaults to a new instance.
+     * @param \Cake\Controller\ComponentRegistry<\Cake\Controller\Controller>|null $components ComponentRegistry to use. Defaults to a new instance.
      */
     public function __construct(
         ServerRequest $request,
@@ -255,7 +255,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
     /**
      * Get the component registry for this controller.
      *
-     * @return \Cake\Controller\ComponentRegistry
+     * @return \Cake\Controller\ComponentRegistry<\Cake\Controller\Controller>
      */
     public function components(): ComponentRegistry
     {
@@ -856,7 +856,7 @@ class Controller implements EventListenerInterface, EventDispatcherInterface
      * @param \Cake\Datasource\RepositoryInterface|\Cake\Datasource\QueryInterface|string|null $object Table to paginate
      * (e.g: Table instance, 'TableName' or a Query object)
      * @param array<string, mixed> $settings The settings/configuration used for pagination. See {@link \Cake\Controller\Controller::$paginate}.
-     * @return \Cake\Datasource\Paging\PaginatedInterface
+     * @return \Cake\Datasource\Paging\PaginatedInterface<int, mixed>
      * @link https://book.cakephp.org/5/en/controllers.html#paginating-a-model
      * @throws \Cake\Http\Exception\NotFoundException When a page out of bounds is requested.
      */

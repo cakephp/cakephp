@@ -167,7 +167,7 @@ class EavStrategy implements TranslateStrategyInterface
      * and adding a formatter to copy the values into the main table records.
      *
      * @param \Cake\Event\EventInterface<\Cake\ORM\Table> $event The beforeFind event that was fired.
-     * @param \Cake\ORM\Query\SelectQuery $query Query
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query Query
      * @param \ArrayObject<string, mixed> $options The options for the query
      * @return void
      */
@@ -361,9 +361,9 @@ class EavStrategy implements TranslateStrategyInterface
      * Modifies the results from a table find in order to merge the translated fields
      * into each entity for a given locale.
      *
-     * @param \Cake\Collection\CollectionInterface $results Results to map.
+     * @param \Cake\Collection\CollectionInterface<mixed, mixed> $results Results to map.
      * @param string $locale Locale string
-     * @return \Cake\Collection\CollectionInterface
+     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     protected function rowMapper(CollectionInterface $results, string $locale): CollectionInterface
     {
@@ -410,8 +410,8 @@ class EavStrategy implements TranslateStrategyInterface
      * Modifies the results from a table find in order to merge full translation
      * records into each entity under the `_translations` key.
      *
-     * @param \Cake\Collection\CollectionInterface $results Results to modify.
-     * @return \Cake\Collection\CollectionInterface
+     * @param \Cake\Collection\CollectionInterface<mixed, mixed> $results Results to modify.
+     * @return \Cake\Collection\CollectionInterface<mixed, mixed>
      */
     public function groupTranslations(CollectionInterface $results): CollectionInterface
     {

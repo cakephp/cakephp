@@ -41,7 +41,7 @@ final class HiddenFileFilterIterator extends RecursiveFilterIterator
      */
     public function getChildren(): self
     {
-        /** @var \RecursiveIterator $inner */
+        /** @var \RecursiveIterator<string, \SplFileInfo> $inner */
         $inner = $this->getInnerIterator();
 
         return new self($inner->getChildren());

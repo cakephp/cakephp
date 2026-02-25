@@ -354,9 +354,9 @@ abstract class TestCase extends BaseTestCase
      * elements in CakePHP or applications.
      *
      * @param array $plugins List of Plugins to load.
-     * @return \Cake\Http\BaseApplication
+     * @return \Cake\Http\BaseApplication<\Cake\Http\BaseApplication>
      */
-    public function loadPlugins(array $plugins = []): BaseApplication
+    public function loadPlugins(array $plugins = []): BaseApplication // @phpstan-ignore missingType.generics
     {
         $this->appPluginsToLoad = $plugins;
 

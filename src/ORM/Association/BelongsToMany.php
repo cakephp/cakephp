@@ -463,7 +463,7 @@ class BelongsToMany extends Association
      * - fields: a list of fields in the target table to include in the result
      * - type: The type of join to be used (e.g. INNER)
      *
-     * @param \Cake\ORM\Query\SelectQuery $query the query to be altered to include the target table data
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query the query to be altered to include the target table data
      * @param array<string, mixed> $options Any extra options or overrides to be taken in account
      * @return void
      */
@@ -503,7 +503,9 @@ class BelongsToMany extends Association
     }
 
     /**
-     * @inheritDoc
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to append to.
+     * @param array<string, mixed> $options The options for not matching.
+     * @return void
      */
     protected function appendNotMatching(SelectQuery $query, array $options): void
     {
@@ -521,7 +523,7 @@ class BelongsToMany extends Association
 
         if (!empty($options['queryBuilder'])) {
             assert(is_callable($options['queryBuilder']));
-            /** @var \Cake\ORM\Query\SelectQuery $subquery */
+            /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $subquery */
             $subquery = $options['queryBuilder']($subquery);
         }
 
@@ -1093,7 +1095,7 @@ class BelongsToMany extends Association
      *   it will be interpreted as the `$options` parameter
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @see \Cake\ORM\Table::find()
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      */
     public function find(array|string|null $type = null, mixed ...$args): SelectQuery
     {
@@ -1117,9 +1119,9 @@ class BelongsToMany extends Association
     /**
      * Append a join to the junction table.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query The query to append.
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to append.
      * @param array|null $conditions The query conditions to use.
-     * @return \Cake\ORM\Query\SelectQuery The modified query.
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> The modified query.
      */
     protected function appendJunctionJoin(SelectQuery $query, ?array $conditions = null): SelectQuery
     {
@@ -1279,7 +1281,7 @@ class BelongsToMany extends Association
      * `$existing` and `$jointEntities`. This method will return the values from
      * `$targetEntities` that were not deleted from calculating the difference.
      *
-     * @param \Cake\ORM\Query\SelectQuery $existing a query for getting existing links
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $existing a query for getting existing links
      * @param array<\Cake\Datasource\EntityInterface> $jointEntities link entities that should be persisted
      * @param array $targetEntities entities in target table that are related to
      * the `$jointEntities`

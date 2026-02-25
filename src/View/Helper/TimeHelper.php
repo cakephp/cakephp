@@ -33,6 +33,7 @@ use Exception;
  *
  * @link https://book.cakephp.org/5/en/views/helpers/time.html
  * @see \Cake\I18n\Time
+ * @extends \Cake\View\Helper<\Cake\View\View>
  */
 class TimeHelper extends Helper
 {

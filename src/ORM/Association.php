@@ -709,7 +709,7 @@ abstract class Association
      * - negateMatch: Will append a condition to the passed query for excluding matches.
      *   with this association.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query the query to be altered to include the target table data
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query the query to be altered to include the target table data
      * @param array<string, mixed> $options Any extra options or overrides to be taken into account
      * @return void
      * @throws \RuntimeException Unable to build the query or associations.
@@ -788,7 +788,7 @@ abstract class Association
      * Conditionally adds a condition to the passed Query that will make it find
      * records where there is no match with this association.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query The query to modify
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to modify
      * @param array<string, mixed> $options Options array containing the `negateMatch` key.
      * @return void
      */
@@ -862,7 +862,7 @@ abstract class Association
      *   it will be interpreted as the `$args` parameter
      * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @see \Cake\ORM\Table::find()
-     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface>
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      */
     public function find(array|string|null $type = null, mixed ...$args): SelectQuery
     {
@@ -948,7 +948,7 @@ abstract class Association
      * Triggers `beforeFind` on the target table for the query this association is
      * attaching to
      *
-     * @param \Cake\ORM\Query\SelectQuery $query the query this association is attaching itself to
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query the query this association is attaching itself to
      * @return void
      */
     protected function dispatchBeforeFind(SelectQuery $query): void
@@ -960,8 +960,8 @@ abstract class Association
      * Helper function used to conditionally append fields to the select clause of
      * a query from the fields found in another query object.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query the query that will get the fields appended to
-     * @param \Cake\ORM\Query\SelectQuery $surrogate the query having the fields to be copied from
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query the query that will get the fields appended to
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $surrogate the query having the fields to be copied from
      * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
      */
@@ -1011,8 +1011,8 @@ abstract class Association
      * applying the surrogate formatters to only the property corresponding to
      * such a table.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query the query that will get the formatter applied to
-     * @param \Cake\ORM\Query\SelectQuery $surrogate the query having formatters for the associated
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query the query that will get the formatter applied to
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $surrogate the query having formatters for the associated
      * target table.
      * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
@@ -1072,8 +1072,8 @@ abstract class Association
      * passed `$query`. Containments are altered so that they respect the association
      * chain from which they originated.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query the query that will get the associations attached to
-     * @param \Cake\ORM\Query\SelectQuery $surrogate the query having the containments to be attached
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query the query that will get the associations attached to
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $surrogate the query having the containments to be attached
      * @param array<string, mixed> $options options passed to the method `attachTo`
      * @return void
      */

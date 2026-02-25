@@ -39,6 +39,8 @@ use Cake\Event\EventListenerInterface;
  * - `beforeRenderFile(EventInterface $event, $viewFile)` - Called before any view fragment is rendered.
  * - `afterRenderFile(EventInterface $event, $viewFile, $content)` - Called after any view fragment is rendered.
  *   If a listener returns a non-null value, the output of the rendered file will be set to that.
+ *
+ * @template TView of \Cake\View\View
  */
 class Helper implements EventListenerInterface
 {
@@ -61,21 +63,21 @@ class Helper implements EventListenerInterface
     /**
      * Loaded helper instances.
      *
-     * @var array<string, \Cake\View\Helper>
+     * @var array<string, \Cake\View\Helper<\Cake\View\View>>
      */
     protected array $helperInstances = [];
 
     /**
      * The View instance this helper is attached to
      *
-     * @var \Cake\View\View
+     * @var TView
      */
     protected View $View;
 
     /**
      * Default Constructor
      *
-     * @param \Cake\View\View $view The View this helper is being attached to.
+     * @param TView $view The View this helper is being attached to.
      * @param array<string, mixed> $config Configuration settings for the helper.
      */
     public function __construct(View $view, array $config = [])
@@ -94,7 +96,7 @@ class Helper implements EventListenerInterface
      * Lazy loads helpers.
      *
      * @param string $name Name of the property being accessed.
-     * @return \Cake\View\Helper|null Helper instance if helper with provided name exists
+     * @return \Cake\View\Helper<\Cake\View\View>|null Helper instance if helper with provided name exists
      */
     public function __get(string $name): ?Helper
     {
@@ -114,7 +116,7 @@ class Helper implements EventListenerInterface
     /**
      * Get the view instance this helper is bound to.
      *
-     * @return \Cake\View\View The bound view instance.
+     * @return TView The bound view instance.
      */
     public function getView(): View
     {

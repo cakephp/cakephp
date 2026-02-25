@@ -31,6 +31,7 @@ use SplFixedArray;
  */
 class Collection extends IteratorIterator implements CollectionInterface
 {
+    /** @use \Cake\Collection\CollectionTrait<TKey, TValue> */
     use CollectionTrait;
 
     /**

@@ -31,6 +31,8 @@ use Traversable;
  * Data can be provided as:
  * - Array of AttributeInfo objects (converted to arrays internally)
  * - Raw array data with optional pre-built indexes (from cache)
+ *
+ * @implements \IteratorAggregate<int, \Cake\AttributeResolver\ValueObject\AttributeInfo>
  */
 class AttributeCollection implements IteratorAggregate, Countable
 {

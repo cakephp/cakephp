@@ -1140,6 +1140,13 @@ trait EntityTrait
             $errors = [$errors];
         }
 
+        // Handle dotted field paths by creating nested error structure
+        if (str_contains($field, '.')) {
+            $nested = Hash::insert([], $field, $errors);
+
+            return $this->setErrors($nested, $overwrite);
+        }
+
         return $this->setErrors([$field => $errors], $overwrite);
     }
 

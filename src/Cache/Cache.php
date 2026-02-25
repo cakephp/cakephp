@@ -85,14 +85,14 @@ class Cache
     /**
      * Cache Registry used for creating and using cache adapters.
      *
-     * @var \Cake\Cache\CacheRegistry
+     * @var \Cake\Cache\CacheRegistry<\Cake\Cache\CacheEngine<object>>
      */
     protected static CacheRegistry $registry;
 
     /**
      * Returns the Cache Registry instance used for creating and using cache adapters.
      *
-     * @return \Cake\Cache\CacheRegistry
+     * @return \Cake\Cache\CacheRegistry<\Cake\Cache\CacheEngine<object>>
      */
     public static function getRegistry(): CacheRegistry
     {
@@ -104,7 +104,7 @@ class Cache
      *
      * Also allows for injecting of a new registry instance.
      *
-     * @param \Cake\Cache\CacheRegistry $registry Injectable registry object.
+     * @param \Cake\Cache\CacheRegistry<\Cake\Cache\CacheEngine<object>> $registry Injectable registry object.
      * @return void
      */
     public static function setRegistry(CacheRegistry $registry): void
@@ -153,6 +153,7 @@ class Cache
             $registry->load($name, $config);
         } catch (RuntimeException $e) {
             if (!array_key_exists('fallback', $config)) {
+                // @phpstan-ignore argument.type (NullEngine is valid fallback)
                 $registry->set($name, new NullEngine());
                 trigger_error($e->getMessage(), E_USER_WARNING);
 

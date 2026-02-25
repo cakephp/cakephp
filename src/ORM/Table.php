@@ -1031,11 +1031,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
      * @param array<string, mixed> $options list of options to configure the association definition
-     * @return \Cake\ORM\Association\BelongsTo
+     * @return \Cake\ORM\Association\BelongsTo<\Cake\ORM\Table>
      */
     public function belongsTo(string $associated, array $options = []): BelongsTo
     {
-        /** @var \Cake\ORM\Association\BelongsTo */
+        /** @var \Cake\ORM\Association\BelongsTo<\Cake\ORM\Table> */
         return $this->associations->load(BelongsTo::class, $associated, $this, $options);
     }
 
@@ -1073,11 +1073,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
      * @param array<string, mixed> $options list of options to configure the association definition
-     * @return \Cake\ORM\Association\HasOne
+     * @return \Cake\ORM\Association\HasOne<\Cake\ORM\Table>
      */
     public function hasOne(string $associated, array $options = []): HasOne
     {
-        /** @var \Cake\ORM\Association\HasOne */
+        /** @var \Cake\ORM\Association\HasOne<\Cake\ORM\Table> */
         return $this->associations->load(HasOne::class, $associated, $this, $options);
     }
 
@@ -1121,11 +1121,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
      * @param array<string, mixed> $options list of options to configure the association definition
-     * @return \Cake\ORM\Association\HasMany
+     * @return \Cake\ORM\Association\HasMany<\Cake\ORM\Table>
      */
     public function hasMany(string $associated, array $options = []): HasMany
     {
-        /** @var \Cake\ORM\Association\HasMany */
+        /** @var \Cake\ORM\Association\HasMany<\Cake\ORM\Table> */
         return $this->associations->load(HasMany::class, $associated, $this, $options);
     }
 
@@ -1171,11 +1171,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * @param string $associated the alias for the target table. This is used to
      * uniquely identify the association
      * @param array<string, mixed> $options list of options to configure the association definition
-     * @return \Cake\ORM\Association\BelongsToMany
+     * @return \Cake\ORM\Association\BelongsToMany<\Cake\ORM\Table>
      */
     public function belongsToMany(string $associated, array $options = []): BelongsToMany
     {
-        /** @var \Cake\ORM\Association\BelongsToMany */
+        /** @var \Cake\ORM\Association\BelongsToMany<\Cake\ORM\Table> */
         return $this->associations->load(BelongsToMany::class, $associated, $this, $options);
     }
 
@@ -1259,7 +1259,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $type the type of query to perform
      * @param mixed ...$args Arguments that match up to finder-specific parameters
-     * @return \Cake\ORM\Query\SelectQuery The query builder
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> The query builder
      */
     public function find(string $type = 'all', mixed ...$args): SelectQuery
     {
@@ -1272,8 +1272,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * By default findAll() applies no query clauses, you can override this
      * method in subclasses to modify how `find('all')` works.
      *
-     * @param \Cake\ORM\Query\SelectQuery $query The query to find with
-     * @return \Cake\ORM\Query\SelectQuery The query builder
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to find with
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> The query builder
      */
     public function findAll(SelectQuery $query): SelectQuery
     {
@@ -1344,8 +1344,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * ]
      * ```
      *
-     * @param \Cake\ORM\Query\SelectQuery $query The query to find with
-     * @return \Cake\ORM\Query\SelectQuery The query builder
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to find with
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> The query builder
      */
     public function findList(
         SelectQuery $query,
@@ -1402,11 +1402,11 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      * $table->find('threaded', keyField: 'id', parentField: 'ancestor_id', nestingKey: 'children');
      * ```
      *
-     * @param \Cake\ORM\Query\SelectQuery $query The query to find with
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query The query to find with
      * @param \Closure|array|string|null $keyField The path to the key field.
      * @param \Closure|array|string $parentField The path to the parent field.
      * @param string $nestingKey The key to nest children under.
-     * @return \Cake\ORM\Query\SelectQuery The query builder
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> The query builder
      */
     public function findThreaded(
         SelectQuery $query,
@@ -1595,7 +1595,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *   transaction (default: true)
      * - defaults: Whether to use the search criteria as default values for the new entity (default: true)
      *
-     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find existing
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|callable|array $search The criteria to find existing
      *   records by. Note that when you pass a query object you'll have to use
      *   the 2nd arg of the method to modify the entity data before saving.
      * @param callable|array|null $callback An array of data key/value pairs or a callback that will
@@ -1630,7 +1630,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Performs the actual find and/or create of an entity based on the passed options.
      *
-     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find an existing record by, or a callable that will
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|callable|array $search The criteria to find an existing record by, or a callable that will
      *   customize the find query.
      * @param callable|array|null $callback Data or a callback that will be invoked for newly
      *   created entities. This callback will be called *before* the entity
@@ -1681,8 +1681,8 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Gets the query object for findOrCreate().
      *
-     * @param \Cake\ORM\Query\SelectQuery|callable|array $search The criteria to find existing records by.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>|callable|array $search The criteria to find existing records by.
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      */
     protected function getFindOrCreateQuery(SelectQuery|callable|array $search): SelectQuery
     {
@@ -1701,7 +1701,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Creates a new SelectQuery instance for a table.
      *
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      */
     public function query(): SelectQuery
     {
@@ -1711,7 +1711,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
     /**
      * Creates a new select query
      *
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      */
     public function selectQuery(): SelectQuery
     {
@@ -1753,7 +1753,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * This is useful for subqueries.
      *
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      */
     public function subquery(): SelectQuery
     {
@@ -2682,7 +2682,7 @@ class Table implements RepositoryInterface, EventListenerInterface, EventDispatc
      *
      * @param string $method The method name that was fired.
      * @param array $args List of arguments passed to the function.
-     * @return \Cake\ORM\Query\SelectQuery
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
      * @throws \BadMethodCallException when there are missing arguments, or when
      *  and & or are combined.
      */
