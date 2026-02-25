@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\Console\Command;
 
 use Cake\Console\CommandInterface;
 use Cake\Console\TestSuite\ConsoleIntegrationTestTrait;
+use Cake\Core\Configure;
 use Cake\TestSuite\TestCase;
 
 /**
@@ -71,8 +72,25 @@ class HelpCommandTest extends TestCase
         $this->assertOutputContains('<comment>cache clear</comment>', 'cache subcommand listed');
         $this->assertOutputContains('Clear all data in a single cache engine', 'inline description shown');
         $this->assertOutputNotContains('<info>app</info>:', 'no plugin group headers in compact mode');
-        $this->assertOutputNotContains('<info>help</info>', 'help command should be hidden');
+        $this->assertOutputNotContains('<comment>help</comment>', 'help command should be hidden');
         $this->assertOutputContains('To run a command', 'more info present');
+    }
+
+    /**
+     * Test that the default header is omitted when Cake version is unknown.
+     */
+    public function testMainCompactOmitsHeaderWhenVersionUnknown(): void
+    {
+        $version = Configure::read('Cake.version');
+        Configure::write('Cake.version', 'unknown');
+
+        try {
+            $this->exec('help');
+            $this->assertExitCode(CommandInterface::CODE_SUCCESS);
+            $this->assertOutputNotContains('<info>CakePHP:</info>', 'header should be omitted when version is unknown');
+        } finally {
+            Configure::write('Cake.version', $version);
+        }
     }
 
     /**
