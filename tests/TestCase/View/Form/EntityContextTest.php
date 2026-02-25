@@ -735,7 +735,7 @@ class EntityContextTest extends TestCase
      */
     public function testIsRequiredWithCallableAllowEmpty(): void
     {
-        $this->_setupTables();
+        $this->setupTables();
 
         $articles = $this->getTableLocator()->get('Articles');
         $validator = new Validator();
