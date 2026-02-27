@@ -1503,7 +1503,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * If set to false array results will be returned for the query.
      *
      * @param bool $enable Use a boolean to set the hydration mode.
-     * @return ($enable is true ? static<\Cake\Datasource\EntityInterface> : static<array>)
+     * @return $this
      */
     public function enableHydration(bool $enable = true)
     {
