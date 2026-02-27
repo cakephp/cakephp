@@ -44,7 +44,7 @@ use Psr\SimpleCache\CacheInterface;
  * into a specific iterator that will be responsible for hydrating results if
  * required.
  *
- * @template TSubject of \Cake\Datasource\EntityInterface|array
+ * @template TSubject of \Cake\Datasource\EntityInterface
  * @extends \Cake\Database\Query\SelectQuery<TSubject>
  */
 class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterface
@@ -234,7 +234,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * iterated without having to call execute() manually, thus making it look like
      * a result set instead of the query itself.
      *
-     * @return \Cake\Datasource\ResultSetInterface<array-key, \Cake\Datasource\EntityInterface|array>
+     * @return \Cake\Datasource\ResultSetInterface<array-key, TSubject>
      */
     public function getIterator(): ResultSetInterface
     {
@@ -397,7 +397,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
     /**
      * Returns an array representation of the results after executing the query.
      *
-     * @return array
+     * @return array<array-key, TSubject>
      */
     public function toArray(): array
     {
@@ -1519,7 +1519,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * Disabling hydration will cause array results to be returned for the query
      * instead of entities.
      *
-     * @return $this
+     * @return static<array<string,mixed>>
      */
     public function disableHydration()
     {
@@ -1545,8 +1545,9 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * When DTO projection is enabled, results will be hydrated into
      * the specified DTO class instead of entity objects.
      *
-     * @param class-string $dtoClass The DTO class name
-     * @return $this
+     * @template TClass
+     * @param class-string<TClass> $dtoClass The DTO class name
+     * @return static<TClass>
      */
     public function projectAs(string $dtoClass)
     {
