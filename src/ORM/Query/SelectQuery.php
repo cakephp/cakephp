@@ -1503,7 +1503,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * If set to false array results will be returned for the query.
      *
      * @param bool $enable Use a boolean to set the hydration mode.
-     * @return ($enable is true ? static<\Cake\Datasource\EntityInterface> : static<array<string,mixed>>)
+     * @return ($enable is true ? static<\Cake\Datasource\EntityInterface> : static<array>)
      */
     public function enableHydration(bool $enable = true)
     {
@@ -1520,9 +1520,11 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * instead of entities.
      *
      * @return static<array<string,mixed>>
+     * phpcs:disable SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
-    public function disableHydration(): self
+    public function disableHydration()
     {
+        // phpcs:enable SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
         $this->_dirty();
         $this->_hydrate = false;
 
@@ -1548,7 +1550,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * @param class-string $dtoClass The DTO class name
      * @return $this
      */
-    public function projectAs(string $dtoClass): self
+    public function projectAs(string $dtoClass)
     {
         $this->_dirty();
         $this->dtoClass = $dtoClass;
@@ -1726,7 +1728,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @param string $finder The finder method to use.
      * @param mixed ...$args Arguments that match up to finder-specific parameters
-     * @return static<TSubject> Returns a modified query.
+     * @return static Returns a modified query.
      */
     public function find(string $finder, mixed ...$args): static
     {
