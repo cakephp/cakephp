@@ -44,7 +44,7 @@ use Psr\SimpleCache\CacheInterface;
  * into a specific iterator that will be responsible for hydrating results if
  * required.
  *
- * @template TSubject of \Cake\Datasource\EntityInterface
+ * @template TSubject of \Cake\Datasource\EntityInterface|array
  * @extends \Cake\Database\Query\SelectQuery<TSubject>
  */
 class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterface
@@ -1503,7 +1503,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * If set to false array results will be returned for the query.
      *
      * @param bool $enable Use a boolean to set the hydration mode.
-     * @return $this
+     * @return ($enable is true ? static<\Cake\Datasource\EntityInterface> : static<array<string,mixed>>)
      */
     public function enableHydration(bool $enable = true)
     {
@@ -1521,7 +1521,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      *
      * @return static<array<string,mixed>>
      */
-    public function disableHydration()
+    public function disableHydration(): self
     {
         $this->_dirty();
         $this->_hydrate = false;
@@ -1545,11 +1545,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * When DTO projection is enabled, results will be hydrated into
      * the specified DTO class instead of entity objects.
      *
-     * @template TClass
-     * @param class-string<TClass> $dtoClass The DTO class name
-     * @return static<TClass>
+     * @param class-string $dtoClass The DTO class name
+     * @return $this
      */
-    public function projectAs(string $dtoClass)
+    public function projectAs(string $dtoClass): self
     {
         $this->_dirty();
         $this->dtoClass = $dtoClass;
