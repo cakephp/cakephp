@@ -234,6 +234,7 @@ class TreeBehavior extends Behavior
 
         if ($diff > 2) {
             if ($this->getConfig('cascadeCallbacks')) {
+                /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface> $query */
                 $query = $this->_scope($this->_table->query())
                     ->where(
                         fn(QueryExpression $exp) => $exp

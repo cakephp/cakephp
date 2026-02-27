@@ -1466,6 +1466,7 @@ class BelongsToMany extends Association
             $query->union($q);
         }
 
+        // @phpstan-ignore return.type
         return array_merge($result, $query->toArray());
     }
 

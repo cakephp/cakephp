@@ -524,6 +524,7 @@ class Marshaller
             $filter = [$primaryKey[0] . ' IN' => $ids];
         }
 
+        // @phpstan-ignore return.type
         return $target->find()->where($filter)->toArray();
     }
 
