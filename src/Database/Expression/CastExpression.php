@@ -137,10 +137,8 @@ class CastExpression implements ExpressionInterface, TypedResultInterface
 
     /**
      * Clones the inner expression if it's an ExpressionInterface
-     *
-     * @return void
      */
-    public function __clone(): void
+    public function __clone()
     {
         if ($this->value instanceof ExpressionInterface) {
             $this->value = clone $this->value;

@@ -769,7 +769,7 @@ class QueryExpression implements ExpressionInterface, Countable
     /**
      * Clone this object and its subtree of expressions.
      */
-    public function __clone(): void
+    public function __clone()
     {
         foreach ($this->conditions as $i => $condition) {
             if ($condition instanceof ExpressionInterface) {
