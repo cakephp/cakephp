@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Core\Plugin;
 use Cake\Database\Connection;
 use Cake\Database\Schema\SqlGeneratorInterface;
 use Cake\Database\Schema\TableSchema;
@@ -60,7 +61,8 @@ class TestFixture implements FixtureInterface
      *
      * If both table and tableAlias are empty, the alias will be inflected
      * from the class name using tableize() then camelize() to respect
-     * custom Inflector rules.
+     * custom Inflector rules. For plugin fixtures, the plugin name is
+     * automatically prepended (e.g., `MyPlugin.Articles`).
      *
      * @var string
      */
@@ -147,6 +149,9 @@ class TestFixture implements FixtureInterface
      * Uses tableize() then camelize() to respect custom Inflector rules
      * like uninflected words.
      *
+     * For plugin fixtures (namespace pattern `{Plugin}\Test\Fixture\`),
+     * the plugin name is automatically prepended to the alias.
+     *
      * @return string
      */
     protected function _aliasFromClass(): string
@@ -155,7 +160,18 @@ class TestFixture implements FixtureInterface
         preg_match('/^(.*)Fixture$/', $class, $matches);
         $name = $matches[1] ?? $class;
 
-        return Inflector::camelize(Inflector::tableize($name));
+        $alias = Inflector::camelize(Inflector::tableize($name));
+
+        // Detect plugin namespace pattern: {Plugin}\Test\Fixture\...
+        // and prepend plugin name to alias for proper table resolution
+        if (preg_match('/^([^\\\\]+)\\\\Test\\\\Fixture\\\\/', static::class, $nsMatches)) {
+            $plugin = $nsMatches[1];
+            if (Plugin::isLoaded($plugin)) {
+                return $plugin . '.' . $alias;
+            }
+        }
+
+        return $alias;
     }
 
     /**
