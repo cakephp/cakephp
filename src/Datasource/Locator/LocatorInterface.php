@@ -21,7 +21,7 @@ use Cake\Datasource\RepositoryInterface;
 /**
  * Registries for repository objects should implement this interface.
  *
- * @template TRepo of \Cake\Datasource\RepositoryInterface
+ * @template-covariant TRepo of \Cake\Datasource\RepositoryInterface
  */
 interface LocatorInterface
 {

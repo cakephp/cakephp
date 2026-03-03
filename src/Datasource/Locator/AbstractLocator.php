@@ -22,7 +22,7 @@ use Cake\Datasource\RepositoryInterface;
 /**
  * Provides an abstract registry/factory for repository objects.
  *
- * @template TRepo of \Cake\Datasource\RepositoryInterface
+ * @template-covariant TRepo of \Cake\Datasource\RepositoryInterface
  * @implements \Cake\Datasource\Locator\LocatorInterface<TRepo>
  */
 abstract class AbstractLocator implements LocatorInterface
