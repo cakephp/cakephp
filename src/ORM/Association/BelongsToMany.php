@@ -1456,9 +1456,12 @@ class BelongsToMany extends Association
 
         $unions = [];
         foreach ($missing as $key) {
-            $unions[] = $hasMany->find()
+            /** @var \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface> $unionQuery */
+            $unionQuery = $hasMany->find()
                 ->where(array_combine($foreignKey, $sourceKey))
                 ->where(array_combine($assocForeignKey, $key));
+
+            $unions[] = $unionQuery;
         }
 
         $query = array_shift($unions);
@@ -1466,7 +1469,6 @@ class BelongsToMany extends Association
             $query->union($q);
         }
 
-        // @phpstan-ignore return.type
         return array_merge($result, $query->toArray());
     }
 
