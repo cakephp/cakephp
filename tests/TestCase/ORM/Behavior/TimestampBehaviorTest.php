@@ -404,25 +404,32 @@ class TimestampBehaviorTest extends TestCase
      */
     public function testSaveTriggersInsert(): void
     {
-        $table = $this->getTableLocator()->get('users');
-        $table->addBehavior('Timestamp', [
-            'events' => [
-                'Model.beforeSave' => [
-                    'created' => 'new',
-                    'updated' => 'always',
+        $previousTestNow = DateTime::getTestNow();
+        $now = new DateTime('2026-01-01 12:00:00');
+        DateTime::setTestNow($now);
+
+        try {
+            $table = $this->getTableLocator()->get('users');
+            $table->addBehavior('Timestamp', [
+                'events' => [
+                    'Model.beforeSave' => [
+                        'created' => 'new',
+                        'updated' => 'always',
+                    ],
                 ],
-            ],
-        ]);
+            ]);
 
-        $entity = new Entity(['username' => 'timestamp test']);
-        $return = $table->save($entity);
-        $this->assertSame($entity, $return, 'The returned object is expected to be the same entity object');
+            $entity = new Entity(['username' => 'timestamp test']);
+            $return = $table->save($entity);
+            $this->assertSame($entity, $return, 'The returned object is expected to be the same entity object');
 
-        $row = $table->find('all')->where(['id' => $entity->id])->first();
+            $row = $table->find('all')->where(['id' => $entity->id])->first();
 
-        $now = DateTime::now();
-        $this->assertSame($now->toDateTimeString(), $row->created->toDateTimeString());
-        $this->assertSame($now->toDateTimeString(), $row->updated->toDateTimeString());
+            $this->assertSame($now->toDateTimeString(), $row->created->toDateTimeString());
+            $this->assertSame($now->toDateTimeString(), $row->updated->toDateTimeString());
+        } finally {
+            DateTime::setTestNow($previousTestNow);
+        }
     }
 
     /**
