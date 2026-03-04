@@ -1393,7 +1393,7 @@ class FormHelper extends Helper
      * @param class-string<\BackedEnum> $enumClass Enum class name.
      * @return array<int|string, string>
      */
-    protected function enumOptions(string $enumClass): array
+    public function enumOptions(string $enumClass): array
     {
         assert(is_subclass_of($enumClass, BackedEnum::class));
 

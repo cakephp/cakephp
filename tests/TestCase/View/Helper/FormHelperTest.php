@@ -3941,6 +3941,37 @@ class FormHelperTest extends TestCase
     }
 
     /**
+     * Test enumOptions() returns correct value => label mapping for backed enums.
+     */
+    public function testEnumOptions(): void
+    {
+        // Basic backed enum without EnumLabelInterface - labels from humanized case names
+        $result = $this->Form->enumOptions(ArticleStatus::class);
+        $expected = [
+            'Y' => 'Published',
+            'N' => 'Unpublished',
+        ];
+        $this->assertSame($expected, $result);
+
+        // Enum implementing EnumLabelInterface - labels from label() method
+        $result = $this->Form->enumOptions(ArticleStatusLabelInterface::class);
+        $expected = [
+            'Y' => 'Is Published',
+            'N' => 'Is Unpublished',
+        ];
+        $this->assertSame($expected, $result);
+
+        // Integer-backed enum implementing EnumLabelInterface
+        $result = $this->Form->enumOptions(Priority::class);
+        $expected = [
+            1 => 'Is Low',
+            2 => 'Is Medium',
+            3 => 'Is High',
+        ];
+        $this->assertSame($expected, $result);
+    }
+
+    /**
      * testControlWithNonStandardPrimaryKeyMakesHidden method
      *
      * Test that control() and a non standard primary key makes a hidden input by default.
