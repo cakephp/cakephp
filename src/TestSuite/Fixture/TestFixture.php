@@ -164,11 +164,9 @@ class TestFixture implements FixtureInterface
 
         // Detect plugin namespace pattern: {Plugin}\Test\Fixture\...
         // and prepend plugin name to alias for proper table resolution
-        if (str_contains(static::class, '\\Test\\Fixture\\')) {
-            $plugin = explode('\\', static::class)[0];
-            if (Plugin::isLoaded($plugin)) {
-                return $plugin . '.' . $alias;
-            }
+        $plugin = strstr(static::class, '\\Test\\Fixture\\', before_needle: true) ?: null;
+        if ($plugin && Plugin::isLoaded($plugin)) {
+            return $plugin . '.' . $alias;
         }
 
         return $alias;
