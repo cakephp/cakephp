@@ -151,7 +151,12 @@ trait EntityTrait
      */
     protected bool $requireFieldPresence = false;
 
-    protected array $restrictedProperties = [
+    /**
+     * List of properties that are not treated as fields.
+     *
+     * @var array<string>
+     */
+    protected static array $restrictedProperties = [
         'propertyFields',
         'original',
         'originalFields',
@@ -1474,7 +1479,7 @@ trait EntityTrait
      */
     protected function propertyExists(string $field): bool
     {
-        return !in_array($field, $this->restrictedProperties) && property_exists($this, $field);
+        return !in_array($field, static::$restrictedProperties) && property_exists($this, $field);
     }
 
     /**
