@@ -157,6 +157,7 @@ trait EntityTrait
      * @var array<string>
      */
     protected static array $restrictedProperties = [
+        'dynamicFields',
         'propertyFields',
         'original',
         'originalFields',
@@ -170,7 +171,7 @@ trait EntityTrait
         'registryAlias',
         'hasBeenVisited',
         'requireFieldPresence',
-        'dynamicFields',
+        'restrictedProperties',
     ];
 
     /**
