@@ -325,7 +325,7 @@ trait EntityTrait
 
             if ($options['asOriginal'] || $this->isModified($name, $value)) {
                 $this->setDirty($name, true);
-            } else {
+            } elseif ($value !== null && !$this->propertyExists($name)) {
                 continue;
             }
 
@@ -561,21 +561,9 @@ trait EntityTrait
      */
     public function has(array|string $field): bool
     {
-        foreach ((array)$field as $prop) {
-            $exists = $this->propertyExists($prop);
-            if ($exists) {
-                try {
-                    // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
-                    @$this->{$prop};
-                } catch (Error) {
-                    return false;
-                }
-            } elseif (!array_key_exists($prop, $this->dynamicFields) && !static::accessor($prop, 'get')) {
-                return false;
-            }
-        }
-
-        return true;
+        return array_all((array)$field, function ($prop) {
+            return !(!in_array($prop, $this->propertyFields) && !static::accessor($prop, 'get'));
+        });
     }
 
     /**
@@ -624,16 +612,13 @@ trait EntityTrait
      */
     public function unset(array|string $field): static
     {
-        $field = (array)$field;
-        foreach ($field as $p) {
-            unset($this->dynamicFields[$p], $this->dirty[$p]);
+        foreach ((array)$field as $p) {
+            unset($this->dynamicFields[$p], $this->dirty[$p], $this->{$p});
 
             $pos = array_search($p, $this->propertyFields, true);
             if ($pos !== false) {
                 unset($this->propertyFields[$pos]);
             }
-
-            unset($this->{$p});
         }
 
         return $this;

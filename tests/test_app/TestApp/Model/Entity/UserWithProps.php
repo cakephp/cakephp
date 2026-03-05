@@ -11,11 +11,6 @@ class UserWithProps extends Entity
     protected string $name;
     protected ?string $username;
     protected ?string $password;
-    protected $created;
-    protected $updated;
-    protected $odd;
 
-    protected $article;
-    protected $articles;
-    protected $comments;
+    protected ?array $articles;
 }
