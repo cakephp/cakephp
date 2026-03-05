@@ -53,6 +53,10 @@ class EntityWithConcretePropertiesTest extends TestCase
         $this->assertSame(1, $entity->id);
         $this->assertSame(1, $entity->getOriginal('id'));
         $this->assertSame('bar', $entity->getOriginal('foo'));
+
+        // Test setting restricted properties does not cause issues.
+        $entity->set('virtual', 'value');
+        $this->assertSame('value', $entity->virtual);
     }
 
     /**
