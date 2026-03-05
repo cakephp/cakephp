@@ -618,7 +618,10 @@ trait EntityTrait
     public function unset(array|string $field): static
     {
         foreach ((array)$field as $p) {
-            unset($this->dynamicFields[$p], $this->dirty[$p], $this->{$p});
+            unset($this->dynamicFields[$p], $this->dirty[$p]);
+            if ($this->propertyExists($p)) {
+                unset($this->{$p});
+            }
 
             $pos = array_search($p, $this->propertyFields, true);
             if ($pos !== false) {
@@ -1102,7 +1105,7 @@ trait EntityTrait
             return [];
         }
 
-        $diff = array_diff_key($this->propertyFields, array_keys($this->errors));
+        $diff = array_diff($this->propertyFields, array_keys($this->errors));
         $values = [];
         foreach ($diff as $field) {
             $values[$field] = $this->{$field};
@@ -1480,7 +1483,7 @@ trait EntityTrait
      */
     protected function propertyExists(string $field): bool
     {
-        return !in_array($field, static::$restrictedProperties) && property_exists($this, $field);
+        return !in_array($field, static::$restrictedProperties, true) && property_exists($this, $field);
     }
 
     /**

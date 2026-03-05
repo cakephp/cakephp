@@ -782,8 +782,8 @@ class EntityWithConcretePropertiesTest extends TestCase
 
     public function testConstructorWithDynamicField(): void
     {
-        $entiy = new Entity(['foo' => 'bar']);
-        $this->assertSame('bar', $entiy->foo);
+        $entity = new Entity(['foo' => 'bar']);
+        $this->assertSame('bar', $entity->foo);
     }
 
     /**
@@ -871,7 +871,7 @@ class EntityWithConcretePropertiesTest extends TestCase
     /**
      * Test that get accessors are called when converting to arrays.
      */
-    public function testToArrayWithPatchableor(): void
+    public function testToArrayWithPatchable(): void
     {
         $entity = new class extends Entity {
             protected $name {
