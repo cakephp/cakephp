@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\TestSuite\Fixture;
 
 use Cake\Core\Exception\CakeException;
+use Cake\Core\Plugin;
 use Cake\Database\Connection;
 use Cake\Database\Schema\SqlGeneratorInterface;
 use Cake\Database\Schema\TableSchema;
@@ -164,7 +165,7 @@ class TestFixture implements FixtureInterface
         // Detect plugin namespace pattern: {Plugin}\Test\Fixture\...
         // and prepend plugin name to alias for proper table resolution
         $plugin = strstr(static::class, '\\Test\\Fixture\\', before_needle: true);
-        if ($plugin) {
+        if ($plugin && Plugin::isLoaded($plugin)) {
             return $plugin . '.' . $alias;
         }
 
