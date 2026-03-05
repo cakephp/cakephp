@@ -18,7 +18,6 @@ namespace Cake\Datasource;
 
 use Cake\Collection\Collection;
 use Cake\Datasource\Exception\MissingPropertyException;
-use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use Error;
@@ -816,7 +815,7 @@ trait EntityTrait
             return static::$accessors[$class][$type][$property] = '';
         }
 
-        if (static::class === Entity::class) {
+        if (static::class === self::class) {
             return '';
         }
 
