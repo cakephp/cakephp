@@ -33,6 +33,13 @@ use InvalidArgumentException;
 trait EntityTrait
 {
     /**
+     * Hold values fields which do not have corresponding class properties.
+     *
+     * @var array<array-key, mixed>
+     */
+    protected array $dynamicFields = [];
+
+    /**
      * Holds field names for initialized properties
      *
      * @var array<string>
@@ -145,25 +152,22 @@ trait EntityTrait
      */
     protected bool $requireFieldPresence = false;
 
-    /**
-     * List of fields that can be dynamically set in this entity.
-     *
-     * @var list<string>
-     */
-    protected array $allowedDynamicFields = [
-        '_joinData',
-        '_matchingData',
-        '_locale',
-        '_translations',
-        '_i18n',
+    protected array $restrictedProperties = [
+        'propertyFields',
+        'original',
+        'originalFields',
+        'hidden',
+        'virtual',
+        'dirty',
+        'new',
+        'errors',
+        'invalid',
+        'patchable',
+        'registryAlias',
+        'hasBeenVisited',
+        'requireFieldPresence',
+        'dynamicFields',
     ];
-
-    /**
-     * Dynamically set field values.
-     *
-     * @var array<array-key, mixed>
-     */
-    protected array $dynamicFields = [];
 
     /**
      * Magic getter to access fields that have been set in this entity
@@ -303,12 +307,7 @@ trait EntityTrait
      */
     public function patch(array $values, array $options = []): static
     {
-        $options += [
-            'setter' => true,
-            'guard' => true,
-            'asOriginal' => false,
-            'allowDynamic' => static::class === Entity::class ? true : false,
-        ];
+        $options += ['setter' => true, 'guard' => true, 'asOriginal' => false];
 
         if ($options['asOriginal'] === true) {
             $this->setOriginalField(array_keys($values));
@@ -350,18 +349,14 @@ trait EntityTrait
                 $this->propertyFields[] = $name;
             }
 
-            if ($options['allowDynamic']) {
-                $propExists = property_exists($this, $name);
+            $propExists = $this->propertyExists($name);
+            if ($propExists) {
+                $this->{$name} = $value;
 
-                if (!$propExists) {
-                    $this->allowedDynamicFields[] = $name;
-                    $this->dynamicFields[$name] = $value;
-
-                    continue;
-                }
+                continue;
             }
 
-            $this->{$name} = $value;
+            $this->dynamicFields[$name] = $value;
         }
 
         return $this;
@@ -381,21 +376,18 @@ trait EntityTrait
      */
     protected function isModified(string $field, mixed $value): bool
     {
-        if (
-            in_array($field, $this->allowedDynamicFields, true)
-            && !property_exists($this, $field)
-        ) {
-            if (!array_key_exists($field, $this->dynamicFields)) {
-                return true;
-            }
-
-            $existing = $this->dynamicFields[$field];
-        } else {
+        if ($this->propertyExists($field)) {
             try {
                 $existing = $this->{$field};
             } catch (Error) {
                 return true;
             }
+        } else {
+            if (!array_key_exists($field, $this->dynamicFields)) {
+                return true;
+            }
+
+            $existing = $this->dynamicFields[$field] ?? null;
         }
 
         if (($value === null || is_scalar($value)) && $existing === $value) {
@@ -447,14 +439,12 @@ trait EntityTrait
         $value = null;
         $fieldIsPresent = false;
 
-        if (property_exists($this, $field)) {
+        if ($this->propertyExists($field)) {
             $fieldIsPresent = true;
             $value = $this->{$field} ?? null;
-        } elseif (in_array($field, $this->allowedDynamicFields, true)) {
+        } elseif (array_key_exists($field, $this->dynamicFields)) {
             $fieldIsPresent = true;
-            if (array_key_exists($field, $this->dynamicFields)) {
-                $value = &$this->dynamicFields[$field];
-            }
+            $value = &$this->dynamicFields[$field];
         }
 
         $method = static::accessor($field, 'get');
@@ -544,24 +534,16 @@ trait EntityTrait
     }
 
     /**
-     * Returns whether this entity contains a field named $field and is initialized.
+     * Returns whether this entity contains a field named $field.
      *
      * It will return `true` even for fields set to `null`.
      *
      * ### Example:
      *
      * ```
-     * class MyEntity extends Entity
-     * {
-     *    protected $id;
-     *    protected $name;
-     *    protected $first_name;
-     * }
-     *
-     * $entity = new MyEntity(['id' => 1, 'name' => null]);
+     * $entity = new Entity(['id' => 1, 'name' => null]);
      * $entity->has('id'); // true
      * $entity->has('name'); // true
-     * $entity->has('first_name'); // false
      * $entity->has('last_name'); // false
      * ```
      *
@@ -580,17 +562,16 @@ trait EntityTrait
     public function has(array|string $field): bool
     {
         foreach ((array)$field as $prop) {
-            $exists = property_exists($this, $prop);
-            if (!$exists) {
-                if (!array_key_exists($prop, $this->dynamicFields) && !static::accessor($prop, 'get')) {
-                    return false;
-                }
-            } else {
+            $exists = $this->propertyExists($prop);
+            if ($exists) {
                 try {
-                    $this->{$prop};
+                    // phpcs:ignore Generic.PHP.NoSilencedErrors.Discouraged
+                    @$this->{$prop};
                 } catch (Error) {
                     return false;
                 }
+            } elseif (!array_key_exists($prop, $this->dynamicFields) && !static::accessor($prop, 'get')) {
+                return false;
             }
         }
 
@@ -1502,6 +1483,17 @@ trait EntityTrait
     }
 
     /**
+     * Checks if a property exists and is not restricted.
+     *
+     * @param string $field The field name to check.
+     * @return bool
+     */
+    protected function propertyExists(string $field): bool
+    {
+        return !in_array($field, $this->restrictedProperties) && property_exists($this, $field);
+    }
+
+    /**
      * Returns an array that can be used to describe the internal state of this
      * object.
      *
@@ -1523,7 +1515,6 @@ trait EntityTrait
             '[new]' => $this->isNew(),
             '[patchable]' => $this->patchable,
             '[dirty]' => $this->dirty,
-            '[allowedDynamic]' => $this->allowedDynamicFields,
             '[original]' => $this->original,
             '[originalFields]' => $this->originalFields,
             '[virtual]' => $this->virtual,

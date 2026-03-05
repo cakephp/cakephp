@@ -191,8 +191,6 @@ class EntityTest extends TestCase
     public function testSetOneParamWithSetter(): void
     {
         $entity = new class extends Entity {
-            protected string $name;
-
             protected function _setName(?string $name): string
             {
                 return 'Dr. ' . $name;
@@ -208,9 +206,6 @@ class EntityTest extends TestCase
     public function testMultipleWithSetter(): void
     {
         $entity = new class extends Entity {
-            protected string $name;
-            protected array $stuff;
-
             protected function _setName(?string $name): string
             {
                 return 'Dr. ' . $name;
@@ -233,9 +228,6 @@ class EntityTest extends TestCase
     public function testBypassSetters(): void
     {
         $entity = new class extends Entity {
-            protected string $name;
-            protected array $stuff;
-
             protected function _setName(?string $name): string
             {
                 throw new Exception('_setName should not have been called');
@@ -251,11 +243,11 @@ class EntityTest extends TestCase
         $entity->set('name', 'Jones', ['setter' => false]);
         $this->assertSame('Jones', $entity->name);
 
-        $entity->set('stuff', ['Thing'], ['setter' => false]);
-        $this->assertSame(['Thing'], $entity->stuff);
+        $entity->set('stuff', 'Thing', ['setter' => false]);
+        $this->assertSame('Thing', $entity->stuff);
 
-        $entity->patch(['name' => 'foo', 'stuff' => ['bar']], ['setter' => false]);
-        $this->assertSame(['bar'], $entity->stuff);
+        $entity->patch(['name' => 'foo', 'stuff' => 'bar'], ['setter' => false]);
+        $this->assertSame('bar', $entity->stuff);
     }
 
     /**
@@ -267,11 +259,11 @@ class EntityTest extends TestCase
 
         $entity
             ->shouldReceive('patch')
-            ->with(['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false, 'asOriginal' => true, 'allowDynamic' => true])
+            ->with(['a' => 'b', 'c' => 'd'], ['setter' => true, 'guard' => false, 'asOriginal' => true])
             ->once();
 
         $entity->shouldReceive('patch')
-            ->with(['foo' => 'bar'], ['setter' => false, 'guard' => false, 'asOriginal' => true, 'allowDynamic' => true])
+            ->with(['foo' => 'bar'], ['setter' => false, 'guard' => false, 'asOriginal' => true])
             ->once();
 
         $entity->__construct(['a' => 'b', 'c' => 'd']);
@@ -288,7 +280,7 @@ class EntityTest extends TestCase
 
         $entity
             ->shouldReceive('patch')
-            ->with(['foo' => 'bar'], ['setter' => true, 'guard' => true, 'asOriginal' => true, 'allowDynamic' => true])
+            ->with(['foo' => 'bar'], ['setter' => true, 'guard' => true, 'asOriginal' => true])
             ->once();
 
         $entity->__construct(['foo' => 'bar'], ['guard' => true]);
@@ -350,8 +342,6 @@ class EntityTest extends TestCase
     public function testGetCustomGetters(): void
     {
         $entity = new class extends Entity {
-            protected string $name;
-
             protected function _getName(string $name): string
             {
                 return 'Dr. ' . $name;
@@ -368,8 +358,6 @@ class EntityTest extends TestCase
     public function testGetCustomGettersAfterSet(): void
     {
         $entity = new class extends Entity {
-            protected string $name;
-
             protected function _getName(string $name): string
             {
                 return 'Dr. ' . $name;
@@ -390,8 +378,6 @@ class EntityTest extends TestCase
     public function testGetCacheClearedByUnset(): void
     {
         $entity = new class extends Entity {
-            protected string $name;
-
             protected function _getName(?string $name): string
             {
                 return 'Dr. ' . $name;
@@ -438,8 +424,6 @@ class EntityTest extends TestCase
     public function testMagicSetWithSetter(): void
     {
         $entity = new class extends Entity {
-            protected string $name;
-
             protected function _setName(?string $name): string
             {
                 return 'Dr. ' . $name;
@@ -455,8 +439,6 @@ class EntityTest extends TestCase
     public function testMagicSetWithSetterTitleCase(): void
     {
         $entity = new class extends Entity {
-            protected string $Name;
-
             protected function _setName(?string $name): string
             {
                 return 'Dr. ' . $name;
@@ -472,8 +454,6 @@ class EntityTest extends TestCase
     public function testMagicGetWithGetter(): void
     {
         $entity = new class extends Entity {
-            protected string $name;
-
             protected function _getName(string $name): string
             {
                 return 'Dr. ' . $name;
@@ -489,8 +469,6 @@ class EntityTest extends TestCase
     public function testMagicGetWithGetterTitleCase(): void
     {
         $entity = new class extends Entity {
-            protected string $Name;
-
             protected function _getName(string $name): string
             {
                 return 'Dr. ' . $name;
@@ -516,12 +494,7 @@ class EntityTest extends TestCase
      */
     public function testHas(): void
     {
-        $entity = new class (['id' => 1]) extends Entity {
-            protected $id;
-            protected $name;
-            protected $foo;
-            protected ?string $typed;
-        };
+        $entity = new Entity(['id' => 1]);
         $entity->name = 'Juan';
         $entity->foo = null;
         $this->assertTrue($entity->has('id'));
@@ -639,18 +612,19 @@ class EntityTest extends TestCase
      */
     public function testSetArrayAccess(): void
     {
-        $entity = Mockery::mock(Entity::class)->makePartial();
-        $entity->shouldReceive('set')
-            ->with('foo', 1)
-            ->once()
-            ->andReturnSelf();
-        $entity->shouldReceive('set')
-            ->with('bar', 2)
-            ->once()
-            ->andReturnSelf();
+        $entity = Mockery::spy(Entity::class)->makePartial();
+        $entity->setPatchable('*', true);
 
         $entity['foo'] = 1;
         $entity['bar'] = 2;
+
+        $entity->shouldHaveReceived('set')
+            ->with('foo', 1)
+            ->once();
+
+        $entity->shouldHaveReceived('set')
+            ->with('bar', 2)
+            ->once();
     }
 
     /**
@@ -673,9 +647,6 @@ class EntityTest extends TestCase
     public function testMethodCache(): void
     {
         $entity = new class extends Entity {
-            protected string $foo;
-            protected string $bar;
-
             protected function _setFoo(?string $name): string
             {
                 return 'Dr. ' . $name;
@@ -687,8 +658,6 @@ class EntityTest extends TestCase
             }
         };
         $entity2 = new class extends Entity {
-            protected string $bar;
-
             protected function _setBar(?string $name): string
             {
                 return 'DrDr. ' . $name;
@@ -707,8 +676,6 @@ class EntityTest extends TestCase
     public function testSetGetLongPropertyNames(): void
     {
         $entity = new class extends Entity {
-            protected string $very_long_property;
-
             protected function _setVeryLongProperty(?string $name): string
             {
                 return 'Dr. ' . $name;
@@ -1042,23 +1009,10 @@ class EntityTest extends TestCase
     public function testToArrayRecursive(): void
     {
         $data = ['id' => 1, 'name' => 'James', 'age' => 20, 'phones' => ['123', '457']];
-        $user = new class ($data) extends Entity {
-            protected $id;
-            protected $name;
-            protected $age;
-            protected $phones;
-            protected $comments;
-            protected $profile;
-        };
+        $user = new Extending($data);
         $comments = [
-            new class (['user_id' => 1, 'body' => 'Comment 1']) extends Entity {
-                protected $user_id;
-                protected $body;
-            },
-            new class (['user_id' => 1, 'body' => 'Comment 2']) extends Entity {
-                protected $user_id;
-                protected $body;
-            },
+            new NonExtending(['user_id' => 1, 'body' => 'Comment 1']),
+            new NonExtending(['user_id' => 1, 'body' => 'Comment 2']),
         ];
         $user->comments = $comments;
         $user->profile = new Entity(['email' => 'mark@example.com']);
@@ -1105,9 +1059,6 @@ class EntityTest extends TestCase
     public function testToArrayWithAccessor(): void
     {
         $entity = new class extends Entity {
-            protected string $name;
-            protected string $email;
-
             protected function _getName(?string $name): string
             {
                 return 'Jose';
@@ -1176,9 +1127,6 @@ class EntityTest extends TestCase
     public function testToArrayVirtualProperties(): void
     {
         $entity = new class extends Entity {
-            protected string $name;
-            protected string $email;
-
             protected function _getName(?string $name): string
             {
                 return 'Jose';
@@ -1217,25 +1165,21 @@ class EntityTest extends TestCase
      */
     public function testSetVirtualWithMerge(): void
     {
-        $data = ['virt' => 'sauce', 'name' => 'mark', 'id' => 1];
-        $entity = new class ($data) extends Entity {
-            protected $virt;
-            protected $name;
-            protected $id;
-        };
-        $entity->setVirtual(['virt']);
+        $data = ['virtual' => 'sauce', 'name' => 'mark', 'id' => 1];
+        $entity = new Entity($data);
+        $entity->setVirtual(['virtual']);
 
         $result = $entity->getVirtual();
-        $this->assertSame(['virt'], $result);
+        $this->assertSame(['virtual'], $result);
 
         $entity->setVirtual(['name'], true);
 
         $result = $entity->getVirtual();
-        $this->assertSame(['virt', 'name'], $result);
+        $this->assertSame(['virtual', 'name'], $result);
 
         $entity->setVirtual(['name'], true);
         $result = $entity->getVirtual();
-        $this->assertSame(['virt', 'name'], $result);
+        $this->assertSame(['virtual', 'name'], $result);
     }
 
     /**
@@ -1334,18 +1278,12 @@ class EntityTest extends TestCase
     {
         $user = new Entity();
         $owner = new NonExtending();
-        $author = new class ([
+        $author = new Extending([
             'foo' => 'bar',
             'thing' => 'baz',
             'user' => $user,
             'owner' => $owner,
-        ]) extends Entity {
-            protected $foo;
-            protected $thing;
-            protected $user;
-            protected $owner;
-            protected $multiple;
-        };
+        ]);
         $author->setError('thing', ['this is a mistake']);
         $user->setErrors(['a' => ['error1'], 'b' => ['error2']]);
         $owner->setErrors(['c' => ['error3'], 'd' => ['error4']]);
@@ -1635,7 +1573,6 @@ class EntityTest extends TestCase
             '[new]' => true,
             '[patchable]' => ['*' => true, 'id' => false, 'name' => true],
             '[dirty]' => ['somethingElse' => true, 'foo' => true],
-            '[allowedDynamic]' => ['_joinData', '_matchingData', '_locale', '_translations', '_i18n', 'foo', 'somethingElse'],
             '[original]' => [],
             '[originalFields]' => ['foo'],
             '[virtual]' => ['baz'],

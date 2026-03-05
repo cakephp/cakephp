@@ -55,7 +55,6 @@ class Entity implements EntityInterface, InvalidPropertyInterface
             'markNew' => null,
             'guard' => false,
             'source' => null,
-            'allowDynamic' => true,
         ];
 
         if ($options['source'] !== null) {
@@ -67,14 +66,13 @@ class Entity implements EntityInterface, InvalidPropertyInterface
         }
 
         if ($properties) {
-            //Remember the original field names here.
+            // Remember the original field names here.
             $this->setOriginalField(array_keys($properties));
 
             $this->patch($properties, [
                 'asOriginal' => true,
                 'setter' => $options['useSetters'],
                 'guard' => $options['guard'],
-                'allowDynamic' => $options['allowDynamic'],
             ]);
         }
 
