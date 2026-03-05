@@ -33,6 +33,7 @@ class TypeFactory
         'biginteger' => Type\IntegerType::class,
         'binary' => Type\BinaryType::class,
         'binaryuuid' => Type\BinaryUuidType::class,
+        'varbinary' => Type\BinaryType::class,
         'boolean' => Type\BoolType::class,
         'char' => Type\StringType::class,
         'cidr' => Type\StringType::class,
