@@ -630,4 +630,34 @@ class EagerLoaderTest extends TestCase
         $this->assertInstanceOf(EagerLoader::class, $result);
         $this->assertArrayHasKey('clients', $loader->getMatching());
     }
+
+    /**
+     * Test that calling setMatching without a builder preserves the existing queryBuilder.
+     *
+     * @see https://github.com/cakephp/cakephp/issues/19285
+     */
+    public function testSetMatchingPreservesExistingQueryBuilder(): void
+    {
+        $loader = new EagerLoader();
+        $builderCalled = false;
+        $loader->setMatching('clients', function ($q) use (&$builderCalled) {
+            $builderCalled = true;
+
+            return $q;
+        });
+
+        // Second call without builder should not override the first
+        $loader->setMatching('clients');
+
+        $matching = $loader->getMatching();
+        $this->assertArrayHasKey('clients', $matching);
+        $this->assertArrayHasKey('queryBuilder', $matching['clients']);
+        $this->assertNotNull($matching['clients']['queryBuilder']);
+
+        // Actually call the builder to verify it's preserved
+        $matching['clients']['queryBuilder'](
+            Mockery::mock(SelectQuery::class),
+        );
+        $this->assertTrue($builderCalled, 'Original queryBuilder should be preserved and called');
+    }
 }

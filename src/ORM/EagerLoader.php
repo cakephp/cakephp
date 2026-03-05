@@ -255,7 +255,7 @@ class EagerLoader
         }
 
         // Add all options to target association contain which is the last in nested chain
-        $nested = ['matching' => true, 'queryBuilder' => $builder] + $options;
+        $nested = ['matching' => true, 'queryBuilder' => $builder ?? fn($q) => $q] + $options;
         $this->_matching->contain($contains);
 
         return $this;

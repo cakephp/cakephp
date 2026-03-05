@@ -42,6 +42,7 @@ use Cake\ORM\Query;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\ResultSet;
 use Cake\TestSuite\TestCase;
+use Closure;
 use InvalidArgumentException;
 use Mockery;
 use PHPUnit\Framework\Attributes\DataProvider;
@@ -2726,17 +2727,20 @@ class SelectQueryTest extends TestCase
             'formatters' => 1,
             'mapReducers' => 1,
             'contain' => [],
-            'matching' => [
-                'articles' => [
-                    'matching' => true,
-                    'queryBuilder' => null,
-                    'joinType' => 'INNER',
-                ],
-            ],
             'extraOptions' => ['foo' => 'bar'],
             'repository' => $table,
         ];
-        $this->assertSame($expected, $query->__debugInfo());
+        $result = $query->__debugInfo();
+
+        // Check matching separately since queryBuilder is a Closure
+        $this->assertArrayHasKey('matching', $result);
+        $this->assertArrayHasKey('articles', $result['matching']);
+        $this->assertTrue($result['matching']['articles']['matching']);
+        $this->assertInstanceOf(Closure::class, $result['matching']['articles']['queryBuilder']);
+        $this->assertSame('INNER', $result['matching']['articles']['joinType']);
+        unset($result['matching']);
+
+        $this->assertSame($expected, $result);
     }
 
     /**
