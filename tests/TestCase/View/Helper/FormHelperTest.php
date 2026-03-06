@@ -51,7 +51,7 @@ use PHPUnit\Framework\Attributes\DataProvider;
 use ReflectionProperty;
 use TestApp\Model\Entity\Article;
 use TestApp\Model\Enum\ArticleStatus;
-use TestApp\Model\Enum\ArticleStatusLabelInterface;
+use TestApp\Model\Enum\ArticleStatusLabel;
 use TestApp\Model\Enum\Priority;
 use TestApp\Model\Table\ContactsTable;
 use TestApp\Model\Table\ValidateUsersTable;
@@ -3815,7 +3815,7 @@ class FormHelperTest extends TestCase
 
         $articlesTable->getSchema()->setColumnType(
             'published',
-            EnumType::from(ArticleStatusLabelInterface::class),
+            EnumType::from(ArticleStatusLabel::class),
         );
 
         $this->Form->create($articlesTable->newEmptyEntity());
