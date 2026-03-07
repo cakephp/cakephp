@@ -19,6 +19,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
 use Cake\Database\Driver\Sqlserver;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Expression\OrderByExpression;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -838,6 +839,10 @@ class HasManyTest extends TestCase
      */
     public function testCTEStrategy(): void
     {
+        $this->skipIf(
+            !ConnectionManager::get('test')->getDriver()->supports(DriverFeatureEnum::CTE),
+            'Database does not support CTEs',
+        );
         $Authors = $this->getTableLocator()->get('Authors');
         $Authors->Articles->setStrategy(Association::STRATEGY_CTE);
 
@@ -859,6 +864,10 @@ class HasManyTest extends TestCase
      */
     public function testCTEStrategyMultipleParents(): void
     {
+        $this->skipIf(
+            !ConnectionManager::get('test')->getDriver()->supports(DriverFeatureEnum::CTE),
+            'Database does not support CTEs',
+        );
         $Authors = $this->getTableLocator()->get('Authors');
         $Authors->Articles->setStrategy(Association::STRATEGY_CTE);
 
@@ -882,6 +891,10 @@ class HasManyTest extends TestCase
      */
     public function testCTEStrategyWithLimit(): void
     {
+        $this->skipIf(
+            !ConnectionManager::get('test')->getDriver()->supports(DriverFeatureEnum::CTE),
+            'Database does not support CTEs',
+        );
         $Authors = $this->getTableLocator()->get('Authors');
         $Authors->Articles->setStrategy(Association::STRATEGY_CTE);
 
@@ -898,6 +911,10 @@ class HasManyTest extends TestCase
      */
     public function testCTEStrategyWithConditions(): void
     {
+        $this->skipIf(
+            !ConnectionManager::get('test')->getDriver()->supports(DriverFeatureEnum::CTE),
+            'Database does not support CTEs',
+        );
         $Authors = $this->getTableLocator()->get('Authors');
         $Authors->Articles->setStrategy(Association::STRATEGY_CTE);
 
