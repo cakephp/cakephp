@@ -343,7 +343,7 @@ class ResultSetFactory
      */
     public function setResultSetClass(string $resultSetClass): static
     {
-        if (!is_a($resultSetClass, ResultSetInterface::class, true)) {
+        if (!is_subclass_of($resultSetClass, ResultSetInterface::class)) {
             throw new InvalidArgumentException(sprintf(
                 'Invalid ResultSet class `%s`. It must implement `%s`',
                 $resultSetClass,

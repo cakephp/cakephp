@@ -27,7 +27,6 @@ use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Marshaller;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
-use Cake\Utility\Hash;
 use function Cake\Core\pluginSplit;
 
 /**
@@ -131,7 +130,7 @@ class ShadowTableStrategy implements TranslateStrategyInterface
      */
     public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void
     {
-        $locale = Hash::get($options, 'locale', $this->getLocale());
+        $locale = $options['locale'] ?? $this->getLocale();
         $config = $this->getConfig();
 
         if ($locale === $config['defaultLocale']) {

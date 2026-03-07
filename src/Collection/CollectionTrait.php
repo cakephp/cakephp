@@ -256,9 +256,8 @@ trait CollectionTrait
         }
         $result = $result
             ->reduce(function (array $acc, $current) {
-                [$count, $sum] = $acc;
-
-                return [$count + 1, $sum + $current];
+                // index 0 is the count, index 1 is the sum
+                return [$acc[0] + 1, $acc[1] + $current];
             }, [0, 0]);
 
         if ($result[0] === 0) {

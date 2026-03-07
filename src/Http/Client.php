@@ -699,11 +699,9 @@ class Client implements EventDispatcherInterface, ClientInterface
      * Returns headers for Accept/Content-Type based on a short type
      * or full mime-type.
      *
-     * @phpstan-param non-empty-string $type
      * @param string $type short type alias or full mimetype.
-     * @return array<string, string> Headers to set on the request.
+     * @return array{'Accept': non-empty-string, 'Content-Type': non-empty-string} Headers to set on the request.
      * @throws \Cake\Core\Exception\CakeException When an unknown type alias is used.
-     * @phpstan-return array<non-empty-string, non-empty-string>
      */
     protected function typeHeaders(string $type): array
     {

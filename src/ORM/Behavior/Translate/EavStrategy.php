@@ -25,7 +25,6 @@ use Cake\Event\EventInterface;
 use Cake\ORM\Locator\LocatorAwareTrait;
 use Cake\ORM\Query\SelectQuery;
 use Cake\ORM\Table;
-use Cake\Utility\Hash;
 
 /**
  * This class provides a way to translate dynamic data by keeping translations
@@ -173,7 +172,7 @@ class EavStrategy implements TranslateStrategyInterface
      */
     public function beforeFind(EventInterface $event, SelectQuery $query, ArrayObject $options): void
     {
-        $locale = Hash::get($options, 'locale', $this->getLocale());
+        $locale = $options['locale'] ?? $this->getLocale();
 
         if ($locale === $this->getConfig('defaultLocale')) {
             return;

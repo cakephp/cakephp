@@ -53,8 +53,7 @@ class DependentDeleteHelper
         $conditions = array_combine($foreignKey, $bindingValue);
 
         if ($association->getCascadeCallbacks()) {
-            foreach ($association->find()->where($conditions)->all()->toList() as $related) {
-                /** @phpstan-ignore argument.type (cascade callbacks always have hydration enabled) */
+            foreach ($association->find()->where($conditions)->toArray() as $related) {
                 $success = $table->delete($related, $options);
                 if (!$success) {
                     return false;

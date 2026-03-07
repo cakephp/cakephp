@@ -21,6 +21,8 @@ use Cake\Datasource\EntityInterface;
 /**
  * Contains translation methods aimed to help managing multiple translations
  * for an entity.
+ *
+ * @require-implements \Cake\Datasource\EntityInterface
  */
 trait TranslateTrait
 {
