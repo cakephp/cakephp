@@ -154,7 +154,7 @@ trait EntityTrait
     /**
      * List of properties that are not treated as fields.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected static array $restrictedProperties = [
         'dynamicFields',
@@ -164,6 +164,7 @@ trait EntityTrait
         'hidden',
         'virtual',
         'dirty',
+        'accessors',
         'new',
         'errors',
         'invalid',
