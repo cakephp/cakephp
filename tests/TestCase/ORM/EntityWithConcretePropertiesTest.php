@@ -16,11 +16,13 @@ declare(strict_types=1);
  */
 namespace Cake\Test\TestCase\ORM;
 
+use Cake\Datasource\EntityTrait;
 use Cake\Datasource\Exception\MissingPropertyException;
 use Cake\ORM\Entity;
 use Cake\TestSuite\TestCase;
 use InvalidArgumentException;
 use Mockery;
+use ReflectionClass;
 use stdClass;
 use TestApp\Model\Entity\UserWithProps;
 
@@ -1669,5 +1671,27 @@ class EntityWithConcretePropertiesTest extends TestCase
         $secondEntity->set('parent', $entity);
 
         $this->assertFalse($entity->hasErrors());
+    }
+
+    /**
+     * Test that EntityTrait::$restrictedProperties list matches the list of
+     * properties declared in the trait.
+     */
+    public function testRestrictedPropertiesMatchesTraitProperties(): void
+    {
+        $reflectedTrait = new ReflectionClass(EntityTrait::class);
+        $properties = [];
+        foreach ($reflectedTrait->getProperties() as $property) {
+            $properties[] = $property->getName();
+        }
+
+        $reflectedEntity = new ReflectionClass(Entity::class);
+        $restrictedProperty = $reflectedEntity->getProperty('restrictedProperties');
+        $restrictedProperties = $restrictedProperty->getValue();
+
+        sort($properties);
+        sort($restrictedProperties);
+
+        $this->assertSame($properties, $restrictedProperties);
     }
 }
