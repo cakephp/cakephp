@@ -17,6 +17,7 @@ declare(strict_types=1);
 namespace Cake\ORM\Association\Loader;
 
 use Cake\Database\Exception\DatabaseException;
+use Cake\Database\Expression\CommonTableExpression;
 use Cake\Database\Expression\IdentifierExpression;
 use Cake\Database\Expression\TupleComparison;
 use Cake\Database\ExpressionInterface;
@@ -61,7 +62,7 @@ class SelectLoader
     protected array|string $foreignKey;
 
     /**
-     * The strategy to use for loading, either select or subquery
+     * The strategy to use for loading: select, subquery, or cte
      *
      * @var string
      */
@@ -192,6 +193,9 @@ class SelectLoader
         if ($useSubquery) {
             $filter = $this->_buildSubquery($selectQuery);
             $fetchQuery = $this->_addFilteringJoin($fetchQuery, $key, $filter);
+        } elseif ($options['strategy'] === Association::STRATEGY_CTE) {
+            $cteQuery = $this->_buildSubquery($selectQuery);
+            $fetchQuery = $this->_addFilteringCTE($fetchQuery, $key, $cteQuery);
         } else {
             $fetchQuery = $this->_addFilteringCondition($fetchQuery, $key, $filter);
         }
@@ -336,6 +340,83 @@ class SelectLoader
         }
 
         return $query->andWhere($conditions);
+    }
+
+    /**
+     * Appends any conditions required to load the relevant set of records in the
+     * target table query using a Common Table Expression (CTE).
+     *
+     * This strategy is beneficial for large result sets as it:
+     * - Avoids packet size limits from large WHERE IN clauses
+     * - Reduces PHP memory usage by keeping IDs in the database
+     * - Allows the database to optimize the join more effectively
+     *
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $query Target table's query
+     * @param array<string>|string $key The fields that should be used for filtering
+     * @param \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array> $cteQuery The CTE query for filtering
+     * @return \Cake\ORM\Query\SelectQuery<\Cake\Datasource\EntityInterface|array>
+     */
+    protected function _addFilteringCTE(SelectQuery $query, array|string $key, SelectQuery $cteQuery): SelectQuery
+    {
+        $cteName = '_cte_' . $this->sourceAlias;
+
+        // Preprocess CTE select fields to use IdentifierExpressions (prevents auto-aliasing)
+        // This is similar to what _addFilteringJoin does for subqueries
+        $filter = [];
+        foreach ($cteQuery->clause('select') as $aliasedField => $field) {
+            if (is_int($aliasedField)) {
+                $filter[] = new IdentifierExpression($field);
+            } else {
+                $filter[$aliasedField] = $field;
+            }
+        }
+        $cteQuery->select($filter, true);
+
+        // Build CTE with the source query
+        $cte = new CommonTableExpression($cteName, $cteQuery);
+        $query->with($cte);
+
+        // Build join conditions between target table and CTE
+        $keys = (array)$key;
+        $conditions = $query->expr()->setConjunction('AND');
+
+        foreach ($keys as $i => $keyField) {
+            // Get the corresponding CTE field - same approach as subquery
+            $cteField = $filter[$i] ?? $filter[0];
+            $cteFieldName = $this->_extractFieldName($cteField);
+
+            $conditions->add(
+                $query->expr()->eq(
+                    new IdentifierExpression($keyField),
+                    new IdentifierExpression($cteName . '.' . $cteFieldName),
+                ),
+            );
+        }
+
+        return $query->innerJoin($cteName, $conditions);
+    }
+
+    /**
+     * Extract the field name from a qualified or aliased field reference.
+     *
+     * @param \Cake\Database\ExpressionInterface|string $field The field reference
+     * @return string The extracted field name
+     */
+    protected function _extractFieldName(ExpressionInterface|string $field): string
+    {
+        if ($field instanceof IdentifierExpression) {
+            $field = $field->getIdentifier();
+        } elseif ($field instanceof ExpressionInterface) {
+            // For complex expressions, use a temporary binder to get SQL representation
+            $binder = new ValueBinder();
+
+            return $field->sql($binder);
+        }
+
+        // Handle "Table.field" format
+        $parts = explode('.', (string)$field);
+
+        return end($parts);
     }
 
     /**

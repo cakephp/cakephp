@@ -65,6 +65,13 @@ abstract class Association
     public const STRATEGY_SELECT = 'select';
 
     /**
+     * Strategy name to use a CTE for fetching associated records
+     *
+     * @var string
+     */
+    public const STRATEGY_CTE = 'cte';
+
+    /**
      * Association type for one to one associations.
      *
      * @var string

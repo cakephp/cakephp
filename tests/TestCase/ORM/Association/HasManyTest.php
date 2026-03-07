@@ -829,6 +829,98 @@ class HasManyTest extends TestCase
     }
 
     /**
+     * Test the CTE strategy correctly loads associated records.
+     *
+     * CTE strategy is beneficial for large result sets as it:
+     * - Avoids packet size limits from large WHERE IN clauses
+     * - Reduces PHP memory usage by keeping IDs in the database
+     * - Allows the database to optimize the join more effectively
+     */
+    public function testCTEStrategy(): void
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_CTE);
+
+        $query = $Authors->find();
+        $result = $query
+            ->contain('Articles')
+            ->where(['Authors.id' => 1])
+            ->first();
+
+        $this->assertNotEmpty($result->articles);
+        $this->assertCount(2, $result->articles);
+        foreach ($result->articles as $article) {
+            $this->assertSame(1, $article->author_id);
+        }
+    }
+
+    /**
+     * Test CTE strategy with multiple parent records.
+     */
+    public function testCTEStrategyMultipleParents(): void
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_CTE);
+
+        $result = $Authors->find()
+            ->contain('Articles')
+            ->orderBy(['Authors.id' => 'ASC'])
+            ->toArray();
+
+        // Author 1 (mariano) has 2 articles
+        $this->assertCount(2, $result[0]->articles);
+        // Author 2 (nate) has 0 articles
+        $this->assertEmpty($result[1]->articles);
+        // Author 3 (larry) has 1 article
+        $this->assertCount(1, $result[2]->articles);
+        // Author 4 (garrett) has 0 articles
+        $this->assertEmpty($result[3]->articles);
+    }
+
+    /**
+     * Test CTE strategy with limit on parent query.
+     */
+    public function testCTEStrategyWithLimit(): void
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_CTE);
+
+        $result = $Authors->find()
+            ->contain('Articles')
+            ->limit(2)
+            ->toArray();
+
+        $this->assertCount(2, $result);
+    }
+
+    /**
+     * Test CTE strategy with conditions on parent query.
+     */
+    public function testCTEStrategyWithConditions(): void
+    {
+        $Authors = $this->getTableLocator()->get('Authors');
+        $Authors->Articles->setStrategy(Association::STRATEGY_CTE);
+
+        $result = $Authors->find()
+            ->contain('Articles')
+            ->where(['Authors.name LIKE' => 'mar%'])
+            ->toArray();
+
+        $this->assertCount(1, $result);
+        $this->assertCount(2, $result[0]->articles);
+    }
+
+    /**
+     * Test that CTE strategy does not require keys from the parent query.
+     */
+    public function testCTEStrategyDoesNotRequireKeys(): void
+    {
+        $assoc = new HasMany('Test');
+        $assoc->setStrategy(HasMany::STRATEGY_CTE);
+        $this->assertFalse($assoc->requiresKeys());
+    }
+
+    /**
      * Assertion method for order by clause contents.
      *
      * @param array $expected The expected join clause.

@@ -130,6 +130,7 @@ class BelongsToMany extends Association
     protected array $_validStrategies = [
         self::STRATEGY_SELECT,
         self::STRATEGY_SUBQUERY,
+        self::STRATEGY_CTE,
     ];
 
     /**
