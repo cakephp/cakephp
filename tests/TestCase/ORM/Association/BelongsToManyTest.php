@@ -18,6 +18,7 @@ namespace Cake\Test\TestCase\ORM\Association;
 
 use Cake\Database\Connection;
 use Cake\Database\Driver\Sqlite;
+use Cake\Database\DriverFeatureEnum;
 use Cake\Database\Exception\DatabaseException;
 use Cake\Database\Expression\OrderClauseExpression;
 use Cake\Database\Expression\QueryExpression;
@@ -26,6 +27,7 @@ use Cake\Datasource\EntityInterface;
 use Cake\Event\EventInterface;
 use Cake\I18n\DateTime;
 use Cake\Log\Log;
+use Cake\ORM\Association;
 use Cake\ORM\Association\BelongsTo;
 use Cake\ORM\Association\BelongsToMany;
 use Cake\ORM\Association\HasMany;
@@ -198,8 +200,133 @@ class BelongsToManyTest extends TestCase
         $assoc->setStrategy(BelongsToMany::STRATEGY_SUBQUERY);
         $this->assertFalse($assoc->requiresKeys());
 
+        $assoc->setStrategy(Association::STRATEGY_CTE);
+        $this->assertFalse($assoc->requiresKeys());
+
         $assoc->setStrategy(BelongsToMany::STRATEGY_SELECT);
         $this->assertTrue($assoc->requiresKeys());
+    }
+
+    /**
+     * Test the CTE strategy correctly loads associated records through junction table.
+     *
+     * CTE strategy is beneficial for large result sets as it:
+     * - Avoids packet size limits from large WHERE IN clauses
+     * - Reduces PHP memory usage by keeping IDs in the database
+     * - Allows the database to optimize the join more effectively
+     */
+    public function testCTEStrategy(): void
+    {
+        $this->skipIf(
+            !ConnectionManager::get('test')->getDriver()->supports(DriverFeatureEnum::CTE),
+            'Database does not support CTEs',
+        );
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsToMany('Tags');
+        $articles->Tags->setStrategy(Association::STRATEGY_CTE);
+
+        $result = $articles->get(1, ...['contain' => 'Tags']);
+
+        $this->assertNotEmpty($result->tags);
+        $this->assertCount(2, $result->tags);
+        $tagIds = array_column($result->tags, 'id');
+        sort($tagIds);
+        $this->assertSame([1, 2], $tagIds);
+    }
+
+    /**
+     * Test CTE strategy with multiple parent records.
+     */
+    public function testCTEStrategyMultipleParents(): void
+    {
+        $this->skipIf(
+            !ConnectionManager::get('test')->getDriver()->supports(DriverFeatureEnum::CTE),
+            'Database does not support CTEs',
+        );
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsToMany('Tags');
+        $articles->Tags->setStrategy(Association::STRATEGY_CTE);
+
+        $result = $articles->find()
+            ->contain('Tags')
+            ->orderBy(['Articles.id' => 'ASC'])
+            ->toArray();
+
+        // Article 1 has 2 tags (tag1, tag2)
+        $this->assertCount(2, $result[0]->tags);
+        // Article 2 has 2 tags (tag1, tag3)
+        $this->assertCount(2, $result[1]->tags);
+        // Article 3 has 0 tags
+        $this->assertEmpty($result[2]->tags);
+    }
+
+    /**
+     * Test CTE strategy with limit on parent query.
+     */
+    public function testCTEStrategyWithLimit(): void
+    {
+        $this->skipIf(
+            !ConnectionManager::get('test')->getDriver()->supports(DriverFeatureEnum::CTE),
+            'Database does not support CTEs',
+        );
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsToMany('Tags');
+        $articles->Tags->setStrategy(Association::STRATEGY_CTE);
+
+        $result = $articles->find()
+            ->contain('Tags')
+            ->limit(2)
+            ->toArray();
+
+        $this->assertCount(2, $result);
+    }
+
+    /**
+     * Test CTE strategy with conditions on parent query.
+     */
+    public function testCTEStrategyWithConditions(): void
+    {
+        $this->skipIf(
+            !ConnectionManager::get('test')->getDriver()->supports(DriverFeatureEnum::CTE),
+            'Database does not support CTEs',
+        );
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsToMany('Tags');
+        $articles->Tags->setStrategy(Association::STRATEGY_CTE);
+
+        $result = $articles->find()
+            ->contain('Tags')
+            ->where(['Articles.title LIKE' => 'First%'])
+            ->toArray();
+
+        $this->assertCount(1, $result);
+        $this->assertCount(2, $result[0]->tags);
+    }
+
+    /**
+     * Test CTE strategy with conditions on the association through junction table.
+     */
+    public function testCTEStrategyWithJunctionConditions(): void
+    {
+        $this->skipIf(
+            !ConnectionManager::get('test')->getDriver()->supports(DriverFeatureEnum::CTE),
+            'Database does not support CTEs',
+        );
+        $articles = $this->getTableLocator()->get('Articles');
+        $articles->belongsToMany('Tags', [
+            'through' => 'SpecialTags',
+            'conditions' => ['SpecialTags.highlighted' => true],
+        ]);
+        $articles->Tags->setStrategy(Association::STRATEGY_CTE);
+
+        $result = $articles->find()
+            ->contain('Tags')
+            ->where(['Articles.id' => 2])
+            ->first();
+
+        // Article 2 has highlighted special_tag for tag1
+        $this->assertCount(1, $result->tags);
+        $this->assertSame('tag1', $result->tags[0]->name);
     }
 
     /**
