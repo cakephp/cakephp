@@ -1527,7 +1527,7 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
         $this->_dirty();
         $this->_hydrate = false;
 
-        // @phpstan-ignore return.type
+        /** @phpstan-ignore return.type */
         return $this;
     }
 
