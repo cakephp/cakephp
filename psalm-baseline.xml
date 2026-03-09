@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="7.0.0-beta15@90bb719c909380be79f7bb788751041f7bc8efb2">
+  <file src="src/Command/PluginLoadCommand.php">
+    <TaintedSSRF>
+      <code><![CDATA[$file]]></code>
+    </TaintedSSRF>
+  </file>
+  <file src="src/Controller/ComponentRegistry.php">
+    <OverriddenMethodAccess>
+      <code><![CDATA[protected function getContainer(): ContainerInterface]]></code>
+      <code><![CDATA[protected function getContainer(): ContainerInterface]]></code>
+      <code><![CDATA[protected function getMode(): int]]></code>
+    </OverriddenMethodAccess>
+  </file>
+  <file src="src/Core/InstanceConfigTrait.php">
+    <UnsupportedPropertyReferenceUsage>
+      <code><![CDATA[$update = &$this->_config]]></code>
+      <code><![CDATA[$update = &$this->_config]]></code>
+    </UnsupportedPropertyReferenceUsage>
+  </file>
+  <file src="src/Core/PluginConfig.php">
+    <TaintedSSRF>
+      <code><![CDATA[$jsonPath]]></code>
+    </TaintedSSRF>
+  </file>
+  <file src="src/Datasource/EntityTrait.php">
+    <UnsupportedPropertyReferenceUsage>
+      <code><![CDATA[$value = &$this->_fields[$field]]]></code>
+    </UnsupportedPropertyReferenceUsage>
+  </file>
+  <file src="src/TestSuite/TestCase.php">
+    <UndefinedVariable>
+      <code><![CDATA[$previousHandler]]></code>
+    </UndefinedVariable>
+  </file>
+</files>

@@ -124,10 +124,14 @@
         ],
         "cs-check": "phpcs",
         "cs-fix": "phpcbf",
-        "stan": "tools/phpstan analyse",
+        "stan": [
+            "tools/phpstan analyse",
+            "tools/psalm"
+        ],
         "stan-tests": "tools/phpstan analyze -c tests/phpstan.neon",
         "stan-baseline": "tools/phpstan --generate-baseline",
         "stan-setup": "phive install",
+        "psalm-baseline": "tools/psalm --set-baseline=psalm-baseline.xml",
         "lowest": "validate-prefer-lowest",
         "lowest-setup": "composer update --prefer-lowest --prefer-stable --prefer-dist --no-interaction && cp composer.json composer.backup && composer require --dev dereuromark/composer-prefer-lowest && mv composer.backup composer.json",
         "rector-setup": "cp composer.json composer.backup && composer require --dev rector/rector:\"~2.3.1\" && mv composer.backup composer.json",

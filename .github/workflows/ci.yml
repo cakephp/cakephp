@@ -238,7 +238,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     env:
-      PHIVE_KEYS: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
+      PHIVE_KEYS: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5,99BF4D9A33D65E1E'
       PHPSTAN_TESTS: 1
 
     steps:
@@ -276,6 +276,10 @@ jobs:
       - name: Run phpstan
         if: always()
         run: tools/phpstan analyse --error-format=github
+
+      - name: Run Psalm
+        if: always()
+        run: tools/psalm --output-format=github
 
       - name: Setup phpcs cache
         if: always()
@@ -328,7 +332,7 @@ jobs:
     runs-on: ubuntu-24.04
 
     env:
-      PHIVE_KEYS: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
+      PHIVE_KEYS: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5,99BF4D9A33D65E1E'
 
     steps:
       - uses: actions/checkout@v6
