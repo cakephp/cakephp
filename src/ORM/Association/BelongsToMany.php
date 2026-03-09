@@ -619,6 +619,7 @@ class BelongsToMany extends Association
         $table = $this->junction();
         $hasMany = $this->getSource()->getAssociation($table->getAlias());
         if ($this->_cascadeCallbacks) {
+            /** @var \Cake\Datasource\EntityInterface $related */
             foreach ($hasMany->find('all')->where($conditions)->toArray() as $related) {
                 $success = $table->delete($related, $options);
                 if (!$success) {
