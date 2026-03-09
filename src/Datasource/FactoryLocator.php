@@ -27,7 +27,7 @@ class FactoryLocator
     /**
      * A list of model factory functions.
      *
-     * @var array<string, \Cake\Datasource\Locator\LocatorInterface<\Cake\Datasource\RepositoryInterface>>
+     * @var array<string, \Cake\Datasource\Locator\LocatorInterface<covariant \Cake\Datasource\RepositoryInterface>>
      */
     protected static array $_modelFactories = [];
 
@@ -35,7 +35,7 @@ class FactoryLocator
      * Register a locator to return repositories of a given type.
      *
      * @param string $type The name of the repository type the factory function is for.
-     * @param \Cake\Datasource\Locator\LocatorInterface<\Cake\Datasource\RepositoryInterface> $factory The factory function used to create instances.
+     * @param \Cake\Datasource\Locator\LocatorInterface<covariant \Cake\Datasource\RepositoryInterface> $factory The factory function used to create instances.
      * @return void
      */
     public static function add(string $type, LocatorInterface $factory): void
@@ -59,7 +59,7 @@ class FactoryLocator
      *
      * @param string $type The repository type to get the factory for.
      * @throws \InvalidArgumentException If the specified repository type has no factory.
-     * @return \Cake\Datasource\Locator\LocatorInterface<\Cake\Datasource\RepositoryInterface> The factory for the repository type.
+     * @return \Cake\Datasource\Locator\LocatorInterface<covariant \Cake\Datasource\RepositoryInterface> The factory for the repository type.
      */
     public static function get(string $type): LocatorInterface
     {
