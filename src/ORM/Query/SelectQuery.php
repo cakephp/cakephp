@@ -1520,11 +1520,10 @@ class SelectQuery extends DbSelectQuery implements JsonSerializable, QueryInterf
      * instead of entities.
      *
      * @return static<array<string,mixed>>
-     * phpcs:disable SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
+     * @phpcsSuppress SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
      */
     public function disableHydration()
     {
-        // phpcs:enable SlevomatCodingStandard.TypeHints.ReturnTypeHint.MissingNativeTypeHint
         $this->_dirty();
         $this->_hydrate = false;
 
