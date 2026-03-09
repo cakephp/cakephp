@@ -42,6 +42,7 @@ phpstan.neon.dist export-ignore
 phpstan-baseline.neon export-ignore
 phpunit.xml.dist export-ignore
 rector.php export-ignore
+composer-stan.json export-ignore
 
 # Split package files
 src/Validation/.gitattributes export-ignore

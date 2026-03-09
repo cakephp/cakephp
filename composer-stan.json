@@ -1,0 +1,94 @@
+{
+    "require": {
+        "php": ">=8.2",
+        "ext-intl": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "cakephp/chronos": "^3.3",
+        "composer/ca-bundle": "^1.5",
+        "laminas/laminas-diactoros": "^3.8",
+        "laminas/laminas-httphandlerrunner": "^2.6",
+        "league/container": "^5.1",
+        "psr/container": "^1.1 || ^2.0",
+        "psr/http-client": "^1.0.2",
+        "psr/http-factory": "^1.1",
+        "psr/http-message": "^1.1 || ^2.0",
+        "psr/http-server-handler": "^1.0.2",
+        "psr/http-server-middleware": "^1.0.2",
+        "psr/log": "^3.0",
+        "psr/simple-cache": "^2.0 || ^3.0"
+    },
+    "require-dev": {
+        "cakephp/cakephp-codesniffer": "^5.3",
+        "dereuromark/composer-prefer-lowest": "@stable",
+        "paragonie/csp-builder": "^2.3 || ^3.0",
+        "phpstan/phpstan": "^2.1",
+        "phpunit/phpunit": "^11.5.3 || ^12.1.3 || ^13.0",
+        "rector/rector": "~2.3.1"
+    },
+    "replace": {
+        "cakephp/cache": "self.version",
+        "cakephp/collection": "self.version",
+        "cakephp/console": "self.version",
+        "cakephp/core": "self.version",
+        "cakephp/database": "self.version",
+        "cakephp/datasource": "self.version",
+        "cakephp/event": "self.version",
+        "cakephp/form": "self.version",
+        "cakephp/http": "self.version",
+        "cakephp/i18n": "self.version",
+        "cakephp/log": "self.version",
+        "cakephp/orm": "self.version",
+        "cakephp/utility": "self.version",
+        "cakephp/validation": "self.version"
+    },
+    "autoload": {
+        "psr-4": {
+            "Cake\\": "src/"
+        },
+        "files": [
+            "src/Core/functions.php",
+            "src/Error/functions.php",
+            "src/Collection/functions.php",
+            "src/I18n/functions.php",
+            "src/ORM/bootstrap.php",
+            "src/Routing/functions.php",
+            "src/Utility/bootstrap.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Cake\\PHPStan\\": "tests/PHPStan/",
+            "Cake\\Test\\": "tests/",
+            "Company\\TestPluginThree\\": "tests/test_app/Plugin/Company/TestPluginThree/src/",
+            "Company\\TestPluginThree\\Test\\": "tests/test_app/Plugin/Company/TestPluginThree/tests/",
+            "Named\\": "tests/test_app/Plugin/Named/src/",
+            "PluginJs\\": "tests/test_app/Plugin/PluginJs/src/",
+            "TestApp\\": "tests/test_app/TestApp/",
+            "TestApp\\Test\\": "tests/test_app/TestApp/tests/",
+            "TestPluginTwo\\": "tests/test_app/Plugin/TestPluginTwo/src/",
+            "TestPlugin\\": "tests/test_app/Plugin/TestPlugin/src/",
+            "TestPlugin\\Test\\": "tests/test_app/Plugin/TestPlugin/tests/",
+            "TestTheme\\": "tests/test_app/Plugin/TestTheme/src/"
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true,
+            "phpstan/extension-installer": true
+        },
+        "lock": false,
+        "process-timeout": 900,
+        "sort-packages": true
+    },
+    "scripts": {
+        "cs-check": "phpcs --parallel=16 -p",
+        "cs-fix": "phpcbf --parallel=16 -p",
+        "lowest": "validate-prefer-lowest",
+        "rector-check": "vendor/bin/rector process --dry-run",
+        "rector-fix": "vendor/bin/rector process",
+        "stan": "tools/phpstan analyse",
+        "stan-baseline": "tools/phpstan --generate-baseline",
+        "stan-tests": "tools/phpstan analyze -c tests/phpstan.neon"
+    }
+}

@@ -6,6 +6,7 @@ on:
       - '4.x'
       - '5.x'
       - '5.next'
+      - '6.x'
   pull_request:
     branches:
       - '*'
@@ -238,7 +239,6 @@ jobs:
     runs-on: ubuntu-24.04
 
     env:
-      PHIVE_KEYS: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
       PHPSTAN_TESTS: 1
 
     steps:
@@ -258,24 +258,12 @@ jobs:
 
       - name: Composer install
         uses: ramsey/composer-install@v3
-
-      - name: Cache phive tools
-        uses: actions/cache@v5
         with:
-          path: |
-            ~/.phive
-            tools
-          key: ${{ runner.os }}-phive-${{ hashFiles('.phive/phars.xml') }}
-          restore-keys: ${{ runner.os }}-phive-
-
-      - name: Install PHP tools with phive.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
+          composer-filename: "composer-stan"
 
       - name: Run phpstan
         if: always()
-        run: tools/phpstan analyse --error-format=github
+        run: vendor/bin/phpstan analyse --error-format=github
 
       - name: Setup phpcs cache
         if: always()
@@ -291,7 +279,7 @@ jobs:
 
       - name: Run phpstan for tests
         if: env.PHPSTAN_TESTS
-        run: tools/phpstan analyse -c tests/phpstan.neon --error-format=github
+        run: vendor/bin/phpstan analyse -c tests/phpstan.neon --error-format=github
 
       - name: Run class deprecation aliasing validation script
         if: always()
@@ -302,8 +290,7 @@ jobs:
         run: php contrib/validate-split-packages.php
 
       - name: Prefer lowest check
-        if: matrix.prefer-lowest == 'prefer-lowest'
-        run: composer require --dev dereuromark/composer-prefer-lowest && vendor/bin/validate-prefer-lowest -m
+        run: vendor/bin/validate-prefer-lowest -m
 
       - name: Setup rector cache
         if: always()
@@ -321,47 +308,9 @@ jobs:
         if: always()
         env:
           RECTOR_CACHE_DIR: ${{ runner.temp }}/rector
-        run: composer rector-setup && composer rector-check
-
-  split-packages-stan:
-    name: Static Analysis for Split Packages
-    runs-on: ubuntu-24.04
-
-    env:
-      PHIVE_KEYS: 'CF1A108D0E7AE720,51C67305FFC2E5C0,12CE0F1D262429A5'
-
-    steps:
-      - uses: actions/checkout@v6
-        with:
-          persist-credentials: false
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: '8.2'
-          extensions: mbstring, intl
-          coverage: none
-          tools: phive
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Composer install
-        uses: ramsey/composer-install@v3
-
-      - name: Cache phive tools
-        uses: actions/cache@v5
-        with:
-          path: |
-            ~/.phive
-            tools
-          key: ${{ runner.os }}-phive-${{ hashFiles('.phive/phars.xml') }}
-          restore-keys: ${{ runner.os }}-phive-
-
-      - name: Install PHP tools with phive.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: 'phive install --trust-gpg-keys "$PHIVE_KEYS"'
+        run: composer rector-check
 
       - name: Run phpstan for split packages
+        if: always()
         continue-on-error: true
         run: php contrib/validate-split-packages-phpstan.php
